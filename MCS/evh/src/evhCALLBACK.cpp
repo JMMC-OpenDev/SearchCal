@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhCALLBACK.cpp,v 1.2 2004-12-08 13:30:37 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
+* gzins     08-Dec-2004  Implemented IsDetached()
 *
 *
 *******************************************************************************/
@@ -15,7 +16,7 @@
  * Definition of the evhCALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCALLBACK.cpp,v 1.2 2004-12-08 13:30:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -92,6 +93,18 @@ mcsCOMPL_STAT evhCALLBACK::Detach()
     _detached = mcsTRUE;
 
     return SUCCESS;
+}
+
+/**
+ * Check whether the callback is detached or not.  
+ *
+ * \return mcsTRUE is callback is detached, and mcsFALSE otherwise.
+ */
+mcsLOGICAL evhCALLBACK::IsDetached()
+{
+    logExtDbg("evhCALLBACK::IsDetached()");
+
+    return _detached;
 }
 
 /**
