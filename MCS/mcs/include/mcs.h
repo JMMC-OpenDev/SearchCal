@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.10 2004-12-01 15:51:53 lafrasse Exp $"
+* "@(#) $Id: mcs.h,v 1.11 2004-12-03 17:07:11 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -33,7 +33,7 @@ extern "C" {
                                     /* 6 characters + 1 byte alignement   */
 #define mcsCMD_LEN              8   /* max. length of a command name      */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes    */
-#define mcsUNKNOWN_ENV  "MCSenv"    /* name used for unknown environment  */
+#define mcsUNKNOWN_ENV  "none"      /* name used for unknown environment  */
 #define mcsFALSE                0   /* False Logical                      */
 #define mcsTRUE                 1   /* True Logical                       */
 

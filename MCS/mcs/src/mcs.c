@@ -4,11 +4,11 @@
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * gzins     15-Jun-2004  Created
-* lafrasse  01-Dec-2004  Added mcs environment name management
+* lafrasse  01-Dec-2004  Added MCS environment name management
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: mcs.c,v 1.4 2004-12-01 15:51:56 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: mcs.c,v 1.5 2004-12-03 17:07:11 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -142,6 +142,7 @@ void mcsExit()
 {
     /* Store the application name */
     mcsStoreProcName(mcsUNKNOWN_PROC);
+    mcsStoreEnvName(mcsUNKNOWN_ENV);
 }
 
 /*
