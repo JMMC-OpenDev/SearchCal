@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.2 2004-12-06 15:07:07 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.3 2004-12-13 15:54:06 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.2 2004-12-06 15:07:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.3 2004-12-13 15:54:06 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -82,14 +82,13 @@ vobsCDATA::~vobsCDATA()
  */
 
 /**
- * Adds a column description (column name, UCD) at the end of the list
+ * Adds a column description (column name) at the end of the list
  *
- * This method adds the description (column name, UCD) of a column in the
+ * This method adds the description (column name) of a column in the
  * CDATA section. The description of the columns has to be done in the same
  * order they appear in the CDATA section.
  *
  * \param colName column name to be added to the list.
- * \param ucdName corresponding UCD to be added to the list.
  *
  * \return
  * Always SUCCESS.
@@ -102,6 +101,18 @@ mcsCOMPL_STAT vobsCDATA::addColName(char *colName)
 
     return SUCCESS;
 }
+/**
+ * Adds a column description (UCD) at the end of the list
+ *
+ * This method adds the description (UCD) of a column in the
+ * CDATA section. The description of the columns has to be done in the same
+ * order they appear in the CDATA section.
+ *
+ * \param ucdName corresponding UCD to be added to the list.
+ *
+ * \return
+ * Always SUCCESS.
+ */
 mcsCOMPL_STAT vobsCDATA::addUcdName(char *ucdName)
 {
     logExtDbg("vobsCDATA::addUcdName(%s)", ucdName);
