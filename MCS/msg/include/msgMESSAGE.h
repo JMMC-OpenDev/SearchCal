@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.24 2005-02-09 16:34:12 lafrasse Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.25 2005-02-14 07:59:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/02/09 16:34:12  lafrasse
+ * Changed method prototypes to use as much 'const' parameters as possible
+ *
  * Revision 1.23  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -57,7 +60,7 @@
 
 /**
  * \file
- * msgMESSAGE class declaration.
+ * Declaration of msgMESSAGE class 
  */
 
 
@@ -207,8 +210,7 @@ public:
     // Constructor
     msgMESSAGE (const mcsLOGICAL isInternalMsg = mcsFALSE);
 
-    // Declaration of copy constructor and assignment operator as private
-    // methods, in order to hide them from the users.
+    // Copy constructor and assignment operator 
     msgMESSAGE(const msgMESSAGE&);
     msgMESSAGE& operator=(const msgMESSAGE&);
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS_LIST.h,v 1.5 2005-02-09 16:35:13 lafrasse Exp $"
+ * "@(#) $Id: msgPROCESS_LIST.h,v 1.6 2005-02-14 07:59:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/09 16:35:13  lafrasse
+ * Changed method prototypes to use as much 'const' parameters as possible
+ *
  * Revision 1.4  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -21,7 +24,7 @@
 
 /**
  * \file
- * msgPROCESS_LIST class declaration.
+ * Declaration of msgPROCESS_LIST class 
  */
 
 #ifndef __cplusplus

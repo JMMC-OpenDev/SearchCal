@@ -3,22 +3,24 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE_FILTER.h,v 1.1 2005-02-09 16:42:26 lafrasse Exp $"
+ * "@(#) $Id: msgMESSAGE_FILTER.h,v 1.2 2005-02-14 07:59:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/09 16:42:26  lafrasse
+ * Added msgMESSAGE_FILTER class to manage message queues
+ *
  ******************************************************************************/
 
 /**
  * \file
- * msgMESSAGE_FILTER class declaration.
+ * Declaration of msgMESSAGE_FILTER class 
  */
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
-
 
 /*
  * MCS header
@@ -36,8 +38,7 @@
  */
 
 /**
- * msgMESSAGE_FILTER is an interface class used to determine wether a received
- * msgMESSAGE object must be filtered or not.
+ * Class used to filter messages on reception.
  */
 class msgMESSAGE_FILTER
 {

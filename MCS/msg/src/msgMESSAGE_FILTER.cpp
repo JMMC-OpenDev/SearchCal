@@ -1,19 +1,22 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE_FILTER.cpp,v 1.1 2005-02-09 16:42:26 lafrasse Exp $"
+ * "@(#) $Id: msgMESSAGE_FILTER.cpp,v 1.2 2005-02-14 07:59:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/09 16:42:26  lafrasse
+ * Added msgMESSAGE_FILTER class to manage message queues
+ *
  ******************************************************************************/
 
 /**
  * \file
- *  Interface class used to handle msgMESSAGE filtering on reception.
+ *  Class used to filter message on reception.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE_FILTER.cpp,v 1.1 2005-02-09 16:42:26 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE_FILTER.cpp,v 1.2 2005-02-14 07:59:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,14 +38,13 @@ using namespace std;
 #include "msgMESSAGE_FILTER.h"
 #include "msgPrivate.h"
 
-
 /**
  * Class constructor
  */
 msgMESSAGE_FILTER::msgMESSAGE_FILTER(const mcsCMD   command,
                                      const mcsINT32 commandId )
 {
-    // Initialze the command name member
+    // Initialize the command name member
     memset (_command, 0, sizeof(_command));
     // Set the command name member
     strncpy(_command, command, sizeof(_command));
@@ -58,15 +60,14 @@ msgMESSAGE_FILTER::~msgMESSAGE_FILTER()
 {
 }
 
-
 /*
  * Public methods
  */
 
 /**
- * Return the filter command name.
+ * Return the filtered command name.
  *
- * \return a character pointer on an mcsCMD value
+ * \return pointer to the name of the filtered command. 
  */
 const char* msgMESSAGE_FILTER::GetCommand(void) const
 {
@@ -76,9 +77,9 @@ const char* msgMESSAGE_FILTER::GetCommand(void) const
 }
 
 /**
- * Return the filter command identifier.
+ * Return the filtered command identifier.
  *
- * \return an mcsINT32 value
+ * \return identifier of the filtered command. 
  */
 const mcsINT32 msgMESSAGE_FILTER::GetCommandId(void) const
 {
@@ -88,18 +89,16 @@ const mcsINT32 msgMESSAGE_FILTER::GetCommandId(void) const
 }
 
 /**
- * Return wether the given message must be filtered (is not the expected reply)
- * or not.
+ * Check whether the given message is the expected one or not 
  *
  * \return mcsTRUE if the given msgMESSAGE object match the filter (i.e is the
- * expected one), or mcsFALSE if the given message is not the one corresponding
- * to the filter
+ * expected one), or mcsFALSE otherwise. 
  */
 const mcsLOGICAL msgMESSAGE_FILTER::IsMatchedBy(const msgMESSAGE& message) const
 {
     logExtDbg("msgMESSAGE_FILTER::IsMatchedBy()");
 
-    // If the given msgMESSAGE object seems to be the one expected
+    // If the given msgMESSAGE object is the expected one.
     if (_commandId == message.GetCommandId())
     {
         return mcsTRUE;
@@ -120,16 +119,5 @@ std::ostream& operator<< (      std::ostream&      stream,
            << "\t\tcommandId    = '" << filter.GetCommandId() << "'" << endl
            << "}";
 }
-
-
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
-
 
 /*___oOo___*/

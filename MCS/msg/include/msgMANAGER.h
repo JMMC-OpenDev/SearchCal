@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.h,v 1.7 2005-02-09 16:36:13 lafrasse Exp $"
+ * "@(#) $Id: msgMANAGER.h,v 1.8 2005-02-14 07:59:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/09 16:36:13  lafrasse
+ * minor indentation refinments
+ *
  * Revision 1.6  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -28,7 +31,7 @@
 
 /**
  * \file
- * msgMANAGER class declaration.
+ * Declaration of msgMANAGER class 
  */
 
 #ifndef __cplusplus

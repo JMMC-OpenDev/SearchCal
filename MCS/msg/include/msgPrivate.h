@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPrivate.h,v 1.8 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgPrivate.h,v 1.9 2005-02-14 07:59:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.7  2005/01/24 15:39:54  gzins
  * Added CVS logs as modification history
  *
@@ -23,7 +26,6 @@
  * \file
  * Private 'msg' module header file, holding the MODULE_ID definition and
  * other constants.
- *
  */
 
 /* The following piece of code alternates the linkage type to C for all 

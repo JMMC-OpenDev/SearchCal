@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET_SERVER.h,v 1.10 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgSOCKET_SERVER.h,v 1.11 2005-02-14 07:59:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.9  2005/01/24 15:39:54  gzins
  * Added CVS logs as modification history
  *
@@ -20,7 +23,7 @@
 
 /**
  * \file
- * msgSOCKET_SERVER class declaration.
+ * Declaration of msgSOCKET_SERVER class 
  */
 
 

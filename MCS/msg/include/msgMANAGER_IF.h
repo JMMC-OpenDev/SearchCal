@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.h,v 1.12 2005-02-09 16:42:26 lafrasse Exp $"
+ * "@(#) $Id: msgMANAGER_IF.h,v 1.13 2005-02-14 07:59:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/09 16:42:26  lafrasse
+ * Added msgMESSAGE_FILTER class to manage message queues
+ *
  * Revision 1.11  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -31,7 +34,7 @@
 
 /**
  * \file
- * msgMANAGER_IF class declaration.
+ * Declaration of msgMANAGER_IF class 
  */
 
 
