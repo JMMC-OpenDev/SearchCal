@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.18 2005-02-10 08:08:33 gzins Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.19 2005-04-04 15:09:02 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/02/10 08:08:33  gzins
+ * Added logInfo to inform about sent and received message
+ * Fixed bug in message reception when message size was big (> ~32k)
+ * Exited program when communication with msgManager is broken
+ *
  * Revision 1.17  2005/02/09 16:39:34  lafrasse
  * Added a remarque about 'commandId' and the possible use of the 'libuuid' to get a true unic Id
  *
@@ -45,7 +50,7 @@
  * \sa msgSOCKET
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.18 2005-02-10 08:08:33 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.19 2005-04-04 15:09:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -191,6 +196,17 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
     _address.sin_family      = AF_INET;      // TCP/IP connection
     _address.sin_port        = htons(port);  // Desired port number
     _address.sin_addr.s_addr = INADDR_ANY;   // Host network address
+
+    // Tell the kernel that even if this port is busy (in the TIME_WAIT state),
+    // go ahead and reuse it anyway.
+    int opt=1;
+    if (setsockopt(_descriptor, SOL_SOCKET, SO_REUSEADDR, &opt, 
+                   sizeof (opt)) == -1)
+    {
+        errAdd(msgERR_BIND, strerror(errno));
+        Close();
+        return mcsFAILURE;
+    }
 
     // Bind the socket to the given port number
     if (bind(_descriptor, (struct sockaddr*)&_address, sizeof(_address)) == -1)
