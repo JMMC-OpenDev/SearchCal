@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.36 2005-02-22 16:24:18 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.37 2005-02-23 08:15:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2005/02/22 16:24:18  gzins
+ * Updated  alxComputeAngularDiameter API
+ *
  * Revision 1.35  2005/02/22 10:20:49  gzins
  * Retrieved all known magnitude values before computing missing magnitudes
  *
@@ -53,7 +56,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.36 2005-02-22 16:24:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.37 2005-02-23 08:15:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -568,7 +571,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
                      (vobsCONFIDENCE_INDEX)confidenceIndex);
     SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diamVk, vobsSTAR_COMPUTED_PROP,
                      (vobsCONFIDENCE_INDEX)confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR, diamVkErr,
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV_ERROR, diamBvErr,
+                     vobsSTAR_COMPUTED_PROP, 
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR_ERROR, diamVrErr,
+                     vobsSTAR_COMPUTED_PROP, 
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR, diamVkErr,
                      vobsSTAR_COMPUTED_PROP, 
                      (vobsCONFIDENCE_INDEX)confidenceIndex);
    
@@ -598,44 +607,38 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     mcsFLOAT baseMax, wavelength;
     mcsFLOAT vis, vis2, visErr, vis2Err;
 
-    // Get object diameter. First look at the diameter coming from catalog, and
-    // if not found used the computed diameter.
-    if (IsPropertySet(vobsSTAR_UD_DIAM) == mcsTRUE)
+    // Get object diameter. First look at the diameters coming from catalog
+    char *diamId[4][2] = 
     {
-        GetPropertyValue(vobsSTAR_UD_DIAM, &diam);
-        // If diameter error was not found in catalog, it assume to 0  
-        if (IsPropertySet(vobsSTAR_UD_DIAM_ERROR) == mcsTRUE)
+        {vobsSTAR_UD_DIAM, vobsSTAR_UD_DIAM_ERROR},
+        {vobsSTAR_LD_DIAM, vobsSTAR_LD_DIAM_ERROR},
+        {vobsSTAR_UDDK_DIAM, vobsSTAR_UDDK_DIAM_ERROR},
+        {vobsSTAR_DIAM12, vobsSTAR_DIAM12_ERROR}
+    };
+    mcsLOGICAL found = mcsFALSE;
+    // For each possible diameters
+    for (int i = 0; (i < 4) && (found == mcsFALSE); i++)
+    {
+        // If diameter and its error are set 
+        if ((IsPropertySet(diamId[i][0]) == mcsTRUE) &&
+            (IsPropertySet(diamId[i][1]) == mcsTRUE))
         {
-            GetPropertyValue(vobsSTAR_UD_DIAM_ERROR, &diamError);
-        }
-        else
-        {
-            diamError = 0.0;
+            // Get values
+            GetPropertyValue(diamId[i][0], &diam);
+            GetPropertyValue(diamId[i][1], &diamError);
+            found = mcsTRUE;
         }
     }
-    else
-    {
-        // If diameter has been computed 
-        if (IsPropertySet(sclsvrCALIBRATOR_DIAM_BV) == mcsTRUE)
-        {
-            // And it is coherent
-            if (IsDiameterOk() == mcsTRUE)
-            {
-                // Get diameters and associated error values
-                mcsFLOAT diamBv, diamVr, diamVk;
-                GetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, &diamBv);
-                GetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, &diamVr);
-                GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &diamVk);
-                GetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR, &diamError);
 
-                // Compute mean diameter
-                diam = (diamBv + diamVr + diamVk) / 3.0;
-            }
-            // Else do not compute visibility
-            else
-            {
-                return mcsSUCCESS;
-            }
+    // If not found in catalog, use the computed one (if exist)
+    if (found == mcsFALSE)
+    {
+        // If computed diameter is OK
+        if (IsDiameterOk() == mcsTRUE)
+        {
+            // Get V-K diameter and associated error value
+            GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &diam);
+            GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR, &diamError);
         }
         // Else do not compute visibility
         else
@@ -690,7 +693,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                 "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, 
                 "%.3f");
-    AddProperty(sclsvrCALIBRATOR_DIAM_ERROR, "diamErr", 
+    AddProperty(sclsvrCALIBRATOR_DIAM_BV_ERROR, "e_diam_bv", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_VR_ERROR, "e_diam_vr", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", 
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", 
                 vobsSTRING_PROPERTY);
