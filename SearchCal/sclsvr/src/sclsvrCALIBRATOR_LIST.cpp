@@ -1,43 +1,48 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.20 2005-02-07 14:44:51 gzins Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.19  2005/02/07 11:10:29  scetre
-* Removed obsolete class sclsvrSEARCH_CALIBRATOR trace and changed method name in sclsvrCALIBRATOR_LIST
-*
-* Revision 1.18  2005/02/07 10:06:36  scetre
-* Changed filter method name in FilterBy...
-*
-* Revision 1.17  2005/02/07 09:50:45  scetre
-* Changed HadCoherentDiameter and VisibilityOk method in IsDiameterOk and IsVisibilityOk
-*
-* Revision 1.16  2005/02/07 09:22:40  gzins
-* Added method to copy list from another sclsvrCALIBRATOR_LIST instance
-*
-* Revision 1.15  2005/02/04 15:49:00  gzins
-* Fixed wrong Id for visibility property
-*
-* Revision 1.14  2005/02/04 15:30:19  gzins
-* Updated Complete method
-*
-* Revision 1.13  2005/02/04 14:22:50  scetre
-* Sort method for GUI added
-*
-* scetre    15-Sep-2004  Created
-* gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.21 2005-02-07 15:00:59 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/02/07 14:44:51  gzins
+ * Changed slcsvr.h to sclsvrCALIBRATOR_LIST.h
+ *
+ * Revision 1.19  2005/02/07 11:10:29  scetre
+ * Removed obsolete class sclsvrSEARCH_CALIBRATOR trace and changed method name
+ * in sclsvrCALIBRATOR_LIST
+ *
+ * Revision 1.18  2005/02/07 10:06:36  scetre
+ * Changed filter method name in FilterBy...
+ *
+ * Revision 1.17  2005/02/07 09:50:45  scetre
+ * Changed HadCoherentDiameter and VisibilityOk method in IsDiameterOk and
+ * IsVisibilityOk
+ *
+ * Revision 1.16  2005/02/07 09:22:40  gzins
+ * Added method to copy list from another sclsvrCALIBRATOR_LIST instance
+ *
+ * Revision 1.15  2005/02/04 15:49:00  gzins
+ * Fixed wrong Id for visibility property
+ *
+ * Revision 1.14  2005/02/04 15:30:19  gzins
+ * Updated Complete method
+ *
+ * Revision 1.13  2005/02/04 14:22:50  scetre
+ * Sort method for GUI added
+ *
+ * scetre    15-Sep-2004  Created
+ * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.20 2005-02-07 14:44:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.21 2005-02-07 15:00:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

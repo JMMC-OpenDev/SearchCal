@@ -1,27 +1,31 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.7 2005-02-07 14:44:03 gzins Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.6  2005/02/07 09:24:42  gzins
-* Replaced vobsVIRTUAL_OBSERVATORY local instance by the class member
-*
-* Revision 1.5  2005/02/04 15:29:54  gzins
-* Removed unused printf
-*
-* gzins     23-Nov-2004  Created
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.8 2005-02-07 15:01:11 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/07 14:44:03  gzins
+ * Renamed lambda to wlen.
+ * Renamed minMagRange to minDeltaMag, and maxMagRange to maxDeltaMag.
+ *
+ * Revision 1.6  2005/02/07 09:24:42  gzins
+ * Replaced vobsVIRTUAL_OBSERVATORY local instance by the class member
+ *
+ * Revision 1.5  2005/02/04 15:29:54  gzins
+ * Removed unused printf
+ *
+ * gzins     23-Nov-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.7 2005-02-07 14:44:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.8 2005-02-07 15:01:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

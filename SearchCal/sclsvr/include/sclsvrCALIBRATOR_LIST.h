@@ -1,26 +1,29 @@
 #ifndef sclsvrCALIBRATOR_LIST_H
 #define sclsvrCALIBRATOR_LIST_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.10 2005-02-07 11:10:29 scetre Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.9  2005/02/07 10:06:36  scetre
-* Changed filter method name in FilterBy...
-*
-* Revision 1.8  2005/02/07 09:15:57  gzins
-* Added method to copy list from another sclsvrCALIBRATOR_LIST instance
-*
-* Revision 1.7  2005/02/04 14:23:13  scetre
-* Sort method for GUI added
-*
-* scetre    15-Sep-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.11 2005-02-07 14:59:51 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/07 11:10:29  scetre
+ * Removed obsolete class sclsvrSEARCH_CALIBRATOR trace and changed method name
+ * in sclsvrCALIBRATOR_LIST
+ *
+ * Revision 1.9  2005/02/07 10:06:36  scetre
+ * Changed filter method name in FilterBy...
+ *
+ * Revision 1.8  2005/02/07 09:15:57  gzins
+ * Added method to copy list from another sclsvrCALIBRATOR_LIST instance
+ *
+ * Revision 1.7  2005/02/04 14:23:13  scetre
+ * Sort method for GUI added
+ *
+ * scetre    15-Sep-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
