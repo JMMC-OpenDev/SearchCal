@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: envLIST.cpp,v 1.4 2004-12-08 14:59:27 lafrasse Exp $"
+* "@(#) $Id: envLIST.cpp,v 1.5 2005-01-05 10:05:59 swmgr Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,7 @@
 *                        loaded' detection code from GetHostName(), Show() and
 *                        GetPortNumber() to LoadEnvListFile(), and refined the
 *                        output format of Show()
-*
+* gzins     05-Jan-2005  Minor changes in documentation
 *
 *******************************************************************************/
 
@@ -20,7 +20,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.4 2004-12-08 14:59:27 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.5 2005-01-05 10:05:59 swmgr Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -69,9 +69,10 @@ envLIST::~envLIST()
 /**
  * Return the host name of the given MCS environment.
  *
- * If the environment name is not given, the current environment, defined by
- * MCSENV environment variable, is used. If the MCSENV environment variable is
- * set to mcsUNKNOWN_ENV, then the local host name is returned.
+ * It returns the host name of the given environment. 
+ * If the environment name is not given, it returns the host name of the
+ * current environment (defined by MCSENV environment variable) or the local
+ * host name if the MCSENV is not set.
  *
  * \param envName the MCS environment for which the host name should be returned
  *
@@ -112,10 +113,9 @@ const char* envLIST::GetHostName(const char *envName)
  *
  * This method returns the port number of the given MCS environment; i.e. the
  * connection port number with the manager process of the MCS message service.
- * If the environment name is not given, the current environment, defined by
- * MCSENV environment variable, is used. If the MCSENV environment variable is
- * set to mcsUNKNOWN_ENV, then the default msgMANAGER_PORT_NUMBER port number
- * is returned.
+ * If the environment name is not given, it returns the port number associated
+ * the current environment (defined by MCSENV environment variable) or the
+ * default port number.
  *
  * \param envName the MCS env. for which the port number should be returned
  *
