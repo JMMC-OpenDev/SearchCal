@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-06-09 16:00:36 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-06-09 16:02:15 gzins Exp $"
 #
 # Makefile of ctoo module
 #
@@ -168,7 +168,7 @@ CSOURCENAMES = \
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/vltMakefile
+include $(MAKEDIR)/mcsMakefile
 
 #
 # TARGETS
