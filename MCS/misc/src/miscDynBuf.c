@@ -1,13 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.4 2004-07-13 14:09:39 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.5 2004-07-19 15:29:38 lafrasse Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
  * lafrasse  05-Jul-2004  Created
  * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
  * lafrasse  12-Jul-2004  Code factorization and error codes polishing
+ * lafrasse  19-Jul-2004  Corrected some bugs ('from = to' parameters)
  *
  *
  ******************************************************************************/
@@ -21,9 +22,10 @@
  * \sa To see all those functions declarations and a minimal code example, see
  * miscDynBuf.h
  * \sa To see all the other 'misc' module functions declarations, see misc.h
+ *
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.4 2004-07-13 14:09:39 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.5 2004-07-19 15:29:38 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -193,7 +195,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
     }
 
     /* Test the 'from' and 'to' parameters validity against each other */
-    if (to <= from)
+    if (to < from)
     {
         errAdd(miscERR_DYN_BUF_BAD_FROM_TO, functionName);
         return FAILURE;
@@ -650,6 +652,8 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
  * \param to the position of the last Dynamic Buffer byte to be substituted
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
+ *
+ * \todo use 'memmove()' instead of temporary buffers
  */
 mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
@@ -733,7 +737,7 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
     /* Try to copy the 'backep up' Dynamic Buffer bytes back inside the
      * Dynamic Buffer at the good position
      */
-    if (memcpy(dynBuf->dynBuf + length, tmpBuf, lengthToBackup) == NULL)
+    if (memcpy(positionToWriteIn + length, tmpBuf, lengthToBackup) == NULL)
     {
         errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
@@ -808,6 +812,8 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
  * \param position the position of the first Dynamic Buffer byte to write at
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
+ *
+ * \todo use 'memmove()' instead of temporary buffers
  */
 mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
@@ -903,6 +909,8 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
  * \param to the position of the last Dynamic Buffer byte to be deleted
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
+ *
+ * \todo use 'memmove()' instead of temporary buffers
  */
 mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
