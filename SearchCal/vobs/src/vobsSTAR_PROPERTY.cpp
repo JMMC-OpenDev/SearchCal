@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.9 2005-02-22 14:22:25 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.10 2005-03-04 06:34:37 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/22 14:22:25  gzins
+* Fixed bug when testing convertion of float values to string
+*
 * Revision 1.8  2005/02/22 14:15:22  gzins
 * Used format when affecting floatting value
 *
@@ -33,7 +36,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.9 2005-02-22 14:22:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.10 2005-03-04 06:34:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -320,7 +323,7 @@ const char   *vobsSTAR_PROPERTY::GetOrigin()
  *
  * \return value of confidence index
  */
-mcsINT32 vobsSTAR_PROPERTY::GetConfidenceIndex()
+vobsCONFIDENCE_INDEX vobsSTAR_PROPERTY::GetConfidenceIndex()
 {
     return _confidenceIndex;
 }
