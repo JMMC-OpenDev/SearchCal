@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.13 2005-02-16 16:18:00 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.14 2005-02-17 15:39:36 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/16 16:18:00  scetre
+* Fixed remaining bugs in Extract and Unpack methods
+*
 * Revision 1.12  2005/02/16 15:55:42  gzins
 * Fixed bug in AppendLines; missing CR after each line insertion
 *
@@ -189,18 +192,15 @@ public:
                         AppendString("\t");
                     }
                 }
-                // If it's not the last star of the list '\n' is written in order to
-                // go to the next line
+                // If it's not the last star of the list '\n' is written in
+                // order to go to the next line
                 if (starIdx != (objectList.Size() - 1))
                 {
                     AppendString("\n");
                 }
-                // if it's the last star '\0' in written
-                else 
-                {
-                    AppendString("\0");            
-                }
             }
+            // Removed the '\0' character at the end of the buffer
+            _dynBuf.storedBytes -= 1;
             return mcsSUCCESS;
         }
 
