@@ -30,6 +30,11 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[received bad 'from' and 'to' parameters ('to' lower than 'from').]]></errFormat>
    </error>
+   <error id="15">
+      <errName>DYN_BUF_COULD_NOT_READ_FILE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[could not read '%s' file : errno ='%d'.]]></errFormat>
+   </error>
    <error id="6">
       <errName>FILE_ENV_VAR_NOT_DEF</errName>
       <errSeverity>WARNING</errSeverity>

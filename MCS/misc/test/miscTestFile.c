@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.11 2004-10-07 14:11:26 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.12 2004-12-03 17:09:53 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -22,7 +22,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.11 2004-10-07 14:11:26 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.12 2004-12-03 17:09:53 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -234,7 +234,7 @@ int main (int argc, char *argv[])
     printf("miscGetEnvVarValue() Function Test :\n\n");
     printf("   Environment Variable name      | Env. Var. value\n");
     printf("   -------------------------------+-------------------------\n");
-    strcpy (fullFileName, "SHEL");
+    strcpy (fullFileName, "MCSENV");
     printf("   %-30s | ", fullFileName);
     if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
         == FAILURE)

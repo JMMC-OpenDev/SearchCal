@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.15 2004-11-17 07:49:28 gzins Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.16 2004-12-03 17:09:53 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -34,6 +34,8 @@
 * gzins     16-Nov-2004  Added miscDynBufVerifyIsInitialized() and update
 *                        miscDynBufInit() to inconditionaly initialize
 *                        the dynamic buffer.
+* lafrasse  03-Dec-2004  Added error management code to miscDynBufLoadFile()
+*
 *
 *******************************************************************************/
 
@@ -79,7 +81,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.15 2004-11-17 07:49:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.16 2004-12-03 17:09:53 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -91,6 +93,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <errno.h>
 
 
 /*
@@ -663,8 +666,6 @@ char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
                                              const char        *currentLinePtr,
                                              const mcsLOGICAL  skipCommentFlag)
 {
-    /* TODO : Add error management */
-
     /* Initialize the received Dynamic Buffer if it is not */
     if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
@@ -707,13 +708,13 @@ char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
     /* Gets the next '\0' occurence after currentLinePtr */
     char* nextCarrigeReturnPtr = strchr(currentLinePtr, '\0');
 
-    /* If an '\n' occurence doesn't exist */
+    /* If an '\0' occurence doesn't exist */
     if (nextCarrigeReturnPtr == NULL)
     {
         return ((char*)NULL);
     }
 
-    /* If the '\n' occurence is not the last char of the Dynamic Buffer */
+    /* If the '\0' occurence is not the last char of the Dynamic Buffer */
     if ((nextCarrigeReturnPtr + 1) < (internalBuffer + internalLength))
     {
         char* commentPattern = dynBuf->commentPattern;
@@ -911,9 +912,10 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
  * Overwrite a Dynamic Buffer with the content of a specified file.
  *
  * \warning The given Dynamic Buffer content (if any) will be \em destroyed by
- * this function call.
+ * this function call.\n\n
  * \warning The given file path must have been \em resolved before this function
  * call. See miscResolvePath() documentation for more information.\n\n
+ * \warning The file buffer will have all its '\n' character replaced by '\\0'.
  *
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param fileName the path specifying the file to be loaded in the Dynamic
@@ -926,8 +928,6 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
                                              const char        *fileName,
                                              const char        *commentPattern)
 {
-    /* TODO : Add error management */
-
     /* Try to destroy the received Dynamic Buffer first */
     if (miscDynBufDestroy(dynBuf) == FAILURE)
     {
@@ -968,12 +968,14 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
     /* Test if the file seems to be loaded correctly */
     if ((readSize != fileSize) || (dynBuf->dynBuf == NULL))
     {
+        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, strerror(errno));
         return FAILURE;
     }
 
     /* Update the Dynamic Buffer internal counters */
     dynBuf->storedBytes = fileSize;
 
+    
     if (miscReplaceChrByChr(dynBuf->dynBuf, '\n', '\0') == FAILURE)
     {
         return FAILURE;
