@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.2 2004-06-23 16:56:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -47,11 +47,8 @@ errERROR errGlobalStack;
 /*
  * Declaration of local functions
  */
-static char *errGetErrProp (const char *moduleId,
-                            mcsINT32 errorId, 
-                            const char *propName);
-
-static char *errGetErrProp(const char *moduleId, int id, const char * propName)
+static char *errGetErrProp(const char *moduleId, 
+                           int errorId, const char * propName)
 {
     logExtDbg("errGetErrProp()"); 
 
@@ -61,21 +58,21 @@ static char *errGetErrProp(const char *moduleId, int id, const char * propName)
     GdomeNodeList *childs, *errs, *texts;
     GdomeException exc;
     GdomeDOMString *name, *value;
-    unsigned long i, j, nbChilds, nbErrs;
-    mcsSTRING16 idSearch;
+    unsigned long i, j, nbChilds, nbTags;
+    mcsINT32 id;
+    mcsINT32 node;
     static mcsSTRING256 propValue;
     mcsSTRING256 errFileName;
     char *envVar;
-    mcsLOGICAL errFileFound;
+    mcsLOGICAL errDefFileFound;
     struct stat statBuf;
-
-    sprintf(idSearch, "%d", id);
+    char *retVal = NULL;
 
     /* Get a DOMImplementation reference */
     domimpl = gdome_di_mkref ();
 
     /* Look for the error definition file */
-    errFileFound= mcsFALSE;
+    errDefFileFound= mcsFALSE;
     /* In ../errors */
     /* Create error file name */
     sprintf(errFileName, "../errors/%sErrors.xml", moduleId);
@@ -83,12 +80,12 @@ static char *errGetErrProp(const char *moduleId, int id, const char * propName)
     /* Test if file exists */
     if (stat(errFileName, &statBuf) == 0)
     {
-        errFileFound = mcsTRUE;
+        errDefFileFound = mcsTRUE;
     }
 
     /* In $INTROOT */
     /* If not found in $INTROOT, look in $MCSROOT */
-    if (errFileFound == mcsFALSE)
+    if (errDefFileFound == mcsFALSE)
     {
         /* Get INTROOT environment variable value */
         envVar = getenv("INTROOT");
@@ -100,7 +97,7 @@ static char *errGetErrProp(const char *moduleId, int id, const char * propName)
             /* Test if file exists */
             if (stat(errFileName, &statBuf) == 0)
             {
-                errFileFound = mcsTRUE;
+                errDefFileFound = mcsTRUE;
             }
         }
         else
@@ -110,7 +107,7 @@ static char *errGetErrProp(const char *moduleId, int id, const char * propName)
     }
     
     /* If not found in $INTROOT, look in $MCSROOT */
-    if (errFileFound == mcsFALSE)
+    if (errDefFileFound == mcsFALSE)
     {
         /* Get MCSROOT environment variable value */
         envVar = getenv("MCSROOT");
@@ -124,38 +121,43 @@ static char *errGetErrProp(const char *moduleId, int id, const char * propName)
             /* Test if file exists */
             if (stat(errFileName, &statBuf) == 0)
             {
-                errFileFound = 0;
+                errDefFileFound = 0;
             }
         }
         else
         {
             logWarning ("Environment variable MCSROOT not defined");
         }
-
     }
     
     /* If error definition file has not been found */
-    if (errFileFound == mcsFALSE)
+    if (errDefFileFound == mcsFALSE)
     {
         logWarning ("Error definition file '%sErrors.xml' can not be found",
                     moduleId);
         return NULL;
     }
 
+    logTest("Used error definition file '%s'", errFileName);
+
     /* Load a new document from a file */
     doc = gdome_di_createDocFromURI(domimpl, errFileName, GDOME_LOAD_PARSING,
                                     &exc);
     if (doc == NULL)
     {
-        logWarning ("DOMImplementation.createDocFromURI: failed. Exception #%d",
-                    exc);
+        logWarning ("Illegal format encountered for error definition file "
+                    "'%.100s'. DOMImplementation.createDocFromURI() failed "
+                    "with exception #%d", errFileName, exc);
         return NULL;
     }
 
     /* Get reference to the root element of the document */
     root = gdome_doc_documentElement (doc, &exc);
     if (root == NULL) {
-        logWarning ("Document.documentElement: NULL. Exception #%d\n", exc);
+        logWarning ("Illegal format encountered for error definition file "
+                    "'%.100s'. Document.documentElement() failed "
+                    "with exception #%d", errFileName, exc);
+        gdome_di_unref (domimpl, &exc);
         return NULL;
     }
 
@@ -163,80 +165,135 @@ static char *errGetErrProp(const char *moduleId, int id, const char * propName)
     childs = gdome_el_childNodes (root, &exc);
     if (childs == NULL)
     {
-        logWarning ("Element.childNodes: NULL. Exception #%d\n", exc);
-        return NULL;
+        logWarning ("Illegal format encountered for error definition file "
+                    "'%.100s'. Element.childNodes() failed "
+                    "with exception #%d", errFileName, exc);
+        goto errCond;
     }
 
-    /* Search the attribute id="**" in the child elements
-     * When it is found, le value of NODEx1 is print to the screen */
+    /* Search the attribute id="**" in the child elements */
     nbChilds = gdome_nl_length (childs, &exc);
-
+    node=0;
     for (i = 0; i < nbChilds; i++)
     {
         el = (GdomeElement *)gdome_nl_item (childs, i, &exc);
         if (el == NULL)
         {
-            logWarning ("NodeList.item(%d): NULL. Exception #%d", (int)i, exc);
-            return NULL;
+            logWarning ("Illegal format encountered for error definition file "
+                        "'%.100s'. NodeList.item(%d) failed "
+                        "with exception #%d", errFileName, (int)i, exc);
+            goto errCond;
         }
         if (gdome_el_nodeType (el, &exc) == GDOME_ELEMENT_NODE)
         {
+            node++;
             name = gdome_str_mkref ("id");
             value = gdome_el_getAttribute(el, name, &exc);
             if (exc)
             {
-                logWarning ("Element.getAttribute: failed. Exception #%d", exc);
-                return NULL;
+                logWarning ("Illegal format encountered for error definition "
+                            "file '%.100s'. Element.getAttribute(node=#%d, "
+                            "name=%s) failed with exception #%d", 
+                            errFileName, (int)node, name, exc);
+                goto errCond;
             }
-            if (strcmp(value->str, idSearch)==0)
+            if (sscanf(value->str, "%d", &id) != 1)
+            {
+                logWarning ("Illegal format encountered for error definition "
+                            "file '%.100s'. Invalid error identifier for "
+                            "node #%d", errFileName, (int)node);
+                goto errCond;  
+            }
+            if (errorId == id)
             {
                 name = gdome_str_mkref (propName);
                 errs = gdome_el_getElementsByTagName (el, name, &exc);
                 if (errs == NULL)
                 {
-                    logWarning ("Element.childNodes: NULL. Exception #%d", exc);
-                    return NULL;
+                    logWarning ("Illegal format encountered for error "
+                                "definition file '%.100s'. "
+                                "Element.childNodes(node=#%d, "
+                                "name=%s) failed with exception #%d", 
+                                errFileName, (int)node, name, exc);
+                    goto errCond;            
                 }
-                nbErrs = gdome_nl_length (errs, &exc);
-                for (j = 0; j < nbErrs; j++)
+                /* Check number of tags for the node */
+                nbTags = gdome_nl_length (errs, &exc);
+                if (nbTags == 0)
                 {
-                    elerr = (GdomeElement *)gdome_nl_item (errs, j, &exc);
-                    texts = gdome_el_childNodes (elerr, &exc);
-                    if (texts == NULL)
-                    {
-                        logWarning ("Element.childNodes: NULL. Exception #%d",
-                                    exc);
-                        return NULL;
-                    }
-                    /*This element must contain one child : TextElement*/
-                    elerr = (GdomeElement *)gdome_nl_item (texts, j, &exc);
-                    value = gdome_el_nodeValue(elerr, &exc);
-                    if (value == NULL)
-                    {
-                        logWarning ("Element.nodeValue: NULL. Exception #%d",
-                                    exc);
-                        return NULL;
-                    }
-                    /* Check property value length */
-                    if (strlen(value->str) >= sizeof(mcsSTRING256))
-                    {
-                        logWarning ("Size of property value too long");
-                        return NULL;
-                    }
-
-                    strncpy(propValue, value->str, sizeof(mcsSTRING256)-1);
+                    logWarning ("Illegal format encountered for error "
+                                "definition file '%.100s'. "
+                                "Tag '%s' not found for node #%d", 
+                                errFileName, propName, (int)node);
+                    goto errCond;         
                 }
+                if (nbTags != 1)
+                {
+                    logWarning ("Illegal format encountered for error "
+                                "definition file '%.100s'. "
+                                "Duplicated tag '%s' for node #%d", 
+                                errFileName, propName, (int)node);
+                    goto errCond;         
+                }
+
+                /* Get none value */
+                elerr = (GdomeElement *)gdome_nl_item (errs, 0, &exc);
+                texts = gdome_el_childNodes (elerr, &exc);
+                if (texts == NULL)
+                {
+                    logWarning ("Illegal format encountered for error "
+                                "definition file '%.100s'. "
+                                "Element.childNodes(node=#%d, "
+                                "name=%s) failed with exception #%d", 
+                                errFileName, (int)node, propName, exc);
+                    goto errCond;         
+                }
+                /*This element must contain one child : TextElement*/
+                elerr = (GdomeElement *)gdome_nl_item (texts, 0, &exc);
+                value = gdome_el_nodeValue(elerr, &exc);
+                if (value == NULL)
+                {
+                    logWarning ("Illegal format encountered for error "
+                                "definition file '%.100s'. "
+                                "Element.nodeValue(node=#%d, "
+                                "name=%s) failed with exception #%d", 
+                                errFileName, (int)node, propName, exc);
+                    goto errCond;         
+                }
+                
+                /* Check node value length */
+                if (strlen(value->str) >= sizeof(mcsSTRING256))
+                {
+                    logWarning ("Error in error definition file '%.100s'. "
+                                "Size of property value '%s' of errorId #%d "
+                                "too long; max=%d, current=%d",
+                                propName, errorId, sizeof(mcsSTRING256), 
+                                strlen(value->str));
+                    goto errCond;         
+                }
+
+                strncpy(propValue, value->str, sizeof(mcsSTRING256)-1);
+                retVal = propValue;
             }
         }
         gdome_el_unref (el, &exc);
     }
 
+    /* Check the error property has bben found */
+    if (retVal == NULL)
+    {
+        logWarning ("Definition of errorId #%d not found in error "
+                    "definition file '%s'",
+                     errorId, errFileName);
+    }
+    
     /* Free the document structure and the DOMImplementation */
+errCond:
     gdome_di_freeDoc (domimpl, doc, &exc);
     gdome_di_unref (domimpl, &exc);
 
     /* Return property value */
-    return propValue;
+    return retVal;
 }
 
 /**
