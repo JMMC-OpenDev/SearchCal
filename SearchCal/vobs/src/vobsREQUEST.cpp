@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.14 2005-03-04 07:51:30 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.15 2005-03-04 08:07:58 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/03/04 07:51:30  gzins
+ * Fixed bug in new added code for RA/DEC check
+ *
  * Revision 1.13  2005/03/04 06:37:01  gzins
  * Checked and reformated RA and DEC parameter
  *
@@ -37,7 +40,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.14 2005-03-04 07:51:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.15 2005-03-04 08:07:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -150,7 +153,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
     hm = (int) ((ra - hh)*60.0);
     hs = (ra - hh - hm/60.0)*3600.0;
 
-    sprintf(raHms, "%c%02d:%02d:%02.2f\n", 
+    sprintf(raHms, "%c%02d:%02d:%02.2f", 
             (ra < 0)?'-':'+', (int)fabs(hh), (int)fabs(hm), fabs(hs));
 
     // Set RA
@@ -199,7 +202,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
     hm = (int) ((dec - dd)*60.0);
     hs = (dec - dd - hm/60.0)*3600.0;
 
-    sprintf(decDms, "%c%02d:%02d:%02.2f\n", 
+    sprintf(decDms, "%c%02d:%02d:%02.2f", 
             (dec < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
 
     // Set DEC
