@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c++-small-main.template,v 1.7 2004-09-01 10:28:41 gluck Exp $"
+#%# "@(#) $Id: c++-small-main.template,v 1.8 2004-09-07 14:26:31 gluck Exp $"
 #%# 
 #%# Template for C++ small main program
 #%# 
@@ -105,6 +105,7 @@ using namespace std;
  */
 #include "mcs.h"
 #include "log.h"
+#include "err.h"
 
 
 /*
