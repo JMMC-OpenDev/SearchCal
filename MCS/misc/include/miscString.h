@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscString.h,v 1.4 2004-12-15 16:31:44 gzins Exp $"
+* "@(#) $Id: miscString.h,v 1.5 2004-12-17 08:15:48 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscString headers
 *                        Moved mcs.h include in from miscString.c
 * gzins     15-Dec-2004  Added miscTrimString function
+* gzins     16-Dec-2004  Added miscDuplicateString function
 *
 *******************************************************************************/
 
@@ -44,6 +45,7 @@ mcsLOGICAL    miscIsSpaceStr     (char *string);
 mcsCOMPL_STAT miscReplaceChrByChr(char *string,
                                   char originalChar,
                                   char newChar);
+char *miscDuplicateString(const char *string);
 
 #ifdef __cplusplus
 }

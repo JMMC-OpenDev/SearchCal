@@ -11,6 +11,7 @@
 *                        misc.h
 *                        Moved mcs.h include to miscString.h
 * gzins     15-Dec-2004  Added miscTrimString function
+* gzins     16-Dec-2004  Added miscDuplicateString function
 *
 *-----------------------------------------------------------------------------*/
 
@@ -19,7 +20,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.11 2004-12-15 16:31:44 gzins Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.12 2004-12-17 08:15:48 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -275,4 +276,33 @@ mcsCOMPL_STAT miscReplaceChrByChr (char *string,
     return SUCCESS;
 }
 
+/**
+ * Duplicate a string.
+ * 
+ * The miscDuplicateString function returns a pointer to a new string which is a
+ * duplicate of the given string. Memory for the new string is obtained with
+ * malloc(3), and can be freed with free(3)
+ *
+ * \param string the null-terminated string to be duplicated.
+ * 
+ * \return a pointer to the duplicated string, or NULL if insufficient memory
+ * was available
+ */
+char *miscDuplicateString (const char *string)
+{
+    char * newString;
+   
+    /* Create new string */
+    newString = malloc(strlen(string) + 1);
+    if (newString == NULL)
+    {
+        errAdd(miscERR_ALLOC);
+        return NULL;
+    }
+
+    /* Duplicate string */
+    strcpy(newString, string);
+
+    return newString;
+}
 /*___oOo___*/
