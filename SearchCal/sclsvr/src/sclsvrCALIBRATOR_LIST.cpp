@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.32 2005-02-22 16:24:00 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.33 2005-03-03 16:48:22 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2005/02/22 16:24:00  gzins
+ * Updated misco::GetNextLine API
+ *
  * Revision 1.31  2005/02/17 15:31:26  gzins
  * Added request parameter to Save and Load methods
  *
@@ -77,7 +80,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.32 2005-02-22 16:24:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.33 2005-03-03 16:48:22 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -695,7 +698,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
         calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
     }
     // Once the star is touch, remove it from the list
-    Remove(*calibrator);
+    if (Remove(*calibrator) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     return mcsSUCCESS;
 }
 
@@ -812,5 +818,66 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
     }
     return mcsSUCCESS;
 }
+
+/**
+ * Get Science object if it is present in the list.
+ *
+ * This method complete the calibrator which should have been built before. It
+ * should have as the minimum of properties, the value of his right ascension
+ * and declinaison position. If one of this properties is not present in the
+ * list, an error is returned.
+ *
+ * \param scienceObject the science object
+ * 
+ * \return mcsSUCCESS if the science star had been found and had been updated,
+ * else return mcsFAILURE 
+ */
+mcsCOMPL_STAT 
+sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
+{
+    logExtDbg("sclsvrCALIBRATOR_LIST::GetScienceObject()");
+   
+    // Check if coordinates of the science star are present in order to be able
+    // to compare
+    if ((scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE) ||
+        (scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE))
+    {
+        return mcsFAILURE;
+    }
+    
+    // Logical flag to know if the object had been found in the list
+    // At beginning, the objet is not found
+    mcsLOGICAL isScienceObjectFound = mcsFALSE;
+   
+    sclsvrCALIBRATOR *calibrator;
+    // for each star of the list, check if the coordinates are the same as the
+    // science object coordinates.
+    for (unsigned int el = 0; el < Size(); el++)
+    {
+        calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
+        // if the next star of the list is the same that the science object
+        if (scienceObject.IsSame(*calibrator) == mcsTRUE)
+        {
+            // update value of the calibrator
+            if (scienceObject.Update(*calibrator) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            // changed flag as true
+            isScienceObjectFound = mcsTRUE;            
+        }
+    }
+   
+    // if the science object had not been found
+    if (isScienceObjectFound == mcsFALSE)
+    {
+        // return failure
+        return mcsFAILURE;
+    }
+
+    // If it has been found, return success
+    return mcsSUCCESS;
+}
+
 
 /*___oOo___*/

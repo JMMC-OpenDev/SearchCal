@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.17 2005-02-17 15:31:26 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.18 2005-03-03 16:48:22 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/02/17 15:31:26  gzins
+ * Added request parameter to Save and Load methods
+ *
  * Revision 1.16  2005/02/16 17:34:23  gzins
  * Changed prototype for Unpack; used const char* instead of miscoDYN_BUF
  *
@@ -104,7 +107,8 @@ public:
     virtual mcsCOMPL_STAT Load(const char *filename,
                                mcsLOGICAL extendedFormat=mcsFALSE,
                                sclsvrREQUEST *request=NULL);
-
+    
+    virtual mcsCOMPL_STAT GetScienceObject(sclsvrCALIBRATOR &scienceObject);
 protected:
 
 private:
