@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.6 2004-12-09 08:29:44 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.7 2004-12-13 13:36:03 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.6 2004-12-09 08:29:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.7 2004-12-13 13:36:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -103,7 +103,18 @@ vobsSTAR::vobsSTAR(const vobsSTAR &star)
 {
     for (int ucdId=0; ucdId<vobsNB_STAR_PROPERTIES; ucdId++)
     {
-        star.GetProperty((vobsUCD_ID)ucdId, (char *)_properties[ucdId]);
+        if (star.GetProperty((vobsUCD_ID)ucdId, (char *)_properties[ucdId]) ==
+            FAILURE)
+        {
+            // if get property failed because of property not set, ignore
+            // error 
+            if (errIsInStack(MODULE_ID, 
+                             vobsERR_PROPERTY_NOT_SET) == mcsTRUE)
+            {
+                errResetStack();
+            }
+            strcpy(_properties[ucdId], vobsSTAR_PROP_NOT_SET);
+        }
     }
 }
 
@@ -260,7 +271,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, char *value) const
         errAdd(vobsERR_INVALID_UCD_NAME, ucd);
         return FAILURE;
     }
-
+        
     // Copy property value
     strcpy(value, _properties[ucdId]);
 
@@ -318,14 +329,20 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, int *value) const
         return FAILURE;
     }
 
+    // Check if the property is ever set
+    if (IsPropertySet(ucdId) == mcsFALSE)
+    {
+        errAdd(vobsERR_PROPERTY_NOT_SET, _properties[ucdId]);
+        return FAILURE;
+    }
+
     // Convert property string value to integer value
     if (sscanf(_properties[ucdId], "%d", value) != 1)
     {
         errAdd(vobsERR_INVALID_UCD_FORMAT, _properties[ucdId], "integer");
         return FAILURE;
     }
-        
-    return SUCCESS;
+    return SUCCESS;    
 }
 
 /**
@@ -378,14 +395,20 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, float *value) const
         errAdd(vobsERR_INVALID_UCD_ID, ucdId);
         return FAILURE;
     }
-    
-    // Convert property string value to float value
+  
+    // Check if the property is ever set    
+    if (IsPropertySet(ucdId) == mcsFALSE)
+    {
+        errAdd(vobsERR_PROPERTY_NOT_SET, _properties[ucdId]);
+        return FAILURE;
+    }
+
+    // Convert property string value to float value if value is not not set
     if (sscanf(_properties[ucdId], "%f", value) != 1)
     {
         errAdd(vobsERR_INVALID_UCD_FORMAT, _properties[ucdId], "float");
         return FAILURE;
     }
-        
     return SUCCESS;
 }
 /**
@@ -416,7 +439,6 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, char *value) const
    
     // Affect string value form the property
     strcpy(value, _properties[ucdId]);
-            
     return SUCCESS;
 }
 
@@ -434,7 +456,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, char *value) const
  */
 mcsLOGICAL vobsSTAR::IsPropertySet(char *ucd) const
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    logExtDbg("vobsSTAR::IsPropertySet()");
 
     // Get Id corresponding to the specified UCD
     vobsUCD_ID ucdId;
@@ -458,7 +480,7 @@ mcsLOGICAL vobsSTAR::IsPropertySet(char *ucd) const
  */
 mcsLOGICAL vobsSTAR::IsPropertySet(vobsUCD_ID ucdId) const
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    logExtDbg("vobsSTAR::IsPropertySet()");
 
     // Check UCD id
     if ((ucdId <= UNKNOWN_UCD_ID) ||
@@ -579,9 +601,25 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
     
     mcsSTRING32 valueRA;
     mcsSTRING32 valueDEC;
-    
-    star.GetProperty(POS_EQ_RA_MAIN_ID, valueRA);
-    star.GetProperty(POS_EQ_DEC_MAIN_ID, valueDEC);
+
+    if (star.IsPropertySet(POS_EQ_RA_MAIN_ID) == mcsTRUE)
+    {
+        star.GetProperty(POS_EQ_RA_MAIN_ID, valueRA);
+    }
+    else
+    {
+        return mcsFALSE;                
+    }
+
+    if (star.IsPropertySet(POS_EQ_DEC_MAIN_ID) == mcsTRUE)
+    {
+        star.GetProperty(POS_EQ_DEC_MAIN_ID, valueDEC);
+    }
+    else
+    {
+        return mcsFALSE;                
+    }
+
     
     if ((strcmp(_properties[POS_EQ_RA_MAIN_ID], valueRA) !=0)
         || (strcmp(_properties[POS_EQ_DEC_MAIN_ID], valueDEC) !=0))
@@ -639,8 +677,15 @@ mcsLOGICAL vobsSTAR::IsSameHip(vobsSTAR &star)
     logExtDbg("vobsSTAR::IsSameHip()");
     
     mcsSTRING32 valueHIP;
-    
-    star.GetProperty(ID_MAIN_ID, valueHIP);
+
+    if (star.IsPropertySet(ID_MAIN_ID) == mcsTRUE)
+    {
+        star.GetProperty(ID_MAIN_ID, valueHIP);
+    }
+    else 
+    {
+        return mcsFALSE;
+    }
     
     if (strcmp(_properties[ID_MAIN_ID], valueHIP) !=0)
     {
@@ -666,13 +711,16 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
     // Compare each property with the propety of the other star
     for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
     {
-        star.GetProperty((vobsUCD_ID)i, value);
-        // Replace the property by the propery of the other star
-        // if the first property has no value
-        if ((strcmp(_properties[i], vobsSTAR_PROP_NOT_SET) == 0) &&
-            (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0))    
+        if (star.IsPropertySet((vobsUCD_ID)i) == mcsTRUE)
         {
-           SetProperty((vobsUCD_ID)i, value);
+            star.GetProperty((vobsUCD_ID)i, value);
+            // Replace the property by the propery of the other star
+            // if the first property has no value
+            if ((strcmp(_properties[i], vobsSTAR_PROP_NOT_SET) == 0) &&
+                (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0))    
+            {
+                SetProperty((vobsUCD_ID)i, value);
+            }
         }
     }
     

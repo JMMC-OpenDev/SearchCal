@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsPARSER.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"
+ * "@(#) $Id: vobsPARSER.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -23,7 +23,6 @@ using namespace std;
 #include <iostream>
 #include <string.h>
 #include <libxml/parser.h>
-
 /*
  * MCS Headers 
  */
@@ -70,13 +69,13 @@ vobsPARSER::~vobsPARSER()
 mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
                                 vobsSTAR_LIST &starList,
                                 char* logFileName)
-{
+{    
     GdomeDOMImplementation *domimpl;
     GdomeDocument          *doc;
     GdomeElement           *root;
     GdomeException         exc;
     vobsSTAR_LIST starListToReturn;
-
+    
     vobsCDATA cData;
     logExtDbg("vobsPARSER::MainParser()");	
 
@@ -182,8 +181,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     xmlCleanupParser();
       
     starList.Clear();
-    starList.Copy(starListToReturn);
-
+    starList.Copy(starListToReturn); 
+    
     return SUCCESS;
 }
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -206,6 +206,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
         }
     }
     
+    
     // create a parser object
     vobsPARSER parser;
     // the parser get the internet of the query and analyse th file coming
@@ -215,7 +216,6 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     {
         return FAILURE; 
     }
-
     
     return SUCCESS;
 }
@@ -512,34 +512,63 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
             
             vobsSTAR *star = list.GetNextStar((mcsLOGICAL)(el==0));
             star->GetProperty(POS_EQ_RA_MAIN_ID, ra);
-            if (sscanf(ra, "%s %s %s", (char*)&hra, (char*)&mra, (char*)&sra) != 3)
+            /*{
+                if (errIsInStack(MODULE_ID, 
+                                 vobsERR_PROPERTY_NOT_SET) == mcsTRUE)
+                {
+                    errResetStack();
+                }
+                return FAILURE;
+            }*/
+            if (sscanf(ra, "%s %s %s",
+                       (char*)&hra,
+                       (char*)&mra,
+                       (char*)&sra) != 3)
             {
                 return FAILURE;
             }
-            miscDynBufAppendString(&strList, hra); miscDynBufAppendString(&strList,"+");
-            miscDynBufAppendString(&strList, mra); miscDynBufAppendString(&strList,"+");
+            miscDynBufAppendString(&strList, hra);
+            miscDynBufAppendString(&strList,"+");
+            miscDynBufAppendString(&strList, mra);
+            miscDynBufAppendString(&strList,"+");
             miscDynBufAppendString(&strList, sra);
             
-            
-            star->GetProperty(POS_EQ_DEC_MAIN_ID, dec);            
-            if (sscanf(dec, "%s %s %s", (char*)&ddec, (char*)&mdec, (char*)&sdec) != 3)
+
+            star->GetProperty(POS_EQ_DEC_MAIN_ID, dec);
+            /*{
+                // if get property failed because of property not set, ignore
+                // error 
+                if (errIsInStack(MODULE_ID, 
+                                 vobsERR_PROPERTY_NOT_SET) == mcsTRUE)
+                {
+                    errResetStack();
+                }
+                return FAILURE;
+            }*/
+            if (sscanf(dec, "%s %s %s",
+                       (char*)&ddec,
+                       (char*)&mdec,
+                       (char*)&sdec) != 3)
             {
                 return FAILURE;
             }
             if (ddec[0]=='+')
             {
                 miscDynBufAppendString(&strList,"%2b");
-                miscDynBufAppendString(&strList, &ddec[1]); miscDynBufAppendString(&strList,"+");
+                miscDynBufAppendString(&strList, &ddec[1]);
+                miscDynBufAppendString(&strList,"+");
             }
             else
             {
-                miscDynBufAppendString(&strList, ddec); miscDynBufAppendString(&strList,"+");
+                miscDynBufAppendString(&strList, ddec);
+                miscDynBufAppendString(&strList,"+");
             }
-            miscDynBufAppendString(&strList, mdec); miscDynBufAppendString(&strList,"+");
+            miscDynBufAppendString(&strList, mdec);
+            miscDynBufAppendString(&strList,"+");
             miscDynBufAppendString(&strList, sdec);
-            
-            
         }
+            
+
 
         miscDynBufAppendString(&strList,"&%3D%3D%3D%3Dresult1%5F280%2Etxt");
         

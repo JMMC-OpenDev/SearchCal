@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"
+ * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -380,11 +380,18 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
             {
                 // Get one property
                 (*iter)->GetProperty((vobsUCD_ID)i, property);
-                // if the property is different from vobsSTAR_PROP_NOT_SET
-                if (strcmp(property, vobsSTAR_PROP_NOT_SET)!=0)
-                {
-                    fprintf(filePtr, "%12s", property);
-                }
+                /*{
+                    // if get property failed because of property not set,
+                    // ignore error 
+                    if (errIsInStack(MODULE_ID, 
+                                     vobsERR_PROPERTY_NOT_SET) == mcsTRUE)
+                    {
+                        errResetStack();
+                    }
+                    return FAILURE;
+                }*/
+                fprintf(filePtr, "%12s", property);
+
             }
             fprintf(filePtr, "\n");
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.12 2004-12-06 13:27:41 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.13 2004-12-13 13:36:03 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -27,7 +27,7 @@
  * Constants definition
  */
 
-#define vobsSTAR_PROP_NOT_SET  "99.99"  /**< Default value of the empty
+#define vobsSTAR_PROP_NOT_SET  "-"  /**< Default value of the empty
                                           properties */
 
 
@@ -49,8 +49,8 @@ typedef mcsSTRING32 vobsSTAR_PROPERTY;
 typedef enum
 {
     UNKNOWN_UCD_ID = -1,        /**< id if no UCD */
-    DATA_LINK_ID,               /**< hd id */
-    ID_MAIN_ID,                 /**< hip id */
+    ID_MAIN_ID,                    /**< hd id */
+    ID_ALTERNATIVE_ID,             /**< hip id */
     POS_EQ_RA_MAIN_ID,          /**< Ra id */
     POS_EQ_DEC_MAIN_ID,         /**< dec id */
     POS_EQ_PMDEC_ID,            /**< pmdec id */

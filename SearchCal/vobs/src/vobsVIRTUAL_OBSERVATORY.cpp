@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.2 2004-12-06 15:07:07 scetre Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.2 2004-12-06 15:07:07 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -79,6 +79,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
                                                 vobsSTAR_LIST &starList)
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::Research()");
+
     vobsSCENARIO scenario;
 
     // Get the observed band
@@ -93,7 +94,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
 
     starList.Clear();
     scenario.Execute(request, starList);
-
+    
     //starList.Display();
     printf("number of star found : %d\n", starList.Size());
 
