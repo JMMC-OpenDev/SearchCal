@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.6 2004-12-15 17:40:04 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.7 2004-12-20 13:34:52 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -21,7 +21,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.6 2004-12-15 17:40:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.7 2004-12-20 13:34:52 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -473,7 +473,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsLOGICAL *par
 
 /** 
  *  This method should be called before any real action on any parameter.
- *  It parses the cdf file and the parameters given to the constructor.
+ *  It parses the parameters given to the constructor.
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
@@ -484,8 +484,8 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
     logDebug ( "working on params '%s'", _params.data());
    
     string::iterator i = _params.begin();
-    int posA=0;
-    int posB=0;
+    int posStart=0;
+    int posEnd=0;
 
     // we start walking out of a parameter value.
     mcsLOGICAL valueZone=mcsFALSE;
@@ -494,15 +494,21 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
     {
         if (*i=='-')
         {
+            /* If the dash is not included into a string value */
             if (! valueZone){
-                if (posA>0)
+                
+                if( ( *(i+1) >= '0' ) &&  ( *(i+1) <= '9' ))
                 {
-                    if (ParseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
+                    /* do nothing because all the tuple string must be catched */
+                }
+                else if (posEnd>0)
+                {
+                    if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==FAILURE)
                     {
                         return FAILURE;
                     }
+                    posStart=posEnd;
                 }
-                posB=posA;
             }
         }
 
@@ -513,13 +519,13 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
         }
         
         i++;
-        posA++;
+        posEnd++;
     }
 
-    // parse last tuple if posB is not null
-    if (posA>0)
+    // parse last tuple if posEnd is not null
+    if (posEnd>0)
     {
-        if (ParseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
+        if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==FAILURE)
         {
             return FAILURE;
         }
