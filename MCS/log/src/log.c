@@ -1,7 +1,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: log.c,v 1.1 2004-05-13 12:54:51 mella Exp $"
+*  "@(#) $Id: log.c,v 1.2 2004-05-13 14:04:40 mella Exp $"
 *
 * who       when      what
 * --------  --------  ----------------------------------------------
@@ -58,34 +58,47 @@ mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName, const mcsMODULEID modul
 }
 
 /**
- * Toggle the date output. Useful in test mode.
+ * Log data to logsystem if level satisfies and optionally
+ * to the stdout if verbose is specified.
  * 
- * @param flag mcsTRUE/mcsFALSE
- *
  * @return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
-{
-    /* Set 'print date' flag  */
-    logRulePtr->printDate = flag;
-    return SUCCESS;
+mcsCOMPL_STAT logPrint( logLEVEL level,
+                        const char *fileLine,
+                        const char *logFormat, ...)
+{ 
+    char buffer[4*logTEXT_LEN];
+    va_list         argPtr;
+    mcsCOMPL_STAT   stat = SUCCESS;
+
+    /* If the specified level is less than or egal to the logging level */
+    if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
+    {
+        /* Log information */
+        va_start(argPtr,logFormat);
+        vsprintf(buffer, logFormat, argPtr);
+        stat = logData(buffer);
+        va_end(argPtr);
+    }
+	
+    /* If the specified level is less than or egal to the logging level */
+    if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
+    {
+        fprintf(stdout, "%s[%s] - ", logProcName, logModName);
+        if ( (fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
+        {
+            fprintf(stdout, "%s - ", fileLine);
+        }
+        va_start(argPtr,logFormat);
+        vfprintf(stdout, logFormat, argPtr);
+        fprintf(stdout,"\n"); fflush(stdout);
+        va_end(argPtr);
+    }
+    /* End if */
+
+    return stat;
+
 }
-
-/**
- * Toggle the fileline output. Useful in test mode.
- * 
- * @param flag mcsTRUE/mcsFALSE
- *
- * @return mcsCOMPL_STAT 
- */
-mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
-{
-    /* Set 'print line/file' flag  */
-    logRulePtr->printFileLine = flag;
-    return SUCCESS;
-}
-
-
 
 /**
  * Print action log.
@@ -232,46 +245,31 @@ logLEVEL logGetActionLevel ()
 }
 
 /**
- * Log data to logsystem if level satisfies and optionally
- * to the stdout if verbose is specified.
+ * Toggle the date output. Useful in test mode.
  * 
+ * @param flag mcsTRUE/mcsFALSE
+ *
  * @return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logPrint( logLEVEL level,
-                        const char *fileLine,
-                        const char *logFormat, ...)
-{ 
-    char buffer[4*logTEXT_LEN];
-    va_list         argPtr;
-    mcsCOMPL_STAT   stat = SUCCESS;
+mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
+{
+    /* Set 'print date' flag  */
+    logRulePtr->printDate = flag;
+    return SUCCESS;
+}
 
-    /* If the specified level is less than or egal to the logging level */
-    if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
-    {
-        /* Log information */
-        va_start(argPtr,logFormat);
-        vsprintf(buffer, logFormat, argPtr);
-        stat = logData(buffer);
-        va_end(argPtr);
-    }
-	
-    /* If the specified level is less than or egal to the logging level */
-    if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
-    {
-        fprintf(stdout, "%s[%s] - ", logProcName, logModName);
-        if ( (fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
-        {
-            fprintf(stdout, "%s - ", fileLine);
-        }
-        va_start(argPtr,logFormat);
-        vfprintf(stdout, logFormat, argPtr);
-        fprintf(stdout,"\n"); fflush(stdout);
-        va_end(argPtr);
-    }
-    /* End if */
-
-    return stat;
-
+/**
+ * Toggle the fileline output. Useful in test mode.
+ * 
+ * @param flag mcsTRUE/mcsFALSE
+ *
+ * @return mcsCOMPL_STAT 
+ */
+mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
+{
+    /* Set 'print line/file' flag  */
+    logRulePtr->printFileLine = flag;
+    return SUCCESS;
 }
 
 /**
@@ -282,7 +280,7 @@ mcsCOMPL_STAT logPrint( logLEVEL level,
  * 
  * @return mcsCOMPL_STAT 
  */
-static mcsCOMPL_STAT logData(const char * msg)
+mcsCOMPL_STAT logData(const char * msg)
 {
     /* TBD */
     /* fprintf(stdout, "logData [%s]\n", msg); */

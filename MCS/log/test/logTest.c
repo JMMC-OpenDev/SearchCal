@@ -1,11 +1,11 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logTest.c,v 1.1 2004-05-13 12:54:51 mella Exp $"
+*  "@(#) $Id: logTest.c,v 1.2 2004-05-13 14:04:40 mella Exp $"
 *
-* who       when      what
-* --------  --------  ----------------------------------------------
-* mella   07/05/04    creation 
+* who       when        what
+* --------  --------    --------------------------------------------
+* mella     07/05/04    creation 
 * 
 */
 
@@ -103,7 +103,7 @@ mcsCOMPL_STAT testAll(void)
 
 mcsCOMPL_STAT test1(mcsLOGICAL log, mcsLOGICAL verbose)
 {
-    logExtDbg("entering test1 function");
+    logExtDbg("ENTER_FUNC test1");
     /* toggle log and verbose */
     logSetLog(log);
     logSetVerbose(verbose);
@@ -115,18 +115,21 @@ mcsCOMPL_STAT test1(mcsLOGICAL log, mcsLOGICAL verbose)
     /* and test log, verbose, action */
     testAll();
      /* \todo handle bad cases */
+    
+    logExtDbg("EXIT_FUNC test1");
     return SUCCESS;
 }
 
 mcsCOMPL_STAT testNoFileLine(void){
-    logTest("entering testNoFileLine function");
+    logTest("ENTER_FUNC testNoFileLine");
+    
+    logSetPrintFileLine(mcsFALSE);
+    logTest("FileLine must not appear");
 
     logSetPrintFileLine(mcsTRUE);
     logTest("FileLine must appear");
     
-    logSetPrintFileLine(mcsFALSE);
-    logTest("FileLine must not appear");
-   
+    logTest("EXIT_FUNC testNoFileLine");
     return SUCCESS;
 }
 
