@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.16 2005-02-13 09:07:50 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.17 2005-02-15 15:20:21 gzins Exp $"
 #
 # Makefile for test of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2005/02/13 09:07:50  gzins
+# Renamed vobsTestVirtualObservtary... to vobsTestVOIn...
+#
 # Revision 1.15  2005/02/13 08:54:00  gzins
 # Updated after vobs classes changes
 # Added CVS log as modifification history
@@ -177,17 +180,10 @@ all:	do_all
 clean : clean_all 
 	@echo " . . . clean done"
 
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
-
 man   : do_man 
 	@echo " . . . man page(s) done"
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___

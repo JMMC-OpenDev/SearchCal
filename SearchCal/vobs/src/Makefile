@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.15 2005-02-11 14:10:43 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.16 2005-02-15 15:20:21 gzins Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2005/02/11 14:10:43  gluck
+# Added vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes
+#
 # Revision 1.14  2005/02/04 10:49:23  gzins
 # Added installation of MIDI catalog
 #
@@ -189,17 +192,10 @@ all:	do_all
 clean : clean_all 
 	@echo " . . . clean done"
 
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
-
 man   : do_man 
 	@echo " . . . man page(s) done"
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
