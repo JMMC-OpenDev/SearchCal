@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2005-02-07 11:10:29 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.7 2005-02-07 14:43:21 gzins Exp $"
 #
 # Makefile of sclsvr
 #
@@ -22,7 +22,6 @@
 
 #
 # additional include and library search paths
-USER_INC =  -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/include/ -I/usr/include/glib-2.0
 #USER_LIB = 
 
 #
@@ -69,6 +68,7 @@ LIBRARIES_L     =
 sclsvr_OBJECTS   = sclsvrCALIBRATOR      \
 				   sclsvrCALIBRATOR_LIST \
 				   sclsvrSERVER          \
+				   sclsvrREQUEST         \
 				   sclsvrGETCAL_CMD      \
 				   sclsvrGETSTAR_CMD     \
 				   sclsvrGetCalCB		 \
