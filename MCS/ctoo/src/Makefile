@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-06-24 12:06:54 mella Exp $"
+# "@(#) $Id: Makefile,v 1.7 2004-06-24 17:33:02 gzins Exp $"
 #
 # Makefile of ctoo module
 #
@@ -36,14 +36,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = ctooDoManPages
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+ctooDoManPages_OBJECTS   = ctooDoManPages
+ctooDoManPages_LDFLAGS   =
+ctooDoManPages_LIBS      =
 
 #
 # special compilation flags for single c sources
@@ -122,8 +122,8 @@ USER_IDL =
 #
 # man pages to be done
 # --------------------
-MANSECTIONS =
-MAN1 =
+MANSECTIONS = 1
+MAN1 = $(SCRIPTS)
 MAN3 =
 MAN5 =
 MAN7 =
