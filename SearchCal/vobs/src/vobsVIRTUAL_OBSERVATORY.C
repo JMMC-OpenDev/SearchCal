@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.9 2004-08-24 14:45:52 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.10 2004-08-24 16:05:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.9 2004-08-24 14:45:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.10 2004-08-24 16:05:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -353,7 +353,11 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
         // list1 is the parameter list
-
+        if ( starList.Merge(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+        
         vobsSTAR_LIST list2;
         if ( list2.Copy(list1) == FAILURE)
         {
@@ -371,13 +375,11 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 2 become a result list
 
-        if ( starList.Merge(list2) == FAILURE)
+        if ( starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
-        starList.Display();
-        printf("number of star found : %d\n", starList.Size());
-        exit(0);
+        
         // list2 is put in final list starlist
         if ( list2.Clear() == FAILURE)
         {

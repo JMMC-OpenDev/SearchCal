@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.3 2004-08-24 16:05:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.3 2004-08-24 16:05:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -122,7 +122,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteAskingSpecificParameters(vobsREQUEST reques
     miscDynBufAppendString(&_asking, band);
     miscDynBufAppendString(&_asking, "mag=");
     mcsSTRING32 magRange;
-    request.GetConstraint(OBSERVED_BAND_ID,magRange);
+    request.GetConstraint(MAGNITUDE_RANGE_ID,magRange);
     miscDynBufAppendString(&_asking, magRange);    
     miscDynBufAppendString(&_asking, "&-c.eq=J2000&-out.max=50&-c.bm=1800/300");
     miscDynBufAppendString(&_asking, "&-c.u=arcmin");
