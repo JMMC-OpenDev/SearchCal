@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynStr.h,v 1.1 2004-07-19 15:31:05 lafrasse Exp $"
+* "@(#) $Id: miscDynStr.h,v 1.2 2004-07-22 09:23:57 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  13-Jul-2004  Created
+* lafrasse  22-Jul-2004  Removed a 'endcode' doxygen tag in excess
 *
 *
 *******************************************************************************/
@@ -19,7 +20,6 @@
  * Those function declarations are isolated of the misc.h declarations due to
  * their number.
  *
- * \endcode
  * \n \b Code \b Example:\n
  * \n A quick'n dirty main using a Dynamic Buffer.
  * \code

@@ -1,11 +1,12 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynStr.c,v 1.1 2004-07-20 13:30:16 lafrasse Exp $"
+ * "@(#) $Id: miscDynStr.c,v 1.2 2004-07-22 09:23:57 lafrasse Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
  * lafrasse  13-Jul-2004  Created
+ * lafrasse  22-Jul-2004  Removed all '\0' from char arrays
  *
  *
  ******************************************************************************/
@@ -24,7 +25,7 @@
  * \sa To see all the other 'misc' module functions declarations, see misc.h
  */
 
-static char *rcsId="@(#) $Id: miscDynStr.c,v 1.1 2004-07-20 13:30:16 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynStr.c,v 1.2 2004-07-22 09:23:57 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -70,7 +71,7 @@ static        mcsUINT32 miscDynStrVerifyStringParameterValidity(
 static        mcsUINT32 miscDynStrVerifyStringParameterValidity(
                                              char              *str)
 {
-    char *functionName = "miscDynBufVerifyPositionParameterValidity\0";
+    char *functionName = "miscDynBufVerifyPositionParameterValidity";
 
     /* Test the 'str' parameter validity */
     if (str == NULL)
@@ -109,7 +110,7 @@ mcsCOMPL_STAT miscDynStrGetStringFromTo     (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    char *functionName = "miscDynStrGetStringFromTo\0";
+    char *functionName = "miscDynStrGetStringFromTo";
 
     /* Try to get the requested bytes array from the Dynamic Buffer */
     if (miscDynBufGetBytesFromTo(dynBuf, str, from, to) == FAILURE)
@@ -152,7 +153,7 @@ mcsCOMPL_STAT miscDynStrReplaceStringFromTo (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    char *functionName = "miscDynStrReplaceStringFromTo\0";
+    char *functionName = "miscDynStrReplaceStringFromTo";
     int bytesNumber = 0;
     
     /* Test the 'str' parameter validity */
@@ -190,7 +191,7 @@ mcsCOMPL_STAT miscDynStrReplaceStringFromTo (miscDYN_BUF       *dynBuf,
 mcsCOMPL_STAT miscDynStrAppendString        (miscDYN_BUF       *dynBuf,
                                              char              *str)
 {
-    char *functionName = "miscDynStrAppendString\0";
+    char *functionName = "miscDynStrAppendString";
     int bytesNumber = 0;
     
     /* Test the 'str' parameter validity */
@@ -252,7 +253,7 @@ mcsCOMPL_STAT miscDynStrInsertStringAt      (miscDYN_BUF       *dynBuf,
                                              char              *str,
                                              const mcsUINT32   position)
 {
-    char *functionName = "miscDynStrAppendString\0";
+    char *functionName = "miscDynStrAppendString";
     int bytesNumber = 0;
     
     /* Test the 'str' parameter validity */
