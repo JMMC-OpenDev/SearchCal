@@ -3,7 +3,7 @@
    <error id="1">
       <errName>STRING_FORMAT</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect |%s| string format : missing or redundant |"|]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%s' string format : missing or redundant '"']]></errFormat>
    </error>
    <error id="2">
       <errName>MALLOC</errName>
@@ -13,46 +13,46 @@
    <error id="3">
       <errName>PARAMS_FORMAT</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect |%.80s| parameter format : must be |Param1| |Value1| |Param2| |Value2|...]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%.80s' parameter format : must be 'Param1' 'Value1' 'Param2' 'Value2'...]]></errFormat>
    </error>
    <error id="4">
       <errName>PARAM_NAME</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect |%s| parameter name : must begin with |-|]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%s' parameter name : must begin with '-']]></errFormat>
    </error>
    <error id="5">
       <errName>PARAM_INDEX</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%d| position is out-of-range [0-%d]]]></errFormat>
+      <errFormat><![CDATA['%d' position is out-of-range [0-%d]]]></errFormat>
    </error>
    <error id="6">
       <errName>PARAM_NOT_FOUND</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%s| parameter could not be found]]></errFormat>
+      <errFormat><![CDATA['%s' parameter could not be found]]></errFormat>
    </error>
    <error id="7">
       <errName>LOGICAL_VALUE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect |%s| boolean value]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%s' boolean value]]></errFormat>
    </error>
    <error id="8">
       <errName>INTEGER_VALUE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect |%s| integer value]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%s' integer value]]></errFormat>
    </error>
    <error id="9">
       <errName>DOUBLE_VALUE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect |%s| float value]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%s' float value]]></errFormat>
    </error>
    <error id="10">
       <errName>UNUSED_PARAM</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%s| parameter has not been recognize]]></errFormat>
+      <errFormat><![CDATA['%s' parameter has not been recognize]]></errFormat>
    </error>
    <error id="11">
       <errName>MISSING_PARAM</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%s| parameter is missing]]></errFormat>
+      <errFormat><![CDATA['%s' parameter is missing]]></errFormat>
    </error>
 </errorList>
