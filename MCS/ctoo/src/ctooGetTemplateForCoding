@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.13 2004-09-03 08:21:31 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.14 2004-09-08 15:54:51 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -171,7 +171,7 @@ then
 
         # For .h files insert file name in the pre-processing directives to
         # avoid multiple inclusions
-        if [ $FILE_SUFFIX = ".h" ]
+        if [ "$FILE_SUFFIX" = ".h" ]
         then
             sed -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
                 -e "1,$ s/#define _H/#define ${FILE_NAME}_H/g" \
