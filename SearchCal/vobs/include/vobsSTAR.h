@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.20 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.21 2005-01-26 14:11:42 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    22-Jul-2004  Created
 *
 *
@@ -108,6 +111,9 @@ public:
     vobsSTAR();
     vobsSTAR(vobsSTAR &star);
 
+    // assignement operator =
+    vobsSTAR& operator=(const vobsSTAR&);
+    
     // Destructor
     virtual ~vobsSTAR();
 
@@ -149,24 +155,21 @@ public:
     
     // Method to print out all star properties
     virtual void Display(void);
-    map<string, vobsSTAR_PROPERTY> _propertyList;
-    map<string, vobsSTAR_PROPERTY>::iterator _propertyListIterator;
-    map<int, string> _propertyOrder;
-    map<int, string>::iterator _propertyOrderIterator;
-
+    
 protected:
     // Method to add a property. Should be only called by constructors.
     mcsCOMPL_STAT AddProperty(char *id, char *name,
                               vobsPROPERTY_TYPE type, char *format=NULL);
+     map<string, vobsSTAR_PROPERTY> _propertyList;
+    map<string, vobsSTAR_PROPERTY>::iterator _propertyListIterator;
+    map<int, string> _propertyOrder;
+    map<int, string>::iterator _propertyOrderIterator;
 
 private:
-    // Declaration of assignment operator as private
-    // method, in order to hide them from the users.
-    vobsSTAR& operator=(const vobsSTAR&);
-
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);
 
+    
 };
 
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.17 2005-01-26 08:50:25 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.18 2005-01-26 14:11:42 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/01/26 08:50:25  scetre
+* upated documentation
+*
 * Revision 1.16  2005/01/26 08:17:54  scetre
 * Change History, add documentation, add checking method on property.
 * Change problem (vobsSTAR_POS_EQ_RA_MAIN -> ...DEC_MAIN). Update IsSame Method
@@ -21,7 +24,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.17 2005-01-26 08:50:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.18 2005-01-26 14:11:42 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -64,9 +67,18 @@ vobsSTAR::vobsSTAR()
  */
 vobsSTAR::vobsSTAR(vobsSTAR &star)
 {
+    *this = star;
+}
+
+/*
+ * Assignement operator
+ */
+vobsSTAR&vobsSTAR::operator=(const vobsSTAR&star)
+{
+    logExtDbg("vobsSTAR::operator=()");
     _propertyList = star._propertyList;
     _propertyOrder = star._propertyOrder;
-
+    return *this;    
 }
 
 /*
