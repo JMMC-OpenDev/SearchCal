@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2004-09-10 16:47:21 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2004-09-10 17:08:24 gzins Exp $"
 #
 # Makefile of err module 
 #
@@ -144,16 +144,6 @@ MAN3 =$(addsuffix .c, $(err_OBJECTS))
 MAN5 =
 MAN7 =
 MAN8 =
-
-#
-# local man pages
-# ---------------
-MANl =
-
-#
-# ASCII file to be converted into Framemaker-MIF
-# ----------------------------------------------
-ASCII_TO_MIF =
 
 #
 # other files to be installed
