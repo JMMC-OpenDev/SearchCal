@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2005-02-15 15:52:39 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.11 2005-03-06 20:28:50 gzins Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2005/02/15 15:52:39  gzins
+# Removed unused target
+#
 # Revision 1.9  2005/02/15 15:52:00  gzins
 # Added CVS log as file modification history
 #
@@ -58,6 +61,7 @@ INCLUDES        = sclsvr.h					\
 				  sclsvrREQUEST.h        	\
 				  sclsvrGETCAL_CMD.h        \
 				  sclsvrGETSTAR_CMD.h       \
+				  sclsvrVersion.h           \
 				  sclsvrSERVER.h
 
 
