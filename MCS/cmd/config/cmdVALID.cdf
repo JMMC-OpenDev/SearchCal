@@ -38,6 +38,8 @@
             <type>integer</type>
             <desc>This parameter is not mandatory but must be of integer type.</desc>
             <defaultValue><integer>12</integer></defaultValue>
+            <minValue><integer>12</integer></minValue>
+            <maxValue><integer>20</integer></maxValue>
         </param>
         <param>
             <name>ddouble</name>

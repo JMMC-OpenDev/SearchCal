@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.h,v 1.8 2005-02-27 09:27:41 gzins Exp $"
+ * "@(#) $Id: cmdPARAM.h,v 1.9 2005-02-27 19:44:17 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/27 09:27:41  gzins
+ * Improved error handling
+ *
  * Revision 1.7  2005/02/15 10:58:58  gzins
  * Added CVS log as file modification history
  *
@@ -63,6 +66,8 @@ public:
     virtual string GetHelp();
     virtual mcsCOMPL_STAT SetUserValue(string value);
     virtual mcsCOMPL_STAT SetDefaultValue(string value);
+    virtual mcsCOMPL_STAT SetMinValue(string value);
+    virtual mcsCOMPL_STAT SetMaxValue(string value);
     virtual mcsCOMPL_STAT GetUserValue(mcsINT32 *value);
     virtual mcsCOMPL_STAT GetUserValue(mcsDOUBLE *value);
     virtual mcsCOMPL_STAT GetUserValue(mcsLOGICAL *value);
@@ -74,6 +79,7 @@ public:
 
 protected:
     virtual mcsCOMPL_STAT CheckValueType(string value);
+    virtual mcsCOMPL_STAT CheckValueRange(string value);
 
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -95,6 +101,10 @@ private:
     string _userValue;
     /** default value of the parameter */
     string _defaultValue;
+    /** min value of the parameter */
+    string _minValue;
+    /** max value of the parameter */
+    string _maxValue;
 };
 
 

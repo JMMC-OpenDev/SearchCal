@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.26 2005-02-27 09:27:41 gzins Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.27 2005-02-27 19:44:17 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/02/27 09:27:41  gzins
+ * Improved error handling
+ *
  * Revision 1.25  2005/02/23 11:15:51  mella
  * Reorder code , add an error to before failure return and add one missing unref_nl into GetNodeContent
  *
@@ -63,7 +66,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.26 2005-02-27 09:27:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.27 2005-02-27 19:44:17 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -444,6 +447,7 @@ mcsLOGICAL cmdCOMMAND::HasDefaultValue(string paramName)
     cmdPARAM *p;
     if (GetParam(paramName, &p) == mcsFAILURE )
     {
+        logWarning("%s parameter doesn't exist",paramName.data());
         return mcsFALSE;
     }
     return p->HasDefaultValue();
@@ -486,7 +490,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
     {   
-        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
         return mcsFAILURE;
     }
 
@@ -531,7 +534,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
     {   
-        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
         return mcsFAILURE;
     }
 
@@ -573,7 +575,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
     {   
-        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
         return mcsFAILURE;
     }
 
@@ -615,7 +616,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
     {   
-        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
         return mcsFAILURE;
     }
 
@@ -1044,6 +1044,8 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     string desc;
     string type;
     string defaultValue;
+    string minValue;
+    string maxValue;
     string unit;
     mcsLOGICAL optional;
     
@@ -1070,53 +1072,76 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     }
    
     // Get optional defaultValue
+    GdomeElement *el;
+    GdomeException exc;
+    if (CmdGetNodeElement(param, "defaultValue", &el, mcsTRUE) == mcsFAILURE)
     { 
-        GdomeNodeList *nl;
-        GdomeElement *el;
-        GdomeException exc;
-        GdomeDOMString *name;
-        int nbChildren;
-
-        name = gdome_str_mkref ("defaultValue");
-        // Get the reference to the defaultValue elements
-        nl = gdome_el_getElementsByTagName (param, name, &exc);
-        if (nl == NULL)
+        return mcsFAILURE;   
+    }
+    else
+    {
+        if (el != NULL)
         {
-            errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
-            gdome_str_unref(name);
-            return mcsFAILURE;
-        }
-        nbChildren = gdome_nl_length (nl, &exc);
-        // If a defaultValue does exist
-        if (nbChildren > 0)
-        {
-            // Get defaultValue element
-            el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
-            if (el == NULL)
-            {
-                errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
-                gdome_str_unref(name);
-                gdome_el_unref(el, &exc);
-                return mcsFAILURE;
-            }
             if (CmdGetNodeContent(el, type, defaultValue) == mcsFAILURE )
             {
-                errAdd (cmdERR_CDF_FORMAT_CONTENT, name->str, exc);
-                gdome_str_unref(name);
                 gdome_el_unref(el, &exc);
                 return mcsFAILURE;   
             }
             gdome_el_unref(el, &exc);
-            gdome_nl_unref(nl, &exc);
         }
         else
         {
             // There should not be any defaultValue
-            logDebug("no defaultValue found ");
-            gdome_nl_unref(nl, &exc);
+            logDebug("No defaultValue for %.40s parameter", name.data());
         }
-        gdome_str_unref(name);
     }
+    
+    // Get optional minValue
+   if (CmdGetNodeElement(param, "minValue", &el, mcsTRUE) == mcsFAILURE)
+    { 
+        return mcsFAILURE;   
+    }
+    else
+    {
+        if (el != NULL)
+        {
+            if (CmdGetNodeContent(el, type, minValue) == mcsFAILURE )
+            {
+                gdome_el_unref(el, &exc);
+                return mcsFAILURE;   
+            }
+            gdome_el_unref(el, &exc);
+        }
+        else
+        {
+            // There should not be any defaultValue
+            logDebug("No minValue for %.40s parameter", name.data());
+        }
+    }
+
+    // Get optional maxValue
+   if (CmdGetNodeElement(param, "maxValue", &el, mcsTRUE) == mcsFAILURE)
+    { 
+        return mcsFAILURE;   
+    }
+    else
+    {
+        if (el != NULL)
+        {
+            if (CmdGetNodeContent(el, type, maxValue) == mcsFAILURE )
+            {
+                gdome_el_unref(el, &exc);
+                return mcsFAILURE;   
+            }
+            gdome_el_unref(el, &exc);
+        }
+        else
+        {
+            // There should not be any defaultValue
+            logDebug("No maxValue for %.40s parameter", name.data());
+        }
+    }
+
     // Check if it is an optional parameter
     { 
         GdomeAttr *attribute;
@@ -1160,6 +1185,20 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     
     // Create the new Parameter and add it to the inner list of parameters
     cmdPARAM *p = new cmdPARAM(name, desc, type, unit, optional);
+    if (! minValue.empty())
+    {
+        if (p->SetMinValue(minValue) == mcsFAILURE)
+        {
+            return mcsFAILURE;   
+        }
+    }
+    if (! maxValue.empty())
+    {
+        if (p->SetMaxValue(maxValue) == mcsFAILURE)
+        {
+            return mcsFAILURE;   
+        }
+    }
     if (! defaultValue.empty())
     {
         if (p->SetDefaultValue(defaultValue) == mcsFAILURE)
@@ -1172,6 +1211,58 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     return mcsSUCCESS;
 }
 
+mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeElement(GdomeElement *parentNode,
+                                            string nodeName, 
+                                            GdomeElement **element,
+                                            mcsLOGICAL isOptional)
+{
+    GdomeNodeList *nl;
+    GdomeException exc;
+    GdomeDOMString *name;
+    int nbChildren;
+
+    // Get the reference to the node elements
+    name = gdome_str_mkref(nodeName.data());
+    nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
+    if (nl == NULL)
+    {
+        errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
+        gdome_str_unref(name);
+        gdome_nl_unref(nl, &exc);
+        return mcsFAILURE;
+    }
+    nbChildren = gdome_nl_length (nl, &exc);
+
+    // If there is element in list
+    if (nbChildren > 0)
+    {
+        // Get first element
+        *element = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
+        if (*element == NULL)
+        {
+            errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
+            gdome_str_unref(name);
+            gdome_nl_unref(nl, &exc);
+            return mcsFAILURE;
+        } 
+    }
+    // Else if element is not optional
+    else if (isOptional == mcsFALSE)
+    {
+        // Return error
+        errAdd (cmdERR_CDF_NO_NODE_ELEMENT, name->str);
+        return mcsFAILURE; 
+    }
+    else
+    {
+        // Else return NULL element
+        *element = NULL;
+        return mcsSUCCESS;
+    }
+
+    return mcsSUCCESS;
+}
+
 /** 
  * Get the content of the first child node using tagName. If tagName is empty
  * the first child is used without any care of the child's tag.
@@ -1179,6 +1270,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
  * \param parentNode the parent node. 
  * \param tagName  the tag of the child or empty.
  * \param content  the storage string.
+ * \param isOptional specify whether node is an optional in the CDF or not.
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -1193,22 +1285,10 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode,
     GdomeDOMString *name;
     int nbChildren;
     
-#if 0
-    if (tagName.empty())
-    {
-        // Get the reference to the childrens of the parentNode element
-        nl = gdome_el_childNodes(parentNode, &exc);
-    }
-    else
-    {
-#endif
-        name = gdome_str_mkref (tagName.data());
-        // Get the reference to the named childrens of the parentNode element
-        nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
-#if 0
-    }
-#endif
-    
+    name = gdome_str_mkref (tagName.data());
+    // Get the reference to the named childrens of the parentNode element
+    nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
+
     if (nl == NULL)
     {
         errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
@@ -1387,7 +1467,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     string paramName = str.substr(1, spacePos-1);
     string paramValue = str.substr(spacePos+1);
     
-    logDebug("found new tuple: [%s,%s]", paramName.data(), paramValue.data());
+    logDebug("Found new tuple: [%s,%s]", paramName.data(), paramValue.data());
    
     cmdPARAM *p;
     // If parameter does'nt exist in the CDF
@@ -1403,9 +1483,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     }
 
     // Assign value to the parameter
-    p->SetUserValue(paramValue);
-    
-    return mcsSUCCESS;
+    return (p->SetUserValue(paramValue));
 }
 
 

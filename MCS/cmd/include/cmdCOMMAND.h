@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.h,v 1.12 2005-02-27 09:27:41 gzins Exp $"
+ * "@(#) $Id: cmdCOMMAND.h,v 1.13 2005-02-27 19:44:17 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/27 09:27:41  gzins
+ * Improved error handling
+ *
  * Revision 1.11  2005/02/17 09:03:01  gzins
  * Added GetCmdParamLine method
  * Updated to keep parameter order as defined in CDF
@@ -108,6 +111,10 @@ private:
      virtual mcsCOMPL_STAT ParseCdfForDesc(GdomeElement *node);
      virtual mcsCOMPL_STAT ParseCdfForParameters(GdomeElement *node);
      virtual mcsCOMPL_STAT ParseCdfForParam(GdomeElement *param);
+     virtual mcsCOMPL_STAT CmdGetNodeElement(GdomeElement *parentNode,
+                                             string nodeName, 
+                                             GdomeElement **element,
+                                      mcsLOGICAL isOptional=mcsFALSE);
      virtual mcsCOMPL_STAT CmdGetNodeContent(GdomeElement *parentNode,
                                              string tagName, string &content,
                                              mcsLOGICAL isOptional=mcsFALSE);

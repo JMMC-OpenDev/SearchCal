@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.7 2005-02-27 09:27:41 gzins Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.8 2005-02-27 19:44:17 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/27 09:27:41  gzins
+ * Improved error handling
+ *
  * Revision 1.6  2005/02/15 11:02:48  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -24,7 +27,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.7 2005-02-27 09:27:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.8 2005-02-27 19:44:17 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -274,8 +277,15 @@ mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
 {
     logExtDbg("cmdPARAM::SetUserValue()");
 
+    printf("name = %s - value  = %s\n", _name.data(), value.data()); 
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Check value range
+    if (CheckValueRange(value) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -304,7 +314,61 @@ mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
         return mcsFAILURE;
     }
 
+    // Check value range
+    if (CheckValueRange(value) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     _defaultValue=value;
+    
+    return mcsSUCCESS;
+}
+
+/** 
+ * Set the min value of the parameter. This method must be called only
+ * by cmdCOMMAND. The value is extracted from the cdf file.
+ *
+ * \param value  the new min value.
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::SetMinValue(string value)
+{
+    logExtDbg("cmdPARAM::SetMinValue()");
+
+    // Check value according to the parameter type
+    if (CheckValueType(value) == mcsFAILURE)
+    {
+        errAdd(cmdERR_DEFAULTVALUE_FORMAT, _name.data());
+        return mcsFAILURE;
+    }
+
+    _minValue=value;
+    
+    return mcsSUCCESS;
+}
+
+/** 
+ * Set the max value of the parameter. This method must be called only
+ * by cmdCOMMAND. The value is extracted from the cdf file.
+ *
+ * \param value  the new max value.
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::SetMaxValue(string value)
+{
+    logExtDbg("cmdPARAM::SetMaxValue()");
+
+    // Check value according to the parameter type
+    if (CheckValueType(value) == mcsFAILURE)
+    {
+        errAdd(cmdERR_DEFAULTVALUE_FORMAT, _name.data());
+        return mcsFAILURE;
+    }
+
+    _maxValue=value;
     
     return mcsSUCCESS;
 }
@@ -520,6 +584,117 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
         }
 
         return mcsSUCCESS;
+    }
+    return mcsSUCCESS;
+}
+ 
+/** 
+ * Check the value range.
+ *
+ * \param value parameter value.
+ *
+ *  \returns mcsFAILURE if the value is out of range, mcsSUCCESS otherwise.
+ */
+mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
+{
+    logExtDbg("cmdPARAM::CheckValueRange()");
+
+    // No check for logical parameter
+    if (_type == "logical")
+    {
+        return mcsSUCCESS;
+    }
+    else if (_type == "string")
+    {
+        // Check min value
+        if (_minValue.empty() == false)
+        {
+            if (value < _minValue)
+            {
+                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
+                       "greater", _minValue.data());
+                return mcsFAILURE;
+            }
+        }
+
+        // Check max value
+        if (_maxValue.empty() == false)
+        {
+            
+            if (value > _minValue)
+            {
+                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
+                       "less", _maxValue.data());
+                return mcsFAILURE;
+            }
+        }
+        
+    }
+    else if (_type == "integer")
+    {
+        mcsINT32 iValue;
+        sscanf (value.data(), "%d", &iValue);
+        
+        // Check min value
+        if (_minValue.empty() == false)
+        {
+            mcsINT32 minValue;
+            sscanf (_minValue.data(), "%d", &minValue);
+            if (iValue < minValue)
+            {
+                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
+                       "greater", _minValue.data());
+                return mcsFAILURE;
+            }
+        }
+
+        // Check max value
+        if (_maxValue.empty() == false)
+        {
+            mcsINT32 maxValue;
+            sscanf (_maxValue.data(), "%d", &maxValue);
+            
+            if (iValue > maxValue)
+            {
+                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
+                       "less", _maxValue.data());
+                return mcsFAILURE;
+            }
+        }
+        
+    }
+    else if (_type == "double")
+    {
+        mcsDOUBLE iValue;
+        sscanf (value.data(), "%d", &iValue);
+        
+        // Check min value
+        if (_minValue.empty() == false)
+        {
+            mcsDOUBLE minValue;
+            sscanf (_minValue.data(), "%lf", &minValue);
+            if (iValue < minValue)
+            {
+                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
+                       "greater", _minValue.data());
+                return mcsFAILURE;
+            }
+        }
+
+        // Check max value
+        if (_maxValue.empty() == false)
+        {
+            mcsDOUBLE maxValue;
+            sscanf (_maxValue.data(), "%lf", &maxValue);
+            
+            if (iValue > maxValue)
+            {
+                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
+                       "less", _maxValue.data());
+                return mcsFAILURE;
+            }
+        }
+        
     }
     return mcsSUCCESS;
 }

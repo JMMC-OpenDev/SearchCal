@@ -105,4 +105,14 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Invalid format for default value of '%.40s' parameter]]></errFormat>
    </error>
+   <error id="22">
+      <errName>CDF_NO_NODE_ELEMENT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - missing '%.20s' node]]></errFormat>
+   </error>
+   <error id="23">
+      <errName>VALUE_OUT_OF_RANGE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Value '%.40s' of '%.40s' parameter is out of range; should be %.40s than '%.40s']]></errFormat>
+   </error>
 </errorList>

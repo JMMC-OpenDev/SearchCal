@@ -36,6 +36,8 @@ elementFormDefault="qualified">
     <xs:element name="desc" type="xs:string" minOccurs="0" maxOccurs="1"/>
     <xs:element name="type" type="paramType" minOccurs="1" maxOccurs="1"/>
     <xs:element name="defaultValue" type="value" minOccurs="0" maxOccurs="1"/>
+    <xs:element name="minValue" type="value" minOccurs="0" maxOccurs="1"/>
+    <xs:element name="maxValue" type="value" minOccurs="0" maxOccurs="1"/>
     <xs:element name="unit" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:all>
     <xs:attribute name="optional" type="xs:boolean" default="false" use="optional"/>
