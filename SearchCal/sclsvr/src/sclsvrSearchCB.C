@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCB.C,v 1.2 2004-11-30 10:35:08 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.C,v 1.2 2004-11-30 10:35:08 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -53,7 +53,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
 
     // Search command
     sclsvrSEARCH_CMD searchCmd(msg.GetCommand(), msg.GetBodyPtr());
-printf("msg.GetBodyPtr() = %s\n", msg.GetBodyPtr()); 
+    printf("msg.GetBodyPtr() = %s\n", msg.GetBodyPtr()); 
     // Object name
     char *objName;
     printf("searchCmd.getHelp = %s\n", searchCmd.getHelp().data()); 
@@ -292,6 +292,15 @@ printf("msg.GetBodyPtr() = %s\n", msg.GetBodyPtr());
         return FAILURE;
     }
     calibratorList.Display();
+    
+    // Pack the list result in a buffer in order to send it
+    miscDYN_BUF dynBuff;
+    miscDynBufInit(&dynBuff);
+    calibratorList.Pack(&dynBuff);
+
+
+    msg.SetBody(miscDynBufGetBufferPointer(&dynBuff),
+                strlen(miscDynBufGetBufferPointer(&dynBuff)));
     
     // Send reply
     if (SendReply(msg) == FAILURE)

@@ -21,7 +21,7 @@
 /*
  * MCS Headers
  */
-#include "cmd.h"
+#include "cmdCMD.h"
 
 /*
  * Class declaration
