@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.8 2004-12-01 12:54:39 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.9 2004-12-05 19:07:50 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -122,13 +122,30 @@ typedef struct
  */
 
 /**
- * msgMESSAGE is a class that wraps the msgMESSAGE_RAW C structure, with all the
- * needed accessors.
+ * Class handling MCS messages.
+ *  
+ * The msgMESSAGE class contains all methods necessary for handling messages
+ * (commands and replies) which are exchanged between processes through the
+ * MCS message service. A message is defined by : 
+ *   - \em sender \n
+ *     is the MCS registering name of the process which send the message
+ *   - \em sender environment \n
+ *     is the environment name in which the sender is running
+ *   - \em recipient \n
+ *     is the MCS registering name of the process to which the message is
+ *     intended
+ *   - \em recipient environment \n
+ *     is the environment name in which the recipient is running
+ *   - \em type \n
+ *     is the message type (see msgTYPE)
+ *   - \em command \n
+ *     is the name of the command
+ *   - \em params \n
+ *     is the command parameters
  *
- * It is used to encapsulate all the data to be sent and received with the help
- * of the msgMANAGER_IF object.
- * 
- * \sa msgMESSAGE_RAW and msgHEADER C structures, and msg.h in general
+ * The class msgMANAGER_IF can be used for reception  and sending of MCS
+ * messages.
+ *
  * \sa msgMANAGER_IF
  */
 
