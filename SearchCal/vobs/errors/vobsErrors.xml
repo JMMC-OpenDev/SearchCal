@@ -123,7 +123,7 @@
    <error id="31">
       <errName>PROPERTY_TYPE</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Could not set or get property "%.40s". Could not convert %.40s value using format '%.40s']]></errFormat>
+      <errFormat><![CDATA[Could not set or get property "%.40s". Could not convert value '%.40s' using format '%.40s']]></errFormat>
    </error>
    <error id="32">
       <errName>INVALID_PROP_FORMAT</errName>
