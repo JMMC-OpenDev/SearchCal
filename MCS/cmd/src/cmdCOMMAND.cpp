@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.12 2005-01-04 08:08:45 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.13 2005-01-05 07:35:58 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,7 +25,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.12 2005-01-04 08:08:45 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.13 2005-01-05 07:35:58 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -69,6 +69,7 @@ cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
 {
     logExtDbg("cmdCOMMAND::cmdCOMMAND()");
     _hasBeenYetParsed = mcsFALSE;
+    _cdfHasBeenYetParsed = mcsFALSE;
     _name = name;
     _params = params;
     _cdfName = cdfName;
@@ -87,7 +88,7 @@ cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
 cmdCOMMAND::~cmdCOMMAND()
 {
     logExtDbg("cmdCOMMAND::~cmdCOMMAND()");
-
+    
     // for each parameter entry: delete each object associated to the pointer object
     if (_paramList.size()>0)
     {
@@ -625,13 +626,13 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
         logWarning ("Illegal format encountered for cdf file "
                     ". Element.childNodes() failed "
                     "with exception #%d", exc);
-        gdome_nl_unref(nl, &exc);
         return FAILURE;
     }
  
     nbChildren = gdome_nl_length (nl, &exc);
 
-    /* if a desc does exist */
+    /* if a desc does exist get first item (xsd assumes there is only one
+     * desc) */
     if (nbChildren > 0)
     {
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
@@ -640,6 +641,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
             logWarning ("Illegal format encountered for cdf file "
                         ". NodeList.item(%d) failed "
                         "with exception #%d", 0, exc);
+            gdome_nl_unref(nl, &exc);
             return FAILURE;
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
@@ -681,7 +683,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
         logWarning ("Illegal format encountered for cdf file "
                     ". Element.childNodes() failed "
                     "with exception #%d", exc);
-        gdome_nl_unref(nl, &exc);
         return FAILURE;
     }
  
@@ -702,14 +703,13 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
         /* Get the reference to the list of param elements */
         name = gdome_str_mkref ("param");
         nl = gdome_el_getElementsByTagName (el, name, &exc);
+        gdome_el_unref(el, &exc);
         gdome_str_unref(name);
         if (nl == NULL)
         {
             logWarning ("Illegal format encountered for cdf file "
                         ". Element.childNodes() failed "
                         "with exception #%d", exc);
-            gdome_el_unref(el, &exc);
-            gdome_nl_unref(nl, &exc);
             return FAILURE;
         }
 
@@ -724,17 +724,21 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
                     logWarning ("Illegal format encountered for cdf file "
                                 ". NodeList.item(%d) failed "
                                 "with exception #%d", i, exc);
+                    gdome_nl_unref(nl, &exc);
                     return FAILURE;
                 }
 
                 if (ParseCdfForParam(el)==FAILURE)
                 {
                     gdome_el_unref(el, &exc);
+                    gdome_nl_unref(nl, &exc);
                     return FAILURE;
                 }
+                gdome_el_unref(el, &exc);
             }
         }
     }
+    gdome_nl_unref(nl, &exc);
     return SUCCESS;
 }
 
@@ -790,7 +794,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
             logWarning ("Illegal format encountered for cdf file "
                         ". Element.childNodes() failed "
                         "with exception #%d", exc);
-            gdome_nl_unref(nl, &exc);
             return FAILURE;
         }
         nbChildren = gdome_nl_length (nl, &exc);
@@ -820,6 +823,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         {
             // there should not be any defaultValue
             logDebug("no defaultValue found ");
+            gdome_nl_unref(nl, &exc);
         }
     }
     /* check if it is an optional parameter */
@@ -859,16 +863,16 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
             gdome_str_unref(str);
             gdome_str_unref(str2);
             gdome_str_unref(attrValue);
+            gdome_a_unref(attribute,&exc);
         }
     }
     
+    // Create the new Parameter and add it to the inner list of parameters
     cmdPARAM *p = new cmdPARAM(name, desc, unit, optional);
-
     if ( ! defaultValue.empty())
     {
         p->SetDefaultValue(defaultValue);
     }
-    
     AddParam(p);
     
     return SUCCESS;
@@ -910,7 +914,6 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
         logWarning ("Illegal format encountered for cdf file "
                     ". Element.childNodes() failed "
                     "with exception #%d", exc);
-        gdome_nl_unref(nl, &exc);
         return FAILURE;
     }
     nbChildren = gdome_nl_length (nl, &exc);
@@ -918,6 +921,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     if (nbChildren > 0)
     {
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
+        gdome_nl_unref(nl, &exc);
         if (el == NULL)
         {
             logWarning ("Illegal format encountered for cdf file "
@@ -930,6 +934,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
         if (el2 == NULL)
         {
             // \todo errAdd
+            gdome_el_unref(el, &exc);
             return FAILURE;
         }
         
@@ -942,7 +947,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     }
     else
     {
-        // \todo add error
+        // no child found
         return FAILURE;
     }
     
