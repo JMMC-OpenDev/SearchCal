@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.12 2004-07-30 14:34:58 lafrasse Exp $"
+* "@(#) $Id: log.h,v 1.13 2004-07-30 17:37:00 gluck Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,16 @@
 *                        logGetVerboseLevel -> logGetStdoutLogVerbosity
 *                        logSetActionLevel -> logSetActionLogVerbosity
 *                        logGetActionLevel -> logGetActionLogVerbosity
-*
+* gluck     30-Jun-2004  Changed some APIs :
+*                        Remove logSetFileLogState and add logEnableFileLog
+*                         and logDisableFileLog
+*                        logSetFileLogVerbosity -> logSetFileLogLevel
+*                        logGetFileLogVerbosity -> logGetFileLogLevel
+*                        Remove logSetStdoutLogState and add logEnableStdoutLog *                         and logDisableStdoutLog
+*                        logSetStdoutLogVerbosity -> logSetStdoutLogLevel
+*                        logGetStdoutLogVerbosity -> logGetStdoutLogLevel
+*                        logSetActionLogVerbosity -> logSetActionLogLevel
+*                        logGetActionLogVerbosity -> logGetActionLogLevel
 *
 *******************************************************************************/
 
@@ -63,23 +72,27 @@ mcsCOMPL_STAT logPrintAction(logLEVEL level,
                              const char *logText, ...);
 
 
-mcsCOMPL_STAT logSetFileLogState(mcsLOGICAL flag);
+mcsCOMPL_STAT logEnableFileLog();
 
-mcsCOMPL_STAT logSetFileLogVerbosity(logLEVEL level);
+mcsCOMPL_STAT logDisableFileLog();
 
-logLEVEL      logGetFileLogVerbosity(void);
+mcsCOMPL_STAT logSetFileLogLevel(logLEVEL level);
 
-
-mcsCOMPL_STAT logSetStdoutLogState(mcsLOGICAL flag);
-
-mcsCOMPL_STAT logSetStdoutLogVerbosity(logLEVEL level);
-
-logLEVEL      logGetStdoutLogVerbosity(void);
+logLEVEL      logGetFileLogLevel(void);
 
 
-mcsCOMPL_STAT logSetActionLogVerbosity(logLEVEL level);
+mcsCOMPL_STAT logEnableStdoutLog();
 
-logLEVEL      logGetActionLogVerbosity(void);
+mcsCOMPL_STAT logDisableStdoutLog();
+
+mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL level);
+
+logLEVEL      logGetStdoutLogLevel(void);
+
+
+mcsCOMPL_STAT logSetActionLogLevel(logLEVEL level);
+
+logLEVEL      logGetActionLogLevel(void);
 
 
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);

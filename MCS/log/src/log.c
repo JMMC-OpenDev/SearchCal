@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.17 2004-07-30 14:34:58 lafrasse Exp $"
+* "@(#) $Id: log.c,v 1.18 2004-07-30 17:37:00 gluck Exp $"
 *
 *
 * who       when                 what
@@ -18,7 +18,16 @@
 *                        logGetVerboseLevel -> logGetStdoutLogVerbosity
 *                        logSetActionLevel -> logSetActionLogVerbosity
 *                        logGetActionLevel -> logGetActionLogVerbosity
-*
+* gluck     30-Jun-2004  Changed some APIs :
+*                        Remove logSetFileLogState and add logEnableFileLog
+*                         and logDisableFileLog
+*                        logSetFileLogVerbosity -> logSetFileLogLevel
+*                        logGetFileLogVerbosity -> logGetFileLogLevel
+*                        Remove logSetStdoutLogState and add logEnableStdoutLog *                         and logDisableStdoutLog
+*                        logSetStdoutLogVerbosity -> logSetStdoutLogLevel
+*                        logGetStdoutLogVerbosity -> logGetStdoutLogLevel
+*                        logSetActionLogVerbosity -> logSetActionLogLevel
+*                        logGetActionLogVerbosity -> logGetActionLogLevel
 *
 *******************************************************************************/
 /**
@@ -117,6 +126,7 @@
  * \endcode
  */
 
+ 
 /* 
  * System Headers 
  */
@@ -128,10 +138,12 @@
 #include <time.h>
 #include <sys/time.h>
 
+ 
 /*
  * MCS Headers 
  */
 #include "mcs.h"
+
 
 /*
  * Local Headers 
@@ -139,6 +151,7 @@
 #include "log.h"
 #include "logPrivate.h"
 
+ 
 /*
  * Default initialization for logging levels printtime and so on..
  * logRULE is defined in logPrivate.h
@@ -153,6 +166,7 @@ static logRULE logRule = {
     mcsTRUE
 };
 static logRULE *logRulePtr = &logRule;
+
 
 /**
  * Log data to logsystem if level satisfies and optionally
@@ -210,6 +224,7 @@ mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
 
 }
 
+
 /**
  * Print action log.
  *
@@ -243,118 +258,157 @@ mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
 
 
 /**
- * Switch file logging ON or OFF.
+ * Switch file logging ON.
  *
- * \param flag mcsTRUE/mcsFALSE
- *
- * \return mcsCOMPL_STAT 
+ * \return always SUCCESS 
  */
-mcsCOMPL_STAT logSetFileLogState(mcsLOGICAL flag)
+mcsCOMPL_STAT logEnableFileLog ()
 {
-   /* Set the file logging state to the specified one */
-   logRulePtr->log = flag;
+   /* Switch ON the file logging */
+   logRulePtr->log = mcsTRUE;
 
    return SUCCESS;
 }
 
+
 /**
- * Set the file logging verbosity level.
- *  
- * \param level TBD
+ * Switch file logging OFF.
  *
- * \return mcsCOMPL_STAT 
+ * \return always SUCCESS
  */
-mcsCOMPL_STAT logSetFileLogVerbosity (logLEVEL level)
+mcsCOMPL_STAT logDisableFileLog ()
 {
-    /* Set the file logging verbosity level to the specified one */
+   /* Switch OFF the file logging */
+   logRulePtr->log = mcsFALSE;
+
+   return SUCCESS;
+}
+
+
+/**
+ * Set the file logging level.
+ *
+ * The level which is set is one of the enumeration type logLEVEL
+ *
+ * \param level Required log level (verbosity level)
+ *
+ * \return always SUCCESS
+ */
+mcsCOMPL_STAT logSetFileLogLevel (logLEVEL level)
+{
+    /* Set the file logging level to the specified one */
     logRulePtr->logLevel = level;
 
     return SUCCESS; 
 }
 
+
 /**
- * Get the file logging verbosity level.
+ * Get the file logging level.
  *
- * \return logLEVEL actual file logging verbosity level 
+ * The level which is get is one of the enumeration type logLEVEL
+ * 
+ * \return logLEVEL actual file logging level (verbosity level)
  */
-logLEVEL logGetFileLogVerbosity ()
+logLEVEL logGetFileLogLevel ()
 {
-    /* Returns the file logging verbosity level */
+    /* Returns the file logging level */
     return (logRulePtr->logLevel);
 }
 
 
-
 /**
- * Switch stdout logging ON or OFF.
+ * Switch stdout logging ON.
  *
- * \param flag mcsTRUE/mcsFALSE
- * 
- * \return mcsCOMPL_STAT 
+ * \return always SUCCESS 
  */
-mcsCOMPL_STAT logSetStdoutLogState(mcsLOGICAL flag)
+mcsCOMPL_STAT logEnableStdoutLog ()
 {
-   /* Set the stdout logging state to the specified one */
-    logRulePtr->verbose = flag;
+   /* Switch ON the stdout logging */
+    logRulePtr->verbose = mcsTRUE;
 
     return SUCCESS;
 }
 
+
 /**
- * Set the stdout logging verbosity level.
+ * Switch stdout logging OFF.
  *
- * \param level  
- *
- * \return mcsCOMPL_STAT
+ * \return always SUCCESS 
  */
-mcsCOMPL_STAT logSetStdoutLogVerbosity (logLEVEL level)
+mcsCOMPL_STAT logDisableStdoutLog ()
+{
+   /* Switch OFF the stdout logging */
+    logRulePtr->verbose = mcsFALSE;
+
+    return SUCCESS;
+}
+
+
+/**
+ * Set the stdout logging level.
+ *
+ * The level which is set is one of the enumeration type logLEVEL
+ *
+ * \param level Required log level (verbosity level)
+ *
+ * \return always SUCCESS 
+ */
+mcsCOMPL_STAT logSetStdoutLogLevel (logLEVEL level)
 {
     
-    /* Set the stdout logging verbosity level to the specified one */
+    /* Set the stdout logging level to the specified one */
     logRulePtr->verboseLevel = level;
 
     return SUCCESS; 
 
 }
 
+
 /**
- * Get the stdout logging verbosity level.
+ * Get the stdout logging level.
  *
- * \return logLEVEL actual stdout logging verbosity level 
+ * The level which is get is one of the enumeration type logLEVEL
+ * 
+ * \return logLEVEL actual stdout logging level (verbosity level)
  */
-logLEVEL logGetStdoutLogVerbosity ()
+logLEVEL logGetStdoutLogLevel ()
 {
-    /* Returns the stdout logging verbosity level */
+    /* Returns the stdout logging level */
     return (logRulePtr->verboseLevel);
 }
 
 
 /**
- * Set the action logging verbosity level.
+ * Set the action logging level.
  * 
- * \param level TBD
+ * The level which is set is one of the enumeration type logLEVEL
  * 
- * \return mcsCOMPL_STAT 
+ * \param level Required log level (verbosity level)
+ *
+ * \return always SUCCESS 
  */
-mcsCOMPL_STAT logSetActionLogVerbosity (logLEVEL level)
+mcsCOMPL_STAT logSetActionLogLevel (logLEVEL level)
 {
-    /* Set the action logging verbosity level to the specified one */
+    /* Set the action logging level to the specified one */
     logRulePtr->actionLevel = level;
 
     return SUCCESS; 
 }
 
+
 /**
- * Get the file logging verbosity level.
+ * Get the file logging level.
  *
- * \return logLEVEL actual file logging verbosity level 
+ * The level which is get is one of the enumeration type logLEVEL
+ * 
+ * \return logLEVEL actual file logging level (verbosity level) 
  */
-logLEVEL logGetActionLogVerbosity ()
+logLEVEL logGetActionLogLevel ()
 {
-    /* Returns the action logging verbosity level */
+    /* Returns the action logging level */
     return (logRulePtr->actionLevel);
 }
-
 
 
 /**
@@ -371,6 +425,7 @@ mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
     return SUCCESS;
 }
 
+
 /**
  * Toggle the fileline output. Useful in test mode.
  * 
@@ -384,6 +439,7 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
     logRulePtr->printFileLine = flag;
     return SUCCESS;
 }
+
 
 /**
  * Place msg into the logging system.
@@ -432,6 +488,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName,
         
     return SUCCESS;
 }
+
 
 /**
  * Format the current date and time, to be used as time stamp.
