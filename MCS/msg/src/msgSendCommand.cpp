@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.cpp,v 1.6 2004-12-07 07:48:59 gzins Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.7 2004-12-21 06:52:09 gzins Exp $"
 *
 *
 * who       when                 what
@@ -14,6 +14,7 @@
 *                        Set default time-out to WAIT_FOREVER
 * gzins     03-Dec-2004  Updated according to new msgMANAGER_IF::Connect API
 * gzins     07-Dec-2004  Removed no longer needed errStackDisplay() 
+* gzins     20-Dec-2004  Removed leading and trailing spaces to parameters
 *
 *******************************************************************************/
 
@@ -49,7 +50,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.6 2004-12-07 07:48:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.7 2004-12-21 06:52:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -96,7 +97,6 @@ int main (int argc, char *argv[])
     cnt     = 1;
     timeout = msgWAIT_FOREVER;
     status  = EXIT_SUCCESS;
-
     /* Try to read CLI Options */
     if (argc > 2)
     {
@@ -117,6 +117,8 @@ int main (int argc, char *argv[])
 
         memset(params, '\0', sizeof(params));
         strncpy((char *)params, argv[cnt++], (sizeof(params) -1));
+        // Removed leading and trailing space
+        miscTrimString(params, " ");
 
         if ((argc - cnt) == 1)
         {
@@ -138,7 +140,7 @@ int main (int argc, char *argv[])
     }
 
     /* Try to send the specified command to the specified process */
-    if (manager.SendCommand(command, process, params, 0) == FAILURE)
+    if (manager.SendCommand(command, process, params) == FAILURE)
     {
         goto exit;
     }
