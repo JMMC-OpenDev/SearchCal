@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.cpp,v 1.4 2005-02-14 08:09:04 gzins Exp $"
+ * "@(#) $Id: miscoDYN_BUF.cpp,v 1.5 2005-02-16 14:57:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/14 08:09:04  gzins
+ * Implemented assignment operator and copy constructor
+ *
  * Revision 1.3  2005/02/12 20:04:44  gzins
  * Go back to version 1.1
  *
@@ -20,7 +23,7 @@
  * byte-based buffers.
  */
 
-static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.4 2005-02-14 08:09:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.5 2005-02-16 14:57:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -193,25 +196,27 @@ const char*   miscoDYN_BUF::GetCommentPattern   () const
 }
 
 /**
- * Return a pointer to the next line of a Dynamic Buffer, skipping lines
- * beginning with the defined comment pattern if specified.
+ * Return the next line of a Dynamic Buffer.
  *
- * \param currentLinePtr the address of the line from which we need to find the
- * next, or NULL to begin on the first line of the file
+ * \param currentPos the  position from which the next line will be searched, or
+ * NULL to begin on the first line of the buffer.
+ * \param nextLine buffer in which next line will be stored in.
  * \param skipCommentFlag the boolean specifying weither the line beginnig by
  * the Dynamic Buffer comment pattern should be skipped or not
  *
- * \sa SetCommentPattern()
+ * \sa miscDynBufGetNextLine()
  *
- * \return a pointer to the next line of a Dynamic Buffer buffer, or NULL if an
- * error occured
+ * \return a pointer to the new buffer position to be used to get the next line,
+ * or NULL if an error occured.
  */
-char*         miscoDYN_BUF::GetNextLine         (const char  *currentLinePtr,
+const char*   miscoDYN_BUF::GetNextLine         (const char  *currentPos,
+                                              mcsSTRING1024  nextLine,
                                            const mcsLOGICAL  skipCommentFlag)
 {
     logExtDbg("miscoDYN_BUF::GetNextLine()");
 
-    return miscDynBufGetNextLine(&_dynBuf, currentLinePtr, skipCommentFlag);
+    return miscDynBufGetNextLine(&_dynBuf, currentPos, 
+                                 nextLine, skipCommentFlag);
 }
 
 /**

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.6 2005-02-14 14:10:13 scetre Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.7 2005-02-16 14:57:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/14 14:10:13  scetre
+ * move _dynBuf from private to protected
+ *
  * Revision 1.5  2005/02/14 08:09:04  gzins
  * Implemented assignment operator and copy constructor
  *
@@ -83,7 +86,8 @@ public:
 
     const char*   GetCommentPattern  () const;
 
-    char*         GetNextLine        (const char       *currentLinePtr,
+    const char*   GetNextLine        (const char       *currentPos,
+                                      mcsSTRING1024     nextLine,
                                       const mcsLOGICAL skipCommentFlag=mcsTRUE);
 
     mcsCOMPL_STAT GetByteAt          (      char       *byte,
