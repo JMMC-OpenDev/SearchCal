@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.17 2005-02-22 15:48:38 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.18 2005-02-22 15:59:43 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/02/22 15:48:38  lafrasse
+* Updated because of a miscoDYN_BUFF::GetNextLine() API change
+*
 * Revision 1.16  2005/02/17 17:57:27  gzins
 * Removed trailing and leading spaces of read values when adding parameter description
 *
@@ -55,7 +58,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.17 2005-02-22 15:48:38 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.18 2005-02-22 15:59:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -375,7 +378,8 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
     mcsSTRING1024 line;
     do 
     {
-        from = tmpBuffer.GetNextLine(from, line, mcsFALSE);
+        from = tmpBuffer.GetNextLine
+            (from, line, sizeof(mcsSTRING1024), mcsFALSE);
         lineNum++;
         if ((from != NULL) && (lineNum > (nbLinesToSkip)) &&
             (miscIsSpaceStr(line) == mcsFALSE))
