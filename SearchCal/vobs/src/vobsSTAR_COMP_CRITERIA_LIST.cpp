@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.3 2005-01-24 10:58:44 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.4 2005-01-24 13:53:33 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.3 2005-01-24 10:58:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.4 2005-01-24 13:53:33 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,11 +50,12 @@ vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
  */
 vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST(vobsSTAR_COMP_CRITERIA_LIST &criteriaList)
 {
-    // For each criteria
+    // For each criteria of the criteria list in parameter
     map<char *, float> ::iterator criteriaIterator;
     for (criteriaIterator = _criteriaList.begin();
          criteriaIterator != _criteriaList.end(); criteriaIterator++)
     {
+        // Copy it in the criteria list
         _criteriaList[(*criteriaIterator).first] = 
             criteriaList._criteriaList[(*criteriaIterator).first];
     }

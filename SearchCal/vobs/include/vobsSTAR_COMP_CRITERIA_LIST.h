@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.2 2004-12-20 09:39:46 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.3 2005-01-24 13:53:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -55,12 +55,13 @@ public:
                                           mcsFLOAT *range,
                                           mcsLOGICAL init = mcsFALSE);
 
+    // Method to get the number of criteria
     virtual int Size();
 
 protected:
     
 private:
-    // List of stars
+    // List of criteria
     std::map<char *, float>           _criteriaList;
     std::map<char *, float>::iterator _criteriaIterator;
 };
