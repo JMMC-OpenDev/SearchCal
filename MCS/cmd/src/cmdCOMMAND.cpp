@@ -1,11 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.1 2004-12-05 18:57:21 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.2 2004-12-06 10:08:45 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * mella     15-Nov-2004  Created
+* gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
+*                        fixed bug related to flag check
 *
 *
 *******************************************************************************/
@@ -16,7 +18,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.1 2004-12-05 18:57:21 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.2 2004-12-06 10:08:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -59,7 +61,7 @@ cmdCOMMAND::cmdCOMMAND(string name, string params)
     logExtDbg("cmdCOMMAND::cmdCOMMAND()");
     _name = name;
     _params = params;
-    _hasNotBeenYetParsed = mcsTRUE;
+    _hasBeenYetParsed = mcsFALSE;
 }
 
 
@@ -92,10 +94,10 @@ cmdCOMMAND::~cmdCOMMAND()
  */
 mcsCOMPL_STAT cmdCOMMAND::Parse()
 {
-    logExtDbg ("cmdCOMMAND::parse()");
+    logExtDbg ("cmdCOMMAND::Parse()");
     
     // If command has been already parsed, return
-    if ( _hasNotBeenYetParsed == mcsTRUE)
+    if ( _hasBeenYetParsed == mcsTRUE)
     {
         return SUCCESS;
     }
@@ -126,7 +128,7 @@ mcsCOMPL_STAT cmdCOMMAND::Parse()
     }
         
     // and flag a right performed parsing only after this point
-    _hasNotBeenYetParsed = mcsFALSE;
+    _hasBeenYetParsed = mcsTRUE;
     return SUCCESS;
 }
 
