@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.12 2004-12-22 08:47:10 gzins Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.13 2005-01-07 18:39:43 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -19,7 +19,8 @@
 *                        to a misc Dynamic Buffer, and removed unused API
 * gzins     22-Dec-2004  Updated Send and Receive which are defined as friend
 *                        of the msgMESSAGE class
-*
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+*                        Changed messageId to commandId
 *
 *******************************************************************************/
 
@@ -28,7 +29,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.12 2004-12-22 08:47:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.13 2005-01-07 18:39:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -94,7 +95,7 @@ msgSOCKET::~msgSOCKET()
 /**
  * Create the socket.
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Create(void)
 {
@@ -104,7 +105,7 @@ mcsCOMPL_STAT msgSOCKET::Create(void)
     if (IsConnected() == mcsTRUE)
     {
         errAdd(msgERR_PROC_ALREADY_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Instantiate a new IPv4/TCP socket
@@ -114,10 +115,10 @@ mcsCOMPL_STAT msgSOCKET::Create(void)
     if (IsConnected() == mcsFALSE)
     {
         errAdd(msgERR_SOCKET, strerror(errno));
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -156,7 +157,7 @@ mcsLOGICAL msgSOCKET::IsConnected(void)
  *
  * \param port the port to which the socket should be bind
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
 {
@@ -166,7 +167,7 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
     if (IsConnected() == mcsFALSE)
     {
         errAdd(msgERR_SOCKET_NOT_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Define socket configuration
@@ -179,7 +180,7 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
     {
         errAdd(msgERR_BIND, strerror(errno));
         Close();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Verify the new socket validity
@@ -189,16 +190,16 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
     {
         errAdd(msgERR_GETSOCKNAME, strerror(errno));
         Close();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
  * Start listening on the socket.
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Listen(void)
 {
@@ -208,7 +209,7 @@ mcsCOMPL_STAT msgSOCKET::Listen(void)
     if ( IsConnected() == mcsFALSE )
     {
         errAdd(msgERR_SOCKET_NOT_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Start listening
@@ -216,10 +217,10 @@ mcsCOMPL_STAT msgSOCKET::Listen(void)
     if (listen_return == -1)
     {
         errAdd(msgERR_LISTEN, strerror(errno));
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -227,7 +228,7 @@ mcsCOMPL_STAT msgSOCKET::Listen(void)
  *
  * \param socket the newly created socket to the connected process
  *
- * @return SUCCESS on successfull completion, FAILURE otherwise
+ * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
 {
@@ -242,10 +243,10 @@ mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
     if (socket.IsConnected() == mcsFALSE)
     {
         errAdd(msgERR_SOCKET_NOT_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -254,7 +255,7 @@ mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
  * \param host the remote machine host name or IPv4 address
  * \param port the remote server  port number
  *
- * @return SUCCESS on successfull completion, FAILURE otherwise
+ * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
                                  const mcsUINT16   port)
@@ -265,7 +266,7 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
     if (IsConnected() == mcsFALSE)
     {
         errAdd(msgERR_SOCKET_NOT_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     _address.sin_family = AF_INET;
@@ -276,7 +277,7 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
     inet_pton(AF_INET, host.c_str(), &_address.sin_addr);
     if (errno == EAFNOSUPPORT) 
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Connect to the remote server
@@ -285,10 +286,10 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
     if (status != 0)
     {
         errAdd(msgERR_CONNECT, strerror(errno));
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -296,7 +297,7 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
  *
  * \param string the string to be sended to the connected process
  *
- * @return SUCCESS on successfull completion, FAILURE otherwise
+ * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
 {
@@ -308,10 +309,10 @@ mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
     if ( status == -1 )
     {
         errAdd(msgERR_CONNECT, strerror(errno));
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -320,7 +321,7 @@ mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
  * \param string a string object that will be overwritten with the incomming
  * data
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
 {
@@ -337,7 +338,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
     if (status == -1)
     {
         errAdd(msgERR_RECV, strerror(errno));
-        return FAILURE;
+        return mcsFAILURE;
     }
     else
     {
@@ -345,12 +346,12 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
         if (status == 0)
         {
             errAdd(msgERR_RECV, strerror(errno));
-            return FAILURE;
+            return mcsFAILURE;
         }
         else
         {
             string = buf;
-            return SUCCESS;
+            return mcsSUCCESS;
         }
     }
 }
@@ -360,23 +361,23 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
  *
  * \param msg the message to send
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 {
     logExtDbg("msgSOCKET::Send()");
 
     // Set message id
-    if (msg.GetMessageId() == -1)
+    if (msg.GetCommandId() == -1)
     {
         /* Get the system time */
         struct timeval  time; 
         gettimeofday(&time, NULL);
 
-        // Message Id is the time of the day in msec
-        mcsINT32 messageId;
-        messageId = (time.tv_sec%86400) * 1000 + time.tv_usec/1000;
-        msg.SetMessageId(messageId);
+        // Command Id is the time of the day in msec
+        mcsINT32 commandId;
+        commandId = (time.tv_sec%86400) * 1000 + time.tv_usec/1000;
+        msg.SetCommandId(commandId);
     }
 
     // Send the message header
@@ -405,10 +406,10 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
         }
 
         // Return an error code
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -418,7 +419,7 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
  * \param msg the message object that will be overwritten with the received one
  * \param timeoutInMs the number of milliseconds before a timeout occur
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
                                  mcsINT32           timeoutInMs)
@@ -459,14 +460,14 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     if (status == 0)
     {
         errAdd(msgERR_TIMEOUT_EXPIRED, "No specific error message !!!");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // If an error occured during select()
     if (status == -1)
     {
         errAdd(msgERR_SELECT, strerror(errno));
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // If the connection with the remote processus was lost...
@@ -474,7 +475,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     if (nbBytesToRead == 0)
     {
         errAdd(msgERR_BROKEN_PIPE);
-        return FAILURE;
+        return mcsFAILURE;
     }
     else
     {
@@ -484,7 +485,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         if (nbBytesRead != msgHEADERLEN)
         {
             errAdd(msgERR_PARTIAL_HDR_RECV, nbBytesRead, msgHEADERLEN);
-            return (FAILURE);
+            return (mcsFAILURE);
         }
 
         // Read the message body if it exists
@@ -492,16 +493,16 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         bodySize = msg.GetBodySize();
         if (bodySize == -1)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         // If there is a body
         if (bodySize != 0)
         {
             // Allocate some memory for the up comming body
-            if (msg.AllocateBody(bodySize) == FAILURE)
+            if (msg.AllocateBody(bodySize) == mcsFAILURE)
             {
-                return (FAILURE);
+                return (mcsFAILURE);
             }
 
             // Get the body from the socket and write it inside msgMESSAGE
@@ -511,7 +512,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
             if (nbBytesRead != bodySize)
             {
                 errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, bodySize);
-                return (FAILURE); 
+                return (mcsFAILURE); 
             }
         }
 
@@ -522,13 +523,13 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         }
     } 
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
  * Close the socket.
  *
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgSOCKET::Close(void)
 {
@@ -541,7 +542,7 @@ mcsCOMPL_STAT msgSOCKET::Close(void)
     close(_descriptor);
     _descriptor = -1;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
