@@ -1,15 +1,15 @@
 #!/bin/bash
-#*******************************************************************************
+#*****************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateFile.sh,v 1.8 2004-09-16 10:22:01 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateFile.sh,v 1.9 2005-01-24 10:58:24 gluck Exp $"
 #
 # who       when         what
-# --------  -----------  -------------------------------------------------------
+# ------  -----------  -------------------------------------------------------
 # gluck     10-Aug-2004  Created
 #
 #
-#*******************************************************************************
+#*****************************************************************************
 
 #/**
 # \file
@@ -75,16 +75,11 @@ fi
 if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
 then
     # File copy succeeds
-    # setup author and date:
-    AUTHOR=`whoami`
-    AUTHOR=`printf "%-8s" $AUTHOR`
-    DATE=`date "+%d-%b-%Y"`
 
-    # Replace author and date in the new temporary file and create the
-    # permanent file
-    sed -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
-        -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
-        -e "1,$ s/I>-<d/\Id/g" \
+    # Replacement in the new temporary file, to include for CVS, $Id: ctooGetTemplateFile.sh,v 1.9 2005-01-24 10:58:24 gluck Exp $ 
+    # and $Log: not supported by cvs2svn $. Then create the permanent file.
+    sed -e "1,$ s/I>-<d/\Id/g" \
+        -e "1,$ s/>-Log-</Log/g" \
         ${FILE}.BAK > $FILE
 
     # Remove the temporary backup file
