@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.15 2005-02-10 06:38:58 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.16 2005-02-11 14:23:07 gluck Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/02/10 06:38:58  gzins
+* Added logInfo; name of consulted catalog and number of stars found.
+*
 * Revision 1.14  2005/02/09 06:10:44  gzins
 * Changed vobsSTAR_COMP_CRITERIA_LIST& to vobsSTAR_COMP_CRITERIA_LIST* in vobsSCENARIO
 *
@@ -50,7 +53,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.15 2005-02-10 06:38:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.16 2005-02-11 14:23:07 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -68,6 +71,7 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "misc.h"
 
 /*
  * Local Headers 
