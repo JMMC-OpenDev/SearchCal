@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/01/27 14:08:33  gzins
+* Added isErrUser parameter
+*
 * Revision 1.9  2005/01/24 14:49:18  gzins
 * Used CVS log as modification history
 *
@@ -14,7 +17,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.10 2005-01-27 14:08:33 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.11 2005-01-31 15:19:50 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -111,7 +114,7 @@ static char *errGetErrProp(const char *moduleId,
             {
                 errDefFileFound = mcsTRUE;
             }
-	}
+	    }
     }
 
     /* If not found in $INTROOT, look in $MCSROOT */
@@ -130,8 +133,8 @@ static char *errGetErrProp(const char *moduleId,
             if (stat(errFileName, &statBuf) == 0)
             {
                 errDefFileFound = mcsTRUE;
+	        }
 	    }
-	}
     }
 
     /* If error definition file has not been found */
