@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/27 14:12:24  gzins
+* Added isErrUser parameter
+*
 * Revision 1.3  2005/01/24 14:49:18  gzins
 * Used CVS log as modification history
 *
@@ -12,7 +15,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errPushInLocalStack_L.c,v 1.4 2005-01-27 14:12:24 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPushInLocalStack_L.c,v 1.5 2005-02-04 10:43:44 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -96,7 +99,17 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
     error->stack[errNum].isErrUser = isErrUser;
     error->stack[errNum].severity = severity;
     strcpy((char *)error->stack[errNum].runTimePar, runTimePar);
- 
+
+    /* Display newly error added (for debug purpose only) */
+    logDebug("%s - %s %s %s %d %c %s\n",
+            error->stack[errNum].timeStamp,
+            error->stack[errNum].moduleId,
+            error->stack[errNum].procName,
+            error->stack[errNum].location,
+            error->stack[errNum].errorId,
+            error->stack[errNum].severity,
+            error->stack[errNum].runTimePar);
+
     return mcsSUCCESS;
 }
 

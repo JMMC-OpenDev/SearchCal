@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/01/31 15:19:50  mella
+* Align some parentheses block
+*
 * Revision 1.10  2005/01/27 14:08:33  gzins
 * Added isErrUser parameter
 *
@@ -17,7 +20,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.11 2005-01-31 15:19:50 mella Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.12 2005-02-04 10:43:44 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -145,7 +148,7 @@ static char *errGetErrProp(const char *moduleId,
         return NULL;
     }
 
-    logDebug("Used error definition file '%s'", errFileName);
+    logExtDbg("Used error definition file '%s'", errFileName);
 
     /* Load a new document from a file */
     doc = gdome_di_createDocFromURI(domimpl, errFileName, GDOME_LOAD_PARSING,

@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/01 07:38:51  mella
+* Correct typo
+*
 * Revision 1.4  2005/01/27 14:08:57  gzins
 * Added isErrUser parameter
 *
@@ -20,7 +23,7 @@
  * \file
  * Definition of errAddInStack function.
  */
-static char *rcsId="@(#) $Id: errAddInStack.c,v 1.5 2005-02-01 07:38:51 mella Exp $"; 
+static char *rcsId="@(#) $Id: errAddInStack.c,v 1.6 2005-02-04 10:43:44 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -71,7 +74,7 @@ mcsCOMPL_STAT errAddInStack(const mcsMODULEID moduleId,
     va_list       argPtr;
     mcsCOMPL_STAT status;
 
-    logExtDbg("errAddInStack(%s, %d)", moduleId, errorId);
+    logTest("errAddInStack(%s, %d)", moduleId, errorId);
     /* Call the error message */
     va_start(argPtr, isErrUser);
     status = errAddInLocalStack_v(&errGlobalStack, moduleId, 
