@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS.h,v 1.3 2005-01-29 19:56:16 gzins Exp $"
+ * "@(#) $Id: msgPROCESS.h,v 1.4 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/29 19:56:16  gzins
+ * Added SetId/GetId and SetUnicity/IsUnique methods
+ *
  * Revision 1.2  2005/01/24 15:39:54  gzins
  * Added CVS logs as modification history
  *
@@ -34,10 +37,11 @@
  */
 
 /**
- * Class handling process connected to the MCS message service.
+ * Class storing all the details about each process connected to the
+ * \<msgManager\>.
  * 
- * The msgPROCESS class provides methods to set/get informations of a
- * connected process to the MCS message service. 
+ * Provides all the methods allowing to get/set informations about any process
+ * connected to the \<msgManager\>. 
  */
 class msgPROCESS : public msgSOCKET_CLIENT
 {

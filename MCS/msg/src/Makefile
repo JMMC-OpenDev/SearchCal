@@ -1,23 +1,25 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.18 2005-01-29 20:05:27 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.19 2005-02-04 15:57:06 lafrasse Exp $"
 #
 # Makefile of msg
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
-# lafrasse  10-Aug-2004  Created
-# gzins     01-Oct-2004  Added msgSendCommand
+# Revision 1.18  2005/01/29 20:05:27  gzins
+# Added PROCLIST command
+#
+# gzins     14-Dec-2004  Added CDF and class for DEBUG command
+# gzins     08-Dec-2004  Removed msgMCS_ENVS and added env library 
+# gzins     07-Dec-2004  Updated after C++ conversion 
+# gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
+# lafrasse  03-Dec-2004  Added msgMCS_ENV compilation directives
+# lafrasse  23-Nov-2004  Added all the socket-related header
 # lafrasse  19-Nov-2004  Added msgMANAGER_IF.cpp and msgMESSAGE.cpp compilation
 #                        directives
-# lafrasse  23-Nov-2004  Added all the socket-related header
-# lafrasse  03-Dec-2004  Added msgMCS_ENV compilation directives
-# gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
-# gzins     07-Dec-2004  Updated after C++ conversion 
-# gzins     08-Dec-2004  Removed msgMCS_ENVS and added env library 
-# gzins     14-Dec-2004  Added CDF and class for DEBUG command
+# lafrasse  10-Aug-2004  Created
 #
 #*******************************************************************************
 # REMARKS

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.13 2005-02-03 11:09:24 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.14 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/02/03 11:09:24  gzins
+ * Returned EXIT_FAILURE when error reply is received
+ *
  * Revision 1.12  2005/01/29 19:59:42  gzins
  * Minor change in file history
  *
@@ -15,26 +18,26 @@
  * Revision 1.10  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
- * lafrasse  16-Aug-2004  Ported from CILAS software
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *                        Displayed error stack when receiving error reply
+ * gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
+ * gzins     20-Dec-2004  Removed leading and trailing spaces to parameters
+ * gzins     07-Dec-2004  Removed no longer needed errStackDisplay() 
+ * gzins     03-Dec-2004  Updated according to new msgMANAGER_IF::Connect API
+ * gzins     29-Nov-2004  Fixed bug related to time-out handling
+ *                        Set default time-out to WAIT_FOREVER
+ * lafrasse  23-Nov-2004  Cleaned included headers
  * lafrasse  19-Nov-2004  Used argv[0] instead of the hard-coded
  *                        "msgSendCommand" value, and added the mcsExit()
  *                        function call
- * lafrasse  23-Nov-2004  Cleaned included headers
- * gzins     29-Nov-2004  Fixed bug related to time-out handling
- *                        Set default time-out to WAIT_FOREVER
- * gzins     03-Dec-2004  Updated according to new msgMANAGER_IF::Connect API
- * gzins     07-Dec-2004  Removed no longer needed errStackDisplay() 
- * gzins     20-Dec-2004  Removed leading and trailing spaces to parameters
- * gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
- * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
- *                        Displayed error stack when receiving error reply
+ * lafrasse  16-Aug-2004  Ported from CILAS software
  *
  ******************************************************************************/
 
 /**
  * \file
- * \e \<msgSendCommand\> - 'msgManager' test program, sending a command,
- * then waiting its replies.
+ * \e \<msgSendCommand\> - program sending a command to a specified process, 
+ * then waiting for a reply.
  *
  * \b Synopsis:\n
  * \e \<msgSendCommand\> [-v] \<process\> \<command\> \<commandPar\>
@@ -43,27 +46,27 @@
  * \param process    : recepient process name
  * \param command    : name of the command to be sent
  * \param commandPar : command parameter list
- * \param time-out   : maximum waiting time-out, in milliseconds (by default,
- *                     wait forever)
+ * \param time-out   : maximum waiting time-out, in milliseconds (waits forever
+ *                     if not specified)
  *
  * \optname v        : enable verbose mode
  *
  * \b Details:\n
- * \e \<msgSendCommand\> sends the \<command\> to the \<process\> process,
- * and then waits for the correspondant reply(ies). The received reply(ies) and
- * all possible errors are printed on stdout.
+ * \e \<msgSendCommand\> sends the \<command\> command to the \<process\>
+ * process, and then waits for the corresponding reply(ies). The received
+ * reply(ies) and all possible errors are then printed on the standard output.
  *
- * The program will exit if :
- * \li the last reply is received
- * \li the \<time-out\> expired
- * \li an error occured
+ * The program will exit when :
+ * \li the last reply of the dialog is received;
+ * \li the \<time-out\> expired;
+ * \li an error occured.
  *
  * \ex
  * msgSendCommand -v msgManager VERSION ""
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.13 2005-02-03 11:09:24 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.14 2005-02-04 15:57:06 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*

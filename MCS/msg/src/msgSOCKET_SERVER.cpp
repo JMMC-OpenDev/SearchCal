@@ -1,24 +1,29 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.6 2005-01-24 15:02:47 gzins Exp $"
+ * "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.7 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * scetre    22-Nov-2004  Created
- * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
- * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * Revision 1.6  2005/01/24 15:02:47  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+ * scetre    22-Nov-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * msgSOCKET_SERVER class definition.
+ * Interface class providing server-side specialized socket functionnalities.
+ *
+ * \sa msgSOCKET_SERVER
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.6 2005-01-24 15:02:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.7 2005-02-04 15:57:06 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -43,6 +48,7 @@ using namespace std;
 #include "msgSOCKET.h"
 #include "msgSOCKET_SERVER.h"
 #include "msgPrivate.h"
+
 
 /*
  * Class constructor

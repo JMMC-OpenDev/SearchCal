@@ -3,18 +3,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.h,v 1.12 2005-01-24 15:39:54 gzins Exp $"
+ * "@(#) $Id: msgSOCKET.h,v 1.13 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * scetre    19-Nov-2004  Created
- * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
- * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
- * gzins     06-Dec-2004  Declared copy constructor as public method
- * gzins     06-Dec-2004  Declared copy constructor as private method
+ * Revision 1.12  2005/01/24 15:39:54  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     22-Dec-2004  Replaced msgMESSAGE.h file inclusion by msgMESSAGE
  *                        class declaration
+ * gzins     06-Dec-2004  Declared copy constructor as private method
+ * gzins     06-Dec-2004  Declared copy constructor as public method
+ * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+ * scetre    19-Nov-2004  Created
  *
  ******************************************************************************/
 
@@ -43,30 +46,28 @@
  */
 class msgMESSAGE;
 
+
+/*
+ * Constant declaration
+ */
+
+const int MAXCONNECTIONS = 5;
+const int MAXRECV        = 500;
+
+
 /*
  * Class declaration
  */
 
 /**
- * Object wrapper around system socket.
+ * Class wrapping IPv4 BSD socket.
  * 
- * The msgSOCKET object provide method to create, close, send and received
- * data on a socket in order to allow network communication.
- *
- * \n
- * \ex
- * OPTIONAL. Code example if needed
- * \n Brief example description.
- * \code
- * Insert your code example here
- * \endcode
- *
- * \todo write code example 
+ * Provides methods to :
+ * \li create a socket;
+ * \li send data through a socket;
+ * \li received data through a socket;
+ * \li close a socket.
  */
-const int MAXHOSTNAME    = 200;
-const int MAXCONNECTIONS = 5;
-const int MAXRECV        = 500;
-
 class msgSOCKET
 {
 

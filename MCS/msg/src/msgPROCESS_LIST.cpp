@@ -1,27 +1,32 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.6 2005-01-29 20:01:00 gzins Exp $"
+ * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.7 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/01/29 20:01:00  gzins
+ * Minor change in code example
+ *
  * Revision 1.5  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
- * gzins     06-Dec-2004  Created
- * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
- * gzins     14-Dec-2004  Minor documentation changes 
  * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ * gzins     14-Dec-2004  Minor documentation changes 
+ * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
+ * gzins     06-Dec-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * msgPROCESS_LIST class definition.
+ * Storage class used to hold all the msgPROCESS objects of the \<msgManager\>.
+ *
+ * \sa msgPROCESS_LIST
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.6 2005-01-29 20:01:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.7 2005-02-04 15:57:06 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -43,6 +48,7 @@ using namespace std;
 #include "msgPROCESS_LIST.h"
 #include "msgPrivate.h"
 
+
 /**
  * Class constructor
  */
@@ -57,14 +63,15 @@ msgPROCESS_LIST::~msgPROCESS_LIST()
 {
 }
 
+
 /*
  * Public methods
  */
+
 /**
- * Check whether the list is empty or not.  
+ * Return whether the list is empty or not.  
  *
- * \return true value (i.e. mcsTRUE) if the number of elements is zero, false
- * (i.e.  mcsFALSE) otherwise.
+ * \return mcsTRUE if the list is empty, mcsFALSE otherwise
  */
 mcsLOGICAL msgPROCESS_LIST::IsEmpty(void)
 {
@@ -80,54 +87,135 @@ mcsLOGICAL msgPROCESS_LIST::IsEmpty(void)
 }
 
 /**
- * Erase all elements from the list.
+ * Return the number of processes currently stored in the list.
  *
- * \return always mcsSUCCESS.
+ * \return the number of processes in the list
  */
-mcsCOMPL_STAT msgPROCESS_LIST::Clear(void)
+mcsUINT32 msgPROCESS_LIST::Size(void) 
 {
-    // Delete all objects in list 
-    std::list<msgPROCESS *>::iterator iter;
-    for (iter=_processList.begin(); iter != _processList.end(); iter++)
-    {
-        delete (*iter);
-    }
-
-    // Clear list
-    _processList.clear();
-    return mcsSUCCESS;
+    return _processList.size();
 }
 
 /**
- * Adds the element at the end of the list
+ * Add a process at the end of the list.
  *
- * \param process element to be added to the list.
+ * \param process the msgPROCESS object to be added to the list
  *
- * \return always mcsSUCCESS.
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgPROCESS_LIST::AddAtTail(msgPROCESS *process)
 {
     logExtDbg("msgPROCESS_LIST::AddAtTail()");
 
-    // Put element in the list
+    // Put the process at the end of the list
     _processList.push_back(process);
 
     return mcsSUCCESS;
 }
 
 /**
- * Remove the element from the list
+ * Returns the next process in the list.
+ *
+ * This method returns a pointer on the next element of the list. If \em init
+ * equals mcsTRUE, returns a pointer on the first element of the list.
+ * 
+ * This method can be used to move forward in the list, as shown below:
+ * \code
+ *     for (unsigned int el = 0; el < processList.Size(); el++)
+ *     {
+ *         processList.GetNextProcess((mcsLOGICAL)(el==0))->Close();
+ *     }
+ * \endcode
+ *
+ * \param init if equals to mcsTRUE, return the first element of the list,
+ * otherwise return the one next to the current internal position
+ *
+ * \return a pointer on the next element of the list, or NULL if the end of the
+ * list is reached
+ */
+msgPROCESS *msgPROCESS_LIST::GetNextProcess(mcsLOGICAL init) 
+{
+    logExtDbg("msgPROCESS_LIST::GetNextProcess()");
+    
+    // If init is TRUE
+    if (init == mcsTRUE)
+    {
+        // Get First element of the list
+        _processIterator = _processList.begin();
+    }
+    else
+    {
+        // Get next element
+        _processIterator++;
+
+        // If end of list is reached
+        if (_processIterator == _processList.end())
+        {
+            // Return NULL
+            return NULL;
+        }
+    }
+
+    // Return current element
+    return (*_processIterator);
+}
+
+/**
+ * Return the process of the list which has been registered with the given name.
+ *
+ * This method looks in the list for the process which has been registered with
+ * the given name, and which is connected to the \em sd socket. If \em sd is not
+ * specified, the first process with the given name is returned.
+ *  
+ * This method can be used to figure out whether a process is in the list or
+ * not, as shown below:
+ * \code
+ *     if (processList.GetProcess(process.GetName()) == NULL)
+ *     {
+ *         printf ("Process not found in list !!");
+ *     }
+ * \endcode
+ * 
+ * \param name the searched process name
+ * \param sd optionnal socket descriptor to which the searched process should be
+ * connected
+ * 
+ * \return a pointer on the searched process, or NULL if the process was not
+ * found in list.
+ */
+msgPROCESS *msgPROCESS_LIST::GetProcess(char *name, mcsINT32 sd)
+{
+    logExtDbg("msgPROCESS_LIST::GetProcess()");
+
+    // Search process in the list
+    std::list<msgPROCESS *>::iterator iter;
+    for (iter=_processList.begin(); iter != _processList.end(); iter++)
+    {
+        // If found
+        if ((strcmp((*iter)->GetName(), name) == 0) &&
+            ((sd == -1) || ((*iter)->GetDescriptor() == sd)))
+        {
+            // Return pointer to the element 
+            return (*iter);
+        }
+    }
+
+    // If not found return NULL pointer
+    return NULL;
+}
+
+/**
+ * Remove a process from the list
  *
  * This method looks for the process corresponding to the specified socket
- * descriptor \em sd in the list. If found, it removes it, and does nothing
- * otherwise.
+ * descriptor \em sd in the list. If found, removes it, otherwise does nothing.
  *
- * \warning if list contains more than one instance corresponding to \em sd,
- * only first occurence is removed. 
+ * \warning if the list contains more than one instance corresponding to \em sd,
+ * only the first occurence is removed. 
  *
- * \param sd socket descriptor of the process to be removed from the list.
+ * \param sd socket descriptor of the process to be removed from the list
  *
- * \return always mcsSUCCESS.
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgPROCESS_LIST::Remove(mcsINT32 sd)
 {
@@ -152,107 +240,22 @@ mcsCOMPL_STAT msgPROCESS_LIST::Remove(mcsINT32 sd)
 }
 
 /**
- * Returns the number of elements (processes) currently stored in the list.
+ * Erase all elements of the list.
  *
- * \return numbers of processes in the list.
+ * \return always mcsSUCCESS
  */
-mcsUINT32 msgPROCESS_LIST::Size(void) 
+mcsCOMPL_STAT msgPROCESS_LIST::Clear(void)
 {
-    return _processList.size();
-}
-
-/**
- * Returns the next element (process) in the list.
- *
- * This method returns the pointer to the next element of the list. If \em
- * init is mcsTRUE, it returns the first element of the list.
- * 
- * This method can be used to move forward in the list, as shown below:
- * \code
- *     for (unsigned int el = 0; el < processList.Size(); el++)
- *     {
- *         processList.GetNextProcess((mcsLOGICAL)(el==0))->Close();
- *     }
- * \endcode
- *
- * \param init if true return the element of the list, otherwise return the
- * next one.
- *
- * \return pointer to the next element of the list or NULL if the end of the
- * list is reached.
- */
-msgPROCESS *msgPROCESS_LIST::GetNextProcess(mcsLOGICAL init) 
-{
-    logExtDbg("msgPROCESS_LIST::GetNextProcess()");
-    
-    // If init is TRUE
-    if (init == mcsTRUE)
-    {
-        // Get First element of the list
-        _processIterator = _processList.begin();
-    }
-    // Else
-    else
-    {
-        // Get next element
-        _processIterator++;
-
-        // If end of list is reached
-        if (_processIterator == _processList.end())
-        {
-            // Return NULL
-            return NULL;
-        }
-        // End if
-    }
-    // End if
-
-    // Return current element
-    return (*_processIterator);
-}
-
-/**
- * Returns the process of the list, which is registered with the given name.
- *
- * This method looks, in the list, for the process which is registered with
- * the specified name and which is connected to the socket \em sd. If \em sd
- * is not specified, the the process with the given name found is returned.
- * If found, it returns the pointer to this element, and NULL otherwise.
- *  
- * This method can be used to know whether a process is in list or not, as shown
- * below:
- * \code
- *     if (processList.GetProcess(process.GetName()) == NULL)
- *     {
- *         printf ("Process not found in list !!");
- *     }
- * \endcode
- * 
- * \param name process name.
- * \param sd socket descriptor to which process is connected.
- * 
- * \return pointer to the found element of the list or NULL if element is not
- * found in list.
- */
-msgPROCESS *msgPROCESS_LIST::GetProcess(char *name, mcsINT32 sd)
-{
-    logExtDbg("msgPROCESS_LIST::GetProcess()");
-
-    // Search process in the list
+    // Delete all objects in list 
     std::list<msgPROCESS *>::iterator iter;
     for (iter=_processList.begin(); iter != _processList.end(); iter++)
     {
-        // If found
-        if ((strcmp((*iter)->GetName(), name) == 0) &&
-            ((sd == -1) || ((*iter)->GetDescriptor() == sd)))
-        {
-            // Return pointer to the element 
-            return (*iter);
-        }
+        delete (*iter);
     }
 
-    // If not found return NULL pointer
-    return NULL;
+    // Clear list
+    _processList.clear();
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

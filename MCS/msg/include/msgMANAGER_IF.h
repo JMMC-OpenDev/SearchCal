@@ -3,24 +3,26 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.h,v 1.10 2005-01-29 19:58:17 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.h,v 1.11 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/01/29 19:58:17  gzins
+ * Added únique' parameter to Connect()
+ *
  * Revision 1.9  2005/01/24 15:39:54  gzins
  * Added CVS logs as modification history
  *
- * lafrasse  18-Nov-2004  Created
- * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
- *                        _socket, and added the class description comment
- * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
- * lafrasse  01-Dec-2004  Comment refinments
+ * gzins     07-Jan-2005  Updated SendCommand prototype to return command Id
  * gzins     03-Dec-2004  Removed msgManagerHost param from Connect
  *                        Gave default value to paramList and paramLen
  *                        arguments of SendCommand
- * gzins     07-Jan-2005  Updated SendCommand prototype to return command Id
- *
+ * lafrasse  01-Dec-2004  Comment refinments
+ * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
+ * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
+ *                        _socket, and added the class description comment
+ * lafrasse  18-Nov-2004  Created
  *
  ******************************************************************************/
 
@@ -53,18 +55,16 @@
  */
 
 /**
- * msgMANAGER_IF is an interface class that allow to easily communicate with an
- * msgManager process.
+ * msgMANAGER_IF is an interface class that allow to easily communicate with
+ * remote processes through \<msgManager\>.
  *
  * The main functionnalities are :
- * \li (dis)connection to an msgManager process;
- * \li transmission of messages (in the firm of msgMESSAGE objects) to it;
- * \li reception of messages from it;
+ * \li (dis)connection to the \<msgManager\> process;
+ * \li transmission of messages (in the form of msgMESSAGE objects) to remote
+ * processes;
+ * \li reception of messages from remote processes.
  *
  * \sa msgSendCommand.cpp for a complete usage example.
- * 
- * \todo use msgSOCKET instead of the msg C function calls.
- * 
  */
 class msgMANAGER_IF
 {

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.cpp,v 1.21 2005-01-29 20:02:24 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.cpp,v 1.22 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/01/29 20:02:24  gzins
+ * Added 'unique' parameter to Connect()
+ *
  * Revision 1.20  2005/01/27 17:10:02  gzins
  * Minor code indentation change.
  *
@@ -15,39 +18,43 @@
  * Revision 1.18  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
- * lafrasse  18-Nov-2004  Created
- * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
- *                        _socket, and refined comments
- * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
- * lafrasse  24-Nov-2004  Comment refinments, and includes cleaning
- * gzins     29-Nov-2004  Fixed bug in Connect method
- * lafrasse  01-Dec-2004  Comment refinments
- * gzins     03-Dec-2004  Removed msgManagerHost param from Connect
- *                        Minor changes in documentation 
- * lafrasse  03-Dec-2004  Added mcs environment name management
- * gzins     05-Dec-2004  Updated according to new msgMCS_ENV class API
- * gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
- * gzins     07-Dec-2004  Updated according to the new msgMCS_ENVS class
- *                        Fixed bug related to error handling in Connect
- * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *                        Updated SendCommand to return command Id
+ * gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
+ * gzins     15-Dec-2004  Used new command name definition (with _NAME)
+ * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+ *                        misc Dynamic Buffer (no more msgMAXLEN)
  * gzins     09-Dec-2004  Fixed bug related to default port number;
  *                        msgMANAGER_PORT_NUMBER used instead of the one given
  *                        by envLIST class
- * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
- *                        misc Dynamic Buffer (no more msgMAXLEN)
- * gzins     15-Dec-2004  Used new command name definition (with _NAME)
- * gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
- * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
- *                        Updated SendCommand to return command Id
+ * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+ * gzins     07-Dec-2004  Updated according to the new msgMCS_ENVS class
+ *                        Fixed bug related to error handling in Connect
+ * gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
+ * gzins     05-Dec-2004  Updated according to new msgMCS_ENV class API
+ * lafrasse  03-Dec-2004  Added mcs environment name management
+ * gzins     03-Dec-2004  Removed msgManagerHost param from Connect
+ *                        Minor changes in documentation 
+ * lafrasse  01-Dec-2004  Comment refinments
+ * gzins     29-Nov-2004  Fixed bug in Connect method
+ * lafrasse  24-Nov-2004  Comment refinments, and includes cleaning
+ * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
+ * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
+ *                        _socket, and refined comments
+ * lafrasse  18-Nov-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * msgMANAGER_IF class definition.
+ * Interface class providing all the necessary API to communicate with remote
+ * processes through \<msgManager\>.
+ *
+ * \sa
+ * msgMANAGER_IF
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.21 2005-01-29 20:02:24 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.22 2005-02-04 15:57:06 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -101,23 +108,25 @@ msgMANAGER_IF::~msgMANAGER_IF()
 }
 
 
+
 /*
  * Public methods
  */
 
 /**
- * Establish the connection with the MCS message service.
+ * Establish the connection with \<msgManager\>.
  *
- * The server host name is found via the $MCSENV environment variable, and the
- * mcsEnvList file (located in $MCSROOT/etc/mcsEnvList).
+ * The server host name and port number are found via the $MCSENV environment
+ * variable and the mcsEnvList file (located in $MCSROOT/etc/mcsEnvList).
  *
- * If unicity flag, \<unique\> is true, this means the process is unique;
- * it will not be possible that another instance establishes connection with the
- * message service at the same time.
+ * If you set the \em unique parameter to mcsTRUE, then your process will be the
+ * only one with its name allowed to be connected to the \<msgManager\> at a
+ * given time.
  *
- * \param procName  processus name
- * \param unique    if mcsTRUE, only one instance will be allowed to be
- * connected to the message service.  
+ * \param procName your processus name
+ * \param unique specify wether one instance only (if set to mcsTRUE), or
+ * multiple instances (if set to mcsFALSE) of your application are allowed to be
+ * connected to \<msgManager\> at the same time
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -155,7 +164,8 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
     {
         return mcsFAILURE;
     }
-    // Check the environment is local
+
+    // Check if the environment is local
     if (strcmp(localHostName, envHostName) != 0)
     {
         errAdd (msgERR_REMOTE_ENV, mcsGetEnvName(), envHostName);
@@ -193,13 +203,11 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
             return mcsFAILURE;
         }
     }
-    // Else
-    else
+    else // No environment is defined...
     {
-        // Use default port number
-        envPortNumber = envList.GetPortNumber(); /* Definir */
+        // Use the default port number
+        envPortNumber = envList.GetPortNumber();
     }
-    // End if
 
     logTest("Connection to message manager in '%s' environment is '%d'",
             mcsGetEnvName(), envPortNumber);
@@ -267,9 +275,9 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
 }
  
 /**
- * Return weither the connection to msgManger is up and running, or not.
+ * Return wether the connection to \<msgManger\> is up and running, or not.
  *
- * \return an MCS logical (TRUE if the connection is up and running, or FALSE
+ * \return an MCS logical (mcsTRUE if the connection is up and running, mcsFALSE
  * otherwise)
  */
 mcsLOGICAL msgMANAGER_IF::IsConnected(void)
@@ -280,19 +288,20 @@ mcsLOGICAL msgMANAGER_IF::IsConnected(void)
 }
  
 /**
- * Send a command message to a process.
+ * Send a 'command' message to a remote process.
  *
- * Send the \<command\>  to the \<destProc\> named process. The command
- * parameters (if any) has to be given in \<paramList\>. The parameter list
- * length can be specified using \<paramLen\>, if it is not given then the
- * length of the parameter list string is used.
+ * The 'command' parameters (if any) have to be given in \em paramList as a
+ * character array. The \em paramList length can be specified using
+ * \em paramLen. If not, its length will be retrieved using strlen(), so the
+ * \em paramList \b must be a null-terminated string.
  *
- * \param command command name
- * \param destProc remote process name
- * \param paramList parameter list stored in a string
- * \param paramLen length of the parameter list string
+ * \param command the desired 'command' name
+ * \param destProc the remote process name
+ * \param paramList the optional 'command' parameter list, stored in a string
+ * \param paramLen the optional length of the \em paramList string
  *
- * \return command Id on successful completion or -1 if an error occurs
+ * \return the 'command' identifier on successful completion, or -1 if an error
+ * occured
  */
 mcsINT32 msgMANAGER_IF::SendCommand(const char        *command,
                                     const mcsPROCNAME  destProc,
@@ -339,8 +348,8 @@ mcsINT32 msgMANAGER_IF::SendCommand(const char        *command,
  * Send a reply message.
  *
  * \param msg the message to reply
- * \param lastReply flag to specify if the current message is the last one or
- * not
+ * \param lastReply a flag that specify wether the reply to be sent is the last
+ * one or not
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -359,6 +368,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
 
     // Build the reply message header
     msg.SetLastReplyFlag(lastReply);
+
     // If there is no error in the MCS error stack
     if (errStackIsEmpty() == mcsTRUE)
     {
@@ -370,7 +380,8 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
     {
         // Put the MCS error stack data in the message body
         char errStackContent[errSTACK_SIZE * errMSG_MAX_LEN];
-        if (errPackStack(errStackContent, sizeof(errStackContent)) == mcsFAILURE)
+        if (errPackStack(errStackContent, sizeof(errStackContent)) ==
+            mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -391,10 +402,10 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
 }
 
 /**
- * Receive a message.
+ * Wait until a message is received.
  *
- * Wait for a message receive from 'msgManager'.\n
- * The \<timeoutInMs\> can have specific values : msgWAIT_FOREVER or msgNO_WAIT.
+ * Wait for a message incomming from 'msgManager'.\n
+ * The \em timeoutInMs can have specific values : msgWAIT_FOREVER or msgNO_WAIT.
  *
  * \param msg an already allocated message structure pointer
  * \param timeoutInMs a time out value in milliseconds
@@ -413,12 +424,12 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE        &msg,
         return mcsFAILURE;
     }
 
-    // Return weither a message was received or not
+    // Wait until a message is received and return its reception status
     return (_socket.Receive(msg, timeoutInMs));
 }
 
 /**
- * Close the connection with the MCS message service.
+ * Close the connection with \<msgManager\>.
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -466,15 +477,15 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
 }
  
 /**
- * Return the socket descriptor for the message queue
+ * Return the socket descriptor for the current message queue
  *
  * This allows a process to monitor its message queue using the UNIX function
  * select().
  *
  * \warning
- * The file descriptor returned must NOT be read or manipulated in any way
- * (e.g. close()) by the process. Otherwise the monitoring system will lose
- * syncronization with the message manager.
+ * The file descriptor returned must \b NOT be read or manipulated in any way
+ * (e.g. close()) by your process, otherwise the monitoring system will lose
+ * syncronization with \<msgManager\>.
  *
  * \return the socket descriptor of the communication link with msgManager
  */

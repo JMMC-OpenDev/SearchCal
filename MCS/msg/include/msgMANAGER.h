@@ -3,20 +3,23 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.h,v 1.5 2005-01-29 09:56:46 gzins Exp $"
+ * "@(#) $Id: msgMANAGER.h,v 1.6 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/01/29 09:56:46  gzins
+ * Updated to notify client when a server is exiting abnormally
+ *
  * Revision 1.4  2005/01/26 08:47:18  gzins
  * Added PrepareReply to fix bug related to wrong message type when sending reply to sender.
  *
  * Revision 1.3  2005/01/24 15:39:54  gzins
  * Added CVS logs as modification history
  *
- * gzins     06-Dec-2004  Created
  * gzins     15-Dec-2004  Set mcsTRUE as default value of lastReply parameter
  *                        of SendReply method
+ * gzins     06-Dec-2004  Created
  *
  ******************************************************************************/
 
@@ -51,11 +54,11 @@
  */
 
 /**
- * MCS message manager class 
+ * MCS \<msgManager\> message manager process main class.
  * 
- * This msgMANAGER class is the communication server allowing message exchange
- * between processes. Each process connected to this server can send message to
- * the other connected processes.
+ * This msgMANAGER class is the communication server core, allowing messages
+ * exchange between processes. Each process connected to this server can send
+ * messages to (and received messages from) all the other connected processes.
  */
 class msgMANAGER
 {
@@ -78,10 +81,10 @@ protected:
     virtual mcsCOMPL_STAT Usage(void);
 
     // Get SW version
-    virtual const char *GetSwVersion(void);
+    virtual const char   *GetSwVersion(void);
 
-    // Accept connection
-    virtual mcsCOMPL_STAT SetConnection();
+    // Accept and register a new connection
+    virtual mcsCOMPL_STAT AcceptConnection();
 
     // Send command/reply
     virtual mcsCOMPL_STAT Forward (msgMESSAGE &msg);

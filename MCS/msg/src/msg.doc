@@ -1,21 +1,27 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msg.doc,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msg.doc,v 1.2 2005-02-04 15:57:06 lafrasse Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * lafrasse  12-Aug-2004  Created
-*
 *
 *******************************************************************************/
 
 /**
-\mainpage msg : Inter-Process Messages Exchange Management
+\mainpage 'Msg' : Inter-Process Network Messages Exchange Management
 
 <b>Brief description</b>\n
-The 'msg' module is a collection of functions to deal with inter-process communication.
+This module provides functionnalities to handle inter-process communication based on messages exchange through an IPv4 network.
 
 <b>Detailed decription</b>\n
-The main use of this module is to allow processus communication over a network connection.
+To achieve the communication, this module is separated in 2 components :
+  \li the \em 'msg' library : your code must use it to handle any inter-process network communication;
+  \li the \em 'msgManager' daemon : process responsible for processes name registration, and message forwarding between those processes.\n\n
+
+Note that the 'msgManager' daemon extensively use the notion of MCS Environment, in the way that each environment can run its own version of 'msgManager'.
+
+\todo Verify that this module is completly 'localhost endianess' independant (e.g extensive use of htons())
 */

@@ -1,39 +1,45 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.15 2005-01-27 17:11:04 gzins Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.16 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/01/27 17:11:04  gzins
+ * Fixed extended debug message for Receive method
+ *
  * Revision 1.14  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
- * scetre    19-Nov-2004  Created
- * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
- * lafrasse  25-Nov-2004  Added error management code
- * gzins     29-Nov-2004  Fixed wrong returned value in IsConnected method
- *                        Do not read body if body size is 0 in Receive()
- * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
- * gzins     06-Dec-2004  Implemented copy constructor
- * gzins     06-Dec-2004  Removed copy constructor
- * gzins     08-Dec-2004  Set MessageId when sending message and set SenderId
- *                        when receiving message.
- * lafrasse  14-Dec-2004  Changed msgMESSAGE body type from statically sized
- *                        to a misc Dynamic Buffer, and removed unused API
- * gzins     22-Dec-2004  Updated Send and Receive which are defined as friend
- *                        of the msgMESSAGE class
  * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
  *                        Changed messageId to commandId
+ * gzins     22-Dec-2004  Updated Send and Receive which are defined as friend
+ *                        of the msgMESSAGE class
+ * lafrasse  14-Dec-2004  Changed msgMESSAGE body type from statically sized
+ *                        to a misc Dynamic Buffer, and removed unused API
+ * gzins     08-Dec-2004  Set MessageId when sending message and set SenderId
+ *                        when receiving message.
+ * gzins     06-Dec-2004  Removed copy constructor
+ * gzins     06-Dec-2004  Implemented copy constructor
+ * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * gzins     29-Nov-2004  Fixed wrong returned value in IsConnected method
+ *                        Do not read body if body size is 0 in Receive()
+ * lafrasse  25-Nov-2004  Added error management code
+ * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+ * scetre    19-Nov-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * msgSOCKET class definition.
+ * Interface class providing all the low-level API to handle IPv4 network
+ * communication.
+ *
+ * \sa msgSOCKET
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.15 2005-01-27 17:11:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.16 2005-02-04 15:57:06 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -92,6 +98,7 @@ msgSOCKET::~msgSOCKET()
     }
 }
 
+
 /*
  * Public methods
  */
@@ -99,7 +106,7 @@ msgSOCKET::~msgSOCKET()
 /**
  * Create the socket.
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgSOCKET::Create(void)
 {
@@ -139,7 +146,7 @@ mcsINT32 msgSOCKET::GetDescriptor(void)
 }
 
 /**
- * Return weither the socket is already connected or not.
+ * Return wether the socket is already connected or not.
  *
  * \return mcsTRUE if the socket is already connected, mcsFALSE otherwise
  */
@@ -157,11 +164,11 @@ mcsLOGICAL msgSOCKET::IsConnected(void)
 }
 
 /**
- * Bind the socket to a specific port.
+ * Bind the socket to a specific port number.
  *
- * \param port the port to which the socket should be bind
+ * \param port the port number to which the socket should be bound
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
 {
@@ -203,7 +210,7 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
 /**
  * Start listening on the socket.
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgSOCKET::Listen(void)
 {
@@ -232,7 +239,7 @@ mcsCOMPL_STAT msgSOCKET::Listen(void)
  *
  * \param socket the newly created socket to the connected process
  *
- * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
 {
@@ -257,9 +264,9 @@ mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
  * Connect the socket to a given remote host name and port number.
  *
  * \param host the remote machine host name or IPv4 address
- * \param port the remote server  port number
+ * \param port the remote server port number
  *
- * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
                                  const mcsUINT16   port)
@@ -297,11 +304,11 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
 }
 
 /**
- * Send a string on the socket.
+ * Send a string through the socket.
  *
- * \param string the string to be sended to the connected process
+ * \param string the string to be sent
  *
- * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
 {
@@ -320,12 +327,12 @@ mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
 }
 
 /**
- * Waits until the socket received some data, then given back as a string.
+ * Waits until the socket received some data, then give it back as a string.
  *
- * \param string a string object that will be overwritten with the incomming
+ * \param string a string object that will be overwritten with the received
  * data
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
 {
@@ -361,11 +368,11 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
 }
 
 /**
- * Send a message on the socket.
+ * Send a msgMESSAGE object content through the socket.
  *
- * \param msg the message to send
+ * \param msg the message to be sent
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 {
@@ -418,12 +425,13 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 
 
 /**
- * Wait until a message is received on the socket.
+ * Wait until a msgMESSAGE object content is received through the socket.
  *
- * \param msg the message object that will be overwritten with the received one
- * \param timeoutInMs the number of milliseconds before a timeout occur
+ * \param msg the message object that will be overwritten with the received
+ * contnent
+ * \param timeoutInMs the number of milliseconds before a timeout occurs
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
                                  mcsINT32           timeoutInMs)

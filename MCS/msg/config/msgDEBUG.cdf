@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $Id: msgDEBUG.cdf,v 1.2 2005-02-04 15:57:06 lafrasse Exp $"
+
+ History
+ ~~~~~~~
+ $Log: not supported by cvs2svn $
+
+********************************************************************************
+
+This cdf describes the DEBUG command.
+
+-->
+
 <cmd
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:noNamespaceSchemaLocation="cmdDefinitionFile.xsd">
-    <!--
-    This cdf describes the DEBUG command.
-    -->
+
     <mnemonic>DEBUG</mnemonic>
     <desc>Changes logging levels on-line. Levels are defined from 1 to 5 whereby
 level 1 produces only limited number of logs, and level 5 produces logs

@@ -1,18 +1,19 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2004-12-08 17:57:39 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.8 2005-02-04 15:57:06 lafrasse Exp $"
 #
 # Makefile of msgTest
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
-# lafrasse  11-Aug-2004  Created
-# gzins     01-Oct-2004  Removed msgTestManagerSend
-# lafrasse  20-Nov-2004  Added C++ attributes to each executable LIBS to become
-#                        compatible with the new C++ code in the library
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     08-Dec-2004  Removed msgTestClient and msgTestServer
 #
+# lafrasse  20-Nov-2004  Added C++ attributes to each executable LIBS to become
+#                        compatible with the new C++ code in the library
+# gzins     01-Oct-2004  Removed msgTestManagerSend
+# lafrasse  11-Aug-2004  Created
 #
 #*******************************************************************************
 # REMARKS

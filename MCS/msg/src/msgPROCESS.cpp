@@ -1,25 +1,31 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS.cpp,v 1.4 2005-01-29 19:56:16 gzins Exp $"
+ * "@(#) $Id: msgPROCESS.cpp,v 1.5 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/01/29 19:56:16  gzins
+ * Added SetId/GetId and SetUnicity/IsUnique methods
+ *
  * Revision 1.3  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
- * gzins     06-Dec-2004  Created
  * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ * gzins     06-Dec-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * msgPROCESS class definition.
+ * Storage class used to hold all the data about each process connected to the
+ * \<msgManager\>.
+ *
+ * \sa msgPROCESS
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS.cpp,v 1.4 2005-01-29 19:56:16 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS.cpp,v 1.5 2005-02-04 15:57:06 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,9 +65,9 @@ msgPROCESS::~msgPROCESS()
 }
 
 /**
- * Set the name of the process; i.e. MCS registering name.
+ * Set the process name.
  *
- * \return mcsSUCCESS. 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgPROCESS::SetName(char *name)
 {
@@ -73,9 +79,9 @@ mcsCOMPL_STAT msgPROCESS::SetName(char *name)
 }
 
 /**
- * Get the name of the process; i.e. MCS registering name.
+ * Get the process name.
  *
- * \return MCS process name. 
+ * \return a character pointer on the process name
  */
 const char *msgPROCESS::GetName() const
 {
@@ -85,9 +91,9 @@ const char *msgPROCESS::GetName() const
 }
 
 /**
- * Set the process ID
+ * Set the process identifier
  *
- * \return mcsSUCCESS. 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgPROCESS::SetId(mcsINT32 pid)
 {
@@ -99,9 +105,9 @@ mcsCOMPL_STAT msgPROCESS::SetId(mcsINT32 pid)
 }
 
 /**
- * Get the process ID
+ * Get the process identifier
  *
- * \return process ID. 
+ * \return the process identifier
  */
 mcsINT32 msgPROCESS::GetId() const
 {
@@ -111,13 +117,14 @@ mcsINT32 msgPROCESS::GetId() const
 }
 
 /**
- * Set the unicity flag.
+ * Specify wether only one instance or multiple instances of the process are
+ * allowed to be connected to \<msgManager\> at the same time.
  *
- * If unicity flag is true, this means the process is unique; it is not allowed
- * to have more than one instance connected to the message service at the same
- * time.
+ * \param flag if equals to mcsTRUE then your process will be the only one with
+ * its name allowed to be connected to the \<msgManager\> at a given time,
+ * otherwise multiple instance of the process will be allowed at the same time
  *
- * \return mcsSUCCESS. 
+ * \return mcsSUCCESS
  */
 mcsCOMPL_STAT msgPROCESS::SetUnicity(mcsLOGICAL flag)
 {
@@ -129,9 +136,11 @@ mcsCOMPL_STAT msgPROCESS::SetUnicity(mcsLOGICAL flag)
 }
 
 /**
- * Get the unicity flag.
+ * Retrieve wether only one instance or multiple instances of the process are
+ * allowed to be connected to \<msgManager\> at the same time.
  *
- * \return unicity flag.
+ * \return mcsTRUE if your process is the only one with its name allowed to be
+ * connected to the \<msgManager\> at a given time, mcsFALSE otherwise
  */
 mcsLOGICAL msgPROCESS::IsUnique() const
 {

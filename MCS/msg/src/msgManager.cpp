@@ -1,33 +1,35 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgManager.cpp,v 1.4 2005-01-24 15:02:47 gzins Exp $"
+ * "@(#) $Id: msgManager.cpp,v 1.5 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * gzins     06-Dec-2004  Created
+ * Revision 1.4  2005/01/24 15:02:47  gzins
+ * Added CVS logs as modification history
+ *
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
  * lafrasse  15-Dec-2004  Re-added Doxygen documentation from the npw removed
  *                        msgManager.c
- * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ * gzins     06-Dec-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * \e \<msgManager\> - inter-process communication server.
+ * \e \<msgManager\> - MCS inter-process communication server.
  *
  * \b Synopsis:\n
  * \e \<msgManager\>
  *
  * \b Details:\n
- * \e \<msgManager\> is the communication server allowing message exchange
- * between processes. Each process connected to this server can send message to
- * the other connected processes.
- * 
+ * \e \<msgManager\> is the communication server doing message forwarding
+ * between processes. Each process connected to this server can send messages to
+ * (and receive messages from) the other connected processes.
  */
 
-static char *rcsId="@(#) $Id: msgManager.cpp,v 1.4 2005-01-24 15:02:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgManager.cpp,v 1.5 2005-02-04 15:57:06 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

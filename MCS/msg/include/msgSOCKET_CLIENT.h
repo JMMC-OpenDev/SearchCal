@@ -3,16 +3,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET_CLIENT.h,v 1.9 2005-01-24 15:39:54 gzins Exp $"
+ * "@(#) $Id: msgSOCKET_CLIENT.h,v 1.10 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * scetre    22-Nov-2004  Created
- * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
- * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
- * gzins     06-Dec-2004  Declared copy constructor as public method
+ * Revision 1.9  2005/01/24 15:39:54  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     06-Dec-2004  Declared copy constructor as private method
+ * gzins     06-Dec-2004  Declared copy constructor as public method
+ * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+ * scetre    22-Nov-2004  Created
  *
  ******************************************************************************/
 
@@ -31,7 +34,6 @@
  */
 #include "mcs.h"
 
-
 /*
  * Local Headers 
  */
@@ -43,9 +45,69 @@
  */
 
 /**
- * Client-side specialized object wrapper around system socket.
+ * Client-side specialized object wrapper around IPv4 BSD socket.
  * 
- * \sa msgTestSocketClient.cpp for a code example
+ * \n
+ * \ex
+ * \code
+ * #include <stdlib.h>
+ * #include <iostream>
+ * 
+ * using namespace std;
+ * 
+ * #define MODULE_ID "mymod"
+ *
+ * #include "mcs.h"
+ * #include "log.h"
+ * #include "err.h"
+ * #include "msg.h"
+ * 
+ * int main(int argc, char *argv[])
+ * {
+ *     string buffer = "Hello server, client speaking !";
+ * 
+ *     mcsInit(argv[0]);
+ * 
+ *     int portNumber = 2005;
+ * 
+ *     msgSOCKET_CLIENT clientSocket;
+ *     if (clientSocket.Open("localhost", portNumber) == mcsFAILURE)
+ *     {
+ *         goto errCond;
+ *     }
+ * 
+ *     if (clientSocket.Send(buffer) == mcsFAILURE)
+ *     {
+ *         goto errCond;
+ *     }
+ * 
+ *     if (clientSocket.Receive(buffer) == mcsFAILURE)
+ *     {
+ *         goto errCond;
+ *     }
+ * 
+ *     cout << "Received : " << buffer << endl;
+ * 
+ *     if (clientSocket.Close() == mcsFAILURE)
+ *     {
+ *         goto errCond;
+ *     }
+ * 
+ *     mcsExit();
+ *     exit (EXIT_SUCCESS);
+ * 
+ * // If an error occured, show the error stack and exit
+ * errCond:
+ *     if (errStackIsEmpty() == mcsFALSE)
+ *     {
+ *         errDisplayStack();
+ *         errCloseStack();
+ *     }
+ * 
+ *     mcsExit();
+ *     exit(EXIT_FAILURE);
+ * }
+ * \endcode
  */
 class msgSOCKET_CLIENT : public msgSOCKET
 {

@@ -3,16 +3,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPrivate.h,v 1.7 2005-01-24 15:39:54 gzins Exp $"
+ * "@(#) $Id: msgPrivate.h,v 1.8 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * lafrasse  10-Aug-2004  Ported from CILAS software
- * gzins     06-Dec-2004  Removed no longer used C functions
- * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
- * gzins     09-Dec-2004  Removed msgMANAGER_PORT_NUMBER definition
+ * Revision 1.7  2005/01/24 15:39:54  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     15-Dec-2004  Added _NAME to command name definitions
+ * gzins     09-Dec-2004  Removed msgMANAGER_PORT_NUMBER definition
+ * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+ * gzins     06-Dec-2004  Removed no longer used C functions
+ * lafrasse  10-Aug-2004  Ported from CILAS software
  *
  ******************************************************************************/
 

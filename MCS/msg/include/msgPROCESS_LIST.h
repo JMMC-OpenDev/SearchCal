@@ -3,13 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS_LIST.h,v 1.3 2005-01-24 15:39:54 gzins Exp $"
+ * "@(#) $Id: msgPROCESS_LIST.h,v 1.4 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * gzins     06-Dec-2004  Created
+ * Revision 1.3  2005/01/24 15:39:54  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
+ * gzins     06-Dec-2004  Created
  *
  ******************************************************************************/
 
@@ -37,11 +40,15 @@
  */
 
 /**
- * List of processes connected to the message services
+ * List of all the processes connected to the \<msgManager\>.
  * 
- * msgPROCESS_LIST is a class to manage a list of processes (msgPROCESS
- * instances). It provides methods to perform actions to the list such
- * adding/removing elements in list, getting list size and clearing list. 
+ * Manage the list of all the connected processes (msgPROCESS instances). It
+ * provides methods to perform actions on the list, such as :
+ * \li getting the number of processes in the list;
+ * \li adding new processes;
+ * \li searching some processes;
+ * \li removing some processes;
+ * \li clearing all the list. 
  */
 class msgPROCESS_LIST
 {
@@ -53,13 +60,15 @@ public:
     virtual ~msgPROCESS_LIST();
 
     virtual mcsLOGICAL    IsEmpty(void);
-    virtual mcsCOMPL_STAT Clear(void);
-    virtual mcsCOMPL_STAT AddAtTail(msgPROCESS *process);
-    virtual mcsCOMPL_STAT Remove(mcsINT32 sd);
     virtual mcsUINT32     Size(void);
+
+    virtual mcsCOMPL_STAT AddAtTail(msgPROCESS *process);
 
     virtual msgPROCESS    *GetNextProcess(mcsLOGICAL init = mcsFALSE);
     virtual msgPROCESS    *GetProcess(char *name, mcsINT32 sd=-1);
+
+    virtual mcsCOMPL_STAT Remove(mcsINT32 sd);
+    virtual mcsCOMPL_STAT Clear(void);
 
 protected:
     // List of clients

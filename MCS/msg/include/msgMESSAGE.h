@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.22 2005-02-03 06:51:42 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.23 2005-02-04 15:57:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/02/03 06:51:42  gzins
+ * Defined IsInternal method as constant
+ *
  * Revision 1.21  2005/01/29 19:54:46  gzins
  * Added AppendStringToBody method
  *
@@ -23,21 +26,7 @@
  * Revision 1.17  2005/01/24 15:39:54  gzins
  * Added CVS logs as modification history
  *
- * scetre    17-Nov-2004  Created
- * lafrasse  19-Nov-2004  Changed all method name first letter to upper case,
- *                        and re-commented
- * lafrasse  22-Nov-2004  Added void type for functions without parameters
- * lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
- *                        msgMESSAGE, added SetLastReplyFlag method
- * scetre    30-Nov-2004  Set message body size to 32000
- * lafrasse  01-Dec-2004  Comment refinments
- * gzins     06-Dec-2004  Updated to be only C++
- * gzins     08-Dec-2004  Added senderId and messageId, with associated methods
- * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
- *                        misc Dynamic Buffer, and removed unused API
- * gzins     15-Dec-2004  Added _NAME to command name definitions
- * gzins     15-Dec-2004  Removed msgDEBUG_CMD_NAME definition (defined in
- *                        msgDEBUG_CMD.h)
+ * gzins     07-Jan-2005  Changed messageId to commandId
  * gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
  *                        Removed GetHeaderPtr
  *                        Declared AllocateBody as private
@@ -45,7 +34,21 @@
  *                        Added ClearBody and AppendToBody
  *                        Declared msgSOCKET::Send and msgSOCKET::Receive as
  *                        friend
- * gzins     07-Jan-2005  Changed messageId to commandId
+ * gzins     15-Dec-2004  Removed msgDEBUG_CMD_NAME definition (defined in
+ *                        msgDEBUG_CMD.h)
+ * gzins     15-Dec-2004  Added _NAME to command name definitions
+ * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+ *                        misc Dynamic Buffer, and removed unused API
+ * gzins     08-Dec-2004  Added senderId and messageId, with associated methods
+ * gzins     06-Dec-2004  Updated to be only C++
+ * lafrasse  01-Dec-2004  Comment refinments
+ * scetre    30-Nov-2004  Set message body size to 32000
+ * lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
+ *                        msgMESSAGE, added SetLastReplyFlag method
+ * lafrasse  22-Nov-2004  Added void type for functions without parameters
+ * lafrasse  19-Nov-2004  Changed all method name first letter to upper case,
+ *                        and re-commented
+ * scetre    17-Nov-2004  Created
  *
  ******************************************************************************/
 
@@ -54,29 +57,50 @@
  * msgMESSAGE class declaration.
  */
 
+
+/*
+ * System Headers 
+ */
+#include <iostream>
+
 /*
  * MCS Headers 
  */
 #include "mcs.h"
 #include "misc.h"
 
+/*
+ * Local Headers 
+ */
 #include "msgSOCKET.h"
+
+
 /* 
  * Constants definition
  */
 
 /**
- * Message waiting constants
+ * Message waiting constant, specifying to not wait on a recieve
  */
 #define msgNO_WAIT               0   
+/**
+ * Message waiting constant, specifying to wait forever on a recieve
+ */
 #define msgWAIT_FOREVER         -1
 
 /**
- * Standard command names
+ * Standard command, used to test wether a remote process is available or not
  */
 #define msgPING_CMD_NAME         "PING"
+/**
+ * Standard command, used to shut down a remote process
+ */
 #define msgEXIT_CMD_NAME         "EXIT"
+/**
+ * Standard command, used to get a remote process version number
+ */
 #define msgVERSION_CMD_NAME      "VERSION"
+
 
 /* 
  * Macro definition
@@ -87,10 +111,6 @@
  */
 #define msgHEADERLEN             (sizeof(msgHEADER))
 
-/**
- * Maximum message body size
- */
-#define msgBODYMAXLEN            (msgMAXLEN - msgHEADERLEN - 1)
 
 /*
  * Enumeration type definition
@@ -101,68 +121,80 @@
  */
 typedef enum
 {
-    msgTYPE_COMMAND = 1,         /**< Describe command messages. */
-    msgTYPE_REPLY,               /**< Describe reply messages. */
-    msgTYPE_ERROR_REPLY          /**< Describe error reply messages. */
+    msgTYPE_COMMAND = 1,         /**< Characterize command messages. */
+    msgTYPE_REPLY,               /**< Characterize reply messages. */
+    msgTYPE_ERROR_REPLY          /**< Characterize error reply messages. */
 } msgTYPE;
+
 
 /* 
  * Structure type definition
  */
 
 /**
- * Message header structure
+ * MCS message network header structure.
+ *
+ * This structure holds all the data used by the 'Msg' library and  the
+ * \<msgManager\> process to route and deliver messages amongst all the remote
+ * processes.
+ *
+ * \sa msgTYPE, 'Cmd' module
  */
 typedef struct
 {
-    mcsPROCNAME sender;          /**< Sender processus name */
-    mcsENVNAME  senderEnv;       /**< Sender environnement */
-    mcsSTRING8  senderId;        /**< Sender Id */
-    mcsPROCNAME recipient;       /**< Receiver processus name  */
-    mcsENVNAME  recipientEnv;    /**< Receiver environnement */
-    msgTYPE     type;            /**< Message type */
-    mcsCMD      command;         /**< Command name */
-    mcsSTRING16 commandId;       /**< Command Id */
-    mcsINT8     lastReply;       /**< 'T' if it is the last answer */
-    mcsBYTES32  timeStamp;       /**< Message date */
-    mcsSTRING8  msgBodySize;     /**< Message body size */
+    mcsPROCNAME sender;          /**< the MCS registering name of the process
+                                   *  that wants to send the message
+                                   */
+    mcsENVNAME  senderEnv;       /**< the MCS environment name in which the
+                                   *  \b sender is running
+                                   */
+    mcsSTRING8  senderId;        /**< the \b sender identifier */
+
+    mcsPROCNAME recipient;       /**< the MCS registering name of the process to
+                                   *  which the message is intended
+                                   */
+    mcsENVNAME  recipientEnv;    /**< the MCS environment name in which the
+                                   *  \b recipient is running
+                                   */
+
+    msgTYPE     type;            /**< the message type (picked amongs those
+                                   *   defined in the msgTYPE enumeration)
+                                   */
+
+    mcsCMD      command;         /**< the message command name (see the 'Cmd'
+                                   *  module for more information about commands
+                                   */
+    mcsSTRING16 commandId;       /**< the message command identifier */
+
+    mcsINT8     lastReply;       /**< the flag specifying wether the message is 
+                                   *  a 'last reply' one or not (equals 'T' if 
+                                   *  it is the last answer of a dialog)
+                                   */
+
+    mcsBYTES32  timeStamp;       /**< the message date */
+
+    mcsSTRING8  msgBodySize;     /**< the message payload size */
+
 } msgHEADER;
 
-/*
- * System Headers 
- */
-#include <iostream>
 
 /*
  * Class declaration
  */
 
 /**
- * Class handling MCS messages.
+ * MCS messages container class, holding the message header and data.
  *  
- * The msgMESSAGE class contains all methods necessary for handling messages
- * (commands and replies) which are exchanged between processes through the
- * MCS message service. A message is defined by : 
- *   - \em sender \n
- *     is the MCS registering name of the process which send the message
- *   - \em sender environment \n
- *     is the environment name in which the sender is running
- *   - \em recipient \n
- *     is the MCS registering name of the process to which the message is
- *     intended
- *   - \em recipient environment \n
- *     is the environment name in which the recipient is running
- *   - \em type \n
- *     is the message type (see msgTYPE)
- *   - \em command \n
- *     is the name of the command
- *   - \em params \n
- *     is the command parameters
+ * The msgMESSAGE class provides all the necessary methods for accessing and
+ * storing messages data that are exchanged between processes through the
+ * \<msgManager\>.\n\n
+ * Each message object holds an msgHEADER structure, followed by a miscDYN_BUF
+ * to store the dynamically sized message payload.
  *
- * The class msgMANAGER_IF can be used for reception  and sending of MCS
- * messages.
+ * The msgMANAGER_IF class can be used as a facility to sending and receiving
+ * msgMessage objects.
  *
- * \sa msgMANAGER_IF
+ * \sa msgHEADER, miscDYN_BUF, msgMANAGER_IF
  */
 
 class msgMESSAGE
@@ -188,7 +220,7 @@ public:
     virtual mcsCOMPL_STAT    SetSenderEnv    (const char     *senderEnv);
 
     virtual mcsINT32         GetSenderId     (void);
-    virtual mcsCOMPL_STAT    SetSenderId     (const mcsINT32 id);
+    virtual mcsCOMPL_STAT    SetSenderId     (const mcsINT32 identifier);
 
     virtual char            *GetRecipient    (void);
     virtual mcsCOMPL_STAT    SetRecipient    (const char     *recipient);
@@ -200,7 +232,7 @@ public:
     virtual mcsCOMPL_STAT    SetType         (const msgTYPE   type);
 
     virtual mcsINT32         GetCommandId    (void);
-    virtual mcsCOMPL_STAT    SetCommandId    (const mcsINT32 id);
+    virtual mcsCOMPL_STAT    SetCommandId    (const mcsINT32 identifier);
 
     virtual char            *GetCommand      (void);
     virtual mcsCOMPL_STAT    SetCommand      (const char     *command);
@@ -235,7 +267,7 @@ private:
     msgHEADER   _header;     // The complete message header
     miscDYN_BUF _body;       // A convenient pointer to the _message body
 
-    mcsLOGICAL  _isInternal; // A flag to say weither the message is of
+    mcsLOGICAL  _isInternal; // A flag to say wether the message is of
                              // internal process use or not (see evh module)
 };
 
