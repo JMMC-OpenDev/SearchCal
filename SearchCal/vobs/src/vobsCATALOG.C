@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.13 2004-10-15 07:52:12 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.14 2004-10-18 11:39:20 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.13 2004-10-15 07:52:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.14 2004-10-18 11:39:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -396,9 +396,9 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
     logExtDbg("vobsCATALOG::GetAskingPosition()");
 
     mcsSTRING32 ra;
-    request.GetConstraint(SEARCH_BOX_RA_ID,ra);
+    request.GetConstraint(RA_ID,ra);
     mcsSTRING32 dec;
-    request.GetConstraint(SEARCH_BOX_DEC_ID,dec);
+    request.GetConstraint(DEC_ID,dec);
     
     if ( (miscDynBufAppendString(&_asking,"&-c.ra=")==FAILURE) ||
          (miscDynBufAppendString(&_asking,ra)==FAILURE) ||

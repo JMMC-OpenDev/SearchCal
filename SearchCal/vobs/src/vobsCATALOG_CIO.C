@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.C,v 1.6 2004-10-15 07:52:12 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.C,v 1.7 2004-10-18 11:39:20 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.6 2004-10-15 07:52:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.7 2004-10-18 11:39:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -223,7 +223,14 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingSpecificParameters(vobsREQUEST request
         miscDynBufAppendString(&_asking, "1.25");        
     }
 
-    miscDynBufAppendString(&_asking, "&-out.max=50&-c.bm=1800/300&-c.u=arcmin");
+    miscDynBufAppendString(&_asking, "&-out.max=50&-c.bm=");
+    mcsSTRING32 searchBoxRa, searchBoxDec;
+    request.GetConstraint(SEARCH_BOX_RA_ID,searchBoxRa);
+    request.GetConstraint(SEARCH_BOX_DEC_ID,searchBoxDec);
+    miscDynBufAppendString(&_asking, searchBoxRa);
+    miscDynBufAppendString(&_asking, "/");
+    miscDynBufAppendString(&_asking, searchBoxDec);
+    miscDynBufAppendString(&_asking, "&-c.u=arcmin");
     miscDynBufAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
     miscDynBufAppendString(&_asking, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
     miscDynBufAppendString(&_asking, "&-sort=_r");

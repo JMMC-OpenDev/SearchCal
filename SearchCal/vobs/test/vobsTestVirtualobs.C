@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestVirtualobs.C,v 1.5 2004-10-11 07:14:27 scetre Exp $"
+* "@(#) $Id: vobsTestVirtualobs.C,v 1.6 2004-10-18 11:39:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualobs.C,v 1.5 2004-10-11 07:14:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualobs.C,v 1.6 2004-10-18 11:39:31 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    logSetStdoutLogLevel(logQUIET);
+    logSetStdoutLogLevel(logEXTDBG);
     
     logInfo("Starting ...");
     vobsREQUEST request;
@@ -79,11 +79,13 @@ int main(int argc, char *argv[])
     }
 
     if ((request.SetConstraint(STAR_NAME_ID,"ETA TAU") == SUCCESS) &&
+        (request.SetConstraint(RA_ID,"03+47+29.08") == SUCCESS) &&
+        (request.SetConstraint(DEC_ID,"+24+06+18.5") == SUCCESS) &&
         (request.SetConstraint(STAR_WLEN_ID,"0.65") == SUCCESS) &&
         (request.SetConstraint(STAR_MAGNITUDE_ID,"2.96") == SUCCESS) &&
         (request.SetConstraint(MAGNITUDE_RANGE_ID,"-1..5") == SUCCESS) &&
-        (request.SetConstraint(SEARCH_BOX_RA_ID,"03+47+29.08") == SUCCESS) &&
-        (request.SetConstraint(SEARCH_BOX_DEC_ID,"+24+06+18.5") == SUCCESS) &&
+        (request.SetConstraint(SEARCH_BOX_RA_ID,"1800") == SUCCESS) &&
+        (request.SetConstraint(SEARCH_BOX_DEC_ID,"300") == SUCCESS) &&
         (request.SetConstraint(STAR_EXPECTED_VIS_ID,"0.922") == SUCCESS) &&
         (request.SetConstraint(STAR_MAX_ERR_VIS_ID,"0.09") == SUCCESS) &&
         (request.SetConstraint(OBSERVED_BAND_ID,"K") == SUCCESS ))

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.4 2004-09-07 11:56:53 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.5 2004-10-18 11:38:58 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,7 +25,7 @@
  * Constants definition
  */
 
-#define vobsNB_REQUEST_CONSTRAINTS 9       /**< Number of contraints */
+#define vobsNB_REQUEST_CONSTRAINTS 11       /**< Number of contraints */
 #define vobsREQUEST_CONSTRAINT_NOT_SET  "00.00"  /**< Default value of the empty
                                           contraints */
 
@@ -45,8 +45,10 @@ typedef mcsSTRING32 vobsREQUEST_CONSTRAINT;
  */
 typedef enum
 {
-    UNKNOWN_CONSTRAINT_ID = -1,        /**< id if no CONSTRAINT */  
+    UNKNOWN_CONSTRAINT_ID = -1,        /**< id if no CONSTRAINT */      
     STAR_NAME_ID,           /**< star name id */
+    RA_ID,
+    DEC_ID,
     STAR_WLEN_ID,           /**< wavelength id */
     STAR_MAGNITUDE_ID,      /**< So magnitude id */
     MAGNITUDE_RANGE_ID,     /**< magnitude range id */

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.8 2004-09-07 11:56:53 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.9 2004-10-18 11:39:20 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.8 2004-09-07 11:56:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.9 2004-10-18 11:39:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,6 +50,8 @@ using namespace std;
 static char *constraintNameList[] =
 {
    "STAR_NAME",
+   "RA_ID",
+   "DEC_ID",
    "STAR_WLEN",
    "STAR_MAGNITUDE",
    "MAGNITUDE_RANGE",
