@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.1 2005-01-29 13:11:44 gzins Exp $
+# Version: $Id: mcs.sh,v 1.2 2005-02-14 14:20:30 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/01/29 13:11:44  gzins
+# Renamed bashrc to mcs.sh
+#
 # gzins     14-05-2004  created
 # gzins     10-11-2004  added MCSDATA definition
 #
@@ -50,7 +53,7 @@ fi
 # Add $INTROOT to LD_LIBRARY_PATH, PATH, MCS_XSLPATH and MANPATH
 if [ "$INTROOT" != "" ]
 then
-    if ! echo ${PATH} |grep -q $INTROOT
+    if ! echo ${LD_LIBRARY_PATH} |grep -q $INTROOT
     then
         export PATH="$PATH:$INTROOT/bin"
         export MANPATH="$MANPATH:$INTROOT/man"
@@ -59,7 +62,8 @@ then
 fi
 
 # Add $MCSROOT to LD_LIBRARY_PATH, PATH, MCS_XSLPATH and MANPATH
-if ! echo ${PATH} |grep -q $MCSROOT ; then
+if ! echo ${LD_LIBRARY_PATH} |grep -q $MCSROOT 
+then
     export PATH="$PATH:$MCSROOT/bin"
     export MANPATH="$MANPATH:$MCSROOT/man"
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MCSROOT/lib
