@@ -1,13 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-12-17 10:06:44 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.1 2004-12-17 10:06:44 gzins Exp $"
 #
-# Makefile of ........
+# Makefile of timlog module tests 
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# sccmgr    17-Dec-2004  Created
+# gzins     17-Dec-2004  Created
 #
 #
 #*******************************************************************************
@@ -38,14 +38,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = timlogTest
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+timlogTest_OBJECTS   = timlogTest
+timlogTest_LDFLAGS   = -lgdome 
+timlogTest_LIBS      = mcs log misc err timlog
 
 #
 # special compilation flags for single c sources
@@ -54,17 +54,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = timlog.h
+INCLUDES        =
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = timlog
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-timlog_OBJECTS   = timlog
+lllll_OBJECTS   =
 
 #
 # Scripts (public and local)

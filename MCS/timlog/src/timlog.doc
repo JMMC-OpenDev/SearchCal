@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: timlog.doc,v 1.1 2004-12-17 08:53:05 sccmgr Exp $"
+* "@(#) $Id: timlog.doc,v 1.2 2004-12-17 10:06:44 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,49 +11,23 @@
 *******************************************************************************/
 
 /**
-\mainpage timlog : Summary module description sentence
+\mainpage timlog : Timer logs faciliy
 
 \bdesc
-Brief module description. There could be one or more sentences in this short
-module description.
+Functions methods to report the time for performing a given action.
 
 \ddesc
-Detailed module description.
+This module provides functions to report the time for performing a given
+action. The elapsed time spent in execution is written  to stdout and/or log
+file (see log) according to the given level.
 
-\usedfiles
-OPTIONAL. If files are used, for each one, name, and usage description, as
-below. 
-\filename filename 1 :  usage description of fileName1
-\filename filename 2 :  usage description of fileName2
-
-\n
-\env
-OPTIONAL. If needed, environmental variables accessed by the program. For each
-variable, name, and usage description, as below.
-\envvar envVar1 :  usage description of envVar1
-\envvar envVar2 :  usage description of envVar2
-
-\n
 \ex
-OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
-example list with the \\li marker.
-\n Brief example description.
+The following example will produce the following log:
+\n"Elapsed time in execution of 'myAction' hh:mm:ss.mmm".
 \code
-Insert code for example
+   timlogStart(logINFO, "myAction");
+   ...
+   timlogStop("myAction");
 \endcode
-
-\sa OPTIONAL. See also section in which you can refer other documented entities.
-Using the \\sa marker, doxygen will create the link automatically.
-An example is given below.
-\sa \<entity to refer\>
-
-\bug OPTIONAL. Known bugs list if it exists.
-\bug Bug 1 : bug 1 description
-\bug Bug 2 : bug 2 description
-
-\todo OPTIONAL. Things to forsee list, if needed.
-\todo Action 1 : action 1 description
-\todo Action 2 : action 2 description
-\n
 
 */

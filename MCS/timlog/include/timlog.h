@@ -1,20 +1,19 @@
-#ifndef timlogPrivate_H
-#define timlogPrivate_H
+#ifndef timlog_H
+#define timlog_H
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: timlogPrivate.h,v 1.2 2004-12-17 10:06:44 gzins Exp $"
+* "@(#) $Id: timlog.h,v 1.1 2004-12-17 10:06:44 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* sccmgr    17-Dec-2004  Created
-*
+* gzins     17-Dec-2004  Created
 *
 *******************************************************************************/
 
 /**
  * \file
- * Private declaration for timer log module.
+ * Declaration of timer log functions.
  */
 
 /* The following piece of code alternates the linkage type to C for all 
@@ -25,28 +24,19 @@ functions in C++-code.
 extern "C" {
 #endif
 
+#include "log.h"
 
 /*
- * Module name
+ * Public functions declaration
  */
-#define MODULE_ID "timlog"
-
-#include <sys/time.h>
- 
-/* Structure to hold one actionName<->startTime relation. */ 
-typedef struct 
-{
-    mcsSTRING64    actionName;
-    logLEVEL       level;
-    struct timeval startTime;
-} timlogENTRY;
-
+void timlogStart(const logLEVEL level, const char* actionName);
+void timlogStop(const char* actionName);
+void timlogClear();
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif /*!timlogPrivate_H*/
+#endif /*!timlog_H*/
 
 /*___oOo___*/

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<errorList moduleName="timlog">
+   <error id="1">
+      <errName>ALLOC_MEM</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not allocate memory]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>NO_TIME_MARKER</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Start time marker '%.80s' is not defined into timer logging service.]]></errFormat>
+   </error>
+</errorList>
