@@ -2,13 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeGeneratedFilesDependencies.sh,v 1.2 2004-12-09 17:59:32 gzins Exp $" 
-# who       when         what
-# --------  --------     ----------------------------------------------
+# "@(#) $Id: mkfMakeGeneratedFilesDependencies.sh,v 1.3 2005-02-15 08:40:15 gzins Exp $" 
+#
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     09-Dec-2004  Created
 # gzins     09-Dec-2004  Removed ../src from rule for C++ command class 
 #
-
 #************************************************************************
 #   NAME
 #   mkfMakeGeneratedFilesDependencies - create the makefile to build the

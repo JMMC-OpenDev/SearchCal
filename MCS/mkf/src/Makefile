@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2004-12-09 17:37:09 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.11 2005-02-15 08:40:15 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # sccmgr    25-Jun-2004  Created
 # gzins     26-Aug-2004  Adapted from VLT
 # gzins     03-Dec-2004  Added mkfMakeInstallCmdDefFiles script

@@ -2,16 +2,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeLibraryDependencies.sh,v 1.3 2004-11-18 16:57:51 gzins Exp $" 
+# "@(#) $Id: mkfMakeLibraryDependencies.sh,v 1.4 2005-02-15 08:40:15 gzins Exp $" 
 #
-# who       when         what
-# --------  --------     ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     26-Aug-2004  Adapted from VLT
 # gzins     18-Nov-2004  Added MCS C++ libraries only when MCS and C++ are
 #                        specified
 # gzins     18-Nov-2004  Fixed bug related to MCS C++ libraries
 #
-
 #************************************************************************
 #   NAME
 #   mkfMakeLibraryDependencies - create the makefile to build a library

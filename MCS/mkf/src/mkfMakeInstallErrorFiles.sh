@@ -2,12 +2,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeInstallErrorFiles.sh,v 1.3 2004-09-30 08:14:50 gzins Exp $" 
+# "@(#) $Id: mkfMakeInstallErrorFiles.sh,v 1.4 2005-02-15 08:40:15 gzins Exp $" 
 #
-# who       when         what
-# --------  --------     ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     26-Aug-2004  Adapted from VLT 
-
+#
 #************************************************************************
 #   NAME
 #   mkfMakeInstallErrorFiles - copy the Error files into target area.

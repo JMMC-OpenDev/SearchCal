@@ -4,8 +4,9 @@
 #
 # "@(#) $Id: mkfDoManPages
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     09-Jun-2004  created from ALMA doxygenize program
 #
 #************************************************************************

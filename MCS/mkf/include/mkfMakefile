@@ -1,13 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.15 2005-02-11 09:45:51 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.16 2005-02-15 08:48:00 gzins Exp $" 
 #
-# who       when      what
-# --------  --------  ----------------------------------------------
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2005/02/11 09:45:51  gzins
+# Added misco to the MCS C++ library list
+#
 # Revision 1.14  2005/01/24 17:03:21  gzins
 # Added gwt to the MCS C++ library list
 #

@@ -2,13 +2,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeJavaExecutable.sh,v 1.2 2004-09-29 15:38:40 gzins Exp $" 
+# "@(#) $Id: mkfMakeJavaExecutable.sh,v 1.3 2005-02-15 08:40:15 gzins Exp $" 
 #
-# who       when         what
-# --------  --------     ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     26-Aug-2004  Adapted from VLT
 #
-
 #************************************************************************
 #   NAME
 #   mkfMakeJavaExecutable - create the java program 

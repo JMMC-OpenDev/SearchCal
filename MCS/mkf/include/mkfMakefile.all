@@ -1,11 +1,11 @@
 #*******************************************************************************
-#
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile.all,v 1.2 2004-12-09 17:41:07 gzins Exp $" 
+# "@(#) $Id: mkfMakefile.all,v 1.3 2005-02-15 08:48:00 gzins Exp $" 
 #
-# who       when      what
-# --------  --------  ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     26-Aug-2004  Adapted from VLT
 # gzins     09-Dec-2004  Removed rules to generate eroor header files (done
 #                        in mkfMakefile)

@@ -1,14 +1,15 @@
 #! /bin/sh
 # JMMC project
 #
-# "@(#) $Id: mkfMakeInstallCmdDefFiles.sh,v 1.3 2004-12-10 17:01:23 scetre Exp $" 
+# "@(#) $Id: mkfMakeInstallCmdDefFiles.sh,v 1.4 2005-02-15 08:40:15 gzins Exp $" 
 #
-# who       when         what
-# --------  --------     ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     03-Dec-2004  Adapted from VLT
 # gzins     10-Dec-2004  Added list of files to be installed
 # gzins     10-Dec-2004  Removed 'touch CDF file' instruction 
-
+#
 #************************************************************************
 #   NAME
 #   mkfMakeInstallCmdDefFiles - copy the CDF files into target area.

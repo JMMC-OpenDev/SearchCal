@@ -2,12 +2,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeTclScript.sh,v 1.1 2004-09-10 13:40:57 gzins Exp $" 
-
-# who       when         what
-# --------  --------     ----------------------------------------------
+# "@(#) $Id: mkfMakeTclScript.sh,v 1.2 2005-02-15 08:40:15 gzins Exp $" 
+#
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     26-Aug-2004  Adapted from VLT
-
+#
 #************************************************************************
 #   NAME
 #   mkfMakeTclScript - create an executable Tcl/Tk procedure

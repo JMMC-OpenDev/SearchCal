@@ -2,12 +2,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeScriptDependencies.sh,v 1.1 2004-09-10 13:40:57 gzins Exp $" 
+# "@(#) $Id: mkfMakeScriptDependencies.sh,v 1.2 2005-02-15 08:40:15 gzins Exp $" 
 #
-# who       when         what
-# --------  --------     ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     26-Aug-2004  Adapted from VLT
-
+#
 #************************************************************************
 #   NAME
 #   mkfMakeScriptDependencies - create the makefile to build one script

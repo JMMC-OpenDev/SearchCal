@@ -3,10 +3,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.2 2004-11-10 09:40:02 gzins Exp $"
+# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.3 2005-02-15 08:40:15 gzins Exp $"
 #
-# who       when        what
-# --------  ----------  ------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     10-09-2004  Created
 # gzins     10-11-2004  Added creation of MCSDATA in MCSROOT
 #

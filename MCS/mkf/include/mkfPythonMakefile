@@ -1,13 +1,14 @@
 #*******************************************************************************
-# E.S.O. - VLT project
+# JMMC project
 #
-# "@(#) $Id: mkfPythonMakefile,v 1.1 2004-09-10 13:42:20 gzins Exp $"
+# "@(#) $Id: mkfPythonMakefile,v 1.2 2005-02-15 08:48:00 gzins Exp $"
 #
-# who       when      what
-# --------  --------  ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     26-Aug-2004  Adapted from VLT
 #
-
+#************************************************************************
 
 SHELL=/bin/ksh
 
