@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.2 2005-02-17 19:04:16 gzins Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.3 2005-02-18 08:19:42 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/17 19:04:16  gzins
+ * Updated formulas to compute dV and dV²
+ *
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
@@ -25,7 +28,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: alxVisibility.c,v 1.2 2005-02-17 19:04:16 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxVisibility.c,v 1.3 2005-02-18 08:19:42 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -96,7 +99,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
     *vis2 = pow(*vis, 2);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    *vis2Error = 8 * jnf(2, x) * fabs(j1f(x)/x) * angDiamError;
+    *vis2Error = 8 * jnf(2, x) * fabs(j1f(x)/x) * angDiamError / angDiam;
     
     /* Print out result */
     logTest("V   = %.6f", *vis);
