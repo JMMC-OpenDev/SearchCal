@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.46 2005-03-30 12:50:58 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.47 2005-04-06 12:16:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.46  2005/03/30 12:50:58  scetre
+ * Changed call to alx funtions.
+ * Updated documentation
+ *
  * Revision 1.45  2005/03/07 16:06:06  gzins
  * Removed automatic sort on visibility
  *
@@ -84,7 +88,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.46 2005-03-30 12:50:58 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.47 2005-04-06 12:16:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -345,12 +349,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
         // Set the computed magnitude. Note, if magnitude is altready set the
         // SetPropertyValue() do nothing; i.e. existing magnitudes are not
         // overwritten
-        if ((magnitudes[band].isSet == mcsFALSE) &&
-            (magnitudes[band].confIndex != alxNO_CONFIDENCE))
+        if (magnitudes[band].isSet == mcsTRUE)
         {
             SetPropertyValue(mag0PropertyId[band], magnitudes[band].value,
                              vobsSTAR_COMPUTED_PROP, 
-                             (vobsCONFIDENCE_INDEX)magnitudes[band].confIndex);
+                             (vobsCONFIDENCE_INDEX)magnitudes[band].confIndex,
+                             mcsFALSE);
         }
     }
     
@@ -388,10 +392,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
     }
     
     // Set the galactic lattitude (if not yet set)
-    SetPropertyValue(vobsSTAR_POS_GAL_LAT, gLat, vobsSTAR_COMPUTED_PROP);
+    if (SetPropertyValue(vobsSTAR_POS_GAL_LAT, gLat, vobsSTAR_COMPUTED_PROP) ==
+        mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     // Set the galactic longitude (if not yet set)
-    SetPropertyValue(vobsSTAR_POS_GAL_LON, gLon, vobsSTAR_COMPUTED_PROP);
+    if (SetPropertyValue(vobsSTAR_POS_GAL_LON, gLon, vobsSTAR_COMPUTED_PROP) ==
+        mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     return mcsSUCCESS;
 }
@@ -514,9 +526,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     logExtDbg("sclsvrCALIBRATOR::ComputeAngularDiameter()");
 
     alxDIAMETERS diameters;
-    mcsFLOAT mgB, mgV, mgR, mgK;
-    mcsFLOAT starProperty[4];
-    
+    alxDATA mgB, mgV, mgR, mgK;
+    alxDATA starProperty[4];
+   
+    // Declare the 4 properties namefor B0, V0, R0, K0
     char *starPropertyId[4] = 
     {
         sclsvrCALIBRATOR_BO,
@@ -531,7 +544,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     { 
         if (IsPropertySet(starPropertyId[i]) == mcsTRUE)
         {
-            GetPropertyValue(starPropertyId[i], &starProperty[i]);
+            // Get property
+            vobsSTAR_PROPERTY *property=GetProperty(starPropertyId[i]);
+            // Get property value
+            if ((property->GetValue(&starProperty[i].value)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            // Set affected property
+            starProperty[i].isSet = mcsTRUE;
+            // Get property confidence index
+            starProperty[i].confIndex =
+                (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
         }
         else
         {
@@ -543,60 +567,42 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     mgV=starProperty[1];
     mgR=starProperty[2];
     mgK=starProperty[3];
-     
+    
+    // Compute angular diameters
     if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK, &diameters) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-
-    // If diameter is OK (i.e. confidence index is alxCONFIDENCE_HIGH), set
-    // confidence index of the computed diameter according to the ones of
-    // magnitudes used to compute it. 
-    if (diameters.confidenceIdx == alxCONFIDENCE_HIGH)
-    {
-        vobsSTAR_PROPERTY *property;
-        property = GetProperty(sclsvrCALIBRATOR_KO);
-        if (property->GetConfidenceIndex() == vobsCONFIDENCE_LOW)
-        {
-            diameters.confidenceIdx = alxCONFIDENCE_LOW;
-        }
-        property = GetProperty(sclsvrCALIBRATOR_RO);
-        if (property->GetConfidenceIndex() == vobsCONFIDENCE_LOW)
-        {
-            diameters.confidenceIdx = alxCONFIDENCE_LOW;
-        }
-    }
-    
-    // Set compute value of the angular diameter
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diameters.bv,
-                     vobsSTAR_COMPUTED_PROP, 
-                     (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, diameters.vr,
-                     vobsSTAR_COMPUTED_PROP, 
-                     (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diameters.vk,
-                     vobsSTAR_COMPUTED_PROP, 
-                     (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV_ERROR, diameters.bvErr,
-                     vobsSTAR_COMPUTED_PROP, 
-                     (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR_ERROR, diameters.vrErr,
-                     vobsSTAR_COMPUTED_PROP, 
-                     (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR, diameters.vkErr,
-                     vobsSTAR_COMPUTED_PROP, 
-                     (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
    
     // Set flag according to the confidence index 
-    if (diameters.confidenceIdx == alxNO_CONFIDENCE)
+    if (diameters.areComputed == mcsFALSE)
     {
          SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, 
                           "NOK", vobsSTAR_COMPUTED_PROP);
     }
     else
     {
-         SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG,
-                          "OK", vobsSTAR_COMPUTED_PROP);
+        SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG,
+                         "OK", vobsSTAR_COMPUTED_PROP);
+        // Set compute value of the angular diameter
+        SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diameters.bv.value,
+                         vobsSTAR_COMPUTED_PROP, 
+                         (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
+        SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, diameters.vr.value,
+                         vobsSTAR_COMPUTED_PROP, 
+                         (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
+        SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diameters.vk.value,
+                         vobsSTAR_COMPUTED_PROP, 
+                         (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
+        SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV_ERROR, diameters.bvErr.value,
+                         vobsSTAR_COMPUTED_PROP, 
+                         (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
+        SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR_ERROR, diameters.vrErr.value,
+                         vobsSTAR_COMPUTED_PROP, 
+                         (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
+        SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR, diameters.vkErr.value,
+                         vobsSTAR_COMPUTED_PROP, 
+                         (vobsCONFIDENCE_INDEX)diameters.confidenceIdx);
     }
    
     return mcsSUCCESS;
