@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.23 2004-12-03 17:08:40 lafrasse Exp $"
+* "@(#) $Id: log.c,v 1.24 2004-12-20 13:25:46 gzins Exp $"
 *
 *
 * who       when                 what
@@ -36,6 +36,7 @@
 * lafrasse  10-Aug-2004  Moved logGetTimeStamp back in
 *                        Changed back to logData original API
 * gzins     10-Nov-2004  Replaced logDisplayError by logPrintErrMessage
+* gzins     20-Dec-2004  Added filtering of stdout log depending on module name
 *
 *
 *******************************************************************************/
@@ -169,6 +170,12 @@ static logRULE logRule =
     mcsTRUE,
     mcsTRUE
 };
+
+/* Number of modules in the allowed modules list */ 
+static mcsINT32 logNbAllowedMod=0; 
+/* List of allowed modules */
+#define logNB_MAX_ALLOWED_MOD 20
+static mcsMODULEID logAllowedModList[logNB_MAX_ALLOWED_MOD];
 
 /* Global pointing to the default log library configuration */
 static logRULE *logRulePtr = &logRule;
@@ -344,7 +351,7 @@ mcsCOMPL_STAT logDisableStdoutLog ()
 /**
  * Set the stdout logging level.
  *
- * The level which is set is one of the enumeration type logLEVEL
+ * The level which is set is one of the enumeration type logLEVEL.
  *
  * \param level Required log level (verbosity level)
  *
@@ -358,11 +365,10 @@ mcsCOMPL_STAT logSetStdoutLogLevel (logLEVEL level)
     return SUCCESS; 
 }
 
-
 /**
  * Get the stdout logging level.
  *
- * The level which is get is one of the enumeration type logLEVEL
+ * The level which is get is one of the enumeration type logLEVEL.
  * 
  * \return logLEVEL actual stdout logging level (verbosity level)
  */
@@ -372,6 +378,45 @@ logLEVEL logGetStdoutLogLevel ()
     return (logRulePtr->verboseLevel);
 }
 
+/**
+ * Clear the list of allowed modules.
+ *
+ * Clear the list of modules which are allowed to print out on stdout logging. 
+ * After the list has been cleared, the filtering is off; i.e all logs are 
+ * printed (according to the current log level) on stdout. 
+ * 
+ * \return logLEVEL actual stdout logging level (verbosity level)
+ */
+void logClearStdoutLogAllowedModList(void)
+{
+    /* Reset the number of allowed modules */
+    logNbAllowedMod = 0;
+}
+
+/**
+ * Add a module to the list of allowed modules.
+ *
+ * Add a module to the list of modules which are allowed to print out on
+ * stdout logging. 
+ * 
+ * \param mod Name of the module to be added to the list of allowed modules. 
+ *
+ * \return SUCCESS or FAILURE if the list is full. 
+ */
+mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
+{
+    /* Check if table is full */
+    if (logNbAllowedMod == logNB_MAX_ALLOWED_MOD)
+    {
+        return FAILURE;
+    }
+
+    /* Add module to the list */
+    strncpy(logAllowedModList[logNbAllowedMod], mod, mcsMODULEID_LEN);
+    logNbAllowedMod++;
+
+    return SUCCESS; 
+}
 
 /**
  * Set the action logging level.
@@ -479,30 +524,55 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
      */
     if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
     {
-        /* Print the log message header */
-        fprintf(stdout, "%s - %s - %s - ", mcsGetEnvName(), mcsGetProcName(),
-                modName);
-    
-        /* If the log message should contain the date */ 
-        if (logRulePtr->printDate == mcsTRUE)
+        /* Check if module belongs to the list of allowed modules */
+        mcsLOGICAL allowed;
+        if (logNbAllowedMod != 0)
         {
-            /* Print it */
-            fprintf(stdout, "%s - ", infoTime);
+            int i;
+            allowed = mcsFALSE;
+            for (i=0; (i<logNbAllowedMod) && (allowed == mcsFALSE); i++)
+            {
+                if (strcmp(logAllowedModList[i], modName) == 0)
+                {
+                    allowed = mcsTRUE;
+                }
+            }
         }
-    
-        /* If the fileline exists and should be contained in the log message */
-        if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
+        else
         {
-            /* Print it */
-            fprintf(stdout, "%s - ", fileLine);
+            allowed = mcsTRUE;
         }
-    
-        /* Compute the variable parameters and print them */
-        va_start(argPtr, logFormat);
-        vfprintf(stdout, logFormat, argPtr);
-        fprintf(stdout, "\n");
-        fflush(stdout);
-        va_end(argPtr);
+
+        /* If message can be printed out */
+        if (allowed == mcsTRUE)
+        {
+            /* Print the log message header */
+            fprintf(stdout, "%s - %s - %s - ", mcsGetEnvName(),
+                    mcsGetProcName(), modName);
+
+            /* If the log message should contain the date */ 
+            if (logRulePtr->printDate == mcsTRUE)
+            {
+                /* Print it */
+                fprintf(stdout, "%s - ", infoTime);
+            }
+
+            /* If the fileline exists and should be contained in the log
+             * message */
+            if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
+            {
+                /* Print it */
+                fprintf(stdout, "%s - ", fileLine);
+            }
+
+            /* Compute the variable parameters and print them */
+            va_start(argPtr, logFormat);
+            vfprintf(stdout, logFormat, argPtr);
+            fprintf(stdout, "\n");
+            fflush(stdout);
+            va_end(argPtr);
+        }
+        /* End if */
     }
 
     return stat;
