@@ -3,22 +3,17 @@
    <error id="1">
       <errName>NULL_PARAM</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[received a NULL value for parameter '%s'.]]></errFormat>
+      <errFormat><![CDATA[Received a NULL value for parameter '%s'.]]></errFormat>
    </error>
    <error id="2">
-      <errName>MEM_FAILURE</errName>
+      <errName>ALLOC</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[could not allocate or copy memory.]]></errFormat>
-   </error>
-   <error id="13">
-      <errName>MEM_DEALLOC_FAILURE</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[could not de-allocate or re-allocate memory.]]></errFormat>
+      <errFormat><![CDATA[Could not allocate or copy memory.]]></errFormat>
    </error>
    <error id="3">
       <errName>FUNC_CALL</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[could not perform '%s' function call.]]></errFormat>
+      <errFormat><![CDATA[Could not perform '%s' function call.]]></errFormat>
    </error>
    <error id="4">
       <errName>DYN_BUF_BAD_POSITION</errName>
@@ -28,12 +23,12 @@
    <error id="5">
       <errName>DYN_BUF_BAD_FROM_TO</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[received bad 'from' and 'to' parameters ('to' lower than 'from').]]></errFormat>
+      <errFormat><![CDATA[Received bad 'from' and 'to' parameters ('to' lower than 'from').]]></errFormat>
    </error>
    <error id="15">
       <errName>DYN_BUF_COULD_NOT_READ_FILE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[could not read '%s' file : errno ='%d'.]]></errFormat>
+      <errFormat><![CDATA[Could not read '%s' file : errno ='%d'.]]></errFormat>
    </error>
    <error id="6">
       <errName>FILE_ENV_VAR_NOT_DEF</errName>
@@ -48,31 +43,36 @@
    <error id="8">
       <errName>FILE_PERMISSION_DENIED</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[file '%s' cannot be accessed : Permission Denied.]]></errFormat>
+      <errFormat><![CDATA[File '%s' cannot be accessed : Permission Denied.]]></errFormat>
    </error>
    <error id="9">
       <errName>FILE_NAME_TOO_LONG</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[file '%s' cannot be accessed : Too Long.]]></errFormat>
+      <errFormat><![CDATA[File '%s' cannot be accessed : Too Long.]]></errFormat>
    </error>
    <error id="10">
       <errName>FILE_DOESNT_EXIST</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[file '%s' cannot be accessed : Doesn't Exist.]]></errFormat>
+      <errFormat><![CDATA[File '%s' cannot be accessed : Doesn't Exist.]]></errFormat>
    </error>
    <error id="11">
       <errName>FILE_TOO_MANY_SYM_LINKS</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[file '%s' cannot be accessed : Too Many Symbolic Links.]]></errFormat>
+      <errFormat><![CDATA[File '%s' cannot be accessed : Too Many Symbolic Links.]]></errFormat>
    </error>
    <error id="12">
       <errName>FILE_UNDEFINED_ERRNO</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[file '%s' cannot be accessed : errno='%d'.]]></errFormat>
+      <errFormat><![CDATA[File '%s' cannot be accessed : errno='%d'.]]></errFormat>
    </error>
    <error id="14">
       <errName>FILE_EXTENSION_MISSING</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[file name '%s' has no extension.]]></errFormat>
+      <errFormat><![CDATA[File name '%s' has no extension.]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>HASH_KEY_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Key '%.100s' not found in the Hash Table]]></errFormat>
    </error>
 </errorList>
