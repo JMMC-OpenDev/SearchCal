@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2004-12-14 16:39:23 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.13 2005-01-27 14:15:16 gzins Exp $"
 #
 # Makefile of err module 
 #
@@ -74,6 +74,7 @@ err_OBJECTS   = errCloseLocalStack_L \
 				errUnpackLocalStack_L \
 				errPushInLocalStack_L \
 				errAddInLocalStack_L \
+				errUserGetInLocalStack_L \
 				errCloseStack \
 				errResetStack \
 				errDisplayStack \
@@ -82,7 +83,9 @@ err_OBJECTS   = errCloseLocalStack_L \
 				errGetStackSize \
 				errPackStack \
 				errUnpackStack \
-				errAddInStack
+				errAddInStack \
+				errUserGet
+				
 
 #
 # Scripts (public and local)
