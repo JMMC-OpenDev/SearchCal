@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestGalacticCoordinates.c,v 1.2 2005-02-12 15:18:56 gzins Exp $"
+ * "@(#) $Id: alxTestGalacticCoordinates.c,v 1.3 2005-02-17 19:05:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/12 15:18:56  gzins
+ * Set logging service for test; do not print time stamp and file/line information and set level to logTEST
+ *
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
@@ -19,7 +22,7 @@
  * Test program of the function which computes galactic coordinates.
  */
 
-static char *rcsId="@(#) $Id: alxTestGalacticCoordinates.c,v 1.2 2005-02-12 15:18:56 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestGalacticCoordinates.c,v 1.3 2005-02-17 19:05:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,11 +74,11 @@ int main (int argc, char *argv[])
     logInfo("Starting...");
 
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         /* Error handling if necessary */
         
-        /* Exit from the application with FAILURE */
+        /* Exit from the application with mcsFAILURE */
         exit (EXIT_FAILURE);
     }
 
@@ -149,9 +152,9 @@ int main (int argc, char *argv[])
             (decTable[i][1] + decTable[i][2]/60 + decTable[i][3]/3600);
 
         /* Compute galactic coodinates */
-        if (alxComputeGalacticCoordinates(ra, dec, &gLat, &gLon) == FAILURE)
+        if (alxComputeGalacticCoordinates(ra, dec, &gLat, &gLon) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     

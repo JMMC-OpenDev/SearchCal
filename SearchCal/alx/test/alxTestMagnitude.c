@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.4 2005-02-12 15:18:56 gzins Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.5 2005-02-17 19:05:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/12 15:18:56  gzins
+ * Set logging service for test; do not print time stamp and file/line information and set level to logTEST
+ *
  * Revision 1.3  2005/01/31 13:32:53  scetre
  * *** empty log message ***
  *
@@ -26,7 +29,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.4 2005-02-12 15:18:56 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.5 2005-02-17 19:05:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -76,11 +79,11 @@ int main (int argc, char *argv[])
     logSetPrintFileLine(mcsFALSE);
 
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         /* Error handling if necessary */
         
-        /* Exit from the application with FAILURE */
+        /* Exit from the application with mcsFAILURE */
         exit (EXIT_FAILURE);
     }
 
@@ -88,49 +91,49 @@ int main (int argc, char *argv[])
     mcsFLOAT R, I, J, H, K, L, M;    
     alxCONFIDENCE_INDEX confIdx;
     if (alxComputeMagnitudesForBrightStar
-        ("B2.5V", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == FAILURE)
+        ("B2.5V", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == mcsFAILURE)
     {
         errCloseStack();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     B=6.6, V=5.77;    
     if (alxComputeMagnitudesForBrightStar
-        ("K2.5V", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == FAILURE)
+        ("K2.5V", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == mcsFAILURE)
     {
         errCloseStack();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     B=6.6, V=5.77;    
     if (alxComputeMagnitudesForBrightStar
-        ("B6I", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == FAILURE)
+        ("B6I", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == mcsFAILURE)
     {
         errCloseStack();
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (alxComputeRealMagnitudes
-        (10, 5, 165, &B, &V, &R, &I, &J, &H, &K, &L, &M) == FAILURE)
+        (10, 5, 165, &B, &V, &R, &I, &J, &H, &K, &L, &M) == mcsFAILURE)
     {
         errCloseStack();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     B=6.6, V=5.77;    
     if (alxComputeMagnitudesForBrightStar
-        ("M8", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == FAILURE)
+        ("M8", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == mcsFAILURE)
     {
         errCloseStack();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
 /*    mcsFLOAT plx=7.80;
     mcsFLOAT gLat=-23.23;
     mcsFLOAT gLon=167.01;
     mcsFLOAT e_b_v=99.99;
-    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == FAILURE)
+    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     logTest("Bo = %0.3f",B);
@@ -143,9 +146,9 @@ int main (int argc, char *argv[])
     logTest("Lo = %0.3f",L);
     logTest("Mo = %0.3f",M);
    
-    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == FAILURE)
+    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     logTest("Bo = %0.3f",B);
@@ -158,9 +161,9 @@ int main (int argc, char *argv[])
     logTest("Lo = %0.3f",L);
     logTest("Mo = %0.3f",M);
 
-    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == FAILURE)
+    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     logTest("Bo = %0.3f",B);

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.3 2005-02-12 15:18:56 gzins Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.4 2005-02-17 19:05:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/12 15:18:56  gzins
+ * Set logging service for test; do not print time stamp and file/line information and set level to logTEST
+ *
  * Revision 1.2  2005/02/10 08:15:14  gzins
  * Updated for new alxComputeAngularDiameter API
  *
@@ -22,7 +25,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.3 2005-02-12 15:18:56 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.4 2005-02-17 19:05:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -59,11 +62,11 @@ int main (int argc, char *argv[])
     logSetPrintFileLine(mcsFALSE);
 
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         /* Error handling if necessary */
         
-        /* Exit from the application with FAILURE */
+        /* Exit from the application with mcsFAILURE */
         exit (EXIT_FAILURE);
     }
 
@@ -75,9 +78,9 @@ int main (int argc, char *argv[])
     mcsFLOAT diamBv, diamVr, diamVk, diamError;
     if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK,
                                   &diamBv, &diamVr, &diamVk, &diamError,
-                                  &confIdx)== FAILURE)
+                                  &confIdx)== mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Close MCS services */
