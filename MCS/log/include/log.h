@@ -1,17 +1,33 @@
 #ifndef logLog_H
 #define logLog_H
+/*******************************************************************************
+*  JMMC Project
+*  
+*  "@(#) $Id: log.h,v 1.3 2004-05-14 10:17:50 mella Exp $"
+*
+* who       when       what
+* --------  --------   ----------------------------------------------
+* mella     12 05 2004 creation 
+* 
+*/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/** \file
+* Main header file.
+*/
+
 /*
- * MCS Headers
- */
+* MCS Headers
+*/
 #include "mcs.h"
 
-/* Macro */
-    
+/* 
+ * Macro
+ */
+
 #ifndef __cplusplus
 #ifndef __FILE_LINE__
 #define logIToStr(a) #a
@@ -46,13 +62,11 @@ extern mcsCOMPL_STAT logPrintAction(logLEVEL level,
                                     const char *logText, ...);
 
 
-
 extern mcsCOMPL_STAT logSetLog(mcsLOGICAL flag);
-    
+
 extern mcsCOMPL_STAT logSetLogLevel(logLEVEL level);
 
 extern logLEVEL      logGetLogLevel(void);
-
 
 
 extern mcsCOMPL_STAT logSetVerbose(mcsLOGICAL flag);
@@ -62,11 +76,9 @@ extern mcsCOMPL_STAT logSetVerboseLevel(logLEVEL level);
 extern logLEVEL      logGetVerboseLevel(void);
 
 
-
 extern mcsCOMPL_STAT logSetActionLevel(logLEVEL level);
 
 extern logLEVEL      logGetActionLevel(void);
-
 
 
 extern mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);
