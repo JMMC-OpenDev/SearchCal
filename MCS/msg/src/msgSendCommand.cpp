@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.12 2005-01-29 19:59:42 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.13 2005-02-03 11:09:24 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/01/29 19:59:42  gzins
+ * Minor change in file history
+ *
  * Revision 1.11  2005/01/26 08:43:50  gzins
  * Suppressed useless 'MESSAGEBUFFER:' ouput when printing out command reply.
  *
@@ -60,7 +63,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.12 2005-01-29 19:59:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.13 2005-02-03 11:09:24 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -198,7 +201,6 @@ int main (int argc, char *argv[])
                         logInfo("Error reply received\n");
                     }
                     errUnpackStack(msg.GetBody(), msg.GetBodySize());
-                    errCloseStack();
                     break;
 
                     /* Unknown reply */
