@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.2  2005/02/16 15:10:57  gzins
+* Updated call to miscDynBufGetNextLine()
+*
 * Revision 1.1  2005/02/12 14:59:11  gzins
 * Created
 *
@@ -19,7 +22,7 @@
  * \sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.2 2005-02-16 15:10:57 gzins Exp $";
+static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.3 2005-02-22 16:18:21 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -112,7 +115,8 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     mcsINT32  lineNum=0;
     const char *pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, mcsTRUE)) != NULL)
+    while ((pos = miscDynBufGetNextLine
+            (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
     {
         /* If line is not empty */
         miscTrimString (line, " ");
