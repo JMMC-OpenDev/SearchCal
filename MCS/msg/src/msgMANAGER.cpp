@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.4 2004-12-09 06:09:57 gzins Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.5 2004-12-12 09:16:42 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,6 +9,7 @@
 * gzins     08-Dec-2004  Updated to support several processes with same name  
 * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
 * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
+* gzins     12-Dec-2004  Added errno.h header file
 *
 *******************************************************************************/
 
@@ -17,7 +18,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.4 2004-12-09 06:09:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.5 2004-12-12 09:16:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -26,6 +27,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <iostream>
 using namespace std;
 #include <sys/ioctl.h>
+#include <errno.h>
 
 /*
  * MCS Headers 
