@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.17 2005-02-13 15:24:50 gzins Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.18 2005-02-14 15:09:12 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/02/13 15:24:50  gzins
+* Change Min/MaxDeltaMag to Min/MaxRangeMag
+*
 * Revision 1.16  2005/02/11 14:44:11  gluck
 * Changed Set/Get max number of selected object type parameters: mcsUINT32 -> mcsINT32
 *
@@ -95,12 +98,12 @@ public:
 
     //  Set and get maximum magnitude difference between the selected object
     //  minimum magnitude and the science object magnitude
-    virtual mcsCOMPL_STAT SetMinRangeMag(const mcsFLOAT minRangeMag);
+    virtual mcsCOMPL_STAT SetMinMagRange(const mcsFLOAT minRangeMag);
     virtual mcsFLOAT GetMinRangeMag(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  maximum magnitude and the science object magnitude
-    virtual mcsCOMPL_STAT SetMaxRangeMag(const mcsFLOAT maxRangeMag);
+    virtual mcsCOMPL_STAT SetMaxMagRange(const mcsFLOAT maxRangeMag);
     virtual mcsFLOAT GetMaxRangeMag(void) const;
     
     // Set and get maximum number of selected objects
