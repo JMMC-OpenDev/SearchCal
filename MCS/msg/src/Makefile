@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-10-01 13:05:41 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-10-01 14:34:36 gzins Exp $"
 #
 # Makefile of msg
 #
@@ -43,8 +43,7 @@ msgManager_OBJECTS   = msgManager            \
                        msgManagerForward     \
                        msgManagerHandleCmd 	 \
                        msgManagerProcess     \
-                       msgManagerProcessList \
-					   msgGetMessageQueue
+                       msgManagerProcessList
 msgManager_LDFLAGS   = -lgdome -lstdc++
 msgManager_LIBS      = mcs log err cmd misc msg
 
@@ -65,7 +64,13 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-msg_OBJECTS   = msg msgConnect msgDisconnect msgReceive msgSend msgSocket
+msg_OBJECTS   = msg               \
+				msgConnect        \
+				msgDisconnect     \
+				msgReceive        \
+				msgSend           \
+				msgSocket         \
+				msgGetMessageQueue
 
 #
 # Scripts (public and local)
