@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.6 2004-12-06 07:02:25 gzins Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.7 2004-12-07 07:50:24 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,6 +9,7 @@
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 * gzins     06-Dec-2004  Implemented copy constructor
+* gzins     06-Dec-2004  Removed copy constructor
 *
 *******************************************************************************/
 
@@ -17,7 +18,7 @@
  * msgSOCKET_CLIENT class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.6 2004-12-06 07:02:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.7 2004-12-07 07:50:24 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -46,13 +47,6 @@ using namespace std;
  * Class constructor
  */
 msgSOCKET_CLIENT::msgSOCKET_CLIENT()
-{
-}
-
-/**
- * Copy constructor
- */
-msgSOCKET_CLIENT::msgSOCKET_CLIENT(const msgSOCKET_CLIENT &socket)
 {
 }
 
