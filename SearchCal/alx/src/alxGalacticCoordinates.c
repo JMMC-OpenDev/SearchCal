@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxGalacticCoordinates.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+ * "@(#) $Id: alxGalacticCoordinates.c,v 1.2 2005-02-12 15:14:54 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/21 08:14:25  gluck
+ * Creation
+ *
  *
  * scetre    28-Sep-2004  Created
  * gzins     12-Jan-2005  - Updated to be compliant with programming standards
@@ -21,7 +24,7 @@
  * \sa file : JMMC-MEM-2600-0007
  */
 
-static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.2 2005-02-12 15:14:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -60,8 +63,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *
  * \param ra right acsension J2000 in degree
  * \param dec declinaison J2000 in degree
- * \param gLat galactic latitude in degree
- * \param gLon galactic longitude in degree
+ * \param gLat galactic latitude in degree in range [0, 360]
+ * \param gLon galactic longitude in degree in range [-90, 90]
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -80,11 +83,11 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
 
     /* Convert ra from degrees (decimal) to radians */
     ra = ra * M_PI / 180;
-    logTest("ra = %f radians\n", ra);
+    logTest("ra = %f radians", ra);
 
     /* Convert dec from degrees (decimal) to radians */
     dec = dec * M_PI / 180;
-    logTest("dec = %f radians\n", dec);
+    logTest("dec = %f radians", dec);
 
     /* Calculate galactic latitude sinus with radian parameters: sin(b) */
     sinusB = sin(dec) * cos(1.097288) -
@@ -116,7 +119,7 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
         *gLat = *gLat - 360;
     }
 
-    logTest("gLat = %.3f degrees\n", *gLat);
+    logTest("gLat = %.3f degrees", *gLat);
 
     /* 
      * Compute galactic longitude in degrees (gLon)
@@ -153,7 +156,7 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
         *gLon += 360;
     }
 
-    logTest("gLon = %.3f degrees\n", *gLon);
+    logTest("gLon = %.3f degrees", *gLon);
 
     return SUCCESS;
 }
