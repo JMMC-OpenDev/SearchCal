@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.35 2005-02-22 15:42:42 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.36 2005-02-23 07:52:13 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.35  2005/02/22 15:42:42  gzins
+* Set format for paralax to "%.2f"
+*
 * Revision 1.34  2005/02/21 11:07:47  scetre
 * changed glat and glon format in %0.2f
 *
@@ -77,7 +80,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.35 2005-02-22 15:42:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.36 2005-02-23 07:52:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -946,6 +949,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_UD_DIAM_ERROR, "e_UD", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_DIAM12_ERROR, "e_dia12.", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_OBS_METHOD, "meth", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "wlen", vobsFLOAT_PROPERTY);
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
