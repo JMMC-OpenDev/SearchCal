@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.32 2005-02-16 14:54:43 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.33 2005-02-16 15:54:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2005/02/16 14:54:43  gzins
+ * Minor change in documentation
+ *
  * Revision 1.31  2005/02/16 14:39:55  gzins
  * Updated miscDynBufGetNextLine() function to do not alter buffer content.
  *
@@ -122,7 +125,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.32 2005-02-16 14:54:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.33 2005-02-16 15:54:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -811,7 +814,7 @@ const char*   miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
     mcsINT32 i = 0;
     memset(nextLine, '\0', sizeof(mcsSTRING1024)); 
     while (((currentPos + i) < bufferEnd) &&
-             (i < (sizeof(mcsSTRING1024) + 1)) &&
+             (i < (sizeof(mcsSTRING1024) - 1)) &&
              (currentPos[i] != '\n'))
     {
         /* Copy current character */
