@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.8 2005-02-08 20:30:37 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.9 2005-02-08 21:23:28 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/08 20:30:37  gzins
+ * Changed _name type; mcsSTRING to string
+ *
  * Revision 1.7  2005/02/07 19:40:58  gzins
  * Updated vobsREQUEST API
  *
@@ -37,7 +40,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.8 2005-02-08 20:30:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.9 2005-02-08 21:23:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -443,6 +446,27 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         // Compute magnitude
         magnitude = 4.1 - (2.5 * log(flux/0.89));
         starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName());
+    }
+
+    // Re-compute diameter errot in mas insteaf of % 
+    for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
+    {
+        // Get star
+        vobsSTAR *starPtr;
+        starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
+        
+        // Get diameter and its associated error 
+        mcsFLOAT diam;
+        mcsFLOAT diamError;
+        starPtr->GetPropertyValue(vobsSTAR_EXTENSION_DIAM, &diam);
+        starPtr->GetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, &diamError);
+        
+        // Convert % to mas 
+        diamError = diam * diamError / 100;
+
+        // Rewrite diameter error
+        starPtr->SetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, diamError,
+                                  GetName(), mcsTRUE);
     }
 
     // If log level is DEBUG or EXTDBG
