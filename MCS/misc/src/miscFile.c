@@ -26,6 +26,7 @@
 * lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
 * lafrasse  07-Oct-2004  Changed miscFileExists API
 * mella     10-Nov-2004  Added xsd and xsl into pathSearchList
+* gzins     10-Dec-2004  Fixed pathSearchList for .cdf files
 *
 *-----------------------------------------------------------------------------*/
 
@@ -34,7 +35,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.19 2004-11-10 13:18:00 mella Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.20 2004-12-10 09:05:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -68,8 +69,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #define miscEXT_IDX   0
 #define miscPATH_IDX  1
 static char *pathSearchList[][2] = {
-   {"cfg", "../config:$INTROOT/config"},
-   {"cdf", "../config:$INTROOT/cdf"},
+   {"cfg", "../config:$INTROOT/config:$MCSROOT/config"},
+   {"cdf", "../config:$INTROOT/config:$MCSROOT/config"},
    {"xsd", "../config:$INTROOT/config:$MCSROOT/config"},
    {"xsl", "../config:$INTROOT/config:$MCSROOT/config"},
    {"xml", "../errors:$INTROOT/errors:$MCSROOT/errors"},
