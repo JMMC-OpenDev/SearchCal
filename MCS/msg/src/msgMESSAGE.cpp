@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.15 2005-01-24 15:02:47 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.16 2005-01-24 15:46:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/01/24 15:02:47  gzins
+ * Added CVS logs as modification history
+ *
  * scetre    17-Nov-2004  Created
  * lafrasse  19-Nov-2004  Re-commented, and replaced all the srtcpy by some
  *                        strNcpy in order to avoid segmentation faults as far
@@ -38,7 +41,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.15 2005-01-24 15:02:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.16 2005-01-24 15:46:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -471,7 +474,7 @@ mcsINT32 msgMESSAGE::GetBodySize(void)
  */
 mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
 {
-    logExtDbg("msgMESSAGE::SetBody()");
+    logExtDbg("msgMESSAGE::ClearBody()");
 
 
     // Empty the body buffer
