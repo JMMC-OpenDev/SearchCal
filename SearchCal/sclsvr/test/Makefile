@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-12-22 10:07:42 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.4 2005-02-04 08:07:58 scetre Exp $"
 #
 # Makefile of sclsvr test module
 #
@@ -67,9 +67,9 @@ EXECUTABLES_L   =
 #sclsvrTestCalibratorMethod_LDFLAGS   = -lxml2 -lgdome -lstdc++
 #sclsvrTestCalibratorMethod_LIBS      = MCS C++ sclsvr vobs alx msg simcli 
 
-sclsvrTestCalibratorPack_OBJECTS   = sclsvrTestCalibratorPack
-sclsvrTestCalibratorPack_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestCalibratorPack_LIBS      = MCS C++ sclsvr vobs alx msg simcli
+#sclsvrTestCalibratorPack_OBJECTS   = sclsvrTestCalibratorPack
+#sclsvrTestCalibratorPack_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestCalibratorPack_LIBS      = MCS C++ sclsvr vobs alx msg simcli
 
 sclsvrTestCalibrator_OBJECTS   = sclsvrTestCalibrator
 sclsvrTestCalibrator_LDFLAGS   = 

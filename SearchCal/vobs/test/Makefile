@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2004-12-20 09:40:57 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.13 2005-02-04 08:06:44 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -34,7 +34,7 @@ USER_INC =
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV getInformation vobsTestCriteria vobsTestStar 
+EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV getInformation vobsTestCriteria vobsTestStar vobsTestRequest 
 EXECUTABLES_L   = 
 
 #

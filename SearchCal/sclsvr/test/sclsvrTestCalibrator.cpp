@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.3 2005-01-26 14:17:55 scetre Exp $"
+* "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.4 2005-02-04 08:07:58 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.3 2005-01-26 14:17:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.4 2005-02-04 08:07:58 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -69,6 +69,13 @@ int main(int argc, char *argv[])
     star.SetPropertyValue(vobsSTAR_ID_MAIN, "25123");
     star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08");
     star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5");
+    star.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01");
+    // add property to a star
+    vobsSTAR star2;
+    star2.SetPropertyValue(vobsSTAR_ID_MAIN, "25233");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 45 01.32");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 23 02.23");
+    star2.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01");
     printf("STAR\n");
     for (int el2 = 0; el2 < star.NbProperties(); el2++)
     {
@@ -100,7 +107,21 @@ int main(int argc, char *argv[])
     }
 
     printf("\n");
-
+    sclsvrCALIBRATOR calibrator2(star2);
+    sclsvrCALIBRATOR calibrator3(star2);
+    
+    sclsvrCALIBRATOR_LIST list1;
+    sclsvrCALIBRATOR_LIST list2;
+    list2.Copy(list1);
+   
+    list2.AddAtTail(calibrator2);
+    list2.AddAtTail(calibrator);
+    list2.AddAtTail(calibrator3);
+    list2.Display();
+    sclsvrCALIBRATOR_LIST listTest;
+    list2.GetScienceObjectSeparation( "03 47 29.08", "+24 06 18.5", 0.1, 0.1);
+/*    list2.GetMaximalMagnitudeSeparation("K", 2.5, 0.1);*/
+    list2.Display();
     errCloseStack();
     logInfo("Exiting ...");
     exit(EXIT_SUCCESS);

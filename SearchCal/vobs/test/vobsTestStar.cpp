@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestStar.cpp,v 1.6 2005-01-26 14:12:46 scetre Exp $"
+* "@(#) $Id: vobsTestStar.cpp,v 1.7 2005-02-04 08:06:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.6 2005-01-26 14:12:46 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.7 2005-02-04 08:06:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     timlogStart(MODULE_ID, logINFO, "98", "testStar");
 
     vobsSTAR star;
-    for (unsigned int el = 0; el < star.NbProperties(); el++)
+    for (int el = 0; el < star.NbProperties(); el++)
      {
          printf("%s\t",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
      }
@@ -114,12 +114,15 @@ int main(int argc, char *argv[])
     printf("dec (deg) = %f\n", dec);
 
     vobsSTAR star2=star;
-    for (unsigned int el2 = 0; el2 < star2.NbProperties(); el2++)
+    for (int el2 = 0; el2 < star2.NbProperties(); el2++)
      {
          printf("%s\t",star2.GetNextProperty((mcsLOGICAL)(el2==0))->GetValue());
      }
     printf("\n");
     
+    vobsSTAR_LIST list1;
+    vobsSTAR_LIST list2;
+    list2.Copy(list1);
     /*logInfo("Starting ...");
 
     vobsSTAR_LIST list;
@@ -180,6 +183,15 @@ int main(int argc, char *argv[])
       exit(EXIT_FAILURE);  
     }
 #endif
+
+    vobsSTAR starX;
+    starX.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, "B8III");
+    mcsSTRING256 spectralClass;
+    starX.GetSpectralClass(spectralClass);
+    printf("the spectral class is : %s\n", spectralClass);
+    mcsSTRING256 lumClass;
+    starX.GetLuminosityClass(lumClass);
+    printf("the lum class is : %s\n", lumClass);
     errCloseStack();
     logInfo("Exiting ...");
     exit(EXIT_SUCCESS);
