@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.6 2005-02-12 15:07:14 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.7 2005-02-21 19:30:05 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/12 15:07:14  gzins
+ * Added alxGetResearchAreaSize declaration
+ *
  * Revision 1.5  2005/02/10 07:55:31  gzins
  * Updated alxComputeAngularDiameter to return diameter from B-V, V-R and V-K calibration
  *
@@ -57,33 +60,35 @@ typedef enum
     alxCONFIDENCE_HIGH      /** High confidence in computed value */
 } alxCONFIDENCE_INDEX;
 
+/**
+ * Band for magnitude.
+ */
+#define alxNB_BANDS 9
+typedef enum
+{
+    alxB_BAND = 0,  /** B-band */
+    alxV_BAND,      /** V-band */
+    alxR_BAND,      /** R-band */
+    alxI_BAND,      /** I-band */
+    alxJ_BAND,      /** J-band */
+    alxH_BAND,      /** H-band */
+    alxK_BAND,      /** K-band */
+    alxL_BAND,      /** L-band */
+    alxM_BAND       /** M-band */
+} alxBAND;
+
 /*
  * Pubic functions declaration
  */
-mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
-                                                mcsFLOAT mgB,
-                                                mcsFLOAT mgV,
-                                                mcsFLOAT *mgR,
-                                                mcsFLOAT *mgI,
-                                                mcsFLOAT *mgJ,
-                                                mcsFLOAT *mgH,
-                                                mcsFLOAT *mgK,
-                                                mcsFLOAT *mgL,
-                                                mcsFLOAT *mgM,
-                                                alxCONFIDENCE_INDEX *confIdx);
+mcsCOMPL_STAT
+alxComputeMagnitudesForBrightStar(mcsSTRING32 spType, 
+                                  mcsFLOAT magnitudes[alxNB_BANDS],
+                                  alxCONFIDENCE_INDEX confIndexes[alxNB_BANDS]);
 
 mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT plx,
                                        mcsFLOAT gLat,
                                        mcsFLOAT gLon,
-                                       mcsFLOAT *mgM,
-                                       mcsFLOAT *mgL,
-                                       mcsFLOAT *mgK,
-                                       mcsFLOAT *mgH,
-                                       mcsFLOAT *mgJ,
-                                       mcsFLOAT *mgI,
-                                       mcsFLOAT *mgR,
-                                       mcsFLOAT *mgV,
-                                       mcsFLOAT *mgB);
+                                       mcsFLOAT magnitudes[alxNB_BANDS]);
 
 mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
                                         mcsFLOAT mgV,
