@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.9 2005-02-22 10:15:32 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.10 2005-02-22 16:17:53 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/22 10:15:32  gzins
+ * Made alxBLANKING_VALUE definition public
+ *
  * Revision 1.8  2005/02/22 07:51:39  gzins
  * Added alxNO_CONFIDENCE in alxCONFIDENCE_INDEX enumerate
  *
@@ -109,7 +112,9 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
                                         mcsFLOAT *diamBv,
                                         mcsFLOAT *diamVr,
                                         mcsFLOAT *diamVk,
-                                        mcsFLOAT *diamError,
+                                        mcsFLOAT *diamBvErr,
+                                        mcsFLOAT *diamVrErr,
+                                        mcsFLOAT *diamVkErr,
                                         alxCONFIDENCE_INDEX *confidenceIdx);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
