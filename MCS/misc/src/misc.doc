@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.doc,v 1.7 2004-08-03 09:09:04 lafrasse Exp $"
+* "@(#) $Id: misc.doc,v 1.8 2004-12-17 11:02:53 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -28,4 +28,5 @@ As of today, the misc module contains functions to deal with :
 \li miscFile.c (UNIX-like file path computing, and environment variables resolving)
 \li miscNetwork.c (network-related utility functions)
 \li miscString.c (null-terminated string computing, like quotes stripping and upper casing)
+\li miscHash.c (hash table management)
 */
