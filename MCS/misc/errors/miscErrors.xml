@@ -80,4 +80,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Too many sub-strings found (more than '%d')]]></errFormat>
    </error>
+   <error id="18">
+      <errName>STRUCT_NOT_INIT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA['%s' structure not initialised.]]></errFormat>
+   </error>
 </errorList>
