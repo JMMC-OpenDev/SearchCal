@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: moduleDocumentation.template,v 1.1 2004-08-10 08:28:45 gluck Exp $"
+#%# "@(#) $Id: moduleDocumentation.template,v 1.2 2004-09-09 09:11:05 gluck Exp $"
 #%# 
 #%# Template for module documentation          
 #%# 
@@ -63,8 +63,7 @@ Insert code for example
 \sa OPTIONAL. See also section in which you can refer other documented entities.
 Using the \\sa marker, doxygen will create the link automatically.
 An example is given below.
-\sa class : modcppOPERATION.h
-\sa methods : modcppOPERATION::Add
+\sa <documented entities>
 
 \bug OPTIONAL. Known bugs list if it exists.
 \bug Bug 1 : bug 1 description
