@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.6 2005-02-16 15:10:57 gzins Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.7 2005-02-21 19:35:45 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/16 15:10:57  gzins
+ * Updated call to miscDynBufGetNextLine()
+ *
  * Revision 1.5  2005/02/12 15:13:55  gzins
  * Removed call to miscResolvePath; done by miscLocateFile
  *
@@ -36,7 +39,7 @@
  * \sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.6 2005-02-16 15:10:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.7 2005-02-21 19:35:45 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -105,7 +108,7 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
      * Reset all extinction ratio
      */
     int i;
-    for (i=0; i<alxNB_FITZ_IDS; i++)
+    for (i = 0; i < alxNB_BANDS; i++)
     {
         extinctionRatioTable.rc[i] = 0.0;
     }
@@ -143,7 +146,7 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
         if (strlen(line) != 0)
         {
             /* Check if there is to many lines in file */
-            if (lineNum >= alxNB_FITZ_IDS)
+            if (lineNum >= alxNB_BANDS)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
@@ -161,35 +164,35 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
             }
             else
             {
-                alxFITZ_ID fitzId;
+                alxBAND fitzId;
                 switch toupper(band)
                 {
                     case 'M':
-                        fitzId = alxFITZ_M;
+                        fitzId = alxM_BAND;
                         break;
                     case 'L':
-                        fitzId = alxFITZ_L;
+                        fitzId = alxL_BAND;
                         break;
                     case 'K':
-                        fitzId = alxFITZ_K;
+                        fitzId = alxK_BAND;
                         break;
                     case 'H':
-                        fitzId = alxFITZ_H;
+                        fitzId = alxH_BAND;
                         break;
                     case 'J':
-                        fitzId = alxFITZ_J;
+                        fitzId = alxJ_BAND;
                         break;
                     case 'I':
-                        fitzId = alxFITZ_I;
+                        fitzId = alxI_BAND;
                         break;
                     case 'R':
-                        fitzId = alxFITZ_R;
+                        fitzId = alxR_BAND;
                         break;
                     case 'V':
-                        fitzId = alxFITZ_V;
+                        fitzId = alxV_BAND;
                         break;
                     case 'B':
-                        fitzId = alxFITZ_B;
+                        fitzId = alxB_BAND;
                         break;
                     default:
                         errAdd(alxERR_INVALID_BAND, band, fileName);
@@ -219,9 +222,9 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
     miscDynBufDestroy(&dynBuf);
 
     /* Check if there is missing line */
-    if (lineNum != alxNB_FITZ_IDS)
+    if (lineNum != alxNB_BANDS)
     {
-        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_FITZ_IDS, fileName);
+        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_BANDS, fileName);
         return NULL;
     }
 
@@ -339,15 +342,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
  * \param paralax the paralax
  * \param gLat the galatic lattitude in degrees
  * \param gLon the galatic longitude in degrees
- * \param mgB corrected magnitude B
- * \param mgV corrected magnitude V
- * \param mgR corrected magnitude R
- * \param mgI corrected magnitude I
- * \param mgJ corrected magnitude J
- * \param mgH corrected magnitude H
- * \param mgK corrected magnitude K
- * \param mgL corrected magnitude L
- * \param mgM corrected magnitude M
+ * \param magnitudes computed magnitudes in B, V, R, I, J, H, K, L and M bands
  * 
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -360,15 +355,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
 mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
                                        mcsFLOAT gLat,
                                        mcsFLOAT gLon,
-                                       mcsFLOAT *mgB,
-                                       mcsFLOAT *mgV,
-                                       mcsFLOAT *mgR,
-                                       mcsFLOAT *mgI,
-                                       mcsFLOAT *mgJ,
-                                       mcsFLOAT *mgH,
-                                       mcsFLOAT *mgK,
-                                       mcsFLOAT *mgL,
-                                       mcsFLOAT *mgM)
+                                       mcsFLOAT magnitudes[alxNB_BANDS])
 {
     logExtDbg("alxComputeRealMagnitudes()");
 
@@ -461,84 +448,19 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
      * if the pointer of a magnitude is NULL that's mean that there is nothing
      * to compute. In this case, do nothing
      */
-    if (*mgM != 0)
+    int band;
+    for (band = alxB_BAND; band <= alxM_BAND; band++)
     {
-        *mgM = *mgM - (av * extinctionRatioTable->rc[alxFITZ_M] / 3.10);
-    }
-    if (*mgL != 0)
-    {
-        *mgL = *mgL - (av * extinctionRatioTable->rc[alxFITZ_L] / 3.10);
-    }
-    if (*mgK != 0)
-    {
-        *mgK = *mgK - (av * extinctionRatioTable->rc[alxFITZ_K] / 3.10);
-    }
-    if (*mgH != 0)
-    {
-        *mgH = *mgH - (av * extinctionRatioTable->rc[alxFITZ_H] / 3.10);
-    }
-    if (*mgJ != 0)
-    {
-        *mgJ = *mgJ - (av * extinctionRatioTable->rc[alxFITZ_J] / 3.10);
-    }
-    if (*mgI != 0)
-    {
-        *mgI = *mgI - (av * extinctionRatioTable->rc[alxFITZ_I] / 3.10);
-    }
-    if (*mgR != 0)
-    {
-        *mgR = *mgR - (av * extinctionRatioTable->rc[alxFITZ_R] / 3.10);
-    }
-    if (*mgV != 0)
-    {
-        *mgV = *mgV - (av * extinctionRatioTable->rc[alxFITZ_V] / 3.10);
-    }
-    if (*mgB != 0)
-    {
-        *mgB = *mgB - (av * extinctionRatioTable->rc[alxFITZ_B] / 3.10);
-    }
-
-    /* Print out results */
-    if (*mgB != 0)
-    {
-        logTest("B (corrected)    = %0.3f", *mgB);
-    }
-    if (*mgV != 0)
-    {
-        logTest("V (corrected)    = %0.3f", *mgV);
-    }
-    if (*mgR != 0)
-    {
-        logTest("R (corrected)    = %0.3lf", *mgR);
-    }
-    if (*mgI != 0)
-    {
-        logTest("I (corrected)    = %0.3lf", *mgI);
-    }
-    if (*mgJ != 0)
-    {
-        logTest("J (corrected)    = %0.3lf", *mgJ);
-    }
-    if (*mgH != 0)
-    {
-        logTest("H (corrected)    = %0.3lf", *mgH);
-    }
-    if (*mgK != 0)
-    {
-        logTest("K (corrected)    = %0.3lf", *mgK);
-    }
-    if (*mgL != 0)
-    {
-        logTest("L (corrected)    = %0.3lf", *mgL);
-    }
-    if (*mgM != 0)
-    {
-        logTest("M (corrected)    = %0.3lf", *mgM);
+        if (magnitudes[band] != alxBLANKING_VALUE)
+        {
+            magnitudes[band] = magnitudes[band] 
+                - (av * extinctionRatioTable->rc[band] / 3.10);
+        }
+        
+        printf("magnitude[band] = %0.3f\n", magnitudes[band]); 
     }
 
     return mcsSUCCESS;
 }
-
-
 
 /*___oOo___*/
