@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.6 2005-03-07 13:39:46 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.7 2005-03-07 16:06:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/03/07 13:39:46  gzins
+ * Remove min baseline length
+ *
  * Revision 1.5  2005/03/04 09:46:04  gzins
  * Rename Set/GetSaveFileName to  Set/GetFileName
  *
@@ -74,11 +77,6 @@ public:
     virtual mcsCOMPL_STAT SetObservingWlen(mcsFLOAT wlen);
     virtual mcsFLOAT GetObservingWlen(void);
 
-    // Expected visibility 
-    virtual mcsCOMPL_STAT SetExpectedVisibility(mcsFLOAT vis, mcsFLOAT visErr);
-    virtual mcsFLOAT GetExpectedVisibility(void);
-    virtual mcsFLOAT GetExpectedVisibilityError(void);
-
     // File name where file should be saved 
     virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
     virtual const char *GetFileName(void);
@@ -96,8 +94,6 @@ private:
 
     mcsFLOAT        _maxBaselineLength;
     mcsFLOAT        _observingWlen;
-    mcsFLOAT        _vis;
-    mcsFLOAT        _visErr;
     mcsSTRING256    _fileName;
 };
 

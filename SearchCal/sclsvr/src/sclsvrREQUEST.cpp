@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.7 2005-03-07 13:40:49 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.8 2005-03-07 16:06:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/03/07 13:40:49  gzins
+ * Remove min baseline length
+ * Defined magnitude range option as optional (not used in N band)
+ *
  * Revision 1.6  2005/03/04 09:46:04  gzins
  * Rename Set/GetSaveFileName to  Set/GetFileName
  *
@@ -32,7 +36,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.7 2005-03-07 13:40:49 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.8 2005-03-07 16:06:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,8 +65,6 @@ sclsvrREQUEST::sclsvrREQUEST()
 {
     _maxBaselineLength = 0.0;
     _observingWlen = 0.0;
-    _vis = 0.0;
-    _visErr = 0.0;
 
     _getCalCmd = NULL;
 }
@@ -195,20 +197,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         return mcsFAILURE;
     }
 
-    // Visibility
-    mcsDOUBLE vis;
-    if (_getCalCmd->GetVis(&vis) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Visibility error
-    mcsDOUBLE visErr;
-    if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-   
     // File name
     char *fileName = "";
     if (_getCalCmd->IsDefinedFile() == mcsTRUE)
@@ -268,10 +256,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     if (SetDeltaDec(diffDec) == mcsFAILURE)
     {
         return mcsFAILURE;
-    }
-    // Affect the expected visibility
-    if (SetExpectedVisibility(vis, visErr) == mcsFAILURE)
-    {
     }
     // Affect the observed band
     if (SetSearchBand(band) ==  mcsFAILURE)
@@ -372,22 +356,6 @@ mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
 }
 
 /**
- * Set the expected visibility, with the associated error.
- *
- * \return Always mcsSUCCESS.
- */
-mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisibility(mcsFLOAT vis, 
-                                                   mcsFLOAT visErr)
-{
-    logExtDbg("sclsvrREQUEST::SetExpectedVisibility()");
-
-    _vis    = vis;
-    _visErr = visErr;
-    
-    return mcsSUCCESS;
-}
-
-/**
  * Set the file name in which the value will be saved
  *
  * \param fileName the name of the save file
@@ -414,30 +382,6 @@ const char *sclsvrREQUEST::GetFileName(void)
 {
     logExtDbg("sclsvrREQUEST::GetFileName()");
     return (_fileName);
-}
-
-/**
- * Get the expected visibility.
- *
- * \return expected visibility.
- */
-mcsFLOAT sclsvrREQUEST::GetExpectedVisibility(void)
-{
-    logExtDbg("sclsvrREQUEST::GetExpectedVisibility()");
-
-    return (_vis);
-}
-
-/**
- * Get the expected visibility error.
- *
- * \return expected visibility error.
- */
-mcsFLOAT sclsvrREQUEST::GetExpectedVisibilityError(void)
-{
-    logExtDbg("sclsvrREQUEST::GetExpectedVisibilityError()");
-
-    return (_visErr);
 }
 
 /*___oOo___*/

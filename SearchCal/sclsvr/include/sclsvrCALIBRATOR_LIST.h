@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.22 2005-03-06 20:34:23 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.23 2005-03-07 16:06:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/03/06 20:34:23  gzins
+ * Improved Save/Load methods; added file header, used REQUEST/FORMAT tags and added automatic format detection when loading file
+ *
  * Revision 1.21  2005/03/06 10:48:30  gzins
  * Merged FilterBySpectralType and FilterByLuminosityClass methods
  *
@@ -87,8 +90,7 @@ public:
 
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
     virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list,
-                               mcsLOGICAL copyDiameterNok = mcsTRUE,
-                               mcsLOGICAL copyVisibilityNok = mcsTRUE);
+                               mcsLOGICAL copyDiameterNok = mcsTRUE);
     virtual mcsCOMPL_STAT AddAtTail(sclsvrCALIBRATOR &calibrator);
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
  

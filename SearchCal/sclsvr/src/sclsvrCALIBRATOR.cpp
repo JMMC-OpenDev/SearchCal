@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.44 2005-03-04 12:50:11 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.45 2005-03-07 16:06:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.44  2005/03/04 12:50:11  gzins
+ * Added test on paralax; do not compute magnitudes and angular diameter when paralax < 1 mas
+ *
  * Revision 1.43  2005/03/04 09:59:38  gzins
  * Set confidence index of computed visibility
  *
@@ -78,7 +81,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.44 2005-03-04 12:50:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.45 2005-03-07 16:06:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -171,35 +174,6 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
 }
 
 /**
- * Say if the visibility is ok
- */
-mcsLOGICAL sclsvrCALIBRATOR::IsVisibilityOk()
-{
-    // If visibility has not been computed
-    if (IsPropertySet(sclsvrCALIBRATOR_VIS2_FLAG) == mcsFALSE)
-    {
-        // Return false
-        return mcsFALSE;
-    }
-    // Else
-    else
-    {
-        // Get the flag, and test it
-        const char *flag;
-        flag = GetPropertyValue(sclsvrCALIBRATOR_VIS2_FLAG);
-        if (strcmp(flag, "OK") == 0)
-        {
-            return mcsTRUE;
-        }
-        else
-        {
-            return mcsFALSE;
-        }
-    }
-    // End if
-}
-
-/**
  * Complete the property of the calibrator
  *
  * Method to complete calibrator properties by using several methods
@@ -259,49 +233,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     }
 
     // Compute visibility and visibility error
-    if (ComputeVisibility(request) != mcsFAILURE)
+    if (ComputeVisibility(request) == mcsFAILURE)
     {
-        // If visibility and his error had been computed
-        mcsFLOAT computedVis;
-        mcsFLOAT computedVisError;
-        if ((IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE) &&
-            (IsPropertySet(sclsvrCALIBRATOR_VIS2_ERROR) == mcsTRUE))
-        {
-            // Get computed visibility
-            GetPropertyValue(sclsvrCALIBRATOR_VIS2, &computedVis);
-            GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, &computedVisError);
-            
-            // Get expected visibility
-            mcsFLOAT expectedVis;
-            mcsFLOAT expectedVisError;
-            expectedVis = request.GetExpectedVisibility();
-            expectedVisError = request.GetExpectedVisibilityError();
-            
-            // compute deltaV2(user) / V2(user)
-            mcsFLOAT expectedRelativeError;
-            expectedRelativeError = expectedVisError / expectedVis;
-            
-            mcsFLOAT computedRelativeError;
-            // fix constant value
-            mcsFLOAT deltaMu2 = 0.005;
-            mcsFLOAT gamma2 = 0.64;
-
-            computedRelativeError = (computedVisError / computedVis)
-                + (deltaMu2/gamma2) * ( 1/computedVis + 1/ expectedVis);
-            
-            // Check if the computed visibility is greater than the
-            // requested one, and the flag accordingly
-            if (expectedRelativeError < computedRelativeError)
-            {
-                SetPropertyValue(sclsvrCALIBRATOR_VIS2_FLAG, "NOK",
-                                 vobsSTAR_COMPUTED_PROP);
-            }
-            else
-            {
-                SetPropertyValue(sclsvrCALIBRATOR_VIS2_FLAG, "OK",
-                                 vobsSTAR_COMPUTED_PROP);
-            }
-        }
+        return mcsFAILURE;
     }
 
     // compute multiplicity

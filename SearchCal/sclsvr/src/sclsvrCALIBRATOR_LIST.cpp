@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.39 2005-03-07 15:16:08 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.40 2005-03-07 16:06:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2005/03/07 15:16:08  scetre
+ * Changed Filter by visibility
+ *
  * Revision 1.38  2005/03/07 14:17:32  scetre
  * Changed 'JMMC calibrators Group' to 'JMMC calibrator Group' in save file
  *
@@ -98,7 +101,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.39 2005-03-07 15:16:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.40 2005-03-07 16:06:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -165,15 +168,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
  * \param list list containing calibrators to be imported
  * \param copyDiameterNok if mcsFALSE do not copy calibrator with a no coherent
  * diameter
- * \param copyVisibilityNok if mcsFALSE do not copy calibrator with a visibility
- * less than the expected one.
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned. 
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
-                                          mcsLOGICAL copyDiameterNok,
-                                          mcsLOGICAL copyVisibilityNok)
+                                          mcsLOGICAL copyDiameterNok)
 {
      
     logExtDbg("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
@@ -185,10 +185,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
         
         // Check if this calibrator has to be copy in or not
         mcsLOGICAL copyIt = mcsTRUE;
-        if (((copyDiameterNok == mcsFALSE) && 
-             (calibrator->IsDiameterOk() == mcsFALSE)) ||
-            ((copyVisibilityNok == mcsFALSE) && 
-             (calibrator->IsVisibilityOk() == mcsFALSE)))
+        if ((copyDiameterNok == mcsFALSE) && 
+            (calibrator->IsDiameterOk() == mcsFALSE))
         {
             copyIt = mcsFALSE;
         }

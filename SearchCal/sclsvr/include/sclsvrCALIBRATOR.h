@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.24 2005-02-23 17:04:15 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.25 2005-03-07 16:05:52 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/02/23 17:04:15  scetre
+ * Added vis and visErr 8mu and 13mu
+ *
  * Revision 1.23  2005/02/23 08:12:59  gzins
  * Replaced DIAM_ERROR by DIAM_BV_ERROR, DIAM_VR_ERROR and DIAM_VK_ERROR
  *
@@ -90,8 +93,6 @@ public:
  
     // Say if the calibrator had coherent diameter
     virtual mcsLOGICAL IsDiameterOk();
-    // Say if the calibrator had visibility OK
-    virtual mcsLOGICAL IsVisibilityOk();
 
 protected:
     
