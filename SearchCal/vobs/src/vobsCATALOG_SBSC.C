@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_SBSC.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_SBSC.C,v 1.3 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_SBSC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.C,v 1.3 2004-09-30 07:40:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,6 +49,8 @@ using namespace std;
 vobsCATALOG_SBSC::vobsCATALOG_SBSC()
 {
     strcpy(_name,"V/36B/bsc4s");
+    strcpy(_fileName,"");
+    strcpy(_nameForFile,"B_36B_bsc4s");
 }
 
 /*

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.3 2004-08-06 13:07:52 scetre Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.4 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -47,7 +47,9 @@ public:
     virtual ~vobsPARSER();
     
     // Parse of the XML document from a URI
-    mcsCOMPL_STAT Parse(char *uri, vobsSTAR_LIST &starList);
+    mcsCOMPL_STAT Parse(char *uri, 
+                        vobsSTAR_LIST &starList,
+                        mcsSTRING256 fileName);
     
 protected:
 
@@ -58,10 +60,14 @@ private:
     vobsPARSER (const vobsPARSER&);
     
     // Recurvise parsing of XML document 
-    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA *> &listCDATA, vobsCDATA *cData);
+    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node,
+                                  std::vector<vobsCDATA *> &listCDATA,
+                                  vobsCDATA *cData);
 
     // Parsing of the CDATA section
-    mcsCOMPL_STAT ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList);
+    mcsCOMPL_STAT ParseCData(vobsCDATA *cData,
+                             vobsSTAR_LIST &starList,
+                             FILE *f);
 };
 
 #endif /*!vobsPARSER_H*/

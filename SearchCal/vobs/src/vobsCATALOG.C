@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.11 2004-09-20 06:42:02 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.12 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.11 2004-09-20 06:42:02 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.12 2004-09-30 07:40:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,6 +61,8 @@ using namespace std;
 vobsCATALOG::vobsCATALOG()
 {
     strcpy(_name,"");
+    strcpy(_fileName,"");
+    strcpy(_nameForFile,"");
 }
 
 /*
@@ -149,11 +151,24 @@ mcsCOMPL_STAT vobsCATALOG::GetName(char *name)
 mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::Search()");
-       
+    
+    if (logGetStdoutLogLevel() == logEXTDBG)
+    {
+        mcsSTRING32 band;
+        request.GetConstraint(OBSERVED_BAND_ID,band);
+        //strcpy(_fileName, "$INTROOT/tmp/");
+        strcpy(_fileName, band);
+        strcat(_fileName, "_");
+        strcat(_fileName, _nameForFile);
+    }
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
     if (list.IsEmpty()==mcsTRUE)
     {
+        if (logGetStdoutLogLevel() == logEXTDBG)
+        {
+            strcat(_fileName, "_1.dat");
+        }
         if (PrepareAsking(request)==FAILURE)
         {
             return FAILURE;
@@ -162,6 +177,10 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     // else, the asking is writing according to the request and the star list
     else 
     {
+        if (logGetStdoutLogLevel() == logEXTDBG)
+        {
+            strcat(_fileName, "_2.dat");
+        }
         if (PrepareAsking(request, list)==FAILURE)
         { 
             return FAILURE; 
@@ -169,7 +188,8 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     }
     
     vobsPARSER parser;
-    if (parser.Parse(miscDynBufGetBufferPointer(&_asking), list) == FAILURE)
+    if (parser.Parse(miscDynBufGetBufferPointer(&_asking), list, _fileName)
+        == FAILURE)
     {
         return FAILURE; 
     }
@@ -177,6 +197,20 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     
     return SUCCESS;
 }
+
+/**
+ * Get a catalog file name
+ *
+ * \param fileName the file nqme associated to the catalog
+ *
+ * \return Always SUCCESS
+ */
+mcsCOMPL_STAT vobsCATALOG::GetFileName(char *fileName)
+{
+    strcpy(fileName, _fileName);
+    return SUCCESS;
+}
+
 /*
  * Protected methods
  */
@@ -199,7 +233,8 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
 mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG::PrepareAsking()");
-
+    
+        
     if ((WriteAskingURI()==FAILURE) ||
         (WriteAskingPosition(request)==FAILURE) ||
         (WriteAskingSpecificParameters(request)==FAILURE) )
@@ -228,6 +263,7 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST &request)
 mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmpList)
 {
     logExtDbg("vobsCATALOG::PrepareAsking()");
+    
     if ( (WriteAskingURI()==FAILURE) ||
          (WriteAskingConstant()==FAILURE) ||
          (WriteAskingSpecificParameters()==FAILURE) ||

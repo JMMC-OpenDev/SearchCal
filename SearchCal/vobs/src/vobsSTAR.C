@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.7 2004-09-07 11:56:53 scetre Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.8 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.7 2004-09-07 11:56:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.8 2004-09-30 07:40:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -636,6 +636,24 @@ void vobsSTAR::DisplayOne()
     }
     printf("\n");
 
+}
+
+/**
+ * Save affected star properties in a file
+ *
+ * \param file 
+ */
+void vobsSTAR::Save(FILE *file)
+{
+    //logExtDbg("vobsSTAR::Save()");
+    for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+    {
+        if (strcmp(_properties[i], vobsSTAR_PROP_NOT_SET)!=0)
+        {
+            fprintf(file, "%12s", _properties[i]);
+        }
+    }
+    fprintf(file, "\n");
 }
 
 /*

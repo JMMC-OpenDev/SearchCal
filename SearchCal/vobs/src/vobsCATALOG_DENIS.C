@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_DENIS.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_DENIS.C,v 1.3 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_DENIS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.C,v 1.3 2004-09-30 07:40:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,6 +49,8 @@ using namespace std;
 vobsCATALOG_DENIS::vobsCATALOG_DENIS()
 {
     strcpy(_name,"B/denis");
+    strcpy(_fileName,"");
+    strcpy(_nameForFile,"B_DENIS");
 }
 
 /*

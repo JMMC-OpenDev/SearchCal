@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.C,v 1.3 2004-08-25 14:53:12 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.C,v 1.4 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.C,v 1.3 2004-08-25 14:53:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.C,v 1.4 2004-09-30 07:40:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -51,6 +51,8 @@ using namespace std;
 vobsCATALOG_PHOTO::vobsCATALOG_PHOTO()
 {
     strcpy(_name,"II/7A/catalog");
+    strcpy(_fileName,"");
+    strcpy(_nameForFile,"II_7A_catalog");
 }
 
 /*

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CHARM.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CHARM.C,v 1.3 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CHARM class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CHARM.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CHARM.C,v 1.3 2004-09-30 07:40:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,6 +49,8 @@ using namespace std;
 vobsCATALOG_CHARM::vobsCATALOG_CHARM()
 {
     strcpy(_name,"J/A+A/386/492/charm");
+    strcpy(_fileName,"");
+    strcpy(_nameForFile,"J_A+A_386_492_charm");
 }
 
 /*

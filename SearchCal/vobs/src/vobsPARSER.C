@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.9 2004-09-07 11:56:53 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.10 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.9 2004-09-07 11:56:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.10 2004-09-30 07:40:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -65,7 +65,9 @@ vobsPARSER::~vobsPARSER()
  * \li vobsERR_GDOME_CALL
  * \li vobsERR_CDATA_NOT_FOUND
  */
-mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
+mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
+                                vobsSTAR_LIST &starList,
+                                mcsSTRING256 fileName)
 {
     GdomeDOMImplementation *domimpl;
     GdomeDocument          *doc;
@@ -156,6 +158,19 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
     
     else
     {
+        FILE *f=NULL;
+        if (strcmp(fileName,"")!=0)
+        {
+            char *resolvedfileName=NULL;
+            miscResolvePath(fileName, &resolvedfileName);
+            printf("%s\n",resolvedfileName);
+            f=fopen(resolvedfileName, "w");
+            if (f==NULL)
+            {
+                errAdd(vobsERR_NO_FILE,resolvedfileName);
+            } 
+        }
+
         iterCDATA=listCDATA.begin();
         int i=1;
         while (iterCDATA!=listCDATA.end())
@@ -163,7 +178,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
             //printf("%deme passage\n",i);
             //printf("%s\n\n",(**iterCDATA).ptr);
             // Parse the CDATA section
-            if (ParseCData((*iterCDATA), starListToReturn) == FAILURE)
+            if (ParseCData((*iterCDATA), starListToReturn, f) == FAILURE)
             {
                 gdome_di_freeDoc (domimpl, doc, &exc);
                 gdome_di_unref (domimpl, &exc);
@@ -175,6 +190,10 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
         // Free the document structure and the DOMImplementation
         gdome_di_freeDoc (domimpl, doc, &exc);
         gdome_di_unref (domimpl, &exc);
+        if (f!=NULL)
+        {
+            fclose(f);
+        }
 
         // Print out the star list 
         /*if (logGetStdoutLogLevel() >= logTEST)
@@ -212,7 +231,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
  * \todo
  * nblinetojump problem
  */
-mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA *> &listCDATA, vobsCDATA *cData)
+mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
+                                          std::vector<vobsCDATA *> &listCDATA,
+                                          vobsCDATA *cData)
 {
     GdomeException exc;
     GdomeNodeList *nodeList;
@@ -405,9 +426,11 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA
  * an error is added to the error stack. The possible error is :
  * \li vobsERR_INVALID_CDATA_FORMAT
  */
-mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
+mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
+                                     vobsSTAR_LIST &starList,
+                                     FILE *f)
 {
-    logExtDbg("vobsPARSER::ParseCData()"); 
+    logExtDbg("vobsPARSER::ParseCData()");  
 
     char *linePtr;
     miscDYN_BUF linePtrList; // Table containing pointers to the CDATA lines
@@ -497,12 +520,22 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
                     return FAILURE;
                 }
             }
+            else
+            {
+                if (f!=NULL)
+                {
+                    fprintf(f, "%10s", ucdValue);
+                }
+            }
 
             // Next UCD
             ucdName++;
             }
         }
-
+        if (f!=NULL)
+        {
+            fprintf(f,"\n");
+        }
         // Put now the star in the star list
         if (starList.AddAtTail(star) == FAILURE)
         {
@@ -511,6 +544,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
     }
 
     miscDynBufDestroy(&linePtrList);
+    
     return SUCCESS;
 }
 

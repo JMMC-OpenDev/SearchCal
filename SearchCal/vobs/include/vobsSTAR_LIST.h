@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.4 2004-09-07 11:56:53 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.5 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -52,7 +52,7 @@ class vobsSTAR_LIST
 
     void                  Display(void);
     void                  DisplayOne(void);
-    
+    void                  Save(mcsSTRING256 filename); 
  protected:
 
  private:

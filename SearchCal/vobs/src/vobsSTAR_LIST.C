@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.6 2004-09-07 11:56:53 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.7 2004-09-30 07:40:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.6 2004-09-07 11:56:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.7 2004-09-30 07:40:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -348,5 +348,33 @@ void vobsSTAR_LIST::DisplayOne(void)
         (*iter).DisplayOne();
     }
 }
+
+/**
+ * Save the elements (stars) of the list in a file.
+ *
+ * \param filename the file where to save
+ */
+void vobsSTAR_LIST::Save(mcsSTRING256 filename)
+{
+    logExtDbg("vobsSTAR_LIST::Save()");
+    
+    FILE *f;
+    f=fopen(filename, "w");
+    /*if (f==NULL)
+    {
+        errAdd(vobsERR_NO_FILE, filename);
+    }*/
+    //else
+    //{
+        // Save all element of the list which are affected 
+        std::list<vobsSTAR>::iterator iter;
+    
+        for (iter=_starList.begin(); iter != _starList.end(); iter++)
+        {
+            (*iter).Save(f);
+        }
+    //}
+}
+
 
 /*___oOo___*/

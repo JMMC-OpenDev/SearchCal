@@ -115,4 +115,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[The end is not writing correctly]]></errFormat>
    </error>
+   <error id="29">
+      <errName>NO_FILE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[file '%s' can't be loaded]]></errFormat>
+   </error>
 </errorList>

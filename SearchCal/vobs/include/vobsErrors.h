@@ -29,3 +29,4 @@
 #define vobsERR_CONSTANT_WRITE_FAILED 26   /**<  The Constants are not writing correctly */
 #define vobsERR_POSITION_WRITE_FAILED 27   /**<  The position are not writing correctly */
 #define vobsERR_END_WRITE_FAILED 28   /**<  The end is not writing correctly */
+#define vobsERR_NO_FILE 29   /**<  file '%s' can't be loaded */
