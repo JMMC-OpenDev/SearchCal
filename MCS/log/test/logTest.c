@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.8 2004-08-03 15:28:40 lafrasse Exp $"
+* "@(#) $Id: logTest.c,v 1.9 2004-08-04 09:46:11 lafrasse Exp $"
 *
 *
 * who       when                 what
@@ -9,13 +9,24 @@
 * mella     07-May-2004  Created
 * lafrasse  30-Jun-2004  Changed some APIs :
 *                        logSetLog -> logSetFileLogState
-*                        logSetLogLevel -> logSetFileLogVerbosity
-*                        logGetLogLevel -> logGetFileLogVerbosity
+*                        logSetLogLevel -> logSetFileLogLevel
+*                        logGetLogLevel -> logGetFileLogLevel
 *                        logSetVerbose -> logSetStdoutLogState
-*                        logSetVerboseLevel -> logSetStdoutLogVerbosity
-*                        logGetVerboseLevel -> logGetStdoutLogVerbosity
-*                        logSetActionLevel -> logSetActionLogVerbosity
-*                        logGetActionLevel -> logGetActionLogVerbosity
+*                        logSetVerboseLevel -> logSetStdoutLogLevel
+*                        logGetVerboseLevel -> logGetStdoutLogLevel
+*                        logSetActionLevel -> logSetActionLogLevel
+*                        logGetActionLevel -> logGetActionLogLevel
+* lafrasse  03-Aug-2004  Changed some APIs :
+*                        logSetFileLogVerbosity -> logSetFileLogLevel
+*                        logGetFileLogVerbosity -> logGetFileLogLevel
+*                        logSetStdoutLogVerbosity -> logSetStdoutLogLevel
+*                        logGetStdoutLogVerbosity -> logGetStdoutLogLevel
+*                        logSetActionLogVerbosity -> logSetActionLogLevel
+*                        logGetActionLogVerbosity -> logGetActionLogLevel
+*                        Replaced logSetFileLogState by logEnableFileLog and
+*                        logDisableFileLog
+*                        Replaced logSetStdoutLogState by logEnableStdoutLog and
+*                        logDisableStdoutLog
 *
 *
 *******************************************************************************/
@@ -67,7 +78,7 @@ mcsCOMPL_STAT testAll(void)
 {
     mcsUINT8 level;
 
-    logSetStdoutLogVerbosity(logQUIET);
+    logSetStdoutLogLevel(logQUIET);
     
     /* Repeat loop changing log level */
     printf("###############################################################\n");
@@ -76,7 +87,7 @@ mcsCOMPL_STAT testAll(void)
     for( level = logQUIET; level <= logEXTDBG; level++ )
     {
         /* Change verbose level */
-        logSetFileLogVerbosity(level);
+        logSetFileLogLevel(level);
     
         /* Print verbose level */
         printf("*** File logging verbosity level is : %d\n", level);
@@ -92,7 +103,7 @@ mcsCOMPL_STAT testAll(void)
     for( level = logQUIET; level <= logEXTDBG; level++ )
     {
         /* Change verbose level */
-        logSetStdoutLogVerbosity(level);
+        logSetStdoutLogLevel(level);
 
         /* Print verbose level */
         printf("*** Stdout logging verbosity level is : %d\n", level);
@@ -108,7 +119,7 @@ mcsCOMPL_STAT testAll(void)
     for( level = logQUIET; level <= logEXTDBG; level++ )
     {
         /* Change verbose level */
-        logSetActionLogVerbosity(level);
+        logSetActionLogLevel(level);
         
         /* Print verbose level */
         printf("*** Action logging verbosity level is : %d\n", level);
@@ -120,15 +131,33 @@ mcsCOMPL_STAT testAll(void)
     return SUCCESS;
 }
 
-mcsCOMPL_STAT test1(mcsLOGICAL log, mcsLOGICAL verbose)
+mcsCOMPL_STAT test1(mcsLOGICAL fileLogState, mcsLOGICAL stdoutLogState)
 {
     logExtDbg("ENTER_FUNC test1");
-    /* toggle log and verbose */
-    logSetFileLogState(log);
-    logSetStdoutLogState(verbose);
+
+    /* Switch file logging ON or OFF */
+    if (fileLogState == mcsTRUE)
+    {
+        logEnableFileLog();
+    }
+    else
+    {
+        logDisableFileLog();
+    }
+
+    /* Switch stdout logging ON or OFF */
+    if (stdoutLogState == mcsTRUE)
+    {
+        logEnableStdoutLog();
+    }
+    else
+    {
+        logDisableStdoutLog();
+    }
+
     printf("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
-    printf("File logging switched %s\n",(log==mcsTRUE?"ON":"OFF"));
-    printf("Stdout logging switched %s\n",(verbose==mcsTRUE?"ON":"OFF"));
+    printf("File logging switched %s\n",(fileLogState==mcsTRUE?"ON":"OFF"));
+    printf("Stdout logging switched %s\n",(stdoutLogState==mcsTRUE?"ON":"OFF"));
     printf("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
 
     /* and test log, verbose, action */
@@ -174,9 +203,9 @@ int main(int argc, char ** argv)
     /*
      * set test level and stdout only
      */
-    logSetFileLogState(mcsFALSE);
-    logSetStdoutLogState(mcsTRUE);
-    logSetStdoutLogVerbosity(logTEST);
+    logDisableFileLog();;
+    logEnableStdoutLog();
+    logSetStdoutLogLevel(logTEST);
 
     testNoFileLine();
 
