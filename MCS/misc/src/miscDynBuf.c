@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.22 2005-01-28 17:56:46 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.23 2005-01-28 18:10:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/01/28 17:56:46  gzins
+ * Declared dynBuf parameter of miscDynBufGetBufferPointer as const
+ * Removed automatic initialisation of dynamic buffer structure
+ *
  * lafrasse  05-Jul-2004  Created
  * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
  * lafrasse  12-Jul-2004  Code factorization and error codes polishing
@@ -79,7 +83,7 @@
  *     miscDynBufAppendString(&dynBuf, tmp);
  *     tmp = " append...";
  *     miscDynBufAppendString(&dynBuf, tmp);
- *     printf("DynBuf contains '%s'.\n", miscDynBufGetBufferPointer(&dynBuf));
+ *     printf("DynBuf contains '%s'.\n", miscDynBufGetBuffer(&dynBuf));
  *
  *     miscDynBufDestroy(&dynBuf);
  *
@@ -88,7 +92,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.22 2005-01-28 17:56:46 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.23 2005-01-28 18:10:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -121,16 +125,16 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local functions declaration 
  */
-static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
+static        mcsCOMPL_STAT miscDynBufCheckPositionParam(
                                              miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   position);
 
-static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
+static        mcsCOMPL_STAT miscDynBufCheckFromToParams(
                                              miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
 
-static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
+static        mcsCOMPL_STAT miscDynBufCheckBytesAndLengthParams(
                                              char              *bytes,
                                              const mcsUINT32   length);
 
@@ -187,7 +191,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyIsInitialized(
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
+static        mcsCOMPL_STAT miscDynBufCheckPositionParam(
                                              miscDYN_BUF        *dynBuf,
                                              const mcsUINT32    position)
 {
@@ -222,7 +226,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
+static        mcsCOMPL_STAT miscDynBufCheckFromToParams(
                                              miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
@@ -269,7 +273,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
+static        mcsCOMPL_STAT miscDynBufCheckBytesAndLengthParams(
                                              char              *bytes,
                                              const mcsUINT32   length)
 {
@@ -606,7 +610,7 @@ mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(
  *
  * \return a pointer to a Dynamic Buffer buffer, or NULL if an error occured
  */
-char*         miscDynBufGetBufferPointer    (const miscDYN_BUF       *dynBuf)
+char*         miscDynBufGetBuffer (const miscDYN_BUF       *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
     if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
@@ -654,7 +658,7 @@ char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf)
  * \return a pointer to the next line of a Dynamic Buffer buffer, or NULL if an
  * error occured
  */
-char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
+char*         miscDynBufGetNextLine (miscDYN_BUF       *dynBuf,
                                              const char        *currentLinePtr,
                                              const mcsLOGICAL  skipCommentFlag)
 {
@@ -665,7 +669,7 @@ char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
     }
 
     /* Get the current Dynamic Buffer internal buffer pointer */
-    char *internalBuffer = miscDynBufGetBufferPointer(dynBuf);
+    char *internalBuffer = miscDynBufGetBuffer(dynBuf);
 
     /* Get the current Dynamic Buffer internal buffer length */
     mcsUINT32 internalLength = 0;
@@ -750,7 +754,7 @@ mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   position)
 {
     /* Test the 'dynBuf' and 'position' parameters validity */
-    if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
+    if (miscDynBufCheckPositionParam(dynBuf, position) == FAILURE)
     {
         return FAILURE;
     }
@@ -788,7 +792,7 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   to)
 {
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
-    if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
+    if (miscDynBufCheckFromToParams(dynBuf, from, to) == FAILURE)
     {
         return FAILURE;
     }
@@ -863,7 +867,7 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo     (miscDYN_BUF       *dynBuf,
  *
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param commentPattern a null-terminated string defining the comment pattern
- * that can be skipped when using miscDynBufGetNextLinePointer(), or NULL
+ * that can be skipped when using miscDynBufGetNextLine(), or NULL
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
@@ -992,7 +996,7 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   position)
 {
     /* Test the 'dynBuf' and 'position' parameters validity */
-    if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
+    if (miscDynBufCheckPositionParam(dynBuf, position) == FAILURE)
     {
         return FAILURE;
     }
@@ -1028,14 +1032,13 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   to)
 {
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
-    if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
+    if (miscDynBufCheckFromToParams(dynBuf, from, to) == FAILURE)
     {
         return FAILURE;
     }
 
     /* Test the 'bytes' and 'length' parameters validity */
-    if (miscDynBufVerifyBytesAndLengthParametersValidity(bytes, length)
-        == FAILURE)
+    if (miscDynBufCheckBytesAndLengthParams(bytes, length) == FAILURE)
     {
         return FAILURE;
     }
@@ -1155,8 +1158,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
     }
 
     /* Test the 'bytes' and 'length' parameters validity */
-    if (miscDynBufVerifyBytesAndLengthParametersValidity(bytes, length)
-        == FAILURE)
+    if (miscDynBufCheckBytesAndLengthParams(bytes, length) == FAILURE)
     {
         return FAILURE;
     }
@@ -1249,14 +1251,13 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   position)
 {
     /* Test the 'dynBuf' and 'position' parameters validity */
-    if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
+    if (miscDynBufCheckPositionParam(dynBuf, position) == FAILURE)
     {
         return FAILURE;
     }
 
     /* Test the 'bytes' and 'length' parameters validity */
-    if (miscDynBufVerifyBytesAndLengthParametersValidity(bytes, length)
-        == FAILURE)
+    if (miscDynBufCheckBytesAndLengthParams(bytes, length) == FAILURE)
     {
         return FAILURE;
     }
@@ -1340,7 +1341,7 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   to)
 {
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
-    if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
+    if (miscDynBufCheckFromToParams(dynBuf, from, to) == FAILURE)
     {
         return FAILURE;
     }
