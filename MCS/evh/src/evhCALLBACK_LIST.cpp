@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.2 2004-12-08 13:32:15 gzins Exp $"
+* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.3 2004-12-08 13:32:53 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     23-Sep-2004  Created
-*
+* gzins     08-Dec-2004  Handled evhCB_DELETE callback return value
+*                        Added some method documentation
 *
 *******************************************************************************/
 
@@ -15,7 +16,7 @@
  * Definition of the evhCALLBACK_LIST class.
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.2 2004-12-08 13:32:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.3 2004-12-08 13:32:53 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
