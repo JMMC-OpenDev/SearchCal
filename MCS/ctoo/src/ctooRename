@@ -1,0 +1,118 @@
+#! /bin/sh
+
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: ctooRename,v 1.1 2004-07-29 10:30:19 lafrasse Exp $"
+#
+# who       when        what
+# --------  --------    ------------------------------------------------
+# lafrasse  29/07/04    Forked form VLT Software
+#
+#*******************************************************************************
+# NAME
+#	ctooRename - rename files and identifiers in a module
+#
+# SYNOPSIS
+#	ctooRename <old-prefix> <new-prefix> <file1> [<file2> ...]
+#
+# DESCRIPTION
+#	This program can be used to rename a module
+#	from  <old-prefix> to <new-prefix>.
+#	Both prefixes must consist of all lower case characters,
+#	otherwise the result is undefined.
+#	The file list can conveniently be given with the find command.
+#
+#	It will modify the name of all given files <fileN>, as well 
+#	as all identifiers in them according to the prefixes.
+#
+#	First in all given files the identifiers are renamed,
+#	considering as much as possible the VLT conventions.
+#	For instance:
+#
+#		oldmod.h	-->	newmod.h
+#		oldmodFoo	-->	newmodFoo
+#		oldmodfoo	-->	oldmodfoo	(unchanged!)
+#		oldmod_foo	-->	newmod_foo
+#		oldmodFOO	-->	newmodFOO
+#		OLDMOD_FOO	-->	NEWMOD_FOO
+#		OLDMODFOO	-->	OLDMODFOO	(unchanged!)
+#
+#	After that all filenames will be changed, replacing
+#	literally <old-prefix> by <new-prefix>.
+#
+#	Finally one possibly has to do some manual alignment work.
+#
+# FILES
+#	All files in the argument list will be read and modified.
+#	All originals will be moved to backup files (`~' appended).
+#
+# ENVIRONMENT
+#
+# RETURN VALUES
+#	0=OK, 1=Error
+#
+# CAUTIONS
+#	For security make a backup of all given files before!
+#	Do not give regular expressions for <old-prefix> or <new-prefix>.
+#	See also BUGS!
+#
+# EXAMPLES
+#	Modify all files in the module `foo' for the new name `bar':
+#
+#		cd foo
+#		ctooRename foo bar `find . -type f`
+#		cd ..
+#		mv foo bar
+#
+# SEE ALSO
+#	sed(1), find(1)
+#
+# BUGS
+#
+#-------------------------------------------------------------------------------
+#
+
+localpath=`dirname $0`
+PATH=/bin:/usr/bin:$localpath
+
+case $# in
+    0|1|2) echo $0' (Usage): ctooRename str1 str2 files' 1>&2; exit 1
+esac
+
+# Old and new module prefixes:
+left="$1"; right="$2"; shift; shift
+
+# The same in upper case:
+typeset LEFT=$left; typeset RIGHT=$right
+
+for i 
+do 
+  if test -f $i 
+  then
+    echo -e "ctooRename: $i\c"
+    sed -e "s|$left\([A-Z_.	]\)|$right\1|g"	$i   > $i~~
+    sed -e "s|$LEFT\([_]\)|$RIGHT\1|g"		$i~~ > $i~~~
+    mv $i $i~
+    mv $i~~~ $i
+    rm -f $i~~*
+
+    iDirName=`dirname $i`
+    iBaseName=`basename $i`
+    iNewName=`echo $iBaseName|sed "s|$left|$right|g"`
+    iNewName="${iDirName}/""$iNewName"
+
+    if test "$i" !=  "$iNewName"
+    then
+    	echo "--> $iNewName"
+    	mv $i "$iNewName"
+    else
+    	echo "-- not moved"
+    fi
+  fi
+
+done
+
+exit 0
+
+# ___oOo___

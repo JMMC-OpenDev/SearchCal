@@ -1,15 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2004-06-25 05:28:07 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2004-07-29 10:30:19 lafrasse Exp $"
 #
 # Makefile of ctoo module
 #
 # who       when        what
 # --------  ----------  --------------------------------------------------------
 # gluck     18-May-2004 Created
-# gzins     09-Jun-2004 added templates for doxygen
-# mella     24-Jun-2004 add buildDocIndex related
+# gzins     09-Jun-2004 Added templates for doxygen
+# mella     24-Jun-2004 Add buildDocIndex related
+# lafrasse  29-Jul-2004 Added ctooRename & ctooReplace (forked the VLT Soft)
 #
 #
 #*******************************************************************************
@@ -71,7 +72,9 @@ SCRIPTS         = ctooGetTemplate \
                   ctooGetDirectoryStructure \
                   ctooGetTemplateForDirectoryStructure \
                   ctooGetCode \
-                  ctooGetTemplateForCoding
+                  ctooGetTemplateForCoding \
+                  ctooRename \
+                  ctooReplace
 SCRIPTS_L       =
 
 #
