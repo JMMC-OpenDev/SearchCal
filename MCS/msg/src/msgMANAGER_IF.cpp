@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.7 2004-12-03 08:49:19 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.8 2004-12-03 17:05:50 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,6 +14,8 @@
 * lafrasse  01-Dec-2004  Comment refinments
 * gzins     03-Dec-2004  Removed msgManagerHost param from Connect
 *                        Minor changes in documentation 
+* lafrasse  03-Dec-2004  Added mcs environment name management
+*
 *
 *******************************************************************************/
 
@@ -22,7 +24,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.7 2004-12-03 08:49:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.8 2004-12-03 17:05:50 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -39,7 +41,6 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-#include "misc.h"
 
 
 /*
@@ -48,6 +49,7 @@ using namespace std;
 #include "msgPrivate.h"
 #include "msgErrors.h"
 #include "msgMANAGER_IF.h"
+#include "msgMCS_ENV.h"
 #include "msgSOCKET_CLIENT.h"
 
 
@@ -79,24 +81,16 @@ msgMANAGER_IF::~msgMANAGER_IF()
 /**
  * Establish the connection with the MCS message service.
  *
- * The server host name is (in order) :
- * \li the msgManagerHost parameter if its value is \em not NULL
- * \li the MSG_MANAGER_HOST environment variable value, if it is defined
- * \li the local host name
+ * The server host name is found via the $MCSENV environment variable, and the
+ * mcsEnvList file (located in $MCSROOT/etc/mcsEnvList).
  *
  * \param procName the local processus name
- * \param msgManagerHost the server host name, or NULL
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
 {
     logExtDbg("msgMANAGER_IF::Connect()");
-
-    mcsSTRING256       hostName;
-    msgMESSAGE         msg;
-    mcsINT32           nbRetry = 0;
-    mcsINT32           status  = 0;
 
     // If a connection is already open...
     if (IsConnected() == mcsTRUE)
@@ -112,29 +106,21 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
         return FAILURE;
     }
 
-    // If the MSG_MANAGER_HOST Env. Var. is not defined...
-    if (miscGetEnvVarValue("MSG_MANAGER_HOST", hostName,sizeof(mcsBYTES256))
-        == FAILURE)
-    {
-        // Get the local host name
-        memset(hostName, '\0', sizeof(hostName));
-        if (miscGetHostName(hostName, sizeof(hostName)) == FAILURE)
-        {
-            return FAILURE;
-        }
-        errResetStack();
-    }
-    logTest("'msgManager' server host name is '%s'", hostName );
+    // Get the msgManager host name and port number
+    msgMCS_ENV mcsEnv;
+    logTest("'msgManager' server host name is '%s', listening on port '%d'",
+            mcsEnv.GetHostName(), mcsEnv.GetPortNumber());
 
     // Establish the connection, retry otherwise...
-    nbRetry = 2;
-    do 
+    mcsINT32 nbRetry = 2;
+    for(;;) 
     {
         // Connect to msgManager
-        _socket.Open(hostName, msgMANAGER_PORT_NUMBER);
+        _socket.Open(mcsEnv.GetHostName(), mcsEnv.GetPortNumber());
         if (_socket.IsConnected() == mcsFALSE)
         {
-            if (--nbRetry <= 0 )
+            // If no more retry possible
+            if (--nbRetry <= 0)
             { 
                 errAdd(msgERR_CONNECT, strerror(errno));
                 return FAILURE; 
@@ -146,8 +132,11 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
                 _socket.Close();
             }
         }
-    } while (status == -1);
-
+        else // Else if the connection is established, leave the retry loop
+        {
+            break;
+        }
+    }
 
     // Register with msgManager
     if (SendCommand(msgREGISTER_CMD, "msgManager", NULL, 0) == FAILURE)
@@ -157,17 +146,20 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     }
     
     // Wait for its answer
-    if (Receive(msg, 1000) == FAILURE)
+    msgMESSAGE registerAnswer;
+    if (Receive(registerAnswer, 1000) == FAILURE)
     {
         _socket.Close();
         return FAILURE;
     }
 
     // If the reply is an ERROR...
-    if (msg.GetType() == msgTYPE_ERROR_REPLY)
+    if (registerAnswer.GetType() == msgTYPE_ERROR_REPLY)
     {
         // Put the received errors in the MCS error stack
-        if (errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize()) == FAILURE)
+        if (errUnpackStack(registerAnswer.GetBodyPtr(),
+                           registerAnswer.GetBodySize())
+            == FAILURE)
         {
             return FAILURE;
         }
@@ -205,7 +197,7 @@ mcsLOGICAL msgMANAGER_IF::IsConnected(void)
  * \param command command name
  * \param destProc remote process name
  * \param paramList parameter list stored in a string
- * \param paramsLen length of the parameter list string
+ * \param paramLen length of the parameter list string
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
@@ -388,4 +380,5 @@ mcsINT32 msgMANAGER_IF::GetMsgQueue()
     return _socket.GetDescriptor();
 }
  
+
 /*___oOo___*/

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2004-11-26 13:11:28 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.13 2004-12-03 17:05:50 lafrasse Exp $"
 #
 # Makefile of msg
 #
@@ -12,6 +12,7 @@
 # lafrasse  19-Nov-2004  Added msgMANAGER_IF.cpp and msgMESSAGE.cpp compilation
 #                        directives
 # lafrasse  23-Nov-2004  Added all the socket-related header
+# lafrasse  03-Dec-2004  Added msgMCS_ENV compilation directives
 #
 #
 #*******************************************************************************
@@ -67,7 +68,8 @@ INCLUDES        = msg.h              \
 				  msgMANAGER_IF.h    \
 				  msgSOCKET.h        \
                   msgSOCKET_CLIENT.h \
-				  msgSOCKET_SERVER.h
+				  msgSOCKET_SERVER.h \
+				  msgMCS_ENV.h
 
 #
 # Libraries (public and local)
@@ -87,7 +89,8 @@ msg_OBJECTS   = msg                \
                 msgMESSAGE         \
                 msgSOCKET		   \
 				msgSOCKET_CLIENT   \
-				msgSOCKET_SERVER
+				msgSOCKET_SERVER   \
+				msgMCS_ENV
 
 
 #

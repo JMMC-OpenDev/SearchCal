@@ -3,12 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.5 2004-12-01 12:54:39 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.6 2004-12-03 17:05:50 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    22-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+* lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 *
 *
 *******************************************************************************/
@@ -55,7 +56,7 @@ public:
     virtual ~msgSOCKET_CLIENT();
 
     // Open a client socket to a given server port number on a given host
-    virtual mcsCOMPL_STAT Open(std::string host, mcsINT32 port);
+    virtual mcsCOMPL_STAT Open(std::string host, mcsUINT16 port);
 
 protected:
 

@@ -3,12 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.7 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.8 2004-12-03 17:05:50 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    19-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+* lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 *
 *
 *******************************************************************************/
@@ -67,9 +68,9 @@
  */
 
 
-const int MAXHOSTNAME = 200;
+const int MAXHOSTNAME    = 200;
 const int MAXCONNECTIONS = 5;
-const int MAXRECV = 500;
+const int MAXRECV        = 500;
 
 class msgSOCKET
 {
@@ -89,17 +90,17 @@ public:
     virtual mcsLOGICAL    IsConnected  (void);
 
     // Server initialisation
-    virtual mcsCOMPL_STAT Bind         (const mcsINT32 port);
+    virtual mcsCOMPL_STAT Bind         (const mcsUINT16 port);
     virtual mcsCOMPL_STAT Listen       (void);
     virtual mcsCOMPL_STAT Accept       (msgSOCKET &socket) const;
 
     // Client initialization
     virtual mcsCOMPL_STAT Connect      (const std::string host,
-                                        const mcsINT32 port);
+                                        const mcsUINT16   port);
 
     // String-related Transmission
-    virtual mcsCOMPL_STAT Send         (const std::string string) const;
-    virtual mcsCOMPL_STAT Receive      (std::string& string) const;
+    virtual mcsCOMPL_STAT Send         (const std::string  string) const;
+    virtual mcsCOMPL_STAT Receive      (      std::string& string) const;
 
     // msgMESSAGE-related Transmission
     virtual mcsCOMPL_STAT Send         (msgMESSAGE &msg);

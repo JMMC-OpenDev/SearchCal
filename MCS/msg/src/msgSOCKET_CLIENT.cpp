@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.4 2004-12-01 12:54:39 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.5 2004-12-03 17:05:50 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    22-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+* lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 *
 *
 *******************************************************************************/
@@ -16,7 +17,7 @@
  * msgSOCKET_CLIENT class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.4 2004-12-01 12:54:39 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.5 2004-12-03 17:05:50 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -69,7 +70,7 @@ msgSOCKET_CLIENT::~msgSOCKET_CLIENT()
  *
  * \return SUCCESS on successfull completion, FAILURE otherwise
  */
-mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host, mcsINT32 port)
+mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host, mcsUINT16 port)
 {
     logExtDbg("msgSOCKET_CLIENT::Open()");
 

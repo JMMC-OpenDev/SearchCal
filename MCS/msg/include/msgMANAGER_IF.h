@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.h,v 1.6 2004-12-03 08:47:33 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.h,v 1.7 2004-12-03 17:05:50 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -87,9 +87,9 @@ public:
 protected:
 
 private:
-    static msgSOCKET_CLIENT _socket; /* The network connection used to
-                                      * communicate with the msgManager process
-                                      */
+    static msgSOCKET_CLIENT _socket;      /* The network connection used to
+                                           * communicate with msgManager process
+                                           */
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

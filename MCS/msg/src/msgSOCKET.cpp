@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.5 2004-12-01 12:54:39 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.6 2004-12-03 17:05:50 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,6 +10,7 @@
 * lafrasse  25-Nov-2004  Added error management code
 * gzins     29-Nov-2004  Fixed wrong returned value in IsConnected method
 *                        Do not read body if body size is 0 in Receive()
+* lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 *
 *
 *******************************************************************************/
@@ -19,7 +20,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.5 2004-12-01 12:54:39 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.6 2004-12-03 17:05:50 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -137,7 +138,7 @@ mcsLOGICAL msgSOCKET::IsConnected(void)
  *
  * \return SUCCESS on successfull completion, FAILURE otherwise
  */
-mcsCOMPL_STAT msgSOCKET::Bind(const mcsINT32 port)
+mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
 {
     logExtDbg("msgSOCKET::Bind()");
     
@@ -236,7 +237,7 @@ mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
  * @return SUCCESS on successfull completion, FAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
-                                 const mcsINT32 port)
+                                 const mcsUINT16   port)
 {
     logExtDbg("msgSOCKET::Connect()");
 
