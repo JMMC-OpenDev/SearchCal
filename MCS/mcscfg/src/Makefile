@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.1 2004-05-14 14:34:04 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-05-14 15:33:39 gzins Exp $"
 #
 # Makefile of ........
 #
@@ -139,6 +139,13 @@ INS_ROOT_FILES =
 INS_ROOT_DIR   =
 
 #
+# Configuration files to be installed
+#----------------------------
+CFG_FILES = ../config/bashrc \
+			../config/vimrc  \
+			../config/gvimrc
+
+#
 # other files to be installed
 #----------------------------
 INSTALL_FILES =
@@ -152,12 +159,6 @@ CSOURCENAMES = \
 
 #
 #>>>>> END OF standard rules
-
-#
-# CHOSE PLATFORM
-# --------------
-# Default is UNIX, for VxVorks application next line MUST BE UNCOMMENTED
-#MAKE_VXWORKS = on   
 
 #
 # INCLUDE STANDARDS
@@ -181,10 +182,12 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
+	@echo "Installing configuration files: "
+	@$(foreach file, $(CFG_FILES), echo "        `basename $(file)`" ;\
+		cp -f $(file) $(MCSROOT)/etc;)
 	@echo " . . . installation done"
 
 db : db_all
 	@echo " . . . ../DB done"
-
 
 #___oOo___
