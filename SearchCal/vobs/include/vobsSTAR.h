@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.5 2004-09-07 11:56:53 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.6 2004-09-20 06:42:02 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -149,14 +149,16 @@ public:
 protected:
     // Method to obtain id from the UCD
     virtual vobsUCD_ID Ucd2Id(char *ucd) const;
+    
+    /** Table containing the star properties */
+    vobsSTAR_PROPERTY _properties[vobsNB_STAR_PROPERTIES];
 
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
     vobsSTAR& operator=(const vobsSTAR&);
 
-    /** Table containing the star properties */
-    vobsSTAR_PROPERTY _properties[vobsNB_STAR_PROPERTIES];
+    
 };
 
 #endif /*!vobsSTAR_H*/

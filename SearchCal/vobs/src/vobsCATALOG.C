@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.10 2004-09-13 07:00:15 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.11 2004-09-20 06:42:02 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.10 2004-09-13 07:00:15 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.11 2004-09-20 06:42:02 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -150,7 +150,6 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::Search()");
        
-    printf("toto\n");
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
     if (list.IsEmpty()==mcsTRUE)

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2004-09-14 08:58:59 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.8 2004-09-20 06:42:02 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -41,7 +41,7 @@ EXECUTABLES_L   =
 # <brief description of vobsServer program>
 #vobsServer_OBJECTS   = vobsServer
 #vobsServer_LDFLAGS   = -lxml2 -lgdome -lstdc++
-#vobsServer_LIBS      = mcs err log bcc misc vobs
+#vobs_LIBS      = mcs err log bcc misc vobs
 
 #
 # special compilation flags for single c sources
@@ -50,8 +50,25 @@ EXECUTABLES_L   =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
-
+INCLUDES        = vobs.h					\
+				  vobsSTAR.h 				\
+				  vobsSTAR_LIST.h 			\
+				  vobsREQUEST.h 			\
+				  vobsPARSER.h				\
+				  vobsCATALOG.h 			\
+				  vobsCATALOG_ASCC.h 		\
+				  vobsCATALOG_BSC.h 		\
+				  vobsCATALOG_CHARM.h 		\
+				  vobsCATALOG_CIO.h 		\
+				  vobsCATALOG_DENIS.h 		\
+				  vobsCATALOG_HIC.h 		\
+				  vobsCATALOG_LBSI.h 		\
+				  vobsCATALOG_MASS.h 		\
+				  vobsCATALOG_PHOTO.h 		\
+				  vobsCATALOG_SBSC.h		\
+				  vobsVIRTUAL_OBSERVATORY.h	\
+				  vobsSCENARIO.h	        \
+				  
 #
 # Libraries (public and local)
 # ----------------------------
