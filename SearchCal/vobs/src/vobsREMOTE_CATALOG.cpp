@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.2 2005-02-16 13:22:38 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.3 2005-02-22 10:44:51 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.2  2005/02/16 13:22:38  scetre
+* changed armin in arcsec in query
+*
 * Revision 1.1  2005/02/11 14:14:31  gluck
 * Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
 *
@@ -17,7 +20,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.2 2005-02-16 13:22:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.3 2005-02-22 10:44:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -103,7 +106,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     logExtDbg("vobsREMOTE_CATALOG::Search()");
     
     // Prepare file name to log result of the catalog request
-    mcsSTRING256 logFileName;
+    mcsSTRING512 logFileName;
     // if the log level is higher or equal to the debug level
     if (logGetStdoutLogLevel() >= logDEBUG)
     {
@@ -112,7 +115,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
         band = request.GetSearchBand();
 
         // build the first part of the file name in the MCSDATA directory
-        sprintf(logFileName, "$MCSDATA/tmp/list_%c", band);
+        sprintf(logFileName, "$MCSDATA/tmp/list_%s", band);
+        printf("logFileName = %s\n", logFileName); 
 
         // Get catalog name, and replace '/' by '_'
         mcsSTRING32 catalogName;
@@ -129,6 +133,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
         else
         {
             strcat(logFileName, "_2.log");
+        }
+        // Resolve path
+        const char   *resolvedPath;
+        resolvedPath = miscResolvePath(logFileName);
+        if (resolvedPath != NULL)
+        {
+            strcpy(logFileName, resolvedPath);
         }
     }
     else

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.16 2005-02-11 14:23:07 gluck Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.17 2005-02-22 10:44:51 gzins Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/02/11 14:23:07  gluck
+* Suppressed misc.h file inclusion
+*
 * Revision 1.15  2005/02/10 06:38:58  gzins
 * Added logInfo; name of consulted catalog and number of stars found.
 *
@@ -53,7 +56,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.16 2005-02-11 14:23:07 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.17 2005-02-22 10:44:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -190,6 +193,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         {
             // This file will be stored in the $MCSDATA/tmp repository
             mcsSTRING256 logFileName;
+            const char   *resolvedPath;
             strcpy(logFileName, "$MCSDATA/tmp/");
 
             // Get band used for search
@@ -203,6 +207,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             miscReplaceChrByChr(catalogName, '/', '_');
             strcat(logFileName, "_");
             strcat(logFileName, catalogName);
+            printf("logFileName = %s\n", logFileName); 
 
             // Add request type (primary or not)
             if ((*_entryIterator)._listInput == NULL)
@@ -214,8 +219,13 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                 strcat(logFileName, "_2.log");
             }
 
-            // Save resulting list
-            tempList.Save(logFileName);
+            // Resolve path
+            resolvedPath = miscResolvePath(logFileName);
+            if (resolvedPath != NULL)
+            {
+                // Save resulting list
+                tempList.Save(resolvedPath);
+            }
         }
         
         // There are 3 different action to do when the scenario is executed
