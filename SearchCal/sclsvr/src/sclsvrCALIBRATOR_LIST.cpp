@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.24 2005-02-08 20:48:11 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.25 2005-02-10 08:20:02 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/02/08 20:48:11  gzins
+ * Updated Copy(); added filterDiameterNok and filterVisibilityNok parameters
+ * Removed obsolete CopyIn(), GetCoherentDiameter() and GetVisibilityOk() methods
+ *
  * Revision 1.23  2005/02/08 07:24:07  gzins
  * Changed char* to const char* when applicable
  *
@@ -51,7 +55,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.24 2005-02-08 20:48:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.25 2005-02-10 08:20:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -135,10 +139,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
         sclsvrCALIBRATOR *calibrator;
         calibrator = (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
         
+        // Check if this calibrator has to be copy in or not
+        mcsLOGICAL copyIt = mcsTRUE;
         if (((copyDiameterNok == mcsFALSE) && 
              (calibrator->IsDiameterOk() == mcsFALSE)) ||
             ((copyVisibilityNok == mcsFALSE) && 
              (calibrator->IsVisibilityOk() == mcsFALSE)))
+        {
+            copyIt = mcsFALSE;
+        }
+
+        // If yes, copy it
+        if (copyIt == mcsTRUE)
         {
             AddAtTail(*calibrator);
         }
@@ -278,7 +290,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
             {
                 return mcsFAILURE;
             }
-            calibrator.Display();
             // add in the list the calibrator
             AddAtTail(calibrator); 
         }
@@ -427,8 +438,7 @@ sclsvrCALIBRATOR_LIST::FilterBySpectralType(std::list<char *> spectTypeList)
         calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
         mcsSTRING32 spectralClass;
         // if it is not possible to get the spectral type
-        if (calibrator->GetSpectralClass(spectralClass)==
-            mcsFAILURE)
+        if (calibrator->GetSpectralClass(spectralClass)== mcsFAILURE)
         {
             // Remove it
             Remove(*calibrator);
@@ -537,7 +547,7 @@ sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
     {
         calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
         // if it is not possible to get the visibility, remove the star
-        if (calibrator->GetPropertyValue(sclsvrCALIBRATOR_VIS,
+        if (calibrator->GetPropertyValue(sclsvrCALIBRATOR_VIS2,
                                          &calibratorVis) == mcsFAILURE)
         {
             // Remove it
