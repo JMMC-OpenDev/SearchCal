@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-09-13 07:10:27 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.7 2004-09-14 08:58:59 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -39,9 +39,9 @@ EXECUTABLES_L   =
 
 #
 # <brief description of vobsServer program>
-vobsServer_OBJECTS   = vobsServer
-vobsServer_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsServer_LIBS      = mcs err log bcc misc vobs
+#vobsServer_OBJECTS   = vobsServer
+#vobsServer_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#vobsServer_LIBS      = mcs err log bcc misc vobs
 
 #
 # special compilation flags for single c sources
