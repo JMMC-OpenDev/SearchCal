@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.12 2004-06-30 09:56:15 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.13 2004-06-30 15:04:36 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -65,6 +65,17 @@ fi
 choice=$1
 ROOT_NAME=$2
 makefile=$3
+
+# Set templates directories
+MCSTEMPLATES=$MCSROOT/templates
+
+# check environment : verify that templates directory exist
+if [ ! -d "$MCSTEMPLATES" ]
+then 
+    echo "ERROR - ctooGetTemplateForDirectoryStructure: $MCSTEMPLATES not
+                  available. Please check your MCS environment"
+    exit 1
+fi
 
 
 # Define the content of each area 
@@ -208,6 +219,38 @@ case $choice in
     MODROOT)
         case $makefile in
             "")
+                # Check module description file existence
+                if [ -f $ROOT_NAME/doc/$ROOT_NAME/moduleDescription.xml ]
+                then
+                    # The module description file already exists
+                    echo -e "\n>>> moduleDescription.xml ALREADY EXISTS."
+                    echo -e "    => The existing one is left\n"
+                else
+                    echo -e "\n>>> Copying module description file\n"
+                    TEMPLATE="$MCSTEMPLATES/forDocumentation/moduleDescription.template"
+                    FILE=$ROOT_NAME/doc/$ROOT_NAME/moduleDescription.xml
+                    # Copy module description in doc directory
+                    if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
+                    then
+                        # module description file copy succeeds
+                        # Change permissions
+                        chmod $MODE ${FILE}.BAK
+                        # setup author and date:
+                        AUTHOR=`whoami`
+                        AUTHOR=`printf "%-8s" $AUTHOR`
+                        DATE=`date "+%d-%b-%Y"`
+                        sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
+                        -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
+                        -e "1,$ s/I>-<d/\Id/g"       \
+                        ${FILE}.BAK > $FILE
+                        rm -f ${FILE}.BAK
+                    else
+                        # Makefile copy failed
+                        echo -e "\ncannot create >>$FILE<<."
+                    fi
+                fi
+
+                # Check Makefile existence
                 if [ -f $ROOT_NAME/src/Makefile ]
                 then
                     # a Makefile already exists
@@ -215,7 +258,7 @@ case $choice in
                     echo -e "    => The existing one is left\n"
                 else
                     echo -e "\n>>> Copying Makefile template for code\n"
-                    TEMPLATE=$MCSROOT/templates/forMakefile/Makefile.template
+                    TEMPLATE=$MCSTEMPLATES/forMakefile/Makefile.template
                     FILE=$ROOT_NAME/src/Makefile
                     # Copy Makefile in src directory
                     if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
