@@ -3,14 +3,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.h,v 1.4 2004-12-22 08:59:09 gzins Exp $"
+* "@(#) $Id: evhHANDLER.h,v 1.5 2005-01-07 17:48:17 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created based on VLT SW
 * gzins     23-Nov-2004  Used new msg C++ library.
 * gzins     22-Dec-2004  Added GetHelp()
-*
+* gzins     07-Jan-2005  Renamed GetHelp() to HandeHelpCmd()
+*                        Added AddCallback() and Run() for command reply
+*                        Declared Run() and Find as protected
+*                        Added evhMainHandler global variable
 *******************************************************************************/
 
 /**
@@ -26,6 +29,7 @@
 #include "msg.h"
 #include "evhKEY.h"
 #include "evhCMD_KEY.h"
+#include "evhCMD_REPLY_KEY.h"
 #include "evhCMD_CALLBACK.h"
 #include "evhIOSTREAM_KEY.h"
 #include "evhIOSTREAM_CALLBACK.h"
@@ -58,17 +62,20 @@ public:
 
     virtual mcsCOMPL_STAT AddCallback(const evhCMD_KEY &key,
                                       evhCMD_CALLBACK &callback);
+    virtual mcsCOMPL_STAT AddCallback(const evhCMD_REPLY_KEY &key,
+                                      evhCMD_CALLBACK &callback);
     virtual mcsCOMPL_STAT AddCallback(const evhIOSTREAM_KEY &key,
                                       evhIOSTREAM_CALLBACK &callback);
     virtual mcsCOMPL_STAT MainLoop(msgMESSAGE *msg=NULL);
 
-    virtual mcsCOMPL_STAT Run(const evhCMD_KEY &key, msgMESSAGE &msg);
-    virtual mcsCOMPL_STAT Run(const evhIOSTREAM_KEY &key, int fd);
-    virtual evhCALLBACK_LIST *Find(const evhKEY &key);
-    virtual evhKEY *Select();
+    virtual mcsCOMPL_STAT HandeHelpCmd(msgMESSAGE &msg);
 
-    virtual mcsCOMPL_STAT GetHelp(msgMESSAGE &msg);
 protected:
+    virtual evhKEY *Select();
+    virtual evhCALLBACK_LIST *Find(const evhKEY &key);
+    virtual mcsCOMPL_STAT Run(const evhCMD_KEY &key, msgMESSAGE &msg);
+    virtual mcsCOMPL_STAT Run(const evhCMD_REPLY_KEY &key, msgMESSAGE &msg);
+    virtual mcsCOMPL_STAT Run(const evhIOSTREAM_KEY &key, int fd);
 
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -79,11 +86,14 @@ private:
     std::list<std::pair<evhKEY*, evhCALLBACK_LIST *> >           _eventList;
     std::list<std::pair<evhKEY*, evhCALLBACK_LIST *> >::iterator _eventIterator;
 
-    evhCMD_KEY      _cmdEvent;
-    evhIOSTREAM_KEY _iostreamEvent;
+    evhKEY           _msgEvent;
+    evhIOSTREAM_KEY  _iostreamEvent;
 
-    msgMANAGER_IF   _msgManager; // Interface to message manager
+    msgMANAGER_IF    _msgManager; // Interface to message manager
 };
+
+/* Standard event handler */
+extern evhHANDLER *evhMainHandler;
 
 #endif /*!evhHANDLER_H*/
 
