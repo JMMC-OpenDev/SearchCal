@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.6 2004-12-03 17:05:50 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.7 2004-12-06 07:02:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,7 @@
 * gzins     29-Nov-2004  Fixed wrong returned value in IsConnected method
 *                        Do not read body if body size is 0 in Receive()
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+* gzins     06-Dec-2004  Implemented copy constructor
 *
 *
 *******************************************************************************/
@@ -20,7 +21,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.6 2004-12-03 17:05:50 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.7 2004-12-06 07:02:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -45,7 +46,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "msgPrivate.h"
 #include "msgErrors.h"
 
-/*
+/**
  * Class constructor
  */
 msgSOCKET::msgSOCKET()
@@ -55,7 +56,16 @@ msgSOCKET::msgSOCKET()
     _descriptor = -1;
 }
 
-/*
+/**
+ * Copy constructor
+ */
+msgSOCKET::msgSOCKET(const msgSOCKET &socket)
+{
+    _descriptor = socket._descriptor;
+    memcpy(&_address, &socket._address, sizeof(sockaddr_in));
+}
+
+/**
  * Class destructor
  */
 msgSOCKET::~msgSOCKET()
