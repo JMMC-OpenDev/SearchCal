@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.23 2005-02-23 08:12:59 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.24 2005-02-23 17:04:15 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/02/23 08:12:59  gzins
+ * Replaced DIAM_ERROR by DIAM_BV_ERROR, DIAM_VR_ERROR and DIAM_VK_ERROR
+ *
  * Revision 1.22  2005/02/16 17:33:20  gzins
  * Removed obsolete Pack and UnPack methods
  *
@@ -56,6 +59,10 @@
 #define sclsvrCALIBRATOR_VIS2               "VIS2"
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 #define sclsvrCALIBRATOR_VIS2_FLAG          "VIS2_FLAG"
+#define sclsvrCALIBRATOR_VIS2_8             "VIS2_8"
+#define sclsvrCALIBRATOR_VIS2_8_ERROR       "VIS2_8_ERROR"
+#define sclsvrCALIBRATOR_VIS2_13            "VIS2_13"
+#define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
 #define sclsvrCALIBRATOR_DIAM_BV            "DIAM_BV"
 #define sclsvrCALIBRATOR_DIAM_VR            "DIAM_VR"
 #define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
