@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.10 2005-02-07 09:47:08 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.11 2005-02-08 20:38:37 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/07 09:47:08  gzins
+* Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
+*
 * Revision 1.9  2005/02/04 15:25:40  gzins
 * Minor change in log message
 *
@@ -23,7 +26,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.10 2005-02-07 09:47:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.11 2005-02-08 20:38:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,6 +75,7 @@ vobsPARSER::~vobsPARSER()
  * The extracted star are stored in the list \em starList given as parameter.
  *
  * \param uri URI from where XML document has to be loaded.
+ * \param catalogName catalog name from where XML document has been got.
  * \param starList list where star has to be put.
  * \param logFileName file to save the result of the asking
  *
@@ -79,9 +83,10 @@ vobsPARSER::~vobsPARSER()
  * an error is added to the error stack. The possible errors are :
  * \li vobsERR_GDOME_CALL
  */
-mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
+mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
+                                const char *catalogName,
                                 vobsSTAR_LIST &starList,
-                                char* logFileName)
+                                const char *logFileName)
 {    
     GdomeDOMImplementation *domimpl;
     GdomeDocument          *doc;
@@ -91,6 +96,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     
     vobsCDATA cData;
     logExtDbg("vobsPARSER::MainParser()");	
+
+    // Set the catalog name
+    cData.SetCatalogName(catalogName);
 
     // Get a DOMImplementation reference
     domimpl = gdome_di_mkref ();
@@ -469,11 +477,14 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
 {
     logExtDbg("vobsPARSER::ParseCData()");  
 
-    char *linePtr=NULL;
+    // Retreive the catalog name form where the data is coming from
+    const char *origin;
+    origin = cData->GetCatalogName();
 
     // For each line in buffer, get the value for each defined UCD (value are
     // separated by '\t' character), store them in star object and add this
     // new star in the list.
+    char *linePtr=NULL;
     char *delimiters = "\t";
     do
     {
@@ -545,7 +556,8 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     }
 
                     // Set star property
-                    if (star.SetPropertyValue(ucdName, ucdValue) == mcsFAILURE)
+                    if (star.SetPropertyValue(ucdName, 
+                                              ucdValue, origin) == mcsFAILURE)
                     {
                         // If ucd is not found, ignore error
                         if (errIsInStack(MODULE_ID, 
@@ -593,7 +605,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                         {
                             logDebug("Flux = %s and lambda = %s ==> mag %s",
                                      flux, lambda, magId);
-                            star.SetPropertyValue(magId, flux); 
+                            star.SetPropertyValue(magId, flux, origin); 
                         }
                     }
                 }
