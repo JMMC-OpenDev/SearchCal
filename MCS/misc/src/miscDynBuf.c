@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.17 2004-12-07 12:46:20 scetre Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.18 2004-12-17 08:13:29 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -36,6 +36,7 @@
 *                        the dynamic buffer.
 * lafrasse  03-Dec-2004  Added error management code to miscDynBufLoadFile()
 * gzins     07-Dec-2004  Closed open file in miscDynBufLoadFile
+* gzins     14-Dec-2004  Renamed miscERR_MEM_FAILURE to miscERR_ALLOC
 *
 *******************************************************************************/
 
@@ -81,7 +82,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.17 2004-12-07 12:46:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.18 2004-12-17 08:13:29 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -334,11 +335,7 @@ mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf)
     }
 
     /* Initialize all the structure with '0' */
-    if ((memset(dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
-    {
-        errAdd(miscERR_MEM_FAILURE);
-        return FAILURE;
-    }
+    memset(dynBuf, 0, sizeof(miscDYN_BUF));
 
     /* Set its 'pointer to itself' correctly */
     dynBuf->thisPointer = dynBuf;
@@ -397,16 +394,12 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
         /* Allocate the desired length */
         if ((dynBuf->dynBuf = calloc(length, sizeof(char))) == NULL)
         {
-            errAdd(miscERR_MEM_FAILURE);
+            errAdd(miscERR_ALLOC);
             return FAILURE;
         }
 
         /* Write '0' on all the newly allocated memory */
-        if (memset(dynBuf->dynBuf, 0, length) == NULL)
-        {
-            errAdd(miscERR_MEM_FAILURE);
-            return FAILURE;
-        }
+        memset(dynBuf->dynBuf, 0, length);
     }
     else /* The buffer needs to be expanded */
     {
@@ -414,7 +407,7 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
         if ((newBuf = realloc(dynBuf->dynBuf, dynBuf->allocatedBytes + length))
             == NULL)
         {
-            errAdd(miscERR_MEM_FAILURE);
+            errAdd(miscERR_ALLOC);
             return FAILURE;
         }
 
@@ -425,11 +418,7 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
         if (dynBuf->storedBytes == 0)
         {
             /* Write '0' on all the newly allocated memory */
-            if ((memset(dynBuf->dynBuf, 0, dynBuf->allocatedBytes)) == NULL)
-            {
-                errAdd(miscERR_MEM_FAILURE);
-                return FAILURE;
-            }
+            memset(dynBuf->dynBuf, 0, dynBuf->allocatedBytes);
         }
     }
 
@@ -466,7 +455,7 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
             /* De-allocate it */
             if (dynBuf->dynBuf == NULL)
             {
-                errAdd(miscERR_MEM_DEALLOC_FAILURE);
+                errAdd(miscERR_NULL_PARAM, "dynBuf->dynBuf");
                 return FAILURE;
             }
 
@@ -477,7 +466,7 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
             /* Give back the unused memory */
             if ((newBuf = realloc(dynBuf->dynBuf, dynBuf->storedBytes)) == NULL)
             {
-                errAdd(miscERR_MEM_DEALLOC_FAILURE);
+                errAdd(miscERR_ALLOC);
                 return FAILURE;
             }
         }
@@ -546,11 +535,7 @@ mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
     }
 
     /* Initialize all the structure with '0' */
-    if ((memset((char *)dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
-    {
-        errAdd(miscERR_MEM_DEALLOC_FAILURE);
-        return FAILURE;
-    }
+    memset((char *)dynBuf, 0, sizeof(miscDYN_BUF));
 
     return SUCCESS;
 }
@@ -818,7 +803,7 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
     /* Copy the Dynamic Buffer desired part in the extern buffer */
     if (memcpy(bytes, positionToReadFrom, lengthToCopy) == NULL)
     {
-        errAdd(miscERR_MEM_FAILURE);
+        errAdd(miscERR_ALLOC);
         return FAILURE;
     }
 
@@ -892,15 +877,9 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
     else
     {
         /* Store the commentPattern in the Dynamic Buffer */
-        if (strncpy(dynBuf->commentPattern,
+        strncpy(dynBuf->commentPattern,
                     commentPattern,
-                    sizeof(dynBuf->commentPattern))
-            == NULL)
-        {
-            dynBuf->commentPattern[0] = '\0';
-            errAdd(miscERR_MEM_FAILURE);
-            return FAILURE;
-        }
+                    sizeof(dynBuf->commentPattern));
         dynBuf->commentPattern[sizeof(dynBuf->commentPattern) - 1] = '\0';
     }
 
@@ -1055,7 +1034,7 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
     }
 
     /* Compute the number of bytes by which the Dynamic Buffer should be
-     * expanded and try to allocate them
+     * expanded and allocate them
      */
     mcsINT32 bytesToAlloc = length
                             - (((to - miscDYN_BUF_BEGINNING_POSITION)
@@ -1081,19 +1060,10 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
     /* Move the 'not-to-be-overwritten' Dynamic Buffer bytes to their
      * definitive place
      */
-    if (memmove(positionToWriteIn + length, positionToBackup, lengthToBackup)
-        == NULL)
-    {
-        errAdd(miscERR_MEM_FAILURE);
-        return FAILURE;
-    }
+    memmove(positionToWriteIn + length, positionToBackup, lengthToBackup);
 
     /* Copy the extern buffer bytes in the Dynamic Buffer */
-    if (memcpy(positionToWriteIn, bytes, length) == NULL)
-    {
-        errAdd(miscERR_MEM_FAILURE);
-        return FAILURE;
-    }
+    memcpy(positionToWriteIn, bytes, length);
 
     /* Update the Dynamic Buffer stored length value using the computed
      * signed 'bytesToAlloc' value
@@ -1185,11 +1155,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
     }
 
     /* Copy the extern buffer bytes at the end of the Dynamic Buffer */
-    if (memcpy(dynBuf->dynBuf + dynBuf->storedBytes, bytes, length) == NULL)
-    {
-        errAdd(miscERR_MEM_FAILURE);
-        return FAILURE;
-    }
+    memcpy(dynBuf->dynBuf + dynBuf->storedBytes, bytes, length);
 
     /* Update the Dynamic Buffer stored length value using the number of the
      * extern buffer bytes
@@ -1305,19 +1271,10 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
     /* Move the 'not-to-be-overwritten' Dynamic Buffer bytes to their
      * definitive place
      */
-    if (memmove(positionToWriteIn + length, positionToWriteIn, lengthToBackup)
-        == NULL)
-    {
-        errAdd(miscERR_MEM_FAILURE);
-        return FAILURE;
-    }
+    memmove(positionToWriteIn + length, positionToWriteIn, lengthToBackup);
 
     /* Copy the extern buffer bytes in the Dynamic Buffer */
-    if (memcpy(positionToWriteIn, bytes, length) == NULL)
-    {
-        errAdd(miscERR_MEM_FAILURE);
-        return FAILURE;
-    }
+    memcpy(positionToWriteIn, bytes, length);
 
     /* Update the Dynamic Buffer stored length value using the extern buffer
      * bytes number
@@ -1396,12 +1353,7 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
     /* Move the 'not-to-be-deleted' Dynamic Buffer bytes to their
      * definitive place
      */
-    if (memmove(positionToWriteIn, positionToBackup, lengthToBackup)
-        == NULL)
-    {
-        errAdd(miscERR_MEM_FAILURE);
-        return FAILURE;
-    }
+    memmove(positionToWriteIn, positionToBackup, lengthToBackup);
 
     /* Update the Dynamic Buffer stored length value using the deleted bytes
      * number
