@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2005-02-15 16:02:02 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2005-02-25 11:17:35 scetre Exp $"
 #
 # Makefile of mcsins module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/15 16:02:02  gzins
+# Added CVS log as file modification history
+#
 # sccmgr    08-Dec-2004  Created
 #
 #*******************************************************************************
@@ -69,7 +72,7 @@ lllll_OBJECTS   =
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = sclinsInstall
+SCRIPTS         = sclinsInstall sclinsStart sclinsStop sclinsQuery
 SCRIPTS_L       =
 
 #
