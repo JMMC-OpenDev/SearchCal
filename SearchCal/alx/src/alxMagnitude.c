@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.9 2005-02-22 08:08:20 gzins Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.10 2005-02-22 10:16:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/22 08:08:20  gzins
+ * Updated to set confidence index to alxNO_CONFIDENCE when magnitude can not be computed
+ *
  * Revision 1.8  2005/02/21 19:32:44  gzins
  * Updated to set confidence index for each computed magnitudes; when a magnitude can not be computed confidence index is set to low
  *
@@ -45,7 +48,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.9 2005-02-22 08:08:20 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.10 2005-02-22 10:16:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -524,86 +527,135 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         }
     }
 
-    /* Compute magnitudes in R, I, J, H, K, L and M bands */
-    if (v_r == alxBLANKING_VALUE)
+    /* Compute *missing* magnitudes in R, I, J, H, K, L and M bands */
+    if (magnitudes [alxR_BAND] == alxBLANKING_VALUE)
     {
-        magnitudes [alxR_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxR_BAND] = alxNO_CONFIDENCE;
+        if (v_r == alxBLANKING_VALUE)
+        {
+            magnitudes [alxR_BAND] = alxBLANKING_VALUE;
+            confIndexes[alxR_BAND] = alxNO_CONFIDENCE;
+        }
+        else
+        {
+            magnitudes [alxR_BAND] = mgV - v_r;
+            confIndexes[alxR_BAND] = alxCONFIDENCE_HIGH;
+        }
     }
     else
     {
-        magnitudes [alxR_BAND] = mgV - v_r;
         confIndexes[alxR_BAND] = alxCONFIDENCE_HIGH;
     }
 
-    if (v_i == alxBLANKING_VALUE)
+    if (magnitudes [alxI_BAND] == alxBLANKING_VALUE)
     {
-        magnitudes [alxI_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxI_BAND] = alxNO_CONFIDENCE;
+        if (v_i == alxBLANKING_VALUE)
+        {
+            magnitudes [alxI_BAND] = alxBLANKING_VALUE;
+            confIndexes[alxI_BAND] = alxNO_CONFIDENCE;
+        }
+        else
+        {
+            magnitudes [alxI_BAND] = mgV - v_i;
+            confIndexes[alxI_BAND] = alxCONFIDENCE_HIGH;
+        }
     }
     else
     {
-        magnitudes [alxI_BAND] = mgV - v_i;
         confIndexes[alxI_BAND] = alxCONFIDENCE_HIGH;
     }
 
-    if ((magnitudes [alxI_BAND] == alxBLANKING_VALUE) ||
-        (i_j == alxBLANKING_VALUE))
+    if (magnitudes [alxJ_BAND] == alxBLANKING_VALUE)
     {
-        magnitudes [alxJ_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxJ_BAND] = alxNO_CONFIDENCE;
+        if ((magnitudes [alxI_BAND] == alxBLANKING_VALUE) ||
+            (i_j == alxBLANKING_VALUE))
+        {
+            magnitudes [alxJ_BAND] = alxBLANKING_VALUE;
+            confIndexes[alxJ_BAND] = alxNO_CONFIDENCE;
+        }
+        else
+        {
+            magnitudes [alxJ_BAND] = magnitudes [alxI_BAND] - i_j;
+            confIndexes[alxJ_BAND] = alxCONFIDENCE_HIGH;
+        }
     }
     else
     {
-        magnitudes [alxJ_BAND] = magnitudes [alxI_BAND] - i_j;
         confIndexes[alxJ_BAND] = alxCONFIDENCE_HIGH;
     }
 
-    if ((magnitudes [alxJ_BAND] == alxBLANKING_VALUE) ||
-        (j_h == alxBLANKING_VALUE))
+    if (magnitudes [alxH_BAND] == alxBLANKING_VALUE)
     {
-        magnitudes [alxH_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxH_BAND] = alxNO_CONFIDENCE;
+        if ((magnitudes [alxJ_BAND] == alxBLANKING_VALUE) ||
+            (j_h == alxBLANKING_VALUE))
+        {
+            magnitudes [alxH_BAND] = alxBLANKING_VALUE;
+            confIndexes[alxH_BAND] = alxNO_CONFIDENCE;
+        }
+        else
+        {
+            magnitudes [alxH_BAND] = magnitudes [alxJ_BAND] - j_h;
+            confIndexes[alxH_BAND] = alxCONFIDENCE_HIGH;
+        }
     }
     else
     {
-        magnitudes [alxH_BAND] = magnitudes [alxJ_BAND] - j_h;
         confIndexes[alxH_BAND] = alxCONFIDENCE_HIGH;
     }
 
-    if ((magnitudes [alxJ_BAND] == alxBLANKING_VALUE) ||
-        (j_k == alxBLANKING_VALUE))
+    if (magnitudes [alxK_BAND] == alxBLANKING_VALUE)
     {
-        magnitudes [alxK_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxK_BAND] = alxNO_CONFIDENCE;
+        if ((magnitudes [alxJ_BAND] == alxBLANKING_VALUE) ||
+            (j_k == alxBLANKING_VALUE))
+        {
+            magnitudes [alxK_BAND] = alxBLANKING_VALUE;
+            confIndexes[alxK_BAND] = alxNO_CONFIDENCE;
+        }
+        else
+        {
+            magnitudes [alxK_BAND] = magnitudes [alxJ_BAND] - j_k;
+            confIndexes[alxK_BAND] = alxCONFIDENCE_HIGH;
+        }
     }
     else
     {
-        magnitudes [alxK_BAND] = magnitudes [alxJ_BAND] - j_k;
         confIndexes[alxK_BAND] = alxCONFIDENCE_HIGH;
     }
 
-    if ((magnitudes [alxK_BAND] == alxBLANKING_VALUE) ||
-        (k_l == alxBLANKING_VALUE))
+    if (magnitudes [alxL_BAND] == alxBLANKING_VALUE)
     {
-        magnitudes [alxL_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxL_BAND] = alxNO_CONFIDENCE;
+        if ((magnitudes [alxK_BAND] == alxBLANKING_VALUE) ||
+            (k_l == alxBLANKING_VALUE))
+        {
+            magnitudes [alxL_BAND] = alxBLANKING_VALUE;
+            confIndexes[alxL_BAND] = alxNO_CONFIDENCE;
+        }
+        else
+        {
+            magnitudes [alxL_BAND] = magnitudes [alxK_BAND] - k_l;
+            confIndexes[alxL_BAND] = alxCONFIDENCE_HIGH;
+        }
     }
     else
     {
-        magnitudes [alxL_BAND] = magnitudes [alxK_BAND] - k_l;
         confIndexes[alxL_BAND] = alxCONFIDENCE_HIGH;
     }
 
-    if ((magnitudes [alxK_BAND] == alxBLANKING_VALUE) ||
-        (k_m == alxBLANKING_VALUE))
+    if (magnitudes [alxM_BAND] == alxBLANKING_VALUE)
     {
-        magnitudes [alxM_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxM_BAND] = alxNO_CONFIDENCE;
+        if ((magnitudes [alxK_BAND] == alxBLANKING_VALUE) ||
+            (k_m == alxBLANKING_VALUE))
+        {
+            magnitudes [alxM_BAND] = alxBLANKING_VALUE;
+            confIndexes[alxM_BAND] = alxNO_CONFIDENCE;
+        }
+        else
+        {
+            magnitudes [alxM_BAND] = magnitudes [alxK_BAND] - k_m;
+            confIndexes[alxM_BAND] = alxCONFIDENCE_HIGH;
+        }
     }
     else
     {
-        magnitudes [alxM_BAND] = magnitudes [alxK_BAND] - k_m;
         confIndexes[alxM_BAND] = alxCONFIDENCE_HIGH;
     }
 
