@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-08-03 09:09:04 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.7 2004-08-03 09:52:36 gzins Exp $"
 #
 # Makefile of misc Library
 #
@@ -14,6 +14,7 @@
 #                        string specific functions move from miscDynStr.h to
 #                        miscDynBuf.h
 # lafrasse  03-Aug-2004  Added miscNetwork stuff
+# gzins     03-Aug-2004  Added installation of all include files 
 #
 #
 #*******************************************************************************
@@ -56,7 +57,14 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = misc.h
+INCLUDES        = misc.h \
+				  miscDate.h \
+				  miscDynBuf.h \
+				  miscFile.h \
+				  miscNetwork.h \
+				  miscPrivate.h \
+				  miscString.h
+
 
 #
 # Libraries (public and local)
