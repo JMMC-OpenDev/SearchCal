@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.8 2005-02-22 15:10:53 lafrasse Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.9 2005-02-22 15:42:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/22 15:10:53  lafrasse
+ * Removed documentation duplication between 'misc' and 'misco', changed miscoDYN_BUF::GetNextLine() API, added miscoDYN_BUF::GetNextCommentLine(), miscoDYN_BUF::AppendLine() and miscoDYN_BUF::AppendCommentLine()
+ *
  * Revision 1.7  2005/02/16 14:57:23  gzins
  * Updated prototype to GetNextLine
  *
@@ -89,10 +92,10 @@ public:
 
     const char*   GetCommentPattern  () const;
 
-    const char*   GetNextLine        (const char        *currentPos,
-                                            char        *nextLine,
-                                      const mcsUINT32   maxLineLength,
-                                      const mcsLOGICAL  skipCommentFlag);
+    const char*   GetNextLine        (const char       *currentPos,
+                                            char       *nextLine,
+                                      const mcsUINT32  maxLineLength,
+                                      const mcsLOGICAL skipCommentFlag=mcsTRUE);
 
     const char*   GetNextCommentLine (const char        *currentPos,
                                             char        *nextLine,
