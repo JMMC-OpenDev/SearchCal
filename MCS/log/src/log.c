@@ -1,7 +1,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: log.c,v 1.6 2004-05-26 08:59:47 mella Exp $"
+*  "@(#) $Id: log.c,v 1.7 2004-05-27 13:18:20 mella Exp $"
 *
 * who       when      what
 * --------  --------  ----------------------------------------------
@@ -41,10 +41,16 @@ been :
 \li Other Linux distributions
 
 \subsection software Software
- 
-The following softwares are needed to generate log:
+
+The following softwares are needed to generate the log library:
 
 \li MCS environment
+
+This library generates log messages using syslog(), which will  be  distributed  by  syslogd.
+
+The following softwares are needed to use the log library:
+
+\li syslogd
 
 \section installation Installation
  
@@ -124,6 +130,7 @@ http://mariotti.ujf-grenoble.fr
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <syslog.h>
 
 /*
  * Local Headers 
@@ -158,6 +165,13 @@ static mcsPROCNAME logProcName = "procUNKNOWN";
 mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName){
     /* store values into global variables */
     strncpy(logProcName, processName, mcsPROCNAME_LEN);
+
+    /* open syslog 
+     * using by convention LOCAL3 facility
+     * \todo use an environment variable to adjust the default LOCAL3 facility
+     */
+    openlog(processName, LOG_NDELAY, LOG_LOCAL3);
+        
     return SUCCESS;
 }
 
@@ -186,7 +200,7 @@ mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
         /* Log information */
         va_start(argPtr,logFormat);
         vsprintf(buffer, logFormat, argPtr);
-        stat = logData(buffer);
+        stat = logData(modName, level, fileLine, buffer);
         va_end(argPtr);
     }
 	
@@ -391,10 +405,26 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
  * 
  * \return mcsCOMPL_STAT 
  */
-static mcsCOMPL_STAT logData(const char * msg)
+static mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
+                        const char *fileLine,
+                        const char *buffer)
 {
-    /* TBD */
-    /* fprintf(stdout, "logData [%s]\n", msg); */
+    int priority;       /* syslog priority */
+
+    /* initialize priority according given loglevel */
+    switch (level){
+        case logQUIET :     priority = LOG_NOTICE ;     break;
+        case logWARNING :   priority = LOG_WARNING ;    break;
+        case logINFO :      priority = LOG_INFO ;       break;
+        case logTEST :      priority = LOG_NOTICE;      break;
+        case logDEBUG :	    priority = LOG_DEBUG;       break;
+        case logEXTDBG :    priority = LOG_DEBUG;       break;
+        default:            priority = LOG_INFO ;       break;
+    }
+    
+    /* log to syslog system */
+    syslog( priority, "%s %s %s", modName, fileLine, buffer);
+        
     return SUCCESS;
 }
 
