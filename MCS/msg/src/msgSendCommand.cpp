@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.cpp,v 1.7 2004-12-21 06:52:09 gzins Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.8 2004-12-22 08:44:19 gzins Exp $"
 *
 *
 * who       when                 what
@@ -15,6 +15,7 @@
 * gzins     03-Dec-2004  Updated according to new msgMANAGER_IF::Connect API
 * gzins     07-Dec-2004  Removed no longer needed errStackDisplay() 
 * gzins     20-Dec-2004  Removed leading and trailing spaces to parameters
+* gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
 *
 *******************************************************************************/
 
@@ -50,7 +51,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.7 2004-12-21 06:52:09 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.8 2004-12-22 08:44:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -174,12 +175,12 @@ int main (int argc, char *argv[])
 
                 if (msg.GetBodySize() > 0)
                 {
-                    printf("MESSAGEBUFFER :\n%s\n", msg.GetBodyPtr());
+                    printf("MESSAGEBUFFER :\n%s\n", msg.GetBody());
                 }
                 break;
 
             case msgTYPE_ERROR_REPLY:
-                errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize());
+                errUnpackStack(msg.GetBody(), msg.GetBodySize());
                 break;
 
             default:
