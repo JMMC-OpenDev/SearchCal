@@ -1,20 +1,21 @@
 #ifndef evhSERVER_H
 #define evhSERVER_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhSERVER.h,v 1.6 2005-01-07 18:10:35 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     09-Nov-2004  Created
-* gzins     23-Nov-2004  Used new msg C++ library.
-*                        Added SendReply method
-* gzins     03-Dec-2004  Added SendCommand
-* gzins     22-Dec-2004  Added HelpCB()
-* gzins     07-Jan-2005  Remove SendCommand(); moved to evhINTERFACE 
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhSERVER.h,v 1.7 2005-01-26 18:09:49 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     09-Nov-2004  Created
+ * gzins     23-Nov-2004  Used new msg C++ library.
+ *                        Added SendReply method
+ * gzins     03-Dec-2004  Added SendCommand
+ * gzins     22-Dec-2004  Added HelpCB()
+ * gzins     07-Jan-2005  Remove SendCommand(); moved to evhINTERFACE 
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -24,52 +25,18 @@
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
+#include <map>
 
 #include "evhTASK.h"
 #include "evhHANDLER.h"
+#include "evhStates.h"
 
 /*
  * Class declaration
  */
 
 /**
- * Brief description of the class, which ends at this dot.
- * 
- * OPTIONAL detailed description of the class follows here.
- *
- * \usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
- *
- * \n
- * \env
- * OPTIONAL. If needed, environmental variables accessed by the class. For
- * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
- * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * \n
- * \ex
- * OPTIONAL. Code example if needed
- * \n Brief example description.
- * \code
- * Insert your code example here
- * \endcode
- *
- * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * \sa modcppMain.C
- * 
- * \bug OPTIONAL. Bugs list if it exists.
- * \bug For example, description of the first bug
- * \bug For example, description of the second bug
- * 
- * \todo OPTIONAL. Things to forsee list, if needed. For example, 
- * \todo add other methods, dealing with operations.
+ * To be written. 
  * 
  */
 class evhSERVER : public evhTASK, public evhHANDLER
@@ -90,8 +57,17 @@ public:
     // Init method
     virtual mcsCOMPL_STAT Init(mcsINT32 argc, char *argv[]);
 
+    // Server state and sub-state
+    virtual mcsCOMPL_STAT SetState(mcsINT32 state);
+    virtual mcsINT32      GetState(void);
+    virtual const char   *GetStateStr(void);
+    virtual mcsCOMPL_STAT SetSubState(mcsINT32 subState);
+    virtual mcsINT32      GetSubState(void);
+    virtual const char   *GetSubStateStr(void);
+    
     // Command callbacks
     virtual evhCB_COMPL_STAT HelpCB(msgMESSAGE &msg, void*);
+    virtual evhCB_COMPL_STAT StateCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT VersionCB(msgMESSAGE &msg, void*);
 
     // Connection to MCS message manager
@@ -106,6 +82,11 @@ public:
                                     mcsLOGICAL lastReply=mcsTRUE);
 
 protected:
+    // Method to add a new state in the state definition list.
+    mcsCOMPL_STAT AddState(mcsINT32 id, char *name);
+
+    // Method to add a new state in the state definition list.
+    mcsCOMPL_STAT AddSubState(mcsINT32 id, char *name);
 
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -118,6 +99,14 @@ private:
 
     // Command given as command-line argument (is any)
     msgMESSAGE _msg;
+
+    // Current server state and sub-state
+    mcsINT32 _state;
+    mcsINT32 _subState;
+
+    // List of defined states with the corresponding name
+    map<mcsINT32, string> _stateList;
+    map<mcsINT32, string> _subStateList;
 };
 
 #endif /*!evhSERVER_H*/
