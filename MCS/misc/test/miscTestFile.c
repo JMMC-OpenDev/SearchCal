@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.7 2004-09-27 14:59:47 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.8 2004-09-30 09:15:19 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -13,11 +13,13 @@
 *                        causing an '\' append at the end of the computed path
 * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
 * lafrasse  27-Sep-2004  Added miscFileExists test
+* lafrasse  28-Sep-2004  Added miscLocateFileInPath test and corrected a bug in
+*                        the miscResolvePath test
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.7 2004-09-27 14:59:47 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.8 2004-09-30 09:15:19 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,7 +54,6 @@ int main (int argc, char *argv[])
     
     mcsSTRING256 fullFileName;
     char *tmp = NULL;
-    tmp = calloc(sizeof(char), 256);
 
     /* Test of miscGetFileName() */
     printf("miscGetFileName() Function Test :\n\n");
@@ -528,15 +529,12 @@ int main (int argc, char *argv[])
         printf("Resolved Path   = \"%s\"\n\n", tmp);
     }
     printf("\n\n");
-    free(tmp);
-
 
     /* Test of miscFileExists() */
     printf("miscFileExists() Function Test :\n\n");
     printf("   ---------------------------------------------------------\n");
-    strcpy (fullFileName, "miscErrors.xml");
-    printf("Tested File = \"%s\" ", fullFileName);
-    if (miscFileExists(fullFileName) == FAILURE)
+    printf("Tested File = \"%s\" ", "NULL");
+    if (miscFileExists(NULL) == FAILURE)
     {
         printf("DOESN'T EXIST\n");
         errDisplayStack();
@@ -594,6 +592,53 @@ int main (int argc, char *argv[])
     {
         printf("        EXIST\n");
     }
+
+    /* Test of miscLocateFileInPath() */
+    printf("miscLocateFileInPath() Function Test :\n\n");
+    printf("   ---------------------------------------------------------\n");
+    tmp = NULL;
+    printf("Tested Path = '%s' - '%s'\n", "NULL", "miscErrors.xml");
+    tmp = miscLocateFileInPath(NULL, "miscErrors.xml");
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errDisplayStack();
+    errCloseStack();
+    tmp = NULL;
+    strcpy(fullFileName, "../:$INTROOT/:$MCSROOT/");
+    printf("Tested Path = '%s' - '%s'\n", fullFileName, "NULL");
+    tmp = miscLocateFileInPath(fullFileName, NULL);
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errDisplayStack();
+    errCloseStack();
+    tmp = NULL;
+    strcpy(fullFileName, "../:$INTROOT/:$MCSROOT/");
+    printf("Tested Path = '%s' - '%s'\n", fullFileName, "miscErrors.xml");
+    tmp = miscLocateFileInPath(fullFileName, "miscErrors.xml");
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errDisplayStack();
+    errCloseStack();
+    tmp = NULL;
+    strcpy(fullFileName, "../:$INTROOT/errors/:$MCSROOT/errors/");
+    printf("Tested Path = '%s' - '%s'\n", fullFileName, "miscErrors.xml");
+    tmp = miscLocateFileInPath(fullFileName, "miscErrors.xml");
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errDisplayStack();
+    errCloseStack();
+    tmp = NULL;
+    strcpy(fullFileName, "../:$MCSROOT/errors/:$INTROOT/errors/");
+    printf("Tested Path = '%s' - '%s'\n", fullFileName, "miscErrors.xml");
+    tmp = miscLocateFileInPath(fullFileName, "miscErrors.xml");
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errDisplayStack();
+    errCloseStack();
+    tmp = NULL;
+    strcpy(fullFileName, "../:/home/$INTROOT/errors/:/home/$MCSROOT/errors/");
+    printf("Tested Path = '%s' - '%s'\n", fullFileName, "miscErrors.xml");
+    tmp = miscLocateFileInPath(fullFileName, "miscErrors.xml");
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errDisplayStack();
+    errCloseStack();
+
+
     exit (EXIT_SUCCESS);
 }
 

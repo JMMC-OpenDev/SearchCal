@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscFile.h,v 1.4 2004-09-27 14:59:47 lafrasse Exp $"
+* "@(#) $Id: miscFile.h,v 1.5 2004-09-30 09:15:19 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -11,6 +11,7 @@
 *                        Moved mcs.h include in from miscFile.c
 * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
 * lafrasse  25-Sep-2004  Added miscFileExists
+* lafrasse  27-Sep-2004  Added miscLocateFileInPath
 *
 *
 *******************************************************************************/
@@ -48,7 +49,7 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
                                   mcsUINT32 envVarValueBufferLength);
 mcsCOMPL_STAT miscYankLastPath   (char *path);
 mcsCOMPL_STAT miscFileExists     (const char *fullPath);
-
+char*         miscLocateFileInPath(const char *path, const char *fileName);
 
 #ifdef __cplusplus
 }
