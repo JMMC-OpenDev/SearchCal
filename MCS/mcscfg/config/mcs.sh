@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.3 2005-02-15 16:49:11 gzins Exp $
+# Version: $Id: mcs.sh,v 1.4 2005-03-07 10:52:53 mella Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/15 16:49:11  gzins
+# Added psg alias
+#
 # Revision 1.2  2005/02/14 14:20:30  gzins
 # Updated test for conditional environment variable setting; test LD_LIBRARY_PATH instead of PATH
 #
@@ -48,28 +51,40 @@ fi
 # Set PATH
 if [ "$PATH" != "" ]
 then
-    export PATH=$PATH:../bin
+        export PATH=$PATH:../bin
 else
     export PATH=../bin
 fi
 
-# Add $INTROOT to LD_LIBRARY_PATH, PATH, MCS_XSLPATH and MANPATH
+# Add $INTROOT to LD_LIBRARY_PATH, PATH and MANPATH
 if [ "$INTROOT" != "" ]
 then
-    if ! echo ${LD_LIBRARY_PATH} |grep -q $INTROOT
+    if ! echo ${LD_LIBRARY_PATH} |grep -q $INTROOT/lib
+    then
+        export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$INTROOT/lib"
+    fi
+    if ! echo ${PATH} |grep -q $INTROOT/bin
     then
         export PATH="$PATH:$INTROOT/bin"
+    fi
+    if ! echo ${MANPATH} |grep -q $INTROOT/man
+    then
         export MANPATH="$MANPATH:$INTROOT/man"
-        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INTROOT/lib
     fi
 fi
 
-# Add $MCSROOT to LD_LIBRARY_PATH, PATH, MCS_XSLPATH and MANPATH
-if ! echo ${LD_LIBRARY_PATH} |grep -q $MCSROOT 
+# Add $MCSROOT to LD_LIBRARY_PATH, PATH and MANPATH
+if ! echo ${LD_LIBRARY_PATH} |grep -q $MCSROOT/lib 
+then
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$MCSROOT/lib"
+fi
+if ! echo ${PATH} |grep -q $MCSROOT/bin
 then
     export PATH="$PATH:$MCSROOT/bin"
+fi
+if ! echo ${MANPATH} |grep -q $MCSROOT/man 
+then
     export MANPATH="$MANPATH:$MCSROOT/man"
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MCSROOT/lib
 fi
 
 # MCSDATA
