@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.12 2005-02-15 15:41:47 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.13 2005-03-04 06:37:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/15 15:41:47  gzins
+ * Fixed wrong mcsmcsSUCCESS and mcsmcsFAILURE
+ *
  * Revision 1.11  2005/02/15 15:19:30  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -31,7 +34,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.12 2005-02-15 15:41:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.13 2005-03-04 06:37:01 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -51,6 +54,7 @@ using namespace std;
  * Local Headers 
  */
 #include "vobsREQUEST.h"
+#include "vobsSTAR.h"
 #include "vobsPrivate.h"
 
 
@@ -126,7 +130,28 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
 {
     logExtDbg("vobsREQUEST::SetObjectRa()");
 
-    _objectRa = objectRa;
+    // Check format
+    vobsSTAR star;
+    mcsFLOAT ra;
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, objectRa);
+    if (star.GetRa(&ra) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Reformat string as +/-HH:MM:SS.TT
+    mcsSTRING64 raHms;
+    mcsFLOAT    hh, hm, hs;
+    ra = ra/15.0;
+    hh = (int) (ra);
+    hm = (int) ((ra - hh)*60.0);
+    hs = (ra - hh - hm/60.0)*3600.0;
+
+    sprintf(raHms, "%c%02d:%02d:%02.2f\n", 
+            (ra < 0)?'-':'+', (int)fabs(hh), (int)fabs(hm), fabs(hs));
+
+    // Set RA
+    _objectRa = raHms;
 
     return mcsSUCCESS;
 }
@@ -155,7 +180,27 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
 {
     logExtDbg("vobsREQUEST::SetObjectDec()");
 
-    _objectDec = objectDec;
+    // Check format
+    vobsSTAR star;
+    mcsFLOAT dec;
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, objectDec);
+    if (star.GetDec(&dec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Reformat string as +/-DD:MM:SS.TT
+    mcsSTRING64 decDms;
+    mcsFLOAT    dd, hm, hs;
+    dd = (int) (dec);
+    hm = (int) ((dec - dd)*60.0);
+    hs = (dec - dd - hm/60.0)*3600.0;
+
+    sprintf(decDms, "%c%02d:%02d:%02.2f\n", 
+            (dec < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
+
+    // Set DEC
+    _objectDec = decDms;
     
     return mcsSUCCESS;
 }
