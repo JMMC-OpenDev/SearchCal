@@ -3,14 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.11 2004-12-03 17:07:11 lafrasse Exp $"
+* "@(#) $Id: mcs.h,v 1.12 2004-12-09 06:06:55 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * mella     07-May-2004  Preliminary version based on MCS from VLT/ESO
 * gzins     11-May-2004  Add RCS Id and removed unused definitions
 * lafrasse  01-Dec-2004  Added mcsUNKNOWN_ENV
-*
+* gzins     09-Dec-2004  Defined mcsLOGICAL as an enumerate
 *
 *******************************************************************************/
 
@@ -34,8 +34,6 @@ extern "C" {
 #define mcsCMD_LEN              8   /* max. length of a command name      */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes    */
 #define mcsUNKNOWN_ENV  "none"      /* name used for unknown environment  */
-#define mcsFALSE                0   /* False Logical                      */
-#define mcsTRUE                 1   /* True Logical                       */
 
 /************************************************************************
  *                          MCS   Data  Types                           *
@@ -46,7 +44,6 @@ typedef short              mcsINT16;     /* 16 bits integers           */
 typedef unsigned short     mcsUINT16;    /* 16 bits unsigned integers  */
 typedef int                mcsINT32;     /* 32 bits integers           */
 typedef unsigned int       mcsUINT32;    /* 32 bits unsigned integers  */
-typedef unsigned char      mcsLOGICAL;   /* logical (rtLogical)        */
 typedef double             mcsDOUBLE;    
 typedef float              mcsFLOAT;
 
@@ -81,6 +78,15 @@ typedef char mcsFILE_LINE[64];                    /* File/line information */
 typedef char mcsCMD[mcsCMD_LEN+1];                /* Command name          */
 
 #define mcsNULL_CMD  ""
+
+/*
+ *   Definition of logical  
+ */
+typedef enum 
+{
+    mcsFALSE = 0,   /* False Logical                      */
+    mcsTRUE  = 1    /* True Logical                       */
+} mcsLOGICAL;     
 
 /*
  *   Definition of the routine completion status
