@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msg.c,v 1.2 2004-09-07 14:25:46 gzins Exp $"
+* "@(#) $Id: msg.c,v 1.3 2004-09-08 08:08:39 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -90,7 +90,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: msg.c,v 1.2 2004-09-07 14:25:46 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msg.c,v 1.3 2004-09-08 08:08:39 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -181,7 +181,6 @@ mcsCOMPL_STAT   msgSetBody        (msgMESSAGE         *msg,
     
     /* Store the new message body size, in network byte order */
     sprintf( msg->header.msgBodySize, "%d", bufLen);
-
     /* Fill the message body with the given length and buffer content */
     strncpy(msg->body, buffer, bufLen);
     
@@ -215,7 +214,7 @@ mcsINT32        msgGetBodySize    (msgMESSAGE         *msg)
     mcsINT32 msgBodySize;
     /* Return the message body size in local host byte order */
     sscanf(msg->header.msgBodySize, "%d", &msgBodySize);
-    return (ntohl (msgBodySize));
+    return (msgBodySize);
 }
 
 
