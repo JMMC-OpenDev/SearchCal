@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.7 2005-02-13 15:35:02 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.8 2005-02-22 14:15:22 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/02/13 15:35:02  gzins
+* Added property name in message of vobsERR_INVALID_PROP_FORMAT error
+*
 * Revision 1.6  2005/02/11 10:43:35  gzins
 * Fixed bug related to vobsCONFIDENCE_INDEX type
 *
@@ -27,7 +30,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.7 2005-02-13 15:35:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.8 2005-02-22 14:15:22 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -160,10 +163,34 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
     // Affect value
     if ((IsSet() == mcsFALSE) || (overwrite==mcsTRUE))
     {
-        strcpy(_value, value);
+        // If type of property is float
+        if (_type == vobsFLOAT_PROPERTY)
+        {
+            // Use format to affect value
+            float fValue;
+            if (sscanf(value, "%f", &fValue) != 1)
+            {
+                errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value, "%f");
+                return (mcsFAILURE);
+            }
+            if (sprintf(_value, _format.c_str(), fValue) != 1)
+            {
+                errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value,
+                        _format.c_str());
+                return (mcsFAILURE);
+            }
+        }
+        // Else
+        else
+        {
+            // Just copy given value
+            strcpy(_value, value);
+        }
+        // End if
+
+        _confidenceIndex = confidenceIndex;
+        _origin = origin;
     }
-    _confidenceIndex = confidenceIndex;
-    _origin = origin;
 
     return mcsSUCCESS;    
 }
@@ -200,11 +227,16 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
     // Affect value
     if ((IsSet() == mcsFALSE) || (overwrite==mcsTRUE))
     {
-        sprintf(_value, _format.c_str(), value);
-    }
+        if (sprintf(_value, _format.c_str(), value) != 1)
+        {
+            errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value,
+                    _format.c_str());
+            return (mcsFAILURE);
+        }
 
-    _confidenceIndex = confidenceIndex;
-    _origin = origin;
+        _confidenceIndex = confidenceIndex;
+        _origin = origin;
+    }
 
     return mcsSUCCESS;    
 }
