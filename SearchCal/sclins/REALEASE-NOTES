@@ -9,9 +9,9 @@ Version 3.0 :
 
 Version 3.1 :
 ~~~~~~~~~~~~~
-    Remove all flag of variability and multiplicity if filter are forbidden.
-    Added "SHOW DETAILS" and "HIDE DETAILS" button.
+    Fixed bug related to variability and multiplicity filtering.
+    Added "SHOW DETAILS" and "HIDE DETAILS" buttons.
     Changed "SHOW ALL RESULTS" and "RESET" button behavior.
-    Changed properties order in the results table.
+    Changed properties order in the result table.
     
     
