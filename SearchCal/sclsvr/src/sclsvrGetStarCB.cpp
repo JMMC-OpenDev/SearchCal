@@ -1,10 +1,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.7 2005-01-24 13:40:27 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.8 2005-01-27 15:58:20 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
 * scetre    30-Nov-2004  Created
 *
 *
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.7 2005-01-24 13:40:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.8 2005-01-27 15:58:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

@@ -1,10 +1,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.1 2005-01-25 11:05:13 gzins Exp $"
+* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.2 2005-01-27 15:58:14 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
 * gzins     23-Nov-2004  Created
 *
 *
@@ -15,7 +15,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.1 2005-01-25 11:05:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.2 2005-01-27 15:58:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
