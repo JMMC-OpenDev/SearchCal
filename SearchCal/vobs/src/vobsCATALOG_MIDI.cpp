@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.13 2005-02-11 14:22:10 gluck Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.14 2005-02-13 15:59:08 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/02/11 14:22:10  gluck
+ * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
+ * - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
+ * - Updated some comments
+ *
  * Revision 1.10  2005/02/10 10:46:42  gzins
  * Changed column name to parameter name
  *
@@ -46,7 +51,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.13 2005-02-11 14:22:10 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.14 2005-02-13 15:59:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -106,13 +111,12 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Load()
 {
-    logExtDbg("vobsLOCAL_CATALOG::Load()");
+    logExtDbg("vobsCATALOG_MIDI::Load()");
     
     //
     // Standard procedure to load catalog
     // ----------------------------------
     vobsLOCAL_CATALOG::Load();
-
 
     //
     // MIDI specific loading actions
