@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.5 2005-02-17 19:05:23 gzins Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.6 2005-02-21 19:36:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/17 19:05:23  gzins
+ * Changed remaining FAILURE to mcsFAILURE
+ *
  * Revision 1.4  2005/02/12 15:18:56  gzins
  * Set logging service for test; do not print time stamp and file/line information and set level to logTEST
  *
@@ -29,7 +32,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.5 2005-02-17 19:05:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.6 2005-02-21 19:36:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -87,94 +90,50 @@ int main (int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    mcsFLOAT B=6.6, V=5.77; 
-    mcsFLOAT R, I, J, H, K, L, M;    
-    alxCONFIDENCE_INDEX confIdx;
+    mcsFLOAT magnitudes[alxNB_BANDS];    
+    alxCONFIDENCE_INDEX confIndexes[alxNB_BANDS];
+    magnitudes[alxB_BAND] = 6.6;
+    magnitudes[alxV_BAND] = 5.77;
     if (alxComputeMagnitudesForBrightStar
-        ("B2.5V", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == mcsFAILURE)
+        ("B2.5V", magnitudes, confIndexes) == mcsFAILURE)
     {
         errCloseStack();
-        return mcsFAILURE;
     }
 
-    B=6.6, V=5.77;    
+    magnitudes[alxB_BAND] = 6.6;
+    magnitudes[alxV_BAND] = 5.77;
     if (alxComputeMagnitudesForBrightStar
-        ("K2.5V", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == mcsFAILURE)
+        ("K2.5V", magnitudes, confIndexes) == mcsFAILURE)
     {
         errCloseStack();
-        return mcsFAILURE;
     }
 
-    B=6.6, V=5.77;    
+    magnitudes[alxB_BAND] = 6.6;
+    magnitudes[alxV_BAND] = 5.77;
     if (alxComputeMagnitudesForBrightStar
-        ("B6I", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == mcsFAILURE)
+        ("A0I", magnitudes, confIndexes) == mcsFAILURE)
     {
         errCloseStack();
-        return mcsFAILURE;
     }
+
     if (alxComputeRealMagnitudes
-        (10, 5, 165, &B, &V, &R, &I, &J, &H, &K, &L, &M) == mcsFAILURE)
+        (10, 5, 165, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
     }
 
-    B=6.6, V=5.77;    
+    printf("magnitudes = %f\n", magnitudes[alxI_BAND]); 
+
+    magnitudes[alxB_BAND] = 6.6;
+    magnitudes[alxV_BAND] = 5.77;
     if (alxComputeMagnitudesForBrightStar
-        ("M8", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == mcsFAILURE)
+        ("M8", magnitudes, confIndexes) == mcsFAILURE)
     {
         errCloseStack();
-        return mcsFAILURE;
     }
 
-/*    mcsFLOAT plx=7.80;
-    mcsFLOAT gLat=-23.23;
-    mcsFLOAT gLon=167.01;
-    mcsFLOAT e_b_v=99.99;
-    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
-    logTest("Bo = %0.3f",B);
-    logTest("Vo = %0.3f",V);
-    logTest("Ro = %0.3f",R);
-    logTest("Io = %0.3f",I);
-    logTest("Jo = %0.3f",J);
-    logTest("Ho = %0.3f",H);
-    logTest("Ko = %0.3f",K);
-    logTest("Lo = %0.3f",L);
-    logTest("Mo = %0.3f",M);
-   
-    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
-    logTest("Bo = %0.3f",B);
-    logTest("Vo = %0.3f",V);
-    logTest("Ro = %0.3f",R);
-    logTest("Io = %0.3f",I);
-    logTest("Jo = %0.3f",J);
-    logTest("Ho = %0.3f",H);
-    logTest("Ko = %0.3f",K);
-    logTest("Lo = %0.3f",L);
-    logTest("Mo = %0.3f",M);
-
-    if (alxComputeRealMagnitude(plx, gLat, gLon, e_b_v, &M, &L, &K, &H, &J, &I, &R, &V, &B) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
-    logTest("Bo = %0.3f",B);
-    logTest("Vo = %0.3f",V);
-    logTest("Ro = %0.3f",R);
-    logTest("Io = %0.3f",I);
-    logTest("Jo = %0.3f",J);
-    logTest("Ho = %0.3f",H);
-    logTest("Ko = %0.3f",K);
-    logTest("Lo = %0.3f",L);
-    logTest("Mo = %0.3f",M);*/
+    printf("magnitudes = %f\n", magnitudes[alxI_BAND]); 
     /* Close MCS services */
     mcsExit();
     
