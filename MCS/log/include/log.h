@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.15 2004-08-10 13:29:10 lafrasse Exp $"
+* "@(#) $Id: log.h,v 1.16 2004-11-18 13:57:26 gzins Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -35,6 +35,7 @@
 *                        logSetLogManagerPortNumber functions
 * lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.h
 *                        Changed back to logData original API
+* gzins     18-Nov-2004  Added logError macro
 *
 *
 *******************************************************************************/
@@ -120,8 +121,15 @@ void          logGetTimeStamp(mcsBYTES32);
 /* File and Stdout related */
 
 /**
- * Log information about errors or abnormal events for application. The
- * logging level is fixed to logWARNING.
+ * Log information about errors for application. The logging level is fixed to
+ * logERROR.
+ */
+#define logError(format, arg...) \
+    logPrint(MODULE_ID, logERROR, __FILE_LINE__, format, ##arg)
+
+/**
+ * Log information about abnormal events for application. The logging level is
+ * fixed to logWARNING.
  */
 #define logWarning(format, arg...) \
     logPrint(MODULE_ID, logWARNING, __FILE_LINE__, format, ##arg)
