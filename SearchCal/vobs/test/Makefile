@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2004-11-24 14:39:09 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.11 2004-12-14 14:45:16 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -34,7 +34,7 @@ USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/i
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV getInformation 
+EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV getInformation vobsTestCriteria 
 EXECUTABLES_L   = 
 
 #
@@ -74,6 +74,10 @@ vobsTestVirtualObsV_LIBS      = mcs err log misc  vobs
 getInformation_OBJECTS   = getInformation
 getInformation_LDFLAGS   = -lxml2 -lgdome -lstdc++
 getInformation_LIBS      = mcs err log misc  vobs simcli
+
+vobsTestCriteria_OBJECTS   = vobsTestCriteria 
+vobsTestCriteria_LDFLAGS   = -lxml2 -lgdome -lstdc++
+vobsTestCriteria_LIBS      = mcs err log misc  vobs 
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
