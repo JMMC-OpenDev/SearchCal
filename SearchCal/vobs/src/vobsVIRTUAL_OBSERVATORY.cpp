@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.10 2005-02-04 07:51:15 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.11 2005-02-04 10:50:37 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/04 07:51:15  gzins
+* Changed printf to logTest
+*
 * Revision 1.9  2005/02/04 07:43:16  gzins
 * Fixed bug related to creation of primary list when porviding a existing list of stars; list was merged instaed of copied.
 *
@@ -28,7 +31,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.10 2005-02-04 07:51:15 gzins Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.11 2005-02-04 10:50:37 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -326,6 +329,18 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
                           criteriaListEmpty);
         // DENIS
         scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY,
+                          criteriaListEmpty);
+    }
+    // Scenario in band N
+    else if (strcmp(band, "N") == 0)
+    {
+        printf("band = N ==> MIDI catalog\n"); 
+        // Clear the list output which will be used
+        _starListS.Clear();
+
+        // Just consult MIDI catalog 
+        _starListP.Copy(starList);
+        scenario.AddEntry(&_midi, NULL, &_starListS, COPY,
                           criteriaListEmpty);
     }
     // Until now, the virtual observatory can't find star in other band
