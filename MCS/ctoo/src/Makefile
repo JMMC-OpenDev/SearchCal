@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.19 2005-01-24 15:47:51 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.20 2005-02-15 09:21:36 gzins Exp $"
 #
 # Makefile of ctoo module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2005/01/24 15:47:51  gluck
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+#
 # gluck     18-May-2004 Created
 # gzins     09-Jun-2004 Added templates for doxygen
 # mella     24-Jun-2004 Add buildDocIndex related
@@ -161,8 +164,5 @@ install : install_all
 	-$(AT) rm -f ${TEMPLATES}/*/*~
 	-$(AT) rm -f ${TEMPLATES}/*/.*.sw*
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
 
 #___oOo___

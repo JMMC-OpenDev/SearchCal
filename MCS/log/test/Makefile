@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.8 2005-02-15 08:22:20 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2005-02-15 09:26:34 gzins Exp $"
 #
 # Makefile of log
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/02/15 08:22:20  gzins
+# Removed logExample program (no longer exist)
+#
 # Revision 1.7  2005/01/26 17:28:22  lafrasse
 # Added automatic CVS history, refined user documentation, removed all
 # ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
@@ -152,9 +155,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
