@@ -1,15 +1,16 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-07-30 13:20:26 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-08-06 12:34:20 lafrasse Exp $"
 #
 # Makefile of log
 #
-# who       when        what
-# --------  ----------  ----------------------------------------------
-# mella    12-05-2004  created
+# who       when         what
+# --------  -----------  ----------------------------------------------
+# mella     12-May-2004  Created
+# lafrasse  03-Aug-2004  Removed cross-dependencies with err and misc
 #
-
+#
 #*******************************************************************************
 # This Makefile follows VLT Standards (see Makefile(5) for more).
 #*******************************************************************************
@@ -41,8 +42,8 @@ EXECUTABLES_L   = logTest
 #
 # <brief description of xxxxx program>
 logTest_OBJECTS   =	logTest
-logTest_LDFLAGS   = -lgdome
-logTest_LIBS      = mcs err misc log
+logTest_LDFLAGS   = 
+logTest_LIBS      = mcs log
 
 #
 # special compilation flags for single c sources

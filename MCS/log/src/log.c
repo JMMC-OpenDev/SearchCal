@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.18 2004-07-30 17:37:00 gluck Exp $"
+* "@(#) $Id: log.c,v 1.19 2004-08-06 12:34:20 lafrasse Exp $"
 *
 *
 * who       when                 what
@@ -19,79 +19,70 @@
 *                        logSetActionLevel -> logSetActionLogVerbosity
 *                        logGetActionLevel -> logGetActionLogVerbosity
 * gluck     30-Jun-2004  Changed some APIs :
-*                        Remove logSetFileLogState and add logEnableFileLog
-*                         and logDisableFileLog
 *                        logSetFileLogVerbosity -> logSetFileLogLevel
 *                        logGetFileLogVerbosity -> logGetFileLogLevel
-*                        Remove logSetStdoutLogState and add logEnableStdoutLog *                         and logDisableStdoutLog
 *                        logSetStdoutLogVerbosity -> logSetStdoutLogLevel
 *                        logGetStdoutLogVerbosity -> logGetStdoutLogLevel
 *                        logSetActionLogVerbosity -> logSetActionLogLevel
 *                        logGetActionLogVerbosity -> logGetActionLogLevel
+*                        Replaced logSetFileLogState by logEnableFileLog and
+*                        logDisableFileLog
+*                        Replaced logSetStdoutLogState by logEnableStdoutLog and
+*                        logDisableStdoutLog
+* lafrasse  03-Aug-2004  Factorized log messages generation in LogPrint
+*                        Changed logData to remotely log with logManager
+*                        Added logSetLogManagerHostName and
+*                        logSetLogManagerPortNumber functions
+*
 *
 *******************************************************************************/
+
+
 /**
- * \mainpage Log : MCS C Logging module
- * \section summary Summary
- * This module provides functions that enable users to handle the three types
- * of logs for the Event Logging. The types of logs are:
- *   \li File Logs   : These logs are stored into standard MCS logManager files.
- *   \li Stdout Logs : These logs are written to stdout.
- *   \li Action Logs : TBD.
+ * \file
+ * The 'log' library provides functions that enable users to handle the three
+ * types of logs for event logging.  The three kinds of logs contain the same
+ * information, but are stored in different locations, as shown thereafter :
+ *   \li File Logs are stored into standard MCS logManager files
+ *   \li Stdout Logs are written to stdout
+ *   \li Action Logs - TBD\n\n
  *
- * The three kinds of logs contain the same information, but are stored
- * in different locations and the levels of information are controlled
- * individually by logSetFileLogVerbosity(), logSetStdoutLogVerbosity() and
- * logSetActionLogVerbosity() methods. The current log levels can be retrieved
- * by logGetFileLogVerbosity(), logGetStdoutLogVerbosity() and
- * logGetActionLogVerbosity() methods.
+ * The levels of information are controlled
+ * individually by :
+ *   \li logSetFileLogVerbosity()
+ *   \li logSetStdoutLogVerbosity()
+ *   \li logSetActionLogVerbosity()\n\n
  *
- * The logging levels range from \p logQUIET to \p logEXTDBG , where the
- * lowest number means the lowest priority. By default, the level of all the
- * logs is set to \p logINFO.
- * The log and verbose flags indicate if the log information are presented
- * respectively on the standard \p MCS logger or on the stdout device
- * (default is mcsTRUE).
- * The following enums should be used to set the log levels : \n
- *   \li \p logQUIET   : no echo \n
- *   \li \p logWARNING : errors or abnormal events for application.\n
- *   \li \p logINFO    : major events.\n
- *   \li \p logTEST    : software test activities.
- *   \li \p logDEBUG   : debugging information.
- *   \li \p logEXTDBG  : more detailed debugging information.
+ * Current log levels can be retrieved with :
+ *   \li logGetFileLogVerbosity()
+ *   \li logGetStdoutLogVerbosity()
+ *   \li logGetActionLogVerbosity()\n\n
  *
- * The following convenient macros are provided in log.h for logging
- * standard and verbose information : logWarning(), logInfo(), logTest(),
- * logDebug() and logExtDbg().
+ * Logging levels range from \p logQUIET to \p logEXTDBG , where the lowest
+ * number means the lowest priority. By default, each log level is set to
+ * \p logINFO. The following enums should be used to set the log levels :
+ *   \li \p logQUIET   : no echo
+ *   \li \p logWARNING : errors or abnormal events for application
+ *   \li \p logINFO    : major events
+ *   \li \p logTEST    : software test activities
+ *   \li \p logDEBUG   : debugging information
+ *   \li \p logEXTDBG  : more detailed debugging information\n\n
  *
- * \section config Configuration
- * This modules makes call to the syslogd daemon. syslogd must be configured to
- * route the messages to the correct destination.
- * 
- * \subsection conf_files Configuration files
- * In general, \p /etc/syslog.conf configures the sylogd. This file is taken
- * into account at startup or after a SIGHUP signal sent. \p /etc/init.d/syslogd
- * \p restart also makes \p syslogd reread configuration
- * file.  
- * 
- * \subsection conf_syntax Configuration syntax
- * Simplest configuration lines is:
- * \code
- * 
- * local3.*                            /home/MCS/mcs.log
- * 
- * \endcode
+ * The following convenient macros are provided in log.h for file and stdout
+ * logging :\n
+ *   \li logWarning()
+ *   \li logInfo()
+ *   \li logTest()
+ *   \li logDebug()
+ *   \li logExtDbg()\n\n
  *
- * See syslog.conf manual page for further information.
+ * \warning
+ * The file used to store log messages is managed by the logManager process\n\n
  *
- * \section Files
- * \li \c $MCS_LOG_FILES/logFile output file for normal logs
- *
- * \section Environment
- * \li \c VLT_LOG_FILES directory containing logging-files
+ * \sa logManager.c documentation\n\n
  * 
  * \b Code \b Example:
-* \code
+ * \code
  *  #include <stdio.h>
  *  #include <math.h>
  *
@@ -100,28 +91,28 @@
  *  
  *  mcsCOMPL_STAT mymodPrint(char *param)
  *  {
- *      logExtDbg("mymodSqrt()");
+ *      logExtDbg("mymodPrint()");
  *
  *      if (param == NULL)
  *      {
  *          logWarning("Parameter is a null pointer. Do nothing!");
- *          return(SUCCESS);
+ *          return FAILURE;
  *      }
  *      printf("%s\n", param); 
  *
- *      return (SUCCESS);
+ *      return SUCCESS;
  *  }
  *  
  *  int main(int argc, char *argv[])
  *  {
  *      mcsInit(argv[0]);
  *
- *      logInfo("Server starting ..");
+ *      logInfo("Main starting...");
  *
  *      mymodPrint("My message");
  *
- *      logInfo("Server exiting ..");
- *      exit (EXIT_SUCCESS);
+ *      logInfo("Main exiting ..");
+ *      exit(EXIT_SUCCESS);
  *  }
  * \endcode
  */
@@ -130,13 +121,16 @@
 /* 
  * System Headers 
  */
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <stdio.h>
-#include <syslog.h>
-#include <time.h>
-#include <sys/time.h>
+
+#include <netinet/in.h>
+#include <sys/utsname.h>
+#include <netdb.h>
+
+#include <errno.h>
 
  
 /*
@@ -151,12 +145,16 @@
 #include "log.h"
 #include "logPrivate.h"
 
- 
+
 /*
- * Default initialization for logging levels printtime and so on..
+ * Default initialization for logging levels, printtime, and so on.
+ *
  * logRULE is defined in logPrivate.h
  */
-static logRULE logRule = {
+static logRULE logRule =
+{
+    "\0",
+    logMANAGER_DEFAULT_PORT_NUMBER,
     mcsTRUE,
     mcsTRUE,
     logINFO,
@@ -165,104 +163,96 @@ static logRULE logRule = {
     mcsTRUE,
     mcsTRUE
 };
+
+/* Global pointing to the default log library configuration */
 static logRULE *logRulePtr = &logRule;
 
 
-/**
- * Log data to logsystem if level satisfies and optionally
- * to the stdout if verbose is specified.
- * 
- * \param modName name of the module relative.
- * \param level of message.
- * \param fileLine fileLine pointing source code of message.
- * \param logFormat format of given message.
- * 
- * \return mcsCOMPL_STAT 
+/* Global holding the connection to logManager */
+static mcsLOGICAL logSocketIsAlreadyOpen = mcsFALSE;
+
+
+/*
+ * Public Functions
  */
-mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
-                        const char *fileLine,
-                        const char *logFormat, ...)
+
+/**
+ * Redefine the logManager host name (local host name by default) to be used for
+ * the connection to the logManager daemon.
+ *
+ * If this function is not called, the local host name will be used by default.
+ *
+ * \param hostName a NULL-terminated string containing the desired host name
+ *
+ * \return FAILURE if the connection to logManger has already been opened (and
+ * thus cannot be changed anymore) or if the given host name value seems bad,
+ * SUCCESS otherwise
+ */
+mcsCOMPL_STAT logSetLogManagerHostName(mcsBYTES256 hostName)
 {
-    char buffer[4*logTEXT_LEN];
-    va_list         argPtr;
-    mcsCOMPL_STAT   stat = SUCCESS;
-    mcsBYTES32      infoTime;
-
-    /* Get UNIX-style time and display as number and string. */
-    logGetTimeStamp(infoTime);
-
-    /* If the specified level is less than or egal to the logging level */
-    if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
+    /* If the socket to the logManager has already been opened... */
+    if (logSocketIsAlreadyOpen == mcsTRUE)
     {
-        /* Log information */
-        va_start(argPtr,logFormat);
-        vsprintf(buffer, logFormat, argPtr);
-        stat = logData(modName, level, infoTime, fileLine, buffer);
-        va_end(argPtr);
+        logDisplayMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the connection to it is already opened");
+        return FAILURE;
     }
-	
-    /* If the specified level is less than or egal to the logging level */
-    if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
+
+    /* If the given host name seems bad... */
+    if ((hostName == NULL) || (strlen(hostName) == 0))
     {
-        fprintf(stdout, "%s - %s - ", mcsGetProcName(), modName);
-        if (logRulePtr->printDate == mcsTRUE)
-        {
-            fprintf(stdout, "%s - ", infoTime);
-        }
-        if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
-        {
-            fprintf(stdout, "%s - ", fileLine);
-        }
-        va_start(argPtr,logFormat);
-        vfprintf(stdout, logFormat, argPtr);
-        fprintf(stdout,"\n"); fflush(stdout);
-        va_end(argPtr);
+        logDisplayMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the received parameter seems bad");
+        return FAILURE;
     }
-    /* End if */
 
-    return stat;
+    /* Store the desired logManager host name */
+    strcpy(logRulePtr->logManagerHostName, hostName);
 
+    return SUCCESS;
 }
 
 
 /**
- * Print action log.
+ * Redefines the logManager port number (8791 by default) to be used for
+ * the connection to the logManager daemon.
  *
- * \param level  TBD
- * \param logFormat msg 
+ * If this function is not called, the logManager default port number (8791)
+ * will be used.
  *
- * \return mcsCOMPL_STAT 
+ * \param portNumber an integer containing the desired port number
+ *
+ * \return FAILURE if the connection to logManger has already been opened (and
+ * thus cannot be changed anymore) or if the given port number value seems bad,
+ * SUCCESS otherwise
  */
-mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
-{ 
-    va_list         argPtr;
-    mcsCOMPL_STAT   stat = SUCCESS;
-
-    /* If the specified level is less than or egal to the action level */
-    if (level <= logRulePtr->actionLevel)
+mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 portNumber)
+{
+    /* If the socket to the logManager has already been opened... */
+    if (logSocketIsAlreadyOpen == mcsTRUE)
     {
-        /* do a simple output which could be filtered and displayed in
-         * a special position color ...
-         * \todo implement real function
-         */
-        printf("ACTION: ");
-        va_start(argPtr,logFormat);
-        vfprintf(stdout, logFormat, argPtr);
-        fprintf(stdout,"\n"); 
-        fflush(stdout);
-        va_end(argPtr);
-    }/* End if */
+        logDisplayMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the connection to it is already opened");
+        return FAILURE;
+    }
 
-    return stat;
+    /* If the given port number is out of range... */
+    if (portNumber < 0 || portNumber > 65535)
+    {
+        logDisplayMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the received parameter is out of range");
+        return FAILURE;
+    }
+
+    /* Store the desired logManager host name */
+    logRulePtr->logManagerPortNumber = portNumber;
+
+    return SUCCESS;
 }
 
 
 /**
  * Switch file logging ON.
  *
- * \return always SUCCESS 
+ * \return always SUCCESS
  */
-mcsCOMPL_STAT logEnableFileLog ()
+mcsCOMPL_STAT logEnableFileLog()
 {
    /* Switch ON the file logging */
    logRulePtr->log = mcsTRUE;
@@ -276,7 +266,7 @@ mcsCOMPL_STAT logEnableFileLog ()
  *
  * \return always SUCCESS
  */
-mcsCOMPL_STAT logDisableFileLog ()
+mcsCOMPL_STAT logDisableFileLog()
 {
    /* Switch OFF the file logging */
    logRulePtr->log = mcsFALSE;
@@ -356,12 +346,10 @@ mcsCOMPL_STAT logDisableStdoutLog ()
  */
 mcsCOMPL_STAT logSetStdoutLogLevel (logLEVEL level)
 {
-    
     /* Set the stdout logging level to the specified one */
     logRulePtr->verboseLevel = level;
 
     return SUCCESS; 
-
 }
 
 
@@ -398,7 +386,7 @@ mcsCOMPL_STAT logSetActionLogLevel (logLEVEL level)
 
 
 /**
- * Get the file logging level.
+ * Get the action logging level.
  *
  * The level which is get is one of the enumeration type logLEVEL
  * 
@@ -412,9 +400,9 @@ logLEVEL logGetActionLogLevel ()
 
 
 /**
- * Toggle the date output. Useful in test mode.
+ * Switch ON/OFF the date output (useful in test mode).
  * 
- * \param flag mcsTRUE/mcsFALSE
+ * \param flag mcsTRUE to turn date print ON, mcsFALSE otherwise
  *
  * \return mcsCOMPL_STAT 
  */
@@ -422,14 +410,15 @@ mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
 {
     /* Set 'print date' flag  */
     logRulePtr->printDate = flag;
+
     return SUCCESS;
 }
 
 
 /**
- * Toggle the fileline output. Useful in test mode.
+ * Switch ON/OFF the fileline output (seful in test mode).
  * 
- * \param flag mcsTRUE/mcsFALSE
+ * \param flag mcsTRUE to turn fileline print ON, mcsFALSE otherwise
  *
  * \return mcsCOMPL_STAT 
  */
@@ -437,85 +426,200 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
 {
     /* Set 'print line/file' flag  */
     logRulePtr->printFileLine = flag;
+
     return SUCCESS;
 }
 
 
 /**
- * Place msg into the logging system.
- *  
+ * Log data to logsystem if level satisfies, and optionally to the stdout if
+ * verbose is specified.
+ * 
  * \param modName name of the module relative.
- * \param level level of message.
- * \param timeStamp time stamp of the message.
- * \param fileLine file name and line number from where the message is issued.
- * \param buffer message to be logged.
+ * \param level of message.
+ * \param fileLine fileLine pointing source code of message.
+ * \param logFormat format of given message.
+ * 
+ * \return mcsCOMPL_STAT 
+ */
+mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
+                       const char *fileLine, const char *logFormat, ...)
+{
+    va_list         argPtr;
+
+    mcsBYTES32      infoTime;
+    
+    mcsCOMPL_STAT   stat = SUCCESS;
+
+    char            logMsg[4*logTEXT_LEN];
+    logMsg[0] = '\0';
+
+    /* Compute the log message header */
+    strcat(logMsg, mcsGetProcName());
+    strcat(logMsg, " - ");
+    strcat(logMsg, modName);
+    strcat(logMsg, " - ");
+
+    /* If the log message should contain the date */ 
+    if (logRulePtr->printDate == mcsTRUE)
+    {
+        /* Get UNIX-style time and display as number and string. */
+        logGetTimeStamp(infoTime);
+
+        /* Append it to the log message */
+        strcat(logMsg, infoTime);
+        strcat(logMsg, " - ");
+    }
+
+    /* If the fileline exists and should be contained in the log message */
+    if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
+    {
+        /* Append it to the log message */
+        strcat(logMsg, fileLine);
+        strcat(logMsg, " - ");
+    }
+
+    /* Compute the variable parameters and append them to the log message */
+    va_start(argPtr, logFormat);
+    vsprintf((logMsg + strlen(logMsg)), logFormat, argPtr);
+    va_end(argPtr);
+
+    /* If the log message should be file-logged, and that its log level is less
+     * than or egal to the desired file-logging level
+     */
+    if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
+    {
+        /* Log information to file */
+        stat = logData(logMsg);
+    }
+	
+    /* If the log message should be stdout logged, and that its log level is
+     * less than or egal to the desired stdout logging level
+     */
+    if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
+    {
+        /* Log information on stdout */
+        fprintf(stdout, "%s\n", logMsg);
+        fflush(stdout);
+    }
+
+    return stat;
+}
+
+
+/**
+ * Print action log.
+ *
+ * \param level  TBD
+ * \param logFormat msg 
+ *
+ * \return mcsCOMPL_STAT 
+ */
+mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
+{ 
+    va_list         argPtr;
+    mcsCOMPL_STAT   stat = SUCCESS;
+
+    /* If the specified level is less than or egal to the action level */
+    if (level <= logRulePtr->actionLevel)
+    {
+        /* do a simple output which could be filtered and displayed in
+         * a special position color ...
+         * \todo implement real function
+         */
+        printf("ACTION: ");
+
+        va_start(argPtr, logFormat);
+        vfprintf(stdout, logFormat, argPtr);
+        fprintf(stdout, "\n"); 
+        va_end(argPtr);
+
+        fflush(stdout);
+    }
+
+    return stat;
+}
+
+
+/**
+ * Place a message into the file logging system.
+ *  
+ * \param logMsg message to be file-logged.
  * 
  * \return SUCCESS.
  */
-mcsCOMPL_STAT logData(const mcsMODULEID modName, 
-                      logLEVEL level,
-                      const char *timeStamp,
-                      const char *fileLine,
-                      const char *buffer)
+mcsCOMPL_STAT logData(const char *logMsg)
 {
-    int priority;       /* syslog priority */
-    static mcsLOGICAL logIsOpen = mcsFALSE;
+    static int sock = 0;
+    static struct sockaddr_in server;
+    struct hostent *hp = NULL;
 
-    /* open syslog 
-     * using by convention LOCAL3 facility
-     * \todo use an environment variable to adjust the default LOCAL3 facility
-     */
-    if (logIsOpen == mcsFALSE)
+    /* If the connection to the logManager is NOT already opened, open it */
+    if (logSocketIsAlreadyOpen == mcsFALSE)
     {
-        openlog(mcsGetProcName(), LOG_NDELAY, LOG_LOCAL3);
-        logIsOpen = mcsTRUE;
+        /* If no specific logManager host name has not been redefined by the log
+         * library user...
+         */
+        if (strlen(logRulePtr->logManagerHostName) == 0)
+        {
+            /* Try to get the local host name */
+            if (logGetHostName(logRulePtr->logManagerHostName,
+                               sizeof(logRulePtr->logManagerHostName))
+                == FAILURE)
+            {
+                logDisplayMessage("- LOG LIBRARY ERROR - logGetHostName() failed - %s", strerror(errno));
+                return FAILURE;
+            }
+            
+            /* If the local host name seems empty... */
+            if ((logRulePtr->logManagerHostName == NULL)
+                || (strlen(logRulePtr->logManagerHostName) == 0))
+            {
+                logDisplayMessage("- LOG LIBRARY ERROR - got an empty hostname");
+                return FAILURE;
+            }
+        }
+
+
+
+        /* Try to create ths socket */
+        sock = socket(AF_INET, SOCK_DGRAM, 0);
+        if (sock == -1) 
+        {
+            logDisplayMessage("- LOG LIBRARY ERROR - socket() failed - %s",
+                    strerror(errno));
+            return FAILURE;
+        }
+
+        hp = gethostbyname(logRulePtr->logManagerHostName);
+        if (hp == NULL )
+        {
+            logDisplayMessage("- LOG LIBRARY ERROR - gethostbyname(%s) failed", logRulePtr->logManagerHostName);
+            return FAILURE;
+        }
+
+        /* Copy the resolved information into the sockaddr_in structure */
+        memset(&server, '\0', sizeof(server));
+        memcpy(&(server.sin_addr), hp->h_addr, hp->h_length);
+        server.sin_family = hp->h_addrtype;
+        server.sin_port   = htons(logRulePtr->logManagerPortNumber);
+
+        logSocketIsAlreadyOpen = mcsTRUE;
     }
 
-    /* initialize priority according given loglevel */
-    switch (level){
-        case logERROR :     priority = LOG_ERR ;     break;
-        case logQUIET :     priority = LOG_NOTICE ;     break;
-        case logWARNING :   priority = LOG_WARNING ;    break;
-        case logINFO :      priority = LOG_INFO ;       break;
-        case logTEST :      priority = LOG_NOTICE;      break;
-        case logDEBUG :	    priority = LOG_DEBUG;       break;
-        case logEXTDBG :    priority = LOG_DEBUG;       break;
-        default:            priority = LOG_INFO ;       break;
+
+
+    /* Send message to the logManager process */
+    if (sendto(sock, (void *)logMsg, strlen(logMsg), 0,
+               (const struct sockaddr *)&server, sizeof(server)) == -1)
+    {
+        logDisplayMessage("- LOG LIBRARY ERROR - sendto() failed - %s",
+                strerror(errno));
+        return FAILURE;
     }
-    
-    /* log to syslog system */
-    syslog( priority, "%s %s %s %s", modName, timeStamp, fileLine, buffer);
-        
+
     return SUCCESS;
 }
 
 
-/**
- * Format the current date and time, to be used as time stamp.
- *
- * This function generates the string corresponding to the current date,
- * expressed in Coordinated Universal Time (UTC), using the following format
- * YYYY-MM-DDThh:mm:ss[.ssssss], as shown in the following example :
- *    
- *     2004-06-16T16:16:48.02941
- * 
- * \param timeStamp character array where the resulting date is stored
- */
-void logGetTimeStamp(mcsBYTES32 timeStamp)
-{
-    struct timeval time;
-    struct tm      *timeNow;
-    mcsSTRING32    tmpBuf;
-
-    /* Get local time */
-    gettimeofday(&time, NULL);
- 
-    /* Format the date */
-    timeNow = gmtime(&time.tv_sec);
-    strftime(timeStamp, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow);
- 
-    /* Add ms and us */
-    sprintf(tmpBuf, "%.6f", time.tv_usec/1e6);
-    strcpy(tmpBuf, (tmpBuf + 1));
-    strcat(timeStamp, tmpBuf);
-}
+/*___oOo___*/

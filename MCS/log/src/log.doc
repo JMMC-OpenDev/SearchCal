@@ -1,0 +1,58 @@
+/*******************************************************************************
+* JMMC project
+*
+* "@(#) $Id: log.doc,v 1.1 2004-08-06 12:34:20 lafrasse Exp $"
+*
+* who       when         what
+* --------  -----------  -------------------------------------------------------
+* lafrasse  05-Aug-2004  Created
+*
+*
+* IMPORTANT :
+* This file contains the GENERAL MODULE DOCUMENTATION, preferably including an
+* example for use of the main functions of this module. To make your own
+* documentation, you have to substitute the general or example comments, with
+* your specific comments.
+*
+* IMPORTANT:
+* To make AUTOMATIC DOCUMENTATION GENERATION by doxygen, you have to insert
+* your code documentation (about file, functions, define, enumeration, ...) as
+* shown below, in the special documentation blocks (beginning with 1 slash and
+* 2 stars), adding or deleting markers as needed.
+* Special documentation block : with 2 stars at the begining
+*       /**
+*        *
+*        */
+* Normal documentation block : with 1 stars at the begining
+*       /*
+*        *
+*        */
+* Nevertheless, you also have to comment the code as usually.  For more
+* informations, you can report to Programming Standards (JRA4-PRO-2000-0001),
+* or doxygen documentation.
+*
+* REMARKS
+* The documentation below, shows some possibilities of doxygen. The general
+* format of this documentation is recommended to make the documentation
+* easily. Some documentation lines are strongly recommended to get rapidly a
+* quite good documentation. Some others are optinonal, depending on the need.
+* They will be pointed out with the word OPTIONAL.
+*
+*******************************************************************************/
+
+/**
+\mainpage Log : MCS C Logging module
+<b>Brief description</b>\n
+This module provides functionnalities to handle the three most common types of
+logs for event logging, that are :
+  \li File Logs   : Those logs are stored in files on disk
+  \li Stdout Logs : Those logs are directly written on stdout
+  \li Action Logs : TBD
+
+<b>Detailed decription</b>\n
+To achieve logging, this module is separated in two component :
+  \li the 'log' library : your code can call it to handle any of the three most common log types you need through its facilities
+  \li the 'logManager' program : it is responsible for writting the events you want in files
+
+Note that the log library delegates file logging to logManager through a network connection, so this program can be a remote process of your development platform for example.
+*/

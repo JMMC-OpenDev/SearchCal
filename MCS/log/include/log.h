@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.13 2004-07-30 17:37:00 gluck Exp $"
+* "@(#) $Id: log.h,v 1.14 2004-08-06 12:34:20 lafrasse Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -18,15 +18,22 @@
 *                        logSetActionLevel -> logSetActionLogVerbosity
 *                        logGetActionLevel -> logGetActionLogVerbosity
 * gluck     30-Jun-2004  Changed some APIs :
-*                        Remove logSetFileLogState and add logEnableFileLog
-*                         and logDisableFileLog
 *                        logSetFileLogVerbosity -> logSetFileLogLevel
 *                        logGetFileLogVerbosity -> logGetFileLogLevel
-*                        Remove logSetStdoutLogState and add logEnableStdoutLog *                         and logDisableStdoutLog
 *                        logSetStdoutLogVerbosity -> logSetStdoutLogLevel
 *                        logGetStdoutLogVerbosity -> logGetStdoutLogLevel
 *                        logSetActionLogVerbosity -> logSetActionLogLevel
 *                        logGetActionLogVerbosity -> logGetActionLogLevel
+*                        Replaced logSetFileLogState by logEnableFileLog and
+*                        logDisableFileLog
+*                        Replaced logSetStdoutLogState by logEnableStdoutLog and
+*                        logDisableStdoutLog
+* lafrasse  03-Aug-2004  Changed logData API
+*                        Moved local functions logGetTimeStamp declaration to
+*                        logPrivate.h
+*                        Added logSetLogManagerHostName and
+*                        logSetLogManagerPortNumber functions
+*
 *
 *******************************************************************************/
 
@@ -42,16 +49,18 @@ extern "C" {
 * Main header file.
 */
 
+
 /*
 * MCS Headers
 */
 #include "mcs.h"
 
+
 /*
  * Logging level constants
  */
-
-typedef enum {
+typedef enum
+{
     logERROR = -1,
     logQUIET,
     logWARNING,
@@ -61,57 +70,49 @@ typedef enum {
     logEXTDBG
 } logLEVEL;
 
-/*
- * Log/Verbose/Action Logging Functions
- */
-mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
-                       const char *fileLine, 
-                       const char *logText, ...);
 
-mcsCOMPL_STAT logPrintAction(logLEVEL level,
-                             const char *logText, ...);
+/*
+ * Pubic functions declaration
+ */
+
+/*
+ * File/Stdout/Action Logging Functions
+ */
+mcsCOMPL_STAT logSetLogManagerHostName(mcsBYTES256);
+mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32);
 
 
 mcsCOMPL_STAT logEnableFileLog();
-
 mcsCOMPL_STAT logDisableFileLog();
-
 mcsCOMPL_STAT logSetFileLogLevel(logLEVEL level);
-
 logLEVEL      logGetFileLogLevel(void);
 
 
 mcsCOMPL_STAT logEnableStdoutLog();
-
 mcsCOMPL_STAT logDisableStdoutLog();
-
 mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL level);
-
 logLEVEL      logGetStdoutLogLevel(void);
 
 
 mcsCOMPL_STAT logSetActionLogLevel(logLEVEL level);
-
 logLEVEL      logGetActionLogLevel(void);
 
 
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);
-
 mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag);
 
-mcsCOMPL_STAT logData(const mcsMODULEID modName, 
-                      logLEVEL level,
-                      const char *timeStamp,
-                      const char *fileLine,
-                      const char *buffer);
 
-void logGetTimeStamp(mcsBYTES32 timeStamp);
+mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
+                       const char *fileLine, const char *logText, ...);
+mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logText, ...);
+mcsCOMPL_STAT logData(const char *logMsg);
+
 
 /*
  * Convenience macros
  */
 
-/* Logging and Verbose */
+/* File and Stdout related */
 
 /**
  * Log information about errors or abnormal events for application. The
@@ -149,7 +150,7 @@ void logGetTimeStamp(mcsBYTES32 timeStamp);
 #define logExtDbg(format, arg...) \
     logPrint(MODULE_ID, logEXTDBG, __FILE_LINE__, format, ##arg)
 
-/* Action logs */
+/* Action related */
     
 #define logAction(level, format, arg...) \
     logPrintAction(level, format, ##arg); \
@@ -175,8 +176,13 @@ void logGetTimeStamp(mcsBYTES32 timeStamp);
     logPrintAction(logEXTDBG, format, ##arg); \
     logPrint(MODULE_ID, logEXTDBG, __FILE_LINE__, format, ##arg)
 
+
 #ifdef __cplusplus
 };
 #endif
+
   
 #endif /*!log_H*/
+
+
+/*___oOo___*/

@@ -3,28 +3,66 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logPrivate.h,v 1.5 2004-08-03 15:28:40 lafrasse Exp $"
+*  "@(#) $Id: logPrivate.h,v 1.6 2004-08-06 12:34:21 lafrasse Exp $"
 *
-* who       when       what
-* --------  --------   ----------------------------------------------
-* mella     14 05 2004 creation 
-* 
-*/
+* who       when         what
+* --------  -----------  -------------------------------------------------------
+* mella     14-May-2004  Created
+* lafrasse  03-Aug-2004  Moved local functions logGetTimeStamp  and
+*                        logGetHostName declaration in
+*                        Added logManagerHostName and logManagerPortNumber to
+*                        logRULE to store logManager host name and port number
+*                        Added logMANAGER_DEFAULT_PORT_NUMBER constant
+*                        Added logDisplayMessage and logDisplayError local
+*                        error message handling functions
+*
+*
+*******************************************************************************/
 
+/**
+ * \file
+ * Private log module header file, holding the MODULE_NAME definition, logRULE
+ * structure definition, contants and local-to-module functions declarations.
+ */
+
+/* The following piece of code alternates the linkage type to C for all
+functions declared within the braces, which is necessary to use the
+functions in C++-code.
+*/
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+ * MCS Headers 
+ */
+#include "mcs.h"
+
+
+/*
+ * Local Headers 
+ */
+#include "log.h"
+
 
 /*
  * Constants
  */
 #define MODULE_ID "log"
 #define logTEXT_LEN 64
-    
+
+/**
+ * logManager default listened network port number.
+ */
+#define logMANAGER_DEFAULT_PORT_NUMBER 8791
+
+
 /*
  * Define logging definition structure 
  */
 typedef struct {
+        mcsBYTES256 logManagerHostName;
+        mcsUINT32   logManagerPortNumber;
         mcsLOGICAL  log;
         mcsLOGICAL  verbose;
         logLEVEL    logLevel;
@@ -34,8 +72,22 @@ typedef struct {
         mcsLOGICAL  printFileLine;
 } logRULE;
 
+
+/*
+ * Local Functions
+ */
+
+mcsCOMPL_STAT logGetTimeStamp(mcsBYTES32);
+mcsCOMPL_STAT logGetHostName(char *, mcsUINT32);
+void          logDisplayMessage(const char *, ...);
+void          logDisplayError(const char *, ...);
+
+
 #ifdef __cplusplus
 };
 #endif
   
 #endif /*!logLOG_PRIVATE_H*/
+
+
+/*___oOo___*/

@@ -1,15 +1,17 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-06-09 16:06:21 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-08-06 12:34:20 lafrasse Exp $"
 #
 # Makefile of log 
 #
-# who       when        what
-# --------  ----------  ----------------------------------------------
-# mella    12-05-2004  created
+# who       when         what
+# --------  -----------  ----------------------------------------------
+# mella     12-May-2004  Created
+# lafrasse  03-Aug-2004  Added logManager and logPrivate stuff
+#                        Removed cross-dependencies with err and misc
 # 
-
+# 
 #*******************************************************************************
 # This Makefile follows VLT Standards (see Makefile(5) for more).
 #*******************************************************************************
@@ -35,14 +37,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = logManager
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   =	
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+logManager_OBJECTS   = logManager
+logManager_LDFLAGS   = 
+logManager_LIBS      = mcs log
 
 #
 # special compilation flags for single c sources
@@ -61,7 +63,7 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-log_OBJECTS   = log
+log_OBJECTS   = log logPrivate
 
 #
 # Scripts (public and local)
