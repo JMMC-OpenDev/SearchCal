@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.4 2005-02-21 19:30:56 gzins Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.5 2005-02-22 10:15:32 gzins Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/21 19:30:56  gzins
+ * Removed alxFITZ_ID definition; replaced by alxBAND
+ *
  * Revision 1.3  2005/02/12 15:09:43  gzins
  * Added type definition for alxGetResearchSize function
  *
@@ -185,12 +188,6 @@ typedef struct
     mcsFLOAT   mag[alxNB_MAG_STEPS];
     mcsINT32   nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
 } alxSTAR_POPULATION;
-
-
-/*
- * Blanking value
- */
-#define alxBLANKING_VALUE (float)99.99
 
 #ifdef __cplusplus
 }

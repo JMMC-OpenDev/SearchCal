@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.8 2005-02-22 07:51:39 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.9 2005-02-22 10:15:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/22 07:51:39  gzins
+ * Added alxNO_CONFIDENCE in alxCONFIDENCE_INDEX enumerate
+ *
  * Revision 1.7  2005/02/21 19:30:05  gzins
  * Updated alxComputeMagnitudesForBrightStar and alxComputeRealMagnitudes prototypes
  *
@@ -52,6 +55,11 @@ extern "C" {
  * MCS header
  */
 #include "mcs.h"
+
+/*
+ * Blanking value.
+ */
+#define alxBLANKING_VALUE (float)99.99
 
 /**
  * Confidence index.
