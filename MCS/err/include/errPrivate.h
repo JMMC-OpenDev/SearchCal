@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: errPrivate.h,v 1.3 2004-08-30 13:42:32 gzins Exp $"
+* "@(#) $Id: errPrivate.h,v 1.4 2004-12-14 13:12:38 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
-* gzins     16-Jun-2004  created
+* gzins     16-Jun-2004  Created
+* lafrasse  14-Dec-2004  Moved errMSG_MAX_LEN to err.H
 *
 *
 *******************************************************************************/
@@ -24,9 +25,6 @@ extern C {
 #include <stdarg.h>
 /* Module name */
 #define MODULE_ID "err"
-
-/* Max size of the error message */
-#define errMSG_MAX_LEN 256
 
 /* Local functions */
 mcsCOMPL_STAT errResetLocalStack (errERROR *error);

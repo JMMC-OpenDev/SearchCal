@@ -1,13 +1,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2004-11-10 09:05:00 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.11 2004-12-14 13:12:38 lafrasse Exp $"
 #
 # Makefile of err module 
 #
 # who       when		 what
 # --------  -----------	 -------------------------------------------------------
-# sccmgr    02-Jun-2004  created
+# sccmgr    02-Jun-2004  Created
+# gzins     14-Dec-2004  Run standard installation target first (to create
+#                        INTROOT if needed) before installing jar files
 #
 #
 #*******************************************************************************
@@ -205,7 +207,7 @@ clean : clean_all
 man   : do_man
 	@echo " . . . man page(s) done"
 
-install : install_local_jar install_all
+install : install_all install_local_jar
 	@echo " . . . installation done"
 
 install_local_jar:

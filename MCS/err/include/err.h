@@ -3,12 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: err.h,v 1.5 2004-08-30 13:41:17 gzins Exp $"
+* "@(#) $Id: err.h,v 1.6 2004-12-14 13:12:38 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * berezne   02-Jun-2004  created
 * gzins     16-Jun-2004  completed implementation
+* lafrasse  14-Dec-2004  Added errMSG_MAX_LEN from errPrivate.H
+*
 *
 *******************************************************************************/
 
@@ -29,7 +31,7 @@ extern "C" {
 
 #define errSTACK_SIZE 20
 
-typedef struct 
+typedef struct
 {                    
     mcsBYTES32     timeStamp;         /* The date when the error occured      */
     mcsUINT8       sequenceNumber;    /* Number of the sequence in the stack  */
@@ -41,9 +43,12 @@ typedef struct
     mcsINT32       errorId;           /* The error identifier                 */
     char           severity;          /* The error severity                   */
     mcsBYTES256    runTimePar;        /* Detailed information about the error */
-} errSTACK_ELEM;                 
+} errSTACK_ELEM;
 
-typedef struct 
+/* Max size of the error message */
+#define errMSG_MAX_LEN 256
+
+typedef struct
 {
     /* The following pointer is used to know if the data structure is
      * initialized or not. When initialized, it contains pointer to itself */
@@ -53,7 +58,7 @@ typedef struct
     mcsUINT8       stackSize;            /* Size of the error stack       */
     mcsLOGICAL     stackOverflow;        /* True if the stack overflows   */
     mcsLOGICAL     stackEmpty;           /* True if the stack is empty    */
-} errERROR;                         
+} errERROR;
 
 /* Prototypes of the public functions */
 mcsCOMPL_STAT errAddInStack (const mcsMODULEID moduleId,
