@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.cpp,v 1.8 2005-02-15 13:09:01 gzins Exp $"
+ * "@(#) $Id: envLIST.cpp,v 1.9 2005-02-16 15:01:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/15 13:09:01  gzins
+ * Removed Pointer suffix to miscDynBufGetNextLine
+ *
  * Revision 1.7  2005/02/13 17:26:51  gzins
  * Minor changes in documentation
  *
@@ -27,7 +30,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.8 2005-02-15 13:09:01 gzins Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.9 2005-02-16 15:01:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -255,11 +258,13 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     mcsSTRING256 hostName;
     memset(parsedEnvName, 0, sizeof(parsedEnvName));
     memset(hostName, 0, sizeof(hostName));
-    char* currentLine = miscDynBufGetNextLine(&envList, NULL, mcsTRUE);
+    mcsSTRING1024 currentLine;
+    const char* currentPos = miscDynBufGetNextLine(&envList, NULL, 
+                                             currentLine, mcsTRUE);
     do
     {
         // If the current line is not empty
-        if ((currentLine != NULL) && (strlen(currentLine) != 0))
+        if ((currentPos != NULL) && (strlen(currentLine) != 0))
         {
             // Read the line values
             nbReadValue = sscanf(currentLine, "%s %s %d", parsedEnvName,
@@ -285,10 +290,10 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
             _map[parsedEnvName] = pair<string,int>(hostName, portNumber);
         }
 
-        currentLine = miscDynBufGetNextLine(&envList, currentLine,
-                                                   mcsTRUE);
+        currentPos = miscDynBufGetNextLine(&envList, currentPos,
+                                            currentLine, mcsTRUE);
     }
-    while (currentLine != NULL);
+    while (currentPos != NULL);
 
     // Destroy the temp Dynamic Buffer
     miscDynBufDestroy(&envList);
