@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.6 2005-03-04 09:46:04 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.7 2005-03-07 13:40:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/03/04 09:46:04  gzins
+ * Rename Set/GetSaveFileName to  Set/GetFileName
+ *
  * Revision 1.5  2005/02/28 13:48:56  scetre
  * Added save file option in the request
  *
@@ -29,7 +32,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.6 2005-03-04 09:46:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.7 2005-03-07 13:40:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,7 +59,6 @@ using namespace std;
  */
 sclsvrREQUEST::sclsvrREQUEST()
 {
-    _minBaselineLength = 0.0;
     _maxBaselineLength = 0.0;
     _observingWlen = 0.0;
     _vis = 0.0;
@@ -119,91 +121,88 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         return mcsFAILURE;
     }
 
-    // max calibrator return
+    // Max calibrator return
     mcsINT32 maxReturn;
     if (_getCalCmd->GetMaxReturn(&maxReturn) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // diff ra
+    // Diff ra
     mcsINT32 diffRa;
     if (_getCalCmd->GetDiffRa(&diffRa) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
-    // diff dec
+    // Diff dec
     mcsINT32 diffDec;
     if (_getCalCmd->GetDiffDec(&diffDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // band
+    // Band
     char *band;
     if (_getCalCmd->GetBand(&band) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // minRangeMag
+    // Magnitude is not used for N band
     mcsDOUBLE minRangeMag;
-    if (_getCalCmd->GetMinMagRange(&minRangeMag) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // maxRangeMag
     mcsDOUBLE maxRangeMag;
-    if (_getCalCmd->GetMaxMagRange(&maxRangeMag) == mcsFAILURE)
+    if (strcmp(band, "N") != 0)
     {
-        return mcsFAILURE;
+        // MinRangeMag
+        if (_getCalCmd->GetMinMagRange(&minRangeMag) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // MaxRangeMag
+        if (_getCalCmd->GetMaxMagRange(&maxRangeMag) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
-    // ra
+    // Ra
     char *ra;
     if (_getCalCmd->GetRa(&ra) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // dec
+    // Dec
     char *dec;
     if (_getCalCmd->GetDec(&dec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // baseMin
-    mcsDOUBLE baseMin;
-    if (_getCalCmd->GetBaseMin(&baseMin) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // baseMax
+    // BaseMax
     mcsDOUBLE baseMax;
     if (_getCalCmd->GetBaseMax(&baseMax) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // wlen
+    // Wlen
     mcsDOUBLE wlen;
     if (_getCalCmd->GetWlen(&wlen) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // visibility
+    // Visibility
     mcsDOUBLE vis;
     if (_getCalCmd->GetVis(&vis) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // visibility error
+    // Visibility error
     mcsDOUBLE visErr;
     if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
     {
@@ -246,15 +245,19 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
-    // Affect the min of the magitude range
-    if (SetMinMagRange(minRangeMag) == mcsFAILURE)
+    // Magnitude is not used for N band
+    if (strcmp(band, "N") != 0)
     {
-        return mcsFAILURE;
-    }
-    // Affect the max of the magnitude range
-    if (SetMaxMagRange(maxRangeMag) == mcsFAILURE)
-    {
-        return mcsFAILURE;
+        // Affect the min of the magitude range
+        if (SetMinMagRange(minRangeMag) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // Affect the max of the magnitude range
+        if (SetMaxMagRange(maxRangeMag) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
     // Affect the search box ra
     if (SetDeltaRa(diffRa) == mcsFAILURE)
@@ -276,7 +279,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         return mcsFAILURE;
     }
     // Affect the baseline length
-    if (SetBaseline(baseMin, baseMax) ==  mcsFAILURE)
+    if (SetMaxBaselineLength(baseMax) ==  mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -321,26 +324,13 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine)
  *
  * \return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrREQUEST::SetBaseline(mcsFLOAT minLength, mcsFLOAT maxLength)
+mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsFLOAT length)
 {
-    logExtDbg("sclsvrREQUEST::SetBaseline()");
+    logExtDbg("sclsvrREQUEST::SetMaxBaselineLength()");
 
-    _minBaselineLength = minLength;
-    _maxBaselineLength = maxLength;
+    _maxBaselineLength = length;
     
     return mcsSUCCESS;
-}
-
-/**
- * Get the minimum baseline length.
- *
- * \return minimum baseline length.
- */
-mcsFLOAT sclsvrREQUEST::GetMinBaselineLength(void)
-{
-    logExtDbg("sclsvrREQUEST::GetMinBaselineLength()");
-
-    return (_minBaselineLength);
 }
 
 /**
