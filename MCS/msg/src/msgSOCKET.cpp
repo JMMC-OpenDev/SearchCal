@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.8 2004-12-07 07:50:59 gzins Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.9 2004-12-08 17:42:11 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -13,7 +13,8 @@
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 * gzins     06-Dec-2004  Implemented copy constructor
 * gzins     06-Dec-2004  Removed copy constructor
-*
+* gzins     08-Dec-2004  Set MessageId when sending message and set SenderId
+*                        when receiving message.
 *
 *******************************************************************************/
 
@@ -22,7 +23,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.8 2004-12-07 07:50:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.9 2004-12-08 17:42:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -31,7 +32,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <errno.h>
 #include <sys/ioctl.h>
-
+#include <time.h>
+#include <sys/time.h>
 /*
  * MCS Headers 
  */
@@ -166,7 +168,7 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
     _address.sin_port        = htons(port);  // Desired port number
     _address.sin_addr.s_addr = INADDR_ANY;   // Host network address
 
-    // Try to bind the socket to the given port number
+    // Bind the socket to the given port number
     if (bind(_descriptor, (struct sockaddr*)&_address, sizeof(_address)) == -1)
     {
         errAdd(msgERR_BIND, strerror(errno));
@@ -264,14 +266,14 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
     // Set the remote server port number to connect to
     _address.sin_port   = htons(port);
 
-    // Try to convert the host name string in a network address structure
+    // Convert the host name string in a network address structure
     inet_pton(AF_INET, host.c_str(), &_address.sin_addr);
     if (errno == EAFNOSUPPORT) 
     {
         return FAILURE;
     }
 
-    // Try to connect to the remote server
+    // Connect to the remote server
     int status = connect(_descriptor, (sockaddr*) &_address, sizeof(_address));
     if (status != 0)
     {
@@ -293,7 +295,7 @@ mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
 {
     logExtDbg("msgSOCKET::Send()");
 
-    // Try to send the given string
+    // Send the given string
     int status = send(_descriptor, string.c_str(), string.size(), MSG_NOSIGNAL);
     if ( status == -1 )
     {
@@ -355,15 +357,26 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 {
     logExtDbg("msgSOCKET::Send()");
 
-    // Try to send the message
+    // Set message id
+    if (msg.GetMessageId() == -1)
+    {
+        /* Get the system time */
+        mcsINT32 messageId;
+        struct timeval  time; 
+        gettimeofday(&time, NULL);
+        // Message Id is the time of the day in msec
+        messageId = (time.tv_sec%86400) * 1000 + time.tv_usec/1000;
+        msg.SetMessageId(messageId);
+    }
+
+    // Send the message
     mcsINT32 msgLength   = msgHEADERLEN + msg.GetBodySize();
     mcsINT32 nbBytesSent = send(_descriptor, msg.GetMessagePtr(), msgLength, 0);
 
-    // If some sent bytes were lost...
     if (nbBytesSent != msgLength)
     {
         // If no byte at all were sent...
-        if (nbBytesSent == 0)
+        if (nbBytesSent == -1)
         {
             errAdd(msgERR_SEND, strerror(errno));
         }
@@ -465,6 +478,12 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
                 errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, msg.GetBodySize());
                 return (FAILURE); 
             }
+        }
+
+        // Set the sender id (i.e. socket descriptor if not yet set)
+        if (msg.GetSenderId() == -1)
+        {
+            msg.SetSenderId(_descriptor);
         }
     } 
 
