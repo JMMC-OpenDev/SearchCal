@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.5 2004-06-18 12:13:23 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.6 2004-06-18 12:14:27 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -15,7 +15,7 @@
 *                        added miscYankExtension
 *
 *******************************************************************************/
-
+ 
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
 functions in C++-code.
