@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrServer.cpp,v 1.5 2005-02-03 10:37:36 gzins Exp $"
-*
-* History
-* -------
-* gzins     23-Nov-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrServer.cpp,v 1.6 2005-02-07 15:01:21 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     23-Nov-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Search Calibrators SERVER
  */
 
-static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.5 2005-02-03 10:37:36 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.6 2005-02-07 15:01:21 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

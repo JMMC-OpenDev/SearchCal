@@ -1,16 +1,16 @@
 #ifndef sclsvrSERVER_H
 #define sclsvrSERVER_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrSERVER.h,v 1.5 2005-02-07 09:16:37 gzins Exp $"
-*
-* History
-* -------
-* scetre    04-Oct-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrSERVER.h,v 1.6 2005-02-07 15:00:23 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    04-Oct-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file

@@ -1,16 +1,16 @@
 #ifndef sclsvrPrivate_H
 #define sclsvrPrivate_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrPrivate.h,v 1.2 2005-01-27 15:56:29 scetre Exp $"
-*
-* History
-* -------
-* sccmgr    23-Nov-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrPrivate.h,v 1.3 2005-02-07 15:00:13 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * sccmgr    23-Nov-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file

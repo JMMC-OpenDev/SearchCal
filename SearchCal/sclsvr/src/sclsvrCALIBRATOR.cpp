@@ -1,21 +1,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.23 2005-02-07 09:50:45 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.24 2005-02-07 15:00:48 gzins Exp $"
  *
  * History
  * -------
+ * $Log: not supported by cvs2svn $
  * scetre    14-Sep-2004  Created
  *
- *
- *******************************************************************************/
+ ******************************************************************************/
 
 /**
  * \file
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.23 2005-02-07 09:50:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.24 2005-02-07 15:00:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

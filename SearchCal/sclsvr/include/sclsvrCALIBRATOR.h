@@ -1,16 +1,16 @@
 #ifndef sclsvrCALIBRATOR_H
 #define sclsvrCALIBRATOR_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.18 2005-02-07 09:50:45 scetre Exp $"
-*
-* History
-* -------
-* scetre    13-Sep-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.19 2005-02-07 14:59:28 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    13-Sep-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
