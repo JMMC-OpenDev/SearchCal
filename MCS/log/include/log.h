@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.7 2004-06-21 16:51:34 gzins Exp $"
+* "@(#) $Id: log.h,v 1.8 2004-06-21 16:57:04 gzins Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -28,16 +28,6 @@ extern "C" {
 * MCS Headers
 */
 #include "mcs.h"
-
-/* 
- * Macro
- */
-
-#ifndef __FILE_LINE__
-#define logIToStr(a) #a
-#define logIToStr2(a) logIToStr(a) 
-#define __FILE_LINE__ __FILE__ ":" logIToStr2(__LINE__)
-#endif /*!__FILE_LINE__*/
 
 /*
  * Logging level constants
