@@ -2,7 +2,7 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2004-07-01 09:25:38 mella Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2004-07-02 09:04:39 gluck Exp $"
 
  who       when        what
  ~~~~~~~~  ~~~~~~~~    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,8 +20,8 @@
 
  EXAMPLES
     <module name="dummymod">
-        <desc>Dummy module</desc>
-        <resp>LinuxPinguin</resp>
+        <desc>Dummy module description</desc>
+        <resp>Prenom Nom</resp>
         <package>MCS</package>
     </module>
 
@@ -29,7 +29,7 @@
 
 <module name="err">
     <desc>C error services</desc>
-    <resp>Gerard ZINS</resp>
+    <resp>Gerard Zins</resp>
     <package>MCS</package>
 </module>
 
