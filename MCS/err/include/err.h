@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: err.h,v 1.4 2004-06-23 13:04:48 gzins Exp $"
+* "@(#) $Id: err.h,v 1.5 2004-08-30 13:41:17 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -56,22 +56,22 @@ typedef struct
 } errERROR;                         
 
 /* Prototypes of the public functions */
-extern  mcsCOMPL_STAT errAddInStack (const mcsMODULEID moduleId,
-                                     const char        *fileLine,
-                                     mcsINT32          errorId,
-                                     ... );
-extern  mcsLOGICAL    errIsInStack       (const mcsMODULEID moduleId,
-                                          mcsINT32          errorId);
-extern  mcsCOMPL_STAT errResetStack      (void);
-extern  mcsCOMPL_STAT errCloseStack      (void);
-extern  mcsCOMPL_STAT errDisplayStack    (void);
-extern  mcsINT8       errGetStackSize    (void);
-extern  mcsLOGICAL    errStackIsEmpty    (void);
+mcsCOMPL_STAT errAddInStack (const mcsMODULEID moduleId,
+                             const char        *fileLine,
+                             mcsINT32          errorId,
+                             ... );
+mcsLOGICAL    errIsInStack       (const mcsMODULEID moduleId,
+                                  mcsINT32          errorId);
+mcsCOMPL_STAT errResetStack      (void);
+mcsCOMPL_STAT errCloseStack      (void);
+mcsCOMPL_STAT errDisplayStack    (void);
+mcsINT8       errGetStackSize    (void);
+mcsLOGICAL    errStackIsEmpty    (void);
 
-extern  mcsCOMPL_STAT errPackStack    (char       *buffer,
-                                       mcsUINT32  bufLen);
-extern  mcsCOMPL_STAT errUnpackStack  (char       *buffer,
-                                       mcsUINT32  bufLen);
+mcsCOMPL_STAT errPackStack    (char       *buffer,
+                               mcsUINT32  bufLen);
+mcsCOMPL_STAT errUnpackStack  (char       *buffer,
+                               mcsUINT32  bufLen);
 /* Convenience macro */
 #define errAdd(errorId, arg...) \
     errAddInStack(MODULE_ID, __FILE_LINE__, errorId, ##arg)
