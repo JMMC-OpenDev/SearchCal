@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.12 2005-01-24 15:47:51 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.13 2005-02-15 14:51:16 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2005/01/24 15:47:51  gluck
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+#
 # lgluck    23-Apr-2004  Created
 # gzins     04-Dec-2004  Changed C++ file extension to cpp
 #                        Look for templates in the following order:
@@ -230,14 +233,14 @@ then
             exit 1
         fi
 
-        # Strip directory from filename
+        # Get filename from path
         BASE_NAME=`basename $FILE_NAME`
         if [ $? != 0 ]
         then
             exit 1
         fi
 
-        # For .h and .H
+        # For .h
         # -> For .h (h-file or c++-h-file) files insert file name in the
         # pre-processing directives to avoid multiple inclusions
         # -> For .h (c++-h-file) files insert class name in the doxygen header
@@ -255,14 +258,16 @@ then
             mv ${FILE}.BAK $FILE 
         fi
 
-        # For .c and .cpp 
-        # -> For .c (c-main, c-procedure) and  .C (c++-small-main,
+        # For .c and .cpp  and Makefile
+        # -> For .c (c-main, c-procedure) and  .cpp (c++-small-main,
         # c++-class-file) files insert module name in the pre-processing
         # directives for header inclusion
-        # -> For .C (c++-class-file) insert class name in the pre-processing
+        # -> For .cpp (c++-class-file) insert class name in the pre-processing
         # directives for header inclusion, in the doxygen header block, and for
         # constructor and destructor replacement
-        if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" ]
+        # -> For Makefile insert module name in file comment header
+        if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" -o 
+            "$FILE_NAME" = "Makefile"]
         then
             sed -e "1,$ s/<moduleName>/${MOD_NAME}/g" \
                 -e "1,$ s/<className>/${BASE_NAME}/g" \
