@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.7 2004-12-06 06:05:19 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.8 2004-12-09 09:46:52 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -14,6 +14,7 @@
 #                       $MCSROOT/templates
 # gzins     06-Dec-2004 Added class and module names substitution in C++
 #                       header files
+# gzins     09-Dec-2004  Changed call to ctooGetModuleName
 #
 #*******************************************************************************
 # NAME
@@ -248,10 +249,12 @@ then
         if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" ]
         then
             # Get module name
-            source ctooGetModuleName
-            ROOT_NAME=$moduleName
-            unset moduleName
-            
+            ROOT_NAME=`ctooGetModuleName`
+            if [ $? != 0 ]
+            then
+                exit 1
+            fi
+
             sed -e "1,$ s/#include \"<moduleName>.h\"/#include \"$ROOT_NAME.h\"/g" \
                 -e "1,$ s/#include \"<moduleName>Private.h\"/#include \"${ROOT_NAME}Private.h\"/g" \
                 -e "1,$ s/#include \"<className>.h\"/#include \"$FILE_NAME.h\"/g" \
