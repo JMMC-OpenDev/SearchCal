@@ -3,13 +3,14 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/bashrc
 #
-# Version: $Id: bashrc,v 1.8 2004-09-10 12:22:22 mella Exp $
+# Version: $Id: bashrc,v 1.9 2004-11-10 09:55:18 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # who       when        what
 # --------  ----------  ----------------------------------------------
 # gzins     14-05-2004  created
+# gzins     10-11-2004  added MCSDATA definition
 #
 # To use it, added the following line in ~/.bash_profile
 #       # Set MCS environment
@@ -76,6 +77,8 @@ if ! echo ${PATH} |grep -q $MCSROOT ; then
     export MCS_XSLPATH=$MCS_XSLPATH:$MCSROOT/config
 fi
 
+# MCSDATA
+export MCSDATA=${MCSROOT}/data
 
 # Aliases
 alias m=more
