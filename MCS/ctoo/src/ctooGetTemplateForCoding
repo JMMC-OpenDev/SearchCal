@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.11 2004-08-11 10:01:06 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.12 2004-09-02 09:25:56 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -186,7 +186,7 @@ then
         chmod $MODE $FILE
         
         # display the file if EDITOR is set
-        if [ $EDITOR != "" ]
+        if [ "$EDITOR" != "" ]
         then 
             $EDITOR $FILE &
             echo -e "\n>>>  CREATED --> $FILE. Opening $EDITOR on it.\c"
