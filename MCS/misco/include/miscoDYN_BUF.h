@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.1 2005-02-11 09:37:57 gzins Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.2 2005-02-11 11:04:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/11 09:37:57  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -37,10 +40,43 @@
  * 
  * \n
  * \ex
- * TODO : Code example
- * \n Brief example description.
  * \code
- * Insert your code example here
+ * #include <stdlib.h>
+ * #include <iostream>
+ * 
+ * using namespace std;
+ * 
+ * #define MODULE_ID "mymod"
+ *
+ * #include "mcs.h"
+ * #include "log.h"
+ * #include "err.h"
+ * #include "misco.h"
+ * 
+ * int main(int argc, char *argv[])
+ * {
+ *     // Initialize MCS services
+ *     if (mcsInit(argv[0]) == FAILURE)
+ *     {
+ *         // Exit from the application with FAILURE
+ *         exit (EXIT_FAILURE);
+ *     }
+ * 
+ *     miscoDYN_BUF buf;
+ * 
+ *     buf.LoadFile("../doc/moduleDescription.xml");
+ *     char* temp = NULL;
+ *     while ((temp = buf.GetNextLine(temp, mcsTRUE)) != NULL)
+ *     {
+ *         cout << "Line = '" << temp << "'" << endl;
+ *     }
+ * 
+ *     // Close MCS services
+ *     mcsExit();
+ *     
+ *     // Exit from the application with SUCCESS
+ *     exit (EXIT_SUCCESS);
+ * }
  * \endcode
  */
 class miscoDYN_BUF
@@ -128,7 +164,8 @@ private:
     miscoDYN_BUF(const miscoDYN_BUF&);
     miscoDYN_BUF& operator=(const miscoDYN_BUF&);
 
-    miscDYN_BUF  _dynBuf;
+    miscDYN_BUF  dynBuf;
+    miscDYN_BUF* buffer;
 };
 
 #endif /*!miscoDYN_BUF_H*/

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoTestDynBuf.cpp,v 1.1 2005-02-11 09:39:57 gzins Exp $"
+ * "@(#) $Id: miscoTestDynBuf.cpp,v 1.2 2005-02-11 11:04:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/11 09:39:57  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -16,7 +19,7 @@
  * \<miscOTestDynBuf\>
  */
 
-static char *rcsId="@(#) $Id: miscoTestDynBuf.cpp,v 1.1 2005-02-11 09:39:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscoTestDynBuf.cpp,v 1.2 2005-02-11 11:04:38 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -98,7 +101,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.AppendBytes(bytes, bytesNumber);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
@@ -108,7 +110,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.AppendBytes(bytes, bytesNumber);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
@@ -118,7 +119,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.AppendBytes(bytes, bytesNumber);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
@@ -265,7 +265,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.ReplaceByteAt(byte, position);
     cout << "buffer.ReplaceByteAt(" << position << ") = '" << byte << "' ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -275,7 +274,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.ReplaceByteAt(byte, position);
     cout << "buffer.ReplaceByteAt(" << position << ") = '" << byte << "' ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -285,7 +283,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.ReplaceByteAt(byte, position);
     cout << "buffer.ReplaceByteAt(" << position << ") = '" << byte << "' ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -295,7 +292,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.ReplaceByteAt(byte, position);
     cout << "buffer.ReplaceByteAt(" << position << ") = '" << byte << "' ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -342,7 +338,6 @@ int main(int argc, char *argv[])
     cout << "buffer.InsertBytesAt('" << bytes << "', " << bytesNumber << ", "
          << position << ") ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -364,7 +359,6 @@ int main(int argc, char *argv[])
     cout << "buffer.InsertBytesAt('" << bytes << "', " << bytesNumber << ", "
          << position << ") ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -377,7 +371,6 @@ int main(int argc, char *argv[])
     cout << "buffer.InsertBytesAt('" << bytes << "', " << 0 << ", "
          << position << ") ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -388,7 +381,6 @@ int main(int argc, char *argv[])
     cout << "buffer.InsertBytesAt('" << bytes << "', " << bytesNumber << ", "
          << position << ") ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -427,7 +419,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.ReplaceBytesFromTo(bytes,
                                                        bytesNumber, from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -459,7 +450,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.ReplaceBytesFromTo(bytes,
                                                        bytesNumber, from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -473,7 +463,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.ReplaceBytesFromTo(bytes,
                                                        bytesNumber, from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -505,7 +494,6 @@ int main(int argc, char *argv[])
     cout << "buffer.DeleteBytesFromTo(" << from << ", " << to << ") ";
     executionStatusCode = buffer.DeleteBytesFromTo(from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -521,7 +509,6 @@ int main(int argc, char *argv[])
     cout << "buffer.DeleteBytesFromTo(" << from << ", " << to << ") ";
     executionStatusCode = buffer.DeleteBytesFromTo(from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -531,7 +518,6 @@ int main(int argc, char *argv[])
     cout << "buffer.DeleteBytesFromTo(" << from << ", " << to << ") ";
     executionStatusCode = buffer.DeleteBytesFromTo(from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -542,7 +528,6 @@ int main(int argc, char *argv[])
     cout << "buffer.DeleteBytesFromTo(" << from << ", " << to << ") ";
     executionStatusCode = buffer.DeleteBytesFromTo(from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -563,7 +548,6 @@ int main(int argc, char *argv[])
     cout << "buffer.Strip() ";
     executionStatusCode = buffer.Strip();
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -575,7 +559,6 @@ int main(int argc, char *argv[])
     cout << "buffer.Reset() ";
     executionStatusCode = buffer.Reset();
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -585,7 +568,7 @@ int main(int argc, char *argv[])
     // buffer.AppendString
     cout << "---------------------------------------------------------" << endl;
     cout << "buffer.AppendString(NULL) ";
-    executionStatusCode = buffer.AppendString(bytes);
+    executionStatusCode = buffer.AppendString(NULL);
     displayExecStatus(executionStatusCode);
     errCloseStack();
     cout << endl;
@@ -595,7 +578,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.AppendString(bytes);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
@@ -604,7 +586,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.AppendString(bytes);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
@@ -613,7 +594,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.AppendString(bytes);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
@@ -639,7 +619,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.InsertStringAt(bytes, position);
     cout << "buffer.InsertStringAt('" << bytes << "', " << position << ") ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -649,7 +628,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.InsertStringAt(bytes, position);
     cout << "buffer.InsertStringAt('" << bytes << "', " << position << ") ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -659,7 +637,6 @@ int main(int argc, char *argv[])
     executionStatusCode = buffer.InsertStringAt(bytes, position);
     cout << "buffer.InsertStringAt('" << bytes << "', " << position << ") ";
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -692,7 +669,6 @@ int main(int argc, char *argv[])
          << to << ") ";
     executionStatusCode = buffer.ReplaceStringFromTo(bytes, from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -720,7 +696,6 @@ int main(int argc, char *argv[])
          << to << ") ";
     executionStatusCode = buffer.ReplaceStringFromTo(bytes, from, to);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     errCloseStack();
     cout << endl;
@@ -743,35 +718,30 @@ int main(int argc, char *argv[])
     cout << "buffer.SetCommentPattern('" << bytes << "') ";
     executionStatusCode = buffer.SetCommentPattern(bytes);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     cout << "------------------" << endl;
     bytes = "//";
     cout << "buffer.SetCommentPattern('" << bytes << "') ";
     executionStatusCode = buffer.SetCommentPattern(bytes);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     cout << "------------------" << endl;
     bytes = "/**";
     cout << "buffer.SetCommentPattern('" << bytes << "') ";
     executionStatusCode = buffer.SetCommentPattern(bytes);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     cout << "------------------" << endl;
     bytes = ";--;";
     cout << "buffer.SetCommentPattern('" << bytes << "') ";
     executionStatusCode = buffer.SetCommentPattern(bytes);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     cout << "------------------" << endl;
     bytes = NULL;
     cout << "buffer.SetCommentPattern(NULL) ";
     executionStatusCode = buffer.SetCommentPattern(bytes);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
@@ -783,13 +753,11 @@ int main(int argc, char *argv[])
     cout << "buffer.LoadFile('" << bytes << "') ";
     executionStatusCode = buffer.LoadFile(bytes, NULL);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     bytes = "../doc/moduleDescription.xml";
     cout << "buffer.LoadFile('" << bytes << "') ";
     executionStatusCode = buffer.LoadFile(bytes, NULL);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
@@ -860,13 +828,11 @@ int main(int argc, char *argv[])
     cout << "buffer.SaveInFile('" << bytes << "') ";
     executionStatusCode = buffer.SaveInFile(bytes);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     bytes = "../tmp/test.txt";
     cout << "buffer.SaveInFile('" << bytes << "') ";
     executionStatusCode = buffer.SaveInFile(bytes);
     displayExecStatus(executionStatusCode);
-//    cout << buffer << endl;
     buffer.Display();
     cout << endl;
 
