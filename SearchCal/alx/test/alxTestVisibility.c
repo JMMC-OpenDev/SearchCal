@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestVisibility.c,v 1.2 2005-02-12 15:18:56 gzins Exp $"
+ * "@(#) $Id: alxTestVisibility.c,v 1.3 2005-02-17 19:05:54 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/12 15:18:56  gzins
+ * Set logging service for test; do not print time stamp and file/line information and set level to logTEST
+ *
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
@@ -19,7 +22,7 @@
  * Test program of the function which computes visibilities.
  */ 
 
-static char *rcsId="@(#) $Id: alxTestVisibility.c,v 1.2 2005-02-12 15:18:56 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestVisibility.c,v 1.3 2005-02-17 19:05:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,11 +74,11 @@ int main (int argc, char *argv[])
     logInfo("Starting...");
    
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         /* Error handling if necessary */
         
-        /* Exit from the application with FAILURE */
+        /* Exit from the application with mcsFAILURE */
         exit (EXIT_FAILURE);
     }
 
@@ -99,15 +102,43 @@ int main (int argc, char *argv[])
                                 &visibility,
                                 &visibility2,
                                 &visibilityError,
-                                &visibilityError2)==FAILURE)
+                                &visibilityError2)==mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
    
     printf("we compute visibility :\n");
-    printf("\t   V   = %f\n", visibility);
-    printf("\t   V²  = %f\n", visibility2);
-    printf("\tdV²/V² = %f\n", visibilityError2);
+    printf("\t V   = %f\n", visibility);
+    printf("\t V²  = %f\n", visibility2);
+    printf("\tdV² = %f\n", visibilityError2);
+
+    angularDiameter=2.0676;
+    angularDiameterError=0.6;
+    baseMax=100;
+    wavelength=10.0;
+    
+    printf("for : \n");
+    printf("\t diam       = %f (mas)\n", angularDiameter);
+    printf("\t diam error = %f \n", angularDiameterError);
+    printf("\t baseMax    = %f (m)\n", baseMax);
+    printf("\t wavelength = %f (microm)\n", wavelength);
+    
+    if (alxComputeVisibility(angularDiameter,
+                                angularDiameterError,
+                                baseMax,
+                                wavelength,
+                                &visibility,
+                                &visibility2,
+                                &visibilityError,
+                                &visibilityError2)==mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    printf("we compute visibility :\n");
+    printf("\t V   = %f\n", visibility);
+    printf("\t V²  = %f\n", visibility2);
+    printf("\tdV²  = %f\n", visibilityError2);
     logInfo("Exiting...");
     
     /* Close MCS services */
