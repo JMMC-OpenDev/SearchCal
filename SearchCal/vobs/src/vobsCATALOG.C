@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.19 2004-11-24 14:39:09 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.20 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.19 2004-11-24 14:39:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.20 2004-11-30 10:32:31 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -82,7 +82,7 @@ vobsCATALOG::~vobsCATALOG()
 /**
  * Set a catalog name.
  *
- * \param name name value to set as a string
+ * \param name name value to set, in a string format
  *
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
  *
@@ -95,21 +95,21 @@ mcsCOMPL_STAT vobsCATALOG::SetName(char *name)
     logExtDbg("vobsCATALOG::SetName()");
     
     // Test if the name is correst
-    if (strcmp(name,"")==0 ||
-        name==NULL)
+    if ( (strcmp(name,"")==0) || (name==NULL) )
     {
         errAdd(vobsERR_BAD_CATALOG_NAME);
         return FAILURE;
     }
     
+    // copy in the catalog name attribute the value to set
     strcpy(_name, name);
     return SUCCESS;
 }
 
 /**
- * Get a catalog name as a string
+ * Get a catalog name in a string format
  *
- * \param name  name to get, as a string
+ * \param name  name to get, in a string format
  *
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
  *
@@ -121,12 +121,13 @@ mcsCOMPL_STAT vobsCATALOG::GetName(char *name)
 {
     logExtDbg("vobsCATALOG::GetName()");
     
+    // Check if the name is not aqual to NULL. it it is equal return error
     if (_name==NULL)
     {
         errAdd(vobsERR_BAD_CATALOG_NAME);
         return FAILURE;
     }
-    
+    // copy the catalog name in the name to return
     strcpy(name,_name);
     return SUCCESS;
 }
@@ -153,13 +154,16 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     
     // Prepare file name to log result of the catalog request
     mcsSTRING256 logFileName;
+    // if the log level is higher or equal to the debug level
     if (logGetStdoutLogLevel() >= logDEBUG)
     {
+        // build the first part of the file name in the MCSDATA directory
         strcpy(logFileName, "$MCSDATA/tmp/list_");
 
         // Get band used for search
         mcsSTRING32 band;
         request.GetConstraint(OBSERVED_BAND_ID,band);
+        // copy the observed band in the filename
         strcat(logFileName, band);
 
         // Get catalog name, and replace '/' by '_'
@@ -168,6 +172,8 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
         miscReplaceChrByChr(catalogName, '/', '_');
         strcat(logFileName, "_");
         strcat(logFileName, catalogName);
+        // the list is mpty the data which will be write in the file will come
+        // from a "primary" asking
         if (list.IsEmpty()==mcsTRUE)
         {
             strcat(logFileName, "_1.log");
@@ -200,7 +206,10 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
         }
     }
     
+    // create a parser object
     vobsPARSER parser;
+    // the parser get the internet of the query and analyse th file coming
+    // from this address
     if (parser.Parse(miscDynBufGetBufferPointer(&_query), list, logFileName)
         == FAILURE)
     {
@@ -235,9 +244,13 @@ mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG::PrepareQuery()");
     
-        
+    // Reset the dynamic buffer which contain the query    
     miscDynBufReset(&_query);
 
+    // in this case of request, there are three parts to write :
+    // the location
+    // the position of the reference star
+    // the specific part of the query
     if ((WriteQueryURIPart()==FAILURE) ||
         (WriteReferenceStarPosition(request)==FAILURE) ||
         (WriteQuerySpecificPart(request)==FAILURE) )
@@ -269,6 +282,11 @@ mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST request, vobsSTAR_LIST &tmpL
     logExtDbg("vobsCATALOG::PrepareQuery()");
     
     miscDynBufReset(&_query);
+    // in this case of request, there are four parts to write :
+    // the location
+    // the constant part of the query
+    // the specific part of the query
+    // the list to complete
     if ( (WriteQueryURIPart()==FAILURE) ||
          (WriteQueryConstantPart()==FAILURE) ||
          (WriteQuerySpecificPart()==FAILURE) ||
@@ -434,6 +452,8 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
     // Build of the stringlist
     miscDYN_BUF strList;
     miscDynBufInit(&strList);
+    // write a star list object as a dynamic buffer in order to write it in a
+    // string format in the query
     StarList2Sring(strList, list);
     
     
@@ -471,6 +491,7 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
 {
     logExtDbg("vobsCATALOG::StarList2Sring()");
     
+    // if the list is not empty
     if (list.Size()!=0)
     {
         miscDynBufAppendString(&strList,"&-c=%3C%3C%3D%3D%3D%3Dresult1%5F280%2Etxt&");

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.7 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.8 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -41,8 +41,8 @@
  * 
  * vobsCATALOG methods allow to
  * \li Prepare a request
- * \li Send this to the CDS
- * \li Build a star list from the return of the CDS
+ * \li Send this request to the CDS
+ * \li Build a star list from the CDS answer
  *
  * 
  */
@@ -61,12 +61,12 @@ public:
    // Method to get the catalog name
    virtual mcsCOMPL_STAT GetName(char *name);  
 
-   // Method to search in the catalog and to have the star list
+   // Method to get a  star list from the catalog
    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
                                 vobsSTAR_LIST &list);
    
 protected:
-    // Method to preare the request as a string
+    // Method to prepare the request in a string format
    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST request,
                                  vobsSTAR_LIST &tmpList);
@@ -79,7 +79,8 @@ protected:
    virtual mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST request);
    virtual mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
   
-   // Method to have a star list as a string from a normal star list
+   // Method to get a star list in a string format from a normal star list
+   // format
    virtual mcsCOMPL_STAT StarList2Sring(miscDYN_BUF &strList,
                                         vobsSTAR_LIST &list);
 

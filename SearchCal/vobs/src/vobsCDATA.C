@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.C,v 1.1 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCDATA.C,v 1.2 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.C,v 1.1 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.C,v 1.2 2004-11-30 10:32:31 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -180,9 +180,9 @@ mcsCOMPL_STAT vobsCDATA::setNbLinesToSkip(mcsINT32 nbLines)
 }
 
 /**
- * Returns the number of lines to be skipped in CDATA.
+ * Returns the number of colum CDATA.
  * \return 
- * The number of lines to be skipped in CDATA.
+ * The number of colum in CDATA.
  */
 mcsUINT32 vobsCDATA::getNbLinesToSkip(void) 
 {

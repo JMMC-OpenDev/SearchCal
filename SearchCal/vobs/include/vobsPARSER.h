@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.5 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.6 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -28,6 +28,13 @@
 #include "vobsSTAR_LIST.h"
 #include "vobsCDATA.h"
 
+/*
+ * Class declaration
+ */
+/**
+ * vobsPARSER allow to get a xml file from an URL in the CDS and to parse it
+ * in order to extract the data present in it.
+ */
 class vobsPARSER
 {
 public:

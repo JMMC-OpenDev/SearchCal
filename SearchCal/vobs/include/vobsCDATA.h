@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.1 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.2 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -35,6 +35,18 @@
 /*
  * Class declaration
  */
+/**
+ * vobsCDATA represent the CDATA part of the resulting xml files coming from
+ * the CDS.
+ *
+ * It is build with several part :
+ * \li a list of UCD name.
+ * \li a list of colum name.
+ * \li a number of line to skip in order to get the information data in the
+ * CDATA block
+ * \li the body of the CDATA
+ * \li the number of line stored in the CDATA
+ **/
 class vobsCDATA
 {
 

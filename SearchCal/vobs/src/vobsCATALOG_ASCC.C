@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.10 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.11 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.10 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.11 2004-11-30 10:32:31 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,13 +88,13 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
     
-    miscDynBufAppendString(&_query,"&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
-    miscDynBufAppendString(&_query,"&-out=*POS_PARLX_TRIG");
-    miscDynBufAppendString(&_query,"&-out=*SPECT_TYPE_MK");
-    miscDynBufAppendString(&_query,"&SpType=%5bOBAFGKM%5d*");
-    miscDynBufAppendString(&_query,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query,"&-out=v1&-out=d5&-out=HIP&-out=HD");
-    miscDynBufAppendString(&_query,"&-out=DM&-sort=_r");
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
+    miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
+    miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
+    miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_query, "&-out=v1&-out=d5&-out=HIP&-out=HD");
+    miscDynBufAppendString(&_query, "&-out=DM&-sort=_r");
     
     return SUCCESS;
 }
@@ -120,18 +120,22 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST request)
 
     miscDynBufAppendString(&_query, "&");
     mcsSTRING32 band;
+    // Get the oserved band from the constarints
     request.GetConstraint(OBSERVED_BAND_ID,band);
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, "mag=");
     mcsSTRING32 minMagRange;
+    // Get the minimum of the magnitude range
     request.GetConstraint(MIN_MAGNITUDE_RANGE_ID,minMagRange);
     miscDynBufAppendString(&_query, minMagRange);
     miscDynBufAppendString(&_query, "..");
     mcsSTRING32 maxMagRange;
+    // Get the maximum of the magnitude range
     request.GetConstraint(MAX_MAGNITUDE_RANGE_ID,maxMagRange);
     miscDynBufAppendString(&_query, maxMagRange);
     miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
-    mcsSTRING32 searchBoxRa, searchBoxDec;
+    mcsSTRING32 searchBoxRa;
+    mcsSTRING32 searchBoxDec;
     request.GetConstraint(SEARCH_BOX_RA_ID,searchBoxRa);
     request.GetConstraint(SEARCH_BOX_DEC_ID,searchBoxDec);
     miscDynBufAppendString(&_query, searchBoxRa);

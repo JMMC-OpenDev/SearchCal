@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.8 2004-11-24 14:39:09 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.9 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -24,7 +24,6 @@
 /* 
  * Constants definition
  */
-
 #define vobsNB_REQUEST_CONSTRAINTS 14       /**< Number of contraints */
 #define vobsREQUEST_CONSTRAINT_NOT_SET  "00.00"  /**< Default value of the empty
                                           contraints */
@@ -32,32 +31,33 @@
 /*
  * Type definition
  */
-
+/**
+ * definition of the request constraint as a string
+ **/
 typedef mcsSTRING32 vobsREQUEST_CONSTRAINT;
 
 /*
  * Enumeration type definition
  */
-
 /**
- * vobsCONSTRAINT_ID is an enumeration which allow correspondance between an id and
- * a CONSTRAINT.
+ * vobsCONSTRAINT_ID is an enumeration which allow correspondance between 
+ * an id and a CONSTRAINT.
  */
 typedef enum
 {
-    UNKNOWN_CONSTRAINT_ID = -1,        /**< id if no CONSTRAINT */      
-    STAR_NAME_ID,           /**< star name id */
-    RA_ID,
-    DEC_ID,
-    STAR_WLEN_ID,           /**< wavelength id */
-    STAR_MAGNITUDE_ID,      /**< So magnitude id */
-    MIN_MAGNITUDE_RANGE_ID,     /**< min magnitude range id */
-    MAX_MAGNITUDE_RANGE_ID,     /**< max magnitude range id */    
-    SEARCH_BOX_RA_ID,       /**< search Ra id */
-    SEARCH_BOX_DEC_ID,      /**< search Dec id */
-    STAR_EXPECTED_VIS_ID,   /**< visibility id */
-    STAR_MAX_ERR_VIS_ID,    /**< absolute errors id */
-    OBSERVED_BAND_ID,       /**< band id */
+    UNKNOWN_CONSTRAINT_ID = -1,         /**< id if no CONSTRAINT */      
+    STAR_NAME_ID,                       /**< star name id */
+    RA_ID,                              /**< right ascension coordinate */
+    DEC_ID,                             /**< declinaison coordinate */
+    STAR_WLEN_ID,                       /**< wavelength id */
+    STAR_MAGNITUDE_ID,                  /**< So magnitude id */
+    MIN_MAGNITUDE_RANGE_ID,             /**< min magnitude range id */
+    MAX_MAGNITUDE_RANGE_ID,             /**< max magnitude range id */    
+    SEARCH_BOX_RA_ID,                   /**< search Ra id */
+    SEARCH_BOX_DEC_ID,                  /**< search Dec id */
+    STAR_EXPECTED_VIS_ID,               /**< visibility id */
+    STAR_MAX_ERR_VIS_ID,                /**< absolute errors id */
+    OBSERVED_BAND_ID,                   /**< band id */
     BASEMIN_ID,
     BASEMAX_ID,
 } vobsCONSTRAINT_ID;
@@ -67,7 +67,11 @@ typedef enum
  */
 
 /**
- * vobsREQUEST is a class which caracterise the user request or contraints.
+ * vobsREQUEST is a class which caracterise the user contraints.
+ *
+ * A constraint is a parameter as the magnitude or the coordinates... The star
+ * which will be found should have a value which should fulfill with the
+ * parameter.
  * 
  * vobsREQUEST methods allow to
  * \li modify

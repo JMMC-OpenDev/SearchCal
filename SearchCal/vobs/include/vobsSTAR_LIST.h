@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.8 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.9 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -22,6 +22,21 @@
 #include<list>
 #include"vobsSTAR.h"
 
+/**
+ * vobsSTAR_LIST is a class which caracterises a list of star.
+ *
+ * methods of this class allows to :
+ * \li known if the list is empty
+ * \li clear the list
+ * \li add at tail a star in the the list
+ * \li remove a star from the list
+ * \li get the list size
+ * \li create a star from another one
+ * \li get a star
+ * \li merge two list
+ * \li display the list o the console
+ * \li save the list in a file
+ */
 class vobsSTAR_LIST
 { 
  public:

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CHARM.h,v 1.3 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CHARM.h,v 1.4 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -33,10 +33,10 @@
  * vobsCATALOG_CHARM is a class which caracterise the Catalog of High Angular
  * Position M.
  * 
- * vobsSTAR methods allow to
+ * vobsCATALOG_CHARM methods allow to
  * \li Prepare a request
- * \li Send this to the CDS
- * \li Build a star list from the return of the CDS
+ * \li Send this request to the CDS
+ * \li Build a star list from the CDS answer
  *
  * 
  */

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.1 2004-09-14 08:58:59 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.2 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -29,7 +29,9 @@
 #include"vobsSTAR_LIST.h"
 #include"vobsCATALOG.h"
 
-
+/*
+ * Enumeration type definition
+ */
 /**
  * vobsACTION_ID is an enumeration which allow correspondance between an id and
  * an ACTION.
@@ -42,7 +44,9 @@ typedef enum
     UPDATE_ONLY
 }vobsACTION;
 
-
+/*
+ * Type definition
+ */
 /*
  * Data structure containing description of ENTRY
  * INTERNAL USED ONLY
@@ -63,8 +67,8 @@ typedef struct
  */
 
 /**
- * vobsSCENARIO is a class which represent the scenario interrogation of the
- * catalogues.
+ * vobsSCENARIO is a class which represent the catalog interrogation scenario 
+ * of the catalogues.
  * 
  * vobsSCENARIO methods allow to
  * \li Add action into the scenario : an action is represented by the

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.10 2004-11-25 13:04:56 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.11 2004-11-30 10:32:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -44,7 +44,7 @@ typedef mcsSTRING32 vobsSTAR_PROPERTY;
  */
 
 /**
- * vobsUCD_ID is an enumeration which allow correspondance between an id and
+ * vobsUCD_ID is an enumeration which allows correspondance between an id and
  * an UCD.
  */
 typedef enum
@@ -90,7 +90,7 @@ typedef enum
  */
 
 /**
- * vobsSTAR is a class which caracterise a star.
+ * vobsSTAR is a class which caracterises a star.
  * 
  * vobsSTAR methods allow to
  * \li modify
@@ -151,7 +151,7 @@ public:
     virtual void Display(void);
 
 protected:
-    // Method to obtain id from the UCD
+    // Method to obtain an id from the UCD name
     virtual vobsUCD_ID Ucd2Id(char *ucd) const;
     
     /** Table containing the star properties */
