@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTestServer.cpp,v 1.1 2004-12-05 19:03:25 gzins Exp $"
+* "@(#) $Id: evhTestServer.cpp,v 1.2 2004-12-08 17:58:42 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Test program for evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.1 2004-12-05 19:03:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.2 2004-12-08 17:58:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -55,7 +55,7 @@ using namespace std;
 class evhTEST : public evhSERVER
 {
 public:
-    evhTEST() {};
+    evhTEST() {i=0;};
     virtual ~evhTEST(){};
 
     virtual evhCB_COMPL_STAT Cb1 (msgMESSAGE &msg,void*)
@@ -63,7 +63,16 @@ public:
         printf("evhTEST::Cb1() : Command = %s, Params = %s\n",
                msg.GetCommand(), msg.GetBodyPtr()); 
         SendReply(msg);
-        return evhCB_SUCCESS;
+        i++;
+        printf("(i%2) = %d\n", (i%2)); 
+        if ((i%2)==0)
+        {
+            return evhCB_SUCCESS | evhCB_DELETE;
+        }
+        else
+        {
+            return evhCB_SUCCESS;
+        }
     };
     virtual evhCB_COMPL_STAT Cb2 (const int,void*)
     {
@@ -72,13 +81,21 @@ public:
         scanf("%s", msg);
         printf("Read string = %s\n", msg);
         errDisplayStack();
-        return evhCB_SUCCESS;
+        return evhCB_SUCCESS | evhCB_DELETE;
     };
+
     virtual mcsCOMPL_STAT AppInit()
     {
         // Attach callback to the SETUP command
         evhCMD_KEY key1("SETUP");
         evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::Cb1);
+ 
+        AddCallback(key1, cb1);
+        AddCallback(key1, cb1);
+        AddCallback(key1, cb1);
+        AddCallback(key1, cb1);
+        AddCallback(key1, cb1);
+        AddCallback(key1, cb1);
         AddCallback(key1, cb1);
 
         // Attach callback to stdin 
@@ -93,6 +110,7 @@ public:
 protected:
 
 private:
+    int i;
 };
 
 
