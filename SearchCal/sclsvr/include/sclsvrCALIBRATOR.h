@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.7 2004-12-06 14:15:29 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.8 2004-12-06 14:31:08 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -120,7 +120,7 @@ public:
     virtual void Display(void);    
    
     virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
-    virtual mcsCOMPL_STAT UnPack(mcsSTRING256 calibratorString);
+    virtual mcsCOMPL_STAT UnPack(char *calibratorString);
 
     virtual mcsLOGICAL HaveCoherentDiameter();
     virtual mcsLOGICAL VisibilityOk();

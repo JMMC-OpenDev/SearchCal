@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.cpp,v 1.2 2004-12-06 13:02:13 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.cpp,v 1.3 2004-12-06 14:34:28 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.2 2004-12-06 13:02:13 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.3 2004-12-06 14:34:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -26,8 +26,6 @@ using namespace std;
 /**
  * Export standard iostream objects (cin, cout,...).
  */
-
-#define MODULE_ID "vobs"
 
 
 /*

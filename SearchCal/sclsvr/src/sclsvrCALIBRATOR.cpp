@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.4 2004-12-06 14:15:29 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.5 2004-12-06 14:31:08 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.4 2004-12-06 14:15:29 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.5 2004-12-06 14:31:08 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -310,10 +310,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(sclsvrPROPERTY_ID id,
 /**
  * Check whether the property is set or not.  
  * 
- * \param ucd UCD name. 
+ * \param name UCD or PROPERTY name. 
  * 
  * \warning
- * If the given UCD name is unknown, this method returns false (i.e.  mcsFALSE)
+ * If the given UCD or PROPERTY name is unknown, this method returns false (i.e.  mcsFALSE)
  *
  * \return
  * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
@@ -430,7 +430,7 @@ mcsLOGICAL sclsvrCALIBRATOR::VisibilityOk()
 /**
  * Check whether the property is set or not.  
  * 
- * \param ucd UCD id. 
+ * \param id property identifier. 
  * 
  * \warning
  * If the given UCD id is invalid, this method returns false (i.e.  mcsFALSE)
@@ -462,7 +462,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsPropertySet(sclsvrPROPERTY_ID id) const
 /**
  * Check whether the property is set or not.  
  * 
- * \param ucd UCD id. 
+ * \param ucdId UCD id. 
  * 
  * \warning
  * If the given UCD id is invalid, this method returns false (i.e.  mcsFALSE)
@@ -481,7 +481,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsPropertySet(vobsUCD_ID ucdId) const
  *
  * Get value property, as a string, corresponding to the PROPERTY
  * 
- * \param property PROPERTY name. 
+ * \param name PROPERTY name. 
  * \param value property value to get, as a string.
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
@@ -531,7 +531,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(char *name, char *value) const
  *
  * Get value property, as a string, corresponding to the PROPERTY
  * 
- * \param propertyId PROPERTY id. 
+ * \param id PROPERTY id. 
  * \param value property value to get, as a string. 
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
@@ -563,7 +563,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(sclsvrPROPERTY_ID id,
  *
  * Get value property corresponding, as a float, to the PROPERTY
  * 
- * \param property PROPERTY name. 
+ * \param name PROPERTY name. 
  * \param value property value to get, as a float. 
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
@@ -609,7 +609,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(char *name, float *value) const
  *
  * Get value property, as a float, corresponding to the PROPERTY
  * 
- * \param propertyId PROPERTY id. 
+ * \param id PROPERTY id. 
  * \param value property value to get, as a float. 
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.

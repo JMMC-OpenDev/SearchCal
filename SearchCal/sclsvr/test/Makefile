@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-11-26 13:53:56 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-12-06 14:31:16 scetre Exp $"
 #
 # Makefile of sclsvr test module
 #
@@ -49,27 +49,27 @@ EXECUTABLES_L   =
 
 sclsvrTestCommand_OBJECTS   = sclsvrTestCommand
 sclsvrTestCommand_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestCommand_LIBS      = MCS C++ sclsvr vobs bcc scitoo msg
+sclsvrTestCommand_LIBS      = MCS C++ sclsvr vobs scitoo msg simcli
 
 sclsvrTestSearchCalibrators_OBJECTS   = sclsvrTestSearchCalibrators
 sclsvrTestSearchCalibrators_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestSearchCalibrators_LIBS      = MCS C++ sclsvr vobs bcc scitoo msg cmd
+sclsvrTestSearchCalibrators_LIBS      = MCS C++ sclsvr vobs scitoo msg cmd simcli
 
 sclsvrSearchCalibrators_OBJECTS   = sclsvrSearchCalibrators
 sclsvrSearchCalibrators_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrSearchCalibrators_LIBS      = MCS C++ sclsvr vobs bcc alx msg
+sclsvrSearchCalibrators_LIBS      = MCS C++ sclsvr vobs alx msg simcli
 
 sclsvrTestSearchCalibratorsClient_OBJECTS   = sclsvrTestSearchCalibratorsClient
 sclsvrTestSearchCalibratorsClient_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestSearchCalibratorsClient_LIBS      = MCS C++ sclsvr vobs bcc scitoo msg gui
+sclsvrTestSearchCalibratorsClient_LIBS      = MCS C++ sclsvr vobs scitoo msg gui simcli
 
 sclsvrTestCalibratorMethod_OBJECTS   = sclsvrTestCalibratorMethod
 sclsvrTestCalibratorMethod_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestCalibratorMethod_LIBS      = MCS C++ sclsvr vobs bcc alx msg 
+sclsvrTestCalibratorMethod_LIBS      = MCS C++ sclsvr vobs alx msg simcli 
 
 sclsvrTestCalibratorPack_OBJECTS   = sclsvrTestCalibratorPack
 sclsvrTestCalibratorPack_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestCalibratorPack_LIBS      = MCS C++ sclsvr vobs bcc alx msg
+sclsvrTestCalibratorPack_LIBS      = MCS C++ sclsvr vobs alx msg simcli
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
