@@ -1,16 +1,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.5 2005-02-15 15:52:00 gzins Exp $"
+ * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.6 2005-03-03 16:49:05 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 15:52:00  gzins
+ * Added CVS log as file modification history
+ *
  * scetre    23-Jul-2004  Created
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.5 2005-02-15 15:52:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.6 2005-03-03 16:49:05 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -66,16 +69,16 @@ int main(int argc, char *argv[])
     
     // add property to a star
     vobsSTAR star;
-    star.SetPropertyValue(vobsSTAR_ID_MAIN, "25123");
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08");
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5");
-    star.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01");
+    star.SetPropertyValue(vobsSTAR_ID_HIP, "25123", "perso");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "perso");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "perso");
+    star.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01", "perso");
     // add property to a star
     vobsSTAR star2;
-    star2.SetPropertyValue(vobsSTAR_ID_MAIN, "25233");
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 45 01.32");
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 23 02.23");
-    star2.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01");
+    star2.SetPropertyValue(vobsSTAR_ID_HIP, "25233", "perso");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 45 01.32", "perso");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 23 02.23", "perso");
+    star2.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01", "perso");
     printf("STAR\n");
     for (int el2 = 0; el2 < star.NbProperties(); el2++)
     {
@@ -119,9 +122,19 @@ int main(int argc, char *argv[])
     list2.AddAtTail(calibrator3);
     list2.Display();
     sclsvrCALIBRATOR_LIST listTest;
-    list2.GetScienceObjectSeparation( "03 47 29.08", "+24 06 18.5", 0.1, 0.1);
+    list2.FilterByDistanceSeparation( "03 47 29.08", "+24 06 18.5", 0.1, 0.1);
 /*    list2.GetMaximalMagnitudeSeparation("K", 2.5, 0.1);*/
     list2.Display();
+
+    sclsvrCALIBRATOR scienceObject;
+    scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "perso");
+    scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "perso");
+
+
+    scienceObject.Display();    
+    printf("science object of the list : \n");
+    list2.GetScienceObject(scienceObject);
+    scienceObject.Display();
     errCloseStack();
     logInfo("Exiting ...");
     exit(EXIT_SUCCESS);
