@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2004-09-10 17:40:27 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.14 2004-09-10 17:43:55 gzins Exp $"
 #
 # Makefile of ctoo module
 #
@@ -105,7 +105,7 @@ tttlll_OBJECTS  =
 # man pages to be done
 # --------------------
 MANSECTIONS = 1
-MAN1 = $(SCRIPTS)
+MAN1 = $(addsuffix .sh, $(SCRIPTS))
 MAN3 =
 MAN5 =
 MAN7 =
