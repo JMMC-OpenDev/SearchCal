@@ -3,11 +3,12 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.1 2004-09-10 15:43:46 gzins Exp $"
+# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.2 2004-11-10 09:40:02 gzins Exp $"
 #
 # who       when        what
-# --------  --------    ------------------------------------------------
-# gzins     10/09/04    Created
+# --------  ----------  ------------------------------------------------
+# gzins     10-09-2004  Created
+# gzins     10-11-2004  Added creation of MCSDATA in MCSROOT
 #
 #*******************************************************************************
 # NAME
@@ -57,30 +58,37 @@ fi
 # Define the content of each area 
 
 # Directories that shall be present in any area 
-DIR_LIST="config      \
-          doc         \
-          bin         \
-          etc         \
-          include     \
-          lib         \
-          errors      \
-          man         \
-          man/man1    \
-          man/man2    \
-          man/man3    \
-          man/man4    \
-          man/man5    \
-          man/man6    \
-          man/man7    \
-          man/man8    \
-          templates   \
-          "
+BASE_DIR_LIST="config      \
+               doc         \
+               bin         \
+               include     \
+               lib         \
+               errors      \
+               man         \
+               man/man1    \
+               man/man2    \
+               man/man3    \
+               man/man4    \
+               man/man5    \
+               man/man6    \
+               man/man7    \
+               man/man8    \
+               templates   \
+               "
+# Additional directories for MCSROOT
+MCSROOT_ADD_DIR_LIST="etc"
+
+# Additional directories for MCSDATA
+MCSDATA_ADD_DIR_LIST="data        \
+                      data/log    \
+                      data/tmp    \
+                      "
 
 # If no root directory is given
 if [ $# = 0 ]
 then
     # Print out directory list
-    for dir in $DIR_LIST
+    for dir in $BASE_DIR_LIST
     do
         echo "$dir"
     done
@@ -125,7 +133,7 @@ fi
 # Check directory structure
 
 # If not already there, create all the needed subdirectories
-for dir in $DIR_LIST
+for dir in $BASE_DIR_LIST
 do
     if [ ! -d $ROOT_NAME/$dir ]
     then
@@ -138,9 +146,32 @@ done
 # INTROOT case
 if [ "$ROOT_NAME" = "$INTROOT" ]
 then
-    for dir in $DIR_LIST
+    for dir in $BASE_DIR_LIST
     do
         # directories must be writable by other developers
+        chmod 777 $ROOT_NAME/$dir
+    done
+# MCSROOT case
+else
+    # Create MCSROOT additional directories
+    for dir in $MCSROOT_ADD_DIR_LIST
+    do
+        if [ ! -d $ROOT_NAME/$dir ]
+        then
+            mkdir $ROOT_NAME/$dir
+            echo "   CREATED >>>     |---$dir "
+        fi
+    done
+
+    # Create MCSDATA additional directories
+    for dir in $MCSDATA_ADD_DIR_LIST
+    do
+        if [ ! -d $ROOT_NAME/$dir ]
+        then
+            mkdir $ROOT_NAME/$dir
+            echo "   CREATED >>>     |---$dir "
+        fi
+        # directories must be writable by all
         chmod 777 $ROOT_NAME/$dir
     done
 fi
