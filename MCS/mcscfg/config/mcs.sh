@@ -1,29 +1,27 @@
 # $MCSROOT/etc/profile -*- Mode: shell-script -*-
 # (c) jmmc
 #------------------------------------------------------------------------------
-# File:    $MCSROOT/etc/bashrc
+# File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: bashrc,v 1.11 2005-01-04 11:12:59 gzins Exp $
+# Version: $Id: mcs.sh,v 1.1 2005-01-29 13:11:44 gzins Exp $
 #
 # Purpose: bash configuration file
 #
-# who       when        what
-# --------  ----------  ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     14-05-2004  created
 # gzins     10-11-2004  added MCSDATA definition
 #
 # To use it, added the following line in ~/.bash_profile
-#       # Set MCS environment
-#       export INTROOT=$HOME/INTROOT
-#       export MCSROOT=/home/MCS
-#       if [ -f $MCSROOT/etc/bashrc ]; then
-#               . $MCSROOT/etc/bashrc
-#       fi
+#   # Set MCS environment
+#   export INTROOT=$HOME/INTROOT
+#   export MCSROOT=/home/MCS
+#   if [ -f $MCSROOT/etc/mcs.sh ]; then
+#           . $MCSROOT/etc/mcs.sh
+#   fi
 #
 #------------------------------------------------------------------------------
-
-# Define VLTROOT to MCSROOT
-export VLTROOT=$MCSROOT
 
 # Set LD_LIBRARY_PATH (path for dynamic linked libraries)
 if [ "$LD_LIBRARY_PATH" != "" ]
@@ -57,7 +55,6 @@ then
         export PATH="$PATH:$INTROOT/bin"
         export MANPATH="$MANPATH:$INTROOT/man"
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INTROOT/lib
-        export MCS_XSLPATH=$MCS_XSLPATH:$INTROOT/config
     fi
 fi
 
@@ -66,7 +63,6 @@ if ! echo ${PATH} |grep -q $MCSROOT ; then
     export PATH="$PATH:$MCSROOT/bin"
     export MANPATH="$MANPATH:$MCSROOT/man"
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MCSROOT/lib
-    export MCS_XSLPATH=$MCS_XSLPATH:$MCSROOT/config
 fi
 
 # MCSDATA
