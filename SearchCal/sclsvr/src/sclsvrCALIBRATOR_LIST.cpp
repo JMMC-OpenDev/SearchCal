@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.31 2005-02-17 15:31:26 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.32 2005-02-22 16:24:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2005/02/17 15:31:26  gzins
+ * Added request parameter to Save and Load methods
+ *
  * Revision 1.30  2005/02/17 09:24:24  scetre
  * updated Delete method
  *
@@ -74,7 +77,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.31 2005-02-17 15:31:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.32 2005-02-22 16:24:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -783,7 +786,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
     {
         // Get the first comment line
         mcsSTRING1024 cmdParamLine;
-        if (cData.GetNextLine(NULL, cmdParamLine, mcsFALSE) == NULL)
+        if (cData.GetNextLine
+            (NULL, cmdParamLine, sizeof(mcsSTRING1024), mcsFALSE) == NULL)
         {
             return mcsFAILURE;
         }
