@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.9 2004-12-09 17:39:10 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.10 2004-12-10 07:05:15 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
@@ -14,6 +14,7 @@
 # gzins     08-Dec-2004  Added env to the MCS library list
 # gzins     09-Dec-2004  Updated to add rules for all generated files (error
 #                        header file and C++ command class files)
+# gzins     10-Dec-2004  Added list of CDF files to be installed
 # 
 #*******************************************************************************
 #   NAME
@@ -1021,7 +1022,7 @@ endif
 
 	-@$(ECHO) "install_standardfiles: errors tables" >>$(FILE)
 	-$(AT)mkfMakeInstallErrorFiles $(ERRORS) $(P644) >>$(FILE)
-	-$(AT)mkfMakeInstallCmdDefFiles $(CDF_DIR) $(P644) >>$(FILE)
+	-$(AT)mkfMakeInstallCmdDefFiles "$(CDF_FILES)" $(CDF_DIR) $(P644) >>$(FILE)
 
 ifneq ($(strip $(LIBRARIES)),)
 	-@$(ECHO) "libraries_begin:" >>$(FILE)
