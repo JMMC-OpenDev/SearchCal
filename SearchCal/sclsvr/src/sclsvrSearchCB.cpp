@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.cpp,v 1.2 2004-12-06 13:05:55 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCB.cpp,v 1.3 2004-12-06 17:04:28 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.2 2004-12-06 13:05:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.3 2004-12-06 17:04:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -53,7 +53,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
 
     // Search command
     sclsvrSEARCH_CMD searchCmd(msg.GetCommand(), msg.GetBodyPtr());
-    printf("msg.GetBodyPtr() = %s\n", msg.GetBodyPtr()); 
+    //printf("msg.GetBodyPtr() = %s\n", msg.GetBodyPtr()); 
     
     // Parse command
     if (searchCmd.Parse() == FAILURE)
@@ -67,105 +67,105 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("objName = %s\n", objName);
+    //printf("objName = %s\n", objName);
     // Observed magnitude
     mcsDOUBLE magnitude;
     if (searchCmd.GetMag(&magnitude) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("magnitude = %lf\n", magnitude);
+    //printf("magnitude = %lf\n", magnitude);
     // max calibrator return
     mcsINT32 maxReturn;
     if (searchCmd.GetMaxReturn(&maxReturn) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("max Return = %d\n", maxReturn);
+    //printf("max Return = %d\n", maxReturn);
     // diff ra
     mcsINT32 diffRa;
     if (searchCmd.GetDiffRa(&diffRa) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("diffRa = %d\n", diffRa);
+    //printf("diffRa = %d\n", diffRa);
     // diff dec
     mcsINT32 diffDec;
     if (searchCmd.GetDiffDec(&diffDec) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("diffDec = %d\n", diffDec);
+    //printf("diffDec = %d\n", diffDec);
     // band
     char *band;
     if (searchCmd.GetBand(&band) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("band = %s\n", band);
+    //printf("band = %s\n", band);
     // minMagRange
     char *minMagRange;
     if (searchCmd.GetMinMagRange(&minMagRange) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("minMagRange = %s\n", minMagRange);
+    //printf("minMagRange = %s\n", minMagRange);
     // maxMagRange
     char *maxMagRange;
     if (searchCmd.GetMaxMagRange(&maxMagRange) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("maxMagRange = %s\n", maxMagRange);
+    //printf("maxMagRange = %s\n", maxMagRange);
     // ra
     char *ra;
     if (searchCmd.GetRa(&ra) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("ra = %s\n", ra);
+    //printf("ra = %s\n", ra);
     // dec
     char *dec;
     if (searchCmd.GetDec(&dec) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("dec = %s\n", dec);
+    //printf("dec = %s\n", dec);
     // baseMin
     mcsDOUBLE baseMin;
     if (searchCmd.GetBaseMin(&baseMin) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("baseMin = %f\n", baseMin);
+    //printf("baseMin = %f\n", baseMin);
     // baseMax
     mcsDOUBLE baseMax;
     if (searchCmd.GetBaseMax(&baseMax) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("baseMax = %f\n", baseMax);
+    //printf("baseMax = %f\n", baseMax);
     // lambda
     mcsDOUBLE lambda;
     if (searchCmd.GetLambda(&lambda) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("lambda = %f\n", lambda);
+    //printf("lambda = %f\n", lambda);
     // visibility
     mcsDOUBLE vis;
     if (searchCmd.GetVis(&vis) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("visibility = %f\n", vis);
+    //printf("visibility = %f\n", vis);
     // visibility error
     mcsDOUBLE visErr;
     if (searchCmd.GetVisErr(&visErr) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    printf("visibility error = %f\n", visErr);
+    //printf("visibility error = %f\n", visErr);
 
     
     // Build the request object from the parameters of the command
@@ -307,6 +307,10 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
 
     msg.SetBody(miscDynBufGetBufferPointer(&dynBuff),
                 strlen(miscDynBufGetBufferPointer(&dynBuff)));
+    
+    sclsvrCALIBRATOR_LIST *temp;
+    calibratorList.GetCoherentDiameterList(temp);
+    temp.Display();
     
     calibratorList.Clear();
     starList.Clear();

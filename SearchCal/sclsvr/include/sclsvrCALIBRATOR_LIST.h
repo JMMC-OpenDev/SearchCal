@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.2 2004-11-26 13:53:56 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.3 2004-12-06 17:04:28 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -47,7 +47,9 @@ public:
     
     virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(miscDYN_BUF *buffer);
-    
+   
+    virtual mcsCOMPL_STAT GetCoherentDiameterList(sclsvrCALIBRATOR_LIST *list);
+    virtual mcsCOMPL_STAT GetVisibilityOkList(sclsvrCALIBRATOR_LIST *list);
 protected:
 
 private:

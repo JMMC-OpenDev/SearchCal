@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.2 2004-12-06 17:04:28 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.2 2004-12-06 17:04:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -288,4 +288,44 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
     }
     return SUCCESS;    
 }
+
+/**
+ *
+ **/
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LIST *list)
+{
+    logExtDbg("sclsvrCALIBRATOR_LIST::GetCoherentDiameterList()");
+    // for each calibrator of the list
+    for (unsigned int el = 0; el < Size(); el++)
+    {
+        
+        if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))-> HadCoherentDiameter()
+            == mcsTRUE )
+        {
+            //list->AddAtTail(( *(sclsvrCALIBRATOR *)GetNextStar((el==0)) ));
+        }
+    }
+    return SUCCESS;
+
+}
+
+/**
+ *
+ **/
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVisibilityOkList(sclsvrCALIBRATOR_LIST *list)
+{
+    logExtDbg("sclsvrCALIBRATOR_LIST::GetCoherentDiameterList()");
+    // for each calibrator of the list
+    for (unsigned int el = 0; el < Size(); el++)
+    {
+        if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))-> VisibilityOk()
+            == mcsTRUE )
+        {
+            //list->AddAtTail(( *(sclsvrCALIBRATOR *)GetNextStar((el==0)) ));
+        }
+    }
+    return SUCCESS;
+
+}
+
 /*___oOo___*/

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.5 2004-12-06 14:31:08 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.6 2004-12-06 17:04:28 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.5 2004-12-06 14:31:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.6 2004-12-06 17:04:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -413,7 +413,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
 /**
  * Say if the calibrator had a coherent diameter
  */
-mcsLOGICAL sclsvrCALIBRATOR::HaveCoherentDiameter()
+mcsLOGICAL sclsvrCALIBRATOR::HadCoherentDiameter()
 {
     return _coherentDiameter;
 }
