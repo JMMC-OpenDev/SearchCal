@@ -1,13 +1,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2005-01-21 08:10:30 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.3 2005-02-12 15:11:51 gzins Exp $"
 #
 # Makefile of the alx module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/01/21 08:10:30  gluck
+# - Updated
+# - Insert automatic rcs log in header file
+#
 #
 # scetre    20-Sep-2004  Created
 #
@@ -19,7 +23,7 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+#USER_CFLAGS =
 
 #
 # user definable javac compilation flags
@@ -50,7 +54,7 @@ xxxxx_LIBS      =
 
 #
 # special compilation flags for single c sources
-#yyyyy_CFLAGS   = 
+#yyyyy_CFLAGS   =
 
 #
 # Includes (.h) files (public only)
@@ -69,7 +73,8 @@ alx_OBJECTS   = alxAngularDiameter          \
 				alxGalacticCoordinates      \
 				alxMagnitude                \
 				alxRealMagnitude            \
-				alxVisibility
+				alxVisibility               \
+				alxResearchArea
 
 #
 # Scripts (public and local)
@@ -141,7 +146,8 @@ INSTALL_FILES = ../config/alxAbsIntPolynomial.cfg					\
 				../config/alxColorTableForBrightDwarfStar.cfg		\
 				../config/alxColorTableForBrightGiantStar.cfg		\
 				../config/alxColorTableForBrightSuperGiantStar.cfg	\
-				../config/alxExtinctionRatioTable.cfg
+				../config/alxExtinctionRatioTable.cfg	\
+				../config/alxStarPopulationInKBand.cfg
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
