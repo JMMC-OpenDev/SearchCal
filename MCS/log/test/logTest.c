@@ -1,7 +1,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logTest.c,v 1.3 2004-05-14 10:04:57 mella Exp $"
+*  "@(#) $Id: logTest.c,v 1.4 2004-05-14 10:06:34 mella Exp $"
 *
 * who       when        what
 * --------  --------    --------------------------------------------
@@ -20,7 +20,7 @@
 /*
  * Constants
  */
-#define MODULE_ID mcsLOG
+#define MODULE_ID "log"
 
 /*
  * Local Headers 
