@@ -3,11 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mcs.h,v 1.17 2005-01-28 23:37:35 gzins Exp $"
+ * "@(#) $Id: mcs.h,v 1.18 2005-01-29 07:27:29 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/01/28 23:37:35  gzins
+ * Changed (back) command name max length to 8
+ * Changed (back) module name max length to 7
+ * Changed (back) process name max length to 19
+ *
  * Revision 1.16  2005/01/28 18:50:22  gzins
  * Changed command and module max lenght to 15
  * Changed process name max lenght to 31
@@ -39,12 +44,12 @@ extern "C" {
 /************************************************************************
  *                           MCS  Constants                             *
  ************************************************************************/
-#define mcsPROCNAME_LEN        19   /* max. length of a process name    */
-#define mcsMODULEID_LEN         7   /* max. length of a module name     */
+#define mcsPROCNAME_LEN        31   /* max. length of a process name    */
+#define mcsMODULEID_LEN        15   /* max. length of a module name     */
                                     /* 15 characters + 1 byte alignement */
 #define mcsENVNAME_LEN         15   /* max. length of an environnement  */
                                     /* 15 characters + 1 byte alignement*/
-#define mcsCMD_LEN              8   /* max. length of a command name    */
+#define mcsCMD_LEN             15   /* max. length of a command name    */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes  */
 #define mcsUNKNOWN_ENV  "default"   /* name used for unknown environment*/
 
