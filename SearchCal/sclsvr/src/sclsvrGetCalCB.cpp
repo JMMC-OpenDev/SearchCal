@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.9 2005-02-08 04:39:32 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.10 2005-02-08 20:55:50 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/08 04:39:32  gzins
+ * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
+ *
  * Revision 1.8  2005/02/07 15:01:11  gzins
  * Reformated file header
  *
@@ -28,7 +31,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.9 2005-02-08 04:39:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.10 2005-02-08 20:55:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -265,7 +268,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    calibratorList.Display();
     
     // Pack the list result in a buffer in order to send it
     if (calibratorList.Size() != 0)
