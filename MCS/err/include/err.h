@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: err.h,v 1.1 2004-06-03 12:07:16 berezne Exp $"
+* "@(#) $Id: err.h,v 1.2 2004-06-03 12:58:53 berezne Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -52,7 +52,6 @@ void ascci_send_msg(const char *dest, char *format, ...)
 Definitions JBz:
 */
 
-#define ERR_API
 #define MODULE_ID "ModuleJbz"
 #define logMAX_LEN 64
 #define logTEXT_LEN 64
@@ -123,8 +122,8 @@ extern mcsCOMPL_STAT errAddInStack(errERROR          *error,
 #endif
     
 /* Prototypes of the public functions */
-extern ERR_API mcsCOMPL_STAT errClear           (errERROR *error);
-extern ERR_API mcsCOMPL_STAT errAdd             (errERROR          *error, 
+extern  mcsCOMPL_STAT errClear           (errERROR *error);
+extern  mcsCOMPL_STAT errAdd             (errERROR          *error, 
                                                  const mcsMODULEID moduleId,
                                                  mcsINT32          errorId,
                                                  const errSEVERITY severity,
@@ -132,24 +131,24 @@ extern ERR_API mcsCOMPL_STAT errAdd             (errERROR          *error,
                                                  const int         line,
                                                  char              *format, 
                                                  ... );
-extern ERR_API mcsLOGICAL    errIsInStack       (errERROR          *error,
+extern  mcsLOGICAL    errIsInStack       (errERROR          *error,
                                                  const mcsMODULEID moduleId,
                                                  mcsINT32          errorId);
-extern ERR_API mcsCOMPL_STAT errResetStack      (errERROR *error);
-extern ERR_API mcsCOMPL_STAT errCloseStack      (errERROR *error);
-extern ERR_API mcsCOMPL_STAT errDisplay         (errERROR *error);
-extern ERR_API mcsINT8       errGetStackSize    (errERROR *error);
-extern ERR_API mcsLOGICAL    errIsEmpty         (errERROR *error);
+extern  mcsCOMPL_STAT errResetStack      (errERROR *error);
+extern  mcsCOMPL_STAT errCloseStack      (errERROR *error);
+extern  mcsCOMPL_STAT errDisplay         (errERROR *error);
+extern  mcsINT8       errGetStackSize    (errERROR *error);
+extern  mcsLOGICAL    errIsEmpty         (errERROR *error);
 
-extern ERR_API mcsCOMPL_STAT errStoreExtrBuffer  (errERROR   *error,
+extern  mcsCOMPL_STAT errStoreExtrBuffer  (errERROR   *error,
                                                  char       *buffer,
                                                  mcsUINT32  bufLen,
                                                  mcsLOGICAL tabulate);
-extern ERR_API mcsCOMPL_STAT errLoadExtrBuffer  (errERROR   *error,
+extern  mcsCOMPL_STAT errLoadExtrBuffer  (errERROR   *error,
                                                  char       *buffer,
                                                  mcsUINT32  bufLen);
         
-extern ERR_API const char    *errGetSockErrorStr(int errNum);
+extern  const char    *errGetSockErrorStr(int errNum);
 
 #ifdef __cplusplus
 }
