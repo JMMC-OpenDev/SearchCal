@@ -1,22 +1,23 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.2 2005-01-07 18:19:51 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     22-Sep-2004  Created
-* gzins     17-Nov-2004  Fixed bug in assignment operator method
-* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     22-Sep-2004  Created
+ * gzins     17-Nov-2004  Fixed bug in assignment operator method
+ * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the evhIOSTREAM_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.2 2005-01-07 18:19:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

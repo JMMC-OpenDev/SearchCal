@@ -1,21 +1,24 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhVersionCB.cpp,v 1.2 2005-01-26 18:13:13 gzins Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* gzins     09-Nov-2004  Created
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhVersionCB.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/26 18:13:13  gzins
+ * Fixed wrong buffer length when calling SetBody.
+ *
+ * gzins     09-Nov-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the VERSION callback.
  */
 
-static char *rcsId="@(#) $Id: evhVersionCB.cpp,v 1.2 2005-01-26 18:13:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhVersionCB.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

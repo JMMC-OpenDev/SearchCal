@@ -1,21 +1,22 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhHelpCB.cpp,v 1.2 2005-01-07 18:19:24 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     09-Nov-2004  Created
-* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*                        Small changes in documentation
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhHelpCB.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     09-Nov-2004  Created
+ * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *                        Small changes in documentation
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the VERSION callback.
  */
 
-static char *rcsId="@(#) $Id: evhHelpCB.cpp,v 1.2 2005-01-07 18:19:24 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHelpCB.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

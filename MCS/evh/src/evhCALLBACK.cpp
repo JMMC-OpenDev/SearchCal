@@ -1,23 +1,24 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhCALLBACK.cpp,v 1.4 2005-01-07 18:11:49 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     22-Sep-2004  Created
-* gzins     08-Dec-2004  Implemented IsDetached()
-* gzins     22-Dec-2004  Added SetUserData()
-* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhCALLBACK.cpp,v 1.5 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     22-Sep-2004  Created
+ * gzins     08-Dec-2004  Implemented IsDetached()
+ * gzins     22-Dec-2004  Added SetUserData()
+ * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the evhCALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK.cpp,v 1.4 2005-01-07 18:11:49 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCALLBACK.cpp,v 1.5 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

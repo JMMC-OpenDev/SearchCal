@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.2 2005-01-07 18:20:11 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     27-Sep-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     27-Sep-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the evhIOSTREAM_KEY class.
  */
 
-static char *rcsId="@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.2 2005-01-07 18:20:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

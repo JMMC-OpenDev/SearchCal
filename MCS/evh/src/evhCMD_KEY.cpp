@@ -1,21 +1,22 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhCMD_KEY.cpp,v 1.3 2005-01-07 18:13:43 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     27-Sep-2004  Created
-* gzins     22-Dec-2004  Added command definition file (CDF)
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhCMD_KEY.cpp,v 1.4 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     27-Sep-2004  Created
+ * gzins     22-Dec-2004  Added command definition file (CDF)
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the evhCMD_KEY class.
  */
 
-static char *rcsId="@(#) $Id: evhCMD_KEY.cpp,v 1.3 2005-01-07 18:13:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_KEY.cpp,v 1.4 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

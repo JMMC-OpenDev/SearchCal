@@ -1,19 +1,20 @@
 #ifndef evhCALLBACK_H
 #define evhCALLBACK_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhCALLBACK.h,v 1.3 2004-12-22 08:52:13 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     22-Sep-2004  Created
-* gzins     08-Dec-2004  Removed evhCB_RETURN and evhCB_NOCALLS callback
-*                        return values
-*                        Added IsDetached() method
-* gzins     22-Dec-2004  Added SetUserData()
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhCALLBACK.h,v 1.4 2005-01-29 15:16:35 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     22-Sep-2004  Created
+ * gzins     08-Dec-2004  Removed evhCB_RETURN and evhCB_NOCALLS callback
+ *                        return values
+ *                        Added IsDetached() method
+ * gzins     22-Dec-2004  Added SetUserData()
+ *
+ ******************************************************************************/
 /**
  * \file
  * Declaration of the evhCALLBACK class 

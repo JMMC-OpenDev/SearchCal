@@ -1,16 +1,17 @@
 #ifndef evhCMD_KEY_H
 #define evhCMD_KEY_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhCMD_KEY.h,v 1.4 2005-01-07 17:28:47 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     27-Sep-2004  Created
-* gzins     22-Dec-2004  Added command definition file (CDF)
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhCMD_KEY.h,v 1.5 2005-01-29 15:16:35 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     27-Sep-2004  Created
+ * gzins     22-Dec-2004  Added command definition file (CDF)
+ *
+ ******************************************************************************/
 
 /**
  * \file

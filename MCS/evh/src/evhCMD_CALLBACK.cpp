@@ -1,23 +1,24 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.4 2005-01-27 17:50:55 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     22-Sep-2004  Created
-* gzins     17-Nov-2004  Fixed bug in assignment operator method
-* gzins     22-Dec-2004  Added SetMethod()
-* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.5 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     22-Sep-2004  Created
+ * gzins     17-Nov-2004  Fixed bug in assignment operator method
+ * gzins     22-Dec-2004  Added SetMethod()
+ * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the evhCMD_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.4 2005-01-27 17:50:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.5 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

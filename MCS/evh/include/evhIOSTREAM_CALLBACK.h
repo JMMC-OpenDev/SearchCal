@@ -1,15 +1,17 @@
 #ifndef evhIOSTREAM_CALLBACK_H
 #define evhIOSTREAM_CALLBACK_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhIOSTREAM_CALLBACK.h,v 1.1 2004-10-18 09:40:10 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     22-Sep-2004  Created
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhIOSTREAM_CALLBACK.h,v 1.2 2005-01-29 15:16:35 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     22-Sep-2004  Created
+ *
+ ******************************************************************************/
+
 /**
  * \file
  * Declaration of the evhIOSTREAM_CALLBACK class 

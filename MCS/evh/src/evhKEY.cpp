@@ -1,21 +1,22 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhKEY.cpp,v 1.2 2005-01-07 18:20:56 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     24-Sep-2004  Created
-* gzins     07-Jan-2005  Implemented Match()
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhKEY.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     24-Sep-2004  Created
+ * gzins     07-Jan-2005  Implemented Match()
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhKEY.cpp,v 1.2 2005-01-07 18:20:56 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhKEY.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

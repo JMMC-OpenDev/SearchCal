@@ -1,25 +1,26 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.6 2005-01-07 18:12:30 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     23-Sep-2004  Created
-* gzins     08-Dec-2004  Handled evhCB_DELETE callback return value
-*                        Added some method documentation
-* lafrasse  08-Dec-2004  Added Purge().
-* gzins     08-Dec-2004  Updated Purge().
-* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.7 2005-01-29 15:17:02 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     23-Sep-2004  Created
+ * gzins     08-Dec-2004  Handled evhCB_DELETE callback return value
+ *                        Added some method documentation
+ * lafrasse  08-Dec-2004  Added Purge().
+ * gzins     08-Dec-2004  Updated Purge().
+ * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the evhCALLBACK_LIST class.
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.6 2005-01-07 18:12:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.7 2005-01-29 15:17:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2005-01-26 18:25:00 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2005-01-29 15:17:02 gzins Exp $"
 #
 # Makefile of evh library
 #
 # History 
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/01/26 18:25:00  gzins
+# Added files related to state/sub-state handling
+#
 # sccmgr    22-Sep-2004  Created
 # gzins     17-Nov-2004  Added evhTASK and evhSERVER class
 # gzins     22-Dec-2004  Added evhVERSION, evhDEBUG and evhVERSION CDF
@@ -94,6 +97,7 @@ evh_OBJECTS   = evhHANDLER           \
 				evhVERSION_CMD       \
 				evhDEBUG_CMD         \
 				evhStateCB           \
+				evhDebugCB           \
 				evhHelpCB            \
 				evhVersionCB
 #
