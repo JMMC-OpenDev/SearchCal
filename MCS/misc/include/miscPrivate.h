@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscPrivate.h,v 1.4 2004-08-02 14:25:25 lafrasse Exp $"
+* "@(#) $Id: miscPrivate.h,v 1.5 2004-12-17 08:15:04 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,6 @@
 * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
 * lafrasse  23-Jul-2004  Added miscDYN_BUF_MAGIC_STRUCTURE_ID from miscDynBuf.h
 * lafrasse  02-Aug-2004  Added mcs.h include
-*
 *
 *******************************************************************************/
 
@@ -28,7 +27,6 @@ functions in C++-code.
 extern "C" {
 #endif
 
-
 /* 
  * MCS Headers
  */
@@ -38,7 +36,6 @@ extern "C" {
 /* Module name */ 
 #define MODULE_ID "misc"
 
-
 /**
  * Unic MCS structure identifier.
  *
@@ -47,11 +44,9 @@ extern "C" {
  */
 #define miscDYN_BUF_MAGIC_STRUCTURE_ID ((mcsUINT32) 2813741963u)
 
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif /*!miscPrivate_H*/
-
 /*___oOo___*/
