@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: timlog.c,v 1.1 2004-12-17 10:06:44 gzins Exp $"
+* "@(#) $Id: timlog.c,v 1.2 2004-12-20 07:38:20 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     17-Dec-2004  Created
-*
+* gzins     20-Dec-2004  Added moduleName and fileLine argument to timlogStart
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * Definition of timer log functions.
   */
 
-static char *rcsId="@(#) $Id: timlog.c,v 1.1 2004-12-17 10:06:44 gzins Exp $"; 
+static char *rcsId="@(#) $Id: timlog.c,v 1.2 2004-12-20 07:38:20 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -57,11 +57,14 @@ static mcsLOGICAL     timlogHashTableCreated = mcsFALSE;
  * actions to be timed. If time marker exits, it is simply replaces by the new
  * one; i.e. the start time is reset to the current time.
  *
+ * \param moduleName name of the module.
  * \param level log level used to log message when timlogStop is called for
  * this action.
+ * \param fileLine file name and line number from where the message is issued.
  * \param actionName name of the action to be timed.
  */
-void timlogStart(const logLEVEL level, const char* actionName)
+void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
+                 const char *fileLine, const char* actionName)
 {
     logExtDbg("timlogStart(%s)", actionName);
     
@@ -83,6 +86,8 @@ void timlogStart(const logLEVEL level, const char* actionName)
         errCloseStack();
         return;
     }
+    strncpy((char *)entry->moduleName, moduleName, sizeof(mcsMODULEID)-1);
+    strncpy((char *)entry->fileLine, fileLine, sizeof(mcsSTRING128)-1);
     strncpy((char *)entry->actionName, actionName, sizeof(mcsSTRING64)-1);
     entry->level = level;
     gettimeofday (&entry->startTime, NULL);
@@ -163,7 +168,7 @@ void timlogStop(const char* actionName)
             "Elapsed time in execution of '%s' %02d:%02d:%02d.%03d",
             actionName, hour, min, sec, msec);
     /* Logs timer information */
-    logPrint(MODULE_ID, entry->level, __FILE_LINE__, logMessage);
+    logPrint(entry->moduleName, entry->level, entry->fileLine, logMessage);
 
     /* Deletes time marker */
     if (miscHashDeleteElement(&timlogHashTable, (char *)actionName) == FAILURE)
