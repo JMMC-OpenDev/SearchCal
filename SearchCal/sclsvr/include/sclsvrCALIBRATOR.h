@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.6 2004-12-06 13:05:12 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.7 2004-12-06 14:15:29 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -49,10 +49,9 @@ typedef mcsSTRING32 sclsvrCALIBRATOR_PROPERTY;
  */
 /* The following offset is used to have id for calibrator properties which
  * differs from the ucd id used by vobsSTAR class */
-#define sclsvrPROP_ID_OFFSET 0
 typedef enum
 {
-    UNKNOWN_PROP_ID = sclsvrPROP_ID_OFFSET-1,
+    UNKNOWN_PROP_ID = -1,
     ANGULAR_DIAMETER_ID,
     ANGULAR_DIAMETER_ERROR_ID,
     MO_ID,
@@ -151,9 +150,6 @@ private:
     mcsLOGICAL _correctVisibility;
     
 };
-
-
-
 
 #endif /*!sclsvrCALIBRATOR_H*/
 

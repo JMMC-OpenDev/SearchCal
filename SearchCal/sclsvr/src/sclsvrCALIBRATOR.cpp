@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.3 2004-12-06 13:05:12 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.4 2004-12-06 14:15:29 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.3 2004-12-06 13:05:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.4 2004-12-06 14:15:29 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -263,8 +263,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(sclsvrPROPERTY_ID id,
     // Affect property value
     if ((IsPropertySet(id) == mcsFALSE) || (overwrite == mcsTRUE))
     {
-        int propertyIdx; 
-        propertyIdx = id - sclsvrPROP_ID_OFFSET;
         strcpy(_compProperties[id], value);
     }
 
@@ -302,9 +300,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(sclsvrPROPERTY_ID id,
     // Affect property value
     if ((IsPropertySet(id) == mcsFALSE) || (overwrite == mcsTRUE))
     {
-        int propertyIdx; 
-        propertyIdx = id - sclsvrPROP_ID_OFFSET;
-        sprintf(_compProperties[propertyIdx], propertyNameList[propertyIdx][1],
+        sprintf(_compProperties[id], propertyNameList[id][1],
                 value);
     }
 
@@ -557,9 +553,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(sclsvrPROPERTY_ID id,
         return FAILURE;
     }
     // Retrieve property value
-    int propertyIdx; 
-    propertyIdx = id - sclsvrPROP_ID_OFFSET;
-    strcpy(value, _compProperties[propertyIdx]);
+    strcpy(value, _compProperties[id]);
 
     return SUCCESS;
 }
@@ -638,12 +632,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(sclsvrPROPERTY_ID id,
         return FAILURE;
     }
     // Convert property string value to float value
-    int propertyIdx; 
-    propertyIdx = id - sclsvrPROP_ID_OFFSET;
-    if (sscanf(_compProperties[propertyIdx], "%f", value) != 1)
+    if (sscanf(_compProperties[id], "%f", value) != 1)
     {
         errAdd(sclsvrERR_INVALID_PROPERTY_FORMAT, 
-               _compProperties[propertyIdx], "float");
+               _compProperties[id], "float");
         return FAILURE;
     }
 
@@ -775,7 +767,7 @@ sclsvrPROPERTY_ID sclsvrCALIBRATOR::Property2Id(char *property) const
     {
         if (strcmp(propertyNameList[i][0], property) == 0)
         {
-            return (sclsvrPROPERTY_ID)(sclsvrPROP_ID_OFFSET + i);
+            return (sclsvrPROPERTY_ID)(i);
         }
     }
 
@@ -836,7 +828,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
     {
         return FAILURE;
     }
-
+    // run alx function to compute magnitude
     if (alxComputeMissingMagnitude(spType,
                                    mgB,
                                    mgV,
@@ -1101,10 +1093,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
     // Get value of base max and wavelength
     GetProperty(INST_WAVELENGTH_VALUE_ID, &wavelength);
 
+    // get value in request of the base max
     request.GetConstraint(BASEMAX_ID, &baseMax);
-    printf("\nbaseMax %f\n", baseMax);
-    printf("%d\n", BASEMAX_ID);
-    request.Display();
     
     if (alxComputeVisibility(angularDiameter,
                              angularDiameterError,
@@ -1117,6 +1107,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
     {
         return FAILURE;
     }
+    // Affect visibility property
     SetProperty(VISIBILITY_ID, visibility2);
     SetProperty(VISIBILITY_ERROR_ID, visibilityError2);
     
@@ -1131,7 +1122,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeMultiplicity()");
 
-    SetProperty(MULTIPLICITY_ID, "1.0");
+    SetProperty(MULTIPLICITY_ID, "1.00");
     
     return SUCCESS;
 }
