@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.16 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.17 2005-02-09 16:39:34 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.15  2005/01/27 17:11:04  gzins
  * Fixed extended debug message for Receive method
  *
@@ -39,7 +42,7 @@
  * \sa msgSOCKET
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.16 2005-02-04 15:57:06 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.17 2005-02-09 16:39:34 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -381,7 +384,12 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
     // Set message id
     if (msg.GetCommandId() == -1)
     {
-        /* Get the system time */
+        // REM : A safer way to get a true unique ID is to use 'libuuid' (see
+        // `man uuidgen`), but it seems to be not available by default under
+        // BSD/Mac OS X, so it's not used for the moment (maybe after Mac OS X
+        // 10.4 release ;)
+
+        // Get the system time
         struct timeval  time; 
         gettimeofday(&time, NULL);
 
