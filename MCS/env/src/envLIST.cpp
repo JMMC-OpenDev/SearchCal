@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.cpp,v 1.7 2005-02-13 17:26:51 gzins Exp $"
+ * "@(#) $Id: envLIST.cpp,v 1.8 2005-02-15 13:09:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/13 17:26:51  gzins
+ * Minor changes in documentation
+ *
  * Revision 1.6  2005/02/13 16:53:13  gzins
  * Added CVS log as modification history
  *
@@ -24,7 +27,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.7 2005-02-13 17:26:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.8 2005-02-15 13:09:01 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -252,7 +255,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     mcsSTRING256 hostName;
     memset(parsedEnvName, 0, sizeof(parsedEnvName));
     memset(hostName, 0, sizeof(hostName));
-    char* currentLine = miscDynBufGetNextLinePointer(&envList, NULL, mcsTRUE);
+    char* currentLine = miscDynBufGetNextLine(&envList, NULL, mcsTRUE);
     do
     {
         // If the current line is not empty
@@ -282,7 +285,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
             _map[parsedEnvName] = pair<string,int>(hostName, portNumber);
         }
 
-        currentLine = miscDynBufGetNextLinePointer(&envList, currentLine,
+        currentLine = miscDynBufGetNextLine(&envList, currentLine,
                                                    mcsTRUE);
     }
     while (currentLine != NULL);
