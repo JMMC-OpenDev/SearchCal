@@ -72,6 +72,11 @@
 #define <xsl:value-of select="$className"/>_NAME "<xsl:value-of select="mnemonic"/>"
 
 /*
+ * Command definition file
+ */
+#define <xsl:value-of select="$moduleName"/><xsl:value-of select="mnemonic"/>_CDF_NAME "<xsl:value-of select="$cdfFilename"/>"
+
+/*
  * Class declaration
  */
         
