@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mcs.h,v 1.18 2005-01-29 07:27:29 gzins Exp $"
+ * "@(#) $Id: mcs.h,v 1.19 2005-02-15 12:36:53 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/01/29 07:27:29  gzins
+ *  Changed (again) command and module max lenght to 15
+ *  Changed (again) process name max lenght to 31
+ *
  * Revision 1.17  2005/01/28 23:37:35  gzins
  * Changed (back) command name max length to 8
  * Changed (back) module name max length to 7
@@ -114,9 +118,6 @@ typedef enum
     mcsFAILURE = -1,
     mcsSUCCESS 
 } mcsCOMPL_STAT;       /* Completion status returned by subroutines */
-/* Macros for backward compatibility */
-#define FAILURE mcsFAILURE
-#define SUCCESS mcsSUCCESS
 
 /*
  * Public functions
