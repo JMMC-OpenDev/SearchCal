@@ -20,4 +20,14 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Property '%.20s' is missing; could not compute '%.80s']]></errFormat>
    </error>
+   <error id="8">
+      <errName>NO_REQUEST_LINE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid file format '%.80s'; it should contain the user request in the first line.]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>REQUEST_LINE_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid file format '%.40s'; the first line '%.80s' does not correspond to the user request.]]></errFormat>
+   </error>
 </errorList>
