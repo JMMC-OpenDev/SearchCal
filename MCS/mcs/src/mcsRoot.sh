@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsRoot.sh,v 1.1 2005-03-11 15:44:06 mella Exp $"
+# "@(#) $Id: mcsRoot.sh,v 1.2 2005-03-14 10:37:16 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/03/11 15:44:06  mella
+# First revision
+#
 #*******************************************************************************
 
 #/**
@@ -40,7 +43,10 @@ TOPDIR=/home/MCS
 P=""
 for e in `ls $TOPDIR`
 do
-    P="$P $TOPDIR/$e o"  
+    if [ -d $TOPDIR/$e ]
+    then
+        P="$P $TOPDIR/$e o"  
+    fi
 done 
 
 $DIALOG --backtitle "Choose one existing MCSROOT" \
@@ -56,7 +62,6 @@ retval=$?
 
 # clear terminal
 clear
-
 choice=`cat /tmp/menu.tmp.$$`
 rm -f /tmp/menu.tmp.$$
 
@@ -74,6 +79,5 @@ case $retval in
   255)
     echo "ESC pressed.";;
 esac
-
 
 #___oOo___
