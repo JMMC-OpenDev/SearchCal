@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.5 2005-01-24 15:02:47 gzins Exp $"
+ * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.6 2005-01-29 20:01:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/01/24 15:02:47  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     06-Dec-2004  Created
  * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
  * gzins     14-Dec-2004  Minor documentation changes 
@@ -18,7 +21,7 @@
  * msgPROCESS_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.5 2005-01-24 15:02:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.6 2005-01-29 20:01:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -168,7 +171,7 @@ mcsUINT32 msgPROCESS_LIST::Size(void)
  * \code
  *     for (unsigned int el = 0; el < processList.Size(); el++)
  *     {
- *         processList.GetNextProcess((el==0))->Close();
+ *         processList.GetNextProcess((mcsLOGICAL)(el==0))->Close();
  *     }
  * \endcode
  *
