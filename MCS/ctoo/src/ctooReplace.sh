@@ -3,48 +3,47 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooReplace.sh,v 1.1 2004-09-10 17:40:27 gzins Exp $"
+# "@(#) $Id: ctooReplace.sh,v 1.2 2004-12-11 15:36:26 lafrasse Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
 # lafrasse  29/07/04    Forked form VLT Software
+# lafrasse  11/12/04    Changed documentation from VLT Software style to Doxygen
 #
 #*******************************************************************************
-# NAME
+
+#/**
+# \file
 #	ctooReplace - replace strings in files
 #
-# SYNOPSIS
-#	ctooReplace str1 str2 files ...
+# \synopsis
+#	ctooReplace \<old-string\> \<new-string\> \<file1\> [\<file2\> ...]
 #
-# DESCRIPTION
-#	ctooReplace replaces str1 with str2 in given files.
+# \details
+#	ctooReplace replaces \<old-string\> with \<new-string\> in given files.
 #
-# FILES
+#   This script returns 0 is everything was OK, otherwise 1 if any error
+#   occrured.
+#
+# \usedfiles
 #	All files in the argument list will be read and modified.
-#	All originals will be moved to backup files (`~' appended).
+#	All originals will be moved to backup files ('~' appended).
 #
-# ENVIRONMENT
-#
-# RETURN VALUES
-#	0=OK, 1=Error
-#
-# CAUTIONS
+# \warning
 #	For security make a backup of all given files before!
-#	Do not give regular expressions for <old-prefix> or <new-prefix>.
+#	Do not give regular expressions for \<old-prefix\> or \<new-prefix\>.
 #
-# EXAMPLES
+# \n
+# \ex
 #	Replace `foo' occurences by `bar' in all files of the `mod' module:
 #
 #		cd mod
 #		ctooReplace foo bar `find . -type f`
 #
-# SEE ALSO
+# \sa
 #	sed(1), find(1)
 #
-# BUGS
-#
-#-------------------------------------------------------------------------------
-#
+# */
 
 localpath=`dirname $0`
 PATH=/bin:/usr/bin:$localpath

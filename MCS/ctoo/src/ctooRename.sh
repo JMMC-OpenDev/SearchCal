@@ -3,61 +3,62 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooRename.sh,v 1.1 2004-09-10 17:40:27 gzins Exp $"
+# "@(#) $Id: ctooRename.sh,v 1.2 2004-12-11 15:36:26 lafrasse Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
 # lafrasse  29/07/04    Forked form VLT Software
+# lafrasse  11/12/04    Changed documentation from VLT Software style to Doxygen
 #
 #*******************************************************************************
-# NAME
+
+#/**
+# \file
 #	ctooRename - rename files and identifiers in a module
 #
-# SYNOPSIS
-#	ctooRename <old-prefix> <new-prefix> <file1> [<file2> ...]
+# \synopsis
+#	ctooRename \<old-prefix\> \<new-prefix\> \<file1\> [\<file2\> ...]
 #
-# DESCRIPTION
+# \details
 #	This program can be used to rename a module
-#	from  <old-prefix> to <new-prefix>.
+#	from  \<old-prefix\> to \<new-prefix\>.
 #	Both prefixes must consist of all lower case characters,
 #	otherwise the result is undefined.
 #	The file list can conveniently be given with the find command.
 #
-#	It will modify the name of all given files <fileN>, as well 
+#	It will modify the name of all given files \<fileN\>, as well 
 #	as all identifiers in them according to the prefixes.
 #
 #	First in all given files the identifiers are renamed,
 #	considering as much as possible the VLT conventions.
 #	For instance:
 #
-#		oldmod.h	-->	newmod.h
-#		oldmodFoo	-->	newmodFoo
-#		oldmodfoo	-->	oldmodfoo	(unchanged!)
-#		oldmod_foo	-->	newmod_foo
-#		oldmodFOO	-->	newmodFOO
-#		OLDMOD_FOO	-->	NEWMOD_FOO
-#		OLDMODFOO	-->	OLDMODFOO	(unchanged!)
+#	    oldmod.h     -->	newmod.h\n
+#	    oldmodFoo    -->	newmodFoo\n
+#	    oldmodfoo    -->	oldmodfoo	(unchanged!)\n
+#	    oldmod_foo   -->	newmod_foo\n
+#	    oldmodFOO    -->	newmodFOO\n
+#	    OLDMOD_FOO   -->	NEWMOD_FOO\n
+#	    OLDMODFOO    -->	OLDMODFOO	(unchanged!)\n
 #
 #	After that all filenames will be changed, replacing
-#	literally <old-prefix> by <new-prefix>.
+#	literally \<old-prefix\> by \<new-prefix\>.
 #
 #	Finally one possibly has to do some manual alignment work.
 #
-# FILES
+#   This script returns 0 is everything was OK, otherwise 1 if any error
+#   occrured.
+#
+# \usedfiles
 #	All files in the argument list will be read and modified.
-#	All originals will be moved to backup files (`~' appended).
+#	All originals will be moved to backup files ('~' appended).
 #
-# ENVIRONMENT
-#
-# RETURN VALUES
-#	0=OK, 1=Error
-#
-# CAUTIONS
+# \warning
 #	For security make a backup of all given files before!
 #	Do not give regular expressions for <old-prefix> or <new-prefix>.
-#	See also BUGS!
 #
-# EXAMPLES
+# \n
+# \ex
 #	Modify all files in the module `foo' for the new name `bar':
 #
 #		cd foo
@@ -65,13 +66,10 @@
 #		cd ..
 #		mv foo bar
 #
-# SEE ALSO
+# \sa
 #	sed(1), find(1)
 #
-# BUGS
-#
-#-------------------------------------------------------------------------------
-#
+# */
 
 localpath=`dirname $0`
 PATH=/bin:/usr/bin:$localpath
