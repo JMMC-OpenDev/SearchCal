@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.12 2004-12-21 09:58:40 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.13 2004-12-22 10:08:27 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.12 2004-12-21 09:58:40 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.13 2004-12-22 10:08:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -57,6 +57,7 @@ vobsSTAR::vobsSTAR()
     // Add all star properties 
     AddProperties();
     _propertyListIterator=_propertyList.begin();
+    _propertyOrderIterator=_propertyOrder.begin();
 }
 
 /**
@@ -221,16 +222,18 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
     logExtDbg("vobsSTAR::GetNextProperty()");
     if (init == mcsTRUE)
     {
-        _propertyListIterator = _propertyList.begin();
+        _propertyOrderIterator=_propertyOrder.begin();
     }
     else
     {
-        _propertyListIterator++;
-        if ( _propertyListIterator== _propertyList.end())
+        _propertyOrderIterator++;
+        if ( _propertyOrderIterator == _propertyOrder.end())
         {
             return NULL;
         }
     }
+    _propertyListIterator = _propertyList.find(_propertyOrderIterator->second);
+    
     return (&(_propertyListIterator->second));
 }
 
@@ -642,36 +645,67 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     //logExtDbg("vobsSTAR::AddProperties()");
     AddProperty(vobsSTAR_ID_MAIN, "hd", vobsSTRING_PROPERTY);
+    _propertyOrder[0]=vobsSTAR_ID_MAIN;
     AddProperty(vobsSTAR_ID_ALTERNATIVE, "hip", vobsSTRING_PROPERTY);
+    _propertyOrder[1]=vobsSTAR_ID_ALTERNATIVE;
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "ra", vobsSTRING_PROPERTY);
+    _propertyOrder[2]=vobsSTAR_POS_EQ_RA_MAIN;
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "dec", vobsSTRING_PROPERTY);
+    _propertyOrder[3]=vobsSTAR_POS_EQ_DEC_MAIN;
     AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmdec", vobsSTRING_PROPERTY);
+    _propertyOrder[4]=vobsSTAR_POS_EQ_PMDEC;
     AddProperty(vobsSTAR_POS_EQ_PMRA, "pmra", vobsSTRING_PROPERTY);
+    _propertyOrder[5]=vobsSTAR_POS_EQ_PMRA;
     AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY);
+    _propertyOrder[6]=vobsSTAR_POS_PARLX_TRIG;
     AddProperty(vobsSTAR_SPECT_TYPE_MK, "tsp", vobsSTRING_PROPERTY);
+    _propertyOrder[7]=vobsSTAR_SPECT_TYPE_MK;
     AddProperty(vobsSTAR_CODE_VARIAB, "varflag", vobsSTRING_PROPERTY);
+    _propertyOrder[8]=vobsSTAR_CODE_VARIAB;
     AddProperty(vobsSTAR_CODE_MULT_FLAG, "multflag", vobsSTRING_PROPERTY);
+    _propertyOrder[9]=vobsSTAR_CODE_MULT_FLAG;
     AddProperty(vobsSTAR_POS_GAL_LAT, "glat", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[10]=vobsSTAR_POS_GAL_LAT;
     AddProperty(vobsSTAR_POS_GAL_LON, "glon", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[11]=vobsSTAR_POS_GAL_LON;
     AddProperty(vobsSTAR_VELOC_HC, "radvel", vobsSTRING_PROPERTY);
+    _propertyOrder[12]=vobsSTAR_VELOC_HC;
     AddProperty(vobsSTAR_EXTENSION_DIAM, "diam", vobsSTRING_PROPERTY);
+    _propertyOrder[13]=vobsSTAR_EXTENSION_DIAM;
     AddProperty(vobsSTAR_OBS_METHOD, "meth", vobsSTRING_PROPERTY);
+    _propertyOrder[14]=vobsSTAR_OBS_METHOD;
     AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "wlen", vobsFLOAT_PROPERTY);
+    _propertyOrder[15]=vobsSTAR_INST_WAVELENGTH_VALUE;
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
+    _propertyOrder[16]=vobsSTAR_PHOT_FLUX_IR_MISC;
     AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
+    _propertyOrder[17]=vobsSTAR_UNITS;
     AddProperty(vobsSTAR_PHOT_JHN_U, "U", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[18]=vobsSTAR_PHOT_JHN_U;
     AddProperty(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[19]=vobsSTAR_PHOT_JHN_B;
     AddProperty(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[20]=vobsSTAR_PHOT_JHN_V;
     AddProperty(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[21]=vobsSTAR_PHOT_JHN_R;
     AddProperty(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[22]=vobsSTAR_PHOT_JHN_I;
     AddProperty(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[23]=vobsSTAR_PHOT_JHN_J;
     AddProperty(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[24]=vobsSTAR_PHOT_JHN_H;
     AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[25]=vobsSTAR_PHOT_JHN_K;
     AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[26]=vobsSTAR_PHOT_JHN_L;
     AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[27]=vobsSTAR_PHOT_JHN_M;
     AddProperty(vobsSTAR_PHOT_IR_N_10_4, "N", vobsSTRING_PROPERTY);
+    _propertyOrder[28]=vobsSTAR_PHOT_IR_N_10_4;
     AddProperty(vobsSTAR_VELOC_ROTAT, "velocrotat", vobsSTRING_PROPERTY);
+    _propertyOrder[29]=vobsSTAR_VELOC_ROTAT;
     AddProperty(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY);
+    _propertyOrder[30]=vobsSTAR_PHOT_COLOR_EXCESS;
 
     return SUCCESS;
 }
