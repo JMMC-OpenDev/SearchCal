@@ -3,46 +3,32 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplate.sh,v 1.1 2004-09-10 17:40:27 gzins Exp $"
+# "@(#) $Id: ctooGetTemplate.sh,v 1.2 2004-09-15 07:46:41 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
 # lgluck    23/04/04    Created
 #
 #*******************************************************************************
-# NAME
-#   ctooGetTemplate - create a file from a standard template (code or document)
+
+#/**
+# \file
+# Create module directory structure or template files for code.
 #
-# SYNOPSIS
-#   ctooGetTemplate
+# \synopsis
+# ctooGetTemplate
 #
-# DESCRIPTION
-#   display available standard template families and create a file from a 
-#   standard template for :
-#       - directory structure
-#       - code : - shell scripts
-#                - C      (.c, .h) 
-#                - C++    (.c, .h) 
-#                - Makefile
-#
-# FILES
-#   $MCSROOT/templates/forXxxxxx  <IN>   various template files
-#
-# ENVIRONMENT
-#   MCSROOT  <IN>  where to look for template files (templates/)
-#
-# RETURN VALUES
-#
-# CAUTIONS
-#
-# EXAMPLES
-#
-# SEE ALSO
-#
-# BUGS
-#
-#-------------------------------------------------------------------------------
-#
+# \details
+# Allow to create 2 kinds of working structure for development.
+# -# module directory structure : a way to organize properly module files
+# -# templates for code : following standard templates are available
+#                         - shell scripts
+#                         - C
+#                         - C++
+#                         - Makefile
+# 
+# */
+
 
 # signal trap (if any)
 
@@ -51,13 +37,13 @@
 cat <<xyz
 --------------------------------------------------------------------------------
 Templates are available for :
-    1- directory structure
+    1- module directory structure
     2- code
 xyz
 
 # Propose the user to enter his choice
-echo -e "\n-> Enter the number corresponding to the template type you need or"
-echo -e "   press <Enter> to exit : \c"
+echo -e "\n-> Enter the number corresponding to the working structure you need "
+echo -e "   or press <Enter> to exit : \c"
 
 # Read the choice
 read choice
