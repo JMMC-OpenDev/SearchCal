@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.14 2005-02-04 15:30:19 gzins Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.15 2005-02-04 15:49:00 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/02/04 15:30:19  gzins
+* Updated Complete method
+*
 * Revision 1.13  2005/02/04 14:22:50  scetre
 * Sort method for GUI added
 *
@@ -19,7 +22,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.14 2005-02-04 15:30:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.15 2005-02-04 15:49:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -531,7 +534,7 @@ sclsvrCALIBRATOR_LIST::GetMaximalExpectedRelativeAccuracy(mcsFLOAT visMax)
     {
         calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
         // if it is not possible to get the visibility, remove the star
-        if (calibrator->GetPropertyValue(sclsvrCALIBRATOR_VISIBILITY,
+        if (calibrator->GetPropertyValue(sclsvrCALIBRATOR_VIS,
                                          &calibratorVis) == mcsFAILURE)
         {
             // Remove it
