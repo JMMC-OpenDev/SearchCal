@@ -149,5 +149,10 @@
       <errName>NO_MORE_CRITERIA</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[no more criteria in the list]]></errFormat>
+  </error>
+  <error id="36">
+      <errName>UNKNOWN_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[the virtual observatory can't find star in band %s]]></errFormat>
    </error>
 </errorList>
