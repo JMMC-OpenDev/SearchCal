@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.11 2005-02-11 10:31:26 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.12 2005-02-11 10:38:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/02/11 10:31:26  gzins
+ * Changed EXTENSION_DIAM to  UD_DIAM
+ *
  * Revision 1.10  2005/02/10 10:46:42  gzins
  * Changed column name to parameter name
  *
@@ -46,7 +49,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.11 2005-02-11 10:31:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.12 2005-02-11 10:38:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -323,11 +326,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
     // Set the catalog name
     cDataStructure.SetCatalogName(GetName());
 
-    // Set line to skip to -1 because in the CDATA AppendLines method, number of
-    // lines to skip is increased of 1, because there is an empty line between
-    // each data line (due to \n to \0 conversion). The CDATA AppendLines method
-    // will have to be changed for this reason.
-    cDataStructure.SetNbLinesToSkip(-1);
+    // Set line to skip to 0
+    cDataStructure.SetNbLinesToSkip(0);
 
     // For each dynamic buffer line
     int  lineNb = 1;
@@ -472,7 +472,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
 
         // Rewrite diameter error
         starPtr->SetPropertyValue(vobsSTAR_UD_DIAM_ERROR, diamError,
-                                  GetName(), mcsTRUE);
+                                  GetName(), vobsCONFIDENCE_HIGH, mcsTRUE);
     }
 
     // If log level is DEBUG or EXTDBG
