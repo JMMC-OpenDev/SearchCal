@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.h,v 1.4 2004-12-03 08:53:34 gzins Exp $"
+* "@(#) $Id: evhSERVER.h,v 1.5 2004-12-22 09:00:04 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,7 @@
 * gzins     23-Nov-2004  Used new msg C++ library.
 *                        Added SendReply method
 * gzins     03-Dec-2004  Added SendCommand
+* gzins     22-Dec-2004  Added HelpCB()
 *
 *******************************************************************************/
 
@@ -90,6 +91,7 @@ public:
     virtual mcsCOMPL_STAT Init(mcsINT32 argc, char *argv[]);
 
     // Command callbacks
+    virtual evhCB_COMPL_STAT HelpCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT VersionCB(msgMESSAGE &msg, void*);
 
     // Connection to MCS message manager
