@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvr.h,v 1.3 2005-01-27 15:56:29 scetre Exp $"
+* "@(#) $Id: sclsvr.h,v 1.4 2005-02-07 11:10:29 scetre Exp $"
 *
 * History
 * -------
@@ -27,7 +27,6 @@
 #include "sclsvrErrors.h"
 #include "sclsvrGETCAL_CMD.h"
 #include "sclsvrGETSTAR_CMD.h"
-#include "sclsvrSEARCH_CALIBRATORS.h"
 #include "sclsvrSERVER.h"
 
 #endif /*!sclsvr_H*/

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2005-01-25 11:07:48 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.6 2005-02-07 11:10:29 scetre Exp $"
 #
 # Makefile of sclsvr
 #
@@ -53,7 +53,6 @@ sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr simcli
 INCLUDES        = sclsvr.h					\
 				  sclsvrCALIBRATOR.h		\
 				  sclsvrCALIBRATOR_LIST.h	\
-				  sclsvrSEARCH_CALIBRATORS.h\
 				  sclsvrGETCAL_CMD.h        \
 				  sclsvrGETSTAR_CMD.h       \
 				  sclsvrSERVER.h

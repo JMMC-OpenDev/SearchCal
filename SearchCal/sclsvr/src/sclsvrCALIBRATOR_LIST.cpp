@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.18 2005-02-07 10:06:36 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.19 2005-02-07 11:10:29 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/02/07 10:06:36  scetre
+* Changed filter method name in FilterBy...
+*
 * Revision 1.17  2005/02/07 09:50:45  scetre
 * Changed HadCoherentDiameter and VisibilityOk method in IsDiameterOk and IsVisibilityOk
 *
@@ -31,7 +34,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.18 2005-02-07 10:06:36 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.19 2005-02-07 11:10:29 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,7 +74,10 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 {
 }
 
-//Copy constructor
+/**
+ * Copy Method from a vobsSTAR_LIST
+ * \param list he list to copy
+ */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::Copy()");
@@ -83,7 +89,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
     return mcsSUCCESS;
 }
 
-//Copy constructor
+/**
+ * Copy Method from a sclsvrCALIBRATOR_LIST
+ * \param list he list to copy 
+ */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list)
 {
      
@@ -218,7 +227,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
  *
  * \param buffer the dynamic buffer where is stord the list
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
 {
@@ -255,11 +265,65 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
 }
 
 /**
+ * Copy in a list the current list
+ *
+ * \param list the list to copy in
+ * \param filterDiameterNok flag to filter nok diameter star
+ * \param filterVisibilityNok flag to filter nok visibility star
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned. 
+ */
+mcsCOMPL_STAT
+sclsvrCALIBRATOR_LIST::CopyIn(sclsvrCALIBRATOR_LIST *list,
+                                 mcsLOGICAL filterDiameterNok,
+                                 mcsLOGICAL filterVisibilityNok)
+{
+    logExtDbg("sclsvrCALIBRATOR_LIST::CopyIn()");
+    // if the flag to remove diameter nok is true
+    if (filterDiameterNok == mcsTRUE)
+    {
+        sclsvrCALIBRATOR *calibrator;
+        for (unsigned int el = 0; el < Size(); el++)
+        {
+
+            if ((calibrator =
+                 ((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0))))->
+                IsDiameterOk()
+                == mcsTRUE )
+            {
+                logTest("calibrator %d had coherent diameter\n", el+1);
+                list->AddAtTail(*calibrator);
+            }
+        }
+    }
+    // if the flag to remove visibility nok is true    
+    if (filterVisibilityNok == mcsTRUE)
+    {
+        sclsvrCALIBRATOR *calibrator;
+        // for each calibrator of the list
+        for (unsigned int el = 0; el < Size(); el++)
+        {
+            if ((calibrator=
+                 ((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0))))->
+                IsVisibilityOk() 
+                == mcsTRUE )
+            {
+                logTest("calibrator %d had visibility OK\n", el+1);
+                list->AddAtTail(*calibrator);
+            }
+        }
+    }
+    return mcsSUCCESS;
+}
+
+/**
  * Get a list of calibrator with coherent diameter
  *
  * \param list the list to get
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  **/
 mcsCOMPL_STAT 
     sclsvrCALIBRATOR_LIST::GetCoherentDiameter(sclsvrCALIBRATOR_LIST *list)
@@ -288,7 +352,8 @@ mcsCOMPL_STAT
  *
  * \param list the list to get
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  **/
 mcsCOMPL_STAT 
     sclsvrCALIBRATOR_LIST::GetVisibilityOk(sclsvrCALIBRATOR_LIST *list)
@@ -434,6 +499,9 @@ sclsvrCALIBRATOR_LIST::FilterByMagnitude(char *band,
 
 /**
  * Method to remove calibrator which have not the specified Spectral type
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT
 sclsvrCALIBRATOR_LIST::FilterBySpectralType(std::list<char *> spectTypeList)
@@ -486,6 +554,9 @@ sclsvrCALIBRATOR_LIST::FilterBySpectralType(std::list<char *> spectTypeList)
 
 /**
  * Method to remove calibrator which have not the specified luminosity class
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT 
 sclsvrCALIBRATOR_LIST::FilterByLuminosityClass(std::list<char *> luminosityList)
@@ -540,6 +611,9 @@ sclsvrCALIBRATOR_LIST::FilterByLuminosityClass(std::list<char *> luminosityList)
 
 /**
  * Method to remove calibrator which have not the specified expected accuracy
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT
 sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
@@ -582,6 +656,9 @@ sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
 /**
  * Method to remove calibrator which have Variability if they are not
  * authorized.
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterByVariability(mcsLOGICAL authorized)
 {
@@ -619,6 +696,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterByVariability(mcsLOGICAL authorized)
 
 /**
  * Method to remove calibrator which have Multiplicity
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT 
 sclsvrCALIBRATOR_LIST::FilterByMultiplicity(mcsLOGICAL authorized)
@@ -670,6 +750,11 @@ sclsvrCALIBRATOR_LIST::FilterByMultiplicity(mcsLOGICAL authorized)
 
 /**
  * Method to delete a star from his number in the list
+ *
+ * \param starNumber the number of the star to removed
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
 {
@@ -694,6 +779,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
 
 /**
  * Method to load a star list from a file
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load()
 {

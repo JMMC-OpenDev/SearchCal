@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.9 2005-02-07 10:06:36 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.10 2005-02-07 11:10:29 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/07 10:06:36  scetre
+* Changed filter method name in FilterBy...
+*
 * Revision 1.8  2005/02/07 09:15:57  gzins
 * Added method to copy list from another sclsvrCALIBRATOR_LIST instance
 *
@@ -44,8 +47,11 @@ public:
     sclsvrCALIBRATOR_LIST();//constructor
     virtual ~sclsvrCALIBRATOR_LIST();//destructor
 
-    virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);//copy constructor
+    virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
     virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list);
+    virtual mcsCOMPL_STAT CopyIn(sclsvrCALIBRATOR_LIST *list,
+                                 mcsLOGICAL filterDiameterNok = mcsFALSE,
+                                 mcsLOGICAL filterVisibilityNok = mcsFALSE);
     virtual mcsCOMPL_STAT AddAtTail(sclsvrCALIBRATOR &calibrator);
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
  
