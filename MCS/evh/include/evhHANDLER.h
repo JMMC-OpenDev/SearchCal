@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.h,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhHANDLER.h,v 1.2 2004-11-18 17:28:36 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -59,7 +59,7 @@ public:
                                       evhCMD_CALLBACK &callback);
     virtual mcsCOMPL_STAT AddCallback(const evhIOSTREAM_KEY &key,
                                       evhIOSTREAM_CALLBACK &callback);
-    virtual mcsCOMPL_STAT MainLoop(void);
+    virtual mcsCOMPL_STAT MainLoop(msgMESSAGE *msg=NULL);
 
     
     virtual mcsCOMPL_STAT Run(const evhCMD_KEY &key, msgMESSAGE &msg);
