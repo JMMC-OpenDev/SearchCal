@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.1 2004-11-22 15:55:08 scetre Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.2 2004-11-22 16:26:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -28,25 +28,8 @@
  */
 
 /**
- * .
+ * Client-side specialized object wrapper around system socket.
  * 
- * OPTIONAL detailed description of the class follows here.
- *
- * \usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
- *
- * \n
- * \env
- * OPTIONAL. If needed, environmental variables accessed by the class. For
- * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
- * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
- *
  * \n
  * \ex
  * OPTIONAL. Code example if needed
@@ -54,18 +37,11 @@
  * \code
  * Insert your code example here
  * \endcode
- *
- * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * \sa modcppMain.C
  * 
- * \bug OPTIONAL. Bugs list if it exists.
- * \bug For example, description of the first bug
- * \bug For example, description of the second bug
+ * \sa http://www.linuxgazette.com/issue74/tougher.html
+ * \sa msgSOCKET.cpp
  * 
- * \todo OPTIONAL. Things to forsee list, if needed. For example, 
- * \todo add other methods, dealing with operations.
- * 
+ * \todo write code example
  */
 class msgSOCKET_CLIENT : public msgSOCKET
 {

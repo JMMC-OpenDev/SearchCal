@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_SERVER.h,v 1.1 2004-11-22 15:55:08 scetre Exp $"
+* "@(#) $Id: msgSOCKET_SERVER.h,v 1.2 2004-11-22 16:26:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -28,10 +28,8 @@
  */
 
 /**
- * Brief description of the class, which ends at this dot.
- * 
- * OPTIONAL detailed description of the class follows here.
- *
+ * Server-side specialized object wrapper around system socket.
+ *  
  * \n
  * \ex
  * OPTIONAL. Code example if needed
@@ -40,10 +38,14 @@
  * Insert your code example here
  * \endcode
  *
+ * \sa http://www.linuxgazette.com/issue74/tougher.html
  * \sa msgSOCKET.cpp
  * 
+ * \todo write code example
  */
-class msgSOCKET_SERVER
+#include "msgSOCKET.h"
+
+class msgSOCKET_SERVER : public msgSOCKET
 {
 
 public:
@@ -54,7 +56,7 @@ public:
     virtual ~msgSOCKET_SERVER();
 
     virtual mcsCOMPL_STAT Open(std::string host,
-                   mcsINT32 port);
+                               mcsINT32 port);
 protected:
 
     

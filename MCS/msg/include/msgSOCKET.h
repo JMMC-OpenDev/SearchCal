@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.5 2004-11-22 16:04:31 scetre Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.6 2004-11-22 16:26:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -85,8 +85,8 @@ public:
 
     // Data Transmission
     // String
-    virtual mcsCOMPL_STAT Send(const std::string s) const;
-    virtual mcsCOMPL_STAT Receive(std::string&) const;
+    virtual mcsCOMPL_STAT Send(const std::string string) const;
+    virtual mcsCOMPL_STAT Receive(std::string& string) const;
     // msgMESSAGE
     virtual mcsCOMPL_STAT Send(msgMESSAGE &msg);
     virtual mcsCOMPL_STAT Receive(msgMESSAGE &msg,
