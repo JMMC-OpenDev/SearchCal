@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.1 2004-12-20 09:39:46 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.2 2005-01-24 10:59:18 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,6 +26,19 @@
 /*
  * Class declaration
  */
+
+/**
+ * Confidence index.
+ */
+typedef enum
+{
+    vobsCONFIDENCE_VERY_LOW=0,
+    vobsCONFIDENCE_2, /* id of the coefficient a1 in the table */
+    vobsCONFIDENCE_3, /* id of the coefficient a2 in the table */
+    vobsCONFIDENCE_4, /* id of the coefficient a3 in the table */
+    vobsCONFIDENCE_HIGH  /* id of the coefficient a4 in the table */
+} vobsCONFIDENCE_INDEX;
+
 typedef enum
 {
     vobsSTRING_PROPERTY = 0,
@@ -52,15 +65,25 @@ public:
     virtual ~vobsSTAR_PROPERTY();
     
     // Set value
-    virtual mcsCOMPL_STAT SetValue(char *value, 
+    virtual mcsCOMPL_STAT SetValue(char *value,
+                                   mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,
+                                   mcsFLOAT isComputed=mcsFALSE,
                                    mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetValue(mcsFLOAT value, 
+    virtual mcsCOMPL_STAT SetValue(mcsFLOAT value,
+                                   mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,
+                                   mcsFLOAT isComputed=mcsFALSE,
                                    mcsLOGICAL overwrite=mcsFALSE);
     
     // Get value
-    virtual const char *GetValue(void) const;
+    virtual const char   *GetValue(void) const;
     virtual mcsCOMPL_STAT GetValue(mcsFLOAT *value) const;
- 
+
+    // Get Confidence Index
+    virtual mcsINT32      GetConfidenceIndex();
+    
+    // Is value computed?
+    virtual mcsLOGICAL    IsComputed() const;
+    
     // Is value set?
     virtual mcsLOGICAL    IsSet() const;
 
@@ -71,11 +94,13 @@ public:
 protected:
     
 private:
-    string            _id;     // Identifier
-    string            _name;   // Name
-    vobsPROPERTY_TYPE _type;   // Type of the value
-    string            _format; // Format to print value 
-    mcsSTRING64       _value;  // Value
+    string            _id;              // Identifier
+    string            _name;            // Name
+    vobsPROPERTY_TYPE _type;            // Type of the value
+    string            _format;          // Format to print value 
+    mcsSTRING64       _value;           // Value
+    mcsINT32          _confidenceIndex; // Confidence index
+    mcsLOGICAL        _isComputed;      // Say if property is computed or not
 };
 
 #endif /*!vobsSTAR_PROPERTY_H*/
