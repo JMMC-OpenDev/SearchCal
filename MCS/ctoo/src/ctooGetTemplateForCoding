@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.6 2004-06-30 14:00:45 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.7 2004-06-30 14:02:00 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -40,12 +40,12 @@
 #-------------------------------------------------------------------------------
 #
 
-# Set templates directories and verify they exist
+# Set templates directories
 MCSTEMPLATES=$MCSROOT/templates      
 CODE_DIR=$MCSTEMPLATES/forCoding
 MAKEFILE_DIR=$MCSTEMPLATES/forMakefile
 
-# check environment
+# check environment : verify that templates directories exist
 if [ ! -d "$MCSTEMPLATES" ]
 then 
     echo "ERROR - ctooGetTemplateForCoding: $MCSTEMPLATES not available. "
