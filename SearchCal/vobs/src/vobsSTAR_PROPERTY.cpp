@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.8 2005-02-22 14:15:22 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.9 2005-02-22 14:22:25 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/02/22 14:15:22  gzins
+* Used format when affecting floatting value
+*
 * Revision 1.7  2005/02/13 15:35:02  gzins
 * Added property name in message of vobsERR_INVALID_PROP_FORMAT error
 *
@@ -30,7 +33,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.8 2005-02-22 14:15:22 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.9 2005-02-22 14:22:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -160,6 +163,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
 {
     logExtDbg("vobsSTAR_PROPERTY::SetValue()");
 
+    // If value is empty, return
+    if (strcmp(value, vobsSTAR_PROP_NOT_SET) == 0)
+    {
+        return mcsSUCCESS;
+    }
+
     // Affect value
     if ((IsSet() == mcsFALSE) || (overwrite==mcsTRUE))
     {
@@ -173,7 +182,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                 errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value, "%f");
                 return (mcsFAILURE);
             }
-            if (sprintf(_value, _format.c_str(), fValue) != 1)
+            if (sprintf(_value, _format.c_str(), fValue) == 0)
             {
                 errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value,
                         _format.c_str());
@@ -227,7 +236,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
     // Affect value
     if ((IsSet() == mcsFALSE) || (overwrite==mcsTRUE))
     {
-        if (sprintf(_value, _format.c_str(), value) != 1)
+        if (sprintf(_value, _format.c_str(), value) == 0)
         {
             errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value,
                     _format.c_str());
