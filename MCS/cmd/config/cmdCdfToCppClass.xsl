@@ -52,7 +52,7 @@
 
 /**
  * \file
- * <xsl:value-of select="$className"/> class declaration.
+ * Generated for <xsl:value-of select="$className"/> class declaration.
  * This file has been automatically generated. If this file is missing in your
  * modArea, just type make all to regenerate.
  */
@@ -118,7 +118,7 @@ private:
     <xsl:template name="cmdCppClass">
 /**
  * \file
- * <xsl:value-of select="$className"/> class definition.
+ * Generated for <xsl:value-of select="$className"/> class definition.
  */
  
  
