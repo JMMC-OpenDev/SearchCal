@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.36 2005-03-03 16:10:31 gluck Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.37 2005-03-04 07:59:03 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2005/03/03 16:10:31  gluck
+ * Code review corrections: code + documentation ...
+ *
  * Revision 1.35  2005/02/22 11:11:38  lafrasse
  * Added miscDynBufGetNextCommentLine(), miscDynBufAppendLine() and miscDynBufAppendComentLine()
  *
@@ -146,7 +149,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.36 2005-03-03 16:10:31 gluck Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.37 2005-03-04 07:59:03 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1396,7 +1399,7 @@ mcsCOMPL_STAT miscDynBufReplaceStringFromTo (miscDYN_BUF  *dynBuf,
          * Increment the number of bytes to be copied from the string in order
          * to add the ending '\0' to the Dynamic Buffer
          */
-        ++stringLength;
+        stringLength++;
     }
     
     /* 
