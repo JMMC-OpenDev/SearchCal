@@ -1,40 +1,17 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhTestTask.cpp,v 1.1 2004-12-05 19:03:25 gzins Exp $"
-*
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* gzins     10-Jun-2004  created
-*
-*
-********************************************************************************
-*   NAME
-* 
-*   SYNOPSIS
-* 
-*   DESCRIPTION
-*
-*   FILES
-*
-*   ENVIRONMENT
-*
-*   COMMANDS
-*
-*   RETURN VALUES
-*
-*   CAUTIONS 
-*
-*   EXAMPLES
-*
-*   SEE ALSO
-*
-*   BUGS   
-* 
-*-----------------------------------------------------------------------------*/
+ * JMMC project
+ *
+ * "@(#) $Id: evhTestTask.cpp,v 1.2 2005-01-29 07:24:48 gzins Exp $"
+ *
+ * History:
+ * --------
+ * $Log: not supported by cvs2svn $
+ * gzins     10-Jun-2004  created
+ *
+ *----------------------------------------------------------------------------*/
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: evhTestTask.cpp,v 1.1 2004-12-05 19:03:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestTask.cpp,v 1.2 2005-01-29 07:24:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -1,10 +1,11 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhTestServer.cpp,v 1.5 2005-01-29 07:20:11 gzins Exp $"
+ * "@(#) $Id: evhTestServer.cpp,v 1.6 2005-01-29 07:24:48 gzins Exp $"
  *
  * History:
  * --------
+ * $Log: not supported by cvs2svn $
  * gzins     24-Sep-2004  Created
  *
  *
@@ -15,7 +16,7 @@
  * Test program for evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.5 2005-01-29 07:20:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.6 2005-01-29 07:24:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

@@ -1,15 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-11-18 17:40:57 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2005-01-29 07:24:48 gzins Exp $"
 #
 # Makefile of test programs for evh module 
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
-# gzins     24-Sep-2004  Created
-#
-#
+# History:
+# --------
+# $Log: not supported by cvs2svn $
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -170,9 +168,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
