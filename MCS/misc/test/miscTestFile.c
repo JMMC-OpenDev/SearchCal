@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.5 2004-08-03 13:48:04 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.6 2004-08-23 14:53:14 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -11,11 +11,12 @@
 * lafrasse  02-Aug-2004  Changed local includes to use miscFile headers
 * lafrasse  03-Aug-2004  Changed miscResolvePath test to reveal a bug that was
 *                        causing an '\' append at the end of the computed path
+* lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.5 2004-08-03 13:48:04 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.6 2004-08-23 14:53:14 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -225,13 +226,13 @@ int main (int argc, char *argv[])
     printf("\n\n");
 
     /* Test of miscGetEnvVarValue() */
-    tmp[0] = '\0';
     printf("miscGetEnvVarValue() Function Test :\n\n");
     printf("   Environment Variable name      | Env. Var. value\n");
     printf("   -------------------------------+-------------------------\n");
     strcpy (fullFileName, "SHEL");
     printf("   %-30s | ", fullFileName);
-    if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
+    if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
+        == FAILURE)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -239,11 +240,12 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("%s\n", tmp);
+        printf("%s\n", fullFileName);
     }
     strcpy (fullFileName, "HOME");
     printf("   %-30s | ", fullFileName);
-    if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
+    if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
+        == FAILURE)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -251,11 +253,12 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("%s\n", tmp);
+        printf("%s\n", fullFileName);
     }
     strcpy (fullFileName, "INTROOT");
     printf("   %-30s | ", fullFileName);
-    if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
+    if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
+        == FAILURE)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -263,11 +266,12 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("%s\n", tmp);
+        printf("%s\n", fullFileName);
     }
     strcpy (fullFileName, "MCSROOT");
     printf("   %-30s | ", fullFileName);
-    if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
+    if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
+        == FAILURE)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -275,7 +279,7 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("%s\n", tmp);
+        printf("%s\n", fullFileName);
     }
     printf("\n\n");
 

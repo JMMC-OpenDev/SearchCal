@@ -17,6 +17,7 @@
 *                        functions move from miscDynStr.h to miscDynBuf.h
 * lafrasse  03-Aug-2004  Corrected a bug in miscResolvePath that was causing an
 *                        '\' append at the end of the computed path
+* lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -26,7 +27,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.11 2004-08-03 13:48:04 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.12 2004-08-23 14:53:14 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -268,9 +269,9 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
 mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 {
     static miscDYN_BUF  builtPath;
-    char                *nextSlashPtr, *leftToBeResolvedPathPtr, *tmpEnvVarPtr;
+    char                *nextSlashPtr, *leftToBeResolvedPathPtr;
     char                *nullTerm = "\0";
-    mcsSTRING256        tmpPath;
+    mcsSTRING256        tmpPath, tmpEnvVarPtr;
     mcsINT32            length;
 
     /* Try to reset the static Dynamic Buffer */
@@ -303,7 +304,8 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 
             *(tmpPath + length) = '\0';
 
-            if (miscGetEnvVarValue(tmpPath, &tmpEnvVarPtr) == FAILURE)
+            if (miscGetEnvVarValue(tmpPath, tmpEnvVarPtr, sizeof(mcsSTRING256))
+                == FAILURE)
             {
                 return FAILURE;
             }
@@ -322,7 +324,8 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
                 return FAILURE;
             }
 
-            if (miscGetEnvVarValue(tmpPath, &tmpEnvVarPtr) == FAILURE)
+            if (miscGetEnvVarValue(tmpPath, tmpEnvVarPtr, sizeof(mcsSTRING256))
+                == FAILURE)
             {
                 return FAILURE;
             }
@@ -439,27 +442,26 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 /**
  * Give back the value of a specified Environment Variable.
  *
- * \warning This function is \em NOT re-entrant. The returned allocated buffer
- * will be deallocated on the next call !\n\n
- *
  * \param envVarName a null-terminated char array containing the searched
  * Environment Variable name \em without the '$'
- * \param envVarValue a null-terminated char array containing the searched
+ * \param envVarValueBuffer an already allocated buffer to receive the
  * Environment Variable value
+ * \param envVarValueBufferLength the length of the already allocated buffer
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT miscGetEnvVarValue(const char *envVarName, char **envVarValue)
+mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
+                                  char *envVarValueBuffer,
+                                  mcsUINT32 envVarValueBufferLength)
 {
-    static miscDYN_BUF envVarValueDynBuf;
     char               *chrPtr;
 
-    if (miscDynBufReset(&envVarValueDynBuf) == FAILURE)
+    /* Return if the anv. var. name is null */
+    if (envVarName == NULL)
     {
+        errAdd(miscERR_NULL_PARAM, "envVarName");
         return FAILURE;
     }
-    
-    *envVarValue = NULL;
 
     if ((chrPtr = getenv(envVarName)) == NULL)
     {
@@ -467,13 +469,13 @@ mcsCOMPL_STAT miscGetEnvVarValue(const char *envVarName, char **envVarValue)
         return FAILURE;
     }
 
-    if (miscDynBufAppendString(&envVarValueDynBuf, chrPtr) == FAILURE)
+    if (strlen(chrPtr) >= envVarValueBufferLength)
     {
+        errAdd(miscERR_FILE_ENV_VAR_TOO_LONG, envVarName);
         return FAILURE;
     }
 
-    envVarValueDynBuf.storedBytes--;   
-    *envVarValue = envVarValueDynBuf.dynBuf;
+    strncpy(envVarValueBuffer, chrPtr, envVarValueBufferLength);
 
     return SUCCESS;
 }

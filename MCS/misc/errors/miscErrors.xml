@@ -30,4 +30,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA['%s' environment variable is not defined.]]></errFormat>
    </error>
+   <error id="7">
+      <errName>FILE_ENV_VAR_TOO_LONG</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' environment variable is too long for the received buffer.]]></errFormat>
+   </error>
 </errorList>
