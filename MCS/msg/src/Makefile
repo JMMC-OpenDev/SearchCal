@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2004-12-06 05:49:59 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.15 2004-12-07 07:52:05 gzins Exp $"
 #
 # Makefile of msg
 #
@@ -14,6 +14,7 @@
 # lafrasse  23-Nov-2004  Added all the socket-related header
 # lafrasse  03-Dec-2004  Added msgMCS_ENV compilation directives
 # gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
+# gzins     07-Dec-2004  Updated after C++ conversion 
 #
 #
 #*******************************************************************************
@@ -45,11 +46,10 @@ EXECUTABLES_L   =
 
 #
 # <brief description of msgManager program>
-msgManager_OBJECTS           = msgManager            \
-                               msgManagerForward     \
-                               msgManagerHandleCmd 	 \
-                               msgManagerProcess     \
-                               msgManagerProcessList
+msgManager_OBJECTS           = msgManager        \
+							   msgPROCESS        \
+							   msgPROCESS_LIST   \
+							   msgMANAGER
 msgManager_LDFLAGS           = -lgdome
 msgManager_LIBS              = mcs log err cmd misc msg C++
 
@@ -80,19 +80,12 @@ LIBRARIES_L     =
 
 #
 # <brief description of msg library>
-msg_OBJECTS   = msg                \
-				msgConnect         \
-				msgDisconnect      \
-				msgReceive         \
-				msgSend            \
-				msgSocket          \
-				msgMANAGER_IF      \
+msg_OBJECTS   = msgMANAGER_IF      \
                 msgMESSAGE         \
                 msgSOCKET		   \
 				msgSOCKET_CLIENT   \
 				msgSOCKET_SERVER   \
 				msgMCS_ENVS
-
 
 #
 # Scripts (public and local)
