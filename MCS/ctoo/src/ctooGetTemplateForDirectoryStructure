@@ -1,0 +1,243 @@
+#! /bin/bash
+
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.1 2004-05-25 16:14:20 gluck Exp $"
+#
+# who       when        what
+# --------  --------    ------------------------------------------------
+# lgluck    23/04/04    created
+#
+#*******************************************************************************
+# NAME
+#   ctooGetDirectoryStructure - create/check standard directory structure
+#
+# SYNOPSIS
+#   ctooGetDirectoryStructure MODROOT|INTROOT|MCSROOT|MCSDATA <name>
+#
+# DESCRIPTION
+#   Utility used ot create new or missing part of MCS directory structure for:
+#       - MODROOT   for a Module directory structure
+#       - INTROOT   for an Integration directory structure
+#       - MCSROOT   for a MCS Root directory structure
+#       - MCSDATA   for a MCS Data directory structure
+#
+#       <name> the name of the directory from which the directory structure
+#              starts. If not existing already, directory/ies are created.
+#
+# FILES
+#
+# ENVIRONMENT
+#
+# RETURN VALUES
+#
+# CAUTIONS
+#
+# SEE ALSO 
+#   ctooGetDirectoryStructure
+#   MCS - Programming Standard
+#
+# BUGS    
+#
+#----------------------------------------------------------------------
+#
+
+# signal trap (if any)
+
+
+# Input parameters given should be 3 and in the correct format:
+if [ $# != 3 ]
+then 
+    echo -e "\n\tUsage: getTemplateForDirectoryStructure \
+            MODROOT|INTROOT|VLTROOT|VLTDATA <name> [noMakefile]\n"
+    exit 1
+fi 
+
+# Get the input parameters
+choice=$1
+ROOT_NAME=$2
+makefile=$3
+
+
+# Define the content of each area 
+
+# Directories that shall be present in any area 
+BASIC_DIRS="\
+            bin         \
+            include     \
+            lib         \
+           "
+
+# directories that shall be present in any module area
+MODROOT_LIST="$BASIC_DIRS  \
+              doc          \
+              object       \
+              test         \
+              tmp          \
+              src          \
+             "
+
+# directories that shall be present in both integration and MCS area 
+INTROOT_LIST="$BASIC_DIRS templates"
+MCSROOT_LIST="$BASIC_DIRS templates"
+
+# MCSDATA directories
+MCSDATA_LIST="tmp"
+
+
+# Define directories list of the structure to build
+case $choice in
+    MODROOT)
+        echo -e "\nCreating/checking Module directory"
+        DIR_LIST="$MODROOT_LIST"
+        ;;
+    INTROOT)
+        echo -e "\nCreating/checking Integration directory"
+        DIR_LIST="$INTROOT_LIST"
+        ;;
+    MCSROOT)
+        echo -e "\nCreating/checking MCS Root directory"
+        DIR_LIST="$MCSROOT_LIST"
+        ;;
+    MCSDATA)
+        echo -e "\nCreating/checking MCS Data directory"
+        DIR_LIST="$MCSDATA_LIST"
+        ;;
+    *)  
+        echo "ERROR >>$choice<< is not a valid directory structure."
+        echo -e "\n\tUsage: getTemplateForDirectory \
+                MODROOT|INTROOT|VLTROOT|VLTDATA <name> [noMakefile]\n"
+        exit 1
+        ;;
+esac
+
+
+# Check validity for parameter ROOT_NAME
+
+# Test existence of a ROOT_NAME file
+if [ -f $ROOT_NAME ]
+then
+    # a file called ROOT_NAME already exists
+    echo -e "\n ERROR: I cannot create the starting directory because a file"
+    echo "             called >>$ROOT_NAME<< already exists."
+    echo "             Use another name or remove the existing file"
+    echo ""
+    exit 1
+fi
+
+# Test existence of a ROOT_NAME directory
+if [ ! -d $ROOT_NAME ]
+then
+    # there is no ROOT_NAME directory
+    # Create ROOT_NAME directory
+    if mkdir $ROOT_NAME
+    then
+        # Creation succeeds
+        echo "   CREATED >>> |---$ROOT_NAME "
+    else
+        # Creation failed 
+        echo -e "\n ERROR: I cannot create the starting directory"
+        echo -e "          >>$ROOT_NAME<<"
+        echo "             Please fix the problem and try again."
+        echo ""
+        exit 1
+    fi
+else
+    # ROOT_NAME  directory already exixts
+    echo "               |---$ROOT_NAME "
+fi
+
+
+# Check directory structure
+
+# If not already there, create all the needed subdirectories
+for dir in $DIR_LIST
+do
+    if [ ! -d $ROOT_NAME/$dir ]
+    then
+        mkdir $ROOT_NAME/$dir
+        echo "   CREATED >>>     |---$dir "
+    else
+        echo "                   |---$dir "
+    fi
+done
+
+
+# Additional case specific actions:
+MODE=644
+case $choice in
+    MODROOT)
+        case $makefile in
+            "")
+                echo -e "\n>>> Copying Makefile template for code"
+                TEMPLATE=$MCSROOT/templates/forMakefile/Makefile.template
+                FILE=$ROOT_NAME/src/Makefile
+                # Copy Makefile in src directory
+                if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
+                then
+                    # Makefile copy succeeds
+                    # Change permissions
+                    chmod $MODE ${FILE}.BAK
+                    # setup author and date:
+                    AUTHOR=`whoami`
+                    AUTHOR=`printf "%-8s" $AUTHOR`
+                    DATE=`date "+%d-%b-%Y"`
+                    sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
+                    -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
+                    -e "1,$ s/I>-<d/\Id/g"       \
+                    ${FILE}.BAK > $FILE
+                    rm -f ${FILE}.BAK
+                else
+                    # Makefile copy failed
+                    echo -e "\ncannot create >>$FILE<<."
+                fi
+                ;;
+                
+            noMakefile)
+                echo -e "\n>>> No makefile added in the src directoy of the"
+                echo -e "    module\n"
+                ;;
+
+            *)
+                echo "ERROR third option is not a valid."
+                echo -e "\n\tUsage: getTemplateForDirectory MODROOT|INTROOT|"
+                echo -e "         VLTROOT|VLTDATA <name> [noMakefile]\n"
+                exit 1
+                ;;
+        esac
+        ;;
+    
+    INTROOT)
+        for dir in $INTROOT_LIST
+        do
+            # directories must be writable by other developers
+            chmod 777 $ROOT_NAME/$dir
+        done
+        echo -e "\n Remember to define \$INTROOT to make this area accessible."
+        echo -e "\n"
+        ;;
+    
+    MCSROOT)
+        echo -e "\n Remember to define \$MCSROOT to make this area accessible."
+        echo -e "\n"
+        ;;
+    
+    MCSDATA)
+        for dir in $MCSDATA_LIST
+        do
+            chmod 777 $ROOT_NAME/$dir
+        done
+        echo -e "\n Remember to define \$MCSDATA to make this area accessible."
+        echo -e "\n"
+        ;;
+    
+    *)
+        echo " INTERNAL ERROR"
+        exit 1
+        ;;
+
+esac
+
+#
+# ___oOo___

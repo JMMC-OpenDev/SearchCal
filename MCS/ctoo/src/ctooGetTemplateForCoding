@@ -1,0 +1,214 @@
+#! /bin/bash
+
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.1 2004-05-25 16:14:20 gluck Exp $"
+#
+# who       when        what
+# --------  --------    ------------------------------------------------
+# lgluck    23/04/04    created
+#
+#*******************************************************************************
+# NAME
+#   ctooGetTemplateForCoding -  give available standard templates for coding
+# 
+# SYNOPSIS
+#   ctooGetTemplateForCoding
+# 
+# DESCRIPTION
+#   See ctooGetTemplate
+#
+# FILES
+#
+# ENVIRONMENT
+#   MCSROOT  <IN>  where to look for template files (templates/)
+#   EDITOR   <IN>  if defined, a "$EDITOR <file> &" is spawned automatically
+#
+# RETURN VALUES
+#
+# CAUTIONS
+#
+# EXAMPLES
+#
+# SEE ALSO
+#
+# BUGS
+#
+#-------------------------------------------------------------------------------
+#
+
+# check environment
+MCSTEMPLATES=$MCSROOT/templates      
+
+# verify that MCSTEMPLATES is a directory
+if [ ! -d "$MCSTEMPLATES" ]
+then 
+    echo "ERROR - getTemplate: $MCSTEMPLATES not available. "
+    echo "                     Please check your MCS environment "
+    exit 1
+fi
+
+# Set templates directories and verify they exist
+CODE_DIR=$MCSROOT/templates/forCoding
+MAKEFILE_DIR=$MCSROOT/templates/forMakefile
+
+if [ ! -d "$CODE_DIR" ]
+then 
+    echo "ERROR - getTemplate: $CODE_DIR not available. "
+    echo "                     Please check your MCS environment "
+    exit 1
+fi
+
+if [ ! -d "$MAKEFILE_DIR" ]
+then 
+    echo "ERROR - getTemplate: $MAKEFILE_DIR not available. "
+    echo "                     Please check your MCS environment "
+    echo -e "\n  Press <Enter> to continue . . .\c"
+    exit 1
+fi
+
+# Input parameters given should be 1 and in the correct format:
+if [ $# != 1 ]
+then 
+    echo -e "\n\tUsage: getTemplateForCoding c-main|c-procedure|h-file|" 
+    echo -e "c++-file|c++-small-main|c++-class-file|c++-h-file|script|Makefile"
+    exit 1
+fi 
+
+# Get the input parameters
+choice=$1
+
+# Treat the choice
+
+# Test if the choice is not empty
+if test -n "$choice"
+then
+    # Examine the choice
+    case $choice in
+        c-main|c-procedure)
+            TEMPLATE=$CODE_DIR/$choice.template
+            FILE_NAME=""
+            FILE_SUFFIX=".c"
+            MODE=644
+            ;;
+
+        c++-small-main|c++-file|c++-class-file)
+            TEMPLATE=$CODE_DIR/$choice.template
+            FILE_NAME=""
+            FILE_SUFFIX=".C"
+            MODE=644
+            ;;
+
+        h-file|c++-h-file)
+            TEMPLATE=$CODE_DIR/$choice.template
+            FILE_NAME=""
+            FILE_SUFFIX=".h"
+            MODE=644
+            ;;
+
+        script)
+            TEMPLATE=$CODE_DIR/$choice.template
+            FILE_NAME=""
+            FILE_SUFFIX=""
+            MODE=755
+            ;;
+
+        Makefile)
+            TEMPLATE=$MAKEFILE_DIR/$choice.template
+            FILE_NAME="Makefile"
+            FILE_SUFFIX=""
+            MODE=644
+            ;;
+
+        *)  
+            TEMPLATE=""
+            echo ">>$choice<< is an invalid choice. \c"
+            ;;
+    esac
+
+    # Test if a template file exists
+    if [ "$TEMPLATE" != "" ]
+    then
+        # Test if FILE_NAME is empty : always the case except for the Makefile
+        if [ "$FILE_NAME" = "" ]
+        then
+            # ask the user for a file name
+            echo -e "\n-> Enter output file name (without extention) or press"
+            echo -e "   <Enter> to quit: \c"
+            read FILE_NAME
+            if [ "$FILE_NAME" = "" ]
+            then 
+                exit
+            fi 
+        fi
+        
+        # Build the whole file name
+        FILE=${FILE_NAME}$FILE_SUFFIX
+
+        # check that output file does not exist
+        while [ -f $FILE -o -d $FILE ]
+        do
+            echo -e "\n-> FILE $FILE ALREADY EXISTS. Enter another file name"
+            echo -e "   (without extention) or press <Enter> to quit: \c"
+            read FILE_NAME
+            if [ "$FILE_NAME" = "" ]
+            then 
+                exit
+            else
+                # Build the new whole file name
+                FILE=${FILE_NAME}$FILE_SUFFIX
+            fi
+        done
+
+        # Copy the template file in current directory
+        if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
+        then 
+            # File copy succeeds
+            # Change permissions
+            chmod $MODE ${FILE}.BAK
+            # Setup author and date and
+            # If necessary insert file name in the pre-processing directives
+            # to avoid multiple inclusions (in h-file and c++-h-file)
+            AUTHOR=`whoami`
+            AUTHOR=`printf "%-8s" $AUTHOR`
+            DATE=`date "+%d-%b-%Y"`
+            sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
+                 -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
+                 -e "1,$ s/I>-<d/\Id/g"       \
+                 -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
+                 -e "1,$ s/#define _H/#define ${FILE_NAME}_H/g" \
+                 -e "1,$ s/#endif \/\*!_H\*\//#endif \/\*!${FILE_NAME}_H\*\//g" \
+                 ${FILE}.BAK > $FILE
+            rm -f ${FILE}.BAK
+
+            # display the file if EDITOR is set
+            if [ "$EDITOR" != "" ]
+            then 
+                $EDITOR $FILE &
+                echo -e "\n>>>  CREATED --> $FILE. Opening $EDITOR on it.\c"
+                sleep 1; echo " .\c"; sleep 1; echo -e " .\c"
+            else
+                echo -e "\n>>>  CREATED --> $FILE\n"
+            fi
+        else
+            # Makefile copy failed
+            echo -e "\n>>>  CANNOT CREATE --> $FILE\n"
+        fi
+
+    else
+        # invalid choice
+        echo -e "\nInvalid choice."
+        echo -e "\n\tUsage: getTemplateForCoding c-main|c-procedure|h-file| \ 
+                c++-file|c++-small-main|c++-class-file|c++-h-file|script| \
+                Makefile"
+        exit
+    fi
+else
+    # No choice, <Enter> was pressed --> exit (up to previous level)
+    exit
+fi
+
+
+#
+# ___oOo___

@@ -1,0 +1,88 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: c-main.template,v 1.1 2004-05-25 16:14:20 gluck Exp $"
+#%# 
+#%# Template for c-main           
+#%# 
+#%# who		   when			what
+#%# ---------  -----------	----------------------------------------------------
+#%# gluck      18-May-2004  created
+#%# 
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+/*******************************************************************************
+* JMMC project
+*
+* "@(#) $I>-<d$"
+*
+* who       when		 what
+* --------  -----------	 -------------------------------------------------------
+* NNNNNNNN  dd-mmm-yyyy  created
+*
+*
+********************************************************************************
+*   NAME
+* 
+*   SYNOPSIS
+* 
+*   DESCRIPTION
+*
+*   FILES
+*
+*   ENVIRONMENT
+*
+*   COMMANDS
+*
+*   RETURN VALUES
+*
+*   CAUTIONS 
+*
+*   EXAMPLES
+*
+*   SEE ALSO
+*
+*   BUGS   
+* 
+*-----------------------------------------------------------------------------*/
+
+#define _POSIX_SOURCE 1
+
+static char *rcsId="@(#) $I>-<d$"; 
+static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
+/* 
+ * System Headers 
+ */
+
+
+/*
+ * Local Headers 
+ */
+
+
+/* 
+ * Signal catching functions  
+ */
+
+
+/* 
+ *Local functions  
+ */
+
+
+/* 
+ * Main
+ */
+
+int main (int argc, char *argv[])
+{
+}
+
+
+/*___oOo___*/

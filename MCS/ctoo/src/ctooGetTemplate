@@ -1,0 +1,98 @@
+#! /bin/bash
+
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: ctooGetTemplate,v 1.1 2004-05-25 16:14:20 gluck Exp $"
+#
+# who       when        what
+# --------  --------    ------------------------------------------------
+# lgluck    23/04/04    created
+#
+#*******************************************************************************
+# NAME
+#   ctooGetTemplate - create a file from a standard template (code or document)
+#
+# SYNOPSIS
+#   ctooGetTemplate
+#
+# DESCRIPTION
+#   display available standard template families and create a file from a 
+#   standard template for :
+#       - directory structure
+#       - code : - shell scripts
+#                - C      (.c, .h) 
+#                - C++    (.c, .h) 
+#                - Makefile
+#
+# FILES
+#   $MCSROOT/templates/forXxxxxx  <IN>   various template files
+#
+# ENVIRONMENT
+#   MCSROOT  <IN>  where to look for template files (templates/)
+#
+# RETURN VALUES
+#
+# CAUTIONS
+#
+# EXAMPLES
+#
+# SEE ALSO
+#
+# BUGS
+#
+#-------------------------------------------------------------------------------
+#
+
+# signal trap (if any)
+
+
+# Print out the menu
+cat <<xyz
+--------------------------------------------------------------------------------
+Templates are available for :
+    1- directory structure
+    2- code
+xyz
+
+# Propose the user to enter his choice
+echo -e "\n-> Enter the number corresponding to the template type you need or"
+echo -e "   press <Enter> to exit : \c"
+
+# Read the choice
+read choice
+
+# Treat the choice
+
+# Test if the choice is not empty
+if test -n "$choice"
+then
+    # A choice is entered
+
+    # Test if the choice is not "directoryStructure"
+    if [ $choice != 1 ]
+    then
+            # check environment
+            MCSTEMPLATES=$MCSROOT/templates      
+
+            # verify that MCSTEMPLATES is a directory
+            if [ ! -d "$MCSTEMPLATES" ]
+            then 
+                echo "ERROR - getTemplate: $MCSTEMPLATES not available. "
+                echo "                     Please check your MCS environment "
+                exit 1
+            fi
+    fi
+        # Examine the choice
+        case $choice in
+            1) $MCSROOT/bin/ctooGetDirectoryStructure;;
+            2) $MCSROOT/bin/ctooGetCode;;
+            *) echo "ERROR : invalid choice";;
+        esac
+    else
+        # <Enter> was pressed
+        exit
+fi
+
+#
+# ___oOo___
