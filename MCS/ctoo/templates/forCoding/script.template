@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: script.template,v 1.9 2004-09-15 07:04:06 gluck Exp $"
+#%# "@(#) $Id: script.template,v 1.10 2004-09-15 09:21:39 gluck Exp $"
 #%# 
 #%# Template for script files          
 #%# 
@@ -74,7 +74,7 @@
 #
 # \sa OPTIONAL. See also section, in which you can refer other documented
 # entities. Doxygen will create the link automatically. For example, 
-# \sa <entity to refer>
+# \sa \<entity to refer\>
 # 
 # \bug OPTIONAL. Known bugs list if it exists.
 # \bug Bug 1 : bug 1 description
