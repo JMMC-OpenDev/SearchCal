@@ -1,13 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMCS_ENVS.cpp,v 1.1 2004-12-06 05:49:59 gzins Exp $"
+* "@(#) $Id: msgMCS_ENVS.cpp,v 1.2 2004-12-06 16:35:08 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  03-Dec-2004  Created
 * gzins     05-Dec-2004  Changed method prototypes and class members
 * gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
+* lafrasse  03-Dec-2004  Added GetEnvLine() method and completed GetHostName()
+*                        and GetPortNumber() methods
+*
 *
 *******************************************************************************/
 
@@ -16,7 +19,7 @@
  * msgMCS_ENVS class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMCS_ENVS.cpp,v 1.1 2004-12-06 05:49:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMCS_ENVS.cpp,v 1.2 2004-12-06 16:35:08 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -40,6 +43,7 @@ using namespace std;
  * Local Headers 
  */
 #include "msgMCS_ENVS.h"
+#include "msgErrors.h"
 #include "msgPrivate.h"
 
 /*
@@ -49,6 +53,7 @@ msgMCS_ENVS::msgMCS_ENVS()
 {
     _envListFileLoaded = mcsFALSE;
     miscDynBufInit(&_envList);
+    memset(_hostName, 0, sizeof(_hostName));
 }
 
 
@@ -58,6 +63,7 @@ msgMCS_ENVS::msgMCS_ENVS()
 msgMCS_ENVS::~msgMCS_ENVS()
 {
     miscDynBufDestroy(&_envList);    
+    memset(_hostName, 0, sizeof(_hostName));
 }
 
 
@@ -68,39 +74,68 @@ msgMCS_ENVS::~msgMCS_ENVS()
  * Return the host name of the MCS environment.
  *
  * If the environment name is not given, the current environment, defined by
- * MCSENV environment variable, is used.
+ * MCSENV environment variable, is used. If the MCSENV environment variable is
+ * set to mcsUNKNOWN_ENV, then the local host name is returned.
  *
- * \return the host name of a given environment or NULL if environment name is
- * unknown.
+ * \return the host name of a given environment or NULL if an error occured.
+ *
+ * \err
+ * The possible error id :
+ * \errname msgERR_FORMAT_ENVLIST
  */
-const char* msgMCS_ENVS::GetHostName(char *envName)
+const char* msgMCS_ENVS::GetHostName(const char *envName)
 {
     logExtDbg("msgMCS_ENVS::GetHostName()");
 
-    // If the file has not been loaded yet
-    if (_envListFileLoaded == mcsFALSE)
+    // If no environment name was specified
+    char* searchedEnvName;
+    searchedEnvName = (char*)envName;
+    if (searchedEnvName == NULL)
     {
-        // Try to retrieve them
-        if (LoadEnvListFile() == FAILURE)
+        // If $MCSENV is not defined
+        searchedEnvName = (char*)mcsGetEnvName();
+        if (strcmp(searchedEnvName, mcsUNKNOWN_ENV) == 0)
         {
-            return NULL;
+            // Get the local host name and return it
+            if (miscGetHostName(_hostName, sizeof(_hostName)) == FAILURE)
+            {
+                return ((char*)NULL);
+            }
+
+            return _hostName;
         }
     }
 
-    // Retrieve the environment name in the list
-    mcsLOGICAL found=mcsFALSE;
-    
-    // If found
-    if (found == mcsTRUE)
+    // If the MCS Env. List file has not been loaded yet
+    if (_envListFileLoaded == mcsFALSE)
     {
-        // Return host name
-        return NULL;
+        // Load it
+        if (LoadEnvListFile() == FAILURE)
+        {
+            return ((char*)NULL);
+        }
     }
-    else
+
+    // Get the environment file line containing the searched env. name
+    char* envLine;
+    envLine = GetEnvLine(searchedEnvName);
+    if (envLine == NULL)
     {
-        // Add error and return NULL
-        return NULL;
+        return ((char*)NULL);
     }
+
+    // Read the line host name value
+    mcsINT32 readValueNumber = 0;
+    readValueNumber = sscanf(envLine, "%*s %s %*d", _hostName);
+
+    // If the sscanf didn't read the right number of values
+    if (readValueNumber != 1)
+    {
+        errAdd(msgERR_FORMAT_ENVLIST);
+        return ((char*)NULL);
+    }
+
+    return _hostName;
 }
 
 /**
@@ -109,38 +144,67 @@ const char* msgMCS_ENVS::GetHostName(char *envName)
  * This method returns the port number of the given MCS environment; i.e. the
  * connection port number with the manager process of the MCS message service.
  * If the environment name is not given, the current environment, defined by
- * MCSENV environment variable, is used.
+ * MCSENV environment variable, is used. If the MCSENV environment variable is
+ * set to mcsUNKNOWN_ENV, then the default msgMANAGER_PORT_NUMBER port number
+ * is returned.
  *
- * \return the port number or -1 if environment name is unknown.
+ * \return the port number or -1 if an error occured.
+ *
+ * \err
+ * The possible error id :
+ * \errname msgERR_FORMAT_ENVLIST
  */
-const mcsINT32 msgMCS_ENVS::GetPortNumber(char *envName)
+const mcsINT32 msgMCS_ENVS::GetPortNumber(const char *envName)
 {
     logExtDbg("msgMCS_ENVS::GetPortNumber()");
 
-    // If the file has not been loaded yet
+    mcsINT32 portNumber;
+    portNumber = msgMANAGER_PORT_NUMBER;
+
+    // If no environment name was specified
+    char* searchedEnvName;
+    searchedEnvName = (char*)envName;
+    if (searchedEnvName == NULL)
+    {
+        // If $MCSENV is not defined
+        searchedEnvName = (char*)mcsGetEnvName();
+        if (strcmp(searchedEnvName, mcsUNKNOWN_ENV) == 0)
+        {
+            // Return the default msgManager port number
+            return portNumber;
+        }
+    }
+
+    // If the MCS Env. List file has not been loaded yet
     if (_envListFileLoaded == mcsFALSE)
     {
-        // Try to retrieve them
+        // Load it
         if (LoadEnvListFile() == FAILURE)
         {
             return -1;
         }
     }
 
-   // Retrieve the environment name in the list
-    mcsLOGICAL found=mcsFALSE;
-    
-    // If found
-    if (found == mcsTRUE)
+    // Get the environment file line containing the searched env. name
+    char* envLine;
+    envLine = GetEnvLine(searchedEnvName);
+    if (envLine == NULL)
     {
-        // Return the port number
         return -1;
     }
-    else
+
+    // Read the line host name value
+    mcsINT32 readValueNumber = 0;
+    readValueNumber = sscanf(envLine, "%*s %*s %d", &portNumber);
+
+    // If the sscanf didn't read the right number of values
+    if (readValueNumber != 1)
     {
-        // Add error and return -1
+        errAdd(msgERR_FORMAT_ENVLIST);
         return -1;
     }
+
+    return portNumber;
 }
 
 /*
@@ -164,11 +228,6 @@ const mcsINT32 msgMCS_ENVS::GetPortNumber(char *envName)
  * The field are separated by spaces; one or more spaces between fields.
  *
  * \return SUCCESS on successfull completion, or FAILURE otherwise.
- *
- * \err
- * The possible errors are :
- * \errname msgERR_UNKNOWN_ENV
- * \errname msgERR_FORMAT_ENVLIST
  */
 mcsCOMPL_STAT msgMCS_ENVS::LoadEnvListFile(void)
 {
@@ -185,39 +244,59 @@ mcsCOMPL_STAT msgMCS_ENVS::LoadEnvListFile(void)
     {
         return FAILURE;
     }
-#if 0
-    /* Jump all the headers and empty lines, and try to find a host name and
-     * port number corresponding to the MCS environment name
+
+    return SUCCESS;
+}
+
+/**
+ * Return a pointer to the line containing the given MCS environment name.
+ *
+ * \return NULL if no lines contain the searched environment name.
+ *
+ * \err
+ * The possible errors are :
+ * \errname msgERR_UNKNOWN_ENV
+ * \errname msgERR_FORMAT_ENVLIST
+ */
+char* msgMCS_ENVS::GetEnvLine(const char *envName)
+{
+    /* Jump all the headers and empty lines, and try to find the line containing
+     * the hostname & port number corresponding to the given MCS env. name
      */
     mcsENVNAME parsedEnvName;
     memset(parsedEnvName, 0, sizeof(parsedEnvName));
-    char* currentLine = miscDynBufGetNextLinePointer(&envList, NULL, mcsTRUE);
+    mcsINT32 readValueNumber = 0;
+    char* currentLine = miscDynBufGetNextLinePointer(&_envList, NULL, mcsTRUE);
     do
     {
         // If the current line is not empty
         if ((currentLine != NULL) && (strlen(currentLine) != 0))
         {
             // Try to read the line values
-            mcsINT32 readValueNumber = sscanf(currentLine, "%s %s %d",
-                                              parsedEnvName, _hostName,
-                                              &_portNumber);
+            readValueNumber = sscanf(currentLine, "%s %*s %*d", parsedEnvName);
     
             // If the sscanf didn't read the right number of values
-            if (readValueNumber != 3)
+            if (readValueNumber != 1)
             {
-                return FAILURE;
+                errAdd(msgERR_FORMAT_ENVLIST);
+                return ((char*)NULL);
+            }
+
+            // If the searched environmnt name is in the current line
+            if (strcmp(parsedEnvName, envName) != 0)
+            {
+                return currentLine;
             }
         }
 
-        currentLine = miscDynBufGetNextLinePointer(&envList, currentLine,
+        currentLine = miscDynBufGetNextLinePointer(&_envList, currentLine,
                                                    mcsTRUE);
     }
-    while ((strcmp(parsedEnvName, searchedEnvName) != 0) &&
-           (currentLine != NULL));
-#endif
-    return SUCCESS;
-}
+    while (currentLine != NULL);
 
+    errAdd(msgERR_UNKNOWN_ENV, envName);
+    return ((char*)NULL);
+}
 
 
 /*___oOo___*/

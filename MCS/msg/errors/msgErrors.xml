@@ -140,4 +140,14 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[recv() call error - %s]]></errFormat>
    </error>
+   <error id="32">
+      <errName>FORMAT_ENVLIST</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[the MCS environment list file has not the awaited format]]></errFormat>
+   </error>
+   <error id="31">
+      <errName>UNKNOWN_ENV</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[the |%s| environment is not defined in the environment list file]]></errFormat>
+   </error>
 </errorList>

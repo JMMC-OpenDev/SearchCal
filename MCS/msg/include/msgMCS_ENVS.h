@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMCS_ENVS.h,v 1.1 2004-12-06 05:49:59 gzins Exp $"
+* "@(#) $Id: msgMCS_ENVS.h,v 1.2 2004-12-06 16:35:08 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  03-Dec-2004  Created
 * gzins     05-Dec-2004  Changed method prototypes and class members
 * gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
+* lafrasse  03-Dec-2004  Added GetEnvLine() method
 *
 *
 *******************************************************************************/
@@ -50,19 +51,22 @@ public:
     // Brief description of the destructor
     virtual ~msgMCS_ENVS();
 
-    virtual const char*    GetHostName(char *envName=NULL);
-    virtual const mcsINT32 GetPortNumber(char *envName=NULL);
+    virtual const char*    GetHostName   (const char *envName = NULL);
+    virtual const mcsINT32 GetPortNumber (const char *envName = NULL);
 
 protected:
     
 private:
-    mcsCOMPL_STAT LoadEnvListFile(void);
+    mcsCOMPL_STAT  LoadEnvListFile       (void);
+    char*          GetEnvLine            (const char *envName);
     miscDYN_BUF   _envList;           /* Internal buffer containing
                                          environment list */
     mcsLOGICAL    _envListFileLoaded; /* Flag that tell weither the file
                                          containing the environment list
                                          definition has already been loaded or
                                          not */
+    mcsSTRING256  _hostName;          /* Instance member to be able to return
+                                         its address putside of GetHostName() */
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
