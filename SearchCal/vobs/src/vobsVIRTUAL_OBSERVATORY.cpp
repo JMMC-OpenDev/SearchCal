@@ -1,20 +1,22 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $"
- *
- * who       when         what
- * --------  -----------  -------------------------------------------------------
- * scetre    06-Jul-2004  Created
- *
- *
- *******************************************************************************/
+* JMMC project
+*
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.6 2005-01-26 08:20:00 scetre Exp $"
+*
+* History
+* -------
+* $Log: not supported by cvs2svn $
+* scetre    06-Jul-2004  Created
+*
+*
+*******************************************************************************/
+
 /**
  * \file
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.6 2005-01-26 08:20:00 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -80,6 +82,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::Research()");
 
+    // Create a asking scenario in which will be stored catalog to query
     vobsSCENARIO scenario;
 
     // Get the observed band
@@ -92,7 +95,9 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
         return mcsFAILURE;
     }
 
+    // Clear the resulting list
     starList.Clear();
+    // Run the method to execute the scenario which had been loaded into memory
     scenario.Execute(request, starList);
     
     //starList.Display();
@@ -124,114 +129,172 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
                                                     vobsSCENARIO    &scenario)
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::LoadScenario()");
-    vobsSTAR_COMP_CRITERIA_LIST *criteriaList = new vobsSTAR_COMP_CRITERIA_LIST;
-    criteriaList->Add(vobsSTAR_POS_EQ_RA_MAIN, 0.1);
-    criteriaList->Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.1);
-    
+   
 
+    // Create a criteria list
+    vobsSTAR_COMP_CRITERIA_LIST criteriaList;
+
+    // Create a empty list of criteria;
+    vobsSTAR_COMP_CRITERIA_LIST criteriaListEmpty; 
+   
+    // Add criteria on right ascension
+    if (criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.1) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Add criteria on declinaison
+    if (criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.1) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     // Scenario in band K
     if ((strcmp(band, "I")==0)||
         (strcmp(band, "J")==0)||
         (strcmp(band, "H")==0)||
         (strcmp(band, "K")==0) )
     {
+        // Clear the list input and list output which will be used
         _starListP.Clear();
         _starListS.Clear();
-       
 
+        // If the lis is empty, it is a calibrator research
+        // the primary is build with the result of the catalog II/225, II/7A and
+        // I/280
         if (starList.IsEmpty() == mcsTRUE)
         {
             // II/225
-            scenario.AddEntry(&_cio, NULL, &_starListP, COPY, NULL);
+            scenario.AddEntry(&_cio, NULL, &_starListP, COPY, criteriaListEmpty);
             // II/7A
             scenario.AddEntry(&_photo, NULL, &_starListP, MERGE, criteriaList);
             // I/280
             scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY,
-                              NULL);
+                              criteriaListEmpty);
         }
+        // If the list is not empty, it is a single resarch
+        // The catalog I/280 is used to build the primary list of one star
         else
         {
             _starListP.Copy(starList);
             // I/280
             scenario.AddEntry(&_ascc, &_starListP, &_starListS, UPDATE_ONLY,
-                              criteriaList);
+                              criteriaListEmpty);
+        }
+
+        // The primary list is completed with the query on catalogs II/225, 
+        // I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
+        
+        // Add mgV criteria
+        if (criteriaList.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // II/7A
+        scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY,
+                          criteriaList);
+        // Removed mgV criteria
+        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_V) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // Add mgK criteria
+        if (criteriaList.Add(vobsSTAR_PHOT_JHN_K, 0.3) == mcsFAILURE)
+        {
+            return mcsFAILURE;
         }
         // II/225
         scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
-        // I/196
-        scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaList);
         // 2MASS
         scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaList);
         // LBSI
         scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaList);
         // CHARM
         scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
-        // II/7A
-        scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
-        // BSC
-        scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
-        // SBSC
-        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaList);        
         // DENIS
         scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaList);        
+        // Removed mgK criteria
+        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_V) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+                // Add hd criteria
+        if (criteriaList.Add(vobsSTAR_ID_MAIN, 0) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // I/196
+        scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY,
+                          criteriaListEmpty);
+        // BSC
+        scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY,
+                          criteriaListEmpty);
+        // SBSC
+        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY,
+                          criteriaListEmpty);
+        
+        
     }
     // Scenario in band V
     else if (strcmp(band, "V")==0)
     {
+        // Clear the list input and list output which will be used
         _starListP.Clear();
         _starListS.Clear();
 
-        // I/280
+        // If the lis is empty, it is a calibrator research
+        // the primary is build with the result of the catalog I/280
         if (starList.IsEmpty() == mcsTRUE)
         {
             scenario.AddEntry(&_ascc, NULL, &_starListS, COPY,
-                              NULL);
+                              criteriaListEmpty);
         }
+        // If the list is not empty, it is a single resarch
+        // The catalog I/280 is used to build the primary list of one star
         else
         {
             _starListP.Copy(starList);
             scenario.AddEntry(&_ascc, &_starListP, &_starListS, MERGE,
-                              criteriaList);
+                              criteriaListEmpty);
         }
+        // The primary list is completed with the query on catalogs I/196,
+        // MASS, II/225, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
         // I/196
         scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
         // MASS
         scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
         // II/225
         scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
         // LBSI
         scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
         // CHARM
         scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
         // II/7A
         scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
         // BSC
         scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
         // SBSC
         scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
         // DENIS
         scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY,
-                          NULL);
+                          criteriaListEmpty);
     }
+    // Until now, the virtual observatory can't find star in other band
     else
     {
+        errAdd(vobsERR_UNKNOWN_BAND, band);
         return mcsFAILURE;
     }
 
