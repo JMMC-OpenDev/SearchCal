@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.4 2005-02-04 13:50:39 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.5 2005-02-10 07:55:31 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/04 13:50:39  gzins
+ * Changed alxCONFIDENCE_VERY_LOW to alxCONFIDENCE_LOW
+ *
  * Revision 1.3  2005/01/31 13:32:37  scetre
  * changed misc...Pointer in misc...
  *
@@ -30,7 +33,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.4 2005-02-04 13:50:39 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.5 2005-02-10 07:55:31 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -190,8 +193,10 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
  * \param mgV magnitude in band V
  * \param mgR magnitude in band R
  * \param mgK magnitude in band K
- * \param angularDiameter computed angular diameter 
- * \param angularDiameterError computed angular diameter error
+ * \param diamBv diameter from (V, (B-V)) calibration 
+ * \param diamVr diameter from (V, (V-R)) calibration 
+ * \param diamVk diameter from (V, (V-K)) calibration 
+ * \param diamError computed diameter error
  * \param confidenceIdx confidence index 
  *  
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -203,8 +208,10 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
                                         mcsFLOAT mgV,
                                         mcsFLOAT mgR,
                                         mcsFLOAT mgK,
-                                        mcsFLOAT *angularDiameter,
-                                        mcsFLOAT *angularDiameterError,
+                                        mcsFLOAT *diamBv,
+                                        mcsFLOAT *diamVr,
+                                        mcsFLOAT *diamVk,
+                                        mcsFLOAT *diamError,
                                         alxCONFIDENCE_INDEX *confidenceIdx)
 {
     logExtDbg("alxComputeAngularDiameter()");
@@ -270,8 +277,10 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
     /* Compute mean diameter and its associated error */
     meanDiam = (d_v_k + d_v_r + d_b_v) / 3;
     meanDiamErr = 0.1 * meanDiam;
-    *angularDiameterError = meanDiamErr;
-    *angularDiameter = meanDiam;
+    *diamError = meanDiamErr;
+    *diamBv = d_b_v;
+    *diamVr = d_v_r;
+    *diamVk = d_v_k;
 
     /* Check whether the diameter is coherent or not */
     if ((fabs(d_b_v - meanDiam) > 2.0 * meanDiamErr) ||
@@ -285,8 +294,8 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
         *confidenceIdx =  alxCONFIDENCE_HIGH;
     }
 
-    logTest("Angular diameter       = %.3f\n", *angularDiameter);
-    logTest("Angular diameter error = %.3f\n", *angularDiameterError);
+    logTest("Diameter BV = %.3f, VR = %.3f, VK = %.3f, error = %.3f\n", 
+            *diamBv, *diamVr, *diamVk, *diamError);
     logTest("Confidence index       = %d\n", *confidenceIdx);
 
     return mcsSUCCESS;

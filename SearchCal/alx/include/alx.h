@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.4 2005-02-04 13:50:05 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.5 2005-02-10 07:55:31 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/04 13:50:05  gzins
+ * Re-defined confidence index
+ *
  * Revision 1.3  2005/01/25 06:33:21  gzins
  * Removed wrong description for alxCONFIDENCE_INDEX
  *
@@ -83,8 +86,10 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
                                         mcsFLOAT mgV,
                                         mcsFLOAT mgR,
                                         mcsFLOAT mgK,
-                                        mcsFLOAT *angularDiameter,
-                                        mcsFLOAT *deltaAngularDiameter,
+                                        mcsFLOAT *diamBv,
+                                        mcsFLOAT *diamVr,
+                                        mcsFLOAT *diamVk,
+                                        mcsFLOAT *diamError,
                                         alxCONFIDENCE_INDEX *confidenceIdx);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
