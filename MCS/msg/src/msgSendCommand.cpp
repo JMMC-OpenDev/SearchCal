@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.17 2005-02-28 08:16:20 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.18 2005-02-28 10:21:54 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/02/28 08:16:20  gzins
+ * Removed possible CR from the given process name, command and parameters
+ *
  * Revision 1.16  2005/02/10 08:09:40  gzins
  * Disable (by default) message logging
  *
@@ -75,7 +78,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.17 2005-02-28 08:16:20 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.18 2005-02-28 10:21:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -149,9 +152,7 @@ int main (int argc, char *argv[])
 
         memset(params, '\0', sizeof(params));
         strncpy((char *)params, argv[cnt++], (sizeof(params) -1));
-        printf("params = %s\n", params);
         miscDeleteChr((char *)params, '\n', mcsTRUE);
-        printf("params = %s\n", params);
 
         // Removed leading and trailing space
         miscTrimString(params, " ");
