@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.3 2004-09-15 14:47:24 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.4 2004-09-24 08:33:05 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -204,13 +204,17 @@ then
         # Get template file
         ctooGetTemplateFile $TEMPLATE $FILE
 
-        # For .h (h-file or c++-h-file) files insert file name in the
+        # For .h and .H
+        # -> For .h (h-file or c++-h-file) files insert file name in the
         # pre-processing directives to avoid multiple inclusions
+        # -> For .h (c++-h-file) files insert class name in the doxygen header
+        # block
         if [ "$FILE_SUFFIX" = ".h" ]
         then
             sed -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
                 -e "1,$ s/#define _H/#define ${FILE_NAME}_H/g" \
                 -e "1,$ s/#endif \/\*!_H\*\//#endif \/\*!${FILE_NAME}_H\*\//g" \
+                -e "1,$ s/<className>/$FILE_NAME/g" \
                 $FILE > ${FILE}.BAK
 
             # Remove the intermediate file ($FILE) and rename the output
@@ -218,9 +222,12 @@ then
             mv ${FILE}.BAK $FILE 
         fi
 
-        # For .c (c-main, c-procedure), or .C (c++-small-main and
-        # c++-class-file) files insert module name in the pre-processing
-        # directives for header inclusion
+        # For .c and .C 
+        # -> For .c (c-main, c-procedure) and  .C (c++-small-main ) files
+        # insert module name in the pre-processing directives for header
+        # inclusion
+        # -> For .C (c++-class-file) insert class name in the pre-processing
+        # directives for header inclusion and in the doxygen header block
         if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".C" ]
         then
             # Get module name
@@ -229,7 +236,9 @@ then
             unset moduleName
             
             sed -e "1,$ s/#include \"<moduleName>.h\"/#include \"$ROOT_NAME.h\"/g" \
-            -e "1,$ s/#include \"<moduleName>Private.h\"/#include \"${ROOT_NAME}Private.h\"/g" \
+                -e "1,$ s/#include \"<moduleName>Private.h\"/#include \"${ROOT_NAME}Private.h\"/g" \
+                -e "1,$ s/#include \"<className>.h\"/#include \"$FILE_NAME.h\"/g" \
+                -e "1,$ s/<className>/$FILE_NAME/g" \
             $FILE > ${FILE}.BAK
 
             # Remove the intermediate file ($FILE) and rename the output
