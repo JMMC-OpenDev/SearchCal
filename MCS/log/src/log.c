@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.22 2004-11-10 22:20:32 gzins Exp $"
+* "@(#) $Id: log.c,v 1.23 2004-12-03 17:08:40 lafrasse Exp $"
 *
 *
 * who       when                 what
@@ -480,7 +480,8 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
     {
         /* Print the log message header */
-        fprintf(stdout, "%s - %s - ", mcsGetProcName(), modName);
+        fprintf(stdout, "%s - %s - %s - ", mcsGetEnvName(), mcsGetProcName(),
+                modName);
     
         /* If the log message should contain the date */ 
         if (logRulePtr->printDate == mcsTRUE)
@@ -583,10 +584,9 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     }
     
     /* Compute the log message */
-    sprintf(logMsg, "%s - %s - %s - %s - %s - %s", mcsGetProcName(),
-             modName, priorityMsg, infoTime, fileLine, logText);
-
-
+    sprintf(logMsg, "%s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
+            mcsGetProcName(), modName, priorityMsg, infoTime, fileLine,
+            logText);
 
     /* If the connection to the logManager is NOT already opened, open it */
     if (logSocketIsAlreadyOpen == mcsFALSE)
@@ -614,8 +614,6 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
             }
         }
 
-
-
         /* Try to create ths socket */
         sock = socket(AF_INET, SOCK_DGRAM, 0);
         if (sock == -1) 
@@ -640,8 +638,6 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
 
         logSocketIsAlreadyOpen = mcsTRUE;
     }
-
-
 
     /* Send message to the logManager process */
     if (sendto(sock, (void *)logMsg, strlen(logMsg), 0,

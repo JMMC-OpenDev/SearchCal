@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logPrivate.c,v 1.3 2004-11-10 22:09:31 gzins Exp $"
+* "@(#) $Id: logPrivate.c,v 1.4 2004-12-03 17:08:40 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,7 +12,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: logPrivate.c,v 1.3 2004-11-10 22:09:31 gzins Exp $"; 
+static char *rcsId="@(#) $Id: logPrivate.c,v 1.4 2004-12-03 17:08:40 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -110,6 +110,10 @@ void logPrintErrMessage(const char *format, ...)
     logGetTimeStamp(utcTime);
     fprintf(stderr, utcTime);
     fprintf(stderr, " : ");
+
+    /* Display the current environment name */
+    fprintf(stderr, mcsGetEnvName());
+    fprintf(stderr, " ");
 
     /* Display the current process name */
     fprintf(stderr, mcsGetProcName());

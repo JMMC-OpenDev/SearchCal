@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.9 2004-08-04 09:46:11 lafrasse Exp $"
+* "@(#) $Id: logTest.c,v 1.10 2004-12-03 17:08:40 lafrasse Exp $"
 *
 *
 * who       when                 what
@@ -192,7 +192,7 @@ int main(int argc, char ** argv)
     /* Init MCS services */
     mcsInit(argv[0]);
 
-    /* test1 loops 
+    /* test1 loops
      * \todo handle function returns
      */
     test1(mcsFALSE, mcsFALSE);
