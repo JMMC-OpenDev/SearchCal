@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.10 2005-03-03 14:46:19 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.11 2005-03-30 12:46:57 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/03/03 14:46:19  gzins
+ * Changed alxCONFIDENCE_LOW to alxNO_CONFIDENCE
+ *
  * Revision 1.9  2005/02/22 16:51:58  gzins
  * Updated misDynBufGetNextLine API
  * Added errors for B-V, V-R and V-K diameters
@@ -49,7 +52,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.10 2005-03-03 14:46:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.11 2005-03-30 12:46:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -202,11 +205,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
  * \param mgV magnitude in band V
  * \param mgR magnitude in band R
  * \param mgK magnitude in band K
- * \param diamBv diameter from (V, (B-V)) calibration 
- * \param diamVr diameter from (V, (V-R)) calibration 
- * \param diamVk diameter from (V, (V-K)) calibration 
- * \param diamError computed diameter error
- * \param confidenceIdx confidence index 
+ * \param diameters diameters the structure of different diameter to compute
  *  
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -217,13 +216,7 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
                                         mcsFLOAT mgV,
                                         mcsFLOAT mgR,
                                         mcsFLOAT mgK,
-                                        mcsFLOAT *diamBv,
-                                        mcsFLOAT *diamVr,
-                                        mcsFLOAT *diamVk,
-                                        mcsFLOAT *diamBvErr,
-                                        mcsFLOAT *diamVrErr,
-                                        mcsFLOAT *diamVkErr,
-                                        alxCONFIDENCE_INDEX *confidenceIdx)
+                                        alxDIAMETERS *diameters)
 {
     logExtDbg("alxComputeAngularDiameter()");
 
@@ -274,34 +267,39 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
         + polynomial->coeff[2][5] * pow(v_k, 5);
 
     /* Compute the diameters D(B-V), D(V-R), D(V-K) */
-    *diamBv = 9.306 * pow(10, -0.2 * mgV) * p_b_v;
-    *diamVr = 9.306 * pow(10, -0.2 * mgV) * p_v_r;
-    *diamVk = 9.306 * pow(10, -0.2 * mgV) * p_v_k;
-    *diamBvErr = *diamBv * 8.0/100.0;
-    *diamVrErr = *diamVr * 9.7/100.0;;
-    *diamVkErr = *diamVk * 6.9/100.0;;
+    diameters->bv = 9.306 * pow(10, -0.2 * mgV) * p_b_v;
+    diameters->vr = 9.306 * pow(10, -0.2 * mgV) * p_v_r;
+    diameters->vk = 9.306 * pow(10, -0.2 * mgV) * p_v_k;
+    diameters->bvErr = diameters->bv * 8.0/100.0;
+    diameters->vrErr = diameters->vr * 9.7/100.0;;
+    diameters->vkErr = diameters->vk * 6.9/100.0;;
 
     /* Compute mean diameter and its associated error */
-    meanDiam = (*diamVk + *diamVr + *diamBv) / 3;
+    meanDiam = (diameters->vk + diameters->vr + diameters->bv) / 3;
     meanDiamErr = 0.1 * meanDiam;
 
     /* Check whether the diameter is coherent or not */
-    if ((fabs(*diamBv - meanDiam) > 2.0 * meanDiamErr) ||
-        (fabs(*diamVr - meanDiam) > 2.0 * meanDiamErr) ||
-        (fabs(*diamVk - meanDiam) > 2.0 * meanDiamErr) )
+    if ((fabs(diameters->bv - meanDiam) > 2.0 * meanDiamErr) ||
+        (fabs(diameters->vr - meanDiam) > 2.0 * meanDiamErr) ||
+        (fabs(diameters->vk - meanDiam) > 2.0 * meanDiamErr) )
     {
-        *confidenceIdx = alxNO_CONFIDENCE;
+        /* Set confidence index to NO_CONFIDENCE */
+        diameters->confidenceIdx = alxNO_CONFIDENCE;
     }
     else
     {
-        *confidenceIdx =  alxCONFIDENCE_HIGH;
+        /* Set Confidence index to CONFIDENCE_HIGH */
+        diameters->confidenceIdx =  alxCONFIDENCE_HIGH;
     }
 
+    /* Display results */
     logTest("Diameter BV = %.3f(%.4f), VR = %.3f(%.4f), VK = %.3f(%.4f)", 
-            *diamBv, *diamBvErr, *diamVr, *diamVrErr, *diamVk, *diamVkErr);
+            diameters->bv, diameters->bvErr, diameters->vr, diameters->vrErr,
+            diameters->vk, diameters->vkErr);
     logTest("Confidence index       = %s", 
-            (*confidenceIdx == alxNO_CONFIDENCE) ? "NO" : "HIGH");
+            (diameters->confidenceIdx == alxNO_CONFIDENCE) ? "NO" : "HIGH");
 
     return mcsSUCCESS;
 }
+
 /*___oOo___*/

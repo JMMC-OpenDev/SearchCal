@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.10 2005-02-22 16:17:53 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.11 2005-03-30 12:46:34 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/22 16:17:53  gzins
+ * Added errors for B-V, V-R and V-K diameters
+ *
  * Revision 1.9  2005/02/22 10:15:32  gzins
  * Made alxBLANKING_VALUE definition public
  *
@@ -78,7 +81,6 @@ typedef enum
 /**
  * Band for magnitude.
  */
-#define alxNB_BANDS 9
 typedef enum
 {
     alxB_BAND = 0,  /** B-band */
@@ -89,33 +91,94 @@ typedef enum
     alxH_BAND,      /** H-band */
     alxK_BAND,      /** K-band */
     alxL_BAND,      /** L-band */
-    alxM_BAND       /** M-band */
+    alxM_BAND,      /** M-band */
+    alxNB_BANDS
 } alxBAND;
+
+/**
+ * Structure of a magnitude with his value, the confidence index associated and
+ * a logical to know if the magnitude is set or not
+ */
+typedef struct
+{
+    mcsFLOAT value;
+    alxCONFIDENCE_INDEX confIndex;
+    mcsLOGICAL isSet; 
+} alxMAGNITUDE;
+
+/**
+ * Stucture of alxNB_BANDS(9) magnitudes
+ */
+typedef alxMAGNITUDE alxMAGNITUDES[alxNB_BANDS];
+
+/**
+ * Structure of visibilities :
+ *  - visibility
+ *  - visError
+ *  - vis²
+ *  - vis²Error
+ */
+typedef struct
+{
+    mcsFLOAT vis;
+    mcsFLOAT vis2;
+    mcsFLOAT visError;
+    mcsFLOAT vis2Error;
+} alxVISIBILITIES;
+
+/**
+ * Structure of diameters :
+ *  - diam B-V
+ *  - diam V-R
+ *  - diam V-K
+ *  - diam B-V err
+ *  - diam V-R err
+ *  - diam V-K err
+ *  - the confidence index associated
+ */
+typedef struct
+{
+    mcsFLOAT bv;
+    mcsFLOAT vr;
+    mcsFLOAT vk;
+    mcsFLOAT bvErr;
+    mcsFLOAT vrErr;
+    mcsFLOAT vkErr;
+    alxCONFIDENCE_INDEX confidenceIdx;
+} alxDIAMETERS;
+
+/**
+ * Differential magnitudes
+ */
+typedef struct
+{
+    mcsFLOAT b_v;
+    mcsFLOAT v_i;
+    mcsFLOAT v_r;
+    mcsFLOAT i_j;
+    mcsFLOAT j_h;
+    mcsFLOAT j_k;
+    mcsFLOAT k_l;
+    mcsFLOAT k_m;
+}alxDIFFERENTIAL_MAGNITUDES;
 
 /*
  * Pubic functions declaration
  */
 mcsCOMPL_STAT
 alxComputeMagnitudesForBrightStar(mcsSTRING32 spType, 
-                                  mcsFLOAT magnitudes[alxNB_BANDS],
-                                  alxCONFIDENCE_INDEX confIndexes[alxNB_BANDS]);
+                                  alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT plx,
                                        mcsFLOAT gLat,
                                        mcsFLOAT gLon,
-                                       mcsFLOAT magnitudes[alxNB_BANDS]);
+                                       alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
                                         mcsFLOAT mgV,
                                         mcsFLOAT mgR,
                                         mcsFLOAT mgK,
-                                        mcsFLOAT *diamBv,
-                                        mcsFLOAT *diamVr,
-                                        mcsFLOAT *diamVk,
-                                        mcsFLOAT *diamBvErr,
-                                        mcsFLOAT *diamVrErr,
-                                        mcsFLOAT *diamVkErr,
-                                        alxCONFIDENCE_INDEX *confidenceIdx);
+                                        alxDIAMETERS *diameters);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
                                             mcsFLOAT dec,
@@ -126,10 +189,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
                                    mcsFLOAT angDiamError,
                                    mcsFLOAT baseMax,
                                    mcsFLOAT wlen,
-                                   mcsFLOAT *vis,
-                                   mcsFLOAT *vis2,
-                                   mcsFLOAT *visError,
-                                   mcsFLOAT *vis2Error);
+                                   alxVISIBILITIES *visibilities);
 
 mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT ra,
                                      mcsFLOAT dec,
