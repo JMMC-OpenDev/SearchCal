@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.39 2005-02-23 12:52:45 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.40 2005-02-23 17:05:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2005/02/23 12:52:45  scetre
+ * Changed test if visibility is ok or not
+ *
  * Revision 1.38  2005/02/23 09:06:28  scetre
  * Extract the visibility ok list with the visErr parameter and the vis instead of the only visi
  *
@@ -63,7 +66,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.39 2005-02-23 12:52:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.40 2005-02-23 17:05:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -631,7 +634,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     mcsFLOAT diam, diamError;
     mcsFLOAT baseMax, wavelength;
     mcsFLOAT vis, vis2, visErr, vis2Err;
-
+   
     // Get object diameter. First look at the diameters coming from catalog
     char *diamId[4][2] = 
     {
@@ -682,11 +685,43 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     {
         return mcsFAILURE;
     }
-    
+     
     // Affect visibility property
     SetPropertyValue(sclsvrCALIBRATOR_VIS2, vis2, vobsSTAR_COMPUTED_PROP);
-    SetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, vis2Err, vobsSTAR_COMPUTED_PROP);
+    SetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, vis2Err,
+                     vobsSTAR_COMPUTED_PROP);
     
+    // Get the observed Band in order to compute visibility with wlen = 8 and
+    // lambda = 13 for band N
+    // If the observed band is N, computed visibility with wlen = 8 and 13
+    if (strcmp(request.GetSearchBand(), "N") == 0)
+    {
+        if (alxComputeVisibility(diam, diamError, baseMax, 8,
+                                 &vis, &vis2, &visErr, &vis2Err)==mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Affect visibility property
+        SetPropertyValue(sclsvrCALIBRATOR_VIS2_8, vis2,
+                         vobsSTAR_COMPUTED_PROP);
+        SetPropertyValue(sclsvrCALIBRATOR_VIS2_8_ERROR, vis2Err,
+                         vobsSTAR_COMPUTED_PROP);
+
+        if (alxComputeVisibility(diam, diamError, baseMax, 13,
+                                 &vis, &vis2, &visErr, &vis2Err)==mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Affect visibility property
+        SetPropertyValue(sclsvrCALIBRATOR_VIS2_13, vis2,
+                         vobsSTAR_COMPUTED_PROP);
+        SetPropertyValue(sclsvrCALIBRATOR_VIS2_13_ERROR, vis2Err,
+                         vobsSTAR_COMPUTED_PROP);
+
+    }
+
     return mcsSUCCESS;
 }
 
@@ -737,6 +772,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS2_8, "vis2(8)", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS2_8_ERROR, "vis2Err(8)", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS2_13, "vis2(13)", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13)", 
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2_FLAG, "vis2Flag", vobsSTRING_PROPERTY);
 
