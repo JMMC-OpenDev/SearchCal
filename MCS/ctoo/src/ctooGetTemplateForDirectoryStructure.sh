@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.9 2004-12-17 07:35:12 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.10 2004-12-17 09:33:47 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -11,8 +11,12 @@
 # gzins     04-Dec-2004 Look for templates in the following order:
 #                       ../templates, $INTROOT/templates and
 #                       $MCSROOT/templates
-# lgluck    17-Dec-2004 Add automatic brief description replacement in private 
-#                       header file when created in the module.
+# lgluck    17-Dec-2004 - Add automatic brief description replacement in
+#                         private header file when created in the module.
+#                       - Change call (ctooGetSpecificHeaderFile -> 
+#                         ctooGetSpecificHeaderFile) when create private
+#                         header file.
+#                       - Add module header file creation.
 #
 #*******************************************************************************
 
@@ -39,6 +43,7 @@
 #   - module description file (moduleDescription.xml) in the doc subdirectory.
 #   - module documentation file (\<moduleName\>.doc) in the src subdirectory.
 #   - Makefile in the src subdirectory.
+#   - module header file (\<moduleName\>.h) in the include subdirectory.
 #   - module private header file (\<moduleName\>Private.h) in the include
 #   subdirectory.
 # 
@@ -235,6 +240,50 @@ case $cvs in
             # Change permissions of the new created file
             chmod $MODE $FILE
         fi
+        
+        # If not exist, get module header file
+        # Check module header file existence
+        if [ -f $ROOT_NAME/include/${ROOT_NAME}.h ]
+        then
+            # The module header file already exists
+            echo -e "\n>>> ${ROOT_NAME}.h ALREADY EXISTS."
+            echo -e "    => The existing one is left\n"
+        else
+            # The module header file does not exist
+            echo -e "\n>>> Copying module header file\n"
+
+            # Go to $ROOT_NAME/include directory, which is required by
+            # the script below
+            cd $ROOT_NAME/include
+
+            # Switch off the environment variable EDITOR, to not
+            # trigger the automatic editor pop up
+            export EDITOR=""
+
+            # Get module header file in include directory
+            ctooGetSpecificHeaderFile module
+
+            # set new created file
+            FILE=${ROOT_NAME}.h
+            
+            # Replace general brief description by a specific one
+            briefDescription="$ROOT_NAME general header file."
+            sed -e "1,$ s/Brief.*/$briefDescription/g" $FILE > ${FILE}.BAK
+            
+            # Remove the intermediate file ($FILE) and rename the output
+            # file
+            mv ${FILE}.BAK $FILE
+            
+            # Switch on the environment variable EDITOR, to trigger
+            # the automatic editor pop up
+            export EDITOR=gvim
+            
+            # Change permissions of the new created file
+            chmod $MODE $FILE
+
+            # Go back to the previous directory
+            cd ../..
+        fi
 
         # If not exist, get module private header file
         # Check module private header file existence
@@ -256,7 +305,7 @@ case $cvs in
             export EDITOR=""
 
             # Get module private header file in include directory
-            ctooGetPrivateHeaderFile
+            ctooGetSpecificHeaderFile private
 
             # set new created file
             FILE=${ROOT_NAME}Private.h
