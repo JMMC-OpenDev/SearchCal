@@ -10,4 +10,14 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Star named '%.80s' has not been found in %s]]></errFormat>
    </error>
+   <error id="6">
+      <errName>WRONG_BUFFER_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid format of buffer '%.80s']]></errFormat>
+   </error>
+   <error id="7">
+      <errName>MISSING_PROPERTY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Property '%.20s' is missing; could not compute '%.80s']]></errFormat>
+   </error>
 </errorList>
