@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.12 2004-12-20 13:52:22 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.13 2004-12-21 08:45:08 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.12 2004-12-20 13:52:22 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.13 2004-12-21 08:45:08 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -89,15 +89,108 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
     // Copy properties of the star in th buffer
     
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
-    
+    propertyIter  = _propertyList.begin();
+
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_ID_MAIN));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_ID_ALTERNATIVE));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_POS_EQ_PMDEC));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_POS_EQ_PMRA));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_POS_PARLX_TRIG));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_CODE_VARIAB));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_CODE_MULT_FLAG));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_POS_GAL_LAT));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_POS_GAL_LON));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_VELOC_HC));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_EXTENSION_DIAM));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_OBS_METHOD));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_INST_WAVELENGTH_VALUE));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_MISC));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_UNITS));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_U));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_B));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_V));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_R));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_I));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_J));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_H));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_K));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_L));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_JHN_M));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_IR_N_10_4));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_VELOC_ROTAT));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(vobsSTAR_PHOT_COLOR_EXCESS));
+    miscDynBufAppendString(buffer, "\t");
+
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_MO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_LO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_KO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_HO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_JO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_IO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_RO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_VO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_BO));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_MULTIPLICITY));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_VISIBILITY));
+    miscDynBufAppendString(buffer, "\t");
+    miscDynBufAppendString(buffer, (char *)GetPropertyValue(sclsvrCALIBRATOR_VISIBILITY_ERROR));
+    miscDynBufAppendString(buffer, "\t");
+
     /*for (propertyIter  = _propertyList.begin();
-         propertyIter != _propertyList.end();
-         propertyIter++)
-    {
-        miscDynBufAppendString(buffer, (*propertyIter).second.GetValue());
-        miscDynBufAppendString(buffer, "\t");
-    }
-    
+      propertyIter != _propertyList.end();
+      propertyIter++)
+      {
+      miscDynBufAppendString(buffer, (*propertyIter).second.GetValue());
+      miscDynBufAppendString(buffer, "\t");
+      }
+     */
     // Write in the buffer diam OK if the diameter is coherent, else diamNOK
     if (_coherentDiameter == mcsTRUE)
     {
@@ -107,7 +200,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
     {
         miscDynBufAppendString(buffer,"diamNOK\t");        
     }
-    
+
     // Write in the buffer visOK if visibility is ok, else visNOK
     if (_correctVisibility == mcsTRUE)
     {
@@ -116,7 +209,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
     else 
     {
         miscDynBufAppendString(buffer,"visNOK\t");        
-    }*/
+    }
 
     return SUCCESS;
 }
@@ -131,8 +224,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
 mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
 { 
     logExtDbg("sclsvrCALIBRATOR::UnPack()");
-    /*char *parsingString=NULL;
-    int i=0;
+    char *parsingString=NULL;
     // initialized the buffer which will contain the calibrator
     miscDYN_BUF localBuffer;
     miscDynBufInit(&localBuffer);
@@ -140,7 +232,119 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
     miscDynBufAppendString(&localBuffer, calibratorString);
     // parse the buffer
     parsingString = (char *) strtok (miscDynBufGetBufferPointer(&localBuffer), "\t");
-    while (parsingString != NULL)
+
+    SetPropertyValue(vobsSTAR_ID_MAIN, parsingString); 
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_ID_ALTERNATIVE, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_POS_EQ_PMRA, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_POS_PARLX_TRIG, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_CODE_VARIAB, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_CODE_MULT_FLAG, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_POS_GAL_LAT, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_POS_GAL_LON, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_VELOC_HC, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_EXTENSION_DIAM, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_OBS_METHOD, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_INST_WAVELENGTH_VALUE, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_MISC, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_UNITS, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_U, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_B, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_V, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_R, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_I, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_J, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_H, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_K, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_L, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_JHN_M, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_IR_N_10_4, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_VELOC_ROTAT, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(vobsSTAR_PHOT_COLOR_EXCESS, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_MO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_LO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_KO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_HO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_JO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_IO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_RO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_VO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_BO, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_MULTIPLICITY, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_VISIBILITY, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    SetPropertyValue(sclsvrCALIBRATOR_VISIBILITY_ERROR, parsingString);
+    parsingString = (char *) strtok (NULL, "\t");
+    if (strcmp(parsingString, "diamOK") == 0)
+    {
+        _coherentDiameter = mcsTRUE;
+    }
+    else
+    {
+        _coherentDiameter = mcsFALSE;
+    }
+    parsingString = (char *) strtok (NULL, "\t");
+    if (strcmp(parsingString, "visOK") == 0)
+    {
+        _correctVisibility = mcsTRUE;
+    }
+    else
+    {
+        _correctVisibility = mcsFALSE;
+    }
+    miscDynBufDestroy(&localBuffer);
+
+
+
+    /*while (parsingString != NULL)
     {
         if (i> NbProperties()+2)
         {
@@ -470,7 +674,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else 
     {
-        errAdd(sclsvrERR_PROPERTY_NOT_SET, "paralax");
+        logWarning("cant't compute interstellar absorption because paralax not set");
         return FAILURE;
     }
     if (IsPropertySet(vobsSTAR_POS_GAL_LAT) == mcsTRUE)
@@ -479,7 +683,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else
     {
-        errAdd(sclsvrERR_PROPERTY_NOT_SET, "galactic Lattitude");
+        logWarning("cant't compute interstellar absorption because galactic Lattitude not set");
         return FAILURE;
     }
     if (IsPropertySet(vobsSTAR_POS_GAL_LON) == mcsTRUE)
@@ -488,7 +692,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else 
     {
-        errAdd(sclsvrERR_PROPERTY_NOT_SET, "galactic Longitude");
+        logWarning("cant't compute interstellar absorption because galactic Longitude not set");
         return FAILURE;
     }
 
@@ -624,7 +828,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
     }
     else
     {
-        errAdd(sclsvrERR_PROPERTY_NOT_SET, "angular diameter");
+        logWarning("can't compute visibility because angular diameter not set");
         return FAILURE;
     }
 
@@ -635,21 +839,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
     }
     else
     {
-        errAdd(sclsvrERR_PROPERTY_NOT_SET, "angular diameter error");
+        logWarning("can't compute visibility because angular diameter error not set");
         return FAILURE;
     }
         
-    // Get value of base max and wavelength
-    if (IsPropertySet(vobsSTAR_INST_WAVELENGTH_VALUE) == mcsTRUE)
-    {
-        GetPropertyValue(vobsSTAR_INST_WAVELENGTH_VALUE, &wavelength);
-    }
-    else
-    {
-        //errAdd(sclsvrERR_PROPERTY_NOT_SET, "wavelength");
-        return FAILURE;
-    }
-    
+    // Get value in request of the wavelength
+    request.GetConstraint(STAR_WLEN_ID, &wavelength);
     // get value in request of the base max
     request.GetConstraint(BASEMAX_ID, &baseMax);
     

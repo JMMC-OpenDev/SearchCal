@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.13 2004-12-20 13:52:22 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.14 2004-12-21 08:45:08 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -43,20 +43,20 @@ typedef mcsSTRING32 sclsvrCALIBRATOR_PROPERTY;
 /*
  * Definition of the calibrators properties
  */
-#define sclsvrCALIBRATOR_ANGULAR_DIAMETER "ANGULAR_DIAMETER"
+#define sclsvrCALIBRATOR_ANGULAR_DIAMETER       "ANGULAR_DIAMETER"
 #define sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR "ANGULAR_DIAMETER_ERROR"
-#define sclsvrCALIBRATOR_MO "MO"
-#define sclsvrCALIBRATOR_LO "LO"
-#define sclsvrCALIBRATOR_KO "KO"
-#define sclsvrCALIBRATOR_HO "HO"
-#define sclsvrCALIBRATOR_JO "JO"
-#define sclsvrCALIBRATOR_IO "IO"
-#define sclsvrCALIBRATOR_RO "RO"
-#define sclsvrCALIBRATOR_VO "VO"
-#define sclsvrCALIBRATOR_BO "BO"
-#define sclsvrCALIBRATOR_MULTIPLICITY "MULTIPLICITY"
-#define sclsvrCALIBRATOR_VISIBILITY "VISIBILITY"
-#define sclsvrCALIBRATOR_VISIBILITY_ERROR "VISIBILITY_ERROR"
+#define sclsvrCALIBRATOR_MO                     "MO"
+#define sclsvrCALIBRATOR_LO                     "LO"
+#define sclsvrCALIBRATOR_KO                     "KO"
+#define sclsvrCALIBRATOR_HO                     "HO"
+#define sclsvrCALIBRATOR_JO                     "JO"
+#define sclsvrCALIBRATOR_IO                     "IO"
+#define sclsvrCALIBRATOR_RO                     "RO"
+#define sclsvrCALIBRATOR_VO                     "VO"
+#define sclsvrCALIBRATOR_BO                     "BO"
+#define sclsvrCALIBRATOR_MULTIPLICITY           "MULTIPLICITY"
+#define sclsvrCALIBRATOR_VISIBILITY             "VISIBILITY"
+#define sclsvrCALIBRATOR_VISIBILITY_ERROR       "VISIBILITY_ERROR"
 
 /*
  * Class declaration
