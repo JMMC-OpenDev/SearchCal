@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfBuildDocIndex.sh,v 1.2 2004-10-20 11:55:00 mella Exp $"
+# "@(#) $Id: mkfBuildDocIndex.sh,v 1.3 2004-12-21 08:56:15 mella Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -147,7 +147,11 @@ echo -e "
     It represents the documentation of the modules installed under <I>$AREALOCATION</I> on $HOSTNAME
     <BR/>
     <BR/>
-    <table border=\"1\">" > $TMP2FILE;
+    <table border=\"1\">
+    <thead>
+        <tr><th>Package</th><th>Module</th><th>Description</th></tr>
+    </thead>
+    <tbody>" > $TMP2FILE;
 
 
 # process html bodies
@@ -193,6 +197,7 @@ echo "   </body>
 
 # append html foot
 echo "   
+    </tbody>
     </table>
     <BR/>
     Generated on " >> $TMP2FILE;
