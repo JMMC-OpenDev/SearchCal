@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.6 2005-02-07 09:24:42 gzins Exp $"
+* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.7 2005-02-07 14:44:03 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/07 09:24:42  gzins
+* Replaced vobsVIRTUAL_OBSERVATORY local instance by the class member
+*
 * Revision 1.5  2005/02/04 15:29:54  gzins
 * Removed unused printf
 *
@@ -18,7 +21,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.6 2005-02-07 09:24:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.7 2005-02-07 14:44:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -106,16 +109,16 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    // minMagRange
-    char *minMagRange;
-    if (getCalCmd.GetMinMagRange(&minMagRange) == mcsFAILURE)
+    // minDeltaMag
+    char *minDeltaMag;
+    if (getCalCmd.GetMinDeltaMag(&minDeltaMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    // maxMagRange
-    char *maxMagRange;
-    if (getCalCmd.GetMaxMagRange(&maxMagRange) == mcsFAILURE)
+    // maxDeltaMag
+    char *maxDeltaMag;
+    if (getCalCmd.GetMaxDeltaMag(&maxDeltaMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -148,9 +151,9 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    // lambda
-    mcsDOUBLE lambda;
-    if (getCalCmd.GetLambda(&lambda) == mcsFAILURE)
+    // wlen
+    mcsDOUBLE wlen;
+    if (getCalCmd.GetWlen(&wlen) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -192,7 +195,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     }
     // Affect the wavelength
     mcsSTRING256 wavelength;
-    sprintf(wavelength, "%f", lambda);
+    sprintf(wavelength, "%f", wlen);
     if (request.SetConstraint(STAR_WLEN_ID, wavelength)
         == mcsFAILURE)
     {
@@ -207,13 +210,13 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the min of the magitude range
-    if (request.SetConstraint(MIN_MAGNITUDE_RANGE_ID, minMagRange)
+    if (request.SetConstraint(MIN_MAGNITUDE_RANGE_ID, minDeltaMag)
         == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the max of the magnitude range
-    if (request.SetConstraint(MAX_MAGNITUDE_RANGE_ID, maxMagRange)
+    if (request.SetConstraint(MAX_MAGNITUDE_RANGE_ID, maxDeltaMag)
         == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
