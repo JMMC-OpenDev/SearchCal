@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2005-01-07 18:24:16 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.6 2005-01-26 18:25:00 gzins Exp $"
 #
 # Makefile of evh library
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History 
+# -------
+# $Log: not supported by cvs2svn $
 # sccmgr    22-Sep-2004  Created
 # gzins     17-Nov-2004  Added evhTASK and evhSERVER class
 # gzins     22-Dec-2004  Added evhVERSION, evhDEBUG and evhVERSION CDF
@@ -64,6 +65,7 @@ INCLUDES        =  evhCALLBACK.h          \
 				   evh.h                  \
 				   evhHANDLER.h           \
 				   evhSERVER.h            \
+				   evhStates.h            \
 				   evhTASK.h
 
 
@@ -88,8 +90,10 @@ evh_OBJECTS   = evhHANDLER           \
 				evhSERVER            \
 				evhIOSTREAM_KEY      \
 				evhHELP_CMD          \
+				evhSTATE_CMD         \
 				evhVERSION_CMD       \
 				evhDEBUG_CMD         \
+				evhStateCB           \
 				evhHelpCB            \
 				evhVersionCB
 #
@@ -150,6 +154,7 @@ jjjjjj_CLASS    =
 # ---------------------------------
 CDF_FILES       = evhDEBUG    \
 				  evhHELP     \
+				  evhSTATE    \
 				  evhVERSION
 
 #
