@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestUtils.c,v 1.7 2004-06-18 12:13:23 lafrasse Exp $"
+* "@(#) $Id: miscTestUtils.c,v 1.8 2004-06-22 07:58:53 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -39,7 +39,7 @@
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.7 2004-06-18 12:13:23 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.8 2004-06-22 07:58:53 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -121,55 +121,55 @@ int main (int argc, char *argv[])
     printf("   -------------------------------+-------------------------\n");
     strcpy (fullFileName, "fileName");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "./fileName");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "../fileName");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "/fileName");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "/tmp/.data/fileName");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "/tmp/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "/tmp/../p/.data/fileName");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
-    miscYankExtension(fullFileName);
+    miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     printf("\n\n");
 
