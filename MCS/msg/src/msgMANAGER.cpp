@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.16 2005-01-29 20:04:35 gzins Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.17 2005-01-31 13:52:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/01/29 20:04:35  gzins
+ * Added PROCLIST command handling
+ * Managed unicity flag for connected processes
+ *
  * Revision 1.15  2005/01/29 09:56:25  gzins
  * Updated to notify client when a server is exiting abnormally
  *
@@ -40,7 +44,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.16 2005-01-29 20:04:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.17 2005-01-31 13:52:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -481,7 +485,6 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
         }
         else
         {
-            
             /* If the registering command is received... */
             if (strcmp(msg.GetCommand(), msgREGISTER_CMD_NAME) == 0)
             {
@@ -566,6 +569,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
                msg.GetCommand());
         PrepareReply(msg);
         SendReply(msg);
+        return mcsFAILURE;
     }
     else
     {
@@ -575,6 +579,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
             /* Report this to the sender */
             PrepareReply(msg);
             SendReply(msg);
+            return mcsFAILURE;
         }
     }
        
