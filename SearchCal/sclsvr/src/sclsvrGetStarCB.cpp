@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.13 2005-02-04 07:39:28 gzins Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.14 2005-02-07 09:24:55 gzins Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.13 2005-02-04 07:39:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.14 2005-02-07 09:24:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -133,8 +133,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec);
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
-    vobsVIRTUAL_OBSERVATORY vobs;
-    if (vobs.Search(request, starList) == mcsFAILURE)
+    if (_virtualObservatory.Search(request, starList) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }

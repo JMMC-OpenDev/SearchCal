@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.5 2005-02-04 15:29:54 gzins Exp $"
+* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.6 2005-02-07 09:24:42 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/04 15:29:54  gzins
+* Removed unused printf
+*
 * gzins     23-Nov-2004  Created
 *
 *******************************************************************************/
@@ -15,7 +18,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.5 2005-02-04 15:29:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.6 2005-02-07 09:24:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -270,14 +273,11 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    // Build the virtual observatory
-    vobsVIRTUAL_OBSERVATORY virtualObservatory;
-
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
 
     // start the research in the virtual observatory
-    if (virtualObservatory.Search(request, starList)==mcsFAILURE)
+    if (_virtualObservatory.Search(request, starList)==mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -298,15 +298,20 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     calibratorList.Display();
     
     // Pack the list result in a buffer in order to send it
-    miscDYN_BUF dynBuff;
-    miscDynBufInit(&dynBuff);
-    
-    calibratorList.Pack(&dynBuff);
+    if (calibratorList.Size() != 0)
+    { 
+        miscDYN_BUF dynBuff;
+        miscDynBufInit(&dynBuff);
 
-    msg.SetBody(miscDynBufGetBuffer(&dynBuff));
-   
-    calibratorList.Clear();
-    starList.Clear();
+        calibratorList.Pack(&dynBuff);
+
+        msg.SetBody(miscDynBufGetBuffer(&dynBuff));
+    }
+    else
+    {
+        msg.ClearBody();
+    }
+
     // Send reply
     if (SendReply(msg) == mcsFAILURE)
     {
