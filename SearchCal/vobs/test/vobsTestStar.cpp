@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestStar.cpp,v 1.5 2005-01-26 08:21:48 scetre Exp $"
+* "@(#) $Id: vobsTestStar.cpp,v 1.6 2005-01-26 14:12:46 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.5 2005-01-26 08:21:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.6 2005-01-26 14:12:46 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -100,9 +100,9 @@ int main(int argc, char *argv[])
     vobsSTAR star;
     for (unsigned int el = 0; el < star.NbProperties(); el++)
      {
-         printf("%s\n",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
+         printf("%s\t",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
      }
-
+    printf("\n");
     star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08");
     mcsFLOAT ra;
     star.GetRa(ra);
@@ -112,6 +112,14 @@ int main(int argc, char *argv[])
     mcsFLOAT dec;
     star.GetDec(dec);
     printf("dec (deg) = %f\n", dec);
+
+    vobsSTAR star2=star;
+    for (unsigned int el2 = 0; el2 < star2.NbProperties(); el2++)
+     {
+         printf("%s\t",star2.GetNextProperty((mcsLOGICAL)(el2==0))->GetValue());
+     }
+    printf("\n");
+    
     /*logInfo("Starting ...");
 
     vobsSTAR_LIST list;
