@@ -1,13 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-06-17 08:27:58 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-06-23 09:05:46 lafrasse Exp $"
 #
 # Makefile of ........
 #
 # who       when		 what
 # --------  -----------	 -------------------------------------------------------
 # gzins     16-Jun-2004  created
+# lafrasse  23-Jun-2004  added miscTestDate.c
 #
 #
 #*******************************************************************************
@@ -34,14 +35,26 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = miscTestUtils
+EXECUTABLES     = miscTestDate miscTestString miscTestFile
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-miscTestUtils_OBJECTS   = miscTestUtils
-miscTestUtils_LDFLAGS   =
-miscTestUtils_LIBS      = mcs misc
+miscTestDate_OBJECTS   = miscTestDate
+miscTestDate_LDFLAGS   =
+miscTestDate_LIBS      = mcs misc
+
+#
+# <brief description of xxxxx program>
+miscTestString_OBJECTS   = miscTestString
+miscTestString_LDFLAGS   =
+miscTestString_LIBS      = mcs misc
+
+#
+# <brief description of xxxxx program>
+miscTestFile_OBJECTS   = miscTestFile
+miscTestFile_LDFLAGS   =
+miscTestFile_LIBS      = mcs misc
 
 #
 # special compilation flags for single c sources
