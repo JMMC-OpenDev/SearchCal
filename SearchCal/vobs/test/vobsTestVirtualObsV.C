@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestVirtualObsV.C,v 1.2 2004-10-18 11:39:31 scetre Exp $"
+* "@(#) $Id: vobsTestVirtualObsV.C,v 1.3 2004-11-03 08:31:21 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualObsV.C,v 1.2 2004-10-18 11:39:31 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualObsV.C,v 1.3 2004-11-03 08:31:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
         (request.SetConstraint(MAGNITUDE_RANGE_ID,"1..5") == SUCCESS) &&
         (request.SetConstraint(SEARCH_BOX_RA_ID,"1800") == SUCCESS) &&
         (request.SetConstraint(SEARCH_BOX_DEC_ID,"300") == SUCCESS) &&
+        (request.SetConstraint(BASEMIN_ID,"45") == SUCCESS) &&
+        (request.SetConstraint(BASEMAX_ID,"100") == SUCCESS) &&
         (request.SetConstraint(STAR_EXPECTED_VIS_ID,"0.349") == SUCCESS) &&
         (request.SetConstraint(STAR_MAX_ERR_VIS_ID,"0.035") == SUCCESS) &&
         (request.SetConstraint(OBSERVED_BAND_ID,"V") == SUCCESS ))
@@ -116,7 +118,8 @@ int main(int argc, char *argv[])
         errCloseStack();
         exit(EXIT_FAILURE);
     }
-    
+    starList.Display();
+
     errDisplayStack();
     
     logInfo("Exiting ...");

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2004-09-13 07:10:27 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.8 2004-11-03 08:31:21 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -73,7 +73,7 @@ vobsTestVirtualObsV_LIBS      = mcs err log misc  vobs
 
 getInformation_OBJECTS   = getInformation
 getInformation_LDFLAGS   = -lxml2 -lgdome -lstdc++
-getInformation_LIBS      = mcs err log misc  vobs
+getInformation_LIBS      = mcs err log misc  vobs simcli
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.16 2004-10-25 08:58:19 scetre Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.17 2004-11-03 08:31:06 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.16 2004-10-25 08:58:19 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.17 2004-11-03 08:31:06 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -86,28 +86,58 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST &request,
     }
     if (kindOfRequest == 0)
     {
-        vobsSTAR_LIST list1;
+        vobsCATALOG_ASCC ascc;
+
+        // Interrogation 3 on I/280
+        if (ascc.Search(request, starList) == FAILURE)
+        {
+            return FAILURE;
+        }
+        if (starList.Merge(starList,0.3,0.3, mcsTRUE) == FAILURE)
+        {
+            return FAILURE;
+        }
+        
+        // II/225
         vobsCATALOG_CIO cio;
-        // interrogation 1 on II/225
+        vobsSTAR_LIST list1;
+        list1.Copy(starList);
         if (cio.Search(request, list1) == FAILURE)
         {
             return FAILURE;
         }
-        // list1 is the result of the first search
-        // -> star list as parameter
-
-        vobsCATALOG_ASCC ascc;
-
-        // Interrogation 3 on I/280
-        if (ascc.Search(request, list1) == FAILURE)
+        if (starList.Merge(list1,0.1,0.1, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
-        if (starList.Merge(list1,0.3,0.3) == FAILURE)
+       
+        list1.Clear();
+        // II/7A
+        vobsCATALOG_PHOTO photo;
+        list1.Copy(starList);
+        if (photo.Search(request, list1) == FAILURE)
         {
             return FAILURE;
         }
-
+        if (starList.Merge(list1,0.1,0.1, mcsTRUE) == FAILURE)
+        {
+            return FAILURE;
+        }
+       
+        /*list1.Clear();
+        // MASS
+        vobsCATALOG_MASS mass;
+        list1.Copy(starList);
+        if (mass.Search(request, list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+        if (starList.Merge(list1,0.1,0.1, mcsTRUE) == FAILURE)
+        {
+            return FAILURE;
+        }*/
+        
+        
         if (starList.Size()==1)
         {
             starList.DisplayOne();
@@ -180,25 +210,25 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST     &request,
         scenario.AddEntry(&ascc, &listP, &listS, COPY, 0.0, 0.0);
         // II/225
         static vobsCATALOG_CIO cio2;
-        scenario.AddEntry(&cio2, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&cio2, &listS, &listS, UPDATE_ONLY, 0.1, 0.1);
         // I/196
         static vobsCATALOG_HIC hic;
-        scenario.AddEntry(&hic, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&hic, &listS, &listS, UPDATE_ONLY, 0.1, 0.1);
         // 2MASS
         static vobsCATALOG_MASS mass;
         scenario.AddEntry(&mass, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
         // LBSI
         static vobsCATALOG_LBSI lbsi;
-        scenario.AddEntry(&lbsi, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&lbsi, &listS, &listS, UPDATE_ONLY, 0.1, 0.1);
         // CHARM
         static vobsCATALOG_CHARM charm;
-        scenario.AddEntry(&charm, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&charm, &listS, &listS, UPDATE_ONLY, 0.1, 0.1);
         // II/7A
         static vobsCATALOG_PHOTO photo2;
-        scenario.AddEntry(&photo2, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&photo2, &listS, &listS, UPDATE_ONLY, 0.1, 0.1);
         // BSC
         static vobsCATALOG_BSC bsc;
-        scenario.AddEntry(&bsc, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&bsc, &listS, &listS, UPDATE_ONLY, 0.1, 0.1);
         // SBSC
         static vobsCATALOG_SBSC sbsc;
         scenario.AddEntry(&sbsc, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
