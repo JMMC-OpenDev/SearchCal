@@ -3,17 +3,19 @@
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
-* gzins     15-Jun-2004  created
+* gzins     15-Jun-2004  Created
+* lafrasse  01-Dec-2004  Added mcs environment name management
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: mcs.c,v 1.3 2004-11-19 10:01:39 swmgr Exp $"; 
+static char *rcsId="@(#) $Id: mcs.c,v 1.4 2004-12-01 15:51:56 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers
  */
 #include <string.h>
+#include <stdlib.h>
 
 /* 
  * Local Headers
@@ -25,11 +27,12 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Local variables 
  */
 static mcsPROCNAME mcsProcName = mcsUNKNOWN_PROC;
-static mcsENVNAME  mcsEnvName = "";
+static mcsENVNAME  mcsEnvName  = mcsUNKNOWN_ENV;
 /*
  * Local functions
  */
 static mcsCOMPL_STAT mcsStoreProcName (const char *procName);
+static mcsCOMPL_STAT mcsStoreEnvName  (const char *envName);
 
 /**
  * \mainpage mcs : MCS services 
@@ -37,8 +40,9 @@ static mcsCOMPL_STAT mcsStoreProcName (const char *procName);
  * \n
  * \section description Description
  * This module is provided mcsInit() function which has to be used to register
- * process to the MCS services. A process has to be registered before calling a
- * MCS services (log, msg, ...), as shown in the following example.
+ * process and environment to the MCS services. A process and its environment
+ * have to be registered before calling a MCS services (log, msg, ...), as shown
+ * in the following example.
  * 
  * \section example Code example
  * \code
@@ -64,8 +68,10 @@ static mcsCOMPL_STAT mcsStoreProcName (const char *procName);
 
 /**
  * Initializes the MCS services.
- * It register application to the MCS services. If process is not identified,
- * then default name is mcsUNKNOWN_PROC.
+ * It register application and environment to the MCS services. If process is
+ * not identified, then default name is mcsUNKNOWN_PROC. If the $MCSENV
+ * environment variable is not defined, then default environment name is
+ * mcsUNKNOWN_ENV.
  *
  * \param procName name of the process.
  *
@@ -75,12 +81,21 @@ static mcsCOMPL_STAT mcsStoreProcName (const char *procName);
  *
  * \return SUCCESS
  *
- * \sa mcsGetProcName
+ * \sa mcsGetProcName, mcsGetEnvName.
  */
 mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
 {
     /* Store the application name */
     mcsStoreProcName(procName);
+
+    /* Store the environment name */
+    /* If the $MCS_ENV_NAME environment variable is defined */
+    char* envValue = getenv("MCSENV");
+    if (envValue != NULL)
+    {
+        /* Copy the environment variable content in mcsEnvName */
+        mcsStoreEnvName(envValue);
+    }
 
     return SUCCESS;
 }
@@ -101,9 +116,9 @@ const char *mcsGetProcName()
 }
 
 /**
- * Returns the environnement name.
+ * Returns the environment name.
  *
- * \return the environnement name.
+ * \return the environment name.
  *
  * \sa mcsInit
  */
@@ -137,7 +152,7 @@ void mcsExit()
  *
  * Strips off from the process name the possible path, which could have been
  * specified to invoke the process.  For example  : "../bin/myProg" becomes
- * only "myProg". If the parameter given to mcsStoreMyName() is NULL, the name
+ * only "myProg". If the parameter given to mcsStoreProcName() is NULL, the name
  * of the process is set to mcsUNKNOWN_PROC.
  *
  * THIS FUNCTION IS FOR INTERNAL USE ONLY.
@@ -161,4 +176,29 @@ mcsCOMPL_STAT mcsStoreProcName (const char *procName)
 
     return SUCCESS;
 }
+
+/**
+ * Stores the curent environment name.
+ *
+ * If the parameter given to mcsStoreEnvName() is NULL, the name of the
+ * environment is set to mcsUNKNOWN_ENV.
+ *
+ * THIS FUNCTION IS FOR INTERNAL USE ONLY.
+ *
+ * \return SUCCESS
+ *
+ * \sa mcsInit
+ */
+mcsCOMPL_STAT mcsStoreEnvName (const char *envName)
+{
+    if (envName == (char *) NULL)
+    {
+        return SUCCESS;
+    }
+
+    strncpy((char *)mcsEnvName, envName, (sizeof(mcsEnvName)-1));
+
+    return SUCCESS;
+}
+
 /*___oOo___*/

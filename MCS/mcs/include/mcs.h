@@ -1,19 +1,23 @@
-/*************************************************************************
-* JMMC project
-*
-* "@(#) $Id: mcs.h,v 1.9 2004-11-19 10:01:39 swmgr Exp $"
-*
-* mcs.h  -  MCS/Common Definitions - Interface File
-*
-* who        when      what
-* ---------  --------  ----------------------------------------------
-* G.Mella    07/05/04  Preliminary version based on MCS from VLT/ESO
-* gzins      11/05/04  Add RCS Id and removed unused definitions
-*
-****************************************************************************/
-
 #ifndef MCS_H
 #define MCS_H
+/*******************************************************************************
+* JMMC project
+*
+* "@(#) $Id: mcs.h,v 1.10 2004-12-01 15:51:53 lafrasse Exp $"
+*
+* who       when		 what
+* --------  -----------	 -------------------------------------------------------
+* mella     07-May-2004  Preliminary version based on MCS from VLT/ESO
+* gzins     11-May-2004  Add RCS Id and removed unused definitions
+* lafrasse  01-Dec-2004  Added mcsUNKNOWN_ENV
+*
+*
+*******************************************************************************/
+
+/* The following piece of code alternates the linkage type to C for all 
+functions declared within the braces, which is necessary to use the 
+functions in C++-code.
+*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,10 +31,11 @@ extern "C" {
                                     /* 6 characters + 1 byte alignement   */
 #define mcsENVNAME_LEN          7   /* max. length of an environnement    */
                                     /* 6 characters + 1 byte alignement   */
-#define mcsCMD_LEN 8                /* max. length of a command name */
-#define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes */
-#define mcsFALSE                0   /* False Logical */
-#define mcsTRUE                 1   /* True Logical */
+#define mcsCMD_LEN              8   /* max. length of a command name      */
+#define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes    */
+#define mcsUNKNOWN_ENV  "MCSenv"    /* name used for unknown environment  */
+#define mcsFALSE                0   /* False Logical                      */
+#define mcsTRUE                 1   /* True Logical                       */
 
 /************************************************************************
  *                          MCS   Data  Types                           *
@@ -69,11 +74,11 @@ typedef char               mcsSTRING80[80];
 typedef char               mcsSTRING128[128]; 
 typedef char               mcsSTRING256[256];
 
-typedef char mcsPROCNAME[mcsPROCNAME_LEN+1];      /* Process name           */
-typedef char mcsENVNAME[mcsENVNAME_LEN+1];       /* Environnement name     */
-typedef char mcsMODULEID[mcsMODULEID_LEN+1];      /* Software module name   */
-typedef char mcsFILE_LINE[64];                    /* File/line information  */
-typedef char mcsCMD[mcsCMD_LEN+1];                /* Command name */
+typedef char mcsPROCNAME[mcsPROCNAME_LEN+1];      /* Process name          */
+typedef char mcsENVNAME[mcsENVNAME_LEN+1];        /* Environnement name    */
+typedef char mcsMODULEID[mcsMODULEID_LEN+1];      /* Software module name  */
+typedef char mcsFILE_LINE[64];                    /* File/line information */
+typedef char mcsCMD[mcsCMD_LEN+1];                /* Command name          */
 
 #define mcsNULL_CMD  ""
 
