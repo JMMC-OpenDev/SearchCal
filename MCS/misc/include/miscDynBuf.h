@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynBuf.h,v 1.2 2004-07-09 14:28:55 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.h,v 1.3 2004-07-12 10:24:26 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -70,13 +70,12 @@ extern "C" {
 #define miscDYN_BUF_BEGINNING_POSITION  ((mcsUINT32) 1u)
 
 
-
 /*
  * Structure type definition
  */
 
 /**
- * a Dynamic Buffer structure.
+ * A Dynamic Buffer structure.
  *
  * It holds all the informtations needed to manage a miscDynBuf Dynamic Buffer.
  */
@@ -112,6 +111,7 @@ typedef struct
 /*
  * Pubic functions declaration
  */
+
 mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length);
 
@@ -159,6 +159,7 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
 mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
+
 
 #ifdef __cplusplus
 }

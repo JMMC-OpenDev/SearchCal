@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDynBuf.c,v 1.2 2004-07-09 14:28:55 lafrasse Exp $"
+* "@(#) $Id: miscTestDynBuf.c,v 1.3 2004-07-12 10:24:26 gluck Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.2 2004-07-09 14:28:55 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.3 2004-07-12 10:24:26 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -51,6 +51,9 @@ void displayDynBuf(miscDYN_BUF*);
 
 int main (int argc, char *argv[])
 {
+    /* Give process name to mcs library */
+    mcsInit(argv[0]);
+    
     mcsCOMPL_STAT execStatus;
 
     printf("---------------------------------------------------------------\n");

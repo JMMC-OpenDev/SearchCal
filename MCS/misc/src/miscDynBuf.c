@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.2 2004-07-09 14:28:55 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.3 2004-07-12 10:24:26 gluck Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -22,7 +22,7 @@
  * \sa To see all the other 'misc' module functions declarations, see misc.h
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.2 2004-07-09 14:28:55 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.3 2004-07-12 10:24:26 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -113,13 +113,15 @@ static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF  *dynBuf)
  * content will remain untouched after the reallocation. New allocated bytes
  * will all contain '0'.
  *
- * Note that the call to this function is optional, as a Dynamic Buffer will
+ * \remark The call to this function is optional, as a Dynamic Buffer will
  * expand itself on demand when invoquing other miscDynBuf functions as
- * miscDynBufAppendBytes(), miscDynBufInsertBytesAt(), etc... So, this function
- * call is only usefull when you know by advance the maximum bytes length the
- * Dynamic Buffer can reach accross its entire life, and thus want to minimize
- * the CPU time spent to expand the Dynamic Buffer allocated memory on demand.
- *
+ * miscDynBufAppendBytes(), miscDynBufInsertBytesAt(), etc... So, this
+ * function call is only usefull when you know by advance the maximum bytes
+ * length the Dynamic Buffer can reach accross its entire life, and thus want
+ * to minimize the CPU time spent to expand the Dynamic Buffer allocated
+ * memory on demand.
+ * 
+ * \n 
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param length the number of bytes by which the Dynamic Buffer should be
  * expanded
@@ -202,7 +204,7 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
+mcsCOMPL_STAT miscDynBufStrip(miscDYN_BUF *dynBuf)
 {
     char *newBuf = NULL;
 
