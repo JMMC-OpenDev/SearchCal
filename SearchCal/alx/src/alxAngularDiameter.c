@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.11 2005-03-30 12:46:57 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.12 2005-04-04 07:22:11 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/03/30 12:46:57  scetre
+ * Added structure in order to simplify the code.
+ * Changed API with this structure
+ *
  * Revision 1.10  2005/03/03 14:46:19  gzins
  * Changed alxCONFIDENCE_LOW to alxNO_CONFIDENCE
  *
@@ -52,7 +56,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.11 2005-03-30 12:46:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.12 2005-04-04 07:22:11 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -92,7 +96,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void);
 /**
  * Return the polynomial coefficients for angular diameter computation 
  *
- * \return pointer to structure containing polynomial coefficients or NULL if
+ * \return pointer onto structure containing polynomial coefficients or NULL if
  * an error occured.
  *
  * \usedfiles alxAngDiamPolynomialForBrightStar.cfg : file containing the
@@ -104,9 +108,9 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     logExtDbg("alxGetPolynamialForAngularDiameter()");
 
     /*
-     * Check if the structure polynomial, where will be stored polynomial
+     * Check if the polynomial structure, where will be stored polynomial
      * coefficients to compute angular diameter, is loaded into memory. If not
-     * loaded it.
+     * load it.
      */
     static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = 
         {mcsFALSE, "alxAngDiamPolynomialForBrightStar.cfg"};
@@ -116,8 +120,8 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     }
 
     /* 
-     * Build the dynamic buffer which will contain the file of coefficient 
-     * of angular diameter
+     * Build the dynamic buffer which will contain the coefficient file 
+     * coefficient for angular diameter computation
      */
     /* Find the location of the file */
     char *fileName;
@@ -127,7 +131,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
         return NULL;
     }
 
-    /* Load file where comment lines started with '#' */
+    /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
@@ -137,7 +141,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     }
 
     /* For each line */
-    int  lineNum = 0;
+    mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
     while ((pos = miscDynBufGetNextLine
@@ -175,7 +179,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
             lineNum++;
         }
     }
-    /* Destroy the dynamic buffr where is stored the file information */
+    /* Destroy the dynamic buffer where is stored the file information */
     miscDynBufDestroy(&dynBuf);
 
     /* Check if there is missing line */
@@ -185,7 +189,8 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
         miscDynBufDestroy(&dynBuf);
         return NULL;
     }
-
+    
+    /* Set to "loaded" the polynomial logical */
     polynomial.loaded = mcsTRUE;
 
     return (&polynomial);
@@ -199,7 +204,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
 /**
  * Compute the angular diameter.
  *
- * Compute the star angular diameter from its the photometric properties.
+ * Compute the star angular diameter from its photometric properties.
  *
  * \param mgB magnitude in band B
  * \param mgV magnitude in band V
@@ -210,7 +215,6 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  *
- * \todo affect correct value to confidence index.
  */
 mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
                                         mcsFLOAT mgV,
@@ -274,7 +278,7 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
     diameters->vrErr = diameters->vr * 9.7/100.0;;
     diameters->vkErr = diameters->vk * 6.9/100.0;;
 
-    /* Compute mean diameter and its associated error */
+    /* Compute mean diameter and its associated error (10%) */
     meanDiam = (diameters->vk + diameters->vr + diameters->bv) / 3;
     meanDiamErr = 0.1 * meanDiam;
 

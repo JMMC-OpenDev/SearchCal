@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.6 2005-03-30 12:48:21 scetre Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.7 2005-04-04 07:22:11 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/03/30 12:48:21  scetre
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/02/23 09:11:48  gzins
  * Added log for test
  *
@@ -37,7 +40,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: alxVisibility.c,v 1.6 2005-03-30 12:48:21 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxVisibility.c,v 1.7 2005-04-04 07:22:11 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -75,7 +78,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *
  * \param angDiam angular diameter of the star (mas)
  * \param angDiamError relative error on the angular diameter
- * \param baseMax maximal baseline(m)
+ * \param baseMax maximal baseline length(m)
  * \param wlen wavelength (nm)
  * \param visibilities the computed visibilities (vis, visErr, vis2, vis2Err)
  *
