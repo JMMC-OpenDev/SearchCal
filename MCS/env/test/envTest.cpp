@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envTest.cpp,v 1.4 2005-02-13 17:26:51 gzins Exp $"
+ * "@(#) $Id: envTest.cpp,v 1.5 2005-02-28 14:19:25 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/13 17:26:51  gzins
+ * Minor changes in documentation
+ *
  * Revision 1.3  2005/02/13 16:53:13  gzins
  * Added CVS log as modification history
  *
@@ -23,7 +26,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: envTest.cpp,v 1.4 2005-02-13 17:26:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: envTest.cpp,v 1.5 2005-02-28 14:19:25 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -92,7 +95,7 @@ int main(int argc, char *argv[])
          << "| " << setw(18) << list.GetHostName(envName)   << " "
          << "| " << setw(11) << list.GetPortNumber(envName) << " |"     << endl;
 
-    envName = "remote";
+    envName = "default";
     cout << "| " << setw(18) << envName                     << " "
          << "| " << setw(18) << list.GetHostName(envName)   << " "
          << "| " << setw(11) << list.GetPortNumber(envName) << " |"     << endl;
