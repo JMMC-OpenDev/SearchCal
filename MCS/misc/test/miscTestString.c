@@ -1,17 +1,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestString.c,v 1.2 2004-07-22 16:58:18 gzins Exp $"
+* "@(#) $Id: miscTestString.c,v 1.3 2004-07-23 09:14:11 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
-* lafrasse  23-Jun-2004  forked from miscTestUtils.c
+* lafrasse  23-Jun-2004  Forked from miscTestUtils.c
+* lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
 *
-*-----------------------------------------------------------------------------*/
+*
+*******************************************************************************/
 
-#define _POSIX_SOURCE 1
-
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.2 2004-07-22 16:58:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.3 2004-07-23 09:14:11 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -21,11 +21,19 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <string.h>
 #include <stdlib.h>
 
+
+/*
+ * MCS Headers 
+ */
+#include "mcs.h"
+#include "err.h"
+
+
 /*
  * Local Headers 
  */
-#include "mcs.h"
 #include "misc.h"
+
 
 /* 
  * Main
@@ -37,28 +45,154 @@ int main (int argc, char *argv[])
 
     /* Test of miscStripQuotes() */
     printf("miscStripQuotes() Function Test :\n\n");
-    strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      \0");
+    printf("   Original String  = |(null)|\n");
+    printf("   Resulting String = ");
+    if (miscStripQuotes(NULL) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("|%s|\n", string);
+    }
+    strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      ");
     printf("   Original String  = |%s|\n", string);
-    miscStripQuotes(string);
-    printf("   Resulting String = |%s|\n", string);
+    printf("   Resulting String = ");
+    if (miscStripQuotes(string) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("|%s|\n", string);
+    }
     printf("\n\n");
 
     /* Test of miscStrToUpper() */
     printf("miscStrToUpper() Function Test :\n\n");
-    strcpy ((char *)string, "Abc deF GhI jKl 012 .;/\0");
+    printf("   Original String  = |(null)|\n");
+    printf("   Resulting String = ");
+    if (miscStrToUpper(NULL) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("|%s|\n", string);
+    }
+    strcpy ((char *)string, "Abc deF GhI jKl 012 .;/");
     printf("   Original String  = |%s|\n", string);
-    miscStrToUpper(string);
-    printf("   Resulting String = |%s|\n", string);
+    printf("   Resulting String = ");
+    if (miscStrToUpper(string) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("|%s|\n", string);
+    }
     printf("\n\n");
 
     /* Test of miscIsSpaceStr() */
     printf("miscIsSpaceStr() Function Test :\n\n");
-    strcpy ((char *)string, "Abc deF GhI jKl 012 .;/\0");
-    printf("   Is string '%s' a white-space string ? : %s\n", string,
-           miscIsSpaceStr(string)==mcsTRUE?"YES":"NO");
-    strcpy ((char *)string, "                       ");
-    printf("   Is string '%s' a white-space string ? : %s\n", string,
-           miscIsSpaceStr(string)==mcsTRUE?"YES":"NO");
+    strcpy ((char *)string, "*");
+    printf("   miscIsSpaceStr(|%s|  ) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, " ");
+    printf("   miscIsSpaceStr(|%s|  ) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, "* ");
+    printf("   miscIsSpaceStr(|%s| ) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, " *");
+    printf("   miscIsSpaceStr(|%s| ) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, "  ");
+    printf("   miscIsSpaceStr(|%s| ) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, "*  ");
+    printf("   miscIsSpaceStr(|%s|) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, " * ");
+    printf("   miscIsSpaceStr(|%s|) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, "  *");
+    printf("   miscIsSpaceStr(|%s|) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, "   ");
+    printf("   miscIsSpaceStr(|%s|) = ", string);
+    if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
     printf("\n\n");
 
     exit (EXIT_SUCCESS);

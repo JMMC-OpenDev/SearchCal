@@ -55,4 +55,9 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[could not perform a standard time.h system function call.]]></errFormat>
    </error>
+   <error id="12">
+      <errName>NULL_PARAM</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[received a NULL value for parameter '%s'.]]></errFormat>
+   </error>
 </errorList>

@@ -3,12 +3,15 @@
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
-* gzins     16-Jun-2004  created
-* lafrasse  17-Jun-2004  added miscStrToUpper
+* gzins     16-Jun-2004  Created
+* lafrasse  17-Jun-2004  Added miscStrToUpper
+* gzins     23-Jul-2004  Added miscIsSpaceStr
+* lafrasse  23-Jul-2004  Added error management
+*
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.5 2004-07-22 16:57:59 gzins Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.6 2004-07-23 09:14:11 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -21,15 +24,21 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <sys/time.h>
 #include <ctype.h>
 
+
 /*
  * MCS Headers
  */
 #include "mcs.h"
+#include "err.h"
+
 
 /*
  * Local Headers
  */
 #include "misc.h"
+#include "miscPrivate.h"
+#include "miscErrors.h"
+
 
 /**
  * Strip quotes enclosing a string.
@@ -41,12 +50,20 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * If the string is not contained in quotes, the function simply returns
  * without changing the string.
  *
- * /param string that shall be stripped.
+ * \param string the null-terminated string that shall be stripped
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-void miscStripQuotes(char *string)
+mcsCOMPL_STAT miscStripQuotes(char *string)
 {
     char  *srcPtr;
     char  *dstPtr;
+
+    if (string == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "string");
+        return FAILURE;
+    }
 
     /* Worst-case string which becomes:
      *   |   "   kjkdjd kjkjk   kjkj  "  ;   |
@@ -89,6 +106,8 @@ void miscStripQuotes(char *string)
         }
         *dstPtr = '\0';
     }
+
+    return SUCCESS;
 }
 
 /**
@@ -98,15 +117,25 @@ void miscStripQuotes(char *string)
  * cleans this by upper-casing all the caracters, using the same character
  * buffer for storing the processed string. The string must be NULL terminated.
  *
- * /param string that shall be upper-cased.
+ * \param string the null-terminated string that shall be upper-cased
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-void miscStrToUpper(char *string)
+mcsCOMPL_STAT miscStrToUpper(char *string)
 {
+    if (string == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "string");
+        return FAILURE;
+    }
+
     while (*string != '\0')
     {
         *string = toupper(*string);
         string++;
     }
+
+    return SUCCESS;
 }
 
 /**
@@ -115,7 +144,11 @@ void miscStrToUpper(char *string)
  * It returns true (i.e. mcsTRUE) if string only contains white-space (i.e.
  * blank), and false (i.e. mcsFALSE) otherwise.
  *
- * /param string to be checked.
+ * \warning string must \em NOT be a null pointer.\n\n
+ *
+ * \param string the null-terminated string that shall be checked.
+ *
+ * \return mcsTRUE if it is a white-space string, mcsFALSE otherwise.
  */
 mcsLOGICAL miscIsSpaceStr (char *string)
 {
