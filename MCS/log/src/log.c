@@ -1,7 +1,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: log.c,v 1.3 2004-05-14 10:04:09 mella Exp $"
+*  "@(#) $Id: log.c,v 1.4 2004-05-14 11:05:35 mella Exp $"
 *
 * who       when      what
 * --------  --------  ----------------------------------------------
@@ -151,9 +151,11 @@ mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
          * a special position color ...
          * \todo implement real function
          */
+        printf("ACTION: ");
         va_start(argPtr,logFormat);
         vfprintf(stdout, logFormat, argPtr);
-        fprintf(stdout,"\n"); fflush(stdout);
+        fprintf(stdout,"\n"); 
+        fflush(stdout);
         va_end(argPtr);
     }/* End if */
 
