@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.11 2005-02-16 15:26:09 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.12 2005-02-16 15:55:42 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/16 15:26:09  gzins
+* Updated call to miscoDYN_BUF::GetNextLine()
+*
 * Revision 1.10  2005/02/14 08:56:35  gzins
 * Updated to skip empty line when extracting star from buffer
 *
@@ -412,7 +415,7 @@ public:
                         return mcsFAILURE;
                     }
                 }
-            } while (line != NULL);
+            } while (from != NULL);
             return mcsSUCCESS;
         }
 

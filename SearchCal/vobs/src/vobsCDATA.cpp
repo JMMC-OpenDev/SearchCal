@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.13 2005-02-16 15:22:11 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.14 2005-02-16 15:55:42 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/16 15:22:11  gzins
+* Updated call to miscoDYN_BUF::GetNextLine()
+*
 * Revision 1.12  2005/02/14 14:11:22  scetre
 * replace \n y \0 in LoadBuffer() method
 *
@@ -43,7 +46,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.13 2005-02-16 15:22:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.14 2005-02-16 15:55:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -363,13 +366,17 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
             {
                 return mcsFAILURE;
             }
+            if (AppendString("\n") == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             _nbLines++;
         }
         else
         {
             logDebug("   > Skip line : %s", line);
         }
-    } while (line != NULL);
+    } while (from != NULL);
  
     return mcsSUCCESS;
 }
