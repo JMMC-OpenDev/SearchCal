@@ -1,12 +1,13 @@
 "------------------------------------------------------------------------------
 " File:    $MCSROOT/etc/vimrc
 "
-" Version: $Id: vimrc,v 1.11 2005-01-06 10:11:50 gzins Exp $
+" Version: $Id: vimrc,v 1.12 2005-02-16 09:28:18 gzins Exp $
 " 
 " Purpose: VIM special configuration file
 "
-" who       when        what
-" --------  ----------  ----------------------------------------------
+" History
+" -------
+" $Log: not supported by cvs2svn $
 " gzins     14-05-2004  created
 " gzins     23-11-2004  added MCS types to the list of C-types keywords
 " gzins     23-11-2004  added mcsTRUE and mcsFALSE to the list of C-types
@@ -177,5 +178,5 @@ set complete=.,b,i
 set path=.,./src,../src,./include,../include,$INTROOT,$INTROOT/src,$INTROOT/include,$MCSROOT/src,$MCSROOT/include,/usr/include
 
 "   syntax: Added MCS types
-autocmd BufRead *.c,*.C,*.h,*.cpp syn keyword cType mcsINT8 mcsUINT8 mcsINT16 mcsUINT16 mcsINT32 mcsUINT32 mcsLOGICAL mcsDOUBLE mcsFLOAT mcsBYTES4 mcsBYTES8 mcsBYTES12 mcsBYTES16 mcsBYTES20 mcsBYTES32 mcsBYTES48 mcsBYTES64 mcsBYTES80 mcsBYTES128 mcsBYTES256 mcsSTRING4 mcsSTRING8 mcsSTRING12 mcsSTRING16 mcsSTRING20 mcsSTRING32 mcsSTRING48 mcsSTRING64 mcsSTRING80 mcsSTRING128 mcsSTRING256 mcsCOMPL_STAT mcsPROCNAME mcsENVNAME mcsMODULEID mcsFILE_LINE mcsCMD evhCB_COMPL_STAT
+autocmd BufRead *.c,*.C,*.h,*.cpp syn keyword cType mcsINT8 mcsUINT8 mcsINT16 mcsUINT16 mcsINT32 mcsUINT32 mcsLOGICAL mcsDOUBLE mcsFLOAT mcsBYTES4 mcsBYTES8 mcsBYTES12 mcsBYTES16 mcsBYTES20 mcsBYTES32 mcsBYTES48 mcsBYTES64 mcsBYTES80 mcsBYTES128 mcsBYTES256 mcsBYTES512 mcsBYTES1024 mcsSTRING4 mcsSTRING8 mcsSTRING12 mcsSTRING16 mcsSTRING20 mcsSTRING32 mcsSTRING48 mcsSTRING64 mcsSTRING80 mcsSTRING128 mcsSTRING256 mcsSTRING512 mcsSTRING1024 mcsCOMPL_STAT mcsPROCNAME mcsENVNAME mcsMODULEID mcsFILE_LINE mcsCMD evhCB_COMPL_STAT
 autocmd BufRead *.c,*.C,*.h,*.cpp syn keyword cConstant mcsTRUE mcsFALSE mcsFAILURE mcsSUCCESS evhCB_FAILURE evhCB_SUCCESS evhCB_NO_DELETE evhCB_DELETE
