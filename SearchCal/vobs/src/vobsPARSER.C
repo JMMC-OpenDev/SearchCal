@@ -1,15 +1,15 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsPARSER.C,v 1.13 2004-10-15 08:14:24 scetre Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    06-Jul-2004  Created
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsPARSER.C,v 1.14 2004-10-19 14:47:54 scetre Exp $"
+ *
+ * who       when         what
+ * --------  -----------  -------------------------------------------------------
+ * scetre    06-Jul-2004  Created
+ *
+ *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.13 2004-10-15 08:14:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.14 2004-10-19 14:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -76,9 +76,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     GdomeException         exc;
     vobsCDATA              cData;
     vobsSTAR_LIST starListToReturn;
-        
+
     std::vector<vobsCDATA *> listCDATA;
-    
+
     logExtDbg("vobsPARSER::MainParser()");	
 
     // Get a DOMImplementation reference
@@ -90,6 +90,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     if (doc == NULL) 
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromURI", exc);
+        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_di_unref (domimpl, &exc);
         return FAILURE;
     }
 
@@ -98,6 +100,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     if (root == NULL)
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_doc_documentElement", exc);
+        gdome_el_unref(root, &exc);            
         gdome_di_freeDoc (domimpl, doc, &exc);
         gdome_di_unref (domimpl, &exc);
         return FAILURE;
@@ -107,6 +110,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     memset(&cData, '\0', sizeof(cData)); 
     if (ParseXmlSubTree((GdomeNode *)root, listCDATA, &cData) == FAILURE)
     {
+        gdome_el_unref(root, &exc);            
         gdome_di_freeDoc (domimpl, doc, &exc);
         gdome_di_unref (domimpl, &exc);
         return FAILURE;
@@ -145,18 +149,19 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
         }
         ++iterCDATA;
     }
-    
-    
+
+
     // If CDATA section has not be found
     if (listCDATA.size() == 0)
     {
         // Handle error
         errAdd(vobsERR_CDATA_NOT_FOUND);
+        gdome_el_unref(root, &exc);            
         gdome_di_freeDoc (domimpl, doc, &exc);
         gdome_di_unref (domimpl, &exc);
         //return FAILURE;
     }
-    
+
     else
     {
         FILE *f=NULL;
@@ -184,6 +189,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
             // Parse the CDATA section
             if (ParseCData((*iterCDATA), starListToReturn, f) == FAILURE)
             {
+                gdome_el_unref(root, &exc);            
                 gdome_di_freeDoc (domimpl, doc, &exc);
                 gdome_di_unref (domimpl, &exc);
                 return FAILURE;
@@ -192,6 +198,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
             ++iterCDATA;
         }
         // Free the document structure and the DOMImplementation
+        gdome_el_unref(root, &exc);            
         gdome_di_freeDoc (domimpl, doc, &exc);
         gdome_di_unref (domimpl, &exc);
         if (f!=NULL)
@@ -201,15 +208,15 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
 
         // Print out the star list 
         /*if (logGetStdoutLogLevel() >= logTEST)
-        {
-            starList.Display();
-        }*/
+          {
+          starList.Display();
+          }*/
 
     }
 
     starList.Clear();
     starList.Copy(starListToReturn);
-    
+
     return SUCCESS;
 }
 
@@ -249,11 +256,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     GdomeDOMString *attrName;
     GdomeDOMString *attrValue;
     GdomeNode *attr;
-    
-    //cData->nbLineToJump=0;
-    //printf("1 nb line to jump = %d\n",cData->nbLineToJump);
-    //memset(&cData, '\0', sizeof(cData)); 
-    
+
     logExtDbg("vobsPARSER:ParseXmlSubTree()");
 
     // Get the node list containing all children of this node
@@ -261,6 +264,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     if (exc != GDOME_NOEXCEPTION_ERR)
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_n_childNodes", exc);
+        gdome_nl_unref(nodeList, &exc);
         return FAILURE;
     }
 
@@ -269,23 +273,27 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     if (exc != GDOME_NOEXCEPTION_ERR)
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_nl_length", exc);
+        gdome_nl_unref(nodeList, &exc);
         return FAILURE;
     }
 
     // If there is no child; return
     if (nbChildren == 0)
     {
+        gdome_nl_unref(nodeList, &exc);
         return SUCCESS;
     }
 
     // For each child
     for (unsigned int i = 0; i < nbChildren; i++)
     {
-        // Get the ith child in the node list
+        // Get the the child in the node list
         child = gdome_nl_item (nodeList, i, &exc);
         if (child == NULL) 
         {
             errAdd(vobsERR_GDOME_CALL, "gdome_nl_item", exc);
+            gdome_n_unref(child, &exc);
+            gdome_nl_unref(nodeList, &exc);
             return FAILURE;
         }
 
@@ -303,6 +311,8 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             if (cDataForList->ptr == NULL)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_cds_data", exc);
+                gdome_n_unref(child, &exc);
+                gdome_nl_unref(nodeList, &exc);
                 return FAILURE;
             }
             listCDATA.push_back(cDataForList);
@@ -316,15 +326,22 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                gdome_str_unref(nodeName);
+                gdome_n_unref(child, &exc);
+                gdome_nl_unref(nodeList, &exc);
                 return FAILURE;
             }
             logTest("Parsing node %s...", nodeName->str);
-            
+
             // Get the attributes list
             attrList = gdome_n_attributes(child, &exc);
             if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_n_attributes", exc);
+                gdome_nnm_unref(attrList, &exc);
+                gdome_str_unref(nodeName);
+                gdome_n_unref(child, &exc);
+                gdome_nl_unref(nodeList, &exc);
                 return FAILURE;
             }
 
@@ -333,6 +350,9 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_nnm_length", exc);
+                gdome_str_unref(nodeName);
+                gdome_n_unref(child, &exc);
+                gdome_nl_unref(nodeList, &exc);
                 return FAILURE;
             }
 
@@ -344,6 +364,9 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 if (exc != GDOME_NOEXCEPTION_ERR)
                 {
                     errAdd(vobsERR_GDOME_CALL, "gdome_nnm_item", exc);
+                    gdome_str_unref(nodeName);
+                    gdome_n_unref(child, &exc);
+                    gdome_nl_unref(nodeList, &exc);
                     return FAILURE;
                 }
                 else
@@ -353,6 +376,9 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if (exc != GDOME_NOEXCEPTION_ERR)
                     {
                         errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                        gdome_str_unref(nodeName);
+                        gdome_n_unref(child, &exc);
+                        gdome_nl_unref(nodeList, &exc);
                         return FAILURE;
                     }
 
@@ -361,9 +387,12 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if (exc != GDOME_NOEXCEPTION_ERR)
                     {
                         errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeValue", exc);
+                        gdome_str_unref(nodeName);
+                        gdome_n_unref(child, &exc);
+                        gdome_nl_unref(nodeList, &exc);
                         return FAILURE;
                     }
-                    
+
                     // If it is the name of the column table of CDATA 
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
                         (strcmp(attrName->str, "name")  == 0))
@@ -393,15 +422,20 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             {
                 if (ParseXmlSubTree(child, listCDATA, cData) == FAILURE)
                 {
+                    gdome_str_unref(nodeName);
+                    gdome_n_unref(child, &exc);
+                    gdome_nl_unref(nodeList, &exc);
                     return FAILURE;
                 }
             }
+            gdome_str_unref(nodeName);
         }
         // Free child instance
         gdome_n_unref (child, &exc);
         if (exc != GDOME_NOEXCEPTION_ERR)
         {
             errAdd(vobsERR_GDOME_CALL, "gdome_n_unref", exc);
+            gdome_nl_unref(nodeList, &exc);
             return FAILURE;
         }
     }
@@ -452,14 +486,14 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
     cDataLength = strlen(cData->ptr);
     nbLines = 0;
     linePtr = cData->ptr;
-    
+
     for (int i=0; i < cDataLength; i++)
     {       
         if (cData->ptr[i] == '\n')
         {
             // Replace CR by '\0' in order to have string
             cData->ptr[i] = '\0';
-           
+
             miscDynBufAppendBytes(&linePtrList, 
                                   (char *)&linePtr, sizeof(char*));
             nbLines++;
@@ -467,7 +501,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             linePtr = &cData->ptr[i] + 1;
         }
     }
-    
+
     // For each line in buffer, get the value for each defined UCD (value are
     // separated by '\t' character), store them in star object and add this
     // new star in the list.
@@ -502,38 +536,38 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             }
             else
             {
-            linePtr = nextLinePtr;
+                linePtr = nextLinePtr;
 
-            // Check if value if empty
-            if (miscIsSpaceStr(ucdValue) == mcsTRUE)
-            {
-                ucdValue = vobsSTAR_PROP_NOT_SET;
-            }
-
-            // Set star property
-            if (star.SetProperty(*ucdName, ucdValue) == FAILURE)
-            {
-                // If ucd is not found, ignore error
-                if (errIsInStack(MODULE_ID, 
-                                 vobsERR_INVALID_UCD_NAME) == mcsTRUE)
+                // Check if value if empty
+                if (miscIsSpaceStr(ucdValue) == mcsTRUE)
                 {
-                    errResetStack();
+                    ucdValue = vobsSTAR_PROP_NOT_SET;
+                }
+
+                // Set star property
+                if (star.SetProperty(*ucdName, ucdValue) == FAILURE)
+                {
+                    // If ucd is not found, ignore error
+                    if (errIsInStack(MODULE_ID, 
+                                     vobsERR_INVALID_UCD_NAME) == mcsTRUE)
+                    {
+                        errResetStack();
+                    }
+                    else
+                    {
+                        return FAILURE;
+                    }
                 }
                 else
                 {
-                    return FAILURE;
+                    if (f!=NULL)
+                    {
+                        fprintf(f, "%10s", ucdValue);
+                    }
                 }
-            }
-            else
-            {
-                if (f!=NULL)
-                {
-                    fprintf(f, "%10s", ucdValue);
-                }
-            }
 
-            // Next UCD
-            ucdName++;
+                // Next UCD
+                ucdName++;
             }
         }
         if (f!=NULL)
@@ -548,7 +582,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
     }
 
     miscDynBufDestroy(&linePtrList);
-    
+
     return SUCCESS;
 }
 

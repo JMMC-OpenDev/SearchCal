@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestParser.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsTestParser.C,v 1.3 2004-10-19 14:48:18 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestParser.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestParser.C,v 1.3 2004-10-19 14:48:18 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 {
     mcsInit(argv[0]);
 
-    logSetStdoutLogStateLevel(logEXTDBG);
+    logSetStdoutLogLevel(logEXTDBG);
 
     logInfo("Starting ...");
 
