@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestUtils.c,v 1.2 2004-06-17 11:55:58 lafrasse Exp $"
+* "@(#) $Id: miscTestUtils.c,v 1.3 2004-06-17 14:10:51 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -35,7 +35,7 @@
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.2 2004-06-17 11:55:58 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.3 2004-06-17 14:10:51 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,6 +59,7 @@ int main (int argc, char *argv[])
 {
     mcsBYTES256 fullFileName;
     mcsBYTES32  utcTime;
+    mcsBYTES256	string;
 
     /* Test of miscGetFileName() */
     printf("miscGetFileName() Function Test :\n\n");
@@ -110,6 +111,14 @@ int main (int argc, char *argv[])
     printf("   Local Time   (precision s=5)  = %s\n", utcTime);
     miscGetLocalTimeStr(utcTime, 6);
     printf("   Local Time   (precision s=5)  = %s\n", utcTime);
+    printf("\n\n");
+
+    /* Test of miscStripQuotes() */
+    printf("miscStripQuotes() Function Test :\n\n");
+    strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      \0");
+    printf("   Original String  = |%s|\n", string);
+    miscStripQuotes(string);
+    printf("   Resulting String = |%s|\n", string);
     printf("\n\n");
 
     exit (EXIT_SUCCESS);

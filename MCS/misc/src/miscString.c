@@ -7,10 +7,10 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.1 2004-06-17 08:27:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscString.c,v 1.2 2004-06-17 14:10:51 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -19,12 +19,12 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <time.h>
 #include <sys/time.h>
 
-/* 
+/*
  * MCS Headers
  */
 #include "mcs.h"
 
-/* 
+/*
  * Local Headers
  */
 #include "misc.h"
@@ -50,11 +50,11 @@ void miscStripQuotes(char *string)
      *   |   "   kjkdjd kjkjk   kjkj  "  ;   |
      *   |kjkdjd kjkjk   kjkj|
      */
-    
+
     dstPtr = string;
     /*= Find first '"' */
     srcPtr = strchr(string, '\"');
-    
+
     /*= If a quote has been found '"' */
     if (srcPtr != NULL)
     {
@@ -64,7 +64,7 @@ void miscStripQuotes(char *string)
         {
             srcPtr++;
         }
-        
+
         /* Copy until quote or NULL terminator */
         while ((*srcPtr != '\0') && (*srcPtr != '\"')) /* " */
         {
@@ -76,8 +76,8 @@ void miscStripQuotes(char *string)
         /* If the string only contains blanks or is of length 0, dstPtr still
          * points to the beginning of the string
          */
-        
-	    /* Yank possible trailing blanks */
+
+        /* Yank possible trailing blanks */
         if (dstPtr != string)
         {
             dstPtr--;
