@@ -6,7 +6,7 @@
     This cdf describes the HELP command.
     -->
     <mnemonic>HELP</mnemonic>
-    <desc>Get a short description of the commands supported by the application, or a description of a given command.</desc>
+    <desc>Get help on supported commands by the application. It returns either a short description of all commands supported by the application, or a detailed description of a given command.</desc>
     <params>
         <param optional="true">
             <name>command</name>
