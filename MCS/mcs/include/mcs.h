@@ -1,7 +1,7 @@
 /*************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.2 2004-05-12 05:02:05 gzins Exp $"
+* "@(#) $Id: mcs.h,v 1.3 2004-06-16 14:06:03 gzins Exp $"
 *
 * mcs.h  -  MCS/Common Definitions - Interface File
 *
@@ -22,12 +22,12 @@ extern "C" {
 /************************************************************************
  *                           MCS  Constants                             *
  ************************************************************************/
-#define mcsPROCNAME_LEN      19   /* max. length of a process name      */
-#define mcsMODULEID_LEN       7   /* max. length of a module name       */
-                                  /* 6 characters + 1 byte alignement   */
-
-#define mcsFALSE              0     /* False Logical */
-#define mcsTRUE               1     /* True Logical */
+#define mcsPROCNAME_LEN        19   /* max. length of a process name      */
+#define mcsMODULEID_LEN         7   /* max. length of a module name       */
+                                    /* 6 characters + 1 byte alignement   */
+#define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes */
+#define mcsFALSE                0   /* False Logical */
+#define mcsTRUE                 1   /* True Logical */
 
 /************************************************************************
  *                          MCS   Data  Types                           *
@@ -65,6 +65,13 @@ typedef enum
     FAILURE = 1,
     SUCCESS 
 } mcsCOMPL_STAT;       /* Completion status returned by subroutines */
+
+/*
+ * Public functions
+ */
+mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName);
+const char *mcsGetProcName();
+void mcsExit();
 
 #ifdef __cplusplus
 }

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center 
 #
-# "@(#) $Id: Makefile,v 1.1 2004-05-11 13:53:20 gzins Exp $" 
+# "@(#) $Id: Makefile,v 1.2 2004-06-16 14:06:03 gzins Exp $" 
 #
 # Makefile for MCS module 
 #
@@ -37,6 +37,16 @@ xxxx_LIBS      =
 # Includes (.h) files (public only)
 # ---------------------------------
 INCLUDES = mcs.h 
+
+#
+# Libraries (public and local)
+# ----------------------------
+LIBRARIES       = mcs
+LIBRARIES_L     =
+
+#
+# <brief description of msg library>
+mcs_OBJECTS   = mcs
 
 #
 # Scripts (public and local)
@@ -89,7 +99,7 @@ CSOURCENAMES =\
 # installation on an empty system.
 #
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/vltMakefile
+include $(MAKEDIR)/mcsMakefile
 
 #
 # TARGETS
