@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.14 2005-02-07 19:35:05 gzins Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.15 2005-02-11 14:08:08 gluck Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/02/07 19:35:05  gzins
+* Changed RA, DEC and band type as well as prototypes of the related methods
+*
 * Revision 1.13  2005/02/07 17:28:11  gluck
 * New vobsREQUEST class implementation
 *
@@ -147,7 +150,7 @@ private:
     mcsFLOAT _maxDeltaMag;
 
     /** Maximum number of selected objects */
-    mcsUINT32 _maxNbOfSelectedObjects;
+    mcsINT32 _maxNbOfSelectedObjects;
 };
 #endif /*!vobsREQUEST_H*/
 
