@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errResetLocalStack_L.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errResetLocalStack_L.c,v 1.2 2005-01-24 14:45:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -63,7 +63,7 @@ mcsCOMPL_STAT errResetLocalStack(errERROR *error)
 
     error->thisPtr = error;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errUnpackLocalStack_L.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errUnpackLocalStack_L.c,v 1.2 2005-01-24 14:45:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -78,7 +78,7 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR *error, char *buffer,
                 runTimePar) != 7)
         {
              logWarning("invalid buffer format");
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         bufPos += strlen(&buffer[bufPos]) + 1;
@@ -86,13 +86,13 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR *error, char *buffer,
         /* Add error to the stack */
         if (errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId, 
                                 location, errorId, 
-                                severity, runTimePar) == FAILURE)
+                                severity, runTimePar) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

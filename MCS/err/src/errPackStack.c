@@ -1,14 +1,19 @@
 /*******************************************************************************
 * JMMC project
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* berezne   02-Jun-2004  created
+* History
+* -------
+* $Log: not supported by cvs2svn $*
 * gzins     17-Jun-2004  completed implementation
+* berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errPackStack.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+/**
+ * \file
+ * Definition of errPackStack function.
+ */
+static char *rcsId="@(#) $Id: errPackStack.c,v 1.2 2005-01-24 14:45:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -37,7 +42,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * \param buffer Pointer to buffer where the error structure has to be packed
  * \param bufLen The size of buffer
  *
- * \return SUCESSS, or FAILURE if the buffer size is too small.
+ * \return mcsSUCCESS, or mcsFAILURE if the buffer size is too small.
  */
 mcsCOMPL_STAT errPackStack(char       *buffer,
                            mcsUINT32  bufLen)

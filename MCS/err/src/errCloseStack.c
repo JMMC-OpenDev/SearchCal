@@ -1,14 +1,19 @@
 /*******************************************************************************
 * JMMC project
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* berezne   02-Jun-2004  created
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * gzins     17-Jun-2004  completed implementation
+* berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errCloseStack.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+/**
+ * \file
+ * Definition of errCloseStack function.
+ */
+static char *rcsId="@(#) $Id: errCloseStack.c,v 1.2 2005-01-24 14:45:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,7 +40,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * It logs all errors which have been placed in the global error stack and
  * reset it. This has to be done when the last error of the sequence cannot be
  * recovered.
- * \return SUCCESS or FAILURE if an error occured.
+ * \return mcsSUCCESS or mcsFAILURE if an error occured.
  *
  * \sa errAdd, errResetStack
  */

@@ -10,7 +10,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.7 2004-11-23 17:52:57 swmgr Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.8 2005-01-24 14:45:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -133,7 +133,7 @@ static char *errGetErrProp(const char *moduleId,
         return NULL;
     }
 
-    logTest("Used error definition file '%s'", errFileName);
+    logDebug("Used error definition file '%s'", errFileName);
 
     /* Load a new document from a file */
     doc = gdome_di_createDocFromURI(domimpl, errFileName, GDOME_LOAD_PARSING,
@@ -378,7 +378,7 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR        *error,
     propValue = errGetErrProp(moduleId, errorId, "errSeverity");
     if (propValue == NULL)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     severity = (char)toupper((int)propValue[0]);
 
@@ -386,7 +386,7 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR        *error,
     propValue = errGetErrProp(moduleId, errorId, "errFormat");
     if (propValue == NULL)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     strcpy(format, propValue);
 

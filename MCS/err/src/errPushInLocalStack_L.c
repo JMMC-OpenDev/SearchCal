@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errPushInLocalStack_L.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPushInLocalStack_L.c,v 1.2 2005-01-24 14:45:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,7 +59,7 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR   *error,
     {
         logWarning("Parameter error is a NULL pointer, module %s, "
                    "err. number %i, location %s", moduleId, errorId, location);
-        return(FAILURE);
+        return(mcsFAILURE);
     }
 
     /* If stack is full */
@@ -91,7 +91,7 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR   *error,
     error->stack[errNum].severity = severity;
     strcpy((char *)error->stack[errNum].runTimePar, runTimePar);
  
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

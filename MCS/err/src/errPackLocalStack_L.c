@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errPackLocalStack_L.c,v 1.2 2004-08-23 13:37:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPackLocalStack_L.c,v 1.3 2005-01-24 14:45:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -86,11 +86,11 @@ mcsCOMPL_STAT errPackLocalStack(errERROR *error, char *buffer,
             logWarning("errStoreExtrBuffer() - buffer too small "
                        "(current size: %d  requested size: %d)",
                        bufSize, bufLen + strlen(log));
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/
