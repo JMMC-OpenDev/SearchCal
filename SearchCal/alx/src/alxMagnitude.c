@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.8 2005-02-21 19:32:44 gzins Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.9 2005-02-22 08:08:20 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/21 19:32:44  gzins
+ * Updated to set confidence index for each computed magnitudes; when a magnitude can not be computed confidence index is set to low
+ *
  * Revision 1.7  2005/02/16 15:10:57  gzins
  * Updated call to miscDynBufGetNextLine()
  *
@@ -42,7 +45,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.8 2005-02-21 19:32:44 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.9 2005-02-22 08:08:20 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -269,7 +272,7 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
  * It computes magnitudes in R, I, J, H, K, L and M bands according to the
  * spectral type and the magnitudes in B and V bands for a bright star.
  * If magnitude can not be computed, its associated confidence index is set to
- * alxCONFIDENCE_LOW.
+ * alxNO_CONFIDENCE.
  *
  * \param spType spectral type
  * \param magnitudes contains magnitudes in B and V bands, and the computed
@@ -525,7 +528,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
     if (v_r == alxBLANKING_VALUE)
     {
         magnitudes [alxR_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxR_BAND] = alxCONFIDENCE_LOW;
+        confIndexes[alxR_BAND] = alxNO_CONFIDENCE;
     }
     else
     {
@@ -536,7 +539,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
     if (v_i == alxBLANKING_VALUE)
     {
         magnitudes [alxI_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxI_BAND] = alxCONFIDENCE_LOW;
+        confIndexes[alxI_BAND] = alxNO_CONFIDENCE;
     }
     else
     {
@@ -548,7 +551,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         (i_j == alxBLANKING_VALUE))
     {
         magnitudes [alxJ_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxJ_BAND] = alxCONFIDENCE_LOW;
+        confIndexes[alxJ_BAND] = alxNO_CONFIDENCE;
     }
     else
     {
@@ -560,7 +563,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         (j_h == alxBLANKING_VALUE))
     {
         magnitudes [alxH_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxH_BAND] = alxCONFIDENCE_LOW;
+        confIndexes[alxH_BAND] = alxNO_CONFIDENCE;
     }
     else
     {
@@ -572,7 +575,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         (j_k == alxBLANKING_VALUE))
     {
         magnitudes [alxK_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxK_BAND] = alxCONFIDENCE_LOW;
+        confIndexes[alxK_BAND] = alxNO_CONFIDENCE;
     }
     else
     {
@@ -584,7 +587,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         (k_l == alxBLANKING_VALUE))
     {
         magnitudes [alxL_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxL_BAND] = alxCONFIDENCE_LOW;
+        confIndexes[alxL_BAND] = alxNO_CONFIDENCE;
     }
     else
     {
@@ -596,7 +599,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         (k_m == alxBLANKING_VALUE))
     {
         magnitudes [alxM_BAND] = alxBLANKING_VALUE;
-        confIndexes[alxM_BAND] = alxCONFIDENCE_LOW;
+        confIndexes[alxM_BAND] = alxNO_CONFIDENCE;
     }
     else
     {
