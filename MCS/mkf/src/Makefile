@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-12-03 18:15:22 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2004-12-04 07:16:13 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
@@ -10,6 +10,7 @@
 # sccmgr    25-Jun-2004  Created
 # gzins     26-Aug-2004  Adapted from VLT
 # gzins     03-Dec-2004  Added mkfMakeInstallCmdDefFiles script
+# gzins     04-Dec-2004  Added mkfUpdateMcs script
 #
 #
 #*******************************************************************************
@@ -85,6 +86,7 @@ SCRIPTS         = mkfBuildDocIndex \
                   mkfMakeTclScriptDependencies \
                   mkfMakeTclScript \
                   mkfMakeScriptDependencies \
+                  mkfUpdateMcs \
                   mkfMakeScript
 SCRIPTS_L       =
 
