@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.h,v 1.5 2004-12-21 16:53:25 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.h,v 1.6 2004-12-22 07:24:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,10 @@
 * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed
 * gzins     09-Dec-2004  Added pure virtual Parse() method
 *                        Added cdfFilename argument to previous Parse() method
+* gzins     22-Dec-2004  Added cdfName parameter to constructor
+*                        Removed Parse(void) method
+*                        Renamed GetHelp to GetDescription
+*                        Added GetShortDescription
 *
 *******************************************************************************/
 
@@ -44,7 +48,7 @@ class cmdCOMMAND
 {
 public:
     // Brief description of the constructor
-    cmdCOMMAND(string name, string params);
+    cmdCOMMAND(string name, string params, string cdfName="");
 
     // Brief description of the destructor
     virtual ~cmdCOMMAND();
@@ -52,9 +56,11 @@ public:
     /** typedef for map of cmdPARAM */
     typedef map<string, cmdPARAM *> STRING2PARAM;
 
-    virtual mcsCOMPL_STAT Parse()=0;
+    virtual mcsCOMPL_STAT Parse(string cdfName="");
      
-    virtual mcsCOMPL_STAT GetHelp(string &help);
+    /** methods to get command description */
+    virtual mcsCOMPL_STAT GetShortDescription(string &desc);
+    virtual mcsCOMPL_STAT GetDescription(string &desc);
     
     /* methods to handle parameters */
     virtual mcsCOMPL_STAT AddParam(cmdPARAM *param);
@@ -76,7 +82,6 @@ public:
                                                mcsLOGICAL *param);
 
 protected:
-    virtual mcsCOMPL_STAT Parse(string cdfFilename);
     
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -84,7 +89,7 @@ private:
      cmdCOMMAND(const cmdCOMMAND&);
      cmdCOMMAND& operator=(const cmdCOMMAND&);
 
-     virtual mcsCOMPL_STAT ParseCdf(string cdfFilename);
+     virtual mcsCOMPL_STAT ParseCdf(string cdfName);
      virtual mcsCOMPL_STAT ParseCdfForDesc(GdomeElement *node);
      virtual mcsCOMPL_STAT ParseCdfForParameters(GdomeElement *node);
      virtual mcsCOMPL_STAT ParseCdfForParam(GdomeElement *param);
@@ -98,14 +103,16 @@ private:
      
      virtual mcsCOMPL_STAT SetDescription(string desc);
 
-     /** given string to the constructor */
-     string _params;
-     /** map of params */
-     STRING2PARAM _paramList;
      /** Flag that indicates if the params have been parsed */
      mcsLOGICAL _hasBeenYetParsed;
      /** name of the command */
      string _name;
+     /** parameters of the command */
+     string _params;
+     /** map of params */
+     STRING2PARAM _paramList;
+     /** command definition file name */
+     string _cdfName;
      /** description of the command */
      string _desc;
 };

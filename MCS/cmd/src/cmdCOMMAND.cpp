@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.8 2004-12-21 16:53:28 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.9 2004-12-22 07:25:31 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,6 +12,10 @@
 * gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
 * gzins     10-Dec-2004  Resolved path before loading CDF file in ParseCdf()
 * gzins     15-Dec-2004  Added error handling
+* gzins     22-Dec-2004  Added cdfName parameter to constructor
+*                        Removed Parse(void) method
+*                        Renamed GetHelp to GetDescription
+*                        Added GetShortDescription
 *
 *******************************************************************************/
 /**
@@ -21,7 +25,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.8 2004-12-21 16:53:28 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.9 2004-12-22 07:25:31 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -60,12 +64,13 @@ using namespace std;
  * \param params  the arguments of the command.
  *
  */
-cmdCOMMAND::cmdCOMMAND(string name, string params)
+cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
 {
     logExtDbg("cmdCOMMAND::cmdCOMMAND()");
+    _hasBeenYetParsed = mcsFALSE;
     _name = name;
     _params = params;
-    _hasBeenYetParsed = mcsFALSE;
+    _cdfName = cdfName;
 }
 
 
@@ -91,16 +96,18 @@ cmdCOMMAND::~cmdCOMMAND()
  */
 
 /** 
- * Parse the command-line parameters.
+ * Parse the command parameters.
  *
- * This method parses .
- * It calls  parseCdf and  parseParams.
+ * This method loads the command definition file (CDF) given as argument,
+ * parses the command parameters and then check the parameters against the
+ * CDF.
+ * It calls  parseCdf() and  parseParams().
  *
- * \param cdfFilename  the cdf file name.
+ * \param cdfName  the cdf file name.
  * 
  * \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfFilename)
+mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 {
     logExtDbg ("cmdCOMMAND::Parse()");
     
@@ -110,8 +117,21 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfFilename)
         return SUCCESS;
     }
 
+    // Check a command definition file name has been given
+    if ((cdfName.size() == 0) && (_cdfName.size() == 0))
+    {
+        errAdd(cmdERR_NO_CDF, _name.c_str());
+        return FAILURE;
+    }
+
+    // Use the given CDF (if any)
+    if (cdfName.size() != 0)
+    {
+        _cdfName = cdfName;
+    }
+    
     // find the correcsponding cdf file
-    char * fullCdfFilename = miscLocateFile(cdfFilename.data());
+    char * fullCdfFilename = miscLocateFile(_cdfName.data());
     // check if the cdf file has been found   
     if (fullCdfFilename == NULL)
     {
@@ -141,20 +161,32 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfFilename)
 }
 
 /** 
- *  Return the help of the command.
+ *  Return the short dscription of the command.
  *
- *  \returns the help string.
+ *  \returns the short description string.
  */
-mcsCOMPL_STAT cmdCOMMAND::GetHelp(string &help)
+mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
 {
-    logExtDbg ("cmdCOMMAND::getHelp()");
+    logExtDbg ("cmdCOMMAND::GetShortDescription()");
+
+    return SUCCESS;
+}
+
+/** 
+ *  Return the detailed dscription of the command and its parameters.
+ *
+ *  \returns the detailed description string.
+ */
+mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
+{
+    logExtDbg ("cmdCOMMAND::GetDescription()");
 
     string s;
     
     if (Parse() == FAILURE )
     {
         s.append("Sorry help can't be generated because an error occured during parsing\n");        
-        help.append(s);
+        desc.append(s);
         return FAILURE;
     }
     
@@ -196,7 +228,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetHelp(string &help)
         s.append("This command takes no parameter\n");
     }
 
-    help.append(s);
+    desc.append(s);
     
     return SUCCESS;
 }
@@ -613,11 +645,11 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
  *  Parse a cdf file and build new parameters for the command.
  *  After this step the parameters can be parsed.
  *
- * \param cdfFilename  the cdf file name.
+ * \param cdfName  the cdf file name.
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCOMMAND::ParseCdf(string cdfFilename)
+mcsCOMPL_STAT cmdCOMMAND::ParseCdf(string cdfName)
 {
     logExtDbg ("cmdCOMMAND::ParseCdf()");
 
@@ -630,7 +662,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf(string cdfFilename)
     domimpl = gdome_di_mkref ();
 
     /* create a new Document from the cdf file */
-    const char *xmlFilename = miscResolvePath(cdfFilename.data());
+    const char *xmlFilename = miscResolvePath(cdfName.data());
     logDebug("Using cdf file %s",xmlFilename);
     doc = gdome_di_createDocFromURI(domimpl, xmlFilename, GDOME_LOAD_PARSING,
                                     &exc);
