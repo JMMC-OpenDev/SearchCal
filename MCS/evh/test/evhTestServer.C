@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTestServer.C,v 1.1 2004-11-18 17:40:57 gzins Exp $"
+* "@(#) $Id: evhTestServer.C,v 1.2 2004-11-23 09:16:03 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Test program for evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.C,v 1.1 2004-11-18 17:40:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.C,v 1.2 2004-11-23 09:16:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -58,36 +58,36 @@ public:
     evhTEST() {};
     virtual ~evhTEST(){};
 
-    virtual evhCB_COMPL_STAT cb1 (msgMESSAGE &msg,void*)
+    virtual evhCB_COMPL_STAT Cb1 (msgMESSAGE &msg,void*)
     {
-        printf("evhTEST::cb1()\n"); 
-        msgSendReply(&msg, mcsTRUE);
+        printf("evhTEST::Cb1() : Command = %s, Params = %s\n",
+               msg.GetCommand(), msg.GetBodyPtr()); 
+        SendReply(msg);
         return evhCB_SUCCESS;
     };
-    virtual evhCB_COMPL_STAT cb2 (const int,void*)
+    virtual evhCB_COMPL_STAT Cb2 (const int,void*)
     {
-        printf("evhTEST::cb2()\n"); 
+        printf("evhTEST::Cb2()\n"); 
         mcsSTRING80 msg;
         scanf("%s", msg);
         printf("Read string = %s\n", msg);
         errDisplayStack();
         return evhCB_SUCCESS;
     };
-    virtual evhCB_COMPL_STAT VersionCB(msgMESSAGE &msg, void*)
+    virtual mcsCOMPL_STAT AppInit()
     {
-        logExtDbg("evhSERVER::VersionCB()");
+        // Attach callback to the SETUP command
+        evhCMD_KEY key1("SETUP");
+        evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::Cb1);
+        AddCallback(key1, cb1);
 
-        // Get the version string
-        mcsSTRING256 version;
-        strcpy(version,  GetSwVersion());
-
-        // Set the reply buffer
-        msgSetBody(&msg, version, strlen(version));
-
-        // Send reply
-        msgSendReply(&msg, mcsTRUE);
-
-        return evhCB_NO_DELETE;
+        // Attach callback to stdin 
+        int fd;
+        evhIOSTREAM_CALLBACK cb2(this, (evhIOSTREAM_CB_METHOD)&evhTEST::Cb2);
+        fd = 0; 
+        evhIOSTREAM_KEY key2(fd);
+        AddCallback(key2, cb2);
+        return SUCCESS;
     }
 
 protected:
@@ -110,18 +110,6 @@ int main(int argc, char *argv[])
     {
         exit (EXIT_FAILURE);
     }
-
-    // Attach callback to the SETUP command
-    evhCMD_KEY key1("SETUP");
-    evhCMD_CALLBACK cb1(&myServer, (evhCMD_CB_METHOD)&evhTEST::VersionCB);
-    myServer.AddCallback(key1, cb1);
-
-    // Attach callback to stdin 
-    int fd;
-    evhIOSTREAM_CALLBACK cb2(&myServer, (evhIOSTREAM_CB_METHOD)&evhTEST::cb2);
-    fd = 0; 
-    evhIOSTREAM_KEY key2(fd);
-    myServer.AddCallback(key2, cb2);
 
     // Main loop
     if (myServer.MainLoop() == FAILURE)
