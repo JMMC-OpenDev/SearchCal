@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.7 2004-08-06 13:07:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.7 2004-08-06 13:07:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,7 +72,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
     GdomeElement           *root;
     GdomeException         exc;
     vobsCDATA              cData;
-
+    
+    std::vector<vobsCDATA *> listCDATA;
+    
     logExtDbg("vobsPARSER::MainParser()");	
 
     // Get a DOMImplementation reference
@@ -99,71 +101,85 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
 
     // Begin the recursif look of the tree
     memset(&cData, '\0', sizeof(cData)); 
-    if (ParseXmlSubTree((GdomeNode *)root, &cData) == FAILURE)
+    if (ParseXmlSubTree((GdomeNode *)root, listCDATA, &cData) == FAILURE)
     {
         gdome_di_freeDoc (domimpl, doc, &exc);
         gdome_di_unref (domimpl, &exc);
         return FAILURE;
     }
-
-    // Print out CDATA description
-    if (logGetStdoutLogLevel() >= logTEST)
+    printf("there is %d CDATA section\n", listCDATA.size());
+    std::vector<vobsCDATA *>::iterator iterCDATA=listCDATA.begin();
+    while (iterCDATA!=listCDATA.end())
     {
-        logTest("CDATA description");
-        logTest("    Number of lines to be skipped : %d", cData.nbLineToJump);
-        logTest("    Number of columns in table    : %d", cData.colName.size());
-        std::vector<char *>::iterator colName=cData.colName.begin();
-        std::vector<char *>::iterator ucdName=cData.ucdName.begin();
-        for (unsigned int i = 0; i < cData.colName.size(); i++)
+        // Print out CDATA description
+        if (logGetStdoutLogLevel() >= logTEST)
         {
-            // Table header
-            if (i == 0)
+            logTest("CDATA description");
+            logTest("    Number of lines to be skipped : %d", (**iterCDATA).nbLineToJump);
+            logTest("    Number of columns in table    : %d", (**iterCDATA).colName.size());
+            std::vector<char *>::iterator colName=(**iterCDATA).colName.begin();
+            std::vector<char *>::iterator ucdName=(**iterCDATA).ucdName.begin();
+            for (unsigned int i = 0; i < (**iterCDATA).colName.size(); i++)
             {
-                logTest("    +----------+--------------+--------------------+");
-                logTest("    | Column # | Name         | UCD                |");
-                logTest("    +----------+--------------+--------------------+");
-            }
-            logTest("    |      %3d | %12s | %18s |",
-                    i+1, *colName, *ucdName);
-            *colName++;
-            *ucdName++;
+                // Table header
+                if (i == 0)
+                {
+                    logTest("    +----------+--------------+--------------------+");
+                    logTest("    | Column # | Name         | UCD                |");
+                    logTest("    +----------+--------------+--------------------+");
+                }
+                logTest("    |      %3d | %12s | %18s |",
+                        i+1, *colName, *ucdName);
+                *colName++;
+                *ucdName++;
 
-            // Table footer
-            if (i == (cData.colName.size() -1))
-            {
-                logTest("    +----------+--------------+--------------------+");
+                // Table footer
+                if (i == ((**iterCDATA).colName.size() -1))
+                {
+                    logTest("    +----------+--------------+--------------------+");
+                }
             }
         }
+        ++iterCDATA;
     }
     
+    
     // If CDATA section has not be found
-    if (cData.ptr == NULL)
+    if (listCDATA.size() == 0)
     {
         // Handle error
         errAdd(vobsERR_CDATA_NOT_FOUND);
         gdome_di_freeDoc (domimpl, doc, &exc);
         gdome_di_unref (domimpl, &exc);
-        return FAILURE;
-    }
-
-    // Parse the CDATA section
-    if (ParseCData(&cData, starList) == FAILURE)
-    {
-        gdome_di_freeDoc (domimpl, doc, &exc);
-        gdome_di_unref (domimpl, &exc);
-        return FAILURE;
-    }
-     
-    // Free the document structure and the DOMImplementation
-    gdome_di_freeDoc (domimpl, doc, &exc);
-    gdome_di_unref (domimpl, &exc);
-
-    // Print out the star list 
-    if (logGetStdoutLogLevel() >= logTEST)
-    {
-        starList.Display();
+        //return FAILURE;
     }
     
+    else
+    {
+        iterCDATA=listCDATA.begin();
+        while (iterCDATA!=listCDATA.end())
+        {
+            printf("%s\n\n",(**iterCDATA).ptr);
+            // Parse the CDATA section
+            if (ParseCData((*iterCDATA), starList) == FAILURE)
+            {
+                gdome_di_freeDoc (domimpl, doc, &exc);
+                gdome_di_unref (domimpl, &exc);
+                return FAILURE;
+            }
+            ++iterCDATA;
+        }
+        // Free the document structure and the DOMImplementation
+        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_di_unref (domimpl, &exc);
+
+        // Print out the star list 
+        if (logGetStdoutLogLevel() >= logTEST)
+        {
+            starList.Display();
+        }
+
+    }
     return SUCCESS;
 }
 
@@ -185,8 +201,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
  * an error is added to the error stack. The possible error is :
  * \li vobsERR_GDOME_CALL
+ *
+ * \todo
+ * nblinetojump problem
  */
-mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
+mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA *> &listCDATA, vobsCDATA *cData)
 {
     GdomeException exc;
     GdomeNodeList *nodeList;
@@ -198,7 +217,11 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
     GdomeDOMString *attrName;
     GdomeDOMString *attrValue;
     GdomeNode *attr;
-
+    
+    //cData->nbLineToJump=0;
+    //printf("1 nb line to jump = %d\n",cData->nbLineToJump);
+    //memset(&cData, '\0', sizeof(cData)); 
+    
     logExtDbg("vobsPARSER:ParseXmlSubTree()");
 
     // Get the node list containing all children of this node
@@ -237,13 +260,24 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
         // If it is the CDATA section
         if (gdome_n_nodeType (child, &exc) == GDOME_CDATA_SECTION_NODE) 
         {
+            vobsCDATA *cDataForList=new vobsCDATA;
+            //cDataForList=cData;
+            cDataForList->colName=cData->colName;
+            cDataForList->ucdName=cData->ucdName;
+            cDataForList->nbLineToJump=cData->nbLineToJump;
+            //cDataForList.ptr=new char[strlen(cData->ptr)+1];
+            //strcpy(cDataForList.ptr, cData->ptr);
+
             /* Get CDATA */
-            cData->ptr = gdome_cds_data(GDOME_CDS(child), &exc)->str;
-            if (cData->ptr == NULL)
+            cDataForList->ptr = new char[strlen(gdome_cds_data(GDOME_CDS(child), &exc)->str)+1];
+            strcpy(cDataForList->ptr, gdome_cds_data(GDOME_CDS(child), &exc)->str);
+            if (cDataForList->ptr == NULL)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_cds_data", exc);
                 return FAILURE;
             }
+            listCDATA.push_back(cDataForList);
+
         }
 
         // If it is an element node, try to get information on attributes
@@ -301,7 +335,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
                         errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeValue", exc);
                         return FAILURE;
                     }
-
+                    
                     // If it is the name of the column table of CDATA 
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
                         (strcmp(attrName->str, "name")  == 0))
@@ -326,11 +360,10 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
                     }
                 }
             }
-
             // If there are children nodes, parse corresponding XML sub-tree
             if (gdome_n_hasChildNodes (child, &exc))
             {
-                if (ParseXmlSubTree(child, cData) == FAILURE)
+                if (ParseXmlSubTree(child, listCDATA, cData) == FAILURE)
                 {
                     return FAILURE;
                 }
@@ -344,6 +377,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
             return FAILURE;
         }
     }
+
     return SUCCESS;
 }
 

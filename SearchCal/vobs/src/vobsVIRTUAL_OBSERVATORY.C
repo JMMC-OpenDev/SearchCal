@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.7 2004-08-06 13:07:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.7 2004-08-06 13:07:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -172,7 +172,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             printf("size of the list = %d\n",list3.Size());
         if (ascc.Search(request, list3) == FAILURE)
         {
-            printf("size of the list = %d\n",list3.Size());
+            printf("size of the list I/280 = %d\n",list3.Size());
             printf("ascc.Search(request, list3) failed\n");
             
             return FAILURE;
@@ -301,7 +301,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
         
-        vobsCATALOG_BSC sbsc;
+        vobsCATALOG_SBSC sbsc;
         // Interrogation 11 on SBSC
         if (sbsc.Search(request, list1) == FAILURE)
         {
@@ -434,7 +434,9 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
     {
         return FAILURE;
     }
-    
+   
+    starList.Display();
+    printf("number of star found : %d\n", starList.Size());
     return SUCCESS;
 }
 

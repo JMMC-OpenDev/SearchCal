@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.3 2004-08-06 13:07:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -132,6 +132,11 @@ public:
     
     // Method to know if another star is the same than this one
     virtual mcsLOGICAL IsSame (vobsSTAR &star);
+    virtual mcsLOGICAL IsSameCoordonate (vobsSTAR &star);
+    virtual mcsLOGICAL IsSameCoordonate (vobsSTAR &star, 
+                                         float intervalRa,
+                                         float intervalDec);    
+    virtual mcsLOGICAL IsSameHip (vobsSTAR &star);    
 
     // Method to update star properties from the given star
     virtual mcsCOMPL_STAT Update (vobsSTAR &star);

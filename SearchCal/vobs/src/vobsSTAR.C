@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.3 2004-08-06 13:07:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,12 +16,13 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.3 2004-08-06 13:07:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
+#include <math.h>
 #include <iostream>
 using namespace std;  /**< Export standard iostream objects (cin, cout,...) */
 #define MODULE_ID "vobs"
@@ -501,6 +502,87 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
     return mcsTRUE;
 }
 
+/**
+ * Test if this star is the same than another one with the coordonate.
+ *
+ * \param star the other star.
+ *
+ * \return TRUE on successful completion. Otherwise FALSE is returned.
+ *
+ */
+mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star)
+{
+    logExtDbg("vobsSTAR::IsSameCoordonate()");
+    
+    mcsSTRING32 valueRA;
+    mcsSTRING32 valueDEC;
+    
+    star.GetProperty(POS_EQ_RA_MAIN_ID, valueRA);
+    star.GetProperty(POS_EQ_DEC_MAIN_ID, valueDEC);
+    
+    if ((strcmp(_properties[POS_EQ_RA_MAIN_ID], valueRA) !=0)
+        || (strcmp(_properties[POS_EQ_DEC_MAIN_ID], valueDEC) !=0))
+    {
+        return mcsFALSE;
+    }
+    return mcsTRUE;
+}
+
+/**
+ * Test if this star is the same than another one with the coordonate and an
+ * interval.
+ *
+ * \param star the other star.
+ *
+ * \return TRUE on successful completion. Otherwise FALSE is returned.
+ *
+ */
+mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star,
+                                      float intervalRa,
+                                      float intervalDec)
+{
+    logExtDbg("vobsSTAR::IsSameCoordonate()");
+    
+    mcsFLOAT valueRA1, valueRA2;
+    mcsFLOAT valueDEC1, valueDEC2;
+   
+
+    GetRa(valueRA1);
+    GetDec(valueDEC1);
+    
+    star.GetRa(valueRA2);
+    star.GetDec(valueDEC2);
+    
+    if ((fabs(valueRA1-valueRA2)<=intervalRa) ||
+        (fabs(valueDEC1-valueDEC2)<=intervalDec) )
+    {
+        return mcsFALSE;
+    }
+    return mcsTRUE;
+}
+
+/**
+ * Test if this star is the same than another one with hipparcos number.
+ *
+ * \param star the other star.
+ *
+ * \return TRUE on successful completion. Otherwise FALSE is returned.
+ *
+ */
+mcsLOGICAL vobsSTAR::IsSameHip(vobsSTAR &star)
+{
+    logExtDbg("vobsSTAR::IsSameHip()");
+    
+    mcsSTRING32 valueHIP;
+    
+    star.GetProperty(ID_MAIN_ID, valueHIP);
+    
+    if (strcmp(_properties[ID_MAIN_ID], valueHIP) !=0)
+    {
+        return mcsFALSE;
+    }
+    return mcsTRUE;
+}
 
 /**
  * Update a star from another one.

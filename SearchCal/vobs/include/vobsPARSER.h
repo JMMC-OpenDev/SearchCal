@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.2 2004-07-22 17:47:12 gzins Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.3 2004-08-06 13:07:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -58,7 +58,7 @@ private:
     vobsPARSER (const vobsPARSER&);
     
     // Recurvise parsing of XML document 
-    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData);
+    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA *> &listCDATA, vobsCDATA *cData);
 
     // Parsing of the CDATA section
     mcsCOMPL_STAT ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList);

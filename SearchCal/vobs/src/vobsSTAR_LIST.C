@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.3 2004-08-06 13:07:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.3 2004-08-06 13:07:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -94,9 +94,44 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 {
     logExtDbg("vobsSTAR_LIST::AddAtTail()");
-
-    // Put element in the list
-    _starList.push_back(star);
+    /*vobsSTAR *starOfList;
+    int same=0;
+    
+    for (unsigned int el = 0; el < Size(); el++)
+    {
+        starOfList=GetNextStar((el==0));
+        // if the star is the same than one of the star list, the element of
+        // the list is update with property of the star
+        if ( starOfList->IsSameCoordonate(star) == mcsTRUE )
+        {
+            same=1;            
+            for (unsigned int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+            {
+                mcsSTRING32 property1;
+                mcsSTRING32 property2;
+                
+                if ((starOfList->GetProperty((vobsUCD_ID)i, property1)
+                                                                ==FAILURE)||
+                    (star.GetProperty((vobsUCD_ID)i, property2) == FAILURE))
+                {
+                    return FAILURE;
+                }
+                if ((strcmp(property1, vobsSTAR_PROP_NOT_SET)==0)
+                    &&((strcmp(property2, vobsSTAR_PROP_NOT_SET)!=0)))
+                {
+                    if (star.SetProperty((vobsUCD_ID)i, property2)==FAILURE)
+                    {
+                        return FAILURE;
+                    }
+                }
+            }
+        }
+    }
+    if (same==0)
+    {*/
+        // Put element in the list
+        _starList.push_back(star);
+    //}
 
     return SUCCESS;
 }
