@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.7 2005-01-27 13:46:57 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.8 2005-01-28 12:48:24 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/01/27 13:46:57  scetre
+* change order of entry in K band
+*
 * Revision 1.6  2005/01/26 08:20:00  scetre
 * Chamge history. Use instence of criteria list instead of pointeur. Update criteria list affectation in LoadScenario()
 *
@@ -19,7 +22,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.7 2005-01-27 13:46:57 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.8 2005-01-28 12:48:24 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -189,6 +192,26 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
          * I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
          */
         
+        /*
+         * Change criteria on right ascension and declinaison
+         */
+        if (criteriaList.Remove(vobsSTAR_POS_EQ_RA_MAIN) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (criteriaList.Remove(vobsSTAR_POS_EQ_RA_MAIN) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.01) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.01) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
         // II/225
         scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
                           criteriaList);
