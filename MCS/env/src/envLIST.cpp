@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.cpp,v 1.10 2005-02-22 11:17:15 lafrasse Exp $"
+ * "@(#) $Id: envLIST.cpp,v 1.11 2005-02-28 14:13:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/22 11:17:15  lafrasse
+ * Update miscDynBufGetNextLine() call because of a miscDynBuf API update
+ *
  * Revision 1.9  2005/02/16 15:01:04  gzins
  * Updated call to miscDynBufGetNextLine()
  *
@@ -33,7 +36,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.10 2005-02-22 11:17:15 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.11 2005-02-28 14:13:50 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -228,14 +231,6 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     }
     _fileAlreadyLoaded = mcsTRUE;
 
-    // Put the default MCS env. host name and port number in the internal map
-    if (miscGetHostName(_hostName, sizeof(_hostName)) == mcsFAILURE)
-    {
-        strncpy(_hostName, "localhost", sizeof(_hostName));
-    }
-    _map[mcsUNKNOWN_ENV] = pair<string,int>(_hostName,
-                               envDEFAULT_MESSAGE_MANAGER_PORT_NUMBER);
-
     // Resolve path of MCS environment list file
     char *fullPath;
     fullPath = miscResolvePath("$MCSROOT/etc/mcsEnvList");
@@ -244,8 +239,8 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
         return mcsFAILURE;
     }
 
-    // Load the MCS environment list file in a misc Dynamic Buffer for line by
-    // line parsing.
+    /* Load the MCS environment list file in a misc Dynamic Buffer for line by
+     * line parsing */
     miscDYN_BUF envList;
     miscDynBufInit(&envList);
     if (miscDynBufLoadFile(&envList, fullPath, "#") == mcsFAILURE)
@@ -253,8 +248,8 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
         return mcsSUCCESS;
     }
 
-    // Jump all the headers and empty lines, and feed the map with the
-    // environments data found in the mcsEnvList file read line by line.
+    /* Jump all the headers and empty lines, and feed the map with the
+     * environments data found in the mcsEnvList file read line by line */
     mcsINT32     nbReadValue = 0;
     mcsINT32     portNumber  = 0;
     mcsENVNAME   parsedEnvName;

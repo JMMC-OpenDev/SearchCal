@@ -3,12 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envPrivate.h,v 1.3 2005-02-13 16:53:13 gzins Exp $"
+ * "@(#) $Id: envPrivate.h,v 1.4 2005-02-28 14:13:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * lafrasse  07-Dec-2004  Created
+ * Revision 1.3  2005/02/13 16:53:13  gzins
+ * Added CVS log as modification history
+ *
  * lafrasse  07-Dec-2004  Created
  *
  ******************************************************************************/
@@ -33,12 +35,6 @@ extern "C" {
 #define MODULE_ID "env"
 
  
-/**
- * Default message Manager port number for connection
- */
-#define envDEFAULT_MESSAGE_MANAGER_PORT_NUMBER 1991
-
-
 #ifdef __cplusplus
 }
 #endif
