@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.5 2005-01-03 14:36:38 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.6 2005-01-07 14:13:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.5 2005-01-03 14:36:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.6 2005-01-07 14:13:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -131,10 +131,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         return FAILURE;
     }
     // complete the calibrators list
-    /*if (calibratorList.Complete(request) == FAILURE)
+    if (calibratorList.Complete(request) == FAILURE)
     {
         return FAILURE;
-    }*/
+    }
     //calibratorList.Display();
 
     // Pack the list result in a buffer in order to send it
@@ -142,23 +142,26 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     miscDynBufInit(&dynBuff);
 
     // Table where are stored magnitudes
-    mcsSTRING64 starMagnitudes[10];
+    mcsSTRING64 starMagnitudes[13];
     // The star asked
-    vobsSTAR *tmpStar=(starList.GetNextStar(mcsTRUE));
+    vobsSTAR *tmpStar=(calibratorList.GetNextStar(mcsTRUE));
     // A property table wanted
-    int nbProperties = 10;
-    mcsSTRING64 starProperty[10] = 
+    int nbProperties = 13;
+    mcsSTRING64 starProperty[13] = 
     {
-        vobsSTAR_PHOT_JHN_B,
-        vobsSTAR_PHOT_JHN_V,
-        vobsSTAR_PHOT_JHN_R,
-        vobsSTAR_PHOT_JHN_I,
-        vobsSTAR_PHOT_JHN_J,
-        vobsSTAR_PHOT_JHN_H,
-        vobsSTAR_PHOT_JHN_K,
-        vobsSTAR_PHOT_JHN_L,
-        vobsSTAR_PHOT_JHN_M,
-        vobsSTAR_PHOT_IR_N_10_4
+        sclsvrCALIBRATOR_BO,
+        sclsvrCALIBRATOR_VO,
+        sclsvrCALIBRATOR_RO,
+        sclsvrCALIBRATOR_IO,
+        sclsvrCALIBRATOR_JO,
+        sclsvrCALIBRATOR_HO,
+        sclsvrCALIBRATOR_KO,
+        sclsvrCALIBRATOR_LO,
+        sclsvrCALIBRATOR_MO,
+        vobsSTAR_SPECT_TYPE_MK,
+        vobsSTAR_POS_GAL_LAT,
+        vobsSTAR_POS_GAL_LON,
+        vobsSTAR_POS_PARLX_TRIG
     };
     // for each property
     for (int i=0; i<nbProperties; i++)

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.15 2005-01-03 14:36:38 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.16 2005-01-07 14:13:12 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.15 2005-01-03 14:36:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.16 2005-01-07 14:13:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -219,34 +219,37 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
     // Compute Angular Diameter
     if (ComputeAngularDiameter() != FAILURE)
     {
-        _coherentDiameter = mcsTRUE;
-        // Compute visibility and visibility error
-        if (ComputeVisibility(request) != FAILURE)
+        if (_coherentDiameter == mcsTRUE)
         {
-            // Get computed visibility
-            mcsFLOAT computedVisibility;
-            if (IsPropertySet(sclsvrCALIBRATOR_VISIBILITY) == 
-                mcsTRUE)
+            // Compute visibility and visibility error
+            if (ComputeVisibility(request) != FAILURE)
             {
-                GetPropertyValue(sclsvrCALIBRATOR_VISIBILITY, &computedVisibility);
-            }
-            else
-            {
-                return FAILURE;
-            }
-            // Get wanted visibility
-            mcsFLOAT requestedVisibility;
-            if (request.GetConstraint(STAR_EXPECTED_VIS_ID,
-                                      &requestedVisibility)
-                == FAILURE)
-            {
-                return FAILURE;
-            }
-            // check if the compute visibility is inferior to 
-            // the wanted visibility
-            if (computedVisibility >= requestedVisibility)
-            {
-                _correctVisibility = mcsTRUE;    
+                // Get computed visibility
+                mcsFLOAT computedVisibility;
+                if (IsPropertySet(sclsvrCALIBRATOR_VISIBILITY) == 
+                    mcsTRUE)
+                {
+                    GetPropertyValue(sclsvrCALIBRATOR_VISIBILITY,
+                                     &computedVisibility);
+                }
+                else
+                {
+                    return FAILURE;
+                }
+                // Get wanted visibility
+                mcsFLOAT requestedVisibility;
+                if (request.GetConstraint(STAR_EXPECTED_VIS_ID,
+                                          &requestedVisibility)
+                    == FAILURE)
+                {
+                    return FAILURE;
+                }
+                // check if the compute visibility is inferior to 
+                // the wanted visibility
+                if (computedVisibility >= requestedVisibility)
+                {
+                    _correctVisibility = mcsTRUE;    
+                }
             }
         }
     }
@@ -454,7 +457,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else 
     {
-        logWarning("cant't compute interstellar absorption because paralax not set");
+        logWarning("can't compute interstellar absorption because paralax not set");
         return FAILURE;
     }
     if (IsPropertySet(vobsSTAR_POS_GAL_LAT) == mcsTRUE)
@@ -463,7 +466,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else
     {
-        logWarning("cant't compute interstellar absorption because galactic Lattitude not set");
+        logWarning("can't compute interstellar absorption because galactic Lattitude not set");
         return FAILURE;
     }
     if (IsPropertySet(vobsSTAR_POS_GAL_LON) == mcsTRUE)
@@ -472,7 +475,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else 
     {
-        logWarning("cant't compute interstellar absorption because galactic Longitude not set");
+        logWarning("can't compute interstellar absorption because galactic Longitude not set");
         return FAILURE;
     }
 
@@ -577,7 +580,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
                                   mgB,
                                   mgV,
                                   mgR,
-                                  mgK) == FAILURE)
+                                  mgK,
+                                  &_coherentDiameter) == FAILURE)
     {
         return FAILURE;
     }
