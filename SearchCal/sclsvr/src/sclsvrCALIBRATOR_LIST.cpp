@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.19 2005-02-07 11:10:29 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.20 2005-02-07 14:44:51 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/02/07 11:10:29  scetre
+* Removed obsolete class sclsvrSEARCH_CALIBRATOR trace and changed method name in sclsvrCALIBRATOR_LIST
+*
 * Revision 1.18  2005/02/07 10:06:36  scetre
 * Changed filter method name in FilterBy...
 *
@@ -34,7 +37,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.19 2005-02-07 11:10:29 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.20 2005-02-07 14:44:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -58,7 +61,7 @@ using namespace std;
  */
 #include "sclsvrPrivate.h"
 #include "sclsvrErrors.h"
-#include "sclsvr.h"
+#include "sclsvrCALIBRATOR_LIST.h"
 
 /*
  * Class constructor
