@@ -3,11 +3,12 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplate.sh,v 1.2 2004-09-15 07:46:41 gluck Exp $"
+# "@(#) $Id: ctooGetTemplate.sh,v 1.3 2004-12-04 19:53:42 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
-# lgluck    23/04/04    Created
+# lgluck    23-Apr-2004 Created
+# gzins     04-Dec-2004 Removed test related to directory structure 
 #
 #*******************************************************************************
 
@@ -53,32 +54,15 @@ read choice
 # Test if the choice is not empty
 if test -n "$choice"
 then
-    # A choice is entered
-
-    # Test if the choice is not "directoryStructure"
-    if [ $choice != 1 ]
-    then
-            # check environment
-            MCSTEMPLATES=$MCSROOT/templates      
-
-            # verify that MCSTEMPLATES is a directory
-            if [ ! -d "$MCSTEMPLATES" ]
-            then 
-                echo "ERROR - ctooGetTemplate: $MCSTEMPLATES not available."
-                echo "                         Please check your MCS"
-                echo "                         environment"
-                exit 1
-            fi
-    fi
-        # Examine the choice
-        case $choice in
-            1) ctooGetDirectoryStructure;;
-            2) ctooGetCode;;
-            *) echo "ERROR : invalid choice";;
-        esac
-    else
-        # <Enter> was pressed
-        exit
+    # Examine the choice
+    case $choice in
+        1) ctooGetDirectoryStructure;;
+        2) ctooGetCode;;
+        *) echo "ERROR : invalid choice";;
+    esac
+else
+    # <Enter> was pressed
+    exit
 fi
 
 #
