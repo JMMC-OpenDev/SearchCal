@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.10 2004-12-15 15:55:35 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.11 2004-12-22 08:43:41 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,7 +26,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.10 2004-12-15 15:55:35 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.11 2004-12-22 08:43:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -49,6 +49,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Local Headers 
  */
 #include "msgSOCKET.h"
+#include "msgMESSAGE.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
 
@@ -378,13 +379,13 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 
     // Send the message header
     mcsINT32 nbBytesSent;
-    nbBytesSent = send(_descriptor, msg.GetHeaderPtr(), msgHEADERLEN, 0);
+    nbBytesSent = send(_descriptor, &msg._header, msgHEADERLEN, 0);
     mcsINT32 msgLength = msgHEADERLEN;
 
     // If the body exists, sent it
     if (msg.GetBodySize() != 0)
     {
-        nbBytesSent += send(_descriptor, msg.GetBodyPtr(), msg.GetBodySize(),0);
+        nbBytesSent += send(_descriptor, msg.GetBody(), msg.GetBodySize(),0);
         msgLength   += msg.GetBodySize();
     }
 
@@ -476,7 +477,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     else
     {
         // Read the message header
-        nbBytesRead = recv(_descriptor, (char*)msg.GetHeaderPtr(), msgHEADERLEN,
+        nbBytesRead = recv(_descriptor, &msg._header, msgHEADERLEN,
                            0);
         if (nbBytesRead != msgHEADERLEN)
         {
@@ -502,7 +503,9 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
             }
 
             // Get the body from the socket and write it inside msgMESSAGE
-            nbBytesRead = recv(_descriptor, msg.GetBodyPtr(), bodySize, 0);
+            nbBytesRead = recv(_descriptor, 
+                               miscDynBufGetBufferPointer(&msg._body), 
+                               bodySize, 0);
             if (nbBytesRead != bodySize)
             {
                 errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, bodySize);
