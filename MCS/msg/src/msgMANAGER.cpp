@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.8 2004-12-20 17:45:08 scetre Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.9 2004-12-22 08:34:00 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,6 +15,7 @@
 * gzins     14-Dec-2004  Handled DEBUG command
 * gzins     20-Dec-2004  Fixed bug related to the use of GetNextProcess after
 *                        removing a process from the list.
+* gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
 *
 *******************************************************************************/
 
@@ -23,7 +24,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.8 2004-12-20 17:45:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.9 2004-12-22 08:34:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -47,6 +48,7 @@ using namespace std;
  */
 #include "msgDEBUG_CMD.h"
 #include "msgMANAGER.h"
+#include "msgMESSAGE.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
 
@@ -576,7 +578,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
         errResetStack();
     }
 
-    logTest("Sending '%s' answer : %s", msg.GetCommand(), msg.GetBodyPtr());
+    logTest("Sending '%s' answer : %s", msg.GetCommand(), msg.GetBody());
 
     // Get sender
     if (sender == NULL)
@@ -656,7 +658,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
     /* If the received command is a DEBUG request... */ 
     else if (strcmp(msg.GetCommand(), msgDEBUG_CMD_NAME) == 0)
     {
-        msgDEBUG_CMD debugCmd(msg.GetCommand(), msg.GetBodyPtr());
+        msgDEBUG_CMD debugCmd(msg.GetCommand(), msg.GetBody());
 
         // Parses command
         if (debugCmd.Parse() == FAILURE)

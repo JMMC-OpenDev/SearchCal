@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.15 2004-12-15 15:55:35 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.16 2004-12-22 08:35:02 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,7 +26,7 @@
 * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
 *                        misc Dynamic Buffer (no more msgMAXLEN)
 * gzins     15-Dec-2004  Used new command name definition (with _NAME)
-*
+* gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
 *
 *******************************************************************************/
 
@@ -35,7 +35,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.15 2004-12-15 15:55:35 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.16 2004-12-22 08:35:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -210,7 +210,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     }
 
     // Register with msgManager
-    if (SendCommand(msgREGISTER_CMD_NAME, "msgManager", NULL, 0) == FAILURE)
+    if (SendCommand(msgREGISTER_CMD_NAME, "msgManager", "") == FAILURE)
     {
         _socket.Close();
         return FAILURE;
@@ -228,7 +228,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     if (registerAnswer.GetType() == msgTYPE_ERROR_REPLY)
     {
         // Put the received errors in the MCS error stack
-        if (errUnpackStack(registerAnswer.GetBodyPtr(),
+        if (errUnpackStack(registerAnswer.GetBody(),
                            registerAnswer.GetBodySize())
             == FAILURE)
         {
@@ -352,7 +352,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
         errResetStack();
     }
 
-    logTest("Sending '%s' answer : %s", msg.GetCommand(), msg.GetBodyPtr());
+    logTest("Sending '%s' answer : %s", msg.GetCommand(), msg.GetBody());
     return _socket.Send(msg);
 }
 
@@ -400,7 +400,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     }
 
     // Send a 'close command' message to msgManager
-    if (SendCommand(msgCLOSE_CMD_NAME, "msgManager", NULL, 0) == FAILURE)
+    if (SendCommand(msgCLOSE_CMD_NAME, "msgManager", "") == FAILURE)
     {
         _socket.Close();
         return FAILURE;
@@ -418,7 +418,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     if (msg.GetType() == msgTYPE_ERROR_REPLY)
     {
         // Put the received error in the local MCS error stack
-        errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize());
+        errUnpackStack(msg.GetBody(), msg.GetBodySize());
         _socket.Close();
         return FAILURE;
     }
