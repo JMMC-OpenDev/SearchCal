@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.21 2004-09-07 13:37:20 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.22 2004-09-08 16:48:33 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -318,8 +318,7 @@ case $directoryStructureTtype in
                 ;;
                 
             creation)
-                echo -e "\n>>> No makefile added in the src directoy of the"
-                echo -e "      module\n"
+                echo -e "\n>>> No files added in subdirectories of the module\n"
                 ;;
 
             *)
