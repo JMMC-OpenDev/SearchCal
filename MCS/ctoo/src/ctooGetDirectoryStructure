@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetDirectoryStructure,v 1.2 2004-06-17 07:14:31 gluck Exp $"
+# "@(#) $Id: ctooGetDirectoryStructure,v 1.3 2004-06-28 07:25:57 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -78,7 +78,7 @@ then
             read moduleName
             if [ $moduleName != "" ]
             then 
-                ctooGetTemplateForDirectoryStructure MODROOT $moduleName ""
+                ctooGetTemplateForDirectoryStructure MODROOT $moduleName
             fi
             ;;
         
@@ -89,7 +89,7 @@ then
             read INTROOT_DIR
             if [ "$INTROOT_DIR" != "" ]
             then 
-                ctooGetTemplateForDirectoryStructure INTROOT $INTROOT_DIR ""
+                ctooGetTemplateForDirectoryStructure INTROOT $INTROOT_DIR
             fi
             ;;
         
@@ -100,7 +100,7 @@ then
             read MCSROOT_DIR
             if [ "$MCSROOT_DIR" != "" ]
             then
-                ctooGetTemplateForDirectoryStructure MCSROOT $MCSROOT_DIR ""
+                ctooGetTemplateForDirectoryStructure MCSROOT $MCSROOT_DIR
             fi
             ;;
         
@@ -111,7 +111,7 @@ then
             read MCSDATA_DIR
             if [ "$MCSDATA_DIR" != "" ]
             then
-                ctooGetTemplateForDirectoryStructure MCSDATA $MCSDATA_DIR ""
+                ctooGetTemplateForDirectoryStructure MCSDATA $MCSDATA_DIR
             fi
             ;;
         
