@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2004-12-14 13:12:38 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.12 2004-12-14 16:39:23 gzins Exp $"
 #
 # Makefile of err module 
 #
@@ -10,6 +10,8 @@
 # sccmgr    02-Jun-2004  Created
 # gzins     14-Dec-2004  Run standard installation target first (to create
 #                        INTROOT if needed) before installing jar files
+# gzins     14-Dec-2004  Removed include path for libxml2 and libgdome (done
+# 						 by mkf)
 #
 #
 #*******************************************************************************
@@ -24,10 +26,7 @@
 
 #
 # additional include and library search paths
-USER_INC = -I/usr/include/libgdome \
-		   -I/usr/lib/glib-2.0/include/ \
-		   -I/usr/include/glib-2.0		\
-		   -I/usr/include/libxml2
+#USER_INC = 
 #USER_LIB =
 
 #
