@@ -160,4 +160,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Received a NULL value for parameter '%.80s'.]]></errFormat>
    </error>
+   <error id="35">
+      <errName>PROC_ABNORMALLY_EXIT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Process %s whose an answer was awaited, abnormally exit]]></errFormat>
+   </error>
 </errorList>
