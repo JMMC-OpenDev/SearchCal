@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestVirtualobs.C,v 1.3 2004-08-19 16:33:24 scetre Exp $"
+* "@(#) $Id: vobsTestVirtualobs.C,v 1.4 2004-08-25 13:46:32 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualobs.C,v 1.3 2004-08-19 16:33:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualobs.C,v 1.4 2004-08-25 13:46:32 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,7 +56,14 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    mcsInit(argv[0]);
+    // Initialize MCS services
+    if (mcsInit(argv[0]) == FAILURE)
+    {
+        // Error handling if necessary
+        
+        // Exit from the application with FAILURE
+        exit (EXIT_FAILURE);
+    }
 
     logSetStdoutLogLevel(logEXTDBG);
     
@@ -112,10 +119,6 @@ int main(int argc, char *argv[])
         errCloseStack();
         exit(EXIT_FAILURE);
     }
-    /*else
-    {
-        starList.Display();
-    }*/
 
     errDisplayStack();
     
