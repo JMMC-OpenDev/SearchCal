@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: fndOBJECT.C,v 1.1 2004-09-22 13:40:13 gzins Exp $"
+* "@(#) $Id: fndOBJECT.cpp,v 1.1 2004-12-05 18:47:14 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * Definition of fndOBJECT class.
  */
 
-static char *rcsId="@(#) $Id: fndOBJECT.C,v 1.1 2004-09-22 13:40:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: fndOBJECT.cpp,v 1.1 2004-12-05 18:47:14 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
