@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSEARCH_CALIBRATORS.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSEARCH_CALIBRATORS class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSEARCH_CALIBRATORS.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

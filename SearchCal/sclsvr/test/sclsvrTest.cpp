@@ -1,21 +1,21 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestCommand.C,v 1.1 2004-11-26 13:53:56 scetre Exp $"
+* "@(#) $Id: sclsvrTest.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* scetre    04-Oct-2004  Created
+* scetre    15-Sep-2004  Created
 *
 *
 *******************************************************************************/
 
 /**
  * \file
- * Test to decode command
- */
+ * Test programm of sclsvr.
+  */
 
-static char *rcsId="@(#) $Id: sclsvrTestCommand.C,v 1.1 2004-11-26 13:53:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTest.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -73,18 +73,16 @@ int main(int argc, char *argv[])
         // Exit from the application with FAILURE
         exit (EXIT_FAILURE);
     }
-
-    logInfo("Starting ...");    
-
-    logSetStdoutLogLevel(logEXTDBG);
+    logInfo("Starting ...");
     
+    logSetStdoutLogLevel(logEXTDBG);
+
     sclsvrSEARCH_CALIBRATORS searchCalibrators;
-    if (searchCalibrators.DecodeCommand(argc, argv) == FAILURE)
-    {
-        exit (EXIT_FAILURE);
-    }
+    searchCalibrators.DecodeCommand("test");
+    searchCalibrators.Run();
 
     logInfo("Exiting ...");
+
 
     // Close MCS services
     mcsExit();

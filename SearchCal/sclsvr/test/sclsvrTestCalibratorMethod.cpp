@@ -1,21 +1,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTest.C,v 1.1 2004-11-26 13:53:56 scetre Exp $"
+* "@(#) $Id: sclsvrTestCalibratorMethod.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* scetre    15-Sep-2004  Created
+* scetre    25-Nov-2004  Created
 *
 *
 *******************************************************************************/
 
-/**
- * \file
- * Test programm of sclsvr.
-  */
 
-static char *rcsId="@(#) $Id: sclsvrTest.C,v 1.1 2004-11-26 13:53:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibratorMethod.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -73,17 +69,33 @@ int main(int argc, char *argv[])
         // Exit from the application with FAILURE
         exit (EXIT_FAILURE);
     }
-    logInfo("Starting ...");
-    
+
+
     logSetStdoutLogLevel(logEXTDBG);
-
-    sclsvrSEARCH_CALIBRATORS searchCalibrators;
-    searchCalibrators.DecodeCommand("test");
-    searchCalibrators.Run();
-
-    logInfo("Exiting ...");
-
-
+    sclsvrCALIBRATOR calibrator;
+    calibrator.SetProperty(ANGULAR_DIAMETER_ID, "1.4");
+    
+    calibrator.SetProperty(POS_GAL_LAT_ID, "22.23");
+    
+    calibrator.SetProperty(PHOT_JHN_K_ID, "4.32");
+    calibrator.Display(); 
+    mcsSTRING32 diamAffectted;
+    calibrator.GetProperty(ANGULAR_DIAMETER_ID, diamAffectted);
+    mcsFLOAT diamBis;
+    calibrator.GetProperty(ANGULAR_DIAMETER_ID, &diamBis);
+    mcsFLOAT glat;
+    calibrator.GetProperty(POS_GAL_LAT_ID, &glat); 
+    mcsFLOAT mgK;
+    calibrator.GetProperty(PHOT_JHN_K_ID, &mgK);
+    
+    sclsvrCALIBRATOR_LIST calibratorList;
+    calibratorList.AddAtTail(calibrator);
+    calibratorList.Display();
+    
+    printf("diameter affected and get = %s\n", diamAffectted);
+    printf("diameter bis = %f\n", diamBis);
+    printf("mag K affected = %f\n", mgK);
+    printf("glat affected = %f\n", glat);
     // Close MCS services
     mcsExit();
     

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrServer.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrServer.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -65,7 +65,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: sclsvrServer.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

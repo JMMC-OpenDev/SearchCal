@@ -1,17 +1,21 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestCalibratorMethod.C,v 1.1 2004-11-26 13:53:56 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCalibrators.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* scetre    25-Nov-2004  Created
+* scetre    04-Oct-2004  Created
 *
 *
 *******************************************************************************/
 
+/**
+ * \file
+ * Test programm of sclsvr.
+ */
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibratorMethod.C,v 1.1 2004-11-26 13:53:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCalibrators.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -70,32 +74,22 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
+    logInfo("Starting ...");    
 
     logSetStdoutLogLevel(logEXTDBG);
-    sclsvrCALIBRATOR calibrator;
-    calibrator.SetProperty(ANGULAR_DIAMETER_ID, "1.4");
     
-    calibrator.SetProperty(POS_GAL_LAT_ID, "22.23");
-    
-    calibrator.SetProperty(PHOT_JHN_K_ID, "4.32");
-    calibrator.Display(); 
-    mcsSTRING32 diamAffectted;
-    calibrator.GetProperty(ANGULAR_DIAMETER_ID, diamAffectted);
-    mcsFLOAT diamBis;
-    calibrator.GetProperty(ANGULAR_DIAMETER_ID, &diamBis);
-    mcsFLOAT glat;
-    calibrator.GetProperty(POS_GAL_LAT_ID, &glat); 
-    mcsFLOAT mgK;
-    calibrator.GetProperty(PHOT_JHN_K_ID, &mgK);
-    
-    sclsvrCALIBRATOR_LIST calibratorList;
-    calibratorList.AddAtTail(calibrator);
-    calibratorList.Display();
-    
-    printf("diameter affected and get = %s\n", diamAffectted);
-    printf("diameter bis = %f\n", diamBis);
-    printf("mag K affected = %f\n", mgK);
-    printf("glat affected = %f\n", glat);
+    vobsSTAR star;
+    star.SetProperty(DATA_LINK_ID, "Hd");
+    sclsvrCALIBRATOR calib(star);
+    sclsvrCALIBRATOR_LIST list;
+    //calib.Display();
+    calib.SetProperty(DATA_LINK_ID, "Hd2", mcsTRUE);
+    calib.SetProperty(VISIBILITY_ID, 0.3198, mcsTRUE);
+    //calib.Display();
+    list.AddAtTail(star);
+    list.AddAtTail(calib);
+    list.Display();
+    errDisplayStack();
     // Close MCS services
     mcsExit();
     

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCalibrators.C,v 1.1 2004-11-26 13:53:56 scetre Exp $"
+* "@(#) $Id: sclsvrTestCommand.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,10 +12,10 @@
 
 /**
  * \file
- * Test programm of sclsvr.
+ * Test to decode command
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCalibrators.C,v 1.1 2004-11-26 13:53:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCommand.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -78,18 +78,14 @@ int main(int argc, char *argv[])
 
     logSetStdoutLogLevel(logEXTDBG);
     
-    vobsSTAR star;
-    star.SetProperty(DATA_LINK_ID, "Hd");
-    sclsvrCALIBRATOR calib(star);
-    sclsvrCALIBRATOR_LIST list;
-    //calib.Display();
-    calib.SetProperty(DATA_LINK_ID, "Hd2", mcsTRUE);
-    calib.SetProperty(VISIBILITY_ID, 0.3198, mcsTRUE);
-    //calib.Display();
-    list.AddAtTail(star);
-    list.AddAtTail(calib);
-    list.Display();
-    errDisplayStack();
+    sclsvrSEARCH_CALIBRATORS searchCalibrators;
+    if (searchCalibrators.DecodeCommand(argc, argv) == FAILURE)
+    {
+        exit (EXIT_FAILURE);
+    }
+
+    logInfo("Exiting ...");
+
     // Close MCS services
     mcsExit();
     
