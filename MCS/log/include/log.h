@@ -20,11 +20,6 @@ extern "C" {
 #endif /*!__FILE_LINE__*/
 #endif
 
-/* 
- * Log Constants 
- */
-#define logTEXT_LEN 64
-    
 /*
  * Logging level constants
  */
@@ -39,25 +34,12 @@ typedef enum {
 } logLEVEL;
 
 /*
- * Define logging definition structure 
- */
-typedef struct {
-        mcsLOGICAL  log;
-        mcsLOGICAL  verbose;
-        logLEVEL    logLevel;
-        logLEVEL    verboseLevel;
-        logLEVEL    actionLevel;
-        mcsLOGICAL  printDate;
-        mcsLOGICAL  printFileLine;
-} logRULE;
-
-/*
  * Log/Verbose/Action Logging Functions
  */
-extern mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName, 
-                                 const mcsMODULEID moduleName);
+extern mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName);
 
-extern mcsCOMPL_STAT logPrint(logLEVEL level, const char *fileLine, 
+extern mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
+                              const char *fileLine, 
                               const char *logText, ...);
 
 extern mcsCOMPL_STAT logPrintAction(logLEVEL level,
@@ -92,9 +74,6 @@ extern mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);
 extern mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag);
 
 
-/* should be placed in a private area */
-extern mcsCOMPL_STAT logData(const char * msg);
-
 /*
  * Convenience macros
  */
@@ -102,45 +81,45 @@ extern mcsCOMPL_STAT logData(const char * msg);
 /* Logging and Verbose */
 
 #define logWarning(format, arg...) \
-    logPrint( logWARNING, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logWARNING, __FILE_LINE__, format, ##arg)
 
 #define logInfo(format, arg...) \
-    logPrint( logINFO, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logINFO, __FILE_LINE__, format, ##arg)
 
 #define logTest(format, arg...) \
-    logPrint( logTEST, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logTEST, __FILE_LINE__, format, ##arg)
 
 #define logDebug(format, arg...) \
-    logPrint( logDEBUG, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logDEBUG, __FILE_LINE__, format, ##arg)
 
 #define logExtDbg(format, arg...) \
-    logPrint( logEXTDBG, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logEXTDBG, __FILE_LINE__, format, ##arg)
 
 /* Action logs */
     
 #define logAction(level, format, arg...) \
     logPrintAction(level, format, ##arg); \
-    logPrint(level, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, level, __FILE_LINE__, format, ##arg)
 
 #define logWarningAction(format, arg...) \
     logPrintAction(logWARNING, format, ##arg); \
-    logPrint(logWARNING, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logWARNING, __FILE_LINE__, format, ##arg)
 
 #define logInfoAction(format, arg...) \
     logPrintAction(logINFO, format, ##arg); \
-    logPrint(logINFO, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logINFO, __FILE_LINE__, format, ##arg)
 
 #define logTestAction(format, arg...) \
     logPrintAction(logTEST, format, ##arg); \
-    logPrint(logTEST, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logTEST, __FILE_LINE__, format, ##arg)
 
 #define logDebugAction(format, arg...) \
     logPrintAction(logDEBUG, format, ##arg); \
-    logPrint(logDEBUG, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logDEBUG, __FILE_LINE__, format, ##arg)
 
 #define logExtDbgAction(format, arg...) \
     logPrintAction(logEXTDBG, format, ##arg); \
-    logPrint(logEXTDBG, __FILE_LINE__, format, ##arg)
+    logPrint(MODULE_ID, logEXTDBG, __FILE_LINE__, format, ##arg)
 
 #ifdef __cplusplus
 };
