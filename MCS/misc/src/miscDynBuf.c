@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.34 2005-02-17 14:32:42 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.35 2005-02-22 11:11:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2005/02/17 14:32:42  gzins
+ * Improved intialisation of static dynamic buffers
+ *
  * Revision 1.33  2005/02/16 15:54:33  gzins
  * Fixed bug in miscDynBufGetNextLine; wrong test to prevent array overflow
  *
@@ -128,7 +131,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.34 2005-02-17 14:32:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.35 2005-02-22 11:11:38 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -698,8 +701,9 @@ const char*    miscDynBufGetCommentPattern   (const miscDYN_BUF  *dynBuf)
  *
  * It retrieves the next line from the given \em currentPos position in the
  * dynamic buffer and copies its content into the \em nextLine buffer. If there
- * is no newline it copies until the end of the dynamic buffer or until the
+ * is no new line it copies until the end of the dynamic buffer or until the
  * bytes read cannot be stored in the \em nextLine buffer.\n
+ *
  * If the given position is a NULL pointer, the search starts from the beginning
  * of the buffer. If \em skipCommentFlag is set to mcsTRUE, the comment lines
  * (starting with pattern defined either when loading file or using
@@ -708,7 +712,8 @@ const char*    miscDynBufGetCommentPattern   (const miscDYN_BUF  *dynBuf)
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param currentPos the  position from which the next line will be searched, or
  * NULL to begin on the first line of the buffer.
- * \param nextLine buffer in which next line will be stored in.
+ * \param nextLine buffer in which the next line will be stored.
+ * \param maxLineLength next line buffer maximun length.
  * \param skipCommentFlag the boolean specifying weither the line beginnig by
  * the Dynamic Buffer comment pattern should be skipped or not
  *
@@ -725,8 +730,8 @@ const char*    miscDynBufGetCommentPattern   (const miscDYN_BUF  *dynBuf)
  * /# Get all the lines, skipping the comment lines #/
  * char *currPtr = NULL;
  * mcsSTRING1024 line;
- * while ((currPtr = miscDynBufGetNextLine(&dynBuf, line, 
- *                                         currPtr, mcsTRUE) != NULL))
+ * while ((currPtr = miscDynBufGetNextLine(&dynBuf, currPtr, line,
+ *                                         sizeof(line), mcsTRUE) != NULL))
  * {
  *     /# Print out line content #/
  *     printf("%s\n", line);
@@ -734,11 +739,12 @@ const char*    miscDynBufGetCommentPattern   (const miscDYN_BUF  *dynBuf)
  * \endcode
  *
  * \return a pointer to the new buffer position to be used to get the next line,
- * or NULL if an error occured.
+ * or NULL if an error occured or the end of the buffer was reached.
  */
 const char*   miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
                                      const char        *currentPos,
-                                     mcsSTRING1024     nextLine,
+                                           char        *nextLine,
+                                     const mcsUINT32   maxLineLength,
                                      const mcsLOGICAL  skipCommentFlag)
 {
     /* Initialize the received Dynamic Buffer if it is not */
@@ -785,13 +791,14 @@ const char*   miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
         /* Get next line in buffer */
         if (currentPos != NULL)
         {
-            currentPos = strchr(currentPos, '\n');
             /* If there is no more line, return */
+            currentPos = strchr(currentPos, '\n');
             if ((currentPos == NULL) || 
                 ((currentPos + 1) == bufferEnd))
             { 
                 return ((char*)NULL);
             }
+
             /* Else skip CR character */
             currentPos = currentPos + 1;
         }
@@ -801,13 +808,10 @@ const char*   miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
             currentPos = bufferStart;
         }            
 
-        /* If it is a comment line and comment lines have to be skipped, 
-         * continue */
-        char* commentPattern = dynBuf->commentPattern;
-        mcsUINT32 commentPatternLen = strlen(commentPattern);
-        if ((skipCommentFlag != mcsTRUE) ||
-            (strlen(commentPattern) == 0) ||
-            (strncmp(currentPos, commentPattern, commentPatternLen) != 0))
+        /* If it is a comment line and it should be skipped, skip it */
+        if ((skipCommentFlag == mcsFALSE) ||
+            (miscIsCommentLine(currentPos, miscDynBufGetCommentPattern(dynBuf))
+            == mcsFALSE))
         {
             nextLineFound = mcsTRUE;
         }
@@ -815,9 +819,9 @@ const char*   miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
 
     /* Copy next into buffer */
     mcsINT32 i = 0;
-    memset(nextLine, '\0', sizeof(mcsSTRING1024)); 
+    memset(nextLine, '\0', maxLineLength); 
     while (((currentPos + i) < bufferEnd) &&
-             (i < (sizeof(mcsSTRING1024) - 1)) &&
+             (i < (maxLineLength - 1)) &&
              (currentPos[i] != '\n'))
     {
         /* Copy current character */
@@ -828,6 +832,41 @@ const char*   miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
     }
 
     return (currentPos);
+}
+
+
+/**
+ * Return the next line of comment of a Dynamic Buffer.
+ *
+ * This function works the same way as miscDynBufGetNextLine().
+ *
+ * \sa miscDynBufGetNextLine().
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param currentPos the  position from which the next comment line will be
+ * searched, or NULL to begin on the first line of the buffer.
+ * \param nextLine buffer in which the next comment line will be stored.
+ * \param maxLineLength next line buffer maximun length.
+ *
+ * \return a pointer to the new buffer position to be used to get the comment
+ * next line, or NULL if an error occured or the end of the buffer was reached.
+ */
+const char*   miscDynBufGetNextCommentLine (const miscDYN_BUF *dynBuf,
+                                            const char        *currentPos,
+                                                  char        *nextLine,
+                                            const mcsUINT32   maxLineLength)
+{
+    /* Skip lines, until it reaches a comment one (or the end of the buffer) */
+    do
+    {
+        currentPos = miscDynBufGetNextLine(dynBuf, currentPos, nextLine,
+                                           maxLineLength, mcsFALSE);
+    }
+    while ((currentPos != NULL) &&
+           (miscIsCommentLine(currentPos, miscDynBufGetCommentPattern(dynBuf))
+           == mcsFALSE));
+
+    return currentPos;
 }
 
 
@@ -1352,7 +1391,8 @@ mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
 
         /* Get the last character of the Dynamic Buffer */
         char lastDynBufChr = '\0';
-        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == mcsFAILURE)
+        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes)
+            == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -1372,6 +1412,97 @@ mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
 
     /* Append the string bytes, including its '\0' */
     return(miscDynBufAppendBytes(dynBuf, str, stringLength));
+}
+
+
+/**
+ * Copy a carridge return ('\\n') followed by an extern string (a null
+ * terminated char array) at the end of a Dynamic Buffer, adding an '\\0' at the 
+ * end of it.
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param line the address of the extern string to be written in
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT miscDynBufAppendLine          (miscDYN_BUF       *dynBuf,
+                                             const char        *line)
+{
+    /* Test the 'line' parameter validity */
+    mcsUINT32 lineLength = 0;
+    if ((lineLength = miscDynBufVerifyStringParameterValidity(line)) == 0)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Get the Dynamic Buffer stored bytes number */
+    mcsUINT32 storedBytes = 0;
+    if (miscDynBufGetNbStoredBytes(dynBuf, &storedBytes) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* If the Dynamic Buffer already contain something... */
+    if (storedBytes != 0)
+    {
+
+        /* Get the last character of the Dynamic Buffer */
+        char lastDynBufChr = '\0';
+        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    
+        /* If the Dynamic Buffer was already holding a null-terminated string...
+         */
+        if (lastDynBufChr == '\0')
+        {
+            /* Replace the ending '\0' by an '\n' */
+            if (miscDynBufReplaceByteAt(dynBuf, '\n', storedBytes)
+                == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+    }
+
+    /* Append the line, with its '\0' */
+    return(miscDynBufAppendBytes(dynBuf, line, lineLength));
+}
+
+
+/**
+ * Copy a carridge return ('\\n') followed by the Dynamic Buffer \em internal
+ * comment pattern and an extern string (a null terminated char array) at the
+ * end of a Dynamic Buffer, adding an '\\0' at the  end of it.
+ *
+ * \sa miscDynBufGetCommentPattern() and miscDynBufSetCommentPattern()
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param line the address of the extern string to be written in
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT miscDynBufAppendCommentLine   (miscDYN_BUF       *dynBuf,
+                                             const char        *line)
+{
+    /* Test the 'line' parameter validity */
+    mcsUINT32 lineLength = 0;
+    if ((lineLength = miscDynBufVerifyStringParameterValidity(line)) == 0)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Append the comment pattern to the Dynamic Buffer */
+    if (miscDynBufAppendLine(dynBuf, miscDynBufGetCommentPattern(dynBuf))
+        == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Append the line, with its '\0' */
+    return(miscDynBufAppendString(dynBuf, line));
 }
 
 

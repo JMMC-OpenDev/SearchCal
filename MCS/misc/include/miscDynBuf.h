@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.18 2005-02-16 14:39:55 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.19 2005-02-22 11:11:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/02/16 14:39:55  gzins
+ * Updated miscDynBufGetNextLine() function to do not alter buffer content.
+ *
  * Revision 1.17  2005/02/15 12:40:22  gzins
  * Removed miscDynBufGetNextLinePointer and miscDynBufGetBufferPointer macros
  *
@@ -155,8 +158,14 @@ const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
 
 const char*   miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
                                              const char        *currentPos,
-                                             mcsSTRING1024     nextLine,
+                                                   char        *nextLine,
+                                             const mcsUINT32   maxLineLength,
                                              const mcsLOGICAL  skipCommentFlag);
+
+const char*   miscDynBufGetNextCommentLine  (const miscDYN_BUF *dynBuf,
+                                             const char        *currentPos,
+                                                   char        *nextLine,
+                                             const mcsUINT32   maxLineLength);
 
 mcsCOMPL_STAT miscDynBufGetByteAt           (const miscDYN_BUF *dynBuf,
                                              char              *byte,
@@ -202,6 +211,12 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length);
 
 mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
+                                             const char        *str);
+
+mcsCOMPL_STAT miscDynBufAppendLine          (miscDYN_BUF       *dynBuf,
+                                             const char        *str);
+
+mcsCOMPL_STAT miscDynBufAppendCommentLine   (miscDYN_BUF       *dynBuf,
                                              const char        *str);
 
 mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
