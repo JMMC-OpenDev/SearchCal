@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.28 2005-02-10 22:59:23 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.29 2005-02-10 23:13:04 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2005/02/10 22:59:23  lafrasse
+ * Corrected a copy-paste typo in miscDynBufGetNextLine()
+ *
  * Revision 1.27  2005/02/10 10:08:07  lafrasse
  * Added miscDynBufSaveInFile(), and moved as most miscDynBuf parameters as possible to const type
  *
@@ -109,7 +112,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.28 2005-02-10 22:59:23 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.29 2005-02-10 23:13:04 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -703,6 +706,11 @@ char*         miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
 
     /* Get the current Dynamic Buffer internal buffer pointer */
     char *internalBuffer = miscDynBufGetBuffer(dynBuf);
+    if (internalBuffer == NULL)
+    {
+        errAdd(miscERR_DYN_BUF_IS_EMPTY);
+        return ((char *) NULL);
+    }
 
     /* Get the current Dynamic Buffer internal buffer length */
     mcsUINT32 internalLength = 0;
