@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.16 2005-03-04 15:38:10 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.17 2005-03-06 20:31:13 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/03/04 15:38:10  gzins
+ * Added timer log
+ *
  * Revision 1.15  2005/03/04 09:47:17  gzins
  * Implemented -file option; i.e. save calibrator list in file if requested
  *
@@ -49,7 +52,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.16 2005-03-04 15:38:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.17 2005-03-06 20:31:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -130,7 +133,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         // If a file has been given, store result in this file
         if (strcmp(request.GetFileName(), "") != 0)
         {
-            if (calibratorList.Save(request.GetFileName()) == mcsFAILURE)
+            if (calibratorList.Save(request.GetFileName(), 
+                                    request) == mcsFAILURE)
             {
                 return evhCB_NO_DELETE | evhCB_FAILURE;
             };
