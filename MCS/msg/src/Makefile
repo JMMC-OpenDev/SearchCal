@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-09-10 17:27:59 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-10-01 13:05:41 gzins Exp $"
 #
 # Makefile of msg
 #
@@ -39,11 +39,12 @@ EXECUTABLES_L   =
 
 #
 # <brief description of msgManager program>
-msgManager_OBJECTS   = msgManager \
-                       msgManagerForward \
-                       msgManagerHandleCmd \
-                       msgManagerProcess \
-                       msgManagerProcessList
+msgManager_OBJECTS   = msgManager            \
+                       msgManagerForward     \
+                       msgManagerHandleCmd 	 \
+                       msgManagerProcess     \
+                       msgManagerProcessList \
+					   msgGetMessageQueue
 msgManager_LDFLAGS   = -lgdome -lstdc++
 msgManager_LIBS      = mcs log err cmd misc msg
 

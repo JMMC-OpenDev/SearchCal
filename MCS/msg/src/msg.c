@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msg.c,v 1.3 2004-09-08 08:08:39 gzins Exp $"
+* "@(#) $Id: msg.c,v 1.4 2004-10-01 13:05:41 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -90,9 +90,8 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: msg.c,v 1.3 2004-09-08 08:08:39 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msg.c,v 1.4 2004-10-01 13:05:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
 
 /* 
  * System Headers
@@ -101,14 +100,12 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <string.h>
 #include <netinet/in.h>
 
-
 /*
  * MCS Headers 
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-
 
 /* 
  * Local Headers
@@ -117,12 +114,10 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "msgPrivate.h"
 #include "msgErrors.h"
 
-
 /*
  * Local Variables
  */
 int msgManagerSd = -1;
-
 
 /*
  * Public functions definition
@@ -131,8 +126,8 @@ int msgManagerSd = -1;
 /**
  * Copy \<bufLen\> bytes of \<buffer\> in the message body.
  *
- * If \<bufLen\> equal 0, strlen() is used to get \<buffer\> length to be copied 
- * in.
+ * If \<bufLen\> equal 0, strlen() is used to get \<buffer\> length to be
+ * copied in.
  * If \<buffer\> equal NULL, the message body is resetted with '\\0'.
  *
  * \param msg a message structure address
@@ -272,7 +267,6 @@ mcsLOGICAL      msgIsLastReply    (msgMESSAGE         *msg)
     /* Return weither it is the last message or not */
     return (msg->header.lastReply);
 }
-
 
 /**
  * Return the message type.
