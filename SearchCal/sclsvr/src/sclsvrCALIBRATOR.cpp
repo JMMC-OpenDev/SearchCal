@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.33 2005-02-22 08:10:39 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.34 2005-02-22 09:50:43 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2005/02/22 08:10:39  gzins
+ * Update calls to alxComputeRealMagnitudes() and alxComputeMagnitudesForBrightStar() functions
+ *
  * Revision 1.32  2005/02/21 14:46:53  scetre
  * Use CDS magnitude instead of computed magnitude to compute diameter
  *
@@ -44,7 +47,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.33 2005-02-22 08:10:39 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.34 2005-02-22 09:50:43 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -505,10 +508,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     
     char *starPropertyId[4] = 
     {
-        vobsSTAR_PHOT_JHN_B,
-        vobsSTAR_PHOT_JHN_V,
-        vobsSTAR_PHOT_JHN_R,
-        vobsSTAR_PHOT_JHN_K
+        sclsvrCALIBRATOR_BO,
+        sclsvrCALIBRATOR_VO,
+        sclsvrCALIBRATOR_RO,
+        sclsvrCALIBRATOR_KO
     };
 
     // For each property needed to compute angular diameter, check if they are
