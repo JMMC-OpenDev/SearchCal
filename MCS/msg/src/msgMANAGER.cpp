@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.15 2005-01-29 09:56:25 gzins Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.16 2005-01-29 20:04:35 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/01/29 09:56:25  gzins
+ * Updated to notify client when a server is exiting abnormally
+ *
  * Revision 1.14  2005/01/26 17:54:42  gzins
  * Removed reference to action log
  *
@@ -37,7 +40,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.15 2005-01-29 09:56:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.16 2005-01-29 20:04:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,6 +63,7 @@ using namespace std;
  * Local Headers 
  */
 #include "msgDEBUG_CMD.h"
+#include "msgPROCLIST_CMD.h"
 #include "msgMANAGER.h"
 #include "msgMESSAGE.h"
 #include "msgPrivate.h"
@@ -486,18 +490,43 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
 
                 logTest("'%s' connection accepted", msg.GetSender());
 
-                /* Add the new process to the process list */
-                newProcess->SetName(msg.GetSender());
-                if (_processList.AddAtTail(newProcess) == mcsFAILURE)
-                {
-                    errCloseStack();
-                }
+                // Retreives information on process. If no process information
+                // in message, ignore error.
+                mcsINT32   pid=-1;
+                mcsLOGICAL unicityFlag=mcsFALSE;
+                sscanf(msg.GetBody(), "%d %d", &pid, &unicityFlag);
 
-                /* Send a registering validation messsage */
-                msg.SetBody("OK", 0);
-                
-                PrepareReply(msg);
-                SendReply(msg);
+                // If process must be unique, amd process already registered
+                if ((unicityFlag == mcsTRUE) &&
+                    (_processList.GetProcess(msg.GetSender()) != NULL))
+                {
+                    // Report error
+                    errAdd (msgERR_DUPLICATE_PROC, msg.GetSender());
+
+                    // Send an error reply
+                    PrepareReply(msg);
+                    SendReply(msg, newProcess);
+
+                    // Delete process
+                    delete (newProcess);
+                }
+                // Else
+                else
+                {
+                    /* Add the new process to the process list */
+                    newProcess->SetName(msg.GetSender());
+                    newProcess->SetId(pid);
+                    newProcess->SetUnicity(unicityFlag);
+                    if (_processList.AddAtTail(newProcess) == mcsFAILURE)
+                    {
+                        errCloseStack();
+                    }
+
+                    /* Send a registering validation messsage */
+                    msg.SetBody("OK");
+                    PrepareReply(msg);
+                    SendReply(msg);
+                }
             }
             else /* Wrong message received... */
             {
@@ -652,6 +681,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
  * Those commands are :
  * \li CLOSE - close the connection with msgManager (internal use)
  * \li DEBUG - log messages management
+ * \li PROCLIST - returns list of connected processes 
  * \li EXIT - quit msgManager
  * \li PING - test if a process is connected to msgManager
  * \li VERSION - give back the current msgManager version number
@@ -752,6 +782,44 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         
         /* Send an hand-checking message */
         msg.SetBody("OK");
+        PrepareReply(msg);
+        SendReply(msg);
+    }  
+    /* If the received command is a PROCLIST request... */ 
+    else if (strcmp(msg.GetCommand(), msgPROCLIST_CMD_NAME) == 0)
+    {
+        msgPROCLIST_CMD procListCmd(msg.GetCommand(), msg.GetBody());
+
+        // Parses command
+        if (procListCmd.Parse() == mcsFAILURE)
+        {
+            PrepareReply(msg);
+            SendReply(msg);
+            return mcsFAILURE;
+        }
+        
+        // Get the list of connected processes
+        msg.ClearBody();
+        for (unsigned int el = 0; el < _processList.Size(); el++)
+        {
+            msgPROCESS *process; 
+            process = _processList.GetNextProcess((mcsLOGICAL)(el==0));
+            if (process != NULL)
+            {
+                mcsSTRING256 buffer;
+                sprintf(buffer, "%s %d %c", 
+                        process->GetName(), process->GetId(),
+                        (process->IsUnique() == mcsTRUE) ? 'T' : 'F'); 
+                msg.AppendStringToBody(buffer);
+                // If it is not the last process, add separator
+                if (el < (_processList.Size() - 1))
+                {
+                    msg.AppendStringToBody(", ");
+                }
+            }
+        }
+
+        /* Send an hand-checking message */
         PrepareReply(msg);
         SendReply(msg);
     }  
