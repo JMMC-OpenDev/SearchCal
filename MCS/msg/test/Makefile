@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-09-10 17:27:55 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-10-01 15:07:46 gzins Exp $"
 #
 # Makefile of msgTest
 #
@@ -34,8 +34,8 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = msgTestClient msgTestServer msgTestManagerSend
-EXECUTABLES_L   = 
+EXECUTABLES     = 
+EXECUTABLES_L   = msgTestClient msgTestServer
 
 #
 # <brief description of msgTestClient program>
@@ -48,12 +48,6 @@ msgTestClient_LIBS      = mcs err log misc msg
 msgTestServer_OBJECTS   = msgTestServer
 msgTestServer_LDFLAGS   = -lgdome
 msgTestServer_LIBS      = mcs err log cmd misc msg
-
-#
-# <brief description of msgTestManagerSend program>
-msgTestManagerSend_OBJECTS   = msgTestManagerSend
-msgTestManagerSend_LDFLAGS   = -lgdome
-msgTestManagerSend_LIBS      = mcs err log cmd misc msg
 
 #
 # special compilation flags for single c sources
