@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-11-17 10:27:12 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-12-22 09:03:30 gzins Exp $"
 #
 # Makefile of evh library
 #
@@ -9,7 +9,8 @@
 # --------  -----------  -------------------------------------------------------
 # sccmgr    22-Sep-2004  Created
 # gzins     17-Nov-2004  Added evhTASK and evhSERVER class
-#
+# gzins     22-Dec-2004  Added evhVERSION, evhDEBUG and evhVERSION CDF
+#                        Added evhHelpCB
 #
 #*******************************************************************************
 # REMARKS
@@ -81,6 +82,10 @@ evh_OBJECTS   = evhHANDLER           \
 				evhTASK              \
 				evhSERVER            \
 				evhIOSTREAM_KEY      \
+				evhHELP_CMD          \
+				evhVERSION_CMD       \
+				evhDEBUG_CMD         \
+				evhHelpCB            \
 				evhVersionCB
 #
 # Scripts (public and local)
@@ -134,6 +139,13 @@ JAVA_EXECUTABLES=
 #
 # <brief description of jjjjjj java program>
 jjjjjj_CLASS    =
+
+#
+# Command Definition Files
+# ---------------------------------
+CDF_FILES       = evhDEBUG    \
+				  evhHELP     \
+				  evhVERSION
 
 #
 # man pages to be done
