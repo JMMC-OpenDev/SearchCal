@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.h,v 1.2 2004-11-18 17:36:47 gzins Exp $"
+* "@(#) $Id: evhTASK.h,v 1.3 2004-12-20 13:36:31 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * gzins     09-Jun-2004  created
 * gzins     18-Nov-2004  splitted parsing and usage methods to separate
 *                        options and arguments in command-line parameters
+* gzins     20-Dec-2004  removed IsTimerLogOption method
 * 
 *******************************************************************************/
 
@@ -47,7 +48,6 @@ public:
     virtual mcsLOGICAL IsFileLogOption();
     virtual mcsLOGICAL IsStdoutLogOption();
     virtual mcsLOGICAL IsActionLogOption();
-    virtual mcsLOGICAL IsTimerLogOption();
 
     virtual const char *GetSwVersion();
 
@@ -61,7 +61,6 @@ private:
     mcsLOGICAL _fileLogOption;
     mcsLOGICAL _stdoutLogOption;
     mcsLOGICAL _actionLogOption; 
-    mcsLOGICAL _timerLogOption;
 };
 
 #endif /*!evhTASK_H*/
