@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.4 2004-12-09 17:52:13 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.5 2004-12-10 09:11:01 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,6 +10,7 @@
 *                        fixed bug related to flag check
 * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
 * gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
+* gzins     10-Dec-2004  Resolved path before loading CDF file in ParseCdf()
 *
 *
 *******************************************************************************/
@@ -20,7 +21,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.4 2004-12-09 17:52:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.5 2004-12-10 09:11:01 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -600,18 +601,17 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf(string cdfFilename)
 {
     logExtDbg ("cmdCOMMAND::ParseCdf()");
 
-    const char *xmlFilename = cdfFilename.data();
     GdomeDOMImplementation *domimpl;
     GdomeDocument *doc;
     GdomeElement *root=NULL;
     GdomeException exc;
-
-    logDebug("Using cdf file %s",xmlFilename);
     
     /* Get a DOMImplementation reference */
     domimpl = gdome_di_mkref ();
 
     /* create a new Document from the cdf file */
+    const char *xmlFilename = miscResolvePath(cdfFilename.data());
+    logDebug("Using cdf file %s",xmlFilename);
     doc = gdome_di_createDocFromURI(domimpl, xmlFilename, GDOME_LOAD_PARSING,
                                     &exc);
     if (doc == NULL)
