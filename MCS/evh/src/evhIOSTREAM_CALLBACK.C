@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhIOSTREAM_CALLBACK.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhIOSTREAM_CALLBACK.C,v 1.2 2004-11-17 09:45:37 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
-*
+* gzins     17-Nov-2004  Fixed bug in assignment operator method
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * Definition of the evhIOSTREAM_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhIOSTREAM_CALLBACK.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhIOSTREAM_CALLBACK.C,v 1.2 2004-11-17 09:45:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -54,7 +54,6 @@ evhIOSTREAM_CALLBACK::evhIOSTREAM_CALLBACK(fndOBJECT *object,
  */
 evhIOSTREAM_CALLBACK &evhIOSTREAM_CALLBACK::operator =(const evhIOSTREAM_CALLBACK &source)
 {
-    *this = source;
     _method   = source._method;
     return *this;
 }

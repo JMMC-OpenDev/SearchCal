@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_CALLBACK.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhCMD_CALLBACK.C,v 1.2 2004-11-17 09:43:34 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
+* gzins     17-Nov-2004  Fixed bug in assignment operator method
 *
 *
 *******************************************************************************/
@@ -15,7 +16,7 @@
  * Definition of the evhCMD_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCMD_CALLBACK.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_CALLBACK.C,v 1.2 2004-11-17 09:43:34 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -54,8 +55,7 @@ evhCMD_CALLBACK::evhCMD_CALLBACK(fndOBJECT *object,
  */
 evhCMD_CALLBACK &evhCMD_CALLBACK::operator =(const evhCMD_CALLBACK &source)
 {
-    *this = source;
-    _method   = source._method;
+    _method = source._method;
     return *this;
 }
 
