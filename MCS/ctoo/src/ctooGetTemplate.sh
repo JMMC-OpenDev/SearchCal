@@ -3,11 +3,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplate.sh,v 1.4 2005-01-24 14:28:38 gluck Exp $"
+# "@(#) $Id: ctooGetTemplate.sh,v 1.5 2005-01-24 15:47:51 gluck Exp $"
 #
 # History
 # -------
-# $>-Log-<$
+# $Log: not supported by cvs2svn $
 # lgluck    23-Apr-2004 Created
 # gzins     04-Dec-2004 Removed test related to directory structure 
 #
