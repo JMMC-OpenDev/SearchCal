@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestString.c,v 1.6 2004-12-15 16:32:14 gzins Exp $"
+* "@(#) $Id: miscTestString.c,v 1.7 2005-01-18 22:11:19 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -9,11 +9,11 @@
 * lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
 * lafrasse  02-Aug-2004  Changed local includes to use miscString headers
 * gzins     15-Dec-2004  Added test for miscTrimString function
-*
+* lafrasse  17-Jan-2005  Added miscSplitString function
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.6 2004-12-15 16:32:14 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.7 2005-01-18 22:11:19 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -242,8 +242,101 @@ int main (int argc, char *argv[])
         printf("Replace 'Z' by 'A'\n");
         printf("   New String  = %s\n", string);
     }
+    printf("\n\n");
+
+    /* Test of miscSplitString */
+    printf("miscSplitString() Function Test :\n\n");
+    strcpy((char *)string, "ABCD E FG HIJ KLMNOPQ R ST UVWXYZ |---10---||---20---||---30---||---40---||---50---||---60---||---70---||---80---||---90---||--100---||--110---||--120---||--130---||--140---||--150---||--160---||--170---||--180---||--190---||--200---||--210---||--220---||--230---||--240---||--250---||--260---|");
+    printf("   Original String  = '%s'\n",string);
+    mcsSTRING256 subStrings[50];
+    mcsUINT32    nbSubString = 0;
+
+    if (miscSplitString(NULL, ' ', NULL, 0, NULL) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        int i = 0;
+        for (i = 0; i<nbSubString; i++)
+        {
+            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+        }
+    }
+
+    if (miscSplitString(string, ' ', NULL, 0, NULL) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        int i = 0;
+        for (i = 0; i<nbSubString; i++)
+        {
+            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+        }
+    }
+
+    if (miscSplitString(string, ' ', subStrings, 0, NULL) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        int i = 0;
+        for (i = 0; i<nbSubString; i++)
+        {
+            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+        }
+    }
+
+    if (miscSplitString(string, ' ', subStrings, 5, NULL) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        int i = 0;
+        for (i = 0; i<nbSubString; i++)
+        {
+            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+        }
+    }
+
+    if (miscSplitString(string, ' ', subStrings, 5, &nbSubString) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        int i = 0;
+        for (i = 0; i<nbSubString; i++)
+        {
+            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+        }
+    }
+
+    if (miscSplitString(string, ' ', subStrings, 10, &nbSubString) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        int i = 0;
+        for (i = 0; i<nbSubString; i++)
+        {
+            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+        }
+    }
 
     exit (EXIT_SUCCESS);
 }
+
 
 /*___oOo___*/

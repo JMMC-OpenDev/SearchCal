@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscString.h,v 1.5 2004-12-17 08:15:48 gzins Exp $"
+* "@(#) $Id: miscString.h,v 1.6 2005-01-18 22:11:19 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -11,6 +11,7 @@
 *                        Moved mcs.h include in from miscString.c
 * gzins     15-Dec-2004  Added miscTrimString function
 * gzins     16-Dec-2004  Added miscDuplicateString function
+* lafrasse  17-Jan-2005  Added miscSplitString function
 *
 *******************************************************************************/
 
@@ -38,14 +39,26 @@ extern "C" {
  * Pubic functions declaration
  */
  
-mcsCOMPL_STAT miscStripQuotes    (char *string);
-mcsCOMPL_STAT miscTrimString(char *string, char *trimChars);
-mcsCOMPL_STAT miscStrToUpper     (char *string);
-mcsLOGICAL    miscIsSpaceStr     (char *string);
-mcsCOMPL_STAT miscReplaceChrByChr(char *string,
-                                  char originalChar,
-                                  char newChar);
-char *miscDuplicateString(const char *string);
+mcsCOMPL_STAT miscStripQuotes    (char               *string);
+
+mcsCOMPL_STAT miscTrimString     (char               *string,
+                                  char               *trimChars);
+
+mcsCOMPL_STAT miscStrToUpper     (char               *string);
+
+mcsLOGICAL    miscIsSpaceStr     (char               *string);
+
+mcsCOMPL_STAT miscReplaceChrByChr(char               *string,
+                                  char                originalChar,
+                                  char                newChar);
+
+char         *miscDuplicateString(const char         *string);
+
+mcsCOMPL_STAT miscSplitString    (const char         *string,
+                                  const char          delimiter,
+                                        mcsSTRING256  subStrings[],
+                                  const mcsUINT32     maxSubStringNb,
+                                        mcsUINT32    *subStringNb);
 
 #ifdef __cplusplus
 }

@@ -75,4 +75,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Key '%.100s' not found in the Hash Table]]></errFormat>
    </error>
+   <error id="17">
+      <errName>STRING_MAX_SUBSTRING_NB_OVERFLOW</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Too many sub-strings found (more than '%d')]]></errFormat>
+   </error>
 </errorList>

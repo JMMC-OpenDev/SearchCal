@@ -12,15 +12,16 @@
 *                        Moved mcs.h include to miscString.h
 * gzins     15-Dec-2004  Added miscTrimString function
 * gzins     16-Dec-2004  Added miscDuplicateString function
+* lafrasse  17-Jan-2005  Added miscSplitString function
 *
-*-----------------------------------------------------------------------------*/
+*******************************************************************************/
 
 /**
  * \file
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.12 2004-12-17 08:15:48 gzins Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.13 2005-01-18 22:11:19 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -305,4 +306,94 @@ char *miscDuplicateString (const char *string)
 
     return newString;
 }
+
+/**
+ * Split a string on a given delimiter.
+ *
+ * Copy each sub-string in the already allocated string array passed in
+ * parameter. The number of found sub-string is returned by the 'subStringNb'
+ * parameter.
+ * 
+ * \warning The 'subStrings' array will be zero-ed on each call.\n\n
+ * 
+ * \param string the null-terminated string to be parsed.
+ * \param delimiter the character on which the sub-strings should be found.
+ * \param subStrings the allocated array used to return the null-terminated
+ * sub-strings.
+ * \param maxSubStringNb the maximum number of sub-strings the sub-string array
+ * can hold.
+ * \param subStringNb the number of found sub-strings.
+ * 
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscSplitString    (const char         *string,
+                                  const char          delimiter,
+                                        mcsSTRING256  subStrings[],
+                                  const mcsUINT32     maxSubStringNb,
+                                        mcsUINT32    *subStringNb)
+{
+    /* If any of the received parameters is unvalid */
+    if (string == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "string");
+        return FAILURE;
+    }
+    if (subStrings == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "subStrings");
+        return FAILURE;
+    }
+    if (maxSubStringNb <= 0)
+    {
+        errAdd(miscERR_NULL_PARAM, "maxSubStringNb");
+        return FAILURE;
+    }
+    if (subStringNb == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "subStringNb");
+        return FAILURE;
+    }
+
+    /* Reset all the subStrings array to 0 */
+    memset(subStrings, 0, sizeof(subStrings));
+
+    char*     floatingPtr        = (char*)string;
+    char*     subString          = NULL;
+    mcsUINT32 length             = 0;
+    mcsUINT32 i                  = 0;
+    mcsUINT32 maxSubStringLength = sizeof(subStrings[i]) - 1;
+   
+    /* While some occurences of the delimiter are found inside the string ... */
+    while (((floatingPtr - string) < strlen(string)) && (floatingPtr != NULL))
+    {
+        /* Get the next deilmiter position */
+        subString = strchr(floatingPtr, delimiter);
+
+        /* If the sub-string array is not full yet... */
+        if (i < maxSubStringNb)
+        {
+            /* Compute the sub-string length between its real length, and its
+             * maximun possible length (defined by the sub-string array type)
+             */
+            length = mcsMIN((subString - floatingPtr), maxSubStringLength);
+
+            /* Copy the sub-string in the sub-string array */
+            strncpy(subStrings[i], floatingPtr, length);
+        }
+        else
+        {
+            errAdd(miscERR_STRING_MAX_SUBSTRING_NB_OVERFLOW, maxSubStringNb);
+            return FAILURE;
+        }
+
+        i++;
+        floatingPtr = subString + 1;
+    }
+
+    /* Return the number of sub-string found */
+    *subStringNb = i;
+    return SUCCESS;
+}
+
+
 /*___oOo___*/
