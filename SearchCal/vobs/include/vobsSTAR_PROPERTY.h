@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.3 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.4 2005-02-04 15:25:13 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/26 08:10:32  scetre
+* change history
+*
 * gzins     13-Dec-2004  Created
 *
 *
@@ -33,11 +36,9 @@
  */
 typedef enum
 {
-    vobsCONFIDENCE_VERY_LOW=0,
-    vobsCONFIDENCE_2, /* id of the coefficient a1 in the table */
-    vobsCONFIDENCE_3, /* id of the coefficient a2 in the table */
-    vobsCONFIDENCE_4, /* id of the coefficient a3 in the table */
-    vobsCONFIDENCE_HIGH  /* id of the coefficient a4 in the table */
+    vobsCONFIDENCE_LOW =0, /* Low confidence in property value */
+    vobsCONFIDENCE_MEDIUM, /* Medium confidence in property value */
+    vobsCONFIDENCE_HIGH    /* High confidence in property value */
 } vobsCONFIDENCE_INDEX;
 
 typedef enum
