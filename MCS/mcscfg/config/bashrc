@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/bashrc
 #
-# Version: $Id: bashrc,v 1.3 2004-05-14 16:03:37 gzins Exp $
+# Version: $Id: bashrc,v 1.4 2004-05-14 16:04:53 gzins Exp $
 #
 # Purpose: bash configuration file
 #
@@ -11,7 +11,7 @@
 # --------  ----------  ----------------------------------------------
 # gzins     14-05-2004  created
 #
-# To use it, added the following line in ~/.vimrc
+# To use it, added the following line in ~/.bash_profile
 #       # Set MCS environment
 #       export INTROOT=$HOME/INTROOT
 #       export MCSROOT=/home/MCS
