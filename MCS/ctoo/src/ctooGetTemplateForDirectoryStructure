@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.9 2004-06-25 05:44:15 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.10 2004-06-25 06:50:58 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -100,7 +100,7 @@ MODROOT_LIST="$BASIC_DIRS  \
 
 # directories that shall be present in both integration and MCS area 
 INTROOT_LIST="$BASIC_DIRS templates"
-MCSROOT_LIST="$BASIC_DIRS templates"
+MCSROOT_LIST="$BASIC_DIRS templates etc" 
 
 # MCSDATA directories
 MCSDATA_LIST="tmp"
