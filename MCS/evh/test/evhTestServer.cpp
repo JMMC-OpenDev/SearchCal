@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTestServer.cpp,v 1.3 2004-12-22 09:04:03 gzins Exp $"
+* "@(#) $Id: evhTestServer.cpp,v 1.4 2005-01-07 18:25:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Test program for evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.3 2004-12-22 09:04:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.4 2005-01-07 18:25:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -44,13 +44,7 @@ using namespace std;
  * Local Headers 
  */
 #define MODULE_ID "myServer"
-#include "evhCALLBACK.h"
-#include "evhCMD_CALLBACK.h"
-#include "evhIOSTREAM_CALLBACK.h"
-#include "evhSERVER.h"
-#include "evhKEY.h"
-#include "evhCMD_KEY.h"
-#include "evhIOSTREAM_KEY.h"
+#include "evh.h"
 
 class evhTEST : public evhSERVER
 {
@@ -60,19 +54,28 @@ public:
 
     virtual evhCB_COMPL_STAT Cb1 (msgMESSAGE &msg,void*)
     {
+        evhINTERFACE msgManagerIf("Message Manager", "mgManager"); 
         printf("evhTEST::Cb1() : Command = %s, Params = %s\n",
                msg.GetCommand(), msg.GetBody()); 
-        SendReply(msg);
-        i++;
-        printf("(i%2) = %d\n", (i%2)); 
-        if ((i%2)==0)
+        evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::CbReply1);
+        msgManagerIf.Forward("PING", "", cb1);
+        _msg = msg;
+        return evhCB_SUCCESS;
+    };
+    virtual evhCB_COMPL_STAT CbReply1 (msgMESSAGE &msg,void*)
+    {
+        printf("evhTEST::CbReply1() - Command = %s, Params = %s\n",
+               msg.GetCommand(), msg.GetBody()); 
+        if (errStackIsEmpty() == mcsFALSE)
         {
-            return evhCB_SUCCESS | evhCB_DELETE;
+            errUnpackStack(msg.GetBody(), msg.GetBodySize());
         }
         else
         {
-            return evhCB_SUCCESS;
+            _msg.SetBody(msg.GetBody());
         }
+        SendReply(_msg);
+        return evhCB_DELETE;
     };
     virtual evhCB_COMPL_STAT Cb2 (const int,void*)
     {
@@ -91,12 +94,6 @@ public:
         evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::Cb1);
  
         AddCallback(key1, cb1);
-        AddCallback(key1, cb1);
-        AddCallback(key1, cb1);
-        AddCallback(key1, cb1);
-        AddCallback(key1, cb1);
-        AddCallback(key1, cb1);
-        AddCallback(key1, cb1);
 
         // Attach callback to stdin 
         int fd;
@@ -111,6 +108,7 @@ protected:
 
 private:
     int i;
+    msgMESSAGE _msg;
 };
 
 
