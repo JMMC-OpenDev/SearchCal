@@ -1,10 +1,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.15 2005-01-24 10:58:44 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.16 2005-01-26 08:17:54 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * scetre    22-Jul-2004  Created
 *
 *
@@ -16,7 +17,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.15 2005-01-24 10:58:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.16 2005-01-26 08:17:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -25,10 +26,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <math.h>
 #include <iostream>
 using namespace std;  
-/**
- * Export standard iostream objects (cin, cout,...).
- */
-
 
 /*
  * MCS Headers 
@@ -36,7 +33,6 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-
 
 /*
  * Local Headers 
@@ -48,7 +44,6 @@ using namespace std;
 /*
  * Class constructor
  */
-
 /**
  * Build a star object.
  */
@@ -92,7 +87,8 @@ vobsSTAR::~vobsSTAR()
  * \param value property value to set
  * \param overwrite booleen to know if it is an overwrite property 
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  *
  * \b Error codes:\n
  * The possible errors are :
@@ -232,10 +228,16 @@ vobsSTAR_PROPERTY *vobsSTAR::GetProperty(char *id)
 vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
 {
     logExtDbg("vobsSTAR::GetNextProperty()");
+
+    // if the logical value of the parameter, init is mcsTRUE, the wanted value
+    // is the first
     if (init == mcsTRUE)
     {
         _propertyOrderIterator=_propertyOrder.begin();
     }
+    // else increase the iterator. It is checking if the iterator stay in the
+    // list and don't go further than the end of the list. If it is the case,
+    // the pointer which is gave is NULL
     else
     {
         _propertyOrderIterator++;
@@ -244,6 +246,9 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
             return NULL;
         }
     }
+
+    // Once the iterator is put on the correct property, the value of the
+    // property is returned
     _propertyListIterator = _propertyList.find(_propertyOrderIterator->second);
     
     return (&(_propertyListIterator->second));
@@ -351,6 +356,37 @@ mcsLOGICAL vobsSTAR::IsPropertySet(char *id)
 }
 
 /**
+ * Check whether a property is a property.  
+ * 
+ * \param id property id. 
+ * 
+ *
+ * \return
+ * True value (i.e. mcsTRUE) if the the property is known, false (i.e.
+ * mcsFALSE) otherwise.
+ */
+mcsLOGICAL vobsSTAR::IsProperty(char *id)
+{
+    logExtDbg("vobsSTAR::IsPropertySet()");
+
+    // Look for property
+    // If found
+    if (GetProperty(id) != NULL)
+    {
+        // Return mcsTRUE
+        return mcsTRUE;
+    }
+    // Else
+    else
+    {
+        // Return error
+        return mcsFALSE;
+    }
+    // End if
+}
+
+
+/**
  * Get right ascension (ra) in arcseconds.
  *
  * \param ra pointer right ascension.
@@ -364,10 +400,11 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     
     mcsSTRING64 raHms;
     float hh,hm,hs; 
-
+    
+    // Check if the value is set
     if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE)
     {
-        // Return error
+        // if not, return error
         errAdd(vobsERR_RA_NOT_SET);
         return mcsFAILURE;
     }
@@ -403,39 +440,34 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
 {
     logExtDbg("vobsSTAR::GetDec()");
     
-    const char *decDms;
+    mcsSTRING64 decDms;
     float dd,dm,ds; 
 
-    // Get DEC  property
-    vobsSTAR_PROPERTY *property;
-    property = GetProperty(vobsSTAR_POS_EQ_DEC_MAIN);
-    if (property == NULL)
+    // Check if the value is set
+    if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE)
     {
+        // if not, return error
+        errAdd(vobsERR_DEC_NOT_SET);
         return mcsFAILURE;
     }
 
-    // If DEC has been set
-    if (property->IsSet() == mcsFALSE)
-    {
-        // Return error
-        errAdd(vobsERR_RA_NOT_SET);
-        return mcsFAILURE;
-    }
-    // End if
-
-    // Get hours, min and sec 
-    decDms = property->GetValue();
+    strcpy(decDms, GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
+    
     if (sscanf(decDms, "%f %f %f", &dd, &dm, &ds) != 3)
     {
         errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
         return mcsFAILURE;
     }
-
-    // Convert to degrees
-    dec = dd + ((dm + ds / 60) / 60);
-    if (dec>180)
+    
+    if (dd > 0)
     {
-        dec=-(360-dec);
+        // Convert to degrees
+        dec = dd + dm/60 + ds / 3600;
+    }
+    else 
+    {
+        // Convert to degrees
+        dec = -1 * ( dd + dm/60 + ds / 3600 );
     }
    
     return mcsSUCCESS;
@@ -456,6 +488,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
 {
     logExtDbg("vobsSTAR::IsSame(0x%x)", criteriaList);
 
+    // Check if the criteria list is empty
     if (criteriaList == NULL)
     {
         mcsFLOAT ra1, ra2, dec1, dec2;
@@ -496,38 +529,51 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     {
         mcsSTRING64 propertyId;
         mcsFLOAT range;
+        // Get the size of the criteria list
         int listSize=criteriaList->Size();
-        logTest("criteriaSize = %d", listSize);
+        logTest("Number of criterias = %d", listSize);
         mcsFLOAT val1, val2;    
+        // Get each criteria of the list and check if the comparaison with all
+        // this criteria gave a equality
         for (int el = 0; el < listSize; el++)
         {
-            criteriaList->GetNextCriteria(propertyId,
+            if (criteriaList->GetNextCriteria(propertyId,
                                           &range,
-                                          (mcsLOGICAL)(el==0));
+                                          (mcsLOGICAL)(el==0)) == mcsFAILURE)
+            {
+                logWarning("pb");
+                errCloseStack();
+                return mcsFALSE;
+            }
+            logTest("propertyId = %s", propertyId);
             if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
             {
                 // Get right ascension of the star. If not set return FALSE
                 if (GetRa(val1) == mcsFAILURE)
                 {
+                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;                
                 }
                 if (star.GetRa(val2) == mcsFAILURE)
                 {
+                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;                
                 }
             }
-            if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+            else if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
             {
                 // Get declinaison of the star. If not set return FALSE
                 if (GetDec(val1) == mcsFAILURE)
                 {
+                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;                
                 }
                 if (star.GetDec(val2) == mcsFAILURE)
                 {
+                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;                
                 }
@@ -537,15 +583,18 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 // Get value of the property id
                 if (GetPropertyValue(propertyId, &val1) == mcsFAILURE)
                 {
+                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;
                 }
                 if (star.GetPropertyValue(propertyId, &val2) == mcsFAILURE)
                 {
+                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;
                 }     
             }
+            logTest("difference = %f for a range of %f", fabs(val1-val2), range);
             if (fabs(val1-val2)>range)
             {
                 return mcsFALSE;
@@ -560,7 +609,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
  *
  * \param star the other star.
  *
- * \return TRUE on successful completion. Otherwise FALSE is returned.
+ * \return always SUCCESS.
  *
  */
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
@@ -642,14 +691,13 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
         return mcsFAILURE;
     }
 
-    //
     vobsSTAR_PROPERTY property(id, name, type, format);
     _propertyList[id] = property;
     return mcsSUCCESS;
 }
 
 /**
- * Add all star properties 
+ * Add all star properties and fix an order 
  *
  * \return mcsSUCCESS 
  */
