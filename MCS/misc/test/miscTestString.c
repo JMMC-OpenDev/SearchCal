@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestString.c,v 1.7 2005-01-18 22:11:19 lafrasse Exp $"
+* "@(#) $Id: miscTestString.c,v 1.8 2005-01-19 10:21:18 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -13,7 +13,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.7 2005-01-18 22:11:19 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.8 2005-01-19 10:21:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,7 +52,6 @@ int main (int argc, char *argv[])
     if (miscStripQuotes(NULL) == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -65,7 +64,6 @@ int main (int argc, char *argv[])
     if (miscStripQuotes(string) == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -82,7 +80,6 @@ int main (int argc, char *argv[])
     if (miscTrimString(string, " ") == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -98,7 +95,6 @@ int main (int argc, char *argv[])
     if (miscStrToUpper(NULL) == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -111,7 +107,6 @@ int main (int argc, char *argv[])
     if (miscStrToUpper(string) == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -222,7 +217,6 @@ int main (int argc, char *argv[])
     if (miscReplaceChrByChr(string, 'A', 'Z') == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -234,7 +228,6 @@ int main (int argc, char *argv[])
     if (miscReplaceChrByChr(string, 'Z', 'A') == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else

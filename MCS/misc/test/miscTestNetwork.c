@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestNetwork.c,v 1.1 2004-08-03 09:09:04 lafrasse Exp $"
+* "@(#) $Id: miscTestNetwork.c,v 1.2 2005-01-19 10:21:18 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.1 2004-08-03 09:09:04 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.2 2005-01-19 10:21:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -51,7 +51,6 @@ int main (int argc, char *argv[])
     if (miscGetHostName(NULL, 0) == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -63,7 +62,6 @@ int main (int argc, char *argv[])
     if (miscGetHostName(string, 0) == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -75,7 +73,6 @@ int main (int argc, char *argv[])
     if (miscGetHostName(string, length) == FAILURE)
     {
         printf("FAILURE.\n");
-        errDisplayStack();
         errCloseStack();
     }
     else

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.12 2004-12-03 17:09:53 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.13 2005-01-19 10:21:18 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -22,7 +22,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.12 2004-12-03 17:09:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.13 2005-01-19 10:21:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -64,23 +64,18 @@ int main (int argc, char *argv[])
     printf("   -------------------------------+-------------------------\n");
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
-    errDisplayStack();
     errCloseStack();
     printf("\n\n");
 
@@ -90,59 +85,45 @@ int main (int argc, char *argv[])
     printf("   -------------------------------+-------------------------\n");
     strcpy (fullFileName, "fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "./fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "../fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
-    errDisplayStack();
     errCloseStack();
     printf("\n\n");
 
@@ -154,79 +135,66 @@ int main (int argc, char *argv[])
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "./fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "../fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     printf("\n\n");
 
@@ -240,7 +208,6 @@ int main (int argc, char *argv[])
         == FAILURE)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -253,7 +220,6 @@ int main (int argc, char *argv[])
         == FAILURE)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -266,7 +232,6 @@ int main (int argc, char *argv[])
         == FAILURE)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -279,7 +244,6 @@ int main (int argc, char *argv[])
         == FAILURE)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -296,79 +260,66 @@ int main (int argc, char *argv[])
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "./fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "../fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
-    errDisplayStack();
     errCloseStack();
     printf("\n\n");
 
@@ -381,7 +332,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -394,7 +344,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -407,7 +356,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -420,7 +368,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -433,7 +380,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -446,7 +392,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -459,7 +404,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -472,7 +416,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -485,7 +428,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -498,7 +440,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -511,7 +452,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -524,7 +464,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -537,7 +476,6 @@ int main (int argc, char *argv[])
     if (tmp == NULL)
     {
         printf("FAILURE\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -553,7 +491,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(NULL, mcsFALSE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -565,7 +502,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(fullFileName, mcsFALSE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -577,7 +513,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(fullFileName, mcsFALSE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -589,7 +524,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(fullFileName, mcsFALSE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -601,7 +535,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(fullFileName, mcsFALSE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -615,7 +548,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(NULL, mcsTRUE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -627,7 +559,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(fullFileName, mcsTRUE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -639,7 +570,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(fullFileName, mcsTRUE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -651,7 +581,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(fullFileName, mcsTRUE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -663,7 +592,6 @@ int main (int argc, char *argv[])
     if (miscFileExists(fullFileName, mcsTRUE) == mcsFALSE)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -679,42 +607,36 @@ int main (int argc, char *argv[])
     printf("Tested Path = '%s' - '%s'\n", "NULL", "miscErrors.xml");
     tmp = miscLocateFileInPath(NULL, "miscErrors.xml");
     printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
-    errDisplayStack();
     errCloseStack();
     tmp = NULL;
     strcpy(fullFileName, "../:$INTROOT/:$MCSROOT/");
     printf("Tested Path = '%s' - '%s'\n", fullFileName, "NULL");
     tmp = miscLocateFileInPath(fullFileName, NULL);
     printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
-    errDisplayStack();
     errCloseStack();
     tmp = NULL;
     strcpy(fullFileName, "../:$INTROOT/:$MCSROOT/");
     printf("Tested Path = '%s' - '%s'\n", fullFileName, "miscErrors.xml");
     tmp = miscLocateFileInPath(fullFileName, "miscErrors.xml");
     printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
-    errDisplayStack();
     errCloseStack();
     tmp = NULL;
     strcpy(fullFileName, "../:$INTROOT/errors/:$MCSROOT/errors/");
     printf("Tested Path = '%s' - '%s'\n", fullFileName, "miscErrors.xml");
     tmp = miscLocateFileInPath(fullFileName, "miscErrors.xml");
     printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
-    errDisplayStack();
     errCloseStack();
     tmp = NULL;
     strcpy(fullFileName, "../:$MCSROOT/errors/:$INTROOT/errors/");
     printf("Tested Path = '%s' - '%s'\n", fullFileName, "miscErrors.xml");
     tmp = miscLocateFileInPath(fullFileName, "miscErrors.xml");
     printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
-    errDisplayStack();
     errCloseStack();
     tmp = NULL;
     strcpy(fullFileName, "../:/home/$INTROOT/errors/:/home/$MCSROOT/errors/");
     printf("Tested Path = '%s' - '%s'\n", fullFileName, "miscErrors.xml");
     tmp = miscLocateFileInPath(fullFileName, "miscErrors.xml");
     printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
-    errDisplayStack();
     errCloseStack();
     printf("\n\n");
 
@@ -725,7 +647,6 @@ int main (int argc, char *argv[])
     if ((tmp = miscLocateFile(NULL)) == NULL)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -737,7 +658,6 @@ int main (int argc, char *argv[])
     if ((tmp = miscLocateFile(fullFileName)) == NULL)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -749,7 +669,6 @@ int main (int argc, char *argv[])
     if ((tmp = miscLocateFile(fullFileName)) == NULL)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
@@ -761,7 +680,6 @@ int main (int argc, char *argv[])
     if ((tmp = miscLocateFile(fullFileName)) == NULL)
     {
         printf(" -> DOESN'T EXIST\n");
-        errDisplayStack();
         errCloseStack();
     }
     else
