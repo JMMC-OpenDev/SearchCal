@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestString.c,v 1.11 2005-02-21 15:27:52 lafrasse Exp $"
+ * "@(#) $Id: miscTestString.c,v 1.12 2005-02-25 16:43:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/02/21 15:27:52  lafrasse
+ * Added miscIsCommentLine()
+ *
  * Revision 1.10  2005/02/15 09:44:37  gzins
  * Added CVS log as file modification history
  *
@@ -17,7 +20,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.11 2005-02-21 15:27:52 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.12 2005-02-25 16:43:52 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,6 +53,8 @@ int main (int argc, char *argv[])
     mcsBYTES256 string;
     mcsSTRING4  pattern;
 
+
+
     /* Test of miscStripQuotes() */
     printf("miscStripQuotes() Function Test :\n\n");
     printf("   Original String  = |(null)|\n");
@@ -76,6 +81,7 @@ int main (int argc, char *argv[])
         printf("|%s|\n", string);
     }
     printf("\n\n");
+
 
 
     /* Test of miscTrimString() */
@@ -121,6 +127,7 @@ int main (int argc, char *argv[])
         printf("|%s|\n", string);
     }
     printf("\n\n");
+
 
 
     /* Test of miscIsSpaceStr() */
@@ -218,6 +225,7 @@ int main (int argc, char *argv[])
     printf("\n\n");
 
 
+
     /* Test of miscIsCommentLine() */
     printf("miscIsCommentLine() Function Test :\n\n");
     strcpy ((char *)string, "    azerty\n    qwerty");
@@ -289,10 +297,11 @@ int main (int argc, char *argv[])
     printf("\n\n");
 
 
-    /* Test of miscReplaceStrByStr */
-    printf("miscReplaceStrByStr() Function Test :\n\n");
+
+    /* Test of miscReplaceChrByChr */
+    printf("miscReplaceChrByChr() Function Test :\n\n");
     strcpy ((char *)string, "Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/");
-    printf("   Original String  = %s\n",string);
+    printf("   Original String  = |%s|\n\n",string);
     if (miscReplaceChrByChr(string, 'A', 'Z') == mcsFAILURE)
     {
         printf("mcsFAILURE.\n");
@@ -300,8 +309,8 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("Replace 'A' by 'Z'\n");
-        printf("   New String  = %s\n", string);
+        printf("   Replace 'A' by 'Z'\n");
+        printf("   New String       = |%s|\n\n", string);
     }
 
     if (miscReplaceChrByChr(string, 'Z', 'A') == mcsFAILURE)
@@ -311,15 +320,84 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("Replace 'Z' by 'A'\n");
-        printf("   New String  = %s\n", string);
+        printf("   Replace 'Z' by 'A'\n");
+        printf("   New String       = |%s|\n\n", string);
     }
     printf("\n\n");
+
+
+
+    /* Test of miscDeleteChr */
+    printf("miscDeleteChr() Function Test :\n\n");
+    strcpy ((char *)string, "Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/");
+    printf("   Original String  = |%s|\n",string);
+    if (miscDeleteChr(string, '/', mcsFALSE) == mcsFAILURE)
+    {
+        printf("mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf("   Removed first '\\'\n");
+        printf("   New String       = |%s|\n\n", string);
+    }
+    strcpy ((char *)string, "Abc deF GhI jKl 012 .; Abc deF GhI jKl 012 .;/");
+    printf("   Original String  = |%s|\n",string);
+    if (miscDeleteChr(string, '/', mcsFALSE) == mcsFAILURE)
+    {
+        printf("mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf("   Removed first '\\'\n");
+        printf("   New String       = |%s|\n\n", string);
+    }
+    strcpy ((char *)string, "/Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/");
+    printf("   Original String  = |%s|\n",string);
+    if (miscDeleteChr(string, '/', mcsFALSE) == mcsFAILURE)
+    {
+        printf("mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf("   Removed first '\\'\n");
+        printf("   New String       = |%s|\n\n", string);
+    }
+
+    strcpy ((char *)string, "Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/");
+    printf("   Original String  = |%s|\n",string);
+    if (miscDeleteChr(string, ' ', mcsTRUE) == mcsFAILURE)
+    {
+        printf("mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf("   Removed all ' '\n");
+        printf("   New String       = |%s|\n\n", string);
+    }
+    strcpy ((char *)string, " Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .; ");
+    printf("   Original String  = |%s|\n",string);
+    if (miscDeleteChr(string, ' ', mcsTRUE) == mcsFAILURE)
+    {
+        printf("mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf("   Removed all ' '\n");
+        printf("   New String       = |%s|\n\n", string);
+    }
+    printf("\n\n");
+
+
 
     /* Test of miscSplitString */
     printf("miscSplitString() Function Test :\n\n");
     strcpy((char *)string, "ABCD E FG HIJ KLMNOPQ R ST UVWXYZ |---10---||---20---||---30---||---40---||---50---||---60---||---70---||---80---||---90---||--100---||--110---||--120---||--130---||--140---||--150---||--160---||--170---||--180---||--190---||--200---||--210---||--220---||--230---||--240---||--250---||--260---|");
-    printf("   Original String  = '%s'\n",string);
+    printf("   Original String  = |%s|\n",string);
     mcsSTRING256 subStrings[50];
     mcsUINT32    nbSubString = 0;
 
@@ -333,7 +411,7 @@ int main (int argc, char *argv[])
         int i = 0;
         for (i = 0; i<nbSubString; i++)
         {
-            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+            printf("   subString[%2d]    = |%s|\n", i, subStrings[i]);
         }
     }
 
@@ -347,7 +425,7 @@ int main (int argc, char *argv[])
         int i = 0;
         for (i = 0; i<nbSubString; i++)
         {
-            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+            printf("   subString[%2d]    = |%s|\n", i, subStrings[i]);
         }
     }
 
@@ -361,7 +439,7 @@ int main (int argc, char *argv[])
         int i = 0;
         for (i = 0; i<nbSubString; i++)
         {
-            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+            printf("   subString[%2d]    = |%s|\n", i, subStrings[i]);
         }
     }
 
@@ -375,7 +453,7 @@ int main (int argc, char *argv[])
         int i = 0;
         for (i = 0; i<nbSubString; i++)
         {
-            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+            printf("   subString[%2d]    = |%s|\n", i, subStrings[i]);
         }
     }
 
@@ -389,7 +467,7 @@ int main (int argc, char *argv[])
         int i = 0;
         for (i = 0; i<nbSubString; i++)
         {
-            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+            printf("   subString[%2d]    = |%s|\n", i, subStrings[i]);
         }
     }
 
@@ -403,7 +481,7 @@ int main (int argc, char *argv[])
         int i = 0;
         for (i = 0; i<nbSubString; i++)
         {
-            printf("   subString[%2d]    = '%s'\n", i, subStrings[i]);
+            printf("   subString[%2d]    = |%s|\n", i, subStrings[i]);
         }
     }
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscString.h,v 1.10 2005-02-21 15:27:52 lafrasse Exp $"
+ * "@(#) $Id: miscString.h,v 1.11 2005-02-25 16:43:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/21 15:27:52  lafrasse
+ * Added miscIsCommentLine()
+ *
  * Revision 1.9  2005/02/15 09:37:52  gzins
  * Added CVS log as file modification history
  *
@@ -43,21 +46,25 @@ extern "C" {
  * Pubic functions declaration
  */
  
-mcsCOMPL_STAT miscStripQuotes    (char               *string);
+mcsCOMPL_STAT miscStripQuotes    (      char         *string);
 
-mcsCOMPL_STAT miscTrimString     (char               *string,
-                                  char               *trimChars);
+mcsCOMPL_STAT miscTrimString     (      char         *string,
+                                        char         *trimChars);
 
-mcsCOMPL_STAT miscStrToUpper     (char               *string);
+mcsCOMPL_STAT miscStrToUpper     (      char         *string);
 
 mcsLOGICAL    miscIsSpaceStr     (const char         *string);
 
 mcsLOGICAL    miscIsCommentLine  (const char         *line,
                                   const mcsSTRING4    commentPattern);
 
-mcsCOMPL_STAT miscReplaceChrByChr(char               *string,
-                                  char                originalChar,
-                                  char                newChar);
+mcsCOMPL_STAT miscReplaceChrByChr(      char         *string,
+                                        char          originalChar,
+                                        char          newChar);
+
+mcsCOMPL_STAT miscDeleteChr      (      char         *string,
+                                  const char          searchedChar,
+                                  const mcsLOGICAL    allFlag);
 
 char         *miscDuplicateString(const char         *string);
 

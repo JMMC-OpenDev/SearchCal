@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/02/21 15:27:52  lafrasse
+ * Added miscIsCommentLine()
+ *
  * Revision 1.17  2005/02/13 11:23:28  gzins
  * Changed parameter type of miscIsSpaceString from char* to const char*
  *
@@ -31,7 +34,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.18 2005-02-21 15:27:52 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.19 2005-02-25 16:43:52 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -297,7 +300,7 @@ mcsCOMPL_STAT miscReplaceChrByChr (char *string,
                                    char originalChar,
                                    char newChar)
 {
-    int i=0;
+    int i = 0;
    
     /* Check string parameter validity */
     if (string == NULL)
@@ -306,7 +309,7 @@ mcsCOMPL_STAT miscReplaceChrByChr (char *string,
         return mcsFAILURE;
     }
 
-    /* For each charracter of the string */ 
+    /* For each character of the string */ 
     while (string[i] !=  '\0')
     {
         /* Check if the current character has to be replaced */
@@ -317,6 +320,49 @@ mcsCOMPL_STAT miscReplaceChrByChr (char *string,
         }
         i++;        
     }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Remove the first or all occurences of a given character in a string.
+ * 
+ * \warning string \em must be a NULL terminated char array pointer.\n\n
+ *
+ * \param string the null-terminated string that shall be modified.
+ * \param searchedChar the character to be removed.
+ * \param allFlag the flag specifying wether all the occurences of the given
+ * character (if set to mcsTRUE), or only the first found (if set to mcsFALSE),
+ * should be removed. 
+ * 
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT miscDeleteChr      (      char         *string,
+                                  const char          searchedChar,
+                                  const mcsLOGICAL    allFlag)
+{
+    /* Check string parameter validity */
+    if (string == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "string");
+        return mcsFAILURE;
+    }
+
+    int   originalLength = strlen(string);
+    char* tmp = string;
+    do
+    {
+        /* Find the next searchedChar occurence */
+        tmp = strchr(string, searchedChar);
+        if (tmp != NULL)
+        {
+            /* If found, prsh the remaining part above the found character */
+            memmove(tmp, tmp + 1, strlen(tmp + 1));
+            originalLength--;
+            string[originalLength] = '\0';
+        }
+    }
+    while ((tmp != NULL) && (allFlag == mcsTRUE));
 
     return mcsSUCCESS;
 }
