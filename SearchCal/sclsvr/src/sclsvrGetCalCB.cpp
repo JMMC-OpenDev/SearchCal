@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.14 2005-02-16 16:56:30 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.15 2005-03-04 09:47:17 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/02/16 16:56:30  gzins
+ * Fixed wrong parameter name in documentation
+ *
  * Revision 1.13  2005/02/14 15:10:40  scetre
  * changed m..RangeMag to m..MagRange
  *
@@ -43,7 +46,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.14 2005-02-16 16:56:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.15 2005-03-04 09:47:17 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -116,6 +119,15 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         calibratorList.Pack(&dynBuff);
         
         msg.SetBody(dynBuff.GetBuffer());
+
+        // If a file has been given, store result in this file
+        if (strcmp(request.GetFileName(), "") != 0)
+        {
+            if (calibratorList.Save(request.GetFileName()) == mcsFAILURE)
+            {
+                return evhCB_NO_DELETE | evhCB_FAILURE;
+            };
+        }
     }
     else
     {
