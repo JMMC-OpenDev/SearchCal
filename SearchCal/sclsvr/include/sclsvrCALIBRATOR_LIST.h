@@ -3,10 +3,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.6 2005-02-02 14:24:17 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.7 2005-02-04 14:23:13 scetre Exp $"
 *
 * History
 * -------
+* $Log: not supported by cvs2svn $
 * scetre    15-Sep-2004  Created
 *
 *
@@ -51,16 +52,20 @@ public:
     // Method need by the graphical user interface
     virtual mcsCOMPL_STAT GetCoherentDiameter(sclsvrCALIBRATOR_LIST *list);
     virtual mcsCOMPL_STAT GetVisibilityOk(sclsvrCALIBRATOR_LIST *list);
-    virtual mcsCOMPL_STAT GetScienceObjectSeparation();
-    virtual mcsCOMPL_STAT GetMaximalMagnitudeSeparation();
-    virtual mcsCOMPL_STAT GetSpectralType();
-    virtual mcsCOMPL_STAT GetLuminosityClass();
-    virtual mcsCOMPL_STAT GetMaximalExpectedRelativeAccuracy();
-    virtual mcsCOMPL_STAT GetVariability();
-    virtual mcsCOMPL_STAT GetMultiplicity();
-    virtual mcsCOMPL_STAT Delete();
+    virtual mcsCOMPL_STAT GetScienceObjectSeparation(char *scienceStarRa,
+                                                     char *scienceStarDec,
+                                                     mcsFLOAT raRange,
+                                                     mcsFLOAT decRange);
+    virtual mcsCOMPL_STAT GetMaximalMagnitudeSeparation(char *band,
+                                                        mcsFLOAT magValue,
+                                                        mcsFLOAT magRange);
+    virtual mcsCOMPL_STAT GetSpectralType(std::list<char *> spectTypeList);
+    virtual mcsCOMPL_STAT GetLuminosityClass(std::list<char *> luminosityList);
+    virtual mcsCOMPL_STAT GetMaximalExpectedRelativeAccuracy(mcsFLOAT visMax);
+    virtual mcsCOMPL_STAT GetVariability(mcsLOGICAL authorized=mcsTRUE);
+    virtual mcsCOMPL_STAT GetMultiplicity(mcsLOGICAL authorized=mcsTRUE);
+    virtual mcsCOMPL_STAT Delete(unsigned int starNumber);
     virtual mcsCOMPL_STAT Load();
-    virtual mcsCOMPL_STAT Save();
 protected:
 
 private:
