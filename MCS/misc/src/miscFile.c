@@ -35,7 +35,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.20 2004-12-10 09:05:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.21 2004-12-17 08:12:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -112,11 +112,11 @@ char *miscGetFileName(char *fullPath)
         free(buffer);
     }
 
-    /* Try to allocate memory for buffer */
+    /* Allocate memory for buffer */
     buffer = malloc(strlen(fullPath) + 1);
     if (buffer == NULL)
     {
-        errAdd(miscERR_MEM_FAILURE);
+        errAdd(miscERR_ALLOC);
         return ((char *)NULL);
     }
 
@@ -298,7 +298,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
     mcsSTRING256        tmpPath, tmpEnvVar;
     mcsINT32            length;
 
-    /* Try to reset the static Dynamic Buffer */
+    /* Reset the static Dynamic Buffer */
     if (miscDynBufReset(&builtPath) == FAILURE)
     {
         return NULL;
@@ -341,11 +341,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
         else if (*leftToBeResolvedPathPtr == '~')
         {
             /* Path of the format: "~/MY_DIR/" or "~<user>/" */
-            if (memcpy(tmpPath, "HOME", 5) == NULL)
-            {
-                errAdd(miscERR_MEM_FAILURE);
-                return NULL;
-            }
+            memcpy(tmpPath, "HOME", 5);
 
             if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
                 == FAILURE)
@@ -420,14 +416,14 @@ char*         miscResolvePath    (const char *unresolvedPath)
     /* Since we cannot know if a filename is contained in the path, we should
      * not allow slash in the end of the complete path
      */
-    /* Try to get the Dynamic Buffer length */
+    /* Get the Dynamic Buffer length */
     mcsUINT32 builtPathLength = 0;
     if (miscDynBufGetStoredBytesNumber(&builtPath, &builtPathLength) == FAILURE)
     {
         return NULL;
     }
 
-    /* Try to get Dynamic Buffer internal buffer pointer */
+    /* Get Dynamic Buffer internal buffer pointer */
     char *endingChar = NULL;
     if ((endingChar = miscDynBufGetBufferPointer(&builtPath)) == NULL)
     {
@@ -447,7 +443,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
         builtPath.storedBytes--;
     }
 
-    /* Try to strip the Dynamic Buffer */
+    /* Strip the Dynamic Buffer */
     if (miscDynBufStrip(&builtPath) == FAILURE)
     {
         return NULL;
@@ -538,14 +534,14 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
         return mcsFALSE;
     }
 
-    /* Try to resolve any Env. Var contained in the given path */
+    /* Resolve any Env. Var contained in the given path */
     char* resolvedPath =  miscResolvePath(fullPath);
     if ( resolvedPath == NULL)
     {
         return mcsFALSE;
     }
 
-    /* Try to get file system informations of the file to be tested */
+    /* Get file system informations of the file to be tested */
     struct stat fileInformationBuffer;
     if (stat(resolvedPath, &fileInformationBuffer) == -1)
     {
@@ -621,7 +617,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
         return NULL;
     }
 
-    /* Try to reset the static Dynamic Buffer */
+    /* Reset the static Dynamic Buffer */
     if (miscDynBufReset(&tmpPath) == FAILURE)
     {
         return NULL;
@@ -658,7 +654,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
             /* Reset the temporary path variable */
             validPath = NULL;
 
-            /* Try to reset the static Dynamic Buffer */
+            /* Reset the static Dynamic Buffer */
             if (miscDynBufReset(&tmpPath) == FAILURE)
             {
                 return NULL;
@@ -675,7 +671,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
     }
     while ((path != NULL) && (validPath == NULL));
     
-    /* Try to minimize allocated memory used by the static Dynamic Buffer */
+    /* Minimize allocated memory used by the static Dynamic Buffer */
     if (miscDynBufStrip(&tmpPath) == FAILURE)
     {
         return NULL;
