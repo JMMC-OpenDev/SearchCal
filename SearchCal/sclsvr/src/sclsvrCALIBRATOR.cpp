@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.32 2005-02-21 14:46:53 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.33 2005-02-22 08:10:39 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2005/02/21 14:46:53  scetre
+ * Use CDS magnitude instead of computed magnitude to compute diameter
+ *
  * Revision 1.31  2005/02/17 15:33:54  gzins
  * Removed printf used for debug
  *
@@ -41,7 +44,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.32 2005-02-21 14:46:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.33 2005-02-22 08:10:39 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -265,62 +268,50 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeMissingMagnitude()");
-    alxCONFIDENCE_INDEX confidenceIndex;
 
-    mcsFLOAT mgB, mgV, mgR, mgI, mgJ, mgH, mgK, mgL, mgM;
+    mcsFLOAT magnitudes[alxNB_BANDS];
+    alxCONFIDENCE_INDEX confIndexes[alxNB_BANDS];
+    // WARNING: Property Id lists should be defined in the same order than
+    // alxBAND enumerate. In order to be able to use this enumerate as index of
+    // this list.
+    char *mag0PropertyId[alxNB_BANDS] = 
+    {
+        sclsvrCALIBRATOR_BO,
+        sclsvrCALIBRATOR_VO,
+        sclsvrCALIBRATOR_RO,
+        sclsvrCALIBRATOR_IO,
+        sclsvrCALIBRATOR_JO,
+        sclsvrCALIBRATOR_HO,
+        sclsvrCALIBRATOR_KO,
+        sclsvrCALIBRATOR_LO,
+        sclsvrCALIBRATOR_MO
+    };
+    
     mcsSTRING32 spType;
     //Get the value of the Spectral Type
     strcpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
     // Get the value of the magnitude in the different band
     // if B or V is not present, return mcsFAILURE
-    if (IsPropertySet(sclsvrCALIBRATOR_BO) == mcsTRUE)
+    if (IsPropertySet(mag0PropertyId[alxB_BAND]) == mcsTRUE)
     {
-        if (GetPropertyValue(sclsvrCALIBRATOR_BO, &mgB) == mcsFAILURE)
+        if (GetPropertyValue(mag0PropertyId[alxB_BAND], 
+                             &magnitudes[alxB_BAND]) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
     }
-    if (IsPropertySet(sclsvrCALIBRATOR_VO) == mcsTRUE)
+    if (IsPropertySet(mag0PropertyId[alxV_BAND]) == mcsTRUE)
     {
-        if (GetPropertyValue(sclsvrCALIBRATOR_VO, &mgV) == mcsFAILURE)
+        if (GetPropertyValue(mag0PropertyId[alxV_BAND], 
+                             &magnitudes[alxV_BAND]) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
     }
-    // For the other Magnitude, don't return mcsFAILURE
-    if (IsPropertySet(sclsvrCALIBRATOR_RO) == mcsTRUE)
-    {
-        GetPropertyValue(sclsvrCALIBRATOR_RO, &mgR);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_IO) == mcsTRUE)
-    {
-        GetPropertyValue(sclsvrCALIBRATOR_IO, &mgI);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_JO) == mcsTRUE)
-    {
-        GetPropertyValue(sclsvrCALIBRATOR_JO, &mgJ);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_HO) == mcsTRUE)
-    {
-        GetPropertyValue(sclsvrCALIBRATOR_HO, &mgH);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_KO) == mcsTRUE)
-    {
-        GetPropertyValue(sclsvrCALIBRATOR_KO, &mgK);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_LO) == mcsTRUE)
-    {
-        GetPropertyValue(sclsvrCALIBRATOR_LO, &mgL);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_MO) == mcsTRUE)
-    {
-        GetPropertyValue(sclsvrCALIBRATOR_MO, &mgM);
-    }
-    
-    // run alx function to compute magnitude
-    if (alxComputeMagnitudesForBrightStar(spType, mgB, mgV, &mgR, &mgI, &mgJ,
-                                          &mgH, &mgK, &mgL, &mgM,
-                                          &confidenceIndex) == mcsFAILURE)
+
+    // Compute missing magnitudes
+    if (alxComputeMagnitudesForBrightStar(spType, magnitudes,
+                                          confIndexes) == mcsFAILURE)
     {
         if ((errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE) ||
             (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) == mcsTRUE))
@@ -334,21 +325,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
         }
     }
   
-    // If property is ever set, do nothing, else write the computed value
-    SetPropertyValue(sclsvrCALIBRATOR_RO, mgR, vobsSTAR_COMPUTED_PROP,
-                     (vobsCONFIDENCE_INDEX)confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_IO, mgI, vobsSTAR_COMPUTED_PROP,
-                     (vobsCONFIDENCE_INDEX)confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ, vobsSTAR_COMPUTED_PROP,
-                     (vobsCONFIDENCE_INDEX)confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_HO, mgH, vobsSTAR_COMPUTED_PROP,
-                     (vobsCONFIDENCE_INDEX)confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_KO, mgK, vobsSTAR_COMPUTED_PROP,
-                     (vobsCONFIDENCE_INDEX)confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_LO, mgL, vobsSTAR_COMPUTED_PROP,
-                     (vobsCONFIDENCE_INDEX)confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_MO, mgM, vobsSTAR_COMPUTED_PROP,
-                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    // For each magnitude
+    for (int band = 0; band < alxNB_BANDS; band++)
+    { 
+        // Set the computed magnitude. Note, if magnitude is altready set the
+        // SetPropertyValue() do nothing; i.e. existing magnitudes are not
+        // overwritten
+        if (confIndexes[band] != alxNO_CONFIDENCE)
+        {
+            SetPropertyValue(mag0PropertyId[band], magnitudes[band],
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)confIndexes[band]);
+        }
+    }
     
     return mcsSUCCESS;
 }
@@ -400,14 +389,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeInterstellarAbsorption()");
 
-    mcsFLOAT mgB, mgV, mgR, mgI, mgJ, mgH, mgK, mgL, mgM;
     mcsFLOAT paralax;
     mcsFLOAT gLat, gLon;
 
-
-    mcsFLOAT starProperty[9];
-    mcsLOGICAL isPropertySet[9];
-    mcsSTRING64 starPropertyId[9] = 
+    mcsLOGICAL isPropertySet[alxNB_BANDS];
+    mcsFLOAT    magnitudes[alxNB_BANDS];
+    // WARNING: Property Id lists should be defined in the same order than
+    // alxBAND enumerate. In order to be able to use this enumerate as index of
+    // this list.
+    char *magPropertyId[alxNB_BANDS] = 
     {
         vobsSTAR_PHOT_JHN_B,
         vobsSTAR_PHOT_JHN_V,
@@ -419,30 +409,34 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
         vobsSTAR_PHOT_JHN_L,
         vobsSTAR_PHOT_JHN_M
     };
+    char *mag0PropertyId[alxNB_BANDS] = 
+    {
+        sclsvrCALIBRATOR_BO,
+        sclsvrCALIBRATOR_VO,
+        sclsvrCALIBRATOR_RO,
+        sclsvrCALIBRATOR_IO,
+        sclsvrCALIBRATOR_JO,
+        sclsvrCALIBRATOR_HO,
+        sclsvrCALIBRATOR_KO,
+        sclsvrCALIBRATOR_LO,
+        sclsvrCALIBRATOR_MO
+    };
 
-    // for each property
-    for (int i=0; i<9; i++)
+    // For each magnitude
+    for (int band = 0; band < alxNB_BANDS; band++)
     { 
-        if (IsPropertySet(starPropertyId[i]) == mcsTRUE)
+        // Get the current value
+        if (IsPropertySet(magPropertyId[band]) == mcsTRUE)
         {
-            GetPropertyValue(starPropertyId[i], &starProperty[i]);
-            isPropertySet[i] = mcsTRUE;
+            GetPropertyValue(magPropertyId[band], &magnitudes[band]);
+            isPropertySet[band] = mcsTRUE;
         }
         else
         {
-            starProperty[i] = 0;
-            isPropertySet[i] = mcsFALSE;
+            magnitudes[band] = 0.0;
+            isPropertySet[band] = mcsFALSE;
         }
     }
-    mgB=starProperty[0];
-    mgV=starProperty[1];
-    mgR=starProperty[2];
-    mgI=starProperty[3];
-    mgJ=starProperty[4];
-    mgH=starProperty[5];
-    mgK=starProperty[6];
-    mgL=starProperty[7];
-    mgM=starProperty[8];
 
     // Get the value of the paralax, the galactic coordinates if it exists.
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
@@ -476,54 +470,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
         return mcsFAILURE;
     }
 
-    // Run alx function to compute corrected magnitude
-    if (alxComputeRealMagnitudes(paralax, gLat, gLon, &mgM, &mgL, &mgK, &mgH,
-                                 &mgJ, &mgI, &mgR, &mgV, &mgB) == mcsFAILURE)
+    // Compute corrected magnitude
+    if (alxComputeRealMagnitudes(paralax, gLat, gLon, magnitudes) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // Print in the calibrators properties the magnitude if they had been
-    // computed, else do nothing
-    if (isPropertySet[8] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_MO, mgM, vobsSTAR_COMPUTED_PROP);
-    }
-    if (isPropertySet[7] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_LO, mgL, vobsSTAR_COMPUTED_PROP);
-    }
-    if (isPropertySet[6] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_KO, mgK, vobsSTAR_COMPUTED_PROP);
-    }
-    if (isPropertySet[5] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_HO, mgH, vobsSTAR_COMPUTED_PROP);
-    }
-    if (isPropertySet[4] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ, vobsSTAR_COMPUTED_PROP);
-    }
-    if (isPropertySet[3] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_IO, mgI, vobsSTAR_COMPUTED_PROP);
-    }
-    if (isPropertySet[2] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_RO, mgR, vobsSTAR_COMPUTED_PROP);
-    }
-    if (isPropertySet[1] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_VO, mgV, vobsSTAR_COMPUTED_PROP);
-    }
-    if (isPropertySet[0] == mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_BO, mgB, vobsSTAR_COMPUTED_PROP);
+    // For each magnitude
+    for (int band = 0; band < alxNB_BANDS; band++)
+    { 
+        // Set the corrected magnitude
+        if (isPropertySet[band] == mcsTRUE)
+        {
+            SetPropertyValue(mag0PropertyId[band], magnitudes[band],
+                             vobsSTAR_COMPUTED_PROP);
+        }
     }
 
     return mcsSUCCESS;
 }
+
 /**
  * Compute Angular diameter
  *
