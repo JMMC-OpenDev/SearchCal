@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-02-04 08:07:58 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-02-15 15:47:17 gzins Exp $"
 #
 # Makefile of sclsvr test module
 #
@@ -26,7 +26,6 @@
 
 #
 # additional include and library search paths
-USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/include/ -I/usr/include/glib-2.0
 #USER_LIB = 
 
 #
@@ -44,31 +43,31 @@ EXECUTABLES_L   =
 #
 # <brief description of xxxxx program>
 #sclsvrTest_OBJECTS   = sclsvrTest
-#sclsvrTest_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTest_LDFLAGS   = 
 #sclsvrTest_LIBS      = MCS C++ sclsvr vobs
 
 #sclsvrTestCommand_OBJECTS   = sclsvrTestCommand
-#sclsvrTestCommand_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestCommand_LDFLAGS   = 
 #sclsvrTestCommand_LIBS      = MCS C++ sclsvr vobs scitoo msg simcli
 
 #sclsvrTestSearchCalibrators_OBJECTS   = sclsvrTestSearchCalibrators
-#sclsvrTestSearchCalibrators_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestSearchCalibrators_LDFLAGS   = 
 #sclsvrTestSearchCalibrators_LIBS      = MCS C++ sclsvr vobs scitoo msg cmd simcli
 
 #sclsvrSearchCalibrators_OBJECTS   = sclsvrSearchCalibrators
-#sclsvrSearchCalibrators_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrSearchCalibrators_LDFLAGS   =
 #sclsvrSearchCalibrators_LIBS      = MCS C++ sclsvr vobs alx msg simcli
 
 #sclsvrTestSearchCalibratorsClient_OBJECTS   = sclsvrTestSearchCalibratorsClient
-#sclsvrTestSearchCalibratorsClient_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestSearchCalibratorsClient_LDFLAGS   = 
 #sclsvrTestSearchCalibratorsClient_LIBS      = MCS C++ sclsvr vobs scitoo msg gui simcli
 
 #sclsvrTestCalibratorMethod_OBJECTS   = sclsvrTestCalibratorMethod
-#sclsvrTestCalibratorMethod_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestCalibratorMethod_LDFLAGS   =
 #sclsvrTestCalibratorMethod_LIBS      = MCS C++ sclsvr vobs alx msg simcli 
 
 #sclsvrTestCalibratorPack_OBJECTS   = sclsvrTestCalibratorPack
-#sclsvrTestCalibratorPack_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestCalibratorPack_LDFLAGS   = 
 #sclsvrTestCalibratorPack_LIBS      = MCS C++ sclsvr vobs alx msg simcli
 
 sclsvrTestCalibrator_OBJECTS   = sclsvrTestCalibrator
@@ -192,9 +191,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
