@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.5 2005-02-14 08:09:04 gzins Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.6 2005-02-14 14:10:13 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/14 08:09:04  gzins
+ * Implemented assignment operator and copy constructor
+ *
  * Revision 1.4  2005/02/13 11:02:17  gzins
  * Set mcsTRUE as default value to skipCommentFlag parameter
  *
@@ -134,9 +137,9 @@ public:
 //                                        const miscoDYN_BUF&   buffer);
 
 protected:
+    miscDYN_BUF  _dynBuf;
 
 private:
-    miscDYN_BUF  _dynBuf;
 };
 
 #endif /*!miscoDYN_BUF_H*/
