@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdTEST.C,v 1.3 2004-11-23 13:19:30 mella Exp $"
+* "@(#) $Id: cmdTEST.C,v 1.4 2004-11-26 08:37:51 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  *  Simple test file for cmdCMD class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.C,v 1.3 2004-11-23 13:19:30 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.C,v 1.4 2004-11-26 08:37:51 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -101,10 +101,6 @@ int main(int argc, char *argv[])
     cout<<"PARAMS = " << params <<endl;
 
     cmdCMD myCmd(mnemo, params);
-    
-    string help;
-    help = myCmd.getHelp();
-    cout<<help<<endl;
 
     if (argc != 3)
     {
@@ -142,7 +138,11 @@ int main(int argc, char *argv[])
         }
     }
     
-    
+    // Print help for myCmd
+    string help;
+    help = myCmd.getHelp();
+    cout<<help<<endl;
+
     // Close MCS services
     mcsExit();
     

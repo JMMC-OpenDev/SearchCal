@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCMD.h,v 1.3 2004-11-23 13:19:28 mella Exp $"
+* "@(#) $Id: cmdCMD.h,v 1.4 2004-11-26 08:37:47 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -50,6 +50,7 @@ public:
     /** typedef for map of cmdPARAM */
     typedef map<string, cmdPARAM *> STRING2PARAM;
 
+    virtual mcsCOMPL_STAT doParsing();
     virtual string getHelp();
     
     /* methods to handle parameters */
