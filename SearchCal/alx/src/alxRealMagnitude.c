@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.3 2005-01-26 15:49:09 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/24 10:56:25  scetre
+ * Changed valid format for spectral type
+ *
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
@@ -24,7 +27,7 @@
  * \sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.3 2005-01-26 15:49:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -118,6 +121,7 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
     
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
+    miscDynBufInit(&dynBuf);
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -187,6 +191,7 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
                         break;
                     default:
                         errAdd(alxERR_INVALID_BAND, band, fileName);
+                        miscDynBufDestroy(&dynBuf);
                         return NULL;
                 }
 
@@ -198,6 +203,7 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
                 else
                 {
                     errAdd(alxERR_DUPLICATED_LINE, line, fileName);
+                    miscDynBufDestroy(&dynBuf);
                     return NULL;
                 }
             }
@@ -270,6 +276,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
+    miscDynBufInit(&dynBuf);
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.3 2005-01-24 13:35:59 scetre Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.4 2005-01-26 15:49:09 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/24 13:35:59  scetre
+ * change the correct value of number of part of spectral type
+ *
  * Revision 1.2  2005/01/24 10:56:25  scetre
  * Changed valid format for spectral type
  *
@@ -27,7 +30,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.3 2005-01-24 13:35:59 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.4 2005-01-26 15:49:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -191,6 +194,7 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
     
     /* Load file where comment lines started with '#' */
     miscDYN_BUF    dynBuf;
+    miscDynBufInit(&dynBuf);    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -242,6 +246,7 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
             lineNum++;
         }
     }
+    miscDynBufDestroy(&dynBuf);
 
     colorTables[starType].nbLines = lineNum;
     colorTables[starType].loaded = mcsTRUE;

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.2 2005-01-26 15:49:09 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/21 08:14:25  gluck
+ * Creation
+ *
  * 
  * scetre    11-Oct-2004  Created
  * gzins     12-Jan-2005  - Updated to be compliant with programming standards
@@ -21,7 +24,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.2 2005-01-26 15:49:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -105,6 +108,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
+    miscDynBufInit(&dynBuf);
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -157,6 +161,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     if (lineNum != alxNB_COLOR_INDEXES)
     {
         errAdd(alxERR_MISSING_LINE, lineNum, alxNB_COLOR_INDEXES, fileName);
+        miscDynBufDestroy(&dynBuf);
         return NULL;
     }
 
