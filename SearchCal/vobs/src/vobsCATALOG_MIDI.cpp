@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.14 2005-02-13 15:59:08 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.15 2005-02-17 17:56:55 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/02/13 15:59:08  gzins
+ * Fixed wrong class name in logExtDbg()
+ *
  * Revision 1.13  2005/02/11 14:22:10  gluck
  * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
  * - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
@@ -51,7 +54,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.14 2005-02-13 15:59:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.15 2005-02-17 17:56:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -136,7 +139,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load()
         starPtr->GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, &flux);
         
         // Compute magnitude
-        magnitude = 4.1 - (2.5 * log(flux/0.89));
+        magnitude = 4.1 - (2.5 * log10(flux/0.89));
         starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName());
     }
 
