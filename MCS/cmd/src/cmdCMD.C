@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCMD.C,v 1.3 2004-11-23 13:19:29 mella Exp $"
+* "@(#) $Id: cmdCMD.C,v 1.4 2004-11-24 14:04:42 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCMD.C,v 1.3 2004-11-23 13:19:29 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCMD.C,v 1.4 2004-11-24 14:04:42 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -76,12 +76,31 @@ cmdCMD::~cmdCMD()
 {
     logExtDbg("cmdCMD::~cmdCMD()");
     // \todo delete _children ...
+    _children.clear();
 }
 
 
 /*
  * Public methods
  */
+
+
+/** 
+ *  Request the parsing of the command.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::doParsing()
+{
+    if( _hasNotBeenYetParsed )
+    {
+        if( parse() == FAILURE )
+        {
+            return FAILURE;
+        }
+    }
+    return SUCCESS;
+}
 
 /** 
  *  Return the help of the command.
@@ -159,7 +178,8 @@ mcsCOMPL_STAT cmdCMD::addParam(cmdPARAM *param)
 }
 
 /** 
- *  Get the parameter associated to paramName.
+ *  Get the parameter associated to paramName. This method must not be called
+ *  during parsing steps because it begins to check if it has been parsed.
  *
  * \param paramName  the name of the requested parameter.
  * \param param  a pointer where to store the parameter pointer
@@ -170,6 +190,17 @@ mcsCOMPL_STAT cmdCMD::addParam(cmdPARAM *param)
 mcsCOMPL_STAT cmdCMD::getParam(string paramName, cmdPARAM **param)
 {
     logExtDbg ("cmdCMD::getParam()");
+    
+    if( _hasNotBeenYetParsed )
+    {
+        if( parse() == FAILURE )
+        {
+            // \todo errAdd
+            return FAILURE;
+        }
+    }
+ 
+    // do real stuff
     STRING2PARAM::iterator iter = _children.find(paramName);
   
     if(iter!= _children.end())
@@ -469,7 +500,7 @@ mcsCOMPL_STAT cmdCMD::parseParams()
 {
     logExtDbg ("cmdCMD::parseParams()");
 
-    cout << "working on " << _params << endl;
+    logDebug ( "working on params '%s'", _params.data());
    
     string::iterator i = _params.begin();
     int posA=0;
@@ -503,10 +534,14 @@ mcsCOMPL_STAT cmdCMD::parseParams()
         i++;
         posA++;
     }
-    // parse last tuple
-    if(parseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
+
+    // parse last tuple if posB is not null
+    if(posA>0)
     {
-        return FAILURE;
+        if(parseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
+        {
+            return FAILURE;
+        }
     }
 
     return SUCCESS;
@@ -524,11 +559,19 @@ mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
 {
     logExtDbg ("cmdCMD::parseTupleParam()");
     
-    int dashPos = tuple.find_first_of("-");
-    int endPos = tuple.find_last_not_of(" ");
+    unsigned int dashPos = tuple.find_first_of("-");
+    unsigned int endPos = tuple.find_last_not_of(" ");
+
     string str = tuple.substr(dashPos, endPos+1);
 
-    int spacePos = str.find_first_of(" ");
+    unsigned int spacePos = str.find_first_of(" ");
+    
+    if((dashPos == string::npos) || (spacePos == string::npos))
+    {
+        // \todo errAdd
+        return FAILURE;
+    }
+    
     /* start from 1 to remove '-' and remove the last space*/
     /* \todo enhance code to accept more than one space between name and value */
     string paramName = str.substr(1,spacePos-1);
@@ -538,10 +581,18 @@ mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
    
     cmdPARAM *p;
     /* If parameter does'nt exist in the cdf */
-    if(getParam(paramName,&p) == FAILURE)
+
+    STRING2PARAM::iterator iter = _children.find(paramName);
+    if(iter!= _children.end())
     {
+        p = iter->second;
+    }
+    else
+    {
+        // \todo errAdd
         return FAILURE;
     }
+
     /* assign value to the parameter */
     p->setUserValue(paramValue);
     
@@ -746,7 +797,6 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParameters(GdomeElement *root)
                     return FAILURE;
                 }
 
-                cout << "parameter " <<i <<endl;
                 if(parseCdfForParam(el)==FAILURE)
                 {
                     gdome_el_unref(el, &exc);
@@ -781,7 +831,6 @@ mcsCOMPL_STAT cmdCMD::cmdGetNodeContent(GdomeElement *parentNode, string tagName
    if(tagName.empty())
    {
         nl = gdome_el_childNodes(parentNode, &exc);
-        cout<<"empty"<<endl;
    }else{
        name = gdome_str_mkref (tagName.data());
        /* Get the reference to the childrens NodeList of the root element */
