@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.16 2005-02-23 07:51:29 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.17 2005-02-24 17:03:18 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/02/23 07:51:29  gzins
+ * Changed vobsSTAR_UD_DIAM/vobsSTAR_UD_DIAM_ERROR to vobsSTAR_DIAM12/vobsSTAR_DIAM12_ERROR
+ *
  * Revision 1.15  2005/02/17 17:56:55  gzins
  * Used decimal logarithm instead of neperian logarithm when computing mag N
  *
@@ -57,7 +60,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.16 2005-02-23 07:51:29 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.17 2005-02-24 17:03:18 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -119,68 +122,71 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load()
 {
     logExtDbg("vobsCATALOG_MIDI::Load()");
     
-    //
-    // Standard procedure to load catalog
-    // ----------------------------------
-    vobsLOCAL_CATALOG::Load();
-
-    //
-    // MIDI specific loading actions
-    // -----------------------------
-    
-    // Compute magnitude in N band
-    mcsUINT32 starIdx;
-    for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
+    if (_loaded == mcsFALSE)
     {
-        // Get star
-        vobsSTAR *starPtr;
-        starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
-        
-        // Get IR flux
-        mcsFLOAT flux;
-        mcsFLOAT magnitude;
-        starPtr->GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, &flux);
-        
-        // Compute magnitude
-        magnitude = 4.1 - (2.5 * log10(flux/0.89));
-        starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName());
-    }
-
-    // Re-compute diameter error in mas instead of % 
-    for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
-    {
-        // Get star
-        vobsSTAR *starPtr;
-        starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
-        
-        // Get diameter and its associated error 
-        mcsFLOAT diam;
-        mcsFLOAT diamError;
-        starPtr->GetPropertyValue(vobsSTAR_DIAM12, &diam);
-        starPtr->GetPropertyValue(vobsSTAR_DIAM12_ERROR, &diamError);
-        
-        // Convert % to mas 
-        diamError = diam * diamError / 100;
-
-        // Rewrite diameter error
-        starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError,
-                                  GetName(), vobsCONFIDENCE_HIGH, mcsTRUE);
-    }
-
-    // If log level is DEBUG or EXTDBG
-    if (logGetStdoutLogLevel() >= logDEBUG)
-    {
-        //Save star list in a file
-        if (_starList.Save("$MCSDATA/tmp/catalogMIDI.dat") == mcsFAILURE)
+        //
+        // Standard procedure to load catalog
+        // ----------------------------------
+        if (vobsLOCAL_CATALOG::Load() == mcsFAILURE)
         {
-            // Ignore error (for test only)
-            errCloseStack();
+            return mcsFAILURE;
+        }
+
+        //
+        // MIDI specific loading actions
+        // -----------------------------
+
+        // Compute magnitude in N band
+        mcsUINT32 starIdx;
+        for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
+        {
+            // Get star
+            vobsSTAR *starPtr;
+            starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
+
+            // Get IR flux
+            mcsFLOAT flux;
+            mcsFLOAT magnitude;
+            starPtr->GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, &flux);
+
+            // Compute magnitude
+            magnitude = 4.1 - (2.5 * log10(flux/0.89));
+            starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName());
+        }
+
+        // Re-compute diameter error in mas instead of % 
+        for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
+        {
+            // Get star
+            vobsSTAR *starPtr;
+            starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
+
+            // Get diameter and its associated error 
+            mcsFLOAT diam;
+            mcsFLOAT diamError;
+            starPtr->GetPropertyValue(vobsSTAR_DIAM12, &diam);
+            starPtr->GetPropertyValue(vobsSTAR_DIAM12_ERROR, &diamError);
+
+            // Convert % to mas 
+            diamError = diam * diamError / 100;
+
+            // Rewrite diameter error
+            starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError,
+                                      GetName(), vobsCONFIDENCE_HIGH, mcsTRUE);
+        }
+
+        // If log level is DEBUG or EXTDBG
+        if (logGetStdoutLogLevel() >= logDEBUG)
+        {
+            //Save star list in a file
+            if (_starList.Save("$MCSDATA/tmp/catalogMIDI.dat") == mcsFAILURE)
+            {
+                // Ignore error (for test only)
+                errCloseStack();
+            }
         }
     }
-
-    // Set flag indicating a correct catalog load
-    _loaded = mcsTRUE;
-    
+  
     return mcsSUCCESS;
 }
 
