@@ -1,7 +1,7 @@
 /*************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.5 2004-06-21 16:36:09 gzins Exp $"
+* "@(#) $Id: mcs.h,v 1.6 2004-06-21 16:38:53 gzins Exp $"
 *
 * mcs.h  -  MCS/Common Definitions - Interface File
 *
@@ -54,6 +54,18 @@ typedef unsigned char      mcsBYTES64[64];
 typedef unsigned char      mcsBYTES80[80]; 
 typedef unsigned char      mcsBYTES128[128]; 
 typedef unsigned char      mcsBYTES256[256]; 
+
+typedef char               mcsSTRING4[4]; 
+typedef char               mcsSTRING8[8]; 
+typedef char               mcsSTRING12[12]; 
+typedef char               mcsSTRING16[16]; 
+typedef char               mcsSTRING20[20]; 
+typedef char               mcsSTRING32[32]; 
+typedef char               mcsSTRING48[48]; 
+typedef char               mcsSTRING64[64]; 
+typedef char               mcsSTRING80[80]; 
+typedef char               mcsSTRING128[128]; 
+typedef char               mcsSTRING256[256];
 
 typedef char mcsPROCNAME[mcsPROCNAME_LEN+1];      /* Process name           */
 typedef char mcsMODULEID[mcsMODULEID_LEN+1];      /* Software module name   */
