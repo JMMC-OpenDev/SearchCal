@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.cpp,v 1.5 2004-12-03 08:52:23 gzins Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.6 2004-12-07 07:48:59 gzins Exp $"
 *
 *
 * who       when                 what
@@ -13,6 +13,7 @@
 * gzins     29-Nov-2004  Fixed bug related to time-out handling
 *                        Set default time-out to WAIT_FOREVER
 * gzins     03-Dec-2004  Updated according to new msgMANAGER_IF::Connect API
+* gzins     07-Dec-2004  Removed no longer needed errStackDisplay() 
 *
 *******************************************************************************/
 
@@ -48,7 +49,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.5 2004-12-03 08:52:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.6 2004-12-07 07:48:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -132,7 +133,6 @@ int main (int argc, char *argv[])
     msgMANAGER_IF manager;
     if (manager.Connect(argv[0]) == FAILURE)
     {
-        errDisplayStack();
         errCloseStack();
         exit(EXIT_FAILURE);
     }
@@ -189,7 +189,7 @@ int main (int argc, char *argv[])
         /* If the reply was the last... */
         if (lastReply == mcsTRUE)
         {
-            /* Exit from the receiving loog */
+            /* Exit from the receiving loop */
             break;
         }
         else
@@ -206,7 +206,6 @@ int main (int argc, char *argv[])
 exit:
     if (errStackIsEmpty() == mcsFALSE)
     {
-        errDisplayStack();
         errCloseStack();
         status = EXIT_FAILURE;
     }
