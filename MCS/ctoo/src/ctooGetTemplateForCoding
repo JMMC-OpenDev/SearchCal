@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.9 2004-08-10 09:19:37 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.10 2004-08-10 16:45:23 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -166,41 +166,34 @@ then
             fi
         done
 
-        # Copy the template file in current directory
-        if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
-        then 
-            # File copy succeeds
-            # Change permissions
-            chmod $MODE ${FILE}.BAK
-            # Setup author and date and
-            # If necessary insert file name in the pre-processing directives
-            # to avoid multiple inclusions (in h-file and c++-h-file)
-            AUTHOR=`whoami`
-            AUTHOR=`printf "%-8s" $AUTHOR`
-            DATE=`date "+%d-%b-%Y"`
-            sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
-                 -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
-                 -e "1,$ s/I>-<d/\Id/g"       \
-                 -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
-                 -e "1,$ s/#define _H/#define ${FILE_NAME}_H/g" \
-                 -e "1,$ s/#endif \/\*!_H\*\//#endif \/\*!${FILE_NAME}_H\*\//g" \
-                 ${FILE}.BAK > $FILE
-            rm -f ${FILE}.BAK
+        # Get template file
+        ctooGetTemplateFile.sh $TEMPLATE $FILE
+        
+        # Change permissions of the new created file
+        chmod $MODE $FILE
 
-            # display the file if EDITOR is set
-            if [ "$EDITOR" != "" ]
-            then 
-                $EDITOR $FILE &
-                echo -e "\n>>>  CREATED --> $FILE. Opening $EDITOR on it.\c"
-                sleep 1; echo " .\c"; sleep 1; echo -e " .\c"
-            else
-                echo -e "\n>>>  CREATED --> $FILE\n"
-            fi
-        else
-            # File copy failed
-            echo -e "\n>>>  CANNOT CREATE --> $FILE\n"
+        # For .h files insert file name in the pre-processing directives to
+        # avoid multiple inclusions
+        if [ $FILE_SUFFIX = ".h" ]
+        then
+            sed -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
+                -e "1,$ s/#define _H/#define ${FILE_NAME}_H/g" \
+                -e "1,$ s/#endif \/\*!_H\*\//#endif \/\*!${FILE_NAME}_H\*\//g" \
+                ${FILE}.BAK > $FILE
         fi
 
+        # Remove the temporary backup file
+        rm -f ${FILE}.BAK
+        
+        # display the file if EDITOR is set
+        if [ $EDITOR != "" ]
+        then 
+            $EDITOR $FILE &
+            echo -e "\n>>>  CREATED --> $FILE. Opening $EDITOR on it.\c"
+            sleep 1; echo " .\c"; sleep 1; echo -e " .\c"
+        else
+            echo -e "\n>>>  CREATED --> $FILE\n"
+        fi
     else
         # invalid choice
         echo -e "\nInvalid choice."
