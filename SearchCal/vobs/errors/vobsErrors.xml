@@ -123,6 +123,31 @@
    <error id="30">
       <errName>PROPERTY_NOT_SET</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[property value not set : "%s"]]></errFormat>
+      <errFormat><![CDATA[Could not read value of '%.80s' property, it has not been set.]]></errFormat>
+   </error>
+   <error id="31">
+      <errName>PROPERTY_TYPE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not set or get property "%.40s". Could not convert %.40s value using format '%.40s']]></errFormat>
+   </error>
+   <error id="32">
+      <errName>INVALID_PROP_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid property format '%.80s'; should be %.20s]]></errFormat>
+   </error>
+   <error id="33">
+      <errName>DUPLICATED_PROPERTY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Duplicated property name '%s']]></errFormat>
+   </error>
+   <error id="34">
+      <errName>INVALID_PROPERTY_ID</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid property id '%d']]></errFormat>
+   </error>
+   <error id="35">
+      <errName>NO_MORE_CRITERIA</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[no more criteria in the list]]></errFormat>
    </error>
 </errorList>
