@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.12 2005-02-25 15:13:09 gluck Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.13 2005-03-02 17:11:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/25 15:13:09  gluck
+ * Changed 2 logTest to logInfo to have them in test outputs
+ *
  * Revision 1.11  2005/02/22 16:20:13  gzins
  * Updated misDynBufGetNextLine API
  * Added check of B-V before computing missing magnitude; delta between V-B (star) and B-V (color table) must be less than 0.1
@@ -55,7 +58,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.12 2005-02-25 15:13:09 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.13 2005-03-02 17:11:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -282,6 +285,9 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
  *
  * It computes magnitudes in R, I, J, H, K, L and M bands according to the
  * spectral type and the magnitudes in B and V bands for a bright star.
+ * If magnitude in K-band is unkwown, the confidence index of computed values is
+ * set to alxCONFIDENCE_LOW, otherwise (B, V and K known) it is set to
+ * alxCONFIDENCE_HIGH.
  * If magnitude can not be computed, its associated confidence index is set to
  * alxNO_CONFIDENCE.
  *
@@ -535,6 +541,19 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
 
     }
 
+    /* Set confidence index for computed values */
+    /* If magnitude in K band is unknown, set confidence index to Low */
+    alxCONFIDENCE_INDEX confIndex;
+    if (magnitudes [alxK_BAND] == alxBLANKING_VALUE)
+    {
+        confIndex = alxCONFIDENCE_LOW;
+    }
+    /* Else B, V and K is known */
+    else
+    {
+        confIndex = alxCONFIDENCE_HIGH;
+    }
+
     /* Compute *missing* magnitudes in R, I, J, H, K, L and M bands */
     if (magnitudes [alxR_BAND] == alxBLANKING_VALUE)
     {
@@ -546,7 +565,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         else
         {
             magnitudes [alxR_BAND] = mgV - v_r;
-            confIndexes[alxR_BAND] = alxCONFIDENCE_HIGH;
+            confIndexes[alxR_BAND] = confIndex;
         }
     }
     else
@@ -564,7 +583,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         else
         {
             magnitudes [alxI_BAND] = mgV - v_i;
-            confIndexes[alxI_BAND] = alxCONFIDENCE_HIGH;
+            confIndexes[alxI_BAND] = confIndex;
         }
     }
     else
@@ -583,7 +602,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         else
         {
             magnitudes [alxJ_BAND] = magnitudes [alxI_BAND] - i_j;
-            confIndexes[alxJ_BAND] = alxCONFIDENCE_HIGH;
+            confIndexes[alxJ_BAND] = confIndex;
         }
     }
     else
@@ -602,7 +621,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         else
         {
             magnitudes [alxH_BAND] = magnitudes [alxJ_BAND] - j_h;
-            confIndexes[alxH_BAND] = alxCONFIDENCE_HIGH;
+            confIndexes[alxH_BAND] = confIndex;
         }
     }
     else
@@ -621,7 +640,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         else
         {
             magnitudes [alxK_BAND] = magnitudes [alxJ_BAND] - j_k;
-            confIndexes[alxK_BAND] = alxCONFIDENCE_HIGH;
+            confIndexes[alxK_BAND] = confIndex;
         }
     }
     else
@@ -640,7 +659,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         else
         {
             magnitudes [alxL_BAND] = magnitudes [alxK_BAND] - k_l;
-            confIndexes[alxL_BAND] = alxCONFIDENCE_HIGH;
+            confIndexes[alxL_BAND] = confIndex;
         }
     }
     else
@@ -659,7 +678,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         else
         {
             magnitudes [alxM_BAND] = magnitudes [alxK_BAND] - k_m;
-            confIndexes[alxM_BAND] = alxCONFIDENCE_HIGH;
+            confIndexes[alxM_BAND] = confIndex;
         }
     }
     else
