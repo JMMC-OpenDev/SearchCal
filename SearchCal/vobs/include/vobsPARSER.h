@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.12 2005-02-11 10:29:26 gzins Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.13 2005-02-13 15:22:11 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/11 10:29:26  gzins
+* Added GetPropertyId() method
+*
 * Revision 1.11  2005/02/10 10:46:33  gzins
 * Changed column name to parameter name
 *
@@ -58,12 +61,8 @@ public:
     mcsCOMPL_STAT Parse(const char *uri, 
                         const char *catalogName,
                         vobsSTAR_LIST &starList,
-                        const char *logFileName);
+                        const char *logFileName=NULL);
 
-    // Parsing of the CDATA section
-    mcsCOMPL_STAT ParseCData(vobsCDATA *cData,
-                             vobsSTAR_LIST &starList);
-    
 protected:
 
 private:
@@ -75,9 +74,6 @@ private:
     // Recurvise parsing of XML document 
     mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node,
                                   vobsCDATA *cData);
-
-    // GetPropertyId
-    char *GetPropertyId(const char *paramName, const char *ucdName);
 };
 
 #endif /*!vobsPARSER_H*/
