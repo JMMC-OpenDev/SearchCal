@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.h,v 1.9 2005-01-24 15:39:54 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.h,v 1.10 2005-01-29 19:58:17 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/01/24 15:39:54  gzins
+ * Added CVS logs as modification history
+ *
  * lafrasse  18-Nov-2004  Created
  * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
  *                        _socket, and added the class description comment
@@ -69,7 +72,8 @@ public:
     msgMANAGER_IF();
     virtual ~msgMANAGER_IF();
 
-    virtual mcsCOMPL_STAT Connect     (const mcsPROCNAME  procName);
+    virtual mcsCOMPL_STAT Connect     (const mcsPROCNAME  procName,
+                                       mcsLOGICAL         unique=mcsFALSE);
 
     virtual mcsINT32      SendCommand (const char        *command,
                                        const mcsPROCNAME  destProc,
