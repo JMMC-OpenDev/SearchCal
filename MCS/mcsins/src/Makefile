@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-12-09 06:13:54 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-01-29 13:44:04 gzins Exp $"
 #
 # Makefile for installation script of MCS 
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     08-Dec-2004  Created
 # gzins     08-Dec-2004  Fixed bug when installing script in $MCSROOT/bin 
 # gzins     09-Dec-2004  Renamed mcsinsInstallMcs to mcsinsInstall
