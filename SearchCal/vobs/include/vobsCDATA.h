@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.14 2005-02-17 15:39:36 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.15 2005-02-17 17:38:01 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/02/17 15:39:36  gzins
+* Fixed minor bug related to remaining '\0' at the end of buffer when storing list in buffer
+*
 * Revision 1.13  2005/02/16 16:18:00  scetre
 * Fixed remaining bugs in Extract and Unpack methods
 *
@@ -270,6 +273,11 @@ public:
                                         1024, &nbOfSubStrings) == mcsFAILURE)
                     {
                         return mcsFAILURE;
+                    }
+                    // and remove trailind and leading blanks
+                    for (mcsUINT32 i = 0; i < nbOfSubStrings; i++)
+                    {
+                        miscTrimString(lineSubStrings[i], " ");
                     }
 
                     // Determine the number of attributes per property
