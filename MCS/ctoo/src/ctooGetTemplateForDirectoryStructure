@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.18 2004-08-11 10:01:51 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.19 2004-09-03 08:31:23 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -14,8 +14,8 @@
 #   ctooGetTemplateForDirectoryStructure - create/check standard directory structure
 #
 # SYNOPSIS
-#   ctooGetTemplateForDirectoryStructure MODROOT|INTROOT|MCSROOT|MCSDATA <name>
-#                                        [noMakefile]
+#   ctooGetTemplateForDirectoryStructure MODROOT|INTROOT|MCSROOT|MCSDATA 
+#                                        <root name> [creation]
 #
 # DESCRIPTION
 #   Utility used ot create new or missing part of MCS directory structure for:
@@ -31,11 +31,12 @@
 #              starts. If not existing already, directory/ies are created.
 #
 #       Remark : for MODROOT directory structure, a Makefile template is added
-#                to the src subdirectory.
+#                to the src subdirectory, if the option creation is not chosen.
 #
 #   Option :
-#       [noMakefile] : if this option is used, no Makefile is added to the
-#                      subdirectory src.
+#       [creation] : if this option is used, no files are added 
+#                    to module subdirectories (ex Makefile in src,
+#                    moduleDescription.xml in doc, ...).
 #
 # FILES
 #
@@ -61,14 +62,14 @@
 if [ $# != 2 -a $# != 3 ]
 then 
     echo -e "\n\tUsage: ctooGetTemplateForDirectoryStructure"
-    echo -e "MODROOT|INTROOT|VLTROOT|VLTDATA <root name> [noMakefile]\n"
+    echo -e "MODROOT|INTROOT|VLTROOT|VLTDATA <root name> [creation]\n"
     exit 1
 fi 
 
 # Get the input parameters
 directoryStructureTtype=$1
 ROOT_NAME=$2
-makefile=$3
+cvs=$3
 
 # Set templates directories
 MCSTEMPLATES=$MCSROOT/templates
@@ -142,7 +143,7 @@ case $directoryStructureTtype in
         echo "ERROR >>$directoryStructureTtype<< is not a valid directory "
         echo "structure."
         echo -e "\n\tUsage: getTemplateForDirectory \
-                MODROOT|INTROOT|VLTROOT|VLTDATA <name> [noMakefile]\n"
+                MODROOT|INTROOT|VLTROOT|VLTDATA <root name> [creation]\n"
         exit 1
         ;;
 esac
@@ -203,8 +204,9 @@ done
 MODE=644
 case $directoryStructureTtype in
     MODROOT)
-        case $makefile in
+        case $cvs in
             "")
+                # If not exist, get module description file
                 # Check module description file existence
                 if [ -f $ROOT_NAME/doc/moduleDescription.xml ]
                 then
@@ -212,6 +214,7 @@ case $directoryStructureTtype in
                     echo -e "\n>>> moduleDescription.xml ALREADY EXISTS."
                     echo -e "    => The existing one is left\n"
                 else
+                    # The module description file does not exist
                     echo -e "\n>>> Copying module description file\n"
                     TEMPLATE="$MCSTEMPLATES/forDocumentation/moduleDescription.template"
                     FILE=$ROOT_NAME/doc/moduleDescription.xml
@@ -222,35 +225,66 @@ case $directoryStructureTtype in
 
                     # Replace module name
                     sed -e "1,$ s/<module name=\"module\">/<module name=\"$ROOT_NAME\">/g" \
-                         ${FILE}.BAK > $FILE
+                            $FILE > ${FILE}.BAK
 
-                    # Remove the temporary backup file
-                    rm -f ${FILE}.BAK
+                    # Remove the intermediate file ($FILE) and rename the output
+                    # file
+                    mv ${FILE}.BAK $FILE
                     
                     # Change permissions of the new created file
                     chmod $MODE $FILE
                 fi
 
+                # If not exist, get module documentation file
+                # Check module documentation file existence
+                if [ -f $ROOT_NAME/src/moduleDescription.doc ]
+                then
+                    # The module documentation file already exists
+                    echo -e "\n>>> moduleDocumentation.doc ALREADY EXISTS."
+                    echo -e "    => The existing one is left\n"
+                else
+                    # The module documentation file does not exist
+                    echo -e "\n>>> Copying module documentation file\n"
+                    TEMPLATE="$MCSTEMPLATES/forDocumentation/moduleDocumentation.template"
+                    FILE=$ROOT_NAME/src/moduleDocumentation.doc
+
+                    # Get template file (module documentation file) in src
+                    # directory
+                    ctooGetTemplateFile.sh $TEMPLATE $FILE
+
+                    # Replace module name
+                    sed -e "1,$ s/moduleName/$ROOT_NAME/g" $FILE > ${FILE}.BAK
+
+                    # Remove the intermediate file ($FILE) and rename the output
+                    # file
+                    mv ${FILE}.BAK $FILE
+                    
+                    # Change permissions of the new created file
+                    chmod $MODE $FILE
+                fi
+                
+                # If not exist, get Makefile
                 # Check Makefile existence
                 if [ -f $ROOT_NAME/src/Makefile ]
                 then
                     # a Makefile already exists
-                    echo -e "\n>>> A MAKEFILE ALREADY EXISTS."
+                    echo -e "\n>>> A makefile ALREADY EXISTS."
                     echo -e "    => The existing one is left\n"
                 else
+                    # a Makefile does not exist
                     echo -e "\n>>> Copying Makefile template for code\n"
                     TEMPLATE=$MCSTEMPLATES/forMakefile/Makefile.template
                     FILE=$ROOT_NAME/src/Makefile
                     
                     # Get template file (Makefile) in src directory
-                    ctooGetTemplateFile.sh $TEMPLATE $FILE remove
+                    ctooGetTemplateFile.sh $TEMPLATE $FILE
                     
                     # Change permissions of the new created file
                     chmod $MODE $FILE
                 fi
                 ;;
                 
-            noMakefile)
+            creation)
                 echo -e "\n>>> No makefile added in the src directoy of the"
                 echo -e "      module\n"
                 ;;
@@ -259,7 +293,7 @@ case $directoryStructureTtype in
                 # Wrong parameter value
                 echo "ERROR third option is not a valid."
                 echo -e "\n\tUsage: getTemplateForDirectory MODROOT|INTROOT|"
-                echo -e "         VLTROOT|VLTDATA <name> [noMakefile]\n"
+                echo -e "         VLTROOT|VLTDATA <root name> [creation]\n"
                 exit 1
                 ;;
         esac
