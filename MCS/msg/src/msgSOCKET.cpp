@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.17 2005-02-09 16:39:34 lafrasse Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.18 2005-02-10 08:08:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/02/09 16:39:34  lafrasse
+ * Added a remarque about 'commandId' and the possible use of the 'libuuid' to get a true unic Id
+ *
  * Revision 1.16  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -42,7 +45,7 @@
  * \sa msgSOCKET
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.17 2005-02-09 16:39:34 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.18 2005-02-10 08:08:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -381,6 +384,39 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 {
     logExtDbg("msgSOCKET::Send()");
 
+    // Log info
+    if (msg.GetType() == msgTYPE_COMMAND)
+    {
+        if (msg.GetBodySize() > 80)
+        {
+            logInfo("Sent '%s %.80s...' to '%s'", 
+                    msg.GetCommand(), msg.GetBody(), msg.GetRecipient());
+        }
+        else
+        {
+            logInfo("Sent '%s %s' to '%s'", 
+                    msg.GetCommand(), msg.GetBody(), msg.GetRecipient());
+        }                                       
+    }
+    else if (msg.GetType() == msgTYPE_REPLY)
+    {
+        if (msg.GetBodySize() > 80)
+        {
+            logInfo("Sent reply '%.80s...' to '%s'", 
+                    msg.GetBody(), msg.GetSender());
+        }
+        else
+        {
+            logInfo("Sent '%s' to '%s'", 
+                    msg.GetBody(), msg.GetSender());
+        }    
+    }
+    else if (msg.GetType() == msgTYPE_ERROR_REPLY)
+    {
+        logInfo("Sent error reply to '%s'; '%s' command failed", 
+                 msg.GetSender(), msg.GetCommand());
+    }
+
     // Set message id
     if (msg.GetCommandId() == -1)
     {
@@ -407,7 +443,7 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
     // If the body exists, sent it
     if (msg.GetBodySize() != 0)
     {
-        nbBytesSent += send(_descriptor, msg.GetBody(), msg.GetBodySize(),0);
+        nbBytesSent += send(_descriptor, msg.GetBody(), msg.GetBodySize(), 0);
         msgLength   += msg.GetBodySize();
     }
 
@@ -494,14 +530,17 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     ioctl(_descriptor, FIONREAD, (unsigned long *)&nbBytesToRead);
     if (nbBytesToRead == 0)
     {
+        // Close socket and exit...
+        close(_descriptor);
         errAdd(msgERR_BROKEN_PIPE);
-        return mcsFAILURE;
+        errCloseStack(); 
+        exit(EXIT_FAILURE);
     }
     else
     {
         // Read the message header
         nbBytesRead = recv(_descriptor, &msg._header, msgHEADERLEN,
-                           0);
+                           MSG_WAITALL);
         if (nbBytesRead != msgHEADERLEN)
         {
             errAdd(msgERR_PARTIAL_HDR_RECV, nbBytesRead, msgHEADERLEN);
@@ -519,16 +558,15 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         // If there is a body
         if (bodySize != 0)
         {
-            // Allocate some memory for the up comming body
+            // Allocate some memory for the coming message
             if (msg.AllocateBody(bodySize) == mcsFAILURE)
             {
                 return (mcsFAILURE);
             }
 
             // Get the body from the socket and write it inside msgMESSAGE
-            nbBytesRead = recv(_descriptor, 
-                               miscDynBufGetBufferPointer(&msg._body), 
-                               bodySize, 0);
+            nbBytesRead = recv(_descriptor, miscDynBufGetBuffer(&msg._body), 
+                               bodySize, MSG_WAITALL);
             if (nbBytesRead != bodySize)
             {
                 errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, bodySize);
@@ -542,6 +580,39 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
             msg.SetSenderId(_descriptor);
         }
     } 
+
+    // Log info
+    if (msg.GetType() == msgTYPE_COMMAND)
+    {
+        if (msg.GetBodySize() > 80)
+        {
+            logInfo("Received '%s %.80s...' from '%s'", 
+                    msg.GetCommand(), msg.GetBody(), msg.GetSender());
+        }
+        else
+        {
+            logInfo("Received '%s %s' from '%s'", 
+                    msg.GetCommand(), msg.GetBody(), msg.GetSender());
+        }     
+    }
+    else if (msg.GetType() == msgTYPE_REPLY)
+    {
+        if (msg.GetBodySize() > 80)
+        {
+            logInfo("Received reply '%.80s...' from '%s'", 
+                    msg.GetBody(), msg.GetRecipient());
+        }
+        else
+        {
+            logInfo("Received '%s' from '%s'", 
+                    msg.GetBody(), msg.GetRecipient());
+        }    
+    }
+    else if (msg.GetType() == msgTYPE_ERROR_REPLY)
+    {
+        logInfo("Received error reply from '%s'; '%s' command failed", 
+                 msg.GetRecipient(), msg.GetCommand());
+    }
 
     return mcsSUCCESS;
 }
