@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: timlog.c,v 1.4 2005-02-15 10:30:55 gzins Exp $"
+ * "@(#) $Id: timlog.c,v 1.5 2005-02-15 10:33:08 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 10:30:55  gzins
+ * Fixed wrong history log
+ *
  * Revision 1.3  2005/02/15 10:27:46  gzins
  * Added CVS log as file modification history
  *
@@ -19,7 +22,7 @@
  * Definition of timer log functions.
   */
 
-static char *rcsId="@(#) $Id: timlog.c,v 1.4 2005-02-15 10:30:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: timlog.c,v 1.5 2005-02-15 10:33:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -99,7 +102,7 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
     /* Adds marker in the Hash Table. If marker already exist in table, it is
      * replace by the new one. */
     if (miscHashAddElement(&timlogHashTable, actionName,
-                           (void **)&entry, mcsTRUE) == FAILURE)
+                           (void **)&entry, mcsTRUE) == mcsFAILURE)
     {
         free (entry);
         errCloseStack();
@@ -175,7 +178,7 @@ void timlogStop(const char* actionName)
     logPrint(entry->moduleName, entry->level, entry->fileLine, logMessage);
 
     /* Deletes time marker */
-    if (miscHashDeleteElement(&timlogHashTable, (char *)actionName) == FAILURE)
+    if (miscHashDeleteElement(&timlogHashTable, (char *)actionName) == mcsFAILURE)
     {
         errCloseStack();
         return;
