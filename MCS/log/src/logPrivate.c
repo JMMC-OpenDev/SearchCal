@@ -1,16 +1,17 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logPrivate.c,v 1.1 2004-08-06 12:34:20 lafrasse Exp $"
+* "@(#) $Id: logPrivate.c,v 1.2 2004-08-10 13:29:10 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  05-Aug-2004  Created
+* lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.c
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: logPrivate.c,v 1.1 2004-08-06 12:34:20 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: logPrivate.c,v 1.2 2004-08-10 13:29:10 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -44,59 +45,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Local Functions
  */
-
-/**
- * Give back the current date and time as a NULL-terminated string.
- *
- * This function generates the string corresponding to the current date,
- * expressed in Coordinated Universal Time (UTC), using the following format
- * YYYY-MM-DDThh:mm:ss.ssssss, as shown in the following example :
- *    
- *     2004-06-16T16:16:48.029417
- * 
- * \param timeStamp character array where the resulting date is given back
- * 
- * \return an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT logGetTimeStamp(mcsBYTES32 timeStamp)
-{
-    struct timeval systemTime;
-    struct tm      *utcTime;
-    mcsSTRING32    tmpBuf;
-
-    /* Test 'timeStamp' parameter validity */
-    if (timeStamp == NULL)
-    {
-        return FAILURE;
-    }
-
-    /* Try to get the system time */
-    if (gettimeofday(&systemTime, NULL) == -1)
-    {
-        return FAILURE;
-    }
- 
-    /* Try to compute the GMT universal time from the system time */
-    utcTime = gmtime(&systemTime.tv_sec);
-    if (utcTime == NULL)
-    {
-        return FAILURE;
-    }
-
-    /* Try to compute a string from the GMT universal time */
-    if (!strftime(timeStamp, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", utcTime))
-    {
-        return FAILURE;
-    }
- 
-    /* Add micro-second precision */
-    sprintf(tmpBuf, "%.6f", (systemTime.tv_usec/1e6));
-    strcpy(tmpBuf, (tmpBuf + 1));
-    strcat(timeStamp, tmpBuf);
-
-    return SUCCESS;
-}
-
 
 /**
  * Give back the local network host name.

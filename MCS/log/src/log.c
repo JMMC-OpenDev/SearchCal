@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.19 2004-08-06 12:34:20 lafrasse Exp $"
+* "@(#) $Id: log.c,v 1.20 2004-08-10 13:29:10 lafrasse Exp $"
 *
 *
 * who       when                 what
@@ -33,6 +33,8 @@
 *                        Changed logData to remotely log with logManager
 *                        Added logSetLogManagerHostName and
 *                        logSetLogManagerPortNumber functions
+* lafrasse  10-Aug-2004  Moved logGetTimeStamp back in
+*                        Changed back to logData original API
 *
 *
 *******************************************************************************/
@@ -131,6 +133,9 @@
 #include <netdb.h>
 
 #include <errno.h>
+
+#include <time.h>
+#include <sys/time.h>
 
  
 /*
@@ -448,41 +453,13 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     va_list         argPtr;
 
     mcsBYTES32      infoTime;
-    
+    char buffer[4*logTEXT_LEN];
+    buffer[0] = '\0';
+
     mcsCOMPL_STAT   stat = SUCCESS;
 
-    char            logMsg[4*logTEXT_LEN];
-    logMsg[0] = '\0';
-
-    /* Compute the log message header */
-    strcat(logMsg, mcsGetProcName());
-    strcat(logMsg, " - ");
-    strcat(logMsg, modName);
-    strcat(logMsg, " - ");
-
-    /* If the log message should contain the date */ 
-    if (logRulePtr->printDate == mcsTRUE)
-    {
-        /* Get UNIX-style time and display as number and string. */
-        logGetTimeStamp(infoTime);
-
-        /* Append it to the log message */
-        strcat(logMsg, infoTime);
-        strcat(logMsg, " - ");
-    }
-
-    /* If the fileline exists and should be contained in the log message */
-    if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
-    {
-        /* Append it to the log message */
-        strcat(logMsg, fileLine);
-        strcat(logMsg, " - ");
-    }
-
-    /* Compute the variable parameters and append them to the log message */
-    va_start(argPtr, logFormat);
-    vsprintf((logMsg + strlen(logMsg)), logFormat, argPtr);
-    va_end(argPtr);
+    /* Get UNIX-style time and display as number and string. */
+    logGetTimeStamp(infoTime);
 
     /* If the log message should be file-logged, and that its log level is less
      * than or egal to the desired file-logging level
@@ -490,7 +467,10 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
     {
         /* Log information to file */
-        stat = logData(logMsg);
+        va_start(argPtr,logFormat);
+        vsprintf(buffer, logFormat, argPtr);
+        stat = logData(modName, level, infoTime, fileLine, buffer);
+        va_end(argPtr);
     }
 	
     /* If the log message should be stdout logged, and that its log level is
@@ -498,9 +478,29 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
      */
     if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
     {
-        /* Log information on stdout */
-        fprintf(stdout, "%s\n", logMsg);
+        /* Print the log message header */
+        fprintf(stdout, "%s - %s - ", mcsGetProcName(), modName);
+    
+        /* If the log message should contain the date */ 
+        if (logRulePtr->printDate == mcsTRUE)
+        {
+            /* Print it */
+            fprintf(stdout, "%s - ", infoTime);
+        }
+    
+        /* If the fileline exists and should be contained in the log message */
+        if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
+        {
+            /* Print it */
+            fprintf(stdout, "%s - ", fileLine);
+        }
+    
+        /* Compute the variable parameters and print them */
+        va_start(argPtr, logFormat);
+        vfprintf(stdout, logFormat, argPtr);
+        fprintf(stdout, "\n");
         fflush(stdout);
+        va_end(argPtr);
     }
 
     return stat;
@@ -532,9 +532,8 @@ mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
         va_start(argPtr, logFormat);
         vfprintf(stdout, logFormat, argPtr);
         fprintf(stdout, "\n"); 
-        va_end(argPtr);
-
         fflush(stdout);
+        va_end(argPtr);
     }
 
     return stat;
@@ -544,15 +543,49 @@ mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
 /**
  * Place a message into the file logging system.
  *  
- * \param logMsg message to be file-logged.
+ * \param modName name of the module relative.
+ * \param level level of message.
+ * \param timeStamp time stamp of the message.
+ * \param fileLine file name and line number from where the message is issued.
+ * \param logText message to be logged.
  * 
  * \return SUCCESS.
  */
-mcsCOMPL_STAT logData(const char *logMsg)
+mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
+                      const char *timeStamp, const char *fileLine,
+                      const char *logText)
 {
+    /* Socket stuff */
     static int sock = 0;
     static struct sockaddr_in server;
     struct hostent *hp = NULL;
+
+    /* Message formating gstuff */
+    mcsBYTES32      infoTime;
+    char            *priorityMsg = NULL;
+    char            logMsg[4*logTEXT_LEN];
+    logMsg[0]       = '\0';
+
+    /* Get UNIX-style time and display as number and string. */
+    logGetTimeStamp(infoTime);
+
+    /* initialize priority according given loglevel */
+    switch (level){
+        case logERROR:      priorityMsg = "Error";      break;
+        case logQUIET:      priorityMsg = "Quiet";      break;
+        case logWARNING:    priorityMsg = "Warning";    break;
+        case logINFO:       priorityMsg = "Info" ;      break;
+        case logTEST:       priorityMsg = "Test";       break;
+        case logDEBUG:	    priorityMsg = "Debug";      break;
+        case logEXTDBG:     priorityMsg = "Ext Dbg";    break;
+        default:            priorityMsg = "Info";       break;
+    }
+    
+    /* Compute the log message */
+    sprintf(logMsg, "%s - %s - %s - %s - %s - %s", mcsGetProcName(),
+             modName, priorityMsg, infoTime, fileLine, logText);
+
+
 
     /* If the connection to the logManager is NOT already opened, open it */
     if (logSocketIsAlreadyOpen == mcsFALSE)
@@ -619,6 +652,37 @@ mcsCOMPL_STAT logData(const char *logMsg)
     }
 
     return SUCCESS;
+}
+
+
+/**
+ * Format the current date and time, to be used as time stamp.
+ *
+ * This function generates the string corresponding to the current date,
+ * expressed in Coordinated Universal Time (UTC), using the following format
+ * YYYY-MM-DDThh:mm:ss[.ssssss], as shown in the following example :
+ *    
+ *     2004-06-16T16:16:48.02941
+ * 
+ * \param timeStamp character array where the resulting date is stored
+ */
+void logGetTimeStamp(mcsBYTES32 timeStamp)
+{
+    struct timeval time;
+    struct tm      *timeNow;
+    mcsSTRING32    tmpBuf;
+
+    /* Get local time */
+    gettimeofday(&time, NULL);
+ 
+    /* Format the date */
+    timeNow = gmtime(&time.tv_sec);
+    strftime(timeStamp, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow);
+ 
+    /* Add ms and us */
+    sprintf(tmpBuf, "%.6f", time.tv_usec/1e6);
+    strcpy(tmpBuf, (tmpBuf + 1));
+    strcat(timeStamp, tmpBuf);
 }
 
 

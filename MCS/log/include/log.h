@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.14 2004-08-06 12:34:20 lafrasse Exp $"
+* "@(#) $Id: log.h,v 1.15 2004-08-10 13:29:10 lafrasse Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -33,6 +33,8 @@
 *                        logPrivate.h
 *                        Added logSetLogManagerHostName and
 *                        logSetLogManagerPortNumber functions
+* lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.h
+*                        Changed back to logData original API
 *
 *
 *******************************************************************************/
@@ -82,30 +84,33 @@ mcsCOMPL_STAT logSetLogManagerHostName(mcsBYTES256);
 mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32);
 
 
-mcsCOMPL_STAT logEnableFileLog();
-mcsCOMPL_STAT logDisableFileLog();
-mcsCOMPL_STAT logSetFileLogLevel(logLEVEL level);
+mcsCOMPL_STAT logEnableFileLog(void);
+mcsCOMPL_STAT logDisableFileLog(void);
+mcsCOMPL_STAT logSetFileLogLevel(logLEVEL);
 logLEVEL      logGetFileLogLevel(void);
 
 
-mcsCOMPL_STAT logEnableStdoutLog();
-mcsCOMPL_STAT logDisableStdoutLog();
-mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL level);
+mcsCOMPL_STAT logEnableStdoutLog(void);
+mcsCOMPL_STAT logDisableStdoutLog(void);
+mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL);
 logLEVEL      logGetStdoutLogLevel(void);
 
 
-mcsCOMPL_STAT logSetActionLogLevel(logLEVEL level);
+mcsCOMPL_STAT logSetActionLogLevel(logLEVEL);
 logLEVEL      logGetActionLogLevel(void);
 
 
-mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);
-mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag);
+mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL);
+mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL);
 
 
-mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
-                       const char *fileLine, const char *logText, ...);
-mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logText, ...);
-mcsCOMPL_STAT logData(const char *logMsg);
+mcsCOMPL_STAT logPrint(const mcsMODULEID, logLEVEL, const char *, const char *,
+                       ...);
+mcsCOMPL_STAT logPrintAction(logLEVEL, const char *, ...);
+mcsCOMPL_STAT logData(const mcsMODULEID, logLEVEL, const char *, const char *,
+                      const char *logText);
+
+void          logGetTimeStamp(mcsBYTES32);
 
 
 /*

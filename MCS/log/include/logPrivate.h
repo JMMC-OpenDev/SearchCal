@@ -3,7 +3,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logPrivate.h,v 1.6 2004-08-06 12:34:21 lafrasse Exp $"
+*  "@(#) $Id: logPrivate.h,v 1.7 2004-08-10 13:29:10 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,6 +15,7 @@
 *                        Added logMANAGER_DEFAULT_PORT_NUMBER constant
 *                        Added logDisplayMessage and logDisplayError local
 *                        error message handling functions
+* lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.h
 *
 *
 *******************************************************************************/
@@ -77,7 +78,6 @@ typedef struct {
  * Local Functions
  */
 
-mcsCOMPL_STAT logGetTimeStamp(mcsBYTES32);
 mcsCOMPL_STAT logGetHostName(char *, mcsUINT32);
 void          logDisplayMessage(const char *, ...);
 void          logDisplayError(const char *, ...);
