@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.10 2005-02-28 16:09:12 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.11 2005-03-03 10:07:26 gildas Exp $"
 #
 # Makefile of mcscfg module, which contains configuration files for MCS
 # environment.
@@ -9,6 +9,9 @@
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2005/02/28 16:09:12  lafrasse
+# Added 'mcsEnvFile'
+#
 # Revision 1.9  2005/02/16 09:26:56  gzins
 # Added CVS log as modification file history
 #
@@ -41,7 +44,7 @@ man   :
 	@echo " . . . man page(s) done"
 
 install :
-	@if [ "$(INTROOT)" = "/home/users/lafrasse/Dev/INTROOT" ]; \
+	@if [ "$(INTROOT)" = "" ]; \
 	then \
 		echo "Installing configuration files: ";\
 		if [ ! -d $(MCSROOT)/etc ]; \
