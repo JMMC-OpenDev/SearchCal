@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.5 2005-02-07 19:40:58 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.6 2005-02-08 14:25:05 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/07 19:40:58  gzins
+* Updated vobsREQUEST API
+*
 * Revision 1.4  2005/01/27 13:45:49  scetre
 * remove bug in http query
 *
@@ -21,7 +24,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.5 2005-02-07 19:40:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.6 2005-02-08 14:25:05 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -138,7 +141,6 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
     minDeltaMag = request.GetMinDeltaMag();
     maxDeltaMag = request.GetMaxDeltaMag();
     sprintf(deltaMag, "%.2f..%.2f", minDeltaMag, maxDeltaMag);
-    miscDynBufAppendString(&_query, "mag=");
     miscDynBufAppendString(&_query, deltaMag);
     
    // Add search box size
