@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<errorList moduleName="vobs">
+   <error id="1">
+      <errName>BAD_PARAMETERS</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat>receive bad parameters : %s</errFormat>
+   </error>
+   <error id="2">
+      <errName>ACTION</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat>%s</errFormat>
+   </error>
+   <error id="3">
+      <errName>MEMORY</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat>bad memory allocation %s</errFormat>
+   </error>
+</errorList>
