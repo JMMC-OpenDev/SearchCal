@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_SBSC.C,v 1.4 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_SBSC.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_SBSC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.C,v 1.4 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,7 +35,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsCATALOG_SBSC.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -49,8 +49,6 @@ using namespace std;
 vobsCATALOG_SBSC::vobsCATALOG_SBSC()
 {
     strcpy(_name,"V/36B/bsc4s");
-    strcpy(_fileName,"");
-    strcpy(_nameForFile,"B_36B_bsc4s");
 }
 
 /*
@@ -62,6 +60,7 @@ vobsCATALOG_SBSC::vobsCATALOG_SBSC()
  */
 vobsCATALOG_SBSC::~vobsCATALOG_SBSC()
 {
+    miscDynBufDestroy(&_asking);
 }
 
 

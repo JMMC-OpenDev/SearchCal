@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.C,v 1.8 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.C,v 1.9 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.8 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.9 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -38,7 +38,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsCATALOG_CIO.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -52,8 +52,6 @@ using namespace std;
 vobsCATALOG_CIO::vobsCATALOG_CIO()
 {
     strcpy(_name,"II/225/catalog");
-    strcpy(_fileName,"");
-    strcpy(_nameForFile,"II_225_catalog");
 }
 
 /*
@@ -65,6 +63,7 @@ vobsCATALOG_CIO::vobsCATALOG_CIO()
  */
 vobsCATALOG_CIO::~vobsCATALOG_CIO()
 {
+    miscDynBufDestroy(&_asking);
 }
 
 /*
@@ -198,9 +197,14 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingSpecificParameters(vobsREQUEST request
     miscDynBufAppendString(&_asking, "&x_F(IR)=M");
     miscDynBufAppendString(&_asking, "&F(IR)=");
     
-    mcsSTRING32 magRange;
-    request.GetConstraint(MAGNITUDE_RANGE_ID,magRange);
-    miscDynBufAppendString(&_asking, magRange);
+    mcsSTRING32 minMagRange;
+    request.GetConstraint(MIN_MAGNITUDE_RANGE_ID,minMagRange);
+    miscDynBufAppendString(&_asking, minMagRange);
+    miscDynBufAppendString(&_asking, "..");
+    mcsSTRING32 maxMagRange;
+    request.GetConstraint(MAX_MAGNITUDE_RANGE_ID,maxMagRange);
+    miscDynBufAppendString(&_asking, maxMagRange);
+    
     miscDynBufAppendString(&_asking, "&lambda=");
 
     /*mcsSTRING32 lambda;

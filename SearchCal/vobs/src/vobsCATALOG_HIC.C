@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_HIC.C,v 1.4 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_HIC.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_HIC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_HIC.C,v 1.4 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_HIC.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,7 +35,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsCATALOG_HIC.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -49,8 +49,6 @@ using namespace std;
 vobsCATALOG_HIC::vobsCATALOG_HIC()
 {
     strcpy(_name,"I/196/main");
-    strcpy(_fileName,"");
-    strcpy(_nameForFile,"I_196_main");
 }
 
 /*
@@ -62,6 +60,7 @@ vobsCATALOG_HIC::vobsCATALOG_HIC()
  */
 vobsCATALOG_HIC::~vobsCATALOG_HIC()
 {
+    miscDynBufDestroy(&_asking);
 }
 
 /*

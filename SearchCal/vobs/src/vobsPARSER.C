@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsPARSER.C,v 1.16 2004-10-27 08:42:54 scetre Exp $"
+ * "@(#) $Id: vobsPARSER.C,v 1.17 2004-11-17 07:58:07 gzins Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.16 2004-10-27 08:42:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.17 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -21,6 +21,7 @@ using namespace std;
 #include <string.h>
 #include <iostream>
 #include <string.h>
+#include <libxml/parser.h>
 
 /*
  * MCS Headers 
@@ -33,7 +34,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsPARSER.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -59,26 +60,23 @@ vobsPARSER::~vobsPARSER()
  *
  * \param uri URI from where XML document has to be loaded.
  * \param starList list where star has to be put.
- * \param fileName file for the save of the result of the asking
+ * \param logFileName file to save the result of the asking
  *
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
  * an error is added to the error stack. The possible errors are :
  * \li vobsERR_GDOME_CALL
- * \li vobsERR_CDATA_NOT_FOUND
  */
 mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
                                 vobsSTAR_LIST &starList,
-                                mcsSTRING256 fileName)
+                                char* logFileName)
 {
     GdomeDOMImplementation *domimpl;
     GdomeDocument          *doc;
     GdomeElement           *root;
     GdomeException         exc;
-    vobsCDATA              cData;
     vobsSTAR_LIST starListToReturn;
 
-    std::vector<vobsCDATA *> listCDATA;
-
+    vobsCDATA cData;
     logExtDbg("vobsPARSER::MainParser()");	
 
     // Get a DOMImplementation reference
@@ -90,8 +88,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     if (doc == NULL) 
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromURI", exc);
-        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
+        xmlCleanupParser();
         return FAILURE;
     }
 
@@ -101,119 +100,85 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_doc_documentElement", exc);
         gdome_el_unref(root, &exc);            
-        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
+        xmlCleanupParser();
         return FAILURE;
     }
 
     // Begin the recursif look of the tree
-    memset(&cData, '\0', sizeof(cData)); 
-    if (ParseXmlSubTree((GdomeNode *)root, listCDATA, &cData) == FAILURE)
+    if (ParseXmlSubTree((GdomeNode *)root, &cData) == FAILURE)
     {
         gdome_el_unref(root, &exc);            
-        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
+        xmlCleanupParser();
         return FAILURE;
     }
-    std::vector<vobsCDATA *>::iterator iterCDATA=listCDATA.begin();
-    while (iterCDATA!=listCDATA.end())
-    {
-        // Print out CDATA description
-        if (logGetStdoutLogLevel() >= logTEST)
-        {
-            logTest("CDATA description");
-            logTest("    Number of lines to be skipped : %d", (**iterCDATA).nbLineToJump);
-            logTest("    Number of columns in table    : %d", (**iterCDATA).colName.size());
-            std::vector<char *>::iterator colName=(**iterCDATA).colName.begin();
-            std::vector<char *>::iterator ucdName=(**iterCDATA).ucdName.begin();
-            for (unsigned int i = 0; i < (**iterCDATA).colName.size(); i++)
-            {
-                // Table header
-                if (i == 0)
-                {
-                    logTest("    +----------+--------------+--------------------+");
-                    logTest("    | Column # | Name         | UCD                |");
-                    logTest("    +----------+--------------+--------------------+");
-                }
-                logTest("    |      %3d | %12s | %18s |",
-                        i+1, *colName, *ucdName);
-                ++colName;
-                ++ucdName;
 
-                // Table footer
-                if (i == ((**iterCDATA).colName.size() -1))
-                {
-                    logTest("    +----------+--------------+--------------------+");
-                }
+    // Print out CDATA description
+    if (logGetStdoutLogLevel() >= logTEST)
+    {
+        logTest("CDATA description");
+        logTest("    Number of lines to be skipped : %d", 
+                cData.getNbLinesToSkip());
+        logTest("    Number of columns in table    : %d", cData.getNbColumns());
+        char *colName;
+        char *ucdName;
+        for (unsigned int i = 0; i < cData.getNbColumns(); i++)
+        {
+            // Table header
+            if (i == 0)
+            {
+                logTest("    +----------+--------------+--------------------+");
+                logTest("    | Column # | Name         | UCD                |");
+                logTest("    +----------+--------------+--------------------+");
             }
-        }
-        ++iterCDATA;
-    }
-
-
-    // If CDATA section has not be found
-    if (listCDATA.size() == 0)
-    {
-        // Handle error
-        errAdd(vobsERR_CDATA_NOT_FOUND);
-        gdome_el_unref(root, &exc);            
-        gdome_di_freeDoc (domimpl, doc, &exc);
-        gdome_di_unref (domimpl, &exc);
-        //return FAILURE;
-    }
-
-    else
-    {
-        FILE *f=NULL;
-        if (strcmp(fileName,"")!=0)
-        {
-            mcsSTRING256 file;
-            strcpy(file, "$INTROOT/tmp/");
-            strcat(file, fileName);
-
-            //printf("%s\n",miscResolvePath(file));
-            f=fopen(miscResolvePath(file), "w+");
-
-            if (f==NULL)
+            // Get the column name and UCD
+            if (cData.getNextColDesc(&colName, &ucdName, (i==0)) == FAILURE)
             {
-                errAdd(vobsERR_NO_FILE,miscResolvePath(file));
-            } 
-        }
-
-        iterCDATA=listCDATA.begin();
-        int i=1;
-        while (iterCDATA!=listCDATA.end())
-        {
-            //printf("%deme passage\n",i);
-            //printf("%s\n\n",(**iterCDATA).ptr);
-            // Parse the CDATA section
-            if (ParseCData((*iterCDATA), starListToReturn, f) == FAILURE)
-            {
-                gdome_el_unref(root, &exc);            
-                gdome_di_freeDoc (domimpl, doc, &exc);
-                gdome_di_unref (domimpl, &exc);
                 return FAILURE;
             }
-            ++i;
-            ++iterCDATA;
-        }
-        // Free the document structure and the DOMImplementation
-        gdome_el_unref(root, &exc);            
-        gdome_di_freeDoc (domimpl, doc, &exc);
-        gdome_di_unref (domimpl, &exc);
-        if (f!=NULL)
-        {
-            fclose(f);
-        }
 
-        // Print out the star list 
-        /*if (logGetStdoutLogLevel() >= logTEST)
-          {
-          starList.Display();
-          }*/
+            logTest("    |      %3d | %12s | %18s |",
+                    i+1, colName, ucdName);
+            ++colName;
+            ++ucdName;
 
+            // Table footer
+            if (i == (cData.getNbColumns() -1))
+            {
+                logTest("    +----------+--------------+--------------------+");
+            }
+        }
     }
 
+    // If CDATA section has been found
+    if (cData.getNbLines() != 0)
+    {
+        // Save CDATA (if requested)
+        if (logFileName != NULL)
+        {
+            cData.save(logFileName);
+        }
+
+        // Parse the CDATA section
+        if (ParseCData(&cData, starListToReturn) == FAILURE)
+        {
+            gdome_el_unref(root, &exc);            
+            gdome_doc_unref (doc, &exc);
+            gdome_di_unref (domimpl, &exc);
+            xmlCleanupParser();
+            return FAILURE;
+        }
+    }
+
+    // Free the document structure and the DOMImplementation
+    gdome_el_unref(root, &exc);            
+    gdome_doc_unref (doc, &exc);
+    gdome_di_unref (domimpl, &exc);
+    xmlCleanupParser();
+      
     starList.Clear();
     starList.Copy(starListToReturn);
 
@@ -243,7 +208,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
  * nblinetojump problem
  */
 mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
-                                          std::vector<vobsCDATA *> &listCDATA,
                                           vobsCDATA *cData)
 {
     GdomeException exc;
@@ -300,27 +264,30 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
         // If it is the CDATA section
         if (gdome_n_nodeType (child, &exc) == GDOME_CDATA_SECTION_NODE) 
         {
-            vobsCDATA *cDataForList=new vobsCDATA;
-            cDataForList->colName=cData->colName;
-            cDataForList->ucdName=cData->ucdName;
-            cDataForList->nbLineToJump=cData->nbLineToJump;     
-
             /* Get CDATA */
-            cDataForList->ptr = new char[strlen(gdome_cds_data(GDOME_CDS(child), &exc)->str)+1];
-            strcpy(cDataForList->ptr, gdome_cds_data(GDOME_CDS(child), &exc)->str);
-            if (cDataForList->ptr == NULL)
+            nodeName = gdome_cds_data(GDOME_CDS(child), &exc);
+            if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_cds_data", exc);
+                gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
                 gdome_nl_unref(nodeList, &exc);
                 return FAILURE;
             }
-            listCDATA.push_back(cDataForList);
-            //delete cDataForList->ptr;
+            else
+            {
+                if (cData->appendLines(nodeName->str) == FAILURE)
+                {
+                    gdome_str_unref(nodeName);
+                    gdome_n_unref(child, &exc);
+                    gdome_nl_unref(nodeList, &exc);
+                    return FAILURE;
+                }
+            }
+            gdome_str_unref(nodeName);
         }
-
         // If it is an element node, try to get information on attributes
-        if (gdome_n_nodeType (child, &exc) == GDOME_ELEMENT_NODE) 
+        else if (gdome_n_nodeType (child, &exc) == GDOME_ELEMENT_NODE) 
         {
             // Get the node name
             nodeName = gdome_n_nodeName(child, &exc);
@@ -351,6 +318,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_nnm_length", exc);
+                gdome_nnm_unref(attrList, &exc);
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
                 gdome_nl_unref(nodeList, &exc);
@@ -365,6 +333,8 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 if (exc != GDOME_NOEXCEPTION_ERR)
                 {
                     errAdd(vobsERR_GDOME_CALL, "gdome_nnm_item", exc);
+                    gdome_n_unref(attr, &exc);
+                    gdome_nnm_unref(attrList, &exc);
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
                     gdome_nl_unref(nodeList, &exc);
@@ -377,6 +347,9 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if (exc != GDOME_NOEXCEPTION_ERR)
                     {
                         errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                        gdome_str_unref(attrName);
+                        gdome_n_unref(attr, &exc);
+                        gdome_nnm_unref(attrList, &exc);
                         gdome_str_unref(nodeName);
                         gdome_n_unref(child, &exc);
                         gdome_nl_unref(nodeList, &exc);
@@ -388,6 +361,10 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if (exc != GDOME_NOEXCEPTION_ERR)
                     {
                         errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeValue", exc);
+                        gdome_str_unref(attrValue);
+                        gdome_str_unref(attrName);
+                        gdome_n_unref(attr, &exc);
+                        gdome_nnm_unref(attrList, &exc);
                         gdome_str_unref(nodeName);
                         gdome_n_unref(child, &exc);
                         gdome_nl_unref(nodeList, &exc);
@@ -398,7 +375,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
                         (strcmp(attrName->str, "name")  == 0))
                     {
-                        cData->colName.push_back(attrValue->str); 
+                        cData->addColName(attrValue->str); 
                     }
 
                     // If it is the UCD name of the corresponding
@@ -406,7 +383,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
                         (strcmp(attrName->str, "ucd")  == 0))
                     {
-                        cData->ucdName.push_back(attrValue->str); 
+                        cData->addUcdName(attrValue->str); 
                     }
 
                     // If it is the number of lines to be skipped
@@ -414,14 +391,17 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if ((strcmp(nodeName->str, "CSV") == 0) &&
                         (strcmp(attrName->str, "headlines")  == 0))
                     {
-                        cData->nbLineToJump = atoi(attrValue->str);
+                        cData->setNbLinesToSkip(atoi(attrValue->str)); 
                     }
+                    gdome_str_unref(attrValue);                    
+                    gdome_str_unref(attrName);                    
                 }
+                gdome_n_unref(attr, &exc);                
             }
             // If there are children nodes, parse corresponding XML sub-tree
             if (gdome_n_hasChildNodes (child, &exc))
             {
-                if (ParseXmlSubTree(child, listCDATA, cData) == FAILURE)
+                if (ParseXmlSubTree(child, cData) == FAILURE)
                 {
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
@@ -430,16 +410,21 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 }
             }
             gdome_str_unref(nodeName);
+            gdome_nnm_unref(attrList, &exc);            
         }
         // Free child instance
-        gdome_n_unref (child, &exc);
         if (exc != GDOME_NOEXCEPTION_ERR)
         {
             errAdd(vobsERR_GDOME_CALL, "gdome_n_unref", exc);
             gdome_nl_unref(nodeList, &exc);
+            gdome_n_unref (child, &exc);
             return FAILURE;
         }
+        gdome_n_unref(child, &exc);        
     }
+
+    gdome_nl_unref(nodeList, &exc);
+    
     return SUCCESS;
 }
 
@@ -466,123 +451,87 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
  * \li vobsERR_INVALID_CDATA_FORMAT
  */
 mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
-                                     vobsSTAR_LIST &starList,
-                                     FILE *f)
+                                     vobsSTAR_LIST &starList)
 {
     logExtDbg("vobsPARSER::ParseCData()");  
 
-    char *linePtr;
-    miscDYN_BUF linePtrList; // Table containing pointers to the CDATA lines
-    int nbLines;             // Number of the in CDATA
-
-    // Allocate memory to store pointers to the lines of the CDATA buffer
-    if (miscDynBufAlloc(&linePtrList, 256*sizeof(char*)) == FAILURE)
-    {
-        return FAILURE;
-    }
-    // Find all lines of the CDATA buffer (terminated by CR), convert them in
-    // individual string (i.e. replace CR by '\0') and place the corresponding
-    // pointer in line pointer table
-    int cDataLength;
-    cDataLength = strlen(cData->ptr);
-    nbLines = 0;
-    linePtr = cData->ptr;
-
-    for (int i=0; i < cDataLength; i++)
-    {       
-        if (cData->ptr[i] == '\n')
-        {
-            // Replace CR by '\0' in order to have string
-            cData->ptr[i] = '\0';
-
-            miscDynBufAppendBytes(&linePtrList, 
-                                  (char *)&linePtr, sizeof(char*));
-            nbLines++;
-            // Set line pointer to the next line
-            linePtr = &cData->ptr[i] + 1;
-        }
-    }
+    char *linePtr=NULL;
 
     // For each line in buffer, get the value for each defined UCD (value are
     // separated by '\t' character), store them in star object and add this
     // new star in the list.
-    // NOTE: Skip one line more than the value given by nbLineToJump because
-    // the CDATA buffer always contains an empty line at first.
-    char **linePtrTab;
     char *delimiters = "\t";
-    std::vector<char *>::iterator ucdName;
-    linePtrTab = (char **)miscDynBufGetBufferPointer(&linePtrList);
-    for (int i = (cData->nbLineToJump+1); i < nbLines; i++)
+    do
     {
-        int  nbUcd;
-        char *ucdValue;
-        vobsSTAR star;
-
-        // Number of UCDs per line
-        nbUcd = cData->ucdName.size();
-
-        // Scan UCD list
-        char *nextLinePtr;
-        linePtr = linePtrTab[i];
-        ucdName = cData->ucdName.begin();
-        for (int j=0; j < nbUcd; j++)
+        // Get next line
+        linePtr = cData->getNextLine(linePtr);
+        
+        if (linePtr != NULL)
         {
-            // Get the UCD value
-            ucdValue = strtok_r(linePtr, delimiters, &nextLinePtr);
-            if (ucdValue == NULL)
-            {
-                errAdd(vobsERR_INVALID_CDATA_FORMAT, linePtr);
-                //printf("titi\n");
-                //return FAILURE;
-            }
-            else
-            {
-                linePtr = nextLinePtr;
+            char line[1024];
+            int  nbUcd;
+            char *colName;
+            char *ucdName;
+            char *ucdValue;
+            vobsSTAR star;
 
-                // Check if value if empty
-                if (miscIsSpaceStr(ucdValue) == mcsTRUE)
+            // Copy line into temporary buffer
+            strcpy(line, linePtr);
+
+            // Number of UCDs per line
+            nbUcd = cData->getNbColumns();
+
+            // Scan UCD list
+            char *nextLinePtr;
+            char *currLinePtr=line;
+            for (int j=0; j < nbUcd; j++)
+            {
+                // Get the column name and UCD
+                if (cData->getNextColDesc(&colName, &ucdName, (j==0)) == FAILURE)
                 {
-                    ucdValue = vobsSTAR_PROP_NOT_SET;
+                    return FAILURE;
                 }
 
-                // Set star property
-                if (star.SetProperty(*ucdName, ucdValue) == FAILURE)
+                // Get the UCD value
+                ucdValue = strtok_r(currLinePtr, delimiters, &nextLinePtr);
+                if (ucdValue == NULL)
                 {
-                    // If ucd is not found, ignore error
-                    if (errIsInStack(MODULE_ID, 
-                                     vobsERR_INVALID_UCD_NAME) == mcsTRUE)
-                    {
-                        errResetStack();
-                    }
-                    else
-                    {
-                        return FAILURE;
-                    }
+                    // End of line reached; stop UCD scan
+                    break;
                 }
                 else
                 {
-                    if (f!=NULL)
+                    currLinePtr = nextLinePtr;
+
+                    // Check if value if empty
+                    if (miscIsSpaceStr(ucdValue) == mcsTRUE)
                     {
-                        fprintf(f, "%10s", ucdValue);
+                        ucdValue = vobsSTAR_PROP_NOT_SET;
+                    }
+
+                    // Set star property
+                    if (star.SetProperty(ucdName, ucdValue) == FAILURE)
+                    {
+                        // If ucd is not found, ignore error
+                        if (errIsInStack(MODULE_ID, 
+                                         vobsERR_INVALID_UCD_NAME) == mcsTRUE)
+                        {
+                            errResetStack();
+                        }
+                        else
+                        {
+                            return FAILURE;
+                        }
                     }
                 }
-
-                // Next UCD
-                ucdName++;
+            }
+            // Put now the star in the star list
+            if (starList.AddAtTail(star) == FAILURE)
+            {
+                return FAILURE;
             }
         }
-        if (f!=NULL)
-        {
-            fprintf(f,"\n");
-        }
-        // Put now the star in the star list
-        if (starList.AddAtTail(star) == FAILURE)
-        {
-            return FAILURE;
-        }
-    }
-
-    miscDynBufDestroy(&linePtrList);
+    } while (linePtr != NULL);
 
     return SUCCESS;
 }

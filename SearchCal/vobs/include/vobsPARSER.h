@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.4 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.5 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,19 +26,7 @@
  * header files
  */
 #include "vobsSTAR_LIST.h"
-
-/*
- * Data structure containing description of the CDATA section
- * INTERNAL USED ONLY
- */
-typedef struct
-{
-    std::vector<char*>colName; // Name of columns
-    std::vector<char*>ucdName; // Name of corresponding UCD
-    int nbLineToJump;          // Number of lines to be skipped in CDATA section
-    char *ptr;                 // Pointer to the CDATA section
-} vobsCDATA;
-
+#include "vobsCDATA.h"
 
 class vobsPARSER
 {
@@ -61,13 +49,11 @@ private:
     
     // Recurvise parsing of XML document 
     mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node,
-                                  std::vector<vobsCDATA *> &listCDATA,
                                   vobsCDATA *cData);
 
     // Parsing of the CDATA section
     mcsCOMPL_STAT ParseCData(vobsCDATA *cData,
-                             vobsSTAR_LIST &starList,
-                             FILE *f);
+                             vobsSTAR_LIST &starList);
 };
 
 #endif /*!vobsPARSER_H*/

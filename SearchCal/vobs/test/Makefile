@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2004-11-03 08:31:21 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.9 2004-11-17 07:58:07 gzins Exp $"
 #
 # Makefile of vobs module 
 #
@@ -34,7 +34,7 @@ USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/i
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV getInformation
+EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV 
 EXECUTABLES_L   = 
 
 #

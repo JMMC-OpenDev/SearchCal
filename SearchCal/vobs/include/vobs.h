@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.4 2004-09-14 09:08:24 scetre Exp $"
+* "@(#) $Id: vobs.h,v 1.5 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -20,6 +20,7 @@
 #include "vobsSTAR.h"
 #include "vobsSTAR_LIST.h"
 #include "vobsCATALOG.h"
+#include "vobsCDATA.h"
 #include "vobsPARSER.h"
 #include "vobsREQUEST.h"
 #include "vobsVIRTUAL_OBSERVATORY.h"

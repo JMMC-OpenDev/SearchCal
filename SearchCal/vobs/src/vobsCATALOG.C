@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.16 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.16 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -41,7 +41,8 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsPARSER.h"
+#include "vobsCATALOG.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -59,8 +60,6 @@ using namespace std;
 vobsCATALOG::vobsCATALOG()
 {
     strcpy(_name,"");
-    strcpy(_fileName,"");
-    strcpy(_nameForFile,"");
 }
 
 /*
@@ -72,6 +71,7 @@ vobsCATALOG::vobsCATALOG()
  */
 vobsCATALOG::~vobsCATALOG()
 {
+    miscDynBufDestroy(&_asking);
 }
 
 /*
@@ -150,23 +150,41 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::Search()");
     
-    if (logGetStdoutLogLevel() == logEXTDBG)
+    // Prepare file name to log result of the catalog request
+    mcsSTRING256 logFileName;
+    if (logGetStdoutLogLevel() >= logDEBUG)
     {
+        strcpy(logFileName, "$MCSDATA/tmp/list_");
+
+        // Get band used for search
         mcsSTRING32 band;
         request.GetConstraint(OBSERVED_BAND_ID,band);
-        //strcpy(_fileName, "$INTROOT/tmp/");
-        strcpy(_fileName, band);
-        strcat(_fileName, "_");
-        strcat(_fileName, _nameForFile);
+        strcat(logFileName, band);
+
+        // Get catalog name, and replace '/' by '_'
+        mcsSTRING32 catalogName;
+        strcpy (catalogName, _name);
+        miscReplaceChrByChr(catalogName, '/', '_');
+        strcat(logFileName, "_");
+        strcat(logFileName, catalogName);
+        if (list.IsEmpty()==mcsTRUE)
+        {
+            strcat(logFileName, "_1.log");
+        }
+        else
+        {
+            strcat(logFileName, "_2.log");
+        }
     }
+    else
+    {
+       memset((char *)logFileName , '\0', sizeof(logFileName)); 
+    }
+
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
     if (list.IsEmpty()==mcsTRUE)
     {
-        if (logGetStdoutLogLevel() == logEXTDBG)
-        {
-            strcat(_fileName, "_1.dat");
-        }
         if (PrepareAsking(request)==FAILURE)
         {
             return FAILURE;
@@ -175,10 +193,6 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     // else, the asking is writing according to the request and the star list
     else 
     {
-        if (logGetStdoutLogLevel() == logEXTDBG)
-        {
-            strcat(_fileName, "_2.dat");
-        }
         if (PrepareAsking(request, list)==FAILURE)
         { 
             return FAILURE; 
@@ -186,26 +200,13 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     }
     
     vobsPARSER parser;
-    if (parser.Parse(miscDynBufGetBufferPointer(&_asking), list, _fileName)
+    if (parser.Parse(miscDynBufGetBufferPointer(&_asking), list, logFileName)
         == FAILURE)
     {
         return FAILURE; 
     }
 
     
-    return SUCCESS;
-}
-
-/**
- * Get a catalog file name
- *
- * \param fileName the file nqme associated to the catalog
- *
- * \return Always SUCCESS
- */
-mcsCOMPL_STAT vobsCATALOG::GetFileName(char *fileName)
-{
-    strcpy(fileName, _fileName);
     return SUCCESS;
 }
 
@@ -428,6 +429,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
     logExtDbg("vobsCATALOG::GetAskingEnd()");
     // Build of the stringlist
     miscDYN_BUF strList;
+    miscDynBufInit(&strList);
     StarList2Sring(strList, list);
     
     
@@ -435,8 +437,11 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
          (miscDynBufAppendString(&_asking, miscDynBufGetBufferPointer(&strList))==FAILURE) )
     {
         errAdd(vobsERR_END_WRITE_FAILED);
+        miscDynBufDestroy(&strList);
         return FAILURE;
     }
+
+    miscDynBufDestroy(&strList);
     
     return SUCCESS;
 }

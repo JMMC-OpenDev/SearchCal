@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.C,v 1.5 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.C,v 1.6 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.5 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.6 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -38,7 +38,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsSCENARIO.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -143,19 +143,37 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             return FAILURE;
         }
        
-        if (logGetStdoutLogLevel() == logEXTDBG)
+        if (logGetStdoutLogLevel() >= logDEBUG)
         {
-            mcsSTRING256 fileName;
-            strcpy(fileName, "$INTROOT/tmp/");
-            strcat(fileName, "list_");
-            mcsSTRING256 tempName;
-            ((*_entryIterator).catalog)->GetFileName(tempName);
-            strcat(fileName, tempName);
-            vobsSTAR_LIST printList;
-            printList.Merge(tempList);
-            printList.Save(fileName);
+            mcsSTRING256 logFileName;
+            strcpy(logFileName, "$MCSDATA/tmp/");
+
+            // Get band used for search
+            mcsSTRING32 band;
+            request.GetConstraint(OBSERVED_BAND_ID,band);
+            strcat(logFileName, band);
+
+            // Get catalog name, and replace '/' by '_'
+            mcsSTRING32 catalogName;
+            ((*_entryIterator).catalog)->GetName(catalogName);
+            miscReplaceChrByChr(catalogName, '/', '_');
+            strcat(logFileName, "_");
+            strcat(logFileName, catalogName);
+
+            // Add request type (primary or not)
+            if ((*_entryIterator).listInput == NULL)
+            {
+                strcat(logFileName, "_1.log");
+            }
+            else
+            {
+                strcat(logFileName, "_2.log");
+            }
+
+            // Save resulting list
+            tempList.Save(logFileName);
         }
-        
+
         switch((*_entryIterator).action)
         {
             case COPY:

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.5 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.6 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -65,9 +65,6 @@ public:
    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
                                 vobsSTAR_LIST &list);
    
-   // Method to get the fileName associated to the catalog
-   virtual mcsCOMPL_STAT GetFileName(char *fileName);
-   
 protected:
     // Method to preare the request as a string
    virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST &request);
@@ -92,16 +89,11 @@ protected:
     // Request to write and to send to the CDS
     miscDYN_BUF _asking;
 
-    // File name to save the result of the ask of the catalog
-    mcsSTRING256 _fileName;
-    mcsSTRING32 _nameForFile;
-
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
     vobsCATALOG& operator=(const vobsCATALOG&);
     vobsCATALOG (const vobsCATALOG&);
-    
 };
 
 #endif /*!vobsCATALOG_H*/

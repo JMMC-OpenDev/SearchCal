@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.8 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.9 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.8 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.9 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -39,7 +39,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsCATALOG_ASCC.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -53,8 +53,6 @@ using namespace std;
 vobsCATALOG_ASCC::vobsCATALOG_ASCC()
 {
     strcpy(_name,"I/280");
-    strcpy(_fileName,"");
-    strcpy(_nameForFile,"I_280");
 }
 
 /*
@@ -66,6 +64,7 @@ vobsCATALOG_ASCC::vobsCATALOG_ASCC()
  */
 vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
 {
+    miscDynBufDestroy(&_asking);
 }
 
 /*
@@ -124,9 +123,13 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteAskingSpecificParameters(vobsREQUEST reques
     request.GetConstraint(OBSERVED_BAND_ID,band);
     miscDynBufAppendString(&_asking, band);
     miscDynBufAppendString(&_asking, "mag=");
-    mcsSTRING32 magRange;
-    request.GetConstraint(MAGNITUDE_RANGE_ID,magRange);
-    miscDynBufAppendString(&_asking, magRange);
+    mcsSTRING32 minMagRange;
+    request.GetConstraint(MIN_MAGNITUDE_RANGE_ID,minMagRange);
+    miscDynBufAppendString(&_asking, minMagRange);
+    miscDynBufAppendString(&_asking, "..");
+    mcsSTRING32 maxMagRange;
+    request.GetConstraint(MAX_MAGNITUDE_RANGE_ID,maxMagRange);
+    miscDynBufAppendString(&_asking, maxMagRange);
     miscDynBufAppendString(&_asking, "&-c.eq=J2000&-out.max=100&-c.bm=");
     mcsSTRING32 searchBoxRa, searchBoxDec;
     request.GetConstraint(SEARCH_BOX_RA_ID,searchBoxRa);

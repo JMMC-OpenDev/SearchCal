@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CHARM.C,v 1.4 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CHARM.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CHARM class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CHARM.C,v 1.4 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CHARM.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,7 +35,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsCATALOG_CHARM.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -49,8 +49,6 @@ using namespace std;
 vobsCATALOG_CHARM::vobsCATALOG_CHARM()
 {
     strcpy(_name,"J/A+A/386/492/charm");
-    strcpy(_fileName,"");
-    strcpy(_nameForFile,"J_A+A_386_492_charm");
 }
 
 /*
@@ -62,6 +60,7 @@ vobsCATALOG_CHARM::vobsCATALOG_CHARM()
  */
 vobsCATALOG_CHARM::~vobsCATALOG_CHARM()
 {
+    miscDynBufDestroy(&_asking);
 }
 
 

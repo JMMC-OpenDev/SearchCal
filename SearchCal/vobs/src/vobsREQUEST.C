@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.11 2004-10-26 09:37:21 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.12 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.11 2004-10-26 09:37:21 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.12 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -41,7 +41,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsREQUEST.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -54,7 +54,8 @@ static char *constraintNameList[] =
    "DEC_ID",
    "STAR_WLEN",
    "STAR_MAGNITUDE",
-   "MAGNITUDE_RANGE",
+   "MIN_MAGNITUDE_RANGE",
+   "MAX_MAGNITUDE_RANGE",   
    "SEARCH_BOX_RA",
    "SEARCH_BOX_DEC",
    "STAR_EXPECTED_VIS",
@@ -292,7 +293,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId , char *
     // Check CONSTRAINT id
     if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||
         (constraintId < -1) ||
-        (constraintId > OBSERVED_BAND_ID))
+        (constraintId > BASEMAX_ID))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
         return FAILURE;
@@ -352,7 +353,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, int *va
     // Check CONSTRAINT id
     if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||
         (constraintId < -1) ||
-        (constraintId > OBSERVED_BAND_ID))
+        (constraintId > BASEMAX_ID))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
         return FAILURE;
@@ -416,7 +417,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, float *
     // Check CONSTRAINT id
     if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||
         (constraintId < -1) ||
-        (constraintId > OBSERVED_BAND_ID))
+        (constraintId > BASEMAX_ID))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
         return FAILURE;

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.6 2004-10-26 09:37:12 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.7 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,7 +25,7 @@
  * Constants definition
  */
 
-#define vobsNB_REQUEST_CONSTRAINTS 13       /**< Number of contraints */
+#define vobsNB_REQUEST_CONSTRAINTS 14       /**< Number of contraints */
 #define vobsREQUEST_CONSTRAINT_NOT_SET  "00.00"  /**< Default value of the empty
                                           contraints */
 
@@ -51,7 +51,8 @@ typedef enum
     DEC_ID,
     STAR_WLEN_ID,           /**< wavelength id */
     STAR_MAGNITUDE_ID,      /**< So magnitude id */
-    MAGNITUDE_RANGE_ID,     /**< magnitude range id */
+    MIN_MAGNITUDE_RANGE_ID,     /**< min magnitude range id */
+    MAX_MAGNITUDE_RANGE_ID,     /**< max magnitude range id */    
     SEARCH_BOX_RA_ID,       /**< search Ra id */
     SEARCH_BOX_DEC_ID,      /**< search Dec id */
     STAR_EXPECTED_VIS_ID,   /**< visibility id */

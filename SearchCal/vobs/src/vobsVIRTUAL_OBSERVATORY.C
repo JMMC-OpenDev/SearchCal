@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.17 2004-11-03 08:31:06 scetre Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.18 2004-11-17 07:58:07 gzins Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.17 2004-11-03 08:31:06 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.18 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -79,89 +79,22 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST &request,
                                                 vobsSTAR_LIST &starList)
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::Research()");
-    int kindOfRequest;
-    if (request.GetKindOfRequest(kindOfRequest) == FAILURE)
+    vobsSCENARIO scenario;
+
+    // Get the observed band
+    mcsSTRING16 band;
+    request.GetConstraint(OBSERVED_BAND_ID, band);
+    printf("%s\n",band);
+    // load the asking scenario with the method LoadScenario
+    if (LoadScenario(band, starList, scenario) == FAILURE)
     {
         return FAILURE;
     }
-    if (kindOfRequest == 0)
-    {
-        vobsCATALOG_ASCC ascc;
+    starList.Clear();
+    scenario.Execute(request, starList);
 
-        // Interrogation 3 on I/280
-        if (ascc.Search(request, starList) == FAILURE)
-        {
-            return FAILURE;
-        }
-        if (starList.Merge(starList,0.3,0.3, mcsTRUE) == FAILURE)
-        {
-            return FAILURE;
-        }
-        
-        // II/225
-        vobsCATALOG_CIO cio;
-        vobsSTAR_LIST list1;
-        list1.Copy(starList);
-        if (cio.Search(request, list1) == FAILURE)
-        {
-            return FAILURE;
-        }
-        if (starList.Merge(list1,0.1,0.1, mcsTRUE) == FAILURE)
-        {
-            return FAILURE;
-        }
-       
-        list1.Clear();
-        // II/7A
-        vobsCATALOG_PHOTO photo;
-        list1.Copy(starList);
-        if (photo.Search(request, list1) == FAILURE)
-        {
-            return FAILURE;
-        }
-        if (starList.Merge(list1,0.1,0.1, mcsTRUE) == FAILURE)
-        {
-            return FAILURE;
-        }
-       
-        /*list1.Clear();
-        // MASS
-        vobsCATALOG_MASS mass;
-        list1.Copy(starList);
-        if (mass.Search(request, list1) == FAILURE)
-        {
-            return FAILURE;
-        }
-        if (starList.Merge(list1,0.1,0.1, mcsTRUE) == FAILURE)
-        {
-            return FAILURE;
-        }*/
-        
-        
-        if (starList.Size()==1)
-        {
-            starList.DisplayOne();
-        }
-        else
-        {
-            printf("No Info\n");
-        }
-    }
-    else
-    {
-        vobsSCENARIO scenario;
-
-        // load the asking scenario with the method LoadScenario
-        if (LoadScenario(request, starList, scenario) == FAILURE)
-        {
-            return FAILURE;
-        }
-
-        scenario.Execute(request, starList);
-
-        //starList.Display();
-        printf("number of star found : %d\n", starList.Size());
-    }
+    //starList.Display();
+    printf("number of star found : %d\n", starList.Size());
     return SUCCESS;
 }
 
@@ -183,14 +116,13 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST &request,
  * \b Errors codes: 
  * The possible errors are:
  */
-mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST     &request, 
+mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
                                                     vobsSTAR_LIST   &starList,
                                                     vobsSCENARIO    &scenario)
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::LoadScenario()");
-
-    mcsSTRING16 band;
-    request.GetConstraint(OBSERVED_BAND_ID, band);
+    //mcsSTRING16 band;
+    //request.GetConstraint(OBSERVED_BAND_ID, band);
     // Scenario in band K
     if ((strcmp(band, "I")==0)||
         (strcmp(band, "J")==0)||
@@ -199,15 +131,25 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST     &request,
     { 
         static vobsSTAR_LIST listP;
         static vobsSTAR_LIST listS;
-        // II/225
-        static vobsCATALOG_CIO cio;
-        scenario.AddEntry(&cio, NULL, &listP, COPY, 0.0, 0.0);
-        // II/7A
-        static vobsCATALOG_PHOTO photo;           
-        scenario.AddEntry(&photo, NULL, &listP, MERGE, 0.1, 0.1);
-        // I/280
-        static vobsCATALOG_ASCC ascc;
-        scenario.AddEntry(&ascc, &listP, &listS, COPY, 0.0, 0.0);
+        if (starList.IsEmpty() == mcsTRUE)
+        {
+            // II/225
+            static vobsCATALOG_CIO cio;
+            scenario.AddEntry(&cio, NULL, &listP, COPY, 0.0, 0.0);
+            // II/7A
+            static vobsCATALOG_PHOTO photo;           
+            scenario.AddEntry(&photo, NULL, &listP, MERGE, 0.1, 0.1);
+            // I/280
+            static vobsCATALOG_ASCC ascc;
+            scenario.AddEntry(&ascc, &listP, &listS, MERGE, 0.0, 0.0);
+        }
+        else
+        {
+            listP.Copy(starList);
+            // I/280
+            static vobsCATALOG_ASCC ascc;
+            scenario.AddEntry(&ascc, &listP, &listS, UPDATE_ONLY, 0.0, 0.0);
+        }
         // II/225
         static vobsCATALOG_CIO cio2;
         scenario.AddEntry(&cio2, &listS, &listS, UPDATE_ONLY, 0.1, 0.1);
@@ -242,37 +184,46 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST     &request,
     {
         static vobsSTAR_LIST listP;
         static vobsSTAR_LIST listS;
-
-        // I/280
         static vobsCATALOG_ASCC ascc;
-        scenario.AddEntry(&ascc, NULL, &listS, COPY, 0.0, 0.0);
+        
+        // I/280
+        if (starList.IsEmpty() == mcsTRUE)
+        {
+            scenario.AddEntry(&ascc, NULL, &listS, MERGE, 0.1, 0.1);
+        }
+        else
+        {
+            listP.Copy(starList);
+            scenario.AddEntry(&ascc, &listP, &listS, MERGE, 0.3, 0.3);
+        }
+
         // I/196
         static vobsCATALOG_HIC hic;
-        scenario.AddEntry(&hic, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&hic, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);
         // MASS
         static vobsCATALOG_MASS mass;
-        scenario.AddEntry(&mass, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&mass, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);
         // II/225
         static vobsCATALOG_CIO cio;
-        scenario.AddEntry(&cio, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&cio, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);
         // LBSI
         static vobsCATALOG_LBSI lbsi;
-        scenario.AddEntry(&lbsi, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&lbsi, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);
         // CHARM
         static vobsCATALOG_CHARM charm;
-        scenario.AddEntry(&charm, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&charm, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);
         // II/7A
         static vobsCATALOG_PHOTO photo;
-        scenario.AddEntry(&photo, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&photo, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);
         // BSC
         static vobsCATALOG_BSC bsc;
-        scenario.AddEntry(&bsc, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&bsc, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);
         // SBSC
         static vobsCATALOG_SBSC sbsc;
-        scenario.AddEntry(&sbsc, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&sbsc, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);
         // DENIS
         static vobsCATALOG_DENIS denis;
-        scenario.AddEntry(&denis, &listS, &listS, UPDATE_ONLY, 0.0, 0.0);            
+        scenario.AddEntry(&denis, &listS, &listS, UPDATE_ONLY, 0.3, 0.3);            
     }
     else
     {

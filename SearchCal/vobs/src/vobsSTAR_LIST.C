@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.11 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.12 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.11 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.12 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -27,12 +27,12 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsSTAR_LIST.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
 /* Local variables */
-static char *nameList[] =
+static char *propNameList[] =
 {
    "hd",
    "hip",
@@ -164,8 +164,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
     {
         if ((*iter).IsSame(star) == mcsTRUE)
         {
-            //star.Display();
-            //(*iter).Display();
             _starList.erase(iter);
             return SUCCESS;
         }
@@ -323,7 +321,7 @@ void vobsSTAR_LIST::Display(void)
     std::list<vobsSTAR>::iterator iter;
     for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
     {
-        printf("%12s",nameList[i]);
+        printf("%12s", propNameList[i]);
     }
     printf("\n");
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
@@ -360,27 +358,45 @@ void vobsSTAR_LIST::DisplayOne(void)
  * The possible errors are :
  * \li vobsERR_NO_FILE
  */
-void vobsSTAR_LIST::Save(mcsSTRING256 filename)
+mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
     
-    FILE *f=NULL;
+    FILE *filePtr;
+    mcsSTRING32 property;
 
-    f=fopen(miscResolvePath(filename), "w+");
-    if (f==NULL)
+    filePtr=fopen(miscResolvePath(filename), "w+");
+    if (filePtr==NULL)
     {
-        errAdd(vobsERR_NO_FILE, filename);
+        logWarning("could not load file %s", miscResolvePath(filename));
+        return SUCCESS;
     }
-    //else
-    //{
+    else
+    {
         // Save all element of the list which are affected 
         std::list<vobsSTAR>::iterator iter;
-    
+
         for (iter=_starList.begin(); iter != _starList.end(); iter++)
         {
-            (*iter).Save(f);
+            
+            for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+            {
+                // Get one property
+                (*iter).GetProperty((vobsUCD_ID)i, property);
+                // if the property is different from vobsSTAR_PROP_NOT_SET
+                if (strcmp(property, vobsSTAR_PROP_NOT_SET)!=0)
+                {
+                    fprintf(filePtr, "%12s", property);
+                }
+            }
+
         }
-    //}
+    }
+
+    // Close file
+    fclose(filePtr);
+
+    return SUCCESS;
 }
 
 

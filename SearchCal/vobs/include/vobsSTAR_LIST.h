@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.5 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.6 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -21,11 +21,6 @@
  */
 #include<list>
 #include"vobsSTAR.h"
-
-/*
- * constants
- */
-/*none*/
 
 class vobsSTAR_LIST
 { 
@@ -50,9 +45,9 @@ class vobsSTAR_LIST
                                 float intervalDec=0,
                                 mcsLOGICAL updateOnly=mcsFALSE);
 
-    void                  Display(void);
-    void                  DisplayOne(void);
-    void                  Save(mcsSTRING256 filename); 
+    virtual void          Display(void);
+    virtual void          DisplayOne(void);
+    virtual mcsCOMPL_STAT Save(mcsSTRING256 filename); 
  protected:
 
  private:

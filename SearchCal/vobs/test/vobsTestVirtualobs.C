@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestVirtualobs.C,v 1.9 2004-11-03 08:31:21 scetre Exp $"
+* "@(#) $Id: vobsTestVirtualobs.C,v 1.10 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualobs.C,v 1.9 2004-11-03 08:31:21 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualobs.C,v 1.10 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -83,7 +83,8 @@ int main(int argc, char *argv[])
         (request.SetConstraint(DEC_ID,"+24+06+18.5") == SUCCESS) &&
         (request.SetConstraint(STAR_WLEN_ID,"0.65") == SUCCESS) &&
         (request.SetConstraint(STAR_MAGNITUDE_ID,"2.96") == SUCCESS) &&
-        (request.SetConstraint(MAGNITUDE_RANGE_ID,"-1..5") == SUCCESS) &&
+        (request.SetConstraint(MIN_MAGNITUDE_RANGE_ID,"-1") == SUCCESS) &&
+        (request.SetConstraint(MAX_MAGNITUDE_RANGE_ID,"5") == SUCCESS) &&
         (request.SetConstraint(SEARCH_BOX_RA_ID,"1800") == SUCCESS) &&
         (request.SetConstraint(SEARCH_BOX_DEC_ID,"300") == SUCCESS) &&
         (request.SetConstraint(BASEMIN_ID,"45") == SUCCESS) &&

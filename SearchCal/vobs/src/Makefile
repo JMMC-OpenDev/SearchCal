@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2004-09-20 06:42:02 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.9 2004-11-17 07:58:07 gzins Exp $"
 #
 # Makefile of vobs module 
 #
@@ -54,6 +54,7 @@ INCLUDES        = vobs.h					\
 				  vobsSTAR.h 				\
 				  vobsSTAR_LIST.h 			\
 				  vobsREQUEST.h 			\
+				  vobsCDATA.h				\
 				  vobsPARSER.h				\
 				  vobsCATALOG.h 			\
 				  vobsCATALOG_ASCC.h 		\
@@ -68,7 +69,6 @@ INCLUDES        = vobs.h					\
 				  vobsCATALOG_SBSC.h		\
 				  vobsVIRTUAL_OBSERVATORY.h	\
 				  vobsSCENARIO.h	        \
-				  
 #
 # Libraries (public and local)
 # ----------------------------
@@ -80,6 +80,7 @@ LIBRARIES_L     =
 vobs_OBJECTS   =   vobsSTAR 				\
 				   vobsSTAR_LIST 			\
 				   vobsREQUEST 				\
+				   vobsCDATA				\
 				   vobsPARSER				\
 				   vobsCATALOG 				\
 				   vobsCATALOG_ASCC 		\
@@ -94,7 +95,6 @@ vobs_OBJECTS   =   vobsSTAR 				\
 				   vobsCATALOG_SBSC			\
 				   vobsVIRTUAL_OBSERVATORY	\
 				   vobsSCENARIO             \
-
 
 #
 # Scripts (public and local)

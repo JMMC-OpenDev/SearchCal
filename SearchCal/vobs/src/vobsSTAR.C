@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.9 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.10 2004-11-17 07:58:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.9 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.10 2004-11-17 07:58:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,7 +42,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobs.h"
+#include "vobsSTAR.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -136,7 +136,6 @@ vobsSTAR::~vobsSTAR()
  * \b Error codes:\n
  * The possible errors are :
  * \li vobsERR_INVALID_UCD_NAME
- *
  */
 mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value, 
                                     mcsLOGICAL overwrite)
@@ -148,8 +147,11 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value,
     ucdId = Ucd2Id(ucd);
     if (ucdId == UNKNOWN_ID)
     {
-        errAdd(vobsERR_INVALID_UCD_NAME, ucd);
-        return FAILURE;
+        // Because catalogs contain lots of star properties which are not
+        // needed, error is ignored to avoid useless overhead.
+        return SUCCESS;
+        //errAdd(vobsERR_INVALID_UCD_NAME, ucd);
+        //return FAILURE;
     }
     
     // Affect property value
@@ -636,24 +638,6 @@ void vobsSTAR::DisplayOne()
     }
     printf("\n");
 
-}
-
-/**
- * Save affected star properties in a file
- *
- * \param file 
- */
-void vobsSTAR::Save(FILE *file)
-{
-    //logExtDbg("vobsSTAR::Save()");
-    for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
-    {
-        if (strcmp(_properties[i], vobsSTAR_PROP_NOT_SET)!=0)
-        {
-            fprintf(file, "%12s", _properties[i]);
-        }
-    }
-    fprintf(file, "\n");
 }
 
 /*
