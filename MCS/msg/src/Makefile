@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.16 2004-12-08 18:01:27 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.17 2004-12-15 16:34:40 gzins Exp $"
 #
 # Makefile of msg
 #
@@ -16,6 +16,7 @@
 # gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
 # gzins     07-Dec-2004  Updated after C++ conversion 
 # gzins     08-Dec-2004  Removed msgMCS_ENVS and added env library 
+# gzins     14-Dec-2004  Added CDF and class for DEBUG command
 #
 #*******************************************************************************
 # REMARKS
@@ -68,7 +69,7 @@ INCLUDES        = msg.h              \
 				  msgMESSAGE.h       \
 				  msgMANAGER_IF.h    \
 				  msgSOCKET.h        \
-                  msgSOCKET_CLIENT.h \
+				  msgSOCKET_CLIENT.h \
 				  msgSOCKET_SERVER.h
 
 #
@@ -80,8 +81,9 @@ LIBRARIES_L     =
 #
 # <brief description of msg library>
 msg_OBJECTS   = msgMANAGER_IF      \
-                msgMESSAGE         \
-                msgSOCKET		   \
+				msgMESSAGE         \
+				msgSOCKET          \
+				msgDEBUG_CMD       \
 				msgSOCKET_CLIENT   \
 				msgSOCKET_SERVER
 
@@ -112,6 +114,11 @@ TCL_LIBRARIES_L =
 #
 # <brief description of tttlll library>
 tttlll_OBJECTS  = 
+
+#
+# Command Definition Files (CDF) 
+#----------------------------
+CDF_FILES       = msgDEBUG
 
 #
 # man pages to be done
