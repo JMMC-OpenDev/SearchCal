@@ -3,12 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPrivate.h,v 1.4 2004-12-07 07:41:17 gzins Exp $"
+* "@(#) $Id: msgPrivate.h,v 1.5 2004-12-09 13:55:35 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  10-Aug-2004  Ported from CILAS software
 * gzins     06-Dec-2004  Removed no longer used C functions
+* gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+* gzins     09-Dec-2004  Removed msgMANAGER_PORT_NUMBER definition
 *
 *******************************************************************************/
 
@@ -36,7 +38,6 @@ extern "C" {
 /**
  * msgManger port number for connection
  */
-#define msgMANAGER_PORT_NUMBER           1993
 #define msgMANAGER_SELECT_WIDTH          32
 #define msgMANAGER_MAX_LENGTH_QUEUE      32
 
