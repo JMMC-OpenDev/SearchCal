@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDate.h,v 1.5 2005-02-22 10:08:15 gluck Exp $"
+ * "@(#) $Id: miscDate.h,v 1.6 2005-02-22 10:23:35 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/22 10:08:15  gluck
+ * Code review corrections
+ *
  * Revision 1.4  2005/02/15 09:37:52  gzins
  * Added CVS log as file modification history
  *
@@ -18,7 +21,7 @@
 
 /**
  * \file
- * This header contains ONLY the miscDate functions declarations.
+ * Declaration of miscDate functions.
  */
 
 /* The following piece of code alternates the linkage type to C for all 

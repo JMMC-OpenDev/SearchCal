@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/02/22 10:08:15  gluck
+ * Code review corrections
+ *
  * Revision 1.10  2005/02/15 09:40:34  gzins
  * Added CVS log as file modification history
  *
@@ -22,10 +25,10 @@
 
 /**
  * \file
- * Contains all the 'misc' Date and Time related functions definitions.
+ * Definition of miscDate functions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.11 2005-02-22 10:08:15 gluck Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.12 2005-02-22 10:23:35 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
