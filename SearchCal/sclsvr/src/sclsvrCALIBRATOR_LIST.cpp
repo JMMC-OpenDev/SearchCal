@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.27 2005-02-15 15:54:00 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.28 2005-02-16 16:56:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2005/02/15 15:54:00  gzins
+ * Changed remaining SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.26  2005/02/14 14:13:19  scetre
  * Added Load and Save methods
  * change miscDYN_BUF to miscoDYN_BUF in pack and unpack methods
@@ -62,7 +65,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.27 2005-02-15 15:54:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.28 2005-02-16 16:56:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -287,8 +290,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscoDYN_BUF *buffer)
 /**
  * Method to remove calibrator which are not in a specific box
  *
- * \param scienceStarRa Right ascension coordinates of the science star
- * \param scienceStarDec Declinaison coordinates of the science star
+ * \param scienceRa Right ascension coordinates of the science star
+ * \param scienceDec Declinaison coordinates of the science star
  * \param raRange range in right ascension (one size of the box)
  * \param decRange range in declinaison (the other size of the box)
  * 

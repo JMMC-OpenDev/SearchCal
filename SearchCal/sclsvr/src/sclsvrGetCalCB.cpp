@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.13 2005-02-14 15:10:40 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.14 2005-02-16 16:56:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/02/14 15:10:40  scetre
+ * changed m..RangeMag to m..MagRange
+ *
  * Revision 1.12  2005/02/14 14:13:41  scetre
  * minor changed
  *
@@ -40,7 +43,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.13 2005-02-14 15:10:40 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.14 2005-02-16 16:56:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -64,7 +67,6 @@ using namespace std;
  * Local Headers 
  */
 #include "sclsvrSERVER.h"
-#include "sclsvrGETCAL_CMD.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 /*
@@ -76,185 +78,13 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 
     logExtDbg("sclsvrSERVER::GetCalCB()");
 
-    // GETCAL command
-    sclsvrGETCAL_CMD getCalCmd(msg.GetCommand(), msg.GetBody());
-
-    
-    // Parse command
-    if (getCalCmd.Parse() == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // Object name
-    char *objectName;
-    if (getCalCmd.GetObjectName(&objectName) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // Observed magnitude
-    mcsDOUBLE magnitude;
-    if (getCalCmd.GetMag(&magnitude) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // max calibrator return
-    mcsINT32 maxReturn;
-    if (getCalCmd.GetMaxReturn(&maxReturn) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // diff ra
-    mcsINT32 diffRa;
-    if (getCalCmd.GetDiffRa(&diffRa) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    
-    // diff dec
-    mcsINT32 diffDec;
-    if (getCalCmd.GetDiffDec(&diffDec) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // band
-    char *band;
-    if (getCalCmd.GetBand(&band) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // minRangeMag
-    mcsDOUBLE minRangeMag;
-    if (getCalCmd.GetMinMagRange(&minRangeMag) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // maxRangeMag
-    mcsDOUBLE maxRangeMag;
-    if (getCalCmd.GetMaxMagRange(&maxRangeMag) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // ra
-    char *ra;
-    if (getCalCmd.GetRa(&ra) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // dec
-    char *dec;
-    if (getCalCmd.GetDec(&dec) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // baseMin
-    mcsDOUBLE baseMin;
-    if (getCalCmd.GetBaseMin(&baseMin) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // baseMax
-    mcsDOUBLE baseMax;
-    if (getCalCmd.GetBaseMax(&baseMax) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // wlen
-    mcsDOUBLE wlen;
-    if (getCalCmd.GetWlen(&wlen) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // visibility
-    mcsDOUBLE vis;
-    if (getCalCmd.GetVis(&vis) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // visibility error
-    mcsDOUBLE visErr;
-    if (getCalCmd.GetVisErr(&visErr) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    
     // Build the request object from the parameters of the command
     sclsvrREQUEST request;
-
-    // Affect the reference object name
-    if (request.SetObjectName(objectName) == mcsFAILURE)
+    if (request.Parse(msg.GetBody()) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    // Affect the right ascension position
-    if (request.SetObjectRa(ra) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the declinaison position
-    if (request.SetObjectDec(dec) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the wavelength
-    if (request.SetObservingWlen(wlen) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the magnitude
-    if (request.SetObjectMag(magnitude) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the min of the magitude range
-    if (request.SetMinMagRange(minRangeMag) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the max of the magnitude range
-    if (request.SetMaxMagRange(maxRangeMag) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the search box ra
-    if (request.SetDeltaRa(diffRa) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the serach box dec
-    if (request.SetDeltaDec(diffDec) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the expected visibility
-    if (request.SetExpectedVisibility(vis, visErr) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the observed band
-    if (request.SetSearchBand(band) ==  mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the baseline length
-    if (request.SetBaseline(baseMin, baseMax) ==  mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
+ 
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
 
