@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.3 2004-11-22 14:19:40 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.3 2004-11-22 14:19:40 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -34,7 +34,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <iostream>
 using namespace std;
 
-
 /*
  * MCS Headers 
  */
@@ -43,22 +42,20 @@ using namespace std;
 #include "err.h"
 #include "misc.h"
 
-
 /*
  * Local Headers 
  */
 #include "msgMANAGER_IF.h"
-#include "msgMESSAGE.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
 
+int msgMANAGER_IF::_socket = -1;
 
 /*
  * Class constructor
  */
 msgMANAGER_IF::msgMANAGER_IF()
 {
-    _socket = -1;
 }
 
 /*
@@ -234,7 +231,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
  * \return an MCS logical (TRUE if the connection is up and running, or FALSE
  * otherwise)
  */
-mcsLOGICAL msgMANAGER_IF::IsConnected()
+mcsLOGICAL msgMANAGER_IF::IsConnected(void)
 {
     logExtDbg("msgMANAGER_IF::IsConnected()");
 
@@ -353,7 +350,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE        &msg,
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT msgMANAGER_IF::Disconnect()
+mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
 {
     logExtDbg("msgMANAGER_IF::Disconnect()");
 
@@ -403,17 +400,23 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect()
     return SUCCESS;
 }
  
-
-/*
- * Protected methods
+/**
+ * Get the socket descriptor for the message queue
+ *
+ * Returns the socket descriptor of the communication link with message
+ * manager. This allows a process to monitor its message queue using the UNIX
+ * function select().
+ *
+ * \warning
+ * The file descriptor returned must NOT be read or manipulated in any way
+ * (e.g. close()) by the process. Otherwise the monitoring system will lose
+ * syncronization with the message manager.
  */
+mcsINT32 msgMANAGER_IF::GetMsgQueue()
+{
+    logExtDbg("msgMANAGER_IF::GetMsgQueue()");
 
-
-
-/*
- * Private methods
- */
-
-
-
+    return _socket;
+}
+ 
 /*___oOo___*/
