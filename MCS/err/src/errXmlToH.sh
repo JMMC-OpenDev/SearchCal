@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: errXmlToH.sh,v 1.4 2005-01-31 13:01:22 mella Exp $"
+# "@(#) $Id: errXmlToH.sh,v 1.5 2005-01-31 14:26:51 mella Exp $"
 #
 # History
 # -------
-# $Log: not supported by cvs2svn $ 
+# $Log: not supported by cvs2svn $
+# Revision 1.4  2005/01/31 13:01:22  mella
+# Add log tag for history
+# 
 #
 #*******************************************************************************
 #   NAME
@@ -65,11 +68,18 @@ if [ $# != 2 ];
 then
 	echo "USAGE : $0 ../errors/<mod>Errors.xml ../include/<mod>Errors.h" >&2
 else
-	#XSD & XSL declaration files
+    # Check if error file does exist
+    if [ ! -f $1 ]
+    then
+        echo "ERROR: XML error file not found" >&2
+        exit 1;
+    fi
+    
+    #XSD & XSL declaration files
     getCfgFile "errXmlToH.xsd"
     if [ "$fullPath" = "NULL" ]
     then
-        echo "XSD Schema File Not Found" >&2
+        echo "ERROR: XSD Schema File Not Found" >&2
         exit 1;
     fi
     schema="$fullPath"
@@ -77,24 +87,24 @@ else
     getCfgFile "errXmlToH.xsl"
     if [ "$fullPath" = "NULL" ]
     then
-        echo "XSL Transformation File Not Found" >&2
+        echo "ERROR: XSL Transformation File Not Found" >&2
         exit 1;
     fi
     xslt="$fullPath"
 
     # Check Xml file validity
     xmllint --noout --schema $schema $1 &> $1.tmpres 
+    cat $1.tmpres >&2
 
-    grep "fails" $1.tmpres >&2
+    # Check if validation was ok or failed
+    grep "fail" $1.tmpres >&2
     res=$?    
     if [ $res -eq 1 ];
     then
-        echo "$val"
-
         # if output file exists then exit
         if [ -a $2 ];
         then 
-            echo "File $2 already exists." >&2
+            echo "ERROR: File $2 already exists." >&2
             echo "Please change filename and run it again." >&2
             exit 1;
         fi
@@ -102,10 +112,9 @@ else
         xsltproc $xslt $1 > $2
         echo "Header file $2 created successfully."
     else
-        cat $1.tmpres >&2
-        echo "Sorry, validation error. You need to modify $1." >&2
+        echo "ERROR: Sorry, validation error. You need to modify $1." >&2
     fi
-#    rm $1.tmpres
+    rm $1.tmpres
 fi
 
 exit 0;
