@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: timlogPrivate.h,v 1.2 2004-12-17 10:06:44 gzins Exp $"
+* "@(#) $Id: timlogPrivate.h,v 1.3 2004-12-20 07:38:02 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * sccmgr    17-Dec-2004  Created
+* gzins     20-Dec-2004  Added moduleName and fileLine fields to timlogENTRY
 *
 *
 *******************************************************************************/
@@ -36,6 +37,8 @@ extern "C" {
 /* Structure to hold one actionName<->startTime relation. */ 
 typedef struct 
 {
+    mcsMODULEID    moduleName;
+    mcsSTRING128   fileLine;
     mcsSTRING64    actionName;
     logLEVEL       level;
     struct timeval startTime;
