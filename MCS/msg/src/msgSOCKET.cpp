@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.9 2004-12-08 17:42:11 gzins Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.10 2004-12-15 15:55:35 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,6 +15,9 @@
 * gzins     06-Dec-2004  Removed copy constructor
 * gzins     08-Dec-2004  Set MessageId when sending message and set SenderId
 *                        when receiving message.
+* lafrasse  14-Dec-2004  Changed msgMESSAGE body type from statically sized
+*                        to a misc Dynamic Buffer, and removed unused API
+*
 *
 *******************************************************************************/
 
@@ -23,7 +26,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.9 2004-12-08 17:42:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.10 2004-12-15 15:55:35 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -274,7 +277,8 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
     }
 
     // Connect to the remote server
-    int status = connect(_descriptor, (sockaddr*) &_address, sizeof(_address));
+    int status;
+    status = connect(_descriptor, (sockaddr*) &_address, sizeof(_address));
     if (status != 0)
     {
         errAdd(msgERR_CONNECT, strerror(errno));
@@ -296,7 +300,8 @@ mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
     logExtDbg("msgSOCKET::Send()");
 
     // Send the given string
-    int status = send(_descriptor, string.c_str(), string.size(), MSG_NOSIGNAL);
+    int status;
+    status = send(_descriptor, string.c_str(), string.size(), MSG_NOSIGNAL);
     if ( status == -1 )
     {
         errAdd(msgERR_CONNECT, strerror(errno));
@@ -324,7 +329,8 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
     string = "";
 
     // Wait untill some data are received
-    int status = recv(_descriptor, buf, MAXRECV, 0 );
+    int status;
+    status = recv(_descriptor, buf, MAXRECV, 0 );
     if (status == -1)
     {
         errAdd(msgERR_RECV, strerror(errno));
@@ -361,18 +367,28 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
     if (msg.GetMessageId() == -1)
     {
         /* Get the system time */
-        mcsINT32 messageId;
         struct timeval  time; 
         gettimeofday(&time, NULL);
+
         // Message Id is the time of the day in msec
+        mcsINT32 messageId;
         messageId = (time.tv_sec%86400) * 1000 + time.tv_usec/1000;
         msg.SetMessageId(messageId);
     }
 
-    // Send the message
-    mcsINT32 msgLength   = msgHEADERLEN + msg.GetBodySize();
-    mcsINT32 nbBytesSent = send(_descriptor, msg.GetMessagePtr(), msgLength, 0);
+    // Send the message header
+    mcsINT32 nbBytesSent;
+    nbBytesSent = send(_descriptor, msg.GetHeaderPtr(), msgHEADERLEN, 0);
+    mcsINT32 msgLength = msgHEADERLEN;
 
+    // If the body exists, sent it
+    if (msg.GetBodySize() != 0)
+    {
+        nbBytesSent += send(_descriptor, msg.GetBodyPtr(), msg.GetBodySize(),0);
+        msgLength   += msg.GetBodySize();
+    }
+
+    // Verify that every bytes were sent
     if (nbBytesSent != msgLength)
     {
         // If no byte at all were sent...
@@ -460,8 +476,8 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     else
     {
         // Read the message header
-        nbBytesRead = recv(_descriptor, (char*)msg.GetHeaderPtr(),
-                           msgHEADERLEN, 0);
+        nbBytesRead = recv(_descriptor, (char*)msg.GetHeaderPtr(), msgHEADERLEN,
+                           0);
         if (nbBytesRead != msgHEADERLEN)
         {
             errAdd(msgERR_PARTIAL_HDR_RECV, nbBytesRead, msgHEADERLEN);
@@ -469,13 +485,27 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         }
 
         // Read the message body if it exists
-        memset(msg.GetBodyPtr(), '\0', (msgBODYMAXLEN + 1));
-        if (msg.GetBodySize() != 0)
+        mcsINT32 bodySize;
+        bodySize = msg.GetBodySize();
+        if (bodySize == -1)
         {
-            nbBytesRead = recv(_descriptor, msg.GetBodyPtr(), msg.GetBodySize(), 0);
-            if (nbBytesRead != msg.GetBodySize())
+            return FAILURE;
+        }
+
+        // If there is a body
+        if (bodySize != 0)
+        {
+            // Allocate some memory for the up comming body
+            if (msg.AllocateBody(bodySize) == FAILURE)
             {
-                errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, msg.GetBodySize());
+                return (FAILURE);
+            }
+
+            // Get the body from the socket and write it inside msgMESSAGE
+            nbBytesRead = recv(_descriptor, msg.GetBodyPtr(), bodySize, 0);
+            if (nbBytesRead != bodySize)
+            {
+                errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, bodySize);
                 return (FAILURE); 
             }
         }

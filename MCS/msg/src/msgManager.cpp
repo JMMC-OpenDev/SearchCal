@@ -1,71 +1,32 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgManager.cpp,v 1.1 2004-12-08 18:31:55 gzins Exp $"
+* "@(#) $Id: msgManager.cpp,v 1.2 2004-12-15 15:55:35 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
+* lafrasse  15-Dec-2004  Re-added Doxygen documentation from the npw removed
+*                        msgManager.c
 *
 *
 *******************************************************************************/
 
 /**
  * \file
- * brief description of the program, which ends at this dot.
+ * \e \<msgManager\> - inter-process communication server.
  *
- * \synopsis
- * \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
- *                     [\e \<option1\> ... \e \<optionN\>] 
+ * \b Synopsis:\n
+ * \e \<msgManager\>
  *
- * \param param1 : description of parameter 1, if it exists
- * \param paramN : description of parameter N, if it exists
- *
- * \n
- * \opt
- * \optname option1 : description of option 1, if it exists
- * \optname optionN : description of option N, if it exists
- * 
- * \n
- * \details
- * OPTIONAL detailed description of the c main file follows here.
- * 
- * \usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
- *
- * \n
- * \env
- * OPTIONAL. If needed, environmental variables accessed by the program. For
- * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
- * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * \n
- * \ex
- * OPTIONAL. Command example if needed
- * \n Brief example description.
- * \code
- * Insert your command example here
- * \endcode
- *
- * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * \sa 
- * 
- * \bug OPTIONAL. Known bugs list if it exists.
- * \bug Bug 1 : bug 1 description
- *
- * \todo OPTIONAL. Things to forsee list, if needed. 
- * \todo Action 1 : action 1 description
+ * \b Details:\n
+ * \e \<msgManager\> is the communication server allowing message exchange
+ * between processes. Each process connected to this server can send message to
+ * the other connected processes.
  * 
  */
 
-static char *rcsId="@(#) $Id: msgManager.cpp,v 1.1 2004-12-08 18:31:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgManager.cpp,v 1.2 2004-12-15 15:55:35 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

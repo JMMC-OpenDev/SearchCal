@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.6 2004-12-15 10:01:14 gzins Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.7 2004-12-15 15:55:35 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,10 @@
 * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
 * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
 * gzins     12-Dec-2004  Added errno.h header file
+* lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+*                        misc Dynamic Buffer (no more msgMAXLEN)
 * gzins     14-Dec-2004  Handled DEBUG command
+*
 *
 *******************************************************************************/
 
@@ -19,7 +22,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.6 2004-12-15 10:01:14 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.7 2004-12-15 15:55:35 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -194,7 +197,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                     {
                         // Read the new message
                         msgMESSAGE msg;
-                        if (process->Receive(msg, 1000) == FAILURE)
+                        if (process->Receive(msg, 0) == FAILURE)
                         {
                             errCloseStack();
                         }
@@ -449,6 +452,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
         }
         else
         {
+            
             /* If the registering command is received... */
             if (strcmp(msg.GetCommand(), msgREGISTER_CMD_NAME) == 0)
             {
@@ -546,13 +550,15 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
     }
     else
     {
-        // Put the error stack data in the message body
-        char errStackContent[msgBODYMAXLEN];
-        if (errPackStack(errStackContent, msgBODYMAXLEN) == FAILURE)
+        // Put the MCS error stack data in the message body
+        char errStackContent[errSTACK_SIZE * errMSG_MAX_LEN];
+        if (errPackStack(errStackContent, sizeof(errStackContent)) == FAILURE)
         {
             return FAILURE;
         }
-        msg.SetBody(errStackContent, msgBODYMAXLEN);
+
+        // Store the message body size
+        msg.SetBody(errStackContent, strlen(errStackContent) + 1);
 
         // Set message type to ERROR_REPLY
         msg.SetType(msgTYPE_ERROR_REPLY);

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.14 2004-12-15 10:02:33 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.15 2004-12-15 15:55:35 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -23,7 +23,10 @@
 * gzins     09-Dec-2004  Fixed bug related to default port number;
 *                        msgMANAGER_PORT_NUMBER used instead of the one given
 *                        by envLIST class
+* lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+*                        misc Dynamic Buffer (no more msgMAXLEN)
 * gzins     15-Dec-2004  Used new command name definition (with _NAME)
+*
 *
 *******************************************************************************/
 
@@ -32,7 +35,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.14 2004-12-15 10:02:33 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.15 2004-12-15 15:55:35 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -333,14 +336,14 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
     else
     {
         // Put the MCS error stack data in the message body
-        char errStackContent[msgBODYMAXLEN];
-        if (errPackStack(errStackContent, msgBODYMAXLEN) == FAILURE)
+        char errStackContent[errSTACK_SIZE * errMSG_MAX_LEN];
+        if (errPackStack(errStackContent, sizeof(errStackContent)) == FAILURE)
         {
             return FAILURE;
         }
 
         // Store the message body size
-        msg.SetBody(errStackContent, msgBODYMAXLEN);
+        msg.SetBody(errStackContent, strlen(errStackContent) + 1);
 
         // Set message type to ERROR_REPLY
         msg.SetType(msgTYPE_ERROR_REPLY);

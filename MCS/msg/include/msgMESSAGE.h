@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.13 2004-12-15 11:16:51 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.14 2004-12-15 15:55:35 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,9 +17,12 @@
 * lafrasse  01-Dec-2004  Comment refinments
 * gzins     06-Dec-2004  Updated to be only C++
 * gzins     08-Dec-2004  Added senderId and messageId, with associated methods
+* lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+*                        misc Dynamic Buffer, and removed unused API
 * gzins     15-Dec-2004  Added _NAME to command name definitions
 * gzins     15-Dec-2004  Removed msgDEBUG_CMD_NAME definition (defined in
 *                        msgDEBUG_CMD.h)
+*
 *
 *******************************************************************************/
 
@@ -32,6 +35,7 @@
  * MCS Headers 
  */
 #include "mcs.h"
+#include "misc.h"
 
 /* 
  * Constants definition
@@ -42,11 +46,6 @@
  */
 #define msgNO_WAIT               0   
 #define msgWAIT_FOREVER         -1
-
-/**
- * Maximum message size
- */
-#define msgMAXLEN                32000
 
 /**
  * Standard command names
@@ -104,16 +103,6 @@ typedef struct
     mcsBYTES32  timeStamp;       /**< Message date */
     mcsSTRING8  msgBodySize;     /**< Message body size */
 } msgHEADER;
-
-/**
- * Complete message structure
- */
-typedef struct
-{
-    msgHEADER  header;
-    char       body[msgMAXLEN - sizeof(msgHEADER)];
-
-} msgMESSAGE_RAW;
 
 /*
  * System Headers 
@@ -198,10 +187,8 @@ public:
     virtual char*            GetBodyPtr      (void);
     virtual mcsINT32         GetBodySize     (void);
     virtual mcsCOMPL_STAT    SetBody         (const char     *buffer,
-                                              const mcsINT32  bufLen=0);
-
-    virtual msgMESSAGE_RAW*  GetMessagePtr   (void);
-    virtual mcsCOMPL_STAT    SetMessage      (const msgMESSAGE_RAW* message);
+                                              const mcsUINT32 bufLen=0);
+    virtual mcsCOMPL_STAT    AllocateBody    (const mcsUINT32 bufLen);
 
     virtual void             Display         (void);
 
@@ -210,13 +197,12 @@ protected:
     
 private:
      // The members
-     msgMESSAGE_RAW _message;    // The complete message structure
-     msgHEADER*     _header;     // A convenient pointer to the _message header
-     char*          _body;       // A convenient pointer to the _message body
+     msgHEADER   _header;     // The complete message header
+     miscDYN_BUF _body;       // A convenient pointer to the _message body
 
-     mcsLOGICAL     _isInternal; /* A flag to say weither the message is of
-                                  * internal process use or not (see evh module)
-                                  */
+     mcsLOGICAL  _isInternal; /* A flag to say weither the message is of
+                               * internal process use or not (see evh module)
+                               */
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
