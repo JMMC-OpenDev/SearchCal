@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.2 2005-01-07 18:20:11 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,10 +12,10 @@
 
 /**
  * \file
- * evhIOSTREAM_KEY class definition.
+ * Definition of the evhIOSTREAM_KEY class.
  */
 
-static char *rcsId="@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.2 2005-01-07 18:20:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
