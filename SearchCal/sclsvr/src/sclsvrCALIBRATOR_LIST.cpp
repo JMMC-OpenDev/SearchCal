@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.36 2005-03-06 10:48:30 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.37 2005-03-06 20:34:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2005/03/06 10:48:30  gzins
+ * Merged FilterBySpectralType and FilterByLuminosityClass methods
+ *
  * Revision 1.35  2005/03/04 16:28:52  scetre
  * Changed Call to Save method
  *
@@ -89,7 +92,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.36 2005-03-06 10:48:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.37 2005-03-06 20:34:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -112,6 +115,7 @@ using namespace std;
  * Local Headers 
  */
 #include "sclsvrPrivate.h"
+#include "sclsvrVersion.h"
 #include "sclsvrErrors.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 
@@ -775,33 +779,58 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           vobsSTAR_PROPERTY_ID_LIST ucdList,
-                                          mcsLOGICAL extendedFormat,
-                                          sclsvrREQUEST *request)
+                                          sclsvrREQUEST &request,
+                                          mcsLOGICAL extendedFormat)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::Save()");
 
     vobsCDATA cData;
 
-    // Place request into the file (if given)
-    if (request != NULL)
+    // Add creation date and SW version
+    mcsSTRING32 utcTime;
+    miscGetUtcTimeStr(0, utcTime);
+    mcsSTRING256 line;
+    cData.AppendString("# JMMC - Calibrators group\n");
+    cData.AppendString("#\n");
+    cData.AppendString("# This file has been created by Search Calibrators Software\n");
+    sprintf(line, "#\t\tVersion : %s\n", sclsvrVERSION);
+    cData.AppendString(line);
+    sprintf(line, "#\t\tDate    : %s\n", utcTime);
+    cData.AppendString(line);
+    cData.AppendString("#\n");
+    
+    // Add request into the file (if given)
+    mcsSTRING1024 cmdParamLine;
+    if (request.GetCmdParamLine(cmdParamLine) == mcsFAILURE)
     {
-        mcsSTRING1024 cmdParamLine;
-        if (request->GetCmdParamLine(cmdParamLine) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        cData.AppendString("# ");
+        return mcsFAILURE;
+    }
+    if (strlen(cmdParamLine) != 0)
+    {
+        cData.AppendString(sclsvrREQUEST_TAG);
         cData.AppendString(cmdParamLine);
         cData.AppendString("\n");
     }
 
+    // Add format : STANDARD or EXTENDED
+    cData.AppendString(sclsvrFORMAT_TAG);
+    if (extendedFormat == mcsTRUE)
+    {
+        cData.AppendString("EXTENDED");
+    }
+    else
+    {
+        cData.AppendString("STANDARD");
+    }
+    cData.AppendString("\n");
+    
     // Store list into the CDATA
     sclsvrCALIBRATOR  calibrator;
     if (cData.Store(calibrator, *this, ucdList, extendedFormat) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    
+
     // Save into file
     if (cData.SaveInFile(filename) == mcsFAILURE)
     {
@@ -824,13 +853,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
-                                          mcsLOGICAL extendedFormat,
-                                          sclsvrREQUEST *request)
+                                          sclsvrREQUEST &request,
+                                          mcsLOGICAL extendedFormat)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::Save()");
 
     vobsSTAR_PROPERTY_ID_LIST ucdList;
-    return Save(filename, ucdList, extendedFormat, request);
+    return Save(filename, ucdList, request, extendedFormat);
 }
 
 /**
@@ -846,10 +875,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
-                                          mcsLOGICAL extendedFormat,
-                                          sclsvrREQUEST *request)
+                                          sclsvrREQUEST &request)
 {
     logExtDbg("vobsSTAR_LIST::Load()");
+
+    // File format; by default standard format is assumed
+    mcsLOGICAL extendedFormat = mcsFALSE;
 
     // Load file
     vobsCDATA cData;
@@ -858,6 +889,44 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
         return mcsFAILURE;
     }
 
+    // Look for request and format in comment lines
+    const char *from = NULL;
+    mcsSTRING1024 cmdParamLine;
+    do 
+    {
+        from = cData.GetNextCommentLine
+            (from, cmdParamLine, sizeof(mcsSTRING1024));
+        if (from != NULL)
+        {
+            if (strncmp(cmdParamLine, 
+                        sclsvrREQUEST_TAG, strlen(sclsvrREQUEST_TAG)) == 0)
+            {
+                // Remove request tag
+                miscTrimString(cmdParamLine, sclsvrREQUEST_TAG);
+
+                // Parse the found request
+                if (request.Parse(cmdParamLine) == mcsFAILURE)
+                {
+                    errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename,
+                           cmdParamLine);
+                    return mcsFAILURE;
+                }
+            }
+            else if (strncmp(cmdParamLine, 
+                             sclsvrFORMAT_TAG, strlen(sclsvrFORMAT_TAG)) == 0)
+            {
+                // Remove request tag
+                miscTrimString(cmdParamLine, sclsvrFORMAT_TAG);
+
+                // Parse the found request
+                if (strcmp(cmdParamLine, "EXTENDED") == 0)
+                {
+                    extendedFormat = mcsTRUE;
+                }
+            }
+        }
+    } while (from != NULL);
+
     // Extract list from the CDATA
     sclsvrCALIBRATOR calibrator;
     if (cData.Extract(calibrator, *this, extendedFormat) == mcsFAILURE)
@@ -865,35 +934,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
         return mcsFAILURE;
     }
     
-    // Retrieve request from the file (if given)
-    if (request != NULL)
-    {
-        // Get the first comment line
-        mcsSTRING1024 cmdParamLine;
-        if (cData.GetNextLine
-            (NULL, cmdParamLine, sizeof(mcsSTRING1024), mcsFALSE) == NULL)
-        {
-            return mcsFAILURE;
-        }
-        
-        // It should be a comment line 
-        if (cmdParamLine[0] == '#')
-        {
-            // Remove hash sign
-            miscTrimString(cmdParamLine, "# ");
-        }
-        else
-        {
-            errAdd(sclsvrERR_NO_REQUEST_LINE, filename);
-            return mcsFAILURE;
-        }
-
-        if (request->Parse(cmdParamLine) == mcsFAILURE)
-        {
-            errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename, cmdParamLine);
-            return mcsFAILURE;
-        }
-    }
     return mcsSUCCESS;
 }
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.21 2005-03-06 10:48:30 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.22 2005-03-06 20:34:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/03/06 10:48:30  gzins
+ * Merged FilterBySpectralType and FilterByLuminosityClass methods
+ *
  * Revision 1.20  2005/03/04 16:28:52  scetre
  * Changed Call to Save method
  *
@@ -111,16 +114,15 @@ public:
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                vobsSTAR_PROPERTY_ID_LIST ucdList,
-                               mcsLOGICAL extendedFormat=mcsFALSE,
-                               sclsvrREQUEST *request=NULL);
+                               sclsvrREQUEST &request,
+                               mcsLOGICAL extendedFormat=mcsFALSE);
     
     virtual mcsCOMPL_STAT Save(const char *filename,
-                               mcsLOGICAL extendedFormat=mcsFALSE,
-                               sclsvrREQUEST *request=NULL);
+                               sclsvrREQUEST &request,
+                               mcsLOGICAL extendedFormat=mcsFALSE);
 
     virtual mcsCOMPL_STAT Load(const char *filename,
-                               mcsLOGICAL extendedFormat=mcsFALSE,
-                               sclsvrREQUEST *request=NULL);
+                               sclsvrREQUEST &request);
     
     virtual mcsCOMPL_STAT GetScienceObject(sclsvrCALIBRATOR &scienceObject);
 protected:
