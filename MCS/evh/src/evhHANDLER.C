@@ -1,12 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhHANDLER.C,v 1.2 2004-11-17 09:52:13 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
-*
+* gzins     17-Nov-2004  Used evhXXX_CALLBACK pointer instead of instance
+*                        reference in order to fix bug related to the
+*                        referencing of deleted callback instance.
 *
 *******************************************************************************/
 
@@ -15,7 +17,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.C,v 1.2 2004-11-17 09:52:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -79,7 +81,8 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhCMD_KEY &key,
     if (cbList != NULL)
     {
         // Add the new callback to the list
-        if (cbList->AddAtTail(&callback) == FAILURE)
+        evhCMD_CALLBACK  *newCallback = new evhCMD_CALLBACK(callback);
+        if (cbList->AddAtTail(newCallback) == FAILURE)
         {
             return FAILURE;
         } 
@@ -88,9 +91,10 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhCMD_KEY &key,
     else
     {
         // Add it
-        evhCMD_KEY   *newKey= new evhCMD_KEY(key);
-        evhCALLBACK_LIST *newCbList = new evhCALLBACK_LIST();
-        newCbList->AddAtTail(&callback);
+        evhCMD_KEY       *newKey      = new evhCMD_KEY(key);
+        evhCMD_CALLBACK  *newCallback = new evhCMD_CALLBACK(callback);
+        evhCALLBACK_LIST *newCbList   = new evhCALLBACK_LIST();
+        newCbList->AddAtTail(newCallback);
         _eventList.push_back(pair<evhKEY *, evhCALLBACK_LIST *>(newKey, newCbList));
     }
     // End if
@@ -119,7 +123,8 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhIOSTREAM_KEY &key,
     if (cbList != NULL)
     {
         // Add the new callback to the list
-        if (cbList->AddAtTail(&callback) == FAILURE)
+        evhIOSTREAM_CALLBACK  *newCallback = new evhIOSTREAM_CALLBACK(callback);
+        if (cbList->AddAtTail(newCallback) == FAILURE)
         {
             return FAILURE;
         } 
@@ -128,9 +133,10 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhIOSTREAM_KEY &key,
     else
     {
         // Add it
-        evhIOSTREAM_KEY  *newKey= new evhIOSTREAM_KEY(key);
-        evhCALLBACK_LIST *newCbList = new evhCALLBACK_LIST();
-        newCbList->AddAtTail(&callback);
+        evhIOSTREAM_KEY      *newKey      = new evhIOSTREAM_KEY(key);
+        evhIOSTREAM_CALLBACK *newCallback = new evhIOSTREAM_CALLBACK(callback);
+        evhCALLBACK_LIST     *newCbList   = new evhCALLBACK_LIST();
+        newCbList->AddAtTail(newCallback);
         _eventList.push_back(pair<evhKEY *, evhCALLBACK_LIST *>(newKey, newCbList));
     }
     // End if
