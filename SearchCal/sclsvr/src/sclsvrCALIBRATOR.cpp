@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.37 2005-02-23 08:15:19 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.38 2005-02-23 09:06:28 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2005/02/23 08:15:19  gzins
+ * Changed DIAM_ERROR to DIAM_BV_ERROR, DIAM_VR_ERROR and DIAM_VK_ERROR
+ * Updated visibility computation to use diameters from catalogs, and if not found the computed diameter from V-K
+ *
  * Revision 1.36  2005/02/22 16:24:18  gzins
  * Updated  alxComputeAngularDiameter API
  *
@@ -56,7 +60,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.37 2005-02-23 08:15:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.38 2005-02-23 09:06:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -232,20 +236,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     // Compute visibility and visibility error
     if (ComputeVisibility(request) != mcsFAILURE)
     {
-        // If visibility has been computed
+        // If visibility and his error had been computed
         mcsFLOAT computedVis;
-        if (IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE)
+        mcsFLOAT computedVisError;
+        if ((IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE) &&
+            (IsPropertySet(sclsvrCALIBRATOR_VIS2_ERROR) == mcsTRUE))
         {
             // Get computed visibility
             GetPropertyValue(sclsvrCALIBRATOR_VIS2, &computedVis);
-
+            GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, &computedVisError);
+            
             // Get expected visibility
             mcsFLOAT expectedVis;
+            mcsFLOAT expectedVisError;
             expectedVis = request.GetExpectedVisibility();
+            expectedVisError = request.GetExpectedVisibilityError();
             
             // Check if the computed visibility is greater than the
             // requested one, and the flag accordingly
-            if (computedVis < expectedVis)
+            if ((computedVis < expectedVis) ||
+                (computedVisError > expectedVisError))
             {
                 SetPropertyValue(sclsvrCALIBRATOR_VIS2_FLAG, "NOK",
                                  vobsSTAR_COMPUTED_PROP);
