@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.10 2004-12-07 07:41:59 gzins Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.11 2004-12-22 08:37:27 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,7 +12,8 @@
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 * gzins     06-Dec-2004  Declared copy constructor as public method
 * gzins     06-Dec-2004  Declared copy constructor as private method
-*
+* gzins     22-Dec-2004  Replaced msgMESSAGE.h file inclusion by msgMESSAGE
+*                        class declaration
 *
 *******************************************************************************/
 
@@ -21,11 +22,9 @@
  * msgSOCKET class declaration.
  */
 
-
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
-
 
 /*
  * System Headers 
@@ -33,18 +32,15 @@
 #include <string>
 #include <arpa/inet.h>
 
-
 /*
  * MCS Headers 
  */
 #include "mcs.h"
 
-
 /*
  * Local Headers 
  */
-#include "msgMESSAGE.h"
-
+class msgMESSAGE;
 
 /*
  * Class declaration
