@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.11 2005-02-02 14:45:56 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.12 2005-02-03 15:52:56 gzins Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.11 2005-02-02 14:45:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.12 2005-02-03 15:52:56 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -76,149 +76,125 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
+    // Get star name 
     char *starName;
     if (getStarCmd.GetObjectName(&starName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }    
-   
-    mcsSTRING32 ra, dec;
 
-    // hostname[256], service[8],
-    char rec[256] ;
-    char *p;
+    // Get observed wavelength 
+    double lambda;
+    if (getStarCmd.GetLambda(&lambda) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }      
+
+    // Get baseline 
+    double baseline;
+    if (getStarCmd.GetLambda(&baseline) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }        
     
-    strcpy(rec, starName);
-    strcat(rec,"!") ; 
-    p=strchr(rec,'_');
-    while ( p !=NULL) 
+    // Get star position from SIMBAD
+    mcsSTRING32 ra, dec;
+    if (simcliGetCoordinates(starName, ra, dec) == mcsFAILURE)
     {
-        *p = ' ';
-        p=strchr(rec,'_');  
+        errAdd(sclsvrERR_STAR_NOT_FOUND, starName, "SIMBAD");
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    simcliGetCoordinates(rec, ra, dec);
-
+    // Prepare request to search information in other catalog
     vobsREQUEST request;
-
-
-    if (request.SetConstraint(STAR_NAME_ID,starName) == mcsFAILURE)
+    if (request.SetConstraint(STAR_NAME_ID, starName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    if (request.SetConstraint(OBSERVED_BAND_ID,"V") == mcsFAILURE)
+    if (request.SetConstraint(OBSERVED_BAND_ID, "V") == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
+    mcsSTRING32 buffer;
+    sprintf(buffer, "%f", lambda);
+    if (request.SetConstraint(STAR_WLEN_ID, buffer) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+    sprintf(buffer, "%f", baseline);
+    if (request.SetConstraint(BASEMAX_ID, buffer) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+
+    // Set star
     vobsSTAR star;
     star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra);
     star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec);
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
     vobsVIRTUAL_OBSERVATORY vobs;
-
     if (vobs.Search(request, starList) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     
-    // Build the list of calibrator
-    sclsvrCALIBRATOR_LIST calibratorList;
-
-    // get the resulting star list and create a calibrator list
-    if (calibratorList.Copy(starList) == mcsFAILURE)
+    // If the star has been found in catalog
+    if (starList.Size() != 0)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        // Build the list of calibrator
+        sclsvrCALIBRATOR_LIST calibratorList;
+
+        // Get the resulting star list and create a calibrator list
+        if (calibratorList.Copy(starList) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+        // Complete the calibrators list
+        if (calibratorList.Complete(request) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+
+        // Get first element of the list, which is the given star
+        sclsvrCALIBRATOR *calibrator;
+        calibrator = (sclsvrCALIBRATOR*)calibratorList.GetNextStar(mcsTRUE);
+        
+        // Prepare reply
+        miscDYN_BUF reply;
+        miscDynBufInit(&reply);
+        int propIdx;
+        vobsSTAR_PROPERTY *property;
+        // Add property name
+        for (propIdx = 0; propIdx < calibrator->NbProperties(); propIdx++)
+        {
+            property = calibrator->GetNextProperty((mcsLOGICAL)(propIdx==0));
+            miscDynBufAppendString(&reply, property->GetName());
+            miscDynBufAppendString(&reply, "\t");
+        }
+        miscDynBufAppendString(&reply, "\n");
+        // Add property value
+        for (propIdx = 0; propIdx < calibrator->NbProperties(); propIdx++)
+        {
+            property = calibrator->GetNextProperty((mcsLOGICAL)(propIdx==0));
+            miscDynBufAppendString(&reply, property->GetValue());
+            miscDynBufAppendString(&reply, "\t");
+        }
+        miscDynBufAppendString(&reply, "\n");
+
+        // Send reply
+        msg.SetBody(miscDynBufGetBuffer(&reply));
+        miscDynBufDestroy(&reply);
+
+        // Send reply
+        if (SendReply(msg) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
     }
-    // complete the calibrators list
-    if (calibratorList.Complete(request) == mcsFAILURE)
+    else
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    //calibratorList.Display();
-
-    // Pack the list result in a buffer in order to send it
-    miscDYN_BUF dynBuff;
-    miscDynBufInit(&dynBuff);
-
-    // Table where are stored magnitudes
-    mcsSTRING64 starPropertyValue[25];
-    // The star asked
-    vobsSTAR *tmpStar=(calibratorList.GetNextStar(mcsTRUE));
-    // A property table wanted
-    int nbProperties = 25;
-    mcsSTRING64 starProperty[25] = 
-    {
-        vobsSTAR_PHOT_JHN_B,
-        vobsSTAR_PHOT_JHN_V,
-        vobsSTAR_PHOT_JHN_R,
-        vobsSTAR_PHOT_JHN_I,
-        vobsSTAR_PHOT_JHN_J,
-        vobsSTAR_PHOT_JHN_H,
-        vobsSTAR_PHOT_JHN_K,
-        vobsSTAR_PHOT_JHN_L,
-        vobsSTAR_PHOT_JHN_M,
-        vobsSTAR_ID_ALTERNATIVE,
-        vobsSTAR_SPECT_TYPE_MK,
-        vobsSTAR_POS_GAL_LAT,
-        vobsSTAR_POS_GAL_LON,
-        vobsSTAR_POS_PARLX_TRIG,
-        sclsvrCALIBRATOR_BO,
-        sclsvrCALIBRATOR_VO,
-        sclsvrCALIBRATOR_RO,
-        sclsvrCALIBRATOR_IO,
-        sclsvrCALIBRATOR_JO,
-        sclsvrCALIBRATOR_HO,
-        sclsvrCALIBRATOR_KO,
-        sclsvrCALIBRATOR_LO,
-        sclsvrCALIBRATOR_MO,
-        sclsvrCALIBRATOR_ANGULAR_DIAMETER,
-        sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR,
-    };
-    // for each property
-    for (int i=0; i<nbProperties; i++)
-    { 
-        strcpy(starPropertyValue[i], tmpStar->GetPropertyValue(starProperty[i]));
-    }
-   
-      
-    miscDYN_BUF raBuf;
-    miscDynBufInit(&raBuf);
-    miscDYN_BUF decBuf;
-    miscDynBufInit(&decBuf);
-    miscDynBufAppendString(&raBuf, ra);
-    miscDynBufAppendString(&decBuf, dec);
-    // Replace ' ' by ':' in ra and dec 
-    miscReplaceChrByChr(miscDynBufGetBuffer(&raBuf), ' ', ':');
-    miscReplaceChrByChr(miscDynBufGetBuffer(&decBuf), ' ', ':');
-
-    // Create the dynamic buffer in which is written the star informations
-    miscDynBufAppendString(&dynBuff, starName);
-    miscDynBufAppendString(&dynBuff, " 2000.0 ");
-    miscDynBufAppendString(&dynBuff, miscDynBufGetBuffer(&raBuf));
-    miscDynBufAppendString(&dynBuff, " ");
-    miscDynBufAppendString(&dynBuff, miscDynBufGetBuffer(&decBuf));
-
-    for (int i=0; i<nbProperties; i++)
-    {
-        miscDynBufAppendString(&dynBuff, " ");
-        miscDynBufAppendString(&dynBuff, starPropertyValue[i]);
-    }
-    
-
-    
-    msg.SetBody(miscDynBufGetBuffer(&dynBuff),
-                strlen(miscDynBufGetBuffer(&dynBuff)));
-
-    miscDynBufDestroy(&dynBuff);
-    miscDynBufDestroy(&raBuf);
-    miscDynBufDestroy(&decBuf);
-    
-    //calibratorList.Clear();
-    //starList.Clear();
-    // Send reply
-    if (SendReply(msg) == mcsFAILURE)
-    {
+        errAdd(sclsvrERR_STAR_NOT_FOUND, starName, "CDS catalogs");
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
