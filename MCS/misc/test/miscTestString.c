@@ -1,18 +1,19 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestString.c,v 1.5 2004-09-27 07:48:12 scetre Exp $"
+* "@(#) $Id: miscTestString.c,v 1.6 2004-12-15 16:32:14 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
 * lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
 * lafrasse  02-Aug-2004  Changed local includes to use miscString headers
+* gzins     15-Dec-2004  Added test for miscTrimString function
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.5 2004-09-27 07:48:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.6 2004-12-15 16:32:14 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -62,6 +63,23 @@ int main (int argc, char *argv[])
     printf("   Original String  = |%s|\n", string);
     printf("   Resulting String = ");
     if (miscStripQuotes(string) == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("|%s|\n", string);
+    }
+    printf("\n\n");
+
+    /* Test of miscTrimString() */
+    printf("miscTrimString() Function Test :\n\n");
+    strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      ");
+    printf("   Original String  = |%s|\n", string);
+    printf("   Resulting String = ");
+    if (miscTrimString(string, " ") == FAILURE)
     {
         printf("FAILURE.\n");
         errDisplayStack();
