@@ -1,172 +1,47 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-12-08 06:18:22 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-12-08 18:20:22 gzins Exp $"
 #
-# Makefile of ........
+# Makefile for installation script of MCS 
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# sccmgr    08-Dec-2004  Created
-#
+# gzins     08-Dec-2004  Created
 #
 #*******************************************************************************
 # REMARKS
-#    Makefile based on the VLT/ALMA Makefile
+#    Makefile based on the VLT Makefile
 #
 #-------------------------------------------------------------------------------
 
 #
-# user definable C-compilation flags
-#USER_CFLAGS = 
-
-#
-# user definable javac compilation flags
-#USER_JFLAGS = 
-
-#
-# additional include and library search paths
-#USER_INC = 
-#USER_LIB = 
-
-#
-# MODULE CODE DESCRIPTION:
-# ------------------------
-# As a general rule:  public file are "cleaned" and "installed"  
-#                     local (_L) are not "installed".
-
-#
-# C programs (public and local)
-# -----------------------------
-EXECUTABLES     =
-EXECUTABLES_L   = 
-
-#
-# <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
-
-#
-# special compilation flags for single c sources
-#yyyyy_CFLAGS   = 
-
-#
-# Includes (.h) files (public only)
-# ---------------------------------
-INCLUDES        =
-
-#
-# Libraries (public and local)
-# ----------------------------
-LIBRARIES       =
-LIBRARIES_L     =
-
-#
-# <brief description of lllll library>
-lllll_OBJECTS   =
-
-#
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
-SCRIPTS_L       =
+SCRIPTS         = mcsinsInstallMcs
 
-#
-# TCL scripts (public and local)
-# ------------------------------
-TCL_SCRIPTS     =
-TCL_SCRIPTS_L   =
-
-#
-# <brief description of tttttt tcl-script>
-tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
-
-#
-# TCL libraries (public and local)
-# --------------------------------
-TCL_LIBRARIES   =
-TCL_LIBRARIES_L =
-
-#
-# <brief description of tttlll library>
-tttlll_OBJECTS  = 
-
-#
-# Python scripts (public and local)
-# ---------------------------------
-PY_SCRIPTS     =
-PY_SCRIPTS_L   =
-
-#
-# Jarfiles and their directories
-# ---------------------------------
-JARFILES        =
-
-#
-# <brief description of jjjfff jar files>
-jjjfff_DIRS     =
-jjjfff_EXTRAS   = 
-
-#
-# Java programs
-# ---------------------------------
-JAVA_EXECUTABLES=
-
-#
-# <brief description of jjjjjj java program>
-jjjjjj_CLASS    =
-
-#
-# man pages to be done
-# --------------------
-MANSECTIONS =
-MAN1 =
-MAN3 =
-MAN5 =
-MAN7 =
-MAN8 =
-
-#
-# other files to be installed
-#----------------------------
-INSTALL_FILES =
-
-#
-# list of all possible C-sources (used to create automatic dependencies)
-# ----------------------------------------------------------------------
-CSOURCENAMES = \
-	$(foreach exe, $(EXECUTABLES) $(EXECUTABLES_L), $($(exe)_OBJECTS)) \
-	$(foreach lib, $(LIBRARIES) $(LIBRARIES_L), $($(lib)_OBJECTS))
-
-#
-#>>>>> END OF standard rules
-
-#
-# INCLUDE STANDARDS
-# -----------------
-MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/mkfMakefile
-
-#
-# TARGETS
-# -------
-all:	do_all
+all:
 	@echo " . . . 'all' done" 
 
-clean : clean_all 
+clean :
 	@echo " . . . clean done"
 
-man   : do_man 
+man   :
 	@echo " . . . man page(s) done"
 
-install : install_all
+install :
+	@if [ "$(INTROOT)" = "" ]; \
+	then \
+		echo "Installing installation script file: ";\
+		if [ ! -d $(MCSROOT)/bin ]; \
+		then \
+			mkdir -p $(MCSROOT)/bin; \
+		fi; \
+		$(foreach file, $(SCRIPTS), echo "        `basename $(file)`" ;\
+			cp -p -f $(file).sh $(MCSROOT)/bin;) \
+			chmod 755 $(MCSROOT)/bin/$(file); \
+	fi
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
 
 
 #___oOo___
