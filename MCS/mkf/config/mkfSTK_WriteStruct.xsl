@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-    
+    <xsl:include href="mkfSTK_WritePointerType.xsl"/>
     <!--                      Fonction struct                                 -->
 	<!-- Cette fonction sert a gerer les typedef structures.                  -->
 	<!-- Elle recopie chaque champ de la structure, et genere deux fonctions  -->
 	<!-- pour en faciliter l'utilisation : structure_lire et structure_print  -->
-	
-	<xsl:template name="WriteStruct">
+    
+    <xsl:template name="WriteStruct">
 		<xsl:param name="noeud"/>
 		<xsl:variable name="type" select="$noeud/../attribute[@name='sym_name']/@value"/>
 		<xsl:value-of select="$noeud/../attribute[@name='storage']/@value"/>
