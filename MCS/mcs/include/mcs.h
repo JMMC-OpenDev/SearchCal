@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mcs.h,v 1.19 2005-02-15 12:36:53 gzins Exp $"
+ * "@(#) $Id: mcs.h,v 1.20 2005-02-16 09:22:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/02/15 12:36:53  gzins
+ * Removed SUCCESS and FAILURE definitions
+ *
  * Revision 1.18  2005/01/29 07:27:29  gzins
  *  Changed (again) command and module max lenght to 15
  *  Changed (again) process name max lenght to 31
@@ -80,6 +83,8 @@ typedef unsigned char      mcsBYTES64[64];
 typedef unsigned char      mcsBYTES80[80]; 
 typedef unsigned char      mcsBYTES128[128]; 
 typedef unsigned char      mcsBYTES256[256]; 
+typedef unsigned char      mcsBYTES512[512]; 
+typedef unsigned char      mcsBYTES1024[1024]; 
 
 typedef char               mcsSTRING4[4]; 
 typedef char               mcsSTRING8[8]; 
@@ -92,6 +97,8 @@ typedef char               mcsSTRING64[64];
 typedef char               mcsSTRING80[80]; 
 typedef char               mcsSTRING128[128]; 
 typedef char               mcsSTRING256[256];
+typedef char               mcsSTRING512[512];
+typedef char               mcsSTRING1024[1024];
 
 typedef char mcsPROCNAME[mcsPROCNAME_LEN+1];   /* Process name          */
 typedef char mcsENVNAME[mcsENVNAME_LEN+1];     /* Environnement name    */
