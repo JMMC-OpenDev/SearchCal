@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-09-10 15:44:37 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-09-10 16:48:13 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
@@ -181,8 +181,6 @@ include $(MAKEDIR)/mkfMakefile
 all:	move_scripts do_all
 	@echo " . . . 'all' done" 
 
-tet:
-	@echo '$$INTROOT' 
 # when installing for the first time, the file is created locally, so an
 # explicit cp is given to allow make to find them in ../bin 
 move_scripts:
