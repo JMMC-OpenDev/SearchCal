@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-06-02 14:06:18 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-06-03 12:13:51 berezne Exp $"
 #
 # Makefile of ........
 #
@@ -50,17 +50,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        = err.h
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = err
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-lllll_OBJECTS   =
+err_OBJECTS   = err
 
 #
 # Scripts (public and local)
