@@ -3,11 +3,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.8 2005-02-13 15:15:02 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.9 2005-02-14 08:45:24 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/02/13 15:15:02  gzins
+* Inherited from miscoDYN_BUF
+* Added method to load from file or buffer
+* Added method to store and extract list of stars
+*
 * Revision 1.7  2005/02/11 10:37:19  gzins
 * Added AddParamsDesc() method
 *
@@ -120,13 +125,12 @@ public:
             logPrint("vobs", logEXTDBG, __FILE_LINE__, "vobsCDATA::Store()");
 
             // Get property ID and place them in the buffer
-            vobsSTAR *star;
+            obj star;
             mcsINT32 propIdx;
-            star = objectList.GetNextStar(mcsFALSE);
-            for (propIdx = 0; propIdx < star->NbProperties(); propIdx++)
+            for (propIdx = 0; propIdx < star.NbProperties(); propIdx++)
             {
                 vobsSTAR_PROPERTY *property;
-                property = star->GetNextProperty((mcsLOGICAL)(propIdx==0));
+                property = star.GetNextProperty((mcsLOGICAL)(propIdx==0));
                 AppendString(property->GetId());
                 AppendString("\t");        
                 AddUcdName(property->GetId());
@@ -134,10 +138,10 @@ public:
             AppendString("\n");
 
             // Get parameter name and place them in the buffer
-            for (propIdx = 0; propIdx < star->NbProperties(); propIdx++)
+            for (propIdx = 0; propIdx < star.NbProperties(); propIdx++)
             {
                 vobsSTAR_PROPERTY *property;
-                property = star->GetNextProperty((mcsLOGICAL)(propIdx==0));
+                property = star.GetNextProperty((mcsLOGICAL)(propIdx==0));
                 AppendString(property->GetName());
                 AppendString("\t"); 
                 AddParamName(property->GetName());
@@ -145,17 +149,20 @@ public:
             AppendString("\n");
 
             // For each object of the list    
+            obj *starPtr;
             mcsUINT32 starIdx;
             for (starIdx = 0; starIdx < objectList.Size(); starIdx++)
             {
                 // Get each object of the list
-                star = objectList.GetNextStar((mcsLOGICAL)(starIdx==0));
+                starPtr = (obj *)objectList.GetNextStar((mcsLOGICAL)
+                                                        (starIdx==0));
                 // For each property of the object
-                for (propIdx = 0; propIdx < star->NbProperties(); propIdx++)
+                for (propIdx = 0; propIdx < starPtr->NbProperties(); propIdx++)
                 {
                     // Get each property
                     vobsSTAR_PROPERTY *property;
-                    property = star->GetNextProperty((mcsLOGICAL)(propIdx==0));
+                    property = starPtr->GetNextProperty((mcsLOGICAL)
+                                                        (propIdx==0));
                     // Each star property is placed in buffer in form :
                     // 'value origin confidenceIndex'
                     AppendString(property-> GetValue());
