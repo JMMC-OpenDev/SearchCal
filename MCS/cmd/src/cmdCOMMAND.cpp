@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.15 2005-01-26 10:51:30 gzins Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.16 2005-02-01 12:52:32 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/01/26 10:51:30  gzins
+ * Added CVS log as modification history.
+ * Re-formated command short description.
+ *
  * mella     15-Nov-2004  Created
  * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
  *                        fixed bug related to flag check
@@ -17,6 +21,8 @@
  *                        Removed Parse(void) method
  *                        Renamed GetHelp to GetDescription
  *                        Added GetShortDescription
+ * lafrasse  01-Feb-2005  Refined GetDescription output format and added
+ *                        GetFirstSentenceOfDescription()
  *
  ******************************************************************************/
 
@@ -27,7 +33,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.15 2005-01-26 10:51:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.16 2005-02-01 12:52:32 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -162,7 +168,61 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 }
 
 /** 
- *  Return the short dscription of the command.
+ *  Return the first sentence of the command description.
+ *
+ *  \returns the first sentence of the description string.
+ */
+mcsCOMPL_STAT cmdCOMMAND::GetFirstSentenceOfDescription(string &desc)
+{
+    logExtDbg ("cmdCOMMAND::GetFirstSentenceOfDescription()");
+
+    // Clear description
+    desc.clear();
+
+    // If there is no CDF for this command
+    if (_cdfName.size() == 0 )
+    {
+        desc.append("No description available.");
+    }
+    else
+    {
+        // Parse The cdf file to obtain full description
+        if (ParseCdf() == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if (_desc.empty())
+        {
+            // If no description does exist.
+            desc.append("No description found in CDF.");
+        }
+        else
+        {
+            // Get only the first sentence of the main description.
+            unsigned int end = _desc.find_first_of(".\n");
+
+            // If dot is found
+            if (end != string::npos)
+            {
+                // To include the dot
+                end++;
+            }
+            else
+            {
+                _desc.append(".");
+                end = _desc.length() + 1;
+            }
+
+            desc.append(_desc.substr(0, end));
+        }
+    }
+
+    return SUCCESS;
+}
+
+/** 
+ *  Return the short description of the command.
  *
  *  \returns the short description string.
  */
@@ -178,62 +238,29 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
     sprintf(cmdName, "%10s - ", _name.c_str());
     desc.append(cmdName);
 
-    // If there is no CDF for this command
-    if (_cdfName.size() == 0 )
+    // Get the first sentence of the command description
+    string firstSentence;
+    if( GetFirstSentenceOfDescription(firstSentence) == FAILURE)
     {
-        desc.append("No description available.");
+        return FAILURE;
     }
-    // Else
-    else
+
+    // if the first sentence is longer than max length
+    if(firstSentence.length() > SHORT_DESC_MAX_LEN)
     {
-        // Parse The cdf file to obtain full description
-        if (ParseCdf()==FAILURE)
-        {
-            return FAILURE;
-        }
-
-        if (_desc.empty())
-        {
-            // If no description does exist.
-            desc.append(": No description found in CDF.");
-        }
-        else
-        {
-            // Get only the first sentence of the main description.
-            unsigned int end = _desc.find_first_of(".\n");
-
-            // If dot is found
-            if (end != string::npos)
-            {
-                // To include the dot
-                end++;
-                
-                // if end is higher than max len
-                if(end > SHORT_DESC_MAX_LEN)
-                {
-                    // cut 3 before to place ... 
-                    end = SHORT_DESC_MAX_LEN - 3 ; 
-                    desc.append(_desc.substr(0, end));
-                    desc.append("...");
-                }
-                else
-                {
-                    desc.append(_desc.substr(0, end));
-                }
-            }
-            else
-            {
-                end = SHORT_DESC_MAX_LEN; 
-                desc.append(_desc.substr(0, end));
-            }  
-        }
+        // cut 3 character before the max length, to place "..."
+        firstSentence = firstSentence.substr(0, (SHORT_DESC_MAX_LEN - 3));
+        firstSentence.append("...");
     }
+
+    desc.append(firstSentence);
     desc.append("\n");
+
     return SUCCESS;
 }
 
 /** 
- *  Return the detailed dscription of the command and its parameters.
+ *  Return the detailed description of the command and its parameters.
  *
  *  \returns the detailed description string.
  */
@@ -244,14 +271,16 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
     // clear recipient
     desc.clear();
 
-    string s;
+    string synopsis;
+    string description;
+    string options;
 
     // If there is no CDF for this command
     if (_cdfName.size() == 0 )
     {
-        s.append("There is no help available for '");
-        s.append(_name);
-        s.append("' command.");
+        synopsis.append("There is no help available for '");
+        synopsis.append(_name);
+        synopsis.append("' command.");
     }
     else
     {
@@ -262,45 +291,78 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         }
 
         // append the command name
-        s.append(_name);
-        s.append(" :\n");
+        synopsis.append("NAME\n\t");
+        synopsis.append(_name);
+
+        // Append the first sentence of the command description
+        string firstSentence;
+        if (GetFirstSentenceOfDescription(firstSentence) ==
+            FAILURE)
+        {
+            return FAILURE;
+        }
+        synopsis.append(" - ");
+        synopsis.append(firstSentence);
 
         // append description of command
         if (_desc.empty())
         {
-            s.append("No description found.");
+            description.append("No description found.");
         }
         else
         {
-            s.append("Description:\n");
-            s.append(_desc);
+            description.append("\n\nDESCRIPTION\n\t");
+            description.append(_desc);
         }
-        s.append("\n");
+
+        synopsis.append("\n\nSYNOPSIS\n\t");
+        synopsis.append(_name);
 
         // append help for each parameter if any
         if (_paramList.size() > 0)
         {
-            s.append("Help on parameters:\n");
+            options.append("\n\nPARAMETERS\n");
             STRING2PARAM::iterator i = _paramList.begin();
             while(i != _paramList.end())
             {
                 cmdPARAM * child = i->second;
+
+                synopsis.append(" ");
+                if (child->IsOptional())
+                {
+                    synopsis.append("[");
+                }
+
+                synopsis.append("-");
+                synopsis.append(child->GetName());
+                synopsis.append(" <");
+                synopsis.append(child->GetType());
+                synopsis.append(">");
+
+                if (child->IsOptional())
+                {
+                    synopsis.append("]");
+                }
+
                 string childHelp = child->GetHelp();
                 if ( ! childHelp.empty() )
                 {
-                    s.append(childHelp);
-                    s.append("\n");
+                    options.append(childHelp);
+                    options.append("\n");
                 }
                 i++;
             }
         }
         else
         {
-            s.append("This command takes no parameter\n");
+            options.append("\t\tThis command takes no parameter\n");
         }
     }
-    desc.append(s);
-    
+
+    desc.append(synopsis);
+    desc.append(description);
+    desc.append(options);
+
     return SUCCESS;
 }
 
@@ -830,13 +892,13 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     mcsLOGICAL optional;
     
     /* get mandatory name */
-    if (CmdGetNodeContent(param, "name", name)==FAILURE )
+    if (CmdGetNodeContent(param, "name", name) == FAILURE)
     {
         // \todo add error
         return FAILURE;   
     }
     /* get mandatory type */
-    if (CmdGetNodeContent(param, "type", type)==FAILURE )
+    if (CmdGetNodeContent(param, "type", type) == FAILURE)
     {
         // \todo add error
         return FAILURE;   
@@ -938,8 +1000,8 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     }
     
     // Create the new Parameter and add it to the inner list of parameters
-    cmdPARAM *p = new cmdPARAM(name, desc, unit, optional);
-    if ( ! defaultValue.empty())
+    cmdPARAM *p = new cmdPARAM(name, desc, type, unit, optional);
+    if (! defaultValue.empty())
     {
         p->SetDefaultValue(defaultValue);
     }
@@ -969,23 +1031,26 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     GdomeDOMString *name, *value;
     int nbChildren;
     
-   if (tagName.empty())
-   {
+    if (tagName.empty())
+    {
         nl = gdome_el_childNodes(parentNode, &exc);
-   }else{
-       name = gdome_str_mkref (tagName.data());
-       /* Get the reference to the childrens NodeList of the root element */
-       nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
-       gdome_str_unref(name);
-   }
+    }
+    else
+    {
+        name = gdome_str_mkref (tagName.data());
+        /* Get the reference to the childrens NodeList of the root element */
+        nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
+        gdome_str_unref(name);
+    }
     
-   if (nl == NULL)
+    if (nl == NULL)
     {
         logWarning ("Illegal format encountered for cdf file "
                     ". Element.childNodes() failed "
                     "with exception #%d", exc);
         return FAILURE;
     }
+
     nbChildren = gdome_nl_length (nl, &exc);
     /* if a desc does exist */
     if (nbChildren > 0)
@@ -1050,11 +1115,11 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
         if (*i=='-')
         {
             /* If the dash is not included into a string value */
-            if (! valueZone){
-                
+            if (! valueZone)
+            {
                 if( ( *(i+1) >= '0' ) &&  ( *(i+1) <= '9' ))
                 {
-                    /* do nothing because all the tuple string must be catched */
+                    // do nothing because all the tuple string must be catched
                 }
                 else if (posEnd>0)
                 {
@@ -1062,6 +1127,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
                     {
                         return FAILURE;
                     }
+
                     posStart=posEnd;
                 }
             }

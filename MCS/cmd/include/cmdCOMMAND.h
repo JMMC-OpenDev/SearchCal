@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.h,v 1.7 2005-01-05 07:30:12 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.h,v 1.8 2005-02-01 12:52:32 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,6 +15,7 @@
 *                        Removed Parse(void) method
 *                        Renamed GetHelp to GetDescription
 *                        Added GetShortDescription
+* lafrasse  01-Feb-2005  Added GetFirstSentenceOfDescription()
 *
 *******************************************************************************/
 
@@ -59,6 +60,7 @@ public:
     virtual mcsCOMPL_STAT Parse(string cdfName="");
      
     /** methods to get command description */
+    virtual mcsCOMPL_STAT GetFirstSentenceOfDescription(string &desc);
     virtual mcsCOMPL_STAT GetShortDescription(string &desc);
     virtual mcsCOMPL_STAT GetDescription(string &desc);
     

@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.cpp,v 1.2 2004-12-15 17:40:04 gzins Exp $"
+* "@(#) $Id: cmdPARAM.cpp,v 1.3 2005-02-01 12:52:32 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * mella     15-Nov-2004  Created
 * gzins     15-Dec-2004  Added error handling
+* lafrasse  01-Feb-2005  Refined GetHelp output format and added type management
 *
 *******************************************************************************/
 
@@ -15,7 +16,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.2 2004-12-15 17:40:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.3 2005-02-01 12:52:32 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -51,15 +52,18 @@ using namespace std;
  *
  * \param name  the name of the parameter.
  * \param desc  
+ * \param type  
  * \param unit  
  * \param optional  
  *
  */
-cmdPARAM::cmdPARAM(string name, string desc, string unit, mcsLOGICAL optional)
+cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
+                   mcsLOGICAL optional)
 {
     logExtDbg("cmdPARAM::cmdPARAM");
     _name = name;
     _desc = desc;
+    _type = type;
     _unit = unit;
     _optional = optional;
 }
@@ -103,6 +107,17 @@ string cmdPARAM::GetDesc()
 {
     logExtDbg("cmdPARAM::GetDesc()");
     return _desc;
+}
+
+/** 
+ *  Get the type of the parameter.
+ *
+ *  \returns the string containing the type or empty.
+ */
+string cmdPARAM::GetType()
+{
+    logExtDbg("cmdPARAM::GetType()");
+    return _type;
 }
 
 /** 
@@ -193,64 +208,55 @@ mcsLOGICAL cmdPARAM::IsDefined()
 string cmdPARAM::GetHelp()
 {
     logExtDbg("cmdPARAM::GetHelp()");
-    string s;
-    if (_optional)
-    {
-        s.append("* optional parameter \t -- ");
-    }
-    else if (HasDefaultValue())
-    {
-        s.append("* default parameter \t -- ");
-    }
-    else
-    {
-        s.append("* mandatory parameter\t -- ");
-    }
-    
-    s.append(_name);
-    s.append(" -- \n");
 
-    /* If there is one given unit */
-    if (! _unit.empty())
+    string help;
+    help.append("\t-");
+    help.append(_name);
+
+    /* If there is one given type */
+    if (! _type.empty())
     {
-        s.append("\tUnit:[");
-        s.append(_unit);
-        s.append("]");
-    }
-    
-    /* If there is one given unit */
-    if (! _userValue.empty())
-    {
-        s.append("\tUser value:[");
-        s.append(_userValue);
-        s.append("]");
+        help.append(" <");
+        help.append(_type);
+        help.append(">");
     }
     
     /* If there is one defaultValue */
     if (HasDefaultValue())
     {
-        s.append("\tDefault value:[");
-        s.append(_defaultValue);
-        s.append("]");
+        help.append(" (default = '");
+        help.append(_defaultValue);
+        help.append("')");
     }
     
     /* If there is one given unit */
+    if (! _unit.empty())
+    {
+        help.append(" (unit = '");
+        help.append(_unit);
+        help.append("')");
+    }
+    
+    /* If there is one given description */
     if (! _desc.empty())
     {
-        s.append("\n\t");
-        s.append(_desc);
+        help.append("\n\t\t");
+        help.append(_desc);
     }
     else
     {
-        s.append("\n\tNo description");
+        help.append("\n\t\tNo description");
     }
     
-    s.append("\n");
-    return s;
+    help.append("\n");
+
+    return help;
 }
 
 /** 
- * Set the user value of the parameter. This method must be called only by cmdCOMMAND.
+ * Set the user value of the parameter. This method must be called only by
+ * cmdCOMMAND.
+ *
  * The value is extracted from the parameter line.
  *
  * \param value  the new user value.

@@ -3,12 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.h,v 1.5 2005-01-29 14:38:36 gzins Exp $"
+* "@(#) $Id: cmdPARAM.h,v 1.6 2005-02-01 12:52:32 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * mella     15-Nov-2004  Created
-*
+* lafrasse  01-Feb-2005  Added type management
 *
 *******************************************************************************/
 
@@ -41,13 +41,15 @@ class cmdPARAM
 public:
   //  cmdPARAM(){};
     // Brief description of the constructor
-    cmdPARAM(string name, string desc, string unit, mcsLOGICAL optional);
+    cmdPARAM(string name, string desc, string type, string unit,
+             mcsLOGICAL optional);
 
     // Brief description of the destructor
     virtual ~cmdPARAM();
 
     virtual string GetName();
     virtual string GetDesc();
+    virtual string GetType();
     virtual string GetUnit();
     virtual string GetUserValue();
     virtual string GetDefaultValue();
@@ -79,6 +81,8 @@ private:
     string _name;
     /** description of the parameter */
     string _desc;
+    /** type of the parameter */
+    string _type;
     /** unit of the parameter */
     string _unit;
     /** flag an optional parameter */ 
