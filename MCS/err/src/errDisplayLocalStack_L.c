@@ -5,10 +5,11 @@
 * --------  -----------	 -------------------------------------------------------
 * berezne   02-Jun-2004  created
 * gzins     17-Jun-2004  completed implementation
+* gzins     18-Nov-2004  printed out error stack on stderr
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errDisplayLocalStack_L.c,v 1.2 2004-07-22 10:08:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errDisplayLocalStack_L.c,v 1.3 2004-11-18 14:13:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,7 +53,7 @@ mcsCOMPL_STAT errDisplayLocalStack(errERROR *error)
     for ( i = 0; i < error->stackSize; i++)
     {
         /* Display error message */
-        printf("%s - %s %s %s %s %d %c %s\n",
+        fprintf(stderr, "%s - %s %s %s %s %d %c %s\n",
                 error->stack[i].timeStamp,
                 error->stack[i].moduleId,
                 error->stack[i].procName,
