@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhVersionCB.C,v 1.2 2004-11-23 09:15:19 gzins Exp $"
+* "@(#) $Id: evhVersionCB.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Definition of the VERSION callback.
  */
 
-static char *rcsId="@(#) $Id: evhVersionCB.C,v 1.2 2004-11-23 09:15:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhVersionCB.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTestTask.C,v 1.1 2004-11-18 17:40:57 gzins Exp $"
+* "@(#) $Id: evhTestTask.cpp,v 1.1 2004-12-05 19:03:25 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -34,7 +34,7 @@
 *-----------------------------------------------------------------------------*/
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: evhTestTask.C,v 1.1 2004-11-18 17:40:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestTask.cpp,v 1.1 2004-12-05 19:03:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhIOSTREAM_CALLBACK.C,v 1.2 2004-11-17 09:45:37 gzins Exp $"
+* "@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Definition of the evhIOSTREAM_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhIOSTREAM_CALLBACK.C,v 1.2 2004-11-17 09:45:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

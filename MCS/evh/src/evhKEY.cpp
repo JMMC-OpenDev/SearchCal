@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhKEY.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhKEY.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Definition of the evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhKEY.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhKEY.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.C,v 1.3 2004-12-03 08:55:39 gzins Exp $"
+* "@(#) $Id: evhTASK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -11,7 +11,7 @@
 * gzins     03-Dec-2004  Added -n command-line option  
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: evhTASK.C,v 1.3 2004-12-03 08:55:39 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -409,7 +409,7 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, mcsINT8 *argv[])
 mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
                                        mcsINT32 *optInd, mcsLOGICAL *optUsed)
 {
-    logLEVEL  level;
+    mcsINT32  level;
 
     logExtDbg ("evhTASK::ParseStdOptions ()");
     // If help option specified
@@ -440,7 +440,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
                           Name(), argv[*optInd-1], optarg);
                 return FAILURE;
             }
-            logSetFileLogLevel(level);
+            logSetFileLogLevel((logLEVEL)level);
             _fileLogOption = mcsTRUE;
         }
         else
@@ -464,7 +464,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
                           Name(), argv[*optInd-1], optarg);
                 return FAILURE;
             }
-            logSetStdoutLogLevel(level);
+            logSetStdoutLogLevel((logLEVEL)level);
             _stdoutLogOption = mcsTRUE;
         }
         else
@@ -488,7 +488,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
                           Name(), argv[*optInd-1], optarg);
                 return FAILURE;
             }
-            logSetActionLogLevel(level);
+            logSetActionLogLevel((logLEVEL)level);
             _actionLogOption = mcsTRUE;
         }
         else
@@ -512,7 +512,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
                           Name(), argv[*optInd-1], optarg);
                 return FAILURE;
             }
-            //ixacTIMER_LOGS::SetLevel(level);
+            //ixacTIMER_LOGS::SetLevel((logLEVEL)level);
             _timerLogOption = mcsTRUE;
         }
         else

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.C,v 1.4 2004-11-23 09:15:10 gzins Exp $"
+* "@(#) $Id: evhHANDLER.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -20,7 +20,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.C,v 1.4 2004-11-23 09:15:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -29,6 +29,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <iostream>
 #include <list>
 using namespace std;
+#include <errno.h>
 
 /*
  * MCS Headers 

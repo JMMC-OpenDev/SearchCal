@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.C,v 1.4 2004-12-03 08:55:12 gzins Exp $"
+* "@(#) $Id: evhSERVER.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -18,7 +18,7 @@
  * evhSERVER class definition.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.C,v 1.4 2004-12-03 08:55:12 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
