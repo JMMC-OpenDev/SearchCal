@@ -3,12 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.h,v 1.1 2004-12-07 07:39:08 gzins Exp $"
+* "@(#) $Id: msgMANAGER.h,v 1.2 2004-12-15 09:55:46 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
-*
+* gzins     15-Dec-2004  Set mcsTRUE as default value of lastReply parameter
+*                        of SendReply method
 *
 *******************************************************************************/
 
@@ -68,7 +69,7 @@ protected:
 
     virtual mcsCOMPL_STAT Forward (msgMESSAGE &msg);
     virtual mcsCOMPL_STAT SendReply (msgMESSAGE &msg,
-                                     mcsLOGICAL lastReply,
+                                     mcsLOGICAL lastReply=mcsTRUE,
                                      msgPROCESS *sender=NULL);
     virtual mcsCOMPL_STAT HandleCmd (msgMESSAGE &msg);
 private:
