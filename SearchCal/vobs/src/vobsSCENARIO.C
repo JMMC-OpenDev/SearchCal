@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.C,v 1.6 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.C,v 1.7 2004-11-23 12:33:38 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.6 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.7 2004-11-23 12:33:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -125,18 +125,15 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
     // For each entry
     while (_entryIterator != _entryList.end())
     {
+        if ( tempList.Clear() == FAILURE )
+        {
+            return FAILURE;
+        }
         if ((*_entryIterator).listInput != NULL)
         {
             tempList.Copy(*(*_entryIterator).listInput);
         }
-        else 
-        {
-            if ( tempList.Clear() == FAILURE )
-            {
-                return FAILURE;
-            }
-        }
-
+        
         // start research in entry's catalog
         if (((*_entryIterator).catalog)->Search(request, tempList) == FAILURE )
         {
