@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.28 2005-02-16 16:56:30 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.29 2005-02-16 17:34:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2005/02/16 16:56:30  gzins
+ * Fixed wrong parameter name in documentation
+ *
  * Revision 1.27  2005/02/15 15:54:00  gzins
  * Changed remaining SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -65,7 +68,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.28 2005-02-16 16:56:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.29 2005-02-16 17:34:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -266,13 +269,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscoDYN_BUF *buffer)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::UnPack()");
    
     // create a cdata object and put the content of the buffer in it
     vobsCDATA cdata;
-    if (cdata.LoadBuffer(buffer->GetBuffer()) == mcsFAILURE)
+    if (cdata.LoadBuffer(buffer) == mcsFAILURE)
     {
         return mcsFAILURE;
     }

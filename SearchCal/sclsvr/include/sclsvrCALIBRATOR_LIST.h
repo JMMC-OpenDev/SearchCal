@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.15 2005-02-14 14:12:46 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.16 2005-02-16 17:34:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/02/14 14:12:46  scetre
+ * Added Load and Save methods
+ * change miscDYN_BUF to miscoDYN_BUF in pack and unpack methods
+ *
  * Revision 1.14  2005/02/08 20:47:15  gzins
  * Updated Copy(); added filterDiameterNok and filterVisibilityNok parameters
  * Removed obsolete CopyIn(), GetCoherentDiameter() and GetVisibilityOk() methods
@@ -73,7 +77,7 @@ public:
     virtual mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
     
     virtual mcsCOMPL_STAT Pack(miscoDYN_BUF *buffer);
-    virtual mcsCOMPL_STAT UnPack(miscoDYN_BUF *buffer);
+    virtual mcsCOMPL_STAT UnPack(const char *buffer);
    
     // Method
     virtual mcsCOMPL_STAT FilterByDistanceSeparation(const char *scienceRa,
