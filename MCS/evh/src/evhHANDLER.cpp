@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhHANDLER.cpp,v 1.7 2005-02-03 06:57:01 gzins Exp $"
+ * "@(#) $Id: evhHANDLER.cpp,v 1.8 2005-02-09 16:28:28 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/03 06:57:01  gzins
+ * Updated HandleHelpCmd to format returned reply when short description is requested
+ *
  * Revision 1.6  2005/01/26 18:27:22  gzins
  * Handled timeout for callback related to command reply.
  *
@@ -31,7 +34,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.7 2005-02-03 06:57:01 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.8 2005-02-09 16:28:28 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -521,7 +524,7 @@ evhKEY *evhHANDLER::Select()
     if (_msgManager.IsConnected() == mcsTRUE)
     {
         // Get the socket descriptor for the message queue
-        msgQueueSd = _msgManager.GetMsgQueue();
+        msgQueueSd = _msgManager.GetSocketDescriptor();
 
         FD_SET(msgQueueSd, &refReadMask);
         maxSd = msgQueueSd + 1;
