@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2004-08-10 13:19:40 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.9 2004-09-10 17:10:30 gzins Exp $"
 #
 # Makefile of misc Library
 #
@@ -105,27 +105,6 @@ TCL_LIBRARIES_L =
 tttlll_OBJECTS  = 
 
 #
-# UIF panels (public and local)
-# -----------------------------
-PANELS   =
-PANELS_L = 
-
-#
-# On-Line Database Files
-# ----------------------
-DBL_CLASSES = 
-DBL_BCF =
-DBL_FLAGS =
-xxxx_DBL_FLAGS =
-
-# 
-# IDL Files and flags
-# -------------------
-IDL_FILES =
-IDL_TAO_FLAGS =
-USER_IDL =
-
-#
 # man pages to be done
 # --------------------
 MANSECTIONS =
@@ -134,22 +113,6 @@ MAN3 =
 MAN5 =
 MAN7 =
 MAN8 =
-
-#
-# local man pages
-# ---------------
-MANl =
-
-#
-# ASCII file to be converted into Framemaker-MIF
-# ----------------------------------------------
-ASCII_TO_MIF = 
-
-#
-# INS_ROOT files to be installed
-#-------------------------------
-INS_ROOT_FILES =
-INS_ROOT_DIR   =
 
 #
 # other files to be installed
@@ -176,7 +139,7 @@ CSOURCENAMES = \
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/mcsMakefile
+include $(MAKEDIR)/mkfMakefile
 
 #
 # TARGETS
