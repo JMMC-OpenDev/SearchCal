@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.7 2005-02-07 19:35:05 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.8 2005-02-11 16:21:57 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/07 19:35:05  gzins
+ * Changed RA, DEC and band type as well as prototypes of the related methods
+ *
  * Revision 1.6  2005/02/07 17:28:11  gluck
  * New vobsREQUEST class implementation
  *
@@ -16,7 +19,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.7 2005-02-07 19:35:05 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.8 2005-02-11 16:21:57 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -348,7 +351,7 @@ mcsFLOAT vobsREQUEST::GetMaxDeltaMag(void) const
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsUINT32 
+mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsINT32 
                                                      maxNbOfSelectedObjects)
 {
     logExtDbg("vobsREQUEST::SetMaxNbOfSelectedObjects()");
@@ -363,7 +366,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsUINT32
  *
  * \return maximum number of selected objects.
  */
-mcsUINT32 vobsREQUEST::GetMaxNbOfSelectedObjects(void) const
+mcsINT32 vobsREQUEST::GetMaxNbOfSelectedObjects(void) const
 {
     logExtDbg("vobsREQUEST::GetMaxNbOfSelectedObjects()");
 
