@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetPrivateHeaderFile.sh,v 1.2 2004-09-09 07:58:04 gluck Exp $"
+# "@(#) $Id: ctooGetPrivateHeaderFile.sh,v 1.3 2004-09-14 08:59:58 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -68,37 +68,8 @@ then
 fi
 
 
-#
 # Get module name
-#
-
-# Test doc directory existence
-DIR=../doc
-if [ ! -d $DIR ]
-then
-    echo "ERROR - ctooGetPrivateHeaderFile: $DIR directory does not exist."
-    echo "        Please check your module directory structure"
-    exit 1
-fi
-
-# Test moduleDescription.xml file existence
-FILE=../doc/moduleDescription.xml
-if [ ! -f $FILE ]
-then
-    echo "ERROR - ctooGetPrivateHeaderFile: $FILE file does not exist."
-    echo "        Please check your module directory structure"
-    exit 1
-fi
-    
-# Get line containing the name of the module in moduleDescription.xml file
-# => <module name="moduleName">
-lineContainingModuleName=`grep "^<module name=\".*\">$" ../doc/moduleDescription.xml`
-
-# Trim left the above extracted line => moduleName">
-rightSideOfModuleName=${lineContainingModuleName##<module name=\"}
-
-# Trim right the above extracted string to get module name => moduleName
-ROOT_NAME=${rightSideOfModuleName%%\">}
+ROOT_NAME=`ctooGetModuleName`
 
 
 #
