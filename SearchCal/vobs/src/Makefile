@@ -1,13 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-06-16 14:24:20 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-07-07 14:59:57 scetre Exp $"
 #
-# Makefile of ........
+# Makefile of vobs module 
 #
 # who       when		 what
 # --------  -----------	 -------------------------------------------------------
-# sccmgr    16-Jun-2004  created
+# scetre    16-Jun-2004  created
 #
 #
 #*******************************************************************************
@@ -22,7 +22,7 @@
 
 #
 # additional include and library search paths
-#USER_INC = 
+USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/include/ -I/usr/include/glib-2.0
 #USER_LIB = 
 
 #
@@ -34,14 +34,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = 
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+# <brief description of vobsServer program>
+vobsServer_OBJECTS   = vobsServer
+vobsServer_LDFLAGS   = -lxml2 -lgdome -lstdc++
+vobsServer_LIBS      = mcs err log bcc vobs
 
 #
 # special compilation flags for single c sources
@@ -55,12 +55,18 @@ INCLUDES        =
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = vobs
 LIBRARIES_L     =
 
 #
-# <brief description of lllll library>
-lllll_OBJECTS   =
+# <brief description of vobs library>
+vobs_OBJECTS   =    vobsCALIBRATOR_STAR      \
+					vobsCALIBRATOR_STAR_LIST \
+					vobsCATALOG              \
+					vobsREQUEST              \
+                    vobsVIRTUAL_OBSERVATORY  \
+		   	  		vobsPARSER
+
 
 #
 # Scripts (public and local)
