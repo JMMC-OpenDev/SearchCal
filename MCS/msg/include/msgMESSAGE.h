@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.10 2004-12-07 07:40:33 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.11 2004-12-08 17:44:00 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,8 +15,8 @@
 *                        msgMESSAGE, added SetLastReplyFlag method
 * scetre    30-Nov-2004  Set message body size to 32000
 * lafrasse  01-Dec-2004  Comment refinments
-* scetre    06-Dec-2004  Updated to be only C++
-*
+* gzins     06-Dec-2004  Updated to be only C++
+* gzins     08-Dec-2004  Added senderId and messageId, with associated methods
 *
 *******************************************************************************/
 
@@ -92,9 +92,10 @@ typedef struct
 {
     mcsPROCNAME sender;          /**< Sender processus name */
     mcsENVNAME  senderEnv;       /**< Sender environnement */
+    mcsSTRING8  senderId;        /**< Sender Id */
     mcsPROCNAME recipient;       /**< Receiver processus name  */
     mcsENVNAME  recipientEnv;    /**< Receiver environnement */
-    mcsSTRING8  identifier;      /**< Identifier */
+    mcsSTRING16 messageId;       /**< Message Id */
     msgTYPE     type;            /**< Message type */
     mcsCMD      command;         /**< Command name */
     mcsLOGICAL  lastReply;       /**< TRUE if it is the last answer */
@@ -167,6 +168,9 @@ public:
     virtual char*            GetSenderEnv    (void);
     virtual mcsCOMPL_STAT    SetSenderEnv    (const char     *senderEnv);
 
+    virtual mcsINT32         GetSenderId     (void);
+    virtual mcsCOMPL_STAT    SetSenderId     (const mcsINT32 id);
+
     virtual char*            GetRecipient    (void);
     virtual mcsCOMPL_STAT    SetRecipient    (const char     *recipient);
 
@@ -176,8 +180,8 @@ public:
     virtual msgTYPE          GetType         (void);
     virtual mcsCOMPL_STAT    SetType         (const msgTYPE   type);
 
-    virtual char*            GetIdentifier   (void);
-    virtual mcsCOMPL_STAT    SetIdentifier   (const char     *identificator);
+    virtual mcsINT32         GetMessageId    (void);
+    virtual mcsCOMPL_STAT    SetMessageId    (const mcsINT32 id);
 
     virtual char*            GetCommand      (void);
     virtual mcsCOMPL_STAT    SetCommand      (const char     *command);
@@ -188,7 +192,6 @@ public:
     virtual mcsLOGICAL       isInternal      (void);
 
     virtual msgHEADER*       GetHeaderPtr    (void);
-    virtual mcsCOMPL_STAT    SetHeader       (const msgHEADER* header);
 
     virtual char*            GetBodyPtr      (void);
     virtual mcsINT32         GetBodySize     (void);
@@ -198,7 +201,6 @@ public:
     virtual msgMESSAGE_RAW*  GetMessagePtr   (void);
     virtual mcsCOMPL_STAT    SetMessage      (const msgMESSAGE_RAW* message);
 
-//    friend  ostream&         operator<<      (ostream &o,const msgMESSAGE &msg);
     virtual void             Display         (void);
 
 protected:
