@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhINTERFACE.cpp,v 1.1 2005-01-07 17:43:22 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     06-Jan-2005  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhINTERFACE.cpp,v 1.2 2005-01-26 18:18:08 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     06-Jan-2005  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * evhINTERFACE class definition.
  */
 
-static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.1 2005-01-07 17:43:22 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.2 2005-01-26 18:18:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -177,7 +177,13 @@ mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
     }
     else
     {
-        evhCMD_REPLY_KEY key(command, cmdId);
+        // If no timeout given, use the default one
+        if (timeout == -2)
+        {
+            timeout = _timeout;
+        }
+        // Attach callback for reply
+        evhCMD_REPLY_KEY key(command, cmdId, timeout);
         if (evhMainHandler->AddCallback(key, callback) == mcsFAILURE)
         {
             return mcsFAILURE;
