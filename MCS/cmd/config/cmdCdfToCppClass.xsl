@@ -76,7 +76,7 @@
 class <xsl:value-of select="$className"/>: public cmdCMD
 {
 public:
-    <xsl:value-of select="$className"/>();
+<xsl:value-of select="$className"/>(string name, string params);
     virtual ~<xsl:value-of select="$className"/>();<xsl:for-each select="./params/param">
     virtual mcsCOMPL_STAT get_<xsl:value-of select="./name"/>(<xsl:call-template name="GetMcsTypeForParam"><xsl:with-param name="paramNode" select="."/></xsl:call-template> *<xsl:value-of select="./name"/>);<xsl:if test="./@optional">
     virtual mcsLOGICAL isDefined_<xsl:value-of select="./name"/>();</xsl:if><xsl:if test="boolean(./defaultValue)">
@@ -129,6 +129,7 @@ using namespace std;
  */
 #include "cmd.h"
 #include "<xsl:value-of select="$className"/>.h"
+#include "<xsl:value-of select="$moduleName"/>Private.h"
 
 /*
  * Class constructor
@@ -138,9 +139,9 @@ using namespace std;
  * Constructs a new class for an easier access for parameters of the
  * <xsl:value-of select="$className"/> COMMAND.
  */
-<xsl:value-of select="$className"/>::<xsl:value-of select="$className"/>()
+ <xsl:value-of select="$className"/>::<xsl:value-of select="$className"/>(string name, string params):cmdCMD(name, params)
 {
-
+    
 }
 
 /*
@@ -169,7 +170,7 @@ using namespace std;
  */ 
 mcsCOMPL_STAT <xsl:value-of select="$className"/>::get_<xsl:value-of select="./name"/>(<xsl:call-template name="GetMcsTypeForParam"><xsl:with-param name="paramNode" select="."/></xsl:call-template> *<xsl:value-of select="./name"/>)
 {
-    mcsLogExtDbg("<xsl:value-of select="$className"/>::get_<xsl:value-of select="./name"/>()");	
+    logExtDbg("<xsl:value-of select="$className"/>::get_<xsl:value-of select="./name"/>()");	
     return getParam("<xsl:value-of select="./name"/>",<xsl:value-of select="./name"/>);
 }
 <xsl:if test="./@optional">
@@ -180,7 +181,7 @@ mcsCOMPL_STAT <xsl:value-of select="$className"/>::get_<xsl:value-of select="./n
  */ 
 mcsLOGICAL <xsl:value-of select="$className"/>::isDefined_<xsl:value-of select="./name"/>()
 {
-    mcsLogExtDbg("<xsl:value-of select="$className"/>::isDefined_<xsl:value-of select="./name"/>()");
+    logExtDbg("<xsl:value-of select="$className"/>::isDefined_<xsl:value-of select="./name"/>()");
     return isDefined("<xsl:value-of select="./name"/>");
 }
 </xsl:if><xsl:if test="boolean(./defaultValue)">
@@ -191,7 +192,7 @@ mcsLOGICAL <xsl:value-of select="$className"/>::isDefined_<xsl:value-of select="
  */ 
 mcsLOGICAL <xsl:value-of select="$className"/>::hasDefault_<xsl:value-of select="./name"/>()
 {
-    mcsLogExtDbg("<xsl:value-of select="$className"/>::hasDefault_<xsl:value-of select="./name"/>()");
+    logExtDbg("<xsl:value-of select="$className"/>::hasDefault_<xsl:value-of select="./name"/>()");
     return hasDefault("<xsl:value-of select="./name"/>");
 }
 
@@ -204,7 +205,7 @@ mcsLOGICAL <xsl:value-of select="$className"/>::hasDefault_<xsl:value-of select=
  */ 
 mcsCOMPL_STAT <xsl:value-of select="$className"/>::getDefault_<xsl:value-of select="./name"/>(<xsl:call-template name="GetMcsTypeForParam"><xsl:with-param name="paramNode" select="."/></xsl:call-template> *<xsl:value-of select="./name"/>)
 {
-    mcsLogExtDbg("<xsl:value-of select="$className"/>::getDefault_<xsl:value-of select="./name"/>()");
+    logExtDbg("<xsl:value-of select="$className"/>::getDefault_<xsl:value-of select="./name"/>()");
     return getDefaultParam("<xsl:value-of select="./name"/>",<xsl:value-of select="./name"/>);
 }
 </xsl:if>
