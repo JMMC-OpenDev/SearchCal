@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.25 2005-02-03 08:59:31 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.26 2005-02-03 15:45:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/02/03 08:59:31  gzins
+ * Defined 'bytes' parameter as constant in miscDynBufAppendBytes
+ * Defined 'str' parameter as constant in miscDynBufAppendString
+ *
  * Revision 1.24  2005/01/28 18:35:10  gzins
  * Added automatic initialisation of structure when needed
  *
@@ -99,7 +103,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.25 2005-02-03 08:59:31 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.26 2005-02-03 15:45:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -132,22 +136,19 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local functions declaration 
  */
-static        mcsCOMPL_STAT miscDynBufCheckPositionParam(
-                                             miscDYN_BUF       *dynBuf,
-                                             const mcsUINT32   position);
+static mcsCOMPL_STAT miscDynBufCheckPositionParam(miscDYN_BUF       *dynBuf,
+                                                  const mcsUINT32   position);
 
-static        mcsCOMPL_STAT miscDynBufCheckFromToParams(
-                                             miscDYN_BUF       *dynBuf,
-                                             const mcsUINT32   from,
-                                             const mcsUINT32   to);
+static mcsCOMPL_STAT miscDynBufCheckFromToParams(miscDYN_BUF       *dynBuf,
+                                                 const mcsUINT32   from,
+                                                 const mcsUINT32   to);
 
-static        mcsCOMPL_STAT miscDynBufCheckBytesAndLengthParams(
-                                             const char        *bytes,
-                                             const mcsUINT32   length);
+static mcsCOMPL_STAT miscDynBufCheckBytesAndLengthParams(const char      *bytes,
+                                                         const mcsUINT32 length);
 
-static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
-                                             const char        *str);
+static mcsUINT32 miscDynBufVerifyStringParameterValidity(const char *str);
 
+static mcsLOGICAL miscDynBufVerifyIsInitialized(const miscDYN_BUF *dynBuf);
 
 /* 
  * Local functions definition
@@ -163,27 +164,18 @@ static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-static        mcsCOMPL_STAT miscDynBufVerifyIsInitialized(
-                                             const miscDYN_BUF        *dynBuf)
+static mcsLOGICAL miscDynBufVerifyIsInitialized(const miscDYN_BUF *dynBuf)
 {
-    /* Test the 'dynBuf' parameter validity... */
-    if (dynBuf == NULL)
-    {
-        errAdd(miscERR_NULL_PARAM, "dynBuf");
-        return mcsFAILURE;
-    }
-
     /* Test the 'pointer to itself' and 'structure identifier magic number'
      * validity...
      */
     if (dynBuf->thisPointer != dynBuf
         || dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
     {
-        errAdd(miscERR_STRUCT_NOT_INIT, "miscDYN_BUF");
-        return (mcsFAILURE);
+        return (mcsFALSE);
     }
 
-    return mcsSUCCESS;
+    return mcsTRUE;
 }
 
 /**
@@ -203,15 +195,11 @@ static        mcsCOMPL_STAT miscDynBufCheckPositionParam(
                                              const mcsUINT32    position)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
@@ -246,15 +234,11 @@ static        mcsCOMPL_STAT miscDynBufCheckFromToParams(
                                              const mcsUINT32   to)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
@@ -408,15 +392,11 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
     char *newBuf = NULL;
 
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
@@ -480,15 +460,11 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
     char *newBuf = NULL;
 
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
@@ -541,15 +517,11 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
 mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
@@ -575,15 +547,11 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
@@ -614,15 +582,11 @@ mcsCOMPL_STAT miscDynBufGetNbStoredBytes(miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *storedBytes)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
@@ -647,15 +611,11 @@ mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(
                                              mcsUINT32         *allocatedBytes)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
@@ -697,15 +657,11 @@ char*         miscDynBufGetBuffer (const miscDYN_BUF       *dynBuf)
 char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
-            return ((char*)NULL);
-        }
-        else
-        {
-            errResetStack();
+            return NULL;
         }
     }
 
@@ -733,15 +689,11 @@ char*         miscDynBufGetNextLine (miscDYN_BUF       *dynBuf,
                                              const mcsLOGICAL  skipCommentFlag)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
-            return ((char*)NULL);
-        }
-        else
-        {
-            errResetStack();
+            return NULL;
         }
     }
 
@@ -952,18 +904,14 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
                                              const char        *commentPattern)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        else
-        {
-            errResetStack();
-        }
     }
-    
+
     /* If the commentPattern parameter is undefined */
     if (commentPattern == NULL)
     {
@@ -1222,15 +1170,11 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        else
-        {
-            errResetStack();
         }
     }
 
