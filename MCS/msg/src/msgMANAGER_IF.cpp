@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.cpp,v 1.19 2005-01-26 08:42:22 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.cpp,v 1.20 2005-01-27 17:10:02 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/01/26 08:42:22  gzins
+ * Printed out reply type in log test message when receiving message
+ *
  * Revision 1.18  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
@@ -41,7 +44,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.19 2005-01-26 08:42:22 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.20 2005-01-27 17:10:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -235,8 +238,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     {
         // Put the received errors in the MCS error stack
         if (errUnpackStack(registerAnswer.GetBody(),
-                           registerAnswer.GetBodySize())
-            == mcsFAILURE)
+                           registerAnswer.GetBodySize()) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
