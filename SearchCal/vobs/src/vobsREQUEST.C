@@ -1,285 +1,518 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.4 2004-07-26 15:26:03 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* scetre    06-Jul-2004  Created
+* scetre    26-Jul-2004  Created
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"; 
+/**
+ * \file
+ * vobsREQUEST class definition.
+ */
+
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.4 2004-07-26 15:26:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
 #include <iostream>
-using namespace std;
-
+using namespace std; /**< Export standard iostream objects (cin, cout,...) */
 #define MODULE_ID "vobs"
+
 /*
  * MCS Headers 
  */
 #include "mcs.h"
 #include "log.h"
-#include "vobs.h"
-//#include "vobsPrivate.h"
+#include "err.h"
+
 
 /*
  * Local Headers 
  */
-#include "vobs.h"
-//#include "vobsREQUEST.h"
+#include "vobsREQUEST.h"
+#include "vobsPrivate.h"
+#include "vobsErrors.h"
+
+
+/* Local variables */
+static char *constraintNameList[] =
+{
+   "STAR_NAME",
+   "STAR_WLEN",
+   "STAR_MAGNITUDE",
+   "MAGNITUDE_RANGE",
+   "SEARCH_BOX_RA",
+   "SEARCH_BOX_DEC",
+   "STAR_EXPECTED_VIS",
+   "STAR_MAX_ERR_VIS",
+   "OBSERVED_BAND",
+   NULL
+};
 
 /*
- * Local Variables
+ * Class constructor
  */
 
-
-/*
- * Local Functions
+/**
+ * Build a request object.
+ *
+ * \n 
+ * \sa OPTIONAL. See also section, in witch you can refer other documented
+ * entities. Doxygen will create the link automatically.
+ * \sa For example modcppPERSON(char *name).
+ * 
  */
-// Class constructor 
 vobsREQUEST::vobsREQUEST()
 {
-    starName=NULL;
-    wavelength=NULL;
-    soMagnitude=NULL;
-    magnitudeRange=NULL;
-    searchRA=NULL;
-    searchDEC=NULL;
-    visibility=NULL;
-    reqAbsErr=NULL;
-    band=NULL;
-    build=0;
+    for (int constraintId=0; constraintId<vobsNB_REQUEST_CONSTRAINTS; constraintId++)
+    {
+        strcpy(_constraints[constraintId], vobsREQUEST_CONSTRAINT_NOT_SET);
+    }
+}
+/**
+ * Build a request object from another one (copy constructor).
+ */
+vobsREQUEST::vobsREQUEST(const vobsREQUEST &request)
+{
+    for (int constraintId=0; constraintId<vobsNB_REQUEST_CONSTRAINTS; constraintId++)
+    {
+        request.GetConstraint((vobsCONSTRAINT_ID)constraintId, (char *)_constraints[constraintId]);
+    }
 }
 
-// Class destructor 
+/*
+ * Class destructor
+ */
+
+/** Delete a request object. */
 vobsREQUEST::~vobsREQUEST()
 {
 }
-/**
- * Method to Set StarName
- */
-void vobsREQUEST::SetStarName(char *x)
-{
-  logExtDbg("vobsREQUEST::SetStarName()\n");
-  starName=new char[strlen(x)+1];
-  strcpy(starName,x);
-}
-/**
- * Method to Set WaveLength
- */
-void vobsREQUEST::SetWaveLength(char *x)
-{
-  logExtDbg("vobsREQUEST::SetWaveLength()\n");
-  wavelength=new char[strlen(x)+1];
-  strcpy(wavelength,x);
-}
-/**
- * Method to Set SoMagnitude
- */
-void vobsREQUEST::SetSoMagnitude(char *x)
-{
-  logExtDbg("vobsREQUEST::SetSoMagnitude()\n");
-  soMagnitude=new char[strlen(x+1)];
-  strcpy(soMagnitude,x);
-}
-/**
- * Method to Set MagnitudeRang
- */
-void vobsREQUEST::SetMagnitudeRange(char *x)
-{
-  logExtDbg("vobsREQUEST::SetMagnitudeRange()\n");
-  magnitudeRange=new char[strlen(x)+1];
-  strcpy(magnitudeRange,x);
-}
-/**
- * Method to Set SearchRA
- */
-void vobsREQUEST::SetSearchRA(char *x)
-{
-  logExtDbg("vobsREQUEST::SetSearchRA()\n");
-  searchRA=new char[strlen(x)+1];
-  strcpy(searchRA,x);
-}
-/**
- * Method to Set SearchDEC
- */
-void vobsREQUEST::SetSearchDEC(char *x)
-{
-  logExtDbg("vobsREQUEST::SetSearchDEC()\n");
-  searchDEC=new char[strlen(x)+1];
-  strcpy(searchDEC,x);
-}
-/**
- * Method to Set Visibility
- */
-void vobsREQUEST::SetVisibility(char *x)
-{
-  logExtDbg("vobsREQUEST::SetVisibility()\n");
-  visibility=new char[strlen(x)+1];
-  strcpy(visibility,x);
-}
-/**
- * Method to Set ReqAbsErr
- */
-void vobsREQUEST::SetReqAbsErr(char *f)
-{
-  logExtDbg("vobsREQUEST::SetReqAbsErr()\n");
-  reqAbsErr=new char[strlen(f)+1];
-  strcpy(reqAbsErr,f);
-}
-/**
- * Method to Set Band
- */
-void vobsREQUEST::SetBand(char *c)
-{
-  logExtDbg("vobsREQUEST::SetBand()\n");
-  band=new char[strlen(c)+1];
-  strcpy(band,c);
-}
-/************************************************************/
-/**
- * function to Get starName
- * \return char *starName
- */
-char *vobsREQUEST::GetStarName()
-{
-  logExtDbg("vobsREQUEST::GetStarName()\n");
 
-  return starName;
-}
-/**
- * function to Get wavelength
- * \return char *wavelength
+/*
+ * Public methods
  */
 
-char *vobsREQUEST::GetWaveLength()
-{
-  logExtDbg("vobsREQUEST::GetWaveLength()\n");
-
-  return wavelength;
-}
 /**
- * function to Get soMagnitude
- * \return char *soMagnitude
+ * Set the kind of request.
+ *
+ * Set value corresponding to the kind of request (single star search or star
+ * list search) 0 or 1
+ *
+ * \param value kind of request integer (0=star or 1=starlist)
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_INVALID_KIND_OF_REQUEST
  */
-
-char *vobsREQUEST::GetSoMagnitude()
+mcsCOMPL_STAT vobsREQUEST::SetKindOfRequest(int value)
 {
-  logExtDbg("vobsREQUEST::GetSoMagnitude()\n");
-
-  return soMagnitude;
-}
-/**
- * function to Get magnitudeRange
- * \return char *magnitudeRange
- */
-
-char *vobsREQUEST::GetMagnitudeRange()
-{
-  logExtDbg("vobsREQUEST::GetGetMagnitudeRange()\n");
-
-  return magnitudeRange;
-}
-/**
- * function to Get searchRA
- * \return char *searchRA
- */
-
-char *vobsREQUEST::GetSearchRA()
-{
-  logExtDbg("vobsREQUEST::GetSearchRA()\n");
-
-  return searchRA;
-}
-/**
- * function to Get searchDEC
- * \return char *searchDEC
- */
-
-char *vobsREQUEST::GetSearchDEC()
-{
-  logExtDbg("vobsREQUEST::GetSearchDEC()\n");
-
-  return searchDEC;
-}
-/**
- * function to Get visibility
- * \return char *visibility
- */
-
-char *vobsREQUEST::GetVisibility()
-{
-  logExtDbg("vobsREQUEST::GetVisibility()\n");
-
-  return visibility;
-}
-/**
- * function to Get reqAbsErr
- * \return char *reqAbsErr
- */
-
-char *vobsREQUEST::GetReqAbsErr()
-{
-  logExtDbg("vobsREQUEST::GetReqAbsErr()\n");
-
-  return reqAbsErr;
-}
-/**
- * function to Get band
- * \return char *band
- */
-
-char *vobsREQUEST::GetBand()
-{
-  logExtDbg("vobsREQUEST::GetBand()\n");
-
-  return band;
-}
-/**
- * Function which tell if the request is build or not : 1 if succes, else 0
- */
-int vobsREQUEST::Build()
-{
-    return build;
+    logExtDbg("vobsSTAR::SetKindOfRequest()");
+   
+    // Compare value with 0 or 1
+    // to check if the kind of request format is correct
+    if ( (value<0) || (value>1) )
+    {
+        errAdd(vobsERR_INVALID_KIND_OF_REQUEST,value);
+        return FAILURE;
+    }
+    
+    // Affect kind of request value
+    kindOfRequest=value;
+    
+    return SUCCESS;
 }
 
 /**
- * Method to create the request according to the parameters
+ * Get the kind of request.
+ *
+ * \param value Kind of request to get as an integer
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_KIND_OF_REQUEST_NOT_SET
+ *
  */
-void vobsREQUEST::Create(char *name, char *wvl ,char *sMg,char *mRg,char *sRa,char *sDEC,char *vis,char *rAerr, char*b)
+mcsCOMPL_STAT vobsREQUEST::GetKindOfRequest(int &value)
 {
-  logExtDbg("vobsREQUEST::Create()\n");
+    logExtDbg("vobsSTAR::GetKindOfRequest()");
 
-  SetStarName(name);
-  SetWaveLength(wvl);
-  SetSoMagnitude(sMg);
-  SetMagnitudeRange(mRg);
-  SetSearchRA(sRa);
-  SetSearchDEC(sDEC);
-  SetVisibility(vis);
-  SetReqAbsErr(rAerr);
-  SetBand(b);
-  build=1;
-  
-  logTest("star name : %s\n",starName);
-  logTest("wavelength : %s\n",wavelength);
-  logTest("soMagnitude : %s\n",soMagnitude);
-  logTest("magnitudeRange : %s\n",magnitudeRange);
-  logTest("searchRA : %s\n",searchRA);
-  logTest("searchDEC : %s\n",searchDEC);
-  logTest("visibility : %s\n",visibility);
-  logTest("reqAbsErr : %s\n",reqAbsErr);
-  logTest("band : %s\n",band);
-
-
-  
+    // Compare Kind of request with 0 or 1
+    // to check if the kind of request is already affected
+    if (kindOfRequest<0||
+        kindOfRequest>1)
+    {
+        errAdd(vobsERR_KIND_OF_REQUEST_NOT_SET);
+        return FAILURE;
+    }
+    
+    // Retreive kind of request
+    value=kindOfRequest;
+    
+    return SUCCESS;
+    
 }
 
+/**
+ * Set a request constraint.
+ *
+ * Set value constraint corresponding to the CONSTRAINT definition
+ * 
+ * \param constraint CONSTRAINT name. 
+ * \param value constraint value to set
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_INVALID_CONSTRAINT
+ *
+ */
+mcsCOMPL_STAT vobsREQUEST::SetConstraint(char *constraint, char *value)
+{
+    logExtDbg("vobsSTAR::SetConstraint()");
+
+    // Get Id corresponding to the specified CONSTRAINT
+    vobsCONSTRAINT_ID constraintId;
+    constraintId = Constraint2Id(constraint);
+    if (constraintId == UNKNOWN_ID)
+    {
+        errAdd(vobsERR_INVALID_CONSTRAINT, constraint);
+        return FAILURE;
+    }
+    // Affect constraint value
+    strcpy(_constraints[constraintId], value);
+
+    return SUCCESS;
+}
+
+/**
+ * Set a request constraint.
+ *
+ * Set value constraint corresponding to the CONSTRAINT definition
+ * 
+ * \param ucd CONSTRAINT id. 
+ * \param value constraint value to set
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_INVALID_CONSTRAINT
+ *
+ */
+mcsCOMPL_STAT vobsREQUEST::SetConstraint(vobsCONSTRAINT_ID constraintId, char *value)
+{
+    logExtDbg("vobsSTAR::SetConstraint()");
+
+    // Get Id corresponding to the specified CONSTRAINT
+    if (constraintId == UNKNOWN_ID)
+    {
+        errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
+        return FAILURE;
+    }
+    // Affect constraint value
+    strcpy(_constraints[constraintId], value);
+
+    return SUCCESS;
+}
+
+/**
+ * Get a request constraint, as a string.
+ *
+ * Get value constraint, as a string, corresponding to the CONSTRAINT
+ * definition
+ * 
+ * \param constraint CONSTRAINT name. 
+ * \param value constraint value to get, as a string.
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_INVALID_CONSTRAINT
+ *
+ */
+mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, char *value)
+{
+    logExtDbg("vobsSTAR::GetConstraint()");
+
+    // Get Id corresponding to the specified CONSTRAINT
+    vobsCONSTRAINT_ID constraintId;
+    constraintId = Constraint2Id(constraint);
+    if (constraintId == UNKNOWN_ID)
+    {
+        errAdd(vobsERR_INVALID_CONSTRAINT, constraint);
+        return FAILURE;
+    }
+    
+    // Retrieve constraint value
+    strcpy(value,_constraints[constraintId]);
+
+    return SUCCESS;
+}
+
+/**
+ * Get a request constraint, as a string.
+ *
+ * Get value constraint, as a string, corresponding to the CONSTRAINT
+ * definition
+ * 
+ * \param constraintID CONSTRAINT id. 
+ * \param value constraint value to get, as a string. 
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_INVALID_CONSTRAINT
+ */
+mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId , char *value) const
+{
+    logExtDbg("vobsSTAR::GetConstraint()");
+    
+    // Check CONSTRAINT id
+    if ((constraintId == UNKNOWN_ID) ||
+        (constraintId < -1) ||
+        (constraintId > OBSERVED_BAND_ID))
+    {
+        errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
+        return FAILURE;
+    }
+   
+    // Retrieve string value form the constraint
+    strcpy(value, _constraints[constraintId]);
+            
+    return SUCCESS;
+}
+
+/**
+ * Get a request constraint, as an integer.
+ *
+ * Get value constraint, as an integer, corresponding to the CONSTRAINT
+ * definition
+ * 
+ * \param constraint CONSTRAINT name. 
+ * \param value constraint value to get, as an integer. 
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ */
+mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, int *value)
+{
+    logExtDbg("vobsSTAR::GetConstraint()");
+
+    // Get Id corresponding to the specified CONSTRAINT
+    vobsCONSTRAINT_ID constraintId;
+    constraintId = Constraint2Id(constraint);
+
+    // Retrieve and return constraint value
+    return (GetConstraint(constraintId, value));
+}
+
+/**
+ * Get a request constraint, as an integer.
+ *
+ * Get value constraint value, as an integer, corresponding to the CONSTRAINT
+ * definition
+ * 
+ * \param constraint CONSTRAINT id. 
+ * \param value constraint value to get, as an integer. 
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_INVALID_CONSTRAINT
+ * \li vobsERR_INVALID_CONSTRAINT_FORMAT
+ *
+ */
+mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, int *value) const
+{
+    logExtDbg("vobsSTAR::GetConstraint()");
+
+    // Check CONSTRAINT id
+    if ((constraintId == UNKNOWN_ID) ||
+        (constraintId < -1) ||
+        (constraintId > OBSERVED_BAND_ID))
+    {
+        errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
+        return FAILURE;
+    }
+
+    // Convert constraint string value to integer value
+    if (sscanf(_constraints[constraintId], "%d", value) != 1)
+    {
+        errAdd(vobsERR_INVALID_CONSTRAINT_FORMAT, value, _constraints[constraintId]);
+        return FAILURE;
+    }
+        
+    return SUCCESS;
+}
+
+/**
+ * Get a request constraint, as a float.
+ *
+ * Get value constraint, as a float, corresponding to the CONSTRAINT
+ * definition
+ * 
+ * \param constraint CONSTRAINT name. 
+ * \param value constraint value to get, as a float. 
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ */
+mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, float *value)
+{
+    logExtDbg("vobsSTAR::GetConstraint()");
+
+    // Get Id corresponding to the specified CONSTRAINT
+    vobsCONSTRAINT_ID constraintId;
+    constraintId = Constraint2Id(constraint);
+
+    // Retrieve and return constraint value
+    return (GetConstraint(constraintId, value));
+}
+
+/**
+ * Get a request constraint, as a float.
+ *
+ * Get value constraint value, as a float, corresponding to the CONSTRAINT
+ * definition
+ * 
+ * \param constraint CONSTRAINT id. 
+ * \param value constraint value to get, as a float. 
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_INVALID_CONSTRAINT
+ * \li vobsERR_INVALID_CONSTRAINT_FORMAT
+ *
+ */
+mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, float *value) const
+{
+    logExtDbg("vobsREQUEST::GetConstraint()");
+
+    // Check CONSTRAINT id
+    if ((constraintId == UNKNOWN_ID) ||
+        (constraintId < -1) ||
+        (constraintId > OBSERVED_BAND_ID))
+    {
+        errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
+        return FAILURE;
+    }
+
+    // Convert constraint string value to integer value
+    if (sscanf(_constraints[constraintId], "%lf", value) != 1)
+    {
+        errAdd(vobsERR_INVALID_CONSTRAINT_FORMAT, value, _constraints[constraintId]);
+        return FAILURE;
+    }
+        
+    return SUCCESS;
+}
+
+/**
+ * Test if the request is build correctly
+ *
+ * \return TRUE on successful completion. Otherwise FALSE is returned.
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li vobsERR_CHECK_OF_KIND_OF_REQUEST_FAILED
+ * \li vobsERR_CHECK_FOR_SIMPLE_STAR_FAILED
+ * \li vobsERR_CHECK_FOR_STAR_LIST_FAILED
+ */
+mcsLOGICAL vobsREQUEST::Check(void)
+{
+    logExtDbg("vobsREQUEST::Check()");
+    
+    // Check if the kind of request is build
+    int kindOfReq=0;
+    if (GetKindOfRequest(kindOfReq)==FAILURE)
+    {
+        errAdd(vobsERR_CHECK_OF_KIND_OF_REQUEST_FAILED);
+        return mcsFALSE;
+    }
+   
+    // Check if the star name is build for the simple star search
+    if (kindOfRequest==0)
+    {
+        if (strcmp(_constraints[STAR_NAME_ID],vobsREQUEST_CONSTRAINT_NOT_SET)==0)
+        {
+            errAdd(vobsERR_CHECK_FOR_SIMPLE_STAR_FAILED);
+            return mcsFALSE;
+        }
+    }
+
+    // Check if the CONSTRAINTS are build for the star list search
+    if (kindOfRequest==1)
+    {
+        for (int i=0; i<vobsNB_REQUEST_CONSTRAINTS; i++)
+        {
+            if (strcmp(_constraints[(vobsCONSTRAINT_ID)i],
+                       vobsREQUEST_CONSTRAINT_NOT_SET)==0)
+            {
+                errAdd(vobsERR_CHECK_FOR_STAR_LIST_FAILED);
+                return mcsFALSE;
+            }
+        }
+    }
+    return mcsTRUE;
+}
+
+/**
+ * Display all request constraints on the console.
+ *
+ * 
+ */
+void vobsREQUEST::Display(void)
+{
+    logExtDbg("vobsREQUEST::Display()");
+    cout << "-----------------------------------------" << endl;
+    for (int i=0; i<vobsNB_REQUEST_CONSTRAINTS; i++)
+    {
+        cout << constraintNameList[i] << " = " << _constraints[i] << endl;
+    }
+}
+
+/*
+ * Protected methods
+ */
+
+/**
+ * Convert a given CONSTRAINT to an id.
+ *
+ * \param constraint CONSTRAINT name.
+ *
+ * \return an CONSTRAINT id.
+ *
+ */
+vobsCONSTRAINT_ID vobsREQUEST::Constraint2Id(char *constraint) const
+{
+    logExtDbg("vobsREQUEST::Constraint2Id()");
+    
+    for (int i=0; i<vobsNB_REQUEST_CONSTRAINTS; i++)
+    {
+        if (strcmp(constraintNameList[i], constraint) == 0)
+        {
+            return (vobsCONSTRAINT_ID)i;
+        }
+    }
+
+    return UNKNOWN_ID;
+}
 
 /*___oOo___*/
