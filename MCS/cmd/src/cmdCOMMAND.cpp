@@ -1,37 +1,41 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.19 2005-02-03 13:54:52 mella Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.18  2005/02/03 11:13:26  mella
-* GetParamValue tries to return the default value if no user value was defined
-*
-* Revision 1.17  2005/02/02 14:19:46  lafrasse
-* Moved GetFirstSenteceOfDescription() code in GetShortDescription()
-*
-* Revision 1.16  2005/02/01 12:52:32  lafrasse
-* Refined the command and parameter descriptions
-*
-* Revision 1.15  2005/01/26 10:51:30  gzins
-* Added CVS log as modification history.
-* Re-formated command short description.
-*
-* mella     15-Nov-2004  Created
-* gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
-*                        fixed bug related to flag check
-* gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
-* gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
-* gzins     10-Dec-2004  Resolved path before loading CDF file in ParseCdf()
-* gzins     15-Dec-2004  Added error handling
-* gzins     22-Dec-2004  Added cdfName parameter to constructor
-*                        Removed Parse(void) method
-*                        Renamed GetHelp to GetDescription
-*                        Added GetShortDescription
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.20 2005-02-15 10:58:58 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/02/03 13:54:52  mella
+ * Replace all c_str by data for strings
+ * Correct bug with defaultValue that wasn't returned
+ *
+ * Revision 1.18  2005/02/03 11:13:26  mella
+ * GetParamValue tries to return the default value if no user value was defined
+ *
+ * Revision 1.17  2005/02/02 14:19:46  lafrasse
+ * Moved GetFirstSenteceOfDescription() code in GetShortDescription()
+ *
+ * Revision 1.16  2005/02/01 12:52:32  lafrasse
+ * Refined the command and parameter descriptions
+ *
+ * Revision 1.15  2005/01/26 10:51:30  gzins
+ * Added CVS log as modification history.
+ * Re-formated command short description.
+ *
+ * mella     15-Nov-2004  Created
+ * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
+ *                        fixed bug related to flag check
+ * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
+ * gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
+ * gzins     10-Dec-2004  Resolved path before loading CDF file in ParseCdf()
+ * gzins     15-Dec-2004  Added error handling
+ * gzins     22-Dec-2004  Added cdfName parameter to constructor
+ *                        Removed Parse(void) method
+ *                        Renamed GetHelp to GetDescription
+ *                        Added GetShortDescription
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -40,7 +44,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.19 2005-02-03 13:54:52 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.20 2005-02-15 10:58:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

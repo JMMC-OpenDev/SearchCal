@@ -1,22 +1,24 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: cmdPARAM.cpp,v 1.4 2005-02-03 13:54:52 mella Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* mella     15-Nov-2004  Created
-* gzins     15-Dec-2004  Added error handling
-* lafrasse  01-Feb-2005  Refined GetHelp output format and added type management
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: cmdPARAM.cpp,v 1.5 2005-02-15 10:58:58 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * mella     15-Nov-2004  Created
+ * gzins     15-Dec-2004  Added error handling
+ * lafrasse  01-Feb-2005  Refined GetHelp output format and added type
+ *                        management
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.4 2005-02-03 13:54:52 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.5 2005-02-15 10:58:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

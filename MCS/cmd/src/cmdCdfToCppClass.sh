@@ -2,10 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdCdfToCppClass.sh,v 1.7 2005-02-07 11:25:19 gzins Exp $"
+# "@(#) $Id: cmdCdfToCppClass.sh,v 1.8 2005-02-15 10:58:58 gzins Exp $"
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # mella     21-Nov-2004  Created
 # gzins     09-Dec-2004  Removed module name argument
 # gzins     10-Dec-2004  Checked CDF name

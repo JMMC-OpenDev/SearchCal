@@ -1,25 +1,26 @@
 #ifndef cmdCOMMAND_H
 #define cmdCOMMAND_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: cmdCOMMAND.h,v 1.9 2005-02-02 14:19:46 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* mella     15-Nov-2004  Created
-* gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed
-* gzins     09-Dec-2004  Added pure virtual Parse() method
-*                        Added cdfFilename argument to previous Parse() method
-* gzins     22-Dec-2004  Added cdfName parameter to constructor
-*                        Removed Parse(void) method
-*                        Renamed GetHelp to GetDescription
-*                        Added GetShortDescription
-* lafrasse  01-Feb-2005  Added GetFirstSentenceOfDescription()
-* lafrasse  02-Feb-2005  Moved GetFirstSentenceOfDescription() code in
-*                        GetShortDescription()
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: cmdCOMMAND.h,v 1.10 2005-02-15 10:58:58 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * mella     15-Nov-2004  Created
+ * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed
+ * gzins     09-Dec-2004  Added pure virtual Parse() method
+ *                        Added cdfFilename argument to previous Parse() method
+ * gzins     22-Dec-2004  Added cdfName parameter to constructor
+ *                        Removed Parse(void) method
+ *                        Renamed GetHelp to GetDescription
+ *                        Added GetShortDescription
+ * lafrasse  01-Feb-2005  Added GetFirstSentenceOfDescription()
+ * lafrasse  02-Feb-2005  Moved GetFirstSentenceOfDescription() code in
+ *                        GetShortDescription()
+ *
+ ******************************************************************************/
 
 /**
  * \file

@@ -1,14 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-12-05 18:57:21 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2005-02-15 10:58:58 gzins Exp $"
 #
 # Makefile of cmd
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     17-Jun-2004  Created
-#
 #
 #*******************************************************************************
 # REMARKS
@@ -22,11 +22,6 @@
 
 #
 # additional include and library search paths
-USER_INC = -I/usr/include/libgdome \
-		   -I/usr/lib/glib-2.0/include/ \
-		   -I/usr/include/glib-2.0 \
-		   -I/usr/include/libxml2
-
 #USER_LIB = 
 
 #

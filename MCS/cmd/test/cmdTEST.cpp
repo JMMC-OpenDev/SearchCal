@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: cmdTEST.cpp,v 1.5 2005-02-03 11:13:57 mella Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* mella     16-Nov-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: cmdTEST.cpp,v 1.6 2005-02-15 10:58:58 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * mella     16-Nov-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.5 2005-02-03 11:13:57 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.6 2005-02-15 10:58:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

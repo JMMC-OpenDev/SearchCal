@@ -1,16 +1,17 @@
 #ifndef cmdPARAM_H
 #define cmdPARAM_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: cmdPARAM.h,v 1.6 2005-02-01 12:52:32 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* mella     15-Nov-2004  Created
-* lafrasse  01-Feb-2005  Added type management
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: cmdPARAM.h,v 1.7 2005-02-15 10:58:58 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * mella     15-Nov-2004  Created
+ * lafrasse  01-Feb-2005  Added type management
+ *
+ ******************************************************************************/
 
 /**
  * \file
