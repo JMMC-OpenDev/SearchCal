@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.11 2004-08-23 15:08:02 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.12 2004-09-30 12:39:19 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -22,6 +22,10 @@
 *                        Moved in null-terminated string specific functions
 *                        from miscDynStr.c
 * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
+* lafrasse  30-Sep-2004  Added MEM_DEALLOC_FAILURE error management, and
+*                        corrected to memory allocation bug in miscDynBufAlloc,
+*                        miscDynBufStrip, miscDynBufReplaceBytesFromTo and
+*                        miscDynBufAppenBytes
 *
 *
 *******************************************************************************/
@@ -68,7 +72,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.11 2004-08-23 15:08:02 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.12 2004-09-30 12:39:19 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -200,11 +204,10 @@ static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
 
 /**
  * Verify if a Dynamic Buffer has already been initialized, and if the given
- * 'from' and 'to' position are correct (eg. inside the Dynamic Buffer range,
- * and "from lower than 'to').
+ * 'bytes' pointer and 'length' size are correct (eg. bytes != 0 & length != 0).
  *
- * This function is only used internally by funtions receiving 'from' and 'to'
- * parameters.
+ * This function is only used internally by funtions receiving 'bytes' and
+ * 'length' parameters.
  *
  * \param bytes the bytes buffer pointer to test
  * \param length the number of bytes in the buffer to test
@@ -324,12 +327,12 @@ mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf)
  *  
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param length the number of bytes by which the Dynamic Buffer should be
- * expanded
+ * \em expanded (if length value is less than or equal to 0, nothing is done).
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
-                                             const mcsUINT32   length)
+                                             const mcsINT32   length)
 {
     char *newBuf = NULL;
 
@@ -340,7 +343,7 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
     }
 
     /* If the current buffer already has sufficient length... */
-    if (length == 0)
+    if (length <= 0)
     {
         /* Do nothing */
         return SUCCESS;
@@ -412,18 +415,37 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
         return FAILURE;
     }
 
-    /* Try to give back the unused memory */
-    if ((newBuf = realloc(dynBuf->dynBuf, dynBuf->storedBytes)) == NULL)
+    /* If the receivved Dynamic Buffer needs to be stripped */
+    if (dynBuf->storedBytes < dynBuf->allocatedBytes)
     {
-        errAdd(miscERR_MEM_FAILURE);
-        return FAILURE;
+        /* If the Dynamic Buffer needs to be completly freed */
+        if (dynBuf->storedBytes == 0)
+        {
+            /* Try to De-allocate it */
+            if (dynBuf->dynBuf == NULL)
+            {
+                errAdd(miscERR_MEM_DEALLOC_FAILURE);
+                return FAILURE;
+            }
+
+            free(dynBuf->dynBuf);
+        }
+        else
+        {
+            /* Try to give back the unused memory */
+            if ((newBuf = realloc(dynBuf->dynBuf, dynBuf->storedBytes)) == NULL)
+            {
+                errAdd(miscERR_MEM_DEALLOC_FAILURE);
+                return FAILURE;
+            }
+        }
+
+        /* Store the new buffer address */
+        dynBuf->dynBuf = newBuf;
+    
+        /* Update the buffer allocated length value */
+        dynBuf->allocatedBytes = dynBuf->storedBytes;
     }
-
-    /* Store the new buffer address */
-    dynBuf->dynBuf = newBuf;
-
-    /* Update the buffer allocated length value */
-    dynBuf->allocatedBytes = dynBuf->storedBytes;
 
     return SUCCESS;
 }
@@ -484,7 +506,7 @@ mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
     /* Try to initialize all the structure with '0' */
     if ((memset((char *)dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
     {
-        errAdd(miscERR_MEM_FAILURE);
+        errAdd(miscERR_MEM_DEALLOC_FAILURE);
         return FAILURE;
     }
 
@@ -717,7 +739,7 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
 /**
  * Replace a given range of Dynamic Buffer bytes by extern buffer bytes.
  *
- * The Dynamic Buffer replaced bytes will bve overwritten. Their range can be
+ * The Dynamic Buffer replaced bytes will be overwritten. Their range can be
  * smaller or bigger than the extern buffer bytes number.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
@@ -751,21 +773,15 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
     }
 
     /* Compute the number of bytes by which the Dynamic Buffer should be
-     * expanded
+     * expanded and try to allocate them
      */
     mcsINT32 bytesToAlloc = length
                             - (((to - miscDYN_BUF_BEGINNING_POSITION)
                                 - (from - miscDYN_BUF_BEGINNING_POSITION)) + 1);
-
-    /* If the Dynamic Buffer needs to be expanded... */
-    if (bytesToAlloc > 0)
+    if (miscDynBufAlloc(dynBuf, bytesToAlloc)
+        == FAILURE)
     {
-        /* Try to allocate the desired bytes number in the Dynamic Buffer */
-        if (miscDynBufAlloc(dynBuf, bytesToAlloc)
-            == FAILURE)
-        {
-            return FAILURE;
-        }
+        return FAILURE;
     }
 
     /* Compute the number of Dynamic Buffer bytes to be backed up */
@@ -810,7 +826,7 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
  * Replace a given range of Dynamic Buffer bytes by an extern string without its
  * ending '\\0'.
  *
- * The Dynamic Buffer replaced bytes will bve overwritten. Their range can be
+ * The Dynamic Buffer replaced bytes will be overwritten. Their range can be
  * smaller or bigger than the extern string length. If the end of the Dynamic
  * Buffer is to be replaced, the string ending '\\0' is keeped.
  *
@@ -865,8 +881,16 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
                                              const mcsUINT32   length)
 {
+    /* Try to initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufInit(dynBuf) == FAILURE)
+    {
+        return FAILURE;
+    }
+
     /* Try to expand the received Dynamic Buffer size */
-    if (miscDynBufAlloc(dynBuf, length) == FAILURE)
+    if (miscDynBufAlloc(dynBuf,
+                        length - (dynBuf->allocatedBytes - dynBuf->storedBytes))
+        == FAILURE)
     {
         return FAILURE;
     }

@@ -10,6 +10,11 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[could not allocate or copy memory.]]></errFormat>
    </error>
+   <error id="13">
+      <errName>MEM_DEALLOC_FAILURE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[could not de-allocate or re-allocate memory.]]></errFormat>
+   </error>
    <error id="3">
       <errName>FUNC_CALL</errName>
       <errSeverity>SEVERE</errSeverity>
