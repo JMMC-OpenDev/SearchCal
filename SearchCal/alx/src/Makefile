@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2005-02-12 15:11:51 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2005-02-15 14:47:55 gzins Exp $"
 #
 # Makefile of the alx module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/12 15:11:51  gzins
+# Added rules for alxGetResearchAreaSize function
+#
 # Revision 1.2  2005/01/21 08:10:30  gluck
 # - Updated
 # - Insert automatic rcs log in header file
@@ -179,9 +182,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2005-02-12 15:19:47 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2005-02-15 14:47:55 gzins Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/12 15:19:47  gzins
+# Added alxTestResearchArea program
+#
 # Revision 1.2  2005/01/21 15:23:53  gluck
 # Add instructions for module python tests
 #
@@ -188,9 +191,6 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
 
 ###########################################################
 #
