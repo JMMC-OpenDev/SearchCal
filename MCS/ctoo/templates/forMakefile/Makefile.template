@@ -1,12 +1,13 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: Makefile.template,v 1.8 2004-12-10 07:20:41 gzins Exp $" 
+#%# "@(#) $Id: Makefile.template,v 1.9 2005-01-21 16:13:09 gluck Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
-#%# who        when         what
-#%# ---------  -----------  ----------------------------------------------------
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
 #%# gluck      14-May-2004  Created
 #%# gzins      10-Dec-2004  Added target for Command Definition Files (CDF)
 #%# 
@@ -24,10 +25,9 @@
 #
 # Makefile of ........
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
-# NNNNNNNN  dd-mmm-yyyy  Created
-#
+# History
+# -------
+# $Log: not supported by cvs2svn $
 #
 #*******************************************************************************
 # REMARKS

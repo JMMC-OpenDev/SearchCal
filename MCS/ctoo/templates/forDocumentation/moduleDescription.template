@@ -1,12 +1,13 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: moduleDescription.template,v 1.4 2004-08-06 09:40:21 gluck Exp $" 
+#%# "@(#) $Id: moduleDescription.template,v 1.5 2005-01-21 16:13:10 gluck Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
-#%# who        when         what
-#%# ---------  -----------  ----------------------------------------------------
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
 #%# gluck      30-Jun-2004  Created
 #%# 
 #%# 
@@ -22,9 +23,9 @@
 
  "@(#) $I>-<d$"
 
- who       when         what
- ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- NNNNNNNN  dd-mmm-yyyy  Created
+ History
+ ~~~~~~~
+ $Log: not supported by cvs2svn $
 
 
 ********************************************************************************
