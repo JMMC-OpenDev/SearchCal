@@ -2,12 +2,12 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envStop.sh,v 1.1 2005-01-21 15:39:39 lafrasse Exp $"
+# "@(#) $Id: envStop.sh,v 1.2 2005-01-26 11:02:14 lafrasse Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # lafrasse  21-Jan-2005  Created
-#
+# lafrasse  25-Jan-2005  Added MCSENV label management (for the default MCSENV)
 #
 #*******************************************************************************
 
@@ -42,15 +42,25 @@ else
     fi
 fi
 
+# If MCSENV is defined
+if [ "$MCSENV" != "" ]
+then
+    # Set LABEL accordinaly
+    LABEL="$MCSENV"
+else
+    # Set LABEL to "default"
+    LABEL="default"
+fi
+
 # Try to stop the msgManager
-output=`msgSendCommand msgManager EXIT "" 2>&1 > /dev/null`
+TMP=`msgSendCommand msgManager EXIT "" 2>&1 > /dev/null`
 
 # If the environment could not be reached
 if [ "$?" != 0 ]
 then
-    echo "'$MCSENV' environment ALREADY terminated !"
+    echo "'$LABEL' environment ALREADY terminated !"
 else
-    echo "'$MCSENV' environment terminated."
+    echo "'$LABEL' environment terminated."
 fi
 
 exit 0;

@@ -2,12 +2,12 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envStart.sh,v 1.1 2005-01-21 15:39:39 lafrasse Exp $"
+# "@(#) $Id: envStart.sh,v 1.2 2005-01-26 11:02:14 lafrasse Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # lafrasse  21-Jan-2005  Created
-#
+# lafrasse  25-Jan-2005  Added MCSENV label management (for the default MCSENV)
 #
 #*******************************************************************************
 
@@ -42,17 +42,27 @@ else
     fi
 fi
 
+# If MCSENV is defined
+if [ "$MCSENV" != "" ]
+then
+    # Set LABEL accordinaly
+    LABEL="$MCSENV"
+else
+    # Set LABEL to "default"
+    LABEL="default"
+fi
+
 # Check weither the msgManager is already running or not
-output=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
+TMP=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
 
 # If the environment is not running
 if [ "$?" != 0 ]
 then
     # Try to start the msgManager
     msgManager 2>&1 > /dev/null &
-    echo "'$MCSENV' environment started."
+    echo "'$LABEL' environment started."
 else
-    echo "'$MCSENV' environment ALREADY started !"
+    echo "'$LABEL' environment ALREADY started !"
 fi
 
 exit 0;

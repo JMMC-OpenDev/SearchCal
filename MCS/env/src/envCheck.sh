@@ -2,19 +2,19 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envCheck.sh,v 1.1 2005-01-21 15:39:39 lafrasse Exp $"
+# "@(#) $Id: envCheck.sh,v 1.2 2005-01-26 11:02:14 lafrasse Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # lafrasse  21-Jan-2005  Created
-#
+# lafrasse  25-Jan-2005  Added MCSENV label management (for the default MCSENV)
 #
 #*******************************************************************************
 
 #/**
 # \file
-# Test weither the msgManager process associated with currently defined
-# environment or the one passed in argument, is running or not.
+# Test weither the msgManager process associated with the currently defined
+# environment name (or the one passed in argument), is running or not.
 #
 # \synopsis
 # \<envCheck\> [\e \<MCS_environment_name\>]
@@ -37,20 +37,30 @@ else
     # If we got an enviromnent name
     if [ "$#" == 1 ]
     then 
-        # Over-ride the user MCSENV environment with the given one
+        # Over-ride the user MCSENV environment with the received one
         MCSENV=$1
     fi
 fi
 
+# If MCSENV is defined
+if [ "$MCSENV" != "" ]
+then
+    # Set LABEL accordinaly
+    LABEL="$MCSENV"
+else
+    # Set LABEL to "default"
+    LABEL="default"
+fi
+
 # Check weither the msgManager is already running or not
-output=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
+TMP=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
 
 # If the environment is not running
 if [ "$?" != 0 ]
 then
-    echo "'$MCSENV' environment NOT running !"
+    echo "'$LABEL' environment is NOT running !"
 else
-    echo "'$MCSENV' environment running."
+    echo "'$LABEL' environment is running."
 fi
 
 exit 0;
