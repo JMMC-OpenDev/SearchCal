@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsQuery.sh,v 1.1 2005-02-25 11:16:50 scetre Exp $"
+# "@(#) $Id: sclinsQuery.sh,v 1.2 2005-02-25 13:00:22 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/02/25 11:16:50  scetre
+# Added script to star, stop and run Search Calibrators
+#
 #*******************************************************************************
 
 #/**
@@ -87,7 +90,7 @@ fi
 
 # Start the servers
 ./sclinsStart.sh 
-if [ $? != 0 ]
+if [ $? == 0 ]
 then
     echo "Failed to start Search Calibrators..." >&2
     exit 1
