@@ -3,12 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPrivate.h,v 1.3 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgPrivate.h,v 1.4 2004-12-07 07:41:17 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  10-Aug-2004  Ported from CILAS software
-*
+* gzins     06-Dec-2004  Removed no longer used C functions
 *
 *******************************************************************************/
 
@@ -36,7 +36,7 @@ extern "C" {
 /**
  * msgManger port number for connection
  */
-#define msgMANAGER_PORT_NUMBER           1991
+#define msgMANAGER_PORT_NUMBER           1993
 #define msgMANAGER_SELECT_WIDTH          32
 #define msgMANAGER_MAX_LENGTH_QUEUE      32
 
@@ -50,78 +50,6 @@ extern "C" {
 /*
  * Private Globals
  */
-
-
-
-
-
-
-#include "msgMESSAGE.h"
-
-
-
-
-
-
-/**
- * Connection with msgManager socket
- */
-extern int msgManagerSd;    
-
-mcsCOMPL_STAT   msgSetBody        (msgMESSAGE_RAW         *msg,
-                                   char               *buffer,
-                                   mcsINT32           bufLen);
-
-char *          msgGetBodyPtr     (msgMESSAGE_RAW         *msg);
-
-mcsINT32        msgGetBodySize    (msgMESSAGE_RAW         *msg);
-
-char *          msgGetCommand     (msgMESSAGE_RAW         *msg);
-
-char *          msgGetSender      (msgMESSAGE_RAW         *msg);
-
-char *          msgGetRecipient   (msgMESSAGE_RAW         *msg);
-
-mcsLOGICAL      msgIsLastReply    (msgMESSAGE_RAW         *msg);
-
-msgTYPE         msgGetType        (msgMESSAGE_RAW         *msg);
-
-mcsLOGICAL      msgIsConnected    (void);
-
-mcsCOMPL_STAT   msgConnect        (const mcsPROCNAME  procName,
-                                   const char*        msgManagerHost);
-
-mcsCOMPL_STAT   msgDisconnect     (void);
-
-mcsCOMPL_STAT   msgReceive        (msgMESSAGE_RAW     *msg,
-                                   mcsINT32           timeoutInMs);
-                                  
-mcsCOMPL_STAT   msgReceiveFrom    (int                sd,
-                                   msgMESSAGE_RAW     *msg,
-                                   mcsINT32           timeoutInMs);
-                                  
-
-
-mcsCOMPL_STAT   msgSendCommand    (const char         *command,
-                                   const mcsPROCNAME  destProc,
-                                   const char         *buffer,  
-                                   mcsINT32           bufLen);
-                                  
-mcsCOMPL_STAT   msgSendTo         (int                sd,
-                                   msgMESSAGE_RAW     *msg);
-                                  
-mcsCOMPL_STAT   msgSendReply      (msgMESSAGE_RAW     *msg,
-                                   mcsLOGICAL         lastReply);
-                                  
-mcsCOMPL_STAT   msgSendReplyTo    (int                sd,
-                                   msgMESSAGE_RAW     *msg,
-                                   mcsLOGICAL         lastReply);
-                                  
-int             msgSocketCreate   (unsigned short     *portNumberPt,
-                                   int                socketType);
-                                  
-mcsCOMPL_STAT   msgSocketClose    (int                sd);
-                                  
 
 
 #ifdef __cplusplus
