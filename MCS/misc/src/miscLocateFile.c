@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscLocateFile.c,v 1.5 2005-01-28 18:39:10 gzins Exp $"
+ * "@(#) $Id: miscLocateFile.c,v 1.6 2005-02-12 14:49:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/01/28 18:39:10  gzins
+ * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
+ *
  * gzins     09-Nov-2004  Created
  * gzins     23-Nov-2004  Returned a 'resolved' path; i.e. where environment
  *                        variables have substituated
@@ -42,7 +45,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.5 2005-01-28 18:39:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.6 2005-02-12 14:49:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -98,7 +101,7 @@ int main (int argc, char *argv[])
     /* Print result */
     if (fullFileName != NULL)
     {
-        printf("%s\n", miscResolvePath(fullFileName));
+        printf("%s\n", fullFileName);
     }
     else
     {
