@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhHANDLER.cpp,v 1.6 2005-01-26 18:27:22 gzins Exp $"
+ * "@(#) $Id: evhHANDLER.cpp,v 1.7 2005-02-03 06:57:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/01/26 18:27:22  gzins
+ * Handled timeout for callback related to command reply.
+ *
  * gzins     22-Sep-2004  Created
  * gzins     17-Nov-2004  Used evhXXX_CALLBACK pointer instead of instance
  *                        reference in order to fix bug related to the
@@ -28,7 +31,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.6 2005-01-26 18:27:22 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.7 2005-02-03 06:57:01 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -416,16 +419,16 @@ mcsCOMPL_STAT evhHANDLER::HandeHelpCmd(msgMESSAGE &msg)
                     {
                         return mcsFAILURE;
                     }
-                    msg.AppendToBody(desc.c_str(), strlen(desc.c_str()));
-                    msg.AppendToBody("\n");
+                    msg.AppendStringToBody(desc.c_str());
+                    msg.AppendStringToBody("\n");
                     found = mcsTRUE;
                 }
             }
         }
         if (found == mcsFALSE)
         {
-            msg.AppendToBody(command, strlen(command));
-            msg.AppendToBody(" - not registered\n");
+            msg.AppendStringToBody(command);
+            msg.AppendStringToBody(" - not registered\n");
         }
     }
     else 
@@ -438,6 +441,7 @@ mcsCOMPL_STAT evhHANDLER::HandeHelpCmd(msgMESSAGE &msg)
             {
                 char *command;
                 char *cdf;
+                mcsSTRING256 cmdShortDescription;
                 command = ((evhCMD_KEY *)((*iter).first))->GetCommand();
                 cdf = ((evhCMD_KEY *)((*iter).first))->GetCdf();
                 string desc;
@@ -446,10 +450,11 @@ mcsCOMPL_STAT evhHANDLER::HandeHelpCmd(msgMESSAGE &msg)
                 {
                     return mcsFAILURE;
                 }
-                msg.AppendToBody(desc.c_str(), strlen(desc.c_str()));
+                sprintf(cmdShortDescription, "%10s - %s\n", 
+                        command, desc.c_str());
+                msg.AppendStringToBody(cmdShortDescription);
             }
         }
-        msg.AppendToBody("\0", 1);
     }
     
     // End for
@@ -623,16 +628,12 @@ evhCALLBACK_LIST *evhHANDLER::Find(const evhKEY &key)
 /**
  * Executes all the callbacks attached to the command.
  *
- * Executes all the callbacks in the list which have been attached to the
- * command (see AddCallback()) identified by the given \em key. They are
- * executed in the same order they where inserted in the list.
- * The received messsage is passed as argument to the callback.
- * 
- * If a callback returns with the evhCB_DELETE bit set, it deletes the
- * callback.
+ * Executes all the callbacks in the list (see evhCALLBACK_LIST::Run() method).
  *
- * If a callback returns with the evhCB_FAILURE bit set, the method returns
- * immediately, i.e. the remaining callbacks in the list are not executed.
+ * If a callback returns with the evhCB_FAILURE bit set, the method send reply
+ * to sender process or (if it is an internal message) close the error stack,
+ * and then returns immediately, i.e. the remaining callbacks in the list are
+ * not executed.
  *           
  * \return mcsSUCCESS or mcsFAILURE (see above).
  */
@@ -695,18 +696,9 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
 /**
  * Executes all the callbacks attached to the command reply.
  *
- * Executes all the callbacks in the list which have been attached to the
- * command reply (see AddCallback()) identified by the given \em key. They are
- * executed in the same order they where inserted in the list.
- * The received messsage is passed as argument to the callback.
+ * Executes all the callbacks in the list (see evhCALLBACK_LIST::Run() method).
  * 
- * If a callback returns with the evhCB_DELETE bit set, it deletes the
- * callback.
- *
- * If a callback returns with the evhCB_FAILURE bit set, the method returns
- * immediately, i.e. the remaining callbacks in the list are not executed.
- *           
- * \return mcsSUCCESS or mcsFAILURE (see above).
+ * \return mcsSUCCESS or mcsFAILURE.
  */
 mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_REPLY_KEY &key, msgMESSAGE &msg)
 {
@@ -764,18 +756,9 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_REPLY_KEY &key, msgMESSAGE &msg)
 /**
  * Executes all the callbacks attached to the I/O.
  *
- * Executes all the callbacks in the list which have been attached to the
- * I/O stream (see AddCallback()) identified by the given \em key. They are
- * executed in the same order they where inserted in the list.
- * The I/O descriptor is passed as argument to the callback.
- * 
- * If a callback returns with the evhCB_DELETE bit set, it deletes the
- * callback.
- *
- * If a callback returns with the evhCB_FAILURE bit set, the method returns
- * immediately, i.e. the remaining callbacks in the list are not executed.
+ * Executes all the callbacks in the list (see evhCALLBACK_LIST::Run() method).
  *           
- * \return mcsSUCCESS or mcsFAILURE (see above).
+ * \return mcsSUCCESS or mcsFAILURE.
  */
 mcsCOMPL_STAT evhHANDLER::Run(const evhIOSTREAM_KEY &key, int fd)
 {
@@ -788,7 +771,7 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhIOSTREAM_KEY &key, int fd)
         // If event is the same than the specified one
         if (((*iter).first)->Match(key))
         {
-            // Add the new callback to the list
+            // Execute the callback 
             if (((*iter).second)->Run(fd) == mcsFAILURE)
             {
                 return mcsFAILURE;
