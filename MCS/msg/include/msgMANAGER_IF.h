@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.h,v 1.5 2004-12-01 12:54:39 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.h,v 1.6 2004-12-03 08:47:33 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,6 +12,9 @@
 *                        and added the class description comment
 * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
 * lafrasse  01-Dec-2004  Comment refinments
+* gzins     03-Dec-2004  Removed msgManagerHost param from Connect
+*                        Gave default value to paramList and paramLen
+*                        arguments of SendCommand
 *
 *
 *******************************************************************************/
@@ -64,13 +67,12 @@ public:
     msgMANAGER_IF();
     virtual ~msgMANAGER_IF();
 
-    virtual mcsCOMPL_STAT Connect     (const mcsPROCNAME  procName,
-                                       const char        *msgManagerHost =NULL);
+    virtual mcsCOMPL_STAT Connect     (const mcsPROCNAME  procName);
 
     virtual mcsCOMPL_STAT SendCommand (const char        *command,
                                        const mcsPROCNAME  destProc,
-                                       const char        *buffer,  
-                                       mcsINT32           bufLen);
+                                       const char        *paramList=NULL,  
+                                       mcsINT32           paramLen=0);
     virtual mcsCOMPL_STAT SendReply   (msgMESSAGE        &msg,
                                        mcsLOGICAL         lastReply);
 
