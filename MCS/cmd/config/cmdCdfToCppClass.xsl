@@ -90,7 +90,6 @@ public:
     <xsl:value-of select="$className"/>(string name, string params);
     virtual ~<xsl:value-of select="$className"/>();
 
-    virtual mcsCOMPL_STAT Parse(void);
 <xsl:for-each select="./params/param">
 <xsl:variable name="paramName"> <xsl:call-template name="convertcase"><xsl:with-param name="toconvert" select="./name"/> <xsl:with-param name="conversion">upfirst</xsl:with-param></xsl:call-template> </xsl:variable>
     virtual mcsCOMPL_STAT Get<xsl:value-of select="$paramName"/>(<xsl:call-template name="GetMcsTypeForParam"><xsl:with-param name="paramNode" select="."/></xsl:call-template>*_<xsl:value-of select="./name"/>_);<xsl:if test="./@optional">
@@ -154,7 +153,7 @@ using namespace std;
  * Constructs a new class for an easier access for parameters of the
  * <xsl:value-of select="$className"/> COMMAND.
  */
- <xsl:value-of select="$className"/>::<xsl:value-of select="$className"/>(string name, string params):cmdCOMMAND(name, params)
+ <xsl:value-of select="$className"/>::<xsl:value-of select="$className"/>(string name, string params):cmdCOMMAND(name, params,"<xsl:value-of select="$cdfFilename"/>")
 {
     
 }
@@ -174,21 +173,7 @@ using namespace std;
 /*
  * Public methods
  */
-/** 
- * Parse the command-line parameters.
- *
- * This method just calls the cmdCOMMAND::parse(cdfFilename) with the name of
- * the file containing the definition of the command; i.e. CDF file.
- *
- * \returns an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT <xsl:value-of select="$className"/>::Parse()
-{
-    logExtDbg("<xsl:value-of select="$className"/>::Parse()");
-       
-    return (cmdCOMMAND::Parse("<xsl:value-of select="$cdfFilename"/>"));
-}
- <xsl:for-each select="./params/param">
+<xsl:for-each select="./params/param">
      <xsl:variable name="paramName"> <xsl:call-template name="convertcase"><xsl:with-param name="toconvert" select="./name"/> <xsl:with-param name="conversion">upfirst</xsl:with-param></xsl:call-template> </xsl:variable>
 /**
  * Get the value of the parameter <xsl:value-of select="./name"/>.
