@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.C,v 1.5 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.C,v 1.6 2004-10-15 07:52:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.5 2004-09-30 07:40:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.6 2004-10-15 07:52:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -97,7 +97,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::PrepareAsking(vobsREQUEST &request)
     }
     if (kindOfRequest == 0)
     {
-        miscDynBufAppendString(&_asking,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=II/225/catalog&-out.max=1&name=");
+        miscDynBufAppendString(&_asking,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=II/225/catalog&-out.max=100&name=");
         mcsSTRING32 name;
         request.GetConstraint(STAR_NAME_ID, name);
         miscDynBufAppendString(&_asking, name);

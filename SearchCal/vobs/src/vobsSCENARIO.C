@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.C,v 1.3 2004-09-30 08:43:02 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.C,v 1.4 2004-10-15 07:52:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.3 2004-09-30 08:43:02 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.4 2004-10-15 07:52:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -74,7 +74,9 @@ vobsSCENARIO::~vobsSCENARIO()
  * \param listInput list of star in enter of the research
  * \param listOutput list of star resulting of the asking of the catalog
  * \param action enumerate representing the action to do
- * \param ra interval right acscension 
+ * \param ra interval right acscension
+ * \param dec interval declinaison
+ * 
  * \return
  * Always SUCCESS.
  */

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.doc,v 1.2 2004-08-25 13:33:03 scetre Exp $"
+* "@(#) $Id: vobs.doc,v 1.3 2004-10-15 07:52:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -18,7 +18,30 @@ Module of query of the software Search Calibrators.
 
 \ddesc
 According to the user request, this module will built an asking and used it
-with a XML parser in order to sent a list of stars. 
+with a XML parser in order to sent a list of stars. It is defined several
+objects :
+\li vobsREQUEST contains all user's constraints
+\li vobsSTAR represents the star object with several properties as the
+coordinates or the magnitude...
+\li vobsSTAR_LIST the star list object where is defined methods to use the
+list
+\li vobsCATALOG catalog of star which build an URL where to find data. Each
+catalog of the CDS have specific data so it is define several object as
+vobsCATALOG :
+  - vobsCATALOG_ASCC : All Sky Compiled Catalog
+  - vobsCATALOG_CHARM : Catalog of High Angular Resolution M
+  - vobsCATALOG_CIO : Catalog of Infrared Observations
+  - vobsCATALOG_DENIS : The DENIS database
+  - vobsCATALOG_HIC : Hipparcos Input Catalog
+  - vobsCATALOG_LBSI : Catalog of calibrator for LBSI
+  - vobsCATALOG_MASS : The 2MASS All Sky Catalog of Point Sources
+  - vobsCATALOG_PHOTO : PHOTOelectric catalog
+  - vobsCATALOG_BSC : Bright Star Catalog
+  - vobsCATALOG_SBSC : Supplement to the BSC
+\li vobsPARSER Analyser of XML file in order to extract from this format the
+data
+\li vobsSCENARIO this object run several action according to the user's constraints
+\li vobsVIRTUAL_OBSERVATORY 
 
 \n
 \ex

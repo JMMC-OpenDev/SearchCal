@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.12 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.13 2004-10-15 07:52:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.12 2004-09-30 07:40:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.13 2004-10-15 07:52:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -228,6 +228,7 @@ mcsCOMPL_STAT vobsCATALOG::GetFileName(char *fileName)
  *
  * \b Errors codes:\n 
  * The possible errors are:
+ * \li vobsERR_ASKING_WRITE_FAILED
  *
  */
 mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST &request)
@@ -259,6 +260,7 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST &request)
  * 
  * \b Errors codes:\n 
  * The possible errors are:
+ * \li vobsERR_ASKING_WRITE_FAILED
  */
 mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmpList)
 {
@@ -287,6 +289,7 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmp
  * 
  * \b Errors codes:\n
  * The possible errors are:
+ * \li vobsERR_URI_WRITE_FAILED
  *
  */
 mcsCOMPL_STAT vobsCATALOG::WriteAskingURI(void)
@@ -315,14 +318,14 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingURI(void)
  * 
  * \b Errors codes:\n 
  * The possible errors are:
- *
+ * \li vobsERR_CONSTANT_WRITE_FAILED
  */
 mcsCOMPL_STAT vobsCATALOG::WriteAskingConstant(void)
 {
     logExtDbg("vobsCATALOG::GetAskingConstant()");
 
     if ( (miscDynBufAppendString(&_asking,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==FAILURE) ||
-         (miscDynBufAppendString(&_asking,"&-out.max=50")==FAILURE) ||
+         (miscDynBufAppendString(&_asking,"&-out.max=100")==FAILURE) ||
          (miscDynBufAppendString(&_asking,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==FAILURE) )
     {
         errAdd(vobsERR_CONSTANT_WRITE_FAILED);
@@ -341,8 +344,6 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingConstant(void)
  *
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
  * 
- * \b Errors codes:\n
- * The possible errors are:
  *
  */
 mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(void)
@@ -388,7 +389,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(vobsREQUEST request)
  * 
  * \b Errors codes:\n
  * The possible errors are:
- *
+ * vobsERR_POSITION_WRITE_FAILED
  */
 mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
 {
