@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/bashrc
 #
-# Version: $Id: bashrc,v 1.9 2004-11-10 09:55:18 gzins Exp $
+# Version: $Id: bashrc,v 1.10 2004-11-19 07:28:47 mella Exp $
 #
 # Purpose: bash configuration file
 #
@@ -47,14 +47,6 @@ then
     export PATH=$PATH:../bin
 else
     export PATH=../bin
-fi
-
-# Set MCS_XSLPATH
-if [ "$MCS_XSLPATH" != "" ]
-then
-    export MCS_XSLPATH=$MCS_XSLPATH:../config
-else
-    export MCS_XSLPATH=../config
 fi
 
 # Add $INTROOT to LD_LIBRARY_PATH, PATH, MCS_XSLPATH and MANPATH
