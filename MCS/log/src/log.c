@@ -1,12 +1,17 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.25 2005-01-26 17:28:13 lafrasse Exp $"
+* "@(#) $Id: log.c,v 1.26 2005-02-15 08:18:43 gzins Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2005/01/26 17:28:13  lafrasse
+* Added automatic CVS history, refined user documentation, removed all
+* ActionLog-related code, and changed mcsSUCCESS in mcsSUCCESS and mcsFAILURE in
+* mcsFAILURE
+*
 * gzins     20-Dec-2004  Added filtering of stdout log depending on module name
 *
 * gzins     10-Nov-2004  Replaced logDisplayError by logPrintErrMessage

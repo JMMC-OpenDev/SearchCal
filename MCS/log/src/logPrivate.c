@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logPrivate.c,v 1.4 2004-12-03 17:08:40 lafrasse Exp $"
+* "@(#) $Id: logPrivate.c,v 1.5 2005-02-15 08:18:43 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,7 +12,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: logPrivate.c,v 1.4 2004-12-03 17:08:40 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: logPrivate.c,v 1.5 2005-02-15 08:18:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,7 +45,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Give back the local network host name.
  *
  * If host name is longer than the given buffer, an error message is print on
- * stderr and FAILURE code is returned.
+ * stderr and mcsFAILURE code is returned.
  *
  * \warning As is, this function uses 'uname()' SysV call, so it is not portable
  * to BSD-style systems that require 'gethostname()' system call.\n\n
@@ -53,7 +53,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * \param hostName allocated character array where the resulting date is stored
  * \param length allocated character array length
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT logGetHostName(char *hostName, mcsUINT32 length)
 {
@@ -63,21 +63,21 @@ mcsCOMPL_STAT logGetHostName(char *hostName, mcsUINT32 length)
     if (hostName == NULL)
     {
         logPrintErrMessage("logGetHostName() - NULL parameter");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Test 'length' parameter validity */
     if (length == 0)
     {
         logPrintErrMessage("logGetHostName() - invalid 'length' parameter");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Get the host name from the system */
     if (uname(&systemInfo) != 0)
     {
         logPrintErrMessage("uname() failed - %s", strerror(errno));
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Test if buffer can contain host name */
@@ -86,13 +86,13 @@ mcsCOMPL_STAT logGetHostName(char *hostName, mcsUINT32 length)
         logPrintErrMessage
             ("logGetHostName() - given buffer too short to store host name '%s'",
              systemInfo.nodename);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Copy the host name */
     strcpy((char *)hostName, systemInfo.nodename);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**

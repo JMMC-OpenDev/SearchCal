@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.doc,v 1.2 2005-01-26 17:28:13 lafrasse Exp $"
+* "@(#) $Id: log.doc,v 1.3 2005-02-15 08:18:43 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.2  2005/01/26 17:28:13  lafrasse
+* Added automatic CVS history, refined user documentation, removed all
+* ActionLog-related code, and changed mcsSUCCESS in mcsSUCCESS and mcsFAILURE in
+* mcsFAILURE
+*
 * lafrasse  05-Aug-2004  Created
 *
 *******************************************************************************/
