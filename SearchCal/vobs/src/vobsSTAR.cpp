@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.18 2005-01-26 14:11:42 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.19 2005-01-27 13:44:41 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/01/26 14:11:42  scetre
+* change assignement operator and pass list as private member of the class vobsSTAR
+*
 * Revision 1.17  2005/01/26 08:50:25  scetre
 * upated documentation
 *
@@ -24,7 +27,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.18 2005-01-26 14:11:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.19 2005-01-27 13:44:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -559,7 +562,6 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                                           &range,
                                           (mcsLOGICAL)(el==0)) == mcsFAILURE)
             {
-                logWarning("pb");
                 errCloseStack();
                 return mcsFALSE;
             }
@@ -569,13 +571,11 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 // Get right ascension of the star. If not set return FALSE
                 if (GetRa(val1) == mcsFAILURE)
                 {
-                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;                
                 }
                 if (star.GetRa(val2) == mcsFAILURE)
                 {
-                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;                
                 }
@@ -585,13 +585,11 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 // Get declinaison of the star. If not set return FALSE
                 if (GetDec(val1) == mcsFAILURE)
                 {
-                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;                
                 }
                 if (star.GetDec(val2) == mcsFAILURE)
                 {
-                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;                
                 }
@@ -601,13 +599,11 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 // Get value of the property id
                 if (GetPropertyValue(propertyId, &val1) == mcsFAILURE)
                 {
-                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;
                 }
                 if (star.GetPropertyValue(propertyId, &val2) == mcsFAILURE)
                 {
-                logWarning("pb");
                     errResetStack();
                     return mcsFALSE;
                 }     
