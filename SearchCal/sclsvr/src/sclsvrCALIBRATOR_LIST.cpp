@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.17 2005-02-07 09:50:45 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.18 2005-02-07 10:06:36 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/02/07 09:50:45  scetre
+* Changed HadCoherentDiameter and VisibilityOk method in IsDiameterOk and IsVisibilityOk
+*
 * Revision 1.16  2005/02/07 09:22:40  gzins
 * Added method to copy list from another sclsvrCALIBRATOR_LIST instance
 *
@@ -28,7 +31,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.17 2005-02-07 09:50:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.18 2005-02-07 10:06:36 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -320,12 +323,12 @@ mcsCOMPL_STAT
  * returned.
  */
 mcsCOMPL_STAT
-    sclsvrCALIBRATOR_LIST::GetScienceObjectSeparation(char *scienceStarRa,
+    sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation(char *scienceStarRa,
                                                       char *scienceStarDec,
                                                       mcsFLOAT raRange,
                                                       mcsFLOAT decRange)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetScienceObjectSeparation()");
+    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation()");
     
     // create a star correponding to the science object
     sclsvrCALIBRATOR scienceStar;
@@ -387,11 +390,11 @@ mcsCOMPL_STAT
  * returned.
  */
 mcsCOMPL_STAT
-sclsvrCALIBRATOR_LIST::GetMaximalMagnitudeSeparation(char *band,
-                                                     mcsFLOAT magValue,
-                                                     mcsFLOAT magRange)
+sclsvrCALIBRATOR_LIST::FilterByMagnitude(char *band,
+                                         mcsFLOAT magValue,
+                                         mcsFLOAT magRange)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetMaximalMagnitudeSeparation()"); 
+    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByMagnitude()"); 
 
     // Create the UCD corresponding to the band
     mcsSTRING256 magnitudeUcd;
@@ -433,9 +436,9 @@ sclsvrCALIBRATOR_LIST::GetMaximalMagnitudeSeparation(char *band,
  * Method to remove calibrator which have not the specified Spectral type
  */
 mcsCOMPL_STAT
-sclsvrCALIBRATOR_LIST::GetSpectralType(std::list<char *> spectTypeList)
+sclsvrCALIBRATOR_LIST::FilterBySpectralType(std::list<char *> spectTypeList)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetSpectralType()");;
+    logExtDbg("sclsvrCALIBRATOR_LIST::FilterBySpectralType()");;
     mcsLOGICAL isSameSpectralClass;
     // for each calibrator of the list
     sclsvrCALIBRATOR *calibrator;
@@ -485,9 +488,9 @@ sclsvrCALIBRATOR_LIST::GetSpectralType(std::list<char *> spectTypeList)
  * Method to remove calibrator which have not the specified luminosity class
  */
 mcsCOMPL_STAT 
-sclsvrCALIBRATOR_LIST::GetLuminosityClass(std::list<char *> luminosityList)
+sclsvrCALIBRATOR_LIST::FilterByLuminosityClass(std::list<char *> luminosityList)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetLuminosityClass()");
+    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByLuminosityClass()");
 
     mcsLOGICAL isSameLuminosityClass;
     // for each calibrator of the list
@@ -539,8 +542,10 @@ sclsvrCALIBRATOR_LIST::GetLuminosityClass(std::list<char *> luminosityList)
  * Method to remove calibrator which have not the specified expected accuracy
  */
 mcsCOMPL_STAT
-sclsvrCALIBRATOR_LIST::GetMaximalExpectedRelativeAccuracy(mcsFLOAT visMax)
+sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
 {
+    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByVisibility()");
+
     // for each calibrator of the list
     sclsvrCALIBRATOR *calibrator;
     mcsFLOAT calibratorVis;
@@ -578,9 +583,9 @@ sclsvrCALIBRATOR_LIST::GetMaximalExpectedRelativeAccuracy(mcsFLOAT visMax)
  * Method to remove calibrator which have Variability if they are not
  * authorized.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVariability(mcsLOGICAL authorized)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterByVariability(mcsLOGICAL authorized)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetVariability()");
+    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByVariability()");
     // if varability are not authorized
     // Check in all star if they have a variability flag.
     // if a star have the flag N or G, remove it
@@ -615,9 +620,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVariability(mcsLOGICAL authorized)
 /**
  * Method to remove calibrator which have Multiplicity
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetMultiplicity(mcsLOGICAL authorized)
+mcsCOMPL_STAT 
+sclsvrCALIBRATOR_LIST::FilterByMultiplicity(mcsLOGICAL authorized)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetMultiplicity()");
+    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByMultiplicity()");
     // if multiplicity are not authorized
     // Check in all star if they have a multiplicity flag.
     // if a star have the flag C, G, O, V or X remove it

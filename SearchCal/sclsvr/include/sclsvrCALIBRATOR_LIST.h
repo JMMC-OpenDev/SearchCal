@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.8 2005-02-07 09:15:57 gzins Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.9 2005-02-07 10:06:36 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/02/07 09:15:57  gzins
+* Added method to copy list from another sclsvrCALIBRATOR_LIST instance
+*
 * Revision 1.7  2005/02/04 14:23:13  scetre
 * Sort method for GUI added
 *
@@ -56,18 +59,18 @@ public:
     // Method need by the graphical user interface
     virtual mcsCOMPL_STAT GetCoherentDiameter(sclsvrCALIBRATOR_LIST *list);
     virtual mcsCOMPL_STAT GetVisibilityOk(sclsvrCALIBRATOR_LIST *list);
-    virtual mcsCOMPL_STAT GetScienceObjectSeparation(char *scienceStarRa,
+    virtual mcsCOMPL_STAT FilterByDistanceSeparation(char *scienceStarRa,
                                                      char *scienceStarDec,
                                                      mcsFLOAT raRange,
                                                      mcsFLOAT decRange);
-    virtual mcsCOMPL_STAT GetMaximalMagnitudeSeparation(char *band,
-                                                        mcsFLOAT magValue,
-                                                        mcsFLOAT magRange);
-    virtual mcsCOMPL_STAT GetSpectralType(std::list<char *> spectTypeList);
-    virtual mcsCOMPL_STAT GetLuminosityClass(std::list<char *> luminosityList);
-    virtual mcsCOMPL_STAT GetMaximalExpectedRelativeAccuracy(mcsFLOAT visMax);
-    virtual mcsCOMPL_STAT GetVariability(mcsLOGICAL authorized=mcsTRUE);
-    virtual mcsCOMPL_STAT GetMultiplicity(mcsLOGICAL authorized=mcsTRUE);
+    virtual mcsCOMPL_STAT FilterByMagnitude(char *band,
+                                            mcsFLOAT magValue,
+                                            mcsFLOAT magRange);
+    virtual mcsCOMPL_STAT FilterBySpectralType(std::list<char *> spectTypeList);
+    virtual mcsCOMPL_STAT FilterByLuminosityClass(std::list<char *> luminosityList);
+    virtual mcsCOMPL_STAT FilterByVisibility(mcsFLOAT visMax);
+    virtual mcsCOMPL_STAT FilterByVariability(mcsLOGICAL authorized=mcsTRUE);
+    virtual mcsCOMPL_STAT FilterByMultiplicity(mcsLOGICAL authorized=mcsTRUE);
     virtual mcsCOMPL_STAT Delete(unsigned int starNumber);
     virtual mcsCOMPL_STAT Load();
 protected:
