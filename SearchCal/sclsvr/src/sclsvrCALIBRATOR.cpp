@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.18 2005-01-26 14:17:55 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.19 2005-01-31 13:33:54 scetre Exp $"
  *
  * History
  * -------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.18 2005-01-26 14:17:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.19 2005-01-31 13:33:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -138,7 +138,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
     // Copy the calibrator in the local buffer
     miscDynBufAppendString(&localBuffer, calibratorString);
     // parse the buffer
-    parsingString = (char *) strtok (miscDynBufGetBufferPointer(&localBuffer), "\t");
+    parsingString = (char *) strtok (miscDynBufGetBuffer(&localBuffer), "\t");
     
     for (_propertyOrderIterator = _propertyOrder.begin();
          _propertyOrderIterator != _propertyOrder.end();

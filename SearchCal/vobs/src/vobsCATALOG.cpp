@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.cpp,v 1.6 2005-01-26 08:11:28 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.cpp,v 1.7 2005-01-31 13:31:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/01/26 08:11:28  scetre
+* change history
+*
 * scetre    27-Jul-2004  Created
 * gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
 *
@@ -17,7 +20,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.6 2005-01-26 08:11:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.7 2005-01-31 13:31:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -212,7 +215,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     vobsPARSER parser;
     // the parser get the internet of the query and analyse th file coming
     // from this address
-    if (parser.Parse(miscDynBufGetBufferPointer(&_query), list, logFileName)
+    if (parser.Parse(miscDynBufGetBuffer(&_query), list, logFileName)
         == mcsFAILURE)
     {
         return mcsFAILURE; 
@@ -459,7 +462,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
     
     
     if ( (miscDynBufAppendString(&_query,"&-out.form=List")==mcsFAILURE) ||
-         (miscDynBufAppendString(&_query, miscDynBufGetBufferPointer(&strList))==mcsFAILURE) )
+         (miscDynBufAppendString(&_query, miscDynBufGetBuffer(&strList))==mcsFAILURE) )
     {
         errAdd(vobsERR_END_WRITE_FAILED);
         miscDynBufDestroy(&strList);

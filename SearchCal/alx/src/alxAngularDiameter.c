@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.2 2005-01-26 15:49:09 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.3 2005-01-31 13:32:37 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/26 15:49:09  scetre
+ * solve memory problem with miscDYN_BUF
+ *
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
@@ -24,7 +27,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.2 2005-01-26 15:49:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.3 2005-01-31 13:32:37 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -118,10 +121,10 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     /* For each line */
     int  lineNum = 0;
     char *line = NULL;
-    while ((line = miscDynBufGetNextLinePointer(&dynBuf,
+    while ((line = miscDynBufGetNextLine(&dynBuf,
                                                 line, mcsTRUE)) != NULL)
     {
-        logTest("miscDynBufGetNextLinePointer() = '%s'", line);
+        logTest("miscDynBufGetNextLine() = '%s'", line);
 
         /* If line is not empty */
         miscTrimString (line, " ");

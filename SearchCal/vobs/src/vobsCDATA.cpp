@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.5 2005-01-26 08:11:28 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.6 2005-01-31 13:31:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/01/26 08:11:28  scetre
+* change history
+*
 * scetre    15-Nov-2004  Created
 *
 *
@@ -16,7 +19,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.5 2005-01-26 08:11:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.6 2005-01-31 13:31:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -230,7 +233,7 @@ mcsCOMPL_STAT vobsCDATA::appendLines(char *buffer)
     }
     
     // Replace CR by '\0' in order to convert buffer to separated lines 
-    miscReplaceChrByChr(miscDynBufGetBufferPointer(&tmpBuffer), '\n', '\0');
+    miscReplaceChrByChr(miscDynBufGetBuffer(&tmpBuffer), '\n', '\0');
 
     logDebug("Buffer to process : %s", buffer);
 
@@ -242,7 +245,7 @@ mcsCOMPL_STAT vobsCDATA::appendLines(char *buffer)
     char *linePtr = NULL;
     do 
     {
-        linePtr = miscDynBufGetNextLinePointer(&tmpBuffer, linePtr, mcsFALSE);
+        linePtr = miscDynBufGetNextLine(&tmpBuffer, linePtr, mcsFALSE);
         lineNum++;
         if ((linePtr != NULL) && (lineNum > (_nbLinesToSkip +1)) &&
             (miscIsSpaceStr(linePtr) == mcsFALSE))
@@ -289,7 +292,7 @@ char * vobsCDATA::getNextLine(char *linePtr)
 {
     //logExtDbg("vobsCDATA::getNextLine()");
 
-    return (miscDynBufGetNextLinePointer(&_buffer, linePtr, mcsFALSE));
+    return (miscDynBufGetNextLine(&_buffer, linePtr, mcsFALSE));
 }
 
 /**

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.9 2005-01-27 15:58:08 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.10 2005-01-31 13:33:54 scetre Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.9 2005-01-27 15:58:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.10 2005-01-31 13:33:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -202,14 +202,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
     mcsLOGICAL skipFlag = mcsFALSE;
     
     // Replace the '\n' by '\0' in the buffer where is stored the list
-    if (miscReplaceChrByChr(miscDynBufGetBufferPointer(buffer), '\n', '\0') == 
+    if (miscReplaceChrByChr(miscDynBufGetBuffer(buffer), '\n', '\0') == 
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // Get the first line of the buffer
-    while ((bufferLine=miscDynBufGetNextLinePointer(buffer,
+    while ((bufferLine=miscDynBufGetNextLine(buffer,
                                                     bufferLine,
                                                     skipFlag)) != NULL)
     {

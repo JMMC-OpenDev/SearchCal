@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.8 2005-01-27 15:58:20 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.9 2005-01-31 13:33:54 scetre Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.8 2005-01-27 15:58:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.9 2005-01-31 13:33:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -177,15 +177,15 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     miscDynBufAppendString(&raBuf, ra);
     miscDynBufAppendString(&decBuf, dec);
     // Replace ' ' by ':' in ra and dec 
-    miscReplaceChrByChr(miscDynBufGetBufferPointer(&raBuf), ' ', ':');
-    miscReplaceChrByChr(miscDynBufGetBufferPointer(&decBuf), ' ', ':');
+    miscReplaceChrByChr(miscDynBufGetBuffer(&raBuf), ' ', ':');
+    miscReplaceChrByChr(miscDynBufGetBuffer(&decBuf), ' ', ':');
 
     // Create the dynamic buffer in which is written the star informations
     miscDynBufAppendString(&dynBuff, starName);
     miscDynBufAppendString(&dynBuff, " 2000.0 ");
-    miscDynBufAppendString(&dynBuff, miscDynBufGetBufferPointer(&raBuf));
+    miscDynBufAppendString(&dynBuff, miscDynBufGetBuffer(&raBuf));
     miscDynBufAppendString(&dynBuff, " ");
-    miscDynBufAppendString(&dynBuff, miscDynBufGetBufferPointer(&decBuf));
+    miscDynBufAppendString(&dynBuff, miscDynBufGetBuffer(&decBuf));
 
     for (int i=0; i<nbProperties; i++)
     {
@@ -195,8 +195,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     
 
     
-    msg.SetBody(miscDynBufGetBufferPointer(&dynBuff),
-                strlen(miscDynBufGetBufferPointer(&dynBuff)));
+    msg.SetBody(miscDynBufGetBuffer(&dynBuff),
+                strlen(miscDynBufGetBuffer(&dynBuff)));
 
     miscDynBufDestroy(&dynBuff);
     miscDynBufDestroy(&raBuf);

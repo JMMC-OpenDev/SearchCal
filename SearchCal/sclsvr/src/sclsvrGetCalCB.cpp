@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.2 2005-01-27 15:58:14 scetre Exp $"
+* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.3 2005-01-31 13:33:54 scetre Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.2 2005-01-27 15:58:14 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.3 2005-01-31 13:33:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -304,7 +304,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     miscDynBufInit(&dynBuff);
     calibratorList.Pack(&dynBuff);
 
-    msg.SetBody(miscDynBufGetBufferPointer(&dynBuff));
+    msg.SetBody(miscDynBufGetBuffer(&dynBuff));
     
     sclsvrCALIBRATOR_LIST coherentDiamList;
     calibratorList.GetCoherentDiameterList(&coherentDiamList);
