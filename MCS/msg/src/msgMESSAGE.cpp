@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.3 2004-11-22 14:57:05 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.4 2004-11-23 08:25:25 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -19,7 +19,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.3 2004-11-22 14:57:05 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.4 2004-11-23 08:25:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -373,32 +373,27 @@ mcsINT32 msgMESSAGE::GetBodySize(void)
  * message body maximum size, SUCCESS otherwise
  */
 mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
-                                  const mcsINT32 bufLen)
+                                  mcsINT32 bufLen)
 {
     logExtDbg("msgMESSAGE::SetBody()");
     
     // If there is nothing to copy in...
-    mcsINT32 trueBufLen = 0;
     if (buffer != NULL)
     {
         // If no to-be-copied-in byte number is given...
         if (bufLen == 0)
         {
             // Get the given buffer total length
-            trueBufLen = strlen(buffer);
-        }
-        else
-        {
-            trueBufLen = bufLen;
+            bufLen = strlen(buffer);
         }
     }
 
     // If the to-be-copied byte number is greater than the message body
     // maximum size...
-    if (trueBufLen > (mcsINT32)msgBODYMAXLEN)
+    if (bufLen > (mcsINT32)msgBODYMAXLEN)
     {
         // Raise an error
-        errAdd(msgERR_BUFFER_TOO_BIG, trueBufLen, msgBODYMAXLEN);
+        errAdd(msgERR_BUFFER_TOO_BIG, bufLen, msgBODYMAXLEN);
 
         // Return an error code
         return FAILURE;
@@ -407,7 +402,7 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
     // Store the new message body size, in network byte order
     sprintf(_message.header.msgBodySize, "%d", bufLen);
     // Fill the message body with the given length and buffer content
-    strncpy(_message.body, buffer, trueBufLen);
+    strncpy(_message.body, buffer, bufLen);
     
     return SUCCESS;
 }

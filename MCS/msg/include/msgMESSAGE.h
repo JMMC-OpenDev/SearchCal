@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.4 2004-11-22 14:57:05 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.5 2004-11-23 08:25:25 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -84,7 +84,7 @@ typedef struct
     mcsENVNAME  senderEnv;       /**< Sender environnement */
     mcsPROCNAME recipient;       /**< Receiver processus name  */
     mcsENVNAME  recipientEnv;    /**< Receiver environnement */
-    mcsSTRING8  identifier;      /**< Identificator */
+    mcsSTRING8  identifier;      /**< Identifier */
     mcsLOGICAL  isInternal;      /**< FALSE if it is external >*/
     msgTYPE     type;            /**< Message type */
     mcsCMD      command;         /**< Command name */

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_SERVER.h,v 1.3 2004-11-22 16:35:48 scetre Exp $"
+* "@(#) $Id: msgSOCKET_SERVER.h,v 1.4 2004-11-23 08:25:25 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -55,7 +55,7 @@ public:
     // Brief description of the destructor
     virtual ~msgSOCKET_SERVER();
 
-    virtual mcsCOMPL_STAT Open(mcsINT32 port);
+    virtual mcsCOMPL_STAT Open(std::string host, mcsINT32 port);
 protected:
 
     
