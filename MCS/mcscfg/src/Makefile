@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.7 2004-12-10 09:19:22 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.8 2005-01-29 13:53:12 gzins Exp $"
 #
 # Makefile of mcscfg module, which contains configuration files for MCS
 # environment. 
@@ -16,7 +16,7 @@
 #
 # Configuration files to be installed
 #----------------------------
-CFG_FILES = ../config/bashrc \
+CFG_FILES = ../config/mcs.sh \
 			../config/emacs  \
 			../config/vimrc  \
 			../config/gvimrc
