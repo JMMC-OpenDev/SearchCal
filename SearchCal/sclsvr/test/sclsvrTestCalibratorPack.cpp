@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestCalibratorPack.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
+* "@(#) $Id: sclsvrTestCalibratorPack.cpp,v 1.2 2004-12-22 10:07:42 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,7 @@
 *******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibratorPack.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibratorPack.cpp,v 1.2 2004-12-22 10:07:42 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -80,19 +80,19 @@ int main(int argc, char *argv[])
     
     miscDYN_BUF buffer;
 
-    calibrator1.SetProperty(PHOT_JHN_K_ID, "4.32");
-    calibrator1.SetProperty(ANGULAR_DIAMETER_ID, "1.34");
+    calibrator1.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "4.32");
+    calibrator1.SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER, "1.34");
     
     calibrator1.Pack(& buffer);
     calibrator2.UnPack(miscDynBufGetBufferPointer(&buffer));
-    calibrator2.SetProperty(ANGULAR_DIAMETER_ERROR_ID, "0.01");
+    calibrator2.SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR, "0.01");
     
     calibratorList.AddAtTail(calibrator1);
     calibratorList.AddAtTail(calibrator2);
     
     sclsvrCALIBRATOR calibrator3;
-    calibrator3.SetProperty(PHOT_JHN_K_ID, "5.52");
-    calibrator3.SetProperty(ANGULAR_DIAMETER_ID, "1.8");
+    calibrator3.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "5.52");
+    calibrator3.SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER, "1.8");
     calibratorList.AddAtTail(calibrator3);
     
     calibratorList.Display();

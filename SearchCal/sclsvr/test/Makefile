@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-12-06 14:31:16 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-12-22 10:07:42 scetre Exp $"
 #
 # Makefile of sclsvr test module
 #
@@ -38,7 +38,7 @@ USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/i
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = sclsvrSearchCalibrators sclsvrTestCalibratorMethod sclsvrTestCalibratorPack
+EXECUTABLES     = sclsvrTestCalibratorPack sclsvrTestCalibrator
 EXECUTABLES_L   = 
 
 #
@@ -47,29 +47,34 @@ EXECUTABLES_L   =
 #sclsvrTest_LDFLAGS   = -lxml2 -lgdome -lstdc++
 #sclsvrTest_LIBS      = MCS C++ sclsvr vobs
 
-sclsvrTestCommand_OBJECTS   = sclsvrTestCommand
-sclsvrTestCommand_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestCommand_LIBS      = MCS C++ sclsvr vobs scitoo msg simcli
+#sclsvrTestCommand_OBJECTS   = sclsvrTestCommand
+#sclsvrTestCommand_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestCommand_LIBS      = MCS C++ sclsvr vobs scitoo msg simcli
 
-sclsvrTestSearchCalibrators_OBJECTS   = sclsvrTestSearchCalibrators
-sclsvrTestSearchCalibrators_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestSearchCalibrators_LIBS      = MCS C++ sclsvr vobs scitoo msg cmd simcli
+#sclsvrTestSearchCalibrators_OBJECTS   = sclsvrTestSearchCalibrators
+#sclsvrTestSearchCalibrators_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestSearchCalibrators_LIBS      = MCS C++ sclsvr vobs scitoo msg cmd simcli
 
-sclsvrSearchCalibrators_OBJECTS   = sclsvrSearchCalibrators
-sclsvrSearchCalibrators_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrSearchCalibrators_LIBS      = MCS C++ sclsvr vobs alx msg simcli
+#sclsvrSearchCalibrators_OBJECTS   = sclsvrSearchCalibrators
+#sclsvrSearchCalibrators_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrSearchCalibrators_LIBS      = MCS C++ sclsvr vobs alx msg simcli
 
-sclsvrTestSearchCalibratorsClient_OBJECTS   = sclsvrTestSearchCalibratorsClient
-sclsvrTestSearchCalibratorsClient_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestSearchCalibratorsClient_LIBS      = MCS C++ sclsvr vobs scitoo msg gui simcli
+#sclsvrTestSearchCalibratorsClient_OBJECTS   = sclsvrTestSearchCalibratorsClient
+#sclsvrTestSearchCalibratorsClient_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestSearchCalibratorsClient_LIBS      = MCS C++ sclsvr vobs scitoo msg gui simcli
 
-sclsvrTestCalibratorMethod_OBJECTS   = sclsvrTestCalibratorMethod
-sclsvrTestCalibratorMethod_LDFLAGS   = -lxml2 -lgdome -lstdc++
-sclsvrTestCalibratorMethod_LIBS      = MCS C++ sclsvr vobs alx msg simcli 
+#sclsvrTestCalibratorMethod_OBJECTS   = sclsvrTestCalibratorMethod
+#sclsvrTestCalibratorMethod_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#sclsvrTestCalibratorMethod_LIBS      = MCS C++ sclsvr vobs alx msg simcli 
 
 sclsvrTestCalibratorPack_OBJECTS   = sclsvrTestCalibratorPack
 sclsvrTestCalibratorPack_LDFLAGS   = -lxml2 -lgdome -lstdc++
 sclsvrTestCalibratorPack_LIBS      = MCS C++ sclsvr vobs alx msg simcli
+
+sclsvrTestCalibrator_OBJECTS   = sclsvrTestCalibrator
+sclsvrTestCalibrator_LDFLAGS   = 
+sclsvrTestCalibrator_LIBS      = MCS C++ sclsvr vobs alx simcli
+
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
