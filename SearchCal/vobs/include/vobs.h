@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.3 2004-07-28 14:16:40 scetre Exp $"
+* "@(#) $Id: vobs.h,v 1.4 2004-09-14 09:08:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -23,6 +23,18 @@
 #include "vobsPARSER.h"
 #include "vobsREQUEST.h"
 #include "vobsVIRTUAL_OBSERVATORY.h"
+#include "vobsCATALOG_ASCC.h"
+#include "vobsCATALOG_BSC.h"
+#include "vobsCATALOG_CHARM.h"
+#include "vobsCATALOG_CIO.h"
+#include "vobsCATALOG_DENIS.h"
+#include "vobsCATALOG.h"
+#include "vobsCATALOG_HIC.h"
+#include "vobsCATALOG_LBSI.h"
+#include "vobsCATALOG_MASS.h"
+#include "vobsCATALOG_PHOTO.h"
+#include "vobsCATALOG_SBSC.h"
+#include "vobsSCENARIO.h"
 
 #endif /*!vobs_H*/
 
