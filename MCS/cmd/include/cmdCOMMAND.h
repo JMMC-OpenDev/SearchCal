@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.h,v 1.8 2005-02-01 12:52:32 lafrasse Exp $"
+* "@(#) $Id: cmdCOMMAND.h,v 1.9 2005-02-02 14:19:46 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,6 +16,8 @@
 *                        Renamed GetHelp to GetDescription
 *                        Added GetShortDescription
 * lafrasse  01-Feb-2005  Added GetFirstSentenceOfDescription()
+* lafrasse  02-Feb-2005  Moved GetFirstSentenceOfDescription() code in
+*                        GetShortDescription()
 *
 *******************************************************************************/
 
@@ -60,16 +62,15 @@ public:
     virtual mcsCOMPL_STAT Parse(string cdfName="");
      
     /** methods to get command description */
-    virtual mcsCOMPL_STAT GetFirstSentenceOfDescription(string &desc);
     virtual mcsCOMPL_STAT GetShortDescription(string &desc);
     virtual mcsCOMPL_STAT GetDescription(string &desc);
     
     /* methods to handle parameters */
     virtual mcsCOMPL_STAT AddParam(cmdPARAM *param);
     virtual mcsCOMPL_STAT GetParam(string paramName, cmdPARAM **param);
-    virtual mcsLOGICAL IsDefined(string paramName);
-    virtual mcsLOGICAL HasDefaultValue(string paramName);
-    virtual mcsLOGICAL IsOptional(string paramName);
+    virtual mcsLOGICAL    IsDefined(string paramName);
+    virtual mcsLOGICAL    HasDefaultValue(string paramName);
+    virtual mcsLOGICAL    IsOptional(string paramName);
     virtual mcsCOMPL_STAT GetParamValue(string paramName, mcsINT32 *param);
     virtual mcsCOMPL_STAT GetParamValue(string paramName, char **param);
     virtual mcsCOMPL_STAT GetParamValue(string paramName, mcsDOUBLE *param);

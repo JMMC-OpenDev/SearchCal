@@ -1,30 +1,35 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.16 2005-02-01 12:52:32 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.15  2005/01/26 10:51:30  gzins
- * Added CVS log as modification history.
- * Re-formated command short description.
- *
- * mella     15-Nov-2004  Created
- * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
- *                        fixed bug related to flag check
- * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
- * gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
- * gzins     10-Dec-2004  Resolved path before loading CDF file in ParseCdf()
- * gzins     15-Dec-2004  Added error handling
- * gzins     22-Dec-2004  Added cdfName parameter to constructor
- *                        Removed Parse(void) method
- *                        Renamed GetHelp to GetDescription
- *                        Added GetShortDescription
- * lafrasse  01-Feb-2005  Refined GetDescription output format and added
- *                        GetFirstSentenceOfDescription()
- *
- ******************************************************************************/
+* JMMC project
+*
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.17 2005-02-02 14:19:46 lafrasse Exp $"
+*
+* History
+* -------
+* $Log: not supported by cvs2svn $
+* Revision 1.16  2005/02/01 12:52:32  lafrasse
+* Refined the command and parameter descriptions
+*
+* Revision 1.15  2005/01/26 10:51:30  gzins
+* Added CVS log as modification history.
+* Re-formated command short description.
+*
+* mella     15-Nov-2004  Created
+* gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
+*                        fixed bug related to flag check
+* gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
+* gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
+* gzins     10-Dec-2004  Resolved path before loading CDF file in ParseCdf()
+* gzins     15-Dec-2004  Added error handling
+* gzins     22-Dec-2004  Added cdfName parameter to constructor
+*                        Removed Parse(void) method
+*                        Renamed GetHelp to GetDescription
+*                        Added GetShortDescription
+* lafrasse  01-Feb-2005  Refined GetDescription output format and added
+*                        GetFirstSentenceOfDescription()
+* lafrasse  02-Feb-2005  Moved GetFirstSentenceOfDescription() code in
+*                        GetShortDescription()
+*
+*******************************************************************************/
 
 /**
  * \file
@@ -33,7 +38,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.16 2005-02-01 12:52:32 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.17 2005-02-02 14:19:46 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -168,13 +173,13 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 }
 
 /** 
- *  Return the first sentence of the command description.
+ *  Return the first sentence of the complete description of the command.
  *
- *  \returns the first sentence of the description string.
+ *  \returns the short description string.
  */
-mcsCOMPL_STAT cmdCOMMAND::GetFirstSentenceOfDescription(string &desc)
+mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
 {
-    logExtDbg ("cmdCOMMAND::GetFirstSentenceOfDescription()");
+    logExtDbg ("cmdCOMMAND::GetShortDescription()");
 
     // Clear description
     desc.clear();
@@ -222,44 +227,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetFirstSentenceOfDescription(string &desc)
 }
 
 /** 
- *  Return the short description of the command.
- *
- *  \returns the short description string.
- */
-mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
-{
-    logExtDbg ("cmdCOMMAND::GetShortDescription()");
-
-    // Clear description
-    desc.clear();
-
-    // Append the command name
-    mcsSTRING32 cmdName;
-    sprintf(cmdName, "%10s - ", _name.c_str());
-    desc.append(cmdName);
-
-    // Get the first sentence of the command description
-    string firstSentence;
-    if( GetFirstSentenceOfDescription(firstSentence) == FAILURE)
-    {
-        return FAILURE;
-    }
-
-    // if the first sentence is longer than max length
-    if(firstSentence.length() > SHORT_DESC_MAX_LEN)
-    {
-        // cut 3 character before the max length, to place "..."
-        firstSentence = firstSentence.substr(0, (SHORT_DESC_MAX_LEN - 3));
-        firstSentence.append("...");
-    }
-
-    desc.append(firstSentence);
-    desc.append("\n");
-
-    return SUCCESS;
-}
-
-/** 
  *  Return the detailed description of the command and its parameters.
  *
  *  \returns the detailed description string.
@@ -295,14 +262,14 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         synopsis.append(_name);
 
         // Append the first sentence of the command description
-        string firstSentence;
-        if (GetFirstSentenceOfDescription(firstSentence) ==
+        string shortSentence;
+        if (GetShortDescription(shortSentence) ==
             FAILURE)
         {
             return FAILURE;
         }
         synopsis.append(" - ");
-        synopsis.append(firstSentence);
+        synopsis.append(shortSentence);
 
         // append description of command
         if (_desc.empty())
