@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.6 2005-01-31 13:31:38 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.7 2005-02-07 09:47:08 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/01/31 13:31:38  scetre
+* changed misc...Pointer in misc...
+*
 * Revision 1.5  2005/01/26 08:11:28  scetre
 * change history
 *
@@ -19,7 +22,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.6 2005-01-31 13:31:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.7 2005-02-07 09:47:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -97,9 +100,9 @@ vobsCDATA::~vobsCDATA()
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::addColName(char *colName)
+mcsCOMPL_STAT vobsCDATA::AddColName(char *colName)
 {
-    logExtDbg("vobsCDATA::addColName(%s)", colName);
+    logExtDbg("vobsCDATA::AddColName(%s)", colName);
 
     _colName.push_back(strdup(colName)); 
 
@@ -117,9 +120,9 @@ mcsCOMPL_STAT vobsCDATA::addColName(char *colName)
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::addUcdName(char *ucdName)
+mcsCOMPL_STAT vobsCDATA::AddUcdName(char *ucdName)
 {
-    logExtDbg("vobsCDATA::addUcdName(%s)", ucdName);
+    logExtDbg("vobsCDATA::AddUcdName(%s)", ucdName);
 
     _ucdName.push_back(strdup(ucdName)); 
 
@@ -131,7 +134,7 @@ mcsCOMPL_STAT vobsCDATA::addUcdName(char *ucdName)
  * \return 
  * The number of lines to be skipped in CDATA.
  */
-mcsUINT32 vobsCDATA::getNbColumns(void) 
+mcsUINT32 vobsCDATA::GetNbColumns(void) 
 {
     return _colName.size();
 }
@@ -149,10 +152,10 @@ mcsUINT32 vobsCDATA::getNbColumns(void)
  * 
  * \return mcsSUCCESS or mcsFAILURE if the end of the column list is reached.
  */
-mcsCOMPL_STAT vobsCDATA::getNextColDesc(char **colName, char **ucdName,
+mcsCOMPL_STAT vobsCDATA::GetNextColDesc(char **colName, char **ucdName,
                                         mcsLOGICAL init) 
 {
-    //logExtDbg("vobsCDATA::getNextColDesc()");
+    //logExtDbg("vobsCDATA::GetNextColDesc()");
 
     if (init == mcsTRUE)
     {
@@ -186,9 +189,9 @@ mcsCOMPL_STAT vobsCDATA::getNextColDesc(char **colName, char **ucdName,
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::setNbLinesToSkip(mcsINT32 nbLines)
+mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
 {
-    logExtDbg("vobsCDATA::setNbLinesToSkip()");
+    logExtDbg("vobsCDATA::SetNbLinesToSkip()");
 
     _nbLinesToSkip = nbLines;
 
@@ -200,7 +203,7 @@ mcsCOMPL_STAT vobsCDATA::setNbLinesToSkip(mcsINT32 nbLines)
  * \return 
  * The number of colum in CDATA.
  */
-mcsUINT32 vobsCDATA::getNbLinesToSkip(void) 
+mcsUINT32 vobsCDATA::GetNbLinesToSkip(void) 
 {
     return _nbLinesToSkip;
 }
@@ -210,9 +213,9 @@ mcsUINT32 vobsCDATA::getNbLinesToSkip(void)
  *
  * This method appends the lines which are provided in the buffer into an
  * internal buffer. The lines of the given buffer must be seperated by '\n'.
- * The first lines, defined with setNbLinesToSkip() method, are skipped. 
- * The getNbLines() method gives the number of lines currently stored in
- * internal buffer. And they can be retrieved using getNextLine().
+ * The first lines, defined with SetNbLinesToSkip() method, are skipped. 
+ * The GetNbLines() method gives the number of lines currently stored in
+ * internal buffer. And they can be retrieved using GetNextLine().
  *
  * \param buffer pointer to the CDATA, which must be null-terminated
  *
@@ -220,9 +223,9 @@ mcsUINT32 vobsCDATA::getNbLinesToSkip(void)
  * mcsSUCCESS, or mcsFAILURE if an error occurs when manipuling internal dynamic
  * buffer.
  */
-mcsCOMPL_STAT vobsCDATA::appendLines(char *buffer)
+mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer)
 {
-    logExtDbg("vobsCDATA::appendLines()");
+    logExtDbg("vobsCDATA::AppendLines()");
 
     // Store buffer into a temporary buffer
     miscDYN_BUF tmpBuffer;
@@ -277,7 +280,7 @@ mcsCOMPL_STAT vobsCDATA::appendLines(char *buffer)
  * \return 
  * The number of lines stored in internal buffer.
  */
-mcsUINT32 vobsCDATA::getNbLines(void) 
+mcsUINT32 vobsCDATA::GetNbLines(void) 
 {
     return _nbLines;
 }
@@ -288,9 +291,9 @@ mcsUINT32 vobsCDATA::getNbLines(void)
  * \return
  * Pointer to buffer containing CDATA section.
  */
-char * vobsCDATA::getNextLine(char *linePtr)
+char * vobsCDATA::GetNextLine(char *linePtr)
 {
-    //logExtDbg("vobsCDATA::getNextLine()");
+    //logExtDbg("vobsCDATA::GetNextLine()");
 
     return (miscDynBufGetNextLine(&_buffer, linePtr, mcsFALSE));
 }
@@ -301,9 +304,9 @@ char * vobsCDATA::getNextLine(char *linePtr)
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::save(char *fileName)
+mcsCOMPL_STAT vobsCDATA::Save(char *fileName)
 {
-    logExtDbg("vobsCDATA::save()");
+    logExtDbg("vobsCDATA::Save()");
 
     FILE *filePtr;
 
@@ -328,7 +331,7 @@ mcsCOMPL_STAT vobsCDATA::save(char *fileName)
     do
     {
         // Get next line
-        linePtr = getNextLine(linePtr);
+        linePtr = GetNextLine(linePtr);
 
         if (linePtr != NULL)
         {
@@ -340,7 +343,7 @@ mcsCOMPL_STAT vobsCDATA::save(char *fileName)
             strcpy(line, linePtr);
 
             // Number of UCDs per line
-            nbUcd = getNbColumns();
+            nbUcd = GetNbColumns();
 
             // Scan UCD list
             char *nextLinePtr;

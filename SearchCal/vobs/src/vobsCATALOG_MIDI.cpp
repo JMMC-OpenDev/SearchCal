@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.5 2005-02-07 09:13:43 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.6 2005-02-07 09:47:08 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/07 09:13:43  gzins
+ * Added initialisation of _loaded
+ * Removed printf
+ * Supported RA and DEC expressed with ':' as separator instead of ' '
+ *
  * Revision 1.4  2005/02/04 15:10:25  gluck
  * Update documentation
  *
@@ -25,7 +30,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.5 2005-02-07 09:13:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.6 2005-02-07 09:47:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -322,11 +327,11 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
     // buffer
     vobsCDATA cDataStructure;
     
-    // Set line to skip to -1 because in the CDATA appendLines method, number of
+    // Set line to skip to -1 because in the CDATA AppendLines method, number of
     // lines to skip is increased of 1, because there is an empty line between
-    // each data line (due to \n to \0 conversion). The CDATA appendLines method
+    // each data line (due to \n to \0 conversion). The CDATA AppendLines method
     // will have to be changed for this reason.
-    cDataStructure.setNbLinesToSkip(-1);
+    cDataStructure.SetNbLinesToSkip(-1);
 
     // For each dynamic buffer line
     int  lineNb = 1;
@@ -361,7 +366,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
                 {
                     // add UCD name to CDATA structure
                     logDebug("\t\t%d- %s\n", i, ucdNameArray[i]);
-                    if (cDataStructure.addUcdName(ucdNameArray[i]) == 
+                    if (cDataStructure.AddUcdName(ucdNameArray[i]) == 
                                                                     mcsFAILURE)
                     {
                         // Do not raise an error because the method returns
@@ -392,7 +397,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
                 {
                     // add UCD colomn name to CDATA structure
                     logDebug("\t\t%d- %s\n", i, ucdColNameArray[i]);
-                    if (cDataStructure.addColName(ucdColNameArray[i]) == 
+                    if (cDataStructure.AddColName(ucdColNameArray[i]) == 
                         mcsFAILURE)
                     {
                         // Do not raise an error because the method returns
@@ -404,7 +409,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
             else
             {
                 // It's neither the first line the second one: CDATA line
-                if (cDataStructure.appendLines(line) == mcsFAILURE)
+                if (cDataStructure.AppendLines(line) == mcsFAILURE)
                 {
                     errAdd(vobsERR_APPEND_LINE_FAILED, line);
                     return mcsFAILURE;
@@ -417,7 +422,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
     }
     
     // Return to 0 line to skip (see previous explanation)
-    cDataStructure.setNbLinesToSkip(0);    
+    cDataStructure.SetNbLinesToSkip(0);    
     
     // Destroy dynamic buffer
     miscDynBufDestroy(&dynBuf);

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.9 2005-02-04 15:25:40 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.10 2005-02-07 09:47:08 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/04 15:25:40  gzins
+* Minor change in log message
+*
 * Revision 1.8  2005/02/04 07:40:53  gzins
 * Limited number of logged messages for test
 *
@@ -20,7 +23,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.9 2005-02-04 15:25:40 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.10 2005-02-07 09:47:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -131,11 +134,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     {
         logDebug("CDATA description");
         logDebug("   Number of lines to be skipped : %d", 
-                cData.getNbLinesToSkip());
-        logDebug("   Number of columns in table    : %d", cData.getNbColumns());
+                cData.GetNbLinesToSkip());
+        logDebug("   Number of columns in table    : %d", cData.GetNbColumns());
         char *colName;
         char *ucdName;
-        for (unsigned int i = 0; i < cData.getNbColumns(); i++)
+        for (unsigned int i = 0; i < cData.GetNbColumns(); i++)
         {
             // Table header
             if (i == 0)
@@ -145,7 +148,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
                 logDebug("   +----------+--------------+--------------------+");
             }
             // Get the column name and UCD
-            if (cData.getNextColDesc(&colName, 
+            if (cData.GetNextColDesc(&colName, 
                                      &ucdName, (mcsLOGICAL)(i==0)) == mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -157,7 +160,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
             ++ucdName;
 
             // Table footer
-            if (i == (cData.getNbColumns() -1))
+            if (i == (cData.GetNbColumns() -1))
             {
                 logDebug("   +----------+--------------+--------------------+");
             }
@@ -165,12 +168,12 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     }
 
     // If CDATA section has been found
-    if (cData.getNbLines() != 0)
+    if (cData.GetNbLines() != 0)
     {
         // Save CDATA (if requested)
         if (logFileName != NULL)
         {
-            cData.save(logFileName);
+            cData.Save(logFileName);
         }
 
         // Parse the CDATA section
@@ -287,7 +290,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             }
             else
             {
-                if (cData->appendLines(nodeName->str) == mcsFAILURE)
+                if (cData->AppendLines(nodeName->str) == mcsFAILURE)
                 {
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
@@ -386,7 +389,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
                         (strcmp(attrName->str, "name")  == 0))
                     {
-                        cData->addColName(attrValue->str); 
+                        cData->AddColName(attrValue->str); 
                     }
 
                     // If it is the UCD name of the corresponding
@@ -394,7 +397,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
                         (strcmp(attrName->str, "ucd")  == 0))
                     {
-                        cData->addUcdName(attrValue->str); 
+                        cData->AddUcdName(attrValue->str); 
                     }
 
                     // If it is the number of lines to be skipped
@@ -402,7 +405,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if ((strcmp(nodeName->str, "CSV") == 0) &&
                         (strcmp(attrName->str, "headlines")  == 0))
                     {
-                        cData->setNbLinesToSkip(atoi(attrValue->str)); 
+                        cData->SetNbLinesToSkip(atoi(attrValue->str)); 
                     }
                     gdome_str_unref(attrValue);                    
                     gdome_str_unref(attrName);                    
@@ -475,7 +478,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
     do
     {
         // Get next line
-        linePtr = cData->getNextLine(linePtr);
+        linePtr = cData->GetNextLine(linePtr);
         
         if (linePtr != NULL)
         {
@@ -490,7 +493,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             strcpy(line, linePtr);
 
             // Number of UCDs per line
-            nbUcd = cData->getNbColumns();
+            nbUcd = cData->GetNbColumns();
 
             // Scan UCD list
             char *nextLinePtr;
@@ -505,7 +508,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             for (int j=0; j < nbUcd; j++)
             {
                 // Get the column name and UCD
-                if (cData->getNextColDesc(&colName, 
+                if (cData->GetNextColDesc(&colName, 
                                           &ucdName,
                                           (mcsLOGICAL)(j==0)) == mcsFAILURE)
                 {

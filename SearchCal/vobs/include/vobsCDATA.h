@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.3 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.4 2005-02-07 09:47:08 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    15-Nov-2004  Created
 *
 *
@@ -58,18 +61,18 @@ public:
     // Destructor
     virtual ~vobsCDATA();
 
-    virtual mcsCOMPL_STAT addColName(char *colName);
-    virtual mcsCOMPL_STAT addUcdName(char *ucdName);
-    virtual mcsUINT32     getNbColumns(void);
-    virtual mcsCOMPL_STAT getNextColDesc(char **colName, char **ucdName,
+    virtual mcsCOMPL_STAT AddColName(char *colName);
+    virtual mcsCOMPL_STAT AddUcdName(char *ucdName);
+    virtual mcsUINT32     GetNbColumns(void);
+    virtual mcsCOMPL_STAT GetNextColDesc(char **colName, char **ucdName,
                                          mcsLOGICAL init);
-    virtual mcsCOMPL_STAT setNbLinesToSkip(mcsINT32 nbLines);
-    virtual mcsUINT32     getNbLinesToSkip(void);
-    virtual mcsCOMPL_STAT appendLines(char *buffer);
-    virtual mcsUINT32     getNbLines(void);
-    virtual char         *getNextLine(char *linePtr);
+    virtual mcsCOMPL_STAT SetNbLinesToSkip(mcsINT32 nbLines);
+    virtual mcsUINT32     GetNbLinesToSkip(void);
+    virtual mcsCOMPL_STAT AppendLines(char *buffer);
+    virtual mcsUINT32     GetNbLines(void);
+    virtual char         *GetNextLine(char *linePtr);
 
-    virtual mcsCOMPL_STAT save(char *fileName);
+    virtual mcsCOMPL_STAT Save(char *fileName);
 
 protected:
     
