@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.8 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.9 2004-11-23 12:36:14 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -49,7 +49,7 @@ typedef mcsSTRING32 vobsSTAR_PROPERTY;
  */
 typedef enum
 {
-    UNKNOWN_ID = -1,            /**< id if no UCD */
+    UNKNOWN_UCD_ID = -1,        /**< id if no UCD */
     DATA_LINK_ID,               /**< hd id */
     ID_MAIN_ID,                 /**< hip id */
     POS_EQ_RA_MAIN_ID,          /**< Ra id */
@@ -127,7 +127,11 @@ public:
     virtual mcsCOMPL_STAT GetProperty(vobsUCD_ID ucdId, int *value) const;
     virtual mcsCOMPL_STAT GetProperty(char *ucd, float *value) const;
     virtual mcsCOMPL_STAT GetProperty(vobsUCD_ID ucdId, float *value) const;
-    
+
+    // Is property set?
+    virtual mcsLOGICAL    IsPropertySet(char *ucd) const;
+    virtual mcsLOGICAL    IsPropertySet(vobsUCD_ID ucdId) const;
+
     // Method to get RA and DEC (in arcsecond) 
     virtual mcsCOMPL_STAT GetRa(float &ra);
     virtual mcsCOMPL_STAT GetDec(float &dec);
@@ -143,8 +147,7 @@ public:
     virtual mcsCOMPL_STAT Update (vobsSTAR &star);
 
     // Method to print out all star properties
-    virtual void Display();
-    virtual void DisplayOne();
+    virtual void Display(void);
 
 protected:
     // Method to obtain id from the UCD
@@ -157,8 +160,6 @@ private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
     vobsSTAR& operator=(const vobsSTAR&);
-
-    
 };
 
 #endif /*!vobsSTAR_H*/

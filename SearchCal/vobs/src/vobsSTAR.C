@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.10 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.11 2004-11-23 12:34:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.10 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.11 2004-11-23 12:34:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -117,7 +117,6 @@ vobsSTAR::~vobsSTAR()
 {
 }
 
-
 /*
  * Public methods
  */
@@ -145,7 +144,7 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value,
     // Get Id corresponding to the specified UCD
     vobsUCD_ID ucdId;
     ucdId = Ucd2Id(ucd);
-    if (ucdId == UNKNOWN_ID)
+    if (ucdId == UNKNOWN_UCD_ID)
     {
         // Because catalogs contain lots of star properties which are not
         // needed, error is ignored to avoid useless overhead.
@@ -155,15 +154,13 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value,
     }
     
     // Affect property value
-    if ((strcmp(_properties[ucdId],"99.99")==0) ||
-        (overwrite==mcsTRUE))
+    if ((IsPropertySet(ucdId) == mcsFALSE) || (overwrite==mcsTRUE))
     {
         strcpy(_properties[ucdId], value);
     }
 
     return SUCCESS;    
 }
-
 
 /**
  * Set a star property.
@@ -186,15 +183,14 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(vobsUCD_ID ucdId, char *value,
 {
     //logExtDbg("vobsSTAR::SetProperty()");
 
-    if (ucdId == UNKNOWN_ID)
+    if (ucdId == UNKNOWN_UCD_ID)
     {
         errAdd(vobsERR_INVALID_UCD_ID, ucdId);
         return FAILURE;
     }
+
     // Affect property value
-    // Affect property value
-    if ((strcmp(_properties[ucdId],"99.99")==0) ||
-        (overwrite==mcsTRUE))
+    if ((IsPropertySet(ucdId) == mcsFALSE) || (overwrite==mcsTRUE))
     {
         strcpy(_properties[ucdId], value);
     }
@@ -224,18 +220,17 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, char *value) const
     // Get Id corresponding to the specified UCD
     vobsUCD_ID ucdId;
     ucdId = Ucd2Id(ucd);
-    if (ucdId == UNKNOWN_ID)
+    if (ucdId == UNKNOWN_UCD_ID)
     {
         errAdd(vobsERR_INVALID_UCD_NAME, ucd);
         return FAILURE;
     }
 
-    // Affect property value
-    strcpy(value,_properties[ucdId]);
+    // Copy property value
+    strcpy(value, _properties[ucdId]);
 
     return SUCCESS;
 }
-
 
 /**
  * Get a star property, as an integer.
@@ -260,7 +255,6 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, int *value) const
     return (GetProperty(ucdId, value));
 }
 
-
 /**
  * Get a star property, as an integer.
  *
@@ -282,7 +276,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, int *value) const
     //logExtDbg("vobsSTAR::GetProperty()");
 
     // Check UCD id
-    if ((ucdId == UNKNOWN_ID) ||
+    if ((ucdId == UNKNOWN_UCD_ID) ||
         (ucdId < -1) ||
         (ucdId > PHOT_COLOR_EXCESS_ID))
     {
@@ -299,7 +293,6 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, int *value) const
         
     return SUCCESS;
 }
-
 
 /**
  * Get a star property, as a float.
@@ -324,7 +317,6 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, float *value) const
     return (GetProperty(ucdId, value));
 }
 
-
 /**
  * Get a star property, as a float.
  *
@@ -346,7 +338,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, float *value) const
     //logExtDbg("vobsSTAR::GetProperty()");
     
     // Check UCD id
-    if ((ucdId == UNKNOWN_ID) ||
+    if ((ucdId == UNKNOWN_UCD_ID) ||
         (ucdId < -1) ||
         (ucdId > PHOT_COLOR_EXCESS_ID))
     {
@@ -382,7 +374,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, char *value) const
     //logExtDbg("vobsSTAR::GetProperty()");
     
     // Check UCD id
-    if ((ucdId == UNKNOWN_ID) ||
+    if ((ucdId == UNKNOWN_UCD_ID) ||
         (ucdId < -1) ||
         (ucdId > PHOT_COLOR_EXCESS_ID))
     {
@@ -396,6 +388,64 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, char *value) const
     return SUCCESS;
 }
 
+/**
+ * Check whether the property is set or not.  
+ * 
+ * \param ucd UCD name. 
+ * 
+ * \warning
+ * If the given UCD name is unknown, this method returns false (i.e.  mcsFALSE)
+ *
+ * \return
+ * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
+ * mcsFALSE) otherwise.
+ */
+mcsLOGICAL vobsSTAR::IsPropertySet(char *ucd) const
+{
+    //logExtDbg("vobsSTAR::GetProperty()");
+
+    // Get Id corresponding to the specified UCD
+    vobsUCD_ID ucdId;
+    ucdId = Ucd2Id(ucd);
+
+    // Retrieve and return property value
+    return (IsPropertySet(ucdId));
+}
+
+/**
+ * Check whether the property is set or not.  
+ * 
+ * \param ucd UCD id. 
+ * 
+ * \warning
+ * If the given UCD id is invalid, this method returns false (i.e.  mcsFALSE)
+ *
+ * \return
+ * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
+ * mcsFALSE) otherwise.
+ */
+mcsLOGICAL vobsSTAR::IsPropertySet(vobsUCD_ID ucdId) const
+{
+    //logExtDbg("vobsSTAR::GetProperty()");
+
+    // Check UCD id
+    if ((ucdId == UNKNOWN_UCD_ID) ||
+        (ucdId < -1) ||
+        (ucdId > PHOT_COLOR_EXCESS_ID))
+    {
+        return mcsFALSE;
+    }
+
+    // Check if property string value is set to vobsSTAR_PROP_NOT_SET
+    if (strcmp(_properties[ucdId], vobsSTAR_PROP_NOT_SET) == 0)
+    {
+        return mcsFALSE;
+    }
+    else
+    {
+        return mcsTRUE;
+    }
+}
 
 /**
  * Get right ascension (ra) in arcseconds.
@@ -578,7 +628,7 @@ mcsLOGICAL vobsSTAR::IsSameHip(vobsSTAR &star)
  */
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
 {
-    //logExtDbg("vobsSTAR::Update()");
+    logExtDbg("vobsSTAR::Update()");
    
     mcsSTRING32 value; 
     
@@ -588,8 +638,8 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
         star.GetProperty((vobsUCD_ID)i, value);
         // Replace the property by the propery of the other star
         // if the first property has no value
-        if ((strcmp(_properties[i], vobsSTAR_PROP_NOT_SET)==0)
-            &&(strcmp(value, vobsSTAR_PROP_NOT_SET)!=0))    
+        if ((strcmp(_properties[i], vobsSTAR_PROP_NOT_SET) == 0) &&
+            (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0))    
         {
            SetProperty((vobsUCD_ID)i, value);
         }
@@ -603,38 +653,18 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
  * Display all star properties on the console.
  * 
  */
-void vobsSTAR::Display()
+void vobsSTAR::Display(void)
 {
-    //logExtDbg("vobsSTAR::Display()");
+    logExtDbg("vobsSTAR::Display()");
     cout << "-----------------------------------------" << endl;
-    /*for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+    /*for (int ucdId=0; ucdId<vobsNB_STAR_PROPERTIES; ucdId++)
     {
-        printf("%20s",ucdNameList[i]);
+        printf("%20s",ucdNameList[ucdId]);
     }
     printf("\n");*/
-    for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+    for (int ucdId=0; ucdId<vobsNB_STAR_PROPERTIES; ucdId++)
     {
-         printf("%12s", _properties[i]);
-    }
-    printf("\n");
-
-}
-/**
- * Display affected star properties on the console.
- * 
- */
-void vobsSTAR::DisplayOne()
-{
-    //logExtDbg("vobsSTAR::Display()");
-    
-    for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
-    {
-        if (strcmp(_properties[i], vobsSTAR_PROP_NOT_SET)!=0)
-        {
-            printf("%20s = ", ucdNameList[i]);
-            printf("%12s", _properties[i]);
-            printf("\n");
-        }
+         printf("%12s", _properties[ucdId]);
     }
     printf("\n");
 
@@ -664,6 +694,6 @@ vobsUCD_ID vobsSTAR::Ucd2Id(char *ucd) const
         }
     }
 
-    return UNKNOWN_ID;
+    return UNKNOWN_UCD_ID;
 }
 /*___oOo___*/
