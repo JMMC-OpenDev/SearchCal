@@ -1,0 +1,111 @@
+#*******************************************************************************
+# Jean-Marie Mariotti Center 
+#
+# "@(#) $Id: Makefile,v 1.1 2004-05-11 13:53:20 gzins Exp $" 
+#
+# Makefile for MCS module 
+#
+# who       when      what
+# --------  --------  ----------------------------------------------
+# gzins     11/04/04  Created
+#
+
+#*******************************************************************************
+# This Makefile follows VLT Standards (see Makefile manpage documentation).
+#
+# REMARK: this should be the first module to be installed.
+#         For such a reason, in few cases, it needs to work from /src.
+#*******************************************************************************
+
+#
+# MODULE CODE DESCRIPTION:
+# ------------------------
+#
+# C programs (public and local)
+# -----------------------------
+EXECUTABLES     = 
+EXECUTABLES_L   = 
+
+#
+# to set the shell to be used by panels
+xxxx_OBJECTS   = 
+xxxx_LDFLAGS   =
+xxxx_LIBS      =
+
+
+#
+# Includes (.h) files (public only)
+# ---------------------------------
+INCLUDES = mcs.h 
+
+#
+# Scripts (public and local)
+SCRIPTS  = 	
+
+#
+# man pages to be done
+# --------------------
+MANSECTIONS = 
+MAN1 = 
+MAN5 = 
+MAN7 = 
+
+#
+# local man pages
+# ---------------
+MANl = $(SCRIPTS)
+
+#
+# ASCII file to be converted into Framemaker-MIF
+# --------------------
+ASCII_TO_MIF = 
+
+#
+# other files to be installed
+# ---------------------------
+INSTALL_FILES = 
+
+#
+# list of all possible C-sources (used to create automatic dependencies)
+# ------------------------------
+CSOURCENAMES =\
+	$(foreach exe, $(EXECUTABLES) $(EXECUTABLES_L), $($(exe)_OBJECTS)) \
+	$(foreach lib, $(LIBRARIES) $(LIBRARIES_L), $($(lib)_OBJECTS))
+
+#
+#>>>>> END OF standard rules
+
+#
+# CHOSE PLATFORM
+# --------------
+# Default is UNIX, for VxVorks application next line MUST BE UNCOMMENTED
+#MAKE_VXWORKS = on   
+
+#
+# INCLUDE STANDARDS
+# -----------------
+# 
+# REMARK: the local file (in /src) is used, so it can work also for
+# installation on an empty system.
+#
+MAKEDIR = $(MCSROOT)/include
+include $(MAKEDIR)/vltMakefile
+
+#
+# TARGETS
+# -------
+all: do_all 
+	@echo " . . . 'all' done" 
+
+clean : clean_all
+	@echo " . . . clean done"
+
+man   : do_man
+	@echo " . . . man page(s) done"
+
+install : install_all
+	@echo " . . . installation done"
+
+#
+#___oOo___
+
