@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.11 2004-06-16 14:38:30 gzins Exp $"
+* "@(#) $Id: log.c,v 1.12 2004-06-21 16:53:35 gzins Exp $"
 *
 *
 * who       when                 what
@@ -125,9 +125,9 @@ http://mariotti.ujf-grenoble.fr
  *   logSetActionLevel() methods. The current log levels can be retrieved by
  *   logGetLogLevel(), logGetVerboseLevel() and logGetActionLevel() methods.
  *
- *   The logging levels range from \p logQUIET to \p logEXTDBG , where the lowest 
- *   number means the  lowest priority. By default, the level of all the 
- *   logs is set to \p logWARNING.
+ *   The logging levels range from \p logQUIET to \p logEXTDBG , where the
+ *   lowest number means the  lowest priority. By default, the level of all
+ *   the logs is set to \p logWARNING.
  *   The log and verbose flags indicate if the log information are presented
  *   respectively on the standard \p MCS logger or on the stdout device
  *   (default is mcsTRUE).
@@ -152,6 +152,12 @@ http://mariotti.ujf-grenoble.fr
 #include <stdarg.h>
 #include <stdio.h>
 #include <syslog.h>
+
+/*
+ * MCS Headers 
+ */
+#include "mcs.h"
+#include "misc.h"
 
 /*
  * Local Headers 
@@ -191,6 +197,10 @@ mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
     char buffer[4*logTEXT_LEN];
     va_list         argPtr;
     mcsCOMPL_STAT   stat = SUCCESS;
+    mcsBYTES32      infoTime;
+
+    /* Get UNIX-style time and display as number and string. */
+    miscGetUtcTimeStr(infoTime, 6);
 
     /* If the specified level is less than or egal to the logging level */
     if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
@@ -198,7 +208,7 @@ mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
         /* Log information */
         va_start(argPtr,logFormat);
         vsprintf(buffer, logFormat, argPtr);
-        stat = logData(modName, level, fileLine, buffer);
+        stat = logData(modName, level, infoTime, fileLine, buffer);
         va_end(argPtr);
     }
 	
@@ -206,7 +216,11 @@ mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
     if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
     {
         fprintf(stdout, "%s - %s - ", mcsGetProcName(), modName);
-        if ( (fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
+        if (logRulePtr->printDate == mcsTRUE)
+        {
+            fprintf(stdout, "%s - ", infoTime);
+        }
+        if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
         {
             fprintf(stdout, "%s - ", fileLine);
         }
@@ -403,9 +417,11 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
  * 
  * \return mcsCOMPL_STAT 
  */
-static mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
-                        const char *fileLine,
-                        const char *buffer)
+mcsCOMPL_STAT logData(const mcsMODULEID modName, 
+                      logLEVEL level,
+                      const char *timeStamp,
+                      const char *fileLine,
+                      const char *buffer)
 {
     int priority;       /* syslog priority */
     static mcsLOGICAL logIsOpen = mcsFALSE;
@@ -422,6 +438,7 @@ static mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
 
     /* initialize priority according given loglevel */
     switch (level){
+        case logERROR :     priority = LOG_ERR ;     break;
         case logQUIET :     priority = LOG_NOTICE ;     break;
         case logWARNING :   priority = LOG_WARNING ;    break;
         case logINFO :      priority = LOG_INFO ;       break;
@@ -432,7 +449,7 @@ static mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     }
     
     /* log to syslog system */
-    syslog( priority, "%s %s %s", modName, fileLine, buffer);
+    syslog( priority, "%s %s %s %s", modName, timeStamp, fileLine, buffer);
         
     return SUCCESS;
 }
