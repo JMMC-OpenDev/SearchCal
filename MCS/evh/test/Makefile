@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-11-18 17:40:57 gzins Exp $"
 #
 # Makefile of test programs for evh module 
 #
@@ -38,14 +38,20 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =  evhTestHandler
+EXECUTABLES     =  evhTestTask evhTestServer
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
-evhTestHandler_OBJECTS   = evhTestHandler
-evhTestHandler_LDFLAGS   =
-evhTestHandler_LIBS      = C++ msg MCS fnd evh
+# Test of evhTASK
+evhTestTask_OBJECTS   = evhTestTask
+evhTestTask_LDFLAGS   =
+evhTestTask_LIBS      = C++ msg MCS fnd evh
+
+# 
+# Test of evhSERVER
+evhTestServer_OBJECTS   = evhTestServer
+evhTestServer_LDFLAGS   =
+evhTestServer_LIBS      = C++ msg MCS fnd evh
 
 #
 # special compilation flags for single c sources

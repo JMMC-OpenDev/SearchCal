@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTestHandler.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhTestServer.C,v 1.1 2004-11-18 17:40:57 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Test program for evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhTestHandler.C,v 1.1 2004-10-18 09:40:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.C,v 1.1 2004-11-18 17:40:57 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -43,23 +43,25 @@ using namespace std;
 /*
  * Local Headers 
  */
+#define MODULE_ID "myServer"
 #include "evhCALLBACK.h"
 #include "evhCMD_CALLBACK.h"
 #include "evhIOSTREAM_CALLBACK.h"
-#include "evhHANDLER.h"
+#include "evhSERVER.h"
 #include "evhKEY.h"
 #include "evhCMD_KEY.h"
 #include "evhIOSTREAM_KEY.h"
 
-class evhTEST : public fndOBJECT
+class evhTEST : public evhSERVER
 {
 public:
     evhTEST() {};
     virtual ~evhTEST(){};
 
-    virtual evhCB_COMPL_STAT cb1 (const msgMESSAGE &,void*)
+    virtual evhCB_COMPL_STAT cb1 (msgMESSAGE &msg,void*)
     {
         printf("evhTEST::cb1()\n"); 
+        msgSendReply(&msg, mcsTRUE);
         return evhCB_SUCCESS;
     };
     virtual evhCB_COMPL_STAT cb2 (const int,void*)
@@ -71,6 +73,22 @@ public:
         errDisplayStack();
         return evhCB_SUCCESS;
     };
+    virtual evhCB_COMPL_STAT VersionCB(msgMESSAGE &msg, void*)
+    {
+        logExtDbg("evhSERVER::VersionCB()");
+
+        // Get the version string
+        mcsSTRING256 version;
+        strcpy(version,  GetSwVersion());
+
+        // Set the reply buffer
+        msgSetBody(&msg, version, strlen(version));
+
+        // Send reply
+        msgSendReply(&msg, mcsTRUE);
+
+        return evhCB_NO_DELETE;
+    }
 
 protected:
 
@@ -83,27 +101,36 @@ private:
  */
 int main(int argc, char *argv[])
 {
-    logSetStdoutLogLevel(logEXTDBG);
-    int fd;
+    evhTEST myServer;
+
+    logInfo("Server starting ...");
+
+    // Init server
+    if (myServer.Init(argc, argv) == FAILURE)
+    {
+        exit (EXIT_FAILURE);
+    }
+
+    // Attach callback to the SETUP command
     evhCMD_KEY key1("SETUP");
-    evhTEST test;
-    evhHANDLER evhHandler;
-    evhCMD_CALLBACK cb1(&test, (evhCMD_CB_METHOD)&evhTEST::cb1);
-    evhIOSTREAM_CALLBACK cb2(&test, (evhIOSTREAM_CB_METHOD)&evhTEST::cb2);
+    evhCMD_CALLBACK cb1(&myServer, (evhCMD_CB_METHOD)&evhTEST::VersionCB);
+    myServer.AddCallback(key1, cb1);
 
-    msgConnect("evhTest", NULL);
+    // Attach callback to stdin 
+    int fd;
+    evhIOSTREAM_CALLBACK cb2(&myServer, (evhIOSTREAM_CB_METHOD)&evhTEST::cb2);
     fd = 0; 
-
     evhIOSTREAM_KEY key2(fd);
-    evhHandler.AddCallback(key1, cb1);
-    evhHandler.AddCallback(key2, cb2);
-    if (evhHandler.MainLoop() == FAILURE)
+    myServer.AddCallback(key2, cb2);
+
+    // Main loop
+    if (myServer.MainLoop() == FAILURE)
     {
         errDisplayStack();
     }
-//    evhHandler.Run(key1, msg);
-//    evhHandler.Run(key2, 1);
+
     // Exit from the application with SUCCESS
+    logInfo("Server exiting ...");
     exit (EXIT_SUCCESS);
 }
 
