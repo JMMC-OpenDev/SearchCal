@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestString.c,v 1.4 2004-08-02 14:08:46 lafrasse Exp $"
+* "@(#) $Id: miscTestString.c,v 1.5 2004-09-27 07:48:12 scetre Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -12,7 +12,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.4 2004-08-02 14:08:46 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.5 2004-09-27 07:48:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -195,6 +195,35 @@ int main (int argc, char *argv[])
         printf("TRUE.\n");
     }
     printf("\n\n");
+
+
+    /* Test of miscReplaceStrByStr */
+    printf("miscReplaceStrByStr() Function Test :\n\n");
+    strcpy ((char *)string, "Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/");
+    printf("   Original String  = %s\n",string);
+    if (miscReplaceChrByChr(string, 'A', 'Z') == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("Replace 'A' by 'Z'\n");
+        printf("   New String  = %s\n", string);
+    }
+
+    if (miscReplaceChrByChr(string, 'Z', 'A') == FAILURE)
+    {
+        printf("FAILURE.\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("Replace 'Z' by 'A'\n");
+        printf("   New String  = %s\n", string);
+    }
 
     exit (EXIT_SUCCESS);
 }

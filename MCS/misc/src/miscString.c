@@ -19,7 +19,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.9 2004-08-02 14:25:25 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.10 2004-09-27 07:48:13 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -166,6 +166,45 @@ mcsLOGICAL miscIsSpaceStr (char *string)
         string++;
     }
 	return mcsTRUE;
+}
+
+/**
+ * Replace a character occurence by another one in a string.
+ * 
+ * \warning string \em must be a NULL terminated char array pointer.\n\n
+ *
+ * \param string the null-terminated string that shall be modified.
+ * \param originalChar the character to be replaced.
+ * \param newChar the replacing character. 
+ * 
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscReplaceChrByChr (char *string,
+                                   char originalChar,
+                                   char newChar)
+{
+    int i=0;
+   
+    /* Check string parameter validity */
+    if (string == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "string");
+        return FAILURE;
+    }
+
+    /* For each charracter of the string */ 
+    while (string[i] !=  '\0')
+    {
+        /* Check if the current character has to be replaced */
+        if (string[i] == originalChar)
+        {
+            /* if ok, replace it */
+            string[i] = newChar;
+        }
+        i++;        
+    }
+
+    return SUCCESS;
 }
 
 /*___oOo___*/

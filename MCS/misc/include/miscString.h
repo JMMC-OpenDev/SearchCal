@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscString.h,v 1.2 2004-08-02 14:25:25 lafrasse Exp $"
+* "@(#) $Id: miscString.h,v 1.3 2004-09-27 07:48:13 scetre Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -40,7 +40,9 @@ extern "C" {
 mcsCOMPL_STAT miscStripQuotes    (char *string);
 mcsCOMPL_STAT miscStrToUpper     (char *string);
 mcsLOGICAL    miscIsSpaceStr     (char *string);
-
+mcsCOMPL_STAT miscReplaceChrByChr(char *string,
+                                  char originalChar,
+                                  char newChar);
 
 #ifdef __cplusplus
 }
