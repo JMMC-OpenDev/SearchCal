@@ -25,7 +25,7 @@ public class ErrXMLGenerator {
         tableGen = tablegen;
         modName = modname;
         //Path of the schema
-        schemaPath = new String("/home/MCS/config/errXmlToH.xsd");
+        schemaPath = new String(app.MCSROOT+"/config/errXmlToH.xsd");
     }
 
     /**
