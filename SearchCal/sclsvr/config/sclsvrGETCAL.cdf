@@ -3,11 +3,16 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.3 2005-02-07 14:41:46 gzins Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.4 2005-02-08 04:54:20 gzins Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.3  2005/02/07 14:41:46  gzins
+ Updated documentation; added description and unit.
+ Renamed lambda to wlen.
+ Renamed minMagRange to minDeltaMag, and maxMagRange to maxDeltaMag.
+
  Revision 1.2  2005/02/03 10:27:01  gzins
  Added file header.
 
@@ -61,14 +66,14 @@
         </param>
         <param>
             <name>minDeltaMag</name>
-            <type>string</type>
+            <type>double</type>
             <desc>min delta magnitude; i.e. maximum difference between the
                 minimum magnitude of calibrator and the science object magnitude
             </desc>
         </param>
         <param>
             <name>maxDeltaMag</name>
-            <type>string</type>
+            <type>double</type>
             <desc>max delta magnitude; i.e. maximum difference between the
                 maximum magnitude of calibrator and the science object magnitude
             </desc>
