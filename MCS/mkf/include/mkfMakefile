@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.17 2005-02-15 10:03:15 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.18 2005-02-15 10:08:01 gzins Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.17  2005/02/15 10:03:15  gzins
+# Removed clean_dist (included to clean)
+#
 # Revision 1.16  2005/02/15 08:48:00  gzins
 # Added CVS log as file modification history
 #
@@ -887,25 +890,9 @@ clean_all: rm_links $(CLEAN_TARGET)
 	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \*\.gdb_history -print | xargs -i $(RM) {}
 	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.o -print | xargs -i $(RM) {}    $(OUTPUT)
-	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \*\~ -print | xargs -i $(RM) {}    $(OUTPUT)
 	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \.\*\~ -print | xargs -i $(RM) {}    $(OUTPUT)
-	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.so -print | xargs -i $(RM) {}    $(OUTPUT)
-	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.sl -print | xargs -i $(RM) {}    $(OUTPUT)
-	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.d -print | xargs -i $(RM) {}    $(OUTPUT)
-	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.ds -print | xargs -i $(RM) {}    $(OUTPUT)
-	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.dx -print | xargs -i $(RM) {}    $(OUTPUT)
-	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.dxt -print | xargs -i $(RM) {}    $(OUTPUT)
-	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.da -print | xargs -i $(RM) {}    $(OUTPUT)
 	-@$(ECHO) " .\c"
 	-$(AT)if [ -f .testSession ];\
 		then tat -nc cleanEnv ;\
