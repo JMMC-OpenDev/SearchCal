@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.27 2005-02-10 08:07:38 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.28 2005-02-11 10:32:10 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2005/02/10 08:07:38  scetre
+* changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
+*
 * Revision 1.26  2005/02/08 20:43:11  gzins
 * Changed _isComputed by _origin
 *
@@ -53,7 +56,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.27 2005-02-10 08:07:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.28 2005-02-11 10:32:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -420,8 +423,10 @@ mcsLOGICAL vobsSTAR::IsProperty(char *id)
     logExtDbg("vobsSTAR::IsPropertySet()");
 
     // Look for property
+    map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
+    propertyIter = _propertyList.find(id);
     // If found
-    if (GetProperty(id) != NULL)
+    if (propertyIter != _propertyList.end())
     {
         // Return mcsTRUE
         return mcsTRUE;
@@ -828,8 +833,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_POS_GAL_LAT, "glat", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_POS_GAL_LON, "glon", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_VELOC_HC, "radvel", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_EXTENSION_DIAM, "diam", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(vobsSTAR_EXTENSION_DIAM_ERROR, "diamErr", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_LD_DIAM, "LD", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_LD_DIAM_ERROR, "e_LD", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_UD_DIAM, "UD", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_UD_DIAM_ERROR, "e_UD", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_OBS_METHOD, "meth", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "wlen", vobsFLOAT_PROPERTY);
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
