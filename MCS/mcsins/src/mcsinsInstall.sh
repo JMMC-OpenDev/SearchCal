@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.4 2004-12-12 09:38:48 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.5 2004-12-17 10:12:17 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -14,6 +14,8 @@
 # gzins     09-Dec-2004  Added '-h' and '-u' options
 #                        Added logfile
 #                        Deleted modules before retrieving from repository
+# gzins     17-Dec-2004  Added installation of timlog module
+#                        Added 'clean' as first target of the make command 
 #
 #*******************************************************************************
 #   NAME 
@@ -86,7 +88,7 @@ echo -e "    Press enter to continue or ^C to abort "
 read choice
 
 # List of MCS modules
-mcs_modules="mkf ctoo mcs log err misc modc modcpp fnd env cmd msg evh gwt"
+mcs_modules="mkf ctoo mcs log err misc timlog modc modcpp fnd env cmd msg evh gwt"
 
 # Delete modules first
 cd $dir
@@ -124,10 +126,10 @@ for mod in $mcs_modules; do
         echo -e "\nERROR: 'cd $mod/src' failed ...\n";
         exit 1
     fi
-    make all man install >> $logfile 2>&1
+    make clean all man install >> $logfile 2>&1
     if [ $? != 0 ]
     then
-        echo -e "\nERROR: 'make all man install' in $mod failed ...\n";
+        echo -e "\nERROR: 'make clean all man install' in $mod failed ...\n";
         tail $logfile
         echo -e "See log file '$logfile' for details."
         exit 1
