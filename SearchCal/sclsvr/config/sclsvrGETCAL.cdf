@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.10 2005-03-04 09:51:23 gzins Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.11 2005-03-07 13:41:04 gzins Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.10  2005/03/04 09:51:23  gzins
+ Updated parameter ranges
+
  Revision 1.9  2005/03/04 09:17:49  scetre
  *** empty log message ***
 
@@ -81,14 +84,14 @@
             <defaultValue><string>K</string></defaultValue>
             <desc>observation band</desc>
         </param>
-        <param>
+        <param optional="true">
             <name>minMagRange</name>
             <type>double</type>
             <minValue><double>-5.0</double></minValue>
             <maxValue><double>20</double></maxValue>
             <desc>minimum of the range magnitude</desc>
         </param>
-        <param>
+        <param optional="true">
             <name>maxMagRange</name>
             <type>double</type>
             <minValue><double>-5.0</double></minValue>
@@ -106,14 +109,6 @@
             <type>string</type>
             <desc>declinaison coordinate of the science object</desc>
             <unit>DD:MM:SS.TT</unit>                
-        </param>
-        <param>
-            <name>baseMin</name>
-            <type>double</type>
-            <desc>minimum baseline length</desc>
-            <minValue><double>0</double></minValue>
-            <maxValue><double>100</double></maxValue>
-            <unit>m</unit>                
         </param>
         <param>
             <name>baseMax</name>
