@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.8 2005-02-17 18:00:10 gzins Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.9 2005-02-22 12:39:11 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/17 18:00:10  gzins
+ * Included test for GetCmdParamLine()
+ *
  * Revision 1.7  2005/02/15 11:02:48  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -21,7 +24,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.8 2005-02-17 18:00:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.9 2005-02-22 12:39:11 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -59,7 +62,7 @@ using namespace std;
  * Local Variables
  */
 
- 
+
 
 /* 
  * Signal catching functions  
@@ -72,118 +75,122 @@ using namespace std;
  */
 
 int main(int argc, char *argv[])
-{
-    // Initialize MCS services
-    if (mcsInit(argv[0]) == mcsFAILURE)
+{   
+    // insert a new block to be sure c++ does a good housekeeping
     {
-        // Error handling if necessary
-        
-        // Exit from the application with mcsFAILURE
-        exit (EXIT_FAILURE);
-    }
+        // Initialize MCS services
+        if (mcsInit(argv[0]) == mcsFAILURE)
+        {
+            // Error handling if necessary
 
-    logSetStdoutLogLevel(logEXTDBG);
-    string mnemo, params; 
-
-    if(argc == 1)
-    {
-        mnemo.assign("VALID");
-        params.assign("-integer 1 -double 0.1 -boolean true -string \"str with blank and --\"");
-    }
-    if(argc == 2)
-    {
-        mnemo.assign("VALID");
-        params.assign(argv[1]);
-    }
-    
-    if(argc == 3)
-    {
-        mnemo.assign(argv[1]);
-        params.assign(argv[2]);
-    }
-    
-    // printf things to parse
-    cout<<"MNEMO = " << mnemo <<endl;
-    cout<<"PARAMS = " << params <<endl;
-
-    cmdVALID_CMD myCmd(mnemo, params);
-
-    if (argc != 3)
-    {
-        // we have parsed a VALID command
-        // get variables from mandatory parameters
-        
-        string pName("dinteger");
-        mcsINT32 v1;
-        if(myCmd.GetParamValue(pName,&v1)==mcsFAILURE) {
-            cout << "Can't get user value into myCmd for parameter " << pName << endl;
-            errCloseStack();
-        } else {
-            cout << pName << " parameter from myCmd gets the next user value: " << v1 << endl;
+            // Exit from the application with mcsFAILURE
+            exit (EXIT_FAILURE);
         }
 
-        pName.assign("double");
-        mcsDOUBLE v2;
-        if(myCmd.GetParamValue(pName,&v2)==mcsFAILURE) {
-            cout << "Can't get user value into myCmd for parameter " << pName << endl;
-            errCloseStack();
-        } else {
-            cout << pName << " parameter from myCmd gets the next user value: " << v2 << endl;
-        }
-        pName.assign("boolean");
-        mcsLOGICAL v3;
-        if(myCmd.GetParamValue(pName,&v3)==mcsFAILURE) {
-            cout << "Can't get user value into myCmd for parameter " << pName << endl;
-            errCloseStack();
-        } else {
-            cout << pName << " parameter from myCmd gets the next user value: " << (int)v3 << endl;
-        }
-        pName.assign("string");
-        char * v4;
-        if(myCmd.GetParamValue(pName,&v4)==mcsFAILURE) {
-            cout << "Can't get user value into myCmd for parameter " << pName << endl;
-            errCloseStack();
-        } else {
-            cout << pName << " parameter from myCmd gets the next user value: " << v4 << endl;
-        }
-    }
-    
-    // Print help for myCmd
-    string help;
-    myCmd.GetDescription(help);
-    cout<<"Description:" <<endl;
-    cout<<help<<endl;
+        logSetStdoutLogLevel(logEXTDBG);
+        string mnemo, params; 
 
-    // Print short description
-    myCmd.GetShortDescription(help);
-    cout<<"Short Description:" <<endl;
-    cout<<help<<endl;
-   
-    // Print get dstring value
-    char *dstringValue;
-    if (myCmd.GetParamValue("string",&dstringValue) == mcsFAILURE) 
-    {
-        cout << "Can't get user value into myCmd for parameter dstring" << endl;
-        errCloseStack();
-    }
-    else
-    {
-        cout << "dstring parameter from myCmd gets the next user value: " << dstringValue << endl;
-    }
-    
-    string cmdParamline;
-    if (myCmd.GetCmdParamLine(cmdParamline) == mcsFAILURE) 
-    {
-        cout << "Can't get command parameter line" << endl;
-        errCloseStack();
-    }
-    else
-    {
-        cout << "command parameter line: " << cmdParamline << endl;
+        if(argc == 1)
+        {
+            mnemo.assign("VALID");
+            params.assign("-integer 1 -double 0.1 -boolean true -string \"str with blank and --\"");
+        }
+        if(argc == 2)
+        {
+            mnemo.assign("VALID");
+            params.assign(argv[1]);
+        }
+
+        if(argc == 3)
+        {
+            mnemo.assign(argv[1]);
+            params.assign(argv[2]);
+        }
+
+        // printf things to parse
+        cout<<"MNEMO = " << mnemo <<endl;
+        cout<<"PARAMS = " << params <<endl;
+
+        cmdVALID_CMD myCmd(mnemo, params);
+
+        if (argc != 3)
+        {
+            // we have parsed a VALID command
+            // get variables from mandatory parameters
+
+            string pName("dinteger");
+            mcsINT32 v1;
+            if(myCmd.GetParamValue(pName,&v1)==mcsFAILURE) {
+                cout << "Can't get user value into myCmd for parameter " << pName << endl;
+                errCloseStack();
+            } else {
+                cout << pName << " parameter from myCmd gets the next user value: " << v1 << endl;
+            }
+
+            pName.assign("double");
+            mcsDOUBLE v2;
+            if(myCmd.GetParamValue(pName,&v2)==mcsFAILURE) {
+                cout << "Can't get user value into myCmd for parameter " << pName << endl;
+                errCloseStack();
+            } else {
+                cout << pName << " parameter from myCmd gets the next user value: " << v2 << endl;
+            }
+            pName.assign("boolean");
+            mcsLOGICAL v3;
+            if(myCmd.GetParamValue(pName,&v3)==mcsFAILURE) {
+                cout << "Can't get user value into myCmd for parameter " << pName << endl;
+                errCloseStack();
+            } else {
+                cout << pName << " parameter from myCmd gets the next user value: " << (int)v3 << endl;
+            }
+            pName.assign("string");
+            char * v4;
+            if(myCmd.GetParamValue(pName,&v4)==mcsFAILURE) {
+                cout << "Can't get user value into myCmd for parameter " << pName << endl;
+                errCloseStack();
+            } else {
+                cout << pName << " parameter from myCmd gets the next user value: " << v4 << endl;
+            }
+        }
+
+        // Print help for myCmd
+        string help;
+        myCmd.GetDescription(help);
+        cout<<"Description:" <<endl;
+        cout<<help<<endl;
+
+        // Print short description
+        myCmd.GetShortDescription(help);
+        cout<<"Short Description:" <<endl;
+        cout<<help<<endl;
+
+        // Print get dstring value
+        char *dstringValue;
+        if (myCmd.GetParamValue("string",&dstringValue) == mcsFAILURE) 
+        {
+            cout << "Can't get user value into myCmd for parameter dstring" << endl;
+            errCloseStack();
+        }
+        else
+        {
+            cout << "dstring parameter from myCmd gets the next user value: " << dstringValue << endl;
+        }
+
+        string cmdParamline;
+        if (myCmd.GetCmdParamLine(cmdParamline) == mcsFAILURE) 
+        {
+            cout << "Can't get command parameter line" << endl;
+            errCloseStack();
+        }
+        else
+        {
+            cout << "command parameter line: " << cmdParamline << endl;
+        }
+
     }
     // Close MCS services
     mcsExit();
-    
+
     // Exit from the application with mcsSUCCESS
     exit (EXIT_SUCCESS);
 }
