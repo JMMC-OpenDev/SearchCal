@@ -73,7 +73,7 @@
  * This class is intented to be used for a
  * reception of the </xsl:text> <xsl:value-of select="mnemonic"/> <xsl:text> command 
  */&#xA;</xsl:text>
-class <xsl:value-of select="$className"/>: public cmdCMD
+class <xsl:value-of select="$className"/>: public cmdCOMMAND
 {
 public:
 <xsl:value-of select="$className"/>(string name, string params);
@@ -81,7 +81,7 @@ public:
 <xsl:variable name="paramName"> <xsl:call-template name="convertcase"><xsl:with-param name="toconvert" select="./name"/> <xsl:with-param name="conversion">upfirst</xsl:with-param></xsl:call-template> </xsl:variable>
     virtual mcsCOMPL_STAT Get<xsl:value-of select="$paramName"/>(<xsl:call-template name="GetMcsTypeForParam"><xsl:with-param name="paramNode" select="."/></xsl:call-template>*<xsl:value-of select="./name"/>);<xsl:if test="./@optional">
         virtual mcsLOGICAL IsDefined<xsl:value-of select="$paramName"/>();</xsl:if><xsl:if test="boolean(./defaultValue)">
-    virtual mcsLOGICAL HasDefault<xsl:value-of select="paramName"/>();
+    virtual mcsLOGICAL HasDefault<xsl:value-of select="$paramName"/>();
     virtual mcsCOMPL_STAT GetDefault<xsl:value-of select="$paramName"/>(<xsl:call-template name="GetMcsTypeForParam"><xsl:with-param name="paramNode" select="."/></xsl:call-template>*<xsl:value-of select="./name"/>);</xsl:if>
 
 </xsl:for-each>
@@ -140,7 +140,7 @@ using namespace std;
  * Constructs a new class for an easier access for parameters of the
  * <xsl:value-of select="$className"/> COMMAND.
  */
- <xsl:value-of select="$className"/>::<xsl:value-of select="$className"/>(string name, string params):cmdCMD(name, params)
+ <xsl:value-of select="$className"/>::<xsl:value-of select="$className"/>(string name, string params):cmdCOMMAND(name, params)
 {
     
 }
