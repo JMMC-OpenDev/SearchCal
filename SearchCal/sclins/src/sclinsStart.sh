@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsStart.sh,v 1.1 2005-02-25 11:16:50 scetre Exp $"
+# "@(#) $Id: sclinsStart.sh,v 1.2 2005-02-25 15:06:00 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/02/25 11:16:50  scetre
+# Added script to star, stop and run Search Calibrators
+#
 #*******************************************************************************
 
 #/**
@@ -83,51 +86,57 @@ fi
 
 
 # Start the environnement
-echo -e "\tstarting environnement..."
-envStart >> /dev/null 2>&1
-sleep 2
+envStart
 if [ $? != 0 ]
 then
-    echo -e "\n\t\tERROR: starting 'environnement' failed\n"
     exit 1
-else
-    echo -e "\t\tenvironnement started"
 fi
 
+i=0
+limit=10
 # Ping the server sclsvr. If it is not started, start it
-echo -e "\tstarting sclsvrServer..."
 msgSendCommand sclsvrServer PING "" >> /dev/null 2>&1
 if [ $? != 0 ]
 then 
     sclsvrServer >> /dev/null &
-    if [ $? != 0 ]
+    toto=$?
+    while [ "$toto" != "0" -a ""$i" -le "$limit"" ]
+    do
+        i=`expr $i + 1`
+        sclsvrServer >> /dev/null 2>&1 &
+        toto=$?
+    done
+    if [ "$i" -ge "$limit" ]
     then
-        echo -e "\n\t\tERROR: starting 'sclsvrServer' failed\n" >&2
-        exit 1
-    else
-        echo -e "\t\tsclsvrServer started"
+        echo -e "ERROR: starting 'sclsvrServer' failed" >&2
     fi
+    echo -e "'sclsvrServer' started"
 else
-    echo -e "\t\tsclsvrServer is already Started"
+    echo -e "'sclsvrServer' ALREADY started"
 fi
 
 
-echo -e "\tstarting sclguiPanel..."
+i=0
 # Ping the server sclguiPanel. If it is not started, start it
 msgSendCommand sclguiPanel PING "" >> /dev/null 2>&1
 if [ $? != 0 ]
 then 
     sclguiPanel >> /dev/null &
-    if [ $? != 0 ]
+    toto=$?
+    while  [ "$toto" != "0" -a ""$i" -le "$limit"" ]
+    do
+        i=`expr $i + 1`
+        sclguiPanel >> /dev/null 2>&1 &
+        toto=$?
+    done
+    if [ "$i" -ge "$limit" ]
     then
         echo -e "\n\t\tERROR: starting 'sclguiPanel' failed\n" >&2
-        exit 1
-    else
-        echo -e "\t\tsclguiPanel started"
     fi
+        echo -e "'sclguiPanel' started"
 else
-    echo -e "\t\tsclguiPanel is already Started"
+    echo -e "'sclguiPanel' ALREADY started"
 fi
 
-sleep 2
+exit 0
 #___oOo___

@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsQuery.sh,v 1.2 2005-02-25 13:00:22 scetre Exp $"
+# "@(#) $Id: sclinsQuery.sh,v 1.3 2005-02-25 15:06:00 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/02/25 13:00:22  scetre
+# *** empty log message ***
+#
 # Revision 1.1  2005/02/25 11:16:50  scetre
 # Added script to star, stop and run Search Calibrators
 #
@@ -69,6 +72,13 @@
 # 
 # */
 
+# Start the servers
+sclinsStart
+if [ $? != 0 ]
+then
+    echo "Failed to start Search Calibrators..." >&2
+    exit 1
+fi
 
 # Check arguments
 if [ $# -lt 30 ]
@@ -78,7 +88,7 @@ then
         if [ "$1" == "-h" ]
         then
             echo -e "Help ..."
-            msgSendCommand sclsvrServer HELP "-command GETCAL"
+            msgSendCommand sclsvrServer HELP "-command GETCAL" 
             exit 1
         fi
     else
@@ -87,15 +97,6 @@ then
         exit 1
     fi
 fi
-
-# Start the servers
-./sclinsStart.sh 
-if [ $? == 0 ]
-then
-    echo "Failed to start Search Calibrators..." >&2
-    exit 1
-fi
-# test ok
 
 # Check if server sclgui is IDLE, if not exit 
 sclguiPanelState=`msgSendCommand sclguiPanel STATE ""` >> /dev/null 2>&1
