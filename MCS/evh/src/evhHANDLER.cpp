@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.cpp,v 1.3 2004-12-08 17:30:29 gzins Exp $"
+* "@(#) $Id: evhHANDLER.cpp,v 1.4 2004-12-22 08:59:02 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
 *                        received command.
 * gzins     08-Dec-2004  Added some method documentation
 * gzins     08-Dec-2004  Added purge of events whith no more callback attached
-*                        to
+* gzins     22-Dec-2004  Implemented GetHelp()
 *
 *******************************************************************************/
 
@@ -23,7 +23,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.3 2004-12-08 17:30:29 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.4 2004-12-22 08:59:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,6 +46,7 @@ using namespace std;
  * Local Headers 
  */
 #include "evhHANDLER.h"
+#include "evhHELP_CMD.h"
 #include "evhPrivate.h"
 #include "evhErrors.h"
 
@@ -276,7 +277,7 @@ evhCALLBACK_LIST *evhHANDLER::Find(const evhKEY &key)
 {
     logExtDbg("evhHANDLER::Find()");
 
-     // For each registered event
+    // For each registered event
     std::list<std::pair<evhKEY *, evhCALLBACK_LIST *> >::iterator iter;
     for (iter=_eventList.begin(); iter != _eventList.end(); ++iter)
     {
@@ -501,6 +502,109 @@ evhKEY *evhHANDLER::Select()
         }
     }
     return NULL;
+}
+
+/**
+ */
+mcsCOMPL_STAT evhHANDLER::GetHelp(msgMESSAGE &msg)
+{
+    // Command instance
+    evhHELP_CMD helpCmd(msg.GetCommand(), msg.GetBody());
+    
+    // Parse command parameters
+    if (helpCmd.Parse() == FAILURE)
+    {
+        return FAILURE;
+    }
+    
+    // Clear message body
+    msg.ClearBody();
+    
+    // If a command name is given
+    if (helpCmd.IsDefinedCommand() == mcsTRUE)
+    {
+        // Get the command name 
+        char *command;
+        if (helpCmd.GetCommand(&command)== FAILURE)
+        {
+            return FAILURE;
+        }
+        
+        // Look for this command 
+        mcsLOGICAL found=mcsFALSE;
+        std::list<std::pair<evhKEY *, evhCALLBACK_LIST *> >::iterator iter;
+        for (iter=_eventList.begin(); iter != _eventList.end(); ++iter)
+        {
+            char *registerCommand;
+            if (((*iter).first)->GetType() == evhTYPE_COMMAND)
+            {
+                registerCommand = ((evhCMD_KEY *)((*iter).first))->GetCommand();
+                if (strcmp(registerCommand, command) == 0)
+                {
+                    char *cdf;
+                    cdf = ((evhCMD_KEY *)((*iter).first))->GetCdf();
+                    if (strlen(cdf) != 0)
+                    {
+                        string desc;
+                        cmdCOMMAND cmd(command, "", cdf);
+                        if (cmd.GetDescription(desc) == FAILURE)
+                        {
+                            return FAILURE;
+                        }
+                        msg.AppendToBody(desc.c_str(), strlen(desc.c_str()));
+                        msg.AppendToBody("\n");
+                    }
+                    else
+                    {
+                        msg.AppendToBody(command, strlen(command));
+                        msg.AppendToBody(" - no help available\n");
+                    }
+                    found = mcsTRUE;
+                }
+            }
+        }
+        if (found == mcsFALSE)
+        {
+            msg.AppendToBody(command, strlen(command));
+            msg.AppendToBody(" - not registered\n");
+        }
+    }
+    else 
+    {
+        // For each registered event
+        std::list<std::pair<evhKEY *, evhCALLBACK_LIST *> >::iterator iter;
+        for (iter=_eventList.begin(); iter != _eventList.end(); ++iter)
+        {
+            if (((*iter).first)->GetType() == evhTYPE_COMMAND)
+            {
+                char *command;
+                char *cdf;
+                command = ((evhCMD_KEY *)((*iter).first))->GetCommand();
+                cdf = ((evhCMD_KEY *)((*iter).first))->GetCdf();
+                printf("command = %s\n", command); 
+                if (strlen(cdf) != 0)
+                {
+                    string desc;
+                    cmdCOMMAND cmd(command, "", cdf);
+                    if (cmd.GetShortDescription(desc) == FAILURE)
+                    {
+                        return FAILURE;
+                    }
+                    msg.AppendToBody(desc.c_str(), strlen(desc.c_str()));
+                    msg.AppendToBody("\n", 1);
+                }
+                else
+                {
+                    msg.AppendToBody(command, strlen(command));
+                    msg.AppendToBody(" - no help available\n", 21);
+                }
+            }
+        }
+        msg.AppendToBody("\0", 1);
+    }
+    
+    // End for
+    return SUCCESS;
 }
 
 /*___oOo___*/
