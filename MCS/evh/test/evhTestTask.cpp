@@ -1,17 +1,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhTestTask.cpp,v 1.2 2005-01-29 07:24:48 gzins Exp $"
+ * "@(#) $Id: evhTestTask.cpp,v 1.3 2005-02-03 12:44:39 gzins Exp $"
  *
  * History:
  * --------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/29 07:24:48  gzins
+ * Added CVS log as modification history
+ *
  * gzins     10-Jun-2004  created
  *
  *----------------------------------------------------------------------------*/
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: evhTestTask.cpp,v 1.2 2005-01-29 07:24:48 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestTask.cpp,v 1.3 2005-02-03 12:44:39 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,7 +52,7 @@ mcsCOMPL_STAT myTASK::PrintAppOptions()
         "a CCS message" << endl;
     cout <<"                   -c <file>    specify application "
         "configuration file" << endl;
-    return SUCCESS;
+    return mcsSUCCESS;
 
 }
 
@@ -61,7 +64,7 @@ mcsCOMPL_STAT myTASK::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
     if(strcmp(argv[*optind], "-noTimeout") == 0)
     {
         noTimeout = mcsTRUE;
-        return SUCCESS;
+        return mcsSUCCESS;
     }
     // Application configuration file option
     else if (strcmp(argv[*optind], "-c") == 0)
@@ -74,22 +77,22 @@ mcsCOMPL_STAT myTASK::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
             {
                 logWarning ("%s: Argument to option %s is invalid: '%s'",
                             Name(), argv[*optind-1], optarg);
-                return FAILURE;
+                return mcsFAILURE;
             }
-            return SUCCESS;
+            return mcsSUCCESS;
         }
         else
         {
             logWarning ("%s: Option %s requires an argument",
                         Name(), argv[*optind]);
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
     // This option has not been processed. 
     *optUsed = mcsFALSE; 
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 int main(int argc, char *argv[])
@@ -99,7 +102,7 @@ int main(int argc, char *argv[])
     
     logInfo("Program starting ...");
     // Parse input parameter
-    if (myTask.Init(argc, argv) == FAILURE)
+    if (myTask.Init(argc, argv) == mcsFAILURE)
     {
         exit (EXIT_FAILURE);
     }

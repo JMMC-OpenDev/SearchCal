@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhTestServer.cpp,v 1.7 2005-01-29 20:18:20 gzins Exp $"
+ * "@(#) $Id: evhTestServer.cpp,v 1.8 2005-02-03 12:44:39 gzins Exp $"
  *
  * History:
  * --------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/01/29 20:18:20  gzins
+ * Added errCloseStack when error occurs
+ *
  * Revision 1.6  2005/01/29 07:24:48  gzins
  * Added CVS log as modification history
  *
@@ -19,7 +22,7 @@
  * Test program for evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.7 2005-01-29 20:18:20 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.8 2005-02-03 12:44:39 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -90,7 +93,7 @@ mcsCOMPL_STAT evhTEST::AppInit()
     fd = 0; 
     evhIOSTREAM_KEY key2(fd);
     AddCallback(key2, cb2);
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 // Callback for SETUP command
@@ -133,19 +136,19 @@ int main(int argc, char *argv[])
     logInfo("Server starting ...");
 
     // Init server
-    if (myServer.Init(argc, argv) == FAILURE)
+    if (myServer.Init(argc, argv) == mcsFAILURE)
     {
         errCloseStack();
         exit (EXIT_FAILURE);
     }
 
     // Main loop
-    if (myServer.MainLoop() == FAILURE)
+    while (myServer.MainLoop() == mcsFAILURE)
     {
         errCloseStack();
     }
 
-    // Exit from the application with SUCCESS
+    // Exit from the application with mcsSUCCESS
     logInfo("Server exiting ...");
     exit (EXIT_SUCCESS);
 }
