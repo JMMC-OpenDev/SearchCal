@@ -1,32 +1,28 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-11-23 09:21:10 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-11-25 13:13:11 scetre Exp $"
 #
-# Makefile of ........
+# Makefile of sclsvr
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# sccmgr    23-Nov-2004  Created
+# scetre    13-Sep-2004  Created
 #
 #
 #*******************************************************************************
 # REMARKS
-#    Makefile based on the VLT/ALMA Makefile
+#    Makefile based on the VLT Makefile
 #
 #-------------------------------------------------------------------------------
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
-
-#
-# user definable javac compilation flags
-#USER_JFLAGS = 
+#USER_CFLAGS =  
 
 #
 # additional include and library search paths
-#USER_INC = 
+USER_INC =  -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/include/ -I/usr/include/glib-2.0
 #USER_LIB = 
 
 #
@@ -38,14 +34,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = sclsvrServer
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+sclsvrServer_OBJECTS   = sclsvrServer
+sclsvrServer_LDFLAGS   =
+sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr
 
 #
 # special compilation flags for single c sources
@@ -54,17 +50,26 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        = sclsvr.h					\
+				  sclsvrCALIBRATOR.h		\
+				  sclsvrCALIBRATOR_LIST.h	\
+				  sclsvrSEARCH_CALIBRATORS.h\
+				  sclsvrSERVER.h
+
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = sclsvr
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-lllll_OBJECTS   =
+sclsvr_OBJECTS   = sclsvrCALIBRATOR      \
+				   sclsvrCALIBRATOR_LIST \
+				   sclsvrSERVER          \
+				   sclsvrSEARCH_CMD      \
+				   sclsvrSearchCB
 
 #
 # Scripts (public and local)
@@ -94,30 +99,6 @@ TCL_LIBRARIES_L =
 # <brief description of tttlll library>
 tttlll_OBJECTS  = 
 
-#
-# Python scripts (public and local)
-# ---------------------------------
-PY_SCRIPTS     =
-PY_SCRIPTS_L   =
-
-#
-# Jarfiles and their directories
-# ---------------------------------
-JARFILES        =
-
-#
-# <brief description of jjjfff jar files>
-jjjfff_DIRS     =
-jjjfff_EXTRAS   = 
-
-#
-# Java programs
-# ---------------------------------
-JAVA_EXECUTABLES=
-
-#
-# <brief description of jjjjjj java program>
-jjjjjj_CLASS    =
 
 #
 # man pages to be done
@@ -128,6 +109,7 @@ MAN3 =
 MAN5 =
 MAN7 =
 MAN8 =
+
 
 #
 # other files to be installed
@@ -144,6 +126,7 @@ CSOURCENAMES = \
 #
 #>>>>> END OF standard rules
 
+
 #
 # INCLUDE STANDARDS
 # -----------------
@@ -158,6 +141,9 @@ all:	do_all
 
 clean : clean_all 
 	@echo " . . . clean done"
+
+clean_dist : clean_all clean_dist_all 
+	@echo " . . . clean_dist done"
 
 man   : do_man 
 	@echo " . . . man page(s) done"
