@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c++-small-main.template,v 1.8 2004-09-07 14:26:31 gluck Exp $"
+#%# "@(#) $Id: c++-small-main.template,v 1.9 2004-09-09 09:16:35 gluck Exp $"
 #%# 
 #%# Template for C++ small main program
 #%# 
@@ -33,16 +33,16 @@
  * brief description of the program, which ends at this dot.
  *
  * \synopsis
- * \e \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
+ * \b \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
  *                     [\e \<option1\> ... \e \<optionN\>] 
  *
- * \param param1 : description of parameter 1
- * \param paramN : description of parameter N
+ * \param param1 : description of parameter 1, if it exists
+ * \param paramN : description of parameter N, if it exists
  *
  * \n
  * \opt
- * \optname option1 : description of option 1
- * \optname optionN : description of option N
+ * \optname option1 : description of option 1, if it exists
+ * \optname optionN : description of option N, if it exists
  * 
  * \n
  * \details
