@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: errTest.c,v 1.1 2004-06-23 13:07:03 gzins Exp $"
+* "@(#) $Id: errTest.c,v 1.2 2004-06-23 16:57:26 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errTest.c,v 1.1 2004-06-23 13:07:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errTest.c,v 1.2 2004-06-23 16:57:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -37,16 +37,15 @@ int main (int argc, char *argv[])
 
     char     buffer[2048];
 
-    logSetVerboseLevel(logEXTDBG);
-    for (i = 1; i < 25; i++)
+    for (i = 1; i <= 10; i++)
     {
         errAdd(i,i);
     }
 
     printf ("Error 10 in stack ? : %s\n",
-        errIsInStack("err", 10)==mcsTRUE?"Oui":"Non");
-    printf ("Error 24 in stack ? : %s\n",
-        errIsInStack("err", 24)==mcsTRUE?"Oui":"Non");
+            errIsInStack("err", 10)==mcsTRUE?"Oui":"Non");
+    printf ("Error 12 in stack ? : %s\n",
+            errIsInStack("err", 24)==mcsTRUE?"Oui":"Non");
 
     printf ("\nDisplay error stack\n");
     errDisplayStack();
