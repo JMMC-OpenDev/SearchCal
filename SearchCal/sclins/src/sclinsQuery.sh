@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsQuery.sh,v 1.3 2005-02-25 15:06:00 scetre Exp $"
+# "@(#) $Id: sclinsQuery.sh,v 1.4 2005-02-28 13:48:24 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/25 15:06:00  scetre
+# *** empty log message ***
+#
 # Revision 1.2  2005/02/25 13:00:22  scetre
 # *** empty log message ***
 #
@@ -98,12 +101,14 @@ then
     fi
 fi
 
+sleep 1
+
 # Check if server sclgui is IDLE, if not exit 
 sclguiPanelState=`msgSendCommand sclguiPanel STATE ""` >> /dev/null 2>&1
 sclguiPanelSubState=${sclguiPanelState##*/}
 if [ "$sclguiPanelSubState" != "IDLE" ]
 then
-    echo -e "\tsclguiPanel is not $sclguiPanelSubState"
+    echo -e "\tsclguiPanel is not IDLE"
     exit 1
 fi
 
