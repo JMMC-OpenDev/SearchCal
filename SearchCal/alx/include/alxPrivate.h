@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.2 2005-01-21 08:10:30 gluck Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.3 2005-02-12 15:09:43 gzins Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/21 08:10:30  gluck
+ * - Updated
+ * - Insert automatic rcs log in header file
+ *
  * 
  * scetre    20-Sep-2004  Created
  * gzins     20-Dec-2004  Fixed wrong module name and removed unused definition
@@ -172,10 +176,28 @@ typedef struct
     mcsLOGICAL loaded;
     char      *fileName;
     mcsINT32   nbLines;
-    mcsFLOAT   longMin[alxNB_MAX_LONGITUDE_STEPS];
-    mcsFLOAT   longMax[alxNB_MAX_LONGITUDE_STEPS];
+    mcsFLOAT   gLonMin[alxNB_MAX_LONGITUDE_STEPS];
+    mcsFLOAT   gLonMax[alxNB_MAX_LONGITUDE_STEPS];
     mcsFLOAT   coeff[alxNB_MAX_LONGITUDE_STEPS][alxNB_POLYNOMIAL_COEFF_ABSORPTION];
 } alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION;
+
+/*
+ * Structure containing the number of star according to the magnitude and the
+ * galatic coordinates. 
+ */
+#define alxNB_MAG_STEPS 29  /* From 5.5 to 19.5 by step of 0.5 */
+#define alxNB_GLON_STEPS 6  /* 0, 10, 90, 180, 270 and 350 */
+#define alxNB_GLAT_STEPS 9  /* -90 -60 -30 -10 0 10 30 60 90 */
+
+typedef struct
+{
+    mcsLOGICAL loaded;
+    char      *fileName;
+    mcsFLOAT   gLonList[alxNB_GLON_STEPS];
+    mcsFLOAT   gLatList[alxNB_GLAT_STEPS];
+    mcsFLOAT   mag[alxNB_MAG_STEPS];
+    mcsINT32   nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
+} alxSTAR_POPULATION;
 
 #ifdef __cplusplus
 }
