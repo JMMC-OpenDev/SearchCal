@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.9 2004-12-22 07:25:31 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.10 2004-12-22 08:32:09 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,7 +25,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.9 2004-12-22 07:25:31 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.10 2004-12-22 08:32:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -169,6 +169,8 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
 {
     logExtDbg ("cmdCOMMAND::GetShortDescription()");
 
+    desc.append(_name);
+    desc.append(" - Short description not yet implemented");
     return SUCCESS;
 }
 
