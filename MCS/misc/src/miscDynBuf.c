@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.6 2004-07-20 13:58:40 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.7 2004-07-22 09:27:14 lafrasse Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -10,6 +10,9 @@
  * lafrasse  12-Jul-2004  Code factorization and error codes polishing
  * lafrasse  19-Jul-2004  Corrected some bugs ('from = to' parameters)
  * lafrasse  20-Jul-2004  Used 'memmove()' instead of temporary buffers
+ * lafrasse  22-Jul-2004  Removed all '\0' from char arrays
+ *                        Corrected a bug in miscDynBufAlloc that could cause a
+ *                        Segmentation fault when bytes were already allocated
  *
  *
  ******************************************************************************/
@@ -25,7 +28,7 @@
  * \sa To see all the other 'misc' module functions declarations, see misc.h
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.6 2004-07-20 13:58:40 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.7 2004-07-22 09:27:14 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -85,7 +88,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
  */
 static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF        *dynBuf)
 {
-    char *functionName = "miscDynBufInit\0";
+    char *functionName = "miscDynBufInit";
     
     /* Test the 'dynBuf' parameter validity... */
     if (dynBuf == NULL)
@@ -132,7 +135,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
                                              miscDYN_BUF        *dynBuf,
                                              const mcsUINT32    position)
 {
-    char *functionName = "miscDynBufVerifyPositionParameterValidity\0";
+    char *functionName = "miscDynBufVerifyPositionParameterValidity";
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
@@ -171,7 +174,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    char *functionName = "miscDynBufVerifyFromToParametersValidity\0";
+    char *functionName = "miscDynBufVerifyFromToParametersValidity";
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
@@ -221,7 +224,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
                                              char              *bytes,
                                              const mcsUINT32   length)
 {
-    char *functionName = "miscDynBufVerifyBytesAndLengthParametersValidity\0";
+    char *functionName = "miscDynBufVerifyBytesAndLengthParametersValidity";
 
     /* Test the 'bytes' parameter validity */
     if (bytes == NULL)
@@ -272,7 +275,7 @@ static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
 mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length)
 {
-    char *functionName = "miscDynBufAlloc\0";
+    char *functionName = "miscDynBufAlloc";
     char *newBuf = NULL;
 
     /* Try to initialize the received Dynamic Buffer if it is not */
@@ -282,7 +285,7 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
         return FAILURE;
     }
 
-    /* If the current buffer already has the desired length... */
+    /* If the current buffer already has sufficient length... */
     if (length == 0)
     {
         /* Do nothing */
@@ -306,11 +309,11 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
             return FAILURE;
         }
     }
-    else /* The buffer needs to be expanded... */
+    else /* The buffer needs to be expanded */
     {
         /* Try to get more memory */
-        if ((newBuf = realloc(dynBuf->dynBuf, (dynBuf->storedBytes + length)))
-             == NULL)
+        if ((newBuf = realloc(dynBuf->dynBuf, dynBuf->allocatedBytes + length))
+            == NULL)
         {
             errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
             return FAILURE;
@@ -347,7 +350,7 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
  */
 mcsCOMPL_STAT miscDynBufStrip(miscDYN_BUF *dynBuf)
 {
-    char *functionName = "miscDynBufStrip\0";
+    char *functionName = "miscDynBufStrip";
     char *newBuf = NULL;
 
     /* Try to initialize the received Dynamic Buffer if it is not */
@@ -386,7 +389,7 @@ mcsCOMPL_STAT miscDynBufStrip(miscDYN_BUF *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
 {
-    char *functionName = "miscDynBufReset\0";
+    char *functionName = "miscDynBufReset";
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
@@ -416,7 +419,7 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
 {
-    char *functionName = "miscDynBufDestroy\0";
+    char *functionName = "miscDynBufDestroy";
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
@@ -452,7 +455,7 @@ mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
  */
 mcsUINT32     miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf)
 {
-    char *functionName = "miscDynBufGetStoredBytesNumber\0";
+    char *functionName = "miscDynBufGetStoredBytesNumber";
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
@@ -475,7 +478,7 @@ mcsUINT32     miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf)
  */
 mcsUINT32     miscDynBufGetAllocatedBytesNumber(miscDYN_BUF       *dynBuf)
 {
-    char *functionName = "miscDynBufGetAllocatedBytesNumber\0";
+    char *functionName = "miscDynBufGetAllocatedBytesNumber";
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
@@ -498,7 +501,7 @@ mcsUINT32     miscDynBufGetAllocatedBytesNumber(miscDYN_BUF       *dynBuf)
  */
 char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf)
 {
-    char *functionName = "miscDynBufGetBufferPointer\0";
+    char *functionName = "miscDynBufGetBufferPointer";
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
@@ -529,7 +532,7 @@ mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
                                              char              *byte,
                                              const mcsUINT32   position)
 {
-    char *functionName = "miscDynBufGetByteAt\0";
+    char *functionName = "miscDynBufGetByteAt";
 
     /* Test the 'dynBuf' and 'position' parameters validity */
     if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
@@ -570,7 +573,7 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    char *functionName = "miscDynBufGetBytesFromTo\0";
+    char *functionName = "miscDynBufGetBytesFromTo";
 
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
     if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
@@ -620,7 +623,7 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
                                              char              byte,
                                              const mcsUINT32   position)
 {
-    char *functionName = "miscDynBufReplaceByteAt\0";
+    char *functionName = "miscDynBufReplaceByteAt";
 
     /* Test the 'dynBuf' and 'position' parameters validity */
     if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
@@ -659,7 +662,7 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    char *functionName = "miscDynBufReplaceBytesFromTo\0";
+    char *functionName = "miscDynBufReplaceBytesFromTo";
 
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
     if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
@@ -687,7 +690,8 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
     if (bytesToAlloc > 0)
     {
         /* Try to allocate the desired bytes number in the Dynamic Buffer */
-        if (miscDynBufAlloc(dynBuf, bytesToAlloc) == FAILURE)
+        if (miscDynBufAlloc(dynBuf, bytesToAlloc)
+            == FAILURE)
         {
             errAdd(miscERR_DYN_BUF_AUTO_ALLOC, functionName);
             return FAILURE;
@@ -745,7 +749,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
                                              const mcsUINT32   length)
 {
-    char *functionName = "miscDynBufAppendBytes\0";
+    char *functionName = "miscDynBufAppendBytes";
 
     /* Try to expand the received Dynamic Buffer size */
     if (miscDynBufAlloc(dynBuf, length) == FAILURE)
@@ -798,7 +802,7 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length,
                                              const mcsUINT32   position)
 {
-    char *functionName = "miscDynBufInsertBytesAt\0";
+    char *functionName = "miscDynBufInsertBytesAt";
 
     /* Test the 'dynBuf' and 'position' parameters validity */
     if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
@@ -872,7 +876,7 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    char *functionName = "miscDynBufDeleteBytesFromTo\0";
+    char *functionName = "miscDynBufDeleteBytesFromTo";
 
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
     if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
