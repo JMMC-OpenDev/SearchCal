@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.9 2005-01-04 07:53:30 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.10 2005-01-24 11:02:40 gluck Exp $"
 #
 # who       when         what
 # --------  --------     ------------------------------------------------
@@ -229,7 +229,7 @@ then
             exit 1
         fi
 
-        # Strip directory and suffix from filename
+        # Strip directory from filename
         BASE_NAME=`basename $FILE_NAME`
         if [ $? != 0 ]
         then
@@ -259,7 +259,8 @@ then
         # c++-class-file) files insert module name in the pre-processing
         # directives for header inclusion
         # -> For .C (c++-class-file) insert class name in the pre-processing
-        # directives for header inclusion and in the doxygen header block
+        # directives for header inclusion, in the doxygen header block, and for
+        # constructor and destructor replacement
         if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" ]
         then
             sed -e "1,$ s/<moduleName>/${MOD_NAME}/g" \
