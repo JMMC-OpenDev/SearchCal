@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooBuildDocIndex,v 1.2 2004-06-24 14:46:03 mella Exp $"
+# "@(#) $Id: ctooBuildDocIndex,v 1.3 2004-06-24 16:40:37 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -56,24 +56,32 @@ function getCfgFile
     fullPath="NULL"
 }
 
+if [ $# != 1 ]
+then
+    echo "" >&2
+    echo " ERROR:  ctooBuildDocIndex: $*" >&2
+    echo " Usage:  ctooBuildDocIndex <DOCROOT>" >&2
+    echo "" >&2
+    exit 1
+fi
 
 # create two temporary files
 TMPFILE=`mktemp -q /tmp/ctooBuildDocIndex.XXXXXX`
 if [ $? -ne 0 ]; then
-    echo "$0: Can't create temp file,
+    echo "$0: Can't create temp file '$TMPFILE',
     exiting..."
     exit 1
 fi
 TMP2FILE=`mktemp -q /tmp/ctooBuildDocIndex.XXXXXX`
 if [ $? -ne 0 ]; then
-    echo "$0: Can't create temp file,
+    echo "$0: Can't create temp file '$TMP2FILE',
     exiting..."
     exit 1
 fi
 
 
 # check if ../doc does exist
-DOCLOCATION=`pwd`/../doc
+DOCLOCATION=$1
 if [ ! -d $DOCLOCATION ]; then
     echo "Can't find any doc directory. Go into a doc directory and run it
     again.";
@@ -150,7 +158,7 @@ do
             echo -e "$modName\t->[FAIL] Can't add to modules.html";
         else
             #add only if index.html is present
-            if [ -f  $longModName/api/index.html ]; then
+            if [ -f  $longModName/api/html/index.html ]; then
                 echo "       $newLine" >> $TMPFILE;
             else
                 echo -e "$modName\t->[WARNING] Can't find module's index.html";
@@ -200,5 +208,5 @@ echo -e "
     </FRAMESET>
 </html>" > $TMPFILE;
 cat $TMPFILE > $DOCLOCATION/index.html
-
+rm -f $TMPFILE
 #___oOo___
