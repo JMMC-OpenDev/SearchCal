@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.10 2004-12-03 17:08:40 lafrasse Exp $"
+* "@(#) $Id: logTest.c,v 1.11 2004-12-20 13:34:32 gzins Exp $"
 *
 *
 * who       when                 what
@@ -27,6 +27,8 @@
 *                        logDisableFileLog
 *                        Replaced logSetStdoutLogState by logEnableStdoutLog and
 *                        logDisableStdoutLog
+* gzins     20-Dec-2004  Added tests for logAddToStdoutLogAllowedModList and
+*                        logClearStdoutLogAllowedModList functions
 *
 *
 *******************************************************************************/
@@ -200,6 +202,18 @@ int main(int argc, char ** argv)
     test1(mcsTRUE, mcsTRUE);
     test1(mcsFALSE, mcsTRUE);
 
+    /* Check module name filtering */
+    printf("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
+    printf("Accept log messages from 'mcs' module only \n");
+    printf("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
+    logAddToStdoutLogAllowedModList("mcs");
+    test1(mcsFALSE, mcsTRUE);
+    printf("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
+    printf("Clear list of allowed modules. All modules can log messages!!\n");
+    printf("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
+    logClearStdoutLogAllowedModList();
+    test1(mcsFALSE, mcsTRUE);
+    
     /*
      * set test level and stdout only
      */
