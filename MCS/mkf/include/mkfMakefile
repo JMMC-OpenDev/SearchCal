@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.14 2005-01-24 17:03:21 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.15 2005-02-11 09:45:51 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2005/01/24 17:03:21  gzins
+# Added gwt to the MCS C++ library list
+#
 # gzins     26-Aug-2004  Adapted from VLT
 # gzins     17-Nov-2004  Added fnd, evh and msg to the MCS library list
 # gzins     18-Nov-2004  Removed MCS C++ library from MCS_LIBLIST, and put
@@ -380,7 +383,7 @@ ifeq ($(platform),Linux)
     XINC_DEFAULT  = -I/usr/X11R6/include/X11 
     XLIB_DEFAULT  = -L/usr/X11R6/lib     
     MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -ltimlog
-    MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lenv -lcmd -lmsg -levh -lgwt
+    MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lmisco -lenv -lcmd -lmsg -levh -lgwt
     MCSSTD_LIBLIST       := -lgdome -lm
     MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)  
     MCSCPP_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(MCSCPP_LIBLIST) $(NOSHARED_OFF) $(MCSSTD_LIBLIST)
