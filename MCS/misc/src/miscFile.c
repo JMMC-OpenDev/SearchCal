@@ -18,6 +18,7 @@
 * lafrasse  03-Aug-2004  Corrected a bug in miscResolvePath that was causing an
 *                        '\' append at the end of the computed path
 * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
+* lafrasse  25-Sep-2004  Added miscFileExists
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -27,7 +28,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.12 2004-08-23 14:53:14 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.13 2004-09-27 14:59:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -38,6 +39,9 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <unistd.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 /* 
  * MCS Headers
@@ -499,6 +503,70 @@ mcsCOMPL_STAT miscYankLastPath(char *path)
 
     *chrPtr = '\0';
 
+    return SUCCESS;
+}
+
+/**
+ * Test if a file exists at a given path.
+ *
+ * \param fullPath a null-terminated char array containing the path to be tested
+ *
+ * \return SUCCESS if the file exit, FAILURE otherwise
+ */
+mcsCOMPL_STAT miscFileExists     (const char *fullPath)
+{
+    /* Test the fullPath parameter validity */
+    if (fullPath == NULL)
+    {
+        return FAILURE;
+    }
+
+    /* Try to resolve any Env. Var contained in the given path */
+    char* resolvedPath = NULL;
+    resolvedPath = calloc(sizeof(char), 256);
+    if (miscResolvePath(fullPath, &resolvedPath) == FAILURE)
+    {
+        return FAILURE;
+    }
+
+    /* Try to get file system informations */
+    struct stat fileInformationBuffer;
+    if (stat(resolvedPath, &fileInformationBuffer) == -1)
+    {
+        switch (errno)
+        {
+            case EACCES:
+                /* Permission denied */
+                errAdd(miscERR_FILE_PERMISSION_DENIED, resolvedPath);
+                break;
+    
+            case ENAMETOOLONG:
+                /* File name too long */
+                errAdd(miscERR_FILE_NAME_TOO_LONG, resolvedPath);
+                break;
+    
+            case ENOENT:
+                /* A component of the path doesn't exist */
+            case ENOTDIR:
+                /* A component of the path is not a directory */
+                errAdd(miscERR_FILE_DOESNT_EXIST, resolvedPath);
+                break;
+    
+            case ELOOP:
+                /* Too many symbolic links encountered while traversing the path
+                 */
+                errAdd(miscERR_FILE_TOO_MANY_SYM_LINKS, resolvedPath);
+                break;
+    
+            default : 
+                errAdd(miscERR_FILE_UNDEFINED_ERRNO, resolvedPath, errno);
+        }
+
+        free(resolvedPath);
+        return FAILURE;
+    }
+
+    free(resolvedPath);
     return SUCCESS;
 }
 

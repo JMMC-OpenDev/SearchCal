@@ -35,4 +35,29 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA['%s' environment variable is too long for the received buffer.]]></errFormat>
    </error>
+   <error id="8">
+      <errName>FILE_PERMISSION_DENIED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[file '%s' cannot be accessed : Permission Denied.]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>FILE_NAME_TOO_LONG</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[file '%s' cannot be accessed : Too Long.]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>FILE_DOESNT_EXIST</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[file '%s' cannot be accessed : Doesn't Exist.]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>FILE_TOO_MANY_SYM_LINKS</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[file '%s' cannot be accessed : Too Many Symbolic Links.]]></errFormat>
+   </error>
+   <error id="12">
+      <errName>FILE_UNDEFINED_ERRNO</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[file '%s' cannot be accessed : errno='%d'.]]></errFormat>
+   </error>
 </errorList>

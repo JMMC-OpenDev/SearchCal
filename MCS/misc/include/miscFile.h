@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscFile.h,v 1.3 2004-08-23 14:53:14 lafrasse Exp $"
+* "@(#) $Id: miscFile.h,v 1.4 2004-09-27 14:59:47 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscFile headers
 *                        Moved mcs.h include in from miscFile.c
 * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
+* lafrasse  25-Sep-2004  Added miscFileExists
 *
 *
 *******************************************************************************/
@@ -46,6 +47,7 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
                                   char *envVarValueBuffer,
                                   mcsUINT32 envVarValueBufferLength);
 mcsCOMPL_STAT miscYankLastPath   (char *path);
+mcsCOMPL_STAT miscFileExists     (const char *fullPath);
 
 
 #ifdef __cplusplus

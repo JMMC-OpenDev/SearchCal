@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.6 2004-08-23 14:53:14 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.7 2004-09-27 14:59:47 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -12,11 +12,12 @@
 * lafrasse  03-Aug-2004  Changed miscResolvePath test to reveal a bug that was
 *                        causing an '\' append at the end of the computed path
 * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
+* lafrasse  27-Sep-2004  Added miscFileExists test
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.6 2004-08-23 14:53:14 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.7 2004-09-27 14:59:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -529,6 +530,70 @@ int main (int argc, char *argv[])
     printf("\n\n");
     free(tmp);
 
+
+    /* Test of miscFileExists() */
+    printf("miscFileExists() Function Test :\n\n");
+    printf("   ---------------------------------------------------------\n");
+    strcpy (fullFileName, "miscErrors.xml");
+    printf("Tested File = \"%s\" ", fullFileName);
+    if (miscFileExists(fullFileName) == FAILURE)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST\n");
+    }
+    strcpy (fullFileName, "../miscErrors.xml");
+    printf("Tested File = \"%s\" ", fullFileName);
+    if (miscFileExists(fullFileName) == FAILURE)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST\n");
+    }
+    strcpy (fullFileName, "../errors/miscErrors.xml");
+    printf("Tested File = \"%s\" ", fullFileName);
+    if (miscFileExists(fullFileName) == FAILURE)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST\n");
+    }
+    strcpy (fullFileName, "$INTROOT/errors/miscErrors.xml");
+    printf("Tested File = \"%s\" ", fullFileName);
+    if (miscFileExists(fullFileName) == FAILURE)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST\n");
+    }
+    strcpy (fullFileName, "$MCSROOT/errors/miscErrors.xml");
+    printf("Tested File = \"%s\" ", fullFileName);
+    if (miscFileExists(fullFileName) == FAILURE)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST\n");
+    }
     exit (EXIT_SUCCESS);
 }
 
