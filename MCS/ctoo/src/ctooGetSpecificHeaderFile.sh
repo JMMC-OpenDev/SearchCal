@@ -2,13 +2,19 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.5 2005-02-21 15:47:02 gluck Exp $"
+# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.6 2005-02-22 15:30:52 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/02/21 15:47:02  gluck
+# Minor correction: comment
+#
 # Revision 1.4  2005/01/24 15:47:51  gluck
-# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.5  2005/02/21 15:47:02  gluck
+# Bug correction for log message automatic insertion (Minor correction: comment
+# Bug correction for log message automatic insertion ()
 #
 # gluck     17-Dec-2004  Created
 # gzins     04-Jan-2005  Changed ROOT_NAME to MOD_NAME 
@@ -131,14 +137,18 @@ case $headerFileType in
         private) # Insert the following block :
                  #
                  #   /*
-                 #    * Module name
+                 #    * Constants definition
                  #    */
+                 #    
+                 #    /* Module name */
                  #    #define MODULE_ID "$MOD_NAME"
                  #
                  echo -e "\n" >> $specificHeaderFile
                  echo "/*" >> $specificHeaderFile
-                 echo " * Module name" >> $specificHeaderFile
+                 echo " * Constants definition" >> $specificHeaderFile
                  echo " */" >> $specificHeaderFile
+                 echo -e "" >> $specificHeaderFile
+                 echo "/* Module name */" >> $specificHeaderFile
                  echo "#define MODULE_ID \"$MOD_NAME\"" >> $specificHeaderFile
                  echo -e "\n \n" >> $specificHeaderFile
                  ;;
