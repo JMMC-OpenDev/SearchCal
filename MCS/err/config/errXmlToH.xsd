@@ -40,7 +40,7 @@
     
     <xs:simpleType name="errSeverity">
     <xs:restriction base="xs:string">
-    <xs:pattern value="Warning|Severe|Fatal"/>
+    <xs:pattern value="WARNING|SEVERE|FATAL"/>
     </xs:restriction>
     </xs:simpleType>
 
