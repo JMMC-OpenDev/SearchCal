@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.cpp,v 1.3 2005-02-12 20:04:44 gzins Exp $"
+ * "@(#) $Id: miscoDYN_BUF.cpp,v 1.4 2005-02-14 08:09:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/12 20:04:44  gzins
+ * Go back to version 1.1
+ *
  * Revision 1.1  2005/02/11 09:39:41  gzins
  * Created
  *
@@ -17,7 +20,7 @@
  * byte-based buffers.
  */
 
-static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.3 2005-02-12 20:04:44 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.4 2005-02-14 08:09:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,6 +48,26 @@ using namespace std;
 miscoDYN_BUF::miscoDYN_BUF()
 {
     miscDynBufInit(&_dynBuf);
+}
+
+/**
+ * Copy constructor
+ */
+miscoDYN_BUF::miscoDYN_BUF(const miscoDYN_BUF& dynBuf)
+{
+    *this = dynBuf;
+}
+/**
+ * Assignment operator
+ */
+miscoDYN_BUF& miscoDYN_BUF::operator=(const miscoDYN_BUF &dynBuf)
+{
+    // Copy buffer content from the given one
+    mcsUINT32 bufferSize;
+    dynBuf.GetNbStoredBytes(&bufferSize);
+    AppendBytes(dynBuf.GetBuffer(), bufferSize); 
+
+    return *this;
 }
 
 /**

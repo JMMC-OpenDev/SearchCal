@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.4 2005-02-13 11:02:17 gzins Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.5 2005-02-14 08:09:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/13 11:02:17  gzins
+ * Set mcsTRUE as default value to skipCommentFlag parameter
+ *
  * Revision 1.3  2005/02/12 20:04:44  gzins
  * Go back to version 1.1
  *
@@ -55,6 +58,10 @@ class miscoDYN_BUF
 public:
     // Class constructor
     miscoDYN_BUF();
+
+    // Assignment operator and copy constructor
+    miscoDYN_BUF(const miscoDYN_BUF &dynBuf);
+    miscoDYN_BUF& operator=(const miscoDYN_BUF &dynBuf);
 
     // Class destructor
     virtual ~miscoDYN_BUF();
@@ -129,11 +136,6 @@ public:
 protected:
 
 private:
-    // Declaration of copy constructor and assignment operator as private
-    // methods, in order to hide them from the users.
-    miscoDYN_BUF(const miscoDYN_BUF&);
-    miscoDYN_BUF& operator=(const miscoDYN_BUF&);
-
     miscDYN_BUF  _dynBuf;
 };
 
