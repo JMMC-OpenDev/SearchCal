@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.7 2004-07-30 14:34:58 lafrasse Exp $"
+* "@(#) $Id: logTest.c,v 1.8 2004-08-03 15:28:40 lafrasse Exp $"
 *
 *
 * who       when                 what
@@ -29,14 +29,10 @@
 #include <stdio.h>
 
 /*
- * Constants
- */
-#define MODULE_ID "log"
-
-/*
  * Local Headers 
  */
 #include "log.h"
+#include "logPrivate.h"
 
 /*
  *Local functions

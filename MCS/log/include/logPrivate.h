@@ -3,7 +3,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logPrivate.h,v 1.4 2004-06-21 16:52:08 gzins Exp $"
+*  "@(#) $Id: logPrivate.h,v 1.5 2004-08-03 15:28:40 lafrasse Exp $"
 *
 * who       when       what
 * --------  --------   ----------------------------------------------
@@ -15,6 +15,10 @@
 extern "C" {
 #endif
 
+/*
+ * Constants
+ */
+#define MODULE_ID "log"
 #define logTEXT_LEN 64
     
 /*
