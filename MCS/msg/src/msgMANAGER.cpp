@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.7 2004-12-15 15:55:35 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.8 2004-12-20 17:45:08 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -13,7 +13,8 @@
 * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
 *                        misc Dynamic Buffer (no more msgMAXLEN)
 * gzins     14-Dec-2004  Handled DEBUG command
-*
+* gzins     20-Dec-2004  Fixed bug related to the use of GetNextProcess after
+*                        removing a process from the list.
 *
 *******************************************************************************/
 
@@ -22,7 +23,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.7 2004-12-15 15:55:35 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.8 2004-12-20 17:45:08 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -179,77 +180,85 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
             logInfo("Message received...");
             mcsINT32   nbBytesToRead ;
 
-            // For each connected processes
-            for (unsigned int el = 0; el < _processList.Size(); el++)
+            // Look for the process which sent message
+            msgPROCESS *process = _processList.GetNextProcess(mcsTRUE);
+            while (process != NULL)
             {
-                // Get the socket descriptor
-                msgPROCESS *process = 
-                    _processList.GetNextProcess((mcsLOGICAL)(el==0));
-
-                // Add it to the list of descriptors for reading
+                // If it is the sending process 
                 if ((process->GetDescriptor() != -1) && 
                     FD_ISSET(process->GetDescriptor(), &readMask))
                 {
-                    // If there is some data to be read...
-                    ioctl(process->GetDescriptor(), FIONREAD,
-                          (unsigned long *)&nbBytesToRead);
-                    if (nbBytesToRead != 0)
-                    {
-                        // Read the new message
-                        msgMESSAGE msg;
-                        if (process->Receive(msg, 0) == FAILURE)
-                        {
-                            errCloseStack();
-                        }
-                        else
-                        {
-                            // If the new message is a command...
-                            if (msg.GetType() == msgTYPE_COMMAND)
-                            {
-                                // If the command is intended to msgManger...
-                                if ((strcmp(msg.GetRecipient(), "msgManager")
-                                     == 0)
-                                    ||
-                                    (strcmp (msg.GetCommand(), msgPING_CMD_NAME)
-                                     == 0))
-                                {
-                                    /* Handle the received command */
-                                    if (HandleCmd(msg) == FAILURE)
-                                    {
-                                        errCloseStack();
-                                    }
-                                }
-                                else // If the command is not for msgManager
-                                {
-                                    // Forward to the destination process
-                                    if (Forward(msg) == FAILURE)
-                                    {
-                                        errCloseStack();
-                                    }
-                                }
-                            }
-                            else // If the message is a reply...
-                            {
-                                // Send reply to the sender process
-                                SendReply(msg, msg.IsLastReply());
-                            }
-                        }
-                    }
-                    else // If there was nothing to read...
-                    {
-                        logWarning("Connection with '%s' process lost",
-                                   process->GetName());
+                    // Stop
+                    break;
+                }
+                // Get the next process 
+                process = _processList.GetNextProcess(mcsFALSE);
+            }
 
-                        /* Close the connection */
-                        if (_processList.Remove(process->GetDescriptor())
-                            == FAILURE)
+            // If the sending process has been found
+            if (process != NULL)
+            {
+                // If there is some data to be read...
+                ioctl(process->GetDescriptor(), FIONREAD,
+                      (unsigned long *)&nbBytesToRead);
+                if (nbBytesToRead != 0)
+                {
+                    // Read the new message
+                    msgMESSAGE msg;
+                    if (process->Receive(msg, 0) == FAILURE)
+                    {
+                        errCloseStack();
+                    }
+                    else
+                    {
+                        // If the new message is a command...
+                        if (msg.GetType() == msgTYPE_COMMAND)
                         {
-                            errCloseStack();
+                            // If the command is intended to msgManger...
+                            if ((strcmp(msg.GetRecipient(), "msgManager") == 0)
+                                || (strcmp (msg.GetCommand(), msgPING_CMD_NAME)
+                                 == 0))
+                            {
+                                /* Handle the received command */
+                                if (HandleCmd(msg) == FAILURE)
+                                {
+                                    errCloseStack();
+                                }
+                            }
+                            else // If the command is not for msgManager
+                            {
+                                // Forward to the destination process
+                                if (Forward(msg) == FAILURE)
+                                {
+                                    errCloseStack();
+                                }
+                            }
+                        }
+                        else // If the message is a reply...
+                        {
+                            // Send reply to the sender process
+                            SendReply(msg, msg.IsLastReply());
                         }
                     }
                 }
+                else // If there was nothing to read...
+                {
+                    logWarning("Connection with '%s' process lost",
+                               process->GetName());
+
+                    /* Close the connection */
+                    if (_processList.Remove(process->GetDescriptor())
+                        == FAILURE)
+                    {
+                        errCloseStack();
+                    }
+                }
             }
-            // End for
+            else
+            {
+                logWarning("Message received from unregister I/O stream");
+            }
+            // End if
         }
 
     } // For ever end
