@@ -3,11 +3,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: envPrivate.h,v 1.1 2004-12-07 15:55:54 sccmgr Exp $"
+* "@(#) $Id: envPrivate.h,v 1.2 2004-12-07 16:45:56 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* sccmgr    07-Dec-2004  Created
+* lafrasse  07-Dec-2004  Created
 *
 *
 *******************************************************************************/
@@ -32,6 +32,11 @@ extern "C" {
 #define MODULE_ID "env"
 
  
+/**
+ * Default message Manager port number for connection
+ */
+#define envDEFAULT_MESSAGE_MANAGER_PORT_NUMBER 1991
+
 
 #ifdef __cplusplus
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<errorList moduleName="env">
+   <error id="1">
+      <errName>FORMAT_ENVLIST</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[wrong format of the line '%s' in environment list file '%s'; should be 'envName' 'hostName' 'portNumber']]></errFormat>
+   </error>
+   <error id="2">
+      <errName>UNKNOWN_ENV</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA['%s' environment is not defined in the environment list file '%s']]></errFormat>
+   </error>
+   <error id="3">
+      <errName>DUPLICATE_ENV</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA['%s' environment is already defined in the environment list file '%s']]></errFormat>
+   </error>
+   <error id="4">
+      <errName>PORT_ALREADY_USED</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[port '%d' of envirnoment '%s' already used by environment '%s' on '%s' host]]></errFormat>
+   </error>
+</errorList>

@@ -2,11 +2,11 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2004-12-07 15:55:54 sccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2004-12-07 16:45:56 lafrasse Exp $"
 
  who       when         what
  ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- sccmgr    07-Dec-2004  Created
+ lafrasse  07-Dec-2004  Created
 
 
 ********************************************************************************
@@ -29,7 +29,7 @@
 -->
 
 <module name="env">
-    <desc>description</desc>
-    <resp>responsible</resp>
-    <package>package</package>
+    <desc>MCS Environment Management</desc>
+    <resp>Sylvain LAFRASSE</resp>
+    <package>MCS</package>
 </module>

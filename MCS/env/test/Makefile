@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-12-07 16:45:56 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.1 2004-12-07 16:45:56 lafrasse Exp $"
 #
 # Makefile of ........
 #
@@ -38,14 +38,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = envShow
-EXECUTABLES_L   = 
+EXECUTABLES     =
+EXECUTABLES_L   = envTest
 
 #
-# <brief description of envShow program>
-envShow_OBJECTS   = envShow
-envShow_LDFLAGS   = -lgdome
-envShow_LIBS      = mcs log err misc env C++
+# <brief description of envTest program>
+envTest_OBJECTS   = envTest
+envTest_LDFLAGS   = -lgdome
+envTest_LIBS      = mcs err log misc env C++
 
 #
 # special compilation flags for single c sources
@@ -54,18 +54,17 @@ envShow_LIBS      = mcs log err misc env C++
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = env.h     \
-                  envLIST.h
+INCLUDES        =
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = env
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-env_OBJECTS   = envLIST
+lllll_OBJECTS   =
 
 #
 # Scripts (public and local)
