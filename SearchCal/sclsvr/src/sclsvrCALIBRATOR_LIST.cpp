@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.37 2005-03-06 20:34:23 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.38 2005-03-07 14:17:32 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2005/03/06 20:34:23  gzins
+ * Improved Save/Load methods; added file header, used REQUEST/FORMAT tags and added automatic format detection when loading file
+ *
  * Revision 1.36  2005/03/06 10:48:30  gzins
  * Merged FilterBySpectralType and FilterByLuminosityClass methods
  *
@@ -92,7 +95,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.37 2005-03-06 20:34:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.38 2005-03-07 14:17:32 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -790,7 +793,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
     mcsSTRING32 utcTime;
     miscGetUtcTimeStr(0, utcTime);
     mcsSTRING256 line;
-    cData.AppendString("# JMMC - Calibrators group\n");
+    cData.AppendString("# JMMC - Calibrator group\n");
     cData.AppendString("#\n");
     cData.AppendString("# This file has been created by Search Calibrators Software\n");
     sprintf(line, "#\t\tVersion : %s\n", sclsvrVERSION);
