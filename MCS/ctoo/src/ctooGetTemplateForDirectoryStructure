@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.5 2004-06-23 09:11:53 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.6 2004-06-24 13:39:06 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -26,6 +26,13 @@
 #       <name> the name of the directory from which the directory structure
 #              starts. If not existing already, directory/ies are created.
 #
+#       Remark : for MODROOT directory structure, a Makefile template is added
+#       to the src subdirectory.
+#
+#   Option :
+#       [noMakefile] : if this option is used, no Makefile is added to the
+#                      subdirectory src.
+#
 # FILES
 #
 # ENVIRONMENT
@@ -47,9 +54,9 @@
 
 
 # Input parameters given should be 3 and in the correct format:
-if [ $# != 3 ]
+if [ $# != 2 || $# != 3 ]
 then 
-    echo -e "\n\tUsage: getTemplateForDirectoryStructure \
+    echo -e "\n\tUsage: ctooGetTemplateForDirectoryStructure \
             MODROOT|INTROOT|VLTROOT|VLTDATA <name> [noMakefile]\n"
     exit 1
 fi 
