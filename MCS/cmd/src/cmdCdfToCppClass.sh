@@ -2,12 +2,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdCdfToCppClass.sh,v 1.4 2004-12-09 17:53:36 gzins Exp $"
+# "@(#) $Id: cmdCdfToCppClass.sh,v 1.5 2004-12-10 06:51:24 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # mella     21-Nov-2004  Created
 # gzins     09-Dec-2004  Removed module name argument
+# gzins     10-Dec-2004  Checked CDF name
 #
 #*******************************************************************************
 
@@ -50,12 +51,29 @@ then
     exit 1
 fi
 
-MODULENAME=`ctooGetModuleName`
-XSLFILE=`miscLocateFile cmdCdfToCppClass.xsl`
-CDFFILE=`basename $1`
+modName=`ctooGetModuleName`
+xslFile=`miscLocateFile cmdCdfToCppClass.xsl`
+cdfFile=`basename $1`
 
-echo "Transforming $1 with $XSLFILE"
+##### Check CDF file name ; must be <modName><cmdName>.cdf
 
-xsltproc --stringparam "moduleName" $MODULENAME --stringparam "cdfFilename" $CDFFILE $XSLFILE $1
+# Get command name
+lineContainingCommandName=`grep "^ *<mnemonic>.*</mnemonic> *$" $1`
+rightSideOfCommandName=${lineContainingCommandName##*<mnemonic>}
+cmdName=${rightSideOfCommandName%%</mnemonic>*}
+
+# Check CDF file name
+if [ "${modName}${cmdName}.cdf" != "$cdfFile" ]
+then
+    echo "ERROR: Invalid CDF file name '$cdfFile'!" >&2
+    echo "MUST be <modName><cmdName>.cdf; i.e. '${modName}${cmdName}.cdf'" >&2
+    echo "" >&2
+    exit 1
+fi
+
+##### Generate C++ class files 
+echo "Transforming $1 with $xslFile"
+
+xsltproc --stringparam "moduleName" $modName --stringparam "cdfFilename" $cdfFile $xslFile $1
 
 #___oOo___
