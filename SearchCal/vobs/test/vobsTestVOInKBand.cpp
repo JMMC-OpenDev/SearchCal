@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestVOInKBand.cpp,v 1.1 2005-02-13 09:06:28 gzins Exp $"
+ * "@(#) $Id: vobsTestVOInKBand.cpp,v 1.2 2005-02-13 16:00:41 gzins Exp $"
  *
  * History
  * -------
@@ -9,7 +9,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVOInKBand.cpp,v 1.1 2005-02-13 09:06:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVOInKBand.cpp,v 1.2 2005-02-13 16:00:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -49,7 +49,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Set logging service
-    logSetStdoutLogLevel(logQUIET);
+    logSetStdoutLogLevel(logTEST);
 
     logInfo("Starting ...");
 
@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
     // Set request in K band
     vobsREQUEST request;
     request.SetObjectName("ETA TAU");
-    request.SetObjectRa("03 47 29.08");
-    request.SetObjectDec("24 06 18.5");
+    request.SetObjectRa("03+47+29.08");
+    request.SetObjectDec("24+06+18.5");
     request.SetObjectMag(2.96);
     request.SetSearchBand("K");
     request.SetDeltaRa(1800.0);
