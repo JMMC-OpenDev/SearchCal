@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.16 2005-01-24 15:46:10 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.17 2005-01-28 23:49:44 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/01/24 15:46:10  gzins
+ * Fixed wrong method name in logExtDbg() for ClearBody()
+ *
  * Revision 1.15  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
@@ -41,7 +44,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.16 2005-01-24 15:46:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.17 2005-01-28 23:49:44 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -425,7 +428,7 @@ mcsLOGICAL msgMESSAGE::IsInternal(void)
  *
  * \return the address of the message body, or NULL if an error occured
  */
-char* msgMESSAGE::GetBody(void)
+char* msgMESSAGE::GetBody(void) const
 {
     logExtDbg("msgMESSAGE::GetBody()");
 
@@ -449,7 +452,7 @@ char* msgMESSAGE::GetBody(void)
  *
  * \return the message body size, or -1 if an error occured
  */
-mcsINT32 msgMESSAGE::GetBodySize(void)
+mcsINT32 msgMESSAGE::GetBodySize(void) const
 {
     logExtDbg("msgMESSAGE::GetBodySize()");
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.17 2005-01-24 15:39:54 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.18 2005-01-28 23:50:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/01/24 15:39:54  gzins
+ * Added CVS logs as modification history
+ *
  * scetre    17-Nov-2004  Created
  * lafrasse  19-Nov-2004  Changed all method name first letter to upper case,
  *                        and re-commented
@@ -195,8 +198,8 @@ public:
 
     virtual mcsLOGICAL       IsInternal      (void);
 
-    virtual char*            GetBody         (void);
-    virtual mcsINT32         GetBodySize     (void);
+    virtual char*            GetBody         (void) const;
+    virtual mcsINT32         GetBodySize     (void) const;
     virtual mcsCOMPL_STAT    ClearBody       (void);
     virtual mcsCOMPL_STAT    SetBody         (const char *buffer,
                                               mcsUINT32  bufLen=0);
