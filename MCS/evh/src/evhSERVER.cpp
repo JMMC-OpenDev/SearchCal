@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.8 2005-01-29 20:52:00 gzins Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.9 2005-02-10 08:13:38 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/01/29 20:52:00  gzins
+ * Fixed forgotten 'unique' argument for Connect()
+ *
  * Revision 1.7  2005/01/29 20:14:52  gzins
  * Added unique parameter to Connect() method
  *
@@ -34,7 +37,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.8 2005-01-29 20:52:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.9 2005-02-10 08:13:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -192,8 +195,6 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
 mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
 {
     logExtDbg("evhSERVER::Init()");
-
-    logSetStdoutLogLevel(logQUIET);
 
     // Registers application to MCS services and parses the command-line
     // parameters
