@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.1 2005-02-07 14:43:41 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.2 2005-02-15 15:54:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/07 14:43:41  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.1 2005-02-07 14:43:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.2 2005-02-15 15:54:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -69,7 +72,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetBaseline(mcsFLOAT minLength, mcsFLOAT maxLength)
     _minBaselineLength = minLength;
     _maxBaselineLength = maxLength;
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -107,7 +110,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsFLOAT wlen)
 
     _observingWlen = wlen;
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -135,7 +138,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisibility(mcsFLOAT vis,
     _vis    = vis;
     _visErr = visErr;
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.26 2005-02-14 14:13:19 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.27 2005-02-15 15:54:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/02/14 14:13:19  scetre
+ * Added Load and Save methods
+ * change miscDYN_BUF to miscoDYN_BUF in pack and unpack methods
+ *
  * Revision 1.25  2005/02/10 08:20:02  gzins
  * Fixed bug in Copy method
  *
@@ -58,7 +62,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.26 2005-02-14 14:13:19 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.27 2005-02-15 15:54:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -687,7 +691,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
  * \param extendedFormat if true, each property is saved with its attributes
  * (origin and confidence index), otherwise only property is saved.
  *
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           mcsLOGICAL extendedFormat)
@@ -722,7 +726,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
  * \param origin used if origin is not given in file (see above). If NULL, the
  * name of file is used as origin.
  *
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
                                           mcsLOGICAL extendedFormat,
