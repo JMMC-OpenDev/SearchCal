@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.13 2004-06-30 15:04:36 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.14 2004-07-01 10:39:07 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -188,27 +188,8 @@ do
     then
         mkdir $ROOT_NAME/$dir
         echo "   CREATED >>>     |---$dir "
-        # for MODROOT choice, if not already there, create
-        # $ROOT_NAME/doc/$ROOT_NAME directory
-        if [ $dir = doc -a $choice = MODROOT ]
-        then
-            mkdir $ROOT_NAME/$dir/$ROOT_NAME
-            echo "   CREATED >>>         |---$ROOT_NAME "
-        fi
     else
         echo "                   |---$dir "
-        # for MODROOT choice, if not already there, create
-        # $ROOT_NAME/doc/$ROOT_NAME directory
-        if [ $dir = doc -a $choice = MODROOT ]
-        then
-            if [ ! -d $ROOT_NAME/$dir/$ROOT_NAME ]
-            then
-                mkdir $ROOT_NAME/$dir/$ROOT_NAME
-                echo "   CREATED >>>         |---$ROOT_NAME "
-            else
-                echo "                       |---$ROOT_NAME "
-            fi
-        fi
     fi
 done
 
@@ -220,7 +201,7 @@ case $choice in
         case $makefile in
             "")
                 # Check module description file existence
-                if [ -f $ROOT_NAME/doc/$ROOT_NAME/moduleDescription.xml ]
+                if [ -f $ROOT_NAME/doc/moduleDescription.xml ]
                 then
                     # The module description file already exists
                     echo -e "\n>>> moduleDescription.xml ALREADY EXISTS."
@@ -228,7 +209,7 @@ case $choice in
                 else
                     echo -e "\n>>> Copying module description file\n"
                     TEMPLATE="$MCSTEMPLATES/forDocumentation/moduleDescription.template"
-                    FILE=$ROOT_NAME/doc/$ROOT_NAME/moduleDescription.xml
+                    FILE=$ROOT_NAME/doc/moduleDescription.xml
                     # Copy module description in doc directory
                     if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
                     then
