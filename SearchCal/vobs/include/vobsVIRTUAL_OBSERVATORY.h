@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.6 2004-11-17 08:30:19 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.7 2004-11-18 07:21:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -65,18 +65,6 @@ public:
     virtual mcsCOMPL_STAT Research(vobsREQUEST &request,
                                    vobsSTAR_LIST &StarList);
     
-    /*vobsCATALOG_CIO cio;
-    vobsCATALOG_PHOTO photo;
-    vobsCATALOG_ASCC ascc;
-    vobsCATALOG_CIO cio2;
-    vobsCATALOG_HIC hic;
-    vobsCATALOG_MASS mass;
-    vobsCATALOG_LBSI lbsi;
-    vobsCATALOG_CHARM charm;
-    vobsCATALOG_PHOTO photo2;
-    vobsCATALOG_BSC bsc;
-    vobsCATALOG_SBSC sbsc;
-    vobsCATALOG_DENIS denis;*/
 protected:
     // Method to load scenario according to the request
     virtual mcsCOMPL_STAT LoadScenario(mcsSTRING16      band,
@@ -88,6 +76,19 @@ private:
     // method, in order to hide them from the users.
     vobsVIRTUAL_OBSERVATORY& operator=(const vobsVIRTUAL_OBSERVATORY&);
     vobsVIRTUAL_OBSERVATORY (const vobsVIRTUAL_OBSERVATORY&);
+
+    // List of available catalogs
+    vobsCATALOG_CIO   _cio;
+    vobsCATALOG_PHOTO _photo;
+    vobsCATALOG_ASCC  _ascc;
+    vobsCATALOG_HIC   _hic;
+    vobsCATALOG_MASS  _mass;
+    vobsCATALOG_LBSI  _lbsi;
+    vobsCATALOG_CHARM _charm;
+    vobsCATALOG_BSC   _bsc;
+    vobsCATALOG_SBSC  _sbsc;
+    vobsCATALOG_DENIS _denis;
+
 };
 
 
