@@ -2,17 +2,19 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: errXmlToH.sh,v 1.6 2005-01-31 14:48:59 mella Exp $"
+# "@(#) $Id: errXmlToH.sh,v 1.7 2005-02-12 14:01:07 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/01/31 14:48:59  mella
+# Give new doxygen documentation style
+#
 # Revision 1.5  2005/01/31 14:26:51  mella
 # Check if xml error file does exist
 #
 # Revision 1.4  2005/01/31 13:01:22  mella
 # Add log tag for history
-# 
 #
 #*******************************************************************************
 
@@ -86,7 +88,6 @@ else
 
     # Check Xml file validity
     xmllint --noout --schema $schema $1 &> $1.tmpres 
-    cat $1.tmpres >&2
 
     # Check if validation was ok or failed
     grep "fail" $1.tmpres >&2
