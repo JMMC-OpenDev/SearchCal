@@ -1,13 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-08-24 15:01:53 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
 #
-# Makefile of msg
+# Makefile of msgTest
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# lafrasse  10-Aug-2004  Created
+# lafrasse  11-Aug-2004  Created
 #
 #
 #*******************************************************************************
@@ -34,18 +34,26 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = msgManager
+EXECUTABLES     = msgTestClient msgTestServer msgTestManagerSend
 EXECUTABLES_L   = 
 
 #
-# <brief description of msgManager program>
-msgManager_OBJECTS   = msgManager \
-                       msgManagerForward \
-                       msgManagerHandleCmd \
-                       msgManagerProcess \
-                       msgManagerProcessList
-msgManager_LDFLAGS   = -lgdome -lstdc++
-msgManager_LIBS      = mcs log err cmd misc msg
+# <brief description of msgTestClient program>
+msgTestClient_OBJECTS   = msgTestClient
+msgTestClient_LDFLAGS   = -lgdome
+msgTestClient_LIBS      = mcs err log misc msg
+
+#
+# <brief description of msgTestServer program>
+msgTestServer_OBJECTS   = msgTestServer
+msgTestServer_LDFLAGS   = -lgdome
+msgTestServer_LIBS      = mcs err log cmd misc msg
+
+#
+# <brief description of msgTestManagerSend program>
+msgTestManagerSend_OBJECTS   = msgTestManagerSend
+msgTestManagerSend_LDFLAGS   = -lgdome
+msgTestManagerSend_LIBS      = mcs err log cmd misc msg
 
 #
 # special compilation flags for single c sources
@@ -54,17 +62,17 @@ msgManager_LIBS      = mcs log err cmd misc msg
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = msg.h
+INCLUDES        =
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = msg
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-msg_OBJECTS   = msg msgConnect msgDisconnect msgReceive msgSend msgSocket
+lllll_OBJECTS   =
 
 #
 # Scripts (public and local)

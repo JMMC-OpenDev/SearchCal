@@ -1,0 +1,21 @@
+/*******************************************************************************
+* JMMC project
+*
+* "@(#) $Id: msg.doc,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+*
+* who       when         what
+* --------  -----------  -------------------------------------------------------
+* lafrasse  12-Aug-2004  Created
+*
+*
+*******************************************************************************/
+
+/**
+\mainpage msg : Inter-Process Messages Exchange Management
+
+<b>Brief description</b>\n
+The 'msg' module is a collection of functions to deal with inter-process communication.
+
+<b>Detailed decription</b>\n
+The main use of this module is to allow processus communication over a network connection.
+*/

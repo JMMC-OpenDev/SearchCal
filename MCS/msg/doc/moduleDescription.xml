@@ -1,0 +1,35 @@
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $Id: moduleDescription.xml,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+
+ who       when         what
+ ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ lafrasse  10-Aug-2004  Created
+
+
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>FirstName LastName</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="msg">
+    <desc>Inter-Process Messages Exchange Management</desc>
+    <resp>Sylvain LAFRASSE</resp>
+    <package>MCS</package>
+</module>
