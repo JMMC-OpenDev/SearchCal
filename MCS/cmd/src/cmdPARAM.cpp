@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.12 2005-03-03 16:13:43 lafrasse Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.13 2005-03-04 17:04:11 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/03/03 16:13:43  lafrasse
+ * Removed a repetitove 'unit' cout in cmdParam::GetHelp()
+ *
  * Revision 1.11  2005/03/03 10:46:47  gzins
  * Fixed bug in range check of float parameters
  *
@@ -39,7 +42,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.12 2005-03-03 16:13:43 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.13 2005-03-04 17:04:11 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -649,8 +652,8 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
         {
             if (value < _minValue)
             {
-                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
-                       "greater", _minValue.data());
+                errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
+                           _name.data(), "greater", _minValue.data());
                 return mcsFAILURE;
             }
         }
@@ -661,8 +664,8 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
             
             if (value > _minValue)
             {
-                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
-                       "less", _maxValue.data());
+                errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
+                           _name.data(), "less", _maxValue.data());
                 return mcsFAILURE;
             }
         }
@@ -680,8 +683,8 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
             sscanf (_minValue.data(), "%d", &minValue);
             if (iValue < minValue)
             {
-                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
-                       "greater", _minValue.data());
+                errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
+                           _name.data(), "greater", _minValue.data());
                 return mcsFAILURE;
             }
         }
@@ -694,8 +697,8 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
             
             if (iValue > maxValue)
             {
-                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
-                       "less", _maxValue.data());
+                errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
+                           _name.data(), "less", _maxValue.data());
                 return mcsFAILURE;
             }
         }
@@ -713,8 +716,8 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
             sscanf (_minValue.data(), "%lf", &minValue);
             if (dValue < minValue)
             {
-                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
-                       "greater", _minValue.data());
+                errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), 
+                           _name.data(), "greater", _minValue.data());
                 return mcsFAILURE;
             }
         }
@@ -727,8 +730,8 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
             
             if (dValue > maxValue)
             {
-                errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
-                       "less", _maxValue.data());
+                errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
+                           _name.data(), "less", _maxValue.data());
                 return mcsFAILURE;
             }
         }
