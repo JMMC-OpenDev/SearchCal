@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.37 2005-02-23 17:15:32 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.38 2005-02-24 16:59:14 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.37  2005/02/23 17:15:32  scetre
+* Updated property name
+*
 * Revision 1.36  2005/02/23 07:52:13  gzins
 * Added vobsSTAR_DIAM12 and vobsSTAR_DIAM12_ERROR properties
 *
@@ -83,7 +86,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.37 2005-02-23 17:15:32 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.38 2005-02-24 16:59:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -707,6 +710,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     // if criteria list is not empty
     else
     {
+        const char *hd;
         mcsSTRING64 propertyId;
         mcsFLOAT range;
         // Get the size of the criteria list
@@ -714,6 +718,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         mcsFLOAT val1, val2;    
         // Get each criteria of the list and check if the comparaison with all
         // this criteria gave a equality
+        hd = GetPropertyValue(vobsSTAR_ID_HD);
         for (int el = 0; el < listSize; el++)
         {
             if (criteriaList->GetNextCriteria
@@ -721,7 +726,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             {
                 return mcsFALSE;
             }
-            logDebug("%s delta is in +/- %.3f?", propertyId, range);
+            logDebug("%s: %s delta is in +/- %.3f?", hd, propertyId, range);
             if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
             {
                 // Get right ascension of the stars. If not set return FALSE
@@ -806,7 +811,8 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                     return mcsFALSE;
                 }    
             }
-            logDebug("%s delta = %.3f", propertyId, fabs(val1-val2));
+            logDebug("%s: %s delta = (%.3f - %.3f) %.3f", 
+                     hd, propertyId, val1, val2, fabs(val1-val2));
             if (fabs(val1-val2) > range)
             {
                 return mcsFALSE;
