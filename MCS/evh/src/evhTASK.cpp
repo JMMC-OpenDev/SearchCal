@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.cpp,v 1.2 2004-12-05 19:44:07 gzins Exp $"
+* "@(#) $Id: evhTASK.cpp,v 1.3 2004-12-08 13:35:32 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -11,7 +11,7 @@
 * gzins     03-Dec-2004  Added -n command-line option  
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.2 2004-12-05 19:44:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.3 2004-12-08 13:35:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -183,7 +183,7 @@ evhTASK::~evhTASK()
  * This method just registers application to MCS services and parses the
  * command-line parameters.
  *
- * \return SUCCESS, or FAILURE if an error occurrs.
+ * \return SUCCESS, or FAILURE if an error occurs.
  */
 mcsCOMPL_STAT evhTASK::Init(mcsINT32 argc, char *argv[])
 {
