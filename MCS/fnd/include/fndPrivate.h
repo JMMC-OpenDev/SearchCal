@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: fndPrivate.h,v 1.1 2004-09-22 08:53:19 sccmgr Exp $"
+* "@(#) $Id: fndPrivate.h,v 1.2 2004-09-22 13:39:53 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
 
 /**
  * \file
- * Brief description of the header file, which ends at this dot.
+ * Private header file of the fnd library.
  */
 
 /* The following piece of code alternates the linkage type to C for all 
