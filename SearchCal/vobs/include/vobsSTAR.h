@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.22 2005-02-04 09:59:05 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.23 2005-02-04 14:31:30 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2005/02/04 09:59:05  gzins
+* Added star properties for MIDI catalog
+*
 * Revision 1.21  2005/01/26 14:11:42  scetre
 * change assignement operator and pass list as private member of the class vobsSTAR
 *
@@ -157,6 +160,12 @@ public:
     virtual mcsCOMPL_STAT GetRa(float &ra);
     virtual mcsCOMPL_STAT GetDec(float &dec);
 
+    // Method to get Spectral class and luminosity class of a the spectral type
+    // of the star
+    virtual mcsCOMPL_STAT GetSpectralClass(char *spectralClass);
+    virtual mcsCOMPL_STAT GetLuminosityClass(char *luminosityClass);
+    
+    
     // Method to know if another star is the same than this one
     virtual mcsLOGICAL IsSame (vobsSTAR &star,
                                vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
@@ -174,7 +183,7 @@ protected:
     // Method to add a property. Should be only called by constructors.
     mcsCOMPL_STAT AddProperty(char *id, char *name,
                               vobsPROPERTY_TYPE type, char *format=NULL);
-     map<string, vobsSTAR_PROPERTY> _propertyList;
+    map<string, vobsSTAR_PROPERTY> _propertyList;
     map<string, vobsSTAR_PROPERTY>::iterator _propertyListIterator;
     map<int, string> _propertyOrder;
     map<int, string>::iterator _propertyOrderIterator;
