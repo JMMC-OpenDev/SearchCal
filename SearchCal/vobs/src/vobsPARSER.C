@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.4 2004-07-22 17:45:22 gzins Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.5 2004-07-26 07:46:15 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.4 2004-07-22 17:45:22 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.5 2004-07-26 07:46:15 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -442,7 +442,10 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
             }
 
             // Set star property
-            star.SetProperty(*ucdName, ucdValue);
+            if (star.SetProperty(*ucdName, ucdValue) == FAILURE)
+            {
+                return FAILURE;
+            }
 
             // Next UCD
             ucdName++;
