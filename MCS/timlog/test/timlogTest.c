@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: timlogTest.c,v 1.3 2005-02-15 10:27:46 gzins Exp $"
+ * "@(#) $Id: timlogTest.c,v 1.4 2005-02-15 10:30:55 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/15 10:27:46  gzins
+ * Added CVS log as file modification history
+ *
  * gzins     17-Dec-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +18,7 @@
  * Test program for timer log facility.
  */
 
-static char *rcsId="@(#) $Id: timlogTest.c,v 1.3 2005-02-15 10:27:46 gzins Exp $"; 
+static char *rcsId="@(#) $Id: timlogTest.c,v 1.4 2005-02-15 10:30:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
