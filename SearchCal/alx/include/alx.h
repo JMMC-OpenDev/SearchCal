@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.12 2005-04-04 07:22:51 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.13 2005-04-06 12:12:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/04/04 07:22:51  scetre
+ * alxDIFFERIANTIAL_MAGNITUDES become a private structure
+ *
  * Revision 1.11  2005/03/30 12:46:34  scetre
  * Added structure in order to simplify the code.
  * Changed API with this structure
@@ -108,12 +111,12 @@ typedef struct
     mcsFLOAT value;
     alxCONFIDENCE_INDEX confIndex;
     mcsLOGICAL isSet; 
-} alxMAGNITUDE;
+} alxDATA;
 
 /**
  * Stucture of alxNB_BANDS(9) magnitudes
  */
-typedef alxMAGNITUDE alxMAGNITUDES[alxNB_BANDS];
+typedef alxDATA alxMAGNITUDES[alxNB_BANDS];
 
 /**
  * Structure of visibilities :
@@ -142,13 +145,14 @@ typedef struct
  */
 typedef struct
 {
-    mcsFLOAT bv;
-    mcsFLOAT vr;
-    mcsFLOAT vk;
-    mcsFLOAT bvErr;
-    mcsFLOAT vrErr;
-    mcsFLOAT vkErr;
+    alxDATA bv;
+    alxDATA vr;
+    alxDATA vk;
+    alxDATA bvErr;
+    alxDATA vrErr;
+    alxDATA vkErr;
     alxCONFIDENCE_INDEX confidenceIdx;
+    mcsLOGICAL areComputed;
 } alxDIAMETERS;
 
 /*
@@ -162,10 +166,10 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT plx,
                                        mcsFLOAT gLon,
                                        alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
-                                        mcsFLOAT mgV,
-                                        mcsFLOAT mgR,
-                                        mcsFLOAT mgK,
+mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
+                                        alxDATA mgV,
+                                        alxDATA mgR,
+                                        alxDATA mgK,
                                         alxDIAMETERS *diameters);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.6 2005-04-04 07:22:51 scetre Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.7 2005-04-06 12:12:56 scetre Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/04/04 07:22:51  scetre
+ * alxDIFFERIANTIAL_MAGNITUDES become a private structure
+ *
  * Revision 1.5  2005/02/22 10:15:32  gzins
  * Made alxBLANKING_VALUE definition public
  *
@@ -97,26 +100,6 @@ typedef struct
     mcsSTRING32 lightClass;    /* Luminosity class*/
 } alxSPECTRAL_TYPE;
 
-/**
- * Differential magnitudes
- */
-typedef struct
-{
-    mcsFLOAT b_v;
-    mcsFLOAT v_i;
-    mcsFLOAT v_r;
-    mcsFLOAT i_j;
-    mcsFLOAT j_h;
-    mcsFLOAT j_k;
-    mcsFLOAT k_l;
-    mcsFLOAT k_m;
-}alxDIFFERENTIAL_MAGNITUDES;
-
-/*
- * The number of column in the table comes from the number of difference it is
- * necessary to have to compute the missing magnitude
- */
-#define alxNB_DIFF_MAG 8
 /*
  * Colum identificator of magnitude difference.
  */
@@ -129,8 +112,14 @@ typedef enum
     alxJ_H,                 /* value of MagJ - MagH */
     alxJ_K,                 /* value of MagJ - MagK */
     alxK_L,                 /* value of MagK - MagL */
-    alxL_M                  /* value of MagL - MagM */
+    alxK_M,                 /* value of MagL - MagM */
+    alxNB_DIFF_MAG          /* number of differential magnitude */
 } alxDIFF_MAG;
+
+/**
+ * Differential magnitudes
+ */
+typedef alxDATA alxDIFFERENTIAL_MAGNITUDES[alxNB_DIFF_MAG];
 
 /*
  * Structure of the color table.
