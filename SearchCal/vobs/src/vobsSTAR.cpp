@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.12 2004-11-25 13:04:56 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.12 2004-11-25 13:04:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

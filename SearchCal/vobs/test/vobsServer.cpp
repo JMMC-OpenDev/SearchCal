@@ -1,16 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSearch.C,v 1.5 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsServer.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* scetre    12-Jul-2004  Created
+* scetre    06-Jul-2004  Created
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSearch.C,v 1.5 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsServer.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -18,70 +18,40 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <iostream>
 using namespace std;
-#include <string.h>
+
 
 /*
  * MCS Headers 
  */
 #include "mcs.h"
 #include "log.h"
-
-#include "err.h"
 #define MODULE_ID "vobs"
-
+#include "err.h"
 /*
  * Local Headers 
  */
-#include "vobs.h"
 
-/*#include "vobsCALIBRATOR_STAR.h"
-#include "vobsCALIBRATOR_STAR_LIST.h"
-#include "vobsCATALOG.h"
-#include "vobsPARSER.h"
-#include "vobsREQUEST.h"
-#include "vobsVIRTUAL_OBSERVATORY.h"
-*/
+#include "vobs.h"
 /*
  * Local Variables
- */
-
- 
-/* 
- * Signal catching functions  
  */
 
 
 /*
  * Local Functions
  */
-
-
-
+// main
 int main(int argc, char *argv[])
 {
     mcsInit(argv[0]);
-    
+
     logSetStdoutLogStateLevel(logEXTDBG);
-    
     logInfo("Starting ...");
-    char *starInit=argv[1];
-    //star=new char[strlen(argv)+1];
-    //strcpy(star,argv);
-    cout << starInit << endl;
     
-    char *star;
-    strcpy(star,"");
-    char *tmp=(char *)strtok(starInit," ");
-    while (tmp!=NULL)
-    {
-        strcat(star,tmp);
-        tmp=(char *)strtok(NULL," ");
-        if (tmp!=NULL)
-            strcat(star,"%20");
-    }
-
-    cout << star << endl;
-
+    char *alpha="1"; 
+    char *delta="2";
+#if 0
+    char *starName="ETA_TAU";
     char *wavelength="2.2";
     char *magnitudeB="magnitudeB";
     char *band="K";
@@ -94,24 +64,39 @@ int main(int argc, char *argv[])
     char *visErr="4.5E-02";
     char *basemin="25";
     char *basemax="100";
-vobsREQUEST request;
-    request.Create(star, wavelength, soMagnitude, magnitudeRange, searchRA, searchDEC, visibility, reqAbsErr, band);
+
+#else
+    char *starName="ZET_GEM";
+    char *wavelength="0.65";
+    char *magnitudeB="magnitudeB";
+    char *band="V";
+    char *soMagnitude="3.62";
+    char *magnitudeRange="1.5..5.5";
+    char *searchRA="07+04+06.53";
+    char *searchDEC="20+34+13.1";
+    char *visibility="0.245";
+    char *reqAbsErr="reqAbsErr";
+    char *visErr="1.2E-02";
+    char *basemin="25";
+    char *basemax="60";
+#endif 
+
+    vobsREQUEST request;
+    request.Create(starName, wavelength, soMagnitude, magnitudeRange, searchRA, searchDEC, visibility, reqAbsErr, band);
+   
     vobsVIRTUAL_OBSERVATORY virtualObservatory;
     
     vobsCALIBRATOR_STAR_LIST calibObjList;
+    calibObjList=virtualObservatory.Search(request);
     
-    calibObjList=virtualObservatory.SearchOne(request);
-
     logInfo("size of the list = %d",calibObjList.Size());
     
     calibObjList.Print();
     
-    logInfo("exiting ...");
+    logInfo("Server exiting ...");
     errDisplayStack();
     errCloseStack();
     return 0;
-
 }
-
 
 /*___oOo___*/

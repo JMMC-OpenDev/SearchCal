@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CHARM.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,12 +9,13 @@
 *
 *
 *******************************************************************************/
+
 /**
  * \file
- * vobsCATALOG_CHARM class definition.
+ * vobsCATALOG_LBSI class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CHARM.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,7 +36,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCATALOG_CHARM.h"
+#include "vobsCATALOG_LBSI.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -46,9 +47,9 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_CHARM::vobsCATALOG_CHARM()
+vobsCATALOG_LBSI::vobsCATALOG_LBSI()
 {
-    strcpy(_name,"J/A+A/386/492/charm");
+    strcpy(_name,"J/A+A/393/183/catalog");
 }
 
 /*
@@ -58,7 +59,7 @@ vobsCATALOG_CHARM::vobsCATALOG_CHARM()
 /**
  * Delete a catalog object. 
  */
-vobsCATALOG_CHARM::~vobsCATALOG_CHARM()
+vobsCATALOG_LBSI::~vobsCATALOG_LBSI()
 {
     miscDynBufDestroy(&_query);
 }
@@ -82,15 +83,12 @@ vobsCATALOG_CHARM::~vobsCATALOG_CHARM()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_CHARM::WriteQuerySpecificPart(void)
+mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_CHARM::GetAskingSpecificParameters()");
+    logExtDbg("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_RA_MAIN");
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_DEC_MAIN&-out=LD");
-    miscDynBufAppendString(&_query, "&-out=e_LD&-out=UD&-out=e_UD");
-    miscDynBufAppendString(&_query, "&-out=*OBS_METHOD&-out=*PHOT_JHN_K");
-    miscDynBufAppendString(&_query, "&Inst=,LBI,LO,SPE&-out=Lambda");
+    miscDynBufAppendString(&_query, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag");
+    miscDynBufAppendString(&_query, "&-out=UDDK,e_UDDK");
             
     return SUCCESS;
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.22 2004-11-30 15:17:25 scetre Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.22 2004-11-30 15:17:25 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*

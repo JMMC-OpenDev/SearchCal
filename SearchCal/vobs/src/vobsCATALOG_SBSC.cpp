@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,10 +11,10 @@
 *******************************************************************************/
 /**
  * \file
- * vobsCATALOG_MASS class definition.
+ * vobsCATALOG_SBSC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,7 +35,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCATALOG_MASS.h"
+#include "vobsCATALOG_SBSC.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -46,9 +46,9 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_MASS::vobsCATALOG_MASS()
+vobsCATALOG_SBSC::vobsCATALOG_SBSC()
 {
-    strcpy(_name,"II/246/out");
+    strcpy(_name,"V/36B/bsc4s");
 }
 
 /*
@@ -58,10 +58,11 @@ vobsCATALOG_MASS::vobsCATALOG_MASS()
 /**
  * Delete a catalog object. 
  */
-vobsCATALOG_MASS::~vobsCATALOG_MASS()
+vobsCATALOG_SBSC::~vobsCATALOG_SBSC()
 {
     miscDynBufDestroy(&_query);
 }
+
 
 /*
  * Protected methods
@@ -81,12 +82,11 @@ vobsCATALOG_MASS::~vobsCATALOG_MASS()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
+mcsCOMPL_STAT vobsCATALOG_SBSC::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_MASS::GetAskingSpecificParameters()");
+    logExtDbg("vobsCATALOG_SBSC::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=Jmag&-out=Hmag&-out=Kmag");
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
+    miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT");
             
     return SUCCESS;
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.11 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,14 +9,12 @@
 *
 *
 *******************************************************************************/
-
 /**
  * \file
- * vobsCATALOG_ASCC class definition.
+ * vobsCATALOG_PHOTO class definition.
  */
 
-
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.11 2004-11-30 10:32:31 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -39,7 +37,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCATALOG_ASCC.h"
+#include "vobsCATALOG_PHOTO.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -50,9 +48,9 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_ASCC::vobsCATALOG_ASCC()
+vobsCATALOG_PHOTO::vobsCATALOG_PHOTO()
 {
-    strcpy(_name,"I/280");
+    strcpy(_name,"II/7A/catalog");
 }
 
 /*
@@ -62,7 +60,7 @@ vobsCATALOG_ASCC::vobsCATALOG_ASCC()
 /**
  * Delete a catalog object. 
  */
-vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
+vobsCATALOG_PHOTO::~vobsCATALOG_PHOTO()
 {
     miscDynBufDestroy(&_query);
 }
@@ -70,6 +68,7 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
 /*
  * Protected methods
  */
+
 
 /**
  * Build the specificatic part of the asking.
@@ -84,18 +83,17 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
+mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
-    
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
-    miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
-    miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
-    miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
+    logExtDbg("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
+   
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query, "&-out=v1&-out=d5&-out=HIP&-out=HD");
-    miscDynBufAppendString(&_query, "&-out=DM&-sort=_r");
-    
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_R&-out=*PHOT_JHN_I");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_J");
+    miscDynBufAppendString(&_query, "-out=*PHOT_JHN_H&-out=*PHOT_JHN_K");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
+            
     return SUCCESS;
 }
 
@@ -112,44 +110,43 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
  * 
  * \b Errors codes:\n
  * The possible errors are:
- *
+ * 
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST request)
 {
-    logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
+    logExtDbg("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
 
     miscDynBufAppendString(&_query, "&");
+
     mcsSTRING32 band;
-    // Get the oserved band from the constarints
     request.GetConstraint(OBSERVED_BAND_ID,band);
     miscDynBufAppendString(&_query, band);
-    miscDynBufAppendString(&_query, "mag=");
+    miscDynBufAppendString(&_query, "=");
+
     mcsSTRING32 minMagRange;
-    // Get the minimum of the magnitude range
     request.GetConstraint(MIN_MAGNITUDE_RANGE_ID,minMagRange);
     miscDynBufAppendString(&_query, minMagRange);
     miscDynBufAppendString(&_query, "..");
     mcsSTRING32 maxMagRange;
-    // Get the maximum of the magnitude range
     request.GetConstraint(MAX_MAGNITUDE_RANGE_ID,maxMagRange);
     miscDynBufAppendString(&_query, maxMagRange);
-    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
-    mcsSTRING32 searchBoxRa;
-    mcsSTRING32 searchBoxDec;
+    
+    miscDynBufAppendString(&_query, "&-out.max=100&-c.bm=");
+    mcsSTRING32 searchBoxRa, searchBoxDec;
     request.GetConstraint(SEARCH_BOX_RA_ID,searchBoxRa);
     request.GetConstraint(SEARCH_BOX_DEC_ID,searchBoxDec);
     miscDynBufAppendString(&_query, searchBoxRa);
     miscDynBufAppendString(&_query, "/");
     miscDynBufAppendString(&_query, searchBoxDec);
-    miscDynBufAppendString(&_query, "&-c.u=arcsec");
+    miscDynBufAppendString(&_query, "&-c.u=arcmin");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
-    miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
-    miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
-    miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query, "&-out=v1&-out=d5");
-    miscDynBufAppendString(&_query, "&-out=HIP&-out=HD&-out=DM&-sort=_r"); 
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_R");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_I&-out=*PHOT_JHN_J");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_H&-out=*PHOT_JHN_K");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
+    miscDynBufAppendString(&_query, "&-sort=_r");
     
     return SUCCESS;
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_BSC.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,13 +9,12 @@
 *
 *
 *******************************************************************************/
-
 /**
  * \file
- * vobsCATALOG_BSC class definition.
+ * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_BSC.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,7 +35,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCATALOG_BSC.h"
+#include "vobsCATALOG_MASS.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -47,9 +46,9 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_BSC::vobsCATALOG_BSC()
+vobsCATALOG_MASS::vobsCATALOG_MASS()
 {
-    strcpy(_name,"V/50/catalog");
+    strcpy(_name,"II/246/out");
 }
 
 /*
@@ -59,11 +58,10 @@ vobsCATALOG_BSC::vobsCATALOG_BSC()
 /**
  * Delete a catalog object. 
  */
-vobsCATALOG_BSC::~vobsCATALOG_BSC()
+vobsCATALOG_MASS::~vobsCATALOG_MASS()
 {
     miscDynBufDestroy(&_query);
 }
-
 
 /*
  * Protected methods
@@ -83,15 +81,14 @@ vobsCATALOG_BSC::~vobsCATALOG_BSC()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_BSC::WriteQuerySpecificPart(void)
+mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_BSC::GetAskingSpecificParameters()");
+    logExtDbg("vobsCATALOG_MASS::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT&-out=HD");
+    miscDynBufAppendString(&_query, "&-out=Jmag&-out=Hmag&-out=Kmag");
+    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
             
     return SUCCESS;
 }
-
-
 
 /*___oOo___*/

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_LBSI.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,13 +9,12 @@
 *
 *
 *******************************************************************************/
-
 /**
  * \file
- * vobsCATALOG_LBSI class definition.
+ * vobsCATALOG_HIC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,7 +35,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCATALOG_LBSI.h"
+#include "vobsCATALOG_HIC.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -47,9 +46,9 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_LBSI::vobsCATALOG_LBSI()
+vobsCATALOG_HIC::vobsCATALOG_HIC()
 {
-    strcpy(_name,"J/A+A/393/183/catalog");
+    strcpy(_name,"I/196/main");
 }
 
 /*
@@ -59,11 +58,10 @@ vobsCATALOG_LBSI::vobsCATALOG_LBSI()
 /**
  * Delete a catalog object. 
  */
-vobsCATALOG_LBSI::~vobsCATALOG_LBSI()
+vobsCATALOG_HIC::~vobsCATALOG_HIC()
 {
     miscDynBufDestroy(&_query);
 }
-
 
 /*
  * Protected methods
@@ -83,14 +81,16 @@ vobsCATALOG_LBSI::~vobsCATALOG_LBSI()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
+mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
+    logExtDbg("vobsCATALOG_HIC::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag");
-    miscDynBufAppendString(&_query, "&-out=UDDK,e_UDDK");
+    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
+    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
+    miscDynBufAppendString(&_query, "&-out=*VELOC_HC");
             
     return SUCCESS;
 }
+
 
 /*___oOo___*/

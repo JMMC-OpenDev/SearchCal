@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_HIC.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_BSC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,12 +9,13 @@
 *
 *
 *******************************************************************************/
+
 /**
  * \file
- * vobsCATALOG_HIC class definition.
+ * vobsCATALOG_BSC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_HIC.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_BSC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,7 +36,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCATALOG_HIC.h"
+#include "vobsCATALOG_BSC.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -46,9 +47,9 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_HIC::vobsCATALOG_HIC()
+vobsCATALOG_BSC::vobsCATALOG_BSC()
 {
-    strcpy(_name,"I/196/main");
+    strcpy(_name,"V/50/catalog");
 }
 
 /*
@@ -58,10 +59,11 @@ vobsCATALOG_HIC::vobsCATALOG_HIC()
 /**
  * Delete a catalog object. 
  */
-vobsCATALOG_HIC::~vobsCATALOG_HIC()
+vobsCATALOG_BSC::~vobsCATALOG_BSC()
 {
     miscDynBufDestroy(&_query);
 }
+
 
 /*
  * Protected methods
@@ -81,16 +83,15 @@ vobsCATALOG_HIC::~vobsCATALOG_HIC()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
+mcsCOMPL_STAT vobsCATALOG_BSC::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_HIC::GetAskingSpecificParameters()");
+    logExtDbg("vobsCATALOG_BSC::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
-    miscDynBufAppendString(&_query, "&-out=*VELOC_HC");
+    miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT&-out=HD");
             
     return SUCCESS;
 }
+
 
 
 /*___oOo___*/
