@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgTestSocketClient.cpp,v 1.3 2005-02-04 15:57:06 lafrasse Exp $"
+* "@(#) $Id: msgTestSocketClient.cpp,v 1.4 2005-02-09 16:41:02 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/02/04 15:57:06  lafrasse
+* Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+*
 * lafrasse  14-Dec-2004  Added error code management
 * lafrasse  24-Nov-2004  Created
 *
@@ -19,7 +22,7 @@
  * \<msgTestSocketClient\>
  */
 
-static char *rcsId="@(#) $Id: msgTestSocketClient.cpp,v 1.3 2005-02-04 15:57:06 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgTestSocketClient.cpp,v 1.4 2005-02-09 16:41:02 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -132,9 +135,7 @@ int main(int argc, char *argv[])
     {
         goto errCond;
     }
-    cout << "Client sending '";
-    msg.Display();
-    cout << "' to server ... ";
+    cout << "Client sending '" << msg << "' to server ... ";
     if (clientSocket.Send(msg) == mcsFAILURE)
     {
         cout << "KO" << endl;
@@ -147,8 +148,7 @@ int main(int argc, char *argv[])
         cout << "KO" << endl;
         goto errCond;
     }
-    msg.Display();
-    cout << "' from server ... OK" << endl << endl;
+    cout << msg << "' from server ... OK" << endl << endl;
 
     cout << "Client deconnecting from server ... ";
     if (clientSocket.Close() == mcsFAILURE)
