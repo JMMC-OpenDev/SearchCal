@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/02/25 16:43:52  lafrasse
+ * Added miscDeleteChr()
+ *
  * Revision 1.18  2005/02/21 15:27:52  lafrasse
  * Added miscIsCommentLine()
  *
@@ -34,7 +37,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.19 2005-02-25 16:43:52 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.20 2005-02-25 17:51:40 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -331,7 +334,7 @@ mcsCOMPL_STAT miscReplaceChrByChr (char *string,
  *
  * \param string the null-terminated string that shall be modified.
  * \param searchedChar the character to be removed.
- * \param allFlag the flag specifying wether all the occurences of the given
+ * \param allFlag the flag specifying whether all the occurences of the given
  * character (if set to mcsTRUE), or only the first found (if set to mcsFALSE),
  * should be removed. 
  * 
@@ -348,21 +351,35 @@ mcsCOMPL_STAT miscDeleteChr      (      char         *string,
         return mcsFAILURE;
     }
 
-    int   originalLength = strlen(string);
-    char* tmp = string;
-    do
+    /* For each character of the string */
+    mcsINT32 src, dest;
+    mcsLOGICAL deleteChr = mcsTRUE;
+    for (src = 0, dest = 0; string[src] != '\0'; src++)
     {
-        /* Find the next searchedChar occurence */
-        tmp = strchr(string, searchedChar);
-        if (tmp != NULL)
+        /* If it is not the searched character, or if the first occurence of
+         * the searched character has been already deleted and the other ones
+         * should not be removed. */
+        if ((string[src] != searchedChar) || (deleteChr == mcsFALSE))
         {
-            /* If found, prsh the remaining part above the found character */
-            memmove(tmp, tmp + 1, strlen(tmp + 1));
-            originalLength--;
-            string[originalLength] = '\0';
+            /* Copy the character into the destination string */
+            string[dest] = string[src];
+            dest++;
+        }
+        /* Else */
+        else
+        {
+            /* Skipped character, and test whether next searched character has
+             * to be removed or not. */
+            if (allFlag == mcsFALSE)
+            {
+                deleteChr = mcsFALSE;
+            }
         }
     }
-    while ((tmp != NULL) && (allFlag == mcsTRUE));
+    /* End ofr */
+
+    /* Added end-of-string character */
+    string[dest] = '\0';
 
     return mcsSUCCESS;
 }
