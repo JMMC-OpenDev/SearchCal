@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.4 2005-02-07 19:40:58 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.5 2005-02-08 08:36:13 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/02/07 19:40:58  gzins
+* Updated vobsREQUEST API
+*
 * Revision 1.3  2005/01/26 08:11:28  scetre
 * change history
 *
@@ -18,7 +21,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.4 2005-02-07 19:40:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.5 2005-02-08 08:36:13 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -92,6 +95,8 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
 mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG::PrepareQuery()");
+
+    miscDynBufReset(&_query);
 
     if ((WriteQueryURIPart()==mcsFAILURE) ||
         (WriteReferenceStarPosition(request)==mcsFAILURE) ||
