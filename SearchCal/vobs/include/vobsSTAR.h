@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.26 2005-02-08 20:36:14 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.27 2005-02-10 08:07:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2005/02/08 20:36:14  gzins
+* Changed some parameters from char* to const char*
+*
 * Revision 1.25  2005/02/08 07:16:56  gzins
 * Changed value parameter type: char* to const char*
 *
@@ -67,8 +70,9 @@
 /*
  * Definition of the star properties
  */
-#define vobsSTAR_ID_MAIN                        "ID_MAIN"
-#define vobsSTAR_ID_ALTERNATIVE                 "ID_ALTERNATIVE"
+#define vobsSTAR_ID_HD                          "ID_HD"
+#define vobsSTAR_ID_HIP                         "ID_HIP"
+#define vobsSTAR_ID_DM                          "ID_DM"
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
 #define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"

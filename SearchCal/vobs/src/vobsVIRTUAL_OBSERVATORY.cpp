@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.18 2005-02-09 06:10:44 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.19 2005-02-10 08:07:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/02/09 06:10:44  gzins
+* Changed vobsSTAR_COMP_CRITERIA_LIST& to vobsSTAR_COMP_CRITERIA_LIST* in vobsSCENARIO
+*
 * Revision 1.17  2005/02/08 11:10:04  scetre
 * changed action enumerate <NAME> in vobs<NAME>
 *
@@ -52,7 +55,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.18 2005-02-09 06:10:44 gzins Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.19 2005-02-10 08:07:38 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -282,7 +285,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         }
 
         // Add hd criteria
-        if (criteriaList.Add(vobsSTAR_ID_MAIN, 0) == mcsFAILURE)
+        if (criteriaList.Add(vobsSTAR_ID_HD, 0) == mcsFAILURE)
         {
             return mcsFAILURE;
         }

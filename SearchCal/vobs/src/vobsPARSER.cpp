@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.13 2005-02-10 06:28:29 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.14 2005-02-10 08:07:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/10 06:28:29  gzins
+* Fixed bug related to ERRO UCD handling
+*
 * Revision 1.12  2005/02/08 21:34:05  gzins
 * Handled ERROR UCDs by renaming them; i.e adding previous UCD as prefix
 *
@@ -33,7 +36,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.13 2005-02-10 06:28:29 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.14 2005-02-10 08:07:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -554,6 +557,28 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                         ucdName = newUcdName;
                     }
                 }
+                // Specific treatment of UCDs ID_ALTERNATIVE
+                if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
+                {
+                    // Three properties have the same UCD. Until now, the only
+                    // method to compare them is to compare the colum name
+                    if (strcmp(colName, "HD") == 0)
+                    {
+                        sprintf(newUcdName, "%s", vobsSTAR_ID_HD);
+                        ucdName = newUcdName;
+                    }
+                    else if (strcmp(colName, "HIP") == 0)
+                    {
+                        sprintf(newUcdName, "%s", vobsSTAR_ID_HIP);
+                        ucdName = newUcdName;
+                    }
+                    else if (strcmp(colName, "DM") == 0)
+                    {
+                        sprintf(newUcdName, "%s", vobsSTAR_ID_DM);
+                        ucdName = newUcdName;
+                    }
+                }
+                // Specific Treatement of the flux
                 // If lambda is found, save it
                 if (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
                 {

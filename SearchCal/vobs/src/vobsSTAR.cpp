@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.26 2005-02-08 20:43:11 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.27 2005-02-10 08:07:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2005/02/08 20:43:11  gzins
+* Changed _isComputed by _origin
+*
 * Revision 1.25  2005/02/08 07:22:27  gzins
 * Changed value parameter type: char* to const char*
 * Accepted RA and DEC with either ':' or ' ' as separator
@@ -50,7 +53,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.26 2005-02-08 20:43:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.27 2005-02-10 08:07:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -811,8 +814,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     //logExtDbg("vobsSTAR::AddProperties()");
-    AddProperty(vobsSTAR_ID_MAIN, "hd", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_ID_ALTERNATIVE, "hip", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_ID_HD, "hd", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_ID_HIP, "hip", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_ID_DM, "dm", vobsSTRING_PROPERTY);    
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "ra", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "dec", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmdec", vobsSTRING_PROPERTY);
