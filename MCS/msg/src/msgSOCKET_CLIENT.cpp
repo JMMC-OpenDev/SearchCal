@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.7 2004-12-07 07:50:24 gzins Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.8 2005-01-07 18:38:46 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,6 +10,7 @@
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 * gzins     06-Dec-2004  Implemented copy constructor
 * gzins     06-Dec-2004  Removed copy constructor
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
 *
 *******************************************************************************/
 
@@ -18,7 +19,7 @@
  * msgSOCKET_CLIENT class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.7 2004-12-07 07:50:24 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.8 2005-01-07 18:38:46 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -67,25 +68,25 @@ msgSOCKET_CLIENT::~msgSOCKET_CLIENT()
  * \param host the remote machine host name to which the socket should connect
  * \param port the remote machine port number to which the socket should connect
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host, mcsUINT16 port)
 {
     logExtDbg("msgSOCKET_CLIENT::Open()");
 
     // Try to create a new socket
-    if (Create() == FAILURE)
+    if (Create() == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Try to connect the new socket to the remote host and port
-    if (Connect(host, port) == FAILURE)
+    if (Connect(host, port) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
         
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

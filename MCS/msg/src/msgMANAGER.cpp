@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.9 2004-12-22 08:34:00 gzins Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.10 2005-01-07 18:32:45 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,6 +16,7 @@
 * gzins     20-Dec-2004  Fixed bug related to the use of GetNextProcess after
 *                        removing a process from the list.
 * gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
 *
 *******************************************************************************/
 
@@ -24,7 +25,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.9 2004-12-22 08:34:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.10 2005-01-07 18:32:45 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -77,22 +78,22 @@ msgMANAGER::~msgMANAGER()
  * It registers application to MCS services, parses the
  * command-line parameters and open the connection socket.
  *
- * \return SUCCESS, or FAILURE if an error occurs.
+ * \return mcsSUCCESS, or mcsFAILURE if an error occurs.
  */
 mcsCOMPL_STAT msgMANAGER::Init(int argc, char *argv[])
 {
     logExtDbg("msgMANAGER::Init()");
 
     // Initialiaze MCS services
-    if (mcsInit(argv[0]) != SUCCESS)
+    if (mcsInit(argv[0]) != mcsSUCCESS)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Parses command-line options 
-    if (ParseOptions(argc, argv) != SUCCESS)
+    if (ParseOptions(argc, argv) != mcsSUCCESS)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // Port number of the current environment
@@ -101,17 +102,17 @@ mcsCOMPL_STAT msgMANAGER::Init(int argc, char *argv[])
     portNumber = envList.GetPortNumber();
     if (portNumber == -1)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Open connection socket
     logTest("Environment '%s', port : %d", mcsGetEnvName(), portNumber);
-    if (_connectionSocket.Open(portNumber) == FAILURE)
+    if (_connectionSocket.Open(portNumber) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -172,7 +173,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
             logInfo("Connection demand received...");
 
             /* Init the new connection */
-            if (SetConnection() == FAILURE)
+            if (SetConnection() == mcsFAILURE)
             {
                 errCloseStack();
             }
@@ -207,7 +208,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                 {
                     // Read the new message
                     msgMESSAGE msg;
-                    if (process->Receive(msg, 0) == FAILURE)
+                    if (process->Receive(msg, 0) == mcsFAILURE)
                     {
                         errCloseStack();
                     }
@@ -222,7 +223,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                                  == 0))
                             {
                                 /* Handle the received command */
-                                if (HandleCmd(msg) == FAILURE)
+                                if (HandleCmd(msg) == mcsFAILURE)
                                 {
                                     errCloseStack();
                                 }
@@ -230,7 +231,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                             else // If the command is not for msgManager
                             {
                                 // Forward to the destination process
-                                if (Forward(msg) == FAILURE)
+                                if (Forward(msg) == mcsFAILURE)
                                 {
                                     errCloseStack();
                                 }
@@ -250,7 +251,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
 
                     /* Close the connection */
                     if (_processList.Remove(process->GetDescriptor())
-                        == FAILURE)
+                        == mcsFAILURE)
                     {
                         errCloseStack();
                     }
@@ -265,7 +266,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
 
     } // For ever end
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*
@@ -279,7 +280,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
  * \param argv array of pointers to the strings which are those arguments
  * processed or not.
  *
- * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
+ * \return On success, mcsSUCCESS is returned. On error, mcsFAILURE is returned, and
  * error message is printed out accordingly.
  */
 mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
@@ -318,7 +319,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
                 {
                     logError ("%s: Argument to option %s is invalid: '%s'",
                               mcsGetProcName(), argv[optInd-1], optarg);
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
                 logSetFileLogLevel((logLEVEL)level);
             }
@@ -326,7 +327,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
             {
                 logError ("%s: Option %s requires an argument",
                           mcsGetProcName(), argv[optInd]);
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
         // Else if stdout level specified
@@ -341,7 +342,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
                 {
                     logError ("%s: Argument to option %s is invalid: '%s'",
                               mcsGetProcName(), argv[optInd-1], optarg);
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
                 logSetStdoutLogLevel((logLEVEL)level);
             }
@@ -349,7 +350,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
             {
                 logError ("%s: Option %s requires an argument",
                           mcsGetProcName(), argv[optInd]);
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
         // Else if action level specified
@@ -364,7 +365,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
                 {
                     logError ("%s: Argument to option %s is invalid: '%s'",
                               mcsGetProcName(), argv[optInd-1], optarg);
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
                 logSetActionLogLevel((logLEVEL)level);
             }
@@ -372,7 +373,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
             {
                 logError ("%s: Option %s requires an argument",
                           mcsGetProcName(), argv[optInd]);
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
         // Else if '-noDate' option specified
@@ -392,10 +393,10 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
         {
             logError ("%s: Invalid option %s", 
                       mcsGetProcName(), argv[optInd] );
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -403,7 +404,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
  *
  * This method gives information about the standard options listed above.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT msgMANAGER::Usage(void)
 {
@@ -421,7 +422,7 @@ mcsCOMPL_STAT msgMANAGER::Usage(void)
     cout <<" and line number" << endl;
     cout <<"                                in stdout log messages" << endl; 
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -439,7 +440,7 @@ const char *msgMANAGER::GetSwVersion(void)
  * Verify that the new process name is unic, otherwise reject the connection
  * request.
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::SetConnection()
 {
@@ -447,7 +448,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
 
     /* Accept the new connection */
     msgPROCESS *newProcess = new msgPROCESS();
-    if (_connectionSocket.Accept(*newProcess) != SUCCESS)
+    if (_connectionSocket.Accept(*newProcess) != mcsSUCCESS)
     {
         errCloseStack();
     }
@@ -455,7 +456,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
     {
         /* Receive the registering command */
         msgMESSAGE msg;
-        if (newProcess->Receive(msg, 1000) == FAILURE)
+        if (newProcess->Receive(msg, 1000) == mcsFAILURE)
         {
             /* Close the connection */
             delete(newProcess);
@@ -474,7 +475,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
 
                 /* Add the new process to the process list */
                 newProcess->SetName(msg.GetSender());
-                if (_processList.AddAtTail(newProcess) == FAILURE)
+                if (_processList.AddAtTail(newProcess) == mcsFAILURE)
                 {
                     errCloseStack();
                 }
@@ -494,7 +495,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
             }
         }
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -502,7 +503,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
  *
  * \param msg the message to be forwarded
  *
- * \return an completion status code (SUCCESS or FAILURE)
+ * \return an completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
 {
@@ -524,14 +525,14 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
     else
     {
         /* If the command could not be delivered to the recipient process... */
-        if (recipient->Send(msg) == FAILURE)
+        if (recipient->Send(msg) == mcsFAILURE)
         {
             /* Report this to the sender */
             SendReply(msg);
         }
     }
        
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -542,7 +543,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
  * not
  * \param sender
  *
- * \return an completion status code (SUCCESS or FAILURE)
+ * \return an completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
                                      mcsLOGICAL lastReply,
@@ -563,9 +564,9 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
     {
         // Put the MCS error stack data in the message body
         char errStackContent[errSTACK_SIZE * errMSG_MAX_LEN];
-        if (errPackStack(errStackContent, sizeof(errStackContent)) == FAILURE)
+        if (errPackStack(errStackContent, sizeof(errStackContent)) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         // Store the message body size
@@ -593,17 +594,17 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
         
         // Close error stack
         errResetStack();
-        return FAILURE;
+        return mcsFAILURE;
     }
     
-    if (sender->Send(msg) == FAILURE)
+    if (sender->Send(msg) == mcsFAILURE)
     {
         // Close error stack
         errResetStack();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;        
+    return mcsSUCCESS;        
 }
 
 /**
@@ -618,7 +619,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
  *
  * \param msg a received command
  *
- * \return an completion status code (SUCCESS or FAILURE)
+ * \return an completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
 {
@@ -661,10 +662,10 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         msgDEBUG_CMD debugCmd(msg.GetCommand(), msg.GetBody());
 
         // Parses command
-        if (debugCmd.Parse() == FAILURE)
+        if (debugCmd.Parse() == mcsFAILURE)
         {
             SendReply(msg);
-            return FAILURE;
+            return mcsFAILURE;
         }
         
         // If 'stdoutLevel' parameter is specified...
@@ -722,7 +723,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         logInfo("Connection with process '%s' closed", msg.GetSender());
         msgPROCESS *sender;
         sender = _processList.GetProcess(msg.GetSender(), msg.GetSenderId());
-        if (_processList.Remove(sender->GetDescriptor()) == FAILURE)
+        if (_processList.Remove(sender->GetDescriptor()) == mcsFAILURE)
         {
             errCloseStack();
         }
@@ -748,10 +749,10 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         errAdd(msgERR_CMD_NOT_SUPPORTED,  msg.GetCommand());
         SendReply(msg);
 
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*

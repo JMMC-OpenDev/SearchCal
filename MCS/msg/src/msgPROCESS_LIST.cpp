@@ -1,13 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPROCESS_LIST.cpp,v 1.3 2004-12-15 09:59:55 gzins Exp $"
+* "@(#) $Id: msgPROCESS_LIST.cpp,v 1.4 2005-01-07 18:36:38 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
 * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
 * gzins     14-Dec-2004  Minor documentation changes 
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
 *
 *******************************************************************************/
 
@@ -16,7 +17,7 @@
  * msgPROCESS_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.3 2004-12-15 09:59:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.4 2005-01-07 18:36:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -77,7 +78,7 @@ mcsLOGICAL msgPROCESS_LIST::IsEmpty(void)
 /**
  * Erase all elements from the list.
  *
- * \return always SUCCESS.
+ * \return always mcsSUCCESS.
  */
 mcsCOMPL_STAT msgPROCESS_LIST::Clear(void)
 {
@@ -90,7 +91,7 @@ mcsCOMPL_STAT msgPROCESS_LIST::Clear(void)
 
     // Clear list
     _processList.clear();
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -98,7 +99,7 @@ mcsCOMPL_STAT msgPROCESS_LIST::Clear(void)
  *
  * \param process element to be added to the list.
  *
- * \return always SUCCESS.
+ * \return always mcsSUCCESS.
  */
 mcsCOMPL_STAT msgPROCESS_LIST::AddAtTail(msgPROCESS *process)
 {
@@ -107,7 +108,7 @@ mcsCOMPL_STAT msgPROCESS_LIST::AddAtTail(msgPROCESS *process)
     // Put element in the list
     _processList.push_back(process);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -122,7 +123,7 @@ mcsCOMPL_STAT msgPROCESS_LIST::AddAtTail(msgPROCESS *process)
  *
  * \param sd socket descriptor of the process to be removed from the list.
  *
- * \return always SUCCESS.
+ * \return always mcsSUCCESS.
  */
 mcsCOMPL_STAT msgPROCESS_LIST::Remove(mcsINT32 sd)
 {
@@ -139,11 +140,11 @@ mcsCOMPL_STAT msgPROCESS_LIST::Remove(mcsINT32 sd)
             delete (*iter);
             // Clear element from list
             _processList.erase(iter);
-            return SUCCESS;
+            return mcsSUCCESS;
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**

@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgManager.cpp,v 1.2 2004-12-15 15:55:35 lafrasse Exp $"
+* "@(#) $Id: msgManager.cpp,v 1.3 2005-01-07 18:32:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
 * lafrasse  15-Dec-2004  Re-added Doxygen documentation from the npw removed
 *                        msgManager.c
-*
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
 *
 *******************************************************************************/
 
@@ -26,7 +26,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgManager.cpp,v 1.2 2004-12-15 15:55:35 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgManager.cpp,v 1.3 2005-01-07 18:32:21 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
     }
 
     // Initialization
-    if (msgManager->Init(argc, argv) == FAILURE)
+    if (msgManager->Init(argc, argv) == mcsFAILURE)
     {
         // Close error stack
         errCloseStack();
@@ -123,15 +123,15 @@ int main(int argc, char *argv[])
     }
 
     // Enter in main loop
-    if (msgManager->MainLoop() == FAILURE)
+    if (msgManager->MainLoop() == mcsFAILURE)
     {
         // Error handling if necessary
         
-        // Exit from the application with FAILURE
+        // Exit from the application with mcsFAILURE
         exit (EXIT_FAILURE);
     }
 
-    // Exit from the application with SUCCESS
+    // Exit from the application with mcsSUCCESS
     delete (msgManager);
     exit (EXIT_SUCCESS);
 }

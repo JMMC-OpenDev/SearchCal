@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.4 2004-12-03 17:05:50 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.5 2005-01-07 18:38:46 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    22-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
-*
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
 *
 *******************************************************************************/
 
@@ -17,7 +17,7 @@
  * msgSOCKET_SERVER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.4 2004-12-03 17:05:50 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.5 2005-01-07 18:38:46 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -67,31 +67,31 @@ msgSOCKET_SERVER::~msgSOCKET_SERVER()
  *
  * \param port the local port number on which the socket should listen
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET_SERVER::Open(mcsUINT16 port)
 {
     logExtDbg("msgSOCKET_SERVER::Open()");
 
     // Try to create a new socket
-    if (Create() == FAILURE)
+    if (Create() == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Try to bind the new socket to the given port number
-    if (Bind(port) == FAILURE)
+    if (Bind(port) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Start listening the network with the new socket
-    if (Listen() == FAILURE)
+    if (Listen() == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
         
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

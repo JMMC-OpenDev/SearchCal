@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPROCESS.cpp,v 1.1 2004-12-07 07:39:26 gzins Exp $"
+* "@(#) $Id: msgPROCESS.cpp,v 1.2 2005-01-07 18:36:38 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
-*
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * msgPROCESS class definition.
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS.cpp,v 1.1 2004-12-07 07:39:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS.cpp,v 1.2 2005-01-07 18:36:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,7 +55,7 @@ msgPROCESS::~msgPROCESS()
 /**
  * Set the name of the process; i.e. MCS registering name.
  *
- * \return SUCCESS. 
+ * \return mcsSUCCESS. 
  */
 mcsCOMPL_STAT msgPROCESS::SetName(char *name)
 {
@@ -63,7 +63,7 @@ mcsCOMPL_STAT msgPROCESS::SetName(char *name)
 
     strncpy(_name , name, sizeof(mcsPROCNAME)); 
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
