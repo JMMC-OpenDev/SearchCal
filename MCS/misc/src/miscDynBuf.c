@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.27 2005-02-10 10:08:07 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.28 2005-02-10 22:59:23 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2005/02/10 10:08:07  lafrasse
+ * Added miscDynBufSaveInFile(), and moved as most miscDynBuf parameters as possible to const type
+ *
  * Revision 1.26  2005/02/03 15:45:43  gzins
  * Updated miscDynBufVerifyIsInitialized to suppress all errResetStack calls
  *
@@ -106,7 +109,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.27 2005-02-10 10:08:07 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.28 2005-02-10 22:59:23 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -695,6 +698,7 @@ char*         miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
     if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
         errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
+        return ((char *) NULL);
     }
 
     /* Get the current Dynamic Buffer internal buffer pointer */
