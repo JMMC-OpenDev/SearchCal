@@ -11,11 +11,14 @@
 #******************************************************************************* 
 # JMMC project
 #
-# "@(#) $Id: logInit.sh,v 1.1 2005-03-07 13:30:36 mella Exp $"
+# "@(#) $Id: logInit.sh,v 1.2 2005-03-10 16:30:58 mella Exp $"
 #
 # History:
 # --------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/03/07 13:30:36  mella
+# Add logInit script
+#
 #******************************************************************************* 
 
 #/**
@@ -35,19 +38,6 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-# Source MCS environment stuff
-export MCSROOT=/home/MCS
-if [ -f $MCSROOT/etc/mcs.sh ]
-then
-    # gprintf "Working with MCS Environment present in %s/etc/mcs.sh" "$MCSROOT"
-    . $MCSROOT/etc/mcs.sh
-else
-    gprintf "Sorry MCS Environment not found in %s/etc/mcs.sh" "$MCSROOT"
-    failure
-    echo
-    exit 1
-fi
-
 # Define some usefull program name and process id
 prog="logManager"
 processId="logManager"
@@ -64,8 +54,7 @@ case "$1" in
            failure
        else
        # start real process
-       # su swmgr -c "$prog &"
-       daemon --user swmgr $prog &
+       su - swmgr -c "$prog &"
        # $prog &
        if [ $? -eq 0 ]
            then
@@ -82,7 +71,13 @@ case "$1" in
 	echo
 	;;
   status)
-    gprintf "Working with MCS Environment present in %s/etc/mcs.sh" "$MCSROOT"
+    # disp MCSROOT
+    gprintf "MCSROOT is " 
+    su - swmgr -c "echo -n \$MCSROOT"
+    echo
+    # disp MCSDATA
+    gprintf "MCSDATA is " 
+    su - swmgr -c "echo -n \$MCSDATA"
     echo
 	status $processId
 	;;
