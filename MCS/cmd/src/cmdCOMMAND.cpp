@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.13 2005-01-05 07:35:58 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.14 2005-01-11 12:16:30 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,7 +25,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.13 2005-01-05 07:35:58 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.14 2005-01-11 12:16:30 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -167,9 +167,54 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
 {
     logExtDbg ("cmdCOMMAND::GetShortDescription()");
+   
+    // clear recipient
+    desc.clear();
+    
+    // Parse The cdf file to obtain full description
+    if (ParseCdf()==FAILURE)
+    {
+        desc.append("Sorry help can't be generated because an error occured during parsing\n");
+        return FAILURE;
+    }
 
+    // append the command name
     desc.append(_name);
-    desc.append(" - Short description not yet implemented");
+
+    if (_desc.empty())
+    {
+        // If no description does exist.
+        desc.append(": No description found.");
+    }
+    else
+    {
+        desc.append(": ");
+        
+        // Get only the first sentence of the main description.
+        unsigned int end = _desc.find_first_of(".\n");
+        // if dot is found
+        if(end != string::npos)
+        {
+            // to include the dot
+            end++;
+            // if end is higher than max len
+            if(end > SHORT_DESC_MAX_LEN)
+            {
+                // cut 3 before to place ... 
+                end = SHORT_DESC_MAX_LEN - 3 ; 
+                desc.append(_desc.substr(0,end+1));
+                desc.append("...");
+            }
+        }
+        else
+        {
+            end = SHORT_DESC_MAX_LEN; 
+            desc.append(_desc.substr(0,end+1));
+        }  
+        
+        
+    }
+    desc.append("\n");
     return SUCCESS;
 }
 
@@ -182,6 +227,9 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
 {
     logExtDbg ("cmdCOMMAND::GetDescription()");
 
+    // clear recipient
+    desc.clear();
+    
     string s;
     
     // Parse The cdf file to obtain full description
@@ -192,6 +240,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         return FAILURE;
     }
     
+    // append the command name
     s.append(_name);
     s.append(" :\n");
    
