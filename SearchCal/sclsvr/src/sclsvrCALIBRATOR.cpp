@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.7 2004-12-07 13:47:53 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.8 2004-12-07 16:28:32 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.7 2004-12-07 13:47:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.8 2004-12-07 16:28:32 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -363,6 +363,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
         miscDynBufAppendString(buffer, _compProperties[propertyIdx]);
         miscDynBufAppendString(buffer, "\t");        
     }
+    // Write in the buffer diam OK if the diameter is coherent, else diamNOK
+    if (_coherentDiameter == mcsTRUE)
+    {
+        miscDynBufAppendString(buffer,"diamOK\t");
+    }
+    else 
+    {
+        miscDynBufAppendString(buffer,"diamNOK\t");        
+    }
+    
+    // Write in the buffer visOK if visibility is ok, else visNOK
+    if (_correctVisibility == mcsTRUE)
+    {
+        miscDynBufAppendString(buffer,"visOK\t");
+    }
+    else 
+    {
+        miscDynBufAppendString(buffer,"visNOK\t");        
+    }
 
     return SUCCESS;
 }
@@ -388,19 +407,42 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
     parsingString = (char *) strtok (miscDynBufGetBufferPointer(&localBuffer), "\t");
     while (parsingString != NULL)
     {
-        if (i> vobsNB_STAR_PROPERTIES+sclsvrNB_CALIBRATOR_PROPERTIES)
+        if (i> vobsNB_STAR_PROPERTIES+sclsvrNB_CALIBRATOR_PROPERTIES+2)
         {
             return FAILURE;
         }
         // write each separated value in the property of the calibrator
-        if (i < vobsNB_STAR_PROPERTIES)
+        if (i <= vobsNB_STAR_PROPERTIES)
         {
             SetProperty((vobsUCD_ID)i, parsingString);
         }
-        else
+        if ((i > vobsNB_STAR_PROPERTIES) &&
+            (i <= vobsNB_STAR_PROPERTIES+sclsvrNB_CALIBRATOR_PROPERTIES))
         {
             SetProperty((sclsvrPROPERTY_ID)(i-vobsNB_STAR_PROPERTIES),
                         parsingString);
+        }
+        if (i == vobsNB_STAR_PROPERTIES+sclsvrNB_CALIBRATOR_PROPERTIES+1)
+        {
+            if (strcmp(parsingString, "diamOK") == 0)
+            {
+                _coherentDiameter = mcsTRUE;
+            }
+            else
+            {
+                _coherentDiameter = mcsFALSE;
+            }
+        }
+        if (i == vobsNB_STAR_PROPERTIES+sclsvrNB_CALIBRATOR_PROPERTIES+2)
+        {
+            if (strcmp(parsingString, "visOK") == 0)
+            {
+                _correctVisibility = mcsTRUE;
+            }
+            else
+            {
+                _correctVisibility = mcsFALSE;
+            }
         }
         parsingString = (char *) strtok (NULL, "\t");
         i++;

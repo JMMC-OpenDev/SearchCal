@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.3 2004-12-07 13:47:53 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.4 2004-12-07 16:28:32 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.3 2004-12-07 13:47:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.4 2004-12-07 16:28:32 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -290,7 +290,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
 }
 
 /**
+ * Get a list of calibrator with coherent diameter
  *
+ * \param list the list to get
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
  **/
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LIST *list)
 {
@@ -302,7 +306,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LI
         if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))-> HadCoherentDiameter()
             == mcsTRUE )
         {
-            printf("calibrator %d had coherent diameter\n", el+1);
+            logTest("calibrator %d had coherent diameter\n", el+1);
             //list->AddAtTail(( *(sclsvrCALIBRATOR *)GetNextStar((el==0)) ));
         }
     }
@@ -311,7 +315,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LI
 }
 
 /**
+ * Get a list of calibrator with visibility ok
  *
+ * \param list the list to get
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
  **/
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVisibilityOkList(sclsvrCALIBRATOR_LIST *list)
 {
@@ -322,7 +330,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVisibilityOkList(sclsvrCALIBRATOR_LIST *
         if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))-> VisibilityOk()
             == mcsTRUE )
         {
-            printf("calibrator %d had visibility OK\n", el+1);
+            logTest("calibrator %d had visibility OK\n", el+1);
             //list->AddAtTail(( *(sclsvrCALIBRATOR *)GetNextStar((el==0)) ));
         }
     }
