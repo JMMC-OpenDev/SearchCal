@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.9 2004-12-06 07:02:06 gzins Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.10 2004-12-07 07:41:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,7 @@
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 * gzins     06-Dec-2004  Declared copy constructor as public method
+* gzins     06-Dec-2004  Declared copy constructor as private method
 *
 *
 *******************************************************************************/
@@ -75,7 +76,6 @@ class msgSOCKET
 public:
     // Brief description of the constructor
     msgSOCKET();
-    msgSOCKET(const msgSOCKET &socket);
 
     // Brief description of the destructor
     virtual ~msgSOCKET();
@@ -109,9 +109,10 @@ public:
 protected:
     
 private:
-    // Declaration of assignment operator as private methods, in order to it
-    // them from the users.
-     msgSOCKET& operator=(const msgSOCKET&);
+    // Declaration of copy const and assignment operator as private methods,
+    // in order to it them from the users.
+    msgSOCKET(const msgSOCKET &socket);
+    msgSOCKET& operator=(const msgSOCKET&);
 
     mcsINT32    _descriptor;  // Socket Descriptor
     sockaddr_in _address;     // Socket Data Structure
