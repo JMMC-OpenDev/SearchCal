@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.14 2004-09-08 15:54:51 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.1 2004-09-10 17:40:27 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -108,7 +108,7 @@ then
         script)
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
-            FILE_SUFFIX=""
+            FILE_SUFFIX=".sh"
             MODE=755
             ;;
 
@@ -167,7 +167,7 @@ then
         done
 
         # Get template file
-        ctooGetTemplateFile.sh $TEMPLATE $FILE
+        ctooGetTemplateFile $TEMPLATE $FILE
 
         # For .h files insert file name in the pre-processing directives to
         # avoid multiple inclusions

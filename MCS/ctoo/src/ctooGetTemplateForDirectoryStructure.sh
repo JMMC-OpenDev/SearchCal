@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.22 2004-09-08 16:48:33 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.1 2004-09-10 17:40:27 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -221,7 +221,7 @@ case $directoryStructureTtype in
 
                     # Get template file (module description file) in doc
                     # directory
-                    ctooGetTemplateFile.sh $TEMPLATE $FILE
+                    ctooGetTemplateFile $TEMPLATE $FILE
 
                     # Replace module name
                     sed -e "1,$ s/<module name=\"module\">/<module name=\"$ROOT_NAME\">/g" \
@@ -250,7 +250,7 @@ case $directoryStructureTtype in
 
                     # Get template file (module documentation file) in src
                     # directory
-                    ctooGetTemplateFile.sh $TEMPLATE $FILE
+                    ctooGetTemplateFile $TEMPLATE $FILE
 
                     # Replace module name
                     sed -e "1,$ s/moduleName/$ROOT_NAME/g" $FILE > ${FILE}.BAK
@@ -277,48 +277,16 @@ case $directoryStructureTtype in
                     FILE=$ROOT_NAME/src/Makefile
                     
                     # Get template file (Makefile) in src directory
-                    ctooGetTemplateFile.sh $TEMPLATE $FILE
+                    ctooGetTemplateFile $TEMPLATE $FILE
                     
                     # Change permissions of the new created file
                     chmod $MODE $FILE
                 fi
-
-                # If not exist, get module private header file
-                # Check module private header file existence
-                if [ -f $ROOT_NAME/include/${ROOT_NAME}Private.h ]
-                then
-                    # The module private header file already exists
-                    echo -e "\n>>> ${ROOT_NAME}Private.h ALREADY EXISTS."
-                    echo -e "    => The existing one is left\n"
-                else
-                    # The module private header file does not exist
-                    echo -e "\n>>> Copying module private header file\n"
-
-                    # Go to $ROOT_NAME/include directory, which is required by
-                    # the script below
-                    cd $ROOT_NAME/include
-
-                    # Switch off the environment variable EDITOR, to not
-                    # trigger the automatic editor pop up
-                    export EDITOR=""
-
-                    # Get module private header file in include directory
-                    ctooGetPrivateHeaderFile.sh
-
-                    # Switch on the environment variable EDITOR, to trigger
-                    # the automatic editor pop up
-                    export EDITOR=gvim
-                    
-                    # Change permissions of the new created file
-                    chmod $MODE ${ROOT_NAME}Private.h
-
-                    # Go back to the previous directory
-                    cd ../..
-                fi
                 ;;
                 
             creation)
-                echo -e "\n>>> No files added in subdirectories of the module\n"
+                echo -e "\n>>> No makefile added in the src directoy of the"
+                echo -e "      module\n"
                 ;;
 
             *)

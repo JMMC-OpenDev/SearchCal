@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2004-09-07 13:23:46 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.13 2004-09-10 17:40:27 gzins Exp $"
 #
 # Makefile of ctoo module
 #
@@ -73,8 +73,8 @@ SCRIPTS         = ctooGetTemplate \
 				  ctooGetTemplateForDirectoryStructure \
 				  ctooGetCode \
 				  ctooGetTemplateForCoding \
-				  ctooGetTemplateFile.sh \
-				  ctooGetPrivateHeaderFile.sh \
+				  ctooGetTemplateFile \
+				  ctooGetPrivateHeaderFile \
                   ctooRename \
                   ctooReplace
 SCRIPTS_L       =
@@ -102,27 +102,6 @@ TCL_LIBRARIES_L =
 tttlll_OBJECTS  = 
 
 #
-# UIF panels (public and local)
-# -----------------------------
-PANELS   =
-PANELS_L = 
-
-#
-# On-Line Database Files
-# ----------------------
-DBL_CLASSES = 
-DBL_BCF =
-DBL_FLAGS =
-xxxx_DBL_FLAGS =
-
-# 
-# IDL Files and flags
-# -------------------
-IDL_FILES =
-IDL_TAO_FLAGS =
-USER_IDL =
-
-#
 # man pages to be done
 # --------------------
 MANSECTIONS = 1
@@ -131,22 +110,6 @@ MAN3 =
 MAN5 =
 MAN7 =
 MAN8 =
-
-#
-# local man pages
-# ---------------
-MANl =
-
-#
-# ASCII file to be converted into Framemaker-MIF
-# ----------------------------------------------
-ASCII_TO_MIF = 
-
-#
-# INS_ROOT files to be installed
-#-------------------------------
-INS_ROOT_FILES =
-INS_ROOT_DIR   =
 
 #
 # other files to be installed
@@ -180,7 +143,7 @@ endif
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/mcsMakefile
+include $(MAKEDIR)/mkfMakefile
 
 #
 # TARGETS
