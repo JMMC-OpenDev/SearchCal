@@ -3,12 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.1 2004-11-19 17:19:42 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    17-Nov-2004  Created
-* lafrasse  19-Nov-2004  Changed all method name first letter to upper case
+* lafrasse  19-Nov-2004  Changed all method name first letter to upper case, and
+*                        re-commented
 *
 *
 *******************************************************************************/
@@ -23,39 +24,39 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+/*
+ * Local Headers 
+ */
 #include "msg.h"
+
 
 /*
  * Class declaration
  */
 
 /**
- * msgMESSAGE class declaration.
- * 
- * msgMESSAGE class contains method which help to access to parameters of a
- * message and his body.
- * 
+ * msgMESSAGE is a class that wraps the msgMESSAGE_RAW C structure, with all the
+ * needed accessors.
  *
- * \usedfiles
- * \filename mcs.h :  header file which contain the definition of the
- * msgMESSAGE_RAW and msgHEADER structure
- *
- * \sa msgMESSAGE.cpp
+ * It is used to encapsulate all the data to be sent and received with the help
+ * of the msgMANAGER_IF object.
  * 
+ * \sa msgMESSAGE_RAW and msgHEADER C structures, and msg.h in general
+ * \sa msgMANAGER_IF
  */
 
 class msgMESSAGE
 {
 
 public:
-    // Brief description of the constructor
-    msgMESSAGE                               (const mcsLOGICAL isInternal = mcsFALSE);
+    // Constructor
+    msgMESSAGE                               (const mcsLOGICAL isInternal
+                                              = mcsFALSE);
 
-    // Brief description of the destructor
+    // Destructor
     virtual ~msgMESSAGE                      ();
     
-    virtual msgMESSAGE_RAW*  GetMessageRaw   ();
-
+    // Accessors
     virtual char*            GetSender       ();
     virtual mcsCOMPL_STAT    SetSender       (const char     *buffer);
 
@@ -68,8 +69,8 @@ public:
     virtual char*            GetRecipientEnv ();
     virtual mcsCOMPL_STAT    SetRecipientEnv (const char     *recipientEnv);
 
-    virtual int              GetType         ();
-    virtual mcsCOMPL_STAT    SetType         (const mcsUINT8  type);
+    virtual msgTYPE          GetType         ();
+    virtual mcsCOMPL_STAT    SetType         (const msgTYPE   type);
 
     virtual char*            GetIdentifier   ();
     virtual mcsCOMPL_STAT    SetIdentifier   (const char     *identificator);
@@ -77,19 +78,24 @@ public:
     virtual char*            GetCommand      ();
     virtual mcsCOMPL_STAT    SetCommand      (const char     *command);
 
-    virtual char*            GetHeaderPtr    ();
-    virtual mcsINT32         GetBodySize     ();
+    virtual mcsLOGICAL       IsLastReply     ();
+    virtual mcsLOGICAL       IsInternal      ();
+
+    virtual msgHEADER*       GetHeaderPtr    ();
+
     virtual char*            GetBodyPtr      ();
+    virtual mcsINT32         GetBodySize     ();
     virtual mcsCOMPL_STAT    SetBody         (const char     *buffer,
                                               const mcsINT32  bufLen=0);
 
-    virtual mcsLOGICAL       IsLastReply     ();
-    virtual mcsLOGICAL       IsInternal();
+    virtual msgMESSAGE_RAW*  GetMessageRaw   ();
+
 
 protected:
 
     
 private:
+     // The only member
      msgMESSAGE_RAW _message;
 
     // Declaration of copy constructor and assignment operator as private
@@ -97,8 +103,6 @@ private:
      msgMESSAGE(const msgMESSAGE&);
      msgMESSAGE& operator=(const msgMESSAGE&);
 };
-
-
 
 
 #endif /*!msgMESSAGE_H*/

@@ -1,11 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.1 2004-11-19 17:19:45 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  18-Nov-2004  Created
+* lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for _socket,
+*                        and refined comments
 *
 *
 *******************************************************************************/
@@ -15,7 +17,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.1 2004-11-19 17:19:45 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -56,7 +58,7 @@ using namespace std;
  */
 msgMANAGER_IF::msgMANAGER_IF()
 {
-    msgManagerSd = -1;
+    _socket = -1;
 }
 
 /*
@@ -64,10 +66,10 @@ msgMANAGER_IF::msgMANAGER_IF()
  */
 msgMANAGER_IF::~msgMANAGER_IF()
 {
-    /* If the connection to the msgManager proc ess is still up */
-    if (msgManagerSd != -1)
+    // If the connection to the msgManager process is still up
+    if (IsConnected() == mcsTRUE)
     {
-        /* Close this connection */
+        // Close this connection
         Disconnect();
     }
 }
@@ -103,36 +105,36 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
     mcsINT32           status;
     msgMESSAGE         msg;
 
-    /* If a connection is already open... */
+    // If a connection is already open...
     if (IsConnected() == mcsTRUE)
     {
-        /* Raise an error */
+        // Raise an error
         errAdd(msgERR_PROC_ALREADY_CONNECTED);
 
-        /* Return an error code */
+        // Return an error code
         return FAILURE;
     }
 
-    /* Try to initialize MCS services */
+    // Try to initialize MCS services
     if (mcsInit(procName) == FAILURE)
     {
         errAdd(msgERR_MCSINIT);
         return FAILURE;
     }
 
-    /* Get a valid host name */
-    /* If the server host name is given by parameter... */
+    // Try to get a valid host name
+    // If the server host name is given by parameter...
     if (msgManagerHost != NULL)
     {
         strcpy(hostName, msgManagerHost);
     }
     else
     {
-        /* If the MSG_MANAGER_HOST Env. Var. is not defined... */
+        // If the MSG_MANAGER_HOST Env. Var. is not defined...
         if (miscGetEnvVarValue("MSG_MANAGER_HOST", hostName,sizeof(mcsBYTES256))
             == FAILURE)
         {
-            /* Try to get the local host name */
+            // Try to get the local host name
             memset(hostName, '\0', sizeof(hostName));
             if (miscGetHostName(hostName, sizeof(hostName)) == FAILURE)
             {
@@ -142,7 +144,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
         }
     }
 
-    /* Get msgManager server data */
+    // Get msgManager server data
     logTest("'msgManager' server host name is '%s'", hostName );
     remoteHostEnt = gethostbyname(hostName);
     if (remoteHostEnt == (struct hostent *) NULL)
@@ -151,11 +153,11 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
         return FAILURE;
     }
 
-    /* Try to establish the connection, retry otherwise... */
+    // Try to establish the connection, retry otherwise...
     nbRetry = 2;
     do 
     {
-        /* Create the socket */
+        // Create the socket
         sd = socket(AF_INET, SOCK_STREAM, 0);
         if(sd == -1)
         { 
@@ -163,13 +165,13 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
             return FAILURE; 
         }
 
-        /* Initialize sockaddr_in */
+        // Initialize sockaddr_in
         memset((char *) &addr, 0, sizeof(addr));
         addr.sin_port = htons(msgMANAGER_PORT_NUMBER);
         memcpy(&(addr.sin_addr), remoteHostEnt->h_addr,remoteHostEnt->h_length);
         addr.sin_family = AF_INET;
 
-        /* Try to connect to msgManager */
+        // Try to connect to msgManager
         status = connect(sd , (struct sockaddr *)&addr, sizeof(addr));
         if (status == -1)
         {
@@ -188,36 +190,36 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
     } while (status == -1);
 
 
-    /* Store the established connection socket */
-    msgManagerSd = sd;
+    // Store the established connection socket
+    _socket = sd;
 
-    /* Try to register with msgManager */
+    // Try to register with msgManager
     if (SendCommand(msgREGISTER_CMD, "msgManager", NULL, 0) == FAILURE)
     {
-        close(msgManagerSd);
-        msgManagerSd = -1;
+        close(_socket);
+        _socket = -1;
         return FAILURE;
     }
     
-    /* Wait for its answer */
+    // Wait for its answer
     if (Receive(msg, 1000) == FAILURE)
     {
-        close(msgManagerSd);
-        msgManagerSd = -1;
+        close(_socket);
+        _socket = -1;
         return FAILURE;
     }
 
-    /* If the reply as ERROR... */
+    // If the reply as ERROR...
     if (msg.GetType() == msgTYPE_ERROR_REPLY)
     {
-        /* Try to put the received errors in the MCS error stack */
+        // Try to put the received errors in the MCS error stack
         if (errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize())
             == FAILURE)
         {
             return FAILURE;
         }
-        close(msgManagerSd);
-        msgManagerSd = -1;       
+        close(_socket);
+        _socket = -1;       
         return FAILURE;
     }
     
@@ -226,11 +228,17 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
     return SUCCESS;
 }
  
+/**
+ * Return weither the connection to msgManger is up and running, or not.
+ *
+ * \return an MCS logical (TRUE if the connection is up and running, or FALSE
+ * otherwise)
+ */
 mcsLOGICAL msgMANAGER_IF::IsConnected()
 {
     logExtDbg("msgMANAGER_IF::IsConnected()");
 
-    return ((msgManagerSd != -1)?mcsTRUE:mcsFALSE);
+    return ((_socket != -1)?mcsTRUE:mcsFALSE);
 }
  
 /**
@@ -257,30 +265,30 @@ mcsCOMPL_STAT msgMANAGER_IF::SendCommand         (const char        *command,
 
     msgMESSAGE msg;
 
-    /* If no connection is already open... */
+    // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        /* Raise an error */
+        // Raise an error
         errAdd(msgERR_PROC_NOT_CONNECTED);
 
-        /* Return an errror code */
+        // Return an error code 
         return FAILURE;
     }
 
-    /* Build the message header */
+    // Build the message header
     msg.SetSender(mcsGetProcName());
     msg.SetRecipient(destProc);
     msg.SetType(msgTYPE_COMMAND);
     msg.SetCommand(command);
  
-    /* Try to build the message body */
+    // Try to build the message body
     if (msg.SetBody((char*)buffer, bufLen) == FAILURE)
     {
         return FAILURE;
     }
 
-    /* Try to send the message */
-    return (msgSendTo(msgManagerSd, msg.GetMessageRaw()));
+    // Try to send the message
+    return (msgSendTo(_socket, msg.GetMessageRaw()));
 }
 
 /**
@@ -296,18 +304,18 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
 {
     logExtDbg("msgMANAGER_IF::SendReply()");
 
-    /* If no connection is already open... */
+    // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        /* Raise an error */
+        // Raise an error
         errAdd(msgERR_PROC_NOT_CONNECTED);
 
-        /* Return an errror code */
+        // Return an error code
         return FAILURE;
     }
 
-    /* Try to send the reply message */
-    return (msgSendReplyTo(msgManagerSd, msg.GetMessageRaw(), lastReply));
+    // Try to send the reply message
+    return (msgSendReplyTo(_socket, msg.GetMessageRaw(), lastReply));
 }
 
 /**
@@ -326,18 +334,18 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE        &msg,
 {
     logExtDbg("msgMANAGER_IF::Receive()");
 
-    /* If no connection is already open... */
+    // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        /* Raise an error */
+        // Raise an error
         errAdd(msgERR_PROC_NOT_CONNECTED);
 
-        /* Return an errror code */
+        // Return an error code
         return FAILURE;
     }
 
-    /* Return weither a message was received or not */
-    return (msgReceiveFrom(msgManagerSd, msg.GetMessageRaw(), timeoutInMs));
+    // Return weither a message was received or not
+    return (msgReceiveFrom(_socket, msg.GetMessageRaw(), timeoutInMs));
 }
 
 /**
@@ -349,46 +357,46 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect()
 {
     logExtDbg("msgMANAGER_IF::Disconnect()");
 
-    /* If no connection is already open... */
+    // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        /* Raise an error */
+        // Raise an error
         errAdd(msgERR_PROC_NOT_CONNECTED);
 
-        /* Return an errror code */
+        // Return an error code
         return FAILURE;
     }
 
-    /* Try to send a 'close command' message to msgManager */
+    // Try to send a 'close command' message to msgManager
     if (SendCommand(msgCLOSE_CMD, "msgManager", NULL, 0) == FAILURE)
     {
-        close(msgManagerSd);
-        msgManagerSd = -1;
+        close(_socket);
+        _socket = -1;
         return FAILURE;
     }
     
-    /* Wait for its answer */
+    // Wait for its answer
     msgMESSAGE msg;
     if (Receive(msg, 1000) == FAILURE)
     {
-        close(msgManagerSd);
-        msgManagerSd = -1;
+        close(_socket);
+        _socket = -1;
         return FAILURE;
     }
 
-    /* If an error occured while deconnecting... */
+    // If an error occured while deconnecting...
     if (msg.GetType() == msgTYPE_ERROR_REPLY)
     {
-        /* Put the received error in the local MCS error stack */
+        // Put the received error in the local MCS error stack
         errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize());
-        close(msgManagerSd);
-        msgManagerSd = -1;       
+        close(_socket);
+        _socket = -1;       
         return (FAILURE);
     }
     
-    /* Close the socket */ 
-    close(msgManagerSd);
-    msgManagerSd = -1;       
+    // Close the socket
+    close(_socket);
+    _socket = -1;       
 
     logExtDbg("Connection to 'msgManager' closed");
 

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2004-11-19 17:15:47 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.9 2004-11-19 23:55:17 lafrasse Exp $"
 #
 # Makefile of msg
 #
@@ -9,7 +9,7 @@
 # --------  -----------  -------------------------------------------------------
 # lafrasse  10-Aug-2004  Created
 # gzins     01-Oct-2004  Added msgSendCommand
-# lafrasse  10-Aug-2004  Added msgMANAGER_IF.cpp  and msgMESSAGE.cpp compilation
+# lafrasse  19-Nov-2004  Added msgMANAGER_IF.cpp  and msgMESSAGE.cpp compilation
 #                        directives
 #
 #
@@ -37,7 +37,7 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = msgManager msgSendCommand msgTestSendCommand
+EXECUTABLES     = msgManager msgSendCommand
 EXECUTABLES_L   = 
 
 #
@@ -53,10 +53,6 @@ msgManager_LIBS              = mcs log err cmd misc msg C++
 msgSendCommand_OBJECTS       = msgSendCommand
 msgSendCommand_LDFLAGS       = -lgdome
 msgSendCommand_LIBS          = mcs log err cmd misc msg C++
-
-msgTestSendCommand_OBJECTS   = msgTestSendCommand
-msgTestSendCommand_LDFLAGS   = -lgdome
-msgTestSendCommand_LIBS      = mcs log err cmd misc msg C++
 
 #
 # special compilation flags for single c sources

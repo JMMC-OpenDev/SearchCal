@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-10-07 08:59:36 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-11-19 23:55:17 lafrasse Exp $"
 #
 # Makefile of msgTest
 #
@@ -9,6 +9,8 @@
 # --------  -----------  -------------------------------------------------------
 # lafrasse  11-Aug-2004  Created
 # gzins     01-Oct-2004  Removed msgTestManagerSend
+# lafrasse  20-Nov-2004  Added C++ attributes to each executable LIBS to become
+#                        compatible with the new C++ code in the library
 #
 #
 #*******************************************************************************
@@ -42,13 +44,13 @@ EXECUTABLES_L   = msgTestClient msgTestServer
 # <brief description of msgTestClient program>
 msgTestClient_OBJECTS   = msgTestClient
 msgTestClient_LDFLAGS   = -lgdome
-msgTestClient_LIBS      = mcs err log misc msg
+msgTestClient_LIBS      = mcs err log misc msg C++
 
 #
 # <brief description of msgTestServer program>
 msgTestServer_OBJECTS   = msgTestServer
 msgTestServer_LDFLAGS   = -lgdome
-msgTestServer_LIBS      = mcs err log cmd misc msg
+msgTestServer_LIBS      = mcs err log cmd misc msg C++
 
 #
 # special compilation flags for single c sources

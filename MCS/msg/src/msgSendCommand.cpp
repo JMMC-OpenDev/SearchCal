@@ -1,12 +1,14 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgTestSendCommand.cpp,v 1.1 2004-11-19 17:19:45 lafrasse Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.1 2004-11-19 23:55:17 lafrasse Exp $"
 *
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  16-Aug-2004  Ported from CILAS software
+* lafrasse  19-Nov-2004  Used argv[0] instead of the hard-coded "msgSendCommand"
+*                        value, and added the mcsExit() function call
 *
 *
 *******************************************************************************/
@@ -43,7 +45,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgTestSendCommand.cpp,v 1.1 2004-11-19 17:19:45 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.1 2004-11-19 23:55:17 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -88,7 +90,9 @@ int main (int argc, char *argv[])
     mcsINT32      status;
     mcsLOGICAL    lastReply;
 
+    mcsInit(argv[0]);
     errResetStack();
+
     verbose = mcsFALSE;
     cnt     = 1;
     timeout = msgNO_WAIT;
@@ -128,7 +132,7 @@ int main (int argc, char *argv[])
 
     /* Try to connect to msgManager */
     msgMANAGER_IF manager;
-    if (manager.Connect("msgSendCommand", NULL) == FAILURE)
+    if (manager.Connect(argv[0], NULL) == FAILURE)
     {
         errDisplayStack();
         errCloseStack();
@@ -211,6 +215,7 @@ exit:
 
     manager.Disconnect();
 
+    mcsExit();
     exit(status);
 }
 

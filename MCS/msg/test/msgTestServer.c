@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgTestServer.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgTestServer.c,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"
 *
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  13-Aug-2004  Ported from CILAS software
+* lafrasse  20-Nov-2004  Renamed all msgMESSAGE references to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -24,7 +25,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgTestServer.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgTestServer.c,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -58,7 +59,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local functions  
  */
-mcsCOMPL_STAT msgDebugCB(msgMESSAGE *msg)
+mcsCOMPL_STAT msgDebugCB(msgMESSAGE_RAW *msg)
 {
     mcsINT32        index;
     mcsLOGICAL      log, verbose, printDate, printFileLine;
@@ -206,7 +207,7 @@ mcsCOMPL_STAT msgDebugCB(msgMESSAGE *msg)
 }
 
 
-mcsCOMPL_STAT msgVersionCB(msgMESSAGE *msg)
+mcsCOMPL_STAT msgVersionCB(msgMESSAGE_RAW *msg)
 {
     logExtDbg("msgVersionCB()");
 
@@ -243,7 +244,7 @@ int main (int argc, char *argv[])
     for(;;)
     {
         /* Try to receive a command */
-        msgMESSAGE msg;
+        msgMESSAGE_RAW msg;
         if (msgReceive(&msg, msgWAIT_FOREVER) == FAILURE)
         {
             /* If the connection with msgManager has been lost... */

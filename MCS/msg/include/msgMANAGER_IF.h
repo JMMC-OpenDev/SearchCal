@@ -3,11 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.h,v 1.1 2004-11-19 17:19:42 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.h,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  18-Nov-2004  Created
+* lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for _socket,
+*                        and added the class description comment
 *
 *
 *******************************************************************************/
@@ -39,43 +41,17 @@
  */
 
 /**
- * Brief description of the class, which ends at this dot.
- * 
- * OPTIONAL detailed description of the class follows here.
+ * msgMANAGER_IF is an interface class that allow to easily communicate with an
+ * msgManager process.
  *
- * \usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
+ * The main functionnalities are :
+ * \li (dis)connection to an msgManager process;
+ * \li transmission of messages (in the firm of msgMESSAGE objects) to it;
+ * \li reception of messages from it;
  *
- * \n
- * \env
- * OPTIONAL. If needed, environmental variables accessed by the class. For
- * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
+ * \sa msgSendCommand.cpp for a complete usage example.
  * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * \n
- * \ex
- * OPTIONAL. Code example if needed
- * \n Brief example description.
- * \code
- * Insert your code example here
- * \endcode
- *
- * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * \sa modcppMain.C
- * 
- * \bug OPTIONAL. Bugs list if it exists.
- * \bug For example, description of the first bug
- * \bug For example, description of the second bug
- * 
- * \todo OPTIONAL. Things to forsee list, if needed. For example, 
- * \todo add other methods, dealing with operations.
+ * \todo use msgSOCKET instead of the msg C function calls.
  * 
  */
 class msgMANAGER_IF
@@ -104,13 +80,14 @@ public:
 protected:
 
 private:
-    int msgManagerSd;
+    int _socket;
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     msgMANAGER_IF& operator=(const msgMANAGER_IF&);
     msgMANAGER_IF (const msgMANAGER_IF&);
 };
+
 
 #endif /*!msgMANAGER_IF_H*/
 

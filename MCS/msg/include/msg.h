@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msg.h,v 1.7 2004-11-19 17:15:42 lafrasse Exp $"
+* "@(#) $Id: msg.h,v 1.8 2004-11-19 23:55:17 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -96,7 +96,7 @@ typedef struct
     mcsENVNAME  recipientEnv;    /**< Receiver environnement */
     mcsSTRING8  identifier;      /**< Identificator */
     mcsLOGICAL  isInternal;      /**< FALSE if it is external >*/
-    mcsUINT8    type;            /**< Message type */
+    msgTYPE     type;            /**< Message type */
     mcsCMD      command;         /**< Command name */
     mcsLOGICAL  lastReply;       /**< TRUE if it is the last answer */
     mcsBYTES32  timeStamp;       /**< Message date */
