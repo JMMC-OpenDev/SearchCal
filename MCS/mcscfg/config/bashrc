@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/bashrc
 #
-# Version: $Id: bashrc,v 1.5 2004-06-25 06:11:56 gzins Exp $
+# Version: $Id: bashrc,v 1.6 2004-06-25 07:13:30 gzins Exp $
 #
 # Purpose: bash configuration file
 #
@@ -29,15 +29,23 @@ if [ "$LD_LIBRARY_PATH" != "" ]
 then
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../lib
 else
-    export LD_LIBRARY_PATH=../lib    
+    export LD_LIBRARY_PATH=../lib
 fi
 
-# Set MANPATH (path for dynamic linked libraries)
+# Set MANPATH
 if [ "$MANPATH" != "" ]
 then
     export MANPATH=$MANPATH:../man
 else
-    export MANPATH=../man    
+    export MANPATH=../man
+fi
+
+# Set PATH
+if [ "$PATH" != "" ]
+then
+    export PATH=$PATH:../bin
+else
+    export PATH=../bin
 fi
 
 # Add $INTROOT to LD_LIBRARY_PATH, PATH and MANPATH
@@ -60,4 +68,5 @@ fi
 
 # Aliases
 alias m=more
+alias Pu='rm -f *~ .*~ core'
 alias gvim='gvim -geometry 80x45'
