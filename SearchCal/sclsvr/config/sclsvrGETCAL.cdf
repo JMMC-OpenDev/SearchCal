@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.5 2005-02-13 16:07:42 gzins Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.6 2005-02-14 15:10:17 scetre Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.5  2005/02/13 16:07:42  gzins
+ Changed Min/MaxDeltaMag to Min/MaxRangeMag
+
  Revision 1.4  2005/02/08 04:54:20  gzins
  Changed min/max magnitude type
 
@@ -65,12 +68,12 @@
             <desc>observation band</desc>
         </param>
         <param>
-            <name>minRangeMag</name>
+            <name>minMagRange</name>
             <type>double</type>
             <desc>minimum of the range magnitude</desc>
         </param>
         <param>
-            <name>maxRangeMag</name>
+            <name>maxMagRange</name>
             <type>double</type>
             <desc>maximum of the range magnitude</desc>
         </param>

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.12 2005-02-14 14:13:41 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.13 2005-02-14 15:10:40 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/14 14:13:41  scetre
+ * minor changed
+ *
  * Revision 1.11  2005/02/13 16:08:09  gzins
  * Changed Min/MaxDeltaMag to Min/MaxRangeMag
  *
@@ -37,7 +40,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.12 2005-02-14 14:13:41 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.13 2005-02-14 15:10:40 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -127,14 +130,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 
     // minRangeMag
     mcsDOUBLE minRangeMag;
-    if (getCalCmd.GetMinRangeMag(&minRangeMag) == mcsFAILURE)
+    if (getCalCmd.GetMinMagRange(&minRangeMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // maxRangeMag
     mcsDOUBLE maxRangeMag;
-    if (getCalCmd.GetMaxRangeMag(&maxRangeMag) == mcsFAILURE)
+    if (getCalCmd.GetMaxMagRange(&maxRangeMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -217,12 +220,12 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the min of the magitude range
-    if (request.SetMinRangeMag(minRangeMag) == mcsFAILURE)
+    if (request.SetMinMagRange(minRangeMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the max of the magnitude range
-    if (request.SetMaxRangeMag(maxRangeMag) == mcsFAILURE)
+    if (request.SetMaxMagRange(maxRangeMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
