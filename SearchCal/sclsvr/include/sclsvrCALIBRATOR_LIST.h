@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.7 2005-02-04 14:23:13 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.8 2005-02-07 09:15:57 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/02/04 14:23:13  scetre
+* Sort method for GUI added
+*
 * scetre    15-Sep-2004  Created
 *
 *
@@ -39,6 +42,7 @@ public:
     virtual ~sclsvrCALIBRATOR_LIST();//destructor
 
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);//copy constructor
+    virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list);
     virtual mcsCOMPL_STAT AddAtTail(sclsvrCALIBRATOR &calibrator);
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
  
