@@ -43,11 +43,16 @@
    <error id="9">
       <errName>FILE_STR_FUNC_CALL</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[could not perform the standard string.h function call.]]></errFormat>
+      <errFormat><![CDATA[could not perform a standard string.h system function call.]]></errFormat>
    </error>
    <error id="10">
       <errName>MEM_FAILURE</errName>
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[could not allocate or copy memory.]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>DATE_TIME_FUNC_CALL</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[could not perform a standard time.h system function call.]]></errFormat>
    </error>
 </errorList>

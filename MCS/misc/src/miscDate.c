@@ -3,12 +3,14 @@
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
-* gzins     16-Jun-2004  created
-* lafrasse  17-Jun-2004  added miscGetLocalTimeStr
+* gzins     16-Jun-2004  Created
+* lafrasse  17-Jun-2004  Added miscGetLocalTimeStr
+* lafrasse  22-Jul-2004  Added error management
+*
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.3 2004-06-18 12:13:23 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.4 2004-07-22 15:29:15 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -20,15 +22,21 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <time.h>
 #include <sys/time.h>
 
+
 /* 
  * MCS Headers
  */
 #include "mcs.h"
+#include "err.h"
+
 
 /* 
  * Local Headers
  */
 #include "misc.h"
+#include "miscPrivate.h"
+#include "miscErrors.h"
+
 
 /**
  * Format the current date and time as YYYY-MM-DDThh:mm:ss.
@@ -44,30 +52,59 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *
  * \param utcTime character array where the resulting date is stored
  * \param precision number of digits to be used for the Nth of seconds
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-void miscGetUtcTimeStr(mcsBYTES32 utcTime, mcsINT32 precision)
+mcsCOMPL_STAT miscGetUtcTimeStr(mcsBYTES32 utcTime, mcsINT32 precision)
 {
     struct timeval  time;
     struct tm       *timeNow;
 
-    /* Get UTC time */
-    gettimeofday(&time, NULL);
+    /* Get the system time */
+    if (gettimeofday(&time, NULL))
+    {
+        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        return FAILURE;
+    }
  
-    /* Format the date */
-    timeNow = gmtime(&time.tv_sec);
-    strftime(utcTime, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow);
- 
+    /* Compute the UTC time from it */
+    if ((timeNow = gmtime(&time.tv_sec)) == NULL)
+    {
+        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        return FAILURE;
+    }
+
+    /* Compute a string from it */
+    if (!strftime(utcTime, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow))
+    {
+        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        return FAILURE;
+    }
+
     /* Add milli-seconds, if requested */
     precision=mcsMIN(precision, 6);
+
     if (precision > 0)
     {
         mcsBYTES32 format, tmpBuf;
 
         sprintf(format, "%%.%df", precision);
         sprintf(tmpBuf, format, time.tv_usec/1e6);
-        strcpy(tmpBuf, (tmpBuf + 1));
-        strcat(utcTime, tmpBuf);
+
+        if (strcpy(tmpBuf, (tmpBuf + 1)) == NULL)
+        {
+            errAdd(miscERR_FILE_STR_FUNC_CALL);
+            return FAILURE;
+        }
+
+        if (strcat(utcTime, tmpBuf) == NULL)
+        {
+            errAdd(miscERR_FILE_STR_FUNC_CALL);
+            return FAILURE;
+        }
     }
+
+    return SUCCESS;
 }
 
 /**
@@ -84,30 +121,59 @@ void miscGetUtcTimeStr(mcsBYTES32 utcTime, mcsINT32 precision)
  *
  * \param localTime character array where the resulting date is stored
  * \param precision number of digits to be used for the Nth of seconds
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-void miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision)
+mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision)
 {
     struct timeval  time;
     struct tm       *timeNow;
 
-    /* Get local time */
-    gettimeofday(&time, NULL);
+    /* Get the system time */
+    if (gettimeofday(&time, NULL))
+    {
+        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        return FAILURE;
+    }
  
-    /* Format the date */
-    timeNow = localtime(&time.tv_sec);
-    strftime(localTime, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow);
+    /* Compute the local time from it */
+    if ((timeNow = localtime(&time.tv_sec)) == NULL)
+    {
+        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        return FAILURE;
+    }
+
+    /* Compute a string from it */
+    if (!strftime(localTime, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow))
+    {
+        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        return FAILURE;
+    }
  
     /* Add milli-seconds, if requested */
     precision=mcsMIN(precision, 6);
+
     if (precision > 0)
     {
         mcsBYTES32 format, tmpBuf;
 
         sprintf(format, "%%.%df", precision);
         sprintf(tmpBuf, format, time.tv_usec/1e6);
-        strcpy(tmpBuf, (tmpBuf + 1));
-        strcat(localTime, tmpBuf);
+
+        if (strcpy(tmpBuf, (tmpBuf + 1)) == NULL)
+        {
+            errAdd(miscERR_FILE_STR_FUNC_CALL);
+            return FAILURE;
+        }
+        
+        if (strcat(localTime, tmpBuf) == NULL)
+        {
+            errAdd(miscERR_FILE_STR_FUNC_CALL);
+            return FAILURE;
+        }
     }
+
+    return SUCCESS;
 }
 
 /*___oOo___*/

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.13 2004-07-22 14:04:17 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.14 2004-07-22 15:29:15 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -22,6 +22,7 @@
 *                        miscYankLastPath from miscFile.c
 * lafrasse  22-Jul-2004  Added an include of misDynStr.h to centralize user
 *                        includes on misc.h
+*                        Added error management to miscDate
 *
 *
 *******************************************************************************/
@@ -56,8 +57,8 @@ mcsCOMPL_STAT miscResolvePath    (const char *orginalPath, char **resolvedPath);
 mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName, char **envVarValue);
 mcsCOMPL_STAT miscYankLastPath   (char *path);
 
-void miscGetUtcTimeStr           (mcsBYTES32 localTime, mcsINT32 precision);
-void miscGetLocalTimeStr         (mcsBYTES32 localTime, mcsINT32 precision);
+mcsCOMPL_STAT miscGetUtcTimeStr  (mcsBYTES32 localTime, mcsINT32 precision);
+mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
 
 void miscStripQuotes             (char *string);
 void miscStrToUpper              (char *string);
