@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.43 2005-03-10 15:46:21 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.44 2005-03-30 12:50:58 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.43  2005/03/10 15:46:21  scetre
+ * Simplified filter on visibility and variability
+ *
  * Revision 1.42  2005/03/10 11:31:34  scetre
  * Removed all star with a flag of variability and multiplicity in filter by visibility and variability methods
  *
@@ -110,7 +113,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.43 2005-03-10 15:46:21 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.44 2005-03-30 12:50:58 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -762,9 +765,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
  * If given, the request is placed in the file, as a comment line.
  *
  * \param filename the file where to save
+ * \param ucdList list of UCD
+ * \param request request used to get this list 
  * \param extendedFormat if true, each property is saved with its attributes
  * (origin and confidence index), otherwise only property is saved.
- * \param request request used to get this list 
+
  *
  * \return always mcsSUCCESS
  */
@@ -857,11 +862,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
  * Load elements (calibrators) from a file.
  *
  * \param filename name of file containing star list
- * \param extendedFormat if true, each property is has been saved with its
- * attributes (origin and confidence index), otherwise only only property has
- * been saved.
- * \param origin used if origin is not given in file (see above). If NULL, the
- * name of file is used as origin.
+ * \param request request object
  *
  * \return always mcsSUCCESS
  */
