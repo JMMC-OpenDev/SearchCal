@@ -1,18 +1,18 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.8 2005-01-29 13:53:12 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2005-02-16 09:26:56 gzins Exp $"
 #
 # Makefile of mcscfg module, which contains configuration files for MCS
 # environment. 
 #
-# who       when         what
-# --------  -----------  ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     25-Jun-2004  Created
 # gzins     10-Dec-2004  Added ../config/emacs
 #
 #------------------------------------------------------------------------
-
 #
 # Configuration files to be installed
 #----------------------------

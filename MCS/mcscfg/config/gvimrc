@@ -1,12 +1,13 @@
 "------------------------------------------------------------------------------
 " File:    $MCSROOT/etc/vimrc
 "
-" Version: $Id: gvimrc,v 1.5 2005-01-05 08:06:53 gzins Exp $
+" Version: $Id: gvimrc,v 1.6 2005-02-16 09:27:06 gzins Exp $
 " 
 " Purpose: VIM GUI special configuration file
 "
-" who       when        what
-" --------  ----------  ----------------------------------------------
+" History
+" -------
+" $Log: not supported by cvs2svn $
 " gzins     14-05-2004  created
 " gzins     05-01-2005  removed lines already defined in vimrc
 " 
