@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.C,v 1.2 2004-11-25 14:54:46 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.C,v 1.3 2004-11-26 13:53:56 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.C,v 1.2 2004-11-25 14:54:46 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.C,v 1.3 2004-11-26 13:53:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -47,20 +47,20 @@ using namespace std;
 // set it. */
 static char *propertyNameList[][2] =
 {
-    {"ANGULAR_DIAMETER",        "%.2f"},
-    {"ANGULAR_DIAMETER_ERROR",  "%.2f"},
-    {"MO",                      "%.2f"},
-    {"LO",                      "%.2f"},
-    {"KO",                      "%.2f"},
-    {"HO",                      "%.2f"},
-    {"JO",                      "%.2f"},
-    {"IO",                      "%.2f"},
-    {"RO",                      "%.2f"},
-    {"VO",                      "%.2f"},
-    {"BO",                      "%.2f"},
-    {"MULTIPLICITY",            "%.2f"},
-    {"VISIBILITY",              "%.2f"},
-    {"VISIBILITY_ERROR",        "%.2f"},
+    {"ANGULAR_DIAMETER",        "%.3f"},
+    {"ANGULAR_DIAMETER_ERROR",  "%.3f"},
+    {"MO",                      "%.3f"},
+    {"LO",                      "%.3f"},
+    {"KO",                      "%.3f"},
+    {"HO",                      "%.3f"},
+    {"JO",                      "%.3f"},
+    {"IO",                      "%.3f"},
+    {"RO",                      "%.3f"},
+    {"VO",                      "%.3f"},
+    {"BO",                      "%.3f"},
+    {"MULTIPLICITY",            "%.3f"},
+    {"VISIBILITY",              "%.4f"},
+    {"VISIBILITY_ERROR",        "%.4f"},
     { NULL,                     NULL}
 };
 
@@ -71,11 +71,17 @@ static char *propertyNameList[][2] =
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR()
 {
+    // Initialize each value of the calibrator at vobsSTAR_PROP_NOT_SET for
+    // the property which come from the star list
     for (int ucdId=0; ucdId<vobsNB_STAR_PROPERTIES; ucdId++)
     {
         strcpy(_properties[ucdId], vobsSTAR_PROP_NOT_SET);
     }
-    for (int propertyId=0; propertyId<sclsvrNB_CALIBRATOR_PROPERTIES; propertyId++)
+    
+    // Initialize each value of the calibrator at sclsvrCALIBRATOR_PROP_NOT_SET
+    // for the property which will be computed
+    for (int propertyId=0;
+         propertyId<sclsvrNB_CALIBRATOR_PROPERTIES; propertyId++)
     {
         strcpy(_compProperties[propertyId], sclsvrCALIBRATOR_PROP_NOT_SET);
     }
@@ -86,16 +92,19 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR()
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR(const sclsvrCALIBRATOR &star)
 {
-    logExtDbg("sclsvrCALIBRATOR::sclsvrCALIBRATOR(const sclsvrCALIBRATOR &star)");
+    logExtDbg("sclsvrCALIBRATOR::sclsvrCALIBRATOR(sclsvrCALIBRATOR &star)");
+    
+    // Copy each value of the calibrator in the calibrator
+    // if it is value coming from a star
     for (int ucdId=0; ucdId<vobsNB_STAR_PROPERTIES; ucdId++)
     {
-        star.GetProperty(ucdId, (char *)_properties[ucdId]);
+        star.GetProperty((vobsUCD_ID)ucdId, (char *)_properties[ucdId]);
     }
-    for (int propertyIdx=0; propertyIdx<sclsvrNB_CALIBRATOR_PROPERTIES; propertyIdx++)
+
+    // if it is computed value
+    for (int propertyId=0; propertyId<sclsvrNB_CALIBRATOR_PROPERTIES; propertyId++)
     {
-        int propertyId;
-        propertyId = propertyIdx + sclsvrPROP_ID_OFFSET;
-        star.GetProperty(propertyId, (char *)_compProperties[propertyIdx]);
+        star.GetProperty((sclsvrPROPERTY_ID)propertyId, (char *)_compProperties[propertyId]);
     }
 }
 
@@ -110,6 +119,8 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star)
     {
         star.GetProperty((vobsUCD_ID)ucdId, (char *)_properties[ucdId]);
     }
+    // initialize to sclsvrCALIBRATOR_PROP_NOT_SET the calue which will be
+    // computed
     for (int propertyIdx=0; propertyIdx<sclsvrNB_CALIBRATOR_PROPERTIES; propertyIdx++)
     {
         strcpy(_compProperties[propertyIdx], sclsvrCALIBRATOR_PROP_NOT_SET);
@@ -195,6 +206,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(char *name, char *value,
 mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(vobsUCD_ID ucdId, char *value,
                                             mcsLOGICAL overwrite)
 {
+    // Ask SetProperty(vobsUCD_ID ucdId, char *value, mcsLOGICAL overwrite)
+    // method of the vobsSTAR object
     return vobsSTAR::SetProperty(ucdId, value, overwrite);
 }
 
@@ -213,6 +226,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(vobsUCD_ID ucdId, char *value,
 mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(vobsUCD_ID ucdId, mcsFLOAT value,
                                             mcsLOGICAL overwrite)
 {
+    // Ask SetProperty(vobsUCD_ID ucdId, mcsFLOAT value, mcsLOGICAL overwrite)
+    // method of the vobsSTAR object
     return vobsSTAR::SetProperty(ucdId, value, overwrite);
 }
 
@@ -251,7 +266,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(sclsvrPROPERTY_ID id,
     {
         int propertyIdx; 
         propertyIdx = id - sclsvrPROP_ID_OFFSET;
-        strcpy(_compProperties[propertyIdx], value);
+        strcpy(_compProperties[id], value);
     }
 
 
@@ -312,7 +327,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(sclsvrPROPERTY_ID id,
  */
 mcsLOGICAL sclsvrCALIBRATOR::IsPropertySet(char *name) const
 {
-    //logExtDbg("vobsSTAR::IsPropertySet()");
+    logExtDbg("vobsSTAR::IsPropertySet()");
 
     // If given name is a UCD 
     vobsUCD_ID ucdId;
@@ -332,6 +347,74 @@ mcsLOGICAL sclsvrCALIBRATOR::IsPropertySet(char *name) const
     }
     // End if
 }
+
+/**
+ * Pack the calibrator in a dynamic buffer
+ *
+ * \param buffer buffer to complete
+ *
+ * \return always SUCCESS
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
+{
+    logExtDbg("sclsvrCALIBRATOR::Pack()");
+    // Copy properties of the star in th buffer
+    for (int ucdId=0; ucdId<vobsNB_STAR_PROPERTIES; ucdId++)
+    {
+        miscDynBufAppendString(buffer, _properties[ucdId]);
+        miscDynBufAppendString(buffer, "\t");
+    }
+    for (int propertyIdx=0; propertyIdx<sclsvrNB_CALIBRATOR_PROPERTIES; propertyIdx++)
+    {
+        miscDynBufAppendString(buffer, _compProperties[propertyIdx]);
+        miscDynBufAppendString(buffer, "\t");        
+    }
+
+    return SUCCESS;
+}
+
+/**
+ * Unpack the calibrator in a dynamic buffer
+ *
+ * \param calibratorString the calibrator to unpack
+ *
+ * \return
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
+{ 
+    logExtDbg("sclsvrCALIBRATOR::UnPack()");
+    char *parsingString=NULL;
+    int i=0;
+    // initialized the buffer which will contain the calibrator
+    miscDYN_BUF localBuffer;
+    miscDynBufInit(&localBuffer);
+    // Copy the calibrator in the local buffer
+    miscDynBufAppendString(&localBuffer, calibratorString);
+    // parse the buffer
+    parsingString = (char *) strtok (miscDynBufGetBufferPointer(&localBuffer), "\t");
+    while (parsingString != NULL)
+    {
+        if (i> vobsNB_STAR_PROPERTIES+sclsvrNB_CALIBRATOR_PROPERTIES)
+        {
+            return FAILURE;
+        }
+        // write each separated value in the property of the calibrator
+        if (i < vobsNB_STAR_PROPERTIES)
+        {
+            SetProperty((vobsUCD_ID)i, parsingString);
+        }
+        else
+        {
+            SetProperty((sclsvrPROPERTY_ID)(i-vobsNB_STAR_PROPERTIES),
+                        parsingString);
+        }
+        parsingString = (char *) strtok (NULL, "\t");
+        i++;
+    }
+    miscDynBufDestroy(&localBuffer);
+    return SUCCESS;
+}
+
 
 mcsLOGICAL sclsvrCALIBRATOR::IsUcdId(int id) const
 {
@@ -457,33 +540,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(char *name, char *value) const
  * The possible errors are :
  * \li sclsvrERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(int id,
+mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(sclsvrPROPERTY_ID id,
                                             char *value) const
 {
     //logExtDbg("sclsvrCALIBRATOR::GetProperty()");
 
-    // If id is an UCD id
-    if (IsUcdId(id) == mcsTRUE)
+    // If it is not a valid property id, return error
+    if ((id == UNKNOWN_PROP_ID) ||
+        (id < UNKNOWN_PROP_ID) ||
+        (id > VISIBILITY_ERROR_ID))
     {
-        // Get star property
-        return (vobsSTAR::GetProperty((vobsUCD_ID)id, value));
+        errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
+        return FAILURE;
     }
-    // Else
-    else
-    {
-        // If it is not a valid property id, return error
-        if ((id == UNKNOWN_PROP_ID) ||
-            (id < UNKNOWN_PROP_ID) ||
-            (id > VISIBILITY_ERROR_ID))
-        {
-            errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
-            return FAILURE;
-        }
-        // Retrieve property value
-        int propertyIdx; 
-        propertyIdx = id - sclsvrPROP_ID_OFFSET;
-        strcpy(value, _compProperties[propertyIdx]);
-    }
+    // Retrieve property value
+    int propertyIdx; 
+    propertyIdx = id - sclsvrPROP_ID_OFFSET;
+    strcpy(value, _compProperties[propertyIdx]);
 
     return SUCCESS;
 }
@@ -549,42 +622,47 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(char *name, float *value) const
  * \li sclsvrERR_INVALID_PROPERTY_ID
  * \li sclsvrERR_INVALID_PROPERTY_FORMAT
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(int id,
+mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(sclsvrPROPERTY_ID id,
                                             float *value) const
 {
     logExtDbg("sclsvrCALIBRATOR::GetProperty(%d)", id);
 
-    // If id is an UCD id
-    if (IsUcdId(id) == mcsTRUE)
+    // If it is not a valid property id, return error
+    if ((id == UNKNOWN_PROP_ID) ||
+        (id < UNKNOWN_PROP_ID) ||
+        (id > VISIBILITY_ERROR_ID))
     {
-        // Get star property
-        return (vobsSTAR::GetProperty((vobsUCD_ID)id, value));
+        errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
+        return FAILURE;
     }
-    // Else
-    else
+    // Convert property string value to float value
+    int propertyIdx; 
+    propertyIdx = id - sclsvrPROP_ID_OFFSET;
+    if (sscanf(_compProperties[propertyIdx], "%f", value) != 1)
     {
-        // If it is not a valid property id, return error
-        if ((id == UNKNOWN_PROP_ID) ||
-            (id < UNKNOWN_PROP_ID) ||
-            (id > VISIBILITY_ERROR_ID))
-        {
-            errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
-            return FAILURE;
-        }
-        // Convert property string value to float value
-        int propertyIdx; 
-        propertyIdx = id - sclsvrPROP_ID_OFFSET;
-        if (sscanf(_compProperties[propertyIdx], "%f", value) != 1)
-        {
-            errAdd(sclsvrERR_INVALID_PROPERTY_FORMAT, 
-                   _compProperties[propertyIdx], "float");
-            return FAILURE;
-        }
-        
+        errAdd(sclsvrERR_INVALID_PROPERTY_FORMAT, 
+               _compProperties[propertyIdx], "float");
+        return FAILURE;
     }
-    // End if
+
 
     return SUCCESS;
+}
+
+/**
+ *
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(vobsUCD_ID id, char *value) const
+{
+    return vobsSTAR::GetProperty((vobsUCD_ID)id, value);
+}
+
+/**
+ *
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(vobsUCD_ID id, float *value) const
+{
+    return vobsSTAR::GetProperty((vobsUCD_ID)id, value);    
 }
 
 

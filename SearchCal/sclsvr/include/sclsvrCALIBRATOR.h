@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.2 2004-11-25 14:54:46 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.3 2004-11-26 13:53:56 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -50,7 +50,7 @@ typedef mcsSTRING32 sclsvrCALIBRATOR_PROPERTY;
  */
 /* The following offset is used to have id for calibrator properties which
  * differs from the ucd id used by vobsSTAR class */
-#define sclsvrPROP_ID_OFFSET 100
+#define sclsvrPROP_ID_OFFSET 0
 typedef enum
 {
     UNKNOWN_PROP_ID = sclsvrPROP_ID_OFFSET-1,
@@ -102,9 +102,12 @@ public:
           
     // Methods to retreive the star properties
     virtual mcsCOMPL_STAT GetProperty(char *property, char *value) const;
-    virtual mcsCOMPL_STAT GetProperty(int id, char *value) const; 
+    virtual mcsCOMPL_STAT GetProperty(sclsvrPROPERTY_ID, char *value) const; 
     virtual mcsCOMPL_STAT GetProperty(char *property, float *value) const;
-    virtual mcsCOMPL_STAT GetProperty(int id, float *value) const;
+    virtual mcsCOMPL_STAT GetProperty(sclsvrPROPERTY_ID id, float *value) const;
+    
+    virtual mcsCOMPL_STAT GetProperty(vobsUCD_ID id, char *value) const; 
+    virtual mcsCOMPL_STAT GetProperty(vobsUCD_ID id, float *value) const;
     
   
     // method to complete calibrator properties
@@ -115,7 +118,10 @@ public:
     mcsCOMPL_STAT GetLattitude(float &lattitude);
 
     virtual void Display(void);    
-    
+   
+    virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
+    virtual mcsCOMPL_STAT UnPack(mcsSTRING256 calibratorString);
+
 protected:
     // Is UCD id?
     virtual mcsLOGICAL    IsUcdId(int id) const;

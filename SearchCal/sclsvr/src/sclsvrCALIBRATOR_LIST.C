@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.C,v 1.2 2004-11-26 13:53:56 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.C,v 1.2 2004-11-26 13:53:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -114,7 +114,8 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 //Copy constructor
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
-    //logExtDbg("sclsvrCALIBRATOR_LIST::Copy()");
+    logExtDbg("sclsvrCALIBRATOR_LIST::Copy()");
+    // Put each star of the vobsSTAR_LIST in the list
     for (unsigned int el = 0; el < list.Size(); el++)
     {
         AddAtTail(*(list.GetNextStar((el==0))));
@@ -132,7 +133,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
 {
-    //logExtDbg("sclsvrCALIBRATOR_LIST::AddAtTail()");
+    logExtDbg("sclsvrCALIBRATOR_LIST::AddAtTail()");
     // Put element in the list
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(calibrator);
     _starList.push_back(newCalibrator);
@@ -149,7 +150,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
 {
-    //logExtDbg("sclsvrCALIBRATOR_LIST::AddAtTail()");
+    logExtDbg("sclsvrCALIBRATOR_LIST::AddAtTail()");
     
     // Put element in the list
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(star);
@@ -169,8 +170,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::Complete()");
+    // for each calibrator of the list 
     for (unsigned int el = 0; el < Size(); el++)
     {
+        // Complete the calibrator
         if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))->Complete(request) 
             == FAILURE)
         {
@@ -208,6 +211,7 @@ void sclsvrCALIBRATOR_LIST::Display(void)
     {
         printf("%12s",propertyNameList[i]);
     }
+    printf("\n");
 
     for (unsigned int el = 0; el < Size(); el++)
     {
@@ -215,4 +219,73 @@ void sclsvrCALIBRATOR_LIST::Display(void)
     }
 }
 
+/**
+ * Pack a calibrator list in a dynamic buffer
+ *
+ * \param buffer the dynamic buffer in which the calibrator will be pack
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
+{
+    logExtDbg("sclsvrCALIBRATOR_LIST::Pack()");
+    // for each calibrator of the list
+    for (unsigned int el = 0; el < Size(); el++)
+    {
+        // Pack in the buffer the caliobrators
+        if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))->Pack(buffer) 
+            == FAILURE )
+        {
+            return FAILURE;
+        }
+        // if it's not the last star of the list '\n' is written in order to
+        // go to the next line
+        if (el != Size()-1)
+        {
+            miscDynBufAppendString(buffer, "\n");
+        }
+        // if it's the last star '\0' in written
+        else 
+        {
+            miscDynBufAppendString(buffer, "\0");            
+        }
+    }
+    return SUCCESS;
+}
+
+/**
+ * Unpack dynamic buffer and create a list
+ *
+ * \param buffer the dynamic buffer where is stord the list
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
+{
+    logExtDbg("sclsvrCALIBRATOR_LIST::UnPack()");
+    char *bufferLine=NULL;
+    
+    // Fix no skip flag
+    mcsLOGICAL skipFlag = mcsFALSE;
+    
+    // Replace the '\n' by '\0' in the buffer where is stored the list
+    miscReplaceChrByChr(miscDynBufGetBufferPointer(buffer), '\n', '\0');
+    
+    // Get the first line of the buffer
+    while ((bufferLine=miscDynBufGetNextLinePointer(buffer,
+                                                    bufferLine,
+                                                    skipFlag)) != NULL)
+    {
+        // If the line had been get
+        sclsvrCALIBRATOR calibrator;
+        // unpack the calibrator which is in the line
+        if (calibrator.UnPack(bufferLine) == FAILURE)
+        {
+            return FAILURE;
+        }
+        // add in the list the calibrator
+        AddAtTail(calibrator); 
+    }
+    return SUCCESS;    
+}
 /*___oOo___*/

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.2 2004-11-26 13:53:56 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -44,7 +44,10 @@ public:
     virtual mcsCOMPL_STAT Complete(vobsREQUEST request);
     
     virtual void Display();
-
+    
+    virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
+    virtual mcsCOMPL_STAT UnPack(miscDYN_BUF *buffer);
+    
 protected:
 
 private:
