@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.42 2005-03-10 11:31:34 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.43 2005-03-10 15:46:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2005/03/10 11:31:34  scetre
+ * Removed all star with a flag of variability and multiplicity in filter by visibility and variability methods
+ *
  * Revision 1.41  2005/03/09 07:30:39  scetre
  * Fixed bug in filter by visibility
  *
@@ -107,7 +110,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.42 2005-03-10 11:31:34 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.43 2005-03-10 15:46:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -671,19 +674,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterByVariability(mcsLOGICAL authorized)
         {
             calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
             // if it is not possible to get the visibility, remove the star
-            if (calibrator->GetPropertyValue(vobsSTAR_CODE_VARIAB) != NULL)
+            if (calibrator->IsPropertySet(vobsSTAR_CODE_VARIAB) == mcsTRUE)
             {
-                // if variability is affected
-                if (calibrator->IsPropertySet(vobsSTAR_CODE_VARIAB) == 
-                    mcsTRUE)
-                {
-                    // Remove it
-                    logTest("calibrator %d had variability %s\n",
-                            el+1, 
-                            calibrator->GetPropertyValue(vobsSTAR_CODE_VARIAB));
-                    Remove(*calibrator);
-                    el = el-1;            
-                }
+                // Remove it
+                logTest("calibrator %d had variability %s\n",
+                        el+1, 
+                        calibrator->GetPropertyValue(vobsSTAR_CODE_VARIAB));
+                Remove(*calibrator);
+                el = el-1;            
             }
         }
     }
@@ -710,24 +708,19 @@ sclsvrCALIBRATOR_LIST::FilterByMultiplicity(mcsLOGICAL authorized)
         {
             calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
             // if it is not possible to get the visibility, remove the star
-            if (calibrator->GetPropertyValue(vobsSTAR_CODE_MULT_FLAG) != NULL)
+            if (calibrator->IsPropertySet(vobsSTAR_CODE_MULT_FLAG) == mcsTRUE)
             {
-                // if the multiplicity is affected
-                if (calibrator->IsPropertySet(vobsSTAR_CODE_MULT_FLAG) == 
-                    mcsTRUE)
-                {
-                    // Remove it
-                    logTest("calibrator %d had multiplicity %s\n",
-                            el+1, 
-                            calibrator->
-                            GetPropertyValue(vobsSTAR_CODE_MULT_FLAG));
-                    Remove(*calibrator);
-                    el = el-1;            
-                }
+                // Remove it
+                logTest("calibrator %d had multiplicity %s\n",
+                        el+1, 
+                        calibrator->
+                        GetPropertyValue(vobsSTAR_CODE_MULT_FLAG));
+                Remove(*calibrator);
+                el = el-1;            
             }
         }
     }
-    
+
     return mcsSUCCESS;
 }
 
