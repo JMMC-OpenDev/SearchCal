@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2005-02-15 08:40:15 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.12 2005-02-15 10:09:35 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2005/02/15 08:40:15  gzins
+# Added CVS log as file modification history
+#
 # sccmgr    25-Jun-2004  Created
 # gzins     26-Aug-2004  Adapted from VLT
 # gzins     03-Dec-2004  Added mkfMakeInstallCmdDefFiles script
@@ -202,9 +205,6 @@ move_scripts:
 clean : clean_all 
 	@echo " . . . clean done"
 
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
-
 man   : do_man 
 	@echo " . . . man page(s) done"
 
@@ -213,9 +213,5 @@ install : install_all
 	-$(AT) rm -f ${TEMPLATES}/*/*~
 	-$(AT) rm -f ${TEMPLATES}/*/.*.sw*
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
