@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestSearchCalibrators.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
+* "@(#) $Id: sclsvrTestSearchCalibrators.cpp,v 1.2 2005-02-15 15:46:00 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Test programm of sclsvr.
  */
 
-static char *rcsId="@(#) $Id: sclsvrTestSearchCalibrators.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestSearchCalibrators.cpp,v 1.2 2005-02-15 15:46:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -55,17 +55,17 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
         
-        // Exit from the application with FAILURE
+        // Exit from the application with mcsFAILURE
         exit (EXIT_FAILURE);
     }
     logSetStdoutLogLevel(logINFO);
     /*******************************************************/
     // Try to connect the msgManager communication server 
-    if (msgConnect("sclsvr", NULL) == FAILURE)
+    if (msgConnect("sclsvr", NULL) == mcsFAILURE)
     {
         logWarning("msgConnect() failed");
         errDisplayStack();
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     {
         // Try to receive a command 
         msgMESSAGE msg;
-        if (msgReceive(&msg, msgWAIT_FOREVER) == FAILURE)
+        if (msgReceive(&msg, msgWAIT_FOREVER) == mcsFAILURE)
         {
             // If the connection with msgManager has been lost... 
             if (errIsInStack("msg", msgERR_BROKEN_PIPE) == mcsTRUE)
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
                            "Trying to reconnect.");
                 for(;;)
                 {
-                    if (msgConnect("sclsvr", NULL) == SUCCESS)
+                    if (msgConnect("sclsvr", NULL) == mcsSUCCESS)
                     {
                         logInfo("Connected to msgManager.");
                         break;
@@ -131,12 +131,12 @@ int main(int argc, char *argv[])
                 
                 sclsvrSEARCH_CALIBRATORS searchCalibrators;
                 if (searchCalibrators.DecodeCommand(newArgc,
-                                                    newArgv) == FAILURE)
+                                                    newArgv) == mcsFAILURE)
                 {
                     exit (EXIT_FAILURE);
                 }
 
-                if (searchCalibrators.Run() == FAILURE)
+                if (searchCalibrators.Run() == mcsFAILURE)
                 {
                     exit (EXIT_FAILURE);
                 }
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
                 printf("Query Finished ...\n");
 
                 msgSetBody(&msg, "OK", 0);
-                if (msgSendReply(&msg, mcsTRUE) == FAILURE)
+                if (msgSendReply(&msg, mcsTRUE) == mcsFAILURE)
                 {
                     errCloseStack();
                 }
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
             {
                 // Try to send a confirmation reply 
                 msgSetBody(&msg, "OK", 0);
-                if (msgSendReply(&msg, mcsTRUE) == FAILURE)
+                if (msgSendReply(&msg, mcsTRUE) == mcsFAILURE)
                 {
                     errCloseStack();
                 }
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
             {
                 // Try to send a confirmation reply 
                 msgSetBody(&msg, "OK", 0);
-                if (msgSendReply(&msg, mcsTRUE) == FAILURE)
+                if (msgSendReply(&msg, mcsTRUE) == mcsFAILURE)
                 {
                     errCloseStack();
                 }
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
     // Close MCS services
     mcsExit();
     
-    // Exit from the application with SUCCESS
+    // Exit from the application with mcsSUCCESS
     exit (EXIT_SUCCESS);
 }
 

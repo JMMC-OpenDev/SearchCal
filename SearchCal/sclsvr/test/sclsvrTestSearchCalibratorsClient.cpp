@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestSearchCalibratorsClient.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
+* "@(#) $Id: sclsvrTestSearchCalibratorsClient.cpp,v 1.2 2005-02-15 15:46:00 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestSearchCalibratorsClient.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestSearchCalibratorsClient.cpp,v 1.2 2005-02-15 15:46:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -63,18 +63,18 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
         
-        // Exit from the application with FAILURE
+        // Exit from the application with mcsFAILURE
         exit (EXIT_FAILURE);
     }
     guiGUI oneGui;
     oneGui.ConnectToRemoteGui("localhost",6666, mcsGetProcName());
     
     /* Try to connect the msgManager communictaion server */
-    if (msgConnect("msgTestClient", NULL) == FAILURE)
+    if (msgConnect("msgTestClient", NULL) == mcsFAILURE)
     {
         logWarning("msgConnect() failed");
         errDisplayStack();
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     /* printf("%s\n", paramList); */
 
     /* Try to send a QUERY command to msgManager */
-    if (msgSendCommand("QUERY", "sclsvr", paramList, 0) == FAILURE)
+    if (msgSendCommand("QUERY", "sclsvr", paramList, 0) == mcsFAILURE)
     {
         errDisplayStack();
         errCloseStack();
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 
     /* Try to received message */
     msgMESSAGE message;    
-    if (msgReceive(&message, 100000) == FAILURE)
+    if (msgReceive(&message, 100000) == mcsFAILURE)
     {
         errDisplayStack();
         errCloseStack();
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
     }
 
     /* Try to disconnect from msgManager */
-    if (msgDisconnect() == FAILURE)
+    if (msgDisconnect() == mcsFAILURE)
     {
         logWarning("msgDisconnect failed");
         errDisplayStack();
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     // Close MCS services
     mcsExit();
     
-    // Exit from the application with SUCCESS
+    // Exit from the application with mcsSUCCESS
     exit (EXIT_SUCCESS);
 }
 
