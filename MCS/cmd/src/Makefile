@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-11-23 08:41:06 mella Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-11-23 08:45:53 scetre Exp $"
 #
 # Makefile of cmd
 #
@@ -107,7 +107,7 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES =
+INSTALL_FILES = ../config/cmdDefinitionFile.xsd ../config/cmdCdfToCppClass.xsl
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
