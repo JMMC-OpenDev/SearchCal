@@ -18,6 +18,10 @@
  * !!!!!!!!!!!  DO NOT MANUALLY EDIT THIS FILE  !!!!!!!!!!!
  */
 
+ /**
+ * \file 
+ * Generated file for the define list of errors.
+ */
 </xsl:text>
 
         <!-- For each error print associated define with doxygen comment-->
