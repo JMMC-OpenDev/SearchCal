@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCMD.C,v 1.4 2004-11-24 14:04:42 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.1 2004-12-05 18:57:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,12 +11,12 @@
 *******************************************************************************/
 /**
  * \file
- * cmdCMD class definition.
+ * cmdCOMMAND class definition.
  * \todo get Default value from cdf
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCMD.C,v 1.4 2004-11-24 14:04:42 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.1 2004-12-05 18:57:21 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -40,7 +40,7 @@ using namespace std;
  * Local Headers 
  */
 #include "cmd.h"
-#include "cmdCMD.h"
+#include "cmdCOMMAND.h"
 #include "cmdPrivate.h"
 
 /*
@@ -54,9 +54,9 @@ using namespace std;
  * \param params  the arguments of the command.
  *
  */
-cmdCMD::cmdCMD(string name, string params)
+cmdCOMMAND::cmdCOMMAND(string name, string params)
 {
-    logExtDbg("cmdCMD::cmdCMD()");
+    logExtDbg("cmdCOMMAND::cmdCOMMAND()");
     _name = name;
     _params = params;
     _hasNotBeenYetParsed = mcsTRUE;
@@ -72,9 +72,9 @@ cmdCMD::cmdCMD(string name, string params)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-cmdCMD::~cmdCMD()
+cmdCOMMAND::~cmdCOMMAND()
 {
-    logExtDbg("cmdCMD::~cmdCMD()");
+    logExtDbg("cmdCOMMAND::~cmdCOMMAND()");
     // \todo delete _children ...
     _children.clear();
 }
@@ -84,21 +84,49 @@ cmdCMD::~cmdCMD()
  * Public methods
  */
 
-
 /** 
- *  Request the parsing of the command.
+ *  This method should be called before any real action on any parameter.
+ *  It calls  parseCdf and  parseParams.
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::doParsing()
+mcsCOMPL_STAT cmdCOMMAND::Parse()
 {
-    if( _hasNotBeenYetParsed )
+    logExtDbg ("cmdCOMMAND::parse()");
+    
+    // If command has been already parsed, return
+    if ( _hasNotBeenYetParsed == mcsTRUE)
     {
-        if( parse() == FAILURE )
-        {
-            return FAILURE;
-        }
+        return SUCCESS;
     }
+
+    // find the correcsponding cdf file
+    string filename = _name;
+    filename.append(".cdf");
+    char * cdfFilename = miscLocateFile(filename.data());
+    // check if the cdf file has been found   
+    if (cdfFilename == NULL)
+    {
+        return FAILURE;
+    }
+        
+    if (ParseCdf(cdfFilename)==FAILURE)
+    {
+        return FAILURE;
+    }
+    
+    if (ParseParams()==FAILURE)
+    {
+        return FAILURE;
+    }
+
+    if (CheckParams() == FAILURE)
+    {
+        return FAILURE;
+    }
+        
+    // and flag a right performed parsing only after this point
+    _hasNotBeenYetParsed = mcsFALSE;
     return SUCCESS;
 }
 
@@ -107,19 +135,16 @@ mcsCOMPL_STAT cmdCMD::doParsing()
  *
  *  \returns the help string.
  */
-string cmdCMD::getHelp()
+string cmdCOMMAND::GetHelp()
 {
-    logExtDbg ("cmdCMD::getHelp()");
+    logExtDbg ("cmdCOMMAND::getHelp()");
 
     string s;
     
-    if( _hasNotBeenYetParsed )
+    if (Parse() == FAILURE )
     {
-        if( parse() == FAILURE )
-        {
-            s.append("Sorry help can't be generated because an error occured during parsing\n");        
-            return s;
-        }
+        s.append("Sorry help can't be generated because an error occured during parsing\n");        
+        return s;
     }
     
     s.append("Help for ");
@@ -146,7 +171,7 @@ string cmdCMD::getHelp()
         while(i != _children.end())
         {
             cmdPARAM * child = i->second;
-            string childHelp = child->getHelp();
+            string childHelp = child->GetHelp();
             if ( ! childHelp.empty() )
             {
                 s.append(childHelp);
@@ -170,10 +195,10 @@ string cmdCMD::getHelp()
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::addParam(cmdPARAM *param)
+mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM *param)
 {
-    logExtDbg ("cmdCMD::addParam()");
-    _children.insert( make_pair(param->getName(), param) );
+    logExtDbg ("cmdCOMMAND::AddParam()");
+    _children.insert( make_pair(param->GetName(), param) );
     return SUCCESS;
 }
 
@@ -187,23 +212,20 @@ mcsCOMPL_STAT cmdCMD::addParam(cmdPARAM *param)
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  *  param should be considered valid only on SUCCESS case.
  */
-mcsCOMPL_STAT cmdCMD::getParam(string paramName, cmdPARAM **param)
+mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
 {
-    logExtDbg ("cmdCMD::getParam()");
+    logExtDbg ("cmdCOMMAND::GetParam()");
     
-    if( _hasNotBeenYetParsed )
+    if (Parse() == FAILURE )
     {
-        if( parse() == FAILURE )
-        {
-            // \todo errAdd
-            return FAILURE;
-        }
+        // \todo errAdd
+        return FAILURE;
     }
  
     // do real stuff
     STRING2PARAM::iterator iter = _children.find(paramName);
   
-    if(iter!= _children.end())
+    if (iter!= _children.end())
     {
         *param = iter->second;
         return SUCCESS;
@@ -222,16 +244,16 @@ mcsCOMPL_STAT cmdCMD::getParam(string paramName, cmdPARAM **param)
  *
  *  \returns mcsFALSE or mcsTRUE
  */
-mcsLOGICAL cmdCMD::hasDefaultValue(string paramName)
+mcsLOGICAL cmdCOMMAND::HasDefaultValue(string paramName)
 {
-    logExtDbg("cmdCMD::hasDefaultValue()");
+    logExtDbg("cmdCOMMAND::HasDefaultValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         logWarning("%s parameter doesn't exist",paramName.data());
         return mcsFALSE;
     }
-    return p->hasDefaultValue();
+    return p->HasDefaultValue();
 }
 
 /** 
@@ -241,16 +263,16 @@ mcsLOGICAL cmdCMD::hasDefaultValue(string paramName)
  *
  *  \returns mcsFALSE or mcsTRUE
  */
-mcsLOGICAL cmdCMD::isOptional(string paramName)
+mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
 {
-    logExtDbg("cmdCMD::isOptional()");
+    logExtDbg("cmdCOMMAND::IsOptional()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         logWarning("%s parameter doesn't exist",paramName.data());
         return mcsFALSE;
     }
-    return p->isOptional();
+    return p->IsOptional();
 }
 
 /** 
@@ -260,16 +282,16 @@ mcsLOGICAL cmdCMD::isOptional(string paramName)
  *
  *  \returns mcsFALSE or mcsTRUE
  */
-mcsLOGICAL cmdCMD::isDefined(string paramName)
+mcsLOGICAL cmdCOMMAND::IsDefined(string paramName)
 {
-    logExtDbg("cmdCMD::isDefined()");
+    logExtDbg("cmdCOMMAND::IsDefined()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         logWarning("%s parameter doesn't exist",paramName.data());
         return mcsFALSE;
     }
-    return p->isDefined();
+    return p->IsDefined();
 }
 
 /** 
@@ -280,17 +302,17 @@ mcsLOGICAL cmdCMD::isDefined(string paramName)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsINT32 *param)
+mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
 {
-    logExtDbg("cmdCMD::getParamValue()");
+    logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         // \todo errAdd 
         logWarning("%s parameter doesn't exist",paramName.data());
         return FAILURE;
     }
-    return p->getUserValue(param);
+    return p->GetUserValue(param);
 }
 
 /** 
@@ -301,17 +323,17 @@ mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsINT32 *param)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, char **param)
+mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
 {
-    logExtDbg("cmdCMD::getParamValue()");
+    logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         // \todo errAdd 
         logWarning("%s parameter doesn't exist",paramName.data());
         return FAILURE;
     }
-    return p->getUserValue(param);
+    return p->GetUserValue(param);
 }
 
 /** 
@@ -322,17 +344,17 @@ mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, char **param)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsDOUBLE *param)
+mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
 {
-    logExtDbg("cmdCMD::getParamValue()");
+    logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         // \todo errAdd 
         logWarning("%s parameter doesn't exist",paramName.data());
         return FAILURE;
     }
-    return p->getUserValue(param);
+    return p->GetUserValue(param);
 }
 
 /** 
@@ -343,17 +365,17 @@ mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsDOUBLE *param)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsLOGICAL *param)
+mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
 {
-    logExtDbg("cmdCMD::getParamValue()");
+    logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         // \todo errAdd 
         logWarning("%s parameter doesn't exist",paramName.data());
         return FAILURE;
     }
-    return p->getUserValue(param);
+    return p->GetUserValue(param);
 }
 
 /** 
@@ -364,17 +386,17 @@ mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsLOGICAL *param)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsINT32 *param)
+mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsINT32 *param)
 {
-    logExtDbg("cmdCMD::getParamValue()");
+    logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         // \todo errAdd 
         logWarning("%s parameter doesn't exist",paramName.data());
         return FAILURE;
     }
-    return p->getDefaultValue(param);
+    return p->GetDefaultValue(param);
 }
 
 /** 
@@ -385,17 +407,17 @@ mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsINT32 *param)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, char **param)
+mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, char **param)
 {
-    logExtDbg("cmdCMD::getParamValue()");
+    logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         // \todo errAdd 
         logWarning("%s parameter doesn't exist",paramName.data());
         return FAILURE;
     }
-    return p->getDefaultValue(param);
+    return p->GetDefaultValue(param);
 }
 
 /** 
@@ -406,17 +428,17 @@ mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, char **param)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsDOUBLE *param)
+mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsDOUBLE *param)
 {
-    logExtDbg("cmdCMD::getParamValue()");
+    logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         // \todo errAdd 
         logWarning("%s parameter doesn't exist",paramName.data());
         return FAILURE;
     }
-    return p->getDefaultValue(param);
+    return p->GetDefaultValue(param);
 }
 
 /** 
@@ -427,17 +449,17 @@ mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsDOUBLE *param)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsLOGICAL *param)
+mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsLOGICAL *param)
 {
-    logExtDbg("cmdCMD::getParamValue()");
+    logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if( getParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == FAILURE )
     {
         // \todo errAdd 
         logWarning("%s parameter doesn't exist",paramName.data());
         return FAILURE;
     }
-    return p->getDefaultValue(param);
+    return p->GetDefaultValue(param);
 }
 
 /*
@@ -450,45 +472,6 @@ mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsLOGICAL *param)
  * Private methods
  */
 
-/** 
- *  This method should be called before any real action on any parameter.
- *  It calls  parseCdf and  parseParams.
- *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT cmdCMD::parse()
-{
-    logExtDbg ("cmdCMD::parse()");
-    
-    // find the correcsponding cdf file
-    string filename = _name;
-    filename.append(".cdf");
-    char * cdfFilename = miscLocateFile(filename.data());
-    // check if the cdf file has been found   
-    if( cdfFilename == NULL)
-    {
-        return FAILURE;
-    }
-        
-    if(parseCdf(cdfFilename)==FAILURE)
-    {
-        return FAILURE;
-    }
-    
-    if(parseParams()==FAILURE)
-    {
-        return FAILURE;
-    }
-
-    if (checkParams() == FAILURE)
-    {
-        return FAILURE;
-    }
-        
-    // and flag a right performed parsing only after this point
-    _hasNotBeenYetParsed = mcsFALSE;
-    return SUCCESS;
-}
 
 /** 
  *  This method should be called before any real action on any parameter.
@@ -496,9 +479,9 @@ mcsCOMPL_STAT cmdCMD::parse()
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::parseParams()
+mcsCOMPL_STAT cmdCOMMAND::ParseParams()
 {
-    logExtDbg ("cmdCMD::parseParams()");
+    logExtDbg ("cmdCOMMAND::ParseParams()");
 
     logDebug ( "working on params '%s'", _params.data());
    
@@ -511,12 +494,12 @@ mcsCOMPL_STAT cmdCMD::parseParams()
 
     while(i != _params.end())
     {
-        if(*i=='-')
+        if (*i=='-')
         {
-            if(! valueZone){
+            if (! valueZone){
                 if (posA>0)
                 {
-                    if(parseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
+                    if (ParseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
                     {
                         return FAILURE;
                     }
@@ -526,7 +509,7 @@ mcsCOMPL_STAT cmdCMD::parseParams()
         }
 
         // if double quotes are encountered it opens or closes a valueZone
-        if(*i=='"')
+        if (*i=='"')
         {
             valueZone = ! valueZone;
         }
@@ -536,9 +519,9 @@ mcsCOMPL_STAT cmdCMD::parseParams()
     }
 
     // parse last tuple if posB is not null
-    if(posA>0)
+    if (posA>0)
     {
-        if(parseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
+        if (ParseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
         {
             return FAILURE;
         }
@@ -555,9 +538,9 @@ mcsCOMPL_STAT cmdCMD::parseParams()
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
+mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
 {
-    logExtDbg ("cmdCMD::parseTupleParam()");
+    logExtDbg ("cmdCOMMAND::ParseTupleParam()");
     
     unsigned int dashPos = tuple.find_first_of("-");
     unsigned int endPos = tuple.find_last_not_of(" ");
@@ -566,7 +549,7 @@ mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
 
     unsigned int spacePos = str.find_first_of(" ");
     
-    if((dashPos == string::npos) || (spacePos == string::npos))
+    if ((dashPos == string::npos) || (spacePos == string::npos))
     {
         // \todo errAdd
         return FAILURE;
@@ -583,7 +566,7 @@ mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
     /* If parameter does'nt exist in the cdf */
 
     STRING2PARAM::iterator iter = _children.find(paramName);
-    if(iter!= _children.end())
+    if (iter!= _children.end())
     {
         p = iter->second;
     }
@@ -594,7 +577,7 @@ mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
     }
 
     /* assign value to the parameter */
-    p->setUserValue(paramValue);
+    p->SetUserValue(paramValue);
     
     return SUCCESS;
 }
@@ -607,9 +590,9 @@ mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::parseCdf(string cdfFilename)
+mcsCOMPL_STAT cmdCOMMAND::ParseCdf(string cdfFilename)
 {
-    logExtDbg ("cmdCMD::parseCdf()");
+    logExtDbg ("cmdCOMMAND::ParseCdf()");
 
     const char *xmlFilename = cdfFilename.data();
     GdomeDOMImplementation *domimpl;
@@ -635,7 +618,8 @@ mcsCOMPL_STAT cmdCMD::parseCdf(string cdfFilename)
 
     /* Get reference to the root element of the document */
     root = gdome_doc_documentElement (doc, &exc);
-    if (root == NULL) {
+    if (root == NULL) 
+    {
         logWarning ("Illegal format encountered for cdf file "
                     "'%.100s'. Document.documentElement() failed "
                     "with exception #%d", xmlFilename, exc);
@@ -643,12 +627,14 @@ mcsCOMPL_STAT cmdCMD::parseCdf(string cdfFilename)
     }
 
     /* Parse for Description */
-    if(parseCdfForDesc(root)==FAILURE){
+    if (ParseCdfForDesc(root)==FAILURE)
+    {
         goto errCond;
     }
     
     /* Parse for Parameters */
-    if(parseCdfForParameters(root)==FAILURE){
+    if (ParseCdfForParameters(root)==FAILURE)
+    {
         goto errCond;
     }
 
@@ -676,9 +662,9 @@ errCond:
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::parseCdfForDesc(GdomeElement *root)
+mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
 {
-    logExtDbg ("cmdCMD::parseCdfForDesc()");
+    logExtDbg ("cmdCOMMAND::ParseCdfForDesc()");
 
     GdomeElement *el,*el2;
     GdomeNodeList *nl;
@@ -702,7 +688,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForDesc(GdomeElement *root)
     nbChildren = gdome_nl_length (nl, &exc);
 
     /* if a desc does exist */
-    if(nbChildren > 0)
+    if (nbChildren > 0)
     {
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
         if (el == NULL)
@@ -714,7 +700,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForDesc(GdomeElement *root)
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
         value=gdome_el_nodeValue(el2,&exc);
-        setDescription(value->str);
+        SetDescription(value->str);
         gdome_str_unref(value);
         gdome_el_unref(el2, &exc);
         gdome_el_unref(el, &exc);
@@ -732,9 +718,9 @@ mcsCOMPL_STAT cmdCMD::parseCdfForDesc(GdomeElement *root)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::parseCdfForParameters(GdomeElement *root)
+mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
 {
-    logExtDbg ("cmdCMD::parseCdfForParameters()");
+    logExtDbg ("cmdCOMMAND::ParseCdfForParameters()");
     
     GdomeElement *el;
     GdomeNodeList *nl;
@@ -757,7 +743,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParameters(GdomeElement *root)
  
     nbChildren = gdome_nl_length (nl, &exc);
     /* if params does exist */
-    if(nbChildren > 0)
+    if (nbChildren > 0)
     {
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
         if (el == NULL)
@@ -785,7 +771,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParameters(GdomeElement *root)
 
         nbChildren = gdome_nl_length (nl, &exc);
         /* if param does exist */
-        if(nbChildren > 0)
+        if (nbChildren > 0)
         {
             for (i=0;i<nbChildren;i++){
                 el = (GdomeElement *)gdome_nl_item (nl, i, &exc);
@@ -797,7 +783,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParameters(GdomeElement *root)
                     return FAILURE;
                 }
 
-                if(parseCdfForParam(el)==FAILURE)
+                if (ParseCdfForParam(el)==FAILURE)
                 {
                     gdome_el_unref(el, &exc);
                     return FAILURE;
@@ -817,9 +803,9 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParameters(GdomeElement *root)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::cmdGetNodeContent(GdomeElement *parentNode, string tagName, string &content)
+mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tagName, string &content)
 {
-    logExtDbg("cmdCMD::cmdGetNodeContent()");
+    logExtDbg("cmdCOMMAND::CmdGetNodeContent()");
     logDebug("searching content for '%s' element\n",tagName.data());
     
     GdomeElement *el, *el2;
@@ -828,7 +814,7 @@ mcsCOMPL_STAT cmdCMD::cmdGetNodeContent(GdomeElement *parentNode, string tagName
     GdomeDOMString *name, *value;
     int nbChildren;
     
-   if(tagName.empty())
+   if (tagName.empty())
    {
         nl = gdome_el_childNodes(parentNode, &exc);
    }else{
@@ -848,7 +834,7 @@ mcsCOMPL_STAT cmdCMD::cmdGetNodeContent(GdomeElement *parentNode, string tagName
     }
     nbChildren = gdome_nl_length (nl, &exc);
     /* if a desc does exist */
-    if(nbChildren > 0)
+    if (nbChildren > 0)
     {
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
         if (el == NULL)
@@ -860,7 +846,7 @@ mcsCOMPL_STAT cmdCMD::cmdGetNodeContent(GdomeElement *parentNode, string tagName
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
 
-        if(el2 == NULL)
+        if (el2 == NULL)
         {
             // \todo errAdd
             return FAILURE;
@@ -891,9 +877,9 @@ mcsCOMPL_STAT cmdCMD::cmdGetNodeContent(GdomeElement *parentNode, string tagName
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
+mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
 {
-    logExtDbg ("cmdCMD::parseCdfForParam()");
+    logExtDbg ("cmdCOMMAND::ParseCdfForParam()");
     string name;
     string desc;
     string type;
@@ -902,22 +888,22 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
     mcsLOGICAL optional;
     
     /* get mandatory name */
-    if( cmdGetNodeContent(param, "name", name)==FAILURE )
+    if (CmdGetNodeContent(param, "name", name)==FAILURE )
     {
         // \todo add error
         return FAILURE;   
     }
     /* get mandatory type */
-    if( cmdGetNodeContent(param, "type", type)==FAILURE )
+    if (CmdGetNodeContent(param, "type", type)==FAILURE )
     {
         // \todo add error
         return FAILURE;   
     }
     
     /* get optional description */
-     cmdGetNodeContent(param, "desc", desc);
+    CmdGetNodeContent(param, "desc", desc);
     /* get optional unit */
-    cmdGetNodeContent(param, "unit", unit);
+    CmdGetNodeContent(param, "unit", unit);
    
     /* get optional defaultValue */
     { 
@@ -941,7 +927,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
         }
         nbChildren = gdome_nl_length (nl, &exc);
         /* if a defaultValue does exist */
-        if(nbChildren > 0)
+        if (nbChildren > 0)
         {
             /* get defaultValue element */
             el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
@@ -954,7 +940,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
                 gdome_el_unref(el, &exc);
                 return FAILURE;
             }
-            if( cmdGetNodeContent(el, type, defaultValue) == FAILURE )
+            if (CmdGetNodeContent(el, type, defaultValue) == FAILURE )
             {
                 // \todo add error
                 gdome_el_unref(el, &exc);
@@ -989,11 +975,11 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
 
             str = gdome_str_mkref ("true");
             str2 = gdome_str_mkref ("1");
-            if( gdome_str_equal(attrValue, str) )
+            if ( gdome_str_equal(attrValue, str) )
             {
                 optional = mcsTRUE;
             }
-            else if( gdome_str_equal(attrValue,str2) )
+            else if ( gdome_str_equal(attrValue,str2) )
             {
                 optional =mcsTRUE;
             }
@@ -1012,10 +998,10 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
 
     if ( ! defaultValue.empty())
     {
-        p->setDefaultValue(defaultValue);
+        p->SetDefaultValue(defaultValue);
     }
     
-    addParam(p);
+    AddParam(p);
     
     return SUCCESS;
 }
@@ -1026,27 +1012,27 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::checkParams(){
-    logExtDbg("cmdCMD::checkParams()");
+mcsCOMPL_STAT cmdCOMMAND::CheckParams(){
+    logExtDbg("cmdCOMMAND::CheckParams()");
 
     STRING2PARAM::iterator i = _children.begin();
     while(i != _children.end())
     {
         cmdPARAM * child = i->second;
-        if (child->isOptional())
+        if (child->IsOptional())
         {
             // no problem
         }
-        else if(child->hasDefaultValue())
+        else if (child->HasDefaultValue())
         {
             // no problem
         }
         else
         {
             // there should be one userValue defined
-            if(child->getUserValue().empty()){
+            if (child->GetUserValue().empty()){
                 // \todo errAdd
-                logDebug(" %s parameter must be given",child->getName().data());
+                logDebug(" %s parameter must be given",child->GetName().data());
                 return FAILURE;
             }
         }
@@ -1066,9 +1052,9 @@ mcsCOMPL_STAT cmdCMD::checkParams(){
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCMD::setDescription(string desc)
+mcsCOMPL_STAT cmdCOMMAND::SetDescription(string desc)
 {
-    logExtDbg ("cmdCMD::setDescription()");
+    logExtDbg ("cmdCOMMAND::SetDescription()");
     _desc=desc;
     return SUCCESS;
 }

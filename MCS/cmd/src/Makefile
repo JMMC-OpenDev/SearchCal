@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-11-23 08:45:53 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-12-05 18:57:21 gzins Exp $"
 #
 # Makefile of cmd
 #
@@ -54,7 +54,7 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = cmd.h cmdCMD.h cmdPARAM.h
+INCLUDES        = cmd.h cmdCOMMAND.h cmdPARAM.h
 
 #
 # Libraries (public and local)
@@ -64,7 +64,7 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-cmd_OBJECTS   = cmdCMD cmdPARAM
+cmd_OBJECTS   = cmdCOMMAND cmdPARAM
 
 #
 # Scripts (public and local)

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmd.h,v 1.1 2004-11-23 08:40:27 mella Exp $"
+* "@(#) $Id: cmd.h,v 1.2 2004-12-05 18:57:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,7 +26,7 @@
 /**
  * cmd Classes declaration
  */
-#include "cmdCMD.h"
+#include "cmdCOMMAND.h"
 #include "cmdPARAM.h"
 
 

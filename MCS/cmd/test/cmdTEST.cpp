@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdTEST.C,v 1.4 2004-11-26 08:37:51 mella Exp $"
+* "@(#) $Id: cmdTEST.cpp,v 1.1 2004-12-05 18:57:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,10 +12,10 @@
 
 /**
  * \file
- *  Simple test file for cmdCMD class
+ *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.C,v 1.4 2004-11-26 08:37:51 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.1 2004-12-05 18:57:21 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -44,7 +44,7 @@ using namespace std;
  * Local Headers 
  */
 #include "cmd.h"
-#include "cmdCMD.h"
+#include "cmdCOMMAND.h"
 #include "cmdPARAM.h"
 #include "cmdPrivate.h"
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     cout<<"MNEMO = " << mnemo <<endl;
     cout<<"PARAMS = " << params <<endl;
 
-    cmdCMD myCmd(mnemo, params);
+    cmdCOMMAND myCmd(mnemo, params);
 
     if (argc != 3)
     {

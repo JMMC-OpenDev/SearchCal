@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.C,v 1.3 2004-11-23 13:19:29 mella Exp $"
+* "@(#) $Id: cmdPARAM.cpp,v 1.1 2004-12-05 18:57:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.C,v 1.3 2004-11-23 13:19:29 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.1 2004-12-05 18:57:21 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -87,9 +87,9 @@ cmdPARAM::~cmdPARAM()
  *
  *  \returns the string containing the name.
  */
-string cmdPARAM::getName()
+string cmdPARAM::GetName()
 {
-    logExtDbg("cmdPARAM::getName()");
+    logExtDbg("cmdPARAM::GetName()");
     return _name;
 }
 
@@ -98,9 +98,9 @@ string cmdPARAM::getName()
  *
  *  \returns the string containing the description or empty.
  */
-string cmdPARAM::getDesc()
+string cmdPARAM::GetDesc()
 {
-    logExtDbg("cmdPARAM::getDesc()");
+    logExtDbg("cmdPARAM::GetDesc()");
     return _desc;
 }
 
@@ -109,9 +109,9 @@ string cmdPARAM::getDesc()
  *
  *  \returns the string containing the unit or empty.
  */
-string cmdPARAM::getUnit()
+string cmdPARAM::GetUnit()
 {
-    logExtDbg("cmdPARAM::getUnit()");
+    logExtDbg("cmdPARAM::GetUnit()");
     return _unit;
 }
 
@@ -120,9 +120,9 @@ string cmdPARAM::getUnit()
  *
  *  \returns the string containing the user value.
  */
-string cmdPARAM::getUserValue()
+string cmdPARAM::GetUserValue()
 {
-    logExtDbg("cmdPARAM::getUserValue()");
+    logExtDbg("cmdPARAM::GetUserValue()");
     return _userValue;
 }
 
@@ -131,9 +131,9 @@ string cmdPARAM::getUserValue()
  *
  *  \returns the string containing the user value.
  */
-string cmdPARAM::getDefaultValue()
+string cmdPARAM::GetDefaultValue()
 {
-    logExtDbg("cmdPARAM::getDefaultValue()");
+    logExtDbg("cmdPARAM::GetDefaultValue()");
     return _defaultValue;
 }
 
@@ -142,9 +142,9 @@ string cmdPARAM::getDefaultValue()
  *
  *  \returns mcsTRUE or mcsFALSE
  */
-mcsLOGICAL cmdPARAM::isOptional()
+mcsLOGICAL cmdPARAM::IsOptional()
 {
-    logExtDbg("cmdPARAM::isOptional()");
+    logExtDbg("cmdPARAM::IsOptional()");
     return _optional;
 }
 
@@ -153,10 +153,10 @@ mcsLOGICAL cmdPARAM::isOptional()
  *
  *  \returns mcsTRUE or mcsFALSE
  */
-mcsLOGICAL cmdPARAM::hasDefaultValue()
+mcsLOGICAL cmdPARAM::HasDefaultValue()
 {
-    logExtDbg("cmdPARAM::hasDefaultValue()");
-    if(_defaultValue.empty())
+    logExtDbg("cmdPARAM::HasDefaultValue()");
+    if (_defaultValue.empty())
     {
         return mcsFALSE;
     }
@@ -171,10 +171,10 @@ mcsLOGICAL cmdPARAM::hasDefaultValue()
  *
  *  \returns mcsTRUE or mcsFALSE
  */
-mcsLOGICAL cmdPARAM::isDefined()
+mcsLOGICAL cmdPARAM::IsDefined()
 {
-    logExtDbg("cmdPARAM::isDefined()");
-    if(_userValue.empty())
+    logExtDbg("cmdPARAM::IsDefined()");
+    if (_userValue.empty())
     {
         return mcsFALSE;
     }
@@ -189,15 +189,15 @@ mcsLOGICAL cmdPARAM::isDefined()
  *
  *  \returns the help string
  */
-string cmdPARAM::getHelp()
+string cmdPARAM::GetHelp()
 {
-    logExtDbg("cmdPARAM::getHelp()");
+    logExtDbg("cmdPARAM::GetHelp()");
     string s;
-    if(_optional)
+    if (_optional)
     {
         s.append("* optional parameter \t -- ");
     }
-    else if(hasDefaultValue())
+    else if (HasDefaultValue())
     {
         s.append("* default parameter \t -- ");
     }
@@ -210,7 +210,7 @@ string cmdPARAM::getHelp()
     s.append(" -- \n");
 
     /* If there is one given unit */
-    if(! _unit.empty())
+    if (! _unit.empty())
     {
         s.append("\tUnit:[");
         s.append(_unit);
@@ -218,7 +218,7 @@ string cmdPARAM::getHelp()
     }
     
     /* If there is one given unit */
-    if(! _userValue.empty())
+    if (! _userValue.empty())
     {
         s.append("\tUser value:[");
         s.append(_userValue);
@@ -226,7 +226,7 @@ string cmdPARAM::getHelp()
     }
     
     /* If there is one defaultValue */
-    if(hasDefaultValue())
+    if (HasDefaultValue())
     {
         s.append("\tDefault value:[");
         s.append(_defaultValue);
@@ -234,7 +234,7 @@ string cmdPARAM::getHelp()
     }
     
     /* If there is one given unit */
-    if(! _desc.empty())
+    if (! _desc.empty())
     {
         s.append("\n\t");
         s.append(_desc);
@@ -249,31 +249,31 @@ string cmdPARAM::getHelp()
 }
 
 /** 
- * Set the user value of the parameter. This method must be called only by cmdCMD.
+ * Set the user value of the parameter. This method must be called only by cmdCOMMAND.
  * The value is extracted from the parameter line.
  *
  * \param value  the new user value.
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::setUserValue(string value)
+mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
 {
-    logExtDbg("cmdPARAM::setUserValue()");
+    logExtDbg("cmdPARAM::SetUserValue()");
     _userValue=value;
     return SUCCESS;
 }
 
 /** 
  * Set the default value of the parameter. This method must be called only
- * by cmdCMD. The value is extracted from the cdf file.
+ * by cmdCOMMAND. The value is extracted from the cdf file.
  *
  * \param value  the new default value.
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::setDefaultValue(string value)
+mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
 {
-    logExtDbg("cmdPARAM::setDefaultValue()");
+    logExtDbg("cmdPARAM::SetDefaultValue()");
     _defaultValue=value;
     return SUCCESS;
 }
@@ -285,9 +285,9 @@ mcsCOMPL_STAT cmdPARAM::setDefaultValue(string value)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::getUserValue(mcsINT32 *value)
+mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
 {
-    logExtDbg("cmdPARAM::getUserValue()");
+    logExtDbg("cmdPARAM::GetUserValue()");
     if (sscanf (_userValue.data(), "%d", value) != 1)
     {
         // \todo errAdd(cmdERR_INTEGER_VALUE, _userValue);
@@ -303,9 +303,9 @@ mcsCOMPL_STAT cmdPARAM::getUserValue(mcsINT32 *value)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::getUserValue(mcsDOUBLE *value)
+mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
 {
-    logExtDbg("cmdPARAM::getUserValue()");
+    logExtDbg("cmdPARAM::GetUserValue()");
      if (sscanf (_userValue.data(), "%lf", value) != 1)
     {
         // \todo errAdd(cmdERR_DOUBLE_VALUE, _userValue);
@@ -321,9 +321,9 @@ mcsCOMPL_STAT cmdPARAM::getUserValue(mcsDOUBLE *value)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::getUserValue(mcsLOGICAL *value)
+mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
 {
-    logExtDbg("cmdPARAM::getUserValue()");
+    logExtDbg("cmdPARAM::GetUserValue()");
     if ( (_userValue.compare("1") == 0) ||
          (_userValue.compare("true") == 0))
     {
@@ -349,10 +349,10 @@ mcsCOMPL_STAT cmdPARAM::getUserValue(mcsLOGICAL *value)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::getUserValue(char **value)
+mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
 {
-    logExtDbg("cmdPARAM::getUserValue()");
-    if(_userValue.empty())
+    logExtDbg("cmdPARAM::GetUserValue()");
+    if (_userValue.empty())
     {
         // \todo errAdd(cmdERR_STRING_VALUE, _userValue);
         return FAILURE;
@@ -368,9 +368,9 @@ mcsCOMPL_STAT cmdPARAM::getUserValue(char **value)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsINT32 *value)
+mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
 {
-    logExtDbg("cmdPARAM::getDefaultValue()");
+    logExtDbg("cmdPARAM::GetDefaultValue()");
     if (sscanf (_userValue.data(), "%d", value) != 1)
     {
         // \todo errAdd(cmdERR_INTEGER_VALUE, _userValue);
@@ -386,9 +386,9 @@ mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsINT32 *value)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsDOUBLE *value)
+mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
 {
-    logExtDbg("cmdPARAM::getDefaultValue()");
+    logExtDbg("cmdPARAM::GetDefaultValue()");
      if (sscanf (_userValue.data(), "%lf", value) != 1)
     {
         // \todo errAdd(cmdERR_DOUBLE_VALUE, _userValue);
@@ -404,9 +404,9 @@ mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsDOUBLE *value)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsLOGICAL *value)
+mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
 {
-    logExtDbg("cmdPARAM::getDefaultValue()");
+    logExtDbg("cmdPARAM::GetDefaultValue()");
     if ( (_userValue.compare("1") == 0) ||
          (_userValue.compare("true") == 0))
     {
@@ -432,10 +432,10 @@ mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsLOGICAL *value)
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::getDefaultValue(char **value)
+mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
 {
-    logExtDbg("cmdPARAM::getDefaultValue()");
-    if(_userValue.empty())
+    logExtDbg("cmdPARAM::GetDefaultValue()");
+    if (_userValue.empty())
     {
         // \todo errAdd(cmdERR_STRING_VALUE, _userValue);
         return FAILURE;

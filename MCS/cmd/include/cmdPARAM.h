@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.h,v 1.3 2004-11-23 13:19:28 mella Exp $"
+* "@(#) $Id: cmdPARAM.h,v 1.4 2004-12-05 18:57:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -41,25 +41,25 @@ public:
     // Brief description of the destructor
     virtual ~cmdPARAM();
 
-    virtual string getName();
-    virtual string getDesc();
-    virtual string getUnit();
-    virtual string getUserValue();
-    virtual string getDefaultValue();
-    virtual mcsLOGICAL isDefined();
-    virtual mcsLOGICAL hasDefaultValue();
-    virtual mcsLOGICAL isOptional();
-    virtual string getHelp();
-    virtual mcsCOMPL_STAT setUserValue(string value);
-    virtual mcsCOMPL_STAT setDefaultValue(string value);
-    virtual mcsCOMPL_STAT getUserValue(mcsINT32 *value);
-    virtual mcsCOMPL_STAT getUserValue(mcsDOUBLE *value);
-    virtual mcsCOMPL_STAT getUserValue(mcsLOGICAL *value);
-    virtual mcsCOMPL_STAT getUserValue(char **value);
-    virtual mcsCOMPL_STAT getDefaultValue(mcsINT32 *value);
-    virtual mcsCOMPL_STAT getDefaultValue(mcsDOUBLE *value);
-    virtual mcsCOMPL_STAT getDefaultValue(mcsLOGICAL *value);
-    virtual mcsCOMPL_STAT getDefaultValue(char **value);
+    virtual string GetName();
+    virtual string GetDesc();
+    virtual string GetUnit();
+    virtual string GetUserValue();
+    virtual string GetDefaultValue();
+    virtual mcsLOGICAL IsDefined();
+    virtual mcsLOGICAL HasDefaultValue();
+    virtual mcsLOGICAL IsOptional();
+    virtual string GetHelp();
+    virtual mcsCOMPL_STAT SetUserValue(string value);
+    virtual mcsCOMPL_STAT SetDefaultValue(string value);
+    virtual mcsCOMPL_STAT GetUserValue(mcsINT32 *value);
+    virtual mcsCOMPL_STAT GetUserValue(mcsDOUBLE *value);
+    virtual mcsCOMPL_STAT GetUserValue(mcsLOGICAL *value);
+    virtual mcsCOMPL_STAT GetUserValue(char **value);
+    virtual mcsCOMPL_STAT GetDefaultValue(mcsINT32 *value);
+    virtual mcsCOMPL_STAT GetDefaultValue(mcsDOUBLE *value);
+    virtual mcsCOMPL_STAT GetDefaultValue(mcsLOGICAL *value);
+    virtual mcsCOMPL_STAT GetDefaultValue(char **value);
 
 protected:
 

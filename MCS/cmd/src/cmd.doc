@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmd.doc,v 1.5 2004-11-23 13:19:29 mella Exp $"
+* "@(#) $Id: cmd.doc,v 1.6 2004-12-05 18:57:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -27,7 +27,7 @@ area, the file is searched into the INTROOT's config and finally into the
 MCSROOT's config directory.
 
 After instantiation, some methods give access to informations about
-parameters. See cmdCMD class documentation for details.
+parameters. See cmdCOMMAND class documentation for details.
 
 Some command classes can be used especially for certain command. The class 
 code is generated automatically using the cmdCdfToCppClass shell script.
