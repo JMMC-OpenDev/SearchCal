@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.25 2005-02-08 04:39:32 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.26 2005-02-08 20:54:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/02/08 04:39:32  gzins
+ * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
+ *
  * Revision 1.24  2005/02/07 15:00:48  gzins
  * Added CVS log as modification history
  *
@@ -18,7 +21,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.25 2005-02-08 04:39:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.26 2005-02-08 20:54:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -92,13 +95,21 @@ sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
 mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
 {
     logExtDbg("sclsvrCALIBRATOR::Pack()");
+
+    mcsSTRING256 str;
     // Copy properties of the star in th buffer
-    for (_propertyOrderIterator = _propertyOrder.begin();
-         _propertyOrderIterator != _propertyOrder.end();
-         _propertyOrderIterator++)
+    map<int, string>::iterator iterator;
+    for (iterator = _propertyOrder.begin();
+         iterator != _propertyOrder.end();
+         iterator++)
     {
-        miscDynBufAppendString(buffer,
-                               (char *)_propertyList[(*_propertyOrderIterator).second].GetValue());
+        // Each star property is placed in buffer in form :
+        // 'value origin confidenceIndex'
+        sprintf(str, "%s \t%s \t%d ", 
+                (char *)_propertyList[(*iterator).second].GetValue(),
+                (char *)_propertyList[(*iterator).second].GetOrigin(),
+                (char *)_propertyList[(*iterator).second].GetConfidenceIndex());
+        miscDynBufAppendString(buffer, str);
         miscDynBufAppendString(buffer, "\t");        
     }
     
@@ -115,15 +126,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
 mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
 { 
     logExtDbg("sclsvrCALIBRATOR::UnPack()");
-    mcsSTRING256 propertyList[100];
+    mcsSTRING256 propertyList[300];
 
     // Split string into list of properties 
     mcsINT32 nbProperties;
     miscSplitString(calibratorString, '\t', 
-                    propertyList, 100, (mcsUINT32 *)&nbProperties);
+                    propertyList, 300, (mcsUINT32 *)&nbProperties);
 
     // Check the number of found properties 
-    if (nbProperties != NbProperties())
+    if (nbProperties != (NbProperties() * 3))
     {
         errAdd(sclsvrERR_WRONG_BUFFER_FORMAT, calibratorString);
     }
@@ -134,9 +145,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
              _propertyOrderIterator != _propertyOrder.end();
              _propertyOrderIterator++, propIdx++)
         {
+            // Retrieve value, origin and confidence index
+            char *value, *origin;
+            vobsCONFIDENCE_INDEX confidenceIndex;
+            value  = propertyList[3*propIdx];
+            origin = propertyList[3*propIdx+1];
+            sscanf(propertyList[3*propIdx+2], "%d", &confidenceIndex);
+
+            // Set the property
             vobsSTAR_PROPERTY *property;
             property = &(_propertyList[(*_propertyOrderIterator).second]);
-            property->SetValue(propertyList[propIdx]);
+            property->SetValue(value, origin, confidenceIndex);
         }
     } 
 
@@ -161,7 +180,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
         // Get the flag, and test it
         const char *flag;
         flag = GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG);
-        if (strcmp(flag, "OK") == 0)
+        if (strncmp(flag, "OK", 2) == 0)
         {
             return mcsTRUE;
         }
@@ -190,7 +209,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsVisibilityOk()
         // Get the flag, and test it
         const char *flag;
         flag = GetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG);
-        if (strcmp(flag, "OK") == 0)
+        if (strncmp(flag, "OK", 2) == 0)
         {
             return mcsTRUE;
         }
@@ -250,7 +269,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     }
     else
     {
-         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "OK");
+         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "OK", 
+                          vobsSTAR_COMPUTED_PROP);
     }
 
     // Compute visibility and visibility error
@@ -271,11 +291,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             // requested one, and the flag accordingly
             if (computedVis < expectedVis)
             {
-                SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "NOK");
+                SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "NOK",
+                                 vobsSTAR_COMPUTED_PROP);
             }
             else
             {
-                SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "OK");
+                SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "OK",
+                                 vobsSTAR_COMPUTED_PROP);
             }
         }
     }
@@ -372,13 +394,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
     }
   
     // If property is ever set, do nothing, else write the computed value
-    SetPropertyValue(sclsvrCALIBRATOR_RO, mgR, mcsFALSE, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_IO, mgI, mcsFALSE, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ, mcsFALSE, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_HO, mgH, mcsFALSE, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_KO, mgK, mcsFALSE, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_LO, mgL, mcsFALSE, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_MO, mgM, mcsFALSE, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_RO, mgR,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_IO, mgI,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_HO, mgH,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_KO, mgK,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_LO, mgL,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_MO, mgM,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
     
     return mcsSUCCESS;
 }
@@ -414,10 +443,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
     }
     
     // Set the galactic lattitude (if not yet set)
-    SetPropertyValue(vobsSTAR_POS_GAL_LAT, gLat, mcsTRUE);
+    SetPropertyValue(vobsSTAR_POS_GAL_LAT, gLat, vobsSTAR_COMPUTED_PROP);
 
     // Set the galactic longitude (if not yet set)
-    SetPropertyValue(vobsSTAR_POS_GAL_LON, gLon, mcsTRUE);
+    SetPropertyValue(vobsSTAR_POS_GAL_LON, gLon, vobsSTAR_COMPUTED_PROP);
 
     return mcsSUCCESS;
 }
@@ -517,39 +546,39 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     // computed, else do nothing
     if (isPropertySet[8] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_MO, mgM, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_MO, mgM, vobsSTAR_COMPUTED_PROP);
     }
     if (isPropertySet[7] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_LO, mgL, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_LO, mgL, vobsSTAR_COMPUTED_PROP);
     }
     if (isPropertySet[6] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_KO, mgK, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_KO, mgK, vobsSTAR_COMPUTED_PROP);
     }
     if (isPropertySet[5] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_HO, mgH, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_HO, mgH, vobsSTAR_COMPUTED_PROP);
     }
     if (isPropertySet[4] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ, vobsSTAR_COMPUTED_PROP);
     }
     if (isPropertySet[3] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_IO, mgI, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_IO, mgI, vobsSTAR_COMPUTED_PROP);
     }
     if (isPropertySet[2] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_RO, mgR, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_RO, mgR, vobsSTAR_COMPUTED_PROP);
     }
     if (isPropertySet[1] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_VO, mgV, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_VO, mgV, vobsSTAR_COMPUTED_PROP);
     }
     if (isPropertySet[0] == mcsTRUE)
     {
-        SetPropertyValue(sclsvrCALIBRATOR_BO, mgB, mcsTRUE);
+        SetPropertyValue(sclsvrCALIBRATOR_BO, mgB, vobsSTAR_COMPUTED_PROP);
     }
 
     return mcsSUCCESS;
@@ -604,18 +633,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 
     // Set compute value of the angular diameter
     SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM, diam,
-                     mcsTRUE, confidenceIndex);
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
     SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR, diamError,
-                     mcsTRUE, confidenceIndex);
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
    
     // Set flag according to the confidence index 
     if (confidenceIndex == alxCONFIDENCE_LOW)
     {
-         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "NOK");
+         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP);
     }
     else
     {
-         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "OK");
+         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP);
     }
    
     return mcsSUCCESS;
@@ -675,8 +704,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     }
     
     // Affect visibility property
-    SetPropertyValue(sclsvrCALIBRATOR_VIS, vis2);
-    SetPropertyValue(sclsvrCALIBRATOR_VIS_ERROR, vis2Err);
+    SetPropertyValue(sclsvrCALIBRATOR_VIS, vis2, vobsSTAR_COMPUTED_PROP);
+    SetPropertyValue(sclsvrCALIBRATOR_VIS_ERROR, vis2Err, vobsSTAR_COMPUTED_PROP);
     
     return mcsSUCCESS;
 }
