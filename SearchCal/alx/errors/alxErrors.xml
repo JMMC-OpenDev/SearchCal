@@ -45,4 +45,14 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Spectral type '%.20s' not found in interstellar extinction table.]]></errFormat>
    </error>
+   <error id="15">
+      <errName>TOO_MANY_COLUMS</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Too many columns in file '%.120s' at line %d]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>MISSING_COLUMS</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Missing columns in file '%.120s' at line %d; %d foundsinstead of %d expected]]></errFormat>
+   </error>
 </errorList>
