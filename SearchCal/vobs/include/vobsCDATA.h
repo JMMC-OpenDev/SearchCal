@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.9 2005-02-14 08:45:24 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.10 2005-02-14 08:56:35 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/14 08:45:24  scetre
+* change vobsSTAR class to obj class in template Store()
+*
 * Revision 1.8  2005/02/13 15:15:02  gzins
 * Inherited from miscoDYN_BUF
 * Added method to load from file or buffer
@@ -237,7 +240,9 @@ public:
 
                 logPrint("vobs", logDEBUG, __FILE_LINE__,
                          "Next line = %s\n", line);
-                if ((lineNum > _nbLinesToSkip) && (line != NULL))
+                if ((lineNum > _nbLinesToSkip) && 
+                    (line != NULL) && 
+                    (miscIsSpaceStr(line) != mcsTRUE))
                 {
                     mcsSTRING256 lineSubStrings[1024];
                     mcsUINT32    nbOfSubStrings;
