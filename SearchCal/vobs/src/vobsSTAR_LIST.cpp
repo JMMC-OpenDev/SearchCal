@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.10 2005-02-13 15:27:53 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.11 2005-02-13 15:56:55 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/13 15:27:53  gzins
+* Added Load() method
+* Updated Save() method to use new vobsCDATA class
+* Set default value of criteriaList to NULL
+*
 * Revision 1.9  2005/02/04 14:31:50  scetre
 * updated documentation
 *
@@ -20,7 +25,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.10 2005-02-13 15:27:53 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.11 2005-02-13 15:56:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -354,15 +359,18 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
 /**
  * Load elements (stars) from a file.
  *
- * \param filename the file containing star list
+ * \param filename name of file containing star list
  * \param extendedFormat if true, each property is has been saved with its
  * attributes (origin and confidence index), otherwise only only property has
  * been saved.
+ * \param origin used if origin is not given in file (see above). If NULL, the
+ * name of file is used as origin.
  *
  * \return always SUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Load(const char *filename,
-                                  mcsLOGICAL extendedFormat)
+                                  mcsLOGICAL extendedFormat,
+                                  const char *origin)
 {
     logExtDbg("vobsSTAR_LIST::Load()");
 
@@ -373,6 +381,19 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char *filename,
         return mcsFAILURE;
     }
 
+    // Set origin (if needed)
+    if (extendedFormat == mcsFALSE)
+    {
+        if (origin == NULL)
+        {
+            cData.SetCatalogName(filename);
+        }
+        else
+        {
+            cData.SetCatalogName(origin);
+        }
+    }
+        
     // Extract list from the CDATA
     vobsSTAR  star;
     if (cData.Extract(star, *this, extendedFormat) == mcsFAILURE)

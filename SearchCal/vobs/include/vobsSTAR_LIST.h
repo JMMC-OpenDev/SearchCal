@@ -3,11 +3,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.12 2005-02-13 15:27:53 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.13 2005-02-13 15:56:55 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/13 15:27:53  gzins
+* Added Load() method
+* Updated Save() method to use new vobsCDATA class
+* Set default value of criteriaList to NULL
+*
 * Revision 1.11  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -67,7 +72,8 @@ class vobsSTAR_LIST
     virtual mcsCOMPL_STAT Save(const char *filename,
                                mcsLOGICAL extendedFormat=mcsFALSE); 
     virtual mcsCOMPL_STAT Load(const char *filename,
-                               mcsLOGICAL extendedFormat=mcsFALSE); 
+                               mcsLOGICAL extendedFormat=mcsFALSE,
+                               const char *origin=NULL); 
 
  protected:
     // List of stars
