@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.21 2005-01-26 14:11:42 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.22 2005-02-04 09:59:05 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/01/26 14:11:42  scetre
+* change assignement operator and pass list as private member of the class vobsSTAR
+*
 * Revision 1.20  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -52,37 +55,48 @@
 /*
  * Definition of the star properties
  */
-#define vobsSTAR_ID_MAIN                 "ID_MAIN"
-#define vobsSTAR_ID_ALTERNATIVE          "ID_ALTERNATIVE"
-#define vobsSTAR_POS_EQ_RA_MAIN          "POS_EQ_RA_MAIN"
-#define vobsSTAR_POS_EQ_DEC_MAIN         "POS_EQ_DEC_MAIN"
-#define vobsSTAR_POS_EQ_PMDEC            "POS_EQ_PMDEC"
-#define vobsSTAR_POS_EQ_PMRA             "POS_EQ_PMRA"
-#define vobsSTAR_POS_PARLX_TRIG          "POS_PARLX_TRIG"
-#define vobsSTAR_SPECT_TYPE_MK           "SPECT_TYPE_MK"
-#define vobsSTAR_CODE_VARIAB             "CODE_VARIAB"
-#define vobsSTAR_CODE_MULT_FLAG          "CODE_MULT_FLAG"
-#define vobsSTAR_POS_GAL_LAT             "POS_GAL_LAT"
-#define vobsSTAR_POS_GAL_LON             "POS_GAL_LON"
-#define vobsSTAR_VELOC_HC                "VELOC_HC"
-#define vobsSTAR_EXTENSION_DIAM          "EXTENSION_DIAM"
-#define vobsSTAR_OBS_METHOD              "OBS_METHOD"
-#define vobsSTAR_INST_WAVELENGTH_VALUE   "INST_WAVELENGTH_VALUE"
-#define vobsSTAR_PHOT_FLUX_IR_MISC       "PHOT_FLUX_IR_MISC"
-#define vobsSTAR_UNITS                   "UNITS"
-#define vobsSTAR_PHOT_JHN_U              "PHOT_JHN_U"
-#define vobsSTAR_PHOT_JHN_B              "PHOT_JHN_B"
-#define vobsSTAR_PHOT_JHN_V              "PHOT_JHN_V"
-#define vobsSTAR_PHOT_JHN_R              "PHOT_JHN_R"
-#define vobsSTAR_PHOT_JHN_I              "PHOT_JHN_I"
-#define vobsSTAR_PHOT_JHN_J              "PHOT_JHN_J"
-#define vobsSTAR_PHOT_JHN_H              "PHOT_JHN_H"
-#define vobsSTAR_PHOT_JHN_K              "PHOT_JHN_K"
-#define vobsSTAR_PHOT_JHN_L              "PHOT_JHN_L"
-#define vobsSTAR_PHOT_JHN_M              "PHOT_JHN_M"
-#define vobsSTAR_PHOT_IR_N_10_4          "PHOT_IR_N_10_4"
-#define vobsSTAR_VELOC_ROTAT             "VELOC_ROTAT"
-#define vobsSTAR_PHOT_COLOR_EXCESS       "PHOT_COLOR_EXCESS"
+#define vobsSTAR_ID_MAIN                        "ID_MAIN"
+#define vobsSTAR_ID_ALTERNATIVE                 "ID_ALTERNATIVE"
+#define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
+#define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
+#define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"
+#define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
+#define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
+#define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
+#define vobsSTAR_CODE_VARIAB                    "CODE_VARIAB"
+#define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
+#define vobsSTAR_POS_GAL_LAT                    "POS_GAL_LAT"
+#define vobsSTAR_POS_GAL_LON                    "POS_GAL_LON"
+#define vobsSTAR_VELOC_HC                       "VELOC_HC"
+#define vobsSTAR_EXTENSION_DIAM                 "EXTENSION_DIAM"
+#define vobsSTAR_EXTENSION_DIAM_ERROR           "EXTENSION_DIAM_ERROR"
+#define vobsSTAR_OBS_METHOD                     "OBS_METHOD"
+#define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
+#define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
+#define vobsSTAR_UNITS                          "UNITS"
+#define vobsSTAR_PHOT_JHN_U                     "PHOT_JHN_U"
+#define vobsSTAR_PHOT_JHN_B                     "PHOT_JHN_B"
+#define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
+#define vobsSTAR_PHOT_JHN_R                     "PHOT_JHN_R"
+#define vobsSTAR_PHOT_JHN_I                     "PHOT_JHN_I"
+#define vobsSTAR_PHOT_JHN_J                     "PHOT_JHN_J"
+#define vobsSTAR_PHOT_JHN_H                     "PHOT_JHN_H"
+#define vobsSTAR_PHOT_JHN_K                     "PHOT_JHN_K"
+#define vobsSTAR_PHOT_JHN_L                     "PHOT_JHN_L"
+#define vobsSTAR_PHOT_JHN_M                     "PHOT_JHN_M"
+#define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
+#define vobsSTAR_VELOC_ROTAT                    "VELOC_ROTAT"
+#define vobsSTAR_PHOT_COLOR_EXCESS              "PHOT_COLOR_EXCESS"
+#define vobsSTAR_IR_FLUX_ORIGIN                 "IR_FLUX_ORIGIN"
+#define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
+#define vobsSTAR_PHOT_FLUX_IR_12                "PHOT_FLUX_IR_12"
+#define vobsSTAR_PHOT_FLUX_IR_12_ERROR          "PHOT_FLUX_IR_12_ERROR"
+#define vobsSTAR_REF_STAR                       "REF_STAR"
+#define vobsSTAR_PHYS_TEMP_EFFEC                "PHYS_TEMP_EFFEC"
+#define vobsSTAR_PHYS_TEMP_EFFEC_ERROR          "PHYS_TEMP_EFFEC_ERROR"
+#define vobsSTAR_PHOT_EXTINCTION_TOTAL          "PHOT_EXTINCTION_TOTAL"
+#define vobsSTAR_CHI2_QUALITY                   "CHI2_QUALITY"
+#define vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC         "SP_TYP_PHYS_TEMP_EFFEC"
 
 
 /*
