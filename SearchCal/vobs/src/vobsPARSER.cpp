@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.17 2005-02-11 10:41:55 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.18 2005-02-13 15:16:07 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/02/11 10:41:55  gzins
+* Updated to correctly handle the number of lines to be skipped.
+* Fixed bug when scanning UCD/parameter to add star properties
+*
 * Revision 1.16  2005/02/11 10:34:49  gzins
 * Added GetPropertyId() method
 * Improved parsing of CDATA
@@ -48,7 +52,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.17 2005-02-11 10:41:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.18 2005-02-13 15:16:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -200,14 +204,20 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     if (cData.GetNbLines() != 0)
     {
         // Save CDATA (if requested)
-        if (logFileName != NULL)
+        if ((logFileName != NULL) && (miscIsSpaceStr(logFileName) == mcsFALSE))
         {
-            cData.Save(logFileName);
+            cData.SaveInFile(logFileName);
+            errCloseStack();
         }
 
         // Parse the CDATA section
         starList.Clear();
-        if (ParseCData(&cData, starList) == mcsFAILURE)
+        vobsSTAR star;
+
+        // Because the lines to be skipped have been removed when appending
+        // lines, there is no more line to skip.
+        cData.SetNbLinesToSkip(0);
+        if (cData.Extract(star, starList) == mcsFAILURE)
         {
             gdome_el_unref(root, &exc);            
             gdome_doc_unref (doc, &exc);
@@ -318,7 +328,8 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             }
             else
             {
-                if (cData->AppendLines(nodeName->str) == mcsFAILURE)
+                if (cData->AppendLines(nodeName->str,
+                                       cData->GetNbLinesToSkip()) == mcsFAILURE)
                 {
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
@@ -473,253 +484,4 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     return mcsSUCCESS;
 }
 
-/**
- * Parse the CDATA section of XML document.
- *
- * This method parses the CDATA section defined by the \em cData parameters.
- * The CDATA section contains a list of stars which are stored in a table
- * where each line corresponds to a star; i.e. all star properties are placed
- * in one line, and separated by the '\\t' character. The list of star
- * properties to be extracted is given by \em ucd.ucdName list.
- *
- * The first lines of the CDATA containing the description of the parameters
- * has to be skipped. The number of lines to be skipped is given by \em
- * ucd.nbLineToJump 
- *
- * The found stars are put in the \em starList parameter. 
- * 
- * \param cData    data structure describing the CDATA section.
- * \param starList list where star has to be put.
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned and
- * an error is added to the error stack. The possible error is :
- * \li vobsERR_INVALID_CDATA_FORMAT
- */
-mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
-                                     vobsSTAR_LIST &starList)
-{
-    logExtDbg("vobsPARSER::ParseCData()");  
-
-    // Retreive the catalog name form where the data is coming from
-    const char *origin;
-    origin = cData->GetCatalogName();
-
-    // For each line in buffer, get the value for each defined UCD (value are
-    // separated by '\t' character), store them in star object and add this
-    // new star in the list.
-    char *linePtr=NULL;
-    char *delimiters = "\t";
-    do
-    {
-        // Get next line
-        linePtr = cData->GetNextLine(linePtr);
-        
-        if (linePtr != NULL)
-        {
-            char line[1024];
-            int  nbUcd;
-            char *paramName;
-            char *ucdName;
-            char *ucdValue;
-            char *propId;
-            vobsSTAR star;
-
-            // Copy line into temporary buffer
-            strcpy(line, linePtr);
-
-            // Number of UCDs per line
-            nbUcd = cData->GetNbParams();
-
-            // Scan UCD list
-            char *nextLinePtr;
-            char *currLinePtr=line;
-
-            // temporary variable to parse in case of II/225
-            mcsSTRING256 wlen;
-            mcsSTRING256 flux;
-            strcpy(wlen, "");
-            strcpy(flux, "");
-
-            for (int j=0; j < nbUcd; j++)
-            {
-                // Get the parameter name and UCD
-                if (cData->GetNextParamDesc(&paramName, 
-                                            &ucdName,
-                                            (mcsLOGICAL)(j==0)) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
-                // Get the UCD value
-                ucdValue = strtok_r(currLinePtr, delimiters, &nextLinePtr);
-                if (ucdValue == NULL)
-                {
-                    // End of line reached; stop UCD scan
-                    break;
-                }
-                currLinePtr = nextLinePtr;
-
-                // If UCD is not a known property ID
-                if (star.IsProperty(ucdName) == mcsFALSE)
-                {
-                    // Check if UCD and parameter association correspond to a
-                    // known property
-                    propId = GetPropertyId(paramName, ucdName);
-                }
-                // Else
-                else
-                {
-                    // Property ID is the UCD
-                    propId = ucdName;
-                }
-                // End if
-
-                // If it is a known property
-                if (propId != NULL)
-                {
-                    // Specific treatement of the flux
-                    // If wavelength is found, save it
-                    if (strcmp(propId, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
-                    {
-                        strcpy(wlen, ucdValue); 
-                    }
-                    // If flux is found, save it
-                    else if (strcmp(propId, vobsSTAR_PHOT_FLUX_IR_MISC) == 0)
-                    {
-                        strcpy(flux, ucdValue);
-                    }
-                    else
-                    {
-                        // Check if value if empty
-                        if (miscIsSpaceStr(ucdValue) == mcsTRUE)
-                        {
-                            ucdValue = vobsSTAR_PROP_NOT_SET;
-                        }
-
-                        // Set star property
-                        if (star.SetPropertyValue(propId, ucdValue, 
-                                                  origin) == mcsFAILURE)
-                        {
-                            return mcsFAILURE;
-                        }
-                    }
-                }
-                
-                // If wavelength and flux have been found, set the corresponding
-                // magnitude
-                if ((strcmp(wlen, "") != 0) && (strcmp(flux, "") != 0))
-                {
-                    // Get the wavelength value 
-                    mcsFLOAT lambdaValue;
-                    if (sscanf(wlen, "%f" , &lambdaValue) == 1)
-                    {
-                        // Determnine to corresponding magnitude
-                        char *magId;
-                        if (lambdaValue == 1.25)
-                        {
-                            magId = vobsSTAR_PHOT_JHN_J;
-                        }
-                        else if (lambdaValue == 1.65)
-                        {
-                            magId = vobsSTAR_PHOT_JHN_H;
-                        }
-                        else if (lambdaValue == 2.20)
-                          {
-                            magId = vobsSTAR_PHOT_JHN_K;
-                        }
-                        else
-                        {
-                            magId = NULL;
-                        }
-     
-                        // If the given flux correspond to an expected magnitude
-                        if (magId != NULL)
-                        {
-                            logDebug("Flux = %s and wlen = %s ==> mag %s",
-                                     flux, wlen, magId);
-                            star.SetPropertyValue(magId, flux, origin); 
-                        }
-                    }
-                }
-            }
-
-            // Put now the star in the star list
-            if (starList.AddAtTail(star) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-        }
-    } while (linePtr != NULL);
-
-    return mcsSUCCESS;
-}
-
-/**
- * Get the property ID corresponding to the given parameter name and UCD. 
- *
- * This method returns the property ID corresponding to the parameter name and
- * UCD, or NULL if they do not correspond to an existing star property.
- *
- * \param paramName parameter name
- * \param ucdName UCD name
- *
- * \return property Id or NULL
- */
-char *vobsPARSER::GetPropertyId(const char *paramName, const char *ucdName)
-{
-
-    // Star identifiers 
-    if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
-    {
-        if (strcmp(paramName, "HD") == 0)
-        {
-            return vobsSTAR_ID_HD;
-        }
-        else if (strcmp(paramName, "HIP") == 0)
-        {
-            return vobsSTAR_ID_HIP;
-        }
-        else if (strcmp(paramName, "DM") == 0)
-        {
-            return vobsSTAR_ID_DM;
-        }
-    }
-
-    // Diameters
-    if (strcmp(ucdName, "EXTENSION_DIAM") == 0)
-    {
-        if (strcmp(paramName, "LD") == 0)
-        {
-            return vobsSTAR_LD_DIAM;
-        }
-        else if (strcmp(paramName, "UD") == 0)
-        {
-            return vobsSTAR_UD_DIAM;
-        }
-        else if (strcmp(paramName, "UDDK") == 0)
-        {
-            return vobsSTAR_UDDK_DIAM;
-        }
-    }
-
-    // Diameter errors
-    if (strcmp(ucdName, "ERROR") == 0)
-    {
-        if (strcmp(paramName, "e_LD") == 0)
-        {
-            return vobsSTAR_LD_DIAM_ERROR;
-        }
-        else if (strcmp(paramName, "e_UD") == 0)
-        {
-            return vobsSTAR_UD_DIAM_ERROR;
-        }
-        else if (strcmp(paramName, "e_UDDK") == 0)
-        {
-            return vobsSTAR_UDDK_DIAM_ERROR;
-        }
-    }
-
-    // No property corresponding to the parameter name/UCD
-    return NULL;
-}
 /*___oOo___*/
