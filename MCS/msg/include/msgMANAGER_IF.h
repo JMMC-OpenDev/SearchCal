@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.h,v 1.7 2004-12-03 17:05:50 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.h,v 1.8 2005-01-07 18:30:24 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,6 +15,7 @@
 * gzins     03-Dec-2004  Removed msgManagerHost param from Connect
 *                        Gave default value to paramList and paramLen
 *                        arguments of SendCommand
+* gzins     07-Jan-2005  Updated SendCommand prototype to return command Id
 *
 *
 *******************************************************************************/
@@ -69,7 +70,7 @@ public:
 
     virtual mcsCOMPL_STAT Connect     (const mcsPROCNAME  procName);
 
-    virtual mcsCOMPL_STAT SendCommand (const char        *command,
+    virtual mcsINT32      SendCommand (const char        *command,
                                        const mcsPROCNAME  destProc,
                                        const char        *paramList=NULL,  
                                        mcsINT32           paramLen=0);
