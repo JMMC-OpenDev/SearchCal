@@ -1,7 +1,7 @@
 /*************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.8 2004-09-27 10:13:06 gzins Exp $"
+* "@(#) $Id: mcs.h,v 1.9 2004-11-19 10:01:39 swmgr Exp $"
 *
 * mcs.h  -  MCS/Common Definitions - Interface File
 *
@@ -24,6 +24,8 @@ extern "C" {
  ************************************************************************/
 #define mcsPROCNAME_LEN        19   /* max. length of a process name      */
 #define mcsMODULEID_LEN         7   /* max. length of a module name       */
+                                    /* 6 characters + 1 byte alignement   */
+#define mcsENVNAME_LEN          7   /* max. length of an environnement    */
                                     /* 6 characters + 1 byte alignement   */
 #define mcsCMD_LEN 8                /* max. length of a command name */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes */
@@ -68,6 +70,7 @@ typedef char               mcsSTRING128[128];
 typedef char               mcsSTRING256[256];
 
 typedef char mcsPROCNAME[mcsPROCNAME_LEN+1];      /* Process name           */
+typedef char mcsENVNAME[mcsENVNAME_LEN+1];       /* Environnement name     */
 typedef char mcsMODULEID[mcsMODULEID_LEN+1];      /* Software module name   */
 typedef char mcsFILE_LINE[64];                    /* File/line information  */
 typedef char mcsCMD[mcsCMD_LEN+1];                /* Command name */
@@ -88,6 +91,7 @@ typedef enum
  */
 mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName);
 const char *mcsGetProcName();
+const char *mcsGetEnvName();
 void mcsExit();
 
 /*

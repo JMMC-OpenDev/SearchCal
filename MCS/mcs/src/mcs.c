@@ -7,7 +7,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: mcs.c,v 1.2 2004-06-21 16:37:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: mcs.c,v 1.3 2004-11-19 10:01:39 swmgr Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -25,9 +25,9 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Local variables 
  */
 static mcsPROCNAME mcsProcName = mcsUNKNOWN_PROC;
-
+static mcsENVNAME  mcsEnvName = "";
 /*
- * Local functions 
+ * Local functions
  */
 static mcsCOMPL_STAT mcsStoreProcName (const char *procName);
 
@@ -99,6 +99,19 @@ const char *mcsGetProcName()
 {
     return ((const char*)mcsProcName);
 }
+
+/**
+ * Returns the environnement name.
+ *
+ * \return the environnement name.
+ *
+ * \sa mcsInit
+ */
+const char *mcsGetEnvName()
+{
+    return ((const char*)mcsEnvName);
+}
+
 
 /**
  * Closes MCS services. 
