@@ -1,0 +1,29 @@
+/*******************************************************************************
+* JMMC project
+*
+* "@(#) $Id: misc.doc,v 1.1 2004-07-09 14:28:55 lafrasse Exp $"
+*
+* who       when         what
+* --------  -----------  -------------------------------------------------------
+* lafrasse  18-Jul-2004  Created
+*
+*******************************************************************************/
+
+/**
+\mainpage misc : Miscellaneous functions
+
+<b>Brief description</b>\n
+The 'Miscellaneous Functions' (misc) module is a collection of usefull functions, meant to be used by every sort of programms and libraries.
+
+<b>Detailed decription</b>\n
+As of today, the misc module contains functions to deal with :
+\li Date (getting local and UTC time)
+\li String (stripping quotes)
+\li File (file path computing)
+\li Dynamic Buffer
+
+\todo miscDynBuf : polish on code and documentation
+\todo miscFile : implement the Resolve function
+\n
+
+*/

@@ -1,0 +1,19 @@
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $Id: moduleDescription.xml,v 1.1 2004-07-09 14:28:55 lafrasse Exp $"
+
+ who       when         what
+ ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ lafrasse  08-Jul-2004  Created
+
+
+********************************************************************************
+-->
+
+<module name="misc">
+    <desc>Miscellaneous Functions</desc>
+    <resp>Sylvain LAFRASSE</resp>
+    <package>MCS</package>
+</module>
