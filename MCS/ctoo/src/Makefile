@@ -1,24 +1,14 @@
-#%# #***************************************************************************
-#%# # JMMC project
-#%# #
-#%# # "@(#) $Id: Makefile,v 1.2 2004-05-25 16:14:20 gluck Exp $" 
-#%# #
-#%# #      REMARK: This file belongs to the "ctoo" module.
-#%# #
-#%# # who       when      what
-#%# ---------  --------  -----------------------------------------------------
-#%# # gluck     18/05/04  created
-#%# 
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $I>-<d$"
+# "@(#) $Id: Makefile,v 1.3 2004-06-09 16:00:36 gzins Exp $"
 #
 # Makefile of ctoo module
 #
 # who       when        what
 # --------  ----------  --------------------------------------------------------
 # gluck		18-05-04	created
+# gzins     09-06-04    added templates for doxygen
 #
 #
 #*******************************************************************************
@@ -80,7 +70,8 @@ SCRIPTS         = ctooGetTemplate \
 				  ctooGetDirectoryStructure \
 				  ctooGetTemplateForDirectoryStructure \
 				  ctooGetCode \
-				  ctooGetTemplateForCoding
+				  ctooGetTemplateForCoding \
+				  ctooDoxygen
 SCRIPTS_L       =
 
 #
