@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.17 2005-03-04 16:58:15 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.18 2005-03-06 10:41:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/03/04 16:58:15  scetre
+ * Changed format of DEC
+ *
  * Revision 1.16  2005/03/04 16:53:16  scetre
  * Removed useless sign when reformatting RA
  *
@@ -46,7 +49,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.17 2005-03-04 16:58:15 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.18 2005-03-06 10:41:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -166,7 +169,6 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
 
     sprintf(raHms, "%02d:%02d:%02.2f", 
             (int)fabs(hh), (int)fabs(hm), fabs(hs));
-    printf("raHms = %s\n", raHms); 
 
     // Set RA
     _objectRa = raHms;
