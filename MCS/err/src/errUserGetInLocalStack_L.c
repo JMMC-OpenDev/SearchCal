@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: errUserGetInLocalStack_L.c,v 1.1 2005-01-27 14:12:55 gzins Exp $"
+ * "@(#) $Id: errUserGetInLocalStack_L.c,v 1.2 2005-01-31 16:26:04 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 14:12:55  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  * Definition of errUserGetInLocalStack function.
  */
 
-static char *rcsId="@(#) $Id: errUserGetInLocalStack_L.c,v 1.1 2005-01-27 14:12:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errUserGetInLocalStack_L.c,v 1.2 2005-01-31 16:26:04 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,7 +52,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 char *errUserGetInLocalStack(errERROR_STACK   *error)
 {
-    logExtDbg("errGetUserMsgInLocalStack()");
+    logExtDbg("errUserGetMsgInLocalStack()");
 
     mcsINT32 userErrorIdx;
     mcsINT32 i;
