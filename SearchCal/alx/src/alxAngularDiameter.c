@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.7 2005-02-16 15:10:57 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.8 2005-02-22 14:05:13 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/16 15:10:57  gzins
+ * Updated call to miscDynBufGetNextLine()
+ *
  * Revision 1.6  2005/02/12 15:13:11  gzins
  * Removed call to miscResolvePath; done by miscLocateFile
  *
@@ -39,7 +42,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.7 2005-02-16 15:10:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.8 2005-02-22 14:05:13 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -274,7 +277,8 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
 
     /* Compute mean diameter and its associated error */
     meanDiam = (d_v_k + d_v_r + d_b_v) / 3;
-    meanDiamErr = 0.1 * meanDiam;
+    /*meanDiamErr = 0.1 * meanDiam;*/
+    meanDiamErr = 0.1 * d_v_k;
     *diamError = meanDiamErr;
     *diamBv = d_b_v;
     *diamVr = d_v_r;
