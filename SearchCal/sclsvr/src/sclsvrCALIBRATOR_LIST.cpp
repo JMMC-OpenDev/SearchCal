@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.25 2005-02-10 08:20:02 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.26 2005-02-14 14:13:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/02/10 08:20:02  gzins
+ * Fixed bug in Copy method
+ *
  * Revision 1.24  2005/02/08 20:48:11  gzins
  * Updated Copy(); added filterDiameterNok and filterVisibilityNok parameters
  * Removed obsolete CopyIn(), GetCoherentDiameter() and GetVisibilityOk() methods
@@ -55,7 +58,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.25 2005-02-10 08:20:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.26 2005-02-14 14:13:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -230,30 +233,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::Pack()");
-    // for each calibrator of the list
-    for (unsigned int el = 0; el < Size(); el++)
+    
+    vobsCDATA cdata;
+    sclsvrCALIBRATOR calibrator;
+    
+    // In unpack method, extended logical is true
+    if (cdata.Store(calibrator, *this, mcsTRUE) == mcsFAILURE)
     {
-        // Pack in the buffer the caliobrators
-        if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))->Pack(buffer) 
-            == mcsFAILURE )
-        {
-            return mcsFAILURE;
-        }
-        // if it's not the last star of the list '\n' is written in order to
-        // go to the next line
-        if (el != Size()-1)
-        {
-            miscDynBufAppendString(buffer, "\n");
-        }
-        // if it's the last star '\0' in written
-        else 
-        {
-            miscDynBufAppendString(buffer, "\0");            
-        }
+        return mcsFAILURE;
     }
+    
+    buffer->AppendString(cdata.GetBuffer());
+
     return mcsSUCCESS;
 }
 
@@ -265,35 +259,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscoDYN_BUF *buffer)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::UnPack()");
-    char *bufferLine=NULL;
    
-    // Replace the '\n' by '\0' in the buffer where is stored the list
-    if (miscReplaceChrByChr(miscDynBufGetBuffer(buffer), '\n', '\0') == mcsFAILURE)
+    // create a cdata object and put the content of the buffer in it
+    vobsCDATA cdata;
+    if (cdata.LoadBuffer(buffer->GetBuffer()) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    sclsvrCALIBRATOR calibrator;
+    
+    if (cdata.Extract(calibrator, *this, mcsTRUE) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // Get the first line of the buffer
-    while ((bufferLine=miscDynBufGetNextLine(buffer, bufferLine,
-                                             mcsFALSE)) != NULL)
-    {
-        // If it is not an empty line
-        if (miscIsSpaceStr(bufferLine) == mcsFALSE)
-        {
-            // If the line had been get
-            sclsvrCALIBRATOR calibrator;
-            // unpack the calibrator which is in the line
-            if (calibrator.UnPack(bufferLine) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            // add in the list the calibrator
-            AddAtTail(calibrator); 
-        }
-    }
     return mcsSUCCESS;    
 }
 
@@ -698,13 +681,82 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
 }
 
 /**
- * Method to load a star list from a file
+ * Save the elements (calibrators) of the list in a file.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * \param filename the file where to save
+ * \param extendedFormat if true, each property is saved with its attributes
+ * (origin and confidence index), otherwise only property is saved.
+ *
+ * \return always SUCCESS
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load()
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
+                                          mcsLOGICAL extendedFormat)
 {
+    logExtDbg("sclsvrCALIBRATOR_LIST::Save()");
+
+    // Store list into the CDATA
+    vobsCDATA cData;
+    sclsvrCALIBRATOR  calibrator;
+    if (cData.Store(calibrator, *this, extendedFormat) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    // Save into file
+    if (cData.SaveInFile(filename) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Load elements (calibrators) from a file.
+ *
+ * \param filename name of file containing star list
+ * \param extendedFormat if true, each property is has been saved with its
+ * attributes (origin and confidence index), otherwise only only property has
+ * been saved.
+ * \param origin used if origin is not given in file (see above). If NULL, the
+ * name of file is used as origin.
+ *
+ * \return always SUCCESS
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
+                                          mcsLOGICAL extendedFormat,
+                                          const char *origin)
+{
+    logExtDbg("vobsSTAR_LIST::Load()");
+
+    // Load file
+    vobsCDATA cData;
+    if (cData.LoadFile(filename) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Set origin (if needed)
+    if (extendedFormat == mcsFALSE)
+    {
+        if (origin == NULL)
+        {
+            cData.SetCatalogName(filename);
+        }
+        else
+        {
+            cData.SetCatalogName(origin);
+        }
+    }
+        
+    // Extract list from the CDATA
+    sclsvrCALIBRATOR calibrator;
+    if (cData.Extract(calibrator, *this, extendedFormat) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     return mcsSUCCESS;
 }
 

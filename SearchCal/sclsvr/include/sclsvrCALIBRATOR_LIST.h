@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.14 2005-02-08 20:47:15 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.15 2005-02-14 14:12:46 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/02/08 20:47:15  gzins
+ * Updated Copy(); added filterDiameterNok and filterVisibilityNok parameters
+ * Removed obsolete CopyIn(), GetCoherentDiameter() and GetVisibilityOk() methods
+ *
  * Revision 1.13  2005/02/08 07:24:07  gzins
  * Changed char* to const char* when applicable
  *
@@ -68,8 +72,8 @@ public:
  
     virtual mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
     
-    virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
-    virtual mcsCOMPL_STAT UnPack(miscDYN_BUF *buffer);
+    virtual mcsCOMPL_STAT Pack(miscoDYN_BUF *buffer);
+    virtual mcsCOMPL_STAT UnPack(miscoDYN_BUF *buffer);
    
     // Method
     virtual mcsCOMPL_STAT FilterByDistanceSeparation(const char *scienceRa,
@@ -85,7 +89,14 @@ public:
     virtual mcsCOMPL_STAT FilterByVariability(mcsLOGICAL authorized=mcsTRUE);
     virtual mcsCOMPL_STAT FilterByMultiplicity(mcsLOGICAL authorized=mcsTRUE);
     virtual mcsCOMPL_STAT Delete(unsigned int starNumber);
-    virtual mcsCOMPL_STAT Load();
+
+    virtual mcsCOMPL_STAT Save(const char *filename,
+                               mcsLOGICAL extendedFormat);
+
+    virtual mcsCOMPL_STAT Load(const char *filename,
+                               mcsLOGICAL extendedFormat,
+                               const char *origin);
+
 protected:
 
 private:
