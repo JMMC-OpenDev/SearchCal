@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.5 2005-02-22 10:15:32 gzins Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.6 2005-04-04 07:22:51 scetre Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/22 10:15:32  gzins
+ * Made alxBLANKING_VALUE definition public
+ *
  * Revision 1.4  2005/02/21 19:30:56  gzins
  * Removed alxFITZ_ID definition; replaced by alxBAND
  *
@@ -93,6 +96,22 @@ typedef struct
     mcsFLOAT    quantity;      /* Quantity of the spectral subtype */
     mcsSTRING32 lightClass;    /* Luminosity class*/
 } alxSPECTRAL_TYPE;
+
+/**
+ * Differential magnitudes
+ */
+typedef struct
+{
+    mcsFLOAT b_v;
+    mcsFLOAT v_i;
+    mcsFLOAT v_r;
+    mcsFLOAT i_j;
+    mcsFLOAT j_h;
+    mcsFLOAT j_k;
+    mcsFLOAT k_l;
+    mcsFLOAT k_m;
+}alxDIFFERENTIAL_MAGNITUDES;
+
 /*
  * The number of column in the table comes from the number of difference it is
  * necessary to have to compute the missing magnitude

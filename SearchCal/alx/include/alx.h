@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.11 2005-03-30 12:46:34 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.12 2005-04-04 07:22:51 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/03/30 12:46:34  scetre
+ * Added structure in order to simplify the code.
+ * Changed API with this structure
+ *
  * Revision 1.10  2005/02/22 16:17:53  gzins
  * Added errors for B-V, V-R and V-K diameters
  *
@@ -147,27 +151,11 @@ typedef struct
     alxCONFIDENCE_INDEX confidenceIdx;
 } alxDIAMETERS;
 
-/**
- * Differential magnitudes
- */
-typedef struct
-{
-    mcsFLOAT b_v;
-    mcsFLOAT v_i;
-    mcsFLOAT v_r;
-    mcsFLOAT i_j;
-    mcsFLOAT j_h;
-    mcsFLOAT j_k;
-    mcsFLOAT k_l;
-    mcsFLOAT k_m;
-}alxDIFFERENTIAL_MAGNITUDES;
-
 /*
  * Pubic functions declaration
  */
-mcsCOMPL_STAT
-alxComputeMagnitudesForBrightStar(mcsSTRING32 spType, 
-                                  alxMAGNITUDES magnitudes);
+mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType, 
+                                                alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT plx,
                                        mcsFLOAT gLat,
