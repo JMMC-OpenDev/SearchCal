@@ -100,4 +100,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Too many sub-strings found (more than '%d')]]></errFormat>
    </error>
+   <error id="25">
+      <errName>FILE_EXTENSION_UNKNOWN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[File extension '.%s' is not supported; file '%.80s' could not be located.]]></errFormat>
+   </error>
 </errorList>
