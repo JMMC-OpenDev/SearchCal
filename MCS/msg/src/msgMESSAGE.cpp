@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.12 2004-12-22 08:45:26 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.13 2004-12-22 08:47:51 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -21,7 +21,11 @@
 *                        misc Dynamic Buffer, and removed unused API
 * gzins     20-Dec-2004  Fixed bug in GetBody which returned a wrong pointer
 *                        when body was empty
-*
+* gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
+*                        Removed GetHeaderPtr
+*                        Declared AllocateBody as private
+*                        Renamed isInternal to IsInternal
+*                        Added ClearBody and AppendToBody
 *
 *******************************************************************************/
 
@@ -30,7 +34,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.12 2004-12-22 08:45:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.13 2004-12-22 08:47:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

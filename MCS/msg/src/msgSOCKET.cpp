@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.11 2004-12-22 08:43:41 gzins Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.12 2004-12-22 08:47:10 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,6 +17,8 @@
 *                        when receiving message.
 * lafrasse  14-Dec-2004  Changed msgMESSAGE body type from statically sized
 *                        to a misc Dynamic Buffer, and removed unused API
+* gzins     22-Dec-2004  Updated Send and Receive which are defined as friend
+*                        of the msgMESSAGE class
 *
 *
 *******************************************************************************/
@@ -26,7 +28,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.11 2004-12-22 08:43:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.12 2004-12-22 08:47:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
