@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.6 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobs.h,v 1.7 2005-02-04 09:57:15 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    15-Jul-2004  Created
 *
 *
@@ -36,6 +39,7 @@
 #include "vobsCATALOG_MASS.h"
 #include "vobsCATALOG_PHOTO.h"
 #include "vobsCATALOG_SBSC.h"
+#include "vobsCATALOG_MIDI.h"
 #include "vobsSCENARIO.h"
 
 #endif /*!vobs_H*/
