@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestUtils.c,v 1.3 2004-06-17 14:10:51 lafrasse Exp $"
+* "@(#) $Id: miscTestUtils.c,v 1.4 2004-06-17 15:04:40 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -35,7 +35,7 @@
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.3 2004-06-17 14:10:51 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.4 2004-06-17 15:04:40 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -118,6 +118,14 @@ int main (int argc, char *argv[])
     strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      \0");
     printf("   Original String  = |%s|\n", string);
     miscStripQuotes(string);
+    printf("   Resulting String = |%s|\n", string);
+    printf("\n\n");
+
+    /* Test of miscStrToUpper() */
+    printf("miscStrToUpper() Function Test :\n\n");
+    strcpy ((char *)string, "Abc deF GhI jKl 012 .;/\0");
+    printf("   Original String  = |%s|\n", string);
+    miscStrToUpper(string);
     printf("   Resulting String = |%s|\n", string);
     printf("\n\n");
 

@@ -7,7 +7,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.2 2004-06-17 14:10:51 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.3 2004-06-17 15:04:40 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -18,6 +18,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include <ctype.h>
 
 /*
  * MCS Headers
@@ -86,6 +87,29 @@ void miscStripQuotes(char *string)
             dstPtr++;
         }
         *dstPtr = '\0';
+    }
+}
+
+/**
+ * Convert a string to upper case.
+ *
+ * Strings are sometimes composed of mixed caracaters case. This function
+ * cleans this by upper-casing all the caracters, using the same character
+ * buffer for storing the processed string. The string must be NULL terminated.
+ *
+ * /param string that shall be upper-cased.
+ */
+void miscStrToUpper(char *string)
+{
+    /* Worst-case string which becomes:
+     *   |Abc deF GhI jKl 012 .;/|
+     *   |ABC DEF GHI JKL 012 .;/|
+     */
+
+    while (*string != '\0')
+    {
+        *string = toupper(*string);
+        *string++;
     }
 }
 

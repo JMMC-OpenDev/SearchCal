@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.2 2004-06-17 11:55:58 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.3 2004-06-17 15:04:40 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -27,6 +27,7 @@ void miscGetUtcTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
 void miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
 
 void miscStripQuotes(char *string);
+void miscStrToUpper(char *string);
 
 #ifdef __cplusplus
 }
