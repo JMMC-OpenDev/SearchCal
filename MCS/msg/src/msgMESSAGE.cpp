@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.6 2004-12-01 12:54:39 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.7 2004-12-03 08:50:54 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,6 +14,7 @@
 *                        msgMESSAGE, added SetLastReplyFlag method
 * lafrasse  01-Dec-2004  Added error management code, comment refinments, and
 *                        includes cleaning
+* gzins     03-Dec-2004  Improved parameter check in SetBody method
 *
 *
 *******************************************************************************/
@@ -23,7 +24,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.6 2004-12-01 12:54:39 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.7 2004-12-03 08:50:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -427,15 +428,22 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char  *buffer,
     logExtDbg("msgMESSAGE::SetBody()");
     
     // If there is nothing to copy in...
-    if (buffer != NULL)
+    if (buffer == NULL)
     {
-        // If no to-be-copied-in byte number is given...
+        // Force buffer length to 0
+        bufLen = 0;
+    }
+    // Else
+    else
+    {
+        // If to-be-copied-in byte number is not given...
         if (bufLen == 0)
         {
             // Get the given buffer total length
             bufLen = strlen(buffer);
         }
     }
+    // End if
 
     // If the to-be-copied byte number is greater than the message body
     // maximum size...
@@ -450,9 +458,13 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char  *buffer,
     
     // Store the new message body size, in network byte order
     sprintf(_header->msgBodySize, "%d", bufLen);
-    // Fill the message body with the given length and buffer content
-    memcpy(_body, buffer, bufLen);
     
+    // Fill the message body with the given length and buffer content
+    if (buffer != NULL)
+    {
+        memcpy(_body, buffer, bufLen);
+    }
+
     return SUCCESS;
 }
 
