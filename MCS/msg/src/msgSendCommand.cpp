@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.cpp,v 1.4 2004-11-30 15:46:10 scetre Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.5 2004-12-03 08:52:23 gzins Exp $"
 *
 *
 * who       when                 what
@@ -12,6 +12,7 @@
 * lafrasse  23-Nov-2004  Cleaned included headers
 * gzins     29-Nov-2004  Fixed bug related to time-out handling
 *                        Set default time-out to WAIT_FOREVER
+* gzins     03-Dec-2004  Updated according to new msgMANAGER_IF::Connect API
 *
 *******************************************************************************/
 
@@ -47,7 +48,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.4 2004-11-30 15:46:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.5 2004-12-03 08:52:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -129,7 +130,7 @@ int main (int argc, char *argv[])
 
     /* Try to connect to msgManager */
     msgMANAGER_IF manager;
-    if (manager.Connect(argv[0], NULL) == FAILURE)
+    if (manager.Connect(argv[0]) == FAILURE)
     {
         errDisplayStack();
         errCloseStack();
