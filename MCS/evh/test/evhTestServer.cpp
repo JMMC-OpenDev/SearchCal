@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhTestServer.cpp,v 1.6 2005-01-29 07:24:48 gzins Exp $"
+ * "@(#) $Id: evhTestServer.cpp,v 1.7 2005-01-29 20:18:20 gzins Exp $"
  *
  * History:
  * --------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/01/29 07:24:48  gzins
+ * Added CVS log as modification history
+ *
  * gzins     24-Sep-2004  Created
  *
  *
@@ -16,7 +19,7 @@
  * Test program for evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.6 2005-01-29 07:24:48 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.7 2005-01-29 20:18:20 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -116,7 +119,7 @@ evhCB_COMPL_STAT evhTEST::StdinCB (const int,void*)
     mcsSTRING80 msg;
     scanf("%s", msg);
     printf("Read string = %s\n", msg);
-    errDisplayStack();
+    errCloseStack();
     return evhCB_SUCCESS;
 };
 
@@ -132,13 +135,14 @@ int main(int argc, char *argv[])
     // Init server
     if (myServer.Init(argc, argv) == FAILURE)
     {
+        errCloseStack();
         exit (EXIT_FAILURE);
     }
 
     // Main loop
     if (myServer.MainLoop() == FAILURE)
     {
-        errDisplayStack();
+        errCloseStack();
     }
 
     // Exit from the application with SUCCESS
