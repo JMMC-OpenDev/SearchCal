@@ -3,11 +3,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.5 2004-09-24 09:36:32 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.6 2004-12-04 19:55:07 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
-# lgluck    23/04/04    Created
+# lgluck    23-Apr-2004 Created
+# gzins     04-Dec-2004 Changed C++ file extension to cpp
+#                       Look for templates in the following order:
+#                       ../templates, $INTROOT/templates and
+#                       $MCSROOT/templates
 #
 #*******************************************************************************
 # NAME
@@ -75,14 +79,23 @@
 
 
 # Set templates directories
-MCSTEMPLATES=$MCSROOT/templates      
-CODE_DIR=$MCSTEMPLATES/forCoding
-MAKEFILE_DIR=$MCSTEMPLATES/forMakefile
+if [ -d ../templates/forCoding ]
+then
+    TEMPLATES=../templates
+elif [ -d $INTROOT/templates/forCoding ]
+then
+    TEMPLATES=$INTROOT/templates
+else
+    TEMPLATES=$MCSROOT/templates      
+fi
+
+CODE_DIR=$TEMPLATES/forCoding
+MAKEFILE_DIR=$TEMPLATES/forMakefile
 
 # check environment : verify that templates directories exist
-if [ ! -d "$MCSTEMPLATES" ]
+if [ ! -d "$TEMPLATES" ]
 then 
-    echo "ERROR - ctooGetTemplateForCoding: $MCSTEMPLATES not available. "
+    echo "ERROR - ctooGetTemplateForCoding: $TEMPLATES not available. "
     echo "                                  Please check your MCS environment "
     exit 1
 fi
@@ -129,7 +142,7 @@ then
         c++-small-main|c++-class-file)
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
-            FILE_SUFFIX=".C"
+            FILE_SUFFIX=".cpp"
             MODE=644
             ;;
 
