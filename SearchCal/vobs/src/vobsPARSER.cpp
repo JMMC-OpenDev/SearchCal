@@ -1,13 +1,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.15 2005-02-10 10:46:42 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.16 2005-02-11 10:34:49 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/02/10 10:46:42  gzins
+* Changed column name to parameter name
+*
 * Revision 1.14  2005/02/10 08:07:38  scetre
-* changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
+* changed parser and hd, hip, dm number id in order to get all of them even if
+* they have the same UCD
 *
 * Revision 1.13  2005/02/10 06:28:29  gzins
 * Fixed bug related to ERRO UCD handling
@@ -20,7 +24,8 @@
 * Changed some parameter types from char* to const char*
 *
 * Revision 1.10  2005/02/07 09:47:08  gzins
-* Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
+* Renamed vobsCDATA method to be compliant with programming standards; method
+* name starts with capital
 *
 * Revision 1.9  2005/02/04 15:25:40  gzins
 * Minor change in log message
@@ -39,7 +44,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.15 2005-02-10 10:46:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.16 2005-02-11 10:34:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -235,8 +240,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
  * \param node  XML document node to be parsed. 
  * \param cData data structure where CDATA description has to be stored.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned and
- * an error is added to the error stack. The possible error is :
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
+ * and an error is added to the error stack. The possible error is :
  * \li vobsERR_GDOME_CALL
  *
  * \todo
@@ -510,11 +515,9 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             int  nbUcd;
             char *paramName;
             char *ucdName;
-            char *prevUcdName=NULL;
             char *ucdValue;
+            char *propId;
             vobsSTAR star;
-
-            mcsSTRING256 newUcdName; // Used to build UCD representing error
 
             // Copy line into temporary buffer
             strcpy(line, linePtr);
@@ -527,17 +530,17 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             char *currLinePtr=line;
 
             // temporary variable to parse in case of II/225
-            mcsSTRING256 lambda;
+            mcsSTRING256 wlen;
             mcsSTRING256 flux;
-            strcpy(lambda, "");
+            strcpy(wlen, "");
             strcpy(flux, "");
 
             for (int j=0; j < nbUcd; j++)
             {
                 // Get the parameter name and UCD
                 if (cData->GetNextParamDesc(&paramName, 
-                                          &ucdName,
-                                          (mcsLOGICAL)(j==0)) == mcsFAILURE)
+                                            &ucdName,
+                                            (mcsLOGICAL)(j==0)) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -549,73 +552,51 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     // End of line reached; stop UCD scan
                     break;
                 }
-                // Specific treatment of UCDs named ERROR; they have to be
-                // linked with previous UCD.
-                if (strcmp(ucdName, "ERROR") == 0)
+
+                // If UCD is not a known property ID
+                if (star.IsProperty(ucdName) == mcsFALSE)
                 {
-                    // Renamed UCD, by adding previous UCD as prefix
-                    if (prevUcdName != NULL)
-                    {
-                        sprintf(newUcdName, "%s_ERROR", prevUcdName);
-                        ucdName = newUcdName;
-                    }
+                    // Check if UCD and parameter association correspond to a
+                    // known property
+                    propId = GetPropertyId(ucdName, paramName);
                 }
-                // Specific treatment of UCDs ID_ALTERNATIVE
-                if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
-                {
-                    // Three properties have the same UCD. Until now, the only
-                    // method to compare them is to compare the parameter name
-                    if (strcmp(paramName, "HD") == 0)
-                    {
-                        sprintf(newUcdName, "%s", vobsSTAR_ID_HD);
-                        ucdName = newUcdName;
-                    }
-                    else if (strcmp(paramName, "HIP") == 0)
-                    {
-                        sprintf(newUcdName, "%s", vobsSTAR_ID_HIP);
-                        ucdName = newUcdName;
-                    }
-                    else if (strcmp(paramName, "DM") == 0)
-                    {
-                        sprintf(newUcdName, "%s", vobsSTAR_ID_DM);
-                        ucdName = newUcdName;
-                    }
-                }
-                // Specific Treatement of the flux
-                // If lambda is found, save it
-                if (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
-                {
-                    currLinePtr = nextLinePtr;
-                    strcpy(lambda, ucdValue); 
-                }
-                // If flux is found, save it
-                else if (strcmp(ucdName, vobsSTAR_PHOT_FLUX_IR_MISC) == 0)
-                {
-                    currLinePtr = nextLinePtr;
-                    strcpy(flux, ucdValue);
-                }
+                // Else
                 else
                 {
-                    currLinePtr = nextLinePtr;
+                    // Property ID is the UCD
+                    propId = ucdName;
+                }
+                // End if
 
-                    // Check if value if empty
-                    if (miscIsSpaceStr(ucdValue) == mcsTRUE)
+                // If it is a known property
+                if (propId != NULL)
+                {
+                    // Specific treatement of the flux
+                    // If wavelength is found, save it
+                    if (strcmp(propId, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
                     {
-                        ucdValue = vobsSTAR_PROP_NOT_SET;
+                        currLinePtr = nextLinePtr;
+                        strcpy(wlen, ucdValue); 
                     }
-
-                    // Set star property
-                    if (star.SetPropertyValue(ucdName, 
-                                              ucdValue, origin) == mcsFAILURE)
+                    // If flux is found, save it
+                    else if (strcmp(propId, vobsSTAR_PHOT_FLUX_IR_MISC) == 0)
                     {
-                        // If ucd is not found, ignore error
-                        if (errIsInStack(MODULE_ID, 
-                                         vobsERR_INVALID_PROPERTY_ID)
-                            == mcsTRUE)
+                        currLinePtr = nextLinePtr;
+                        strcpy(flux, ucdValue);
+                    }
+                    else
+                    {
+                        currLinePtr = nextLinePtr;
+
+                        // Check if value if empty
+                        if (miscIsSpaceStr(ucdValue) == mcsTRUE)
                         {
-                            errResetStack();
+                            ucdValue = vobsSTAR_PROP_NOT_SET;
                         }
-                        else
+
+                        // Set star property
+                        if (star.SetPropertyValue(propId, ucdValue, 
+                                                  origin) == mcsFAILURE)
                         {
                             return mcsFAILURE;
                         }
@@ -624,11 +605,11 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                 
                 // If wavelength and flux have been found, set the corresponding
                 // magnitude
-                if ((strcmp(lambda, "") != 0) && (strcmp(flux, "") != 0))
+                if ((strcmp(wlen, "") != 0) && (strcmp(flux, "") != 0))
                 {
                     // Get the wavelength value 
                     mcsFLOAT lambdaValue;
-                    if (sscanf(lambda, "%f" , &lambdaValue) == 1)
+                    if (sscanf(wlen, "%f" , &lambdaValue) == 1)
                     {
                         // Determnine to corresponding magnitude
                         char *magId;
@@ -652,14 +633,12 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                         // If the given flux correspond to an expected magnitude
                         if (magId != NULL)
                         {
-                            logDebug("Flux = %s and lambda = %s ==> mag %s",
-                                     flux, lambda, magId);
+                            logDebug("Flux = %s and wlen = %s ==> mag %s",
+                                     flux, wlen, magId);
                             star.SetPropertyValue(magId, flux, origin); 
                         }
                     }
                 }
-                // Set current UCD as previous
-                prevUcdName = ucdName;
             }
 
             // Put now the star in the star list
@@ -673,4 +652,72 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
     return mcsSUCCESS;
 }
 
+/**
+ * Get the property ID corresponding to the given parameter name and UCD. 
+ *
+ * This method returns the property ID corresponding to the parameter name and
+ * UCD, or NULL if they do not correspond to an existing star property.
+ *
+ * \param paramName parameter name
+ * \param ucdName UCD name
+ *
+ * \return property Id or NULL
+ */
+char *vobsPARSER::GetPropertyId(const char *paramName, const char *ucdName)
+{
+
+    // Star identifiers 
+    if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
+    {
+        if (strcmp(paramName, "HD") == 0)
+        {
+            return vobsSTAR_ID_HD;
+        }
+        else if (strcmp(paramName, "HIP") == 0)
+        {
+            return vobsSTAR_ID_HIP;
+        }
+        else if (strcmp(paramName, "DM") == 0)
+        {
+            return vobsSTAR_ID_DM;
+        }
+    }
+
+    // Diameters
+    if (strcmp(ucdName, "EXTENSION_DIAM") == 0)
+    {
+        if (strcmp(paramName, "LD") == 0)
+        {
+            return vobsSTAR_LD_DIAM;
+        }
+        else if (strcmp(paramName, "UD") == 0)
+        {
+            return vobsSTAR_UD_DIAM;
+        }
+        else if (strcmp(paramName, "UDDK") == 0)
+        {
+            return vobsSTAR_UDDK_DIAM;
+        }
+    }
+
+    // Diameter errors
+    if (strcmp(ucdName, "ERROR") == 0)
+    {
+        if (strcmp(paramName, "e_LD") == 0)
+        {
+            return vobsSTAR_LD_DIAM_ERROR;
+        }
+        else if (strcmp(paramName, "e_UD") == 0)
+        {
+            return vobsSTAR_UD_DIAM_ERROR;
+        }
+        else if (strcmp(paramName, "e_UDDK") == 0)
+        {
+            return vobsSTAR_UDDK_DIAM_ERROR;
+        }
+    }
+
+    // No property corresponding to the parameter name/UCD
+    return NULL;
+}
 /*___oOo___*/
