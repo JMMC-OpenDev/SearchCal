@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_SERVER.h,v 1.7 2004-12-03 17:05:50 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET_SERVER.h,v 1.8 2004-12-07 07:42:38 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    22-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+* lafrasse  06-Dec-2004  Fixed wrong header file name
 *
 *
 *******************************************************************************/
@@ -33,7 +34,7 @@
 /*
  * Local Headers 
  */
-#include "msgSOCKET_SERVER.h"
+#include "msgSOCKET.h"
 
 
 /*
