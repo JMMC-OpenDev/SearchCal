@@ -1,40 +1,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestString.c,v 1.1 2004-06-23 09:05:46 lafrasse Exp $"
+* "@(#) $Id: miscTestString.c,v 1.2 2004-07-22 16:58:18 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * lafrasse  23-Jun-2004  forked from miscTestUtils.c
 *
-********************************************************************************
-*   NAME
-* 
-*   SYNOPSIS
-* 
-*   DESCRIPTION
-*
-*   FILES
-*
-*   ENVIRONMENT
-*
-*   COMMANDS
-*
-*   RETURN VALUES
-*
-*   CAUTIONS 
-*
-*   EXAMPLES
-*
-*   SEE ALSO
-*
-*   BUGS   
-* 
 *-----------------------------------------------------------------------------*/
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.1 2004-06-23 09:05:46 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.2 2004-07-22 16:58:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,6 +49,16 @@ int main (int argc, char *argv[])
     printf("   Original String  = |%s|\n", string);
     miscStrToUpper(string);
     printf("   Resulting String = |%s|\n", string);
+    printf("\n\n");
+
+    /* Test of miscIsSpaceStr() */
+    printf("miscIsSpaceStr() Function Test :\n\n");
+    strcpy ((char *)string, "Abc deF GhI jKl 012 .;/\0");
+    printf("   Is string '%s' a white-space string ? : %s\n", string,
+           miscIsSpaceStr(string)==mcsTRUE?"YES":"NO");
+    strcpy ((char *)string, "                       ");
+    printf("   Is string '%s' a white-space string ? : %s\n", string,
+           miscIsSpaceStr(string)==mcsTRUE?"YES":"NO");
     printf("\n\n");
 
     exit (EXIT_SUCCESS);
