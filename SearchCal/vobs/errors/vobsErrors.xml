@@ -53,7 +53,7 @@
    <error id="16">
       <errName>INVALID_CONSTRAINT</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Invalid CONSTRAINT id '%d']]></errFormat>
+      <errFormat><![CDATA[Invalid CONSTRAINT id '%s']]></errFormat>
    </error>
    <error id="17">
       <errName>INVALID_CONSTRAINT_FORMAT</errName>
@@ -115,11 +115,6 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[The end is not writing correctly]]></errFormat>
    </error>
-   <error id="29">
-      <errName>NO_FILE</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[file '%s' can't be loaded]]></errFormat>
-   </error>
    <error id="30">
       <errName>PROPERTY_NOT_SET</errName>
       <errSeverity>WARNING</errSeverity>
@@ -149,10 +144,35 @@
       <errName>NO_MORE_CRITERIA</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[no more criteria in the list]]></errFormat>
-  </error>
-  <error id="36">
+   </error>
+   <error id="36">
       <errName>UNKNOWN_BAND</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[the virtual observatory can't find star in band %s]]></errFormat>
+   </error>
+   <error id="38">
+      <errName>CATALOG_LOAD</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not load '%s' catalog ]]></errFormat>
+   </error>
+   <error id="40">
+      <errName>INVALID_PARSING_UCD_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid format for UCD parsing]]></errFormat>
+   </error>
+   <error id="41">
+      <errName>APPEND_LINE_FAILED</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Line '%.80s' could not be appended to CDATA structure]]></errFormat>
+   </error>
+   <error id="42">
+      <errName>PARSE_CDATA</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not parse CDATA]]></errFormat>
+   </error>
+   <error id="43">
+      <errName>INVALID_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Incorrect band. It should be '%.80s' band]]></errFormat>
    </error>
 </errorList>
