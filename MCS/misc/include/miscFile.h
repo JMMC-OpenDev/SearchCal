@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscFile.h,v 1.10 2005-02-15 09:37:52 gzins Exp $"
+ * "@(#) $Id: miscFile.h,v 1.11 2005-04-06 09:31:50 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/15 09:37:52  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscFile headers
  *                        Moved mcs.h include in from miscFile.c
  * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
@@ -21,7 +24,7 @@
 
 /**
  * \file
- * This header contains ONLY the miscFile functions declarations.
+ * Declaration of miscFile functions.
  */
 
 /* The following piece of code alternates the linkage type to C for all 
@@ -43,7 +46,7 @@ extern "C" {
  * Pubic functions declaration
  */
  
-char *        miscGetFileName       (char             *fullPath);
+char *        miscGetFileName       (const char       *fullPath);
 
 char *        miscGetExtension      (char             *fullPath);
 

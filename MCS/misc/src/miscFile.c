@@ -4,6 +4,10 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2005/03/08 07:17:04  gzins
+ * Released dynamic buffer used in miscResolvePath()
+ * Added input parameter check in miscResolvePath()
+ *
  * Revision 1.28  2005/02/17 14:32:42  gzins
  * Improved intialisation of static dynamic buffers
  *
@@ -51,28 +55,33 @@
 
 /**
  * \file
- * Contains all the 'misc' Unix file path related functions definitions.
+ * Definition of miscFile functions.
+ * 
+ * Contains all Unix like file path related functionalities.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.29 2005-03-08 07:17:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.30 2005-04-06 09:31:50 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers
  */
 #include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+
 
 /* 
  * MCS Headers
  */
 #include "err.h"
+
 
 /* 
  * Local Headers
@@ -82,11 +91,25 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "miscErrors.h"
 #include "miscDynBuf.h"
 
+
 /* 
- * Local Variables and Defines
+ * Constants definition
  */
+
+/** index defining extension position in path search list variable */
 #define miscEXT_IDX   0
+
+/** index defining path position in path search list variable */
 #define miscPATH_IDX  1
+
+/* 
+ * Local Variables
+ */
+
+/**
+ * Variable which allow to know possible search path depending on extension
+ * type.
+ */
 static char *pathSearchList[][2] = {
    {"cfg", "../config:$INTROOT/config:$MCSROOT/config"},
    {"cdf", "../config:$INTROOT/config:$MCSROOT/config"},
@@ -96,25 +119,37 @@ static char *pathSearchList[][2] = {
    {NULL, NULL }
 };
 
+
 /**
- * Return the file name from a full path.
+ * Return file name from full path.
  * 
- * This function returns the file name with any leading directory components
- * removed. For example, miscGetFileName("../data/myFile.fits") will return
- * "myFile.fits".
+ * Strip directory from the given full path.
  *
+ * \param fullPath null-terminated string containing the full path.
+ *
+ * \n
+ * \return a null-terminated string containing the file name, or NULL in the
+ * following cases: full path input parameter is a NULL pointer, string  length
+ * stored in this path equals 0 or there is no more memory for allocation.
+ *
+ * \n
  * \warning This function is \em NOT re-entrant. The returned allocated buffer
- * will be deallocated on the next call !\n\n
+ * will be deallocated on the next call !
  *
- * \param fullPath a null-terminated string containing the full path.
- *
- * \return a null-terminated string containing the file name, or NULL.
+ * \n
+ * \ex 
+ * \code
+ *  ...
+ * miscGetFileName("../data/myFile.fits")
+ * ...
+ * > myFile.fits
+ * \endcode
  */
-char *miscGetFileName(char *fullPath)
+char *miscGetFileName(const char *fullPath)
 {
     static char *buffer = NULL;
     char *token;
-    char *fileName = fullPath;
+    char *fileName = NULL;
 
     /* If full file name is empty */
     if ((fullPath == NULL) || (strlen(fullPath) == 0))
@@ -123,9 +158,7 @@ char *miscGetFileName(char *fullPath)
         return ((char *)NULL);
     }
 
-    /* (Re)-allocate memory for temporary buffer strtok() function modifies
-     * the input string and it is needed to make a copy of the buffer before
-     * using it */
+    /* De-alloc the previous buffer memory */
     if (buffer != NULL)
     {
         free(buffer);
@@ -140,26 +173,24 @@ char *miscGetFileName(char *fullPath)
     }
 
     /* Copy full file name into temporary buffer */
-    if (strcpy(buffer, fullPath) == NULL)
-    {
-        errAdd(miscERR_FUNC_CALL, "strcpy");
-        return ((char*)NULL);
-    }
-
+    strcpy(buffer, fullPath);
+    
     /* Establish string and get the first token: */
-    token = strtok( buffer, "/" );
+    token = strtok(buffer, "/");
 
     /* While there are tokens in "string" */       
-    while( token != NULL )
+    while(token != NULL)
     {
-        /* Get next token: */
+        /* Set filename */
         fileName = token;
 
-        token = strtok( NULL, "/" );   
+        /* Get next token: */
+        token = strtok(NULL, "/");
     }
 
     return fileName;
 }
+
 
 /**
  * Return the file extension from a full path.
@@ -283,7 +314,7 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
         else
         {
             /* find the position of the extension */
-            pos = strlen(fullPath)-strlen(extPtr)-1;
+            pos = strlen(fullPath) - strlen(extPtr) - 1;
 
             /* cut the string there */
             fullPath[pos] = '\0';
@@ -326,7 +357,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
         return NULL;
     }
 
-    /* Initialize buffer (if not already done */
+    /* Initialize buffer (if not already done) */
     if (init == mcsFALSE)
     {
         miscDynBufInit(&builtPath);
@@ -520,7 +551,7 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
                                   char *envVarValueBuffer,
                                   mcsUINT32 envVarValueBufferLength)
 {
-    char               *chrPtr;
+    char *chrPtr;
 
     /* Return if the anv. var. name is null */
     if (envVarName == NULL)
