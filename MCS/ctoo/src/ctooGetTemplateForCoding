@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.8 2004-08-05 15:48:09 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.9 2004-08-10 09:19:37 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -125,9 +125,16 @@ then
             ;;
     esac
 
-    # Test if a template file exists
+    # Test if a template file has been chosen
     if [ "$TEMPLATE" != "" ]
     then
+        # test if the template file exists
+        if [ ! -f $TEMPLATE ]
+        then
+            # the template file doesn't exist
+            echo -e "ERROR : the template $TEMPLATE file doesn't exist"
+        fi
+        
         # Test if FILE_NAME is empty : always the case except for the Makefile
         if [ "$FILE_NAME" = "" ]
         then
@@ -190,7 +197,7 @@ then
                 echo -e "\n>>>  CREATED --> $FILE\n"
             fi
         else
-            # Makefile copy failed
+            # File copy failed
             echo -e "\n>>>  CANNOT CREATE --> $FILE\n"
         fi
 
