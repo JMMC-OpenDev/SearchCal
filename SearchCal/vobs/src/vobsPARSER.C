@@ -1,16 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.4 2004-07-22 17:45:22 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
-*
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.4 2004-07-22 17:45:22 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -18,7 +17,10 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <iostream>
 using namespace std;
-#define MODULE_ID "vobs"
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <string.h>
 
 /*
  * MCS Headers 
@@ -26,17 +28,14 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "misc.h"
 
 /*
  * Local Headers 
  */
-
-//#include"vobsPARSER.h"
-#include "vobs.h"
-/*
- * Local Variables
- */
-
+#include "vobsPARSER.h"
+#include "vobsPrivate.h"
+#include "vobsErrors.h"
 
 /*
  * Local Functions
@@ -44,7 +43,6 @@ using namespace std;
 // Class constructor 
 vobsPARSER::vobsPARSER()
 {
-    nbLineToJump=0;
 }
 
 // Class destructor 
@@ -53,259 +51,411 @@ vobsPARSER::~vobsPARSER()
 }
 
 /**
- * main methode of vobsPARSER which return 0 when the treatment is over
- * \return 0 or 1
+ * Load XML document from URI and parse it to extract the list of star.
+ * 
+ * This method loads the XML document from the URI, check it is  well formed
+ * and parses it to extract the list of stars contained in the CDATA section.
+ * The extracted star are stored in the list \em starList given as parameter.
+ *
+ * \param uri URI from where XML document has to be loaded.
+ * \param starList list where star has to be put.
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
+ * an error is added to the error stack. The possible errors are :
+ * \li vobsERR_GDOME_CALL
+ * \li vobsERR_CDATA_NOT_FOUND
  */
-int vobsPARSER::MainParser(char *request)
+mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
 {
-    logExtDbg("vobsPARSER::MainParser()");	
     GdomeDOMImplementation *domimpl;
-    GdomeDocument *doc;
-    GdomeElement *root;
-    GdomeNodeList *childs;
-    GdomeException exc;
-    /* First I get a DOMImplementation reference */
+    GdomeDocument          *doc;
+    GdomeElement           *root;
+    GdomeException         exc;
+    vobsCDATA              cData;
+
+    logExtDbg("vobsPARSER::MainParser()");	
+
+    // Get a DOMImplementation reference
     domimpl = gdome_di_mkref ();
 
-    /* I load a new document from the URL*/
-    doc = gdome_di_createDocFromURI(domimpl, request, GDOME_LOAD_PARSING, &exc);
-    if (doc == NULL) {
-        fprintf (stderr, "DOMImplementation.createDocFromURI: failed\n\tException #%d\n", exc);
-        errAdd(vobsERR_ACTION_GDOME,"DOMImplementation.createDocFromURI: failed");
-        return 1;
+    // Load a new document from the URI
+    logTest("Get XML document from '%s'", uri);
+    doc = gdome_di_createDocFromURI(domimpl, uri, GDOME_LOAD_PARSING, &exc);
+    if (doc == NULL) 
+    {
+        errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromURI", exc);
+        return FAILURE;
     }
 
-    /* I get reference to the root element of the document */
+    // Get reference to the root element of the document
     root = gdome_doc_documentElement (doc, &exc);
-    if (root == NULL) {
-        fprintf (stderr, "Document.documentElement: NULL\n\tException #%d\n", exc);
-        errAdd(vobsERR_ACTION_GDOME,"Document.documentElement: NULL");
-        return 1;
-    }
-
-    /* I get the reference to the childrens NodeList of the root element */
-    childs = gdome_el_childNodes (root, &exc);
-    if (childs == NULL) {
-        fprintf (stderr, "Element.childNodes: NULL\n\tException #%d\n", exc);
-        errAdd(vobsERR_ACTION_GDOME,"Element.childNodes: NULL");
-        return 1;
-    }
-
-    // I begin the recursif look of the tree
-    XMLParser(childs, doc);
-
-    logTest("there is %d column in the CDATA\n",tab.size());
-    std::vector<char *>::iterator P=tab.begin();
-    for (unsigned int i=0;i<tab.size();i++)
+    if (root == NULL)
     {
-        logTest("name of column %d : %s\n",i+1,*P);
-        P++;
+        errAdd(vobsERR_GDOME_CALL, "gdome_doc_documentElement", exc);
+        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_di_unref (domimpl, &exc);
+        return FAILURE;
     }
 
-    // I print the number of line we need to jump to parse CDATA
-    logTest("The number of lines we need to jump to parse CDATA is %d",nbLineToJump);
+    // Begin the recursif look of the tree
+    memset(&cData, '\0', sizeof(cData)); 
+    if (ParseXmlSubTree((GdomeNode *)root, &cData) == FAILURE)
+    {
+        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_di_unref (domimpl, &exc);
+        return FAILURE;
+    }
 
-    // I print CDATA
-    //logTest("%s\n",CDATA);
+    // Print out CDATA description
+    if (logGetVerboseLevel() >= logTEST)
+    {
+        logTest("CDATA description");
+        logTest("    Number of lines to be skipped : %d", cData.nbLineToJump);
+        logTest("    Number of columns in table    : %d", cData.colName.size());
+        std::vector<char *>::iterator colName=cData.colName.begin();
+        std::vector<char *>::iterator ucdName=cData.ucdName.begin();
+        for (unsigned int i = 0; i < cData.colName.size(); i++)
+        {
+            // Table header
+            if (i == 0)
+            {
+                logTest("    +----------+--------------+--------------------+");
+                logTest("    | Column # | Name         | UCD                |");
+                logTest("    +----------+--------------+--------------------+");
+            }
+            logTest("    |      %3d | %12s | %18s |",
+                    i+1, *colName, *ucdName);
+            *colName++;
+            *ucdName++;
+
+            // Table footer
+            if (i == (cData.colName.size() -1))
+            {
+                logTest("    +----------+--------------+--------------------+");
+            }
+        }
+    }
     
-    // I Parse CDATA
-    if (nbLineToJump!=0)
-        CDATAParser();
+    // If CDATA section has not be found
+    if (cData.ptr == NULL)
+    {
+        // Handle error
+        errAdd(vobsERR_CDATA_NOT_FOUND);
+        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_di_unref (domimpl, &exc);
+        return FAILURE;
+    }
 
-    // here I just see if the list of ucd is ok
-    std::vector<char *>::iterator iterateur=ucd.begin();
-    while (iterateur !=ucd.end())
+    // Parse the CDATA section
+    if (ParseCData(&cData, starList) == FAILURE)
     {
-        logTest("%s \n",*iterateur);
-        ++iterateur;
+        gdome_di_freeDoc (domimpl, doc, &exc);
+        gdome_di_unref (domimpl, &exc);
+        return FAILURE;
     }
-    
-    // I print listOfStar
-    /*std::list<vobsCALIBRATOR_STAR>::iterator Q=listOfStar.begin();
-    while (Q!=listOfStar.end())
-    {
-        (*Q).View();
-        ++Q;
-    }
-    */
-    /* I free the document structure and the DOMImplementation */
+     
+    // Free the document structure and the DOMImplementation
     gdome_di_freeDoc (domimpl, doc, &exc);
     gdome_di_unref (domimpl, &exc);
-    return 0;
+
+    // Print out the star list 
+    if (logGetVerboseLevel() >= logTEST)
+    {
+        starList.Display();
+    }
+    
+    return SUCCESS;
 }
 
 /**
- * XML Parser which return 1 when parsing succeed
- * \return 1 or 0
+ * Parse recursively XML document.
+ *
+ * This method recursively parses the XML document (i.e. node by node), and
+ * extract informations related to the CDATA section which contains the star
+ * table. These informations are the name of the columns with the
+ * corresponding UCD, the number lines to be skipped in CDATA section and the
+ * pointer to the CDATA buffer (see vobsCDATA data structure).
+ * Informations about columns are given by 'FIELD' node; 'name' attribute for
+ * the column name and 'UCD' for UCD, and the number of line to skip is given
+ * by 'CSV' node and 'headlines' attribute.
+ *
+ * \param node  XML document node to be parsed. 
+ * \param cData data structure where CDATA description has to be stored.
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
+ * an error is added to the error stack. The possible error is :
+ * \li vobsERR_GDOME_CALL
  */
-int vobsPARSER::XMLParser(GdomeNodeList *childs, GdomeDocument *doc)
+mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
 {
-    logExtDbg("vobsPARSER:XMLParser()");
-    /* I get all tag name for each children of the root element */
-    GdomeNode *el;
     GdomeException exc;
-    GdomeDOMString *name;
-    GdomeNamedNodeMap *attributes;
-    GdomeNode *attribute;
-    unsigned long i, nchilds, j;
-    GdomeNodeList *childs2;
+    GdomeNodeList *nodeList;
+    unsigned long nbChildren;
+    GdomeDOMString *nodeName;
+    GdomeNode *child;
+    GdomeNamedNodeMap *attrList;
+    unsigned long nbAttrs;
+    GdomeDOMString *attrName;
+    GdomeDOMString *attrValue;
+    GdomeNode *attr;
 
-    // I get the number of child
-    nchilds = gdome_nl_length (childs, &exc);
-    for (i = 0; i < nchilds; i++)
+    logExtDbg("vobsPARSER:ParseXmlSubTree()");
+
+    // Get the node list containing all children of this node
+    nodeList = gdome_n_childNodes (node, &exc);
+    if (exc != GDOME_NOEXCEPTION_ERR)
     {
-        el = gdome_nl_item (childs, i, &exc);
-        if (el == NULL) {
-            fprintf (stderr, "NodeList.item(%d): NULL\n\tException #%d\n", (int)i, exc);
-            errAdd(vobsERR_ACTION_GDOME,"NodeList.item : NULL");
-            return 1;
-        }
-        // I make a test to know if i am in the CDATASection
-        if (gdome_n_nodeType (el, &exc) == GDOME_CDATA_SECTION_NODE) 
+        errAdd(vobsERR_GDOME_CALL, "gdome_n_childNodes", exc);
+        return FAILURE;
+    }
+
+    // Get the number of children
+    nbChildren = gdome_nl_length (nodeList, &exc);
+    if (exc != GDOME_NOEXCEPTION_ERR)
+    {
+        errAdd(vobsERR_GDOME_CALL, "gdome_nl_length", exc);
+        return FAILURE;
+    }
+
+    // If there is no child; return
+    if (nbChildren == 0)
+    {
+        return SUCCESS;
+    }
+
+    // For each child
+    for (unsigned int i = 0; i < nbChildren; i++)
+    {
+        // Get the ith child in the node list
+        child = gdome_nl_item (nodeList, i, &exc);
+        if (child == NULL) 
         {
-            /* I get CDATA */
-            CDATA=gdome_cds_data(GDOME_CDS(el),&exc)->str;
-            if (CDATA==NULL)
-            {
-                errAdd(vobsERR_ACTION_GDOME,"Cdata Section : NULL");
-                return 1;
-            }
-            return 1;
+            errAdd(vobsERR_GDOME_CALL, "gdome_nl_item", exc);
+            return FAILURE;
         }
-        // if I'm not in CDATAsection i try to get information
-        if (gdome_n_nodeType (el, &exc) == GDOME_ELEMENT_NODE) 
+
+        // If it is the CDATA section
+        if (gdome_n_nodeType (child, &exc) == GDOME_CDATA_SECTION_NODE) 
         {
-            /* I get tag name */
-            name = gdome_n_nodeName(el, &exc);
-            if (exc)
+            /* Get CDATA */
+            cData->ptr = gdome_cds_data(GDOME_CDS(child), &exc)->str;
+            if (cData->ptr == NULL)
             {
-                fprintf (stderr, "Element.setAttribute: failed\n\tException #%d\n", exc);
-                errAdd(vobsERR_ACTION_GDOME,"Element.setAttribute: failed");
-                return 1;
+                errAdd(vobsERR_GDOME_CALL, "gdome_cds_data", exc);
+                return FAILURE;
             }
-            else
+        }
+
+        // If it is an element node, try to get information on attributes
+        if (gdome_n_nodeType (child, &exc) == GDOME_ELEMENT_NODE) 
+        {
+            // Get the node name
+            nodeName = gdome_n_nodeName(child, &exc);
+            if (exc != GDOME_NOEXCEPTION_ERR)
             {
-                /* List attributes */
-                attributes = gdome_n_attributes(el, &exc);
-                if (exc) 
+                errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                return FAILURE;
+            }
+            logTest("Parsing node %s...", nodeName->str);
+            
+            // Get the attributes list
+            attrList = gdome_n_attributes(child, &exc);
+            if (exc != GDOME_NOEXCEPTION_ERR)
+            {
+                errAdd(vobsERR_GDOME_CALL, "gdome_n_attributes", exc);
+                return FAILURE;
+            }
+
+            // Get the number of attributes
+            nbAttrs = gdome_nnm_length (attrList, &exc);
+            if (exc != GDOME_NOEXCEPTION_ERR)
+            {
+                errAdd(vobsERR_GDOME_CALL, "gdome_nnm_length", exc);
+                return FAILURE;
+            }
+
+            // For each attribute
+            for (unsigned int j=0; j < nbAttrs; j++)
+            {
+                // Get the ith attribute in the node list
+                attr = gdome_nnm_item(attrList, j, &exc);
+                if (exc != GDOME_NOEXCEPTION_ERR)
                 {
-                    fprintf (stderr, "gdome_el_attributes: failed\n\tException #%d\n", exc);
-                    errAdd(vobsERR_ACTION_GDOME,"gdome_el_attributes: failed");
-                    return 1;
+                    errAdd(vobsERR_GDOME_CALL, "gdome_nnm_item", exc);
+                    return FAILURE;
                 }
                 else
                 {
-                    for (j=0;j<gdome_nnm_length(attributes,&exc);j++)
+                    // Get the attribute name
+                    attrName = gdome_n_nodeName(attr, &exc);
+                    if (exc != GDOME_NOEXCEPTION_ERR)
                     {
-                        attribute = gdome_nnm_item(attributes,j,&exc);
-                        if (exc) 
-                        {
-                            fprintf (stderr, "gdome_nnm_item: failed\n\tException #%d\n", exc);
-                            errAdd(vobsERR_ACTION_GDOME,"gdome_nnm_item: failed");
-                            return 1;
-                        }
-                        else
-                        {
-                            // we look if the node is FIELD and if there is a name and we put the name in the stl vector of name
-                            if ((strcmp(gdome_n_nodeName(attribute,&exc)->str,"name")==0)&&(strcmp(name->str,"FIELD")==0))
-                            {
-                                tab.push_back(gdome_n_nodeValue(attribute,&exc)->str); 
-                            }
-                            if ((strcmp(gdome_n_nodeName(attribute,&exc)->str,"UCD")==0)&&(strcmp(name->str,"FIELD")==0))
-                            {
-                                ucd.push_back(gdome_n_nodeValue(attribute,&exc)->str); 
-                            }
+                        errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                        return FAILURE;
+                    }
 
-                            if ((strcmp(gdome_n_nodeName(attribute,&exc)->str,"headlines")==0)&&(strcmp(name->str,"CSV")==0))
-                                if (atoi(gdome_n_nodeValue(attribute,&exc)->str))
-                                    nbLineToJump=atoi(gdome_n_nodeValue(attribute,&exc)->str);
-                        }
+                    // Get the attribute name
+                    attrValue = gdome_n_nodeValue(attr, &exc);
+                    if (exc != GDOME_NOEXCEPTION_ERR)
+                    {
+                        errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeValue", exc);
+                        return FAILURE;
+                    }
+
+                    // If it is the name of the column table of CDATA 
+                    if ((strcmp(nodeName->str, "FIELD") == 0) &&
+                        (strcmp(attrName->str, "name")  == 0))
+                    {
+                        cData->colName.push_back(attrValue->str); 
+                    }
+
+                    // If it is the UCD name of the corresponding
+                    // column table  
+                    if ((strcmp(nodeName->str, "FIELD") == 0) &&
+                        (strcmp(attrName->str, "UCD")  == 0))
+                    {
+                        cData->ucdName.push_back(attrValue->str); 
+                    }
+
+                    // If it is the number of lines to be skipped
+                    // before accessing to data in CDATA table 
+                    if ((strcmp(nodeName->str, "CSV") == 0) &&
+                        (strcmp(attrName->str, "headlines")  == 0))
+                    {
+                        cData->nbLineToJump = atoi(attrValue->str);
                     }
                 }
-                childs2 = gdome_n_childNodes (el, &exc);
-                if (childs2 == NULL) 
+            }
+
+            // If there are children nodes, parse corresponding XML sub-tree
+            if (gdome_n_hasChildNodes (child, &exc))
+            {
+                if (ParseXmlSubTree(child, cData) == FAILURE)
                 {
-                    fprintf (stderr, "Element.childNodes: NULL\n\tException #%d\n", exc);
-                    errAdd(vobsERR_ACTION_GDOME,"Element.childNodes: NULL");
-                    return 1;
+                    return FAILURE;
                 }
-                XMLParser(childs2,doc);
             }
         }
-        gdome_n_unref (el, &exc);
-        
+        // Free child instance
+        gdome_n_unref (child, &exc);
+        if (exc != GDOME_NOEXCEPTION_ERR)
+        {
+            errAdd(vobsERR_GDOME_CALL, "gdome_n_unref", exc);
+            return FAILURE;
+        }
     }
-    return 1;
-
+    return SUCCESS;
 }
 
 /**
- * CDATA Parser extract information by token according to the delimiter "\t".
- * It return 1 if succeed
- * \return 0 or 1
+ * Parse the CDATA section of XML document.
+ *
+ * This method parses the CDATA section defined by the \em cData parameters.
+ * The CDATA section contains a list of stars which are stored in a table
+ * where each line corresponds to a star; i.e. all star properties are placed
+ * in one line, and separated by the '\\t' character. The list of star
+ * properties to be extracted is given by \em ucd.ucdName list.
+ *
+ * The first lines of the CDATA containing the description of the column table
+ * has to be skipped. The number of lines to be skipped is given by \em
+ * ucd.nbLineToJump 
+ *
+ * The found stars are put in the \em starList parameter. 
+ * 
+ * \param cData    data structure describing the CDATA section.
+ * \param starList list where star has to be put.
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
+ * an error is added to the error stack. The possible error is :
+ * \li vobsERR_INVALID_CDATA_FORMAT
  */
-int vobsPARSER::CDATAParser()
+mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
 {
-    logExtDbg("vobsPARSER::CDATAParser()");
-    char *line=NULL;
-    char *delimiters = "\t";
-    char *token;
-    //nbLineToJump=nbLineToJump+1;
-    char *in;
-    
-    if (nbLineToJump==1)
-        return 0;
-    else
+    logExtDbg("vobsPARSER::ParseCData()");
+    char *linePtr;
+    miscDYN_BUF linePtrList; // Table containing pointers to the CDATA lines
+    int nbLines;             // Number of the in CDATA
+
+    // Allocate memory to store pointers to the lines of the CDATA buffer
+    if (miscDynBufAlloc(&linePtrList, 256*sizeof(char*)) == FAILURE)
     {
-        in=CDATA;
-
-        // Read each line one at a time 
-        line=strtok(in,"\n");
-        for (int k=0;k<nbLineToJump-1;k++)
-        {
-            line=strtok(NULL,"\n");
-        }
-        std::vector<char *>::iterator P;
-        char *nbBytes=NULL;
-        nbBytes=strtok(NULL,"\n"); 
-        while(nbBytes != NULL)
-        {
-            // Get one line 
-            // Break the line up according to our delimiters
-            char *tmp=nbBytes;
-            char *saveptr;
-            token = strtok_r(tmp, delimiters, &saveptr);
-            tmp=saveptr;
-            vobsCALIBRATOR_STAR calibStar;
-            P=ucd.begin();
-            while ((token != NULL)&&(P!=ucd.end()))
-            {            
-                // for each line we create a calibrator star
-                // and we add the elemets in the calibrator star              
-                if (strcmp(token,"      ")==0) strcpy(token,"99.99");
-                calibStar.AddElement(*P,token);
-                ++P; 
-                logTest("%s  ",token);
-                // Get the next word 
-                token = strtok_r(tmp, delimiters, &saveptr);
-                tmp=saveptr;
-            }
-            logTest("\n");
-            // we put now the calibrator star in a calibrator star list
-            listOfStar.push_back(calibStar);
-            nbBytes=strtok(NULL,"\n");
-        }
-        return 0;
+        return FAILURE;
     }
-}
+    // Find all lines of the CDATA buffer (terminated by CR), convert them in
+    // individual string (i.e. replace CR by '\0') and place the corresponding
+    // pointer in line pointer table
+    int cDataLength;
+    cDataLength = strlen(cData->ptr);
+    nbLines = 0;
+    linePtr = cData->ptr;
+    for (int i=0; i < cDataLength; i++)
+    {
+        if (cData->ptr[i] == '\n')
+        {
+            // Replace CR by '\0' in order to have string
+            cData->ptr[i] = '\0';
+            miscDynBufAppendBytes(&linePtrList, 
+                                  (char *)&linePtr, sizeof(char*));
+            nbLines++;
+            // Set line pointer to the next line
+            linePtr = &cData->ptr[i] + 1;
+        }
+    }
 
-/**
- * Method to return the list of star build in vobsPARSER
- * \return STL list of vobsCALIBRATOR_STAR
- */
-std::list<vobsCALIBRATOR_STAR> vobsPARSER::GetList()
-{
-    return listOfStar;
+    // For each line in buffer, get the value for each defined UCD (value are
+    // separated by '\t' character), store them in star object and add this
+    // new star in the list.
+    // NOTE: Skip one line more than the value given by nbLineToJump because
+    // the CDATA buffer always contains an empty line at first.
+    char **linePtrTab;
+    char *delimiters = "\t";
+    std::vector<char *>::iterator ucdName;
+    linePtrTab = (char **)miscDynBufGetBufferPointer(&linePtrList);
+    for (int i = (cData->nbLineToJump+1); i < nbLines; i++)
+    {
+        int  nbUcd;
+        char *ucdValue;
+        vobsSTAR star;
+
+        // Number of UCDs per line
+        nbUcd = cData->ucdName.size();
+
+        // Scan UCD list
+        char *nextLinePtr;
+        linePtr = linePtrTab[i];
+        ucdName = cData->ucdName.begin();
+        for (int j=0; j < nbUcd; j++)
+        {
+            // Get the UCD value
+            ucdValue = strtok_r(linePtr, delimiters, &nextLinePtr);
+            if (ucdValue == NULL)
+            {
+                errAdd(vobsERR_INVALID_CDATA_FORMAT, linePtr);
+                return FAILURE;
+            }
+            linePtr = nextLinePtr;
+
+            // Check if value if empty
+            if (miscIsSpaceStr(ucdValue) == mcsTRUE)
+            {
+                ucdValue = vobsSTAR_PROP_NOT_SET;
+            }
+
+            // Set star property
+            star.SetProperty(*ucdName, ucdValue);
+
+            // Next UCD
+            ucdName++;
+        }
+
+        // Put now the star in the star list
+        if (starList.AddAtTail(star) == FAILURE)
+        {
+            return FAILURE;
+        }
+    }
+
+    return SUCCESS;
 }
 
 /*___oOo___*/
