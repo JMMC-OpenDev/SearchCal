@@ -2,45 +2,37 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: errXmlToH.sh,v 1.5 2005-01-31 14:26:51 mella Exp $"
+# "@(#) $Id: errXmlToH.sh,v 1.6 2005-01-31 14:48:59 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/01/31 14:26:51  mella
+# Check if xml error file does exist
+#
 # Revision 1.4  2005/01/31 13:01:22  mella
 # Add log tag for history
 # 
 #
 #*******************************************************************************
-#   NAME
-#   errXmlToH - Generate the error defines from the XML definition file. 
+
+#/**
+# \file 
+# Generate the error defines from the XML definition file. 
 #
-#   SYNOPSIS
-#   errXmlToH input.xml output.h   
+# \synopsis
+# errXmlToH \<input.xml\> \<output.h\>   
 #
-#   DESCRIPTION
-#   errXmlToH generates a C header file. The output file defines each error's
-#   constant. Errors are defined into the XML input file 
+# \details
+# errXmlToH generates a C header file. The output file defines each error's
+# constant. Errors are defined into the XML input file 
 #
-#   FILES
+# This script exits with 0 on success or 1 on failure.
 #
-#   ENVIRONMENT
+# \usedfiles
+# errXmlToH.xsl: XSLT stylesheet file to generate header files
 #
-#   RETURN VALUES
-#   errXmlToH exits with a value of 0 on success or 1 on failure.
-#
-#   CAUTIONS
-#
-#   EXAMPLES
-#   errXmlToH ../errors/modErrors.xml ../include/modErrors.h   
-#   
-#
-#   SEE ALSO
-#
-#   BUGS     
-#
-#-------------------------------------------------------------------------------
-#
+# */
 
 # signal trap (if any)
 
@@ -113,6 +105,7 @@ else
         echo "Header file $2 created successfully."
     else
         echo "ERROR: Sorry, validation error. You need to modify $1." >&2
+        exit 1;
     fi
     rm $1.tmpres
 fi
