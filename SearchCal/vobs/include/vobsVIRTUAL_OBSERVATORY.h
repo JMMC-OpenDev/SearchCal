@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.8 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.9 2004-11-30 15:17:25 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -88,6 +88,10 @@ private:
     vobsCATALOG_BSC   _bsc;
     vobsCATALOG_SBSC  _sbsc;
     vobsCATALOG_DENIS _denis;
+
+    // Star lists used in scenarion
+    vobsSTAR_LIST     _starListP;
+    vobsSTAR_LIST     _starListS;
 
 };
 
