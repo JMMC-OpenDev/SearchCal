@@ -1,11 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: envLIST.cpp,v 1.1 2004-12-07 16:45:56 lafrasse Exp $"
+* "@(#) $Id: envLIST.cpp,v 1.2 2004-12-08 13:11:22 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  07-Dec-2004  Created
+* lafrasse  08-Dec-2004  Comment refinments, and added the default MCS env in
+*                        the internal map by default
 *
 *
 *******************************************************************************/
@@ -15,7 +17,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.1 2004-12-07 16:45:56 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.2 2004-12-08 13:11:22 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,6 +47,7 @@ using namespace std;
 envLIST::envLIST()
 {
     _fileAlreadyLoaded = mcsFALSE;
+
     memset(_hostName, 0, sizeof(_hostName));
 }
 
@@ -66,6 +69,8 @@ envLIST::~envLIST()
  * MCSENV environment variable, is used. If the MCSENV environment variable is
  * set to mcsUNKNOWN_ENV, then the local host name is returned.
  *
+ * \param envName the MCS environment for which the host name should be returned
+ *
  * \return the host name of a given environment or NULL if an error occured.
  */
 const char* envLIST::GetHostName(const char *envName)
@@ -77,20 +82,8 @@ const char* envLIST::GetHostName(const char *envName)
     searchedEnvName = (char*)envName;
     if (searchedEnvName == NULL)
     {
-        // If $MCSENV is not defined
+        // If $MCSENV is not defined, set it to the default one
         searchedEnvName = (char*)mcsGetEnvName();
-        if (strcmp(searchedEnvName, mcsUNKNOWN_ENV) == 0)
-        {
-            memset(_hostName, 0, sizeof(_hostName));
-
-            // Get the local host name and return it
-            if (miscGetHostName(_hostName, sizeof(_hostName)) == FAILURE)
-            {
-                return ((char*)NULL);
-            }
-
-            return _hostName;
-        }
     }
 
     // If the MCS Env. List file has not been loaded yet
@@ -125,6 +118,8 @@ const char* envLIST::GetHostName(const char *envName)
  * set to mcsUNKNOWN_ENV, then the default msgMANAGER_PORT_NUMBER port number
  * is returned.
  *
+ * \param envName the MCS env. for which the port number should be returned
+ *
  * \return the port number or -1 if an error occured.
  */
 const mcsINT32 envLIST::GetPortNumber(const char *envName)
@@ -136,13 +131,8 @@ const mcsINT32 envLIST::GetPortNumber(const char *envName)
     searchedEnvName = (char*)envName;
     if (searchedEnvName == NULL)
     {
-        // If $MCSENV is not defined
+        // If $MCSENV is not defined, set it to the default one
         searchedEnvName = (char*)mcsGetEnvName();
-        if (strcmp(searchedEnvName, mcsUNKNOWN_ENV) == 0)
-        {
-            // Return the default message manager port number
-            return envDEFAULT_MESSAGE_MANAGER_PORT_NUMBER;
-        }
     }
     
     // If the MCS Env. List file has not been loaded yet
@@ -206,7 +196,7 @@ void envLIST::Show(void)
  * Private methods
  */
 /**
- * Load file containing the environment list definition.
+ * Load the MCS file containing the environment list definition.
  *
  * This method loads in an internal map the file, named mcsEnvList and
  * located in $MCSROOT/etc directory, containing informations about the
@@ -217,6 +207,7 @@ void envLIST::Show(void)
  *   <envName>   <hostName>  <portNumber>
  *
  * The field are separated by spaces; one or more spaces between fields.
+ * If no file exists, only the default MCS env. will be added.
  *
  * \return SUCCESS on successfull completion, or FAILURE otherwise.
  *
@@ -228,6 +219,15 @@ void envLIST::Show(void)
 mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
 {
     logExtDbg("msgMCS_ENVS::LoadEnvListFile()"); 
+
+    // Put the default MCS env. host name and port number in the internal map
+    if (miscGetHostName(_hostName, sizeof(_hostName)) == FAILURE)
+    {
+        strncpy(_hostName, "localhost", sizeof(_hostName));
+    }
+    _map[mcsUNKNOWN_ENV] = pair<string,int>(_hostName,
+                               envDEFAULT_MESSAGE_MANAGER_PORT_NUMBER);
+
     // Resolve path of MCS environment list file
     char *fullPath;
     fullPath = miscResolvePath("$MCSROOT/etc/mcsEnvList");
@@ -243,11 +243,11 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     miscDynBufInit(&envList);
     if (miscDynBufLoadFile(&envList, fullPath, "#") == FAILURE)
     {
-        return FAILURE;
+        return SUCCESS;
     }
 
     /* Jump all the headers and empty lines, and feed the map with the
-     * environments data found the mcsEnvList file read line by line.
+     * environments data found in the mcsEnvList file read line by line.
      */
     mcsINT32     nbReadValue = 0;
     mcsINT32     portNumber  = 0;
@@ -290,7 +290,10 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     }
     while (currentLine != NULL);
 
-    /* Verify that there is not to differnet environments using the same port
+    // Destroy the temp Dynamic Buffer
+    miscDynBufDestroy(&envList);
+
+    /* Verify that there is not two different environments using the same port
      * number on the same host
      */
     map<string,pair<string,int> > ::iterator i;
@@ -299,7 +302,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
         map<string,pair<string,int> > ::iterator j;
         for (j = i, j++; j != _map.end(); j++)
         {
-            // If the host name and port number couples are the same
+            // If the host name and port number pairs are the same
             if ((*j).second == (*i).second)
             {
                 errAdd(envERR_PORT_ALREADY_USED, (*j).second.second,
