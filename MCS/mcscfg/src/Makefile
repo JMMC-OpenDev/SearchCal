@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.4 2004-06-25 06:32:21 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-06-25 06:47:54 gzins Exp $"
 #
 # Makefile of mcscfg module, which contains configuration files for MCS
 # environment. 
@@ -35,6 +35,10 @@ install :
 	@if [ "$(INTROOT)" = "" ]; \
 	then \
 		echo "Installing configuration files: ";\
+		if [ ! -d $(MCSROOT)/etc ]; \
+		then \
+			mkdir $(MCSROOT)/etc; \
+		fi; \
 		$(foreach file, $(CFG_FILES), echo "        `basename $(file)`" ;\
 			cp -f $(file) $(MCSROOT)/etc;) \
 	fi
