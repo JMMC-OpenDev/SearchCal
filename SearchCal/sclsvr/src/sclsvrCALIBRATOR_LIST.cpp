@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.41 2005-03-09 07:30:39 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.42 2005-03-10 11:31:34 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2005/03/09 07:30:39  scetre
+ * Fixed bug in filter by visibility
+ *
  * Revision 1.40  2005/03/07 16:06:06  gzins
  * Removed automatic sort on visibility
  *
@@ -104,7 +107,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.41 2005-03-09 07:30:39 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.42 2005-03-10 11:31:34 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -670,11 +673,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterByVariability(mcsLOGICAL authorized)
             // if it is not possible to get the visibility, remove the star
             if (calibrator->GetPropertyValue(vobsSTAR_CODE_VARIAB) != NULL)
             {
-                // check if the var flag property is = N or G
-                if ((strcmp(calibrator->
-                            GetPropertyValue(vobsSTAR_CODE_VARIAB), "N") == 0)||
-                    (strcmp(calibrator->
-                            GetPropertyValue(vobsSTAR_CODE_VARIAB), "G") == 0))
+                // if variability is affected
+                if (calibrator->IsPropertySet(vobsSTAR_CODE_VARIAB) == 
+                    mcsTRUE)
                 {
                     // Remove it
                     logTest("calibrator %d had variability %s\n",
@@ -711,22 +712,9 @@ sclsvrCALIBRATOR_LIST::FilterByMultiplicity(mcsLOGICAL authorized)
             // if it is not possible to get the visibility, remove the star
             if (calibrator->GetPropertyValue(vobsSTAR_CODE_MULT_FLAG) != NULL)
             {
-                // check if the mult flag property is = C, G, O, V, X
-                if ((strcmp(calibrator->
-                            GetPropertyValue(vobsSTAR_CODE_MULT_FLAG),
-                            "C") == 0)||
-                    (strcmp(calibrator->
-                            GetPropertyValue(vobsSTAR_CODE_MULT_FLAG),
-                            "G") == 0)||
-                    (strcmp(calibrator->
-                            GetPropertyValue(vobsSTAR_CODE_MULT_FLAG),
-                            "O") == 0)||
-                    (strcmp(calibrator->
-                            GetPropertyValue(vobsSTAR_CODE_MULT_FLAG),
-                            "V") == 0)||
-                    (strcmp(calibrator->
-                            GetPropertyValue(vobsSTAR_CODE_MULT_FLAG),
-                            "X") == 0))
+                // if the multiplicity is affected
+                if (calibrator->IsPropertySet(vobsSTAR_CODE_MULT_FLAG) == 
+                    mcsTRUE)
                 {
                     // Remove it
                     logTest("calibrator %d had multiplicity %s\n",
