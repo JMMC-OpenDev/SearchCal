@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestRequest.cpp,v 1.3 2005-02-07 17:28:34 gluck Exp $"
+ * "@(#) $Id: vobsTestRequest.cpp,v 1.4 2005-02-07 17:43:06 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/07 17:28:34  gluck
+ * New vobsREQUEST class implementation tests
+ *
  ******************************************************************************/
 
 /**
@@ -63,7 +66,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.3 2005-02-07 17:28:34 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.4 2005-02-07 17:43:06 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -137,28 +140,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-//     request.SetConstraint(STAR_NAME_ID, "ETA TAU");
-//     request.SetConstraint(RA_ID, "02+12+52.3");
-//     request.SetConstraint(DEC_ID, "+06+04+36.2");
-//     request.SetConstraint(STAR_MAGNITUDE_ID, "2.50");
-//     request.SetConstraint(OBSERVED_BAND_ID, "N");
-//     request.SetConstraint(SEARCH_BOX_RA_ID, "15");
-//     request.SetConstraint(SEARCH_BOX_DEC_ID, "5");
-//     request.SetConstraint(STAR_WLEN_ID, "2.20");
-//     request.SetConstraint(STAR_EXPECTED_VIS_ID, "2");
-//     request.SetConstraint(STAR_MAX_ERR_VIS_ID, "0.00032");
-
     vobsREQUEST request;
-//     string _objectName;
-//     mcsFLOAT _objectRa;
-//     mcsFLOAT _objectDec;
-//     mcsFLOAT _objectMag;
-//     char _searchBand;
-//     mcsFLOAT _deltaRa;
-//     mcsFLOAT _deltaDec;
-//     mcsFLOAT _minDeltaMag;
-//     mcsFLOAT _maxDeltaMag;
-//     mcsUINT32 _maxNbOfSelectedObjects;
     
     // Display initial request
     logDebug("-------------------------------------------------");
