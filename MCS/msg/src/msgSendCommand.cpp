@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.cpp,v 1.8 2004-12-22 08:44:19 gzins Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.9 2005-01-07 18:37:59 gzins Exp $"
 *
 *
 * who       when                 what
@@ -16,6 +16,8 @@
 * gzins     07-Dec-2004  Removed no longer needed errStackDisplay() 
 * gzins     20-Dec-2004  Removed leading and trailing spaces to parameters
 * gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+*                        Displayed error stack when receiving error reply
 *
 *******************************************************************************/
 
@@ -51,7 +53,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.8 2004-12-22 08:44:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.9 2005-01-07 18:37:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -134,14 +136,14 @@ int main (int argc, char *argv[])
 
     /* Try to connect to msgManager */
     msgMANAGER_IF manager;
-    if (manager.Connect(argv[0]) == FAILURE)
+    if (manager.Connect(argv[0]) == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
     }
 
     /* Try to send the specified command to the specified process */
-    if (manager.SendCommand(command, process, params) == FAILURE)
+    if (manager.SendCommand(command, process, params) == mcsFAILURE)
     {
         goto exit;
     }
@@ -154,7 +156,7 @@ int main (int argc, char *argv[])
     }
 
     /* While last reply hasn't been received... */
-    while (manager.Receive(msg, timeout) == SUCCESS)
+    while (manager.Receive(msg, timeout) == mcsSUCCESS)
     {
         /* Test the received reply command name validity */
         if (strcmp(command, msg.GetCommand()) != 0)
@@ -181,6 +183,7 @@ int main (int argc, char *argv[])
 
             case msgTYPE_ERROR_REPLY:
                 errUnpackStack(msg.GetBody(), msg.GetBodySize());
+                errCloseStack();
                 break;
 
             default:
