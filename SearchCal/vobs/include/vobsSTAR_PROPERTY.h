@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.5 2005-02-08 07:16:56 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.6 2005-02-08 20:26:16 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/08 07:16:56  gzins
+* Changed value parameter type: char* to const char*
+*
 * Revision 1.4  2005/02/04 15:25:13  gzins
 * Redefined confidence index
 *
@@ -30,6 +33,7 @@
 
 #define vobsSTAR_PROP_NOT_SET  "-"  /**< Default value of the empty
                                       properties */
+#define vobsSTAR_COMPUTED_PROP "computed"  /**< Tag for computed properties */
 /*
  * Class declaration
  */
@@ -71,17 +75,20 @@ public:
     
     // Set value
     virtual mcsCOMPL_STAT SetValue(const char *value,
+                                   const char *origin,
                                    mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,
-                                   mcsFLOAT isComputed=mcsFALSE,
                                    mcsLOGICAL overwrite=mcsFALSE);
     virtual mcsCOMPL_STAT SetValue(mcsFLOAT value,
+                                   const char *origin,
                                    mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,
-                                   mcsFLOAT isComputed=mcsFALSE,
                                    mcsLOGICAL overwrite=mcsFALSE);
     
     // Get value
     virtual const char   *GetValue(void) const;
     virtual mcsCOMPL_STAT GetValue(mcsFLOAT *value) const;
+
+    // Get property origin 
+    virtual const char   *GetOrigin();
 
     // Get Confidence Index
     virtual mcsINT32      GetConfidenceIndex();
@@ -105,7 +112,10 @@ private:
     string            _format;          // Format to print value 
     mcsSTRING64       _value;           // Value
     mcsINT32          _confidenceIndex; // Confidence index
-    mcsLOGICAL        _isComputed;      // Say if property is computed or not
+    string            _origin;          // Either the catalog name where the
+                                        // value has been found or
+                                        // vobsSTAR_COMPUTED_PROP if the value
+                                        // has been calculated.
 };
 
 #endif /*!vobsSTAR_PROPERTY_H*/
