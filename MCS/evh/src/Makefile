@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-12-22 09:03:30 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-01-07 18:24:16 gzins Exp $"
 #
 # Makefile of evh library
 #
@@ -11,6 +11,7 @@
 # gzins     17-Nov-2004  Added evhTASK and evhSERVER class
 # gzins     22-Dec-2004  Added evhVERSION, evhDEBUG and evhVERSION CDF
 #                        Added evhHelpCB
+# gzins     07-Jan-2005  Added evhCMD_REPLY_KEY and evhINTERFACE 
 #
 #*******************************************************************************
 # REMARKS
@@ -53,14 +54,16 @@ EXECUTABLES_L   =
 INCLUDES        =  evhCALLBACK.h          \
 				   evhCALLBACK_LIST.h     \
 				   evhCMD_CALLBACK.h      \
+				   evhIOSTREAM_CALLBACK.h \
+				   evhKEY.h               \
 				   evhCMD_KEY.h           \
+				   evhCMD_REPLY_KEY.h     \
+				   evhIOSTREAM_KEY.h      \
+				   evhINTERFACE.h         \
 				   evhErrors.h            \
 				   evh.h                  \
 				   evhHANDLER.h           \
 				   evhSERVER.h            \
-				   evhIOSTREAM_CALLBACK.h \
-				   evhIOSTREAM_KEY.h      \
-				   evhKEY.h               \
 				   evhTASK.h
 
 
@@ -79,7 +82,9 @@ evh_OBJECTS   = evhHANDLER           \
 				evhCALLBACK_LIST     \
 				evhKEY               \
 				evhCMD_KEY           \
+				evhCMD_REPLY_KEY     \
 				evhTASK              \
+				evhINTERFACE         \
 				evhSERVER            \
 				evhIOSTREAM_KEY      \
 				evhHELP_CMD          \
