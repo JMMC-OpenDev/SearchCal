@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.11 2004-12-13 13:33:48 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.12 2004-12-20 10:17:05 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -39,10 +39,24 @@
 
 typedef mcsSTRING32 sclsvrCALIBRATOR_PROPERTY;
 
-/*
- * Enumeration type definition
- */
 
+/*
+ * Definition of the calibrators properties
+ */
+#define sclsvrCALIBRATOR_ANGULAR_DIAMETER "ANGULAR_DIAMETER"
+#define sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR "ANGULAR_DIAMETER_ERROR"
+#define sclsvrCALIBRATOR_MO "MO"
+#define sclsvrCALIBRATOR_LO "LO"
+#define sclsvrCALIBRATOR_KO "KO"
+#define sclsvrCALIBRATOR_HO "HO"
+#define sclsvrCALIBRATOR_JO "JO"
+#define sclsvrCALIBRATOR_IO "IO"
+#define sclsvrCALIBRATOR_RO "RO"
+#define sclsvrCALIBRATOR_VO "VO"
+#define sclsvrCALIBRATOR_BO "BO"
+#define sclsvrCALIBRATOR_MULTIPLICITY "MULTIPLICITY"
+#define sclsvrCALIBRATOR_VISIBILITY "VISIBILITY"
+#define sclsvrCALIBRATOR_VISIBILITY_ERROR "VISIBILITY_ERROR"
 /**
  * sclsvrPROPERTY_ID is an enumeration which allow correspondance between an id
  * and an PROPERTY.
@@ -77,48 +91,15 @@ class sclsvrCALIBRATOR : public vobsSTAR
 public:
     // Constructors
     sclsvrCALIBRATOR();
-    sclsvrCALIBRATOR(const sclsvrCALIBRATOR &sclsvr);
-    sclsvrCALIBRATOR(const vobsSTAR &star);
-    
+    // Copy Construstor
+    sclsvrCALIBRATOR(vobsSTAR &star);
+     
     // Destructor
-    virtual ~sclsvrCALIBRATOR();
- 
-    // Method to set the star properties
-
-    virtual mcsCOMPL_STAT SetProperty(char *property, char *value, 
-                                      mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetProperty(vobsUCD_ID ucdId, char *value,
-                                      mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetProperty(vobsUCD_ID ucdId, mcsFLOAT value,
-                                      mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetProperty(sclsvrPROPERTY_ID id, char *value,
-                                      mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetProperty(sclsvrPROPERTY_ID id, mcsFLOAT value,
-                                      mcsLOGICAL overwrite=mcsFALSE);
-    // Is property set?
-    virtual mcsLOGICAL    IsPropertySet(char *ucd) const;
-    virtual mcsLOGICAL    IsPropertySet(sclsvrPROPERTY_ID ucdId) const;      
-    virtual mcsLOGICAL    IsPropertySet(vobsUCD_ID ucdId) const;
-
-    // Methods to retreive the star properties
-    virtual mcsCOMPL_STAT GetProperty(char *property, char *value) const;
-    virtual mcsCOMPL_STAT GetProperty(sclsvrPROPERTY_ID, char *value) const; 
-    virtual mcsCOMPL_STAT GetProperty(char *property, float *value) const;
-    virtual mcsCOMPL_STAT GetProperty(sclsvrPROPERTY_ID id, float *value) const;
-    
-    virtual mcsCOMPL_STAT GetProperty(vobsUCD_ID id, char *value) const; 
-    virtual mcsCOMPL_STAT GetProperty(vobsUCD_ID id, float *value) const;
-    
+    virtual ~sclsvrCALIBRATOR();    
   
     // method to complete calibrator properties
     mcsCOMPL_STAT Complete(vobsREQUEST request);
-
-    // methods to get galactic coordonates
-    mcsCOMPL_STAT GetLongitude(float &longitude);
-    mcsCOMPL_STAT GetLattitude(float &lattitude);
-
-    virtual void Display(void);    
-   
+ 
     virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(char *calibratorString);
 
@@ -128,14 +109,14 @@ public:
     virtual mcsLOGICAL VisibilityOk();
 
 protected:
-
-    // Method to obtain id from the UCD
-    virtual sclsvrPROPERTY_ID Property2Id(char *ucd) const;
     
 private:
     // Declaration of assignment operator as private method, in order to hide
     // them from the users.
     sclsvrCALIBRATOR& operator=(const sclsvrCALIBRATOR&);
+    
+    // Method to define all star properties
+    mcsCOMPL_STAT AddProperties(void);
 
     // Method to compute specific property
     mcsCOMPL_STAT ComputeMissingMagnitude();
@@ -143,10 +124,7 @@ private:
     mcsCOMPL_STAT ComputeInterstellarAbsorption();
     mcsCOMPL_STAT ComputeAngularDiameter();
     mcsCOMPL_STAT ComputeVisibility(vobsREQUEST request);
-    mcsCOMPL_STAT ComputeMultiplicity();
-
-    /** Table containing the calibrator computed properties */
-    sclsvrCALIBRATOR_PROPERTY _compProperties[sclsvrNB_CALIBRATOR_PROPERTIES];
+    mcsCOMPL_STAT ComputeMultiplicity(); 
 
     mcsLOGICAL _coherentDiameter;
     mcsLOGICAL _correctVisibility;

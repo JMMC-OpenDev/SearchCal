@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.2 2004-12-13 13:33:48 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.3 2004-12-20 10:17:05 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.2 2004-12-13 13:33:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.3 2004-12-20 10:17:05 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -111,8 +111,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         return FAILURE;
     }
     vobsSTAR star;
-    star.SetProperty(POS_EQ_RA_MAIN_ID, ra);
-    star.SetProperty(POS_EQ_DEC_MAIN_ID, dec);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec);
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
     vobsVIRTUAL_OBSERVATORY vobs;
@@ -131,10 +131,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         return FAILURE;
     }
     // complete the calibrators list
-    if (calibratorList.Complete(request) == FAILURE)
+    /*if (calibratorList.Complete(request) == FAILURE)
     {
         return FAILURE;
-    }
+    }*/
     //calibratorList.Display();
 
     // Pack the list result in a buffer in order to send it
@@ -142,28 +142,28 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     miscDynBufInit(&dynBuff);
 
     // Table where are stored magnitudes
-    mcsSTRING32 starMagnitudes[10];
+    mcsSTRING64 starMagnitudes[10];
     // The star asked
     vobsSTAR *tmpStar=(starList.GetNextStar(mcsTRUE));
     // A property table wanted
     int nbProperties = 10;
-    int starProperty[10] = 
+    mcsSTRING64 starProperty[10] = 
     {
-        PHOT_JHN_B_ID,
-        PHOT_JHN_V_ID,
-        PHOT_JHN_R_ID,
-        PHOT_JHN_I_ID,
-        PHOT_JHN_J_ID,
-        PHOT_JHN_H_ID,
-        PHOT_JHN_K_ID,
-        PHOT_JHN_L_ID,
-        PHOT_JHN_M_ID,
-        PHOT_IR_N_10_4_ID
+        vobsSTAR_PHOT_JHN_B,
+        vobsSTAR_PHOT_JHN_V,
+        vobsSTAR_PHOT_JHN_R,
+        vobsSTAR_PHOT_JHN_I,
+        vobsSTAR_PHOT_JHN_J,
+        vobsSTAR_PHOT_JHN_H,
+        vobsSTAR_PHOT_JHN_K,
+        vobsSTAR_PHOT_JHN_L,
+        vobsSTAR_PHOT_JHN_M,
+        vobsSTAR_PHOT_IR_N_10_4
     };
     // for each property
     for (int i=0; i<nbProperties; i++)
     { 
-        tmpStar->GetProperty((vobsUCD_ID)starProperty[i], starMagnitudes[i]);
+        strcpy(starMagnitudes[i], tmpStar->GetPropertyValue(starProperty[i]));
     }
    
       

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.5 2004-12-09 06:44:03 gzins Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.6 2004-12-20 10:17:05 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.5 2004-12-09 06:44:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.6 2004-12-20 10:17:05 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -40,62 +40,6 @@ using namespace std;
 #include "sclsvrPrivate.h"
 #include "sclsvrErrors.h"
 #include "sclsvr.h"
-
-/* Local variables */
-static char *nameList[] =
-{
-   "hd",
-   "hip",
-   "ra",
-   "dec",
-   "pmdec",
-   "pmra",
-   "plx",
-   "tsp",
-   "varflag",
-   "multflag",
-   "glat",
-   "glon",
-   "radvel",
-   "diam",
-   "meth",
-   "wlen",
-   "photflux",
-   "units",
-   "U",
-   "B",
-   "V",
-   "R",
-   "I",
-   "J",
-   "H",
-   "K",
-   "L",
-   "M",
-   "N",
-   "velocrotat",
-   "color",
-   NULL
-};
-
-static char *propertyNameList[] =
-{
-    "diamAngul",
-    "diamAngulError",
-    "Mo",
-    "Lo",
-    "Ko",
-    "Ho",
-    "Jo",
-    "Io",
-    "Ro",
-    "Vo",
-    "Bo",
-    "mult",
-    "vis",
-    "visError",
-    NULL
-};
 
 /*
  * Class constructor
@@ -199,19 +143,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
 void sclsvrCALIBRATOR_LIST::Display(void)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::Display()");
-
-    // Display all element of the list 
-    std::list<sclsvrCALIBRATOR>::iterator iter;
-    for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
-    {
-        printf("%12s",nameList[i]);
-    }
-    printf("\n");
-    for (int i=0; i<sclsvrNB_CALIBRATOR_PROPERTIES; i++)
-    {
-        printf("%12s",propertyNameList[i]);
-    }
-    printf("\n");
 
     for (unsigned int el = 0; el < Size(); el++)
     {
