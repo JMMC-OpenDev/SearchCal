@@ -5,10 +5,12 @@
 * --------  -----------	 -------------------------------------------------------
 * berezne   02-Jun-2004  created
 * gzins     17-Jun-2004  completed implementation
+* gzins     23-Nov-2004  removed useless warning messages related to undefined
+*                        INTROOT and MCSROOT
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.6 2004-11-10 09:05:00 scetre Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.7 2004-11-23 17:52:57 swmgr Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -100,13 +102,9 @@ static char *errGetErrProp(const char *moduleId,
             {
                 errDefFileFound = mcsTRUE;
             }
-        }
-        else
-        {
-            logWarning ("Environment variable INTROOT not defined");
-        }
+	}
     }
-    
+
     /* If not found in $INTROOT, look in $MCSROOT */
     if (errDefFileFound == mcsFALSE)
     {
@@ -123,14 +121,10 @@ static char *errGetErrProp(const char *moduleId,
             if (stat(errFileName, &statBuf) == 0)
             {
                 errDefFileFound = mcsTRUE;
-            }
-        }
-        else
-        {
-            logWarning ("Environment variable MCSROOT not defined");
-        }
+	    }
+	}
     }
-    
+
     /* If error definition file has not been found */
     if (errDefFileFound == mcsFALSE)
     {
