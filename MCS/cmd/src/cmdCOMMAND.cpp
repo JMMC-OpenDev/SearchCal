@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.24 2005-02-23 07:36:09 mella Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.25 2005-02-23 11:15:51 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/02/23 07:36:09  mella
+ * Place variable declaration into functionnal blocks
+ *
  * Revision 1.23  2005/02/22 12:43:53  mella
  * Reduce some error dues to bad unref and add some user returned informations
  *
@@ -57,7 +60,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.24 2005-02-23 07:36:09 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.25 2005-02-23 11:15:51 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -797,6 +800,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     // check if the cdf file has been found   
     if (fullCdfFilename == NULL)
     {
+        errAdd(cmdERR_NO_CDF, _cdfName.data());
         return mcsFAILURE;
     }
 
@@ -867,7 +871,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
 {
     logExtDbg ("cmdCOMMAND::ParseCdfForDesc()");
 
-    GdomeElement *el,*el2;
     GdomeNodeList *nl;
     GdomeException exc;
     GdomeDOMString *name, *value;
@@ -891,6 +894,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
      * desc) */
     if (nbChildren > 0)
     {
+        GdomeElement *el,*el2;
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
         if (el == NULL)
         {
@@ -901,6 +905,16 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
             return mcsFAILURE;
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
+        if (el2 == NULL)
+        {
+            logWarning ("Illegal format encountered for cdf file "
+                        ". Element.firstChild() failed "
+                        "with exception #%d", exc);
+            gdome_el_unref(el2, &exc);
+            gdome_nl_unref(nl, &exc);
+            return mcsFAILURE;
+        }
+        
         value=gdome_el_nodeValue(el2,&exc);
         SetDescription(value->str);
         gdome_str_unref(value);
@@ -1221,14 +1235,15 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
         
         value=gdome_el_nodeValue(el2,&exc);
         content.append(value->str);
-        
         gdome_str_unref(value);
+
         gdome_el_unref(el2, &exc);
         gdome_el_unref(el, &exc);
     }
     else
     {
         logDebug("searching content for '%s' element failed, no element found ",tagName.data());
+        gdome_nl_unref(nl, &exc);
         // no child found
         return mcsFAILURE;
     }
