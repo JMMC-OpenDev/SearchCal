@@ -2,11 +2,12 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.1 2004-12-17 09:35:59 gluck Exp $"
+# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.2 2005-01-04 07:54:45 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # gluck     17-Dec-2004  Created
+# gzins     04-Jan-2005  Changed ROOT_NAME to MOD_NAME 
 #
 #
 #*******************************************************************************
@@ -58,7 +59,7 @@ fi
 
 
 # Get module name
-ROOT_NAME=`ctooGetModuleName`
+MOD_NAME=`ctooGetModuleName`
 if [ $? != 0 ]
 then
     exit 1
@@ -70,8 +71,8 @@ fi
 
 # Set private header file name
 case $headerFileType in
-    module) headerFilename=${ROOT_NAME};;
-    private) headerFilename=${ROOT_NAME}Private;;
+    module) headerFilename=${MOD_NAME};;
+    private) headerFilename=${MOD_NAME}Private;;
     *) echo "ERROR parameter is not a valid."
        echo -e "\n\tUsage: ctooGetSpecificHeaderFile module|private \n";;
 esac
@@ -128,13 +129,13 @@ case $headerFileType in
                  #   /*
                  #    * Module name
                  #    */
-                 #    #define MODULE_ID "$ROOT_NAME"
+                 #    #define MODULE_ID "$MOD_NAME"
                  #
                  echo -e "\n" >> $specificHeaderFile
                  echo "/*" >> $specificHeaderFile
                  echo " * Module name" >> $specificHeaderFile
                  echo " */" >> $specificHeaderFile
-                 echo "#define MODULE_ID \"$ROOT_NAME\"" >> $specificHeaderFile
+                 echo "#define MODULE_ID \"$MOD_NAME\"" >> $specificHeaderFile
                  echo -e "\n \n" >> $specificHeaderFile
                  ;;
 esac
