@@ -25,4 +25,9 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[no stream (message queue, file descriptor) to listen]]></errFormat>
    </error>
+   <error id="9">
+      <errName>CMD_UNKNOWN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[unknown command %.20s]]></errFormat>
+   </error>
 </errorList>
