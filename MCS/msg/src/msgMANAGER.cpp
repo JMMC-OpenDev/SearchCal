@@ -1,13 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.2 2004-12-08 17:37:29 gzins Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.3 2004-12-08 18:02:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
 * gzins     08-Dec-2004  Updated to support several processes with same name  
-*
+* gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
 *
 *******************************************************************************/
 
@@ -16,7 +16,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.2 2004-12-08 17:37:29 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.3 2004-12-08 18:02:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -32,12 +32,12 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "env.h"
 
 /*
  * Local Headers 
  */
 #include "msgMANAGER.h"
-#include "msgMCS_ENVS.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
 
@@ -85,7 +85,7 @@ mcsCOMPL_STAT msgMANAGER::Init(int argc, char *argv[])
     }
     
     // Port number of the current environment
-    msgMCS_ENVS envList;
+    envLIST envList;
     mcsINT32    portNumber;
     portNumber = envList.GetPortNumber();
     if (portNumber == -1)

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.11 2004-12-07 07:44:25 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.12 2004-12-08 18:02:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -19,6 +19,7 @@
 * gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
 * gzins     07-Dec-2004  Updated according to the new msgMCS_ENVS class
 *                        Fixed bug related to error handling in Connect
+* gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
 *
 *******************************************************************************/
 
@@ -27,7 +28,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.11 2004-12-07 07:44:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.12 2004-12-08 18:02:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -45,6 +46,8 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "env.h"
+#include "misc.h"
 
 
 /*
@@ -53,7 +56,6 @@ using namespace std;
 #include "msgPrivate.h"
 #include "msgErrors.h"
 #include "msgMANAGER_IF.h"
-#include "msgMCS_ENVS.h"
 #include "msgSOCKET_CLIENT.h"
 
 
@@ -118,9 +120,9 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     }
 
     // Get the host name on which environment is running
-    msgMCS_ENVS mcsEnvs;
+    envLIST envList;
     const char *envHostName;
-    envHostName = mcsEnvs.GetHostName();
+    envHostName = envList.GetHostName();
     if (envHostName == NULL)
     {
         return FAILURE;
@@ -138,7 +140,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     {
         // Get the host name on which environment is running
         const char *envHostName;
-        envHostName = mcsEnvs.GetHostName();
+        envHostName = envList.GetHostName();
         
         // Check environment if defined
         if (envHostName == NULL)
@@ -155,7 +157,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
         }
 
         // Get msgManager connection port number
-        envPortNumber = mcsEnvs.GetPortNumber();
+        envPortNumber = envList.GetPortNumber();
         
         // Check environment if defined
         if (envPortNumber == -1)
