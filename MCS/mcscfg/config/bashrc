@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/bashrc
 #
-# Version: $Id: bashrc,v 1.7 2004-09-10 11:46:49 mella Exp $
+# Version: $Id: bashrc,v 1.8 2004-09-10 12:22:22 mella Exp $
 #
 # Purpose: bash configuration file
 #
@@ -81,3 +81,5 @@ fi
 alias m=more
 alias Pu='rm -f *~ .*~ core'
 alias gvim='gvim -geometry 80x45'
+alias macam='make clean all man'
+alias macami='make clean all man install'
