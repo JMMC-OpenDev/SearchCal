@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.19 2005-01-27 13:44:41 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.20 2005-02-04 07:44:43 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/01/27 13:44:41  scetre
+* update documentation in IsSame method
+*
 * Revision 1.18  2005/01/26 14:11:42  scetre
 * change assignement operator and pass list as private member of the class vobsSTAR
 *
@@ -27,7 +30,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.19 2005-01-27 13:44:41 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.20 2005-02-04 07:44:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -552,23 +555,20 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         mcsFLOAT range;
         // Get the size of the criteria list
         int listSize=criteriaList->Size();
-        logTest("Number of criterias = %d", listSize);
         mcsFLOAT val1, val2;    
         // Get each criteria of the list and check if the comparaison with all
         // this criteria gave a equality
         for (int el = 0; el < listSize; el++)
         {
-            if (criteriaList->GetNextCriteria(propertyId,
-                                          &range,
-                                          (mcsLOGICAL)(el==0)) == mcsFAILURE)
+            if (criteriaList->GetNextCriteria
+                (propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
             {
-                errCloseStack();
                 return mcsFALSE;
             }
-            logTest("propertyId = %s", propertyId);
+            logDebug("%s delta is in +/- %.3f?", propertyId, range);
             if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
             {
-                // Get right ascension of the star. If not set return FALSE
+                // Get right ascension of the stars. If not set return FALSE
                 if (GetRa(val1) == mcsFAILURE)
                 {
                     errResetStack();
@@ -582,7 +582,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             }
             else if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
             {
-                // Get declinaison of the star. If not set return FALSE
+                // Get declinaison of the stars. If not set return FALSE
                 if (GetDec(val1) == mcsFAILURE)
                 {
                     errResetStack();
@@ -608,8 +608,8 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                     return mcsFALSE;
                 }     
             }
-            logTest("difference = %f for a range of %f", fabs(val1-val2), range);
-            if (fabs(val1-val2)>range)
+            logDebug("%s delta = %.3f", propertyId, fabs(val1-val2));
+            if (fabs(val1-val2) > range)
             {
                 return mcsFALSE;
             }

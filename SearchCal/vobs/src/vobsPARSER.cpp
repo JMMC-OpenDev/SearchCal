@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.7 2005-01-27 13:45:30 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.8 2005-02-04 07:40:53 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/01/27 13:45:30  scetre
+* Add functionnality to the parser to parse II/225 return
+*
 * Revision 1.6  2005/01/26 08:11:28  scetre
 * change history
 *
@@ -14,7 +17,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.7 2005-01-27 13:45:30 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.8 2005-02-04 07:40:53 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -121,12 +124,12 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     }
 
     // Print out CDATA description
-    if (logGetStdoutLogLevel() >= logTEST)
+    if (logGetStdoutLogLevel() >= logDEBUG)
     {
-        logTest("CDATA description");
-        logTest("    Number of lines to be skipped : %d", 
+        logDebug("CDATA description");
+        logDebug("   Number of lines to be skipped : %d", 
                 cData.getNbLinesToSkip());
-        logTest("    Number of columns in table    : %d", cData.getNbColumns());
+        logDebug("   Number of columns in table    : %d", cData.getNbColumns());
         char *colName;
         char *ucdName;
         for (unsigned int i = 0; i < cData.getNbColumns(); i++)
@@ -134,9 +137,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
             // Table header
             if (i == 0)
             {
-                logTest("    +----------+--------------+--------------------+");
-                logTest("    | Column # | Name         | UCD                |");
-                logTest("    +----------+--------------+--------------------+");
+                logDebug("   +----------+--------------+--------------------+");
+                logDebug("   | Column # | Name         | UCD                |");
+                logDebug("   +----------+--------------+--------------------+");
             }
             // Get the column name and UCD
             if (cData.getNextColDesc(&colName, 
@@ -145,7 +148,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
                 return mcsFAILURE;
             }
 
-            logTest("    |      %3d | %12s | %18s |",
+            logDebug("   |      %3d | %12s | %18s |",
                     i+1, colName, ucdName);
             ++colName;
             ++ucdName;
@@ -153,7 +156,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
             // Table footer
             if (i == (cData.getNbColumns() -1))
             {
-                logTest("    +----------+--------------+--------------------+");
+                logDebug("   +----------+--------------+--------------------+");
             }
         }
     }
@@ -304,7 +307,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 gdome_nl_unref(nodeList, &exc);
                 return mcsFAILURE;
             }
-            logTest("Parsing node %s...", nodeName->str);
+            logDebug("Parsing node %s...", nodeName->str);
 
             // Get the attributes list
             attrList = gdome_n_attributes(child, &exc);
@@ -492,7 +495,6 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
 
             // temporary variable to parse in case of II/225
             mcsSTRING256 lambda;
-            mcsFLOAT lambdaFloat;
             mcsSTRING256 flux;
             strcpy(lambda, "");
             strcpy(flux, "");
@@ -514,13 +516,13 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     // End of line reached; stop UCD scan
                     break;
                 }
-                // If lambda is found, memorise it
+                // If lambda is found, save it
                 else if (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
                 {
                     currLinePtr = nextLinePtr;
                     strcpy(lambda, ucdValue); 
                 }
-                // if flux is found, memorise it
+                // If flux is found, save it
                 else if (strcmp(ucdName, vobsSTAR_PHOT_FLUX_IR_MISC) == 0)
                 {
                     currLinePtr = nextLinePtr;
@@ -552,77 +554,45 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                         }
                     }
                 }
-                // if wavelength and flux has been found and memorise
+                
+                // If wavelength and flux have been found, set the corresponding
+                // magnitude
                 if ((strcmp(lambda, "") != 0) && (strcmp(flux, "") != 0))
                 {
-                    // convert lambda from str to numerical value
-                    if (sscanf(lambda, "%f" , &lambdaFloat) == 1)
+                    // Get the wavelength value 
+                    mcsFLOAT lambdaValue;
+                    if (sscanf(lambda, "%f" , &lambdaValue) == 1)
                     {
-                        logTest("we will compute a mag\n");
-                        logTest("lbd = %f and flux = %s\n", lambdaFloat, flux);
-                        // if the wvl is 1.25, the flux is mgJ
-                        if (lambdaFloat == (mcsFLOAT)1.25)
+                        // Determnine to corresponding magnitude
+                        char *magId;
+                        if (lambdaValue == 1.25)
                         {
-                            logTest("J = %s\n", flux);
-                            if (star.SetPropertyValue(vobsSTAR_PHOT_JHN_J,
-                                                      flux) == mcsFAILURE)
-                            {
-                                // If ucd is not found, ignore error
-                                if (errIsInStack(MODULE_ID, 
-                                                 vobsERR_INVALID_PROPERTY_ID)
-                                    == mcsTRUE)
-                                {
-                                    errResetStack();
-                                }
-                                else
-                                {
-                                    return mcsFAILURE;
-                                }
-                            }
+                            magId = vobsSTAR_PHOT_JHN_J;
                         }
-                        // if wvl is 1.65, the flux is mgH
-                        if (lambdaFloat == (mcsFLOAT)1.65)
+                        else if (lambdaValue == 1.65)
                         {
-                            logTest("H = %s\n", flux);
-                            if (star.SetPropertyValue(vobsSTAR_PHOT_JHN_H,
-                                                      flux) == mcsFAILURE)
-                            {
-                                // If ucd is not found, ignore error
-                                if (errIsInStack(MODULE_ID, 
-                                                 vobsERR_INVALID_PROPERTY_ID)
-                                    == mcsTRUE)
-                                {
-                                    errResetStack();
-                                }
-                                else
-                                {
-                                    return mcsFAILURE;
-                                }
-                            }
+                            magId = vobsSTAR_PHOT_JHN_H;
                         }
-                        // if wvl is 2.20, the flux is mgK
-                        if (lambdaFloat == (mcsFLOAT)2.20)
+                        else if (lambdaValue == 2.20)
+                          {
+                            magId = vobsSTAR_PHOT_JHN_K;
+                        }
+                        else
                         {
-                            logTest("K = %s\n", flux);
-                            if (star.SetPropertyValue(vobsSTAR_PHOT_JHN_K,
-                                                      flux) == mcsFAILURE)
-                            {
-                                // If ucd is not found, ignore error
-                                if (errIsInStack(MODULE_ID, 
-                                                 vobsERR_INVALID_PROPERTY_ID)
-                                    == mcsTRUE)
-                                {
-                                    errResetStack();
-                                }
-                                else
-                                {
-                                    return mcsFAILURE;
-                                }
-                            }
+                            magId = NULL;
+                        }
+     
+                        // If the given flux correspond to an expected magnitude
+                        if (magId != NULL)
+                        {
+                            logDebug("flux = %s and lambda = %s ==> mag %s\n",
+                                     flux, lambda, magId);
+                            star.SetPropertyValue(magId, flux); 
                         }
                     }
                 }
             }
+
             // Put now the star in the star list
             if (starList.AddAtTail(star) == mcsFAILURE)
             {
