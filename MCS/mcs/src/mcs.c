@@ -5,10 +5,13 @@
 * --------  -----------	 -------------------------------------------------------
 * gzins     15-Jun-2004  Created
 * lafrasse  01-Dec-2004  Added MCS environment name management
+* lafrasse  08-Dec-2004  Corrected a bug that caused an empty env. name instead
+*                        of a mcsUNKNOWN_ENV env. name when $MCSENV was reset to 
+*                        "" after being used with another value
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: mcs.c,v 1.5 2004-12-03 17:07:11 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: mcs.c,v 1.6 2004-12-08 10:15:02 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -91,7 +94,7 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
     /* Store the environment name */
     /* If the $MCS_ENV_NAME environment variable is defined */
     char* envValue = getenv("MCSENV");
-    if (envValue != NULL)
+    if ((envValue != NULL) && (strlen(envValue) != 0))
     {
         /* Copy the environment variable content in mcsEnvName */
         mcsStoreEnvName(envValue);
