@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsStart.sh,v 1.4 2005-03-08 10:14:31 gzins Exp $"
+# "@(#) $Id: sclinsStart.sh,v 1.5 2005-03-08 13:55:27 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/03/08 10:14:31  gzins
+# Started process in real background with nohup
+#
 # Revision 1.3  2005/03/04 15:05:52  gzins
 # Updated to return correct execution status, display error when execution failed and suppress useless sleep
 #
@@ -101,7 +104,7 @@ do
     if [ $? != 0 ]
     then 
         # Start process
-        nohup $process &
+        nohup $process >> /dev/null 2>&1 &
 
         # Wait that process is registered 
         for (( i=0; $i<10; i++)); 
