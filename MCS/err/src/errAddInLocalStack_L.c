@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.4 2004-08-23 13:35:38 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.5 2004-10-01 14:53:05 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -121,7 +121,7 @@ static char *errGetErrProp(const char *moduleId,
             /* Test if file exists */
             if (stat(errFileName, &statBuf) == 0)
             {
-                errDefFileFound = 0;
+                errDefFileFound = mcsTRUE;
             }
         }
         else
