@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.4 2005-02-17 19:05:23 gzins Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.5 2005-02-22 16:21:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/17 19:05:23  gzins
+ * Changed remaining FAILURE to mcsFAILURE
+ *
  * Revision 1.3  2005/02/12 15:18:56  gzins
  * Set logging service for test; do not print time stamp and file/line information and set level to logTEST
  *
@@ -25,7 +28,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.4 2005-02-17 19:05:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.5 2005-02-22 16:21:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,13 +74,14 @@ int main (int argc, char *argv[])
     }
 
     alxCONFIDENCE_INDEX confIdx;
-    mcsFLOAT mgB=10.063;
-    mcsFLOAT mgV=8.402;
-    mcsFLOAT mgR=6.60;
-    mcsFLOAT mgK=3.21;
-    mcsFLOAT diamBv, diamVr, diamVk, diamError;
+    mcsFLOAT mgB=11.190 ;
+    mcsFLOAT mgV=10.079;
+    mcsFLOAT mgR=7.530;
+    mcsFLOAT mgK=3.092;
+    mcsFLOAT diamBv, diamVr, diamVk, diamBvErr, diamVrErr, diamVkErr;
     if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK,
-                                  &diamBv, &diamVr, &diamVk, &diamError,
+                                  &diamBv, &diamVr, &diamVk,
+                                  &diamBvErr, &diamVrErr, &diamVkErr,
                                   &confIdx)== mcsFAILURE)
     {
         return mcsFAILURE;
