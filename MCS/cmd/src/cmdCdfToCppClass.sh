@@ -2,12 +2,12 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdCdfToCppClass.sh,v 1.3 2004-11-23 13:19:29 mella Exp $"
+# "@(#) $Id: cmdCdfToCppClass.sh,v 1.4 2004-12-09 17:53:36 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # mella     21-Nov-2004  Created
-#
+# gzins     09-Dec-2004  Removed module name argument
 #
 #*******************************************************************************
 
@@ -44,17 +44,18 @@
 # 
 # */
 
-if [ $# != 2 ]
+if [ $# != 1 ]
 then
-    echo "Usage: $0 commandDefinition.cdf moduleName"
+    echo "Usage: $0 <commandDefinition.cdf>"
     exit 1
 fi
 
-MODULENAME=$2
+MODULENAME=`ctooGetModuleName`
 XSLFILE=`miscLocateFile cmdCdfToCppClass.xsl`
+CDFFILE=`basename $1`
 
 echo "Transforming $1 with $XSLFILE"
 
-xsltproc --stringparam "moduleName" $MODULENAME $XSLFILE $1
+xsltproc --stringparam "moduleName" $MODULENAME --stringparam "cdfFilename" $CDFFILE $XSLFILE $1
 
 #___oOo___
