@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.33 2005-02-16 15:54:33 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.34 2005-02-17 14:32:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2005/02/16 15:54:33  gzins
+ * Fixed bug in miscDynBufGetNextLine; wrong test to prevent array overflow
+ *
  * Revision 1.32  2005/02/16 14:54:43  gzins
  * Minor change in documentation
  *
@@ -125,7 +128,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.33 2005-02-16 15:54:33 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.34 2005-02-17 14:32:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -774,7 +777,7 @@ const char*   miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
     {
         return ((char*)NULL);
     }
-
+    
     /* Gets the next '\n' occurence after currentPos */
     mcsLOGICAL nextLineFound = mcsFALSE;
     do 

@@ -4,6 +4,11 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2005/02/12 14:46:09  gzins
+ * Updated miscLocateFile function:
+ *  - added test of file existence before looking for in path list.
+ *  - returned a resolved path
+ *
  * Revision 1.26  2005/02/09 06:27:35  gzins
  * Fixed minor bug in miscFileExists; some errors was added even if addError was set to false
  *
@@ -46,7 +51,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.27 2005-02-12 14:46:09 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.28 2005-02-17 14:32:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -305,17 +310,25 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
  */
 char*         miscResolvePath    (const char *unresolvedPath)
 {
+    static mcsLOGICAL   init = mcsFALSE;
     static miscDYN_BUF  builtPath;
     miscDYN_BUF         pathToResolve;
     mcsSTRING256        tmpPath, tmpEnvVar;
     mcsINT32            length;
+
+    /* Initialize buffer (if not already done */
+    if (init == mcsFALSE)
+    {
+        miscDynBufInit(&builtPath);
+        init = mcsTRUE;
+    }
 
     /* Reset the static Dynamic Buffer */
     if (miscDynBufReset(&builtPath) == mcsFAILURE)
     {
         return NULL;
     }
-    if (miscDynBufReset(&pathToResolve) == mcsFAILURE)
+    if (miscDynBufInit(&pathToResolve) == mcsFAILURE)
     {
         return NULL;
     }
@@ -637,8 +650,16 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
  */
 char* miscLocateFileInPath(const char *path, const char *fileName)
 {
+    static mcsLOGICAL  init = mcsFALSE;
     static miscDYN_BUF tmpPath;
     const char* originalPath = path;
+
+    /* Initialize buffer (if not already done */
+    if (init == mcsFALSE)
+    {
+        miscDynBufInit(&tmpPath);
+        init = mcsTRUE;
+    }
 
     /* Test the path parameter validity */
     if ((path == NULL) || (strlen(path) == 0))
