@@ -1,13 +1,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.15 2005-02-13 08:54:00 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.16 2005-02-13 09:07:50 gzins Exp $"
 #
 # Makefile for test of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2005/02/13 08:54:00  gzins
+# Updated after vobs classes changes
+# Added CVS log as modifification history
+#
 # Revision 1.14  2005/02/04 10:06:40  gzins
 # Added test for vobsCATALOG_MIDI
 #
@@ -37,8 +41,8 @@ USER_INC =
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestVirtualObservatoryKBand 	\
-				  vobsTestVirtualObservatoryVBand 	\
+EXECUTABLES     = vobsTestVOInKBand 	\
+				  vobsTestVOInVBand 	\
 				  vobsTestParser vobsTestRequest 	\
 				  vobsTestCriteria vobsTestStar 	\
 				  vobsTestStarList 					\
@@ -47,37 +51,37 @@ EXECUTABLES_L   =
 
 #
 # List of test programs 
-vobsTestVirtualObservatoryKBand_OBJECTS = vobsTestVirtualObservatoryKBand
-vobsTestVirtualObservatoryKBand_LDFLAGS = 
-vobsTestVirtualObservatoryKBand_LIBS    = MCS C++ vobs
+vobsTestVOInKBand_OBJECTS   = vobsTestVOInKBand
+vobsTestVOInKBand_LDFLAGS   = 
+vobsTestVOInKBand_LIBS      = MCS C++ vobs
 
-vobsTestVirtualObservatoryVBand_OBJECTS = vobsTestVirtualObservatoryVBand
-vobsTestVirtualObservatoryVBand_LDFLAGS = 
-vobsTestVirtualObservatoryVBand_LIBS    = MCS C++ vobs
+vobsTestVOInVBand_OBJECTS   = vobsTestVOInVBand
+vobsTestVOInVBand_LDFLAGS   = 
+vobsTestVOInVBand_LIBS      = MCS C++ vobs
 
-vobsTestParser_OBJECTS            		= vobsTestParser 
-vobsTestParser_LDFLAGS            		= 
-vobsTestParser_LIBS               		= MCS C++ vobs
+vobsTestParser_OBJECTS      = vobsTestParser 
+vobsTestParser_LDFLAGS      = 
+vobsTestParser_LIBS         = MCS C++ vobs
 
-vobsTestRequest_OBJECTS           		= vobsTestRequest 
-vobsTestRequest_LDFLAGS           		= 
-vobsTestRequest_LIBS              		= MCS C++ vobs
+vobsTestRequest_OBJECTS     = vobsTestRequest 
+vobsTestRequest_LDFLAGS     = 
+vobsTestRequest_LIBS        = MCS C++ vobs
 
-vobsTestCriteria_OBJECTS          		= vobsTestCriteria 
-vobsTestCriteria_LDFLAGS          		= 
-vobsTestCriteria_LIBS             		= MCS C++ vobs
+vobsTestCriteria_OBJECTS    = vobsTestCriteria 
+vobsTestCriteria_LDFLAGS    = 
+vobsTestCriteria_LIBS       = MCS C++ vobs
 
-vobsTestStar_OBJECTS              		= vobsTestStar
-vobsTestStar_LDFLAGS              		= 
-vobsTestStar_LIBS                 		= MCS C++ vobs
+vobsTestStar_OBJECTS        = vobsTestStar
+vobsTestStar_LDFLAGS        = 
+vobsTestStar_LIBS           = MCS C++ vobs
 
-vobsTestStarList_OBJECTS          		= vobsTestStarList
-vobsTestStarList_LDFLAGS          		= 
-vobsTestStarList_LIBS             		= MCS C++ vobs
+vobsTestStarList_OBJECTS    = vobsTestStarList
+vobsTestStarList_LDFLAGS    = 
+vobsTestStarList_LIBS       = MCS C++ vobs
 
-vobsTestMidiCatalog_OBJECTS       		= vobsTestMidiCatalog 
-vobsTestMidiCatalog_LDFLAGS       		= 
-vobsTestMidiCatalog_LIBS          		= MCS C++ vobs
+vobsTestMidiCatalog_OBJECTS = vobsTestMidiCatalog 
+vobsTestMidiCatalog_LDFLAGS = 
+vobsTestMidiCatalog_LIBS    = MCS C++ vobs
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
