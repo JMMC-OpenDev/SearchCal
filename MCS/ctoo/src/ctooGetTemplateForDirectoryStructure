@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.14 2004-07-01 10:39:07 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.15 2004-07-01 15:06:20 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -222,7 +222,8 @@ case $choice in
                         DATE=`date "+%d-%b-%Y"`
                         sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
                         -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
-                        -e "1,$ s/I>-<d/\Id/g"       \
+                        -e "1,$ s/I>-<d/\Id/g" \
+                        -e "1,$ s/<module name=\"module\">/<module name=\"$ROOT_NAME\">/g" \
                         ${FILE}.BAK > $FILE
                         rm -f ${FILE}.BAK
                     else
@@ -253,7 +254,7 @@ case $choice in
                         DATE=`date "+%d-%b-%Y"`
                         sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
                         -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
-                        -e "1,$ s/I>-<d/\Id/g"       \
+                        -e "1,$ s/I>-<d/\Id/g" \
                         ${FILE}.BAK > $FILE
                         rm -f ${FILE}.BAK
                     else
