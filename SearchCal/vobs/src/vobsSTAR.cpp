@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.38 2005-02-24 16:59:14 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.39 2005-03-04 06:36:18 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.38  2005/02/24 16:59:14  scetre
+* Improved debug message when comparing star properties (show HD number)
+*
 * Revision 1.37  2005/02/23 17:15:32  scetre
 * Updated property name
 *
@@ -86,7 +89,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.38 2005-02-24 16:59:14 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.39 2005-03-04 06:36:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -495,9 +498,10 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     }
 
     // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
-    // Replace ':' by ' '
+    // Replace ':' by ' ', and remove trailing and leading pace
     strcpy(raHms, GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
     miscReplaceChrByChr(raHms, ':', ' ');
+    miscTrimString(raHms, " ");
     if (sscanf(raHms, "%f %f %f", &hh, &hm, &hs) != 3)
     {
         errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
@@ -506,7 +510,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 
     // Get sign of hh which has to be propagated to hm and hs
     mcsFLOAT sign;
-    sign = (hh >= 0) ? 1.0 : -1.0;
+    sign = (raHms[0] == '-') ? -1.0 : 1.0;
 
     // Convert to degrees
     ra  = (hh + sign*hm/60.0 + sign*hs/3600.0) * 15.0;
@@ -544,9 +548,10 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
     }
 
     // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
-    // Replace ':' by ' '
+    // Replace ':' by ' ', and remove trailing and leading pace
     strcpy(decDms, GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
     miscReplaceChrByChr(decDms, ':', ' ');
+    miscTrimString(decDms, " ");
     if (sscanf(decDms, "%f %f %f", &dd, &dm, &ds) != 3)
     {
         errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
@@ -555,8 +560,8 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
 
     // Get sign of hh which has to be propagated to hm and hs
     mcsFLOAT sign;
-    sign = (dd >= 0) ? 1.0 : -1.0;
-    
+    sign = (decDms[0] == '-') ? -1.0 : 1.0; 
+
     // Convert to degrees
     dec  = dd + sign*dm/60.0 + sign*ds/3600.0;
 
