@@ -3,7 +3,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logPrivate.h,v 1.7 2004-08-10 13:29:10 lafrasse Exp $"
+*  "@(#) $Id: logPrivate.h,v 1.8 2004-11-10 22:07:54 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,8 @@
 *                        Added logDisplayMessage and logDisplayError local
 *                        error message handling functions
 * lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.h
-*
+* gzins     10-Nov-2004  Renamed logDisplayMessage to logPrintErrMessage
+*                        Removed logDisplayError
 *
 *******************************************************************************/
 
@@ -57,7 +58,6 @@ extern "C" {
  */
 #define logMANAGER_DEFAULT_PORT_NUMBER 8791
 
-
 /*
  * Define logging definition structure 
  */
@@ -73,21 +73,16 @@ typedef struct {
         mcsLOGICAL  printFileLine;
 } logRULE;
 
-
 /*
  * Local Functions
  */
-
 mcsCOMPL_STAT logGetHostName(char *, mcsUINT32);
-void          logDisplayMessage(const char *, ...);
-void          logDisplayError(const char *, ...);
-
+void          logPrintErrMessage(const char *, ...);
 
 #ifdef __cplusplus
 };
 #endif
   
 #endif /*!logLOG_PRIVATE_H*/
-
 
 /*___oOo___*/
