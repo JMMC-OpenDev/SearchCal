@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.29 2005-02-10 23:13:04 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.30 2005-02-11 08:46:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2005/02/10 23:13:04  lafrasse
+ * Corrected a 'segmentation fault' bug when using miscDynBufGetNextLine() on an
+ * empty Dynamic Buffer
+ *
  * Revision 1.28  2005/02/10 22:59:23  lafrasse
  * Corrected a copy-paste typo in miscDynBufGetNextLine()
  *
@@ -112,7 +116,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.29 2005-02-10 23:13:04 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.30 2005-02-11 08:46:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -968,9 +972,9 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
         return mcsFAILURE;
     }
 
-    /* Get the file size and verify it is a regular file */
+    /* Get the file size */
     struct stat fileStats;
-    if ((stat(fileName, &fileStats) == -1) || (S_ISREG(fileStats.st_mode) == 0))
+    if (stat(fileName, &fileStats) == -1)
     {
         errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, strerror(errno));
         return mcsFAILURE;
