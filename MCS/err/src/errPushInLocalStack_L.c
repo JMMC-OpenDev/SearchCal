@@ -4,12 +4,15 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/24 14:49:18  gzins
+* Used CVS log as modification history
+*
 * gzins     17-Jun-2004  completed implementation
 * berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errPushInLocalStack_L.c,v 1.3 2005-01-24 14:49:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPushInLocalStack_L.c,v 1.4 2005-01-27 14:12:24 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,14 +45,15 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * \param severity error severity (F, S or W)
  * \param runTimePar error message
  */
-mcsCOMPL_STAT errPushInLocalStack(errERROR   *error,
-                                  const char *timeStamp,
-                                  const char *procName,
-                                  const char *moduleId,
-                                  const char *location,
-                                  mcsINT32   errorId,
-                                  char       severity,
-                                  char       *runTimePar)
+mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
+                                  const char     *timeStamp,
+                                  const char     *procName,
+                                  const char     *moduleId,
+                                  const char     *location,
+                                  mcsINT32       errorId,
+                                  mcsLOGICAL     isErrUser,
+                                  char           severity,
+                                  char           *runTimePar)
 {
     mcsINT32 errNum;
 
@@ -89,6 +93,7 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR   *error,
             (sizeof(mcsFILE_LINE) -1));
     strcpy((char *) error->stack[errNum].moduleId, moduleId);
     error->stack[errNum].errorId = errorId;
+    error->stack[errNum].isErrUser = isErrUser;
     error->stack[errNum].severity = severity;
     strcpy((char *)error->stack[errNum].runTimePar, runTimePar);
  

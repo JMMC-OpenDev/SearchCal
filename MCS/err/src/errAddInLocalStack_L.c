@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/01/24 14:49:18  gzins
+* Used CVS log as modification history
+*
 * gzins     23-Nov-2004  removed useless warning messages related to undefined
 *                        INTROOT and MCSROOT
 * gzins     17-Jun-2004  completed implementation
@@ -11,7 +14,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.9 2005-01-24 14:49:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.10 2005-01-27 14:08:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,14 +49,19 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "errPrivate.h"
 
 /* Global variable */
-errERROR errGlobalStack;
+errERROR_STACK errGlobalStack;
 
 /*
  * Declaration of local functions
  */
 static char *errGetErrProp(const char *moduleId, 
-                           int errorId, const char * propName)
-{
+                           int errorId, const char * propName);
+
+/*
+ * Definition of local functions
+ */
+static char *errGetErrProp(const char *moduleId, 
+                           int errorId, const char * propName){
     logExtDbg("errGetErrProp()"); 
 
     GdomeDOMImplementation *domimpl;
@@ -352,13 +360,18 @@ errCond:
  *
  * \param error error structure.
  * \param moduleId module identifier
- * \param errorId error number
  * \param fileLine file name and line number from where the error has been added
+ * \param errorId error number
+ * \param isErrUser specify whether the error message is intended or not to the 
+ * \param argPtr (optional) argument list associated to the error 
+ *
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT errAddInLocalStack_v(errERROR        *error,
+mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
                                    const mcsMODULEID moduleId,
                                    const char        *fileLine,
                                    mcsINT32          errorId,
+                                   mcsLOGICAL        isErrUser,
                                    va_list           argPtr)
 {
     mcsSTRING64  timeStamp;
@@ -400,7 +413,8 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR        *error,
     
     /* Add error to the stack */
     return (errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId,
-                                fileLine, errorId, severity, runTimePar));
+                                fileLine, errorId, isErrUser, 
+                                severity, runTimePar));
 }
 
 /**
@@ -408,22 +422,28 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR        *error,
  *
  * \param error error structure.
  * \param moduleId module identifier
- * \param errorId error number
  * \param fileLine file name and line number from where the error has been added
+ * \param errorId error number
+ * \param isErrUser specify whether the error message is intended or not to the 
+ * \param argPtr (optional) argument list associated to the error 
+ *
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT errAddInLocalStack(errERROR        *error,
+mcsCOMPL_STAT errAddInLocalStack(errERROR_STACK    *error,
                                  const mcsMODULEID moduleId,
                                  const char        *fileLine,
-                                 mcsINT32          errorId,...)
+                                 mcsINT32          errorId,
+                                 mcsLOGICAL        isErrUser,
+                                 ...)
 {
     va_list       argPtr;
     mcsCOMPL_STAT status;
 
     logExtDbg("errAddInStack()");
 
-    va_start(argPtr, errorId);
+    va_start(argPtr, isErrUser);
     status = errAddInLocalStack_v(error, moduleId, 
-                                  fileLine, errorId, argPtr);
+                                  fileLine, errorId, isErrUser, argPtr);
     va_end(argPtr);
 
     return (status);
