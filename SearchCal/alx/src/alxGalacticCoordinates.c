@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxGalacticCoordinates.c,v 1.2 2005-02-12 15:14:54 gzins Exp $"
+ * "@(#) $Id: alxGalacticCoordinates.c,v 1.3 2005-02-15 14:46:29 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/12 15:14:54  gzins
+ * Minor changes in documentation
+ *
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
@@ -24,7 +27,7 @@
  * \sa file : JMMC-MEM-2600-0007
  */
 
-static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.2 2005-02-12 15:14:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.3 2005-02-15 14:46:29 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -66,7 +69,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * \param gLat galactic latitude in degree in range [0, 360]
  * \param gLon galactic longitude in degree in range [-90, 90]
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
@@ -158,6 +161,6 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
 
     logTest("gLon = %.3f degrees", *gLon);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 /*___oOo___*/
