@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.17 2005-01-28 23:49:44 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.18 2005-01-29 07:17:59 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/01/28 23:49:44  gzins
+ * Defined GetBody and GetBodySize as constant method
+ *
  * Revision 1.16  2005/01/24 15:46:10  gzins
  * Fixed wrong method name in logExtDbg() for ClearBody()
  *
@@ -44,7 +47,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.17 2005-01-28 23:49:44 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.18 2005-01-29 07:17:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -68,7 +71,6 @@ using namespace std;
 #include "msgPrivate.h"
 #include "msgErrors.h"
 
-
 /*
  * Class constructor
  */
@@ -77,8 +79,8 @@ msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
     // Reset all the header structure to 0
     memset(&_header, 0, sizeof(_header));
 
-    // Initializing the body Dynamic Buffer
-    miscDynBufInit(&_body);
+    // Initializing the body
+    ClearBody(); 
 
     // Message is considered extern by default
     _isInternal = isInternalMsg;
@@ -91,7 +93,7 @@ msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
 /**
  * Copy constructor
  */
-msgMESSAGE::msgMESSAGE(msgMESSAGE& msg)
+msgMESSAGE::msgMESSAGE(const msgMESSAGE& msg)
 {
     *this = msg;
 }
@@ -99,7 +101,7 @@ msgMESSAGE::msgMESSAGE(msgMESSAGE& msg)
 /**
  * Assignment operator
  */
-msgMESSAGE &msgMESSAGE::operator=(msgMESSAGE& msg)
+msgMESSAGE &msgMESSAGE::operator=(const msgMESSAGE& msg)
 {
     memcpy (&_header, &msg._header, sizeof(msgHEADER));
     if (msg.GetBodySize() != 0)

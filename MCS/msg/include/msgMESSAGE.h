@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.18 2005-01-28 23:50:00 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.19 2005-01-29 07:17:59 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/01/28 23:50:00  gzins
+ * Defined GetBody and GetBodySize as constant method
+ *
  * Revision 1.17  2005/01/24 15:39:54  gzins
  * Added CVS logs as modification history
  *
@@ -158,12 +161,12 @@ class msgMESSAGE
 
 public:
     // Constructor
-    msgMESSAGE                               (const mcsLOGICAL isInternalMsg
-                                              = mcsFALSE);
+    msgMESSAGE (const mcsLOGICAL isInternalMsg = mcsFALSE);
+
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-    msgMESSAGE(msgMESSAGE&);
-    msgMESSAGE&              operator=(msgMESSAGE&);
+    msgMESSAGE(const msgMESSAGE&);
+    msgMESSAGE& operator=(const msgMESSAGE&);
 
     // Destructor
     virtual ~msgMESSAGE                      (void);
