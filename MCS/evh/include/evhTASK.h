@@ -1,18 +1,19 @@
 #ifndef evhTASK_H
 #define evhTASK_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhTASK.h,v 1.4 2005-01-07 17:29:58 gzins Exp $"
-*
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* gzins     09-Jun-2004  created
-* gzins     18-Nov-2004  splitted parsing and usage methods to separate
-*                        options and arguments in command-line parameters
-* gzins     20-Dec-2004  removed IsTimerLogOption method
-* 
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhTASK.h,v 1.5 2005-01-26 18:11:00 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     09-Jun-2004  created
+ * gzins     18-Nov-2004  splitted parsing and usage methods to separate
+ *                        options and arguments in command-line parameters
+ * gzins     20-Dec-2004  removed IsTimerLogOption method
+ * 
+ ******************************************************************************/
 
 /**
  * \file
@@ -52,7 +53,6 @@ public:
                                          mcsLOGICAL *optUsed);
     virtual mcsLOGICAL IsFileLogOption();
     virtual mcsLOGICAL IsStdoutLogOption();
-    virtual mcsLOGICAL IsActionLogOption();
 
     virtual const char *GetSwVersion();
 
@@ -65,7 +65,6 @@ private:
 
     mcsLOGICAL _fileLogOption;
     mcsLOGICAL _stdoutLogOption;
-    mcsLOGICAL _actionLogOption; 
 };
 
 #endif /*!evhTASK_H*/
