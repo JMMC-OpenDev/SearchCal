@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.15 2005-02-15 15:48:11 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.16 2005-02-25 15:11:43 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2005/02/15 15:48:11  gluck
+# Correct bug due to missing space
+#
 # Revision 1.14  2005/02/15 14:55:26  gluck
 # Correct wrapping line bug
 #
@@ -16,6 +19,9 @@
 #
 # Revision 1.12  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.15  2005/02/15 15:48:11  gluck
+# Bug correction for log message automatic insertion (Correct bug due to missing space
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.14  2005/02/15 14:55:26  gluck
 # Bug correction for log message automatic insertion (Correct wrapping line bug
 # Bug correction for log message automatic insertion (
@@ -34,35 +40,6 @@
 # gzins     04-Jan-2005  Updated to accept relative path when giving file name
 #
 #*******************************************************************************
-# NAME
-#   ctooGetTemplateForCoding -  give available standard templates for coding
-# 
-# SYNOPSIS
-#   ctooGetTemplateForCoding c-main|c-procedure|h-file|c++-small-main|
-#                            c++-class-file|c++-h-file|script|Makefile
-# 
-# DESCRIPTION
-#   See ctooGetTemplate
-#
-# FILES
-#
-# ENVIRONMENT
-#   MCSROOT  <IN>  where to look for template files (templates/)
-#   EDITOR   <IN>  if defined, a "$EDITOR <file> &" is spawned automatically
-#
-# RETURN VALUES
-#
-# CAUTIONS
-#
-# EXAMPLES
-#
-# SEE ALSO
-#
-# BUGS
-#
-#-------------------------------------------------------------------------------
-#
-
 
 #/**
 # \file
