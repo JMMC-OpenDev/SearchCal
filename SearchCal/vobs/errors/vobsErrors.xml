@@ -1,23 +1,53 @@
 <?xml version="1.0"?>
 <errorList moduleName="vobs">
-   <error id="1">
-      <errName>BAD_PARAMETERS</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat>receive bad parameters : %s</errFormat>
-   </error>
-   <error id="2">
-      <errName>ACTION</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat>%s</errFormat>
-   </error>
-   <error id="3">
-      <errName>MEMORY</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat>bad memory allocation %s</errFormat>
-  </error>
-  <error id="4">
-      <errName>ACTION_GDOME</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat>libGdome failed : %s</errFormat>
-   </error>
+    <error id="6">
+        <errName>GDOME_CALL</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Call to %s function failed with the exception  "%d]]></errFormat>
+    </error>
+    <error id="7">
+        <errName>CDATA_NOT_FOUND</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[CDATA section not found]]></errFormat>
+    </error>
+    <error id="8">
+        <errName>INVALID_CDATA_FORMAT</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid format of the CDATA line '%.100s']]></errFormat>
+    </error>
+    <error id="14">
+        <errName>INVALID_UCD_NAME</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid UCD name '%s']]></errFormat>
+    </error>
+    <error id="10">
+        <errName>INVALID_UCD_ID</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid UCD id '%d']]></errFormat>
+    </error>
+    <error id="11">
+        <errName>INVALID_UCD_FORMAT</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid UCD format '%.80s'; should be %.20s]]></errFormat>
+    </error>
+    <error id="12">
+        <errName>INVALID_RA_FORMAT</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid RA format '%.80s'; should be 'HH MM SS.TTT']]></errFormat>
+    </error>
+    <error id="13">
+        <errName>RA_NOT_SET</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[RA property not set]]></errFormat>
+    </error>
+    <error id="14">
+        <errName>INVALID_DEC_FORMAT</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid DEC format '%.80s'; should be 'DD MM SS.TTT']]> </errFormat>
+    </error>
+    <error id="15">
+        <errName>DEC_NOT_SET</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[DEC property not set]]></errFormat>
+    </error>
 </errorList>
