@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestDate.c,v 1.6 2005-02-15 09:44:37 gzins Exp $"
+ * "@(#) $Id: miscTestDate.c,v 1.7 2005-03-03 16:10:59 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 09:44:37  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
  * lafrasse  22-Jul-2004  Correted some typos, code factorization, and error
  *                        management
@@ -13,7 +16,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDate.c,v 1.6 2005-02-15 09:44:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDate.c,v 1.7 2005-03-03 16:10:59 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,7 +48,7 @@ int main (int argc, char *argv[])
 {
     /* Give process name to mcs library */
     mcsInit(argv[0]);
-
+    
     mcsBYTES32  time;
     int i;
 
@@ -55,7 +58,7 @@ int main (int argc, char *argv[])
     {
         printf("   UTC Time     (precision s=%d)  = ", i);
 
-        if (miscGetUtcTimeStr(time, i) == mcsFAILURE)
+        if (miscGetUtcTimeStr(i, time) == mcsFAILURE)
         {
             printf("mcsFAILURE.\n");
             errCloseStack();
@@ -73,7 +76,7 @@ int main (int argc, char *argv[])
     {
         printf("   Local Time   (precision s=%d)  = ", i);
 
-        if (miscGetLocalTimeStr(time, i) == mcsFAILURE)
+        if (miscGetLocalTimeStr(i, time) == mcsFAILURE)
         {
             printf("mcsFAILURE.\n");
             errCloseStack();
