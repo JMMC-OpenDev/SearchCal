@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhINTERFACE.h,v 1.1 2005-01-07 17:43:32 gzins Exp $"
+* "@(#) $Id: evhINTERFACE.h,v 1.2 2005-01-27 17:51:55 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -44,7 +44,7 @@
  * Forward() command is used for asynchronous transfer. It installs callback
  * which is called when either a reply, error or timeout are received.
  */
-class evhINTERFACE
+class evhINTERFACE : fndOBJECT
 {
 
 public:
@@ -64,6 +64,8 @@ public:
                                   const char *parameters,  
                                   evhCMD_CALLBACK callback,
                                   mcsINT32   timeout=-2);
+    virtual evhCB_COMPL_STAT ReplyCB(msgMESSAGE &msg, void*);
+
     // Get reply of the last sent command 
     virtual char         *GetLastReply(void);
 
@@ -83,7 +85,8 @@ private:
     msgMANAGER_IF _msgManager; /** Interface to msgManager process */
 
     msgMESSAGE    _msg;        /** Used to receive message */
-    
+
+    evhCMD_CALLBACK *_replyCb;  /** Callback for reply */
 };
 
 #endif /*!evhINTERFACE_H*/
