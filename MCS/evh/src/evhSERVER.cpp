@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.cpp,v 1.2 2004-12-05 19:44:07 gzins Exp $"
+* "@(#) $Id: evhSERVER.cpp,v 1.3 2004-12-22 09:02:01 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,6 +10,8 @@
 *                        Connect, Disconnect and MainLoop methods
 *                        Updated Init.
 * gzins     03-Dec-2004  Added -n command-line option  
+* gzins     22-Dec-2004  Attached callback for HELP command
+*                        Replaced GetBodyPtr by GetBody
 *
 *******************************************************************************/
 
@@ -18,7 +20,7 @@
  * evhSERVER class definition.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.2 2004-12-05 19:44:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.3 2004-12-22 09:02:01 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -41,6 +43,8 @@ using namespace std;
  * Local Headers 
  */
 #include "evhSERVER.h"
+#include "evhVERSION_CMD.h"
+#include "evhHELP_CMD.h"
 #include "evhPrivate.h"
 
 /*
@@ -148,10 +152,17 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
         return (FAILURE);
     }
 
-    evhCMD_KEY key("VERSION");
+    // Add callback to VERSION command
+    evhCMD_KEY key(evhVERSION_CMD_NAME, evhVERSION_CDF_NAME);
     evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD)&evhSERVER::VersionCB);
     AddCallback(key, cb);
     
+    // Add callback to HELP command
+    key.SetCommand(evhHELP_CMD_NAME);
+    key.SetCdf(evhHELP_CDF_NAME);
+    cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::HelpCB);
+    AddCallback(key, cb);
+    //
     // If no command has been given in command-line arguments
     if (strlen(_msg.GetCommand()) == 0)
     {
@@ -260,7 +271,7 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
     {
         if (errStackIsEmpty() == mcsTRUE)
         {
-            printf("%s\n", msg.GetBodyPtr());
+            printf("%s\n", msg.GetBody());
             return SUCCESS;
         }
         else
