@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.16 2004-11-18 13:57:26 gzins Exp $"
+* "@(#) $Id: log.h,v 1.17 2004-12-20 13:24:41 gzins Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -36,6 +36,8 @@
 * lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.h
 *                        Changed back to logData original API
 * gzins     18-Nov-2004  Added logError macro
+* gzins     20-Dec-2004  Added functions to filter stdout log depending on
+*                        module name
 *
 *
 *******************************************************************************/
@@ -96,6 +98,8 @@ mcsCOMPL_STAT logDisableStdoutLog(void);
 mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL);
 logLEVEL      logGetStdoutLogLevel(void);
 
+void logClearStdoutLogAllowedModList(void);
+mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char*);
 
 mcsCOMPL_STAT logSetActionLogLevel(logLEVEL);
 logLEVEL      logGetActionLogLevel(void);
