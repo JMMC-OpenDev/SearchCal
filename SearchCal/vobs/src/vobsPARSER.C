@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.7 2004-08-06 13:07:52 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.8 2004-08-19 16:33:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.7 2004-08-06 13:07:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.8 2004-08-19 16:33:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,7 +72,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
     GdomeElement           *root;
     GdomeException         exc;
     vobsCDATA              cData;
-    
+    vobsSTAR_LIST starListToReturn;
+        
     std::vector<vobsCDATA *> listCDATA;
     
     logExtDbg("vobsPARSER::MainParser()");	
@@ -130,8 +131,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
                 }
                 logTest("    |      %3d | %12s | %18s |",
                         i+1, *colName, *ucdName);
-                *colName++;
-                *ucdName++;
+                ++colName;
+                ++ucdName;
 
                 // Table footer
                 if (i == ((**iterCDATA).colName.size() -1))
@@ -157,16 +158,19 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
     else
     {
         iterCDATA=listCDATA.begin();
+        int i=1;
         while (iterCDATA!=listCDATA.end())
         {
+            //printf("%deme passage\n",i);
             printf("%s\n\n",(**iterCDATA).ptr);
             // Parse the CDATA section
-            if (ParseCData((*iterCDATA), starList) == FAILURE)
+            if (ParseCData((*iterCDATA), starListToReturn) == FAILURE)
             {
                 gdome_di_freeDoc (domimpl, doc, &exc);
                 gdome_di_unref (domimpl, &exc);
                 return FAILURE;
             }
+            ++i;
             ++iterCDATA;
         }
         // Free the document structure and the DOMImplementation
@@ -174,12 +178,16 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
         gdome_di_unref (domimpl, &exc);
 
         // Print out the star list 
-        if (logGetStdoutLogLevel() >= logTEST)
+        /*if (logGetStdoutLogLevel() >= logTEST)
         {
             starList.Display();
-        }
+        }*/
 
     }
+
+    starList.Clear();
+    starList.Copy(starListToReturn);
+    
     return SUCCESS;
 }
 
@@ -261,12 +269,9 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA
         if (gdome_n_nodeType (child, &exc) == GDOME_CDATA_SECTION_NODE) 
         {
             vobsCDATA *cDataForList=new vobsCDATA;
-            //cDataForList=cData;
             cDataForList->colName=cData->colName;
             cDataForList->ucdName=cData->ucdName;
-            cDataForList->nbLineToJump=cData->nbLineToJump;
-            //cDataForList.ptr=new char[strlen(cData->ptr)+1];
-            //strcpy(cDataForList.ptr, cData->ptr);
+            cDataForList->nbLineToJump=cData->nbLineToJump;     
 
             /* Get CDATA */
             cDataForList->ptr = new char[strlen(gdome_cds_data(GDOME_CDS(child), &exc)->str)+1];
@@ -277,7 +282,6 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA
                 return FAILURE;
             }
             listCDATA.push_back(cDataForList);
-
         }
 
         // If it is an element node, try to get information on attributes
@@ -346,7 +350,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA
                     // If it is the UCD name of the corresponding
                     // column table  
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
-                        (strcmp(attrName->str, "UCD")  == 0))
+                        (strcmp(attrName->str, "ucd")  == 0))
                     {
                         cData->ucdName.push_back(attrValue->str); 
                     }
@@ -377,7 +381,6 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA
             return FAILURE;
         }
     }
-
     return SUCCESS;
 }
 
@@ -405,7 +408,8 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, std::vector<vobsCDATA
  */
 mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
 {
-    logExtDbg("vobsPARSER::ParseCData()");
+    logExtDbg("vobsPARSER::ParseCData()"); 
+
     char *linePtr;
     miscDYN_BUF linePtrList; // Table containing pointers to the CDATA lines
     int nbLines;             // Number of the in CDATA
@@ -422,12 +426,14 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
     cDataLength = strlen(cData->ptr);
     nbLines = 0;
     linePtr = cData->ptr;
+    
     for (int i=0; i < cDataLength; i++)
-    {
+    {       
         if (cData->ptr[i] == '\n')
         {
             // Replace CR by '\0' in order to have string
             cData->ptr[i] = '\0';
+           
             miscDynBufAppendBytes(&linePtrList, 
                                   (char *)&linePtr, sizeof(char*));
             nbLines++;
@@ -435,7 +441,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
             linePtr = &cData->ptr[i] + 1;
         }
     }
-
+    
     // For each line in buffer, get the value for each defined UCD (value are
     // separated by '\t' character), store them in star object and add this
     // new star in the list.
@@ -465,8 +471,11 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
             if (ucdValue == NULL)
             {
                 errAdd(vobsERR_INVALID_CDATA_FORMAT, linePtr);
-                return FAILURE;
+                printf("titi\n");
+                //return FAILURE;
             }
+            else
+            {
             linePtr = nextLinePtr;
 
             // Check if value if empty
@@ -492,6 +501,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
 
             // Next UCD
             ucdName++;
+            }
         }
 
         // Put now the star in the star list
@@ -501,6 +511,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
         }
     }
 
+    miscDynBufDestroy(&linePtrList);
     return SUCCESS;
 }
 

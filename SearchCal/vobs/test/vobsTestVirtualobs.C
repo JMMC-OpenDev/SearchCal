@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestVirtualobs.C,v 1.2 2004-08-06 13:07:52 scetre Exp $"
+* "@(#) $Id: vobsTestVirtualobs.C,v 1.3 2004-08-19 16:33:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualobs.C,v 1.2 2004-08-06 13:07:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualobs.C,v 1.3 2004-08-19 16:33:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         (request.SetConstraint(SEARCH_BOX_RA_ID,"03+47+29.08") == SUCCESS) &&
         (request.SetConstraint(SEARCH_BOX_DEC_ID,"+24+06+18.5") == SUCCESS) &&
         (request.SetConstraint(STAR_EXPECTED_VIS_ID,"0.922") == SUCCESS) &&
-        (request.SetConstraint(STAR_MAX_ERR_VIS_ID,"0..09") == SUCCESS) &&
+        (request.SetConstraint(STAR_MAX_ERR_VIS_ID,"0.09") == SUCCESS) &&
         (request.SetConstraint(OBSERVED_BAND_ID,"K") == SUCCESS ))
     {
         // Check if the request is correctly build

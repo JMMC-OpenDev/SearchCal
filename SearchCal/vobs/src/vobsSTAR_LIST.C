@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.3 2004-08-06 13:07:52 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.4 2004-08-19 16:33:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.3 2004-08-06 13:07:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.4 2004-08-19 16:33:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,7 +61,7 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
  */
 mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
 {
-    logExtDbg("vobsSTAR_LIST::IsEmpty()");
+    //logExtDbg("vobsSTAR_LIST::IsEmpty()");
     if (_starList.empty() == true)
     {
         return mcsTRUE;
@@ -93,9 +93,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR_LIST::AddAtTail()");
-    /*vobsSTAR *starOfList;
-    int same=0;
+    //logExtDbg("vobsSTAR_LIST::AddAtTail()");
+    vobsSTAR *starOfList;
+    unsigned int same=0;
     
     for (unsigned int el = 0; el < Size(); el++)
     {
@@ -104,6 +104,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
         // the list is update with property of the star
         if ( starOfList->IsSameCoordonate(star) == mcsTRUE )
         {
+            starOfList->Update(star);
             same=1;            
             for (unsigned int i=0; i<vobsNB_STAR_PROPERTIES; i++)
             {
@@ -128,10 +129,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
         }
     }
     if (same==0)
-    {*/
+    {
         // Put element in the list
         _starList.push_back(star);
-    //}
+    }
 
     return SUCCESS;
 }
@@ -162,8 +163,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
     {
         if ((*iter).IsSame(star) == mcsTRUE)
         {
-            star.Display();
-            (*iter).Display();
+            //star.Display();
+            //(*iter).Display();
             _starList.erase(iter);
             return SUCCESS;
         }
@@ -200,7 +201,7 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  */
 vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init) 
 {
-    logExtDbg("vobsSTAR_LIST::GetNextStar()");
+    //logExtDbg("vobsSTAR_LIST::GetNextStar()");
 
     if (init == mcsTRUE)
     {
@@ -238,7 +239,7 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
  */
 vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR_LIST::GetStar()");
+    //logExtDbg("vobsSTAR_LIST::GetStar()");
 
     // Search star in the list
     std::list<vobsSTAR>::iterator iter;

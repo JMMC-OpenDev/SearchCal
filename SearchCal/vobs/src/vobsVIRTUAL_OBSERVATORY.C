@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.7 2004-08-06 13:07:52 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.8 2004-08-19 16:33:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.7 2004-08-06 13:07:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.8 2004-08-19 16:33:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -90,7 +90,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST request,
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::Research()");
 
-    // load the asking scenarion with the method LoadScenario
+    // load the asking scenario with the method LoadScenario
     if (LoadScenario(request, starList) == FAILURE)
     {
         return FAILURE;
@@ -138,7 +138,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
         }
         // list1 is the result of the first search
         // -> star list as parameter
-
+        
         vobsSTAR_LIST list2;
         vobsCATALOG_PHOTO photo;
         // Interrogation 2 on II/7A
@@ -151,34 +151,30 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         if (list1.Merge(list2) == FAILURE )
         {
-            printf("list1.Merge(list2) failed\n");
             return FAILURE;
         }
         // list1 + list2 -> star list as parameter
 
         vobsSTAR_LIST list3;
-            printf("size of the list1 = %d\n",list1.Size());
         if (list3.Copy(list1) == FAILURE )
         {
-            printf("list3.Copy(list1) failed\n");
             return FAILURE;
         }
-            printf("size of the list3 = %d\n",list3.Size());
         // list3 = list1 ->  star list as parameter
         
         vobsCATALOG_ASCC ascc;
         
         // Interrogation 3 on I/280
-            printf("size of the list = %d\n",list3.Size());
         if (ascc.Search(request, list3) == FAILURE)
         {
-            printf("size of the list I/280 = %d\n",list3.Size());
-            printf("ascc.Search(request, list3) failed\n");
-            
             return FAILURE;
         }
 
-        starList.Copy(list3);
+        if (starList.Merge(list3) == FAILURE)
+        {
+            return FAILURE;
+        }
+        
         if ((list1.Clear() == FAILURE)||
             (list2.Clear() == FAILURE) )
         {
@@ -191,12 +187,24 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
 
-        vobsCATALOG_CIO cio2;        
+        vobsCATALOG_CIO cio2;
         // Interrogation 4 on II/225
-        if (cio2.Search(request,starList)== FAILURE)
+        if (cio2.Search(request,list3)== FAILURE)
         {
             return FAILURE;
         }
+        
+        if (starList.Merge(list3) == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if ((list3.Clear() == FAILURE) ||
+            (list3.Copy(list1) == FAILURE) )
+        {
+            return FAILURE;
+        }
+        
         
         vobsCATALOG_HIC hic;
         // Interrogation 5 on I/196
@@ -331,103 +339,239 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
         vobsSTAR_LIST list1;
         vobsCATALOG_ASCC ascc;
         // Interrogation 1 on I/280
-        ascc.Search(request, list1); // list1 is the parameter list
+        if (ascc.Search(request, list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+        // list1 is the parameter list
 
         vobsSTAR_LIST list2;
-        list2.Copy(list1);
+        if ( list2.Copy(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become the parameter lis
         
         vobsCATALOG_HIC hic;
         // Interrogation 2 on I/196
-        hic.Search(request, list2);
+        if ( hic.Search(request, list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become a result list
 
-        starList.Merge(list2);
+        if ( starList.Merge(list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list2 is put in final list starlist
-        list2.Clear();
-        list2.Copy(list1);
+        if ( list2.Clear() == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if ( list2.Copy(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become the parameter list
 
         vobsCATALOG_MASS mass;
         // Interrogation 3 on 2MASS
-        mass.Search(request, list2);
+        if ( mass.Search(request, list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become a result list
 
-        starList.Merge(list2);
+        if ( starList.Merge(list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list2 is put in final list starlist
-        list2.Clear();
-        list2.Copy(list1);
+        if ( list2.Clear() == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if ( list2.Copy(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become the parameter list
 
         vobsCATALOG_CIO cio;
         //Interrogation 4 on II/225
-        cio.Search(request, list2);
+        if ( cio.Search(request, list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become a result list
 
-        starList.Merge(list2);
+        if ( starList.Merge(list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list2 is put in final list starlist
-        list2.Clear();
-        list2.Copy(list1);
+        if ( list2.Clear() == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if ( list2.Copy(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become the parameter list
 
         vobsCATALOG_LBSI lbsi;
         // Interrogation 5 on LBSI
-        lbsi.Search(request, list2);
+        if ( lbsi.Search(request, list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become a result list
 
-        starList.Merge(list2);
+        if ( starList.Merge(list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list2 is put in final list starlist
-        list2.Clear();
-        list2.Copy(list1);
+        if ( list2.Clear() == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if ( list2.Copy(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become the parameter list
 
         vobsCATALOG_CHARM charm;
         // Interrogation 6 on CHARM
-        charm.Search(request, list2);
+        if ( charm.Search(request, list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become a result list
 
-        starList.Merge(list2);
+        if ( starList.Merge(list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list2 is put in final list starlist
-        list2.Clear();
-        list2.Copy(list1);
+        if ( list2.Clear() == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if ( list2.Copy(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become the parameter list
 
         vobsCATALOG_PHOTO photo;
         // Interrogation 7 on II/7A
-        photo.Search(request, list2);
+        if ( photo.Search(request, list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become a result list
 
-        starList.Merge(list2);
+        if ( starList.Merge(list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list2 is put in final list starlist
-        list2.Clear();
-        list2.Copy(list1);
+        if ( list2.Clear() == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if ( list2.Copy(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become the parameter list
         
         vobsCATALOG_BSC bsc;
         // Interrogation 8 on BSC
-        bsc.Search(request, list2);
+        if ( bsc.Search(request, list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become a result list
 
-        starList.Merge(list2);
+        if ( starList.Merge(list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list2 is put in final list starlist
-        list2.Clear();
-        list2.Copy(list1);
+        if ( list2.Clear() == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if ( list2.Copy(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become the parameter list
 
         vobsCATALOG_SBSC sbsc;
         // Interrogation 9 on SBSC
-        sbsc.Search(request, list2);
+        if ( sbsc.Search(request, list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 2 become a result list
 
-        starList.Merge(list2);
+        if ( starList.Merge(list2) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list2 is put in final list starlist
         
         vobsCATALOG_DENIS denis;
         // Interrogation 10 on DENIS
-        denis.Search(request, list1);
+        if ( denis.Search(request, list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list 1 become a result list
 
-        starList.Merge(list1); 
+        if ( starList.Merge(list1) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         // list1 is put in final list starlist
     }
     else

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.3 2004-08-06 13:07:52 scetre Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.4 2004-08-19 16:33:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.3 2004-08-06 13:07:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.4 2004-08-19 16:33:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -399,7 +399,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, char *value) const
  */
 mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 {
-    logExtDbg("vobsSTAR::GetRa()");
+    //logExtDbg("vobsSTAR::GetRa()");
     
     char *raHms;
     float hh,hm,hs; 
@@ -428,7 +428,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
         ra=-(360-ra);
     }
     
-    logTest("RA (deg) : %.5f", ra); 
+    //logTest("RA (deg) : %.5f", ra); 
 
     return SUCCESS;
 }
@@ -444,7 +444,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
  */
 mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
 {
-    logExtDbg("vobsSTAR::GetDec()");
+    //logExtDbg("vobsSTAR::GetDec()");
     
     char *decDms;
     float dd,dm,ds; 
@@ -471,7 +471,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
         dec=-(360-dec);
     }
    
-    logTest("DEC (deg) : %.5f", dec); 
+    //logTest("DEC (deg) : %.5f", dec); 
     return SUCCESS;
 }
 
@@ -486,7 +486,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
  */
 mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR::IsSame()");
+    //logExtDbg("vobsSTAR::IsSame()");
     
     mcsSTRING32 valueRA;
     mcsSTRING32 valueDEC;
@@ -512,7 +512,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
  */
 mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR::IsSameCoordonate()");
+    //logExtDbg("vobsSTAR::IsSameCoordonate()");
     
     mcsSTRING32 valueRA;
     mcsSTRING32 valueDEC;
@@ -541,7 +541,7 @@ mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star,
                                       float intervalRa,
                                       float intervalDec)
 {
-    logExtDbg("vobsSTAR::IsSameCoordonate()");
+    //logExtDbg("vobsSTAR::IsSameCoordonate()");
     
     mcsFLOAT valueRA1, valueRA2;
     mcsFLOAT valueDEC1, valueDEC2;
@@ -571,7 +571,7 @@ mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star,
  */
 mcsLOGICAL vobsSTAR::IsSameHip(vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR::IsSameHip()");
+    //logExtDbg("vobsSTAR::IsSameHip()");
     
     mcsSTRING32 valueHIP;
     
@@ -594,7 +594,7 @@ mcsLOGICAL vobsSTAR::IsSameHip(vobsSTAR &star)
  */
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR::Update()");
+    //logExtDbg("vobsSTAR::Update()");
    
     mcsSTRING32 value; 
     
@@ -625,7 +625,7 @@ void vobsSTAR::Display()
     cout << "-----------------------------------------" << endl;
     for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
     {
-        cout << ucdNameList[i] << " = " << _properties[i] << endl;
+        printf("%21s = %13s\n",ucdNameList[i], _properties[i]);
     }
 }
 
@@ -643,7 +643,7 @@ void vobsSTAR::Display()
  */
 vobsUCD_ID vobsSTAR::Ucd2Id(char *ucd) const
 {
-    logExtDbg("vobsSTAR::Ucd2Id()");
+    //logExtDbg("vobsSTAR::Ucd2Id()");
     
     for (unsigned int i=0; i<vobsNB_STAR_PROPERTIES; i++)
     {

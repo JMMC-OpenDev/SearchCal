@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.6 2004-08-06 13:07:52 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.7 2004-08-19 16:33:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.6 2004-08-06 13:07:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.7 2004-08-19 16:33:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -161,7 +161,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST request, vobsSTAR_LIST &list)
     {
         printf("list not empty\n");
         if (PrepareAsking(request, list)==FAILURE)
-        {
+        { 
             return FAILURE; 
         }
     }
@@ -172,6 +172,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST request, vobsSTAR_LIST &list)
         return FAILURE; 
     }
 
+    
     return SUCCESS;
 }
 /*
