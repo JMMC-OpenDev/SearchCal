@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.29 2005-02-11 10:53:17 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.30 2005-02-16 17:33:20 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2005/02/11 10:53:17  gzins
+ * Updated property IDs related to diameter
+ * Fixed conflict related to confidence index types
+ *
  * Revision 1.28  2005/02/10 08:19:29  gzins
  * Added properties for diameter from B-V, V-K and V- R calibration
  *
@@ -31,7 +35,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.29 2005-02-11 10:53:17 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.30 2005-02-16 17:33:20 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -94,87 +98,6 @@ sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
 /*
  * Public methods
  */
-
-/**
- * Pack the calibrator in a dynamic buffer
- *
- * \param buffer buffer to complete
- *
- * \return always mcsSUCCESS
- */
-mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
-{
-    logExtDbg("sclsvrCALIBRATOR::Pack()");
-
-    mcsSTRING256 str;
-    // Copy properties of the star in th buffer
-    map<int, string>::iterator iterator;
-    for (iterator = _propertyOrder.begin();
-         iterator != _propertyOrder.end();
-         iterator++)
-    {
-        // Each star property is placed in buffer in form :
-        // 'value origin confidenceIndex'
-        sprintf(str, "%s \t%s \t%d ", 
-                (char *)_propertyList[(*iterator).second].GetValue(),
-                (char *)_propertyList[(*iterator).second].GetOrigin(),
-                (char *)_propertyList[(*iterator).second].GetConfidenceIndex());
-        miscDynBufAppendString(buffer, str);
-        miscDynBufAppendString(buffer, "\t");        
-    }
-    
-    return mcsSUCCESS;
-}
-
-/**
- * Unpack the calibrator in a dynamic buffer
- *
- * \param calibratorString the calibrator to unpack
- *
- * \return
- */
-mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
-{ 
-    logExtDbg("sclsvrCALIBRATOR::UnPack()");
-    mcsSTRING256 propertyList[300];
-
-    // Split string into list of properties 
-    mcsINT32 nbProperties;
-    miscSplitString(calibratorString, '\t', 
-                    propertyList, 300, (mcsUINT32 *)&nbProperties);
-
-    // Check the number of found properties 
-    if (nbProperties != (NbProperties() * 3))
-    {
-        errAdd(sclsvrERR_WRONG_BUFFER_FORMAT, calibratorString);
-    }
-    else
-    {
-        mcsINT32 propIdx;
-        for (_propertyOrderIterator = _propertyOrder.begin(), propIdx = 0;
-             _propertyOrderIterator != _propertyOrder.end();
-             _propertyOrderIterator++, propIdx++)
-        {
-            // Retrieve value, origin and confidence index
-            char *value, *origin;
-            vobsCONFIDENCE_INDEX confidenceIndex;
-            value  = propertyList[3*propIdx];
-            miscTrimString(value, " ");
-            origin = propertyList[3*propIdx+1];
-            miscTrimString(origin, " ");
-            sscanf(propertyList[3*propIdx+2], "%d", &confidenceIndex);
-
-            // Set the property
-            vobsSTAR_PROPERTY *property;
-            property = &(_propertyList[(*_propertyOrderIterator).second]);
-            property->SetValue(value, origin, confidenceIndex);
-        }
-    } 
-
-    return mcsSUCCESS;
-}
-
-
 /**
  * Say if the calibrator had a coherent diameter
  */

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.21 2005-02-10 08:20:21 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.22 2005-02-16 17:33:20 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/02/10 08:20:21  gzins
+ * Added properties for diameter from B-V, V-K and V- R calibration
+ *
  * Revision 1.20  2005/02/08 04:38:50  gzins
  * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
  *
@@ -73,9 +76,6 @@ public:
     // method to complete calibrator properties
     mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
  
-    virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
-    virtual mcsCOMPL_STAT UnPack(char *calibratorString);
-
     // Say if the calibrator had coherent diameter
     virtual mcsLOGICAL IsDiameterOk();
     // Say if the calibrator had visibility OK
