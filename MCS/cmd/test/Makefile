@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-11-19 16:29:41 mella Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-12-10 07:26:16 gzins Exp $"
 #
 # Makefile of cmdTest
 #
@@ -41,7 +41,7 @@ EXECUTABLES_L   = cmdTEST
 
 #
 # <brief description of cmdTest program>
-cmdTEST_OBJECTS   = cmdTEST
+cmdTEST_OBJECTS   = cmdVALID_CMD cmdTEST
 cmdTEST_LDFLAGS   = -lgdome
 cmdTEST_LIBS      = MCS C++ cmd
 #
@@ -90,6 +90,11 @@ TCL_LIBRARIES_L =
 #
 # <brief description of tttlll library>
 tttlll_OBJECTS  = 
+
+#
+# Command Definition Files (CDF)
+# ---------------------------------
+CDF_FILES       = cmdVALID
 
 #
 # man pages to be done
