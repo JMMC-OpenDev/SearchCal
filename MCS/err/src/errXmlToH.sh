@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: errXmlToH.sh,v 1.1 2004-09-10 16:53:30 gzins Exp $"
+# "@(#) $Id: errXmlToH.sh,v 1.2 2004-09-29 08:37:53 mella Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -84,10 +84,11 @@ else
     xslt="$fullPath"
 
     # Check Xml file validity
-    res=`xmllint --noout --schema $schema $1 2> /dev/null`
-    val="$1 validates"
+    xmllint --noout --schema $schema $1 &> $1.tmpres 
 
-    if [ "$res" = "$val" ];
+    grep "fails" $1.tmpres &> /dev/stderr
+    res=$?    
+    if [ $res -eq 1 ];
     then
         echo "$val"
 
@@ -102,9 +103,10 @@ else
         xsltproc $xslt $1 > $2
         echo "Header file $2 created successfully."
     else
-        echo "$res" > /dev/stderr
+        cat $1.tmpres > /dev/stderr
         echo "Sorry, validation error. You need to modify $1." > /dev/stderr
     fi
+#    rm $1.tmpres
 fi
 
 exit 0;
