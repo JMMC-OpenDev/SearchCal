@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2004-12-04 19:11:34 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2004-12-08 18:24:29 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
@@ -12,6 +12,7 @@
 # gzins     03-Dec-2004  Added mkfMakeInstallCmdDefFiles script
 # gzins     04-Dec-2004  Added mkfUpdateMcs script
 # gzins     04-Dec-2004  Changed mkfUpdateMcs to mkfInstallMcs
+# gzins     08-Dec-2004  Moved mkfInstallMcs to mcsins
 #
 #*******************************************************************************
 # REMARKS
@@ -86,7 +87,6 @@ SCRIPTS         = mkfBuildDocIndex \
                   mkfMakeTclScriptDependencies \
                   mkfMakeTclScript \
                   mkfMakeScriptDependencies \
-                  mkfInstallMcs \
                   mkfMakeScript
 SCRIPTS_L       =
 
