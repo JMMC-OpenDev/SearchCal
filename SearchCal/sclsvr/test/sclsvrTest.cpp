@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrTest.cpp,v 1.2 2005-02-15 15:46:00 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    15-Sep-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrTest.cpp,v 1.3 2005-02-15 15:52:00 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    15-Sep-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Test programm of sclsvr.
   */
 
-static char *rcsId="@(#) $Id: sclsvrTest.cpp,v 1.2 2005-02-15 15:46:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTest.cpp,v 1.3 2005-02-15 15:52:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
