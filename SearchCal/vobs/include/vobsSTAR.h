@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.29 2005-02-11 10:44:00 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.30 2005-02-13 15:25:59 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.29  2005/02/11 10:44:00  gzins
+* Added UD, LD and UDDK diameter star properties
+*
 * Revision 1.28  2005/02/10 16:42:38  gluck
 * Correct wrong type for confidenceIndex: mcsINT32 -> vobsCONFIDENCE_INDEX
 *
@@ -203,7 +206,7 @@ public:
     virtual mcsINT32 NbProperties();
     
     // Method to print out all star properties
-    virtual void Display(void);
+    virtual void Display(mcsLOGICAL showPropId=mcsFALSE);
     
 protected:
     // Method to add a property. Should be only called by constructors.

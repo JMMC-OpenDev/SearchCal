@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.29 2005-02-11 10:44:00 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.30 2005-02-13 15:25:59 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.29  2005/02/11 10:44:00  gzins
+* Added UD, LD and UDDK diameter star properties
+*
 * Revision 1.28  2005/02/11 10:32:10  gzins
 * Added UD, LD and UDDK diameter properties
 *
@@ -59,7 +62,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.29 2005-02-11 10:44:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.30 2005-02-13 15:25:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -619,27 +622,57 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     {
         mcsFLOAT ra1, ra2, dec1, dec2;
         // Get right ascension of the star. If not set return FALSE
-        if (GetRa(ra1) == mcsFAILURE)
+        if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
         {
-            errResetStack();
+            if (GetRa(ra1) == mcsFAILURE)
+            {
+                errCloseStack();
+                return mcsFALSE;
+            }
+        }
+        else
+        {
             return mcsFALSE;
         }
-        if (star.GetRa(ra2) == mcsFAILURE)
+        if (star.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
         {
-            errResetStack();
+            if (star.GetRa(ra2) == mcsFAILURE)
+            {
+                errCloseStack();
+                return mcsFALSE;
+            }
+        }
+        else
+        {
             return mcsFALSE;
         }
+
         // Get declinaison of the star. If not set return FALSE
-        if (GetDec(dec1) == mcsFAILURE)
+        if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
         {
-            errResetStack();
+            if (GetDec(dec1) == mcsFAILURE)
+            {
+                errCloseStack();
+                return mcsFALSE;
+            }
+        }
+        else
+        {
             return mcsFALSE;
         }
-        if (star.GetDec(dec2) == mcsFAILURE)
+        if (star.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
         {
-            errResetStack();
+            if (star.GetDec(dec2) == mcsFAILURE)
+            {
+                errCloseStack();
+                return mcsFALSE;
+            }
+        }
+        else
+        {
             return mcsFALSE;
         }
+
         // Compare coordinates
         if ((ra1 == ra2) && (dec1==dec2))
         {
@@ -671,44 +704,86 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
             {
                 // Get right ascension of the stars. If not set return FALSE
-                if (GetRa(val1) == mcsFAILURE)
+                if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
                 {
-                    errResetStack();
+                    if (GetRa(val1) == mcsFAILURE)
+                    {
+                        errCloseStack();
+                        return mcsFALSE;
+                    }
+                }
+                else
+                {
                     return mcsFALSE;
                 }
-                if (star.GetRa(val2) == mcsFAILURE)
+                if (star.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
                 {
-                    errResetStack();
+                    if (star.GetRa(val2) == mcsFAILURE)
+                    {
+                        errCloseStack();
+                        return mcsFALSE;
+                    }
+                }
+                else
+                {
                     return mcsFALSE;
                 }
             }
             else if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
             {
                 // Get declinaison of the stars. If not set return FALSE
-                if (GetDec(val1) == mcsFAILURE)
+                if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
                 {
-                    errResetStack();
+                    if (GetDec(val1) == mcsFAILURE)
+                    {
+                        errCloseStack();
+                        return mcsFALSE;
+                    }
+                }
+                else
+                {
                     return mcsFALSE;
                 }
-                if (star.GetDec(val2) == mcsFAILURE)
+                if (star.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
                 {
-                    errResetStack();
+                    if (star.GetDec(val2) == mcsFAILURE)
+                    {
+                        errCloseStack();
+                        return mcsFALSE;
+                    }
+                }
+                else
+                {
                     return mcsFALSE;
                 }
             }
             else
             {
                 // Get value of the property id
-                if (GetPropertyValue(propertyId, &val1) == mcsFAILURE)
+                if (IsPropertySet(propertyId) == mcsTRUE)
                 {
-                    errResetStack();
-                    return mcsFALSE;
+                    if (GetPropertyValue(propertyId, &val1) == mcsFAILURE)
+                    {
+                        errCloseStack();
+                        return mcsFALSE;
+                    }
                 }
-                if (star.GetPropertyValue(propertyId, &val2) == mcsFAILURE)
+                else
                 {
-                    errResetStack();
                     return mcsFALSE;
+                }    
+                if (star.IsPropertySet(propertyId) == mcsTRUE)
+                {
+                    if (star.GetPropertyValue(propertyId, &val2) == mcsFAILURE)
+                    {
+                        errCloseStack();
+                        return mcsFALSE;
+                    } 
                 }
+                else
+                {
+                    return mcsFALSE;
+                }    
             }
             logDebug("%s delta = %.3f", propertyId, fabs(val1-val2));
             if (fabs(val1-val2) > range)
@@ -761,20 +836,34 @@ mcsINT32 vobsSTAR::NbProperties()
 /**
  * Display all star properties on the console.
  *
+ * \param showPropId if true display each star property in a form <propId> =
+ * <value>, otherwise all properties are displayed on a single line.
  */
-void vobsSTAR::Display(void)
+void vobsSTAR::Display(mcsLOGICAL showPropId)
 {
     logExtDbg("vobsSTAR::Display()");
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
 
-    for (propertyIter  = _propertyList.begin();
-         propertyIter != _propertyList.end();
-         propertyIter++)
+    if (showPropId == mcsFALSE)
     {
-         printf("%12s", (*propertyIter).second.GetValue());
+        for (propertyIter  = _propertyList.begin();
+             propertyIter != _propertyList.end();
+             propertyIter++)
+        {
+            printf("%12s", (*propertyIter).second.GetValue());
+        }
+        printf("\n");
     }
-    printf("\n");
-
+    else
+    {
+        for (propertyIter  = _propertyList.begin();
+             propertyIter != _propertyList.end();
+             propertyIter++)
+        {
+            printf("%12s = %12s\n", (*propertyIter).second.GetId(),
+                   (*propertyIter).second.GetValue());
+        }
+    }
 }
 
 /*
