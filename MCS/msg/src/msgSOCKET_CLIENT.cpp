@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.3 2004-11-29 15:30:07 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * msgSOCKET_CLIENT class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.3 2004-11-29 15:30:07 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,7 +71,7 @@ msgSOCKET_CLIENT::~msgSOCKET_CLIENT()
  */
 mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host, mcsINT32 port)
 {
-    logExtDbg("msgSOCKET_SERVER::Open()");
+    logExtDbg("msgSOCKET_CLIENT::Open()");
 
     // Try to create a new socket
     if (Create() == FAILURE)
