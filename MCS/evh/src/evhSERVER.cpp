@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.7 2005-01-29 20:14:52 gzins Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.8 2005-01-29 20:52:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/01/29 20:14:52  gzins
+ * Added unique parameter to Connect() method
+ *
  * Revision 1.6  2005/01/29 15:15:00  gzins
  * Attached callback for DEBUG command.
  *
@@ -31,7 +34,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.7 2005-01-29 20:14:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.8 2005-01-29 20:52:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -354,7 +357,7 @@ mcsCOMPL_STAT evhSERVER::Connect()
     logExtDbg("evhSERVER::Connect()");
 
     // Connect to message services
-    if (_msgManager.Connect(Name()) == mcsFAILURE)
+    if (_msgManager.Connect(Name(), _unique) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
