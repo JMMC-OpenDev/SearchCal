@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.13 2005-02-08 20:42:06 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.14 2005-02-09 06:10:44 gzins Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/08 20:42:06  gzins
+* Used new vobsCATALOG::GetName() method
+*
 * Revision 1.12  2005/02/08 11:10:04  scetre
 * changed action enumerate <NAME> in vobs<NAME>
 *
@@ -44,7 +47,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.13 2005-02-08 20:42:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.14 2005-02-09 06:10:44 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -104,14 +107,13 @@ vobsSCENARIO::~vobsSCENARIO()
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSCENARIO::AddEntry( vobsCATALOG *catalog,
-                                      vobsSTAR_LIST *listInput,
-                                      vobsSTAR_LIST *listOutput,
-                                      vobsACTION action,
-                                      vobsSTAR_COMP_CRITERIA_LIST criteriaList)
+mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsCATALOG *catalog,
+                                     vobsSTAR_LIST *listInput,
+                                     vobsSTAR_LIST *listOutput,
+                                     vobsACTION action,
+                                     vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    logExtDbg("vobsSCENARIO::AddEntry(0x%x, 0x%x, 0x%x, %d, 0x%x)",
-              catalog, listInput, listOutput, action, &criteriaList);
+    logExtDbg("vobsSCENARIO::AddEntry()");
     
     // Create a new entry
     // Affect in this entry the catalog, the list input, the list output, the
@@ -154,14 +156,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
     while (_entryIterator != _entryList.end())
     {
         vobsSTAR_COMP_CRITERIA_LIST *criteriaList;
-        if ((*_entryIterator)._criteriaList.Size() != 0)
-        {
-            criteriaList = &(*_entryIterator)._criteriaList;
-        }
-        else
-        {
-            criteriaList = NULL;
-        }
+        criteriaList = (*_entryIterator)._criteriaList;
 
         // begin to clean the temporary list
         if ( tempList.Clear() == mcsFAILURE )
@@ -238,7 +233,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             // stored in the the list output is preserved and can be modified
             case vobsMERGE:
                 {
-                    if ( ((*_entryIterator)._listOutput)->
+                    if (((*_entryIterator)._listOutput)->
                          Merge(tempList, criteriaList) == mcsFAILURE )
                     {
                         return mcsFAILURE;

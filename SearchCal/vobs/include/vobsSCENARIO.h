@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.6 2005-01-27 15:55:54 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.7 2005-02-09 06:09:57 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/01/27 15:55:54  scetre
+* scenario became a friend class of scenario entry to be able to access private members
+*
 * Revision 1.5  2005/01/27 13:44:04  scetre
 * remove vobsSCENARIO_ENTRY class
 *
@@ -67,12 +70,12 @@ public :
     virtual mcsCOMPL_STAT AddEntry(vobsCATALOG   *catalog,
                                    vobsSTAR_LIST *listInput,
                                    vobsSTAR_LIST *listOutput,
-                                   vobsACTION action,
-                                   vobsSTAR_COMP_CRITERIA_LIST criteriaList);
+                                   vobsACTION    action,
+                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
   
     // Execute the scenario
-    mcsCOMPL_STAT Execute(vobsREQUEST &request,
-                                 vobsSTAR_LIST &starList);
+    virtual mcsCOMPL_STAT Execute(vobsREQUEST &request,
+                                  vobsSTAR_LIST &starList);
 
 protected :
 

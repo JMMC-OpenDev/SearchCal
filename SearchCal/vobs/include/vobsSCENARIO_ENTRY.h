@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.4 2005-02-08 11:10:04 scetre Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.5 2005-02-09 06:09:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/08 11:10:04  scetre
+ * changed action enumerate <NAME> in vobs<NAME>
+ *
  * Revision 1.3  2005/02/08 11:10:04  scetre
  * changed action enumerate <NAME> in vobs<NAME>
  *
@@ -72,13 +75,12 @@ class vobsSCENARIO_ENTRY
 {
 public:
     // Class constructor
-    vobsSCENARIO_ENTRY();
-    vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
     vobsSCENARIO_ENTRY(vobsCATALOG                  *catalog,
                        vobsSTAR_LIST                *listInput,
                        vobsSTAR_LIST                *listOutput,
                        vobsACTION                   action,
-                       vobsSTAR_COMP_CRITERIA_LIST  criteriaList);
+                       vobsSTAR_COMP_CRITERIA_LIST  *criteriaList);
+    vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
     
     // Class destructor
     virtual ~vobsSCENARIO_ENTRY();
@@ -95,7 +97,7 @@ private:
     vobsSTAR_LIST               *_listInput;
     vobsSTAR_LIST               *_listOutput;
     vobsACTION                  _action;
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaList;
+    vobsSTAR_COMP_CRITERIA_LIST *_criteriaList;
 };
 
 #endif /*!vobsSCENARIO_ENTRY_H*/
