@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.20 2005-02-04 07:44:43 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.21 2005-02-04 08:09:28 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/02/04 07:44:43  gzins
+* Limited number of logged messages for test
+*
 * Revision 1.19  2005/01/27 13:44:41  scetre
 * update documentation in IsSame method
 *
@@ -30,25 +33,25 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.20 2005-02-04 07:44:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.21 2005-02-04 08:09:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <math.h>
 #include <iostream>
-using namespace std;  
+using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsSTAR.h"
 #include "vobsPrivate.h"
@@ -62,7 +65,7 @@ using namespace std;
  */
 vobsSTAR::vobsSTAR()
 {
-    // Add all star properties 
+    // Add all star properties
     AddProperties();
     _propertyListIterator=_propertyList.begin();
     _propertyOrderIterator=_propertyOrder.begin();
@@ -84,7 +87,7 @@ vobsSTAR&vobsSTAR::operator=(const vobsSTAR&star)
     logExtDbg("vobsSTAR::operator=()");
     _propertyList = star._propertyList;
     _propertyOrder = star._propertyOrder;
-    return *this;    
+    return *this;
 }
 
 /*
@@ -104,14 +107,14 @@ vobsSTAR::~vobsSTAR()
  * Set a star property value.
  *
  * Set value corresponding to the given property id
- * 
- * \param id property id. 
+ *
+ * \param id property id.
  * \param value property value to set
  * \param isComputed booleen to know if it is a computed property
  * \param confidenceIndex confidence index
- * \param overwrite booleen to know if it is an overwrite property 
+ * \param overwrite booleen to know if it is an overwrite property
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  *
  * \b Error codes:\n
@@ -132,8 +135,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, char *value,
     if (propertyIter != _propertyList.end())
     {
         // Set property
-        propertyIter->second.SetValue(value, 
-                                      confidenceIndex, 
+        propertyIter->second.SetValue(value,
+                                      confidenceIndex,
                                       isComputed,
                                       overwrite);
         return mcsSUCCESS;
@@ -152,12 +155,12 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, char *value,
  * Set a star property.
  *
  * Set value corresponding to the given property id
- * 
- * \param id property id. 
+ *
+ * \param id property id.
  * \param value property value to set
  * \param isComputed booleen to know if it is a computed property
  * \param confidenceIndex confidence index
- * \param overwrite booleen to know if it is an overwrite property 
+ * \param overwrite booleen to know if it is an overwrite property
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
@@ -179,8 +182,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, mcsFLOAT value,
     if (propertyIter != _propertyList.end())
     {
         // Set property
-        propertyIter->second.SetValue(value, 
-                                      confidenceIndex, 
+        propertyIter->second.SetValue(value,
+                                      confidenceIndex,
                                       isComputed,
                                       overwrite);
         return mcsSUCCESS;
@@ -199,8 +202,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, mcsFLOAT value,
  * Get a star property.
  *
  * Set property value corresponding to the UCD
- * 
- * \param id property id. 
+ *
+ * \param id property id.
  *
  * \return pointer to the found star property object on successful completion.
  * Otherwise NULL is returned.
@@ -245,7 +248,7 @@ vobsSTAR_PROPERTY *vobsSTAR::GetProperty(char *id)
  *         printf("%s",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
  *     }
  * \endcode
- * 
+ *
  * \return pointer to the next element of the list or NULL if the end of the
  * list is reached.
  */
@@ -274,7 +277,7 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
     // Once the iterator is put on the correct property, the value of the
     // property is returned
     _propertyListIterator = _propertyList.find(_propertyOrderIterator->second);
-    
+
     return (&(_propertyListIterator->second));
 }
 
@@ -283,8 +286,8 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
  * Get a star property.
  *
  * Get value as string corresponding to the given property id.
- * 
- * \param id property id. 
+ *
+ * \param id property id.
  *
  * \return pointer to the found star property value on successful completion.
  * Otherwise NULL is returned.
@@ -315,8 +318,8 @@ const char *vobsSTAR::GetPropertyValue(char *id)
  * Get a star property.
  *
  * Get value as string corresponding to the given property id.
- * 
- * \param id property id. 
+ *
+ * \param id property id.
  * \param value pointer to store value.
  *
  * \return pointer to the found star property value on successful completion.
@@ -345,10 +348,10 @@ mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
 }
 
 /**
- * Check whether the property is set or not.  
- * 
- * \param id property id. 
- * 
+ * Check whether the property is set or not.
+ *
+ * \param id property id.
+ *
  * \warning
  * If the given property id is unknown, this method returns false (i.e.
  * mcsFALSE)
@@ -380,10 +383,10 @@ mcsLOGICAL vobsSTAR::IsPropertySet(char *id)
 }
 
 /**
- * Check whether a property is a property.  
- * 
- * \param id property id. 
- * 
+ * Check whether a property is a property.
+ *
+ * \param id property id.
+ *
  *
  * \return
  * True value (i.e. mcsTRUE) if the the property is known, false (i.e.
@@ -421,10 +424,10 @@ mcsLOGICAL vobsSTAR::IsProperty(char *id)
 mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 {
     logExtDbg("vobsSTAR::GetRa()");
-    
+
     mcsSTRING64 raHms;
-    float hh,hm,hs; 
-    
+    float hh,hm,hs;
+
     // Check if the value is set
     if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE)
     {
@@ -433,7 +436,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
         return mcsFAILURE;
     }
     strcpy(raHms, GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
-    
+
     if (sscanf(raHms, "%f %f %f", &hh, &hm, &hs) != 3)
     {
         errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
@@ -448,7 +451,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     {
         ra=-(360-ra);
     }
-    
+
     return mcsSUCCESS;
 }
 
@@ -463,9 +466,9 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
 {
     logExtDbg("vobsSTAR::GetDec()");
-    
+
     mcsSTRING64 decDms;
-    float dd,dm,ds; 
+    float dd,dm,ds;
 
     // Check if the value is set
     if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE)
@@ -476,24 +479,24 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
     }
 
     strcpy(decDms, GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
-    
+
     if (sscanf(decDms, "%f %f %f", &dd, &dm, &ds) != 3)
     {
         errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
         return mcsFAILURE;
     }
-    
+
     if (dd > 0)
     {
         // Convert to degrees
         dec = dd + dm/60 + ds / 3600;
     }
-    else 
+    else
     {
         // Convert to degrees
         dec = -1 * ( dd + dm/60 + ds / 3600 );
     }
-   
+
     return mcsSUCCESS;
 }
 
@@ -520,23 +523,23 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         if (GetRa(ra1) == mcsFAILURE)
         {
             errResetStack();
-            return mcsFALSE;                
+            return mcsFALSE;
         }
         if (star.GetRa(ra2) == mcsFAILURE)
         {
             errResetStack();
-            return mcsFALSE;                
+            return mcsFALSE;
         }
         // Get declinaison of the star. If not set return FALSE
         if (GetDec(dec1) == mcsFAILURE)
         {
             errResetStack();
-            return mcsFALSE;                
+            return mcsFALSE;
         }
         if (star.GetDec(dec2) == mcsFAILURE)
         {
             errResetStack();
-            return mcsFALSE;                
+            return mcsFALSE;
         }
         // Compare coordinates
         if ((ra1 == ra2) && (dec1==dec2))
@@ -549,7 +552,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         }
     }
     // if criteria list is not empty
-    else 
+    else
     {
         mcsSTRING64 propertyId;
         mcsFLOAT range;
@@ -572,12 +575,12 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 if (GetRa(val1) == mcsFAILURE)
                 {
                     errResetStack();
-                    return mcsFALSE;                
+                    return mcsFALSE;
                 }
                 if (star.GetRa(val2) == mcsFAILURE)
                 {
                     errResetStack();
-                    return mcsFALSE;                
+                    return mcsFALSE;
                 }
             }
             else if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
@@ -586,12 +589,12 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 if (GetDec(val1) == mcsFAILURE)
                 {
                     errResetStack();
-                    return mcsFALSE;                
+                    return mcsFALSE;
                 }
                 if (star.GetDec(val2) == mcsFAILURE)
                 {
                     errResetStack();
-                    return mcsFALSE;                
+                    return mcsFALSE;
                 }
             }
             else
@@ -606,7 +609,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 {
                     errResetStack();
                     return mcsFALSE;
-                }     
+                }
             }
             logDebug("%s delta = %.3f", propertyId, fabs(val1-val2));
             if (fabs(val1-val2) > range)
@@ -629,7 +632,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
 {
     logExtDbg("vobsSTAR::Update()");
-    
+
     // For each star property
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
     for (propertyIter  = _propertyList.begin();
@@ -638,7 +641,7 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
         if (IsPropertySet((char *)(*propertyIter).first.c_str()) == mcsFALSE)
         {
             // Copy property form the given star
-            _propertyList[(*propertyIter).first] = 
+            _propertyList[(*propertyIter).first] =
                 star._propertyList[(*propertyIter).first];
         }
     }
@@ -658,13 +661,13 @@ mcsINT32 vobsSTAR::NbProperties()
 
 /**
  * Display all star properties on the console.
- * 
+ *
  */
 void vobsSTAR::Display(void)
 {
     logExtDbg("vobsSTAR::Display()");
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
-    
+
     for (propertyIter  = _propertyList.begin();
          propertyIter != _propertyList.end();
          propertyIter++)
@@ -680,10 +683,10 @@ void vobsSTAR::Display(void)
  */
 
 /**
- * Add a star property  
+ * Add a star property
  *
  * \param id     property identifier
- * \param name   property name 
+ * \param name   property name
  * \param type   property type
  * \param format format used to set property
  *
@@ -707,79 +710,72 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
 
     vobsSTAR_PROPERTY property(id, name, type, format);
     _propertyList[id] = property;
+    _propertyOrder[_propertyList.size()-1] = id;
+
     return mcsSUCCESS;
 }
 
 /**
- * Add all star properties and fix an order 
+ * Add all star properties and fix an order
  *
- * \return mcsSUCCESS 
+ * \return mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     //logExtDbg("vobsSTAR::AddProperties()");
     AddProperty(vobsSTAR_ID_MAIN, "hd", vobsSTRING_PROPERTY);
-    _propertyOrder[0]=vobsSTAR_ID_MAIN;
     AddProperty(vobsSTAR_ID_ALTERNATIVE, "hip", vobsSTRING_PROPERTY);
-    _propertyOrder[1]=vobsSTAR_ID_ALTERNATIVE;
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "ra", vobsSTRING_PROPERTY);
-    _propertyOrder[2]=vobsSTAR_POS_EQ_RA_MAIN;
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "dec", vobsSTRING_PROPERTY);
-    _propertyOrder[3]=vobsSTAR_POS_EQ_DEC_MAIN;
     AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmdec", vobsSTRING_PROPERTY);
-    _propertyOrder[4]=vobsSTAR_POS_EQ_PMDEC;
     AddProperty(vobsSTAR_POS_EQ_PMRA, "pmra", vobsSTRING_PROPERTY);
-    _propertyOrder[5]=vobsSTAR_POS_EQ_PMRA;
     AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY);
-    _propertyOrder[6]=vobsSTAR_POS_PARLX_TRIG;
     AddProperty(vobsSTAR_SPECT_TYPE_MK, "tsp", vobsSTRING_PROPERTY);
-    _propertyOrder[7]=vobsSTAR_SPECT_TYPE_MK;
     AddProperty(vobsSTAR_CODE_VARIAB, "varflag", vobsSTRING_PROPERTY);
-    _propertyOrder[8]=vobsSTAR_CODE_VARIAB;
     AddProperty(vobsSTAR_CODE_MULT_FLAG, "multflag", vobsSTRING_PROPERTY);
-    _propertyOrder[9]=vobsSTAR_CODE_MULT_FLAG;
     AddProperty(vobsSTAR_POS_GAL_LAT, "glat", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[10]=vobsSTAR_POS_GAL_LAT;
     AddProperty(vobsSTAR_POS_GAL_LON, "glon", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[11]=vobsSTAR_POS_GAL_LON;
     AddProperty(vobsSTAR_VELOC_HC, "radvel", vobsSTRING_PROPERTY);
-    _propertyOrder[12]=vobsSTAR_VELOC_HC;
-    AddProperty(vobsSTAR_EXTENSION_DIAM, "diam", vobsSTRING_PROPERTY);
-    _propertyOrder[13]=vobsSTAR_EXTENSION_DIAM;
+    AddProperty(vobsSTAR_EXTENSION_DIAM, "diam", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_EXTENSION_DIAM_ERROR, "diamErr", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_OBS_METHOD, "meth", vobsSTRING_PROPERTY);
-    _propertyOrder[14]=vobsSTAR_OBS_METHOD;
     AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "wlen", vobsFLOAT_PROPERTY);
-    _propertyOrder[15]=vobsSTAR_INST_WAVELENGTH_VALUE;
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
-    _propertyOrder[16]=vobsSTAR_PHOT_FLUX_IR_MISC;
     AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
-    _propertyOrder[17]=vobsSTAR_UNITS;
     AddProperty(vobsSTAR_PHOT_JHN_U, "U", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[18]=vobsSTAR_PHOT_JHN_U;
     AddProperty(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[19]=vobsSTAR_PHOT_JHN_B;
     AddProperty(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[20]=vobsSTAR_PHOT_JHN_V;
     AddProperty(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[21]=vobsSTAR_PHOT_JHN_R;
     AddProperty(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[22]=vobsSTAR_PHOT_JHN_I;
     AddProperty(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[23]=vobsSTAR_PHOT_JHN_J;
     AddProperty(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[24]=vobsSTAR_PHOT_JHN_H;
     AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[25]=vobsSTAR_PHOT_JHN_K;
     AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[26]=vobsSTAR_PHOT_JHN_L;
     AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[27]=vobsSTAR_PHOT_JHN_M;
-    AddProperty(vobsSTAR_PHOT_IR_N_10_4, "N", vobsSTRING_PROPERTY);
-    _propertyOrder[28]=vobsSTAR_PHOT_IR_N_10_4;
+    AddProperty(vobsSTAR_PHOT_JHN_N, "N", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_VELOC_ROTAT, "velocrotat", vobsSTRING_PROPERTY);
-    _propertyOrder[29]=vobsSTAR_VELOC_ROTAT;
     AddProperty(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY);
-    _propertyOrder[30]=vobsSTAR_PHOT_COLOR_EXCESS;
+    AddProperty(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx",  vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_IRAS, "Fnu_12",  vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_IRAS_QUALITY, "Fqual_12",  
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_MSX, "F12", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_MSX_ERROR, "e_F12",  
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(vobsSTAR_CHI2_QUALITY, "Chi2", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", 
+                vobsFLOAT_PROPERTY, "%.3f");
+
 
     return mcsSUCCESS;
 }
