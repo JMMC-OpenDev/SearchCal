@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmd.doc,v 1.2 2004-11-19 16:29:40 mella Exp $"
+* "@(#) $Id: cmd.doc,v 1.3 2004-11-21 19:59:02 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -13,15 +13,88 @@
 /**
 \mainpage cmd : C++ representation of a command
 
-<b>Brief description</b>\n
-The 'cmd' module is a collection of classes to deal with parameters of a
-command.
+<h3>Brief description</h3>\n
+The 'cmd' module is a collection of classes to handle a command and its
+associated parameters.
 
-<b>Detailed decription</b>\n
-The main use of this module is to build a command object that corresponds to a
-parameter list. The model is builded using a command definition file according to the given command mnemonic.
+<h3>Detailed decription</h3>\n
+The main use of this module builds a command object. Each command contains a
+collection of parameters object. The model is builded using a command
+definition file according to the given command mnemonic. The command
+definition files are located into the config directories according the general
+search mecanism. If cdf is not found in the config directory of the module
+area, the file is searched into the INTROOT's config and finally into the
+MCSROOT's config directory.
+
+After instantiation, some methods give access to informations about
+parameters. See cmdCMD class documentation for details.
+
+Some command classes can be used especially for certain command. The class 
+code is generated automatically using the cmdCdfToCppClass shell script.
+Your cdf file can be checked by the cmdIsCdfValid script.
+
+<h3> XML format for CDF files </h3>
+
+Each simple command must get a mnemonic and a description (the xml tree order
+should be respected). Mnemonics must contains between 3 and 12 characters.
+Descriptions can be much longer to give usefull comments to users. 
+
+\code
+<cmd>
+    <mnemonic>MYCOMMAND</mnemonic>
+    <desc>Here comes a really usefull multiline comment to explain MYCOMMAND.
+Because MYCOMMAND is not complex, here is the end of the description.</desc>
+</cmd>
+\endcode
+
+If your command accepts some parameters one <b>params</b> node must contains
+the parameters. Each parameter are associated to one <b>param</b> node. 
+One <b>name</b> element must be filled to indicate the name of the parameter.  
+One <b>type</b> element must be filled to indicate the type of the parameter.
+The accepted types must be one of :
+<ul>
+<li>integer</li>
+<li>double</li>
+<li>string</li>
+<li>boolean</li>
+</ul>
+One <b>desc</b> element can be filled.  
+One <b>defaultValue</b> element can be filled. The value must be under a node
+indicating the type of defaultValue.
+One <b>unit</b> element can be filled. 
+One <b>optional</b> attribute can be filled ( using 0, false, 1 or true ) to
+indicate if the parameter must be filled by the user or not. By default the
+parameter is required (optional is false).
+
+\code
+<cmd>
+    <mnemonic>MYCOMMAND</mnemonic>
+    <desc>Here comes a really usefull multiline comment to explain MYCOMMAND.
+Because MYCOMMAND is not complex, here is the end of the description.</desc>
+    <params>
+        <param>
+            <name>p1</name>
+            <type>integer<type>
+            <desc>first parameter with description</desc>
+        </param>
+        <param>
+            <name>p2</name>
+            <type>integer<type>
+            <defaultValue><integer>1</integer></defaultValue>
+            <unit>second</unit>
+        </param>
+        <param>
+            <name>p3</name>
+            <type>integer<type>
+            <desc>optional</desc>
+        </param>
+    </params>
+</cmd>
+\endcode
+
+One graphical tool is planned to be simplify the xml writing process.
 
 
-\todo explain the xml format of cdf
+
 \todo order methods in the h and C files
 */
