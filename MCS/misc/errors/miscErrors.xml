@@ -40,6 +40,11 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[Dynamic Buffer not initialised.]]></errFormat>
    </error>
+   <error id="24">
+      <errName>DYN_BUF_IS_EMPTY</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Dynamic Buffer is empty.]]></errFormat>
+   </error>
    <error id="6">
       <errName>FILE_ENV_VAR_NOT_DEF</errName>
       <errSeverity>WARNING</errSeverity>
