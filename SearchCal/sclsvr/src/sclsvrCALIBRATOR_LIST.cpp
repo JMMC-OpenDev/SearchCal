@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.13 2005-02-04 14:22:50 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.14 2005-02-04 15:30:19 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/04 14:22:50  scetre
+* Sort method for GUI added
+*
 * scetre    15-Sep-2004  Created
 * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
 *
@@ -16,7 +19,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.13 2005-02-04 14:22:50 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.14 2005-02-04 15:30:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -119,15 +122,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
     for (unsigned int el = 0; el < Size(); el++)
     {
         // Complete the calibrator
-        if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))->Complete(request) 
-            == mcsFAILURE)
+        sclsvrCALIBRATOR *calibrator;
+        calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
+
+        if (calibrator->Complete(request) == mcsFAILURE)
         {
-            errCloseStack();
-            logTest("star %d not a calibrator\n", el+1);
-        }
-        else 
-        {
-            logTest("star %d is a calibrator\n", el+1);
+            return mcsFAILURE;
         }
     }
     return mcsSUCCESS;
