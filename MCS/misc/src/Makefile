@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2004-09-10 17:10:30 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2004-11-09 14:53:55 gzins Exp $"
 #
 # Makefile of misc Library
 #
@@ -42,14 +42,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = miscLocateFile
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+# 
+miscLocateFile_OBJECTS   = miscLocateFile
+miscLocateFile_LDFLAGS   = -lgdome
+miscLocateFile_LIBS      = mcs log err misc
 
 #
 # special compilation flags for single c sources
@@ -107,8 +107,8 @@ tttlll_OBJECTS  =
 #
 # man pages to be done
 # --------------------
-MANSECTIONS =
-MAN1 =
+MANSECTIONS = 1
+MAN1 = miscLocateFile.c
 MAN3 =
 MAN5 =
 MAN7 =
