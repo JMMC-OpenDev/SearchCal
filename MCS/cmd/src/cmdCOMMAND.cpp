@@ -1,23 +1,25 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.14 2005-01-11 12:16:30 mella Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* mella     15-Nov-2004  Created
-* gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
-*                        fixed bug related to flag check
-* gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
-* gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
-* gzins     10-Dec-2004  Resolved path before loading CDF file in ParseCdf()
-* gzins     15-Dec-2004  Added error handling
-* gzins     22-Dec-2004  Added cdfName parameter to constructor
-*                        Removed Parse(void) method
-*                        Renamed GetHelp to GetDescription
-*                        Added GetShortDescription
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.15 2005-01-26 10:51:30 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * mella     15-Nov-2004  Created
+ * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
+ *                        fixed bug related to flag check
+ * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
+ * gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
+ * gzins     10-Dec-2004  Resolved path before loading CDF file in ParseCdf()
+ * gzins     15-Dec-2004  Added error handling
+ * gzins     22-Dec-2004  Added cdfName parameter to constructor
+ *                        Removed Parse(void) method
+ *                        Renamed GetHelp to GetDescription
+ *                        Added GetShortDescription
+ *
+ ******************************************************************************/
+
 /**
  * \file
  * cmdCOMMAND class definition.
@@ -25,7 +27,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.14 2005-01-11 12:16:30 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.15 2005-01-26 10:51:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -167,52 +169,64 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
 {
     logExtDbg ("cmdCOMMAND::GetShortDescription()");
-   
-    // clear recipient
+
+    // Clear description
     desc.clear();
-    
-    // Parse The cdf file to obtain full description
-    if (ParseCdf()==FAILURE)
-    {
-        desc.append("Sorry help can't be generated because an error occured during parsing\n");
-        return FAILURE;
-    }
 
-    // append the command name
-    desc.append(_name);
+    // Append the command name
+    mcsSTRING32 cmdName;
+    sprintf(cmdName, "%10s - ", _name.c_str());
+    desc.append(cmdName);
 
-    if (_desc.empty())
+    // If there is no CDF for this command
+    if (_cdfName.size() == 0 )
     {
-        // If no description does exist.
-        desc.append(": No description found.");
+        desc.append("No description available.");
     }
+    // Else
     else
     {
-        desc.append(": ");
-        
-        // Get only the first sentence of the main description.
-        unsigned int end = _desc.find_first_of(".\n");
-        // if dot is found
-        if(end != string::npos)
+        // Parse The cdf file to obtain full description
+        if (ParseCdf()==FAILURE)
         {
-            // to include the dot
-            end++;
-            // if end is higher than max len
-            if(end > SHORT_DESC_MAX_LEN)
-            {
-                // cut 3 before to place ... 
-                end = SHORT_DESC_MAX_LEN - 3 ; 
-                desc.append(_desc.substr(0,end+1));
-                desc.append("...");
-            }
+            return FAILURE;
+        }
+
+        if (_desc.empty())
+        {
+            // If no description does exist.
+            desc.append(": No description found in CDF.");
         }
         else
         {
-            end = SHORT_DESC_MAX_LEN; 
-            desc.append(_desc.substr(0,end+1));
-        }  
-        
-        
+            // Get only the first sentence of the main description.
+            unsigned int end = _desc.find_first_of(".\n");
+
+            // If dot is found
+            if (end != string::npos)
+            {
+                // To include the dot
+                end++;
+                
+                // if end is higher than max len
+                if(end > SHORT_DESC_MAX_LEN)
+                {
+                    // cut 3 before to place ... 
+                    end = SHORT_DESC_MAX_LEN - 3 ; 
+                    desc.append(_desc.substr(0, end));
+                    desc.append("...");
+                }
+                else
+                {
+                    desc.append(_desc.substr(0, end));
+                }
+            }
+            else
+            {
+                end = SHORT_DESC_MAX_LEN; 
+                desc.append(_desc.substr(0, end));
+            }  
+        }
     }
     desc.append("\n");
     return SUCCESS;
@@ -229,55 +243,62 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
 
     // clear recipient
     desc.clear();
-    
+
     string s;
-    
-    // Parse The cdf file to obtain full description
-    if (ParseCdf()==FAILURE)
+
+    // If there is no CDF for this command
+    if (_cdfName.size() == 0 )
     {
-        s.append("Sorry help can't be generated because an error occured during parsing\n");
-        desc.append(s);
-        return FAILURE;
-    }
-    
-    // append the command name
-    s.append(_name);
-    s.append(" :\n");
-   
-    // append description of command
-    if (_desc.empty())
-    {
-        s.append("No description found.");
+        s.append("There is no help available for '");
+        s.append(_name);
+        s.append("' command.");
     }
     else
     {
-        s.append("Description:\n");
-        s.append(_desc);
-    }
-    s.append("\n");
-    
-    // append help for each parameter if any
-    if (_paramList.size()>0)
-    {
-        s.append("Help on parameters:\n");
-        STRING2PARAM::iterator i = _paramList.begin();
-        while(i != _paramList.end())
+        // Parse The cdf file to obtain full description
+        if (ParseCdf()==FAILURE)
         {
-            cmdPARAM * child = i->second;
-            string childHelp = child->GetHelp();
-            if ( ! childHelp.empty() )
+            return FAILURE;
+        }
+
+        // append the command name
+        s.append(_name);
+        s.append(" :\n");
+
+        // append description of command
+        if (_desc.empty())
+        {
+            s.append("No description found.");
+        }
+        else
+        {
+            s.append("Description:\n");
+            s.append(_desc);
+        }
+        s.append("\n");
+
+        // append help for each parameter if any
+        if (_paramList.size() > 0)
+        {
+            s.append("Help on parameters:\n");
+            STRING2PARAM::iterator i = _paramList.begin();
+            while(i != _paramList.end())
             {
-                s.append(childHelp);
-                s.append("\n");
+                cmdPARAM * child = i->second;
+                string childHelp = child->GetHelp();
+                if ( ! childHelp.empty() )
+                {
+                    s.append(childHelp);
+                    s.append("\n");
+                }
+                i++;
             }
-            i++;
+        }
+        else
+        {
+            s.append("This command takes no parameter\n");
         }
     }
-    else
-    {
-        s.append("This command takes no parameter\n");
-    }
-
     desc.append(s);
     
     return SUCCESS;
