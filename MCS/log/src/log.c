@@ -1,13 +1,89 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: log.c,v 1.5 2004-05-14 13:43:29 mella Exp $"
+*  "@(#) $Id: log.c,v 1.6 2004-05-26 08:59:47 mella Exp $"
 *
 * who       when      what
 * --------  --------  ----------------------------------------------
 * mella   07/05/04  Preliminary version based on log from VLT/ESO
 =* 
  */
+
+/**
+\mainpage Log : MCS C Logging module
+
+\htmlonly
+<center>
+<a href="#summary">Summary</a>
+<a href="#requirements">Requirements</a>
+<a href="#installation">Installation</a>
+<a href="#config">Configuration</a>
+<a href="#copyright">Copyright</a>
+</center>
+\endhtmlonly
+
+\section summary Summary
+
+Log is a C module for logging to syslog or stdout. It is a module of the MCS software.
+Log is available from the CVS repository of JMMC or is included in the MCS distribution. 
+
+\section requirements Requirements
+ 
+\subsection platforms Platforms
+
+log module was successfully compiled and run on the following platforms :
+
+\li Mandrake Linux release 9.2
+
+log module should compile and run on the following platforms, but has never
+been :
+
+\li Other Linux distributions
+
+\subsection software Software
+ 
+The following softwares are needed to generate log:
+
+\li MCS environment
+
+\section installation Installation
+ 
+\subsection installation_cvs Building from cvs's sources
+
+The log module uses the MCS makefile system. The following commands should build log on the supported platforms:
+
+\code
+
+$ cvs co log
+$ cd log/src
+$ make
+
+\endcode
+
+The following command should install the log library into the INTROOT directory defined by the environment variable $INTROOT:
+
+\code
+
+$ make install
+
+\endcode
+
+\section config Configuration
+
+\subsection conf_files Configuration files
+
+\subsection conf_syntax Configuration syntax
+
+\subsection env Environment variables
+
+No use at the present time.
+
+\section copyright Copyright
+
+All software in this package are Copyright © 2004 JMMC
+http://mariotti.ujf-grenoble.fr 
+
+*/
 
 /** \file
  * This module provides functions that enable users to handle the three types
