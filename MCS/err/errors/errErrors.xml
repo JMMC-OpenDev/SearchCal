@@ -1,65 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<errorList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="desErr.xsd"
-    moduleName="err">
-    <error id="1">
-        <errName>NUM_1</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="2">
-        <errName>NUM_2</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="3">
-        <errName>NUM_3</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="4">
-        <errName>NUM_4</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="5">
-        <errName>NUM_5</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="6">
-        <errName>NUM_6</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="7">
-        <errName>NUM_7</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="8">
-        <errName>NUM_8</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="9">
-        <errName>NUM_9</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="10">
-        <errName>NUM_10</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="11">
-        <errName>NUM_11</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
-    <error id="12">
-        <errName>NUM_12</errName>
-        <errSeverity>SEVERE</errSeverity>
-        <errFormat>Error number %d</errFormat>
-    </error>
+<?xml version="1.0"?>
+<errorList moduleName="err">
+   <error id="1">
+      <errName>NUM_1</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Error number %d (for test purpose only)]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>NUM_2</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Error number %d (for test purpose only)]]></errFormat>
+   </error>
+   <error id="3">
+      <errName>USR_MSG</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Error message intended to end-user (for test purpose only)]]></errFormat>
+   </error>
 </errorList>
