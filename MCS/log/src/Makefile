@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-09-10 15:59:20 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2004-09-10 16:05:07 gzins Exp $"
 #
 # Makefile of log 
 #
@@ -96,8 +96,8 @@ tttlll_OBJECTS  =
 #
 # man pages to be done
 # --------------------
-MANSECTIONS =
-MAN1 =
+MANSECTIONS = 1
+MAN1 = $(addsuffix .c, $(EXECUTABLES))
 MAN3 =
 MAN5 =
 MAN7 =
