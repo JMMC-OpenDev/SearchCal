@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.20 2005-02-08 04:38:50 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.21 2005-02-10 08:20:21 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/02/08 04:38:50  gzins
+ * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
+ *
  * Revision 1.19  2005/02/07 14:59:28  gzins
  * Added CVS log as modification history
  *
@@ -44,12 +47,14 @@
 #define sclsvrCALIBRATOR_RO                 "RO"
 #define sclsvrCALIBRATOR_VO                 "VO"
 #define sclsvrCALIBRATOR_BO                 "BO"
-#define sclsvrCALIBRATOR_VIS                "VIS"
-#define sclsvrCALIBRATOR_VIS_ERROR          "VIS_ERROR"
-#define sclsvrCALIBRATOR_VIS_FLAG           "VIS_FLAG"
-#define sclsvrCALIBRATOR_ANGULAR_DIAM       "ANGULAR_DIAM"
-#define sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR "ANGULAR_DIAM_ERROR"
-#define sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG  "ANGULAR_DIAM_FLAG"
+#define sclsvrCALIBRATOR_VIS2               "VIS2"
+#define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
+#define sclsvrCALIBRATOR_VIS2_FLAG          "VIS2_FLAG"
+#define sclsvrCALIBRATOR_DIAM_BV            "DIAM_BV"
+#define sclsvrCALIBRATOR_DIAM_VR            "DIAM_VR"
+#define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
+#define sclsvrCALIBRATOR_DIAM_ERROR         "DIAM_ERROR"
+#define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 
 /*
  * Class declaration

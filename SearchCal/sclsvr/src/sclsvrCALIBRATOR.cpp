@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.27 2005-02-08 21:36:41 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.28 2005-02-10 08:19:29 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2005/02/08 21:36:41  gzins
+ * Removed diameter error conversion (% to mas). Done at catalog level.
+ *
  * Revision 1.26  2005/02/08 20:54:06  gzins
  * Added 'computed' flag when setting computed star property
  * Updated Pack() and Unpack() to store and retrieve origin and confidence index of star properties
@@ -25,7 +28,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.27 2005-02-08 21:36:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.28 2005-02-10 08:19:29 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -153,7 +156,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
             char *value, *origin;
             vobsCONFIDENCE_INDEX confidenceIndex;
             value  = propertyList[3*propIdx];
+            miscTrimString(value, " ");
             origin = propertyList[3*propIdx+1];
+            miscTrimString(origin, " ");
             sscanf(propertyList[3*propIdx+2], "%d", &confidenceIndex);
 
             // Set the property
@@ -173,7 +178,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
 mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
 {
     // If diameter has not been computed
-    if (IsPropertySet(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG) == mcsFALSE)
+    if (IsPropertySet(sclsvrCALIBRATOR_DIAM_FLAG) == mcsFALSE)
     {
         // Return false
         return mcsFALSE;
@@ -183,8 +188,8 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
     {
         // Get the flag, and test it
         const char *flag;
-        flag = GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG);
-        if (strncmp(flag, "OK", 2) == 0)
+        flag = GetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG);
+        if (strcmp(flag, "OK") == 0)
         {
             return mcsTRUE;
         }
@@ -202,7 +207,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
 mcsLOGICAL sclsvrCALIBRATOR::IsVisibilityOk()
 {
     // If visibility has not been computed
-    if (IsPropertySet(sclsvrCALIBRATOR_VIS_FLAG) == mcsFALSE)
+    if (IsPropertySet(sclsvrCALIBRATOR_VIS2_FLAG) == mcsFALSE)
     {
         // Return false
         return mcsFALSE;
@@ -212,8 +217,8 @@ mcsLOGICAL sclsvrCALIBRATOR::IsVisibilityOk()
     {
         // Get the flag, and test it
         const char *flag;
-        flag = GetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG);
-        if (strncmp(flag, "OK", 2) == 0)
+        flag = GetPropertyValue(sclsvrCALIBRATOR_VIS2_FLAG);
+        if (strcmp(flag, "OK") == 0)
         {
             return mcsTRUE;
         }
@@ -273,7 +278,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     }
     else
     {
-         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "OK", 
+         SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
                           vobsSTAR_COMPUTED_PROP);
     }
 
@@ -282,10 +287,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     {
         // If visibility has been computed
         mcsFLOAT computedVis;
-        if (IsPropertySet(sclsvrCALIBRATOR_VIS) == mcsTRUE)
+        if (IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE)
         {
             // Get computed visibility
-            GetPropertyValue(sclsvrCALIBRATOR_VIS, &computedVis);
+            GetPropertyValue(sclsvrCALIBRATOR_VIS2, &computedVis);
 
             // Get expected visibility
             mcsFLOAT expectedVis;
@@ -295,12 +300,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             // requested one, and the flag accordingly
             if (computedVis < expectedVis)
             {
-                SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "NOK",
+                SetPropertyValue(sclsvrCALIBRATOR_VIS2_FLAG, "NOK",
                                  vobsSTAR_COMPUTED_PROP);
             }
             else
             {
-                SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "OK",
+                SetPropertyValue(sclsvrCALIBRATOR_VIS2_FLAG, "OK",
                                  vobsSTAR_COMPUTED_PROP);
             }
         }
@@ -595,7 +600,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeAngularDiameter()");
-    mcsFLOAT diam, diamError;
+    mcsFLOAT diamBv, diamVr, diamVk, diamError;
     mcsFLOAT mgB, mgV, mgR, mgK;
     mcsFLOAT starProperty[4];
     alxCONFIDENCE_INDEX confidenceIndex;
@@ -628,27 +633,32 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     mgK=starProperty[3];
      
     if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK,
-                                  &diam,
-                                  &diamError,
+                                  &diamBv, &diamVr, &diamVk, &diamError,
                                   &confidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Set compute value of the angular diameter
-    SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM, diam,
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diamBv,
                      vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR, diamError,
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, diamVr,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diamVk,
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR, diamError,
                      vobsSTAR_COMPUTED_PROP, confidenceIndex);
    
     // Set flag according to the confidence index 
     if (confidenceIndex == alxCONFIDENCE_LOW)
     {
-         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP);
+         SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, 
+                          "NOK", vobsSTAR_COMPUTED_PROP);
     }
     else
     {
-         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP);
+         SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG,
+                          "OK", vobsSTAR_COMPUTED_PROP);
     }
    
     return mcsSUCCESS;
@@ -682,15 +692,31 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     }
     else
     {
-        if (IsPropertySet(sclsvrCALIBRATOR_ANGULAR_DIAM) == mcsTRUE)
+        // If diameter has been computed 
+        if (IsPropertySet(sclsvrCALIBRATOR_DIAM_BV) == mcsTRUE)
         {
-            GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM, &diam);
-            GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR, &diamError);
+            // And it is coherent
+            if (IsDiameterOk() == mcsTRUE)
+            {
+                // Get diameters and associated error values
+                mcsFLOAT diamBv, diamVr, diamVk;
+                GetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, &diamBv);
+                GetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, &diamVr);
+                GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &diamVk);
+                GetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR, &diamError);
+
+                // Compute mean diameter
+                diam = (diamBv + diamVr + diamVk) / 3.0;
+            }
+            // Else do not compute visibility
+            else
+            {
+                return mcsSUCCESS;
+            }
         }
+        // Else do not compute visibility
         else
         {
-            // If diameter is not available, do not compute visibility
-            logWarning("Could not compute visibility, no diameter available");
             return mcsSUCCESS;
         }
     }
@@ -705,10 +731,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     {
         return mcsFAILURE;
     }
+    printf("diam = %f (%f) -> vis = %f (%f) vis2 = %f (%f)\n", diam, diamError, vis, visErr, vis2, vis2Err); 
     
     // Affect visibility property
-    SetPropertyValue(sclsvrCALIBRATOR_VIS, vis2, vobsSTAR_COMPUTED_PROP);
-    SetPropertyValue(sclsvrCALIBRATOR_VIS_ERROR, vis2Err, vobsSTAR_COMPUTED_PROP);
+    SetPropertyValue(sclsvrCALIBRATOR_VIS2, vis2, vobsSTAR_COMPUTED_PROP);
+    SetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, vis2Err, vobsSTAR_COMPUTED_PROP);
     
     return mcsSUCCESS;
 }
@@ -735,11 +762,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
 mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
     //logExtDbg("vobsSTAR::AddProperties()");
-    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAM, "diam", vobsFLOAT_PROPERTY, 
+    AddProperty(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, 
                 "%.3f");
-    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR, "diamErr", 
+    AddProperty(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_ERROR, "diamErr", 
                 vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "diamFlag", 
+    AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", 
                 vobsSTRING_PROPERTY);
     AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "%.3f");
@@ -750,10 +781,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(sclsvrCALIBRATOR_VIS, "vis", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(sclsvrCALIBRATOR_VIS_ERROR, "visErr", 
+    AddProperty(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", 
                 vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(sclsvrCALIBRATOR_VIS_FLAG, "visFlag", vobsSTRING_PROPERTY);
+    AddProperty(sclsvrCALIBRATOR_VIS2_FLAG, "vis2Flag", vobsSTRING_PROPERTY);
 
     return mcsSUCCESS;
 }
