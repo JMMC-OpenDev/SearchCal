@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-11-19 16:29:40 mella Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-11-21 18:41:31 mella Exp $"
 #
 # Makefile of cmd
 #
@@ -69,7 +69,7 @@ cmd_OBJECTS   = cmdCMD cmdPARAM
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = cmdCdfToCppClass cmdIsCDTValid 
+SCRIPTS         = cmdCdfToCppClass cmdIsCdfValid 
 SCRIPTS_L       =
 
 #
