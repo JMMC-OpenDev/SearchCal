@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPrivate.h,v 1.1 2004-11-19 15:57:12 sccmgr Exp $"
+* "@(#) $Id: cmdPrivate.h,v 1.2 2005-01-12 08:44:22 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -31,7 +31,11 @@ extern "C" {
  */
 #define MODULE_ID "cmd"
 
- 
+/*
+ * Max length for short description.
+ */
+#define SHORT_DESC_MAX_LEN 60
+
 
 #ifdef __cplusplus
 }
