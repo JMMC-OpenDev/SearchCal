@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.5 2005-02-10 07:55:31 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.6 2005-02-12 15:07:14 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/10 07:55:31  gzins
+ * Updated alxComputeAngularDiameter to return diameter from B-V, V-R and V-K calibration
+ *
  * Revision 1.4  2005/02/04 13:50:05  gzins
  * Re-defined confidence index
  *
@@ -105,6 +108,13 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
                                    mcsFLOAT *vis2,
                                    mcsFLOAT *visError,
                                    mcsFLOAT *vis2Error);
+
+mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT ra,
+                                     mcsFLOAT dec,
+                                     mcsFLOAT minMag,
+                                     mcsFLOAT maxMag,
+                                     mcsFLOAT *areaSize);
+
 #ifdef __cplusplus
 }
 #endif
