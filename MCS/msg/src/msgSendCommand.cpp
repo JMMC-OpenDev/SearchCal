@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.18 2005-02-28 10:21:54 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.19 2005-03-08 10:32:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/02/28 10:21:54  gzins
+ * Removed printf used for debug
+ *
  * Revision 1.17  2005/02/28 08:16:20  gzins
  * Removed possible CR from the given process name, command and parameters
  *
@@ -78,7 +81,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.18 2005-02-28 10:21:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.19 2005-03-08 10:32:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -169,8 +172,8 @@ int main (int argc, char *argv[])
     }
 
     // Try to connect to msgManager
-    msgMANAGER_IF manager;
-    if (manager.Connect(argv[0]) == mcsFAILURE)
+    msgMANAGER_IF *manager = new msgMANAGER_IF;
+    if (manager->Connect(argv[0]) == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
@@ -178,7 +181,7 @@ int main (int argc, char *argv[])
 
     // Send the specified command to the specified process
     mcsINT32 cmdId;
-    cmdId = manager.SendCommand(command, process, params);
+    cmdId = manager->SendCommand(command, process, params);
     if (cmdId != mcsFAILURE)
     {
         if (verbose == mcsTRUE)
@@ -187,7 +190,7 @@ int main (int argc, char *argv[])
         }
 
         // While last reply hasn't been received...
-        while (manager.Receive(msg, timeout) == mcsSUCCESS)
+        while (manager->Receive(msg, timeout) == mcsSUCCESS)
         {
             // Test the received reply command name validity
             if (strcmp(command, msg.GetCommand()) != 0)
@@ -264,10 +267,15 @@ int main (int argc, char *argv[])
         status = EXIT_FAILURE;
     }
 
-    // Disconnect from msgManager
-    manager.Disconnect();
-
+    // If it was not the command to stop msgManager
+    if ((strcmp(command, "EXIT") != 0) && (strcmp(process, "msgManager") != 0))
+    {
+        // Disconnect from msgManager
+        manager->Disconnect();
+    }
+    delete (manager);
     mcsExit();
+
     exit(status);
 }
 
