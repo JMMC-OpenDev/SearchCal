@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.C,v 1.2 2004-11-25 14:54:46 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.C,v 1.2 2004-11-25 14:54:46 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -183,6 +183,42 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(char *name, char *value,
 /**
  * Set a calibrator property.
  *
+ * Set value property corresponding to the UCD
+ * 
+ * \param ucdId UCD id. 
+ * \param value property value to set
+ * \param overwrite indicate whether a value already set has to be overwritten  
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(vobsUCD_ID ucdId, char *value,
+                                            mcsLOGICAL overwrite)
+{
+    return vobsSTAR::SetProperty(ucdId, value, overwrite);
+}
+
+/**
+ * Set a calibrator property.
+ *
+ * Set value property corresponding to the UCD
+ * 
+ * \param ucdId UCD id. 
+ * \param value property value to set
+ * \param overwrite indicate whether a value already set has to be overwritten  
+ * 
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(vobsUCD_ID ucdId, mcsFLOAT value,
+                                            mcsLOGICAL overwrite)
+{
+    return vobsSTAR::SetProperty(ucdId, value, overwrite);
+}
+
+/**
+ * Set a calibrator property.
+ *
  * Set value property corresponding to the PROPERTY
  * 
  * \param id property or UCD id. 
@@ -196,37 +232,28 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(char *name, char *value,
  * \li sclsvrERR_INVALID_PROPERTY_ID
  * 
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(int id,
+mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(sclsvrPROPERTY_ID id,
                                             char *value,
                                             mcsLOGICAL overwrite)
 {
     logExtDbg("sclsvrCALIBRATOR::SetProperty()");
 
-    // If id is an UCD id
-    if (IsUcdId(id) == mcsTRUE)
+    // If it is not a valid property id, return error
+    if ((id == UNKNOWN_PROP_ID) ||
+        (id < UNKNOWN_PROP_ID) ||
+        (id > VISIBILITY_ERROR_ID))
     {
-        // Set star property
-        return (vobsSTAR::SetProperty((vobsUCD_ID)id, value, overwrite));
+        errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
+        return FAILURE;
     }
-    // Else
-    else
+    // Affect property value
+    if ((IsPropertySet(id) == mcsFALSE) || (overwrite == mcsTRUE))
     {
-        // If it is not a valid property id, return error
-        if ((id == UNKNOWN_PROP_ID) ||
-            (id < UNKNOWN_PROP_ID) ||
-            (id > VISIBILITY_ERROR_ID))
-        {
-            errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
-            return FAILURE;
-        }
-        // Affect property value
-        if ((IsPropertySet(id) == mcsFALSE) || (overwrite == mcsTRUE))
-        {
-            int propertyIdx; 
-            propertyIdx = id - sclsvrPROP_ID_OFFSET;
-            strcpy(_compProperties[propertyIdx], value);
-        }
+        int propertyIdx; 
+        propertyIdx = id - sclsvrPROP_ID_OFFSET;
+        strcpy(_compProperties[propertyIdx], value);
     }
+
 
     return SUCCESS;    
 }

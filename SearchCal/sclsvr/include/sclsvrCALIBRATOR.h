@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.2 2004-11-25 14:54:46 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -85,9 +85,14 @@ public:
     virtual ~sclsvrCALIBRATOR();
  
     // Method to set the star properties
+
     virtual mcsCOMPL_STAT SetProperty(char *property, char *value, 
                                       mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetProperty(int id, char *value,
+    virtual mcsCOMPL_STAT SetProperty(vobsUCD_ID ucdId, char *value,
+                                      mcsLOGICAL overwrite=mcsFALSE);
+    virtual mcsCOMPL_STAT SetProperty(vobsUCD_ID ucdId, mcsFLOAT value,
+                                      mcsLOGICAL overwrite=mcsFALSE);
+    virtual mcsCOMPL_STAT SetProperty(sclsvrPROPERTY_ID id, char *value,
                                       mcsLOGICAL overwrite=mcsFALSE);
     virtual mcsCOMPL_STAT SetProperty(sclsvrPROPERTY_ID id, mcsFLOAT value,
                                       mcsLOGICAL overwrite=mcsFALSE);
