@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdCdfToCppClass.sh,v 1.5 2004-12-10 06:51:24 gzins Exp $"
+# "@(#) $Id: cmdCdfToCppClass.sh,v 1.6 2005-01-31 07:48:03 mella Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -52,7 +52,8 @@ then
 fi
 
 modName=`ctooGetModuleName`
-xslFile=`miscLocateFile cmdCdfToCppClass.xsl`
+xslFileName="cmdCdfToCppClass.xsl"
+xslFile=`miscLocateFile $xslFileName`
 cdfFile=`basename $1`
 
 ##### Check CDF file name ; must be <modName><cmdName>.cdf
@@ -71,9 +72,16 @@ then
     exit 1
 fi
 
+# Check if xslt file exist
+if [ -z $xslFile ]
+then
+    echo "ERROR: No $xslFileName stylesheet file found to convert cdf into cpp" >&2
+    echo "" >&2
+    exit 1
+fi
+
 ##### Generate C++ class files 
 echo "Transforming $1 with $xslFile"
-
 xsltproc --stringparam "moduleName" $modName --stringparam "cdfFilename" $cdfFile $xslFile $1
 
 #___oOo___
