@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/bashrc
 #
-# Version: $Id: bashrc,v 1.4 2004-05-14 16:04:53 gzins Exp $
+# Version: $Id: bashrc,v 1.5 2004-06-25 06:11:56 gzins Exp $
 #
 # Purpose: bash configuration file
 #
@@ -24,13 +24,39 @@
 # Define VLTROOT to MCSROOT
 export VLTROOT=$MCSROOT
 
-# Add $MCSROOT to PATH
-if ! echo ${PATH} |grep -q $MCSROOT ; then
-    export PATH="$PATH:$INTROOT/bin:$MCSROOT/bin"
+# Set LD_LIBRARY_PATH (path for dynamic linked libraries)
+if [ "$LD_LIBRARY_PATH" != "" ]
+then
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../lib
+else
+    export LD_LIBRARY_PATH=../lib    
 fi
 
-# Set LD_LIBRARY_PATH (path for dynamic linked libraries)
-export LD_LIBRARY_PATH=../lib:$INTROOT/lib:$MCSROOT/lib
+# Set MANPATH (path for dynamic linked libraries)
+if [ "$MANPATH" != "" ]
+then
+    export MANPATH=$MANPATH:../man
+else
+    export MANPATH=../man    
+fi
+
+# Add $INTROOT to LD_LIBRARY_PATH, PATH and MANPATH
+if [ "$INTROOT" != "" ]
+then
+    if ! echo ${PATH} |grep -q $INTROOT
+    then
+        export PATH="$PATH:$INTROOT/bin"
+        export MANPATH="$MANPATH:$INTROOT/man"
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INTROOT/lib
+    fi
+fi
+
+# Add $MCSROOT to LD_LIBRARY_PATH, PATH and MANPATH
+if ! echo ${PATH} |grep -q $MCSROOT ; then
+    export PATH="$PATH:$MCSROOT/bin"
+    export MANPATH="$MANPATH:$MCSROOT/man"
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MCSROOT/lib
+fi
 
 # Aliases
 alias m=more
