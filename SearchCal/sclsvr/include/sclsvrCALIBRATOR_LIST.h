@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.20 2005-03-04 16:28:52 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.21 2005-03-06 10:48:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/03/04 16:28:52  scetre
+ * Changed Call to Save method
+ *
  * Revision 1.19  2005/03/04 15:51:21  scetre
  * Updated call to Save method
  *
@@ -99,8 +102,8 @@ public:
     virtual mcsCOMPL_STAT FilterByMagnitude(const char *band,
                                             mcsFLOAT magValue,
                                             mcsFLOAT magRange);
-    virtual mcsCOMPL_STAT FilterBySpectralType(std::list<char *> spectTypeList);
-    virtual mcsCOMPL_STAT FilterByLuminosityClass(std::list<char *> luminosityList);
+    virtual mcsCOMPL_STAT FilterBySpectralType(char *tempClassList[],
+                                               char *lumClassList[]);
     virtual mcsCOMPL_STAT FilterByVisibility(mcsFLOAT visMax);
     virtual mcsCOMPL_STAT FilterByVariability(mcsLOGICAL authorized=mcsTRUE);
     virtual mcsCOMPL_STAT FilterByMultiplicity(mcsLOGICAL authorized=mcsTRUE);

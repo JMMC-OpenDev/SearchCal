@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.35 2005-03-04 16:28:52 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.36 2005-03-06 10:48:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2005/03/04 16:28:52  scetre
+ * Changed Call to Save method
+ *
  * Revision 1.34  2005/03/04 15:51:21  scetre
  * Updated call to Save method
  *
@@ -86,7 +89,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.35 2005-03-04 16:28:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.36 2005-03-06 10:48:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -431,48 +434,151 @@ sclsvrCALIBRATOR_LIST::FilterByMagnitude(const char *band,
 }
 
 /**
- * Method to remove calibrator which have not the specified Spectral type
+ * Filter calibrator list by spectral type.
  *
+ * This method removes all the calibrators whose the spectral type does not
+ * match the given temperature or luminosity classes. The temperature and
+ * luminosity classes, used to filter list, are in two separated tables which
+ * are ends by a NULL to mark the end of table.
+ *
+ * \param tempClassList list of accepted temperature classes. If NULL, no filter
+ * is applied on temperature class.
+ * \param lumClassList list of accepted luminosity classes. If NULL, no filter
+ * is applied on luminosity class.
+ * 
+ * \warning Only temperature class coded on one letter is supported.
+ * \ex
+ * Filter all calibrators belonging to the temperature classes 'O' and 'G'.
+ * No filter applied on luminosity class.
+ * \code
+ * char *temperatureClassList[3] = {"O", "G", NULL};
+ * list.FilterBySpectralType(temperatureClassList, NULL);
+ * \endcode
+ * Filter all calibrators belonging to the luminosity classes 'I' and 'IV'.
+ * No filter applied on temperature class.
+ * \code
+ * char *luminosityClassList[3] = {"I", "IV", NULL};
+ * list.FilterBySpectralType(NULL, luminosityClassList);
+ * \endcode
+ * ls
+ * 
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT
-sclsvrCALIBRATOR_LIST::FilterBySpectralType(std::list<char *> spectTypeList)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterBySpectralType(char *tempClassList[],
+                                                          char *lumClassList[])
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::FilterBySpectralType()");;
-    mcsLOGICAL isSameSpectralClass;
-    // for each calibrator of the list
+
+    // For each calibrator in the list
     sclsvrCALIBRATOR *calibrator;
     for (unsigned int el = 0; el < Size(); el++)
     {
-        // if the calibrator had a spectral type different to the wnated
-        // spectral type
-        calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
-        mcsSTRING32 spectralClass;
-        // if it is not possible to get the spectral type
-        if (calibrator->GetSpectralClass(spectralClass)== mcsFAILURE)
+        calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
+
+        // If spectral type is unknown
+        if (calibrator->IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
         {
             // Remove it
             Remove(*calibrator);
-            el = el-1;
+            el = el - 1;
         }
+        // Else
         else
         {
-            isSameSpectralClass=mcsFALSE;
-            // compare the sectral class of te class with all the spectral
-            // class in the list
-            std::list<char *>::iterator spectTypeListIterator;
-            spectTypeListIterator=spectTypeList.begin();
-            while (spectTypeListIterator != spectTypeList.end())
+            // Get the star spectral type 
+            const char *spType;
+            spType = calibrator-> GetPropertyValue(vobsSTAR_SPECT_TYPE_MK);
+                
+            // Look for temperature class(es). Stop when end of string reached
+            // or first character of luminosity class found 
+            mcsINT32 spIdx = 0; // Index on spectral type string
+            mcsLOGICAL tempClassMatch = mcsFALSE;
+            while ((spType[spIdx] != '\0') && 
+                   (spType[spIdx] != 'I') && (spType[spIdx] != 'V'))
             {
-                if (strcmp((*spectTypeListIterator), spectralClass) == 0)
+                // If the list of temperature classes has been given
+                if (tempClassList != NULL)
                 {
-                    isSameSpectralClass = mcsTRUE;
+                    // For ecah given temperature class
+                    mcsINT32 classIdx = 0;
+                    while (tempClassList[classIdx] != NULL)
+                    {
+                        // Check if 
+                        if (spType[spIdx] == tempClassList[classIdx][0])
+                        {
+                            tempClassMatch = mcsTRUE;
+                        }
+                        classIdx++;
+                    }
                 }
-                spectTypeListIterator++;
+                // Else
+                else
+                {
+                    // Do not filter
+                    tempClassMatch = mcsTRUE;
+                }
+                spIdx++;
             }
-            // if the spectral of the list is not one of the list
-            if (isSameSpectralClass != mcsTRUE)
+
+            mcsLOGICAL lumClassMatch = mcsFALSE;
+            // If the list of luminosity classes has been given
+            if (lumClassList != NULL)
+            {
+                // Look for luminosity class(es). Stop when end of string
+                // recahed
+                mcsSTRING8 lumClass;
+                memset(lumClass, '\0', sizeof(mcsSTRING8)); 
+                mcsLOGICAL endOfString = mcsFALSE;
+                mcsINT32   lumIdx = 0;
+                while (endOfString == mcsFALSE)
+                {
+                    // Get all consecutive characters constituing luminosity
+                    // class
+                    if ((spType[spIdx] == 'I') || (spType[spIdx] == 'V'))
+                    {
+                        lumClass[lumIdx] = spType[spIdx];
+                        lumIdx++;
+                    }
+                    else
+                    {
+                        // If luminosity class has been found
+                        if (lumIdx != 0)
+                        {
+                            // For ecah given temperature class
+                            mcsINT32 classIdx = 0;
+                            while (lumClassList[classIdx] != NULL)
+                            {
+                                // Check if 
+                                if (strcmp(lumClass, 
+                                           lumClassList[classIdx]) == 0)
+                                {
+                                    lumClassMatch = mcsTRUE;
+                                }
+                                classIdx++;
+                            }
+
+                            memset(lumClass, '\0', sizeof(mcsSTRING8)); 
+                            lumIdx = 0;
+                        }
+                    }
+                    if (spType[spIdx] == '\0')
+                    {
+                        endOfString = mcsTRUE;
+                    }
+
+                    spIdx++;
+                }
+            }
+            // Else
+            else
+            {
+                // Do not filter
+                lumClassMatch = mcsTRUE;
+            }
+
+            // If the spectral of the list is not one of the list
+            if ((tempClassMatch == mcsFALSE) || (lumClassMatch == mcsFALSE))
             {            
                 // Remove it
                 Remove(*calibrator);
@@ -480,64 +586,7 @@ sclsvrCALIBRATOR_LIST::FilterBySpectralType(std::list<char *> spectTypeList)
             }
         }
     }
-    
-    return mcsSUCCESS;
-}
 
-/**
- * Method to remove calibrator which have not the specified luminosity class
- *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- */
-mcsCOMPL_STAT 
-sclsvrCALIBRATOR_LIST::FilterByLuminosityClass(std::list<char *> luminosityList)
-{
-    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByLuminosityClass()");
-
-    mcsLOGICAL isSameLuminosityClass;
-    // for each calibrator of the list
-    sclsvrCALIBRATOR *calibrator;
-    for (unsigned int el = 0; el < Size(); el++)
-    {
-        // if the calibrator had a spectral type different to the wanted
-        // spectral type
-        calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
-        mcsSTRING32 luminosityClass;
-        // if it is not possible to get the luminosity class
-        if (calibrator->GetLuminosityClass(luminosityClass)==
-            mcsFAILURE)
-        {
-            // Remove it
-            Remove(*calibrator);
-            el = el-1;
-        }
-        else
-        {
-            isSameLuminosityClass=mcsFALSE;
-            // compare the luminosity class of te class with all the spectral
-            // class in the list
-            std::list<char *>::iterator luminosityListIterator;
-            luminosityListIterator=luminosityList.begin();
-            while (luminosityListIterator != luminosityList.end())
-            {
-                if (strcmp((*luminosityListIterator), luminosityClass) == 0)
-                {
-                    isSameLuminosityClass = mcsTRUE;
-                }
-                luminosityListIterator++;
-            }
-            // if the spectral of the list is not one of the list
-            if (isSameLuminosityClass != mcsTRUE)
-            {            
-                // Remove it
-                Remove(*calibrator);
-                el = el-1;            
-            }
-        }
-    }
-
-    
     return mcsSUCCESS;
 }
 
