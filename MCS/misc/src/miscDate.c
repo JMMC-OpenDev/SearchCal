@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/22 10:23:35  gluck
+ * Code review corrections: doxygen file header
+ *
  * Revision 1.11  2005/02/22 10:08:15  gluck
  * Code review corrections
  *
@@ -28,7 +31,7 @@
  * Definition of miscDate functions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.12 2005-02-22 10:23:35 gluck Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.13 2005-02-22 15:05:55 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -66,7 +69,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * The number of digits used to represent the the Nth of seconds is given by
  * the \em precision argument.
  *
- * \param utcTime character array where the resulting date is stored
+ * \param utcTime string (character array) where the resulting date is stored
  * \param precision number of digits to be used for the Nth of seconds. The
  * valid range of this argument is 0 to 6.
  * 
@@ -140,7 +143,7 @@ mcsCOMPL_STAT miscGetUtcTimeStr(mcsSTRING32 utcTime, mcsINT32 precision)
  * The number of digits used to represent the the Nth of seconds is given by
  * the \em precision argument. 
  *
- * \param localTime character array where the resulting date is stored
+ * \param localTime string (character array) where the resulting date is stored
  * \param precision number of digits to be used for the Nth of seconds. The
  * valid range of this argument is 0 to 6.
  *
