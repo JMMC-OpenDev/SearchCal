@@ -1,17 +1,20 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.6 2005-01-26 08:11:28 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.7 2005-01-27 13:45:30 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/01/26 08:11:28  scetre
+* change history
+*
 * scetre    06-Jul-2004  Created
 * gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.6 2005-01-26 08:11:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.7 2005-01-27 13:45:30 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -486,11 +489,20 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             // Scan UCD list
             char *nextLinePtr;
             char *currLinePtr=line;
+
+            // temporary variable to parse in case of II/225
+            mcsSTRING256 lambda;
+            mcsFLOAT lambdaFloat;
+            mcsSTRING256 flux;
+            strcpy(lambda, "");
+            strcpy(flux, "");
+
             for (int j=0; j < nbUcd; j++)
             {
                 // Get the column name and UCD
                 if (cData->getNextColDesc(&colName, 
-                                          &ucdName, (mcsLOGICAL)(j==0)) == mcsFAILURE)
+                                          &ucdName,
+                                          (mcsLOGICAL)(j==0)) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -501,6 +513,18 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                 {
                     // End of line reached; stop UCD scan
                     break;
+                }
+                // If lambda is found, memorise it
+                else if (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
+                {
+                    currLinePtr = nextLinePtr;
+                    strcpy(lambda, ucdValue); 
+                }
+                // if flux is found, memorise it
+                else if (strcmp(ucdName, vobsSTAR_PHOT_FLUX_IR_MISC) == 0)
+                {
+                    currLinePtr = nextLinePtr;
+                    strcpy(flux, ucdValue);
                 }
                 else
                 {
@@ -517,13 +541,84 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     {
                         // If ucd is not found, ignore error
                         if (errIsInStack(MODULE_ID, 
-                                         vobsERR_INVALID_PROPERTY_ID) == mcsTRUE)
+                                         vobsERR_INVALID_PROPERTY_ID)
+                            == mcsTRUE)
                         {
                             errResetStack();
                         }
                         else
                         {
                             return mcsFAILURE;
+                        }
+                    }
+                }
+                // if wavelength and flux has been found and memorise
+                if ((strcmp(lambda, "") != 0) && (strcmp(flux, "") != 0))
+                {
+                    // convert lambda from str to numerical value
+                    if (sscanf(lambda, "%f" , &lambdaFloat) == 1)
+                    {
+                        logTest("we will compute a mag\n");
+                        logTest("lbd = %f and flux = %s\n", lambdaFloat, flux);
+                        // if the wvl is 1.25, the flux is mgJ
+                        if (lambdaFloat == (mcsFLOAT)1.25)
+                        {
+                            logTest("J = %s\n", flux);
+                            if (star.SetPropertyValue(vobsSTAR_PHOT_JHN_J,
+                                                      flux) == mcsFAILURE)
+                            {
+                                // If ucd is not found, ignore error
+                                if (errIsInStack(MODULE_ID, 
+                                                 vobsERR_INVALID_PROPERTY_ID)
+                                    == mcsTRUE)
+                                {
+                                    errResetStack();
+                                }
+                                else
+                                {
+                                    return mcsFAILURE;
+                                }
+                            }
+                        }
+                        // if wvl is 1.65, the flux is mgH
+                        if (lambdaFloat == (mcsFLOAT)1.65)
+                        {
+                            logTest("H = %s\n", flux);
+                            if (star.SetPropertyValue(vobsSTAR_PHOT_JHN_H,
+                                                      flux) == mcsFAILURE)
+                            {
+                                // If ucd is not found, ignore error
+                                if (errIsInStack(MODULE_ID, 
+                                                 vobsERR_INVALID_PROPERTY_ID)
+                                    == mcsTRUE)
+                                {
+                                    errResetStack();
+                                }
+                                else
+                                {
+                                    return mcsFAILURE;
+                                }
+                            }
+                        }
+                        // if wvl is 2.20, the flux is mgK
+                        if (lambdaFloat == (mcsFLOAT)2.20)
+                        {
+                            logTest("K = %s\n", flux);
+                            if (star.SetPropertyValue(vobsSTAR_PHOT_JHN_K,
+                                                      flux) == mcsFAILURE)
+                            {
+                                // If ucd is not found, ignore error
+                                if (errIsInStack(MODULE_ID, 
+                                                 vobsERR_INVALID_PROPERTY_ID)
+                                    == mcsTRUE)
+                                {
+                                    errResetStack();
+                                }
+                                else
+                                {
+                                    return mcsFAILURE;
+                                }
+                            }
                         }
                     }
                 }
