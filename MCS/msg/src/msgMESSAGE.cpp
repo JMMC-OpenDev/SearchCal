@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.11 2004-12-21 06:57:30 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.12 2004-12-22 08:45:26 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -19,7 +19,7 @@
 * gzins     08-Dec-2004  Implemented methods for SendId and MessageId 
 * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
 *                        misc Dynamic Buffer, and removed unused API
-* gzins     20-Dec-2004  Fixed bug in GetBodyPtr which returned a wrong pointer
+* gzins     20-Dec-2004  Fixed bug in GetBody which returned a wrong pointer
 *                        when body was empty
 *
 *
@@ -30,7 +30,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.11 2004-12-21 06:57:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.12 2004-12-22 08:45:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -375,25 +375,12 @@ mcsCOMPL_STAT msgMESSAGE::SetLastReplyFlag(mcsLOGICAL flag)
  *
  * \return mcsTRUE if the message is internal, mcsFALSE otherwise
  */
-mcsLOGICAL msgMESSAGE::isInternal(void)
+mcsLOGICAL msgMESSAGE::IsInternal(void)
 {
-    logExtDbg("msgMESSAGE::GetInternalFlag()");
+    logExtDbg("msgMESSAGE::IsInternal()");
 
     // Return weither the current message is an internal one or not
     return _isInternal;
-}
-
-/**
- * Return a pointer to the message header.
- *
- * \return the address of the message header
- */
-msgHEADER* msgMESSAGE::GetHeaderPtr(void)
-{
-    logExtDbg("msgMESSAGE::GetHeaderPtr()");
-
-    // Return a pointer to the message header
-    return &_header;
 }
 
 /**
@@ -401,9 +388,9 @@ msgHEADER* msgMESSAGE::GetHeaderPtr(void)
  *
  * \return the address of the message body, or NULL if an error occured
  */
-char* msgMESSAGE::GetBodyPtr(void)
+char* msgMESSAGE::GetBody(void)
 {
-    logExtDbg("msgMESSAGE::GetBodyPtr()");
+    logExtDbg("msgMESSAGE::GetBody()");
 
     // If message body is empty
     if (GetBodySize() == 0)
@@ -444,83 +431,14 @@ mcsINT32 msgMESSAGE::GetBodySize(void)
 }
 
 /**
- * Copy \<bufLen\> bytes of \<buffer\> in the message body.
+ * Clear the message body.
  *
- * If \<bufLen\> equal 0, strlen() is used to get \<buffer\> length to be
- * copied in.
- * If \<buffer\> equal NULL, the message body is resetted with '\\0'.
- *
- * \warning This method is not re-entrant, as the message body will be resetted
- * on each call.
- *
- * \param buffer the byte buffer to be copied in
- * \param bufLen the size to be copied in
- *
- * \return FAILURE if the to-be-copied-in byte number is greater than the
- * message body maximum size, SUCCESS otherwise
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
  */
-mcsCOMPL_STAT msgMESSAGE::SetBody(const char      *buffer,
-                                  const mcsUINT32  bufLen)
+mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
 {
     logExtDbg("msgMESSAGE::SetBody()");
-    
-    mcsUINT32 internalBufLen = 0;
 
-    // If there is nothing to copy in...
-    if (buffer == NULL)
-    {
-        // Force buffer length to 0
-        internalBufLen = 0;
-    }
-    else
-    {
-        // If to-be-copied-in byte number is not given...
-        if (bufLen == 0)
-        {
-            // Get the given buffer total length
-            internalBufLen = strlen(buffer);
-        }
-        else
-        {
-            internalBufLen = bufLen;
-        }
-    }
-
-    // Reset the body buffer and allocate sufficient memory
-    if (AllocateBody(internalBufLen) == FAILURE)
-    {
-        return FAILURE;
-    }
-
-    // Fill the body buffer with the given length and content
-    if ((buffer != NULL) && (internalBufLen > 0))
-    {
-        if (miscDynBufAppendBytes(&_body, (char*)buffer, internalBufLen)
-            == FAILURE)
-        {
-            return FAILURE;
-        }
-    }
-
-    // Store the new body size in the header
-    sprintf(_header.msgBodySize, "%d", internalBufLen);
-    
-    return SUCCESS;
-}
-
-/**
- * Allocate some memory for the message body.
- *
- * \warning This method is not re-entrant, as the message body will be resetted
- * on each call.
- *
- * \param bufLen the total needed buffer size
- *
- * \return SUCCESS on successfull completion, FAILURE otherwise
- */
-mcsCOMPL_STAT  msgMESSAGE::AllocateBody(const mcsUINT32 bufLen)
-{
-    logExtDbg("msgMESSAGE::AllocateBody()");
 
     // Empty the body buffer
     if (miscDynBufReset(&_body) == FAILURE)
@@ -528,12 +446,120 @@ mcsCOMPL_STAT  msgMESSAGE::AllocateBody(const mcsUINT32 bufLen)
         return FAILURE;
     }
 
-    // Set the message body size
-    if (miscDynBufAlloc(&_body, bufLen) == FAILURE)
+    // Reset the body size
+    sprintf(_header.msgBodySize, "%d", 0);
+
+    return SUCCESS;
+}
+
+/**
+ * Copy \<bufLen\> bytes of \<buffer\> in the message body.
+ *
+ * If \<bufLen\> equal 0, strlen() is used to get \<buffer\> length to be
+ * copied in.
+ *
+ * \param buffer buffer to be copied in
+ * \param bufLen buffer size
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors code:\n
+ * The possible errors are :
+ * \li msgERR_NULL_PARAM
+ */
+mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
+                                  mcsUINT32  bufLen)
+{
+    logExtDbg("msgMESSAGE::SetBody()");
+    
+    // If received a NULL pointer
+    if (buffer == NULL)
     {
+        errAdd(msgERR_NULL_PARAM, "buffer");
         return FAILURE;
     }
+    
+    // If to-be-copied-in byte number is not given...
+    if (bufLen <= 0)
+    {
+        // Get the given buffer total length
+        bufLen = strlen(buffer) + 1;
+    }
 
+    // Fill the body buffer with the given length and content
+    if (bufLen > 0)
+    {  
+        // Reset the body buffer and allocate sufficient memory
+        if (AllocateBody(bufLen) == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        if (miscDynBufAppendBytes(&_body, (char*)buffer, bufLen) == FAILURE)
+        {
+            return FAILURE;
+        }
+    }
+    else
+    {
+        // Empty the body buffer
+        if (miscDynBufReset(&_body) == FAILURE)
+        {
+            return FAILURE;
+        }
+    }
+
+    // Store the new body size in the header
+    sprintf(_header.msgBodySize, "%d", bufLen);
+    
+    return SUCCESS;
+}
+
+/**
+ * Append \<bufLen\> bytes of \<buffer\> to the message body.
+ *
+ * If \<bufLen\> equal 0, strlen() is used to get \<buffer\> length to be
+ * appended.
+ *
+ * \param buffer buffer to be appended to
+ * \param bufLen buffer size 
+ *
+ * \return FAILURE if the to-be-copied-in byte number is greater than the
+ * message body maximum size, SUCCESS otherwise
+ */
+mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
+                                       mcsUINT32  bufLen)
+{
+    logExtDbg("msgMESSAGE::AppendToBody()");
+    
+    // If received a NULL pointer
+    if (buffer == NULL)
+    {
+        errAdd(msgERR_NULL_PARAM, "buffer");
+        return FAILURE;
+    }
+    
+    // If to-be-appended byte number is not given...
+    if (bufLen <= 0)
+    {
+        // Get the given buffer total length
+        bufLen = strlen(buffer) + 1;
+    }
+
+    // Fill the body buffer with the given length and content
+    if (bufLen > 0)
+    {  
+        if (miscDynBufAppendBytes(&_body, (char*)buffer, bufLen) == FAILURE)
+        {
+            return FAILURE;
+        }
+    }
+
+    // Store the new body size in the header
+    mcsUINT32 bodySize;
+    miscDynBufGetNbStoredBytes(&_body, &bodySize);
+    sprintf(_header.msgBodySize, "%d", bodySize);
+    
     return SUCCESS;
 }
 
@@ -566,7 +592,7 @@ void  msgMESSAGE::Display(void)
     if (GetBodySize() != 0)
     {
         // Show it
-        cout << GetBodyPtr(); 
+        cout << GetBody(); 
     }
     else
     {
@@ -575,6 +601,38 @@ void  msgMESSAGE::Display(void)
 
     cout << "'" << endl
          << "}";
+}
+
+/*
+ * Public methods
+ */
+/**
+ * Allocate some memory for the message body.
+ *
+ * \warning This method is not re-entrant, as the message body will be resetted
+ * on each call.
+ *
+ * \param bufLen the total needed buffer size
+ *
+ * \return SUCCESS on successfull completion, FAILURE otherwise
+ */
+mcsCOMPL_STAT  msgMESSAGE::AllocateBody(const mcsUINT32 bufLen)
+{
+    logExtDbg("msgMESSAGE::AllocateBody()");
+
+    // Empty the body buffer
+    if (miscDynBufReset(&_body) == FAILURE)
+    {
+        return FAILURE;
+    }
+
+    // Set the message body size
+    if (miscDynBufAlloc(&_body, bufLen) == FAILURE)
+    {
+        return FAILURE;
+    }
+
+    return SUCCESS;
 }
 
 /*___oOo___*/
