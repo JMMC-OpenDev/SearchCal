@@ -1,13 +1,17 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: script.template,v 1.12 2005-01-21 16:13:10 gluck Exp $"
+#%# "@(#) $Id: script.template,v 1.13 2005-01-24 11:17:40 gluck Exp $"
 #%# 
 #%# Template for script files          
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.12  2005/01/21 16:13:10  gluck
+#%# - Correct alignment for generated files header from templates
+#%# - Add log message automatic insertion ($Log)
+#%#
 #%# gluck      18-May-2004  Created
 #%# 
 #%# 
@@ -25,8 +29,7 @@
 #
 # History
 # -------
-# $Log: not supported by cvs2svn $
-#
+# $>-Log-<$
 #*******************************************************************************
 
 #/**
