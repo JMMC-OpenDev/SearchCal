@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.cpp,v 1.3 2004-11-29 16:02:05 scetre Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.4 2004-11-30 15:46:10 scetre Exp $"
 *
 *
 * who       when                 what
@@ -47,7 +47,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.3 2004-11-29 16:02:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.4 2004-11-30 15:46:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -127,7 +127,6 @@ int main (int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    printf ("timeout = %d\n", timeout);
     /* Try to connect to msgManager */
     msgMANAGER_IF manager;
     if (manager.Connect(argv[0], NULL) == FAILURE)
