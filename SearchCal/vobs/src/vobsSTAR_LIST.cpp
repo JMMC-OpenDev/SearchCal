@@ -1,17 +1,20 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.7 2005-01-26 08:18:15 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.8 2005-01-26 14:12:24 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/01/26 08:18:15  scetre
+* change history
+*
 * scetre    06-Jul-2004  Created
 * gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.7 2005-01-26 08:18:15 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.8 2005-01-26 14:12:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -313,17 +316,14 @@ void vobsSTAR_LIST::Display(void)
  *
  * \param filename the file where to save
  *
- * \b Error codes:\n
- * The possible errors are :
- * \li vobsERR_NO_FILE
+ * \return always SUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
-    
-#if 0
+
+    // file where will be save information
     FILE *filePtr;
-    mcsSTRING32 property;
 
     filePtr=fopen(miscResolvePath(filename), "w+");
     if (filePtr==NULL)
@@ -333,26 +333,25 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
     }
     else
     {
-        // Save all element of the list which are affected 
-        std::list<vobsSTAR *>::iterator iter;
-
-        for (iter=_starList.begin(); iter != _starList.end(); iter++)
+        vobsSTAR *star;
+        for (unsigned int el = 0; el < Size(); el++)
         {
-            
-            for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
-            {
-                // Get one property
-                (*iter)->GetProperty((vobsUCD_ID)i, property);
-                fprintf(filePtr, "%12s", property);
+            star = GetNextStar((mcsLOGICAL)(el==0));
 
+            for (int elem = 0; elem < star->NbProperties(); elem++)
+            {
+                fprintf(filePtr, "%12s",
+                        (star->GetNextProperty((mcsLOGICAL)(elem==0)))->
+                        GetValue());
             }
+
             fprintf(filePtr, "\n");
         }
     }
 
     // Close file
     fclose(filePtr);
-#endif
+
     return mcsSUCCESS;
 }
 
