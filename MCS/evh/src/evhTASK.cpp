@@ -1,19 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhTASK.cpp,v 1.5 2005-01-07 18:23:30 gzins Exp $"
-*
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* gzins     09-Jun-2004  created
-* gzins     18-Nov-2004  splitted parsing and usage methods to separate
-*                        options and arguments in command-line parameters
-* gzins     03-Dec-2004  Added -n command-line option  
-* gzins     03-Dec-2004  Removed -t command-line option and added -m
-* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*
-*******************************************************************************/
-static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.5 2005-01-07 18:23:30 gzins Exp $"; 
+ * JMMC project
+ *
+ * "@(#) $Id: evhTASK.cpp,v 1.6 2005-01-26 18:23:25 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     09-Jun-2004  created
+ * gzins     18-Nov-2004  splitted parsing and usage methods to separate
+ *                        options and arguments in command-line parameters
+ * gzins     03-Dec-2004  Added -n command-line option  
+ * gzins     03-Dec-2004  Removed -t command-line option and added -m
+ * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
+ ******************************************************************************/
+
+static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.6 2005-01-26 18:23:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -28,7 +30,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *     \arg \e -h                \n usage syntax
  *     \arg <em>-l \<level></em> \n file log level
  *     \arg <em>-v \<level></em> \n stdout log level
- *     \arg <em>-a \<level></em> \n action log level
  *     \arg <em>-n \<name></em>  \n registering name to MCS services  
  *     \arg <em>-m \<module></em>\n add module to the list of modules allowed
  *                               to log messages on stdout. This option can be
@@ -172,7 +173,6 @@ evhTASK::evhTASK()
 {
     _fileLogOption   = mcsFALSE;
     _stdoutLogOption = mcsFALSE;
-    _actionLogOption = mcsFALSE;
 }
 
 // Class destructor 
@@ -280,7 +280,6 @@ mcsCOMPL_STAT evhTASK::PrintStdOptions()
 {
     cout <<" Standard options: -l <level>   set file log level" << endl;
     cout <<"                   -v <level>   set stdout log level" << endl;
-    cout <<"                   -a <level>   set action log level" << endl;
     cout <<"                   -n <name>    registering name to MCS services" 
         << endl; 
     cout <<"                   -m <mod>     add module to the list of modules";
@@ -484,30 +483,6 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
             return mcsFAILURE;
         }
     }
-    // Else if action level specified
-    else if (strcmp(argv[*optInd], "-a") == 0)
-    {
-        // Set new action log level
-        if ((*optInd + 1) < argc)
-        {
-            *optInd += 1;
-            optarg = argv[*optInd];
-            if ( sscanf (optarg, "%d", &level) != 1)
-            {
-                logError ("%s: Argument to option %s is invalid: '%s'",
-                          Name(), argv[*optInd-1], optarg);
-                return mcsFAILURE;
-            }
-            logSetActionLogLevel((logLEVEL)level);
-            _actionLogOption = mcsTRUE;
-        }
-        else
-        {
-            logError ("%s: Option %s requires an argument",
-                      Name(), argv[*optInd]);
-            return mcsFAILURE;
-        }
-    }
     // Else if 'allowed modules' specified
     else if (strcmp(argv[*optInd], "-m") == 0)
     {
@@ -641,18 +616,6 @@ mcsLOGICAL evhTASK::IsStdoutLogOption()
     logExtDbg ("evhTASK::IsStdoutLogOption ()");
 
     return _stdoutLogOption;
-}
-
-/**
- * Returns a flag indicating whether the action log level has been specified
- * on the command line
- * \return action log level option flag
- */
-mcsLOGICAL evhTASK::IsActionLogOption()
-{
-    logExtDbg ("evhTASK::IsActionLogOption ()");
-
-    return _actionLogOption;
 }
 
 /**
