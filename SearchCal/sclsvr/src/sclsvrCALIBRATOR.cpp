@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.34 2005-02-22 09:50:43 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.35 2005-02-22 10:20:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2005/02/22 09:50:43  scetre
+ * Back to compute magnitude instead of cds magnitude to compute diameter
+ *
  * Revision 1.33  2005/02/22 08:10:39  gzins
  * Update calls to alxComputeRealMagnitudes() and alxComputeMagnitudesForBrightStar() functions
  *
@@ -47,7 +50,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.34 2005-02-22 09:50:43 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.35 2005-02-22 10:20:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -309,6 +312,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
                              &magnitudes[alxV_BAND]) == mcsFAILURE)
         {
             return mcsFAILURE;
+        }
+    }
+    // For other magnitudes
+    for (int band = 0; band < alxNB_BANDS; band++)
+    { 
+        // Get the current value
+        if (IsPropertySet(mag0PropertyId[band]) == mcsTRUE)
+        {
+            GetPropertyValue(mag0PropertyId[band], &magnitudes[band]);
+        }
+        else
+        {
+            magnitudes[band] = alxBLANKING_VALUE;
         }
     }
 
