@@ -1,7 +1,7 @@
 "------------------------------------------------------------------------------
 " File:    $MCSROOT/etc/vimrc
 "
-" Version: $Id: vimrc,v 1.7 2004-12-16 13:39:05 gzins Exp $
+" Version: $Id: vimrc,v 1.8 2005-01-05 08:07:08 gzins Exp $
 " 
 " Purpose: VIM special configuration file
 "
@@ -15,8 +15,9 @@
 "                       keywords
 " gzins     16-12-2004  added SUCCESS and FAILURE to the list of C++-boolean
 "                       keywords
-" gzins     16-12-2004  redifined mcsTRUE, mcsFALSE, SUCCESS and FAILURE as
+" gzins     16-12-2004  redefined mcsTRUE, mcsFALSE, SUCCESS and FAILURE as
 "                       cConstant 
+" gzins     05-01-2005  changed textwidth to 80 instead of 78
 " 
 " To use it, added the following line in ~/.vimrc 
 "       source $MCSROOT/etc/vimrc
@@ -26,7 +27,7 @@
 set nocompatible    " Use Vim defaults (much better!)
 set bs=2            " allow backspacing over everything in insert mode
 set ai              " always set autoindenting on
-set tw=78           " always limit the width of text to 78
+set tw=80           " always limit the width of text to 80
 set backup          " keep a backup file
 set viminfo='20,\"50    " read/write a .viminfo file, don't store more
 " than 50 lines of registers
@@ -50,8 +51,8 @@ endif
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
 
-    " In text files, always limit the width of text to 78 characters
-    autocmd BufRead *.txt set tw=78
+    " In text files, always limit the width of text to 80 characters
+    autocmd BufRead *.txt set tw=80
 
 
     augroup cprog
@@ -142,7 +143,7 @@ set   visualbell
 set mouse=a
 
 "
-" Naos customization
+" MCS customization
 "
 autocmd BufRead * let @z = expand("%:t:r")
 set autowrite
