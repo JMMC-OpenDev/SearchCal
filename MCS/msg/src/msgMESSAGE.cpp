@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.5 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.6 2004-12-01 12:54:39 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,6 +12,8 @@
 * lafrasse  22-Nov-2004  Added void type for functions without parameters
 * lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
 *                        msgMESSAGE, added SetLastReplyFlag method
+* lafrasse  01-Dec-2004  Added error management code, comment refinments, and
+*                        includes cleaning
 *
 *
 *******************************************************************************/
@@ -21,7 +23,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.5 2004-11-26 13:11:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.6 2004-12-01 12:54:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -30,8 +32,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <iostream>
 using namespace std;
-#include <string.h>
-#include <netinet/in.h>
 
 /*
  * MCS Headers 
@@ -44,7 +44,6 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "msg.h"
 #include "msgMESSAGE.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
@@ -60,7 +59,7 @@ msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
 
     // Initializing short-cuts
     _header = &(_message.header);
-    _body   = _message.body;
+    _body   =   _message.body;
 
     // The message is considered extern by default
     _isInternal = isInternalMsg;
@@ -350,15 +349,23 @@ msgHEADER* msgMESSAGE::GetHeaderPtr(void)
 }
 
 /**
- * Set weither the current message is the last one or not.
+ * Overwrite the current message header by the given one.
  *
- * \param header mcsTRUE if the message is the last one, mcsFALSE othewise
+ * \param header the address of an msgHEADER to replace the internal one
  *
- * \return always SUCCESS
+ * \sa msgHEADER, the message header structure
+ *
+ * \return FAILURE if the given header pointer is NULL, SUCCESS otherwise
  */
 mcsCOMPL_STAT msgMESSAGE::SetHeader(const msgHEADER* header)
 {
     logExtDbg("msgMESSAGE::SetHeader()");
+
+    // Test the header parameter vailidty
+    if (header == NULL)
+    {
+        return FAILURE;
+    }
 
     // Copy the given value in the message header
     memcpy(_header, header, msgHEADERLEN);
@@ -382,15 +389,21 @@ char* msgMESSAGE::GetBodyPtr(void)
 /**
  * Return the message body size.
  *
- * \return the message body size
+ * \return the message body size, or -1 if an error occured
  */
 mcsINT32 msgMESSAGE::GetBodySize(void)
 {
     logExtDbg("msgMESSAGE::GetBodySize()");
 
-    // Return the message body size in the localhost byte order
+    // Get the message body size in the localhost byte order
     mcsINT32 msgBodySize = 0;
-    sscanf(_header->msgBodySize, "%d", &msgBodySize);
+    mcsINT32 readFieldNumber = sscanf(_header->msgBodySize, "%d", &msgBodySize);
+
+    // Verify the body size was well read
+    if (readFieldNumber != 1)
+    {
+        return -1;
+    }
 
     return msgBodySize;
 }

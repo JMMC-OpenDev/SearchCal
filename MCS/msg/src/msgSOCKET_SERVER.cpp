@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.3 2004-12-01 12:54:39 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * msgSOCKET_SERVER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.3 2004-12-01 12:54:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -66,7 +66,7 @@ msgSOCKET_SERVER::~msgSOCKET_SERVER()
  *
  * \param port the local port number on which the socket should listen
  *
- * \return SUCCESS on successfull completion otherwise FAILURE is return
+ * \return SUCCESS on successfull completion, FAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET_SERVER::Open(mcsINT32 port)
 {

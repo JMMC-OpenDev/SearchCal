@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.7 2004-11-30 16:41:47 scetre Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.8 2004-12-01 12:54:39 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -13,7 +13,8 @@
 * lafrasse  22-Nov-2004  Added void type for functions without parameters
 * lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
 *                        msgMESSAGE, added SetLastReplyFlag method
-* scetre    30-Nov-2004  Set message body size to 3200
+* scetre    30-Nov-2004  Set message body size to 32000
+* lafrasse  01-Dec-2004  Comment refinments
 *
 *
 *******************************************************************************/
@@ -187,11 +188,14 @@ protected:
 
     
 private:
-     // The only member
-     msgMESSAGE_RAW _message;
-     msgHEADER*     _header;
-     char*          _body;
-     mcsLOGICAL     _isInternal;
+     // The members
+     msgMESSAGE_RAW _message;    // The complete message structure
+     msgHEADER*     _header;     // A convenient pointer to the _message header
+     char*          _body;       // A convenient pointer to the _message body
+
+     mcsLOGICAL     _isInternal; /* A flag to say weither the message is of
+                                  * internal process use or not (see evh module)
+                                  */
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

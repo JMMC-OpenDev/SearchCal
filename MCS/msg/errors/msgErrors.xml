@@ -125,4 +125,19 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[%d bytes buffer size is too big (max = %d)]]></errFormat>
    </error>
+   <error id="27">
+      <errName>SOCKET_NOT_CONNECTED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[socket not connected]]></errFormat>
+   </error>
+   <error id="28">
+      <errName>LISTEN</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[listen() call error - %s]]></errFormat>
+   </error>
+   <error id="29">
+      <errName>RECV</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[recv() call error - %s]]></errFormat>
+   </error>
 </errorList>

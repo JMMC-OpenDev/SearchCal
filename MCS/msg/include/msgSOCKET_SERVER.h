@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_SERVER.h,v 1.5 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET_SERVER.h,v 1.6 2004-12-01 12:54:39 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -42,18 +42,7 @@
 /**
  * Server-side specialized object wrapper around system socket.
  *  
- * \n
- * \ex
- * OPTIONAL. Code example if needed
- * \n Brief example description.
- * \code
- * Insert your code example here
- * \endcode
- *
- * \sa http://www.linuxgazette.com/issue74/tougher.html
- * \sa msgSOCKET.cpp
- * 
- * \todo write code example
+ * \sa msgTestSocketServer.cpp for a code example
  */
 class msgSOCKET_SERVER : public msgSOCKET
 {
@@ -77,8 +66,6 @@ private:
      msgSOCKET_SERVER(const msgSOCKET_SERVER&);
      msgSOCKET_SERVER& operator=(const msgSOCKET_SERVER&);
 };
-
-
 
 
 #endif /*!msgSOCKET_SERVER_H*/

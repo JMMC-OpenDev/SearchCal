@@ -1,14 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.4 2004-11-29 15:33:24 scetre Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.5 2004-12-01 12:54:39 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    19-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+* lafrasse  25-Nov-2004  Added error management code
 * gzins     29-Nov-2004  Fixed wrong returned value in IsConnected method
 *                        Do not read body if body size is 0 in Receive()
+*
 *
 *******************************************************************************/
 
@@ -17,7 +19,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.4 2004-11-29 15:33:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.5 2004-12-01 12:54:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -77,12 +79,20 @@ mcsCOMPL_STAT msgSOCKET::Create(void)
 {
     logExtDbg("msgSOCKET::Create()");
 
+    // Is the socket is already connected
+    if (IsConnected() == mcsTRUE)
+    {
+        errAdd(msgERR_PROC_ALREADY_CONNECTED);
+        return FAILURE;
+    }
+
     // Instantiate a new IPv4/TCP socket
     _descriptor = socket(AF_INET, SOCK_STREAM, 0);
 
     // Check that the socket has been succesfully created
-    if (_descriptor == -1)
+    if (IsConnected() == mcsFALSE)
     {
+        errAdd(msgERR_SOCKET, strerror(errno));
         return FAILURE;
     }
 
@@ -111,6 +121,7 @@ mcsLOGICAL msgSOCKET::IsConnected(void)
 {
     logExtDbg("msgSOCKET::IsConnected()");
 
+    // If the socket has not already been created
     if (_descriptor == -1)
     {
         return mcsFALSE;
@@ -122,9 +133,9 @@ mcsLOGICAL msgSOCKET::IsConnected(void)
 /**
  * Bind the socket to a specific port.
  *
- * \param port the port where the method bind te socket 
+ * \param port the port to which the socket should be bind
  *
- * \return SUCCESS on successfull completion otherwise FAILURE is return
+ * \return SUCCESS on successfull completion, FAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Bind(const mcsINT32 port)
 {
@@ -133,6 +144,7 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsINT32 port)
     // Check that the socket is connected
     if (IsConnected() == mcsFALSE)
     {
+        errAdd(msgERR_SOCKET_NOT_CONNECTED);
         return FAILURE;
     }
 
@@ -149,7 +161,7 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsINT32 port)
         return FAILURE;
     }
 
-    /* Verify the new socket */
+    // Verify the new socket validity
     socklen_t addressLength = sizeof(_address);
     if (getsockname(_descriptor, (struct sockaddr*)&_address, &addressLength)
         == -1)
@@ -174,12 +186,15 @@ mcsCOMPL_STAT msgSOCKET::Listen(void)
     // Check that the socket is connected
     if ( IsConnected() == mcsFALSE )
     {
+        errAdd(msgERR_SOCKET_NOT_CONNECTED);
         return FAILURE;
     }
 
-    int listen_return = listen ( _descriptor, MAXCONNECTIONS );
-    if ( listen_return == -1 )
+    // Start listening
+    int listen_return = listen(_descriptor, MAXCONNECTIONS);
+    if (listen_return == -1)
     {
+        errAdd(msgERR_LISTEN, strerror(errno));
         return FAILURE;
     }
 
@@ -187,7 +202,7 @@ mcsCOMPL_STAT msgSOCKET::Listen(void)
 }
 
 /**
- * Wait until a new connection is made on he socket, and then accept it.
+ * Wait until a new connection is made on the socket, and then accept it.
  *
  * \param socket the newly created socket to the connected process
  *
@@ -197,12 +212,15 @@ mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
 {
     logExtDbg("msgSOCKET:::Accept()");
 
+    // Wait until a new connection is received on the socket
     int addr_length    = sizeof(_address);
     socket._descriptor = accept(_descriptor, (sockaddr *)&_address,
                                 (socklen_t*)&addr_length);
 
+    // If the new socket is not functionnal
     if (socket.IsConnected() == mcsFALSE)
     {
+        errAdd(msgERR_SOCKET_NOT_CONNECTED);
         return FAILURE;
     }
 
@@ -225,6 +243,7 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
     // Check that the socket is connected
     if (IsConnected() == mcsFALSE)
     {
+        errAdd(msgERR_SOCKET_NOT_CONNECTED);
         return FAILURE;
     }
 
@@ -232,16 +251,18 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
     // Set the remote server port number to connect to
     _address.sin_port   = htons(port);
 
-    int status = inet_pton(AF_INET, host.c_str(), &_address.sin_addr);
+    // Try to convert the host name string in a network address structure
+    inet_pton(AF_INET, host.c_str(), &_address.sin_addr);
     if (errno == EAFNOSUPPORT) 
     {
         return FAILURE;
     }
 
     // Try to connect to the remote server
-    status = connect(_descriptor, (sockaddr*) &_address, sizeof(_address));
+    int status = connect(_descriptor, (sockaddr*) &_address, sizeof(_address));
     if (status != 0)
     {
+        errAdd(msgERR_CONNECT, strerror(errno));
         return FAILURE;
     }
 
@@ -263,6 +284,7 @@ mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
     int status = send(_descriptor, string.c_str(), string.size(), MSG_NOSIGNAL);
     if ( status == -1 )
     {
+        errAdd(msgERR_CONNECT, strerror(errno));
         return FAILURE;
     }
 
@@ -290,12 +312,15 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
     int status = recv(_descriptor, buf, MAXRECV, 0 );
     if (status == -1)
     {
+        errAdd(msgERR_RECV, strerror(errno));
         return FAILURE;
     }
     else
     {
+        // If nothing was received
         if (status == 0)
         {
+            errAdd(msgERR_RECV, strerror(errno));
             return FAILURE;
         }
         else
@@ -374,6 +399,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     FD_ZERO(&readMask);
     FD_SET(_descriptor, &readMask);
 
+    // If a timeout is defined
     if (timeoutInMs != msgWAIT_FOREVER)
     {
         status = select(_descriptor + 1, &readMask, NULL, NULL, &timeout);
@@ -384,44 +410,25 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
                         (struct timeval *)NULL);
     }
 
-    // If the timeout expired... 
+    // If the timeout expired...
     if (status == 0)
     {
-        /* Raise an error */
         errAdd(msgERR_TIMEOUT_EXPIRED, "No specific error message !!!");
-
-        // Return an error code
         return FAILURE;
     }
 
-    /* If the timeout expired... */ 
-    if (status == 0)
-    {
-        /* Raise an error */
-        errAdd(msgERR_TIMEOUT_EXPIRED, "No specific error message !!!");
-
-        /* Return an error code */
-        return FAILURE;
-    }
-
-    /* If an error occured during select() */
+    // If an error occured during select()
     if (status == -1)
     {
-        /* Raise an error */
         errAdd(msgERR_SELECT, strerror(errno));
-
-        // Return an error code 
         return FAILURE;
     }
 
-    /* If the connection with the remote processus was lost... */
+    // If the connection with the remote processus was lost...
     ioctl(_descriptor, FIONREAD, (unsigned long *)&nbBytesToRead);
     if (nbBytesToRead == 0)
     {
-        // Raise an error 
         errAdd(msgERR_BROKEN_PIPE);
-
-        // Return an error code 
         return FAILURE;
     }
     else

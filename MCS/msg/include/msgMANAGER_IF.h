@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.h,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.h,v 1.5 2004-12-01 12:54:39 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,7 @@
 * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for _socket,
 *                        and added the class description comment
 * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
+* lafrasse  01-Dec-2004  Comment refinments
 *
 *
 *******************************************************************************/
@@ -84,7 +85,9 @@ public:
 protected:
 
 private:
-    static msgSOCKET_CLIENT _socket;
+    static msgSOCKET_CLIENT _socket; /* The network connection used to
+                                      * communicate with the msgManager process
+                                      */
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

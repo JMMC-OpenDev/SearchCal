@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.3 2004-11-29 15:30:07 scetre Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.4 2004-12-01 12:54:39 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * msgSOCKET_CLIENT class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.3 2004-11-29 15:30:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.4 2004-12-01 12:54:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -67,7 +67,7 @@ msgSOCKET_CLIENT::~msgSOCKET_CLIENT()
  * \param host the remote machine host name to which the socket should connect
  * \param port the remote machine port number to which the socket should connect
  *
- * \return SUCCESS on successfull completion otherwise FAILURE is return
+ * \return SUCCESS on successfull completion, FAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host, mcsINT32 port)
 {

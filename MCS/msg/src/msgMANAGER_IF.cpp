@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.5 2004-11-29 15:28:47 scetre Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.6 2004-12-01 12:54:39 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,7 @@
 * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
 * lafrasse  24-Nov-2004  Comment refinments, and includes cleaning
 * gzins     29-Nov-2004  Fixed bug in Connect method
+* lafrasse  01-Dec-2004  Comment refinments
 *
 *
 *******************************************************************************/
@@ -20,7 +21,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.5 2004-11-29 15:28:47 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.6 2004-12-01 12:54:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -100,10 +101,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
     // If a connection is already open...
     if (IsConnected() == mcsTRUE)
     {
-        // Raise an error
         errAdd(msgERR_PROC_ALREADY_CONNECTED);
-
-        // Return an error code
         return FAILURE;
     }
 
@@ -174,12 +172,11 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
         return FAILURE;
     }
 
-    // If the reply as ERROR...
+    // If the reply is an ERROR...
     if (msg.GetType() == msgTYPE_ERROR_REPLY)
     {
         // Try to put the received errors in the MCS error stack
-        if (errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize())
-            == FAILURE)
+        if (errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize()) == FAILURE)
         {
             return FAILURE;
         }
@@ -233,10 +230,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendCommand         (const char        *command,
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        // Raise an error
         errAdd(msgERR_PROC_NOT_CONNECTED);
-
-        // Return an error code 
         return FAILURE;
     }
 
@@ -272,37 +266,34 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        // Raise an error
         errAdd(msgERR_PROC_NOT_CONNECTED);
-
-        // Return an error code
         return FAILURE;
     }
 
-    /* Build the reply message header */
+    // Build the reply message header
     msg.SetLastReplyFlag(lastReply);
-    /* If there is no error in the MCS error stack */
+    // If there is no error in the MCS error stack
     if (errStackIsEmpty() == mcsTRUE)
     {
-        /* Set message type to REPLY */
+        // Set message type to REPLY
         msg.SetType(msgTYPE_REPLY);
     }
     else
     {
+        // Try to put the MCS error stack data in the message body
         char errStackContent[msgBODYMAXLEN];
-        /* Try to put the MCS error stack data in the message body */
         if (errPackStack(errStackContent, msgBODYMAXLEN) == FAILURE)
         {
             return FAILURE;
         }
 
-        /* Store the message body size in network byte order */
+        // Store the message body size
         msg.SetBody(errStackContent, msgBODYMAXLEN);
 
-        /* Set message type to ERROR_REPLY */
+        // Set message type to ERROR_REPLY
         msg.SetType(msgTYPE_ERROR_REPLY);
 
-        /* Empty MCS error stack */
+        // Empty MCS error stack
         errResetStack();
     }
 
@@ -329,10 +320,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE        &msg,
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        // Raise an error
         errAdd(msgERR_PROC_NOT_CONNECTED);
-
-        // Return an error code
         return FAILURE;
     }
 
@@ -352,10 +340,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        // Raise an error
         errAdd(msgERR_PROC_NOT_CONNECTED);
-
-        // Return an error code
         return FAILURE;
     }
 
@@ -380,7 +365,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
         // Put the received error in the local MCS error stack
         errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize());
         _socket.Close();
-        return (FAILURE);
+        return FAILURE;
     }
     
     // Close the socket
@@ -392,16 +377,17 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
 }
  
 /**
- * Get the socket descriptor for the message queue
+ * Return the socket descriptor for the message queue
  *
- * Returns the socket descriptor of the communication link with message
- * manager. This allows a process to monitor its message queue using the UNIX
- * function select().
+ * This allows a process to monitor its message queue using the UNIX function
+ * select().
  *
  * \warning
  * The file descriptor returned must NOT be read or manipulated in any way
  * (e.g. close()) by the process. Otherwise the monitoring system will lose
  * syncronization with the message manager.
+ *
+ * \return the socket descriptor of the communication link with msgManager
  */
 mcsINT32 msgMANAGER_IF::GetMsgQueue()
 {
