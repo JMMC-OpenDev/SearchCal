@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.13 2005-01-28 17:54:41 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.14 2005-01-28 18:10:17 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/01/28 17:54:41  gzins
+ * Declared dynBuf parameter of miscDynBufGetBufferPointer as const
+ *
  * lafrasse  06-Jul-2004  Created
  * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
  * lafrasse  23-Jul-2004  Moved miscDYN_BUF_MAGIC_STRUCTURE_ID to miscPrivate.h,
@@ -131,13 +134,14 @@ mcsCOMPL_STAT miscDynBufGetNbStoredBytes    (miscDYN_BUF       *dynBuf,
 mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *allocatedBytes);
 
-char*         miscDynBufGetBufferPointer    (const miscDYN_BUF       *dynBuf);
-
+char*         miscDynBufGetBuffer           (const miscDYN_BUF       *dynBuf);
+#define miscDynBufGetBufferPointer miscDynBufGetBuffer
 char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf);
 
-char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
+char*         miscDynBufGetNextLine         (miscDYN_BUF       *dynBuf,
                                              const char        *currentLinePtr,
                                              const mcsLOGICAL  skipCommentFlag);
+#define miscDynBufGetNextLinePointer miscDynBufGetNextLine
 
 mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
                                              char              *byte,
