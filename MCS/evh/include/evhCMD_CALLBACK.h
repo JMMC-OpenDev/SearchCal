@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_CALLBACK.h,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhCMD_CALLBACK.h,v 1.2 2004-12-22 08:53:43 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
+* gzins     22-Dec-2004  Added SetMethod()
 *
 *******************************************************************************/
 /**
@@ -56,6 +57,9 @@ public:
 
     evhCMD_CALLBACK(const evhCMD_CALLBACK &source);
 
+    virtual evhCMD_CALLBACK &SetMethod(const evhCMD_CB_METHOD method, 
+                                       void *userData = NULL);
+    
     virtual mcsLOGICAL IsSame (evhCALLBACK &callback);
 
     virtual evhCB_COMPL_STAT Run(const msgMESSAGE &msg);

@@ -1,13 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.2 2004-12-22 08:53:43 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
 * gzins     17-Nov-2004  Fixed bug in assignment operator method
-*
+* gzins     22-Dec-2004  Added SetMethod()
 *
 *******************************************************************************/
 
@@ -16,7 +16,7 @@
  * Definition of the evhCMD_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.2 2004-12-22 08:53:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -77,6 +77,27 @@ evhCMD_CALLBACK::~evhCMD_CALLBACK()
 /*
  * Public methods
  */
+/**
+ * Set the method to be executed.
+ * 
+ * \param method method to be executed.
+ * \param userData user data pointer passed to the method
+ *
+ * \return reference to the object itself
+ *
+ */
+evhCMD_CALLBACK &evhCMD_CALLBACK::SetMethod(const evhCMD_CB_METHOD method, 
+                                            void *userData)
+{
+    logExtDbg("evhCMD_CALLBACK::SetMethod()");
+
+    _method = method;
+
+    SetUserData(userData); 
+
+    return *this;
+}
+
 /**
  * Test if this callback is the same than another one.
  * 
