@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-11-30 15:48:09 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-12-10 08:17:15 scetre Exp $"
 #
 # Makefile of sclsvr
 #
@@ -100,6 +100,11 @@ TCL_LIBRARIES_L =
 #
 # <brief description of tttlll library>
 tttlll_OBJECTS  = 
+
+#
+# Command Definition Files (CDF) 
+#----------------------------
+CDF_FILES     = sclsvrSEARCH sclsvrGETSTAR
 
 
 #

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.cpp,v 1.5 2004-12-09 08:47:29 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCB.cpp,v 1.6 2004-12-10 08:17:15 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.5 2004-12-09 08:47:29 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.6 2004-12-10 08:17:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -63,7 +63,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
 
     // Object name
     char *objName;
-    if (searchCmd.GetObjetName(&objName) == FAILURE)
+    if (searchCmd.GetObjectName(&objName) == FAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }

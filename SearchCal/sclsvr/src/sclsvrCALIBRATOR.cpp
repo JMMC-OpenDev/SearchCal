@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.8 2004-12-07 16:28:32 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.9 2004-12-10 08:17:15 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.8 2004-12-07 16:28:32 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.9 2004-12-10 08:17:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -834,39 +834,39 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
     //Get the value of the Spectral Type
     strcpy(spType, _properties[SPECT_TYPE_MK_ID]);
     // Get the value of the magnitude in the different band
-    if (GetProperty(PHOT_JHN_B_ID, &mgB) == FAILURE)
+    if (GetProperty(BO_ID, &mgB) == FAILURE)
     {
         return FAILURE;
     }
-    if (GetProperty(PHOT_JHN_V_ID, &mgV) == FAILURE)
+    if (GetProperty(VO_ID, &mgV) == FAILURE)
     {
         return FAILURE;
     }
-    if (GetProperty(PHOT_JHN_R_ID, &mgR) == FAILURE)
+    if (GetProperty(RO_ID, &mgR) == FAILURE)
     {
         return FAILURE;
     }
-    if (GetProperty(PHOT_JHN_I_ID, &mgI) == FAILURE)
+    if (GetProperty(IO_ID, &mgI) == FAILURE)
     {
         return FAILURE;
     }
-    if (GetProperty(PHOT_JHN_J_ID, &mgJ) == FAILURE)
+    if (GetProperty(JO_ID, &mgJ) == FAILURE)
     {
         return FAILURE;
     }
-    if (GetProperty(PHOT_JHN_H_ID, &mgH) == FAILURE)
+    if (GetProperty(HO_ID, &mgH) == FAILURE)
     {
         return FAILURE;
     }
-    if (GetProperty(PHOT_JHN_K_ID, &mgK) == FAILURE)
+    if (GetProperty(KO_ID, &mgK) == FAILURE)
     {
         return FAILURE;
     }
-    if (GetProperty(PHOT_JHN_L_ID, &mgL) == FAILURE)
+    if (GetProperty(LO_ID, &mgL) == FAILURE)
     {
         return FAILURE;
     }
-    if (GetProperty(PHOT_JHN_M_ID, &mgM) == FAILURE)
+    if (GetProperty(MO_ID, &mgM) == FAILURE)
     {
         return FAILURE;
     }
@@ -895,7 +895,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
     logTest("L = %0.3f",mgL);
     logTest("M = %0.3f",mgM);
 
-    // Check if the property is not already affected.
+    // Print in the calibrators properties the magnitude
+    SetProperty(MO_ID, mgM);
+    SetProperty(LO_ID, mgL);
+    SetProperty(KO_ID, mgK);
+    SetProperty(HO_ID, mgH);
+    SetProperty(JO_ID, mgJ);
+    SetProperty(IO_ID, mgI);
+    SetProperty(RO_ID, mgR);
+    SetProperty(VO_ID, mgV);
+    SetProperty(BO_ID, mgB);
+    /*// Check if the property is not already affected.
     // If not, affect
     if (strcmp(_properties[PHOT_JHN_R_ID],sclsvrCALIBRATOR_PROP_NOT_SET)==0)
     { 
@@ -924,7 +934,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
     if (strcmp(_properties[PHOT_JHN_M_ID],sclsvrCALIBRATOR_PROP_NOT_SET)==0)
     {
         vobsSTAR::SetProperty(PHOT_JHN_M_ID, mgM);
-    }
+    }*/
     return SUCCESS;
 }
 
