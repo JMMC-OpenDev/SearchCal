@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.3 2004-11-26 13:53:56 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.4 2004-12-01 13:03:22 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -144,6 +144,9 @@ private:
 
     /** Table containing the calibrator computed properties */
     sclsvrCALIBRATOR_PROPERTY _compProperties[sclsvrNB_CALIBRATOR_PROPERTIES];
+
+    mcsLOGICAL _coherentDiameter;
+    mcsLOGICAL _correctVisibility;
     
 };
 

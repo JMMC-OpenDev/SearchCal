@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.C,v 1.1 2004-11-30 15:48:09 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.C,v 1.2 2004-12-01 13:03:22 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.C,v 1.1 2004-11-30 15:48:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.C,v 1.2 2004-12-01 13:03:22 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -82,8 +82,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     char rec[256] ;
     char *p;
     
-    strcat(starName,"!") ; 
     strcpy(rec, starName);
+    strcat(rec,"!") ; 
     p=strchr(rec,'_');
     while ( p !=NULL) 
     {
@@ -129,20 +129,74 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     {
         return FAILURE;
     }
-    calibratorList.Display();
+    //calibratorList.Display();
 
     // Pack the list result in a buffer in order to send it
     miscDYN_BUF dynBuff;
     miscDynBufInit(&dynBuff);
-    calibratorList.Pack(&dynBuff);
+        
+    // Retrieve all magnitude
+    mcsSTRING32 mgB, mgV, mgR, mgI, mgJ, mgH, mgK, mgL, mgM, mgN;
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_B_ID, mgB);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_V_ID, mgV);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_R_ID, mgR);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_I_ID, mgI);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_J_ID, mgJ);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_H_ID, mgH);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_K_ID, mgK);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_L_ID, mgL);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_JHN_M_ID, mgM);
+    starList.GetNextStar(mcsTRUE)->GetProperty((vobsUCD_ID)PHOT_IR_N_10_4_ID, mgN);
+    
+    miscDYN_BUF raBuf;
+    miscDynBufInit(&raBuf);
+    miscDYN_BUF decBuf;
+    miscDynBufInit(&decBuf);
+    miscDynBufAppendString(&raBuf, ra);
+    miscDynBufAppendString(&decBuf, dec);
+    // Replace ' ' by ':' in ra and dec 
+    miscReplaceChrByChr(miscDynBufGetBufferPointer(&raBuf), ' ', ':');
+    miscReplaceChrByChr(miscDynBufGetBufferPointer(&decBuf), ' ', ':');
+    
+    // Create the dynamic buffer in which is written the star informations
+    miscDynBufAppendString(&dynBuff, starName);
+    miscDynBufAppendString(&dynBuff, " 2000.0 ");
+    miscDynBufAppendString(&dynBuff, miscDynBufGetBufferPointer(&raBuf));
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, miscDynBufGetBufferPointer(&decBuf));
+    miscDynBufAppendString(&dynBuff, " ");
+   
+    miscDynBufAppendString(&dynBuff, mgB);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgV);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgR);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgI);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgJ);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgH);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgK);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgL);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgM);
+    miscDynBufAppendString(&dynBuff, " ");
+    miscDynBufAppendString(&dynBuff, mgN);
 
-
+    printf("%s\n", miscDynBufGetBufferPointer(&dynBuff)); 
+    
     msg.SetBody(miscDynBufGetBufferPointer(&dynBuff),
                 strlen(miscDynBufGetBufferPointer(&dynBuff)));
-    
-    calibratorList.Clear();
-    starList.Clear();
+
     miscDynBufDestroy(&dynBuff);
+    miscDynBufDestroy(&raBuf);
+    miscDynBufDestroy(&decBuf);
+    
+    //calibratorList.Clear();
+    //starList.Clear();
     // Send reply
     if (SendReply(msg) == FAILURE)
     {

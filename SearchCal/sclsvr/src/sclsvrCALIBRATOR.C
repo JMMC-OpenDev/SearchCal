@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.C,v 1.3 2004-11-26 13:53:56 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.C,v 1.4 2004-12-01 13:03:22 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.C,v 1.3 2004-11-26 13:53:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.C,v 1.4 2004-12-01 13:03:22 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -676,27 +676,54 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(vobsUCD_ID id, float *value) const
 mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
 {
     logExtDbg("sclsvrCALIBRATOR::Complete()");
-
+    
+    _coherentDiameter = mcsFALSE;
+    _correctVisibility = mcsFALSE;
+    
+    // Compute Galactic coordinates
     if (ComputeGalacticCoordinates() == FAILURE)
     {
         return FAILURE;
     }
+    // Compute Interstellar extinction
     if (ComputeInterstellarAbsorption() == FAILURE)
     {
         return FAILURE;
     }
+    // Compute Missing Magnitude
     if (ComputeMissingMagnitude() == FAILURE)
     {
         return FAILURE;
     }
+    // Compute Angular Diameter
     if (ComputeAngularDiameter() == FAILURE)
     {
         return FAILURE;
     }
+    _coherentDiameter = mcsTRUE;
+    // Compute visibility and visibility error
     if (ComputeVisibility(request) == FAILURE)
     {
         return FAILURE;
     }
+    // Get compute visibility
+    mcsFLOAT computedVisibility;
+    if (GetProperty(VISIBILITY_ID, &computedVisibility) == FAILURE)
+    {
+        return FAILURE;
+    }
+    // Get wanted visibility
+    mcsFLOAT requestedVisibility;
+    if (request.GetConstraint(STAR_EXPECTED_VIS_ID, &requestedVisibility) == FAILURE)
+    {
+        return FAILURE;
+    }
+    // check if the compute visibility is inferior to the wnated visibility
+    if (computedVisibility <= requestedVisibility)
+    {
+        _correctVisibility = mcsTRUE;    
+    }
+    // compute visibility
     if (ComputeMultiplicity() == FAILURE)
     {
         return FAILURE;
