@@ -1,7 +1,7 @@
 "------------------------------------------------------------------------------
 " File:    $MCSROOT/etc/vimrc
 "
-" Version: $Id: vimrc,v 1.1 2004-05-14 15:33:19 gzins Exp $
+" Version: $Id: vimrc,v 1.2 2004-05-17 05:51:21 mella Exp $
 " 
 " Purpose: VIM special configuration file
 "
@@ -109,8 +109,7 @@ if has("autocmd")
     endif
 endif " has("autocmd")
 
-set dictionary=/usr/dict/words
-set dictionary=/usr/dict/words
+set dictionary=/usr/share/dict/words
 
 "   laststatus:  show status line?  Yes, always!
 "   laststatus:  Even for only one buffer.
