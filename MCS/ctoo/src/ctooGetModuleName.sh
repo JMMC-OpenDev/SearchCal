@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetModuleName.sh,v 1.1 2004-09-14 14:28:06 gluck Exp $"
+# "@(#) $Id: ctooGetModuleName.sh,v 1.2 2004-09-15 07:03:29 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -65,7 +65,9 @@
 # 
 # */
 
+
 # signal trap (if any)
+
 
 # test doc directory existence
 dir=../doc

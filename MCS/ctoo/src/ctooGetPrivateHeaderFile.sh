@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetPrivateHeaderFile.sh,v 1.4 2004-09-15 05:47:50 gluck Exp $"
+# "@(#) $Id: ctooGetPrivateHeaderFile.sh,v 1.5 2004-09-15 07:02:19 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -10,30 +10,6 @@
 #
 #
 #*******************************************************************************
-#   NAME
-# 
-#   SYNOPSIS
-# 
-#   DESCRIPTION
-#
-#   FILES
-#
-#   ENVIRONMENT
-#
-#   RETURN VALUES
-#
-#   CAUTIONS
-#
-#   EXAMPLES
-#
-#   SEE ALSO
-#
-#   BUGS     
-#
-#-------------------------------------------------------------------------------
-#
-
-# signal trap (if any)
 
 #/**
 # \file
@@ -55,6 +31,9 @@
 # \sa ctooGetTemplateForCoding, ctooGetCode, ctooGetTemplate
 # 
 # */
+
+
+# signal trap (if any)
 
 
 # Verify that current directory is an include directory (location for header
