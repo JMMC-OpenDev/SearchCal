@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.11 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.12 2005-02-04 08:06:28 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    26-Jul-2004  Created
 *
 *
@@ -22,6 +25,7 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+
 /* 
  * Constants definition
  */
@@ -34,7 +38,7 @@
 /**
  * definition of the request constraint as a string
  **/
-typedef mcsSTRING32 vobsREQUEST_CONSTRAINT;
+typedef mcsSTRING256 vobsREQUEST_CONSTRAINT;
 
 /*
  * Enumeration type definition
@@ -107,7 +111,7 @@ public:
     
     // Method to print out all request constraints
     virtual void Display(void);
-    
+
 protected:
     // Method to obtain id from the CONTRAINT
     virtual vobsCONSTRAINT_ID Constraint2Id(char *constraint) const;
