@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.15 2004-12-22 08:42:06 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.16 2005-01-07 18:31:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -29,6 +29,7 @@
 *                        Added ClearBody and AppendToBody
 *                        Declared msgSOCKET::Send and msgSOCKET::Receive as
 *                        friend
+* gzins     07-Jan-2005  Changed messageId to commandId
 *
 *******************************************************************************/
 
@@ -103,9 +104,9 @@ typedef struct
     mcsSTRING8  senderId;        /**< Sender Id */
     mcsPROCNAME recipient;       /**< Receiver processus name  */
     mcsENVNAME  recipientEnv;    /**< Receiver environnement */
-    mcsSTRING16 messageId;       /**< Message Id */
     msgTYPE     type;            /**< Message type */
     mcsCMD      command;         /**< Command name */
+    mcsSTRING16 commandId;       /**< Command Id */
     mcsLOGICAL  lastReply;       /**< TRUE if it is the last answer */
     mcsBYTES32  timeStamp;       /**< Message date */
     mcsSTRING8  msgBodySize;     /**< Message body size */
@@ -155,6 +156,10 @@ public:
     // Constructor
     msgMESSAGE                               (const mcsLOGICAL isInternalMsg
                                               = mcsFALSE);
+    // Declaration of copy constructor and assignment operator as private
+    // methods, in order to hide them from the users.
+    msgMESSAGE(msgMESSAGE&);
+    msgMESSAGE&              operator=(msgMESSAGE&);
 
     // Destructor
     virtual ~msgMESSAGE                      (void);
@@ -178,8 +183,8 @@ public:
     virtual msgTYPE          GetType         (void);
     virtual mcsCOMPL_STAT    SetType         (const msgTYPE   type);
 
-    virtual mcsINT32         GetMessageId    (void);
-    virtual mcsCOMPL_STAT    SetMessageId    (const mcsINT32 id);
+    virtual mcsINT32         GetCommandId    (void);
+    virtual mcsCOMPL_STAT    SetCommandId    (const mcsINT32 id);
 
     virtual char*            GetCommand      (void);
     virtual mcsCOMPL_STAT    SetCommand      (const char     *command);
@@ -213,16 +218,9 @@ private:
     msgHEADER   _header;     // The complete message header
     miscDYN_BUF _body;       // A convenient pointer to the _message body
 
-    mcsLOGICAL  _isInternal; /* A flag to say weither the message is of
-                              * internal process use or not (see evh module)
-                              */
-
-    // Declaration of copy constructor and assignment operator as private
-    // methods, in order to hide them from the users.
-    msgMESSAGE(const msgMESSAGE&);
-    msgMESSAGE& operator=(const msgMESSAGE&);
+    mcsLOGICAL  _isInternal; // A flag to say weither the message is of
+                             // internal process use or not (see evh module)
 };
 
 #endif /*!msgMESSAGE_H*/
-
 /*___oOo___*/
