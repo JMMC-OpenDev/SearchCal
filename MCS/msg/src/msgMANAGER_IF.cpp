@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.cpp,v 1.18 2005-01-24 15:02:47 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.cpp,v 1.19 2005-01-26 08:42:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/01/24 15:02:47  gzins
+ * Added CVS logs as modification history
+ *
  * lafrasse  18-Nov-2004  Created
  * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
  *                        _socket, and refined comments
@@ -38,7 +41,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.18 2005-01-24 15:02:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.19 2005-01-26 08:42:22 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -329,6 +332,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
                                                   mcsLOGICAL         lastReply)
 {
     logExtDbg("msgMANAGER_IF::SendReply()");
+    char *replyType;
 
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
@@ -344,6 +348,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
     {
         // Set message type to REPLY
         msg.SetType(msgTYPE_REPLY);
+        replyType = "reply";
     }
     else
     {
@@ -359,12 +364,13 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
 
         // Set message type to ERROR_REPLY
         msg.SetType(msgTYPE_ERROR_REPLY);
+        replyType = "error reply";
 
         // Empty MCS error stack
         errResetStack();
     }
 
-    logTest("Sending '%s' answer : %s", msg.GetCommand(), msg.GetBody());
+    logTest("Sending '%s' %s : %s", msg.GetCommand(), replyType, msg.GetBody());
     return _socket.Send(msg);
 }
 
