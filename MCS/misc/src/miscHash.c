@@ -1,13 +1,14 @@
 /*******************************************************************************
-* JMMC project
-* 
-* "@(#) $Id: miscHash.c,v 1.1 2004-12-17 08:16:15 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     16-Dec-2004  Created
-*
-*******************************************************************************/
+ * JMMC project
+ * 
+ * "@(#) $Id: miscHash.c,v 1.2 2005-01-28 18:39:10 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     16-Dec-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -49,9 +50,9 @@
  *     miscHASH_TABLE hashTable;
  *     
  *     /# Initializes MCS services #/
- *     if (mcsInit(argv[0]) == FAILURE)
+ *     if (mcsInit(argv[0]) == mcsFAILURE)
  *     {
- *         exit (EXIT_FAILURE);
+ *         exit (EXIT_mcsFAILURE);
  *     }
  * 
  *     /# Create the hash table #/
@@ -63,10 +64,10 @@
  *     for (i = 0; i < 24; i++)
  *     {
  *         if (miscHashAddElement(&hashTable, data[i],
- *                                (void **)&data[i], mcsFALSE)== FAILURE)
+ *                                (void **)&data[i], mcsFALSE)== mcsFAILURE)
  *         {
  *             errCloseStack();
- *             exit (EXIT_FAILURE);
+ *             exit (EXIT_mcsFAILURE);
  *         }
  *     }
  *     /# Display the content of hash table #/
@@ -78,15 +79,15 @@
  *     if (dataPtr == NULL)
  *     {
  *         errCloseStack();
- *         exit (EXIT_FAILURE);
+ *         exit (EXIT_mcsFAILURE);
  *     }
  *     printf("  key = %s - data = %s\n", data[3], dataPtr);
  * 
  *     /# Delete an element #/
- *     if (miscHashDeleteElement(&hashTable, data[3])== FAILURE)
+ *     if (miscHashDeleteElement(&hashTable, data[3])== mcsFAILURE)
  *     {
  *         errCloseStack();
- *         exit (EXIT_FAILURE);
+ *         exit (EXIT_mcsFAILURE);
  *     }
  * 
  *     /# Get sequencialy all element of the hash table #/
@@ -103,14 +104,14 @@
  *     /# Close MCS services #/
  *     mcsExit();
  *     
- *     /# Exit from the application with SUCCESS #/
- *     exit (EXIT_SUCCESS);
+ *     /# Exit from the application with mcsSUCCESS #/
+ *     exit (EXIT_mcsSUCCESS);
  * }
  *  
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscHash.c,v 1.1 2004-12-17 08:16:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscHash.c,v 1.2 2005-01-28 18:39:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -225,7 +226,7 @@ static miscHASH_ELEMENT *miscHashLookUp(const miscHASH_TABLE *hashTable,
  *
  * This function MUST be called before any operation on the hash table.
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -242,7 +243,7 @@ mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize)
     if (hashTable->table == NULL)
     {
         errAdd(miscERR_ALLOC);
-        return (FAILURE);
+        return (mcsFAILURE);
     }
     hashTable->tableSize = tableSize;
 
@@ -256,7 +257,7 @@ mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize)
     hashTable->currElement = NULL;
     hashTable->currHashIndex = 0;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -274,7 +275,7 @@ mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize)
  * \param allocatedMemory true (mcsTRUE) if data pointer points to allocated
  * area of memory which has to be freed when element is deleted.
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -292,7 +293,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
     if (data == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "data");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Look for the element entry hash table entry */
@@ -307,7 +308,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
         if (element == NULL)
         {
             errAdd(miscERR_ALLOC);
-            return (FAILURE);
+            return (mcsFAILURE);
         }
 
         /* Compute hash value */
@@ -346,7 +347,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
         if (element->key == NULL)
         {
             errAdd(miscERR_ALLOC);
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     /* Else */
@@ -364,7 +365,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
     element->data = *data;  
     element->allocatedMemory = allocatedMemory;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -377,7 +378,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
  * \param key NULL-terminated string which is the key of the element to be
  * deleted.
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -397,7 +398,7 @@ mcsCOMPL_STAT miscHashDeleteElement(miscHASH_TABLE  *hashTable,
     {
         /* Return pointer to the associated data */
         errAdd(miscERR_HASH_KEY_NOT_FOUND, key);
-        return FAILURE;
+        return mcsFAILURE;
     }
     /* End if */
 
@@ -430,7 +431,7 @@ mcsCOMPL_STAT miscHashDeleteElement(miscHASH_TABLE  *hashTable,
     /* Delete element */
     free(element);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**

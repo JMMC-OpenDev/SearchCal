@@ -1,27 +1,28 @@
 /*******************************************************************************
-* JMMC project
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     16-Jun-2004  Created
-* lafrasse  17-Jun-2004  Added miscStrToUpper
-* gzins     23-Jul-2004  Added miscIsSpaceStr
-* lafrasse  23-Jul-2004  Added error management
-* lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
-*                        misc.h
-*                        Moved mcs.h include to miscString.h
-* gzins     15-Dec-2004  Added miscTrimString function
-* gzins     16-Dec-2004  Added miscDuplicateString function
-* lafrasse  17-Jan-2005  Added miscSplitString function
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     16-Jun-2004  Created
+ * lafrasse  17-Jun-2004  Added miscStrToUpper
+ * gzins     23-Jul-2004  Added miscIsSpaceStr
+ * lafrasse  23-Jul-2004  Added error management
+ * lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
+ *                        misc.h
+ *                        Moved mcs.h include to miscString.h
+ * gzins     15-Dec-2004  Added miscTrimString function
+ * gzins     16-Dec-2004  Added miscDuplicateString function
+ * lafrasse  17-Jan-2005  Added miscSplitString function
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.14 2005-01-19 10:24:09 gzins Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.15 2005-01-28 18:39:10 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -59,7 +60,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *
  * \param string the null-terminated string that shall be stripped
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscStripQuotes(char *string)
 {
@@ -69,7 +70,7 @@ mcsCOMPL_STAT miscStripQuotes(char *string)
     if (string == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "string");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Worst-case string which becomes:
@@ -114,7 +115,7 @@ mcsCOMPL_STAT miscStripQuotes(char *string)
         *dstPtr = '\0';
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -128,7 +129,7 @@ mcsCOMPL_STAT miscStripQuotes(char *string)
  * \param string the null-terminated string that shall be trimmed
  * \param trimChars leading and trailing characters to be removed
  *
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT miscTrimString(char *string, char *trimChars)
 {
@@ -182,7 +183,7 @@ mcsCOMPL_STAT miscTrimString(char *string, char *trimChars)
             while ((*chrPtr != '\0') && run);
         }
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
  
 /**
@@ -194,14 +195,14 @@ mcsCOMPL_STAT miscTrimString(char *string, char *trimChars)
  *
  * \param string the null-terminated string that shall be upper-cased
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscStrToUpper(char *string)
 {
     if (string == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "string");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     while (*string != '\0')
@@ -210,7 +211,7 @@ mcsCOMPL_STAT miscStrToUpper(char *string)
         string++;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -247,7 +248,7 @@ mcsLOGICAL miscIsSpaceStr (char *string)
  * \param originalChar the character to be replaced.
  * \param newChar the replacing character. 
  * 
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscReplaceChrByChr (char *string,
                                    char originalChar,
@@ -259,7 +260,7 @@ mcsCOMPL_STAT miscReplaceChrByChr (char *string,
     if (string == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "string");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* For each charracter of the string */ 
@@ -274,7 +275,7 @@ mcsCOMPL_STAT miscReplaceChrByChr (char *string,
         i++;        
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -324,7 +325,7 @@ char *miscDuplicateString (const char *string)
  * can hold.
  * \param subStringNb the number of found sub-strings.
  * 
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscSplitString    (const char         *string,
                                   const char          delimiter,
@@ -336,22 +337,22 @@ mcsCOMPL_STAT miscSplitString    (const char         *string,
     if (string == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "string");
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (subStrings == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "subStrings");
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (maxSubStringNb <= 0)
     {
         errAdd(miscERR_NULL_PARAM, "maxSubStringNb");
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (subStringNb == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "subStringNb");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Reset all the subStrings array to 0 */
@@ -383,7 +384,7 @@ mcsCOMPL_STAT miscSplitString    (const char         *string,
         else
         {
             errAdd(miscERR_STRING_MAX_SUBSTRING_NB_OVERFLOW, maxSubStringNb);
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         i++;
@@ -392,7 +393,7 @@ mcsCOMPL_STAT miscSplitString    (const char         *string,
 
     /* Return the number of sub-string found */
     *subStringNb = i;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

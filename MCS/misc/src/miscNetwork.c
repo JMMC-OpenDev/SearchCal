@@ -1,19 +1,19 @@
 /*******************************************************************************
-* JMMC project
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  03-Aug-2004  Created
-*
-*
-*-----------------------------------------------------------------------------*/
+ * JMMC project
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  03-Aug-2004  Created
+ *
+ *----------------------------------------------------------------------------*/
 
 /**
  * \file
  * Contains all the 'misc' Network related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscNetwork.c,v 1.2 2005-01-19 10:25:38 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscNetwork.c,v 1.3 2005-01-28 18:39:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,7 +50,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * \param hostName allocated character array where the resulting date is stored
  * \param length allocated character array length
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscGetHostName(char *hostName, mcsUINT32 length)
 {
@@ -60,30 +60,30 @@ mcsCOMPL_STAT miscGetHostName(char *hostName, mcsUINT32 length)
     if (hostName == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "hostName");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Test 'length' parameter validity */
     if (length == 0)
     {
         errAdd(miscERR_NULL_PARAM, "length");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Try to get the hostname from the system */
     if (uname(&systemInfo) != 0)
     {
         errAdd(miscERR_FUNC_CALL, "uname");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     if (strncpy((char *)hostName, systemInfo.nodename, length) == NULL)
     {
         errAdd(miscERR_FUNC_CALL, "strncpy");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

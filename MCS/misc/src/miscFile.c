@@ -1,41 +1,43 @@
 /*******************************************************************************
-* JMMC project
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     16-Jun-2004  Created from VLT file 'slxUtils.c'
-* lafrasse  17-Jun-2004  Added miscGetExtension
-* lafrasse  18-Jun-2004  Debugged miscGetExtension
-*                        Added miscYankExtension
-* lafrasse  20-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
-*                        miscYankLastPath
-* lafrasse  23-Jul-2004  Added error management code optimisation
-* lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
-*                        misc.h
-*                        Moved mcs.h include to miscFile.h
-*                        Changed includes due to null-terminated string specific
-*                        functions move from miscDynStr.h to miscDynBuf.h
-* lafrasse  03-Aug-2004  Corrected a bug in miscResolvePath that was causing an
-*                        '\' append at the end of the computed path
-* lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
-* lafrasse  25-Sep-2004  Added miscFileExists
-* lafrasse  27-Sep-2004  Added miscLocateFileInPath, corrected a bug in the
-*                        miscResolvePath use of misFileExists, and refined the
-*                        doxygen documentation
-* lafrasse  30-Sep-2004  Added miscLocateFile
-* lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
-* lafrasse  07-Oct-2004  Changed miscFileExists API
-* mella     10-Nov-2004  Added xsd and xsl into pathSearchList
-* gzins     10-Dec-2004  Fixed pathSearchList for .cdf files
-*
-*-----------------------------------------------------------------------------*/
+ * JMMC project
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     16-Jun-2004  Created from VLT file 'slxUtils.c'
+ * lafrasse  17-Jun-2004  Added miscGetExtension
+ * lafrasse  18-Jun-2004  Debugged miscGetExtension
+ *                        Added miscYankExtension
+ * lafrasse  20-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
+ *                        miscYankLastPath
+ * lafrasse  23-Jul-2004  Added error management code optimisation
+ * lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
+ *                        misc.h
+ *                        Moved mcs.h include to miscFile.h
+ *                        Changed includes due to null-terminated string
+ *                        specific functions move from miscDynStr.h to
+ *                        miscDynBuf.h
+ * lafrasse  03-Aug-2004  Corrected a bug in miscResolvePath that was causing an
+ *                        '\' append at the end of the computed path
+ * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
+ * lafrasse  25-Sep-2004  Added miscFileExists
+ * lafrasse  27-Sep-2004  Added miscLocateFileInPath, corrected a bug in the
+ *                        miscResolvePath use of misFileExists, and refined the
+ *                        doxygen documentation
+ * lafrasse  30-Sep-2004  Added miscLocateFile
+ * lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
+ * lafrasse  07-Oct-2004  Changed miscFileExists API
+ * mella     10-Nov-2004  Added xsd and xsl into pathSearchList
+ * gzins     10-Dec-2004  Fixed pathSearchList for .cdf files
+ *
+ *----------------------------------------------------------------------------*/
 
 /**
  * \file
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.23 2005-01-19 10:25:38 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.24 2005-01-28 18:39:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -222,7 +224,7 @@ char *miscGetExtension(char *fullPath)
  * \param extension a null-terminated string containing the file extension
  * to yank
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
 {    
@@ -232,7 +234,7 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
     /* return if the file name is null */
     if (fullPath == NULL)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* if extension is specified */
@@ -259,7 +261,7 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
         /* get the extention */
         if ((extPtr = miscGetExtension(fullPath)) == NULL)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
         else
         {
@@ -271,7 +273,7 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -299,7 +301,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
     mcsINT32            length;
 
     /* Reset the static Dynamic Buffer */
-    if (miscDynBufReset(&builtPath) == FAILURE)
+    if (miscDynBufReset(&builtPath) == mcsFAILURE)
     {
         return NULL;
     }
@@ -328,12 +330,12 @@ char*         miscResolvePath    (const char *unresolvedPath)
             *(tmpPath + length) = '\0';
 
             if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
-                == FAILURE)
+                == mcsFAILURE)
             {
                 return NULL;
             }
 
-            if (miscDynBufAppendString(&builtPath, tmpEnvVar) == FAILURE)
+            if (miscDynBufAppendString(&builtPath, tmpEnvVar) == mcsFAILURE)
             {
                 return NULL;
             }
@@ -344,12 +346,12 @@ char*         miscResolvePath    (const char *unresolvedPath)
             memcpy(tmpPath, "HOME", 5);
 
             if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
-                == FAILURE)
+                == mcsFAILURE)
             {
                 return NULL;
             }
 
-            if (miscDynBufAppendString(&builtPath, tmpEnvVar) == FAILURE)
+            if (miscDynBufAppendString(&builtPath, tmpEnvVar) == mcsFAILURE)
             {
                 return NULL;
             }
@@ -373,13 +375,13 @@ char*         miscResolvePath    (const char *unresolvedPath)
 
             *(tmpPath + length) = '\0';
 
-            if (miscDynBufAppendString(&builtPath, tmpPath) == FAILURE)
+            if (miscDynBufAppendString(&builtPath, tmpPath) == mcsFAILURE)
             {
                 return NULL;
             }
         }
 
-        if (miscDynBufAppendString(&builtPath, "/") == FAILURE)
+        if (miscDynBufAppendString(&builtPath, "/") == mcsFAILURE)
         {
             return NULL;
         }
@@ -402,7 +404,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
 
         if (*leftToBeResolvedPathPtr == ':')
         {
-            if (miscDynBufAppendString(&builtPath, ":") == FAILURE)
+            if (miscDynBufAppendString(&builtPath, ":") == mcsFAILURE)
             {
                 return NULL;
             }
@@ -418,7 +420,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
      */
     /* Get the Dynamic Buffer length */
     mcsUINT32 builtPathLength = 0;
-    if (miscDynBufGetNbStoredBytes(&builtPath, &builtPathLength) == FAILURE)
+    if (miscDynBufGetNbStoredBytes(&builtPath, &builtPathLength) == mcsFAILURE)
     {
         return NULL;
     }
@@ -444,7 +446,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
     }
 
     /* Strip the Dynamic Buffer */
-    if (miscDynBufStrip(&builtPath) == FAILURE)
+    if (miscDynBufStrip(&builtPath) == mcsFAILURE)
     {
         return NULL;
     }
@@ -461,7 +463,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
  * Environment Variable value
  * \param envVarValueBufferLength the length of the already allocated buffer
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
                                   char *envVarValueBuffer,
@@ -473,24 +475,24 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
     if (envVarName == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "envVarName");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     if ((chrPtr = getenv(envVarName)) == NULL)
     {
         errAdd(miscERR_FILE_ENV_VAR_NOT_DEF, envVarName);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     if (strlen(chrPtr) >= envVarValueBufferLength)
     {
         errAdd(miscERR_FILE_ENV_VAR_TOO_LONG, envVarName);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     strncpy(envVarValueBuffer, chrPtr, envVarValueBufferLength);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -498,7 +500,7 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
  *
  * \param path a null-terminated string containing the path to be yanked
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscYankLastPath(char *path)
 {
@@ -507,12 +509,12 @@ mcsCOMPL_STAT miscYankLastPath(char *path)
     if ((chrPtr = strrchr(path, '/')) == NULL)
     {
         /* There is no '/' in the received path */
-        return SUCCESS;
+        return mcsSUCCESS;
     }
 
     *chrPtr = '\0';
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -618,7 +620,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
     }
 
     /* Reset the static Dynamic Buffer */
-    if (miscDynBufReset(&tmpPath) == FAILURE)
+    if (miscDynBufReset(&tmpPath) == mcsFAILURE)
     {
         return NULL;
     }
@@ -655,7 +657,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
             validPath = NULL;
 
             /* Reset the static Dynamic Buffer */
-            if (miscDynBufReset(&tmpPath) == FAILURE)
+            if (miscDynBufReset(&tmpPath) == mcsFAILURE)
             {
                 return NULL;
             }
@@ -672,7 +674,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
     while ((path != NULL) && (validPath == NULL));
     
     /* Minimize allocated memory used by the static Dynamic Buffer */
-    if (miscDynBufStrip(&tmpPath) == FAILURE)
+    if (miscDynBufStrip(&tmpPath) == mcsFAILURE)
     {
         return NULL;
     }

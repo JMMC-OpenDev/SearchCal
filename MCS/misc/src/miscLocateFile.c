@@ -1,16 +1,16 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscLocateFile.c,v 1.4 2004-12-14 03:19:20 mella Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     09-Nov-2004  Created
-* gzins     23-Nov-2004  Returned a 'resolved' path; i.e. where environment
-*                        variables have substituated
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscLocateFile.c,v 1.5 2005-01-28 18:39:10 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     09-Nov-2004  Created
+ * gzins     23-Nov-2004  Returned a 'resolved' path; i.e. where environment
+ *                        variables have substituated
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -42,7 +42,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.4 2004-12-14 03:19:20 mella Exp $"; 
+static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.5 2005-01-28 18:39:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -70,9 +70,10 @@ int main (int argc, char *argv[])
     char *fullFileName;
 
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        /* Exit from the application with FAILURE */
+        /* Exit from the application with mcsFAILURE */
+        errCloseStack();
         exit (EXIT_FAILURE);
     }
 
@@ -99,21 +100,17 @@ int main (int argc, char *argv[])
     {
         printf("%s\n", miscResolvePath(fullFileName));
     }
+    else
+    {
+        errCloseStack();
+        exit (EXIT_FAILURE);
+    }
 
     /* Close MCS services */
     mcsExit();
     
-    /* Exit from the application with SUCCESS or FAILURE */
-    if (fullFileName != NULL)
-    {
-        exit (EXIT_SUCCESS);
-    }
-    else
-    {
-        exit (EXIT_FAILURE);
-    }
-
+    /* Exit from the application with mcsSUCCESS or mcsFAILURE */
+    exit (EXIT_SUCCESS);
 }
-
 
 /*___oOo___*/
