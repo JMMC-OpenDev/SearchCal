@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envStart.sh,v 1.5 2005-02-28 14:25:00 lafrasse Exp $"
+# "@(#) $Id: envStart.sh,v 1.6 2005-03-08 10:11:09 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/02/28 14:25:00  lafrasse
+# Reversed changelog order
+#
 # Revision 1.4  2005/02/13 17:26:51  gzins
 # Minor changes in documentation
 #
@@ -65,7 +68,7 @@ TMP=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
 if [ "$?" != 0 ]
 then
     # Try to start the msgManager
-    msgManager 2>&1 > /dev/null &
+    nohup msgManager 2>&1 > /dev/null &
     echo "'$LABEL' environment started."
 else
     echo "'$LABEL' environment ALREADY started !"
