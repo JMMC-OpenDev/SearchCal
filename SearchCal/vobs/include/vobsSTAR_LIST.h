@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.6 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.7 2004-11-23 12:36:23 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -46,19 +46,18 @@ class vobsSTAR_LIST
                                 mcsLOGICAL updateOnly=mcsFALSE);
 
     virtual void          Display(void);
-    virtual void          DisplayOne(void);
+
     virtual mcsCOMPL_STAT Save(mcsSTRING256 filename); 
  protected:
+    // List of stars
+    std::list<vobsSTAR *>           _starList;
+    std::list<vobsSTAR *>::iterator _starIterator;
 
  private:
     // Declaration assignment operator as private
     // methods, in order to hide them from the users.
     vobsSTAR_LIST& operator=(const vobsSTAR_LIST&);
     vobsSTAR_LIST (const vobsSTAR_LIST& list);//copy constructor
-
-    // List of stars
-    std::list<vobsSTAR>           _starList;
-    std::list<vobsSTAR>::iterator _starIterator;
 };
 
 #endif /*!vobSTAR_LIST_H*/

@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.12 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.13 2004-11-23 12:35:32 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.12 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.13 2004-11-23 12:35:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -77,6 +77,7 @@ vobsSTAR_LIST::vobsSTAR_LIST()
 //Copy constructor
 mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 {
+     
     for (unsigned int el = 0; el < list.Size(); el++)
     {
         AddAtTail(*(list.GetNextStar((el==0))));
@@ -87,7 +88,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 //Class destructor
 vobsSTAR_LIST::~vobsSTAR_LIST()
 {
-    _starList.clear();
+    Clear();
 }
 
 /**
@@ -95,7 +96,7 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
  *
  * \return
  * True value (i.e. mcsTRUE) if the number of elements is zero, false (i.e.
- * mcsFLASE) otherwise.
+ * mcsFALSE) otherwise.
  */
 mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
 {
@@ -118,6 +119,14 @@ mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 {
+    // Delete all objects in list 
+    std::list<vobsSTAR *>::iterator iter;
+    for (iter=_starList.begin(); iter != _starList.end(); iter++)
+    {
+        delete (*iter);
+    }
+
+    // Clear list
     _starList.clear();
     return SUCCESS;
 }
@@ -131,9 +140,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 {
-    //logExtDbg("vobsSTAR_LIST::AddAtTail()");
+    logExtDbg("vobsSTAR_LIST::AddAtTail()");
     // Put element in the list
-    _starList.push_back(star);
+    vobsSTAR *newStar = new vobsSTAR(star);
+    _starList.push_back(newStar);
 
     return SUCCESS;
 }
@@ -159,11 +169,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
     logExtDbg("vobsSTAR_LIST::Remove()");
 
     // Search star in the list
-    std::list<vobsSTAR>::iterator iter;
+    std::list<vobsSTAR *>::iterator iter;
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
-        if ((*iter).IsSame(star) == mcsTRUE)
+        // If found
+        if ((*iter)->IsSame(star) == mcsTRUE)
         {
+            // Delete element
+            delete (*iter);
+            // Clear element from list
             _starList.erase(iter);
             return SUCCESS;
         }
@@ -214,7 +228,7 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
             return NULL;
         }
     }
-    return &(*_starIterator);
+    return (*_starIterator);
 }
 
 /**
@@ -243,12 +257,12 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
     //logExtDbg("vobsSTAR_LIST::GetStar()");
 
     // Search star in the list
-    std::list<vobsSTAR>::iterator iter;
+    std::list<vobsSTAR *>::iterator iter;
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
-        if ((*iter).IsSameCoordinate(star, intervalRa, intervalDec) == mcsTRUE)
+        if ((*iter)->IsSameCoordinate(star, intervalRa, intervalDec) == mcsTRUE)
         {
-            return &(*iter);
+            return (*iter);
         }
     }
 
@@ -318,7 +332,7 @@ void vobsSTAR_LIST::Display(void)
     logExtDbg("vobsSTAR_LIST::Display()");
 
     // Display all element of the list 
-    std::list<vobsSTAR>::iterator iter;
+    std::list<vobsSTAR *>::iterator iter;
     for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
     {
         printf("%12s", propNameList[i]);
@@ -326,26 +340,7 @@ void vobsSTAR_LIST::Display(void)
     printf("\n");
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
-        (*iter).Display();
-    }
-}
-
-/**
- * Display the elements (stars) of the list of single star.
- *
- * This method display the star on the console, using the
- * vobsSTAR::DisplayOne method.
- */
-void vobsSTAR_LIST::DisplayOne(void)
-{
-    logExtDbg("vobsSTAR_LIST::Display()");
-
-    // Display all element of the list 
-    std::list<vobsSTAR>::iterator iter;
-    
-    for (iter=_starList.begin(); iter != _starList.end(); iter++)
-    {
-        (*iter).DisplayOne();
+        (*iter)->Display();
     }
 }
 
@@ -374,7 +369,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
     else
     {
         // Save all element of the list which are affected 
-        std::list<vobsSTAR>::iterator iter;
+        std::list<vobsSTAR *>::iterator iter;
 
         for (iter=_starList.begin(); iter != _starList.end(); iter++)
         {
@@ -382,13 +377,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
             for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
             {
                 // Get one property
-                (*iter).GetProperty((vobsUCD_ID)i, property);
+                (*iter)->GetProperty((vobsUCD_ID)i, property);
                 // if the property is different from vobsSTAR_PROP_NOT_SET
                 if (strcmp(property, vobsSTAR_PROP_NOT_SET)!=0)
                 {
                     fprintf(filePtr, "%12s", property);
                 }
             }
+            fprintf(filePtr, "\n");
 
         }
     }
@@ -398,6 +394,5 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
 
     return SUCCESS;
 }
-
 
 /*___oOo___*/
