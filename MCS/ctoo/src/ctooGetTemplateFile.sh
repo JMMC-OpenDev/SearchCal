@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateFile.sh,v 1.7 2004-09-15 14:47:24 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateFile.sh,v 1.8 2004-09-16 10:22:01 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -61,8 +61,12 @@ TEMPLATE=$1
 # New file to create from the template
 FILE=$2
 
-# option to say if the generated temporary file should be removed or not
-backupFile=$3
+# test if the template file exists
+if [ ! -f $TEMPLATE ]
+then
+    # the template file doesn't exist
+    echo -e "ERROR : the template $TEMPLATE file doesn't exist"
+fi
 
 
 # Copy the template file in current directory.
