@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.10 2004-08-10 16:45:23 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.11 2004-08-11 10:01:06 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -168,9 +168,6 @@ then
 
         # Get template file
         ctooGetTemplateFile.sh $TEMPLATE $FILE
-        
-        # Change permissions of the new created file
-        chmod $MODE $FILE
 
         # For .h files insert file name in the pre-processing directives to
         # avoid multiple inclusions
@@ -184,6 +181,9 @@ then
 
         # Remove the temporary backup file
         rm -f ${FILE}.BAK
+        
+        # Change permissions of the new created file
+        chmod $MODE $FILE
         
         # display the file if EDITOR is set
         if [ $EDITOR != "" ]
