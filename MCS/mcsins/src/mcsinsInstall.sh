@@ -2,10 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.5 2004-12-17 10:12:17 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.6 2005-01-29 13:49:36 gzins Exp $"
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     04-Dec-2004  Created
 # gzins     08-Dec-2004  Moved from mkf module
 #                        Added installation of env module
@@ -72,6 +73,13 @@ then
     fi
 fi
 
+# Check that the script is not run by 'root'
+if [ `whoami` == "root" ]
+then
+    echo -e "\nERROR : MCS installation MUST NOT BE done as root !!" 
+    echo -e "\n  ->  Please log in as swmgr, and start again.\n" 
+    exit 1
+fi
 # Get the current directory
 dir=$PWD
 
