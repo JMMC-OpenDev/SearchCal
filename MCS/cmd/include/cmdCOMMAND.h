@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.h,v 1.6 2004-12-22 07:24:35 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.h,v 1.7 2005-01-05 07:30:12 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -89,7 +89,7 @@ private:
      cmdCOMMAND(const cmdCOMMAND&);
      cmdCOMMAND& operator=(const cmdCOMMAND&);
 
-     virtual mcsCOMPL_STAT ParseCdf(string cdfName);
+     virtual mcsCOMPL_STAT ParseCdf();
      virtual mcsCOMPL_STAT ParseCdfForDesc(GdomeElement *node);
      virtual mcsCOMPL_STAT ParseCdfForParameters(GdomeElement *node);
      virtual mcsCOMPL_STAT ParseCdfForParam(GdomeElement *param);
@@ -105,6 +105,8 @@ private:
 
      /** Flag that indicates if the params have been parsed */
      mcsLOGICAL _hasBeenYetParsed;
+     /** Flag that indicates if the cdf has been parsed */
+     mcsLOGICAL _cdfHasBeenYetParsed;
      /** name of the command */
      string _name;
      /** parameters of the command */
