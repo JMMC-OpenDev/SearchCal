@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.2 2005-02-04 10:42:32 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.3 2005-02-04 10:49:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/04 10:42:32  gzins
+ * Added RA/DEC delta conversion (minutes (dm) to decimal degrees)
+ *
  * Revision 1.1  2005/02/04 09:54:42  gzins
  * Created
  *
@@ -16,7 +19,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.2 2005-02-04 10:42:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.3 2005-02-04 10:49:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,7 +48,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_MIDI::vobsCATALOG_MIDI() : _catalogFilename("vobMidiCatalog.cfg")
+vobsCATALOG_MIDI::vobsCATALOG_MIDI() : _catalogFilename("vobsMidiCatalog.cfg")
 {
     // Set catalog name
     SetName("MIDI");
