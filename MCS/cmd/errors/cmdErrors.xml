@@ -33,17 +33,17 @@
    <error id="7">
       <errName>LOGICAL_VALUE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect '%.80s' boolean value]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%.80s' boolean value for '%.80s' parameter]]></errFormat>
    </error>
    <error id="8">
       <errName>INTEGER_VALUE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect '%.80s' integer value]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%.80s' integer value for '%.80s' parameter]]></errFormat>
    </error>
    <error id="9">
       <errName>DOUBLE_VALUE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect '%.80s' float value]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%.80s' float value for '%.80s' parameter]]></errFormat>
    </error>
    <error id="10">
       <errName>UNUSED_PARAM</errName>
@@ -74,5 +74,35 @@
       <errName>NO_CDF</errName>
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[No command definition file for command %.80s. Command could not be parsed.]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>CDF_NO_ELEMENT_CONTENT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - no content for '%.20s' element]]></errFormat>
+   </error>
+   <error id="17">
+      <errName>CDF_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - loading CDF '%.80s' failed with exeption #%d ]]></errFormat>
+   </error>
+   <error id="18">
+      <errName>CDF_FORMAT_ITEM</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - get %dth item of  element '%.20s' failed with exception #%d ]]></errFormat>
+   </error>
+   <error id="19">
+      <errName>CDF_FORMAT_ELEMENT </errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - get element '%.20s' failed with exception #%d ]]></errFormat>
+   </error>
+   <error id="20">
+      <errName>CDF_FORMAT_CONTENT </errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - get content of '%.20s' element failed with exception #%d ]]></errFormat>
+   </error>
+   <error id="21">
+      <errName>DEFAULTVALUE_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid format for default value of '%.40s' parameter]]></errFormat>
    </error>
 </errorList>

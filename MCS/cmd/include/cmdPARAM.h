@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.h,v 1.7 2005-02-15 10:58:58 gzins Exp $"
+ * "@(#) $Id: cmdPARAM.h,v 1.8 2005-02-27 09:27:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/15 10:58:58  gzins
+ * Added CVS log as file modification history
+ *
  * mella     15-Nov-2004  Created
  * lafrasse  01-Feb-2005  Added type management
  *
@@ -70,7 +73,7 @@ public:
     virtual mcsCOMPL_STAT GetDefaultValue(char **value);
 
 protected:
-
+    virtual mcsCOMPL_STAT CheckValueType(string value);
 
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -92,7 +95,6 @@ private:
     string _userValue;
     /** default value of the parameter */
     string _defaultValue;
-
 };
 
 

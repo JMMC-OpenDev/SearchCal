@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.6 2005-02-15 11:02:48 gzins Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.7 2005-02-27 09:27:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 11:02:48  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.5  2005/02/15 10:58:58  gzins
  * Added CVS log as file modification history
  *
@@ -21,7 +24,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.6 2005-02-15 11:02:48 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.7 2005-02-27 09:27:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -60,7 +63,6 @@ using namespace std;
  * \param type  
  * \param unit  
  * \param optional  
- *
  */
 cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
                    mcsLOGICAL optional)
@@ -225,7 +227,7 @@ string cmdPARAM::GetHelp()
         help.append(_type);
         help.append(">");
     }
-    
+
     /* If there is one defaultValue */
     if (HasDefaultValue())
     {
@@ -233,7 +235,7 @@ string cmdPARAM::GetHelp()
         help.append(_defaultValue);
         help.append("')");
     }
-    
+
     /* If there is one given unit */
     if (! _unit.empty())
     {
@@ -241,7 +243,7 @@ string cmdPARAM::GetHelp()
         help.append(_unit);
         help.append("')");
     }
-    
+
     /* If there is one given description */
     if (! _desc.empty())
     {
@@ -252,7 +254,7 @@ string cmdPARAM::GetHelp()
     {
         help.append("\n\t\tNo description");
     }
-    
+
     help.append("\n");
 
     return help;
@@ -271,7 +273,15 @@ string cmdPARAM::GetHelp()
 mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
 {
     logExtDbg("cmdPARAM::SetUserValue()");
+
+    // Check value according to the parameter type
+    if (CheckValueType(value) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     _userValue=value;
+
     return mcsSUCCESS;
 }
 
@@ -286,7 +296,16 @@ mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
 mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
 {
     logExtDbg("cmdPARAM::SetDefaultValue()");
+
+    // Check value according to the parameter type
+    if (CheckValueType(value) == mcsFAILURE)
+    {
+        errAdd(cmdERR_DEFAULTVALUE_FORMAT, _name.data());
+        return mcsFAILURE;
+    }
+
     _defaultValue=value;
+    
     return mcsSUCCESS;
 }
 
@@ -302,7 +321,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
     logExtDbg("cmdPARAM::GetUserValue()");
     if (sscanf (_userValue.data(), "%d", value) != 1)
     {
-        errAdd(cmdERR_INTEGER_VALUE, _userValue.data());
+        errAdd(cmdERR_INTEGER_VALUE, _userValue.data(), _name.data());
         return mcsFAILURE;
     }
     return mcsSUCCESS;
@@ -318,9 +337,9 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
 mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
 {
     logExtDbg("cmdPARAM::GetUserValue()");
-     if (sscanf (_userValue.data(), "%lf", value) != 1)
+    if (sscanf (_userValue.data(), "%lf", value) != 1)
     {
-        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data());
+        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data(), _name.data());
         return mcsFAILURE;
     }
     return mcsSUCCESS;
@@ -336,19 +355,19 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
 mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
 {
     logExtDbg("cmdPARAM::GetUserValue()");
-    if ( (_userValue.compare("1") == 0) ||
+    if ((_userValue.compare("1") == 0) ||
          (_userValue.compare("true") == 0))
     {
         *value = mcsTRUE;
     }
-    else if ( (_userValue.compare("0") == 0) ||
+    else if ((_userValue.compare("0") == 0) ||
               (_userValue.compare("false") == 0))
     {
         *value = mcsFALSE;
     }
     else
     {
-        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data());
+        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data(), _name.data());
         return mcsFAILURE;
     }
     return mcsSUCCESS;
@@ -381,7 +400,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
     logExtDbg("cmdPARAM::GetDefaultValue()");
     if (sscanf (_defaultValue.data(), "%d", value) != 1)
     {
-        errAdd(cmdERR_INTEGER_VALUE, _defaultValue.data());
+        errAdd(cmdERR_INTEGER_VALUE, _defaultValue.data(), _name.data());
         return mcsFAILURE;
     }
     return mcsSUCCESS;    
@@ -397,9 +416,9 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
-     if (sscanf (_userValue.data(), "%lf", value) != 1)
+    if (sscanf (_userValue.data(), "%lf", value) != 1)
     {
-        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data());
+        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data(), _name.data());
         return mcsFAILURE;
     }
     return mcsSUCCESS;
@@ -415,19 +434,19 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
-    if ( (_userValue.compare("1") == 0) ||
-         (_userValue.compare("true") == 0))
+    if ((_userValue.compare("1") == 0) ||
+        (_userValue.compare("true") == 0))
     {
         *value = mcsTRUE;
     }
-    else if ( (_userValue.compare("0") == 0) ||
-              (_userValue.compare("false") == 0))
+    else if ((_userValue.compare("0") == 0) ||
+             (_userValue.compare("false") == 0))
     {
         *value = mcsFALSE;
     }
     else
     {
-        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data());
+        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data(), _name.data());
         return mcsFAILURE;
     }
     return mcsSUCCESS;
@@ -451,13 +470,62 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
 /*
  * Protected methods
  */
+/** 
+ * Check the value, given as string, is consistent with parameter type.
+ *
+ * \param value parameter value.
+ *
+ *  \returns mcsSUCCESS the value is in conformity with parameter type,
+ *  mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
+{
+    logExtDbg("cmdPARAM::Method()");
 
+    if (_type == "string")
+    {
+        return mcsSUCCESS;
+    }
+    else if (_type == "integer")
+    {
+        mcsINT32 iValue;
+        if (sscanf (value.data(), "%d", &iValue) != 1)
+        {
+            errAdd(cmdERR_INTEGER_VALUE, value.data(), _name.data());
+            return mcsFAILURE;
+        }
+        
+        return mcsSUCCESS;
+    }
+    else if (_type == "double")
+    {
+        mcsDOUBLE dValue;
+        if (sscanf (value.data(), "%lf", &dValue) != 1)
+        {
+            errAdd(cmdERR_DOUBLE_VALUE, value.data(), _name.data());
+            return mcsFAILURE;
+        }
+        
+        return mcsSUCCESS;
+    }
+    else if (_type == "logical")
+    {
+        if ((value.compare("1")     == 0) ||
+            (value.compare("0")     == 0) ||
+            (value.compare("true")  == 0) ||
+            (value.compare("false") == 0))
+        {
+            errAdd(cmdERR_LOGICAL_VALUE, value.data(), _name.data());
+            return mcsFAILURE;
+        }
 
-
+        return mcsSUCCESS;
+    }
+    return mcsSUCCESS;
+}
+ 
 /*
  * Private methods
  */
-
-
 
 /*___oOo___*/

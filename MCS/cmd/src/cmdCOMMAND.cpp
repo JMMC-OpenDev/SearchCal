@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.25 2005-02-23 11:15:51 mella Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.26 2005-02-27 09:27:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/02/23 11:15:51  mella
+ * Reorder code , add an error to before failure return and add one missing unref_nl into GetNodeContent
+ *
  * Revision 1.24  2005/02/23 07:36:09  mella
  * Place variable declaration into functionnal blocks
  *
@@ -56,11 +59,11 @@
 /**
  * \file
  * cmdCOMMAND class definition.
- * \todo get Default value from cdf
+ * \todo get Default value from CDF
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.25 2005-02-23 11:15:51 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.26 2005-02-27 09:27:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -124,7 +127,7 @@ cmdCOMMAND::~cmdCOMMAND()
 {
     logExtDbg("cmdCOMMAND::~cmdCOMMAND()");
     
-    // for each parameter entry: delete each object associated to the pointer object
+    // For each parameter entry: delete each object associated to the pointer object
     if (_paramList.size()>0)
     {
         STRING2PARAM::iterator i;
@@ -151,7 +154,7 @@ cmdCOMMAND::~cmdCOMMAND()
  * CDF.
  * It calls  parseCdf() and  parseParams().
  *
- * \param cdfName  the cdf file name.
+ * \param cdfName  the CDF file name.
  * 
  * \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -189,7 +192,7 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
         return mcsFAILURE;
     }
         
-    // and flag a right performed parsing only after this point
+    // And flag a right performed parsing only after this point
     _hasBeenYetParsed = mcsTRUE;
     return mcsSUCCESS;
 }
@@ -213,7 +216,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
     }
     else
     {
-        // Parse The cdf file to obtain full description
+        // Parse the CDF file to obtain full description
         if (ParseCdf() == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -257,7 +260,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
 {
     logExtDbg ("cmdCOMMAND::GetDescription()");
 
-    // clear recipient
+    // Clear recipient
     desc.clear();
 
     string synopsis;
@@ -273,13 +276,13 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
     }
     else
     {
-        // Parse The cdf file to obtain full description
+        // Parse the CDF file to obtain full description
         if (ParseCdf()==mcsFAILURE)
         {
             return mcsFAILURE;
         }
 
-        // append the command name
+        // Append the command name
         synopsis.append("NAME\n\t");
         synopsis.append(_name);
 
@@ -293,7 +296,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         synopsis.append(" - ");
         synopsis.append(shortSentence);
 
-        // append description of command
+        // Append description of command
         if (_desc.empty())
         {
             description.append("No description found.");
@@ -307,10 +310,10 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         synopsis.append("\n\nSYNOPSIS\n\t");
         synopsis.append(_name);
 
-        // append help for each parameter if any
+        // Append help for each parameter if any
+        options.append("\n\nPARAMETERS\n");
         if (_paramList.size() > 0)
         {
-            options.append("\n\nPARAMETERS\n");
             STRING2PARAM::iterator i = _paramList.begin();
             while(i != _paramList.end())
             {
@@ -344,7 +347,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         }
         else
         {
-            options.append("\t\tThis command takes no parameter\n");
+            options.append("\tThis command takes no parameter.\n");
         }
     }
 
@@ -487,14 +490,21 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
         return mcsFAILURE;
     }
 
-    // Try to return the user value
-    if( p->GetUserValue(param) == mcsSUCCESS ){
-        return mcsSUCCESS;
+    // If user value is given
+    if (p->IsDefined() == mcsTRUE)
+    {
+        // Return the user value
+        return (p->GetUserValue(param));
     }
-
-    // Else try to return the default value
-    if( p->HasDefaultValue() == mcsTRUE ){
-        return p->GetDefaultValue(param);    
+    // Else 
+    else
+    {
+        // If a default value exist
+        if (p->HasDefaultValue() == mcsTRUE )
+        {
+            // Return the default value
+            return p->GetDefaultValue(param);    
+        }
     }
 
     // Finally return an error
@@ -525,14 +535,19 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
         return mcsFAILURE;
     }
 
-    // Try to return the user value
-    if( p->GetUserValue(param) == mcsSUCCESS ){
-        return mcsSUCCESS;
+    // If user value is given
+    if (p->IsDefined() == mcsTRUE)
+    {
+        // Return the user value
+        return (p->GetUserValue(param));
     }
-
-    // Else try to return the default value
-    if( p->HasDefaultValue() == mcsTRUE ){
-        return p->GetDefaultValue(param);    
+    else
+    {
+        // Else return the default value
+        if (p->HasDefaultValue() == mcsTRUE )
+        {
+            return p->GetDefaultValue(param);    
+        }
     }
 
     // Finally return an error
@@ -562,14 +577,19 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
         return mcsFAILURE;
     }
 
-    // Try to return the user value
-    if( p->GetUserValue(param) == mcsSUCCESS ){
-        return mcsSUCCESS;
+    // If user value is given
+    if (p->IsDefined() == mcsTRUE)
+    {
+        // Return the user value
+        return (p->GetUserValue(param));
     }
-
-    // Else try to return the default value
-    if( p->HasDefaultValue() == mcsTRUE ){
-        return p->GetDefaultValue(param);    
+    else
+    {
+        // Else return the default value
+        if (p->HasDefaultValue() == mcsTRUE )
+        {
+            return p->GetDefaultValue(param);    
+        }
     }
 
     // Finally return an error
@@ -599,14 +619,19 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
         return mcsFAILURE;
     }
 
-    // Try to return the user value
-    if( p->GetUserValue(param) == mcsSUCCESS ){
-        return mcsSUCCESS;
+    // If user value is given
+    if (p->IsDefined() == mcsTRUE)
+    {
+        // Return the user value
+        return (p->GetUserValue(param));
     }
-
-    // Else try to return the default value
-    if( p->HasDefaultValue() == mcsTRUE ){
-        return p->GetDefaultValue(param);    
+    else
+    {
+        // Else return the default value
+        if (p->HasDefaultValue() == mcsTRUE )
+        {
+            return p->GetDefaultValue(param);    
+        }
     }
 
     // Finally return an error
@@ -755,19 +780,12 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
     return mcsSUCCESS;
 }
 
-
-/*
- * Protected methods
- */
-
-
-
 /*
  * Private methods
  */
 
 /** 
- *  Parse a cdf file and build new parameters for the command.
+ *  Parse a CDF file and build new parameters for the command.
  *  After this step the parameters can be parsed.
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
@@ -776,7 +794,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
 {
     logExtDbg ("cmdCOMMAND::ParseCdf()");
 
-    // If the cdf has been already parsed, return
+    // If the CDF has been already parsed, return
     if ( _cdfHasBeenYetParsed == mcsTRUE)
     {
         return mcsSUCCESS;
@@ -795,54 +813,50 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
         return mcsFAILURE;
     }
  
-    // find the correcsponding cdf file
+    // Find the correcsponding CDF file
     char * fullCdfFilename = miscLocateFile(_cdfName.data());
-    // check if the cdf file has been found   
+    // Check if the CDF file has been found   
     if (fullCdfFilename == NULL)
     {
         errAdd(cmdERR_NO_CDF, _cdfName.data());
         return mcsFAILURE;
     }
 
-    /* Get a DOMImplementation reference */
+    // Get a DOMImplementation reference
     domimpl = gdome_di_mkref ();
 
-    /* create a new Document from the cdf file */
+    // Create a new Document from the CDF file
     const char *xmlFilename = miscResolvePath(fullCdfFilename);
-    logDebug("Using cdf file %s",xmlFilename);
+    logDebug("Using CDF file %s",xmlFilename);
     doc = gdome_di_createDocFromURI(domimpl, xmlFilename, GDOME_LOAD_PARSING,
                                     &exc);
     if (doc == NULL)
     {
-        logWarning ("Illegal format encountered for cdf file "
-                    "'%.100s'. DOMImplementation.createDocFromURI() failed "
-                    "with exception #%d", xmlFilename, exc);
+        errAdd (cmdERR_CDF_FORMAT, xmlFilename, exc);
         goto errCond;
     }
 
-    /* Get reference to the root element of the document */
+    // Get reference to the root element of the document
     root = gdome_doc_documentElement (doc, &exc);
     if (root == NULL) 
     {
-        logWarning ("Illegal format encountered for cdf file "
-                    "'%.100s'. Document.documentElement() failed "
-                    "with exception #%d", xmlFilename, exc);
+        errAdd (cmdERR_CDF_FORMAT, xmlFilename, exc);
         goto errCond;
     }
 
-    /* Parse for Description */
+    // Parse for Description
     if (ParseCdfForDesc(root)==mcsFAILURE)
     {
         goto errCond;
     }
     
-    /* Parse for Parameters */
+    // Parse for Parameters
     if (ParseCdfForParameters(root)==mcsFAILURE)
     {
         goto errCond;
     }
 
-    /* Free the document structure and the DOMImplementation */
+    // Free the document structure and the DOMImplementation
     gdome_el_unref(root, &exc);
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
@@ -851,7 +865,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     return mcsSUCCESS;
 
 errCond:
-    /* Free the document structure and the DOMImplementation */
+    // Free the document structure and the DOMImplementation
     gdome_el_unref(root, &exc);
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
@@ -861,9 +875,9 @@ errCond:
 }
 
 /** 
- *  Parse the cdf document to extract description.
+ *  Parse the CDF document to extract description.
  *
- * \param root  the root node of the cdf document.
+ * \param root  the root node of the CDF document.
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -877,39 +891,34 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
     int nbChildren;
     
     name = gdome_str_mkref ("desc");
-    /* Get the reference to the childrens NodeList of the root element */
+    // Get the reference to the childrens NodeList of the root element
     nl = gdome_el_getElementsByTagName (root, name, &exc);
-    gdome_str_unref(name);
     if (nl == NULL)
     {
-        logWarning ("Illegal format encountered for cdf file "
-                    ". Element.childNodes() failed "
-                    "with exception #%d", exc);
+        errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
+        gdome_str_unref(name);
         return mcsFAILURE;
     }
  
     nbChildren = gdome_nl_length (nl, &exc);
 
-    /* if a desc does exist get first item (xsd assumes there is only one
-     * desc) */
+    // If a desc does exist get first item (xsd assumes there is only one desc
     if (nbChildren > 0)
     {
         GdomeElement *el,*el2;
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
         if (el == NULL)
         {
-            logWarning ("Illegal format encountered for cdf file "
-                        ". NodeList.item(%d) failed "
-                        "with exception #%d", 0, exc);
+            errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
+            gdome_str_unref(name);
             gdome_nl_unref(nl, &exc);
             return mcsFAILURE;
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
         if (el2 == NULL)
         {
-            logWarning ("Illegal format encountered for cdf file "
-                        ". Element.firstChild() failed "
-                        "with exception #%d", exc);
+            errAdd (cmdERR_CDF_FORMAT_CONTENT, name->str, exc);
+            gdome_str_unref(name);
             gdome_el_unref(el2, &exc);
             gdome_nl_unref(nl, &exc);
             return mcsFAILURE;
@@ -922,15 +931,16 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
         gdome_el_unref(el, &exc);
     }
     
+    gdome_str_unref(name);
     gdome_nl_unref(nl, &exc);
     
     return mcsSUCCESS;
 }
 
 /** 
- *  Parse the cdf document to extract the parameters.
+ *  Parse the CDF document to extract the parameters.
  *
- * \param root  the root node of the cdf document.
+ * \param root  the root node of the CDF document.
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -944,67 +954,64 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
     int nbChildren;
     
     name = gdome_str_mkref ("params");
-    /* Get the reference to the params childrens of the root element */
+    // Get the reference to the params childrens of the root element
     params_nl = gdome_el_getElementsByTagName (root, name, &exc);
-    gdome_str_unref(name);
     if (params_nl == NULL)
     {
-        logWarning ("Illegal format encountered for cdf file "
-                    ". Element.getElementsByTagName() failed "
-                    "with exception #%d", exc);
+        errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
+        gdome_str_unref(name);
         return mcsFAILURE;
     }
+    gdome_str_unref(name);
  
     nbChildren = gdome_nl_length (params_nl, &exc);
 
-    if (nbChildren == 1)    /* if params does exist */
+    if (nbChildren == 1)    // If params does exist
     {
         GdomeElement *params_el;
         GdomeNodeList *param_nl;
         params_el = (GdomeElement *)gdome_nl_item (params_nl, 0, &exc);
         if (params_el == NULL)
         {
-            logWarning ("Illegal format encountered for cdf file "
-                        ". NodeList.item(%d) failed "
-                        "with exception #%d", 0, exc);
+            errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
             gdome_nl_unref(params_nl, &exc);
             return mcsFAILURE;
         }
 
-        /* Get the reference to the list of param elements */
+        // Get the reference to the list of param elements
         name = gdome_str_mkref ("param");
         param_nl = gdome_el_getElementsByTagName (params_el, name, &exc);
-        gdome_str_unref(name);
         if (param_nl == NULL)
         {
-            logWarning ("Illegal format encountered for cdf file "
-                        ". Element.childNodes() failed "
-                        "with exception #%d", exc);
+            errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
+            gdome_str_unref(name);
             gdome_el_unref(params_el, &exc);
             gdome_nl_unref(params_nl, &exc);
             return mcsFAILURE;
         }
 
         nbChildren = gdome_nl_length (param_nl, &exc);
-        /* if param has children */
+        // If param has children
         if (nbChildren > 0)
-        {   int i;
-            for (i=0;i<nbChildren;i++){
+        {  
+            int i;
+            for (i=0;i<nbChildren;i++)
+            {
                 GdomeElement *param_el;
                 param_el = (GdomeElement *)gdome_nl_item (param_nl, i, &exc);
                 if (param_el == NULL)
                 {
-                    logWarning ("Illegal format encountered for cdf file "
-                                ". NodeList.item(%d) failed "
-                                "with exception #%d", i, exc);
+                    errAdd (cmdERR_CDF_FORMAT_ITEM, i, name->str, exc);
+                    gdome_str_unref(name);
                     gdome_el_unref(params_el, &exc);
                     gdome_nl_unref(param_nl, &exc);
                     gdome_nl_unref(params_nl, &exc);
                     return mcsFAILURE;
                 }
 
-                if (ParseCdfForParam(param_el)==mcsFAILURE)
+                if (ParseCdfForParam(param_el) == mcsFAILURE)
                 {
+                    gdome_str_unref(name);
                     gdome_el_unref(param_el, &exc);
                     gdome_el_unref(params_el, &exc);
                     gdome_nl_unref(param_nl, &exc);
@@ -1014,10 +1021,9 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
                 gdome_el_unref(param_el, &exc);
             }
         }
+        gdome_str_unref(name);
         gdome_el_unref(params_el, &exc);
         gdome_nl_unref(param_nl, &exc);
-    }else{    /* else : if params does not exist */
-        // the command does not accept parameters
     }
     
     gdome_nl_unref(params_nl, &exc);
@@ -1025,9 +1031,9 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
 }
 
 /** 
- *  Parse the cdf document to extract the parameters.
+ *  Parse the CDF document to extract the parameters.
  *
- *  \param param  one param node of the cdf document.
+ *  \param param  one param node of the CDF document.
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -1041,25 +1047,29 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     string unit;
     mcsLOGICAL optional;
     
-    /* get mandatory name */
+    // Get mandatory name
     if (CmdGetNodeContent(param, "name", name) == mcsFAILURE)
     {
-        // \todo add error
         return mcsFAILURE;   
     }
-    /* get mandatory type */
+    // Get mandatory type
     if (CmdGetNodeContent(param, "type", type) == mcsFAILURE)
     {
-        // \todo add error
         return mcsFAILURE;   
     }
     
-    /* get optional description */
-    CmdGetNodeContent(param, "desc", desc);
-    /* get optional unit */
-    CmdGetNodeContent(param, "unit", unit);
+    // Get optional description
+    if (CmdGetNodeContent(param, "desc", desc, mcsTRUE) == mcsFAILURE)
+    {
+        return mcsFAILURE;   
+    }
+    // Get optional unit
+    if (CmdGetNodeContent(param, "unit", unit, mcsTRUE) == mcsFAILURE)
+    {
+        return mcsFAILURE;   
+    }
    
-    /* get optional defaultValue */
+    // Get optional defaultValue
     { 
         GdomeNodeList *nl;
         GdomeElement *el;
@@ -1068,33 +1078,31 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         int nbChildren;
 
         name = gdome_str_mkref ("defaultValue");
-        /* Get the reference to the defaultValue elements  */
+        // Get the reference to the defaultValue elements
         nl = gdome_el_getElementsByTagName (param, name, &exc);
-        gdome_str_unref(name);
         if (nl == NULL)
         {
-            logWarning ("Illegal format encountered for cdf file "
-                        ". Element.childNodes() failed "
-                        "with exception #%d", exc);
+            errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
+            gdome_str_unref(name);
             return mcsFAILURE;
         }
         nbChildren = gdome_nl_length (nl, &exc);
-        /* if a defaultValue does exist */
+        // If a defaultValue does exist
         if (nbChildren > 0)
         {
-            /* get defaultValue element */
+            // Get defaultValue element
             el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
             if (el == NULL)
             {
-                logWarning ("Illegal format encountered for cdf file "
-                            ". NodeList.item(%d) failed "
-                            "with exception #%d", 0, exc);
+                errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
+                gdome_str_unref(name);
                 gdome_el_unref(el, &exc);
                 return mcsFAILURE;
             }
             if (CmdGetNodeContent(el, type, defaultValue) == mcsFAILURE )
             {
-                // \todo add error
+                errAdd (cmdERR_CDF_FORMAT_CONTENT, name->str, exc);
+                gdome_str_unref(name);
                 gdome_el_unref(el, &exc);
                 return mcsFAILURE;   
             }
@@ -1103,24 +1111,25 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         }
         else
         {
-            // there should not be any defaultValue
+            // There should not be any defaultValue
             logDebug("no defaultValue found ");
             gdome_nl_unref(nl, &exc);
         }
+        gdome_str_unref(name);
     }
-    /* check if it is an optional parameter */
+    // Check if it is an optional parameter
     { 
         GdomeAttr *attribute;
         GdomeException exc;
         GdomeDOMString *attrName,*attrValue, *str, *str2;
 
         attrName = gdome_str_mkref ("optional");
-        /* Get the reference to the optional element  */
+        // Get the reference to the optional element
         attribute = gdome_el_getAttributeNode (param, attrName, &exc);
         gdome_str_unref(attrName);
         if (attribute == NULL)
         {
-            // by default it is not optional.
+            // By default it is not optional.
             optional = mcsFALSE;
         }
         else
@@ -1153,7 +1162,10 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     cmdPARAM *p = new cmdPARAM(name, desc, type, unit, optional);
     if (! defaultValue.empty())
     {
-        p->SetDefaultValue(defaultValue);
+        if (p->SetDefaultValue(defaultValue) == mcsFAILURE)
+        {
+            return mcsFAILURE;   
+        }
     }
     AddParam(p);
     
@@ -1170,7 +1182,9 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tagName, string &content)
+mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode,
+                                            string tagName, string &content,
+                                            mcsLOGICAL isOptional)
 {
     logExtDbg("cmdCOMMAND::CmdGetNodeContent()");
     
@@ -1179,35 +1193,37 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     GdomeDOMString *name;
     int nbChildren;
     
+#if 0
     if (tagName.empty())
     {
-        /* Get the reference to the childrens of the parentNode element */
+        // Get the reference to the childrens of the parentNode element
         nl = gdome_el_childNodes(parentNode, &exc);
     }
     else
     {
+#endif
         name = gdome_str_mkref (tagName.data());
-        /* Get the reference to the named childrens of the parentNode element */
+        // Get the reference to the named childrens of the parentNode element
         nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
-        gdome_str_unref(name);
+#if 0
     }
+#endif
     
     if (nl == NULL)
     {
-        logDebug("searching content for '%s' element failed ",tagName.data());
-        logWarning ("Illegal format encountered for cdf file "
-                    ". Element.childNodes() failed "
-                    "with exception #%d", exc);
+        errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
+        gdome_str_unref(name);
         return mcsFAILURE;
     }
 
     nbChildren = gdome_nl_length (nl, &exc);
 
-    /* inform that we are maybe missing some data */
-    if (nbChildren > 1){
-        logWarning("We use only the first children but %d are present",nbChildren);
+    // Inform that we are maybe missing some data
+    if (nbChildren > 1)
+    {
+        logWarning("Only use the first children but %d are present",nbChildren);
     }
-    /* if one or more children do exist work*/
+    // If one or more children do exist work*/
     if (nbChildren > 0)
     {
         GdomeElement *el, *el2;
@@ -1215,21 +1231,19 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
         if (el == NULL)
         {
-            logDebug("searching content for '%s' element failed ",tagName.data());
-            logWarning ("Illegal format encountered for cdf file "
-                        ". NodeList.item(%d) failed "
-                        "with exception #%d", 0, exc);
+            errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
             gdome_nl_unref(nl, &exc);
+            gdome_str_unref(name);
             return mcsFAILURE;
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
 
         if (el2 == NULL)
         {
-            logDebug("searching content for '%s' element failed ",tagName.data());
-            // \todo errAdd
+            errAdd (cmdERR_CDF_FORMAT_CONTENT, name->str, exc);
             gdome_el_unref(el, &exc);
             gdome_nl_unref(nl, &exc);
+            gdome_str_unref(name);
             return mcsFAILURE;
         }
         
@@ -1242,12 +1256,18 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     }
     else
     {
-        logDebug("searching content for '%s' element failed, no element found ",tagName.data());
+        mcsCOMPL_STAT status = mcsSUCCESS;
+        if (isOptional == mcsFALSE)
+        {
+            errAdd (cmdERR_CDF_NO_ELEMENT_CONTENT, name->str);
+            status = mcsFAILURE;
+        }
+        gdome_str_unref(name);
         gdome_nl_unref(nl, &exc);
-        // no child found
-        return mcsFAILURE;
+        return status;
     }
     
+    gdome_str_unref(name);
     gdome_nl_unref(nl, &exc);
     logDebug("content of '%s' element is '%s'",tagName.data(),content.data());
     return mcsSUCCESS;
@@ -1269,19 +1289,19 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
     int posStart=0;
     int posEnd=0;
 
-    // we start walking out of a parameter value.
+    // Start walking out of a parameter value.
     mcsLOGICAL valueZone=mcsFALSE;
 
     while(i != _params.end())
     {
         if (*i=='-')
         {
-            /* If the dash is not included into a string value */
+            // If the dash is not included into a string value
             if (! valueZone)
             {
                 if( ( *(i+1) >= '0' ) &&  ( *(i+1) <= '9' ))
                 {
-                    // do nothing because all the tuple string must be catched
+                    // Do nothing because all the tuple string must be catched
                 }
                 else if (posEnd>0)
                 {
@@ -1295,7 +1315,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
             }
         }
 
-        // if double quotes are encountered it opens or closes a valueZone
+        // If double quotes are encountered it opens or closes a valueZone
         if (*i=='"')
         {
             valueZone = (mcsLOGICAL)!valueZone;
@@ -1305,7 +1325,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
         posEnd++;
     }
 
-    // parse last tuple if posEnd is not null
+    // Parse last tuple if posEnd is not null
     if (posEnd>0)
     {
         if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==mcsFAILURE)
@@ -1362,16 +1382,15 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
         return mcsFAILURE;
     }
     
-    /* start from 1 to remove '-' and remove the last space*/
-    /* \todo enhance code to accept more than one space between name and value
-     * */
+    // Start from 1 to remove '-' and remove the last space*/
+    // \todo enhance code to accept more than one space between name and value
     string paramName = str.substr(1, spacePos-1);
     string paramValue = str.substr(spacePos+1);
     
     logDebug("found new tuple: [%s,%s]", paramName.data(), paramValue.data());
    
     cmdPARAM *p;
-    /* If parameter does'nt exist in the cdf */
+    // If parameter does'nt exist in the CDF
     STRING2PARAM::iterator iter = FindParam(paramName);
     if (iter != _paramList.end())
     {
@@ -1383,7 +1402,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
         return mcsFAILURE;
     }
 
-    /* assign value to the parameter */
+    // Assign value to the parameter
     p->SetUserValue(paramValue);
     
     return mcsSUCCESS;
@@ -1405,15 +1424,15 @@ mcsCOMPL_STAT cmdCOMMAND::CheckParams(){
         cmdPARAM * child = i->second;
         if (child->IsOptional())
         {
-            // no problem
+            // No problem
         }
         else if (child->HasDefaultValue())
         {
-            // no problem
+            // No problem
         }
         else
         {
-            // there should be one userValue defined
+            // There should be one userValue defined
             if (child->GetUserValue().empty())
             {
                 errAdd(cmdERR_MISSING_PARAM, child->GetName().data(),
