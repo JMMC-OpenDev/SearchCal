@@ -1,14 +1,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2005-01-20 10:48:51 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2005-01-21 08:10:30 gluck Exp $"
 #
-# Makefile of ........
+# Makefile of the alx module 
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
-# sccmgr    20-Jan-2005  Created
+# History
+# -------
+# $Log: not supported by cvs2svn $
 #
+# scetre    20-Sep-2004  Created
 #
 #*******************************************************************************
 # REMARKS
@@ -54,17 +55,21 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
-
+INCLUDES        = alx.h						\
+				  
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = alx 
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-lllll_OBJECTS   =
+alx_OBJECTS   = alxAngularDiameter          \
+				alxGalacticCoordinates      \
+				alxMagnitude                \
+				alxRealMagnitude            \
+				alxVisibility
 
 #
 # Scripts (public and local)
@@ -110,7 +115,6 @@ JARFILES        =
 jjjfff_DIRS     =
 jjjfff_EXTRAS   = 
 
-#
 # Java programs
 # ---------------------------------
 JAVA_EXECUTABLES=
@@ -118,11 +122,6 @@ JAVA_EXECUTABLES=
 #
 # <brief description of jjjjjj java program>
 jjjjjj_CLASS    =
-
-#
-# Command Definition Files (CDF)
-# ---------------------------------
-CDF_FILES       =
 
 #
 # man pages to be done
@@ -137,7 +136,12 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES =
+INSTALL_FILES = ../config/alxAbsIntPolynomial.cfg					\
+				../config/alxAngDiamPolynomialForBrightStar.cfg		\
+				../config/alxColorTableForBrightDwarfStar.cfg		\
+				../config/alxColorTableForBrightGiantStar.cfg		\
+				../config/alxColorTableForBrightSuperGiantStar.cfg	\
+				../config/alxExtinctionRatioTable.cfg
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
@@ -169,5 +173,9 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
+
+db : db_all
+	@echo " . . . ../DB done"
+
 
 #___oOo___
