@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.11 2004-07-19 15:31:05 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.12 2004-07-22 13:23:45 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -18,6 +18,10 @@
 * lafrasse  01-Jul-2004  moved miscDynBuf stuff to miscDynBuf.h
 * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
 * lafrasse  19-Jul-2004  Added miscDynStr doxygen comment
+* lafrasse  20-Jul-2004  Added miscResolvePath, miscGetValueEnvVar, and
+*                        miscYankLastPath from miscFile.c
+* lafrasse  22-Jul-2004  Added an include of misDynStr.h to centralize user
+*                        includes on misc.h
 *
 *
 *******************************************************************************/
@@ -39,19 +43,24 @@ functions in C++-code.
 extern C {
 #endif
 
+#include "miscDynStr.h"
+
 /*
  * Pubic functions declaration
  */
  
-char *miscGetFileName(char *fullPath);
-char *miscGetExtension(char *fileName);
-void miscYankExtension(char *fileName, char *extension);
+char *        miscGetFileName    (char *fullPath);
+char *        miscGetExtension   (char *fullPath);
+mcsCOMPL_STAT miscYankExtension  (char *fullPath, char *extension);
+mcsCOMPL_STAT miscResolvePath    (const char *orginalPath, char **resolvedPath);
+mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName, char **envVarValue);
+mcsCOMPL_STAT miscYankLastPath   (char *path);
 
-void miscGetUtcTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
-void miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
+void miscGetUtcTimeStr           (mcsBYTES32 localTime, mcsINT32 precision);
+void miscGetLocalTimeStr         (mcsBYTES32 localTime, mcsINT32 precision);
 
-void miscStripQuotes(char *string);
-void miscStrToUpper(char *string);
+void miscStripQuotes             (char *string);
+void miscStrToUpper              (char *string);
 
 #ifdef __cplusplus
 }
