@@ -3,12 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.h,v 1.2 2004-11-18 17:32:31 gzins Exp $"
+* "@(#) $Id: evhSERVER.h,v 1.3 2004-11-23 09:13:22 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     09-Nov-2004  Created
-*
+* gzins     23-Nov-2004  Used new msg C++ library.
+*                        Added SendReply method
 *
 *******************************************************************************/
 
@@ -97,6 +98,10 @@ public:
     // Main loop
     virtual mcsCOMPL_STAT MainLoop(msgMESSAGE *msg=NULL);
 
+    // Main loop
+    virtual mcsCOMPL_STAT SendReply(msgMESSAGE &msg, 
+                                    mcsLOGICAL lastReply=mcsTRUE);
+
 protected:
 
 private:
@@ -105,8 +110,10 @@ private:
     evhSERVER& operator=(const evhSERVER&);
     evhSERVER (const evhSERVER&);
 
-    mcsLOGICAL _isConnected; // Is connected to MCS message manager ?
+    // Interface to msgManager process
+    msgMANAGER_IF   _msgManager;
 
+    // Command given as command-line argument (is any)
     msgMESSAGE _msg;
 };
 
