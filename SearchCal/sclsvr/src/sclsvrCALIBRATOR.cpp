@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.20 2005-02-04 15:27:40 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.21 2005-02-04 15:49:23 gzins Exp $"
  *
  * History
  * -------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.20 2005-02-04 15:27:40 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.21 2005-02-04 15:49:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -706,7 +706,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "diamFlag", 
                 vobsSTRING_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_VIS_FLAG, "visFlag", vobsSTRING_PROPERTY);
     AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "%.3f");
