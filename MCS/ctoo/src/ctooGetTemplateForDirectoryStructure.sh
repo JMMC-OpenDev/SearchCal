@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.2 2004-09-14 07:55:41 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.3 2004-09-14 08:55:51 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -303,7 +303,7 @@ case $directoryStructureTtype in
                     export EDITOR=""
 
                     # Get module private header file in include directory
-                    ctooGetPrivateHeaderFile.sh
+                    ctooGetPrivateHeaderFile
 
                     # Switch on the environment variable EDITOR, to trigger
                     # the automatic editor pop up
