@@ -1,0 +1,11 @@
+################################################################################
+# MCS Environments List Definition
+################################################################################
+
+# MCS 'default' Environment Definition.
+# Do not delete this line, nor modify this environment name !
+default   localhost  1991
+
+# MCS User Environment Definitions.
+# Customize this list (with the format given below) to feet your needs.
+# EnvName   HostName   PortNumber
