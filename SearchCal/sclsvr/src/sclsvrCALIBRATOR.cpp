@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.35 2005-02-22 10:20:49 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.36 2005-02-22 16:24:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2005/02/22 10:20:49  gzins
+ * Retrieved all known magnitude values before computing missing magnitudes
+ *
  * Revision 1.34  2005/02/22 09:50:43  scetre
  * Back to compute magnitude instead of cds magnitude to compute diameter
  *
@@ -50,7 +53,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.35 2005-02-22 10:20:49 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.36 2005-02-22 16:24:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -517,7 +520,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeAngularDiameter()");
-    mcsFLOAT diamBv, diamVr, diamVk, diamError;
+    mcsFLOAT diamBv, diamVr, diamVk;
+    mcsFLOAT diamBvErr, diamVrErr, diamVkErr;
     mcsFLOAT mgB, mgV, mgR, mgK;
     mcsFLOAT starProperty[4];
     alxCONFIDENCE_INDEX confidenceIndex;
@@ -550,7 +554,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     mgK=starProperty[3];
      
     if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK,
-                                  &diamBv, &diamVr, &diamVk, &diamError,
+                                  &diamBv, &diamVr, &diamVk, 
+                                  &diamBvErr, &diamVrErr, &diamVkErr,
                                   &confidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -563,7 +568,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
                      (vobsCONFIDENCE_INDEX)confidenceIndex);
     SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diamVk, vobsSTAR_COMPUTED_PROP,
                      (vobsCONFIDENCE_INDEX)confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR, diamError,
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR, diamVkErr,
                      vobsSTAR_COMPUTED_PROP, 
                      (vobsCONFIDENCE_INDEX)confidenceIndex);
    
