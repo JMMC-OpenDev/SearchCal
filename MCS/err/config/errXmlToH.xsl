@@ -7,7 +7,9 @@
     </xsl:variable>
 
     <xsl:template match="/">
-        
+
+        <!-- Print Header -->
+
 <xsl:text>/*
  * Error Include File    Created on ...
  *
@@ -18,14 +20,18 @@
 
 </xsl:text>
 
+        <!-- For each error print associated define with doxygen comment-->
+
         <xsl:for-each select="//error">
-        <xsl:text>#define </xsl:text>
-        <xsl:value-of select="$modName" />
-        <xsl:text>ERR_</xsl:text>
-        <xsl:value-of select="errName" />
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="@id" />
-        <xsl:text>&#xA;</xsl:text>
+            <xsl:text>#define </xsl:text>
+            <xsl:value-of select="$modName" />
+            <xsl:text>ERR_</xsl:text>
+            <xsl:value-of select="errName" />
+            <xsl:text> </xsl:text>
+            <xsl:value-of select="@id" />
+            <xsl:text>   /**&lt;  </xsl:text>
+            <xsl:value-of select="errFormat" />
+            <xsl:text> */&#xA;</xsl:text>
         </xsl:for-each>
     </xsl:template>
 
