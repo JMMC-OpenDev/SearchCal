@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.3 2005-01-07 18:13:08 gzins Exp $"
+* "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.4 2005-01-27 17:50:55 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,7 @@
  * Definition of the evhCMD_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.3 2005-01-07 18:13:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.4 2005-01-27 17:50:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -144,7 +144,7 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
     }
 
     /* If object is a null pointer */
-    if(_object == reinterpret_cast<void *>(NULL))
+    if (_object == reinterpret_cast<void *>(NULL))
     {
         /* Return mcsFAILURE */
         errAdd(evhERR_NULL_OBJECT);
@@ -166,7 +166,7 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
     /* End if*/
 
     /* If callback failed */
-    if((stat & evhCB_FAILURE) != 0)
+    if ((stat & evhCB_FAILURE) != 0)
     {
         /* Return mcsFAILURE */
         errAdd(evhERR_RUN_CB);
