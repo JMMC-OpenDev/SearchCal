@@ -1,12 +1,13 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: h-file.template,v 1.5 2004-08-09 16:08:17 gluck Exp $"
+#%# "@(#) $Id: h-file.template,v 1.6 2004-12-16 08:02:04 gluck Exp $"
 #%# 
 #%# Template for .h include files         
 #%# 
 #%# who        when         what
 #%# ---------  -----------  ----------------------------------------------------
+#%# gluck      16-Dec-2004  Add mcs.h header file
 #%# gluck      18-May-2004  Created
 #%# 
 #%# 
@@ -42,6 +43,13 @@ functions in C++-code.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/*
+ * MCS header
+ */
+#include "mcs.h"
+
 
 
 /* 
