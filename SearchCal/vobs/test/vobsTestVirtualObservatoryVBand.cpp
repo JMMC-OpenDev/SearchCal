@@ -1,16 +1,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestVirtualObservatoryVBand.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"
+ * "@(#) $Id: vobsTestVirtualObservatoryVBand.cpp,v 1.3 2005-02-13 08:58:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/13 08:54:00  gzins
+ * Updated after vobs classes changes
+ * Added CVS log as modifification history
+ *
  * scetre    25-Aug-2004  Created
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualObservatoryVBand.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualObservatoryVBand.cpp,v 1.3 2005-02-13 08:58:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -86,22 +90,6 @@ int main(int argc, char *argv[])
     printf(">>>>>>>>> V BAND REQUEST <<<<<<<<<<\n");
     starList.Display();
 
-   // Set request in K band
-    request.SetObjectMag(2.96);
-    request.SetSearchBand("K");
-    request.SetMinRangeMag(-1);
-    request.Display();
-
-    // Search in VO
-    starList.Clear();
-    if (vobs.Search(request, starList)==FAILURE)
-    {
-        errCloseStack();
-        exit(EXIT_FAILURE);
-    }
-    printf("\n\n>>>>>>>>> K BAND REQUEST <<<<<<<<<<\n");
-    starList.Display();
-    
     logInfo("Exiting ...");
     exit(EXIT_SUCCESS);
 }
