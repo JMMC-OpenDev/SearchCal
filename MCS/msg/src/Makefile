@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.20 2005-02-09 16:42:26 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.21 2005-02-15 11:55:05 gzins Exp $"
 #
 # Makefile of msg
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.20  2005/02/09 16:42:26  lafrasse
+# Added msgMESSAGE_FILTER class to manage message queues
+#
 # Revision 1.19  2005/02/04 15:57:06  lafrasse
 # Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
 #
@@ -175,9 +178,6 @@ all:	do_all
 
 clean : clean_all 
 	@echo " . . . clean done"
-
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
 
 man   : do_man 
 	@echo " . . . man page(s) done"
