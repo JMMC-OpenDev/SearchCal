@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.12 2005-02-04 14:31:50 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.13 2005-02-07 17:36:00 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/04 14:31:50  scetre
+* updated documentation
+*
 * Revision 1.11  2005/02/04 10:50:37  gzins
 * Added N band scenario
 *
@@ -34,7 +37,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.12 2005-02-04 14:31:50 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.13 2005-02-07 17:36:00 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -303,37 +306,37 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
         {
             _starListP.Copy(starList);
             scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY,
-                              criteriaListEmpty);
+                              criteriaList);
         }
         // The primary list is completed with the query on catalogs I/196,
         // MASS, II/225, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
         // I/196
         scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
         // MASS
         scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
         // II/225
         scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
         // LBSI
         scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
         // CHARM
         scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
         // II/7A
         scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
         // BSC
         scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
         // SBSC
         scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
         // DENIS
         scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaListEmpty);
+                          criteriaList);
     }
     // Scenario in band N
     else if (strcmp(band, "N") == 0)
