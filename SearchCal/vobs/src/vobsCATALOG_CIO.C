@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -83,10 +83,10 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingConstant(void)
 {
     logExtDbg("vobsCATALOG_CIO::GetAskingConstant()");
 
-    miscDynStrAppendString(&_asking,"&-file=-c&-c.eq=J2000&&x_F(IR)=M");
-    miscDynStrAppendString(&_asking,"&lambda=1.25,1.65,2.20");
-    miscDynStrAppendString(&_asking,"&-out.max=50");
-    miscDynStrAppendString(&_asking,"-c.r=1&-c.u=arcmin");
+    miscDynBufAppendString(&_asking,"&-file=-c&-c.eq=J2000&&x_F(IR)=M");
+    miscDynBufAppendString(&_asking,"&lambda=1.25,1.65,2.20");
+    miscDynBufAppendString(&_asking,"&-out.max=50");
+    miscDynBufAppendString(&_asking,"-c.r=1&-c.u=arcmin");
     
     return SUCCESS;
 }
@@ -110,9 +110,9 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingSpecificParameters(void)
 {
     logExtDbg("vobsCATALOG_CIO::GetAskingSpecificParameters()");
    
-    miscDynStrAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynStrAppendString(&_asking, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
-    miscDynStrAppendString(&_asking, "&-sort=_r");
+    miscDynBufAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_asking, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
+    miscDynBufAppendString(&_asking, "&-sort=_r");
             
     return SUCCESS;
 }
@@ -136,37 +136,38 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingSpecificParameters(vobsREQUEST request
 {
     logExtDbg("vobsCATALOG_CIO::GetAskingSpecificParameters()");
 
-    miscDynStrAppendString(&_asking, "&x_F(IR)=M");
-    miscDynStrAppendString(&_asking, "&F(IR)=");
+    miscDynBufAppendString(&_asking, "&x_F(IR)=M");
+    miscDynBufAppendString(&_asking, "&F(IR)=");
     
-    char *magRange="";
+    mcsSTRING32 magRange;
     request.GetConstraint(MAGNITUDE_RANGE_ID,magRange);
-    miscDynStrAppendString(&_asking, magRange);
-    miscDynStrAppendString(&_asking, "&lambda=");
+    miscDynBufAppendString(&_asking, magRange);
+    miscDynBufAppendString(&_asking, "&lambda=");
 
-    char *lambda="";
+    /*mcsSTRING32 lambda;
     request.GetConstraint(STAR_WLEN_ID,lambda);
-    miscDynStrAppendString(&_asking, lambda);
+    miscDynBufAppendString(&_asking, lambda);*/
 
-    char *band="";
+    mcsSTRING32 band;
+    request.GetConstraint(OBSERVED_BAND_ID, band);
     request.GetConstraint(OBSERVED_BAND_ID,band);
     if (strcmp(band,"K")==0)
     {
-        miscDynStrAppendString(&_asking, "2.20");
+        miscDynBufAppendString(&_asking, "2.20");
     }
     else if (strcmp(band,"H")==0)
     {
-        miscDynStrAppendString(&_asking, "1.65");        
+        miscDynBufAppendString(&_asking, "1.65");        
     }
     else if (strcmp(band,"J")==0)
     {
-        miscDynStrAppendString(&_asking, "1.25");        
+        miscDynBufAppendString(&_asking, "1.25");        
     }
 
-    miscDynStrAppendString(&_asking, "&-out.max=50&-c.bm=1800/300&-c.u=arcmin");
-    miscDynStrAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynStrAppendString(&_asking, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
-    miscDynStrAppendString(&_asking, "&-sort=_r");
+    miscDynBufAppendString(&_asking, "&-out.max=50&-c.bm=1800/300&-c.u=arcmin");
+    miscDynBufAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_asking, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
+    miscDynBufAppendString(&_asking, "&-sort=_r");
     
     return SUCCESS;
 }

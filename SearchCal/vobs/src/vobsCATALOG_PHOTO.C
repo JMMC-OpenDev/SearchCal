@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -84,12 +84,12 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteAskingSpecificParameters(void)
 {
     logExtDbg("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
    
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_R&-out=*PHOT_JHN_I");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_J");
-    miscDynStrAppendString(&_asking, "-out=*PHOT_JHN_H&-out=*PHOT_JHN_K");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_R&-out=*PHOT_JHN_I");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_J");
+    miscDynBufAppendString(&_asking, "-out=*PHOT_JHN_H&-out=*PHOT_JHN_K");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
             
     return SUCCESS;
 }
@@ -113,25 +113,25 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteAskingSpecificParameters(vobsREQUEST reque
 {
     logExtDbg("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
 
-    miscDynStrAppendString(&_asking, "&");
+    miscDynBufAppendString(&_asking, "&");
 
-    char *band="";
+    mcsSTRING32 band;
     request.GetConstraint(OBSERVED_BAND_ID,band);
-    miscDynStrAppendString(&_asking, band);
-    miscDynStrAppendString(&_asking, "=");
+    miscDynBufAppendString(&_asking, band);
+    miscDynBufAppendString(&_asking, "=");
 
-    char *magRange="";
+    mcsSTRING32 magRange;
     request.GetConstraint(MAGNITUDE_RANGE_ID,magRange);
-    miscDynStrAppendString(&_asking, magRange);
-    miscDynStrAppendString(&_asking, "&-out.max=50&-c.bm=1800/300&-c.u=arcmin");
-    miscDynStrAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_R");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_I&-out=*PHOT_JHN_J");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_H&-out=*PHOT_JHN_K");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
-    miscDynStrAppendString(&_asking, "&-sort=_r");
+    miscDynBufAppendString(&_asking, magRange);
+    miscDynBufAppendString(&_asking, "&-out.max=50&-c.bm=1800/300&-c.u=arcmin");
+    miscDynBufAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_R");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_I&-out=*PHOT_JHN_J");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_H&-out=*PHOT_JHN_K");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
+    miscDynBufAppendString(&_asking, "&-sort=_r");
     
     return SUCCESS;
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.4 2004-07-28 14:19:41 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.5 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.4 2004-07-28 14:19:41 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.5 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -40,6 +40,7 @@ using namespace std;  /**< Export standard iostream objects (cin, cout,...) */
  */
 #include "vobsCATALOG.h"
 #include "vobsREQUEST.h"
+#include "vobsPARSER.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -142,9 +143,34 @@ mcsCOMPL_STAT vobsCATALOG::GetName(char *name)
  * \b Errors codes:\n 
  * The possible errors are:
  */
-mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST request, vobsSTAR_LIST list)
+mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST request, vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::Search()");
+       
+    // Check if the list is empty
+    // if ok, the asking is writing according to only the request
+    if (list.IsEmpty()==mcsTRUE)
+    {
+        if (PrepareAsking(request)==FAILURE)
+        {
+            return FAILURE;
+        }
+    }
+    // else, the asking is writing according to the request and the star list
+    else 
+    {
+        printf("list not empty\n");
+        if (PrepareAsking(request, list)==FAILURE)
+        {
+            return FAILURE; 
+        }
+    }
+    
+    vobsPARSER parser;
+    if (parser.Parse(miscDynBufGetBufferPointer(&_asking), list) == FAILURE)
+    {
+        return FAILURE; 
+    }
 
     return SUCCESS;
 }
@@ -196,10 +222,10 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request)
  * \b Errors codes:\n 
  * The possible errors are:
  */
-mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST tmpList)
+mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmpList)
 {
     logExtDbg("vobsCATALOG::PrepareAsking()");
-
+    printf("Prepare asking 2\n");
     if ( (WriteAskingURI()==FAILURE) ||
          (WriteAskingConstant()==FAILURE) ||
          (WriteAskingSpecificParameters()==FAILURE) ||
@@ -229,9 +255,9 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingURI(void)
 {
     logExtDbg("vobsCATALOG::GetAskingURI()");
 
-    if ((miscDynStrAppendString(&_asking, "http://vizier.u-strasbg.fr/viz-bin/")==FAILURE) ||
-        (miscDynStrAppendString(&_asking, "asu-xml?-source=")==FAILURE) ||
-        (miscDynStrAppendString(&_asking, _name)==FAILURE) )
+    if ((miscDynBufAppendString(&_asking, "http://vizier.u-strasbg.fr/viz-bin/")==FAILURE) ||
+        (miscDynBufAppendString(&_asking, "asu-xml?-source=")==FAILURE) ||
+        (miscDynBufAppendString(&_asking, _name)==FAILURE) )
     {
         errAdd(vobsERR_URI_WRITE_FAILED);
         return FAILURE;
@@ -257,9 +283,9 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingConstant(void)
 {
     logExtDbg("vobsCATALOG::GetAskingConstant()");
 
-    if ( (miscDynStrAppendString(&_asking,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==FAILURE) ||
-         (miscDynStrAppendString(&_asking,"&-out.max=50")==FAILURE) ||
-         (miscDynStrAppendString(&_asking,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==FAILURE) )
+    if ( (miscDynBufAppendString(&_asking,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==FAILURE) ||
+         (miscDynBufAppendString(&_asking,"&-out.max=50")==FAILURE) ||
+         (miscDynBufAppendString(&_asking,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==FAILURE) )
     {
         errAdd(vobsERR_CONSTANT_WRITE_FAILED);
         return FAILURE;
@@ -285,7 +311,6 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(void)
 {
     logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
 
-    miscDynStrAppendString(&_asking,"");    
     
     return SUCCESS;
 }
@@ -309,7 +334,6 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(vobsREQUEST request)
 {
     logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
 
-    miscDynStrAppendString(&_asking,"");
 
     return SUCCESS;
 }
@@ -332,15 +356,15 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
 {
     logExtDbg("vobsCATALOG::GetAskingPosition()");
 
-    char *ra="";
+    mcsSTRING32 ra;
     request.GetConstraint(SEARCH_BOX_RA_ID,ra);
-    char *dec="";
+    mcsSTRING32 dec;
     request.GetConstraint(SEARCH_BOX_DEC_ID,dec);
     
-    if ( (miscDynStrAppendString(&_asking,"&-c.ra=")==FAILURE) ||
-         (miscDynStrAppendString(&_asking,ra)==FAILURE) ||
-         (miscDynStrAppendString(&_asking,"&-c.dec=")==FAILURE) ||
-         (miscDynStrAppendString(&_asking,dec)==FAILURE) )
+    if ( (miscDynBufAppendString(&_asking,"&-c.ra=")==FAILURE) ||
+         (miscDynBufAppendString(&_asking,ra)==FAILURE) ||
+         (miscDynBufAppendString(&_asking,"&-c.dec=")==FAILURE) ||
+         (miscDynBufAppendString(&_asking,dec)==FAILURE) )
     {
         errAdd(vobsERR_POSITION_WRITE_FAILED);
         return FAILURE;
@@ -365,13 +389,15 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
 mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::GetAskingEnd()");
-
+    printf("tailli list in write end %d\n", list.Size());
     // Build of the stringlist
-    char *strList="";
+    miscDYN_BUF strList;
     StarList2Sring(strList, list);
     
-    if ( (miscDynStrAppendString(&_asking,"&-out.form=List")==FAILURE) ||
-         (miscDynStrAppendString(&_asking, strList)==FAILURE) )
+    printf("%s\n",miscDynBufGetBufferPointer(&strList));
+    
+    if ( (miscDynBufAppendString(&_asking,"&-out.form=List")==FAILURE) ||
+         (miscDynBufAppendString(&_asking, miscDynBufGetBufferPointer(&strList))==FAILURE) )
     {
         errAdd(vobsERR_END_WRITE_FAILED);
         return FAILURE;
@@ -396,11 +422,62 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG::StarList2Sring(char *stringList,
+mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
                                           vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::StarList2Sring()");
+    printf("tailli list in l2strl %d\n", list.Size());
+    
+    if (list.Size()!=0)
+    {
+        miscDynBufAppendString(&strList,"&-c=");
+        int compt=0;
+        
+        for (unsigned int el = 0; el < list.Size(); el++)
+        {
+            if (compt!=0)
+            {
+                miscDynBufAppendString(&strList,"&+");
+            }
+            compt++;
+            
+            mcsSTRING32 ra;
+            mcsSTRING32 hra, mra, sra;
+            mcsSTRING32 dec;
+            mcsSTRING32 ddec, mdec, sdec;
+            
+            vobsSTAR *star = list.GetNextStar((el==0));
+            star->GetProperty(POS_EQ_RA_MAIN_ID, ra);
+            if (sscanf(ra, "%s %s %s", &hra, &mra, &sra) != 3)
+            {
+                return FAILURE;
+            }
+            miscDynBufAppendString(&strList, hra); miscDynBufAppendString(&strList,"+");
+            miscDynBufAppendString(&strList, mra); miscDynBufAppendString(&strList,"+");
+            miscDynBufAppendString(&strList, sra);
+            
+            
+            star->GetProperty(POS_EQ_DEC_MAIN_ID, dec);            
+            if (sscanf(dec, "%s %s %s", &ddec, &mdec, &sdec) != 3)
+            {
+                return FAILURE;
+            }
+            if (ddec[0]=='+')
+            {
+                miscDynBufAppendString(&strList,"%2b");
+                miscDynBufAppendString(&strList, &ddec[1]); miscDynBufAppendString(&strList,"+");
+            }
+            else
+            {
+                miscDynBufAppendString(&strList, ddec); miscDynBufAppendString(&strList,"+");
+            }
+            miscDynBufAppendString(&strList, mdec); miscDynBufAppendString(&strList,"+");
+            miscDynBufAppendString(&strList, sdec);
+            
+            
+        }
 
+    }
     return SUCCESS;
 }
 /*

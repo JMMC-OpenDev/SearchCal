@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.5 2004-07-28 14:19:41 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.5 2004-07-28 14:19:41 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -181,7 +181,7 @@ mcsCOMPL_STAT vobsREQUEST::GetKindOfRequest(int &value)
  */
 mcsCOMPL_STAT vobsREQUEST::SetConstraint(char *constraint, char *value)
 {
-    logExtDbg("vobsSTAR::SetConstraint()");
+    //logExtDbg("vobsSTAR::SetConstraint()");
 
     // Get Id corresponding to the specified CONSTRAINT
     vobsCONSTRAINT_ID constraintId;
@@ -214,7 +214,7 @@ mcsCOMPL_STAT vobsREQUEST::SetConstraint(char *constraint, char *value)
  */
 mcsCOMPL_STAT vobsREQUEST::SetConstraint(vobsCONSTRAINT_ID constraintId, char *value)
 {
-    logExtDbg("vobsSTAR::SetConstraint()");
+    //logExtDbg("vobsSTAR::SetConstraint()");
 
     // Get Id corresponding to the specified CONSTRAINT
     if (constraintId == UNKNOWN_CONSTRAINT_ID)
@@ -246,7 +246,7 @@ mcsCOMPL_STAT vobsREQUEST::SetConstraint(vobsCONSTRAINT_ID constraintId, char *v
  */
 mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, char *value)
 {
-    logExtDbg("vobsSTAR::GetConstraint()");
+    //logExtDbg("vobsSTAR::GetConstraint()");
 
     // Get Id corresponding to the specified CONSTRAINT
     vobsCONSTRAINT_ID constraintId;
@@ -280,7 +280,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, char *value)
  */
 mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId , char *value) const
 {
-    logExtDbg("vobsSTAR::GetConstraint()");
+    //logExtDbg("vobsSTAR::GetConstraint()");
     
     // Check CONSTRAINT id
     if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||
@@ -311,7 +311,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId , char *
  */
 mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, int *value)
 {
-    logExtDbg("vobsSTAR::GetConstraint()");
+    //logExtDbg("vobsSTAR::GetConstraint()");
 
     // Get Id corresponding to the specified CONSTRAINT
     vobsCONSTRAINT_ID constraintId;
@@ -340,7 +340,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, int *value)
  */
 mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, int *value) const
 {
-    logExtDbg("vobsSTAR::GetConstraint()");
+    //logExtDbg("vobsSTAR::GetConstraint()");
 
     // Check CONSTRAINT id
     if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||
@@ -375,7 +375,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, int *va
  */
 mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, float *value)
 {
-    logExtDbg("vobsSTAR::GetConstraint()");
+    //logExtDbg("vobsSTAR::GetConstraint()");
 
     // Get Id corresponding to the specified CONSTRAINT
     vobsCONSTRAINT_ID constraintId;
@@ -404,7 +404,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, float *value)
  */
 mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, float *value) const
 {
-    logExtDbg("vobsREQUEST::GetConstraint()");
+    //logExtDbg("vobsREQUEST::GetConstraint()");
 
     // Check CONSTRAINT id
     if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||

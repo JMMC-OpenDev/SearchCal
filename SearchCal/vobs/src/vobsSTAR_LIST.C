@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.1 2004-07-26 07:46:58 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.1 2004-07-26 07:46:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,6 +36,16 @@ vobsSTAR_LIST::vobsSTAR_LIST()
     _starIterator = _starList.begin();
 }
 
+//Copy constructor
+mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
+{
+    for (unsigned int el = 0; el < list.Size(); el++)
+    {
+        AddAtTail(*(list.GetNextStar((el==0))));
+    }
+    return SUCCESS;
+}
+
 //Class destructor
 vobsSTAR_LIST::~vobsSTAR_LIST()
 {
@@ -51,6 +61,7 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
  */
 mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
 {
+    logExtDbg("vobsSTAR_LIST::IsEmpty()");
     if (_starList.empty() == true)
     {
         return mcsTRUE;
@@ -131,7 +142,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
  * \return 
  * The numbers of stars in the list.
  */
-mcsUINT32 vobsSTAR_LIST::Size(void)
+mcsUINT32 vobsSTAR_LIST::Size(void) 
 {
     return _starList.size();
 }
@@ -152,7 +163,7 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  * \return pointer to the next element of the list or NULL if the end of the
  * list is reached.
  */
-vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
+vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init) 
 {
     logExtDbg("vobsSTAR_LIST::GetNextStar()");
 

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-07-28 14:19:41 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-08-03 13:44:10 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -34,34 +34,38 @@ USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/i
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestRequest
+EXECUTABLES     = vobsTestVirtualobs vobsTestStarList
 EXECUTABLES_L   = 
 
 #
 # <brief description of vobsServer program>
 vobsServer_OBJECTS   = vobsServer
 vobsServer_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsServer_LIBS      = mcs err log bcc vobs
+vobsServer_LIBS      = mcs err log  vobs
 
 vobsSearch_OBJECTS   = vobsSearch
 vobsSearch_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsSearch_LIBS      = mcs err log bcc vobs
+vobsSearch_LIBS      = mcs err log  vobs
 
-#vobsTestParser_OBJECTS   = vobsTestParser
-#vobsTestParser_LDFLAGS   = -lxml2 -lgdome -lstdc++
-#vobsTestParser_LIBS      = mcs err log misc bcc vobs
+vobsTestParser_OBJECTS   = vobsTestParser
+vobsTestParser_LDFLAGS   = -lxml2 -lgdome -lstdc++
+vobsTestParser_LIBS      = mcs err log misc  vobs
 
 vobsTestStar_OBJECTS   = vobsTestStar
 vobsTestStar_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestStar_LIBS      = mcs err log misc bcc vobs
+vobsTestStar_LIBS      = mcs err log misc  vobs
 
 vobsTestStarList_OBJECTS   = vobsTestStarList
 vobsTestStarList_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestStarList_LIBS      = mcs err log misc bcc vobs
+vobsTestStarList_LIBS      = mcs err log misc  vobs
 
 vobsTestRequest_OBJECTS   = vobsTestRequest
 vobsTestRequest_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestRequest_LIBS      = mcs err log misc bcc vobs
+vobsTestRequest_LIBS      = mcs err log misc  vobs
+
+vobsTestVirtualobs_OBJECTS   = vobsTestVirtualobs
+vobsTestVirtualobs_LDFLAGS   = -lxml2 -lgdome -lstdc++
+vobsTestVirtualobs_LIBS      = mcs err log misc  vobs
 
 #
 # special compilation flags for single c sources

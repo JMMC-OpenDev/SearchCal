@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_BSC.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_BSC.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsCATALOG_BSC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_BSC.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_BSC.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -86,7 +86,7 @@ mcsCOMPL_STAT vobsCATALOG_BSC::WriteAskingSpecificParameters(void)
 {
     logExtDbg("vobsCATALOG_BSC::GetAskingSpecificParameters()");
    
-    miscDynStrAppendString(&_asking, "&-out=*VELOC_ROTAT&-out=HD");
+    miscDynBufAppendString(&_asking, "&-out=*VELOC_ROTAT&-out=HD");
             
     return SUCCESS;
 }

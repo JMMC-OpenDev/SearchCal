@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.1 2004-07-26 07:46:51 gzins Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.1 2004-07-26 07:46:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,6 +60,8 @@ static char *ucdNameList[] =
    "EXTENSION_DIAM",
    "OBS_METHOD",
    "INST_WAVELENGTH_VALUE",
+   "PHOT_FLUX_IR_MISC",
+   "UNITS",
    "PHOT_JHN_U",
    "PHOT_JHN_B",
    "PHOT_JHN_V",
@@ -130,9 +132,10 @@ vobsSTAR::~vobsSTAR()
  * \li vobsERR_INVALID_UCD_NAME
  *
  */
-mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value)
+mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value, 
+                                    mcsLOGICAL overwrite)
 {
-    logExtDbg("vobsSTAR::SetProperty()");
+    //logExtDbg("vobsSTAR::SetProperty()");
 
     // Get Id corresponding to the specified UCD
     vobsUCD_ID ucdId;
@@ -142,8 +145,13 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value)
         errAdd(vobsERR_INVALID_UCD_NAME, ucd);
         return FAILURE;
     }
+    
     // Affect property value
-    strcpy(_properties[ucdId], value);
+    if ((strcmp(_properties[ucdId],"99.99")==0) ||
+        (overwrite==mcsTRUE))
+    {
+        strcpy(_properties[ucdId], value);
+    }
 
     return SUCCESS;    
 }
@@ -164,9 +172,10 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value)
  * \li vobsERR_INVALID_UCD_ID
  *
  */
-mcsCOMPL_STAT vobsSTAR::SetProperty(vobsUCD_ID ucdId, char *value)
+mcsCOMPL_STAT vobsSTAR::SetProperty(vobsUCD_ID ucdId, char *value, 
+                                    mcsLOGICAL overwrite)
 {
-    logExtDbg("vobsSTAR::SetProperty()");
+    //logExtDbg("vobsSTAR::SetProperty()");
 
     if (ucdId == UNKNOWN_ID)
     {
@@ -174,7 +183,12 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(vobsUCD_ID ucdId, char *value)
         return FAILURE;
     }
     // Affect property value
-    strcpy(_properties[ucdId], value);
+    // Affect property value
+    if ((strcmp(_properties[ucdId],"99.99")==0) ||
+        (overwrite==mcsTRUE))
+    {
+        strcpy(_properties[ucdId], value);
+    }
 
     return SUCCESS;    
 }
@@ -196,7 +210,7 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(vobsUCD_ID ucdId, char *value)
  */
 mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, char *value) const
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    //logExtDbg("vobsSTAR::GetProperty()");
 
     // Get Id corresponding to the specified UCD
     vobsUCD_ID ucdId;
@@ -227,7 +241,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, char *value) const
  */
 mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, int *value) const
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    //logExtDbg("vobsSTAR::GetProperty()");
 
     // Get Id corresponding to the specified UCD
     vobsUCD_ID ucdId;
@@ -256,7 +270,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, int *value) const
  */
 mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, int *value) const
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    //logExtDbg("vobsSTAR::GetProperty()");
 
     // Check UCD id
     if ((ucdId == UNKNOWN_ID) ||
@@ -291,7 +305,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, int *value) const
  */
 mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, float *value) const
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    //logExtDbg("vobsSTAR::GetProperty()");
 
     // Get Id corresponding to the specified UCD
     vobsUCD_ID ucdId;
@@ -320,7 +334,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(char *ucd, float *value) const
  */
 mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, float *value) const
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    //logExtDbg("vobsSTAR::GetProperty()");
     
     // Check UCD id
     if ((ucdId == UNKNOWN_ID) ||
@@ -356,7 +370,7 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, float *value) const
  */
 mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, char *value) const
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    //logExtDbg("vobsSTAR::GetProperty()");
     
     // Check UCD id
     if ((ucdId == UNKNOWN_ID) ||
@@ -496,7 +510,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
  * \return TRUE on successful completion. Otherwise FALSE is returned.
  *
  */
-mcsLOGICAL vobsSTAR::Update (vobsSTAR &star)
+mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
 {
     logExtDbg("vobsSTAR::Update()");
    
@@ -515,7 +529,7 @@ mcsLOGICAL vobsSTAR::Update (vobsSTAR &star)
         }
     }
     
-    return mcsTRUE;
+    return SUCCESS;
 }
 
 
@@ -549,7 +563,7 @@ vobsUCD_ID vobsSTAR::Ucd2Id(char *ucd) const
 {
     logExtDbg("vobsSTAR::Ucd2Id()");
     
-    for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+    for (unsigned int i=0; i<vobsNB_STAR_PROPERTIES; i++)
     {
         if (strcmp(ucdNameList[i], ucd) == 0)
         {

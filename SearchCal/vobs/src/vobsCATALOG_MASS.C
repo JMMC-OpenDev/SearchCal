@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -84,8 +84,8 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteAskingSpecificParameters(void)
 {
     logExtDbg("vobsCATALOG_MASS::GetAskingSpecificParameters()");
    
-    miscDynStrAppendString(&_asking, "&-out=Jmag&-out=Hmag&-out=Kmag");
-    miscDynStrAppendString(&_asking, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
+    miscDynBufAppendString(&_asking, "&-out=Jmag&-out=Hmag&-out=Kmag");
+    miscDynBufAppendString(&_asking, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
             
     return SUCCESS;
 }

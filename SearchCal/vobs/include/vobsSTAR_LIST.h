@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.1 2004-07-26 07:41:53 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -38,21 +38,22 @@ class vobsSTAR_LIST
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
     virtual mcsCOMPL_STAT Remove(vobsSTAR &star);
     virtual mcsUINT32     Size(void);
+    virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
 
     virtual vobsSTAR      *GetNextStar(mcsLOGICAL init = mcsFALSE);
     virtual vobsSTAR      *GetStar(vobsSTAR &star);
     
     virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list);
 
-    void Display(void);
+    void                  Display(void);
 
  protected:
 
  private:
-    // Declaration of copy constructor and assignment operator as private
+    // Declaration assignment operator as private
     // methods, in order to hide them from the users.
     vobsSTAR_LIST& operator=(const vobsSTAR_LIST&);
-    vobsSTAR_LIST (const vobsSTAR_LIST&);
+    vobsSTAR_LIST (const vobsSTAR_LIST& list);//copy constructor
 
     // List of stars
     std::list<vobsSTAR>           _starList;

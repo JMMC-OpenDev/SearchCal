@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.2 2004-07-28 14:19:41 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.3 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,48 +11,59 @@
 *
 *
 *******************************************************************************/
+/**
+ * \file
+ * vobsVIRTUAL_OBSERVATORY class declaration.
+ */
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
 /*
- * header files
+ * Local header
  */
-#include"vobsCATALOG.h"
-#include"vobsSTAR_LIST.h"
-#include"vobsREQUEST.h"
+#include "vobsREQUEST.h"
+#include "vobsSTAR_LIST.h"
+
+
+/*
+ * Class declaration
+ */
+
+/**
+ * vobsVIRTUAL_OBSERVATORY is a class which represent the virtual observatory.
+ * 
+ * vobsVIRTUAL_OBSERVATORY methods allow to
+ * \li Load the scenario of research : the order of interrogation of the
+ * catalogs
+ * \li search in all the catalogs
+ * 
+ */
 
 class vobsVIRTUAL_OBSERVATORY
 {
- public:
-  vobsVIRTUAL_OBSERVATORY();
-  virtual ~vobsVIRTUAL_OBSERVATORY();
+public:
+     // Constructor
+    vobsVIRTUAL_OBSERVATORY();
+
+    // Destructor
+    virtual ~vobsVIRTUAL_OBSERVATORY();
  
-  vobsSTAR_LIST GetCalibStarList();
-  
-  void LoadScenario(vobsREQUEST request);
-  
-  vobsSTAR_LIST Research(vobsREQUEST request);
-  vobsSTAR_LIST ResearchOne(vobsREQUEST request);
+    // Method to star the research in the different catalog
+    virtual mcsCOMPL_STAT Research(vobsREQUEST request,
+                                   vobsSTAR_LIST &StarList);
 
-  void Merge(std::list<vobsSTAR>list2);
-  void UpdateCalibStar(vobsSTAR &calibStar1, vobsSTAR &calibStar2);
-  int CompareRaDec(char *ra1, char *dec1, char *ra2, char *dec2, float raInterval, float decInterval);
-  std::list<vobsSTAR> FillAndErase( std::list<vobsSTAR>SList);
- protected:
+protected:
+    // Method to load scenario according to the request
+    mcsCOMPL_STAT LoadScenario(vobsREQUEST request,
+                               vobsSTAR_LIST &StarList);
 
- private:
-  vobsCATALOG catalog;
-  vobsSTAR_LIST StarList;
-  std::list<vobsSTAR>list;
-  
-  std::list<char *>catalogList;
-  std::list<char *>coordRaList;
-  std::list<char *>coordDeList;  
-  char *listForK;
-  char *listForV;
-  char *listOne;
+private:
+    // Declaration of assignment operator as private
+    // method, in order to hide them from the users.
+    vobsVIRTUAL_OBSERVATORY& operator=(const vobsVIRTUAL_OBSERVATORY&);
+    vobsVIRTUAL_OBSERVATORY (const vobsVIRTUAL_OBSERVATORY&);
 };
 
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.1 2004-07-26 07:41:42 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -27,7 +27,7 @@
  * Constants definition
  */
 
-#define vobsNB_STAR_PROPERTIES 29       /**< Number of properties */
+#define vobsNB_STAR_PROPERTIES 31       /**< Number of properties */
 #define vobsSTAR_PROP_NOT_SET  "99.99"  /**< Default value of the empty
                                           properties */
 
@@ -66,6 +66,8 @@ typedef enum
     EXTENSION_DIAM_ID,          /**< diam id */
     OBS_METHOD_ID,              /**< meth id */
     INST_WAVELENGTH_VALUE_ID,   /**< wavelength id */
+    PHOT_FLUX_IR_MISC_ID,
+    UNITS_ID,
     PHOT_JHN_U_ID,              /**< U id */
     PHOT_JHN_B_ID,              /**< B id */
     PHOT_JHN_V_ID,              /**< V id */
@@ -111,8 +113,10 @@ public:
     virtual ~vobsSTAR();
 
     // Method to set the star properties
-    virtual mcsCOMPL_STAT SetProperty(char *ucd, char *value);
-    virtual mcsCOMPL_STAT SetProperty(vobsUCD_ID ucdId, char *value);
+    virtual mcsCOMPL_STAT SetProperty(char *ucd, char *value, 
+                                      mcsLOGICAL overwrite=mcsFALSE);
+    virtual mcsCOMPL_STAT SetProperty(vobsUCD_ID ucdId, char *value,
+                                      mcsLOGICAL overwrite=mcsFALSE);
     
     // Methods to retreive the star properties
     virtual mcsCOMPL_STAT GetProperty(char *ucd, char *value) const;
@@ -130,7 +134,7 @@ public:
     virtual mcsLOGICAL IsSame (vobsSTAR &star);
 
     // Method to update star properties from the given star
-    virtual mcsLOGICAL Update (vobsSTAR &star);
+    virtual mcsCOMPL_STAT Update (vobsSTAR &star);
 
     // Method to print out all star properties
     virtual void Display();

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -86,13 +86,13 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteAskingSpecificParameters(void)
 {
     logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
     
-    miscDynStrAppendString(&_asking,"&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
-    miscDynStrAppendString(&_asking,"&-out=*POS_PARLX_TRIG");
-    miscDynStrAppendString(&_asking,"&-out=*SPECT_TYPE_MK");
-    miscDynStrAppendString(&_asking,"&SpType=%5bOBAFGKM%5d*");
-    miscDynStrAppendString(&_asking,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynStrAppendString(&_asking,"&-out=v1&-out=d5&-out=HIP&-out=HD");
-    miscDynStrAppendString(&_asking,"&-out=DM&-sort=_r");
+    miscDynBufAppendString(&_asking,"&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
+    miscDynBufAppendString(&_asking,"&-out=*POS_PARLX_TRIG");
+    miscDynBufAppendString(&_asking,"&-out=*SPECT_TYPE_MK");
+    miscDynBufAppendString(&_asking,"&SpType=%5bOBAFGKM%5d*");
+    miscDynBufAppendString(&_asking,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_asking,"&-out=v1&-out=d5&-out=HIP&-out=HD");
+    miscDynBufAppendString(&_asking,"&-out=DM&-sort=_r");
     
     return SUCCESS;
 }
@@ -116,24 +116,24 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteAskingSpecificParameters(vobsREQUEST reques
 {
     logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
 
-    miscDynStrAppendString(&_asking, "&");
-    char *band="";
+    miscDynBufAppendString(&_asking, "&");
+    mcsSTRING32 band;
     request.GetConstraint(OBSERVED_BAND_ID,band);
-    miscDynStrAppendString(&_asking, band);
-    miscDynStrAppendString(&_asking, "mag=");
-    char *magRange="";
+    miscDynBufAppendString(&_asking, band);
+    miscDynBufAppendString(&_asking, "mag=");
+    mcsSTRING32 magRange;
     request.GetConstraint(OBSERVED_BAND_ID,magRange);
-    miscDynStrAppendString(&_asking, magRange);    
-    miscDynStrAppendString(&_asking, "&-c.eq=J2000&-out.max=50&-c.bm=1800/300");
-    miscDynStrAppendString(&_asking, "&-c.u=arcmin");
-    miscDynStrAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynStrAppendString(&_asking, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
-    miscDynStrAppendString(&_asking, "&-out=*POS_PARLX_TRIG");
-    miscDynStrAppendString(&_asking, "&-out=*SPECT_TYPE_MK");
-    miscDynStrAppendString(&_asking, "&SpType=%5bOBAFGKM%5d*");
-    miscDynStrAppendString(&_asking, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynStrAppendString(&_asking, "&-out=v1&-out=d5");
-    miscDynStrAppendString(&_asking, "&-out=HIP&-out=HD&-out=DM&-sort=_r"); 
+    miscDynBufAppendString(&_asking, magRange);    
+    miscDynBufAppendString(&_asking, "&-c.eq=J2000&-out.max=50&-c.bm=1800/300");
+    miscDynBufAppendString(&_asking, "&-c.u=arcmin");
+    miscDynBufAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_asking, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
+    miscDynBufAppendString(&_asking, "&-out=*POS_PARLX_TRIG");
+    miscDynBufAppendString(&_asking, "&-out=*SPECT_TYPE_MK");
+    miscDynBufAppendString(&_asking, "&SpType=%5bOBAFGKM%5d*");
+    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_asking, "&-out=v1&-out=d5");
+    miscDynBufAppendString(&_asking, "&-out=HIP&-out=HD&-out=DM&-sort=_r"); 
     
     return SUCCESS;
 }

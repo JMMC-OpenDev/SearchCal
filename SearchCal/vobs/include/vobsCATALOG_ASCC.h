@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.h,v 1.1 2004-07-28 14:16:20 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.h,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -42,7 +42,7 @@
  * 
  */
 
-class vobsCATALOG_ASCC:vobsCATALOG
+class vobsCATALOG_ASCC : public vobsCATALOG
 {
 public:
     // Constructor

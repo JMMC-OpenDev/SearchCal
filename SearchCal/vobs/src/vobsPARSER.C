@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.5 2004-07-26 07:46:15 gzins Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.5 2004-07-26 07:46:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -107,7 +107,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
     }
 
     // Print out CDATA description
-    if (logGetVerboseLevel() >= logTEST)
+    if (logGetStdoutLogLevel() >= logTEST)
     {
         logTest("CDATA description");
         logTest("    Number of lines to be skipped : %d", cData.nbLineToJump);
@@ -159,7 +159,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
     gdome_di_unref (domimpl, &exc);
 
     // Print out the star list 
-    if (logGetVerboseLevel() >= logTEST)
+    if (logGetStdoutLogLevel() >= logTEST)
     {
         starList.Display();
     }
@@ -444,7 +444,16 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
             // Set star property
             if (star.SetProperty(*ucdName, ucdValue) == FAILURE)
             {
-                return FAILURE;
+                // If ucd is not found, ignore error
+                if (errIsInStack(MODULE_ID, 
+                                 vobsERR_INVALID_UCD_NAME) == mcsTRUE)
+                {
+                    errResetStack();
+                }
+                else
+                {
+                    return FAILURE;
+                }
             }
 
             // Next UCD

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_LBSI.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_LBSI.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsCATALOG_LBSI class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.C,v 1.1 2004-07-28 14:18:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.C,v 1.2 2004-08-03 13:44:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -86,8 +86,8 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteAskingSpecificParameters(void)
 {
     logExtDbg("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
    
-    miscDynStrAppendString(&_asking, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag");
-    miscDynStrAppendString(&_asking, "&-out=UDDK,e_UDDK");
+    miscDynBufAppendString(&_asking, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag");
+    miscDynBufAppendString(&_asking, "&-out=UDDK,e_UDDK");
             
     return SUCCESS;
 }
