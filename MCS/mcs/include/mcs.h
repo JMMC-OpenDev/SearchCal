@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.13 2004-12-15 10:28:30 lafrasse Exp $"
+* "@(#) $Id: mcs.h,v 1.14 2005-01-06 07:41:10 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -13,13 +13,17 @@
 * gzins     09-Dec-2004  Defined mcsLOGICAL as an enumerate
 * lafrasse  14-Dec-2004  Increased environment name length constant
 *                        mcsENVNAME_LEN from 7 to 15
-*
+* gzins     06-Jan-2005  Changed FAILURE to mcsFAILURE and SUCCESS to
+*                        mcsSUCCESS
+*                        Changed value for mcsFAILURE to -1
+*                        Added FAILURE and SUCCESS macros for backward
+*                        compatibility
 *
 *******************************************************************************/
 
 /* The following piece of code alternates the linkage type to C for all 
-functions declared within the braces, which is necessary to use the 
-functions in C++-code.
+functions declared within the braces, which is necessary to use the functions
+in C++-code.
 */
 
 #ifdef __cplusplus
@@ -96,9 +100,12 @@ typedef enum
  */
 typedef enum 
 {
-    FAILURE = 1,
-    SUCCESS 
+    mcsFAILURE = -1,
+    mcsSUCCESS 
 } mcsCOMPL_STAT;       /* Completion status returned by subroutines */
+/* Macros for backward compatibility */
+#define FAILURE mcsFAILURE
+#define SUCCESS mcsSUCCESS
 
 /*
  * Public functions
