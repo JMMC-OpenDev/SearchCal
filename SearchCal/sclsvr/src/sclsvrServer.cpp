@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrServer.cpp,v 1.4 2005-01-27 15:58:38 scetre Exp $"
+* "@(#) $Id: sclsvrServer.cpp,v 1.5 2005-02-03 10:37:36 gzins Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * Search Calibrators SERVER
  */
 
-static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.4 2005-01-27 15:58:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.5 2005-02-03 10:37:36 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     }
 
     // Main loop
-    if (scalibServer.MainLoop() == mcsFAILURE)
+    while (scalibServer.MainLoop() == mcsFAILURE)
     {
         errDisplayStack();
     }
