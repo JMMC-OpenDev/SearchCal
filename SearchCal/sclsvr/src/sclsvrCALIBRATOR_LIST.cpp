@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.40 2005-03-07 16:06:06 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.41 2005-03-09 07:30:39 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2005/03/07 16:06:06  gzins
+ * Removed automatic sort on visibility
+ *
  * Revision 1.39  2005/03/07 15:16:08  scetre
  * Changed Filter by visibility
  *
@@ -101,7 +104,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.40 2005-03-07 16:06:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.41 2005-03-09 07:30:39 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -632,7 +635,7 @@ sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
         {
             // if the value of the calibrator visibility error / visibility
             // is lower than this enter by the user, remove it
-            if (calibratorVisError/calibratorVis <= visMax)   
+            if (calibratorVisError/calibratorVis >= visMax)   
             {
                 // Remove it
                 logTest("calibrator %d not visibility enough\n", el+1);
