@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.1 2005-02-11 14:14:31 gluck Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.2 2005-02-16 13:22:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.1  2005/02/11 14:14:31  gluck
+* Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
+*
 ******************************************************************************/
 
 
@@ -14,7 +17,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.1 2005-02-11 14:14:31 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.2 2005-02-16 13:22:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -161,7 +164,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     {
         return mcsFAILURE; 
     }
-    
+    printf("size of list in catalog search method = %d \n", list.Size()); 
     return mcsSUCCESS;
 }
 
@@ -292,7 +295,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
 {
     logExtDbg("vobsREMOTE_CATALOG::GetAskingConstant()");
 
-    if ( (miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==mcsFAILURE) ||
+    if ( (miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&-c.r=5&-c.u=arcsec")==mcsFAILURE) ||
          (miscDynBufAppendString(&_query,"&-out.max=50")==mcsFAILURE) ||
          (miscDynBufAppendString(&_query,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==mcsFAILURE) )
     {

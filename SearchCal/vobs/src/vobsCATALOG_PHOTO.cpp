@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.10 2005-02-14 15:22:44 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.11 2005-02-16 13:22:00 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/14 15:22:44  scetre
+* changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
+*
 * Revision 1.9  2005/02/13 15:29:04  gzins
 * Change Min/MaxDeltaMag to Min/MaxMagRange
 *
@@ -38,7 +41,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.10 2005-02-14 15:22:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.11 2005-02-16 13:22:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -163,9 +166,9 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
     deltaRa = request.GetDeltaRa();
     deltaDec = request.GetDeltaDec();
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-    miscDynBufAppendString(&_query, "&-out.max=100&-c.bm=");
+    miscDynBufAppendString(&_query, "&-out.max=50&-c.bm=");
     miscDynBufAppendString(&_query, separation);
-    miscDynBufAppendString(&_query, "&-c.u=arcmin");
+    miscDynBufAppendString(&_query, "&-c.u=arcsec");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_R");
