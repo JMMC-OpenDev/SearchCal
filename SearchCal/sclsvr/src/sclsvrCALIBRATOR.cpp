@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.2 2004-12-06 10:30:54 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.2 2004-12-06 10:30:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -254,9 +254,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(sclsvrPROPERTY_ID id,
     logExtDbg("sclsvrCALIBRATOR::SetProperty()");
 
     // If it is not a valid property id, return error
-    if ((id == UNKNOWN_PROP_ID) ||
-        (id < UNKNOWN_PROP_ID) ||
-        (id > VISIBILITY_ERROR_ID))
+    if ((id <= UNKNOWN_PROP_ID) ||
+        (id >= sclsvrNB_CALIBRATOR_PROPERTIES))
     {
         errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
         return FAILURE;
@@ -294,9 +293,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::SetProperty(sclsvrPROPERTY_ID id,
     logExtDbg("sclsvrCALIBRATOR::SetProperty()");
 
     // If it is not a valid property id, return error
-    if ((id == UNKNOWN_PROP_ID) ||
-        (id < UNKNOWN_PROP_ID) ||
-        (id > VISIBILITY_ERROR_ID))
+    if ((id <= UNKNOWN_PROP_ID) ||
+        (id >= sclsvrNB_CALIBRATOR_PROPERTIES))
     {
         errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
         return FAILURE;
@@ -443,37 +441,41 @@ mcsLOGICAL sclsvrCALIBRATOR::IsUcdId(int id) const
  * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
  * mcsFALSE) otherwise.
  */
-mcsLOGICAL sclsvrCALIBRATOR::IsPropertySet(int id) const
+mcsLOGICAL sclsvrCALIBRATOR::IsPropertySet(sclsvrPROPERTY_ID id) const
 {
-    // If id is an UCD id
-    if (IsUcdId(id) == mcsTRUE)
+    // If it is not a valid property id, return false
+    if ((id <= UNKNOWN_PROP_ID) ||
+        (id >= sclsvrNB_CALIBRATOR_PROPERTIES))
     {
-        // Set star property
-        return (vobsSTAR::IsPropertySet((vobsUCD_ID)id));
+        return mcsFALSE;
     }
-    // Else
+
+    // Check if property string value is set to vobsSTAR_PROP_NOT_SET
+    if (strcmp(_compProperties[id], vobsSTAR_PROP_NOT_SET) == 0)
+    {
+        return mcsFALSE;
+    }
     else
     {
-        // If it is not a valid property id, return false
-        if ((id == UNKNOWN_PROP_ID) ||
-            (id < UNKNOWN_PROP_ID) ||
-            (id > VISIBILITY_ERROR_ID))
-        {
-            return mcsFALSE;
-        }
-
-        // Check if property string value is set to vobsSTAR_PROP_NOT_SET
-        int propertyIdx; 
-        propertyIdx = id - sclsvrPROP_ID_OFFSET;
-        if (strcmp(_compProperties[propertyIdx], vobsSTAR_PROP_NOT_SET) == 0)
-        {
-            return mcsFALSE;
-        }
-        else
-        {
-            return mcsTRUE;
-        }
+        return mcsTRUE;
     }
+}
+
+/**
+ * Check whether the property is set or not.  
+ * 
+ * \param ucd UCD id. 
+ * 
+ * \warning
+ * If the given UCD id is invalid, this method returns false (i.e.  mcsFALSE)
+ *
+ * \return
+ * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
+ * mcsFALSE) otherwise.
+ */
+mcsLOGICAL sclsvrCALIBRATOR::IsPropertySet(vobsUCD_ID ucdId) const
+{
+    return vobsSTAR::IsPropertySet(ucdId);
 }
 
 /**
@@ -546,9 +548,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(sclsvrPROPERTY_ID id,
     //logExtDbg("sclsvrCALIBRATOR::GetProperty()");
 
     // If it is not a valid property id, return error
-    if ((id == UNKNOWN_PROP_ID) ||
-        (id < UNKNOWN_PROP_ID) ||
-        (id > VISIBILITY_ERROR_ID))
+    if ((id <= UNKNOWN_PROP_ID) ||
+        (id >= sclsvrNB_CALIBRATOR_PROPERTIES))
     {
         errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
         return FAILURE;
@@ -628,9 +629,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::GetProperty(sclsvrPROPERTY_ID id,
     logExtDbg("sclsvrCALIBRATOR::GetProperty(%d)", id);
 
     // If it is not a valid property id, return error
-    if ((id == UNKNOWN_PROP_ID) ||
-        (id < UNKNOWN_PROP_ID) ||
-        (id > VISIBILITY_ERROR_ID))
+    if ((id <= UNKNOWN_PROP_ID) ||
+        (id >= sclsvrNB_CALIBRATOR_PROPERTIES))
     {
         errAdd(sclsvrERR_INVALID_PROPERTY_ID, id);
         return FAILURE;

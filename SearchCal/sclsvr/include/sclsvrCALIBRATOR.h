@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.4 2004-12-01 13:03:22 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.5 2004-12-06 10:30:54 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -30,7 +30,6 @@
  * Constants definition
  */
 
-#define sclsvrNB_CALIBRATOR_PROPERTIES 14       /**< Number of properties */
 #define sclsvrCALIBRATOR_PROP_NOT_SET  "99.99"  /**< Default value of the empty
                                           properties */
 
@@ -67,7 +66,8 @@ typedef enum
     BO_ID,
     MULTIPLICITY_ID,
     VISIBILITY_ID,
-    VISIBILITY_ERROR_ID
+    VISIBILITY_ERROR_ID,
+    sclsvrNB_CALIBRATOR_PROPERTIES
 } sclsvrPROPERTY_ID;
 
 /*
@@ -98,8 +98,9 @@ public:
                                       mcsLOGICAL overwrite=mcsFALSE);
     // Is property set?
     virtual mcsLOGICAL    IsPropertySet(char *ucd) const;
-    virtual mcsLOGICAL    IsPropertySet(int ucdId) const;
-          
+    virtual mcsLOGICAL    IsPropertySet(sclsvrPROPERTY_ID ucdId) const;      
+    virtual mcsLOGICAL    IsPropertySet(vobsUCD_ID ucdId) const;
+
     // Methods to retreive the star properties
     virtual mcsCOMPL_STAT GetProperty(char *property, char *value) const;
     virtual mcsCOMPL_STAT GetProperty(sclsvrPROPERTY_ID, char *value) const; 
