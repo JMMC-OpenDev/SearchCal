@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.7 2004-06-24 14:03:36 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.8 2004-06-24 14:39:43 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -179,33 +179,40 @@ case $choice in
     MODROOT)
         case $makefile in
             "")
-                echo -e "\n>>> Copying Makefile template for code"
-                TEMPLATE=$MCSROOT/templates/forMakefile/Makefile.template
-                FILE=$ROOT_NAME/src/Makefile
-                # Copy Makefile in src directory
-                if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
+                if [ -f $ROOT_NAME/src/Makefile ]
                 then
-                    # Makefile copy succeeds
-                    # Change permissions
-                    chmod $MODE ${FILE}.BAK
-                    # setup author and date:
-                    AUTHOR=`whoami`
-                    AUTHOR=`printf "%-8s" $AUTHOR`
-                    DATE=`date "+%d-%b-%Y"`
-                    sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
-                    -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
-                    -e "1,$ s/I>-<d/\Id/g"       \
-                    ${FILE}.BAK > $FILE
-                    rm -f ${FILE}.BAK
+                    # a Makefile already exists
+                    echo -e "\n>>> A MAKEFILE ALREADY EXISTS."
+                    echo -e "    => The existing one is left\n"
                 else
-                    # Makefile copy failed
-                    echo -e "\ncannot create >>$FILE<<."
+                    echo -e "\n>>> Copying Makefile template for code\n"
+                    TEMPLATE=$MCSROOT/templates/forMakefile/Makefile.template
+                    FILE=$ROOT_NAME/src/Makefile
+                    # Copy Makefile in src directory
+                    if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
+                    then
+                        # Makefile copy succeeds
+                        # Change permissions
+                        chmod $MODE ${FILE}.BAK
+                        # setup author and date:
+                        AUTHOR=`whoami`
+                        AUTHOR=`printf "%-8s" $AUTHOR`
+                        DATE=`date "+%d-%b-%Y"`
+                        sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
+                        -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
+                        -e "1,$ s/I>-<d/\Id/g"       \
+                        ${FILE}.BAK > $FILE
+                        rm -f ${FILE}.BAK
+                    else
+                        # Makefile copy failed
+                        echo -e "\ncannot create >>$FILE<<."
+                    fi
                 fi
                 ;;
                 
             noMakefile)
                 echo -e "\n>>> No makefile added in the src directoy of the"
-                echo -e "    module\n"
+                echo -e "      module\n"
                 ;;
 
             *)
