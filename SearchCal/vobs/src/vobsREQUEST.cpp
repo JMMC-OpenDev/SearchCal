@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.10 2005-02-14 15:22:44 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.11 2005-02-15 15:19:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/14 15:22:44  scetre
+ * changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
+ *
  * Revision 1.9  2005/02/13 15:24:50  gzins
  * Change Min/MaxDeltaMag to Min/MaxMagRange
  *
@@ -25,7 +28,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.10 2005-02-14 15:22:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.11 2005-02-15 15:19:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -83,7 +86,7 @@ vobsREQUEST::~vobsREQUEST()
  *
  * \param objectName science object name.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char *objectName)
@@ -92,7 +95,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char *objectName)
 
     _objectName = objectName;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -113,7 +116,7 @@ const char * vobsREQUEST::GetObjectName(void) const
  *
  * \param objectRa science object right ascension in hms units (hh mm ss).
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
@@ -122,7 +125,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
 
     _objectRa = objectRa;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -142,7 +145,7 @@ const char *vobsREQUEST::GetObjectRa(void) const
  *
  * \param objectDec science object declinaison in dms units (dd mm ss).
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
@@ -151,7 +154,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
 
     _objectDec = objectDec;
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -171,7 +174,7 @@ const char *vobsREQUEST::GetObjectDec(void) const
  *
  * \param objectMag science object magnitude.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectMag(const mcsFLOAT objectMag)
@@ -180,7 +183,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectMag(const mcsFLOAT objectMag)
 
     _objectMag = objectMag;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -200,7 +203,7 @@ mcsFLOAT vobsREQUEST::GetObjectMag(void) const
  *
  * \param searchBand search band which is a letter (H, M, N, R, V ...).
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char *searchBand)
@@ -209,7 +212,7 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char *searchBand)
 
     _searchBand = searchBand;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -229,7 +232,7 @@ const char *vobsREQUEST::GetSearchBand(void) const
  *
  * \param deltaRa accepted object ra difference in hms units (hh mm ss).
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetDeltaRa(const mcsFLOAT deltaRa)
@@ -238,7 +241,7 @@ mcsCOMPL_STAT vobsREQUEST::SetDeltaRa(const mcsFLOAT deltaRa)
 
     _deltaRa = deltaRa;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -258,7 +261,7 @@ mcsFLOAT vobsREQUEST::GetDeltaRa(void) const
  *
  * \param deltaDec accepted object dec difference in dms units (dd mm ss).
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetDeltaDec(const mcsFLOAT deltaDec)
@@ -267,7 +270,7 @@ mcsCOMPL_STAT vobsREQUEST::SetDeltaDec(const mcsFLOAT deltaDec)
 
     _deltaDec = deltaDec;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -289,7 +292,7 @@ mcsFLOAT vobsREQUEST::GetDeltaDec(void) const
  * \param minMagRange maximum accepted magnitude difference correcponding to the
  * minimum expected magnitude for the selected object.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsFLOAT minMagRange)
@@ -298,7 +301,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsFLOAT minMagRange)
 
     _minMagRange = minMagRange;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -323,7 +326,7 @@ mcsFLOAT vobsREQUEST::GetMinMagRange(void) const
  * \param maxMagRange maximum accepted magnitude difference correcponding to the
  * maximum expected magnitude for the selected object.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsFLOAT maxMagRange)
@@ -332,7 +335,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsFLOAT maxMagRange)
 
     _maxMagRange = maxMagRange;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -354,7 +357,7 @@ mcsFLOAT vobsREQUEST::GetMaxMagRange(void) const
  *
  * \param maxNbOfSelectedObjects maximum number of selected objects.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsINT32 
@@ -364,7 +367,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsINT32
 
     _maxNbOfSelectedObjects = maxNbOfSelectedObjects;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -382,7 +385,7 @@ mcsINT32 vobsREQUEST::GetMaxNbOfSelectedObjects(void) const
 /**
  * Display request containt (constraints).
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsREQUEST::Display(void)
@@ -400,7 +403,7 @@ mcsCOMPL_STAT vobsREQUEST::Display(void)
     logInfo("max mag range = %f", _maxMagRange);
     logInfo("max nb of selected object = %i", _maxNbOfSelectedObjects);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

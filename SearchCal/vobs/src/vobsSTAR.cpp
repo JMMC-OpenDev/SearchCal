@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.30 2005-02-13 15:25:59 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.31 2005-02-15 15:19:30 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.30  2005/02/13 15:25:59  gzins
+* Added showPropId parameter to Display() method
+*
 * Revision 1.29  2005/02/11 10:44:00  gzins
 * Added UD, LD and UDDK diameter star properties
 *
@@ -62,7 +65,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.30 2005-02-13 15:25:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.31 2005-02-15 15:19:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -149,7 +152,7 @@ vobsSTAR::~vobsSTAR()
  * \param confidenceIndex confidence index
  * \param overwrite booleen to know if it is an overwrite property
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
  * returned.
  *
  * \b Error codes:\n
@@ -173,14 +176,14 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
         propertyIter->second.SetValue(value, origin,
                                       confidenceIndex,
                                       overwrite);
-        return mcsSUCCESS;
+        return mcsmcsSUCCESS;
     }
     // Else
     else
     {
         // Return error
         errAdd(vobsERR_INVALID_PROPERTY_ID, id);
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
     // End if
 }
@@ -196,7 +199,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
  * \param confidenceIndex confidence index
  * \param overwrite booleen to know if it is an overwrite property
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is returned.
  *
  * \b Error codes:\n
  * The possible errors are :
@@ -218,14 +221,14 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
         // Set property
         propertyIter->second.SetValue(value, origin, confidenceIndex, 
                                       overwrite);
-        return mcsSUCCESS;
+        return mcsmcsSUCCESS;
     }
     // Else
     else
     {
         // Return error
         errAdd(vobsERR_INVALID_PROPERTY_ID, id);
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
     // End if
 }
@@ -374,7 +377,7 @@ mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
     else
     {
         // Return error
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
     // End if
 }
@@ -452,7 +455,7 @@ mcsLOGICAL vobsSTAR::IsProperty(char *id)
  *
  * \param ra pointer right ascension.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is returned.
  *
  */
 mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
@@ -467,7 +470,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     {
         // if not, return error
         errAdd(vobsERR_RA_NOT_SET);
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
 
     // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
@@ -477,7 +480,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     if (sscanf(raHms, "%f %f %f", &hh, &hm, &hs) != 3)
     {
         errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
 
     // Get sign of hh which has to be propagated to hm and hs
@@ -493,7 +496,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
         ra = -1.0 * (360 - ra);
     }
 
-    return mcsSUCCESS;
+    return mcsmcsSUCCESS;
 }
 
 /**
@@ -501,7 +504,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
  *
  * \param dec declinaison.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is returned.
  *
  */
 mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
@@ -516,7 +519,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
     {
         // if not, return error
         errAdd(vobsERR_DEC_NOT_SET);
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
 
     // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
@@ -526,7 +529,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
     if (sscanf(decDms, "%f %f %f", &dd, &dm, &ds) != 3)
     {
         errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
 
     // Get sign of hh which has to be propagated to hm and hs
@@ -536,7 +539,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
     // Convert to degrees
     dec  = dd + sign*dm/60.0 + sign*ds/3600.0;
 
-    return mcsSUCCESS;
+    return mcsmcsSUCCESS;
 }
 
 /**
@@ -562,11 +565,11 @@ mcsCOMPL_STAT vobsSTAR::GetSpectralClass(char *spectralClass)
     if ((nbItems < 1) || (nbItems > 3))
     {
         // todo err
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
     // if it exist (mbItems > 1)
     strcpy(spectralClass, &code);
-    return mcsSUCCESS;
+    return mcsmcsSUCCESS;
 }
 
 /**
@@ -593,12 +596,12 @@ mcsCOMPL_STAT vobsSTAR::GetLuminosityClass(char *LuminosityClass)
     if (nbItems != 3)
     {
         // todo err
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
     // if it exist (mbItems = 3)
     strcpy(LuminosityClass, lightClass);
     
-    return mcsSUCCESS;
+    return mcsmcsSUCCESS;
 }
 
 
@@ -624,7 +627,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         // Get right ascension of the star. If not set return FALSE
         if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
         {
-            if (GetRa(ra1) == mcsFAILURE)
+            if (GetRa(ra1) == mcsmcsFAILURE)
             {
                 errCloseStack();
                 return mcsFALSE;
@@ -636,7 +639,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         }
         if (star.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
         {
-            if (star.GetRa(ra2) == mcsFAILURE)
+            if (star.GetRa(ra2) == mcsmcsFAILURE)
             {
                 errCloseStack();
                 return mcsFALSE;
@@ -650,7 +653,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         // Get declinaison of the star. If not set return FALSE
         if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
         {
-            if (GetDec(dec1) == mcsFAILURE)
+            if (GetDec(dec1) == mcsmcsFAILURE)
             {
                 errCloseStack();
                 return mcsFALSE;
@@ -662,7 +665,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         }
         if (star.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
         {
-            if (star.GetDec(dec2) == mcsFAILURE)
+            if (star.GetDec(dec2) == mcsmcsFAILURE)
             {
                 errCloseStack();
                 return mcsFALSE;
@@ -696,7 +699,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         for (int el = 0; el < listSize; el++)
         {
             if (criteriaList->GetNextCriteria
-                (propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
+                (propertyId, &range, (mcsLOGICAL)(el==0)) == mcsmcsFAILURE)
             {
                 return mcsFALSE;
             }
@@ -706,7 +709,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 // Get right ascension of the stars. If not set return FALSE
                 if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
                 {
-                    if (GetRa(val1) == mcsFAILURE)
+                    if (GetRa(val1) == mcsmcsFAILURE)
                     {
                         errCloseStack();
                         return mcsFALSE;
@@ -718,7 +721,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 }
                 if (star.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
                 {
-                    if (star.GetRa(val2) == mcsFAILURE)
+                    if (star.GetRa(val2) == mcsmcsFAILURE)
                     {
                         errCloseStack();
                         return mcsFALSE;
@@ -734,7 +737,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 // Get declinaison of the stars. If not set return FALSE
                 if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
                 {
-                    if (GetDec(val1) == mcsFAILURE)
+                    if (GetDec(val1) == mcsmcsFAILURE)
                     {
                         errCloseStack();
                         return mcsFALSE;
@@ -746,7 +749,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 }
                 if (star.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
                 {
-                    if (star.GetDec(val2) == mcsFAILURE)
+                    if (star.GetDec(val2) == mcsmcsFAILURE)
                     {
                         errCloseStack();
                         return mcsFALSE;
@@ -762,7 +765,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 // Get value of the property id
                 if (IsPropertySet(propertyId) == mcsTRUE)
                 {
-                    if (GetPropertyValue(propertyId, &val1) == mcsFAILURE)
+                    if (GetPropertyValue(propertyId, &val1) == mcsmcsFAILURE)
                     {
                         errCloseStack();
                         return mcsFALSE;
@@ -774,7 +777,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 }    
                 if (star.IsPropertySet(propertyId) == mcsTRUE)
                 {
-                    if (star.GetPropertyValue(propertyId, &val2) == mcsFAILURE)
+                    if (star.GetPropertyValue(propertyId, &val2) == mcsmcsFAILURE)
                     {
                         errCloseStack();
                         return mcsFALSE;
@@ -800,7 +803,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
  *
  * \param star the other star.
  *
- * \return always SUCCESS.
+ * \return always mcsSUCCESS.
  *
  */
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
@@ -820,7 +823,7 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
         }
     }
 
-    return mcsSUCCESS;
+    return mcsmcsSUCCESS;
 }
 
 /**
@@ -878,7 +881,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  * \param type   property type
  * \param format format used to set property
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is returned.
  *
  * \b Error codes:\n
  * The possible error is :
@@ -893,20 +896,20 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
     if (_propertyList.find(id) != _propertyList.end())
     {
         errAdd(vobsERR_DUPLICATED_PROPERTY, id);
-        return mcsFAILURE;
+        return mcsmcsFAILURE;
     }
 
     vobsSTAR_PROPERTY property(id, name, type, format);
     _propertyList[id] = property;
     _propertyOrder[_propertyList.size()-1] = id;
 
-    return mcsSUCCESS;
+    return mcsmcsSUCCESS;
 }
 
 /**
  * Add all star properties and fix an order
  *
- * \return mcsSUCCESS
+ * \return mcsmcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
@@ -966,7 +969,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                 vobsFLOAT_PROPERTY, "%.3f");
 
 
-    return mcsSUCCESS;
+    return mcsmcsSUCCESS;
 }
 
 
