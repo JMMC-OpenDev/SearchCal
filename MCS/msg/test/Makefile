@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2005-02-04 15:57:06 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.9 2005-02-09 16:42:26 lafrasse Exp $"
 #
 # Makefile of msgTest
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/02/04 15:57:06  lafrasse
+# Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+#
 # gzins     08-Dec-2004  Removed msgTestClient and msgTestServer
 #
 # lafrasse  20-Nov-2004  Added C++ attributes to each executable LIBS to become
@@ -40,20 +43,9 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   = msgTestSocketClient  \
-                  msgTestSocketServer
-
-#
-# <brief description of msgTestClient program>
-msgTestClient_OBJECTS   = msgTestClient
-msgTestClient_LDFLAGS   = -lgdome
-msgTestClient_LIBS      = mcs err log misc env msg C++
-
-#
-# <brief description of msgTestServer program>
-msgTestServer_OBJECTS   = msgTestServer
-msgTestServer_LDFLAGS   = -lgdome
-msgTestServer_LIBS      = mcs err log cmd misc env msg C++
+EXECUTABLES_L   = msgTestSocketClient   \
+                  msgTestSocketServer   \
+                  msgTestManagerIFQueue
 
 #
 # <brief description of msgTestSocketClient program>
@@ -66,6 +58,12 @@ msgTestSocketClient_LIBS      = mcs err log env cmd misc msg C++
 msgTestSocketServer_OBJECTS   = msgTestSocketServer
 msgTestSocketServer_LDFLAGS   = -lgdome
 msgTestSocketServer_LIBS      = mcs err log env cmd misc msg C++
+
+#
+# <brief description of msgTestManagerIFQueue program>
+msgTestManagerIFQueue_OBJECTS   = msgTestManagerIFQueue
+msgTestManagerIFQueue_LDFLAGS   = -lgdome
+msgTestManagerIFQueue_LIBS      = mcs err log cmd misc env msg C++
 
 #
 # special compilation flags for single c sources

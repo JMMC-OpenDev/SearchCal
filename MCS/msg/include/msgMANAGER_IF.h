@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.h,v 1.11 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgMANAGER_IF.h,v 1.12 2005-02-09 16:42:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.10  2005/01/29 19:58:17  gzins
  * Added únique' parameter to Connect()
  *
@@ -37,6 +40,12 @@
 #endif
 
 /*
+ * System Headers 
+ */
+#include <queue>
+
+
+/*
  * MCS Headers 
  */
 #include "mcs.h"
@@ -47,6 +56,7 @@
  */
 #include "msgSOCKET_CLIENT.h"
 #include "msgMESSAGE.h"
+#include "msgMESSAGE_FILTER.h"
 #include "msgErrors.h"
 
 
@@ -64,7 +74,7 @@
  * processes;
  * \li reception of messages from remote processes.
  *
- * \sa msgSendCommand.cpp for a complete usage example.
+ * \sa msgSendCommand.cpp code as a complete usage example.
  */
 class msgMANAGER_IF
 {
@@ -72,30 +82,40 @@ public:
     msgMANAGER_IF();
     virtual ~msgMANAGER_IF();
 
-    virtual mcsCOMPL_STAT Connect     (const mcsPROCNAME  procName,
-                                       mcsLOGICAL         unique=mcsFALSE);
+    virtual mcsCOMPL_STAT Connect               (const mcsPROCNAME,
+                                                 const mcsLOGICAL = mcsFALSE);
+    virtual mcsLOGICAL    IsConnected           (void) const;
+    virtual mcsCOMPL_STAT Disconnect            (void);
+                                                
+    virtual mcsINT32      SendCommand           (const char*,
+                                                 const mcsPROCNAME,
+                                                 const char* = NULL,  
+                                                 const mcsINT32 = 0);
+    virtual mcsCOMPL_STAT SendReply             (      msgMESSAGE&,
+                                                 const mcsLOGICAL);
+                                                
+    virtual mcsCOMPL_STAT Receive               (      msgMESSAGE&,
+                                                 const mcsINT32);
+    virtual mcsCOMPL_STAT Receive               (      msgMESSAGE&,
+                                                 const mcsINT32,
+                                                 const msgMESSAGE_FILTER&);
+                                                
+    virtual mcsUINT32     QueuedMessagesNb      (void) const;
+    virtual mcsCOMPL_STAT GetNextQueuedMessage  (msgMESSAGE&);
 
-    virtual mcsINT32      SendCommand (const char        *command,
-                                       const mcsPROCNAME  destProc,
-                                       const char        *paramList=NULL,  
-                                       mcsINT32           paramLen=0);
-    virtual mcsCOMPL_STAT SendReply   (msgMESSAGE        &msg,
-                                       mcsLOGICAL         lastReply);
+    virtual mcsINT32      GetSocketDescriptor   (void) const;
 
-    virtual mcsCOMPL_STAT Receive     (msgMESSAGE        &msg,
-                                       const mcsINT32     timeoutInMs);
-
-    virtual mcsLOGICAL    IsConnected (void);
-
-    virtual mcsCOMPL_STAT Disconnect  (void);
-
-    virtual mcsINT32      GetMsgQueue (void);
 protected:
 
 private:
-    static msgSOCKET_CLIENT _socket;      /* The network connection used to
-                                           * communicate with msgManager process
-                                           */
+    static msgSOCKET_CLIENT  _socket;             /* The network connection used
+                                                   * to communicate with
+                                                   * msgManager process
+                                                   */
+
+    static std::queue<msgMESSAGE> _messageQueue;  /* The FIFO stack used to hold
+                                                   * waiting messages
+                                                   */
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

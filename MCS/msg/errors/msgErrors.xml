@@ -140,6 +140,11 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[recv() call error - %s]]></errFormat>
    </error>
+   <error id="36">
+      <errName>EMPTY_STACK</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[empty stack]]></errFormat>
+   </error>
    <error id="32">
       <errName>FORMAT_ENVLIST</errName>
       <errSeverity>WARNING</errSeverity>

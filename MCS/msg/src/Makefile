@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.19 2005-02-04 15:57:06 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.20 2005-02-09 16:42:26 lafrasse Exp $"
 #
 # Makefile of msg
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2005/02/04 15:57:06  lafrasse
+# Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+#
 # Revision 1.18  2005/01/29 20:05:27  gzins
 # Added PROCLIST command
 #
@@ -68,12 +71,13 @@ msgSendCommand_LIBS          = mcs log err cmd misc env msg C++
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = msg.h              \
-				  msgMESSAGE.h       \
-				  msgMANAGER_IF.h    \
-				  msgSOCKET.h        \
-				  msgDEBUG_CMD.h     \
-				  msgSOCKET_CLIENT.h \
+INCLUDES        = msg.h                \
+				  msgMESSAGE.h         \
+				  msgMESSAGE_FILTER.h  \
+				  msgMANAGER_IF.h      \
+				  msgSOCKET.h          \
+				  msgDEBUG_CMD.h       \
+				  msgSOCKET_CLIENT.h   \
 				  msgSOCKET_SERVER.h
 
 #
@@ -86,6 +90,7 @@ LIBRARIES_L     =
 # <brief description of msg library>
 msg_OBJECTS   = msgMANAGER_IF      \
 				msgMESSAGE         \
+				msgMESSAGE_FILTER  \
 				msgSOCKET          \
 				msgDEBUG_CMD       \
 				msgPROCLIST_CMD    \

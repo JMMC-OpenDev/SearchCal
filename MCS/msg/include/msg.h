@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msg.h,v 1.13 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msg.h,v 1.14 2005-02-09 16:42:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.12  2005/01/29 15:57:10  gzins
  * Added msgDEBUG_CMD header file
  *
@@ -31,6 +34,7 @@
 #include "msgSOCKET_CLIENT.h"
 #include "msgSOCKET_SERVER.h"
 #include "msgMESSAGE.h"
+#include "msgMESSAGE_FILTER.h"
 #include "msgMANAGER_IF.h"
 #include "msgDEBUG_CMD.h"
 
