@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.2 2004-11-22 14:46:00 scetre Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.3 2004-11-22 15:24:05 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -28,24 +28,10 @@
  */
 
 /**
- * Brief description of the class, which ends at this dot.
+ * Object wrapper around system socket.
  * 
- * OPTIONAL detailed description of the class follows here.
- *
- * \usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
- *
- * \n
- * \env
- * OPTIONAL. If needed, environmental variables accessed by the class. For
- * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
- * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
+ * The msgSOCKET object provide method to create, close, send and received
+ * data on a socket in order to allow network communication.
  *
  * \n
  * \ex
@@ -55,17 +41,9 @@
  * Insert your code example here
  * \endcode
  *
- * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * \sa modcppMain.C
+ * \sa http://www.linuxgazette.com/issue74/tougher.html
  * 
- * \bug OPTIONAL. Bugs list if it exists.
- * \bug For example, description of the first bug
- * \bug For example, description of the second bug
- * 
- * \todo OPTIONAL. Things to forsee list, if needed. For example, 
- * \todo add other methods, dealing with operations.
- * 
+ * \todo write code example 
  */
 #include "msgMESSAGE.h"
 #include <sys/types.h>
@@ -92,9 +70,12 @@ public:
     virtual ~msgSOCKET();
     
     virtual mcsINT32 GetDescriptor(void);
-    virtual mcsCOMPL_STAT SetDescriptor(mcsINT32 descrip);
+   
+    // Initialisation
+    virtual mcsCOMPL_STAT Open(unsigned short     *portNumberPt,
+                               int                socketType);
+    virtual mcsCOMPL_STAT Close(void);
     
-    // Server Initialisation
     virtual mcsCOMPL_STAT Create(void);
     virtual mcsCOMPL_STAT Bind(const mcsINT32 port);
     virtual mcsCOMPL_STAT Listen(void);
@@ -108,17 +89,14 @@ public:
     // String
     virtual mcsCOMPL_STAT Send(const std::string s) const;
     virtual mcsCOMPL_STAT Receive(std::string&) const;
-
-    virtual mcsCOMPL_STAT IsValid(void);
-
-    virtual mcsCOMPL_STAT Open(unsigned short     *portNumberPt,
-                               int                socketType);
-    virtual mcsCOMPL_STAT Close(void);
     // msgMESSAGE
     virtual mcsCOMPL_STAT Send(msgMESSAGE &msg);
     virtual mcsCOMPL_STAT Receive(msgMESSAGE &msg,
                                   mcsINT32 timeoutInMs);
-protected:
+
+    virtual mcsCOMPL_STAT IsValid(void);
+    
+    protected:
 
     
 private:
