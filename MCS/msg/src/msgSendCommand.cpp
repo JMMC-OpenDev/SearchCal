@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.19 2005-03-08 10:32:43 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.20 2005-03-08 16:24:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/03/08 10:32:43  gzins
+ * Fixed problem when sending EXIT command to msgManager; exit directly when reply is received, and do not try to disconnect process from message service.
+ *
  * Revision 1.18  2005/02/28 10:21:54  gzins
  * Removed printf used for debug
  *
@@ -81,7 +84,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.19 2005-03-08 10:32:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.20 2005-03-08 16:24:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -268,7 +271,7 @@ int main (int argc, char *argv[])
     }
 
     // If it was not the command to stop msgManager
-    if ((strcmp(command, "EXIT") != 0) && (strcmp(process, "msgManager") != 0))
+    if ((strcmp(command, "EXIT") != 0) || (strcmp(process, "msgManager") != 0))
     {
         // Disconnect from msgManager
         manager->Disconnect();
