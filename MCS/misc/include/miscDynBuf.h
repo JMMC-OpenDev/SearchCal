@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.19 2005-02-22 11:11:38 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.20 2005-03-03 16:10:31 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/02/22 11:11:38  lafrasse
+ * Added miscDynBufGetNextCommentLine(), miscDynBufAppendLine() and miscDynBufAppendComentLine()
+ *
  * Revision 1.18  2005/02/16 14:39:55  gzins
  * Updated miscDynBufGetNextLine() function to do not alter buffer content.
  *
@@ -58,7 +61,7 @@
 
 /**
  * \file
- * This header contains all the miscDynBuf functions declarations.
+ * Declaration of miscDynBuf functions.
  */
 
 /* The following piece of code alternates the linkage type to C for all 
@@ -83,8 +86,8 @@ extern "C" {
 /**
  * Dynamic Buffer first position number abstraction.
  *
- * It is meant to isolate all of your code from the number internally used to
- * reference the first byte of a Dynamic Buffer, in order to make your work
+ * It is meant to make independant all the code from the number internally used
+ * to reference the first byte of a Dynamic Buffer, in order to make your work
  * independant of our futur hypotetic implementation changes.
  */
 #define miscDYN_BUF_BEGINNING_POSITION  ((mcsUINT32) 1u)
@@ -102,17 +105,16 @@ extern "C" {
 typedef struct
 {
     void        *thisPointer;      /**< A pointer to itself. This is used to
-                                     allow the testing of a Dynamic Buffer
-                                     struture initialization state (wether
-                                     it has allready been initialized as a
-                                     miscDYN_BUF or not). */
-
-    mcsUINT32   magicStructureId;  /**< A magic number to unically identify a
-                                     MCS structure. This is used to allow the
-                                     testing of a Dynamic Buffer struture
-                                     initialization state (wether it has
-                                     allready been initialized  as a miscDYN_BUF
+                                     allow the Dynamic Buffer structure
+                                     initialization state test (whether it has
+                                     already been initialized as a miscDYN_BUF
                                      or not). */
+
+    mcsUINT32   magicStructureId;  /**< A magic number to identify in a univocal
+                                     way a MCS structure. This is used to allow
+                                     the Dynamic Buffer structure initialization
+                                     state test(whether it has already been
+                                     initialized  as a miscDYN_BUF or not). */
 
     char        *dynBuf;           /**< A pointer to the Dynamic Buffer internal
                                      bytes buffer. */
@@ -121,12 +123,12 @@ typedef struct
                                      identifying the comment to be skipped. */
 
     mcsUINT32   storedBytes;       /**< An unsigned integer counting the number
-                                     of bytes effectively held by Dynamic
+                                     of bytes effectively holden by Dynamic
                                      Buffer.
                                      */
 
     mcsUINT32   allocatedBytes;    /**< An unsigned integer counting the number
-                                     of bytes allready allocated in Dynamic
+                                     of bytes already allocated in Dynamic
                                      Buffer. */
 } miscDYN_BUF;
 
@@ -147,7 +149,7 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf);
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf);
 
 mcsCOMPL_STAT miscDynBufGetNbStoredBytes    (const miscDYN_BUF *dynBuf,
-                                                   mcsUINT32   *storedBytes);
+                                             mcsUINT32         *storedBytes);
 
 mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (const miscDYN_BUF *dynBuf,
                                              mcsUINT32         *allocatedBytes);
