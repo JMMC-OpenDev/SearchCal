@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhIOSTREAM_KEY.h,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhIOSTREAM_KEY.h,v 1.2 2005-01-07 17:48:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
 
 /**
  * \file
- * evhIOSTREAM_KEY class declaration.
+ * Declaration of the evhIOSTREAM_KEY class.
  */
 
 #ifndef __cplusplus
