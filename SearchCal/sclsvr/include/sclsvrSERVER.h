@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSERVER.h,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrSERVER.h,v 1.2 2004-11-30 15:48:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -82,6 +82,7 @@ public:
     
     // Command callbacks
     virtual evhCB_COMPL_STAT SearchCB(msgMESSAGE &msg, void*);
+    virtual evhCB_COMPL_STAT GetStarCB(msgMESSAGE &msg, void*);
 
 protected:
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.C,v 1.2 2004-11-26 13:53:56 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.C,v 1.3 2004-11-30 15:48:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.C,v 1.2 2004-11-26 13:53:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.C,v 1.3 2004-11-30 15:48:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -177,11 +177,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
         if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))->Complete(request) 
             == FAILURE)
         {
-            printf("star %d not a calibrator\n", el+1);
+            logTest("star %d not a calibrator\n", el+1);
         }
         else 
         {
-            printf("star %d is a calibrator\n", el+1);
+            logTest("star %d is a calibrator\n", el+1);
         }
     }
     return SUCCESS;

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-11-25 13:13:11 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-11-30 15:48:09 scetre Exp $"
 #
 # Makefile of sclsvr
 #
@@ -41,7 +41,7 @@ EXECUTABLES_L   =
 # <brief description of xxxxx program>
 sclsvrServer_OBJECTS   = sclsvrServer
 sclsvrServer_LDFLAGS   =
-sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr
+sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr simcli
 
 #
 # special compilation flags for single c sources
@@ -69,7 +69,9 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      \
 				   sclsvrCALIBRATOR_LIST \
 				   sclsvrSERVER          \
 				   sclsvrSEARCH_CMD      \
-				   sclsvrSearchCB
+				   sclsvrGETSTAR_CMD     \
+				   sclsvrSearchCB		 \
+				   sclsvrGetStarCB
 
 #
 # Scripts (public and local)

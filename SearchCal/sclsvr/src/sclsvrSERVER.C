@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSERVER.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrSERVER.C,v 1.2 2004-11-30 15:48:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSERVER class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSERVER.C,v 1.1 2004-11-25 13:12:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSERVER.C,v 1.2 2004-11-30 15:48:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -65,7 +65,10 @@ mcsCOMPL_STAT sclsvrSERVER::AppInit()
     evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD)&sclsvrSERVER::SearchCB);
     AddCallback(key, cb);
     
-
+    evhCMD_KEY key1("GETSTAR");
+    evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&sclsvrSERVER::GetStarCB);
+    AddCallback(key1, cb1);
+    
     return SUCCESS;
 }
  

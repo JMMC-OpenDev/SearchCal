@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.C,v 1.2 2004-11-30 10:35:08 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCB.C,v 1.3 2004-11-30 15:48:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.C,v 1.2 2004-11-30 10:35:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.C,v 1.3 2004-11-30 15:48:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -302,6 +302,8 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     msg.SetBody(miscDynBufGetBufferPointer(&dynBuff),
                 strlen(miscDynBufGetBufferPointer(&dynBuff)));
     
+    calibratorList.Clear();
+    starList.Clear();
     // Send reply
     if (SendReply(msg) == FAILURE)
     {
