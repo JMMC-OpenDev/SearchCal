@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.3 2004-11-22 14:31:38 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -19,17 +19,90 @@
  * msgMESSAGE class declaration.
  */
 
+/*
+ * MCS Headers 
+ */
+#include "mcs.h"
 
-#ifndef __cplusplus
-#error This is a C++ include file and cannot be used from plain C
-#endif
+/* 
+ * Constants definition
+ */
+
+/**
+ * Message waiting constants
+ */
+#define msgNO_WAIT               0   
+#define msgWAIT_FOREVER         -1
+
+/**
+ * Maximum message size
+ */
+#define msgMAXLEN                8192
+
+/**
+ * Standard command names
+ */
+#define msgDEBUG_CMD            "DEBUG"
+#define msgPING_CMD             "PING"
+#define msgEXIT_CMD             "EXIT"
+#define msgVERSION_CMD          "VERSION"
+
+/* 
+ * Macro definition
+ */
+
+/**
+ * Maximum message body size
+ */
+#define msgBODYMAXLEN            (msgMAXLEN - sizeof(msgHEADER) - 1)
 
 /*
- * Local Headers 
+ * Enumeration type definition
  */
-#include "msg.h"
 
+/**
+ * Message types enumeration
+ */
+typedef enum
+{
+    msgTYPE_COMMAND = 1,         /**< Describe command messages. */
+    msgTYPE_REPLY,               /**< Describe reply messages. */
+    msgTYPE_ERROR_REPLY          /**< Describe error reply messages. */
+} msgTYPE;
 
+/* 
+ * Structure type definition
+ */
+
+/**
+ * Message header structure
+ */
+typedef struct
+{
+    mcsPROCNAME sender;          /**< Sender processus name */
+    mcsENVNAME  senderEnv;       /**< Sender environnement */
+    mcsPROCNAME recipient;       /**< Receiver processus name  */
+    mcsENVNAME  recipientEnv;    /**< Receiver environnement */
+    mcsSTRING8  identifier;      /**< Identificator */
+    mcsLOGICAL  isInternal;      /**< FALSE if it is external >*/
+    msgTYPE     type;            /**< Message type */
+    mcsCMD      command;         /**< Command name */
+    mcsLOGICAL  lastReply;       /**< TRUE if it is the last answer */
+    mcsBYTES32  timeStamp;       /**< Message date */
+    mcsSTRING8  msgBodySize;     /**< Message body size */
+} msgHEADER;
+
+/**
+ * Complete message structure
+ */
+typedef struct
+{
+    msgHEADER  header;
+    char       body[msgMAXLEN - sizeof(msgHEADER)];
+
+} msgMESSAGE_RAW;
+
+#ifdef __cplusplus
 /*
  * Class declaration
  */
@@ -103,7 +176,7 @@ private:
      msgMESSAGE(const msgMESSAGE&);
      msgMESSAGE& operator=(const msgMESSAGE&);
 };
-
+#endif
 
 #endif /*!msgMESSAGE_H*/
 
