@@ -1,16 +1,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* berezne   02-Jun-2004  created
-* gzins     17-Jun-2004  completed implementation
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * gzins     23-Nov-2004  removed useless warning messages related to undefined
 *                        INTROOT and MCSROOT
+* gzins     17-Jun-2004  completed implementation
+* berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.8 2005-01-24 14:45:09 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.9 2005-01-24 14:49:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

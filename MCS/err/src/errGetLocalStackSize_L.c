@@ -1,14 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* berezne   02-Jun-2004  created
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * gzins     17-Jun-2004  completed implementation
+* berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errGetLocalStackSize_L.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errGetLocalStackSize_L.c,v 1.2 2005-01-24 14:49:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
