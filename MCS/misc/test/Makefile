@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2004-09-10 17:16:12 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2004-12-17 08:20:42 gzins Exp $"
 #
 # Makefile of misc Tests
 #
@@ -44,8 +44,12 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = miscTestDate miscTestDynBuf miscTestFile miscTestNetwork miscTestString
-
+EXECUTABLES     = miscTestDate     \
+				  miscTestDynBuf   \
+				  miscTestFile     \
+				  miscTestNetwork  \
+				  miscTestString   \
+				  miscTestHash
 
 EXECUTABLES_L   = 
 
@@ -78,6 +82,12 @@ miscTestNetwork_LIBS      = mcs err log misc
 miscTestString_OBJECTS   = miscTestString
 miscTestString_LDFLAGS   = -lgdome
 miscTestString_LIBS      = mcs err log misc
+
+#
+# <brief description of xxxxx program>
+miscTestHash_OBJECTS   = miscTestHash
+miscTestHash_LDFLAGS   = -lgdome
+miscTestHash_LIBS      = mcs err log misc
 
 #
 # special compilation flags for single c sources
