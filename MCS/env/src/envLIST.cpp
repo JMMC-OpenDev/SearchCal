@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.cpp,v 1.11 2005-02-28 14:13:50 lafrasse Exp $"
+ * "@(#) $Id: envLIST.cpp,v 1.12 2005-02-28 14:25:00 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/02/28 14:13:50  lafrasse
+ * Moved the MCS 'default' environment definition from hard-coded values to the 'mcsEnvList' file
+ *
  * Revision 1.10  2005/02/22 11:17:15  lafrasse
  * Update miscDynBufGetNextLine() call because of a miscDynBuf API update
  *
@@ -21,13 +24,13 @@
  * Revision 1.6  2005/02/13 16:53:13  gzins
  * Added CVS log as modification history
  *
- * lafrasse  07-Dec-2004  Created
+ * gzins     05-Jan-2005  Minor changes in documentation
  * lafrasse  08-Dec-2004  Comment refinments, added the default MCS env in the
  *                        internal map by default, factorized the 'file already
  *                        loaded' detection code from GetHostName(), Show() and
  *                        GetPortNumber() to LoadEnvListFile(), and refined the
  *                        output format of Show()
- * gzins     05-Jan-2005  Minor changes in documentation
+ * lafrasse  07-Dec-2004  Created
  *
  ******************************************************************************/
 
@@ -36,7 +39,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.11 2005-02-28 14:13:50 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.12 2005-02-28 14:25:00 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
