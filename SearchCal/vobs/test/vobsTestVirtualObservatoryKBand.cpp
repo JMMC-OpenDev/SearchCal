@@ -1,16 +1,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestVirtualObservatoryKBand.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"
+ * "@(#) $Id: vobsTestVirtualObservatoryKBand.cpp,v 1.3 2005-02-13 08:57:55 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/13 08:54:00  gzins
+ * Updated after vobs classes changes
+ * Added CVS log as modifification history
+ *
  * scetre    25-Aug-2004  Created
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualObservatoryKBand.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualObservatoryKBand.cpp,v 1.3 2005-02-13 08:57:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -61,35 +65,18 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    // Set request in V band
+    // Set request in K band
     vobsREQUEST request;
     request.SetObjectName("ETA TAU");
     request.SetObjectRa("03 47 29.08");
     request.SetObjectDec("24 06 18.5");
-    request.SetObjectMag(2.87);
-    request.SetSearchBand("V");
-    request.SetDeltaRa(1800.0);
-    request.SetDeltaDec(300.0);
-    request.SetMinRangeMag(1);
-    request.SetMaxRangeMag(5);
-    request.SetMaxNbOfSelectedObjects(50);
-    request.Display();
-
-    // Search in VO
-    vobsSTAR_LIST starList;
-    vobsVIRTUAL_OBSERVATORY vobs;
-    if (vobs.Search(request, starList)==FAILURE)
-    {
-        errCloseStack();
-        exit(EXIT_FAILURE);
-    }
-    printf(">>>>>>>>> V BAND REQUEST <<<<<<<<<<\n");
-    starList.Display();
-
-   // Set request in K band
     request.SetObjectMag(2.96);
     request.SetSearchBand("K");
+    request.SetDeltaRa(1800.0);
+    request.SetDeltaDec(300.0);
     request.SetMinRangeMag(-1);
+    request.SetMaxRangeMag(5);
+    request.SetMaxNbOfSelectedObjects(50);
     request.Display();
 
     // Search in VO
