@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: Makefile.template,v 1.4 2004-06-30 08:09:13 gluck Exp $" 
+#%# "@(#) $Id: Makefile.template,v 1.5 2004-09-10 18:09:12 gzins Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
@@ -10,7 +10,7 @@
 #%# gluck      14-May-2004  Created
 #%# 
 #%# 
-#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# This file has been prepared to be pre-processed by "ctooGetTemplate".
 #%# If you are using it by hand, please:
 #%#        - remove all lines starting with #%#
 #%#        - delete ">-<" in "$I>-<d$"
@@ -30,13 +30,17 @@
 #
 #*******************************************************************************
 # REMARKS
-#    Makefile based on the VLT Makefile
+#    Makefile based on the VLT/ALMA Makefile
 #
 #-------------------------------------------------------------------------------
 
 #
 # user definable C-compilation flags
 #USER_CFLAGS = 
+
+#
+# user definable javac compilation flags
+#USER_JFLAGS = 
 
 #
 # additional include and library search paths
@@ -109,25 +113,29 @@ TCL_LIBRARIES_L =
 tttlll_OBJECTS  = 
 
 #
-# UIF panels (public and local)
-# -----------------------------
-PANELS   =
-PANELS_L = 
+# Python scripts (public and local)
+# ---------------------------------
+PY_SCRIPTS     =
+PY_SCRIPTS_L   =
 
 #
-# On-Line Database Files
-# ----------------------
-DBL_CLASSES = 
-DBL_BCF =
-DBL_FLAGS =
-xxxx_DBL_FLAGS =
+# Jarfiles and their directories
+# ---------------------------------
+JARFILES        =
 
-# 
-# IDL Files and flags
-# -------------------
-IDL_FILES =
-IDL_TAO_FLAGS =
-USER_IDL =
+#
+# <brief description of jjjfff jar files>
+jjjfff_DIRS     =
+jjjfff_EXTRAS   = 
+
+#
+# Java programs
+# ---------------------------------
+JAVA_EXECUTABLES=
+
+#
+# <brief description of jjjjjj java program>
+jjjjjj_CLASS    =
 
 #
 # man pages to be done
@@ -138,22 +146,6 @@ MAN3 =
 MAN5 =
 MAN7 =
 MAN8 =
-
-#
-# local man pages
-# ---------------
-MANl =
-
-#
-# ASCII file to be converted into Framemaker-MIF
-# ----------------------------------------------
-ASCII_TO_MIF = 
-
-#
-# INS_ROOT files to be installed
-#-------------------------------
-INS_ROOT_FILES =
-INS_ROOT_DIR   =
 
 #
 # other files to be installed
@@ -171,16 +163,10 @@ CSOURCENAMES = \
 #>>>>> END OF standard rules
 
 #
-# CHOSE PLATFORM
-# --------------
-# Default is UNIX, for VxVorks application next line MUST BE UNCOMMENTED
-#MAKE_VXWORKS = on   
-
-#
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/mcsMakefile
+include $(MAKEDIR)/mkfMakefile
 
 #
 # TARGETS
@@ -190,9 +176,6 @@ all:	do_all
 
 clean : clean_all 
 	@echo " . . . clean done"
-
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
 
 man   : do_man 
 	@echo " . . . man page(s) done"
