@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: Makefile.template,v 1.7 2004-12-10 07:08:30 gzins Exp $" 
+#%# "@(#) $Id: Makefile.template,v 1.8 2004-12-10 07:20:41 gzins Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
@@ -140,7 +140,7 @@ jjjjjj_CLASS    =
 
 #
 # Command Definition Files (CDF)
-#
+# ---------------------------------
 CDF_FILES       =
 
 #
