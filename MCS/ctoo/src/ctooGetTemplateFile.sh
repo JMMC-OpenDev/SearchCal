@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateFile.sh,v 1.2 2004-08-11 10:00:22 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateFile.sh,v 1.3 2004-09-03 08:20:00 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -48,15 +48,6 @@
 #               path).
 # 
 # \n
-# \opt
-# \optname remove : if used, the temporary backup file will be removed. If not
-#                   used, the temporary backup file will be kept, which will 
-#                   allow to continue the treatment in the calling script,
-#                   without generating a new temporary backup file. But this
-#                   temporary backup file will have to be removed in the
-#                   calling script.
-# 
-# \n
 # \details
 # Create a customized template file from an original template file. If no
 # paths are specified for template and file parameters, the script will look
@@ -65,7 +56,6 @@
 # to get and create files, respectively.
 # 
 # \usedfiles
-# OPTIONAL. If files are used, for each one, name, and usage description.
 # \filename template : cf description of template parameter above.
 # 
 # \n 
@@ -75,10 +65,10 @@
 
 
 # Input parameters given should be 3 and in the correct format:
-if [ $# != 2 -a $# != 3 ]
+if [ $# != 2 ]
 then 
     echo -e "\n\tUsage: ctooGetTemplateFile"
-    echo -e "<template> <file> [remove]\n"
+    echo -e "<template> <file>\n"
     exit 1
 fi
 
@@ -100,7 +90,6 @@ backupFile=$3
 if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
 then
     # File copy succeeds
-        
     # setup author and date:
     AUTHOR=`whoami`
     AUTHOR=`printf "%-8s" $AUTHOR`
@@ -113,23 +102,9 @@ then
         -e "1,$ s/I>-<d/\Id/g" \
         ${FILE}.BAK > $FILE
 
-    case $backupFile in
-        "")
-            # Keep the temporary backup file => do nothing
-            ;;
-        remove)
-            # Remove the temporary backup file
-            rm -f ${FILE}.BAK
-            ;;
-        *)
-            # Wrong parameter value
-            echo "ERROR third option is not a valid."
-            echo -e "\n\tUsage: ctooGetTemplateFile"
-            echo -e "<template> <file> [remove]\n"
-            exit 1
-            ;;
-    esac
-            
+    # Remove the temporary backup file
+    rm -f ${FILE}.BAK
+
 else
     # File copy failed
     echo -e "\n>>> CANNOT CREATE --> $FILE\n"
