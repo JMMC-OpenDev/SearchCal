@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.16 2005-02-11 10:34:49 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.17 2005-02-11 10:41:55 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/02/11 10:34:49  gzins
+* Added GetPropertyId() method
+* Improved parsing of CDATA
+*
 * Revision 1.15  2005/02/10 10:46:42  gzins
 * Changed column name to parameter name
 *
@@ -44,7 +48,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.16 2005-02-11 10:34:49 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.17 2005-02-11 10:41:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -110,7 +114,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     GdomeDocument          *doc;
     GdomeElement           *root;
     GdomeException         exc;
-    vobsSTAR_LIST starListToReturn;
     
     vobsCDATA cData;
     logExtDbg("vobsPARSER::MainParser()");	
@@ -203,12 +206,14 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         }
 
         // Parse the CDATA section
-        if (ParseCData(&cData, starListToReturn) == mcsFAILURE)
+        starList.Clear();
+        if (ParseCData(&cData, starList) == mcsFAILURE)
         {
             gdome_el_unref(root, &exc);            
             gdome_doc_unref (doc, &exc);
             gdome_di_unref (domimpl, &exc);
             xmlCleanupParser();
+            starList.Clear();
             return mcsFAILURE;
         }
     }
@@ -219,9 +224,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     gdome_di_unref (domimpl, &exc);
     xmlCleanupParser();
       
-    starList.Clear();
-    starList.Copy(starListToReturn); 
-    
     return mcsSUCCESS;
 }
 
@@ -428,10 +430,13 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
 
                     // If it is the number of lines to be skipped
                     // before accessing to data in CDATA table 
+                    // NOTE: Skip one line more than the value given by
+                    // CDS because the CDATA buffer always contains
+                    // an empty line at first.
                     if ((strcmp(nodeName->str, "CSV") == 0) &&
                         (strcmp(attrName->str, "headlines")  == 0))
                     {
-                        cData->SetNbLinesToSkip(atoi(attrValue->str)); 
+                        cData->SetNbLinesToSkip(atoi(attrValue->str) + 1); 
                     }
                     gdome_str_unref(attrValue);                    
                     gdome_str_unref(attrName);                    
@@ -552,13 +557,14 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     // End of line reached; stop UCD scan
                     break;
                 }
+                currLinePtr = nextLinePtr;
 
                 // If UCD is not a known property ID
                 if (star.IsProperty(ucdName) == mcsFALSE)
                 {
                     // Check if UCD and parameter association correspond to a
                     // known property
-                    propId = GetPropertyId(ucdName, paramName);
+                    propId = GetPropertyId(paramName, ucdName);
                 }
                 // Else
                 else
@@ -575,19 +581,15 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     // If wavelength is found, save it
                     if (strcmp(propId, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
                     {
-                        currLinePtr = nextLinePtr;
                         strcpy(wlen, ucdValue); 
                     }
                     // If flux is found, save it
                     else if (strcmp(propId, vobsSTAR_PHOT_FLUX_IR_MISC) == 0)
                     {
-                        currLinePtr = nextLinePtr;
                         strcpy(flux, ucdValue);
                     }
                     else
                     {
-                        currLinePtr = nextLinePtr;
-
                         // Check if value if empty
                         if (miscIsSpaceStr(ucdValue) == mcsTRUE)
                         {
