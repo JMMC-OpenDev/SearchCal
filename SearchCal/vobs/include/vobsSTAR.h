@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.31 2005-02-23 07:50:42 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.32 2005-03-06 10:44:03 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.31  2005/02/23 07:50:42  gzins
+* Added vobsSTAR_DIAM12 and vobsSTAR_DIAM12_ERROR definitions
+*
 * Revision 1.30  2005/02/13 15:25:59  gzins
 * Added showPropId parameter to Display() method
 *
@@ -194,12 +197,6 @@ public:
     virtual mcsCOMPL_STAT GetRa(float &ra);
     virtual mcsCOMPL_STAT GetDec(float &dec);
 
-    // Method to get Spectral class and luminosity class of a the spectral type
-    // of the star
-    virtual mcsCOMPL_STAT GetSpectralClass(char *spectralClass);
-    virtual mcsCOMPL_STAT GetLuminosityClass(char *luminosityClass);
-    
-    
     // Method to know if another star is the same than this one
     virtual mcsLOGICAL IsSame (vobsSTAR &star,
                                vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);

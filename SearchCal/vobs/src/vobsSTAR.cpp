@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.39 2005-03-04 06:36:18 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.40 2005-03-06 10:44:03 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.39  2005/03/04 06:36:18  gzins
+* Fixed bug related to RA/DEC conversion; -00:xx was seen as positive.
+*
 * Revision 1.38  2005/02/24 16:59:14  scetre
 * Improved debug message when comparing star properties (show HD number)
 *
@@ -40,7 +43,8 @@
 * Added UD, LD and UDDK diameter properties
 *
 * Revision 1.27  2005/02/10 08:07:38  scetre
-* changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
+* changed parser and hd, hip, dm number id in order to get all of them even if
+* they have the same UCD
 *
 * Revision 1.26  2005/02/08 20:43:11  gzins
 * Changed _isComputed by _origin
@@ -69,7 +73,8 @@
 * update documentation in IsSame method
 *
 * Revision 1.18  2005/01/26 14:11:42  scetre
-* change assignement operator and pass list as private member of the class vobsSTAR
+* change assignement operator and pass list as private member of the class
+* vobsSTAR
 *
 * Revision 1.17  2005/01/26 08:50:25  scetre
 * upated documentation
@@ -89,7 +94,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.39 2005-03-04 06:36:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.40 2005-03-06 10:44:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -567,69 +572,6 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
 
     return mcsSUCCESS;
 }
-
-/**
- *
- */
-mcsCOMPL_STAT vobsSTAR::GetSpectralClass(char *spectralClass)
-{
-    logExtDbg("vobsSTAR::GetSpectralClass()");
-    // Get the spectral type of the star
-    mcsSTRING64 spectralType;
-    strcpy(spectralType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
-    
-    char        code;          /* Code of the spectral type */
-    mcsFLOAT    quantity;      /* Quantity of the spectral subtype */
-    mcsSTRING32 lightClass;    /* Luminosity class*/
-    mcsINT32 nbItems;
-    nbItems = sscanf(spectralType, "%c%f%s",
-                     &code, 
-                     &quantity, 
-                     lightClass);
-
-    // if the spectral class of the spectral type doesn't exist, return error
-    if ((nbItems < 1) || (nbItems > 3))
-    {
-        // todo err
-        return mcsFAILURE;
-    }
-    // if it exist (mbItems > 1)
-    strcpy(spectralClass, &code);
-    return mcsSUCCESS;
-}
-
-/**
- *
- */
-mcsCOMPL_STAT vobsSTAR::GetLuminosityClass(char *LuminosityClass)
-{
-    logExtDbg("vobsSTAR::GetLuminosityClass()");
-    // Get the luminosity class of the star
-    mcsSTRING64 spectralType;
-    strcpy(spectralType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
-    
-    char        code;          /* Code of the spectral type */
-    mcsFLOAT    quantity;      /* Quantity of the spectral subtype */
-    mcsSTRING32 lightClass;    /* Luminosity class*/
-
-    mcsINT32 nbItems;
-    nbItems = sscanf(spectralType, "%c%f%s",
-                     &code, 
-                     &quantity, 
-                     lightClass);
-
-    // if the luminosity class of the spectral type doesn't exist, return error
-    if (nbItems != 3)
-    {
-        // todo err
-        return mcsFAILURE;
-    }
-    // if it exist (mbItems = 3)
-    strcpy(LuminosityClass, lightClass);
-    
-    return mcsSUCCESS;
-}
-
 
 /**
  * Test if this star is the same than another one.
