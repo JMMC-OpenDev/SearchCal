@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.33 2005-03-03 16:48:22 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.34 2005-03-04 15:51:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2005/03/03 16:48:22  scetre
+ * Added GetScienceObject method
+ *
  * Revision 1.32  2005/02/22 16:24:00  gzins
  * Updated misco::GetNextLine API
  *
@@ -80,7 +83,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.33 2005-03-03 16:48:22 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.34 2005-03-04 15:51:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -262,8 +265,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
     vobsCDATA cdata;
     sclsvrCALIBRATOR calibrator;
     
+    vobsSTAR_PROPERTY_ID_LIST ucdList;
     // In unpack method, extended logical is true
-    if (cdata.Store(calibrator, *this, mcsTRUE) == mcsFAILURE)
+    if (cdata.Store(calibrator, *this, ucdList, mcsTRUE) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -718,6 +722,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
+                                          vobsSTAR_PROPERTY_ID_LIST ucdList,
                                           mcsLOGICAL extendedFormat,
                                           sclsvrREQUEST *request)
 {
@@ -740,7 +745,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 
     // Store list into the CDATA
     sclsvrCALIBRATOR  calibrator;
-    if (cData.Store(calibrator, *this, extendedFormat) == mcsFAILURE)
+    if (cData.Store(calibrator, *this, ucdList, extendedFormat) == mcsFAILURE)
     {
         return mcsFAILURE;
     }

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.18 2005-03-03 16:48:22 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.19 2005-03-04 15:51:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/03/03 16:48:22  scetre
+ * Added GetScienceObject method
+ *
  * Revision 1.17  2005/02/17 15:31:26  gzins
  * Added request parameter to Save and Load methods
  *
@@ -101,6 +104,7 @@ public:
     virtual mcsCOMPL_STAT Delete(unsigned int starNumber);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
+                               vobsSTAR_PROPERTY_ID_LIST ucdList,
                                mcsLOGICAL extendedFormat=mcsFALSE,
                                sclsvrREQUEST *request=NULL);
 
