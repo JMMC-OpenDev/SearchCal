@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.30 2005-02-16 17:33:20 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.31 2005-02-17 15:33:54 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2005/02/16 17:33:20  gzins
+ * Removed obsolete Pack and UnPack methods
+ *
  * Revision 1.29  2005/02/11 10:53:17  gzins
  * Updated property IDs related to diameter
  * Fixed conflict related to confidence index types
@@ -35,7 +38,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.30 2005-02-16 17:33:20 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.31 2005-02-17 15:33:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -658,7 +661,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     {
         return mcsFAILURE;
     }
-    printf("diam = %f (%f) -> vis = %f (%f) vis2 = %f (%f)\n", diam, diamError, vis, visErr, vis2, vis2Err); 
     
     // Affect visibility property
     SetPropertyValue(sclsvrCALIBRATOR_VIS2, vis2, vobsSTAR_COMPUTED_PROP);
