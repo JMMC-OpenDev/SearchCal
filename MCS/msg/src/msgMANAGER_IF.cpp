@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.16 2004-12-22 08:35:02 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.17 2005-01-07 18:33:54 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -27,6 +27,8 @@
 *                        misc Dynamic Buffer (no more msgMAXLEN)
 * gzins     15-Dec-2004  Used new command name definition (with _NAME)
 * gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+*                        Updated SendCommand to return command Id
 *
 *******************************************************************************/
 
@@ -35,7 +37,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.16 2004-12-22 08:35:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.17 2005-01-07 18:33:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -99,7 +101,7 @@ msgMANAGER_IF::~msgMANAGER_IF()
  *
  * \param procName the local processus name
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
 {
@@ -109,21 +111,21 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     if (IsConnected() == mcsTRUE)
     {
         errAdd(msgERR_PROC_ALREADY_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Initialize MCS services
-    if (mcsInit(procName) == FAILURE)
+    if (mcsInit(procName) == mcsFAILURE)
     {
         errAdd(msgERR_MCSINIT);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Get the local host name
     mcsSTRING256 localHostName;
-    if (miscGetHostName(localHostName, sizeof(mcsSTRING256)) != SUCCESS)
+    if (miscGetHostName(localHostName, sizeof(mcsSTRING256)) != mcsSUCCESS)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Get the host name on which environment is running
@@ -132,13 +134,13 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     envHostName = envList.GetHostName();
     if (envHostName == NULL)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     // Check the environment is local
     if (strcmp(localHostName, envHostName) != 0)
     {
         errAdd (msgERR_REMOTE_ENV, mcsGetEnvName(), envHostName);
-        return FAILURE;
+        return mcsFAILURE;
     }
    
     // If an environment is defined
@@ -152,7 +154,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
         // Check environment if defined
         if (envHostName == NULL)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         // Check the MCS environment is a local environment; i.e runing on the
@@ -160,7 +162,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
         if (strcmp(localHostName, envHostName) != 0)
         {
             // errAdd (msgERR_REMOTE_ENV, mcsGetEnvName(), envHostName);
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         // Get msgManager connection port number
@@ -169,7 +171,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
         // Check environment if defined
         if (envPortNumber == -1)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     // Else
@@ -188,12 +190,12 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     for(;;) 
     {
         // Connect to msgManager
-        if (_socket.Open(localHostName, envPortNumber) == FAILURE)
+        if (_socket.Open(localHostName, envPortNumber) == mcsFAILURE)
         {
             // If no more retry possible
             if (--nbRetry <= 0)
             { 
-                return FAILURE; 
+                return mcsFAILURE; 
             }
             else
             {
@@ -210,18 +212,18 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     }
 
     // Register with msgManager
-    if (SendCommand(msgREGISTER_CMD_NAME, "msgManager", "") == FAILURE)
+    if (SendCommand(msgREGISTER_CMD_NAME, "msgManager", "") == mcsFAILURE)
     {
         _socket.Close();
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // Wait for its answer
     msgMESSAGE registerAnswer;
-    if (Receive(registerAnswer, 1000) == FAILURE)
+    if (Receive(registerAnswer, 1000) == mcsFAILURE)
     {
         _socket.Close();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // If the reply is an ERROR...
@@ -230,18 +232,18 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
         // Put the received errors in the MCS error stack
         if (errUnpackStack(registerAnswer.GetBody(),
                            registerAnswer.GetBodySize())
-            == FAILURE)
+            == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         _socket.Close();
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     logExtDbg("Connection to 'msgManager' established");
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
  
 /**
@@ -270,12 +272,12 @@ mcsLOGICAL msgMANAGER_IF::IsConnected(void)
  * \param paramList parameter list stored in a string
  * \param paramLen length of the parameter list string
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return command Id on successful completion or -1 if an error occurs
  */
-mcsCOMPL_STAT msgMANAGER_IF::SendCommand(const char        *command,
-                                         const mcsPROCNAME  destProc,
-                                         const char        *paramList,  
-                                         const mcsINT32     paramLen)
+mcsINT32 msgMANAGER_IF::SendCommand(const char        *command,
+                                    const mcsPROCNAME  destProc,
+                                    const char        *paramList,  
+                                    const mcsINT32     paramLen)
 {
     logExtDbg("msgMANAGER_IF::SendCommand()");
 
@@ -285,7 +287,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendCommand(const char        *command,
     if (IsConnected() == mcsFALSE)
     {
         errAdd(msgERR_PROC_NOT_CONNECTED);
-        return FAILURE;
+        return -1;
     }
 
     // Build the message header
@@ -295,13 +297,22 @@ mcsCOMPL_STAT msgMANAGER_IF::SendCommand(const char        *command,
     msg.SetCommand(command);
  
     // Build the message body
-    if (msg.SetBody((char*)paramList, paramLen) == FAILURE)
+    if (paramList != NULL)
     {
-        return FAILURE;
+        if (msg.SetBody((char*)paramList, paramLen) == mcsFAILURE)
+        {
+            return -1;
+        }
     }
 
     // Send the message
-    return (_socket.Send(msg));
+    if (_socket.Send(msg) == mcsFAILURE)
+    {
+        return -1;
+    }
+
+    // Return Id of the sent message
+    return (msg.GetCommandId());
 }
 
 /**
@@ -311,7 +322,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendCommand(const char        *command,
  * \param lastReply flag to specify if the current message is the last one or
  * not
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
                                                   mcsLOGICAL         lastReply)
@@ -322,7 +333,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
     if (IsConnected() == mcsFALSE)
     {
         errAdd(msgERR_PROC_NOT_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Build the reply message header
@@ -337,9 +348,9 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
     {
         // Put the MCS error stack data in the message body
         char errStackContent[errSTACK_SIZE * errMSG_MAX_LEN];
-        if (errPackStack(errStackContent, sizeof(errStackContent)) == FAILURE)
+        if (errPackStack(errStackContent, sizeof(errStackContent)) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         // Store the message body size
@@ -365,7 +376,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
  * \param msg an already allocated message structure pointer
  * \param timeoutInMs a time out value in milliseconds
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE        &msg,
                                           const mcsINT32     timeoutInMs)
@@ -376,7 +387,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE        &msg,
     if (IsConnected() == mcsFALSE)
     {
         errAdd(msgERR_PROC_NOT_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Return weither a message was received or not
@@ -386,7 +397,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE        &msg,
 /**
  * Close the connection with the MCS message service.
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
 {
@@ -396,22 +407,22 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     if (IsConnected() == mcsFALSE)
     {
         errAdd(msgERR_PROC_NOT_CONNECTED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Send a 'close command' message to msgManager
-    if (SendCommand(msgCLOSE_CMD_NAME, "msgManager", "") == FAILURE)
+    if (SendCommand(msgCLOSE_CMD_NAME, "msgManager", "") == mcsFAILURE)
     {
         _socket.Close();
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // Wait for its answer
     msgMESSAGE msg;
-    if (Receive(msg, 1000) == FAILURE)
+    if (Receive(msg, 1000) == mcsFAILURE)
     {
         _socket.Close();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // If an error occured while deconnecting...
@@ -420,7 +431,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
         // Put the received error in the local MCS error stack
         errUnpackStack(msg.GetBody(), msg.GetBodySize());
         _socket.Close();
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // Close the socket
@@ -428,7 +439,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
 
     logExtDbg("Connection to 'msgManager' closed");
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
  
 /**
@@ -450,6 +461,5 @@ mcsINT32 msgMANAGER_IF::GetMsgQueue()
 
     return _socket.GetDescriptor();
 }
- 
 
 /*___oOo___*/
