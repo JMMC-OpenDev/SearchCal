@@ -103,6 +103,15 @@ then
     echo "Could not find template"
     exit -1
 fi
+#
+# determine the dot tool is available
+#
+if [ "`which dot 2>/dev/null`" != "" ] 
+then
+    HAVE_DOT="YES"; 
+else 
+    HAVE_DOT="NO"; 
+fi
 ###################################################
 
 # Default API IDL INPUT OUTPUT directories
@@ -286,7 +295,7 @@ then
             fi
         done
 
-        sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME API\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#;s#^FILE_PATTERNS.*#FILE_PATTERNS = $INPUT_FILES#;s#^GENERATE_HTML.*#GENERATE_HTML = NO#;s#^GENERATE_MAN.*#GENERATE_MAN = YES#;s#^MAN_EXTENSION.*#MAN_EXTENSION = .$MAN_SECTION#;s#^MAN_LINKS.*#MAN_LINKS = YES#" $FILE | doxygen -
+        sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME API\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#;s#^FILE_PATTERNS.*#FILE_PATTERNS = $INPUT_FILES#;s#^GENERATE_HTML.*#GENERATE_HTML = NO#;s#^GENERATE_MAN.*#GENERATE_MAN = YES#;s#^MAN_EXTENSION.*#MAN_EXTENSION = .$MAN_SECTION#;s#^MAN_LINKS.*#MAN_LINKS = YES#;s#^HAVE_DOT.*#HAVE_DOT = $HAVE_DOT#" $FILE | doxygen -
 
         for man in ${OUTPUT}/man/man${MAN_SECTION}/*
         do

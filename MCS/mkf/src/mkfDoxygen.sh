@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfDoxygen.sh,v 1.2 2004-09-10 14:17:44 gzins Exp $"
+# "@(#) $Id: mkfDoxygen.sh,v 1.3 2004-09-30 06:15:02 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -108,6 +108,16 @@ then
     echo "Could not find template"
     exit -1
 fi
+#
+# determine the dot tool is available
+#
+if [ "`which dot 2>/dev/null`" != "" ] 
+then
+    HAVE_DOT="YES"; 
+else 
+    HAVE_DOT="NO"; 
+fi
+
 ###################################################
 
 # Default API IDL INPUT OUTPUT directories
@@ -327,7 +337,7 @@ then
         done
 
         echo "....calling doxygen for IDL"
-        sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME IDL\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#" $FILE | doxygen -
+        sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME IDL\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#;s#^HAVE_DOT.*#HAVE_DOT = $HAVE_DOT#" $FILE | doxygen -
         # copy the nice picture. To be re-thought!
         #
         # make the pdf file
@@ -393,7 +403,7 @@ then
         done
 
         echo "....calling doxygen for API"
-        sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME API\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#" $FILE | doxygen -
+        sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME API\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#;s#^HAVE_DOT.*#HAVE_DOT = $HAVE_DOT#" $FILE | doxygen -
 
         #
         # place main index.html under the doc directory
