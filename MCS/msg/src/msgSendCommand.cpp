@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.16 2005-02-10 08:09:40 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.17 2005-02-28 08:16:20 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/02/10 08:09:40  gzins
+ * Disable (by default) message logging
+ *
  * Revision 1.15  2005/02/09 14:23:07  lafrasse
  * Changed comments from C to C++ style
  *
@@ -72,7 +75,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.16 2005-02-10 08:09:40 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.17 2005-02-28 08:16:20 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -138,12 +141,17 @@ int main (int argc, char *argv[])
     {
         memset(process, '\0', sizeof(mcsPROCNAME));
         strncpy((char *)process, argv[cnt++], mcsPROCNAME_LEN);
+        miscDeleteChr((char *)process, '\n', mcsTRUE);
 
         memset(command, '\0', sizeof(mcsCMD));
         strncpy((char *)command, argv[cnt++], mcsCMD_LEN);
+        miscDeleteChr((char *)command, '\n', mcsTRUE);
 
         memset(params, '\0', sizeof(params));
         strncpy((char *)params, argv[cnt++], (sizeof(params) -1));
+        printf("params = %s\n", params);
+        miscDeleteChr((char *)params, '\n', mcsTRUE);
+        printf("params = %s\n", params);
 
         // Removed leading and trailing space
         miscTrimString(params, " ");
