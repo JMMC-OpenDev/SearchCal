@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.cpp,v 1.3 2005-02-01 12:52:32 lafrasse Exp $"
+* "@(#) $Id: cmdPARAM.cpp,v 1.4 2005-02-03 13:54:52 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.3 2005-02-01 12:52:32 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.4 2005-02-03 13:54:52 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -297,7 +297,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
     logExtDbg("cmdPARAM::GetUserValue()");
     if (sscanf (_userValue.data(), "%d", value) != 1)
     {
-        errAdd(cmdERR_INTEGER_VALUE, _userValue.c_str());
+        errAdd(cmdERR_INTEGER_VALUE, _userValue.data());
         return FAILURE;
     }
     return SUCCESS;
@@ -315,7 +315,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
     logExtDbg("cmdPARAM::GetUserValue()");
      if (sscanf (_userValue.data(), "%lf", value) != 1)
     {
-        errAdd(cmdERR_DOUBLE_VALUE, _userValue.c_str());
+        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data());
         return FAILURE;
     }
     return SUCCESS;
@@ -343,7 +343,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
     }
     else
     {
-        errAdd(cmdERR_LOGICAL_VALUE, _userValue.c_str());
+        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data());
         return FAILURE;
     }
     return SUCCESS;
@@ -374,9 +374,9 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
-    if (sscanf (_userValue.data(), "%d", value) != 1)
+    if (sscanf (_defaultValue.data(), "%d", value) != 1)
     {
-        errAdd(cmdERR_INTEGER_VALUE, _userValue.c_str());
+        errAdd(cmdERR_INTEGER_VALUE, _defaultValue.data());
         return FAILURE;
     }
     return SUCCESS;    
@@ -394,7 +394,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
     logExtDbg("cmdPARAM::GetDefaultValue()");
      if (sscanf (_userValue.data(), "%lf", value) != 1)
     {
-        errAdd(cmdERR_DOUBLE_VALUE, _userValue.c_str());
+        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data());
         return FAILURE;
     }
     return SUCCESS;
@@ -422,7 +422,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
     }
     else
     {
-        errAdd(cmdERR_LOGICAL_VALUE, _userValue.c_str());
+        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data());
         return FAILURE;
     }
     return SUCCESS;

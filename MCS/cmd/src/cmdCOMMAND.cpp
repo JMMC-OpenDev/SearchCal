@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.18 2005-02-03 11:13:26 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.19 2005-02-03 13:54:52 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/02/03 11:13:26  mella
+* GetParamValue tries to return the default value if no user value was defined
+*
 * Revision 1.17  2005/02/02 14:19:46  lafrasse
 * Moved GetFirstSenteceOfDescription() code in GetShortDescription()
 *
@@ -37,7 +40,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.18 2005-02-03 11:13:26 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.19 2005-02-03 13:54:52 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -151,13 +154,13 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
   
     if (ParseCdf()==FAILURE)
     {
-        errAdd (cmdERR_PARSE_CDF, _cdfName.data(), _name.c_str());
+        errAdd (cmdERR_PARSE_CDF, _cdfName.data(), _name.data());
         return FAILURE;
     }
     
     if (ParseParams() == FAILURE)
     {
-        errAdd (cmdERR_PARSE_PARAMETERS, _params.c_str(), _name.c_str());
+        errAdd (cmdERR_PARSE_PARAMETERS, _params.data(), _name.data());
         return FAILURE;
     }
 
@@ -380,7 +383,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
     else
     {
         // Handle error
-        errAdd(cmdERR_PARAM_UNKNOWN, paramName.c_str(), _name.c_str());
+        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data());
         return FAILURE;
     }
     // End if
@@ -704,7 +707,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     // Check that a command definition file name has been given
     if ( _cdfName.size() == 0 )
     {
-        errAdd(cmdERR_NO_CDF, _name.c_str());
+        errAdd(cmdERR_NO_CDF, _name.data());
         return FAILURE;
     }
  
@@ -769,7 +772,7 @@ errCond:
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
     xmlCleanupParser();
-    errAdd (cmdERR_PARSE_CDF, fullCdfFilename, _name.c_str());
+    errAdd (cmdERR_PARSE_CDF, fullCdfFilename, _name.data());
     return FAILURE;
 }
 
@@ -1064,7 +1067,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
 mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tagName, string &content)
 {
     logExtDbg("cmdCOMMAND::CmdGetNodeContent()");
-    logDebug("searching content for '%s' element\n",tagName.data());
     
     GdomeElement *el, *el2;
     GdomeNodeList *nl;
@@ -1086,6 +1088,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     
     if (nl == NULL)
     {
+        logDebug("searching content for '%s' element failed ",tagName.data());
         logWarning ("Illegal format encountered for cdf file "
                     ". Element.childNodes() failed "
                     "with exception #%d", exc);
@@ -1100,6 +1103,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
         gdome_nl_unref(nl, &exc);
         if (el == NULL)
         {
+            logDebug("searching content for '%s' element failed ",tagName.data());
             logWarning ("Illegal format encountered for cdf file "
                         ". NodeList.item(%d) failed "
                         "with exception #%d", 0, exc);
@@ -1109,6 +1113,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
 
         if (el2 == NULL)
         {
+            logDebug("searching content for '%s' element failed ",tagName.data());
             // \todo errAdd
             gdome_el_unref(el, &exc);
             return FAILURE;
@@ -1123,11 +1128,13 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     }
     else
     {
+        logDebug("searching content for '%s' element failed, no element found ",tagName.data());
         // no child found
         return FAILURE;
     }
     
     gdome_nl_unref(nl, &exc);
+    logDebug("content of '%s' element is '%s'",tagName.data(),content.data());
    
     return SUCCESS;
 }
@@ -1226,7 +1233,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
             paramName = tuple.substr(0, spacePos);
         }
         // Handle error
-        errAdd(cmdERR_PARAM_NAME, paramName.c_str());
+        errAdd(cmdERR_PARAM_NAME, paramName.data());
         return FAILURE;
     }
     // End if
@@ -1237,7 +1244,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     unsigned int spacePos = str.find_first_of(" ");
     if (spacePos == string::npos)
     {
-        errAdd(cmdERR_PARAMS_FORMAT, tuple.c_str());
+        errAdd(cmdERR_PARAMS_FORMAT, tuple.data());
         return FAILURE;
     }
     
@@ -1258,7 +1265,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     }
     else
     {
-        errAdd(cmdERR_PARAM_UNKNOWN, paramName.c_str(), _name.c_str());
+        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data());
         return FAILURE;
     }
 
@@ -1296,7 +1303,7 @@ mcsCOMPL_STAT cmdCOMMAND::CheckParams(){
             if (child->GetUserValue().empty())
             {
                 errAdd(cmdERR_MISSING_PARAM, child->GetName().data(),
-                       _name.c_str());
+                       _name.data());
                 return FAILURE;
             }
         }
