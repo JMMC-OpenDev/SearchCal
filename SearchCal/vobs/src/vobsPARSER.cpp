@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.12 2005-02-08 21:34:05 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.13 2005-02-10 06:28:29 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/08 21:34:05  gzins
+* Handled ERROR UCDs by renaming them; i.e adding previous UCD as prefix
+*
 * Revision 1.11  2005/02/08 20:38:37  gzins
 * Added name of catalog from where data is coming from
 * Changed some parameter types from char* to const char*
@@ -30,7 +33,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.12 2005-02-08 21:34:05 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.13 2005-02-10 06:28:29 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -552,7 +555,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     }
                 }
                 // If lambda is found, save it
-                else if (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
+                if (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
                 {
                     currLinePtr = nextLinePtr;
                     strcpy(lambda, ucdValue); 
@@ -627,6 +630,8 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                         }
                     }
                 }
+                // Set current UCD as previous
+                prevUcdName = ucdName;
             }
 
             // Put now the star in the star list
@@ -634,9 +639,6 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             {
                 return mcsFAILURE;
             }
-
-            // Set current UCD as previous
-            prevUcdName = ucdName;
         }
     } while (linePtr != NULL);
 
