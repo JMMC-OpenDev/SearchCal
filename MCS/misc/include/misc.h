@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.14 2004-07-22 15:29:15 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.15 2004-07-22 16:57:53 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -60,8 +60,9 @@ mcsCOMPL_STAT miscYankLastPath   (char *path);
 mcsCOMPL_STAT miscGetUtcTimeStr  (mcsBYTES32 localTime, mcsINT32 precision);
 mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
 
-void miscStripQuotes             (char *string);
-void miscStrToUpper              (char *string);
+void         miscStripQuotes     (char *string);
+void         miscStrToUpper      (char *string);
+mcsLOGICAL   miscIsSpaceStr      (char *string);
 
 #ifdef __cplusplus
 }

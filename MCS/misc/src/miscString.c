@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.4 2004-06-18 12:13:23 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.5 2004-07-22 16:57:59 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -102,16 +102,32 @@ void miscStripQuotes(char *string)
  */
 void miscStrToUpper(char *string)
 {
-    /* Worst-case string which becomes:
-     *   |Abc deF GhI jKl 012 .;/|
-     *   |ABC DEF GHI JKL 012 .;/|
-     */
-
     while (*string != '\0')
     {
         *string = toupper(*string);
-        *string++;
+        string++;
     }
+}
+
+/**
+ * Checks for string only containing white-space characters.
+ * 
+ * It returns true (i.e. mcsTRUE) if string only contains white-space (i.e.
+ * blank), and false (i.e. mcsFALSE) otherwise.
+ *
+ * /param string to be checked.
+ */
+mcsLOGICAL miscIsSpaceStr (char *string)
+{
+    while (*string != '\0')
+    {
+		if (!isspace(*string))
+        {
+			return mcsFALSE;
+        }
+        string++;
+    }
+	return mcsTRUE;
 }
 
 /*___oOo___*/
