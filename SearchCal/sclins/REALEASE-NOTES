@@ -5,4 +5,13 @@ Search Calibrators Software.
 
 Version 3.0 :
 ~~~~~~~~~~~~~
-   Initial version.
+    Initial version.
+
+Version 3.1 :
+~~~~~~~~~~~~~
+    Remove all flag of variability and multiplicity if filter are forbidden.
+    Added "SHOW DETAILS" and "HIDE DETAILS" button.
+    Changed "SHOW ALL RESULTS" and "RESET" button behavior.
+    Changed properties order in the results table.
+    
+    
