@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSearch.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"
+* "@(#) $Id: vobsSearch.C,v 1.3 2004-07-28 14:19:41 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSearch.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSearch.C,v 1.3 2004-07-28 14:19:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -26,11 +26,14 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 
+#include "err.h"
 #define MODULE_ID "vobs"
-#include "vobs.h"
+
 /*
  * Local Headers 
  */
+#include "vobs.h"
+
 /*#include "vobsCALIBRATOR_STAR.h"
 #include "vobsCALIBRATOR_STAR_LIST.h"
 #include "vobsCATALOG.h"
@@ -56,7 +59,9 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    logSetVerboseLevel(logINFO);
+    mcsInit(argv[0]);
+    
+    logSetVerboseLevel(logEXTDBG);
     
     logInfo("Starting ...");
     char *starInit=argv[1];
@@ -102,6 +107,8 @@ vobsREQUEST request;
     calibObjList.Print();
     
     logInfo("exiting ...");
+    errDisplayStack();
+    errCloseStack();
     return 0;
 
 }

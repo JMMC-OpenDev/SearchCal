@@ -50,4 +50,69 @@
         <errSeverity>WARNING</errSeverity>
         <errFormat><![CDATA[DEC property not set]]></errFormat>
     </error>
+    <error id="16">
+        <errName>INVALID_CONSTRAINT</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid CONSTRAINT id '%d']]></errFormat>
+    </error>
+    <error id="17">
+        <errName>INVALID_CONSTRAINT_FORMAT</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid CONSTRAINT format '%.80s'; should be %.20s]]></errFormat>
+    </error>
+    <error id="18">
+        <errName>INVALID_KIND_OF_REQUEST</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Invalid Kind of request '%d'; should be 0 or 1]]></errFormat>
+    </error>
+    <error id="19">
+        <errName>KIND_OF_REQUEST_NOT_SET</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Kind of request not set]]></errFormat>
+    </error>
+    <error id="20">
+        <errName>CHECK_OF_KIND_OF_REQUEST_FAILED</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[Kind of request not set]]></errFormat>
+    </error>
+    <error id="21">
+        <errName>CHECK_FOR_SIMPLE_STAR_FAILED</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[constraint for simple star search not ok]]></errFormat>
+    </error>
+    <error id="22">
+        <errName>CHECK_FOR_STAR_LIST_FAILED</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[constraints for star list search not ok]]></errFormat>
+    </error>
+    <error id="23">
+        <errName>BAD_CATALOG_NAME</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[bad catalog name]]></errFormat>
+    </error>
+    <error id="24">
+        <errName>ASKING_WRITE_FAILED</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[The asking is not writing correctly : %s]]></errFormat>
+    </error>
+    <error id="25">
+        <errName>URI_WRITE_FAILED</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[The URI is not writing correctly]]></errFormat>
+    </error>
+    <error id="26">
+        <errName>CONSTANT_WRITE_FAILED</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[The Constants are not writing correctly]]></errFormat>
+    </error>
+    <error id="27">
+        <errName>POSITION_WRITE_FAILED</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[The position are not writing correctly]]></errFormat>
+    </error>
+    <error id="28">
+        <errName>END_WRITE_FAILED</errName>
+        <errSeverity>WARNING</errSeverity>
+        <errFormat><![CDATA[The end is not writing correctly]]></errFormat>
+    </error>
 </errorList>

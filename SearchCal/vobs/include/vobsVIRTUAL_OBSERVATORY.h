@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.1 2004-07-13 13:41:09 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.2 2004-07-28 14:19:41 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -20,7 +20,7 @@
  * header files
  */
 #include"vobsCATALOG.h"
-#include"vobsCALIBRATOR_STAR_LIST.h"
+#include"vobsSTAR_LIST.h"
 #include"vobsREQUEST.h"
 
 class vobsVIRTUAL_OBSERVATORY
@@ -29,23 +29,23 @@ class vobsVIRTUAL_OBSERVATORY
   vobsVIRTUAL_OBSERVATORY();
   virtual ~vobsVIRTUAL_OBSERVATORY();
  
-  vobsCALIBRATOR_STAR_LIST GetCalibStarList();
+  vobsSTAR_LIST GetCalibStarList();
   
   void LoadScenario(vobsREQUEST request);
   
-  vobsCALIBRATOR_STAR_LIST Research(vobsREQUEST request);
-  vobsCALIBRATOR_STAR_LIST ResearchOne(vobsREQUEST request);
+  vobsSTAR_LIST Research(vobsREQUEST request);
+  vobsSTAR_LIST ResearchOne(vobsREQUEST request);
 
-  void Merge(std::list<vobsCALIBRATOR_STAR>list2);
-  void UpdateCalibStar(vobsCALIBRATOR_STAR &calibStar1, vobsCALIBRATOR_STAR &calibStar2);
+  void Merge(std::list<vobsSTAR>list2);
+  void UpdateCalibStar(vobsSTAR &calibStar1, vobsSTAR &calibStar2);
   int CompareRaDec(char *ra1, char *dec1, char *ra2, char *dec2, float raInterval, float decInterval);
-  std::list<vobsCALIBRATOR_STAR> FillAndErase( std::list<vobsCALIBRATOR_STAR>SList);
+  std::list<vobsSTAR> FillAndErase( std::list<vobsSTAR>SList);
  protected:
 
  private:
   vobsCATALOG catalog;
-  vobsCALIBRATOR_STAR_LIST StarList;
-  std::list<vobsCALIBRATOR_STAR>list;
+  vobsSTAR_LIST StarList;
+  std::list<vobsSTAR>list;
   
   std::list<char *>catalogList;
   std::list<char *>coordRaList;

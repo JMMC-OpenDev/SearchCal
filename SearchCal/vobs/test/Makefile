@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-07-13 13:25:16 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-07-28 14:19:41 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -34,7 +34,7 @@ USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/i
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsServer vobsSearch
+EXECUTABLES     = vobsTestRequest
 EXECUTABLES_L   = 
 
 #
@@ -46,6 +46,23 @@ vobsServer_LIBS      = mcs err log bcc vobs
 vobsSearch_OBJECTS   = vobsSearch
 vobsSearch_LDFLAGS   = -lxml2 -lgdome -lstdc++
 vobsSearch_LIBS      = mcs err log bcc vobs
+
+#vobsTestParser_OBJECTS   = vobsTestParser
+#vobsTestParser_LDFLAGS   = -lxml2 -lgdome -lstdc++
+#vobsTestParser_LIBS      = mcs err log misc bcc vobs
+
+vobsTestStar_OBJECTS   = vobsTestStar
+vobsTestStar_LDFLAGS   = -lxml2 -lgdome -lstdc++
+vobsTestStar_LIBS      = mcs err log misc bcc vobs
+
+vobsTestStarList_OBJECTS   = vobsTestStarList
+vobsTestStarList_LDFLAGS   = -lxml2 -lgdome -lstdc++
+vobsTestStarList_LIBS      = mcs err log misc bcc vobs
+
+vobsTestRequest_OBJECTS   = vobsTestRequest
+vobsTestRequest_LDFLAGS   = -lxml2 -lgdome -lstdc++
+vobsTestRequest_LIBS      = mcs err log misc bcc vobs
+
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 

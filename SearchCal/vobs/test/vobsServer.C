@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsServer.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"
+* "@(#) $Id: vobsServer.C,v 1.4 2004-07-28 14:19:41 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsServer.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsServer.C,v 1.4 2004-07-28 14:19:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,12 +45,12 @@ int main(int argc, char *argv[])
 {
     mcsInit(argv[0]);
 
-    logSetVerboseLevel(logQUIET);
+    logSetVerboseLevel(logEXTDBG);
     logInfo("Starting ...");
     
     char *alpha="1"; 
     char *delta="2";
-
+#if 0
     char *starName="ETA_TAU";
     char *wavelength="2.2";
     char *magnitudeB="magnitudeB";
@@ -65,8 +65,8 @@ int main(int argc, char *argv[])
     char *basemin="25";
     char *basemax="100";
 
-
-/*    char *starName="ZET_GEM";
+#else
+    char *starName="ZET_GEM";
     char *wavelength="0.65";
     char *magnitudeB="magnitudeB";
     char *band="V";
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     char *visErr="1.2E-02";
     char *basemin="25";
     char *basemax="60";
-*/ 
+#endif 
 
     vobsREQUEST request;
     request.Create(starName, wavelength, soMagnitude, magnitudeRange, searchRA, searchDEC, visibility, reqAbsErr, band);

@@ -1,23 +1,29 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.4 2004-07-28 14:19:41 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* scetre    06-Jul-2004  Created
+* scetre    27-Jul-2004  Created
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"; 
+
+/**
+ * \file
+ * vobsCATALOG class definition.
+ */
+
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.4 2004-07-28 14:19:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
 #include <iostream>
-using namespace std;
+using namespace std;  /**< Export standard iostream objects (cin, cout,...) */
 
 
 /*
@@ -25,503 +31,379 @@ using namespace std;
  */
 #include "mcs.h"
 #include "log.h"
-#define MODULE_ID "vobs"
-#include "vobs.h"
+#include "err.h"
+#include "misc.h"
+
 
 /*
  * Local Headers 
  */
-#include "vobs.h"
-//#include"vobsCATALOG.h"
+#include "vobsCATALOG.h"
+#include "vobsREQUEST.h"
+#include "vobsPrivate.h"
+#include "vobsErrors.h"
 
 /*
  * Local Variables
  */
 
-
 /*
- * Local Functions
+ * Class constructor
  */
-// Class constructor
+
+/**
+ * Build a catalog object.
+ */
 vobsCATALOG::vobsCATALOG()
 {
-    req=NULL;
-    _name=NULL;
-}
- 
-vobsCATALOG::vobsCATALOG(char *x)
-{
-    SetCatalogName(x);
+    strcpy(_name,"");
 }
 
-// Class destructor 
+/*
+ * Class destructor
+ */
+
+/**
+ * Delete a catalog object. 
+ */
 vobsCATALOG::~vobsCATALOG()
 {
-    /*delete[]req;
-    delete[]_name;*/
-}
-/**
- * Return the name of one catalog
- * return name of catalog
- */
-char *vobsCATALOG::GetCatalogName()
-{
-	logExtDbg("vobsCATALOG::GetCatalogName()\n");
-	return _name;
 }
 
-/**
- * Set the catalog name
+/*
+ * Public methods
  */
-void vobsCATALOG::SetCatalogName(char *x)
-{
-	logExtDbg("vobsCATALOG::SetCatalogName()\n");
-	_name=x;
-    //strcpy(_name,x);
-}
-
-
-// Method to get the request
-/*char vobsCATALOG::GetRequest()
-  {
-  return req;
-  }*/
 
 /**
- * Prepare a first request
+ * Set a catalog name.
+ *
+ * \param name name value to set as a string
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Error codes:\n
+ * The possible errors are :
+ * \li vobsERR_BAD_CATALOG_NAME
  */
-char *vobsCATALOG::PrepareFirst(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG::SetName(char *name)
 {
-    logExtDbg("vobsCATALOG::PrepareFirst()\n");
-    char requete[10000];
-    char *ptr_req=requete;
-    strcpy(requete,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=");
+    logExtDbg("vobsCATALOG::SetName()");
     
-    if ((strcmp(request.GetBand(),"K")==0)||(strcmp(request.GetBand(),"J")==0)||(strcmp(request.GetBand(),"H")==0))
+    // Test if the name is correst
+    if (strcmp(name,"")==0 ||
+        name==NULL)
     {
-        // request on II/225/catalog
-        if (strcmp(_name,"II/225/catalog")==0)
-        {
-            strcat(requete,_name);
-
-            strcat(requete,"&-c.ra=");
-            strcat(requete,request.GetSearchRA()); 
-
-            strcat(requete,"&-c.dec=");
-            strcat(requete,request.GetSearchDEC()); 
-
-            strcat(requete,"&x_F(IR)=M");
-            strcat(requete,"&F(IR)=");
-            strcat(requete,request.GetMagnitudeRange()); 
-
-            strcat(requete,"&lambda=");
-            if (strcmp(request.GetBand(),"K")==0)
-                strcat(requete,"2.20");
-            else if (strcmp(request.GetBand(),"H")==0)
-                strcat(requete,"1.65");
-            else if (strcmp(request.GetBand(),"J")==0)
-                strcat(requete,"1.25");
-            else logWarning("Pb to define wavelength in II/225 according to the band");
-            strcat(requete,"&-out.max=50&-c.bm=1800/300&-c.u=arcmin");
-
-            strcat(requete,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=lambda&-out=F(IR)&-out=x_F(IR)&-sort=_r"); 
-
-            //logTest("%s\n",ptr_req);
-        }
-        // request on II/7A/catalog
-        else if (strcmp(_name,"II/7A/catalog")==0)
-        {
-            strcat(requete,_name);
-
-            strcat(requete,"&-c.ra=");
-            strcat(requete,request.GetSearchRA()); 
-
-            strcat(requete,"&-c.dec=");
-            strcat(requete,request.GetSearchDEC()); 
-
-            strcat(requete,"&");
-            strcat(requete,request.GetBand());
-            strcat(requete,"=");
-            strcat(requete,request.GetMagnitudeRange());
-            strcat(requete,"&-out.max=50&-c.bm=1800/300&-c.u=arcmin");
-
-
-            strcat(requete,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=*PHOT_JHN_R");
-            strcat(requete,"&-out=*PHOT_JHN_I&-out=*PHOT_JHN_J&-out=*PHOT_JHN_H&-out=*PHOT_JHN_K&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4&-sort=_r");
-            logTest("%s\n",ptr_req);
-
-
-        }
-        else logWarning("no request to build in prepare first in K scenario\n");
+        errAdd(vobsERR_BAD_CATALOG_NAME);
+        return FAILURE;
     }
-    else if (strcmp(request.GetBand(),"V")==0)
-    {
-        logExtDbg("V scenario\n");
-        if (strcmp(_name,"I/280")==0)
-        {
-            strcat(requete,_name);
-            strcat(requete,"&-c.ra=");
-            strcat(requete,request.GetSearchRA()); 
-            strcat(requete,"&-c.dec=");
-            strcat(requete,request.GetSearchDEC());
-            strcat(requete,"&");
-            strcat(requete,request.GetBand());
-            strcat(requete,"mag=");
-            strcat(requete,request.GetMagnitudeRange());
-            strcat(requete,"&-c.eq=J2000&-out.max=50&-c.bm=1800/300&-c.u=arcmin");
-            strcat(requete,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-            strcat(requete,"&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
-            strcat(requete,"&-out=*POS_PARLX_TRIG&-out=*SPECT_TYPE_MK");
-            strcat(requete,"&SpType=%5bOBAFGKM%5d*");
-            strcat(requete,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-            strcat(requete,"&-out=v1&-out=d5");
-            strcat(requete,"&-out=HIP&-out=HD&-out=DM&-sort=_r");
-        }
-        else
-            logWarning("no request to build in prepare first in V scenario\n");
-    }
-    return ptr_req;
-
+    
+    strcpy(_name, name);
+    return SUCCESS;
 }
 
 /**
- * Prepare a request
- * \return char *request
+ * Get a catalog name as a string
+ *
+ * \param name  name to get, as a string
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Error codes:\n
+ * The possible errors are :
+ * \li vobsERR_BAD_CATALOG_NAME
  */
-char *vobsCATALOG::Prepare(vobsREQUEST request, char *listForKV)
+mcsCOMPL_STAT vobsCATALOG::GetName(char *name)
 {
-	//logExtDbg("vobsCATALOG::Prepare()\n");
-    char requete[100000];
-    char *ptr_req=requete;
-    strcpy(requete,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=");
-    if ((strcmp(request.GetBand(),"K")==0)||(strcmp(request.GetBand(),"J")==0)||(strcmp(request.GetBand(),"H")==0))
-    {
-        // build of request for band K,J,H
-        
-        // request on II/225/catalog
-        if (strcmp(_name,"II/225/catalog")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&x_F(IR)=M"); 
-            strcat(ptr_req,"&-out.max=50");     
-            strcat(ptr_req,"&lambda=1.25,1.65,2.20");
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-c.r=1&-c.u=arcmin");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=lambda&-out=F(IR)&-out=x_F(IR)&-sort=_r");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);    
-
-            logTest("%s\n",ptr_req);
-        }
-        // request on II/7A/catalog
-        else if (strcmp(_name,"II/7A/catalog")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-            strcat(ptr_req,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=*PHOT_JHN_R&-out=*PHOT_JHN_I&-out=*PHOT_JHN_J");
-            strcat(ptr_req,"-out=*PHOT_JHN_H&-out=*PHOT_JHN_K&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-
-        }
-        // request on I/280
-        else if (strcmp(_name,"I/280")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            //strcat(ptr_req,"%5bSpType=%5bOBAFGKM%5d*");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG");
-            strcat(ptr_req,"&-out=*SPECT_TYPE_MK&SpType=%5bOBAFGKM%5d*&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=d5&-out=HIP&-out=HD&-out=DM&-sort=_r");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-
-        }
-        // request on I/196/main
-        else if (strcmp(_name,"I/196/main")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-            strcat(ptr_req,"&-out=*POS_GAL_LAT&-out=*POS_GAL_LON&-out=*VELOC_HC");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on B/2mass/out ou II/246/out
-        else if (strcmp(_name,"II/246/out")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=Jmag&-out=Hmag&-out=Kmag&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");        
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on J/A+A/393/183/catalog
-        else if (strcmp(_name,"J/A+A/393/183/catalog")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.add=RAJ2000,DEJ2000&-oc=hms&-out=Bmag,Vmag,Jmag,Hmag,Kmag&-out=UDDK,e_UDDK");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on J/A+A/386/492/charm
-        else if (strcmp(_name,"J/A+A/386/492/charm")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out=*POS_EQ_RA_MAIN&-out=*POS_EQ_DEC_MAIN&-out=LD&-out=e_LD&-out=UD&-out=e_UD&-out=*OBS_METHOD");
-            strcat(ptr_req,"&-out=*PHOT_JHN_K&Inst=,LBI,LO,SPE&-out=Lambda");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on V/50/catalog
-        else if (strcmp(_name,"V/50/catalog")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*VELOC_ROTAT&-out=HD");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on V/36B/bsc4s
-        else if (strcmp(_name,"V/36B/bsc4s")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*VELOC_ROTAT");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on B/denis
-        else if (strcmp(_name,"B/denis")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=Kmag&-out=Jmag&-out=Imag");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        else logWarning("pas de catalogue correspondant\n");
-    }
-    // Build of request for band V
-    else if (strcmp(request.GetBand(),"V")==0)
-    {
-        // request on I/196/main
-        if (strcmp(_name,"I/196/main")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-            strcat(ptr_req,"&-out=*POS_GAL_LAT&-out=*POS_GAL_LON&-out=*VELOC_HC&-out=HD");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on II/246/out
-        else if (strcmp(_name,"II/246/out")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=Jmag&-out=Hmag&-out=Kmag&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");        
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on II/225/catalog
-        else if (strcmp(_name,"II/225/catalog")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-            strcat(ptr_req,"&x_F(IR)=M");
-            strcat(ptr_req,"&F(IR)=");
-            strcat(ptr_req,request.GetMagnitudeRange());
-            strcat(ptr_req,"&lambda=1.25,1.65,2.20");
-            strcat(ptr_req,"&-out=lambda&-out=F(IR)&-out=x_F(IR)&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        /*else if (strcmp(_name,"II/224/cadars")==0)
-        {
-            
-        }*/
-        // request on J/A+A/393/183/catalog
-        else if (strcmp(_name,"J/A+A/393/183/catalog")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.add=RAJ2000,DEJ2000&-oc=hms&-out=Bmag,Vmag,Jmag,Hmag,Kmag&-out=UDDK,e_UDDK");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on J/A+A/386/492/charm
-        else if (strcmp(_name,"J/A+A/386/492/charm")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out=*POS_EQ_RA_MAIN&-out=*POS_EQ_DEC_MAIN&-out=LD&-out=e_LD&-out=UD&-out=e_UD&-out=*OBS_METHOD");
-            strcat(ptr_req,"&-out=*PHOT_JHN_K&Inst=,LBI,LO,SPE&-out=Lambda");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on II/7A/catalog
-        else if (strcmp(_name,"II/7A/catalog")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-            strcat(ptr_req,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=*PHOT_JHN_R&-out=*PHOT_JHN_I&-out=*PHOT_JHN_J");
-            strcat(ptr_req,"-out=*PHOT_JHN_H&-out=*PHOT_JHN_K&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on V/50/catalog
-        else if (strcmp(_name,"V/50/catalog")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*VELOC_ROTAT&-out=HD");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on V/36B/bsc4s
-        else if (strcmp(_name,"V/36B/bsc4s")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*VELOC_ROTAT");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        // request on B/denis
-        else if (strcmp(_name,"B/denis")==0)
-        {
-            strcat(ptr_req,_name);
-            strcat(ptr_req,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin"); 
-            strcat(ptr_req,"&-out.max=50");
-            strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=Kmag&-out=Jmag&-out=Imag");
-            strcat(ptr_req,"&-out.form=List");
-            strcat(ptr_req,listForKV);
-            logTest("%s\n",ptr_req);
-        }
-        else logWarning("No catalog\n");
-    }
-    return ptr_req;
+    logExtDbg("vobsCATALOG::GetName()");
     
+    if (_name==NULL)
+    {
+        errAdd(vobsERR_BAD_CATALOG_NAME);
+        return FAILURE;
+    }
     
-	// we wrote the request as a char in order to be send to the CDS
-	
+    strcpy(name,_name);
+    return SUCCESS;
+}
 
+
+/**
+ * Search in the catalog a list of star.
+ *
+ * Search int the catalog a list of star according to a vobsREQUEST
+ *
+ * \param request a vobsREQUEST which have all the contraints for the search
+ * \param list a vobsSTAR_LIST as the result of the search
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \sa vobsREQUEST
+ *
+ * \b Errors codes:\n 
+ * The possible errors are:
+ */
+mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST request, vobsSTAR_LIST list)
+{
+    logExtDbg("vobsCATALOG::Search()");
+
+    return SUCCESS;
+}
+/*
+ * Protected methods
+ */
+
+/**
+ * Prepare the asking.
+ *
+ * Prepare the asking according to the request (constraints) for a first ask
+ * to the CDS, that's mean that the use of this asking will help to have a
+ * list of possible star
+ *
+ * \param request vobsREQUEST which have all the contraints for the search
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors codes:\n 
+ * The possible errors are:
+ *
+ */
+mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request)
+{
+    logExtDbg("vobsCATALOG::PrepareAsking()");
+
+    if ((WriteAskingURI()==FAILURE) ||
+        (WriteAskingPosition(request)==FAILURE) ||
+        (WriteAskingSpecificParameters(request)==FAILURE) )
+    {
+        errAdd(vobsERR_ASKING_WRITE_FAILED, _asking);
+        return FAILURE;
+    }
+    
+    return SUCCESS;
 }
 
 /**
- * Search begin the research of information in the CDS
- * \return STL list of vobsCALIBRATOR_STAR
+ * Prepare the asking.
+ *
+ * Prepare the asking according to the request (constraints). The knowledge of
+ * another list of star help to create the asking for a final ask to the CDS.
+ *
+ * \param request vobsREQUEST which have all the contraints for the search  
+ * \param tmpList vobsSTAR_LIST which come from an older ask to the CDS. 
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \b Errors codes:\n 
+ * The possible errors are:
  */
-std::list<vobsCALIBRATOR_STAR> vobsCATALOG::Search(vobsREQUEST request, char *catName, int kindOfReq, char *listForKV)
+mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST tmpList)
 {
-	logExtDbg("vobsCATALOG::Search()\n");
+    logExtDbg("vobsCATALOG::PrepareAsking()");
 
-	logInfo("-------------------recherche depuis catalog----------------\n \n");
-	//  we write the good char request and we create the connexion with the CDS
-	// char *f;
-    
-    SetCatalogName(catName);
-    
-    if (request.Build()==1) // test if the request is build
+    if ( (WriteAskingURI()==FAILURE) ||
+         (WriteAskingConstant()==FAILURE) ||
+         (WriteAskingSpecificParameters()==FAILURE) ||
+         (WriteAskingEnd(tmpList)==FAILURE) )
     {
-        if (kindOfReq==1)
-        {
-            req=PrepareFirst(request);
-            logTest("requete de PrepareFirst : \n \t%s\n",req);
-        }
-        else 
-        {
-            req=Prepare(request,listForKV);
-            logTest("requete de Prepare : \n \t%s\n",req);
-        }
+        errAdd(vobsERR_ASKING_WRITE_FAILED, _asking);
+        return FAILURE;
     }
-    else logWarning("l'objet requete n'est pas encore construit\n");
-    
-    if (req!=NULL)
-    {
-        parser.MainParser(req);
-        listOfStar=parser.GetList();
-    }
-    /*if (listOfStar.size()!=0)
-    {
-        std::list<vobsCALIBRATOR_STAR>::iterator Q=listOfStar.begin();
-        while (Q!=listOfStar.end())
-        {
-            (*Q).View();
-            ++Q;
-        }
-    }*/
-    //vobsCALIBRATOR_STAR_LIST L;
-	return listOfStar;
+
+    return SUCCESS;
 }
+
 /**
- * SearchOne begin the research of information in the CDS for only one star
- * \return STL list of vobsCALIBRATOR_STAR
+ * Build the destination part of the asking.
+ *
+ * Build the destination part of the asking. All catalog files are located on
+ * web server. It is possible to find them on the URL : 
+ * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \b Errors codes:\n
+ * The possible errors are:
+ *
  */
-std::list<vobsCALIBRATOR_STAR> vobsCATALOG::SearchOne(vobsREQUEST request, int requestNumber, char *listOne)
+mcsCOMPL_STAT vobsCATALOG::WriteAskingURI(void)
 {
-    char requete[10000];
-    char *ptr_req=requete;
-    strcpy(requete,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=");
-    if (requestNumber==1)
-    {
-        strcat(requete,"II/225/catalog");
-        strcat(requete,"&name=");
-        strcat(requete,request.GetStarName());
-        strcat(requete,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=lambda&-out=F(IR)&-out=x_F(IR)&-sort=_r");
-        
-        parser.MainParser(ptr_req);
-        listOfStar=parser.GetList();
-        return listOfStar;
-    }
-    else if (requestNumber==2)
-    {
-        strcat(requete,"II/7A/catalog");
-        strcat(ptr_req,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-        strcat(ptr_req,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=*PHOT_JHN_R&-out=*PHOT_JHN_I&-out=*PHOT_JHN_J");
-        strcat(ptr_req,"-out=*PHOT_JHN_H&-out=*PHOT_JHN_K&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
-        
-        strcat(ptr_req,listOne);
-        parser.MainParser(ptr_req);
-        listOfStar=parser.GetList();
-        return listOfStar;    
-    }
-	return listOfStar;
+    logExtDbg("vobsCATALOG::GetAskingURI()");
 
+    if ((miscDynStrAppendString(&_asking, "http://vizier.u-strasbg.fr/viz-bin/")==FAILURE) ||
+        (miscDynStrAppendString(&_asking, "asu-xml?-source=")==FAILURE) ||
+        (miscDynStrAppendString(&_asking, _name)==FAILURE) )
+    {
+        errAdd(vobsERR_URI_WRITE_FAILED);
+        return FAILURE;
+    }
+
+    return SUCCESS;
 }
+
+/**
+ * Build the constant part of the asking
+ *
+ * Build the constant part of the asking. For each catalog, a part of the
+ * asking is the same.
+ *
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \b Errors codes:\n 
+ * The possible errors are:
+ *
+ */
+mcsCOMPL_STAT vobsCATALOG::WriteAskingConstant(void)
+{
+    logExtDbg("vobsCATALOG::GetAskingConstant()");
+
+    if ( (miscDynStrAppendString(&_asking,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==FAILURE) ||
+         (miscDynStrAppendString(&_asking,"&-out.max=50")==FAILURE) ||
+         (miscDynStrAppendString(&_asking,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==FAILURE) )
+    {
+        errAdd(vobsERR_CONSTANT_WRITE_FAILED);
+        return FAILURE;
+    }
+    
+    return SUCCESS;
+}
+
+/**
+ * Build the specificatic part of the asking.
+ *
+ * Build the specificatic part of the asking. This is the part of the asking
+ * which is write specificaly for each catalog.
+ *
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \b Errors codes:\n
+ * The possible errors are:
+ *
+ */
+mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(void)
+{
+    logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
+
+    miscDynStrAppendString(&_asking,"");    
+    
+    return SUCCESS;
+}
+
+/**
+ * Build the specificatic part of the asking.
+ *
+ * Build the specificatic part of the asking. This is the part of the asking
+ * which is write specificaly for each catalog. The constraints of the request
+ * which help to build an asking in order to restrict the research.
+ *
+ * \param request vobsREQUEST which help to restrict the search
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \b Errors codes:\n
+ * The possible errors are:
+ *
+ */
+mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(vobsREQUEST request)
+{
+    logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
+
+    miscDynStrAppendString(&_asking,"");
+
+    return SUCCESS;
+}
+
+/**
+ * Build the position box part of the asking.
+ *
+ * Build the position box part of the asking. This method is used in case of
+ * restrictive search.
+ *
+ * \param request vobsREQUEST which help to restrict the search 
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \b Errors codes:\n
+ * The possible errors are:
+ *
+ */
+mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
+{
+    logExtDbg("vobsCATALOG::GetAskingPosition()");
+
+    char *ra="";
+    request.GetConstraint(SEARCH_BOX_RA_ID,ra);
+    char *dec="";
+    request.GetConstraint(SEARCH_BOX_DEC_ID,dec);
+    
+    if ( (miscDynStrAppendString(&_asking,"&-c.ra=")==FAILURE) ||
+         (miscDynStrAppendString(&_asking,ra)==FAILURE) ||
+         (miscDynStrAppendString(&_asking,"&-c.dec=")==FAILURE) ||
+         (miscDynStrAppendString(&_asking,dec)==FAILURE) )
+    {
+        errAdd(vobsERR_POSITION_WRITE_FAILED);
+        return FAILURE;
+    }
+    
+    return SUCCESS;
+}
+
+/**
+ * Buil the end part of the asking.
+ *
+ * The end part of the asking for a search from a star list.
+ *
+ * \param list vobsSTAR_LIST which help to build the end part
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \b Errors codes:\n
+ * The possible errors are:
+ *
+ */
+mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
+{
+    logExtDbg("vobsCATALOG::GetAskingEnd()");
+
+    // Build of the stringlist
+    char *strList="";
+    StarList2Sring(strList, list);
+    
+    if ( (miscDynStrAppendString(&_asking,"&-out.form=List")==FAILURE) ||
+         (miscDynStrAppendString(&_asking, strList)==FAILURE) )
+    {
+        errAdd(vobsERR_END_WRITE_FAILED);
+        return FAILURE;
+    }
+    
+    return SUCCESS;
+}
+
+/**
+ * Convert a star list to a string list.
+ *
+ * The research of specific star knowong their coordonate need to write in the
+ * asking the list of coordonate as a string. This method convert the position
+ * of all star present in a star list in a string.
+ *
+ * \param stringList string list as a string
+ * \param list star list to cnvert
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * 
+ * \b Errors codes:\n
+ * The possible errors are:
+ *
+ */
+mcsCOMPL_STAT vobsCATALOG::StarList2Sring(char *stringList,
+                                          vobsSTAR_LIST &list)
+{
+    logExtDbg("vobsCATALOG::StarList2Sring()");
+
+    return SUCCESS;
+}
+/*
+ * Private methods
+ */
 /*___oOo___*/
