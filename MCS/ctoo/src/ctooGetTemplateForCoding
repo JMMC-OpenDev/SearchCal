@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.2 2004-06-17 07:14:31 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.3 2004-06-24 14:01:11 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -14,7 +14,9 @@
 #   ctooGetTemplateForCoding -  give available standard templates for coding
 # 
 # SYNOPSIS
-#   ctooGetTemplateForCoding
+#   ctooGetTemplateForCoding c-main|c-procedure|h-file|c++-file|
+#                            c++-small-main|c++-class-file|c++-h-file|
+#                            script|Makefile
 # 
 # DESCRIPTION
 #   See ctooGetTemplate
@@ -44,8 +46,8 @@ MCSTEMPLATES=$MCSROOT/templates
 # verify that MCSTEMPLATES is a directory
 if [ ! -d "$MCSTEMPLATES" ]
 then 
-    echo "ERROR - getTemplate: $MCSTEMPLATES not available. "
-    echo "                     Please check your MCS environment "
+    echo "ERROR - ctooGetTemplateForCoding: $MCSTEMPLATES not available. "
+    echo "                                  Please check your MCS environment "
     exit 1
 fi
 
@@ -55,15 +57,15 @@ MAKEFILE_DIR=$MCSROOT/templates/forMakefile
 
 if [ ! -d "$CODE_DIR" ]
 then 
-    echo "ERROR - getTemplate: $CODE_DIR not available. "
-    echo "                     Please check your MCS environment "
+    echo "ERROR - ctooGetTemplateForCoding: $CODE_DIR not available. "
+    echo "                                  Please check your MCS environment "
     exit 1
 fi
 
 if [ ! -d "$MAKEFILE_DIR" ]
 then 
-    echo "ERROR - getTemplate: $MAKEFILE_DIR not available. "
-    echo "                     Please check your MCS environment "
+    echo "ERROR - ctooGetTemplateForCoding: $MAKEFILE_DIR not available. "
+    echo "                                  Please check your MCS environment "
     echo -e "\n  Press <Enter> to continue . . .\c"
     exit 1
 fi
@@ -71,7 +73,7 @@ fi
 # Input parameters given should be 1 and in the correct format:
 if [ $# != 1 ]
 then 
-    echo -e "\n\tUsage: getTemplateForCoding c-main|c-procedure|h-file|" 
+    echo -e "\n\tUsage: ctooGetTemplateForCoding c-main|c-procedure|h-file|" 
     echo -e "c++-file|c++-small-main|c++-class-file|c++-h-file|script|Makefile"
     exit 1
 fi 
