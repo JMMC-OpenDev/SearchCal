@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.9 2004-12-20 13:51:40 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.10 2004-12-21 08:42:17 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.9 2004-12-20 13:51:40 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.10 2004-12-21 08:42:17 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -44,41 +44,6 @@ using namespace std;
 #include "vobsSTAR.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
-
-/*
- * Definition of the star properties
- */
-#define vobsSTAR_ID_MAIN                 "ID_MAIN"
-#define vobsSTAR_ID_ALTERNATIVE          "ID_ALTERNATIVE"
-#define vobsSTAR_POS_EQ_RA_MAIN          "POS_EQ_RA_MAIN"
-#define vobsSTAR_POS_EQ_DEC_MAIN         "POS_EQ_DEC_MAIN"
-#define vobsSTAR_POS_EQ_PMDEC            "POS_EQ_PMDEC"
-#define vobsSTAR_POS_EQ_PMRA             "POS_EQ_PMRA"
-#define vobsSTAR_POS_PARLX_TRIG          "POS_PARLX_TRIG"
-#define vobsSTAR_SPECT_TYPE_MK           "SPECT_TYPE_MK"
-#define vobsSTAR_CODE_VARIAB             "CODE_VARIAB"
-#define vobsSTAR_CODE_MULT_FLAG          "CODE_MULT_FLAG"
-#define vobsSTAR_POS_GAL_LAT             "POS_GAL_LAT"
-#define vobsSTAR_POS_GAL_LON             "POS_GAL_LON"
-#define vobsSTAR_VELOC_HC                "VELOC_HC"
-#define vobsSTAR_EXTENSION_DIAM          "EXTENSION_DIAM"
-#define vobsSTAR_OBS_METHOD              "OBS_METHOD"
-#define vobsSTAR_INST_WAVELENGTH_VALUE   "INST_WAVELENGTH_VALUE"
-#define vobsSTAR_PHOT_FLUX_IR_MISC       "PHOT_FLUX_IR_MISC"
-#define vobsSTAR_UNITS                   "UNITS"
-#define vobsSTAR_PHOT_JHN_U              "PHOT_JHN_U"
-#define vobsSTAR_PHOT_JHN_B              "PHOT_JHN_B"
-#define vobsSTAR_PHOT_JHN_V              "PHOT_JHN_V"
-#define vobsSTAR_PHOT_JHN_R              "PHOT_JHN_R"
-#define vobsSTAR_PHOT_JHN_I              "PHOT_JHN_I"
-#define vobsSTAR_PHOT_JHN_J              "PHOT_JHN_J"
-#define vobsSTAR_PHOT_JHN_H              "PHOT_JHN_H"
-#define vobsSTAR_PHOT_JHN_K              "PHOT_JHN_K"
-#define vobsSTAR_PHOT_JHN_L              "PHOT_JHN_L"
-#define vobsSTAR_PHOT_JHN_M              "PHOT_JHN_M"
-#define vobsSTAR_PHOT_IR_N_10_4          "PHOT_IR_N_10_4"
-#define vobsSTAR_VELOC_ROTAT             "VELOC_ROTAT"
-#define vobsSTAR_PHOT_COLOR_EXCESS       "PHOT_COLOR_EXCESS"
 
 /*
  * Class constructor
@@ -555,7 +520,7 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
     for (propertyIter  = _propertyList.begin();
          propertyIter != _propertyList.end() ; propertyIter++)
     {
-        if (IsPropertySet((*propertyIter).first.c_str()) == mcsFALSE)
+        if (IsPropertySet((char *)(*propertyIter).first.c_str()) == mcsFALSE)
         {
             // Copy property form the given star
             _propertyList[(*propertyIter).first] = 
