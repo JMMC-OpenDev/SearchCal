@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.21 2005-02-16 17:02:04 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.22 2005-02-22 13:23:16 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/02/16 17:02:04  scetre
+* Updated criteria association
+*
 * Revision 1.20  2005/02/16 14:28:31  scetre
 * *** empty log message ***
 *
@@ -61,7 +64,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.21 2005-02-16 17:02:04 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.22 2005-02-22 13:23:16 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -253,15 +256,15 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         /*
          * Add mgV criteria
          */
-        if (criteriaList.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
+        /*if (criteriaList.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
+        }*/
         // II/7A
         scenario.AddEntry(&_photo, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           &criteriaList);
         // Removed mgV criteria
-        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_V) == mcsFAILURE)
+        /*if (criteriaList.Remove(vobsSTAR_PHOT_JHN_V) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -269,7 +272,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         if (criteriaList.Add(vobsSTAR_PHOT_JHN_K, 0.3) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
+        }*/
         
         // 2MASS
         scenario.AddEntry(&_mass, &_starListS, &_starListS, vobsUPDATE_ONLY,
@@ -284,10 +287,10 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         scenario.AddEntry(&_denis, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           &criteriaList);        
         // Removed mgK criteria
-        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_K) == mcsFAILURE)
+        /*if (criteriaList.Remove(vobsSTAR_PHOT_JHN_K) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
+        }*/
 
         // Add hd criteria
         if (criteriaList.Add(vobsSTAR_ID_HD, 0) == mcsFAILURE)
