@@ -3,126 +3,48 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetDirectoryStructure.sh,v 1.1 2004-09-10 17:40:27 gzins Exp $"
+# "@(#) $Id: ctooGetDirectoryStructure.sh,v 1.2 2004-09-15 14:49:38 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
 # lgluck    07/05/04    Created
 #
 #*******************************************************************************
-# NAME
-# ctooGetDirectoryStructure - interactive script to create/check standard 
-#                             directory structure
+
+#/**
+# \file
+# Interactive script to create/check standard module directory structure.
 #
-# SYNOPSIS
+# \synopsis
 # ctooGetDirectoryStructure
 #
-# DESCRIPTION
-# Utility used ot create/check MCS directory structure for :
-#   - module
-#   - integration
-#   - root
-#   - data
+# \details
+# Interactive utility used ot create or check MCS module directory structure.
+# It asks the user to enter the module name to create.
+# 
+# \sa ctooGetTemplateForDirectoryStructure.sh, ctooGetTemplate.sh
+# \sa MCS - Programming Standard
+# 
+# \n
 #
-# FILES
-#
-# ENVIRONMENT
-#   INTROOT    current integration area root directory
-#   MCSROOT    current MCS area root directory
-#
-# RETURN VALUES
-#
-# CAUTIONS
-#                            
-# SEE ALSO 
-# ctooGetTemplateForDirectoryStructure
-# MCS - Programming Standard
-#
-# BUGS    
-#
+# */
 
-#----------------------------------------------------------------------
-#
 
 # signal trap (if any)
 
 
-# Print out the menu
-cat <<xyz
--------------------------------------------------------------------------------
-This utility allows you to create or to check a directory structure for
-    1- MODROOT = module area
-    2- INTROOT = integration area
-    3- MCSROOT = root area
-    4- MCSDATA = data area
-xyz
-
-# Propose the user to enter his choice
-echo -e "\n-> Enter the number corresponding to the directory structure you"
-echo -e "   need or press <Enter> to exit : \c"
-
-# Read the choice
-read choice
+# Print out
+echo "-------------------------------------------------------------------------"
+echo "This utility allows to create or to check a module directory structure"
 
 
-# Treat the choice
-
-# Test if the choice is not empty
-if test -n "$choice"
-then
-    # Examine the choice
-    case $choice in
-        1)  # MODROOT choice
-            # get the module name
-            echo -e "\n-> Enter module name or press <Enter> to quit: \c"
-            read moduleName
-            if [ $moduleName != "" ]
-            then 
-                ctooGetTemplateForDirectoryStructure MODROOT $moduleName
-            fi
-            ;;
-        
-        2)  # INTROOT choice
-            # get the application root directory
-            echo -e "\n-> Enter the INTROOT directory or press <Enter>"
-            echo -e "   to quit: \c"
-            read INTROOT_DIR
-            if [ "$INTROOT_DIR" != "" ]
-            then 
-                ctooGetTemplateForDirectoryStructure INTROOT $INTROOT_DIR
-            fi
-            ;;
-        
-        3)  # MCSROOT choice
-            # get the root directory
-            echo -e "\n-> Enter the MCSROOT directory or press <Enter>"
-            echo -e "   to quit: \c"
-            read MCSROOT_DIR
-            if [ "$MCSROOT_DIR" != "" ]
-            then
-                ctooGetTemplateForDirectoryStructure MCSROOT $MCSROOT_DIR
-            fi
-            ;;
-        
-        4)  # MCSDATA choice
-            # get the data directory
-            echo -e "\n-> Enter the MCSDATA directory or press <Enter>"
-            echo -e "   to quit: \c"
-            read MCSDATA_DIR
-            if [ "$MCSDATA_DIR" != "" ]
-            then
-                ctooGetTemplateForDirectoryStructure MCSDATA $MCSDATA_DIR
-            fi
-            ;;
-        
-        *) echo "ERROR : invalid choice";;
-        
-    esac
-
-else
-    # <Enter> was pressed
-    exit
+# get the module name to create
+echo -e "\n-> Enter module name or press <Enter> to quit: \c"
+read moduleName
+if [ $moduleName != "" ]
+then 
+    ctooGetTemplateForDirectoryStructure $moduleName
 fi
 
-#
+
 # ___oOo___
