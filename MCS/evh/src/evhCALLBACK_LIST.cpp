@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.5 2004-12-08 17:30:41 gzins Exp $"
+* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.6 2005-01-07 18:12:30 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *                        Added some method documentation
 * lafrasse  08-Dec-2004  Added Purge().
 * gzins     08-Dec-2004  Updated Purge().
-*
+* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 *
 *******************************************************************************/
 
@@ -19,7 +19,7 @@
  * Definition of the evhCALLBACK_LIST class.
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.5 2004-12-08 17:30:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.6 2005-01-07 18:12:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -89,13 +89,13 @@ mcsLOGICAL evhCALLBACK_LIST::IsEmpty(void)
  * Erase all elements from the list.
  *
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Clear(void)
 {
     logExtDbg("evhCALLBACK_LIST::Clear()"); 
     _callbackList.clear();
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -103,7 +103,7 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Clear(void)
  *
  * \param callback element to be added to the list.
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::AddAtTail(evhCALLBACK *callback)
 {
@@ -112,7 +112,7 @@ mcsCOMPL_STAT evhCALLBACK_LIST::AddAtTail(evhCALLBACK *callback)
     // Put element in the list
     _callbackList.push_back(callback);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -129,7 +129,7 @@ mcsCOMPL_STAT evhCALLBACK_LIST::AddAtTail(evhCALLBACK *callback)
  *
  * \param callback element to be removed from the list.
  *
- * \return Always SUCCESS.
+ * \return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Remove(evhCALLBACK *callback)
 {
@@ -144,18 +144,18 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Remove(evhCALLBACK *callback)
         {
             // Remove it
             _callbackList.erase(iter);
-            return SUCCESS;
+            return mcsSUCCESS;
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
  * Delete all detached callbacks.
  *
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Purge(void)
 {
@@ -178,7 +178,7 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Purge(void)
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -204,7 +204,7 @@ mcsUINT32 evhCALLBACK_LIST::Size(void)
  * If a callback returns with the evhCB_DELETE bit set, the method just
  * delete it.
  *           
- * \return SUCCESS or FAILURE (see above).
+ * \return mcsSUCCESS or mcsFAILURE (see above).
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Run(const msgMESSAGE &msg)
 {
@@ -219,25 +219,25 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const msgMESSAGE &msg)
         status = ((evhCMD_CALLBACK *)(*iter))->Run(msg);
         if ((status & evhCB_FAILURE) != 0)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
         if ((status & evhCB_DELETE) != 0)
         {
-            if (((evhCMD_CALLBACK *)(*iter))->Detach() == FAILURE)
+            if (((evhCMD_CALLBACK *)(*iter))->Detach() == mcsFAILURE)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
     }
     // End for
 
     // Delete detached callbacks
-    if (Purge() == FAILURE)
+    if (Purge() == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -252,7 +252,7 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const msgMESSAGE &msg)
  * If a callback returns with the evhCB_DELETE bit set, the method just
  * delete it.
  *           
- * \return SUCCESS or FAILURE (see above).
+ * \return mcsSUCCESS or mcsFAILURE (see above).
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Run(const int fd)
 {
@@ -267,25 +267,25 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const int fd)
         status = ((evhIOSTREAM_CALLBACK *)(*iter))->Run(fd);
         if ((status & evhCB_FAILURE) != 0)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
         if ((status & evhCB_DELETE) != 0)
         {
-            if (((evhIOSTREAM_CALLBACK *)(*iter))->Detach() == FAILURE)
+            if (((evhIOSTREAM_CALLBACK *)(*iter))->Detach() == mcsFAILURE)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
     }
     // End for
     
     // Delete detached callbacks
-    if (Purge() == FAILURE)
+    if (Purge() == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

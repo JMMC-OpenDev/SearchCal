@@ -1,13 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.2 2004-12-22 08:53:43 gzins Exp $"
+* "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.3 2005-01-07 18:13:08 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
 * gzins     17-Nov-2004  Fixed bug in assignment operator method
 * gzins     22-Dec-2004  Added SetMethod()
+* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 *
 *******************************************************************************/
 
@@ -16,7 +17,7 @@
  * Definition of the evhCMD_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.2 2004-12-22 08:53:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.3 2005-01-07 18:13:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -145,14 +146,14 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
     /* If object is a null pointer */
     if(_object == reinterpret_cast<void *>(NULL))
     {
-        /* Return FAILURE */
+        /* Return mcsFAILURE */
         errAdd(evhERR_NULL_OBJECT);
         return evhCB_FAILURE;
     }
     /* Else if method has not been set */
     else if (_method == (evhCMD_CB_METHOD)NULL) 
     {
-        /* Return FAILURE */
+        /* Return mcsFAILURE */
         errAdd(evhERR_NULL_METHOD);
         return evhCB_FAILURE;
     }
@@ -167,7 +168,7 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
     /* If callback failed */
     if((stat & evhCB_FAILURE) != 0)
     {
-        /* Return FAILURE */
+        /* Return mcsFAILURE */
         errAdd(evhERR_RUN_CB);
         return stat;
     }
