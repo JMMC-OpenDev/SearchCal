@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.7 2005-02-15 11:02:48 gzins Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.8 2005-02-17 18:00:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/15 11:02:48  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.6  2005/02/15 10:58:58  gzins
  * Added CVS log as file modification history
  *
@@ -18,7 +21,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.7 2005-02-15 11:02:48 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.8 2005-02-17 18:00:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -158,14 +161,26 @@ int main(int argc, char *argv[])
    
     // Print get dstring value
     char *dstringValue;
-     if(myCmd.GetParamValue("string",&dstringValue)==mcsFAILURE) {
-            cout << "Can't get user value into myCmd for parameter dstring" << endl;
-            errCloseStack();
-        } else {
-            cout << "dstring parameter from myCmd gets the next user value: " << dstringValue << endl;
-        }
+    if (myCmd.GetParamValue("string",&dstringValue) == mcsFAILURE) 
+    {
+        cout << "Can't get user value into myCmd for parameter dstring" << endl;
+        errCloseStack();
+    }
+    else
+    {
+        cout << "dstring parameter from myCmd gets the next user value: " << dstringValue << endl;
+    }
     
-    
+    string cmdParamline;
+    if (myCmd.GetCmdParamLine(cmdParamline) == mcsFAILURE) 
+    {
+        cout << "Can't get command parameter line" << endl;
+        errCloseStack();
+    }
+    else
+    {
+        cout << "command parameter line: " << cmdParamline << endl;
+    }
     // Close MCS services
     mcsExit();
     
