@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.9 2005-02-28 11:05:59 scetre Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.10 2005-02-28 13:38:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/28 11:05:59  scetre
+ * Removed unused printf
+ *
  * Revision 1.8  2005/02/27 19:44:17  gzins
  * Implemented parameter value range check
  *
@@ -30,11 +33,11 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.9 2005-02-28 11:05:59 scetre Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.10 2005-02-28 13:38:18 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
-/* 
+/*
  * System Headers 
  */
 #include <iostream>
@@ -61,7 +64,7 @@ using namespace std;
  * Class constructor
  */
 
-/** 
+/**
  *  Constructs a new named Parameter 
  *
  * \param name  the name of the parameter.
@@ -87,7 +90,7 @@ cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
  */
 
 
-/** 
+/**
  *  Destructs the parameter
  *
  */
@@ -100,7 +103,7 @@ cmdPARAM::~cmdPARAM()
  * Public methods
  */
 
-/** 
+/**
  *  Get the name of the parameter.
  *
  *  \returns the string containing the name.
@@ -111,7 +114,7 @@ string cmdPARAM::GetName()
     return _name;
 }
 
-/** 
+/**
  *  Get the description of the parameter.
  *
  *  \returns the string containing the description or empty.
@@ -122,7 +125,7 @@ string cmdPARAM::GetDesc()
     return _desc;
 }
 
-/** 
+/**
  *  Get the type of the parameter.
  *
  *  \returns the string containing the type or empty.
@@ -133,7 +136,7 @@ string cmdPARAM::GetType()
     return _type;
 }
 
-/** 
+/**
  *  Get the unit of the parameter.
  *
  *  \returns the string containing the unit or empty.
@@ -144,29 +147,7 @@ string cmdPARAM::GetUnit()
     return _unit;
 }
 
-/** 
- *  Get the user value of the parameter.
- *
- *  \returns the string containing the user value.
- */
-string cmdPARAM::GetUserValue()
-{
-    logExtDbg("cmdPARAM::GetUserValue()");
-    return _userValue;
-}
-
-/** 
- *  Get the default value of the parameter.
- *
- *  \returns the string containing the user value.
- */
-string cmdPARAM::GetDefaultValue()
-{
-    logExtDbg("cmdPARAM::GetDefaultValue()");
-    return _defaultValue;
-}
-
-/** 
+/**
  *  Return if the parameter is optional.
  *
  *  \returns mcsTRUE or mcsFALSE
@@ -177,26 +158,101 @@ mcsLOGICAL cmdPARAM::IsOptional()
     return _optional;
 }
 
-/** 
- * Return if the parameter has got a default value.  
+/**
+ *  Return the help of the parameter.
  *
- *  \returns mcsTRUE or mcsFALSE
+ *  \returns the help string
  */
-mcsLOGICAL cmdPARAM::HasDefaultValue()
+string cmdPARAM::GetHelp()
 {
-    logExtDbg("cmdPARAM::HasDefaultValue()");
-    if (_defaultValue.empty())
+    logExtDbg("cmdPARAM::GetHelp()");
+
+    string help;
+    help.append("\t-");
+    help.append(_name);
+
+    // If there is a given type
+    if (! _type.empty())
     {
-        return mcsFALSE;
+        help.append(" <");
+        help.append(_type);
+        help.append(">");
+    }
+
+    // If there is a defaultValue
+    if (HasDefaultValue())
+    {
+        help.append(" (default = '");
+        help.append(_defaultValue);
+        help.append("')");
+    }
+
+    // If there is a given unit
+    if (! _unit.empty())
+    {
+        help.append(" (unit = '");
+        help.append(_unit);
+        help.append("')");
+    }
+
+    // If there is a given unit
+    if (! _unit.empty())
+    {
+        help.append(" (unit = '");
+        help.append(_unit);
+        help.append("')");
+    }
+
+    // If there is a given minimum and maximum value
+    if ((! _minValue.empty()) && (! _maxValue.empty()))
+    {
+        help.append(" (range from '");
+        help.append(_minValue);
+        help.append("' to '");
+        help.append(_maxValue);
+        help.append("')");
+    }
+    else if (! _minValue.empty()) // If there is only a given minimum
+    {
+        help.append(" (minimum value of '");
+        help.append(_minValue);
+        help.append("')");
+    }
+    else if (! _maxValue.empty()) // If there is only a given maximum
+    {
+        help.append(" (maximum value of '");
+        help.append(_maxValue);
+        help.append("')");
+    }
+
+    // If there is a given unit
+    if (! _unit.empty())
+    {
+        help.append(" (unit = '");
+        help.append(_unit);
+        help.append("')");
+    }
+
+    // If there is a given description
+    if (! _desc.empty())
+    {
+        help.append("\n\t\t");
+        help.append(_desc);
     }
     else
     {
-        return mcsTRUE;
+        help.append("\n\t\tNo description");
     }
+
+    help.append("\n");
+
+    return help;
 }
 
-/** 
- * Return if the parameter has got a user value.  
+
+
+/**
+ * Return if the parameter has got a user value.
  *
  *  \returns mcsTRUE or mcsFALSE
  */
@@ -213,60 +269,95 @@ mcsLOGICAL cmdPARAM::IsDefined()
     }
 }
 
-/** 
- *  Return the help of the parameter.
+/**
+ *  Get the user value of the parameter.
  *
- *  \returns the help string
+ *  \returns the string containing the user value.
  */
-string cmdPARAM::GetHelp()
+string cmdPARAM::GetUserValue()
 {
-    logExtDbg("cmdPARAM::GetHelp()");
+    logExtDbg("cmdPARAM::GetUserValue()");
+    return _userValue;
+}
 
-    string help;
-    help.append("\t-");
-    help.append(_name);
-
-    /* If there is one given type */
-    if (! _type.empty())
+/**
+ * Get the user value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
+{
+    logExtDbg("cmdPARAM::GetUserValue()");
+    if (sscanf(_userValue.data(), "%d", value) != 1)
     {
-        help.append(" <");
-        help.append(_type);
-        help.append(">");
+        errAdd(cmdERR_INTEGER_VALUE, _userValue.data(), _name.data());
+        return mcsFAILURE;
     }
+    return mcsSUCCESS;
+}
 
-    /* If there is one defaultValue */
-    if (HasDefaultValue())
+/**
+ * Get the user value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
+{
+    logExtDbg("cmdPARAM::GetUserValue()");
+    if (sscanf(_userValue.data(), "%lf", value) != 1)
     {
-        help.append(" (default = '");
-        help.append(_defaultValue);
-        help.append("')");
+        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data(), _name.data());
+        return mcsFAILURE;
     }
+    return mcsSUCCESS;
+}
 
-    /* If there is one given unit */
-    if (! _unit.empty())
+/**
+ * Get the user value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
+{
+    logExtDbg("cmdPARAM::GetUserValue()");
+    if ((_userValue.compare("1") == 0) || (_userValue.compare("true") == 0))
     {
-        help.append(" (unit = '");
-        help.append(_unit);
-        help.append("')");
+        *value = mcsTRUE;
     }
-
-    /* If there is one given description */
-    if (! _desc.empty())
+    else if ((_userValue.compare("0") == 0) || (_userValue.compare("false")==0))
     {
-        help.append("\n\t\t");
-        help.append(_desc);
+        *value = mcsFALSE;
     }
     else
     {
-        help.append("\n\t\tNo description");
+        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data(), _name.data());
+        return mcsFAILURE;
     }
-
-    help.append("\n");
-
-    return help;
+    return mcsSUCCESS;
 }
 
-/** 
+/**
+ * Get the user value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
+{
+    logExtDbg("cmdPARAM::GetUserValue()");
+
+    *value = (char *)_userValue.data();
+    return mcsSUCCESS;
+}
+
+/**
  * Set the user value of the parameter. This method must be called only by
  * cmdCOMMAND.
  *
@@ -297,7 +388,115 @@ mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
     return mcsSUCCESS;
 }
 
-/** 
+
+
+/**
+ * Return if the parameter has got a default value.  
+ *
+ *  \returns mcsTRUE or mcsFALSE
+ */
+mcsLOGICAL cmdPARAM::HasDefaultValue()
+{
+    logExtDbg("cmdPARAM::HasDefaultValue()");
+    if (_defaultValue.empty())
+    {
+        return mcsFALSE;
+    }
+    else
+    {
+        return mcsTRUE;
+    }
+}
+
+/**
+ *  Get the default value of the parameter.
+ *
+ *  \returns the string containing the user value.
+ */
+string cmdPARAM::GetDefaultValue()
+{
+    logExtDbg("cmdPARAM::GetDefaultValue()");
+    return _defaultValue;
+}
+
+/**
+ * Get the default value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
+{
+    logExtDbg("cmdPARAM::GetDefaultValue()");
+    if (sscanf (_defaultValue.data(), "%d", value) != 1)
+    {
+        errAdd(cmdERR_INTEGER_VALUE, _defaultValue.data(), _name.data());
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;    
+}
+
+/**
+ * Get the default value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
+{
+    logExtDbg("cmdPARAM::GetDefaultValue()");
+    if (sscanf (_userValue.data(), "%lf", value) != 1)
+    {
+        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data(), _name.data());
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;
+}
+
+/**
+ * Get the default value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
+{
+    logExtDbg("cmdPARAM::GetDefaultValue()");
+    if ((_userValue.compare("1") == 0) || (_userValue.compare("true") == 0))
+    {
+        *value = mcsTRUE;
+    }
+    else if ((_userValue.compare("0") == 0) || (_userValue.compare("false")==0))
+    {
+        *value = mcsFALSE;
+    }
+    else
+    {
+        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data(), _name.data());
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;
+}
+
+/**
+ * Get the default value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
+{
+    logExtDbg("cmdPARAM::GetDefaultValue()");
+
+    *value = (char*)_userValue.data();
+    return mcsSUCCESS;
+}
+
+/**
  * Set the default value of the parameter. This method must be called only
  * by cmdCOMMAND. The value is extracted from the cdf file.
  *
@@ -327,7 +526,10 @@ mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
     return mcsSUCCESS;
 }
 
-/** 
+
+
+
+/**
  * Set the min value of the parameter. This method must be called only
  * by cmdCOMMAND. The value is extracted from the cdf file.
  *
@@ -351,7 +553,7 @@ mcsCOMPL_STAT cmdPARAM::SetMinValue(string value)
     return mcsSUCCESS;
 }
 
-/** 
+/**
  * Set the max value of the parameter. This method must be called only
  * by cmdCOMMAND. The value is extracted from the cdf file.
  *
@@ -375,168 +577,12 @@ mcsCOMPL_STAT cmdPARAM::SetMaxValue(string value)
     return mcsSUCCESS;
 }
 
-/** 
- * Get the user value.
- *
- * \param value the storage data pointer
- *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
-{
-    logExtDbg("cmdPARAM::GetUserValue()");
-    if (sscanf (_userValue.data(), "%d", value) != 1)
-    {
-        errAdd(cmdERR_INTEGER_VALUE, _userValue.data(), _name.data());
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;
-}
 
-/** 
- * Get the user value.
- *
- * \param value the storage data pointer
- *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
-{
-    logExtDbg("cmdPARAM::GetUserValue()");
-    if (sscanf (_userValue.data(), "%lf", value) != 1)
-    {
-        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data(), _name.data());
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;
-}
-
-/** 
- * Get the user value.
- *
- * \param value the storage data pointer
- *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
-{
-    logExtDbg("cmdPARAM::GetUserValue()");
-    if ((_userValue.compare("1") == 0) ||
-         (_userValue.compare("true") == 0))
-    {
-        *value = mcsTRUE;
-    }
-    else if ((_userValue.compare("0") == 0) ||
-              (_userValue.compare("false") == 0))
-    {
-        *value = mcsFALSE;
-    }
-    else
-    {
-        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data(), _name.data());
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;
-}
-
-/** 
- * Get the user value.
- *
- * \param value the storage data pointer
- *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
-{
-    logExtDbg("cmdPARAM::GetUserValue()");
-
-    *value = (char *)_userValue.data();
-    return mcsSUCCESS;
-}
-
-/** 
- * Get the default value.
- *
- * \param value the storage data pointer
- *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
-{
-    logExtDbg("cmdPARAM::GetDefaultValue()");
-    if (sscanf (_defaultValue.data(), "%d", value) != 1)
-    {
-        errAdd(cmdERR_INTEGER_VALUE, _defaultValue.data(), _name.data());
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;    
-}
-
-/** 
- * Get the default value.
- *
- * \param value the storage data pointer
- *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
-{
-    logExtDbg("cmdPARAM::GetDefaultValue()");
-    if (sscanf (_userValue.data(), "%lf", value) != 1)
-    {
-        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data(), _name.data());
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;
-}
-
-/** 
- * Get the default value.
- *
- * \param value the storage data pointer
- *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
-{
-    logExtDbg("cmdPARAM::GetDefaultValue()");
-    if ((_userValue.compare("1") == 0) ||
-        (_userValue.compare("true") == 0))
-    {
-        *value = mcsTRUE;
-    }
-    else if ((_userValue.compare("0") == 0) ||
-             (_userValue.compare("false") == 0))
-    {
-        *value = mcsFALSE;
-    }
-    else
-    {
-        errAdd(cmdERR_LOGICAL_VALUE, _userValue.data(), _name.data());
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;
-}
-
-/** 
- * Get the default value.
- *
- * \param value the storage data pointer
- *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
-{
-    logExtDbg("cmdPARAM::GetDefaultValue()");
-
-    *value = (char*)_userValue.data();
-    return mcsSUCCESS;
-}
 
 /*
  * Protected methods
  */
-/** 
+/**
  * Check the value, given as string, is consistent with parameter type.
  *
  * \param value parameter value.
@@ -590,7 +636,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
     return mcsSUCCESS;
 }
  
-/** 
+/**
  * Check the value range.
  *
  * \param value parameter value.

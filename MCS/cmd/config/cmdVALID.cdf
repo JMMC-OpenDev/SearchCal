@@ -13,7 +13,7 @@
     a o prefix.
     -->
     <mnemonic>VALID</mnemonic>
-    <desc>Simple command with 4 mandatory, 4 default and 4 optional parameters</desc>
+    <desc>Simple command, with all sorts of parameters</desc>
     <params>
         <param>
             <name>integer</name>
@@ -34,11 +34,25 @@
             <type>string</type>
         </param>
         <param>
-            <name>dinteger</name>
+            <name>minimaix</name>
             <type>integer</type>
-            <desc>This parameter is not mandatory but must be of integer type.</desc>
+            <desc>This parameter is not mandatory but must be of integer type, and have a minimun and maximun value.</desc>
             <defaultValue><integer>12</integer></defaultValue>
             <minValue><integer>12</integer></minValue>
+            <maxValue><integer>20</integer></maxValue>
+        </param>
+        <param>
+            <name>mini</name>
+            <type>integer</type>
+            <desc>This parameter is not mandatory but must be of integer type, and have a minimun value.</desc>
+            <defaultValue><integer>12</integer></defaultValue>
+            <minValue><integer>12</integer></minValue>
+        </param>
+        <param>
+            <name>maxi</name>
+            <type>integer</type>
+            <desc>This parameter is not mandatory but must be of integer type, and have a maximun value.</desc>
+            <defaultValue><integer>12</integer></defaultValue>
             <maxValue><integer>20</integer></maxValue>
         </param>
         <param>

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.h,v 1.9 2005-02-27 19:44:17 gzins Exp $"
+ * "@(#) $Id: cmdPARAM.h,v 1.10 2005-02-28 13:38:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/27 19:44:17  gzins
+ * Implemented parameter value range check
+ *
  * Revision 1.8  2005/02/27 09:27:41  gzins
  * Improved error handling
  *
@@ -54,32 +57,35 @@ public:
     // Brief description of the destructor
     virtual ~cmdPARAM();
 
-    virtual string GetName();
-    virtual string GetDesc();
-    virtual string GetType();
-    virtual string GetUnit();
-    virtual string GetUserValue();
-    virtual string GetDefaultValue();
-    virtual mcsLOGICAL IsDefined();
-    virtual mcsLOGICAL HasDefaultValue();
-    virtual mcsLOGICAL IsOptional();
-    virtual string GetHelp();
-    virtual mcsCOMPL_STAT SetUserValue(string value);
-    virtual mcsCOMPL_STAT SetDefaultValue(string value);
-    virtual mcsCOMPL_STAT SetMinValue(string value);
-    virtual mcsCOMPL_STAT SetMaxValue(string value);
-    virtual mcsCOMPL_STAT GetUserValue(mcsINT32 *value);
-    virtual mcsCOMPL_STAT GetUserValue(mcsDOUBLE *value);
-    virtual mcsCOMPL_STAT GetUserValue(mcsLOGICAL *value);
-    virtual mcsCOMPL_STAT GetUserValue(char **value);
-    virtual mcsCOMPL_STAT GetDefaultValue(mcsINT32 *value);
-    virtual mcsCOMPL_STAT GetDefaultValue(mcsDOUBLE *value);
-    virtual mcsCOMPL_STAT GetDefaultValue(mcsLOGICAL *value);
-    virtual mcsCOMPL_STAT GetDefaultValue(char **value);
+    virtual string         GetName          ();
+    virtual string         GetDesc          ();
+    virtual string         GetType          ();
+    virtual string         GetUnit          ();
+    virtual mcsLOGICAL     IsOptional       ();
+    virtual string         GetHelp          ();
+
+    virtual mcsLOGICAL     IsDefined        ();
+    virtual string         GetUserValue     ();
+    virtual mcsCOMPL_STAT  GetUserValue     (mcsINT32     *value);
+    virtual mcsCOMPL_STAT  GetUserValue     (mcsDOUBLE    *value);
+    virtual mcsCOMPL_STAT  GetUserValue     (mcsLOGICAL   *value);
+    virtual mcsCOMPL_STAT  GetUserValue     (char        **value);
+    virtual mcsCOMPL_STAT  SetUserValue     (string        value);
+
+    virtual mcsLOGICAL     HasDefaultValue  ();
+    virtual string         GetDefaultValue  ();
+    virtual mcsCOMPL_STAT  GetDefaultValue  (mcsINT32     *value);
+    virtual mcsCOMPL_STAT  GetDefaultValue  (mcsDOUBLE    *value);
+    virtual mcsCOMPL_STAT  GetDefaultValue  (mcsLOGICAL   *value);
+    virtual mcsCOMPL_STAT  GetDefaultValue  (char        **value);
+    virtual mcsCOMPL_STAT  SetDefaultValue  (string        value);
+
+    virtual mcsCOMPL_STAT  SetMinValue      (string        value);
+    virtual mcsCOMPL_STAT  SetMaxValue      (string        value);
 
 protected:
-    virtual mcsCOMPL_STAT CheckValueType(string value);
-    virtual mcsCOMPL_STAT CheckValueRange(string value);
+    virtual mcsCOMPL_STAT  CheckValueType   (string        value);
+    virtual mcsCOMPL_STAT  CheckValueRange  (string        value);
 
 private:
     // Declaration of copy constructor and assignment operator as private
