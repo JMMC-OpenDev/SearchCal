@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.10 2005-02-28 13:38:18 lafrasse Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.11 2005-03-03 10:46:47 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/28 13:38:18  lafrasse
+ * Added minimum and maximum parameter values information output in cmdPARAM:GetHelp()
+ *
  * Revision 1.9  2005/02/28 11:05:59  scetre
  * Removed unused printf
  *
@@ -33,7 +36,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.10 2005-02-28 13:38:18 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.11 2005-03-03 10:46:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -713,15 +716,15 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
     }
     else if (_type == "double")
     {
-        mcsDOUBLE iValue;
-        sscanf (value.data(), "%d", &iValue);
+        mcsDOUBLE dValue;
+        sscanf (value.data(), "%lf", &dValue);
         
         // Check min value
         if (_minValue.empty() == false)
         {
             mcsDOUBLE minValue;
             sscanf (_minValue.data(), "%lf", &minValue);
-            if (iValue < minValue)
+            if (dValue < minValue)
             {
                 errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
                        "greater", _minValue.data());
@@ -735,7 +738,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
             mcsDOUBLE maxValue;
             sscanf (_maxValue.data(), "%lf", &maxValue);
             
-            if (iValue > maxValue)
+            if (dValue > maxValue)
             {
                 errAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), _name.data(),
                        "less", _maxValue.data());
