@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.18 2005-02-13 15:16:07 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.19 2005-02-13 15:23:20 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/02/13 15:16:07  gzins
+* Removed ParseCDATA and GetPropertyId. Moved to vobsCDATA class
+*
 * Revision 1.17  2005/02/11 10:41:55  gzins
 * Updated to correctly handle the number of lines to be skipped.
 * Fixed bug when scanning UCD/parameter to add star properties
@@ -52,7 +55,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.18 2005-02-13 15:16:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.19 2005-02-13 15:23:20 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
