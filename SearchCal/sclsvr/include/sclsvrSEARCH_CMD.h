@@ -21,7 +21,7 @@
 /*
  * MCS Headers
  */
-#include "cmdCMD.h"
+#include "cmd.h"
 
 /*
  * Class declaration
@@ -33,46 +33,46 @@
  * reception of the SEARCH command 
  */
 
-class sclsvrSEARCH_CMD: public cmdCMD
+class sclsvrSEARCH_CMD: public cmdCOMMAND
 {
 public:
-    sclsvrSEARCH_CMD(string name, string params);
+sclsvrSEARCH_CMD(string name, string params);
     virtual ~sclsvrSEARCH_CMD();
-    virtual mcsCOMPL_STAT get_objetName(char * *objetName);
-    virtual mcsCOMPL_STAT get_mag(mcsDOUBLE  *mag);
-    virtual mcsCOMPL_STAT get_maxReturn(mcsINT32  *maxReturn);
-    virtual mcsLOGICAL hasDefault_maxReturn();
-    virtual mcsCOMPL_STAT getDefault_maxReturn(mcsINT32  *maxReturn);
-    virtual mcsCOMPL_STAT get_diffRa(mcsINT32  *diffRa);
-    virtual mcsLOGICAL hasDefault_diffRa();
-    virtual mcsCOMPL_STAT getDefault_diffRa(mcsINT32  *diffRa);
-    virtual mcsCOMPL_STAT get_diffDec(mcsINT32  *diffDec);
-    virtual mcsLOGICAL hasDefault_diffDec();
-    virtual mcsCOMPL_STAT getDefault_diffDec(mcsINT32  *diffDec);
-    virtual mcsCOMPL_STAT get_band(char * *band);
-    virtual mcsLOGICAL hasDefault_band();
-    virtual mcsCOMPL_STAT getDefault_band(char * *band);
-    virtual mcsCOMPL_STAT get_minMagRange(char * *minMagRange);
-    virtual mcsCOMPL_STAT get_maxMagRange(char * *maxMagRange);
-    virtual mcsCOMPL_STAT get_ra(char * *ra);
-    virtual mcsLOGICAL hasDefault_ra();
-    virtual mcsCOMPL_STAT getDefault_ra(char * *ra);
-    virtual mcsCOMPL_STAT get_dec(char * *dec);
-    virtual mcsLOGICAL hasDefault_dec();
-    virtual mcsCOMPL_STAT getDefault_dec(char * *dec);
-    virtual mcsCOMPL_STAT get_baseMin(mcsDOUBLE  *baseMin);
-    virtual mcsLOGICAL hasDefault_baseMin();
-    virtual mcsCOMPL_STAT getDefault_baseMin(mcsDOUBLE  *baseMin);
-    virtual mcsCOMPL_STAT get_baseMax(mcsDOUBLE  *baseMax);
-    virtual mcsLOGICAL hasDefault_baseMax();
-    virtual mcsCOMPL_STAT getDefault_baseMax(mcsDOUBLE  *baseMax);
-    virtual mcsCOMPL_STAT get_lambda(mcsDOUBLE  *lambda);
-    virtual mcsCOMPL_STAT get_vis(mcsDOUBLE  *vis);
-    virtual mcsLOGICAL hasDefault_vis();
-    virtual mcsCOMPL_STAT getDefault_vis(mcsDOUBLE  *vis);
-    virtual mcsCOMPL_STAT get_visErr(mcsDOUBLE  *visErr);
-    virtual mcsLOGICAL hasDefault_visErr();
-    virtual mcsCOMPL_STAT getDefault_visErr(mcsDOUBLE  *visErr);
+    virtual mcsCOMPL_STAT GetObjetName(char **objetName);
+    virtual mcsCOMPL_STAT GetMag(mcsDOUBLE *mag);
+    virtual mcsCOMPL_STAT GetMaxReturn(mcsINT32 *maxReturn);
+    virtual mcsLOGICAL HasDefaultMaxReturn();
+    virtual mcsCOMPL_STAT GetDefaultMaxReturn(mcsINT32 *maxReturn);
+    virtual mcsCOMPL_STAT GetDiffRa(mcsINT32 *diffRa);
+    virtual mcsLOGICAL HasDefaultDiffRa();
+    virtual mcsCOMPL_STAT GetDefaultDiffRa(mcsINT32 *diffRa);
+    virtual mcsCOMPL_STAT GetDiffDec(mcsINT32 *diffDec);
+    virtual mcsLOGICAL HasDefaultDiffDec();
+    virtual mcsCOMPL_STAT GetDefaultDiffDec(mcsINT32 *diffDec);
+    virtual mcsCOMPL_STAT GetBand(char **band);
+    virtual mcsLOGICAL HasDefaultBand();
+    virtual mcsCOMPL_STAT GetDefaultBand(char **band);
+    virtual mcsCOMPL_STAT GetMinMagRange(char **minMagRange);
+    virtual mcsCOMPL_STAT GetMaxMagRange(char **maxMagRange);
+    virtual mcsCOMPL_STAT GetRa(char **ra);
+    virtual mcsLOGICAL HasDefaultRa();
+    virtual mcsCOMPL_STAT GetDefaultRa(char **ra);
+    virtual mcsCOMPL_STAT GetDec(char **dec);
+    virtual mcsLOGICAL HasDefaultDec();
+    virtual mcsCOMPL_STAT GetDefaultDec(char **dec);
+    virtual mcsCOMPL_STAT GetBaseMin(mcsDOUBLE *baseMin);
+    virtual mcsLOGICAL HasDefaultBaseMin();
+    virtual mcsCOMPL_STAT GetDefaultBaseMin(mcsDOUBLE *baseMin);
+    virtual mcsCOMPL_STAT GetBaseMax(mcsDOUBLE *baseMax);
+    virtual mcsLOGICAL HasDefaultBaseMax();
+    virtual mcsCOMPL_STAT GetDefaultBaseMax(mcsDOUBLE *baseMax);
+    virtual mcsCOMPL_STAT GetLambda(mcsDOUBLE *lambda);
+    virtual mcsCOMPL_STAT GetVis(mcsDOUBLE *vis);
+    virtual mcsLOGICAL HasDefaultVis();
+    virtual mcsCOMPL_STAT GetDefaultVis(mcsDOUBLE *vis);
+    virtual mcsCOMPL_STAT GetVisErr(mcsDOUBLE *visErr);
+    virtual mcsLOGICAL HasDefaultVisErr();
+    virtual mcsCOMPL_STAT GetDefaultVisErr(mcsDOUBLE *visErr);
 
 protected:
 

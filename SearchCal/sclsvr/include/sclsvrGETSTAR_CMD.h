@@ -33,12 +33,12 @@
  * reception of the GETSTAR command 
  */
 
-class sclsvrGETSTAR_CMD: public cmdCMD
+class sclsvrGETSTAR_CMD: public cmdCOMMAND
 {
 public:
 sclsvrGETSTAR_CMD(string name, string params);
     virtual ~sclsvrGETSTAR_CMD();
-    virtual mcsCOMPL_STAT getObjectName(char **objectName);
+    virtual mcsCOMPL_STAT GetObjectName(char **objectName);
 
 protected:
 

@@ -37,7 +37,7 @@ using namespace std;
  * Constructs a new class for an easier access for parameters of the
  * sclsvrGETSTAR_CMD COMMAND.
  */
- sclsvrGETSTAR_CMD::sclsvrGETSTAR_CMD(string name, string params):cmdCMD(name, params)
+ sclsvrGETSTAR_CMD::sclsvrGETSTAR_CMD(string name, string params):cmdCOMMAND(name, params)
 {
     
 }
@@ -66,10 +66,10 @@ sclsvrGETSTAR_CMD::~sclsvrGETSTAR_CMD()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrGETSTAR_CMD::getObjectName(char **objectName)
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetObjectName(char **objectName)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::getObjectName()");	
-    return getParamValue("objectName",objectName);
+    logExtDbg("sclsvrGETSTAR_CMD::GetObjectName()");	
+    return GetParamValue("objectName",objectName);
 }
 
 

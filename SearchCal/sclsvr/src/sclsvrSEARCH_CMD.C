@@ -37,7 +37,7 @@ using namespace std;
  * Constructs a new class for an easier access for parameters of the
  * sclsvrSEARCH_CMD COMMAND.
  */
- sclsvrSEARCH_CMD::sclsvrSEARCH_CMD(string name, string params):cmdCMD(name, params)
+ sclsvrSEARCH_CMD::sclsvrSEARCH_CMD(string name, string params):cmdCOMMAND(name, params)
 {
     
 }
@@ -58,7 +58,7 @@ sclsvrSEARCH_CMD::~sclsvrSEARCH_CMD()
  * Public methods
  */
         
-
+ 
 /**
  * Get the value of the parameter objetName.
  *
@@ -66,10 +66,10 @@ sclsvrSEARCH_CMD::~sclsvrSEARCH_CMD()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_objetName(char * *objetName)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetObjetName(char **objetName)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_objetName()");	
-    return getParamValue("objetName",objetName);
+    logExtDbg("sclsvrSEARCH_CMD::GetObjetName()");	
+    return GetParamValue("objetName",objetName);
 }
 
 /**
@@ -79,10 +79,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_objetName(char * *objetName)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_mag(mcsDOUBLE  *mag)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetMag(mcsDOUBLE *mag)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_mag()");	
-    return getParamValue("mag",mag);
+    logExtDbg("sclsvrSEARCH_CMD::GetMag()");	
+    return GetParamValue("mag",mag);
 }
 
 /**
@@ -92,10 +92,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_mag(mcsDOUBLE  *mag)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_maxReturn(mcsINT32  *maxReturn)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetMaxReturn(mcsINT32 *maxReturn)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_maxReturn()");	
-    return getParamValue("maxReturn",maxReturn);
+    logExtDbg("sclsvrSEARCH_CMD::GetMaxReturn()");	
+    return GetParamValue("maxReturn",maxReturn);
 }
 
 /**
@@ -103,10 +103,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_maxReturn(mcsINT32  *maxReturn)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_maxReturn()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultMaxReturn()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_maxReturn()");
-    return hasDefaultValue("maxReturn");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultMaxReturn()");
+    return HasDefaultValue("maxReturn");
 }
 
 /**
@@ -116,10 +116,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_maxReturn()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_maxReturn(mcsINT32  *maxReturn)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultMaxReturn(mcsINT32 *maxReturn)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_maxReturn()");
-    return getDefaultParamValue("maxReturn",maxReturn);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultMaxReturn()");
+    return GetDefaultParamValue("maxReturn",maxReturn);
 }
 
 /**
@@ -129,10 +129,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_maxReturn(mcsINT32  *maxReturn)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_diffRa(mcsINT32  *diffRa)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDiffRa(mcsINT32 *diffRa)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_diffRa()");	
-    return getParamValue("diffRa",diffRa);
+    logExtDbg("sclsvrSEARCH_CMD::GetDiffRa()");	
+    return GetParamValue("diffRa",diffRa);
 }
 
 /**
@@ -140,10 +140,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_diffRa(mcsINT32  *diffRa)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_diffRa()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultDiffRa()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_diffRa()");
-    return hasDefaultValue("diffRa");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultDiffRa()");
+    return HasDefaultValue("diffRa");
 }
 
 /**
@@ -153,10 +153,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_diffRa()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_diffRa(mcsINT32  *diffRa)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultDiffRa(mcsINT32 *diffRa)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_diffRa()");
-    return getDefaultParamValue("diffRa",diffRa);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultDiffRa()");
+    return GetDefaultParamValue("diffRa",diffRa);
 }
 
 /**
@@ -166,10 +166,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_diffRa(mcsINT32  *diffRa)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_diffDec(mcsINT32  *diffDec)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDiffDec(mcsINT32 *diffDec)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_diffDec()");	
-    return getParamValue("diffDec",diffDec);
+    logExtDbg("sclsvrSEARCH_CMD::GetDiffDec()");	
+    return GetParamValue("diffDec",diffDec);
 }
 
 /**
@@ -177,10 +177,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_diffDec(mcsINT32  *diffDec)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_diffDec()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultDiffDec()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_diffDec()");
-    return hasDefaultValue("diffDec");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultDiffDec()");
+    return HasDefaultValue("diffDec");
 }
 
 /**
@@ -190,10 +190,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_diffDec()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_diffDec(mcsINT32  *diffDec)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultDiffDec(mcsINT32 *diffDec)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_diffDec()");
-    return getDefaultParamValue("diffDec",diffDec);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultDiffDec()");
+    return GetDefaultParamValue("diffDec",diffDec);
 }
 
 /**
@@ -203,10 +203,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_diffDec(mcsINT32  *diffDec)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_band(char * *band)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetBand(char **band)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_band()");	
-    return getParamValue("band",band);
+    logExtDbg("sclsvrSEARCH_CMD::GetBand()");	
+    return GetParamValue("band",band);
 }
 
 /**
@@ -214,10 +214,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_band(char * *band)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_band()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultBand()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_band()");
-    return hasDefaultValue("band");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultBand()");
+    return HasDefaultValue("band");
 }
 
 /**
@@ -227,10 +227,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_band()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_band(char * *band)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultBand(char **band)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_band()");
-    return getDefaultParamValue("band",band);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultBand()");
+    return GetDefaultParamValue("band",band);
 }
 
 /**
@@ -240,10 +240,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_band(char * *band)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_minMagRange(char * *minMagRange)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetMinMagRange(char **minMagRange)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_minMagRange()");	
-    return getParamValue("minMagRange",minMagRange);
+    logExtDbg("sclsvrSEARCH_CMD::GetMinMagRange()");	
+    return GetParamValue("minMagRange",minMagRange);
 }
 
 /**
@@ -253,10 +253,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_minMagRange(char * *minMagRange)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_maxMagRange(char * *maxMagRange)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetMaxMagRange(char **maxMagRange)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_maxMagRange()");	
-    return getParamValue("maxMagRange",maxMagRange);
+    logExtDbg("sclsvrSEARCH_CMD::GetMaxMagRange()");	
+    return GetParamValue("maxMagRange",maxMagRange);
 }
 
 /**
@@ -266,10 +266,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_maxMagRange(char * *maxMagRange)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_ra(char * *ra)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetRa(char **ra)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_ra()");	
-    return getParamValue("ra",ra);
+    logExtDbg("sclsvrSEARCH_CMD::GetRa()");	
+    return GetParamValue("ra",ra);
 }
 
 /**
@@ -277,10 +277,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_ra(char * *ra)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_ra()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultRa()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_ra()");
-    return hasDefaultValue("ra");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultRa()");
+    return HasDefaultValue("ra");
 }
 
 /**
@@ -290,10 +290,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_ra()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_ra(char * *ra)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultRa(char **ra)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_ra()");
-    return getDefaultParamValue("ra",ra);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultRa()");
+    return GetDefaultParamValue("ra",ra);
 }
 
 /**
@@ -303,10 +303,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_ra(char * *ra)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_dec(char * *dec)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDec(char **dec)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_dec()");	
-    return getParamValue("dec",dec);
+    logExtDbg("sclsvrSEARCH_CMD::GetDec()");	
+    return GetParamValue("dec",dec);
 }
 
 /**
@@ -314,10 +314,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_dec(char * *dec)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_dec()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultDec()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_dec()");
-    return hasDefaultValue("dec");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultDec()");
+    return HasDefaultValue("dec");
 }
 
 /**
@@ -327,10 +327,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_dec()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_dec(char * *dec)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultDec(char **dec)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_dec()");
-    return getDefaultParamValue("dec",dec);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultDec()");
+    return GetDefaultParamValue("dec",dec);
 }
 
 /**
@@ -340,10 +340,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_dec(char * *dec)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_baseMin(mcsDOUBLE  *baseMin)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetBaseMin(mcsDOUBLE *baseMin)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_baseMin()");	
-    return getParamValue("baseMin",baseMin);
+    logExtDbg("sclsvrSEARCH_CMD::GetBaseMin()");	
+    return GetParamValue("baseMin",baseMin);
 }
 
 /**
@@ -351,10 +351,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_baseMin(mcsDOUBLE  *baseMin)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_baseMin()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultBaseMin()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_baseMin()");
-    return hasDefaultValue("baseMin");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultBaseMin()");
+    return HasDefaultValue("baseMin");
 }
 
 /**
@@ -364,10 +364,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_baseMin()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_baseMin(mcsDOUBLE  *baseMin)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultBaseMin(mcsDOUBLE *baseMin)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_baseMin()");
-    return getDefaultParamValue("baseMin",baseMin);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultBaseMin()");
+    return GetDefaultParamValue("baseMin",baseMin);
 }
 
 /**
@@ -377,10 +377,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_baseMin(mcsDOUBLE  *baseMin)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_baseMax(mcsDOUBLE  *baseMax)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetBaseMax(mcsDOUBLE *baseMax)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_baseMax()");	
-    return getParamValue("baseMax",baseMax);
+    logExtDbg("sclsvrSEARCH_CMD::GetBaseMax()");	
+    return GetParamValue("baseMax",baseMax);
 }
 
 /**
@@ -388,10 +388,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_baseMax(mcsDOUBLE  *baseMax)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_baseMax()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultBaseMax()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_baseMax()");
-    return hasDefaultValue("baseMax");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultBaseMax()");
+    return HasDefaultValue("baseMax");
 }
 
 /**
@@ -401,10 +401,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_baseMax()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_baseMax(mcsDOUBLE  *baseMax)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultBaseMax(mcsDOUBLE *baseMax)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_baseMax()");
-    return getDefaultParamValue("baseMax",baseMax);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultBaseMax()");
+    return GetDefaultParamValue("baseMax",baseMax);
 }
 
 /**
@@ -414,10 +414,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_baseMax(mcsDOUBLE  *baseMax)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_lambda(mcsDOUBLE  *lambda)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetLambda(mcsDOUBLE *lambda)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_lambda()");	
-    return getParamValue("lambda",lambda);
+    logExtDbg("sclsvrSEARCH_CMD::GetLambda()");	
+    return GetParamValue("lambda",lambda);
 }
 
 /**
@@ -427,10 +427,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_lambda(mcsDOUBLE  *lambda)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_vis(mcsDOUBLE  *vis)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetVis(mcsDOUBLE *vis)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_vis()");	
-    return getParamValue("vis",vis);
+    logExtDbg("sclsvrSEARCH_CMD::GetVis()");	
+    return GetParamValue("vis",vis);
 }
 
 /**
@@ -438,10 +438,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_vis(mcsDOUBLE  *vis)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_vis()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultVis()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_vis()");
-    return hasDefaultValue("vis");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultVis()");
+    return HasDefaultValue("vis");
 }
 
 /**
@@ -451,10 +451,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_vis()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_vis(mcsDOUBLE  *vis)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultVis(mcsDOUBLE *vis)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_vis()");
-    return getDefaultParamValue("vis",vis);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultVis()");
+    return GetDefaultParamValue("vis",vis);
 }
 
 /**
@@ -464,10 +464,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_vis(mcsDOUBLE  *vis)
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::get_visErr(mcsDOUBLE  *visErr)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetVisErr(mcsDOUBLE *visErr)
 {
-    logExtDbg("sclsvrSEARCH_CMD::get_visErr()");	
-    return getParamValue("visErr",visErr);
+    logExtDbg("sclsvrSEARCH_CMD::GetVisErr()");	
+    return GetParamValue("visErr",visErr);
 }
 
 /**
@@ -475,10 +475,10 @@ mcsCOMPL_STAT sclsvrSEARCH_CMD::get_visErr(mcsDOUBLE  *visErr)
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
-mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_visErr()
+ mcsLOGICAL sclsvrSEARCH_CMD::HasDefaultVisErr()
 {
-    logExtDbg("sclsvrSEARCH_CMD::hasDefault_visErr()");
-    return hasDefaultValue("visErr");
+    logExtDbg("sclsvrSEARCH_CMD::HasDefaultVisErr()");
+    return HasDefaultValue("visErr");
 }
 
 /**
@@ -488,10 +488,10 @@ mcsLOGICAL sclsvrSEARCH_CMD::hasDefault_visErr()
  * 
  * \return an MCS completion status code (SUCCESS or FAILURE).
  */ 
-mcsCOMPL_STAT sclsvrSEARCH_CMD::getDefault_visErr(mcsDOUBLE  *visErr)
+mcsCOMPL_STAT sclsvrSEARCH_CMD::GetDefaultVisErr(mcsDOUBLE *visErr)
 {
-    logExtDbg("sclsvrSEARCH_CMD::getDefault_visErr()");
-    return getDefaultParamValue("visErr",visErr);
+    logExtDbg("sclsvrSEARCH_CMD::GetDefaultVisErr()");
+    return GetDefaultParamValue("visErr",visErr);
 }
 
 
