@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errPackLocalStack_L.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPackLocalStack_L.c,v 1.2 2004-08-23 13:37:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -71,7 +71,7 @@ mcsCOMPL_STAT errPackLocalStack(errERROR *error, char *buffer,
         }
 
         memset(log, '\0', sizeof(log));
-        sprintf(log,"%s - %s %s %s\n",
+        sprintf(log,"%s - %s %s %.200s\n",
                 error->stack[i].timeStamp, error->stack[i].moduleId,
                 error->stack[i].procName, logBuf);
 
