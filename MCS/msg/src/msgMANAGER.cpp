@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.5 2004-12-12 09:16:42 gzins Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.6 2004-12-15 10:01:14 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,6 +10,7 @@
 * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
 * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
 * gzins     12-Dec-2004  Added errno.h header file
+* gzins     14-Dec-2004  Handled DEBUG command
 *
 *******************************************************************************/
 
@@ -18,7 +19,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.5 2004-12-12 09:16:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.6 2004-12-15 10:01:14 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -40,6 +41,7 @@ using namespace std;
 /*
  * Local Headers 
  */
+#include "msgDEBUG_CMD.h"
 #include "msgMANAGER.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
@@ -205,7 +207,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                                 if ((strcmp(msg.GetRecipient(), "msgManager")
                                      == 0)
                                     ||
-                                    (strcmp (msg.GetCommand(), msgPING_CMD)
+                                    (strcmp (msg.GetCommand(), msgPING_CMD_NAME)
                                      == 0))
                                 {
                                     /* Handle the received command */
@@ -226,10 +228,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                             else // If the message is a reply...
                             {
                                 // Send reply to the sender process
-                                if (SendReply(msg, msg.IsLastReply()) == FAILURE)
-                                {
-                                    errCloseStack();
-                                }
+                                SendReply(msg, msg.IsLastReply());
                             }
                         }
                     }
@@ -451,7 +450,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
         else
         {
             /* If the registering command is received... */
-            if (strcmp(msg.GetCommand(), msgREGISTER_CMD) == 0)
+            if (strcmp(msg.GetCommand(), msgREGISTER_CMD_NAME) == 0)
             {
                 logTest("Connection demand received from %s ...",
                         msg.GetSender());
@@ -467,17 +466,14 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
 
                 /* Send a registering validation messsage */
                 msg.SetBody("OK", 0);
-                if (SendReply(msg, mcsTRUE) == FAILURE)
-                {
-                    errCloseStack();
-                }
+                SendReply(msg);
             }
             else /* Wrong message received... */
             {
                 /* Close the connection */
                 logWarning("Received a '%s' message instead of '%s'",
                            "- '%s' process connection refused",
-                           msg.GetCommand(), msgREGISTER_CMD,
+                           msg.GetCommand(), msgREGISTER_CMD_NAME,
                            msg.GetSender());
                 delete (newProcess);
             }
@@ -491,7 +487,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
  *
  * \param msg the message to be forwarded
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
 {
@@ -501,29 +497,22 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
     logInfo("Received '%s' command from '%s' for '%s'", msg.GetCommand(),
             msg.GetSender(), msg.GetRecipient());
 
-    /* Try to find the recipient process in the process list */
+    /* Find the recipient process in the process list */
     recipient = _processList.GetProcess(msg.GetRecipient());
     if (recipient == NULL)
     {
         /* Raise the error to the sender */
         errAdd(msgERR_RECIPIENT_NOT_CONNECTED, msg.GetRecipient(),
                msg.GetCommand());
-        if (SendReply(msg, mcsTRUE) == FAILURE)
-        {
-            errCloseStack();
-        }
+        SendReply(msg);
     }
     else
     {
         /* If the command could not be delivered to the recipient process... */
         if (recipient->Send(msg) == FAILURE)
         {
-            /* Try to report this to the sender */
-            if (SendReply(msg, mcsTRUE) == FAILURE)
-            {
-                errCloseStack();
-            }
-            return FAILURE;
+            /* Report this to the sender */
+            SendReply(msg);
         }
     }
        
@@ -538,7 +527,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
  * not
  * \param sender
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
                                      mcsLOGICAL lastReply,
@@ -549,7 +538,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
     // Build the reply message header
     msg.SetLastReplyFlag(lastReply);
 
-    // If there is no error in the MCS error stack
+    // If there is no error in the error stack
     if (errStackIsEmpty() == mcsTRUE)
     {
         // Set message type to REPLY
@@ -557,7 +546,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
     }
     else
     {
-        // Put the MCS error stack data in the message body
+        // Put the error stack data in the message body
         char errStackContent[msgBODYMAXLEN];
         if (errPackStack(errStackContent, msgBODYMAXLEN) == FAILURE)
         {
@@ -568,7 +557,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
         // Set message type to ERROR_REPLY
         msg.SetType(msgTYPE_ERROR_REPLY);
 
-        // Empty MCS error stack
+        // Empty error stack
         errResetStack();
     }
 
@@ -581,17 +570,27 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
     }
     if (sender == NULL)
     {
-        /* Raise the error to the sender */
+        // Raise the error to the sender
         errAdd(msgERR_SENDER_NOT_CONNECTED, msg.GetSender(),
                msg.GetCommand());
+        
+        // Close error stack
+        errResetStack();
         return FAILURE;
     }
     
-    return (sender->Send(msg));
+    if (sender->Send(msg) == FAILURE)
+    {
+        // Close error stack
+        errResetStack();
+        return FAILURE;
+    }
+
+    return SUCCESS;        
 }
 
 /**
- * Try to manage msgManager own commands.
+ * Manage msgManager own commands.
  *
  * Those commands are :
  * \li CLOSE - close the connection with msgManager (internal use)
@@ -602,7 +601,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
  *
  * \param msg a received command
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
 {
@@ -611,7 +610,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
             msg.GetSender());
     
     /* If the received command is a PING request... */ 
-    if (strcmp(msg.GetCommand(), msgPING_CMD) == 0)
+    if (strcmp(msg.GetCommand(), msgPING_CMD_NAME) == 0)
     {
         /* If the command recipient is connected... */
         if ((strcmp (msg.GetRecipient(), "msgManager") == 0) ||
@@ -626,183 +625,83 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
             errAdd(msgERR_PING, msg.GetRecipient());
         }
 
-        /* Try to send the built reply message */
-        if (SendReply(msg, mcsTRUE) == FAILURE)
-        {
-            errCloseStack();
-        }
+        /* Send the built reply message */
+        SendReply(msg);
     } 
     /* If the received command is a VERSION request... */ 
-    else if (strcmp(msg.GetCommand(), msgVERSION_CMD) == 0)
+    else if (strcmp(msg.GetCommand(), msgVERSION_CMD_NAME) == 0)
     {
-        /* Try to reply the msgManager CVS verson number */
+        /* Reply the msgManager CVS verson number */
         mcsSTRING256 buffer;
         memset(buffer, '\0', sizeof(buffer));
         sprintf(buffer, rcsId);
         msg.SetBody(buffer);
-        if (SendReply(msg, mcsTRUE) == FAILURE)
-        {
-            errCloseStack();
-        }
+        SendReply(msg);
     }  
     /* If the received command is a DEBUG request... */ 
-    else if (strcmp(msg.GetCommand(), msgDEBUG_CMD) == 0)
+    else if (strcmp(msg.GetCommand(), msgDEBUG_CMD_NAME) == 0)
     {
-#if 0
-        mcsINT32   index;
-        mcsLOGICAL log, verbose, printDate, printFileLine;
-        mcsINT32   logLevel, verboseLevel;
-        
-        /* Try to analyze the received command parameter */
-        cmdPARAM_LIST *paramList;
-        paramList = cmdParseParam(msgDEBUG_CMD, msgGetBodyPtr(msg));
-        if (paramList == NULL)
-        {
-            msgSendReplyTo(process->sd, msg, mcsTRUE);
-            return FAILURE;
-        } 
-        
-        /* If the 'log' parameter is specified... */
-        index = cmdGetParamIndex(paramList, "log");
-        if (index != -1)
-        {
-            /* Try to toogle file log message recording */
-            if (cmdGetLogicalParamByIndex(paramList, index, &log) == FAILURE)
-            {
-                msgSendReplyTo(process->sd, msg, mcsTRUE);
-                return FAILURE;
-            }
-            else
-            {
-                if (log == mcsTRUE)
-                {
-                    logEnableFileLog();
-                }
-                else
-                {
-                    logDisableFileLog();
-                }
-            }
-        }
+        msgDEBUG_CMD debugCmd(msg.GetCommand(), msg.GetBodyPtr());
 
-        /* If the 'logLevel' parameter is specified... */
-        index = cmdGetParamIndex(paramList, "logLevel");
-        if (index != -1)
+        // Parses command
+        if (debugCmd.Parse() == FAILURE)
         {
-            /* Try to change the file log level accordinaly */
-            if (cmdGetIntegerParamByIndex(paramList, index, &logLevel)
-                == FAILURE)
-            {
-                msgSendReplyTo(process->sd, msg, mcsTRUE);
-                return FAILURE;
-            }
-            else
-            {
-                logSetFileLogLevel(logLevel);
-            }
-        }
-
-        /* If the 'verbose' parameter is specified... */
-        index = cmdGetParamIndex(paramList, "verbose");
-        if (index != -1)
-        {  
-            /* Try to toogle stdout log message printing */
-            if (cmdGetLogicalParamByIndex(paramList, index, &verbose)
-                != FAILURE)
-            {
-                msgSendReplyTo(process->sd, msg, mcsTRUE);
-                return FAILURE;
-            }
-            else
-            {
-                if (verbose == mcsTRUE)
-                {
-                    logEnableStdoutLog();
-                }
-                else
-                {
-                    logDisableStdoutLog();
-                }
-            }
-        }
-
-        /* If the 'verboseLevel' parameter is specified... */
-        index = cmdGetParamIndex(paramList, "verboseLevel");
-        if (index != -1)
-        {
-            /* Try to change the stdout log level accordinaly */
-            if (cmdGetIntegerParamByName(paramList, "verboseLevel", 
-                                         &verboseLevel) == FAILURE)
-            {
-                msgSendReplyTo(process->sd, msg, mcsTRUE);
-                return FAILURE;
-            }
-            else
-            {
-                logSetStdoutLogLevel(verboseLevel);
-            }
-        }
-
-        /* If the 'printDate' parameter is specified... */
-        index = cmdGetParamIndex(paramList, "printDate");
-        if (index != -1)
-        {  
-            /* Try to toogle log date printing */
-            if (cmdGetLogicalParamByIndex(paramList, index, &printDate)
-                == FAILURE)
-            {
-                msgSendReplyTo(process->sd, msg, mcsTRUE);
-                return FAILURE;
-            }
-            else
-            {
-                logSetPrintDate(printDate);
-            }
-        }
-                
-        /* If the 'printFileLine' parameter is specified... */
-        index = cmdGetParamIndex(paramList, "printFileLine");
-        if (index != -1)
-        {  
-            /* Try to toogle log line printing */
-            if (cmdGetLogicalParamByIndex(paramList, index,  &printFileLine)
-                != FAILURE)
-            {
-                msgSendReplyTo(process->sd, msg, mcsTRUE);
-                return FAILURE;
-            }
-            else
-            {
-                logSetPrintFileLine(printFileLine);
-            }
-        }
-
-        /* Verify that there is no unrecognized parameter for the command */
-        if (cmdCheckUnusedParams(paramList) == FAILURE)
-        {
-            msgSendReplyTo(process->sd, msg, mcsTRUE);
+            SendReply(msg);
             return FAILURE;
         }
+        
+        // If 'stdoutLevel' parameter is specified...
+        if (debugCmd.IsDefinedStdoutLevel() == mcsTRUE)
+        {
+            // Set new level
+            mcsINT32 level;
+            debugCmd.GetStdoutLevel(&level);
+            logSetStdoutLogLevel((logLEVEL)level);
+        }
+        // End if
 
-#endif
+        // If 'logfileLevel' parameter is specified...
+        if (debugCmd.IsDefinedLogfileLevel() == mcsTRUE)
+        {
+            // Set new level
+            mcsINT32 level;
+            debugCmd.GetLogfileLevel(&level);
+            logSetFileLogLevel((logLEVEL)level);
+        }
+        // End if
+        
+        // If 'printDate' parameter is specified...
+        if (debugCmd.IsDefinedPrintDate() == mcsTRUE)
+        {
+            // Set new level
+            mcsLOGICAL flag;
+            debugCmd.GetPrintDate(&flag);
+            logSetPrintDate(flag);
+        }
+        // Endif
+        
+        // If 'printFileLine' parameter is specified...
+        if (debugCmd.IsDefinedPrintFileLine() == mcsTRUE)
+        {
+            // Set new level
+            mcsLOGICAL flag;
+            debugCmd.GetPrintFileLine(&flag);
+            logSetPrintFileLine(flag);
+        }
+        // Endif
+        
         /* Send an hand-checking message */
         msg.SetBody("OK");
-        if (SendReply(msg, mcsTRUE) == FAILURE)
-        {
-            errCloseStack();
-        }
+        SendReply(msg);
     }  
     /* If the received command is a CLOSE request... */
-    else if (strcmp(msg.GetCommand(), msgCLOSE_CMD) == 0)
+    else if (strcmp(msg.GetCommand(), msgCLOSE_CMD_NAME) == 0)
     {
-        /* Try to send an hand-checking message */
+        /* Send an hand-checking message */
         msg.SetBody("OK");
-        if (SendReply(msg, mcsTRUE) == FAILURE)
-        {
-            errCloseStack();
-        }
+        SendReply(msg);
 
-        /* Try to close the connection */
+        /* Close the connection */
         logInfo("Connection with process '%s' closed", msg.GetSender());
         msgPROCESS *sender;
         sender = _processList.GetProcess(msg.GetSender(), msg.GetSenderId());
@@ -812,14 +711,11 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         }
     }
     /* If the received command is a EXIT request... */
-    else if (strcmp(msg.GetCommand(), msgEXIT_CMD) == 0)
+    else if (strcmp(msg.GetCommand(), msgEXIT_CMD_NAME) == 0)
     {
-        /* Try to send an hand-checking message */
+        /* Send an hand-checking message */
         msg.SetBody("OK");
-        if (SendReply(msg, mcsTRUE) == FAILURE)
-        {
-            errCloseStack();
-        }
+        SendReply(msg);
         
         /* Quit msgManager process */
         logInfo("msgManager exiting...");
@@ -833,10 +729,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
                  msg.GetCommand());
 
         errAdd(msgERR_CMD_NOT_SUPPORTED,  msg.GetCommand());
-        if (SendReply(msg, mcsTRUE) == FAILURE)
-        {
-            errCloseStack();
-        }
+        SendReply(msg);
 
         return FAILURE;
     }
