@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.7 2005-02-21 19:30:05 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.8 2005-02-22 07:51:39 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/21 19:30:05  gzins
+ * Updated alxComputeMagnitudesForBrightStar and alxComputeRealMagnitudes prototypes
+ *
  * Revision 1.6  2005/02/12 15:07:14  gzins
  * Added alxGetResearchAreaSize declaration
  *
@@ -55,9 +58,10 @@ extern "C" {
  */
 typedef enum
 {
-    alxCONFIDENCE_LOW = 0,  /** Low confidence in computed value */
+    alxNO_CONFIDENCE  = -1, /** No confidence in computed value     */
+    alxCONFIDENCE_LOW,      /** Low confidence in computed value    */
     alxCONFIDENCE_MEDIUM,   /** Medium confidence in computed value */
-    alxCONFIDENCE_HIGH      /** High confidence in computed value */
+    alxCONFIDENCE_HIGH      /** High confidence in computed value   */
 } alxCONFIDENCE_INDEX;
 
 /**
