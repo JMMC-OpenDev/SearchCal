@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDate.h,v 1.4 2005-02-15 09:37:52 gzins Exp $"
+ * "@(#) $Id: miscDate.h,v 1.5 2005-02-22 10:08:15 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 09:37:52  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscDate headers
  *                        Moved mcs.h include in from miscDate.c
  *
@@ -37,8 +40,8 @@ extern "C" {
  * Pubic functions declaration
  */
  
-mcsCOMPL_STAT miscGetUtcTimeStr  (mcsBYTES32 localTime, mcsINT32 precision);
-mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
+mcsCOMPL_STAT miscGetUtcTimeStr  (mcsSTRING32 localTime, mcsINT32 precision);
+mcsCOMPL_STAT miscGetLocalTimeStr(mcsSTRING32 localTime, mcsINT32 precision);
 
 
 #ifdef __cplusplus

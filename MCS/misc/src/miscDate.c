@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/15 09:40:34  gzins
+ * Added CVS log as file modification history
+ *
  * Revision 1.9  2005/01/28 18:39:10  gzins
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
@@ -22,7 +25,7 @@
  * Contains all the 'misc' Date and Time related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.10 2005-02-15 09:40:34 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.11 2005-02-22 10:08:15 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,18 +58,20 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * This function generates the string corresponding to the current date,
  * expressed in Coordinated Universal Time (UTC), using the following format
  * YYYY-MM-DDThh:mm:ss[.ssssss], as shown in the following example :
- *    
- *     2004-06-16T16:16:48.029
- * 
+ * \code 2004-06-16T16:16:48.029 \endcode
+ *
  * The number of digits used to represent the the Nth of seconds is given by
- * the \em precision argument. The valid range of this argument is 0 to 6.
+ * the \em precision argument.
  *
  * \param utcTime character array where the resulting date is stored
- * \param precision number of digits to be used for the Nth of seconds
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \param precision number of digits to be used for the Nth of seconds. The
+ * valid range of this argument is 0 to 6.
+ * 
+ * \n
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT miscGetUtcTimeStr(mcsBYTES32 utcTime, mcsINT32 precision)
+mcsCOMPL_STAT miscGetUtcTimeStr(mcsSTRING32 utcTime, mcsINT32 precision)
 {
     struct timeval  time;
     struct tm       *timeNow;
@@ -79,25 +84,27 @@ mcsCOMPL_STAT miscGetUtcTimeStr(mcsBYTES32 utcTime, mcsINT32 precision)
     }
  
     /* Compute the UTC time from it */
-    if ((timeNow = gmtime(&time.tv_sec)) == NULL)
+    timeNow = gmtime(&time.tv_sec);
+
+    if (timeNow == NULL)
     {
         errAdd(miscERR_FUNC_CALL, "gmtime");
         return mcsFAILURE;
     }
 
-    /* Compute a string from it */
-    if (!strftime(utcTime, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow))
+    /* Format a string from it */
+    if (!strftime(utcTime, sizeof(mcsSTRING32), "%Y-%m-%dT%H:%M:%S", timeNow))
     {
         errAdd(miscERR_FUNC_CALL, "strftime");
         return mcsFAILURE;
     }
 
     /* Add milli-seconds, if requested */
-    precision=mcsMIN(precision, 6);
-
+    precision = mcsMIN(precision, 6);
+    
     if (precision > 0)
     {
-        mcsBYTES32 format, tmpBuf;
+        mcsSTRING32 format, tmpBuf;
 
         sprintf(format, "%%.%df", precision);
         sprintf(tmpBuf, format, time.tv_usec/1e6);
@@ -118,24 +125,27 @@ mcsCOMPL_STAT miscGetUtcTimeStr(mcsBYTES32 utcTime, mcsINT32 precision)
     return mcsSUCCESS;
 }
 
+
 /**
  * Format the current date and time as YYYY-MM-DDThh:mm:ss.
  *
  * This function generates the string corresponding to the current date,
  * expressed in Local Time, using the following format 
  * YYYY-MM-DDThh:mm:ss[.ssssss], as shown in the following example :
- *    
- *     2004-06-16T16:16:48.029
+ * \code 2004-06-16T16:16:48.029 \endcode 
  * 
  * The number of digits used to represent the the Nth of seconds is given by
- * the \em precision argument. The valid range of this argument is 0 to 6.
+ * the \em precision argument. 
  *
  * \param localTime character array where the resulting date is stored
- * \param precision number of digits to be used for the Nth of seconds
+ * \param precision number of digits to be used for the Nth of seconds. The
+ * valid range of this argument is 0 to 6.
  *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \n
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision)
+mcsCOMPL_STAT miscGetLocalTimeStr(mcsSTRING32 localTime, mcsINT32 precision)
 {
     struct timeval  time;
     struct tm       *timeNow;
@@ -148,25 +158,27 @@ mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision)
     }
  
     /* Compute the local time from it */
-    if ((timeNow = localtime(&time.tv_sec)) == NULL)
+    timeNow = localtime(&time.tv_sec);
+
+    if (timeNow == NULL)
     {
         errAdd(miscERR_FUNC_CALL, "gmtime");
         return mcsFAILURE;
     }
 
     /* Compute a string from it */
-    if (!strftime(localTime, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow))
+    if (!strftime(localTime, sizeof(mcsSTRING32), "%Y-%m-%dT%H:%M:%S", timeNow))
     {
         errAdd(miscERR_FUNC_CALL, "strftime");
         return mcsFAILURE;
     }
  
     /* Add milli-seconds, if requested */
-    precision=mcsMIN(precision, 6);
+    precision = mcsMIN(precision, 6);
 
     if (precision > 0)
     {
-        mcsBYTES32 format, tmpBuf;
+        mcsSTRING32 format, tmpBuf;
 
         sprintf(format, "%%.%df", precision);
         sprintf(tmpBuf, format, time.tv_usec/1e6);
