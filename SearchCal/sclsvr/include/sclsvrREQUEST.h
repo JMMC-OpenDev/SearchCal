@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.2 2005-02-16 17:06:58 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.3 2005-02-17 15:32:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/16 17:06:58  gzins
+ * Added Parse method
+ *
  * Revision 1.1  2005/02/07 14:43:41  gzins
  * Created
  *
@@ -29,6 +32,7 @@
 #include "mcs.h"
 
 #include "vobsREQUEST.h"
+#include "sclsvrGETCAL_CMD.h"
 
 /*
  * Class declaration
@@ -49,8 +53,9 @@ public:
     // Class destructor
     virtual ~sclsvrREQUEST();
 
-    // Parse command parameters 
-    virtual mcsCOMPL_STAT Parse(const char *cmdParams);
+    // Command parameters 
+    virtual mcsCOMPL_STAT Parse(const char *cmdParamLine);
+    virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine);
     
     // Baseline
     virtual mcsCOMPL_STAT SetBaseline(mcsFLOAT minLength, mcsFLOAT maxLength);
@@ -73,6 +78,9 @@ private:
     // methods, in order to hide them from the users.
     sclsvrREQUEST(const sclsvrREQUEST&);
     sclsvrREQUEST& operator=(const sclsvrREQUEST&);
+
+    // GETCAL command
+    sclsvrGETCAL_CMD *_getCalCmd;
 
     mcsFLOAT  _minBaselineLength;
     mcsFLOAT  _maxBaselineLength;
