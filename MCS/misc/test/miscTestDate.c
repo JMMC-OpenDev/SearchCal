@@ -1,19 +1,19 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscTestDate.c,v 1.5 2005-01-19 10:28:08 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  23-Jun-2004  Forked from miscTestUtils.c
-* lafrasse  22-Jul-2004  Correted some typos, code factorization, and error
-*                        management
-* lafrasse  02-Aug-2004  Changed local includes to use miscDate headers
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscTestDate.c,v 1.6 2005-02-15 09:44:37 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
+ * lafrasse  22-Jul-2004  Correted some typos, code factorization, and error
+ *                        management
+ * lafrasse  02-Aug-2004  Changed local includes to use miscDate headers
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDate.c,v 1.5 2005-01-19 10:28:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDate.c,v 1.6 2005-02-15 09:44:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,9 +55,9 @@ int main (int argc, char *argv[])
     {
         printf("   UTC Time     (precision s=%d)  = ", i);
 
-        if (miscGetUtcTimeStr(time, i) == FAILURE)
+        if (miscGetUtcTimeStr(time, i) == mcsFAILURE)
         {
-            printf("FAILURE.\n");
+            printf("mcsFAILURE.\n");
             errCloseStack();
         }
         else
@@ -73,9 +73,9 @@ int main (int argc, char *argv[])
     {
         printf("   Local Time   (precision s=%d)  = ", i);
 
-        if (miscGetLocalTimeStr(time, i) == FAILURE)
+        if (miscGetLocalTimeStr(time, i) == mcsFAILURE)
         {
-            printf("FAILURE.\n");
+            printf("mcsFAILURE.\n");
             errCloseStack();
         }
         else

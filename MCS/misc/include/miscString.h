@@ -1,19 +1,20 @@
 #ifndef miscString_H
 #define miscString_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscString.h,v 1.8 2005-02-13 11:23:28 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  02-Aug-2004  Forked from misc.h to isolate miscString headers
-*                        Moved mcs.h include in from miscString.c
-* gzins     15-Dec-2004  Added miscTrimString function
-* gzins     16-Dec-2004  Added miscDuplicateString function
-* lafrasse  17-Jan-2005  Added miscSplitString function
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscString.h,v 1.9 2005-02-15 09:37:52 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscString headers
+ *                        Moved mcs.h include in from miscString.c
+ * gzins     15-Dec-2004  Added miscTrimString function
+ * gzins     16-Dec-2004  Added miscDuplicateString function
+ * lafrasse  17-Jan-2005  Added miscSplitString function
+ *
+ ******************************************************************************/
 
 /**
  * \file

@@ -1,28 +1,28 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscTestFile.c,v 1.14 2005-01-19 10:28:08 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  23-Jun-2004  Forked from miscTestUtils.c
-* lafrasse  21-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
-*                        miscYankLastPath tests
-* lafrasse  02-Aug-2004  Changed local includes to use miscFile headers
-* lafrasse  03-Aug-2004  Changed miscResolvePath test to reveal a bug that was
-*                        causing an '\' append at the end of the computed path
-* lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
-* lafrasse  27-Sep-2004  Added miscFileExists test
-* lafrasse  28-Sep-2004  Added miscLocateFileInPath test and corrected a bug in
-*                        the miscResolvePath test
-* lafrasse  30-Sep-2004  Added miscLocateFile test
-* lafrasse  01-Oct-2004  Updated to reflect miscResolvePath API change
-* lafrasse  07-Oct-2004  Changed miscFileExists API
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscTestFile.c,v 1.15 2005-02-15 09:44:37 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
+ * lafrasse  21-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
+ *                        miscYankLastPath tests
+ * lafrasse  02-Aug-2004  Changed local includes to use miscFile headers
+ * lafrasse  03-Aug-2004  Changed miscResolvePath test to reveal a bug that was
+ *                        causing an '\' append at the end of the computed path
+ * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
+ * lafrasse  27-Sep-2004  Added miscFileExists test
+ * lafrasse  28-Sep-2004  Added miscLocateFileInPath test and corrected a bug in
+ *                        the miscResolvePath test
+ * lafrasse  30-Sep-2004  Added miscLocateFile test
+ * lafrasse  01-Oct-2004  Updated to reflect miscResolvePath API change
+ * lafrasse  07-Oct-2004  Changed miscFileExists API
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.14 2005-01-19 10:28:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.15 2005-02-15 09:44:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -205,9 +205,9 @@ int main (int argc, char *argv[])
     strcpy (fullFileName, "MCSENV");
     printf("   %-30s | ", fullFileName);
     if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
-        == FAILURE)
+        == mcsFAILURE)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -217,9 +217,9 @@ int main (int argc, char *argv[])
     strcpy (fullFileName, "HOME");
     printf("   %-30s | ", fullFileName);
     if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
-        == FAILURE)
+        == mcsFAILURE)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -229,9 +229,9 @@ int main (int argc, char *argv[])
     strcpy (fullFileName, "INTROOT");
     printf("   %-30s | ", fullFileName);
     if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
-        == FAILURE)
+        == mcsFAILURE)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -241,9 +241,9 @@ int main (int argc, char *argv[])
     strcpy (fullFileName, "MCSROOT");
     printf("   %-30s | ", fullFileName);
     if (miscGetEnvVarValue(fullFileName, fullFileName, sizeof(mcsSTRING256))
-        == FAILURE)
+        == mcsFAILURE)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -331,7 +331,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -343,7 +343,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -355,7 +355,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -367,7 +367,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -379,7 +379,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -391,7 +391,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -403,7 +403,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -415,7 +415,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -427,7 +427,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -439,7 +439,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -451,7 +451,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -463,7 +463,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else
@@ -475,7 +475,7 @@ int main (int argc, char *argv[])
     tmp = miscResolvePath(fullFileName);
     if (tmp == NULL)
     {
-        printf("FAILURE\n");
+        printf("mcsFAILURE\n");
         errCloseStack();
     }
     else

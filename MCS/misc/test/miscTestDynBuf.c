@@ -1,34 +1,35 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscTestDynBuf.c,v 1.15 2005-02-10 23:51:54 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  23-Jun-2004  Created
-* lafrasse  09-Jul-2004  Passed some polish
-* lafrasse  20-Jul-2004  Removed all '\0' from char arrays
-* lafrasse  23-Jul-2004  Added error management to
-*                        miscDynBufGetStoredBytesNumber and
-*                        miscDynBufGetAllocatedBytesNumber, plus
-*                        miscDynBufGetBytesFromTo parameter refinments
-* lafrasse  02-Aug-2004  Added miscTesDynStr code, due to null-terminated
-*                        string specific functions move from miscDynStr.h to
-*                        miscDynBuf.h
-* lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
-* lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer(),
-*                        miscDynBufGetCommentPattern(),
-*                        miscDynBufSetCommentPattern() and miscDynBufLoadFile()
-*                        functions test
-* gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
-*                        miscDynBufGetNbStoredBytes and
-*                        miscDynBufGetAllocatedBytesNumber to
-*                        miscDynBufGetNbAllocatedBytes
-* lafrasse  23-Jun-2004  Added miscDynBufSaveInFile() test
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscTestDynBuf.c,v 1.16 2005-02-15 09:44:37 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  23-Jun-2004  Created
+ * lafrasse  09-Jul-2004  Passed some polish
+ * lafrasse  20-Jul-2004  Removed all '\0' from char arrays
+ * lafrasse  23-Jul-2004  Added error management to
+ *                        miscDynBufGetStoredBytesNumber and
+ *                        miscDynBufGetAllocatedBytesNumber, plus
+ *                        miscDynBufGetBytesFromTo parameter refinments
+ * lafrasse  02-Aug-2004  Added miscTesDynStr code, due to null-terminated
+ *                        string specific functions move from miscDynStr.h to
+ *                        miscDynBuf.h
+ * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
+ * lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer(),
+ *                        miscDynBufGetCommentPattern(),
+ *                        miscDynBufSetCommentPattern() and miscDynBufLoadFile()
+ *                        functions test
+ * gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
+ *                        miscDynBufGetNbStoredBytes and
+ *                        miscDynBufGetAllocatedBytesNumber to
+ *                        miscDynBufGetNbAllocatedBytes
+ * lafrasse  23-Jun-2004  Added miscDynBufSaveInFile() test
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.15 2005-02-10 23:51:54 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.16 2005-02-15 09:44:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -993,7 +994,7 @@ int main (int argc, char *argv[])
 
 void displayExecStatus(mcsCOMPL_STAT executionStatusCode)
 {
-    if (executionStatusCode == FAILURE)
+    if (executionStatusCode == mcsFAILURE)
     {
         printf("%s\n", FAILED);
         errCloseStack();
@@ -1012,9 +1013,9 @@ void displayDynBuf(miscDYN_BUF *dynBuf)
     char*     tmp         = NULL;
 
     printf("miscDynBufGetNbStoredBytes = ");
-    if (miscDynBufGetNbStoredBytes(dynBuf, &bytesNumber) == FAILURE)
+    if (miscDynBufGetNbStoredBytes(dynBuf, &bytesNumber) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
     }
     else
     {
@@ -1022,9 +1023,9 @@ void displayDynBuf(miscDYN_BUF *dynBuf)
     }
 
     printf("miscDynBufGetNbAllocatedBytes = ");
-    if (miscDynBufGetNbAllocatedBytes(dynBuf, &bytesNumber) == FAILURE)
+    if (miscDynBufGetNbAllocatedBytes(dynBuf, &bytesNumber) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
     }
     else
     {
@@ -1035,7 +1036,7 @@ void displayDynBuf(miscDYN_BUF *dynBuf)
     tmp = (char*)miscDynBufGetCommentPattern(dynBuf);
     if (tmp == NULL)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
     }
     else
     {
@@ -1046,7 +1047,7 @@ void displayDynBuf(miscDYN_BUF *dynBuf)
     tmp = miscDynBufGetBufferPointer(dynBuf);
     if (tmp == NULL)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
     }
     else
     {

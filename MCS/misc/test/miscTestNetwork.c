@@ -1,16 +1,16 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscTestNetwork.c,v 1.3 2005-01-19 10:28:08 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  03-Aug-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscTestNetwork.c,v 1.4 2005-02-15 09:44:37 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  03-Aug-2004  Created
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.3 2005-01-19 10:28:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.4 2005-02-15 09:44:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -48,9 +48,9 @@ int main (int argc, char *argv[])
     /* Test of miscGetHostName() */
     printf("miscGetHostName() Function Test :\n\n");
     printf("miscGetHostName(NULL, 0)  = ");
-    if (miscGetHostName(NULL, 0) == FAILURE)
+    if (miscGetHostName(NULL, 0) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -59,9 +59,9 @@ int main (int argc, char *argv[])
     }
 
     printf("miscGetHostName(string, 0)  = ");
-    if (miscGetHostName(string, 0) == FAILURE)
+    if (miscGetHostName(string, 0) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -70,9 +70,9 @@ int main (int argc, char *argv[])
     }
 
     printf("miscGetHostName(string, length)  = ");
-    if (miscGetHostName(string, length) == FAILURE)
+    if (miscGetHostName(string, length) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else

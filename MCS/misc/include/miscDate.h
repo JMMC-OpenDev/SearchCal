@@ -1,17 +1,17 @@
 #ifndef miscDate_H
 #define miscDate_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscDate.h,v 1.3 2005-01-19 10:29:42 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  02-Aug-2004  Forked from misc.h to isolate miscDate headers
-*                        Moved mcs.h include in from miscDate.c
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscDate.h,v 1.4 2005-02-15 09:37:52 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscDate headers
+ *                        Moved mcs.h include in from miscDate.c
+ *
+ ******************************************************************************/
 
 /**
  * \file

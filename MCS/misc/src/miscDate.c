@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/01/28 18:39:10  gzins
+ * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
+ *
  * gzins     16-Jun-2004  Created
  * lafrasse  17-Jun-2004  Added miscGetLocalTimeStr
  * lafrasse  22-Jul-2004  Added error management
@@ -12,14 +15,14 @@
  *                        misc.h
  *                        Moved mcs.h include to miscDate.h
  *
- *----------------------------------------------------------------------------*/
+ ******************************************************************************/
 
 /**
  * \file
  * Contains all the 'misc' Date and Time related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.9 2005-01-28 18:39:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.10 2005-02-15 09:40:34 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

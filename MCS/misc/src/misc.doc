@@ -1,19 +1,19 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: misc.doc,v 1.8 2004-12-17 11:02:53 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  18-Jul-2004  Created
-* lafrasse  22-Jul-2004  Added new File functions, and passed some polish
-* lafrasse  02-Aug-2004  Removed miscDynStr due to null-terminated string
-*                        specific functions move from miscDynStr.h to
-*                        miscDynBuf.h
-* lafrasse  03-Aug-2004  Added miscNetwork stuff
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: misc.doc,v 1.9 2005-02-15 09:40:34 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  18-Jul-2004  Created
+ * lafrasse  22-Jul-2004  Added new File functions, and passed some polish
+ * lafrasse  02-Aug-2004  Removed miscDynStr due to null-terminated string
+ *                        specific functions move from miscDynStr.h to
+ *                        miscDynBuf.h
+ * lafrasse  03-Aug-2004  Added miscNetwork stuff
+ *
+ *******************************************************************************/
 
 /**
 \mainpage misc : Miscellaneous functions

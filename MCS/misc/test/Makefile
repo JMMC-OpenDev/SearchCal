@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2004-12-17 08:20:42 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2005-02-15 09:44:37 gzins Exp $"
 #
 # Makefile of misc Tests
 #
-# who       when		 what
-# --------  -----------	 -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     16-Jun-2004  created
 # lafrasse  23-Jun-2004  added miscTestDate.c
 #                        added miscTestString.c
@@ -18,7 +19,6 @@
 #                        null-terminated string specific functions move from
 #                        miscDynStr.h to miscDynBuf.h
 # lafrasse  03-Aug-2004  Added miscTestNetwork.c
-#
 #
 #*******************************************************************************
 # REMARKS
@@ -190,9 +190,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___

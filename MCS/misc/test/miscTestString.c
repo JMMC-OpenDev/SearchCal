@@ -1,19 +1,20 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscTestString.c,v 1.9 2005-01-19 10:28:08 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  23-Jun-2004  Forked from miscTestUtils.c
-* lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
-* lafrasse  02-Aug-2004  Changed local includes to use miscString headers
-* gzins     15-Dec-2004  Added test for miscTrimString function
-* lafrasse  17-Jan-2005  Added miscSplitString function
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscTestString.c,v 1.10 2005-02-15 09:44:37 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
+ * lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
+ * lafrasse  02-Aug-2004  Changed local includes to use miscString headers
+ * gzins     15-Dec-2004  Added test for miscTrimString function
+ * lafrasse  17-Jan-2005  Added miscSplitString function
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.9 2005-01-19 10:28:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.10 2005-02-15 09:44:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,9 +50,9 @@ int main (int argc, char *argv[])
     printf("miscStripQuotes() Function Test :\n\n");
     printf("   Original String  = |(null)|\n");
     printf("   Resulting String = ");
-    if (miscStripQuotes(NULL) == FAILURE)
+    if (miscStripQuotes(NULL) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -61,9 +62,9 @@ int main (int argc, char *argv[])
     strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      ");
     printf("   Original String  = |%s|\n", string);
     printf("   Resulting String = ");
-    if (miscStripQuotes(string) == FAILURE)
+    if (miscStripQuotes(string) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -77,9 +78,9 @@ int main (int argc, char *argv[])
     strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      ");
     printf("   Original String  = |%s|\n", string);
     printf("   Resulting String = ");
-    if (miscTrimString(string, " ") == FAILURE)
+    if (miscTrimString(string, " ") == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -92,9 +93,9 @@ int main (int argc, char *argv[])
     printf("miscStrToUpper() Function Test :\n\n");
     printf("   Original String  = |(null)|\n");
     printf("   Resulting String = ");
-    if (miscStrToUpper(NULL) == FAILURE)
+    if (miscStrToUpper(NULL) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -104,9 +105,9 @@ int main (int argc, char *argv[])
     strcpy ((char *)string, "Abc deF GhI jKl 012 .;/");
     printf("   Original String  = |%s|\n", string);
     printf("   Resulting String = ");
-    if (miscStrToUpper(string) == FAILURE)
+    if (miscStrToUpper(string) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -214,9 +215,9 @@ int main (int argc, char *argv[])
     printf("miscReplaceStrByStr() Function Test :\n\n");
     strcpy ((char *)string, "Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/");
     printf("   Original String  = %s\n",string);
-    if (miscReplaceChrByChr(string, 'A', 'Z') == FAILURE)
+    if (miscReplaceChrByChr(string, 'A', 'Z') == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -225,9 +226,9 @@ int main (int argc, char *argv[])
         printf("   New String  = %s\n", string);
     }
 
-    if (miscReplaceChrByChr(string, 'Z', 'A') == FAILURE)
+    if (miscReplaceChrByChr(string, 'Z', 'A') == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -244,9 +245,9 @@ int main (int argc, char *argv[])
     mcsSTRING256 subStrings[50];
     mcsUINT32    nbSubString = 0;
 
-    if (miscSplitString(NULL, ' ', NULL, 0, NULL) == FAILURE)
+    if (miscSplitString(NULL, ' ', NULL, 0, NULL) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -258,9 +259,9 @@ int main (int argc, char *argv[])
         }
     }
 
-    if (miscSplitString(string, ' ', NULL, 0, NULL) == FAILURE)
+    if (miscSplitString(string, ' ', NULL, 0, NULL) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -272,9 +273,9 @@ int main (int argc, char *argv[])
         }
     }
 
-    if (miscSplitString(string, ' ', subStrings, 0, NULL) == FAILURE)
+    if (miscSplitString(string, ' ', subStrings, 0, NULL) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -286,9 +287,9 @@ int main (int argc, char *argv[])
         }
     }
 
-    if (miscSplitString(string, ' ', subStrings, 5, NULL) == FAILURE)
+    if (miscSplitString(string, ' ', subStrings, 5, NULL) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -300,9 +301,9 @@ int main (int argc, char *argv[])
         }
     }
 
-    if (miscSplitString(string, ' ', subStrings, 5, &nbSubString) == FAILURE)
+    if (miscSplitString(string, ' ', subStrings, 5, &nbSubString) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else
@@ -314,9 +315,9 @@ int main (int argc, char *argv[])
         }
     }
 
-    if (miscSplitString(string, ' ', subStrings, 10, &nbSubString) == FAILURE)
+    if (miscSplitString(string, ' ', subStrings, 10, &nbSubString) == mcsFAILURE)
     {
-        printf("FAILURE.\n");
+        printf("mcsFAILURE.\n");
         errCloseStack();
     }
     else

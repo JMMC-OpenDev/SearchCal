@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2004-12-17 08:17:55 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.13 2005-02-15 09:40:34 gzins Exp $"
 #
 # Makefile of misc Library
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # lafrasse  24-Jun-2004  Created
 # lafrasse  01-Jul-2004  Added miscDynBuf.h
 # lafrasse  13-Jul-2004  Added miscDynStr.h
@@ -18,7 +19,6 @@
 # lafrasse  10-Aug-2004  Removed miscPrivate. installation
 # gzins     09-Nov-2004  Added miscLocateFile compilation directives 
 # gzins     17-Dec-2004  Added miscHash
-#
 #
 #*******************************************************************************
 # REMARKS
@@ -166,9 +166,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___

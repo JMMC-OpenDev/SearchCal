@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscTestHash.c,v 1.1 2004-12-17 08:20:19 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     16-Dec-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscTestHash.c,v 1.2 2005-02-15 09:44:37 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     16-Dec-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Test program for hash table management functions.
  */
 
-static char *rcsId="@(#) $Id: miscTestHash.c,v 1.1 2004-12-17 08:20:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestHash.c,v 1.2 2005-02-15 09:44:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -67,11 +67,11 @@ int main (int argc, char *argv[])
     miscHASH_TABLE hashTable;
     char *dataPtr;
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         /* Error handling if necessary */
 
-        /* Exit from the application with FAILURE */
+        /* Exit from the application with mcsFAILURE */
         exit (EXIT_FAILURE);
     }
 
@@ -85,7 +85,7 @@ int main (int argc, char *argv[])
         printf("   %-10s added\n", data[i]);
         dataPtr = miscDuplicateString(data[i]);
         if (miscHashAddElement(&hashTable, data[i],
-                               (void **)&dataPtr, mcsTRUE)== FAILURE)
+                               (void **)&dataPtr, mcsTRUE)== mcsFAILURE)
         {
             errCloseStack();
             exit (EXIT_FAILURE);
@@ -103,7 +103,7 @@ int main (int argc, char *argv[])
     /* Test of miscHashDeleteElement function */
     printf("\nmiscHashDeleteElement() Function Test :\n");
     printf("  %-10s deleted\n", data[3]); 
-    if (miscHashDeleteElement(&hashTable, data[3])== FAILURE)
+    if (miscHashDeleteElement(&hashTable, data[3])== mcsFAILURE)
     {
         errCloseStack();
         exit (EXIT_FAILURE);
@@ -129,7 +129,7 @@ int main (int argc, char *argv[])
     /* Close MCS services */
     mcsExit();
     
-    /* Exit from the application with SUCCESS */
+    /* Exit from the application with mcsSUCCESS */
     exit (EXIT_SUCCESS);
 }
 
