@@ -1,49 +1,50 @@
 /*******************************************************************************
-* JMMC project
-* 
-* "@(#) $Id: miscDynBuf.c,v 1.21 2005-01-17 16:21:38 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  05-Jul-2004  Created
-* lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
-* lafrasse  12-Jul-2004  Code factorization and error codes polishing
-* lafrasse  19-Jul-2004  Corrected some bugs ('from = to' parameters)
-* lafrasse  20-Jul-2004  Used 'memmove()' instead of temporary buffers
-* lafrasse  22-Jul-2004  Removed all '\0' from char arrays
-*                        Corrected a bug in miscDynBufAlloc that could cause a
-*                        Segmentation fault when bytes were already allocated
-* lafrasse  23-Jul-2004  Added error management to
-*                        miscDynBufGetNbStoredBytes and
-*                        miscDynBufGetNbAllocatedBytes, plus
-*                        miscDynBufGetBytesFromTo parameter refinments and
-*                        error code factorization
-* lafrasse  02-Aug-2004  Moved mcs.h include to miscDynBuf.h
-*                        Moved in null-terminated string specific functions
-*                        from miscDynStr.c
-* lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
-* lafrasse  30-Sep-2004  Added MEM_DEALLOC_FAILURE error management, and
-*                        corrected to memory allocation bug in miscDynBufAlloc,
-*                        miscDynBufStrip, miscDynBufReplaceBytesFromTo and
-*                        miscDynBufAppenBytes
-* lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer() and
-*                        miscDynBufLoadFile() function, plus the code to
-*                        correctly initialize the new commentPattern field in
-*                        miscDynBufInit() and miscDynBufGetCommentPattern() and
-*                        miscDynBufSetCommentPattern() to deal with this field
-* gzins     16-Nov-2004  Added miscDynBufVerifyIsInitialized() and update
-*                        miscDynBufInit() to inconditionaly initialize
-*                        the dynamic buffer.
-* lafrasse  03-Dec-2004  Added error management code to miscDynBufLoadFile()
-* gzins     07-Dec-2004  Closed open file in miscDynBufLoadFile
-* gzins     14-Dec-2004  Renamed miscERR_MEM_FAILURE to miscERR_ALLOC
-* scetre    21-Dec-2004  Added '\0' at the end of buffer in miscDynBufLoadFile
-* gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
-*                        miscDynBufGetNbStoredBytes and
-*                        miscDynBufGetAllocatedBytesNumber to
-*                        miscDynBufGetNbAllocatedBytes
-*
-*******************************************************************************/
+ * JMMC project
+ * 
+ * "@(#) $Id: miscDynBuf.c,v 1.22 2005-01-28 17:56:46 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  05-Jul-2004  Created
+ * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
+ * lafrasse  12-Jul-2004  Code factorization and error codes polishing
+ * lafrasse  19-Jul-2004  Corrected some bugs ('from = to' parameters)
+ * lafrasse  20-Jul-2004  Used 'memmove()' instead of temporary buffers
+ * lafrasse  22-Jul-2004  Removed all '\0' from char arrays
+ *                        Corrected a bug in miscDynBufAlloc that could cause a
+ *                        Segmentation fault when bytes were already allocated
+ * lafrasse  23-Jul-2004  Added error management to
+ *                        miscDynBufGetNbStoredBytes and
+ *                        miscDynBufGetNbAllocatedBytes, plus
+ *                        miscDynBufGetBytesFromTo parameter refinments and
+ *                        error code factorization
+ * lafrasse  02-Aug-2004  Moved mcs.h include to miscDynBuf.h
+ *                        Moved in null-terminated string specific functions
+ *                        from miscDynStr.c
+ * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
+ * lafrasse  30-Sep-2004  Added MEM_DEALLOC_FAILURE error management, and
+ *                        corrected to memory allocation bug in miscDynBufAlloc,
+ *                        miscDynBufStrip, miscDynBufReplaceBytesFromTo and
+ *                        miscDynBufAppenBytes
+ * lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer() and
+ *                        miscDynBufLoadFile() function, plus the code to
+ *                        correctly initialize the new commentPattern field in
+ *                        miscDynBufInit() and miscDynBufGetCommentPattern() and
+ *                        miscDynBufSetCommentPattern() to deal with this field
+ * gzins     16-Nov-2004  Added miscDynBufVerifyIsInitialized() and update
+ *                        miscDynBufInit() to inconditionaly initialize
+ *                        the dynamic buffer.
+ * lafrasse  03-Dec-2004  Added error management code to miscDynBufLoadFile()
+ * gzins     07-Dec-2004  Closed open file in miscDynBufLoadFile
+ * gzins     14-Dec-2004  Renamed miscERR_MEM_FAILURE to miscERR_ALLOC
+ * scetre    21-Dec-2004  Added '\0' at the end of buffer in miscDynBufLoadFile
+ * gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
+ *                        miscDynBufGetNbStoredBytes and
+ *                        miscDynBufGetAllocatedBytesNumber to
+ *                        miscDynBufGetNbAllocatedBytes
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -87,7 +88,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.21 2005-01-17 16:21:38 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.22 2005-01-28 17:56:46 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -152,7 +153,7 @@ static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
 static        mcsCOMPL_STAT miscDynBufVerifyIsInitialized(
-                                             miscDYN_BUF        *dynBuf)
+                                             const miscDYN_BUF        *dynBuf)
 {
     /* Test the 'dynBuf' parameter validity... */
     if (dynBuf == NULL)
@@ -167,7 +168,8 @@ static        mcsCOMPL_STAT miscDynBufVerifyIsInitialized(
     if (dynBuf->thisPointer != dynBuf
         || dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
     {
-        return (miscDynBufInit(dynBuf));
+        errAdd(miscERR_STRUCT_NOT_INIT, "miscDYN_BUF");
+        return (FAILURE);
     }
 
     return SUCCESS;
@@ -604,7 +606,7 @@ mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(
  *
  * \return a pointer to a Dynamic Buffer buffer, or NULL if an error occured
  */
-char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf)
+char*         miscDynBufGetBufferPointer    (const miscDYN_BUF       *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
     if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
