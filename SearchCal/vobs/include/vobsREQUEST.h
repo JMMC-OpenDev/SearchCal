@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.15 2005-02-11 14:08:08 gluck Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.16 2005-02-11 14:44:11 gluck Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/02/11 14:08:08  gluck
+* Changed max number of selected object type: mcsUINT32 -> mcsINT32
+*
 * Revision 1.14  2005/02/07 19:35:05  gzins
 * Changed RA, DEC and band type as well as prototypes of the related methods
 *
@@ -98,9 +101,9 @@ public:
     virtual mcsFLOAT GetMaxDeltaMag(void) const;
     
     // Set and get maximum number of selected objects
-    virtual mcsCOMPL_STAT SetMaxNbOfSelectedObjects(const mcsUINT32 
+    virtual mcsCOMPL_STAT SetMaxNbOfSelectedObjects(const mcsINT32 
                                            maxNbOfSelectedObjects);
-    virtual mcsUINT32 GetMaxNbOfSelectedObjects(void) const;
+    virtual mcsINT32 GetMaxNbOfSelectedObjects(void) const;
     
     // Display request containt (constraints)
     virtual mcsCOMPL_STAT Display(void);
