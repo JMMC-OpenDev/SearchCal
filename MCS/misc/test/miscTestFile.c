@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.9 2004-09-30 15:11:36 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.10 2004-10-01 08:59:09 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -16,11 +16,12 @@
 * lafrasse  28-Sep-2004  Added miscLocateFileInPath test and corrected a bug in
 *                        the miscResolvePath test
 * lafrasse  30-Sep-2004  Added miscLocateFile test
+* lafrasse  01-Oct-2004  Updated to reflect miscResolvePath API change
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.9 2004-09-30 15:11:36 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.10 2004-10-01 08:59:09 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -375,7 +376,8 @@ int main (int argc, char *argv[])
     printf("   ---------------------------------------------------------\n");
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -387,7 +389,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "/tmp/../p/.data/");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -399,7 +402,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "~/../p/.data/fileName.txt");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -411,7 +415,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "~/../p/.data/");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -423,7 +428,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "$INTROOT/data/fileName.txt");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -435,7 +441,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "$INTROOT/data/");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -447,7 +454,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "/data/$INTROOT/data/fileName.txt");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -459,7 +467,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "/data/$INTROOT/data/fileName.txt");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -471,7 +480,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "$MCSROOT/$INTROOT/data/");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -483,7 +493,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "/data/$MCSROOT/$INTROOT/data/fileName.txt");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -495,7 +506,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "/data/$MCSROOT/$INTROOT/data/");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -507,7 +519,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "~/data/$MCSROOT/$INTROOT/data/fileName.txt");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();
@@ -519,7 +532,8 @@ int main (int argc, char *argv[])
     }
     strcpy (fullFileName, "~/data/$MCSROOT/$INTROOT/data/");
     printf("Unresolved Path = \"%s\"\n", fullFileName);
-    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    tmp = miscResolvePath(fullFileName);
+    if (tmp == NULL)
     {
         printf("FAILURE\n");
         errDisplayStack();

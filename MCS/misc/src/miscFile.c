@@ -23,6 +23,7 @@
 *                        miscResolvePath use of misFileExists, and refined the
 *                        doxygen documentation
 * lafrasse  30-Sep-2004  Added miscLocateFile
+* lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -32,7 +33,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.15 2004-09-30 15:11:36 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.16 2004-10-01 08:59:09 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -270,7 +271,7 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
 }
 
 /**
- * Give back a resolved path of entries that may be environment variables and in
+ * Return a resolved path of entries that may be environment variables and in
  * direct reference to HOME.
  *
  * The function can resolve "~/$MY_VAR/MY_DIR/file", "~<user>/MY_DIR" or
@@ -282,28 +283,25 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
  * will be deallocated on the next call !
  * No space is allowed in the input path name.\n\n
  *
- * \param orginalPath a null-terminated string containing an unresolved path
- * \param resolvedPath a null-terminated string containing the resolved path
+ * \param unresolvedPath a null-terminated string pointer to the path to be
+ * resolved
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return a pointer to the resolved path, or NULL
  */
-mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
+char*         miscResolvePath    (const char *unresolvedPath)
 {
     static miscDYN_BUF  builtPath;
-    char                *nextSlashPtr, *leftToBeResolvedPathPtr;
-    char                *nullTerm = "\0";
-    mcsSTRING256        tmpPath, tmpEnvVarPtr;
+    mcsSTRING256        tmpPath, tmpEnvVar;
     mcsINT32            length;
 
     /* Try to reset the static Dynamic Buffer */
     if (miscDynBufReset(&builtPath) == FAILURE)
     {
-        return FAILURE;
+        return NULL;
     }
 
-    *resolvedPath = NULL;
-    leftToBeResolvedPathPtr = (char *)orginalPath;
-    nextSlashPtr = strchr(leftToBeResolvedPathPtr, '/');
+    char *leftToBeResolvedPathPtr  = (char*)unresolvedPath;
+    char *nextSlashPtr             = strchr(leftToBeResolvedPathPtr, '/');
     do
     {
         if (*leftToBeResolvedPathPtr == '$')
@@ -320,20 +318,20 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
             if (strncpy(tmpPath, (leftToBeResolvedPathPtr + 1), length) == NULL)
             {
                 errAdd(miscERR_FUNC_CALL, "strncpy");
-                return FAILURE;
+                return NULL;
             }
 
             *(tmpPath + length) = '\0';
 
-            if (miscGetEnvVarValue(tmpPath, tmpEnvVarPtr, sizeof(mcsSTRING256))
+            if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
                 == FAILURE)
             {
-                return FAILURE;
+                return NULL;
             }
 
-            if (miscDynBufAppendString(&builtPath, tmpEnvVarPtr) == FAILURE)
+            if (miscDynBufAppendString(&builtPath, tmpEnvVar) == FAILURE)
             {
-                return FAILURE;
+                return NULL;
             }
         }
         else if (*leftToBeResolvedPathPtr == '~')
@@ -342,18 +340,18 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
             if (memcpy(tmpPath, "HOME", 5) == NULL)
             {
                 errAdd(miscERR_MEM_FAILURE);
-                return FAILURE;
+                return NULL;
             }
 
-            if (miscGetEnvVarValue(tmpPath, tmpEnvVarPtr, sizeof(mcsSTRING256))
+            if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
                 == FAILURE)
             {
-                return FAILURE;
+                return NULL;
             }
 
-            if (miscDynBufAppendString(&builtPath, tmpEnvVarPtr) == FAILURE)
+            if (miscDynBufAppendString(&builtPath, tmpEnvVar) == FAILURE)
             {
-                return FAILURE;
+                return NULL;
             }
         }
         else
@@ -370,20 +368,20 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
             if (strncpy(tmpPath, leftToBeResolvedPathPtr, length) == NULL)
             {
                 errAdd(miscERR_FUNC_CALL, "strncpy");
-                return FAILURE;
+                return NULL;
             }
 
             *(tmpPath + length) = '\0';
 
             if (miscDynBufAppendString(&builtPath, tmpPath) == FAILURE)
             {
-                return FAILURE;
+                return NULL;
             }
         }
 
         if (miscDynBufAppendString(&builtPath, "/") == FAILURE)
         {
-            return FAILURE;
+            return NULL;
         }
 
         if (nextSlashPtr != NULL)
@@ -399,14 +397,14 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
         }
         else
         {
-            leftToBeResolvedPathPtr = nullTerm;
+            leftToBeResolvedPathPtr = "\0";
         }
 
         if (*leftToBeResolvedPathPtr == ':')
         {
             if (miscDynBufAppendString(&builtPath, ":") == FAILURE)
             {
-                return FAILURE;
+                return NULL;
             }
 
             leftToBeResolvedPathPtr++;
@@ -422,14 +420,14 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
     mcsUINT32 builtPathLength = 0;
     if (miscDynBufGetStoredBytesNumber(&builtPath, &builtPathLength) == FAILURE)
     {
-        return FAILURE;
+        return NULL;
     }
 
     /* Try to get Dynamic Buffer internal buffer pointer */
     char *endingChar = NULL;
     if ((endingChar = miscDynBufGetBufferPointer(&builtPath)) == NULL)
     {
-        return FAILURE;
+        return NULL;
     }
     
     /* Compute the last path character position */
@@ -448,16 +446,10 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
     /* Try to strip the Dynamic Buffer */
     if (miscDynBufStrip(&builtPath) == FAILURE)
     {
-        return FAILURE;
+        return NULL;
     }
     
-    /* Try to get Dynamic Buffer internal buffer pointer */
-    if ((*resolvedPath = miscDynBufGetBufferPointer(&builtPath)) == NULL)
-    {
-        return FAILURE;
-    }
-
-    return SUCCESS;
+    return miscDynBufGetBufferPointer(&builtPath);
 }
 
 /**
@@ -543,8 +535,8 @@ mcsCOMPL_STAT miscFileExists     (const char *fullPath)
     }
 
     /* Try to resolve any Env. Var contained in the given path */
-    char* resolvedPath =  NULL;
-    if (miscResolvePath(fullPath, &resolvedPath) == FAILURE)
+    char* resolvedPath =  miscResolvePath(fullPath);
+    if ( resolvedPath == NULL)
     {
         return FAILURE;
     }
@@ -628,12 +620,12 @@ char*         miscLocateFileInPath(const char *path, const char *fileName)
      * For each path part, until all of them were tested or a valid path was
      * found
      */
-    char* validPath = NULL;
+    char *validPath = NULL;
     do
     {
         /* Compute the length of the current path part */
         int pathPartLength = 0;
-        char* colonPtr = strchr(path, ':');
+        char *colonPtr = strchr(path, ':');
         if (colonPtr == NULL)
         {
             pathPartLength = strlen(path);
@@ -715,8 +707,8 @@ char*         miscLocateFile     (const char *fileName)
      */
     int i = 0;
     int extensionComparisonResult = 0;
-    char* currentListExtension = NULL;
-    char* currentListPath = NULL;
+    char *currentListExtension = NULL;
+    char *currentListPath = NULL;
     do
     {
         /* Compare the file extension with the current one in the path list */

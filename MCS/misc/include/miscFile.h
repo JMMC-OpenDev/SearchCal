@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscFile.h,v 1.6 2004-09-30 15:11:36 lafrasse Exp $"
+* "@(#) $Id: miscFile.h,v 1.7 2004-10-01 08:59:09 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -13,6 +13,7 @@
 * lafrasse  25-Sep-2004  Added miscFileExists
 * lafrasse  27-Sep-2004  Added miscLocateFileInPath
 * lafrasse  30-Sep-2004  Added miscLocateFile
+* lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
 *
 *
 *******************************************************************************/
@@ -44,7 +45,7 @@ extern "C" {
 char *        miscGetFileName    (char *fullPath);
 char *        miscGetExtension   (char *fullPath);
 mcsCOMPL_STAT miscYankExtension  (char *fullPath, char *extension);
-mcsCOMPL_STAT miscResolvePath    (const char *orginalPath, char **resolvedPath);
+char*         miscResolvePath    (const char *orginalPath);
 mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
                                   char *envVarValueBuffer,
                                   mcsUINT32 envVarValueBufferLength);
