@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.1 2004-11-19 18:51:11 scetre Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.2 2004-11-22 14:46:00 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -68,6 +68,18 @@
  * 
  */
 #include "msgMESSAGE.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <string>
+#include <arpa/inet.h>
+
+
+const int MAXHOSTNAME = 200;
+const int MAXCONNECTIONS = 5;
+const int MAXRECV = 500;
 
 class msgSOCKET
 {
@@ -79,14 +91,33 @@ public:
     // Brief description of the destructor
     virtual ~msgSOCKET();
     
-    virtual mcsINT32 GetSocketId();
+    virtual mcsINT32 GetDescriptor(void);
+    virtual mcsCOMPL_STAT SetDescriptor(mcsINT32 descrip);
+    
+    // Server Initialisation
+    virtual mcsCOMPL_STAT Create(void);
+    virtual mcsCOMPL_STAT Bind(const mcsINT32 port);
+    virtual mcsCOMPL_STAT Listen(void);
+    virtual mcsCOMPL_STAT Accept(msgSOCKET &socket) const;
+    
+    // Client initialization
+    virtual mcsCOMPL_STAT Connect(const std::string host,
+                                  const mcsINT32 port);
+
+    // Data Transmission
+    // String
+    virtual mcsCOMPL_STAT Send(const std::string s) const;
+    virtual mcsCOMPL_STAT Receive(std::string&) const;
+
+    virtual mcsCOMPL_STAT IsValid(void);
+
     virtual mcsCOMPL_STAT Open(unsigned short     *portNumberPt,
                                int                socketType);
-    virtual mcsCOMPL_STAT Close();
-
+    virtual mcsCOMPL_STAT Close(void);
+    // msgMESSAGE
     virtual mcsCOMPL_STAT Send(msgMESSAGE &msg);
-    virtual mcsCOMPL_STAT Receive(msgMESSAGE         &msg,
-                                  mcsINT32           timeoutInMs);
+    virtual mcsCOMPL_STAT Receive(msgMESSAGE &msg,
+                                  mcsINT32 timeoutInMs);
 protected:
 
     
@@ -96,7 +127,8 @@ private:
      msgSOCKET(const msgSOCKET&);
      msgSOCKET& operator=(const msgSOCKET&);
 
-    mcsINT32 _socketId;
+    mcsINT32 _descriptor;
+    sockaddr_in _address;
 };
 
 
