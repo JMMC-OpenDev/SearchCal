@@ -1,22 +1,82 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsTestRequest.cpp,v 1.2 2005-02-04 08:06:44 scetre Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    26-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsTestRequest.cpp,v 1.3 2005-02-07 17:28:34 gluck Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.2 2005-02-04 08:06:44 scetre Exp $"; 
+/**
+ * \file
+ * Test program for vobsREQUEST class.
+ *
+ * \synopsis
+ * vobsTestRequest [\e \<param1\> ... \e \<paramN\>] 
+ *                     [\e \<option1\> ... \e \<optionN\>] 
+ *
+ * \param param1 : description of parameter 1, if it exists
+ * \param paramN : description of parameter N, if it exists
+ *
+ * \n
+ * \opt
+ * \optname option1 : description of option 1, if it exists
+ * \optname optionN : description of option N, if it exists
+ * 
+ * \n
+ * \details
+ * OPTIONAL detailed description of the c main file follows here.
+ * 
+ * \usedfiles
+ * OPTIONAL. If files are used, for each one, name, and usage description.
+ * \filename fileName1 :  usage description of fileName1
+ * \filename fileName2 :  usage description of fileName2
+ *
+ * \n
+ * \env
+ * OPTIONAL. If needed, environmental variables accessed by the program. For
+ * each variable, name, and usage description, as below.
+ * \envvar envVar1 :  usage description of envVar1
+ * \envvar envVar2 :  usage description of envVar2
+ * 
+ * \n
+ * \warning OPTIONAL. Warning if any (software requirements, ...)
+ *
+ * \n
+ * \ex
+ * OPTIONAL. Command example if needed
+ * \n Brief example description.
+ * \code
+ * Insert your command example here
+ * \endcode
+ *
+ * \sa OPTIONAL. See also section, in which you can refer other documented
+ * entities. Doxygen will create the link automatically.
+ * \sa <entity to refer>
+ * 
+ * \bug OPTIONAL. Known bugs list if it exists.
+ * \bug Bug 1 : bug 1 description
+ *
+ * \todo OPTIONAL. Things to forsee list, if needed. 
+ * \todo Action 1 : action 1 description
+ * 
+ */
+
+static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.3 2005-02-07 17:28:34 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
  */
+#include <stdlib.h>
 #include <iostream>
+
+/**
+ * \namespace std
+ * Export standard iostream objects (cin, cout,...).
+ */
 using namespace std;
 
 
@@ -26,48 +86,129 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "evh.h"
+
 
 /*
  * Local Headers 
  */
-#include "vobsREQUEST.h"
+#include "vobs.h"
 #include "vobsPrivate.h"
 
 
+/*
+ * Local Variables
+ */
+
+ 
+
+/* 
+ * Signal catching functions  
+ */
+
+
+
+/* 
+ * Main
+ */
+
 int main(int argc, char *argv[])
 {
-    mcsInit(argv[0]);
+    // Initialize MCS services
+    if (mcsInit(argv[0]) == FAILURE)
+    {
+        // Error handling if necessary
+        
+        // Exit from the application with FAILURE
+        exit (EXIT_FAILURE);
+    }
 
+    // Set stdout Log level
+    logSetStdoutLogLevel(logDEBUG);
 
-    logInfo("Starting ...");
+    logInfo("Starting...");
+    
+    // Set a task
+    evhTASK task;
+
+    // Parse command line
+    if (task.Init(argc, argv) == mcsFAILURE)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+//     request.SetConstraint(STAR_NAME_ID, "ETA TAU");
+//     request.SetConstraint(RA_ID, "02+12+52.3");
+//     request.SetConstraint(DEC_ID, "+06+04+36.2");
+//     request.SetConstraint(STAR_MAGNITUDE_ID, "2.50");
+//     request.SetConstraint(OBSERVED_BAND_ID, "N");
+//     request.SetConstraint(SEARCH_BOX_RA_ID, "15");
+//     request.SetConstraint(SEARCH_BOX_DEC_ID, "5");
+//     request.SetConstraint(STAR_WLEN_ID, "2.20");
+//     request.SetConstraint(STAR_EXPECTED_VIS_ID, "2");
+//     request.SetConstraint(STAR_MAX_ERR_VIS_ID, "0.00032");
 
     vobsREQUEST request;
-    logTest("request brefore building : ");
-    // Display the request to see if the element of the class are correctly
-    // initialized
- 
-    // Set element of the class
-    request.SetConstraint(STAR_NAME_ID,"ETA TAU");
-    request.SetConstraint(RA_ID,"02+12+52.3");
-    request.SetConstraint(DEC_ID,"+06+04+36.2");
-    request.SetConstraint(STAR_WLEN_ID,"2.20");
-    request.SetConstraint(STAR_MAGNITUDE_ID,"2.50");
-    request.SetConstraint(MIN_MAGNITUDE_RANGE_ID,"1");
-    request.SetConstraint(MAX_MAGNITUDE_RANGE_ID,"5");
-    request.SetConstraint(SEARCH_BOX_RA_ID,"1800");
-    request.SetConstraint(SEARCH_BOX_DEC_ID,"300");
-    request.SetConstraint(STAR_EXPECTED_VIS_ID,"2");
-    request.SetConstraint(STAR_MAX_ERR_VIS_ID,"0.00032");
-    request.SetConstraint(OBSERVED_BAND_ID,"K");
-    request.SetConstraint(BASEMIN_ID,"46");
-    request.SetConstraint(BASEMAX_ID,"100");
+//     string _objectName;
+//     mcsFLOAT _objectRa;
+//     mcsFLOAT _objectDec;
+//     mcsFLOAT _objectMag;
+//     char _searchBand;
+//     mcsFLOAT _deltaRa;
+//     mcsFLOAT _deltaDec;
+//     mcsFLOAT _minDeltaMag;
+//     mcsFLOAT _maxDeltaMag;
+//     mcsUINT32 _maxNbOfSelectedObjects;
     
-        
+    // Display initial request
+    logDebug("-------------------------------------------------");
+    logDebug("-> Initial request() ...");
+    request.Display();
     
+    // Set request
+    logDebug("-------------------------------------------------");
+    logDebug("-> Test of set() methods ...");
+    request.SetObjectName("ETA TAU");
+    request.SetObjectRa(36.2);
+    request.SetObjectDec(21.4);
+    request.SetObjectMag(1.3);
+    request.SetSearchBand('M');
+    request.SetDeltaRa(12);
+    request.SetDeltaDec(8);
+    request.SetMinDeltaMag(0.4);
+    request.SetMaxDeltaMag(0.2);
+    request.SetMaxNbOfSelectedObjects(14);
+
+    // Display affected request
+    logDebug("-------------------------------------------------");
+    logDebug("-> Affected request() ...");
+    request.Display();
+
+    // Set request
+    logDebug("-------------------------------------------------");
+    logDebug("-> Test of get() methods ...");
+    logDebug("Get object name = %s", request.GetObjectName());
+    logDebug("Get ra = %f", request.GetObjectRa());
+    logDebug("Get dec = %f", request.GetObjectDec());
+    logDebug("Get Mag = %f", request.GetObjectMag());
+    logDebug("Get search band = %c", request.GetSearchBand());
+    logDebug("Get delta ra = %f", request.GetDeltaRa());
+    logDebug("Get delta dec = %f", request.GetDeltaDec());
+    logDebug("Get min delta mag = %f", request.GetMinDeltaMag());
+    logDebug("Get max delta mag = %f", request.GetMaxDeltaMag());
+    logDebug("Get max nb of selected object = %i", 
+             request.GetMaxNbOfSelectedObjects());
+
+    // Logs errors and resets the global error structure
+    errCloseStack();
     
-    errDisplayStack();
     logInfo("Exiting ...");
-    exit(EXIT_SUCCESS);    
+    
+    // Close MCS services
+    mcsExit();
+    
+    // Exit from the application with SUCCESS
+    exit (EXIT_SUCCESS);
 }
 
 
