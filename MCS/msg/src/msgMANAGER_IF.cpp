@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.10 2004-12-06 05:49:59 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.11 2004-12-07 07:44:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,8 @@
 * lafrasse  03-Dec-2004  Added mcs environment name management
 * gzins     05-Dec-2004  Updated according to new msgMCS_ENV class API
 * gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
-*
+* gzins     07-Dec-2004  Updated according to the new msgMCS_ENVS class
+*                        Fixed bug related to error handling in Connect
 *
 *******************************************************************************/
 
@@ -26,7 +27,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.10 2004-12-06 05:49:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.11 2004-12-07 07:44:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -116,11 +117,25 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
         return FAILURE;
     }
 
+    // Get the host name on which environment is running
+    msgMCS_ENVS mcsEnvs;
+    const char *envHostName;
+    envHostName = mcsEnvs.GetHostName();
+    if (envHostName == NULL)
+    {
+        return FAILURE;
+    }
+    // Check the environment is local
+    if (strcmp(localHostName, envHostName) != 0)
+    {
+        errAdd (msgERR_REMOTE_ENV, mcsGetEnvName(), envHostName);
+        return FAILURE;
+    }
+   
     // If an environment is defined
     mcsINT32 envPortNumber;
     if (strcmp (mcsGetEnvName(), mcsUNKNOWN_ENV) != 0)
     {
-        msgMCS_ENVS mcsEnvs;
         // Get the host name on which environment is running
         const char *envHostName;
         envHostName = mcsEnvs.GetHostName();
@@ -164,19 +179,18 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     for(;;) 
     {
         // Connect to msgManager
-        _socket.Open(localHostName, envPortNumber);
-        if (_socket.IsConnected() == mcsFALSE)
+        if (_socket.Open(localHostName, envPortNumber) == FAILURE)
         {
             // If no more retry possible
             if (--nbRetry <= 0)
             { 
-                errAdd(msgERR_CONNECT, strerror(errno));
                 return FAILURE; 
             }
             else
             {
                 logWarning("Cannot connect to 'msgManager'. Trying again...");
                 sleep(1);
+                errResetStack();
                 _socket.Close();
             }
         }
