@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.1 2005-02-11 14:14:31 gluck Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.2 2005-02-13 15:58:08 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/11 14:14:31  gluck
+ * Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of vobsLOCAL_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.1 2005-02-11 14:14:31 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.2 2005-02-13 15:58:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -64,9 +67,9 @@ vobsLOCAL_CATALOG::~vobsLOCAL_CATALOG()
  */
 
 /**
- * Search for star list in MIDI catalog.
+ * Search for star list in catalog.
  *
- * Build star list from MIDI catalog, where each list star verifies constraints
+ * Build star list from catalog, where each list star verifies constraints
  * specified by user request.
  *
  * \param request user request specifying search contraints
@@ -81,15 +84,15 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Search(vobsREQUEST &request,
     logExtDbg("vobsLOCAL_CATALOG::Search()");
 
     //
-    // Load MIDI catalog in star list
-    // ------------------------------
+    // Load catalog in star list
+    // -------------------------
     if (Load() == mcsFAILURE)
     {
         // Add error with specifying the catalog name
         errAdd(vobsERR_CATALOG_LOAD, GetName());
         return mcsFAILURE;
     }
-    logTest("MIDI catalog is correctly loaded in a star list");
+    logTest("Catalog is correctly loaded in a star list");
     
     //
     // Build reference (science) object
@@ -203,19 +206,19 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Search(vobsREQUEST &request,
     }
 
     //
-    // Select MIDI catalog stars which verifies constraints
-    // ----------------------------------------------------
+    // Select catalog stars which verifies constraints
+    // -----------------------------------------------
 
     for (mcsUINT32 i=0; i<_starList.Size(); i++)
     {
-        // Get MIDI catalog star
+        // Get catalog star
         vobsSTAR *midiCatalogStarPtr;
         midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL)(i==0));
-        // Compare MIDI catalog star with reference star
+        // Compare catalog star with reference star
         if (midiCatalogStarPtr->IsSame(referenceStar, &constraintlist) == 
                                                                         mcsTRUE)
         {
-            // If Compare MIDI catalog star verifies constraint list then add it
+            // If Compare catalog star verifies constraint list then add it
             // to the resulting list
             list.AddAtTail(*midiCatalogStarPtr);
         }
@@ -230,9 +233,9 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Search(vobsREQUEST &request,
  */
 
 /**
- * Load MIDI catalog.
+ * Load catalog.
  *
- * Build star list from MIDI catalog stars.
+ * Build star list from catalog stars.
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -242,9 +245,9 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load()
     logExtDbg("vobsLOCAL_CATALOG::Load()");
     
     //
-    // Load MIDI catalog into a buffer
-    // -------------------------------
-    logDebug("Load MIDI catalog ...");
+    // Load catalog into a buffer
+    // --------------------------
+    logDebug("Load catalog ...");
 
     // Catalog has already been loaded
     if (_loaded == mcsTRUE)
@@ -255,160 +258,20 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load()
     // Catalog has not already been loaded
     
     // Search for file location
-    const char *catalogFileNamePtr;
-    catalogFileNamePtr = miscLocateFile(_filename);
-    if (catalogFileNamePtr == NULL)
+    const char *catalogFileName;
+    catalogFileName = miscLocateFile(_filename);
+    if (catalogFileName == NULL)
     {
         return mcsFAILURE;
     }
 
-    // Resolve environment variables (if any)
-    catalogFileNamePtr = miscResolvePath(catalogFileNamePtr);
-    if (catalogFileNamePtr == NULL)
+    // Load catalog file 
+    if (_starList.Load(catalogFileName, mcsFALSE, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
-    }
-    
-    // Init buffer to load catalog file
-    miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
-
-    // Load catalog file except comment lines beginning by '#'
-    if (miscDynBufLoadFile(&dynBuf, catalogFileNamePtr, "#") == mcsFAILURE)
-    {
-        miscDynBufDestroy(&dynBuf);
-        return mcsFAILURE;
-    }
-
-    
-    //
-    // Load CDATA structure with MIDI stars
-    // ------------------------------------
-    logDebug("Load CDATA structure ...");
-
-    // Create an object CDATA to transfer MIDI catalog from the dynamic
-    // buffer
-    vobsCDATA cDataStructure;
-    
-    // Set the catalog name
-    cDataStructure.SetCatalogName(GetName());
-
-    // Set line to skip to -1 because in the CDATA AppendLines method, number of
-    // lines to skip is increased of 1, because there is an empty line between
-    // each data line (due to \n to \0 conversion). The CDATA AppendLines method
-    // will have to be changed for this reason.
-    cDataStructure.SetNbLinesToSkip(-1);
-
-    // For each dynamic buffer line
-    int  lineNb = 1;
-    char *line = NULL;
-    // While it's not the end of file
-    while ((line = miscDynBufGetNextLine(&dynBuf, line, mcsTRUE)) != NULL)
-    {
-        // Trim leading and trailing spaces from the line
-        miscTrimString (line, " ");
-        
-        // If line is not empty
-        if (strlen(line) != 0)
-        {
-            if (lineNb == 1)
-            {
-                // It's the first line: UCD name line
-                // Parse UCD name line and strore them in an array
-                mcsSTRING256 ucdNameArray[25];
-                mcsUINT32 nbOfUcdName;
-                if (miscSplitString(line, '\t', ucdNameArray, 
-                                    25, &nbOfUcdName) == mcsFAILURE)
-                {
-                    errAdd(vobsERR_INVALID_PARSING_UCD_FORMAT);
-                    
-                    miscDynBufDestroy(&dynBuf);
-                    return mcsFAILURE;
-                }
-                // For each UCD name stored in the array
-                logDebug("\t-> Add UCD name to CDATA structure ...");
-                logDebug("\t\tNumber of UCD name = %i", nbOfUcdName);
-                for (mcsUINT32 i=0; i<nbOfUcdName; i++)
-                {
-                    // add UCD name to CDATA structure
-                    logDebug("\t\t%d- %s\n", i, ucdNameArray[i]);
-                    if (cDataStructure.AddUcdName(ucdNameArray[i]) == 
-                                                                    mcsFAILURE)
-                    {
-                        // Do not raise an error because the method returns
-                        // always SUCCESS
-                        return mcsFAILURE;
-                    }
-                }
-            }
-            else if (lineNb == 2)
-            {
-                // It's the second line: parameter name line
-                // Parse parameter name line and strore them in an array
-                mcsSTRING256 paramNameArray[25];
-                mcsUINT32 nbOfParamName;
-                if (miscSplitString(line, '\t', paramNameArray, 
-                                    25, &nbOfParamName) == mcsFAILURE)
-                {
-                    errAdd(vobsERR_INVALID_PARSING_UCD_FORMAT);
-
-                    miscDynBufDestroy(&dynBuf);
-                    return mcsFAILURE;
-                }
-                // For each parameter description stored in the array
-                logDebug("\t-> Add parameter name to CDATA structure ...");
-                logDebug("\t\tNumber of parameter name = %i", \
-                         nbOfParamName);
-                for (mcsUINT32 i=0; i<nbOfParamName; i++)
-                {
-                    // add parameter name to CDATA structure
-                    logDebug("\t\t%d- %s\n", i, paramNameArray[i]);
-                    if (cDataStructure.AddParamName(paramNameArray[i]) == 
-                        mcsFAILURE)
-                    {
-                        // Do not raise an error because the method returns
-                        // always SUCCESS
-                        return mcsFAILURE;
-                    }
-                }
-            }
-            else
-            {
-                // It's neither the first line the second one: CDATA line
-                if (cDataStructure.AppendLines(line) == mcsFAILURE)
-                {
-                    errAdd(vobsERR_APPEND_LINE_FAILED, line);
-                    return mcsFAILURE;
-                }
-            }
-            
-            /* Next line */
-            lineNb++;
-       }
-    }
-    
-    // Return to 0 line to skip (see previous explanation)
-    cDataStructure.SetNbLinesToSkip(0);    
-    
-    // Destroy dynamic buffer
-    miscDynBufDestroy(&dynBuf);
-
-    //
-    // Parse CDATA and set star list
-    // -----------------------------
-    logDebug("Parse CDATA and build star list ...");
-    
-    // Create a parser to parse CDATA
-    vobsPARSER parser;
-    // Parse CDATA
-    if (parser.ParseCData(&cDataStructure, _starList) == mcsFAILURE)
-    {
-        errAdd(vobsERR_PARSE_CDATA);
     }
 
     return mcsSUCCESS;
 }
-
-
 
 /*___oOo___*/
