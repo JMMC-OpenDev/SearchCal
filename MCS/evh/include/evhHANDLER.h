@@ -3,13 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.h,v 1.3 2004-11-23 09:12:27 gzins Exp $"
+* "@(#) $Id: evhHANDLER.h,v 1.4 2004-12-22 08:59:09 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created based on VLT SW
 * gzins     23-Nov-2004  Used new msg C++ library.
-*
+* gzins     22-Dec-2004  Added GetHelp()
 *
 *******************************************************************************/
 
@@ -66,6 +66,8 @@ public:
     virtual mcsCOMPL_STAT Run(const evhIOSTREAM_KEY &key, int fd);
     virtual evhCALLBACK_LIST *Find(const evhKEY &key);
     virtual evhKEY *Select();
+
+    virtual mcsCOMPL_STAT GetHelp(msgMESSAGE &msg);
 protected:
 
 private:
