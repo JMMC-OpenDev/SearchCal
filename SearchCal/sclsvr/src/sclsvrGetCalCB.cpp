@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.11 2005-02-13 16:08:09 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.12 2005-02-14 14:13:41 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/02/13 16:08:09  gzins
+ * Changed Min/MaxDeltaMag to Min/MaxRangeMag
+ *
  * Revision 1.10  2005/02/08 20:55:50  gzins
  * Removed display of resulting star list
  *
@@ -34,7 +37,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.11 2005-02-13 16:08:09 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.12 2005-02-14 14:13:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -275,12 +278,11 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     // Pack the list result in a buffer in order to send it
     if (calibratorList.Size() != 0)
     { 
-        miscDYN_BUF dynBuff;
-        miscDynBufInit(&dynBuff);
+        miscoDYN_BUF dynBuff;
 
         calibratorList.Pack(&dynBuff);
-
-        msg.SetBody(miscDynBufGetBuffer(&dynBuff));
+        
+        msg.SetBody(dynBuff.GetBuffer());
     }
     else
     {
