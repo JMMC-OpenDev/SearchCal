@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.16 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.17 2004-11-23 12:32:10 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.16 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.17 2004-11-23 12:32:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,6 +59,7 @@ using namespace std;
  */
 vobsCATALOG::vobsCATALOG()
 {
+    miscDynBufInit(&_asking);
     strcpy(_name,"");
 }
 
@@ -235,6 +236,8 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST &request)
     logExtDbg("vobsCATALOG::PrepareAsking()");
     
         
+    miscDynBufReset(&_asking);
+
     if ((WriteAskingURI()==FAILURE) ||
         (WriteAskingPosition(request)==FAILURE) ||
         (WriteAskingSpecificParameters(request)==FAILURE) )
@@ -265,6 +268,7 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmp
 {
     logExtDbg("vobsCATALOG::PrepareAsking()");
     
+    miscDynBufReset(&_asking);
     if ( (WriteAskingURI()==FAILURE) ||
          (WriteAskingConstant()==FAILURE) ||
          (WriteAskingSpecificParameters()==FAILURE) ||
@@ -293,7 +297,7 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmp
  */
 mcsCOMPL_STAT vobsCATALOG::WriteAskingURI(void)
 {
-    logExtDbg("vobsCATALOG::GetAskingURI()");
+    logExtDbg("vobsCATALOG::WriteAskingURI()");
 
     if ((miscDynBufAppendString(&_asking, "http://vizier.u-strasbg.fr/viz-bin/")==FAILURE) ||
         (miscDynBufAppendString(&_asking, "asu-xml?-source=")==FAILURE) ||
