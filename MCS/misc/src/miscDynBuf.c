@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.18 2004-12-17 08:13:29 gzins Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.19 2004-12-21 15:30:41 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -37,6 +37,7 @@
 * lafrasse  03-Dec-2004  Added error management code to miscDynBufLoadFile()
 * gzins     07-Dec-2004  Closed open file in miscDynBufLoadFile
 * gzins     14-Dec-2004  Renamed miscERR_MEM_FAILURE to miscERR_ALLOC
+* scetre    21-Dec-2004  Added '\0' at the end of buffer in miscDynBufLoadFile
 *
 *******************************************************************************/
 
@@ -82,7 +83,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.18 2004-12-17 08:13:29 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.19 2004-12-21 15:30:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -957,7 +958,7 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
     /* Update the Dynamic Buffer internal counters */
     dynBuf->storedBytes = fileSize;
 
-    
+    miscDynBufAppendString(dynBuf, "\0");
     if (miscReplaceChrByChr(dynBuf->dynBuf, '\n', '\0') == FAILURE)
     {
         return FAILURE;
