@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.7 2005-01-27 15:56:04 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.8 2005-02-07 17:36:53 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/01/27 15:56:04  scetre
+* scenario became a friend class of scenario entry to be able to access private members
+*
 * Revision 1.6  2005/01/27 13:44:04  scetre
 * remove vobsSCENARIO_ENTRY class
 *
@@ -26,7 +29,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.7 2005-01-27 15:56:04 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.8 2005-02-07 17:36:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -127,6 +130,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                                     vobsSTAR_LIST &starList)
 {
     logExtDbg("vobsSCENARIO::Execute()");
+   printf("starList.size begin= %d\n", starList.Size());
     
     // Create a temporary list of star in xhich will be store the lst input
     vobsSTAR_LIST tempList;
@@ -155,6 +159,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         {
             tempList.Copy(*(*_entryIterator)._listInput);
         }
+        printf("tmpListSize = %d\n", tempList.Size());
         
         // start research in entry's catalog
         if (((*_entryIterator)._catalog)->Search(request,
@@ -248,6 +253,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
     {
         return mcsFAILURE;
     }
+   printf("starList.size = %d\n", starList.Size());
     
     return mcsSUCCESS;
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.2 2005-01-27 15:56:04 scetre Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.3 2005-02-07 17:36:53 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/27 15:56:04  scetre
+ * scenario became a friend class of scenario entry to be able to access private members
+ *
  * Revision 1.1  2005/01/27 13:42:54  scetre
  * vobsSCENARIO_ENTRY created. It move from vobsSCENARIO
  *
@@ -16,7 +19,7 @@
  *  Definition of vobsSCENARIO_ENTRY class.
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.2 2005-01-27 15:56:04 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.3 2005-02-07 17:36:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -43,6 +46,7 @@ using namespace std;
  */
 vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY()
 {
+    
 }
 
 /**
@@ -76,6 +80,8 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(vobsCATALOG                 *catalog,
  */
 vobsSCENARIO_ENTRY::~vobsSCENARIO_ENTRY()
 {
+    _listInput=NULL;
+    _listOutput=NULL;
 }
 
 /*
