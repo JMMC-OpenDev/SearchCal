@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.3 2004-11-22 15:24:05 scetre Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.4 2004-11-22 15:55:08 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -71,11 +71,9 @@ public:
     
     virtual mcsINT32 GetDescriptor(void);
    
-    // Initialisation
-    virtual mcsCOMPL_STAT Open(unsigned short     *portNumberPt,
-                               int                socketType);
     virtual mcsCOMPL_STAT Close(void);
     
+    // Server initialisation
     virtual mcsCOMPL_STAT Create(void);
     virtual mcsCOMPL_STAT Bind(const mcsINT32 port);
     virtual mcsCOMPL_STAT Listen(void);
@@ -96,7 +94,7 @@ public:
 
     virtual mcsCOMPL_STAT IsValid(void);
     
-    protected:
+protected:
 
     
 private:
