@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.h,v 1.5 2004-12-22 09:00:04 gzins Exp $"
+* "@(#) $Id: evhSERVER.h,v 1.6 2005-01-07 18:10:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,14 +12,14 @@
 *                        Added SendReply method
 * gzins     03-Dec-2004  Added SendCommand
 * gzins     22-Dec-2004  Added HelpCB()
+* gzins     07-Jan-2005  Remove SendCommand(); moved to evhINTERFACE 
 *
 *******************************************************************************/
 
 /**
  * \file
- * evhSERVER class declaration.
+ * Declaration of the evhSERVER class.
  */
-
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
@@ -101,11 +101,7 @@ public:
     // Main loop
     virtual mcsCOMPL_STAT MainLoop(msgMESSAGE *msg=NULL);
 
-    // Send command/reply
-    virtual mcsCOMPL_STAT SendCommand(const char        *command,
-                                      const mcsPROCNAME  destProc,
-                                      const char        *paramList=NULL,  
-                                      mcsINT32           paramsLen=0);
+    // Send reply
     virtual mcsCOMPL_STAT SendReply(msgMESSAGE &msg, 
                                     mcsLOGICAL lastReply=mcsTRUE);
 
