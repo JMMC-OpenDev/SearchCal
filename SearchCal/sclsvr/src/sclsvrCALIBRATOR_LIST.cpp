@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.30 2005-02-17 09:24:24 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.31 2005-02-17 15:31:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2005/02/17 09:24:24  scetre
+ * updated Delete method
+ *
  * Revision 1.29  2005/02/16 17:34:23  gzins
  * Changed prototype for Unpack; used const char* instead of miscoDYN_BUF
  *
@@ -71,7 +74,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.30 2005-02-17 09:24:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.31 2005-02-17 15:31:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -696,19 +699,37 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
 /**
  * Save the elements (calibrators) of the list in a file.
  *
+ * If given, the request is placed in the file, as a comment line.
+ *
  * \param filename the file where to save
  * \param extendedFormat if true, each property is saved with its attributes
  * (origin and confidence index), otherwise only property is saved.
+ * \param request request used to get this list 
  *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
-                                          mcsLOGICAL extendedFormat)
+                                          mcsLOGICAL extendedFormat,
+                                          sclsvrREQUEST *request)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::Save()");
 
-    // Store list into the CDATA
     vobsCDATA cData;
+
+    // Place request into the file (if given)
+    if (request != NULL)
+    {
+        mcsSTRING1024 cmdParamLine;
+        if (request->GetCmdParamLine(cmdParamLine) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        cData.AppendString("# ");
+        cData.AppendString(cmdParamLine);
+        cData.AppendString("\n");
+    }
+
+    // Store list into the CDATA
     sclsvrCALIBRATOR  calibrator;
     if (cData.Store(calibrator, *this, extendedFormat) == mcsFAILURE)
     {
@@ -739,7 +760,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
                                           mcsLOGICAL extendedFormat,
-                                          const char *origin)
+                                          sclsvrREQUEST *request)
 {
     logExtDbg("vobsSTAR_LIST::Load()");
 
@@ -750,19 +771,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
         return mcsFAILURE;
     }
 
-    // Set origin (if needed)
-    if (extendedFormat == mcsFALSE)
-    {
-        if (origin == NULL)
-        {
-            cData.SetCatalogName(filename);
-        }
-        else
-        {
-            cData.SetCatalogName(origin);
-        }
-    }
-        
     // Extract list from the CDATA
     sclsvrCALIBRATOR calibrator;
     if (cData.Extract(calibrator, *this, extendedFormat) == mcsFAILURE)
@@ -770,6 +778,34 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
         return mcsFAILURE;
     }
     
+    // Retrieve request from the file (if given)
+    if (request != NULL)
+    {
+        // Get the first comment line
+        mcsSTRING1024 cmdParamLine;
+        if (cData.GetNextLine(NULL, cmdParamLine, mcsFALSE) == NULL)
+        {
+            return mcsFAILURE;
+        }
+        
+        // It should be a comment line 
+        if (cmdParamLine[0] == '#')
+        {
+            // Remove hash sign
+            miscTrimString(cmdParamLine, "# ");
+        }
+        else
+        {
+            errAdd(sclsvrERR_NO_REQUEST_LINE, filename);
+            return mcsFAILURE;
+        }
+
+        if (request->Parse(cmdParamLine) == mcsFAILURE)
+        {
+            errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename, cmdParamLine);
+            return mcsFAILURE;
+        }
+    }
     return mcsSUCCESS;
 }
 

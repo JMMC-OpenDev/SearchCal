@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.16 2005-02-16 17:34:23 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.17 2005-02-17 15:31:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/02/16 17:34:23  gzins
+ * Changed prototype for Unpack; used const char* instead of miscoDYN_BUF
+ *
  * Revision 1.15  2005/02/14 14:12:46  scetre
  * Added Load and Save methods
  * change miscDYN_BUF to miscoDYN_BUF in pack and unpack methods
@@ -95,11 +98,12 @@ public:
     virtual mcsCOMPL_STAT Delete(unsigned int starNumber);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
-                               mcsLOGICAL extendedFormat);
+                               mcsLOGICAL extendedFormat=mcsFALSE,
+                               sclsvrREQUEST *request=NULL);
 
     virtual mcsCOMPL_STAT Load(const char *filename,
-                               mcsLOGICAL extendedFormat,
-                               const char *origin);
+                               mcsLOGICAL extendedFormat=mcsFALSE,
+                               sclsvrREQUEST *request=NULL);
 
 protected:
 
