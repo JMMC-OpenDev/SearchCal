@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-main.template,v 1.10 2004-09-09 09:16:35 gluck Exp $"
+#%# "@(#) $Id: c-main.template,v 1.11 2004-09-13 06:19:32 gluck Exp $"
 #%# 
 #%# Template for C main file          
 #%# 
@@ -33,7 +33,7 @@
  * brief description of the program, which ends at this dot.
  *
  * \synopsis
- * \b \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
+ * \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
  *                     [\e \<option1\> ... \e \<optionN\>] 
  *
  * \param param1 : description of parameter 1, if it exists
