@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDynBuf.c,v 1.14 2005-02-10 10:08:07 lafrasse Exp $"
+* "@(#) $Id: miscTestDynBuf.c,v 1.15 2005-02-10 23:51:54 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -28,7 +28,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.14 2005-02-10 10:08:07 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.15 2005-02-10 23:51:54 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -324,7 +324,7 @@ int main (int argc, char *argv[])
     printf("\n");
 
     position = 7;
-    byte = 'D';
+    byte = 'B';
     executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
     displayExecStatus(executionStatusCode);
