@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.16 2005-02-02 14:24:17 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.17 2005-02-04 15:30:43 gzins Exp $"
 *
 * History
 * -------
@@ -30,33 +30,22 @@
  * Constants definition
  */
 
-#define sclsvrCALIBRATOR_PROP_NOT_SET  "-"  /**< Default value of the empty
-                                          properties */
-
-/*
- * Type definition
- */
-
-typedef mcsSTRING32 sclsvrCALIBRATOR_PROPERTY;
-
-
-/*
- * Definition of the calibrators properties
- */
-#define sclsvrCALIBRATOR_ANGULAR_DIAMETER       "ANGULAR_DIAMETER"
-#define sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR "ANGULAR_DIAMETER_ERROR"
-#define sclsvrCALIBRATOR_MO                     "MO"
-#define sclsvrCALIBRATOR_LO                     "LO"
-#define sclsvrCALIBRATOR_KO                     "KO"
-#define sclsvrCALIBRATOR_HO                     "HO"
-#define sclsvrCALIBRATOR_JO                     "JO"
-#define sclsvrCALIBRATOR_IO                     "IO"
-#define sclsvrCALIBRATOR_RO                     "RO"
-#define sclsvrCALIBRATOR_VO                     "VO"
-#define sclsvrCALIBRATOR_BO                     "BO"
-#define sclsvrCALIBRATOR_MULTIPLICITY           "MULTIPLICITY"
-#define sclsvrCALIBRATOR_VISIBILITY             "VISIBILITY"
-#define sclsvrCALIBRATOR_VISIBILITY_ERROR       "VISIBILITY_ERROR"
+/* Definition of the calibrators properties */
+#define sclsvrCALIBRATOR_MO                 "MO"
+#define sclsvrCALIBRATOR_LO                 "LO"
+#define sclsvrCALIBRATOR_KO                 "KO"
+#define sclsvrCALIBRATOR_HO                 "HO"
+#define sclsvrCALIBRATOR_JO                 "JO"
+#define sclsvrCALIBRATOR_IO                 "IO"
+#define sclsvrCALIBRATOR_RO                 "RO"
+#define sclsvrCALIBRATOR_VO                 "VO"
+#define sclsvrCALIBRATOR_BO                 "BO"
+#define sclsvrCALIBRATOR_VIS                "VIS"
+#define sclsvrCALIBRATOR_VIS_ERROR          "VIS_ERROR"
+#define sclsvrCALIBRATOR_VIS_FLAG           "VIS_FLAG"
+#define sclsvrCALIBRATOR_ANGULAR_DIAM       "ANGULAR_DIAM"
+#define sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR "ANGULAR_DIAM_ERROR"
+#define sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG  "ANGULAR_DIAM_FLAG"
 
 /*
  * Class declaration
@@ -86,7 +75,6 @@ public:
 protected:
     
 private:
-        
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);
 
@@ -97,10 +85,6 @@ private:
     mcsCOMPL_STAT ComputeAngularDiameter();
     mcsCOMPL_STAT ComputeVisibility(vobsREQUEST request);
     mcsCOMPL_STAT ComputeMultiplicity(); 
-
-    mcsLOGICAL _coherentDiameter;
-    mcsLOGICAL _correctVisibility;
-    
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/

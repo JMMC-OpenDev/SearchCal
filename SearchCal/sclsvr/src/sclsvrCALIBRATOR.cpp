@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.19 2005-01-31 13:33:54 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.20 2005-02-04 15:27:40 gzins Exp $"
  *
  * History
  * -------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.19 2005-01-31 13:33:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.20 2005-02-04 15:27:40 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -98,26 +98,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
         miscDynBufAppendString(buffer, "\t");        
     }
     
-    // Write in the buffer diam OK if the diameter is coherent, else diamNOK
-    if (_coherentDiameter == mcsTRUE)
-    {
-        miscDynBufAppendString(buffer,"diamOK\t");
-    }
-    else 
-    {
-        miscDynBufAppendString(buffer,"diamNOK\t");        
-    }
-
-    // Write in the buffer visOK if visibility is ok, else visNOK
-    if (_correctVisibility == mcsTRUE)
-    {
-        miscDynBufAppendString(buffer,"visOK\t");
-    }
-    else 
-    {
-        miscDynBufAppendString(buffer,"visNOK\t");        
-    }
-
     return mcsSUCCESS;
 }
 
@@ -132,13 +112,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
 { 
     logExtDbg("sclsvrCALIBRATOR::UnPack()");
     char *parsingString=NULL;
-    // initialized the buffer which will contain the calibrator
+
+    // Initialise the buffer which will contain the calibrator
     miscDYN_BUF localBuffer;
     miscDynBufInit(&localBuffer);
+
     // Copy the calibrator in the local buffer
     miscDynBufAppendString(&localBuffer, calibratorString);
-    // parse the buffer
-    parsingString = (char *) strtok (miscDynBufGetBuffer(&localBuffer), "\t");
+
+    // Parse the buffer
+    parsingString = (char *) strtok(miscDynBufGetBuffer(&localBuffer), "\t");
     
     for (_propertyOrderIterator = _propertyOrder.begin();
          _propertyOrderIterator != _propertyOrder.end();
@@ -146,27 +129,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
     {
         _propertyList[(*_propertyOrderIterator).second].SetValue(parsingString);
 
-        parsingString = (char *) strtok (NULL, "\t");
+        parsingString = (char *) strtok(NULL, "\t");
 
     }
     
-    if (strcmp(parsingString, "diamOK") == 0)
-    {
-        _coherentDiameter = mcsTRUE;
-    }
-    else
-    {
-        _coherentDiameter = mcsFALSE;
-    }
-    parsingString = (char *) strtok (NULL, "\t");
-    if (strcmp(parsingString, "visOK") == 0)
-    {
-        _correctVisibility = mcsTRUE;
-    }
-    else
-    {
-        _correctVisibility = mcsFALSE;
-    }
     miscDynBufDestroy(&localBuffer);
 
     return mcsSUCCESS;
@@ -178,7 +144,28 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
  */
 mcsLOGICAL sclsvrCALIBRATOR::HadCoherentDiameter()
 {
-    return _coherentDiameter;
+    // If diameter has not been computed
+    if (IsPropertySet(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG) == mcsFALSE)
+    {
+        // Return false
+        return mcsFALSE;
+    }
+    // Else
+    else
+    {
+        // Get the flag, and test it
+        const char *flag;
+        flag = GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG);
+        if (strcmp(flag, "OK") == 0)
+        {
+            return mcsTRUE;
+        }
+        else
+        {
+            return mcsFALSE;
+        }
+    }
+    // End if
 }
 
 /**
@@ -186,7 +173,28 @@ mcsLOGICAL sclsvrCALIBRATOR::HadCoherentDiameter()
  */
 mcsLOGICAL sclsvrCALIBRATOR::VisibilityOk()
 {
-    return _correctVisibility;
+    // If visibility has not been computed
+    if (IsPropertySet(sclsvrCALIBRATOR_VIS_FLAG) == mcsFALSE)
+    {
+        // Return false
+        return mcsFALSE;
+    }
+    // Else
+    else
+    {
+        // Get the flag, and test it
+        const char *flag;
+        flag = GetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG);
+        if (strcmp(flag, "OK") == 0)
+        {
+            return mcsTRUE;
+        }
+        else
+        {
+            return mcsFALSE;
+        }
+    }
+    // End if
 }
 
 /**
@@ -200,55 +208,71 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
 {
     logExtDbg("sclsvrCALIBRATOR::Complete()");
     
-    _coherentDiameter = mcsFALSE;
-    _correctVisibility = mcsFALSE;
+    // Get the observed band
+    mcsSTRING16 band;
+    if (request.GetConstraint(OBSERVED_BAND_ID, band) ==  mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     // Compute Galactic coordinates
     if (ComputeGalacticCoordinates() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    // Compute Interstellar extinction
-    if (ComputeInterstellarAbsorption() == mcsFAILURE)
+    
+    // If it is not the scenario for N band
+    if (strcmp(band, "N") != 0)
     {
-        return mcsFAILURE;
-    }
-    // Compute Missing Magnitude
-    if (ComputeMissingMagnitude() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Compute Angular Diameter
-    if (ComputeAngularDiameter() != mcsFAILURE)
-    {
-        // Compute visibility and visibility error
-        if (ComputeVisibility(request) != mcsFAILURE)
+        // If paralax of the star if known
+        if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
         {
-            // Get computed visibility
-            mcsFLOAT computedVisibility;
-            if (IsPropertySet(sclsvrCALIBRATOR_VISIBILITY) == 
-                mcsTRUE)
-            {
-                GetPropertyValue(sclsvrCALIBRATOR_VISIBILITY,
-                                 &computedVisibility);
-            }
-            else
+            // Compute Interstellar extinction
+            if (ComputeInterstellarAbsorption() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
-            // Get wanted visibility
-            mcsFLOAT requestedVisibility;
-            if (request.GetConstraint(STAR_EXPECTED_VIS_ID,
-                                      &requestedVisibility)
+
+            // Compute Missing Magnitude
+            if (ComputeMissingMagnitude() == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // Compute Angular Diameter
+            if (ComputeAngularDiameter() != mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+    }
+
+    // Compute visibility and visibility error
+    if (ComputeVisibility(request) != mcsFAILURE)
+    {
+        // If visibility has been computed
+        mcsFLOAT computedVis;
+        if (IsPropertySet(sclsvrCALIBRATOR_VIS) == mcsTRUE)
+        {
+            // Get computed visibility
+            GetPropertyValue(sclsvrCALIBRATOR_VIS, &computedVis);
+
+            // Get requested visibility
+            mcsFLOAT requestedVis;
+            if (request.GetConstraint(STAR_EXPECTED_VIS_ID, &requestedVis)
                 == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
-            // check if the compute visibility is inferior to 
-            // the wanted visibility
-            if (computedVisibility >= requestedVisibility)
+            // Check if the computed visibility is greater than the
+            // requested one, and the flag accordingly
+            if (computedVis < requestedVis)
             {
-                _correctVisibility = mcsTRUE;    
+                SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "NOK");
+            }
+            else
+            {
+                SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "OK");
             }
         }
     }
@@ -258,7 +282,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
     {
         return mcsFAILURE;
     } // end multiplicity
-
 
     return mcsSUCCESS;
 }
@@ -276,7 +299,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeMissingMagnitude()");
-    vobsCONFIDENCE_INDEX confidenceIndex;
+    alxCONFIDENCE_INDEX confidenceIndex;
 
     mcsFLOAT mgB, mgV, mgR, mgI, mgJ, mgH, mgK, mgL, mgM;
     mcsSTRING32 spType;
@@ -329,17 +352,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
     }
     
     // run alx function to compute magnitude
-    if (alxComputeMagnitudesForBrightStar(spType,
-                                   mgB,
-                                   mgV,
-                                   &mgR,
-                                   &mgI,
-                                   &mgJ,
-                                   &mgH,
-                                   &mgK,
-                                   &mgL,
-                                   &mgM,
-                                   (alxCONFIDENCE_INDEX*)&confidenceIndex) == mcsFAILURE)
+    if (alxComputeMagnitudesForBrightStar(spType, mgB, mgV, &mgR, &mgI, &mgJ,
+                                          &mgH, &mgK, &mgL, &mgM,
+                                          &confidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -402,24 +417,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
     }
     
     // Run alxComputeGalacticCoordinates() from alx library
-    if (alxComputeGalacticCoordinates(ra, dec, &gLat, &gLon)
-        == mcsFAILURE)
+    if (alxComputeGalacticCoordinates(ra, dec, &gLat, &gLon) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
-    // If the galactic lattitude is not yet affected
-    // Write the new value in the compute value table
-    if (IsPropertySet(vobsSTAR_POS_GAL_LAT) != mcsTRUE)
-    {
-        SetPropertyValue(vobsSTAR_POS_GAL_LAT, gLat, mcsTRUE);
-    }
-    // If the galactic longitude is not yet affected
-    // Write the new value in the compute value table
-    if (IsPropertySet(vobsSTAR_POS_GAL_LON) != mcsTRUE)
-    {
-        SetPropertyValue(vobsSTAR_POS_GAL_LON, gLon, mcsTRUE);
-    }
+    // Set the galactic lattitude (if not yet set)
+    SetPropertyValue(vobsSTAR_POS_GAL_LAT, gLat, mcsTRUE);
+
+    // Set the galactic longitude (if not yet set)
+    SetPropertyValue(vobsSTAR_POS_GAL_LON, gLon, mcsTRUE);
 
     return mcsSUCCESS;
 }
@@ -506,18 +513,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
 
     // Run alx function to compute corrected magnitude
-    if (alxComputeRealMagnitudes(paralax,
-                                gLat,
-                                gLon,
-                                &mgM,
-                                &mgL,
-                                &mgK,
-                                &mgH,
-                                &mgJ,
-                                &mgI,
-                                &mgR,
-                                &mgV,
-                                &mgB) == mcsFAILURE)
+    if (alxComputeRealMagnitudes(paralax, gLat, gLon, &mgM, &mgL, &mgK, &mgH,
+                                 &mgJ, &mgI, &mgR, &mgV, &mgB) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -571,10 +568,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeAngularDiameter()");
-    mcsFLOAT angularDiameter, angularDiameterError;
+    mcsFLOAT diam, diamError;
     mcsFLOAT mgB, mgV, mgR, mgK;
     mcsFLOAT starProperty[4];
-    vobsCONFIDENCE_INDEX confidenceIndex;
+    alxCONFIDENCE_INDEX confidenceIndex;
     
     char *starPropertyId[4] = 
     {
@@ -603,31 +600,30 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     mgR=starProperty[2];
     mgK=starProperty[3];
      
-    if (alxComputeAngularDiameter(mgB,
-                                  mgV,
-                                  mgR,
-                                  mgK,
-                                  &angularDiameter,
-                                  &angularDiameterError,
-                                  (alxCONFIDENCE_INDEX*)&confidenceIndex) == mcsFAILURE)
+    if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK,
+                                  &diam,
+                                  &diamError,
+                                  &confidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // if confidence index is bad, return FAILURE
-    if (confidenceIndex == vobsCONFIDENCE_VERY_LOW)
-    {
-        return mcsFAILURE;
-    }
     // Set compute value of the angular diameter
-    SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER,
-                     angularDiameter,
+    SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM, diam,
                      mcsTRUE, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR,
-                     angularDiameterError,
+    SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR, diamError,
                      mcsTRUE, confidenceIndex);
-    _coherentDiameter = mcsTRUE;
-    
+   
+    // Set flag according to the confidence index 
+    if (confidenceIndex == alxCONFIDENCE_LOW)
+    {
+         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "NOK");
+    }
+    else
+    {
+         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "OK");
+    }
+   
     return mcsSUCCESS;
 }
 /**
@@ -638,55 +634,50 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeVisibility()");
-    mcsFLOAT angularDiameter, angularDiameterError;
+    mcsFLOAT diam, diamError;
     mcsFLOAT baseMax, wavelength;
-    mcsFLOAT visibility, visibility2, visibilityError, visibilityError2;
+    mcsFLOAT vis, vis2, visErr, vis2Err;
 
-    // Get value of the angular diameter and the error on it
-    if (IsPropertySet(sclsvrCALIBRATOR_ANGULAR_DIAMETER) == mcsTRUE)
+    // Get object diameter. First look at the diameter coming from catalog, and
+    // if not found used the computed diameter.
+    if (IsPropertySet(vobsSTAR_EXTENSION_DIAM) == mcsTRUE)
     {
-        GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER,
-                    &angularDiameter);
+        GetPropertyValue(vobsSTAR_EXTENSION_DIAM, &diam);
+        GetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, &diamError);
     }
     else
     {
-        logWarning("can't compute visibility because angular diameter not set");
-        return mcsFAILURE;
+        if (IsPropertySet(sclsvrCALIBRATOR_ANGULAR_DIAM) == mcsTRUE)
+        {
+            GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM, &diam);
+            GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR, &diamError);
+        }
+        else
+        {
+            // If diameter is not available, do not compute visibility
+            logWarning("Coul not compute visibility, no diameter available");
+            return mcsSUCCESS;
+        }
     }
 
-    if (IsPropertySet(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR) == mcsTRUE)
-    {
-        GetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR,
-                    &angularDiameterError);
-    }
-    else
-    {
-        logWarning("can't compute visibility because angular diameter error not set");
-        return mcsFAILURE;
-    }
-        
     // Get value in request of the wavelength
     request.GetConstraint(STAR_WLEN_ID, &wavelength);
     // get value in request of the base max
     request.GetConstraint(BASEMAX_ID, &baseMax);
     
-    if (alxComputeVisibility(angularDiameter,
-                             angularDiameterError,
-                             baseMax,
-                             wavelength,
-                             &visibility,
-                             &visibility2,
-                             &visibilityError,
-                             &visibilityError2)==mcsFAILURE)
+    if (alxComputeVisibility(diam, diamError, baseMax, wavelength,
+                             &vis, &vis2, &visErr, &vis2Err)==mcsFAILURE)
     {
         return mcsFAILURE;
     }
+    
     // Affect visibility property
-    SetPropertyValue(sclsvrCALIBRATOR_VISIBILITY, visibility2);
-    SetPropertyValue(sclsvrCALIBRATOR_VISIBILITY_ERROR, visibilityError2);
+    SetPropertyValue(sclsvrCALIBRATOR_VIS, vis2);
+    SetPropertyValue(sclsvrCALIBRATOR_VIS_ERROR, vis2Err);
     
     return mcsSUCCESS;
 }
+
 /**
  * Compute Multiplicity
  *
@@ -696,7 +687,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeMultiplicity()");
 
-    SetPropertyValue(sclsvrCALIBRATOR_MULTIPLICITY, "1.00");
+    //SetPropertyValue(sclsvrCALIBRATOR_MULTIPLICITY, "1.00");
     
     return mcsSUCCESS;
 }
@@ -706,42 +697,31 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
  *
  * \return mcsSUCCESS 
  */
- 
 mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
     //logExtDbg("vobsSTAR::AddProperties()");
-    
-    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAMETER, "angDiam", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[31]=sclsvrCALIBRATOR_ANGULAR_DIAMETER;
-    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR, "angDiamErr", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[32]=sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR;
+    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAM, "diam", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAM_ERROR, "diamErr", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "diamFlag", 
+                vobsSTRING_PROPERTY);
+    AddProperty(sclsvrCALIBRATOR_VIS_FLAG, "visFlag", vobsSTRING_PROPERTY);
     AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[33]=sclsvrCALIBRATOR_MO;
     AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[34]=sclsvrCALIBRATOR_LO;
     AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[35]=sclsvrCALIBRATOR_KO;
     AddProperty(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[36]=sclsvrCALIBRATOR_HO;
     AddProperty(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[37]=sclsvrCALIBRATOR_JO;
     AddProperty(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[38]=sclsvrCALIBRATOR_IO;
     AddProperty(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[39]=sclsvrCALIBRATOR_RO;
     AddProperty(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[40]=sclsvrCALIBRATOR_VO;
     AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[41]=sclsvrCALIBRATOR_BO;
-    AddProperty(sclsvrCALIBRATOR_MULTIPLICITY, "multiplicity", vobsFLOAT_PROPERTY);
-    _propertyOrder[42]=sclsvrCALIBRATOR_MULTIPLICITY;
-    AddProperty(sclsvrCALIBRATOR_VISIBILITY, "visibility", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[43]=sclsvrCALIBRATOR_VISIBILITY;
-    AddProperty(sclsvrCALIBRATOR_VISIBILITY_ERROR, "visibilityErr", vobsFLOAT_PROPERTY, "%.3f");
-    _propertyOrder[44]=sclsvrCALIBRATOR_VISIBILITY_ERROR;
+    AddProperty(sclsvrCALIBRATOR_VIS, "vis", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS_ERROR, "visErr", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS_FLAG, "visFlag", vobsSTRING_PROPERTY);
 
     return mcsSUCCESS;
 }
-
 
 /*___oOo___*/
