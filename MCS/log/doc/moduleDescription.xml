@@ -1,0 +1,35 @@
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $Id: moduleDescription.xml,v 1.1 2004-07-02 07:17:35 mella Exp $"
+
+ who       when        what
+ ~~~~~~~~  ~~~~~~~~    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ mella     28-Jun-2004 Created
+
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the responsible of the module 
+ - the package
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module</desc>
+        <resp>LinuxPinguin</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="log">
+    <desc>C logging services</desc>
+    <resp>Guillaume MELLA</resp>
+    <package>MCS</package>
+</module>
+
