@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.10 2005-02-08 20:55:50 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.11 2005-02-13 16:08:09 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/08 20:55:50  gzins
+ * Removed display of resulting star list
+ *
  * Revision 1.9  2005/02/08 04:39:32  gzins
  * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
  *
@@ -14,7 +17,7 @@
  *
  * Revision 1.7  2005/02/07 14:44:03  gzins
  * Renamed lambda to wlen.
- * Renamed minMagRange to minDeltaMag, and maxMagRange to maxDeltaMag.
+ * Renamed minMagRange to minRangeMag, and maxMagRange to maxRangeMag.
  *
  * Revision 1.6  2005/02/07 09:24:42  gzins
  * Replaced vobsVIRTUAL_OBSERVATORY local instance by the class member
@@ -31,7 +34,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.10 2005-02-08 20:55:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.11 2005-02-13 16:08:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -119,16 +122,16 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    // minDeltaMag
-    mcsDOUBLE minDeltaMag;
-    if (getCalCmd.GetMinDeltaMag(&minDeltaMag) == mcsFAILURE)
+    // minRangeMag
+    mcsDOUBLE minRangeMag;
+    if (getCalCmd.GetMinRangeMag(&minRangeMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    // maxDeltaMag
-    mcsDOUBLE maxDeltaMag;
-    if (getCalCmd.GetMaxDeltaMag(&maxDeltaMag) == mcsFAILURE)
+    // maxRangeMag
+    mcsDOUBLE maxRangeMag;
+    if (getCalCmd.GetMaxRangeMag(&maxRangeMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -211,12 +214,12 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the min of the magitude range
-    if (request.SetMinDeltaMag(minDeltaMag) == mcsFAILURE)
+    if (request.SetMinRangeMag(minRangeMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the max of the magnitude range
-    if (request.SetMaxDeltaMag(maxDeltaMag) == mcsFAILURE)
+    if (request.SetMaxRangeMag(maxRangeMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }

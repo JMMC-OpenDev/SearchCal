@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.4 2005-02-08 04:54:20 gzins Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.5 2005-02-13 16:07:42 gzins Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.4  2005/02/08 04:54:20  gzins
+ Changed min/max magnitude type
+
  Revision 1.3  2005/02/07 14:41:46  gzins
  Updated documentation; added description and unit.
  Renamed lambda to wlen.
@@ -22,10 +25,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:noNamespaceSchemaLocation="cmdDefinitionFile.xsd">
     <mnemonic>GETCAL</mnemonic>
-    <desc>Get a list of interferometric calibrators for a given science
-        object. It returns all stars, found in CDS catalogs around the science
-        object, which can be used as calibrator during the observation. It
-        computes for each calibrator, its diameter and the expected visibility.  </desc>
+    <desc>Get a list of interferometric calibrators for a given science object. It returns all stars, found in CDS catalogs around the science object, which can be used as calibrator during the observation. It computes for each calibrator, its diameter and the expected visibility.</desc>
     <params>
         <param>
             <name>objectName</name>
@@ -65,18 +65,14 @@
             <desc>observation band</desc>
         </param>
         <param>
-            <name>minDeltaMag</name>
+            <name>minRangeMag</name>
             <type>double</type>
-            <desc>min delta magnitude; i.e. maximum difference between the
-                minimum magnitude of calibrator and the science object magnitude
-            </desc>
+            <desc>minimum of the range magnitude</desc>
         </param>
         <param>
-            <name>maxDeltaMag</name>
+            <name>maxRangeMag</name>
             <type>double</type>
-            <desc>max delta magnitude; i.e. maximum difference between the
-                maximum magnitude of calibrator and the science object magnitude
-            </desc>
+            <desc>maximum of the range magnitude</desc>
         </param>
         <param>
             <name>ra</name>
