@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.3 2004-06-17 15:04:40 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.4 2004-06-17 15:17:58 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -23,6 +23,8 @@ extern C {
 
 /* Public functions */
 char *miscGetFileName(char *fullPath);
+char *miscGetExtension(char *fullPath);
+
 void miscGetUtcTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
 void miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
 

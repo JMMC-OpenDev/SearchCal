@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestUtils.c,v 1.4 2004-06-17 15:04:40 lafrasse Exp $"
+* "@(#) $Id: miscTestUtils.c,v 1.5 2004-06-17 15:17:58 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -35,7 +35,7 @@
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.4 2004-06-17 15:04:40 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.5 2004-06-17 15:17:58 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -75,6 +75,22 @@ int main (int argc, char *argv[])
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
+    printf("\n\n");
+
+    /* Test of miscGetExtension() */
+    printf("miscGetExtension() Function Test :\n\n");
+    printf("   File Path                      | File Name\n");
+    printf("   -------------------------------+---------------\n");
+    strcpy (fullFileName, "fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "./fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "../fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "/fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "/tmp/data/fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     printf("\n\n");
 
     /* Test of miscGetUtcTimeStr() */
