@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhKEY.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhKEY.cpp,v 1.2 2005-01-07 18:20:56 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     24-Sep-2004  Created
-*
+* gzins     07-Jan-2005  Implemented Match()
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * Definition of the evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhKEY.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhKEY.cpp,v 1.2 2005-01-07 18:20:56 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -86,6 +86,20 @@ evhKEY& evhKEY::operator =( const evhKEY& key)
 mcsLOGICAL evhKEY::IsSame(const evhKEY& key)
 {
     logExtDbg("evhKEY::IsSame()");
+
+    return (_type == key._type)?mcsTRUE:mcsFALSE;
+}
+
+/**
+ * Determines whether the given key matches to this.
+ *
+ * \param key element to be compared to this.
+ * 
+ * \return mcsTRUE if it matches, mcsFALSE otherwise.
+ */
+mcsLOGICAL evhKEY::Match(const evhKEY& key)
+{
+    logExtDbg("evhKEY::Match()");
 
     return (_type == key._type)?mcsTRUE:mcsFALSE;
 }
