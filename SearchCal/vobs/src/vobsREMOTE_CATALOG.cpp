@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.3 2005-02-22 10:44:51 gzins Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.4 2005-03-04 15:35:02 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/02/22 10:44:51  gzins
+* Fixed bug related to the saved files; environment variables was not resolved
+*
 * Revision 1.2  2005/02/16 13:22:38  scetre
 * changed armin in arcsec in query
 *
@@ -20,7 +23,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.3 2005-02-22 10:44:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.4 2005-03-04 15:35:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -116,7 +119,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
 
         // build the first part of the file name in the MCSDATA directory
         sprintf(logFileName, "$MCSDATA/tmp/list_%s", band);
-        printf("logFileName = %s\n", logFileName); 
 
         // Get catalog name, and replace '/' by '_'
         mcsSTRING32 catalogName;
@@ -175,7 +177,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     {
         return mcsFAILURE; 
     }
-    printf("size of list in catalog search method = %d \n", list.Size()); 
     return mcsSUCCESS;
 }
 
