@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.6 2005-02-21 19:36:30 gzins Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.7 2005-02-22 10:18:08 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/21 19:36:30  gzins
+ * Updated according to alxComputeMagnitudesForBrightStar and alxComputeRealMagnitudes changes.
+ *
  * Revision 1.5  2005/02/17 19:05:23  gzins
  * Changed remaining FAILURE to mcsFAILURE
  *
@@ -32,7 +35,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.6 2005-02-21 19:36:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.7 2005-02-22 10:18:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -92,6 +95,11 @@ int main (int argc, char *argv[])
 
     mcsFLOAT magnitudes[alxNB_BANDS];    
     alxCONFIDENCE_INDEX confIndexes[alxNB_BANDS];
+    int band;
+    for (band = 0; band < alxNB_BANDS; band++)
+    { 
+        magnitudes[band] = alxBLANKING_VALUE;
+    }
     magnitudes[alxB_BAND] = 6.6;
     magnitudes[alxV_BAND] = 5.77;
     if (alxComputeMagnitudesForBrightStar
@@ -100,6 +108,10 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
 
+    for (band = 0; band < alxNB_BANDS; band++)
+    { 
+        magnitudes[band] = alxBLANKING_VALUE;
+    }
     magnitudes[alxB_BAND] = 6.6;
     magnitudes[alxV_BAND] = 5.77;
     if (alxComputeMagnitudesForBrightStar
@@ -108,6 +120,10 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
 
+    for (band = 0; band < alxNB_BANDS; band++)
+    { 
+        magnitudes[band] = alxBLANKING_VALUE;
+    }
     magnitudes[alxB_BAND] = 6.6;
     magnitudes[alxV_BAND] = 5.77;
     if (alxComputeMagnitudesForBrightStar
@@ -123,8 +139,10 @@ int main (int argc, char *argv[])
         return mcsFAILURE;
     }
 
-    printf("magnitudes = %f\n", magnitudes[alxI_BAND]); 
-
+    for (band = 0; band < alxNB_BANDS; band++)
+    { 
+        magnitudes[band] = alxBLANKING_VALUE;
+    }
     magnitudes[alxB_BAND] = 6.6;
     magnitudes[alxV_BAND] = 5.77;
     if (alxComputeMagnitudesForBrightStar
@@ -133,7 +151,6 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
 
-    printf("magnitudes = %f\n", magnitudes[alxI_BAND]); 
     /* Close MCS services */
     mcsExit();
     
