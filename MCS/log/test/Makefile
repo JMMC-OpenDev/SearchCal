@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-06-21 16:54:06 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-07-30 13:20:26 lafrasse Exp $"
 #
 # Makefile of log
 #
@@ -41,8 +41,8 @@ EXECUTABLES_L   = logTest
 #
 # <brief description of xxxxx program>
 logTest_OBJECTS   =	logTest
-logTest_LDFLAGS   =
-logTest_LIBS      = mcs misc log
+logTest_LDFLAGS   = -lgdome
+logTest_LIBS      = mcs err misc log
 
 #
 # special compilation flags for single c sources
@@ -163,7 +163,7 @@ CSOURCENAMES = \
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/vltMakefile
+include $(MAKEDIR)/mcsMakefile
 
 #
 # TARGETS
