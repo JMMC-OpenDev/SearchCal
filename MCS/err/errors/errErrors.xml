@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<errorList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="desErr.xsd"
+moduleName="dummyMod">
+
+   <error id="1">
+      <errName>Err1</errName>
+      <errSeverity>S</errSeverity>
+      <errFormat>Bad number %d</errFormat>
+   </error>
+   <error id="2">
+      <errName>FileNotFound</errName>
+      <errSeverity>F</errSeverity>
+      <errFormat>File #%d not found</errFormat>
+   </error>
+</errorList>
