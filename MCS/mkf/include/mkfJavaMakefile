@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfJavaMakefile,v 1.1 2004-09-10 13:42:20 gzins Exp $"
+# "@(#) $Id: mkfJavaMakefile,v 1.2 2004-09-10 16:30:55 gzins Exp $"
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
@@ -148,7 +148,7 @@ ifneq ($(strip $(JAVA_EXECUTABLES)),)
 	-@$(ECHO) "install_java: java_begin $(foreach member, $(JAVA_EXECUTABLES), $(BIN)/$(member) )" >>$(FILE)
 	-@$(ECHO) "java_begin:" >>$(FILE)
 	-@$(ECHO) "	-@echo \"\"; $(ECHO) \"......java programs:\"" >>$(FILE)
-	-$(AT) for member in $(foreach name, $(JARFILES), $(name) ); \
+	-$(AT) for member in $(foreach name, $(JAVA_EXECUTABLES), $(name) ); \
 		do \
 		    $(ECHO) "$(BIN)/$${member}: ../bin/$${member}" >>$(FILE);\
 		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
