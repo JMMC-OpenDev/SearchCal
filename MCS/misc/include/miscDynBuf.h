@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.16 2005-02-10 10:08:07 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.17 2005-02-15 12:40:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/02/10 10:08:07  lafrasse
+ * Added miscDynBufSaveInFile(), and moved as most miscDynBuf parameters as possible to const type
+ *
  * Revision 1.15  2005/02/03 08:59:24  gzins
  * Defined 'bytes' parameter as constant in miscDynBufAppendBytes
  * Defined 'str' parameter as constant in miscDynBufAppendString
@@ -144,14 +147,12 @@ mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (const miscDYN_BUF *dynBuf,
                                              mcsUINT32         *allocatedBytes);
 
 char*         miscDynBufGetBuffer           (const miscDYN_BUF *dynBuf);
-#define miscDynBufGetBufferPointer miscDynBufGetBuffer
 
 const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
 
 char*         miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
                                              const char        *currentLinePtr,
                                              const mcsLOGICAL  skipCommentFlag);
-#define miscDynBufGetNextLinePointer miscDynBufGetNextLine
 
 mcsCOMPL_STAT miscDynBufGetByteAt           (const miscDYN_BUF *dynBuf,
                                              char              *byte,
