@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.13 2004-11-10 17:05:02 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.14 2004-11-15 16:31:08 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -77,7 +77,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.13 2004-11-10 17:05:02 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.14 2004-11-15 16:31:08 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -101,6 +101,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Local Headers
  */
 #include "miscDynBuf.h"
+#include "miscString.h"
 #include "miscPrivate.h"
 #include "miscErrors.h"
 
@@ -657,7 +658,16 @@ char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
     if (currentLinePtr == NULL)
     {
         /* Return a pointer to the beginning of the Dynamic Buffer */
-        return (internalBuffer);
+        if ((skipCommentFlag == mcsTRUE) &&
+            (strncmp(internalBuffer, dynBuf->commentPattern,
+                     strlen(dynBuf->commentPattern)) == 0))
+        {
+            currentLinePtr = internalBuffer;
+        }
+        else
+        {
+            return (internalBuffer);
+        }
     }
 
     /* If the given current Line Pointer is outside of the Dynamic Buffer */
@@ -667,8 +677,8 @@ char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
         return ((char*)NULL);
     }
 
-    /* Gets the next '\n' occurence after currentLinePtr */
-    char* nextCarrigeReturnPtr = strchr(currentLinePtr, '\n');
+    /* Gets the next '\0' occurence after currentLinePtr */
+    char* nextCarrigeReturnPtr = strchr(currentLinePtr, '\0');
 
     /* If an '\n' occurence doesn't exist */
     if (nextCarrigeReturnPtr == NULL)
@@ -690,7 +700,7 @@ char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
                    (strncmp((nextCarrigeReturnPtr + 1), commentPattern,
                     commentPatternLength) == 0))
             {
-                nextCarrigeReturnPtr = strchr((nextCarrigeReturnPtr + 1), '\n');
+                nextCarrigeReturnPtr = strchr((nextCarrigeReturnPtr + 1), '\0');
             }
         }
 
@@ -937,6 +947,11 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
     /* Update the Dynamic Buffer internal counters */
     dynBuf->storedBytes = fileSize;
 
+    if (miscReplaceChrByChr(dynBuf->dynBuf, '\n', '\0') == FAILURE)
+    {
+        return FAILURE;
+    }
+    
     /* Try to set the Dynamic Buffer comment pattern */
     return(miscDynBufSetCommentPattern(dynBuf, commentPattern));
 }
