@@ -1,7 +1,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logTest.c,v 1.2 2004-05-13 14:04:40 mella Exp $"
+*  "@(#) $Id: logTest.c,v 1.3 2004-05-14 10:04:57 mella Exp $"
 *
 * who       when        what
 * --------  --------    --------------------------------------------
@@ -16,6 +16,11 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+/*
+ * Constants
+ */
+#define MODULE_ID mcsLOG
 
 /*
  * Local Headers 
@@ -136,7 +141,7 @@ mcsCOMPL_STAT testNoFileLine(void){
 int main(int argc, char ** argv)
 {
     /* Init names of process and module */
-    logIdentify(argv[0],mcsLOG);
+    logIdentify(argv[0]);
     
     /* test1 loops 
      * \todo handle function returns
