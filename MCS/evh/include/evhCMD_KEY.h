@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_KEY.h,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhCMD_KEY.h,v 1.2 2004-11-17 10:32:57 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -53,7 +53,7 @@ public:
     virtual mcsLOGICAL Match(const evhKEY& key);
 
     virtual evhCMD_KEY &SetCommand(const mcsCMD type);
-    virtual char           *GetCommand() const;
+    virtual char       *GetCommand() const;
 
 protected:
 
