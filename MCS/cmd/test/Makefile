@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2005-02-15 10:58:58 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2005-02-15 11:04:33 gzins Exp $"
 #
 # Makefile of cmdTest
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/15 10:58:58  gzins
+# Added CVS log as file modification history
+#
 # lafrasse  11-Aug-2004  Created
 #
 #*******************************************************************************
@@ -23,7 +26,6 @@
 #
 # additional include and library search paths
 #USER_INC = 
-USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/include/ -I/usr/include/glib-2.0
 #USER_LIB = 
 
 #
@@ -142,17 +144,11 @@ all:	do_all
 clean : clean_all 
 	@echo " . . . clean done"
 
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
-
 man   : do_man 
 	@echo " . . . man page(s) done"
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
 
 
 #___oOo___
