@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.11 2005-02-08 20:38:37 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.12 2005-02-08 21:34:05 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/08 20:38:37  gzins
+* Added name of catalog from where data is coming from
+* Changed some parameter types from char* to const char*
+*
 * Revision 1.10  2005/02/07 09:47:08  gzins
 * Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
 *
@@ -26,7 +30,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.11 2005-02-08 20:38:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.12 2005-02-08 21:34:05 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -497,8 +501,11 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             int  nbUcd;
             char *colName;
             char *ucdName;
+            char *prevUcdName=NULL;
             char *ucdValue;
             vobsSTAR star;
+
+            mcsSTRING256 newUcdName; // Used to build UCD representing error
 
             // Copy line into temporary buffer
             strcpy(line, linePtr);
@@ -532,6 +539,17 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                 {
                     // End of line reached; stop UCD scan
                     break;
+                }
+                // Specific treatment of UCDs named ERROR; they have to be
+                // linked with previous UCD.
+                if (strcmp(ucdName, "ERROR") == 0)
+                {
+                    // Renamed UCD, by adding previous UCD as prefix
+                    if (prevUcdName != NULL)
+                    {
+                        sprintf(newUcdName, "%s_ERROR", prevUcdName);
+                        ucdName = newUcdName;
+                    }
                 }
                 // If lambda is found, save it
                 else if (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
@@ -616,6 +634,9 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             {
                 return mcsFAILURE;
             }
+
+            // Set current UCD as previous
+            prevUcdName = ucdName;
         }
     } while (linePtr != NULL);
 
