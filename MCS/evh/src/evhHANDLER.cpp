@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhHANDLER.cpp,v 1.2 2004-12-08 13:34:33 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,6 +12,7 @@
 * gzins     18-Nov-2004  Updated main loop to accept message as argument.
 *                        Returned error when no callback is attached to the
 *                        received command.
+* gzins     08-Dec-2004  Added some method documentation
 *
 *******************************************************************************/
 
@@ -20,7 +21,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.2 2004-12-08 13:34:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -112,7 +113,7 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhCMD_KEY &key,
  * It adds the specified callback for the event defined by the given I/O
  * stream key.
  *
- * \return always SUCCESS.
+ * \return SUCCESS, or FAILURE if an error occurs.
  *
  * \sa evhIOSTREAM_KEY
  */
@@ -147,6 +148,40 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhIOSTREAM_KEY &key,
     return SUCCESS;
 }
 
+/**
+ * Handle the events main loop.
+ *
+ * An application calls this function when it is ready to handle events,
+ * usually in the main() function after initialization of the application's
+ * object.
+ *
+ * Inside this function events are received and callbacks dispatched.
+ * Whenever a callback returns, execution is resumed by the MainLoop() that is
+ * ready to handle the following event.
+ * The function can return only if:
+ *   - a callback has returned with an error condition, rising the
+ *     evhCB_FAILURE bit in its return code.
+ *     In this case MainLoop() returns FAILURE.
+ *   - an internal error occurred in the handling of events.
+ *     In this case MainLoop() returns FAILURE
+ *
+ * If the callback returns with the DELETE flag up, it is always deleted, no
+ * regard of the other flags. If the callback returns with the FAILURE and/or
+ * RETURN flag up, no other callback in the callback lists is called, but the
+ * main loop exit immediately. 
+ *    
+ * At the end of every callback and before waiting for the next event, the
+ * method checks also that the error stack is clean and empty.  If a callback
+ * is returned with no error code and the error stack is not clean, this means
+ * that some error has occurred in the callback, but it has not been properly
+ * handled.  In this case the main loop logs an error and close the otherwise
+ * pending error stack.
+ *
+ * The programmer should check for these errors to identify bad error handling
+ * in the code.
+ *
+ * \return SUCCESS or FAILURE (see above).
+ */
 mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
 {
     logExtDbg("evhHANDLER::MainLoop()");
@@ -196,7 +231,7 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
                 // Build event key
                 ((evhCMD_KEY *)key)->SetCommand(msg.GetCommand());
 
-                // Run attached callback
+                // Run attached callbacks
                 if (Run(*(evhCMD_KEY *)key, msg) == FAILURE)
                 {
                     return FAILURE;
@@ -212,7 +247,8 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
             else if (key->GetType() == evhTYPE_IOSTREAM)
             {
                 // Run attached callback
-                if (Run(*(evhIOSTREAM_KEY *)key, ((evhIOSTREAM_KEY *)key)->GetSd()) == FAILURE)
+                if (Run(*(evhIOSTREAM_KEY *)key, 
+                        ((evhIOSTREAM_KEY *)key)->GetSd()) == FAILURE)
                 {
                     return FAILURE;
                 }
@@ -222,7 +258,6 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
 
     return SUCCESS;
 }
-
 
 /**
  * Look up a key object in the map.
@@ -256,6 +291,22 @@ evhCALLBACK_LIST *evhHANDLER::Find(const evhKEY &key)
    return NULL;
 }
 
+/**
+ * Executes all the callbacks attached to the command.
+ *
+ * Executes all the callbacks in the list which have been attached to the
+ * command (see AddCallback()) identified by the given \em key. They are
+ * executed in the same order they where inserted in the list.
+ * The received messsage is passed as argument to the callaback.
+ * 
+ * If a callback returns with the evhCB_DELETE bit set, it deletes the
+ * callback.
+ *
+ * If a callback returns with the evhCB_FAILURE bit set, the method returns
+ * immediately, i.e. the remaining callbacks in the list are not executed.
+ *           
+ * \return SUCCESS or FAILURE (see above).
+ */
 mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
 {
     logExtDbg("evhHANDLER::Run()");
@@ -272,7 +323,7 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
         {
             counter++;
 
-            // Add the new callback to the list
+            // Execute callback of the list
             if (((*iter).second)->Run(msg) == FAILURE)
             {
                 return FAILURE;
@@ -295,6 +346,22 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
     return SUCCESS;
 }
 
+/**
+ * Executes all the callbacks attached to the I/O.
+ *
+ * Executes all the callbacks in the list which have been attached to the
+ * I/O stream (see AddCallback()) identified by the given \em key. They are
+ * executed in the same order they where inserted in the list.
+ * The I/O descriptor is passed as argument to the callaback.
+ * 
+ * If a callback returns with the evhCB_DELETE bit set, it deletes the
+ * callback.
+ *
+ * If a callback returns with the evhCB_FAILURE bit set, the method returns
+ * immediately, i.e. the remaining callbacks in the list are not executed.
+ *           
+ * \return SUCCESS or FAILURE (see above).
+ */
 mcsCOMPL_STAT evhHANDLER::Run(const evhIOSTREAM_KEY &key, int fd)
 {
     logExtDbg("evhHANDLER::Run()");
@@ -322,8 +389,10 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhIOSTREAM_KEY &key, int fd)
  * Wait for events.
  * 
  * This method performs an asynchroneous wait for events. It returns whenever
- * a new message is received or a stream descriptor attached (see
- * evhIOSTREAM_KEY) is ready.
+ * a new message is received or a stream descriptor (see evhIOSTREAM_KEY) is
+ * ready.
+ *
+ * \return key corresponding to the received event or NULL if an error occurs.
  */
 evhKEY *evhHANDLER::Select()
 {
@@ -414,6 +483,5 @@ evhKEY *evhHANDLER::Select()
     }
     return NULL;
 }
-
 
 /*___oOo___*/
