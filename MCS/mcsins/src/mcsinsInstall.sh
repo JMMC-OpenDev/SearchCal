@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.1 2004-12-09 06:13:54 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.2 2004-12-09 06:23:32 swmgr Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -44,7 +44,7 @@
 dir=$PWD
 
 # Propose the user to continue or abort
-echo -e "\n-> All the MCS modules will be installed and updated from"
+echo -e "\n-> All the MCS modules will be installed (or just updated) from"
 echo -e "   '$dir' directory\n"
 echo -e "   Press enter to continue or ^C to abort "
 read choice
