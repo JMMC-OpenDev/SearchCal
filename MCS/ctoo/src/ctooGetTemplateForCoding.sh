@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.2 2004-09-15 05:50:02 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.3 2004-09-15 14:47:24 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -38,6 +38,41 @@
 #
 #-------------------------------------------------------------------------------
 #
+
+
+#/**
+# \file
+#  Get templates for coding.
+#
+# \synopsis
+# ctooGetTemplateForCoding \e \<templateType\> 
+#
+# \param templateType : template type to generate. Should have one of the
+# following value :
+#   - c-main
+#   - c-procedure
+#   - h-file
+#   - c++-small-main
+#   - c++-class-file
+#   - c++-h-file
+#   - script
+#   - Makefile
+# 
+# \n
+# \details
+# Utility used to get a template file for coding. It asks the user
+# to enter the template type to generate the corresponding file.
+#
+# \sa ctooGetCode.sh, ctooGetTemplate.sh, ctooGetTemplateFile.sh, \
+# ctooGetModuleName.sh
+#  
+# \n 
+# 
+# */
+
+
+# signal trap (if any)
+
 
 # Set templates directories
 MCSTEMPLATES=$MCSROOT/templates      

@@ -3,49 +3,42 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetCode.sh,v 1.1 2004-09-10 17:40:27 gzins Exp $"
+# "@(#) $Id: ctooGetCode.sh,v 1.2 2004-09-15 14:47:24 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
 # lgluck    14/05/04    Created
 #
 #*******************************************************************************
-# NAME
-#   ctooGetCode -  interactive script to get standard templates for coding
+
+#/**
+# \file
+# Interactive script to get standard templates for coding.
+#
+# \synopsis
+# ctooGetCode 
+#
+# \details
+# Interactive utility to get template files for code. Following templates are
+# available :
+#   -# c-main
+#   -# c-procedure
+#   -# h-file
+#   -# c++-small-main
+#   -# c++-class-file
+#   -# c++-h-file
+#   -# script
+#   -# Makefile
 # 
-# SYNOPSIS
-#   ctooGetCode
+# \sa ctooGetTemplateForCoding.sh, ctooGetTemplateFile.sh, ctooGetTemplate.sh
+#  
+# \n 
 # 
-# DESCRIPTION
-#   Utility to get standard template for :
-#       1- c-main
-#       2- c-procedure
-#       3- h-file
-#   
-#       4- c++-small-main
-#       5- c++-class-file
-#       6- c++-h-file
-#   
-#       7- script
-#   
-#       8- Makefile
-#
-# FILES
-#
-# ENVIRONMENT
-#
-# RETURN VALUES
-#
-# CAUTIONS
-#
-# EXAMPLES
-#
-# SEE ALSO
-#
-# BUGS
-#
-#-------------------------------------------------------------------------------
-#
+# */
+
+
+# signal trap (if any)
+
 
 # Print out the menu
 cat <<xyz

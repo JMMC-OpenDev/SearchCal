@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetModuleName.sh,v 1.2 2004-09-15 07:03:29 gluck Exp $"
+# "@(#) $Id: ctooGetModuleName.sh,v 1.3 2004-09-15 14:47:24 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -18,51 +18,23 @@
 # \synopsis
 # ctooGetModuleName 
 #
-# \param param1 : description of parameter 1, if it exists
-# \param paramn : description of parameter n, if it exists
-#
-# \n
-# \opt
-# \optname option1 : description of option 1, if it exists
-# \optname optionn : description of option n, if it exists
-# 
-# \n
 # \details
-# optional detailed description of the shell script follows here.
+# Get module name, extracting it from a file, normaly existing in each module
+# directory  structure.
 # 
 # \usedfiles
-# optional. if files are used, for each one, name, and usage description.
-# \filename filename1 :  usage description of filename1
-# \filename filename2 :  usage description of filename2
+# \filename moduleDescription.xml : file used to extract module name, located
+# in the doc subdirectory of a module directory structure
 #
 # \n
-# \env
-# optional. if needed, environmental variables accessed by the program. for
-# each variable, name, and usage description, as below.
-# \envvar envvar1 :  usage description of envvar1
-# \envvar envvar2 :  usage description of envvar2
-# 
-# \n
-# \warning optional. warning if any (software requirements, ...)
+# \warning This script should be executed from one of the first level
+# subdirectory of a module structure.
 #
 # \n
-# \ex
-# optional. command example if needed
-# \n brief example description.
-# \code
-# insert your command example here
-# \endcode
-#
-# \sa optional. see also section, in which you can refer other documented
-# entities. doxygen will create the link automatically. for example, 
-# \sa <entity to refer>
+# \sa ctooGetPrivateHeaderFile.sh, ctooGetTemplateForCoding.sh
 # 
-# \bug optional. known bugs list if it exists.
-# \bug bug 1 : bug 1 description
+# \n
 #
-# \todo optional. things to forsee list.
-# \todo action 1 : action 1 description
-# 
 # */
 
 

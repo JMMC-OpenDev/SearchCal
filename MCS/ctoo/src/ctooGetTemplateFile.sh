@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateFile.sh,v 1.6 2004-09-13 06:20:43 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateFile.sh,v 1.7 2004-09-15 14:47:24 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -10,30 +10,6 @@
 #
 #
 #*******************************************************************************
-#   NAME
-# 
-#   SYNOPSIS
-# 
-#   DESCRIPTION
-#
-#   FILES
-#
-#   ENVIRONMENT
-#
-#   RETURN VALUES
-#
-#   CAUTIONS
-#
-#   EXAMPLES
-#
-#   SEE ALSO
-#
-#   BUGS     
-#
-#-------------------------------------------------------------------------------
-#
-
-# signal trap (if any)
 
 #/**
 # \file
@@ -59,9 +35,14 @@
 # \filename template : cf description of template parameter above.
 # 
 # \n 
-# \sa ctooGetTemplateForCoding, ctooGetCode, ctooGetTemplate
+# \sa ctooGetTemplateForCoding.sh, ctooGetTemplateForDirectoryStructure.sh
+# 
+# \n 
 # 
 # */
+
+
+# signal trap (if any)
 
 
 # Input parameters given should be 3 and in the correct format:
@@ -109,5 +90,6 @@ else
     # File copy failed
     echo -e "\n>>> CANNOT CREATE --> $FILE\n"
 fi
+
 
 #___oOo___
