@@ -70,4 +70,9 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[Could not parse command definition file '%.80s' for command %.80s. ]]></errFormat>
    </error>
+   <error id="15">
+      <errName>NO_CDF</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[No command definition file for command %.80s. Command could not be parsed.]]></errFormat>
+   </error>
 </errorList>
