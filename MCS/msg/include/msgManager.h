@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgManager.h,v 1.2 2004-11-19 17:15:42 lafrasse Exp $"
+* "@(#) $Id: msgManager.h,v 1.3 2004-11-22 14:31:20 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -43,7 +43,7 @@ extern "C" {
 /*
  * Local Headers 
  */
-#include "msg.h"
+#include "msgMESSAGE.h"
 #include "msgPrivate.h"
 
 

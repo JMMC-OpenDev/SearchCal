@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgTestClient.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgTestClient.c,v 1.2 2004-11-22 14:34:06 gzins Exp $"
 *
 *
 * who       when                 what
@@ -25,7 +25,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgTestClient.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgTestClient.c,v 1.2 2004-11-22 14:34:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -50,7 +50,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Local Headers 
  */
-#include "msg.h"
+#include "msgMESSAGE.h"
 #include "msgPrivate.h"
 
 
