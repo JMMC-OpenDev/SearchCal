@@ -1,7 +1,7 @@
 /*************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.6 2004-06-21 16:38:53 gzins Exp $"
+* "@(#) $Id: mcs.h,v 1.7 2004-06-21 16:58:06 gzins Exp $"
 *
 * mcs.h  -  MCS/Common Definitions - Interface File
 *
@@ -92,6 +92,12 @@ void mcsExit();
  */
 #define mcsMAX(a,b)  ((a)>=(b)?(a):(b))
 #define mcsMIN(a,b)  ((a)<=(b)?(a):(b))
+
+#ifndef __FILE_LINE__
+#define mcsIToStr(a) #a
+#define mcsIToStr2(a) mcsIToStr(a) 
+#define __FILE_LINE__ __FILE__ ":" mcsIToStr2(__LINE__)
+#endif /*!__FILE_LINE__*/
 
 #ifdef __cplusplus
 }
