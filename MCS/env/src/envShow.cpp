@@ -1,19 +1,20 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: envShow.cpp,v 1.1 2004-12-07 16:45:56 lafrasse Exp $"
+* "@(#) $Id: envShow.cpp,v 1.2 2004-12-08 14:39:59 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  07-Dec-2004  Created
+* lafrasse  08-Dec-2004  Comment refinments
 *
 *
 *******************************************************************************/
 
 /**
  * \file
- * Small tool that allow you to show the content of the mcsEnvList file, and
- * weither it is well structures or not.
+ * Small tool that allow you to show the content of the mcsEnvList file, and to
+ * verify weither it is well structured or not.
  *
  * \synopsis
  * \<envEnvShow\>
@@ -23,7 +24,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: envShow.cpp,v 1.1 2004-12-07 16:45:56 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envShow.cpp,v 1.2 2004-12-08 14:39:59 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

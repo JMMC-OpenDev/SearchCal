@@ -1,13 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: envLIST.cpp,v 1.2 2004-12-08 13:11:22 lafrasse Exp $"
+* "@(#) $Id: envLIST.cpp,v 1.3 2004-12-08 14:39:59 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  07-Dec-2004  Created
-* lafrasse  08-Dec-2004  Comment refinments, and added the default MCS env in
-*                        the internal map by default
+* lafrasse  08-Dec-2004  Comment refinments, added the default MCS env in the
+*                        internal map by default, factorized the 'file already
+*                        loaded' detection code form GetHostName() and
+*                        GetPortNumber() to LoadEnvListFile(), and refined the
+*                        output format of Show()
 *
 *
 *******************************************************************************/
@@ -17,13 +20,14 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.2 2004-12-08 13:11:22 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.3 2004-12-08 14:39:59 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
 #include <iostream>
+#include <iomanip>
 using namespace std;
 
 /*
@@ -86,15 +90,10 @@ const char* envLIST::GetHostName(const char *envName)
         searchedEnvName = (char*)mcsGetEnvName();
     }
 
-    // If the MCS Env. List file has not been loaded yet
-    if (_fileAlreadyLoaded == mcsFALSE)
+    // Load the MCS Env. List file
+    if (LoadEnvListFile() == FAILURE)
     {
-        // Load it
-        if (LoadEnvListFile() == FAILURE)
-        {
-            return ((char*)NULL);
-        }
-        _fileAlreadyLoaded = mcsTRUE;
+        return ((char*)NULL);
     }
 
     // Find the searched environment name in the internal map
@@ -135,15 +134,10 @@ const mcsINT32 envLIST::GetPortNumber(const char *envName)
         searchedEnvName = (char*)mcsGetEnvName();
     }
     
-    // If the MCS Env. List file has not been loaded yet
-    if (_fileAlreadyLoaded == mcsFALSE)
+    // Load the MCS Env. List file
+    if (LoadEnvListFile() == FAILURE)
     {
-        // Load it
-        if (LoadEnvListFile() == FAILURE)
-        {
-            return -1;
-        }
-        _fileAlreadyLoaded = mcsTRUE;
+        return -1;
     }
 
     // Find the searched environment name in the internal map
@@ -176,14 +170,17 @@ void envLIST::Show(void)
     }
 
     // Show all the map content
-    cout << "'environment name' = {'host name', 'port number'}" << endl << endl;
+    cout << "+--------------------+--------------------+-------------+" << endl
+         << "|   ENVIRONMENT NAME |          HOST NAME | PORT NUMBER |" << endl
+         << "+--------------------+--------------------+-------------+" << endl;
     map<string,pair<string,int> > ::iterator i;
     for (i = _map.begin(); i != _map.end(); i++)
     {
-        cout << "'" << (*i).first         << "' = {"
-             << "'" << (*i).second.first  << "', "
-             << "'" << (*i).second.second << "'}" << endl;
+        cout << "| " << setw(18) << (*i).first         << " "
+             << "| " << setw(18) << (*i).second.first  << " "
+             << "| " << setw(11) << (*i).second.second << " |" << endl;
     }
+    cout << "+--------------------+--------------------+-------------+" << endl;
 }
 
 
@@ -219,6 +216,13 @@ void envLIST::Show(void)
 mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
 {
     logExtDbg("msgMCS_ENVS::LoadEnvListFile()"); 
+
+    // If the MCS Env. List file has not been loaded yet
+    if (_fileAlreadyLoaded == mcsTRUE)
+    {
+        return SUCCESS;
+    }
+    _fileAlreadyLoaded = mcsTRUE;
 
     // Put the default MCS env. host name and port number in the internal map
     if (miscGetHostName(_hostName, sizeof(_hostName)) == FAILURE)
