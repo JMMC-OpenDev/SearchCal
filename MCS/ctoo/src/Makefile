@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2004-08-10 16:48:35 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.12 2004-09-07 13:23:46 gluck Exp $"
 #
 # Makefile of ctoo module
 #
@@ -74,6 +74,7 @@ SCRIPTS         = ctooGetTemplate \
 				  ctooGetCode \
 				  ctooGetTemplateForCoding \
 				  ctooGetTemplateFile.sh \
+				  ctooGetPrivateHeaderFile.sh \
                   ctooRename \
                   ctooReplace
 SCRIPTS_L       =
