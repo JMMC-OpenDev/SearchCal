@@ -1,29 +1,30 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhSERVER.cpp,v 1.4 2005-01-07 18:22:52 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     09-Nov-2004  Created
-* gzins     18-Nov-2004  Added PrintSynopsis, PrintArguments, ParseArguments,
-*                        Connect, Disconnect and MainLoop methods
-*                        Updated Init.
-* gzins     03-Dec-2004  Added -n command-line option  
-* gzins     22-Dec-2004  Attached callback for HELP command
-*                        Replaced GetBodyPtr by GetBody
-* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*                        Removed SendCommand()
-*                        Added some method documentation
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhSERVER.cpp,v 1.5 2005-01-26 18:19:25 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     09-Nov-2004  Created
+ * gzins     18-Nov-2004  Added PrintSynopsis, PrintArguments, ParseArguments,
+ *                        Connect, Disconnect and MainLoop methods
+ *                        Updated Init.
+ * gzins     03-Dec-2004  Added -n command-line option  
+ * gzins     22-Dec-2004  Attached callback for HELP command
+ *                        Replaced GetBodyPtr by GetBody
+ * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *                        Removed SendCommand()
+ *                        Added some method documentation
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.4 2005-01-07 18:22:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.5 2005-01-26 18:19:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -33,7 +34,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <iostream>
 using namespace std;
 
-
 /*
  * MCS Headers 
  */
@@ -41,13 +41,14 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 
-
 /*
  * Local Headers 
  */
 #include "evhSERVER.h"
 #include "evhVERSION_CMD.h"
 #include "evhHELP_CMD.h"
+#include "evhSTATE_CMD.h"
+#include "evhErrors.h"
 #include "evhPrivate.h"
 
 /*
@@ -55,6 +56,18 @@ using namespace std;
  */
 evhSERVER::evhSERVER()
 {
+    // Add state definitions
+    AddState(evhSTATE_UNKNOWN, evhSTATE_STR_UNKNOWN);
+    AddState(evhSTATE_OFF, evhSTATE_STR_OFF);
+    AddState(evhSTATE_STANDBY, evhSTATE_STR_STANDBY);
+    AddState(evhSTATE_ONLINE, evhSTATE_STR_ONLINE);
+
+    // Add sub-state definitions
+    AddSubState(evhSUBSTATE_UNKNOWN, evhSUBSTATE_STR_UNKNOWN);
+    AddSubState(evhSUBSTATE_ERROR, evhSUBSTATE_STR_ERROR);
+    AddSubState(evhSUBSTATE_IDLE, evhSUBSTATE_STR_IDLE);
+    AddSubState(evhSUBSTATE_WAITING, evhSUBSTATE_STR_WAITING);
+    AddSubState(evhSUBSTATE_BUSY, evhSUBSTATE_STR_BUSY);
 }
 
 /*
@@ -62,6 +75,8 @@ evhSERVER::evhSERVER()
  */
 evhSERVER::~evhSERVER()
 {
+    _stateList.clear();
+    _subStateList.clear();
 }
 
 /**
@@ -131,7 +146,8 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
         if (_msg.GetBodySize() == 0)
         {
             // Set command parameters 
-            if (_msg.SetBody(argv[*optInd], strlen(argv[*optInd])) == mcsFAILURE)
+            if (_msg.SetBody(argv[*optInd], 
+                             strlen(argv[*optInd])) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -174,7 +190,13 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
     key.SetCdf(evhHELP_CDF_NAME);
     cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::HelpCB);
     AddCallback(key, cb);
-    //
+    
+    // Add callback to STATE command
+    key.SetCommand(evhSTATE_CMD_NAME);
+    key.SetCdf(evhSTATE_CDF_NAME);
+    cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::StateCB);
+    AddCallback(key, cb);
+    
     // If no command has been given in command-line arguments
     if (strlen(_msg.GetCommand()) == 0)
     {
@@ -185,7 +207,114 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
         }
     }
 
+    // Set state/sub-state to ONLINE/IDLE
+    SetState(evhSTATE_ONLINE);
+    SetSubState(evhSUBSTATE_IDLE);
+
     return mcsSUCCESS;
+}
+
+/**
+ * Set server state
+ *
+ * \return mcsSUCCESS
+ */
+mcsCOMPL_STAT evhSERVER::SetState(mcsINT32 state)
+{
+    logExtDbg("evhSERVER::SetState()");
+
+    _state = state;
+
+    return SUCCESS;
+}
+/**
+ * Get server state
+ *
+ * \return server state
+ */
+mcsINT32 evhSERVER::GetState(void)
+{
+    logExtDbg("evhSERVER::GetState()");
+
+    return _state;
+}
+
+/**
+ * Get server state as string
+ *
+ * \return server state
+ */
+const char *evhSERVER::GetStateStr(void)
+{
+    logExtDbg("evhSERVER::GetStateStr()");
+    
+    // If state is not defined
+    map<mcsINT32, string> ::iterator iterator;
+    iterator = _stateList.find(_state);
+    if (iterator == _stateList.end())
+    {
+        // Return 'UNKNOWN'
+        return evhSTATE_STR_UNKNOWN;
+    }
+    // Else
+    else
+    {
+        // Return string corresponding to the current state
+        return (iterator->second.c_str());
+    }
+    // End if
+}
+
+/**
+ * Set server sub-state
+ *
+ * \return mcsSUCCESS
+ */
+mcsCOMPL_STAT evhSERVER::SetSubState(mcsINT32 subState)
+{
+    logExtDbg("evhSERVER::SetSubState()");
+
+    _subState = subState;
+
+    return SUCCESS;
+}
+
+/**
+ * Get server sub-state
+ *
+ * \return server sub-state
+ */
+mcsINT32 evhSERVER::GetSubState(void)
+{
+    logExtDbg("evhSERVER::GetSubState()");
+
+    return _subState;
+}
+
+/**
+ * Get server sub-state as string
+ *
+ * \return server sub-state
+ */
+const char *evhSERVER::GetSubStateStr(void)
+{
+    logExtDbg("evhSERVER::GetSubStateStr()");
+    
+    // If state is not defined
+    map<mcsINT32, string> ::iterator iterator;
+    iterator = _subStateList.find(_subState);
+    if (iterator == _subStateList.end())
+    {
+        // Return 'UNKNOWN'
+        return evhSUBSTATE_STR_UNKNOWN;
+    }
+    // Else
+    else
+    {
+        // Return string corresponding to the current sub-state
+        return (iterator->second.c_str());
+    }
+    // End if
 }
 
 /**
@@ -280,5 +409,61 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
         return _msgManager.SendReply(msg, lastReply);
     }
 }
+
+/* 
+ * Protected methods
+ */
+/**
+ * Add a server state in the state definition list.
+ *
+ * \param id   state identifier
+ * \param name state name
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ *
+ * \b Error codes:\n
+ * The possible error is :
+ * \li evhERR_DUPLICATED_STATE
+ */
+mcsCOMPL_STAT evhSERVER::AddState(mcsINT32  id, char *name)
+{
+    logExtDbg("evhSERVER::AddState()");
+
+    if (_stateList.find(id) != _stateList.end())
+    {
+        errAdd(evhERR_DUPLICATED_STATE, id, name);
+        return mcsFAILURE;
+    }
+    _stateList[id] = name;
+
+    return SUCCESS;
+}
+
+/**
+ * Add a server sub-state in the state definition list.
+ *
+ * \param id   sub-state identifier
+ * \param name sub-state name
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ *
+ * \b Error codes:\n
+ * The possible error is :
+ * \li evhERR_DUPLICATED_SUBSTATE
+ */
+mcsCOMPL_STAT evhSERVER::AddSubState(mcsINT32 id, char *name)
+{
+    logExtDbg("evhSERVER::AddSubState()");
+
+    if (_subStateList.find(id) != _subStateList.end())
+    {
+        errAdd(evhERR_DUPLICATED_SUBSTATE, id, name);
+        return mcsFAILURE;
+    }
+    _subStateList[id] = name;
+
+    return SUCCESS;
+}
+
 
 /*___oOo___*/
