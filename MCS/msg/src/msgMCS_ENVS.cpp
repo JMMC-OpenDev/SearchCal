@@ -1,21 +1,22 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMCS_ENV.cpp,v 1.2 2004-12-05 19:14:48 gzins Exp $"
+* "@(#) $Id: msgMCS_ENVS.cpp,v 1.1 2004-12-06 05:49:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  03-Dec-2004  Created
 * gzins     05-Dec-2004  Changed method prototypes and class members
+* gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
 *
 *******************************************************************************/
 
 /**
  * \file
- * msgMCS_ENV class definition.
+ * msgMCS_ENVS class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMCS_ENV.cpp,v 1.2 2004-12-05 19:14:48 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMCS_ENVS.cpp,v 1.1 2004-12-06 05:49:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -38,13 +39,13 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "msgMCS_ENV.h"
+#include "msgMCS_ENVS.h"
 #include "msgPrivate.h"
 
 /*
  * Class constructor
  */
-msgMCS_ENV::msgMCS_ENV()
+msgMCS_ENVS::msgMCS_ENVS()
 {
     _envListFileLoaded = mcsFALSE;
     miscDynBufInit(&_envList);
@@ -54,7 +55,7 @@ msgMCS_ENV::msgMCS_ENV()
 /*
  * Class destructor
  */
-msgMCS_ENV::~msgMCS_ENV()
+msgMCS_ENVS::~msgMCS_ENVS()
 {
     miscDynBufDestroy(&_envList);    
 }
@@ -72,9 +73,9 @@ msgMCS_ENV::~msgMCS_ENV()
  * \return the host name of a given environment or NULL if environment name is
  * unknown.
  */
-const char* msgMCS_ENV::GetHostName(char *envName)
+const char* msgMCS_ENVS::GetHostName(char *envName)
 {
-    logExtDbg("msgMCS_ENV::GetHostName()");
+    logExtDbg("msgMCS_ENVS::GetHostName()");
 
     // If the file has not been loaded yet
     if (_envListFileLoaded == mcsFALSE)
@@ -112,9 +113,9 @@ const char* msgMCS_ENV::GetHostName(char *envName)
  *
  * \return the port number or -1 if environment name is unknown.
  */
-const mcsINT32 msgMCS_ENV::GetPortNumber(char *envName)
+const mcsINT32 msgMCS_ENVS::GetPortNumber(char *envName)
 {
-    logExtDbg("msgMCS_ENV::GetPortNumber()");
+    logExtDbg("msgMCS_ENVS::GetPortNumber()");
 
     // If the file has not been loaded yet
     if (_envListFileLoaded == mcsFALSE)
@@ -169,7 +170,7 @@ const mcsINT32 msgMCS_ENV::GetPortNumber(char *envName)
  * \errname msgERR_UNKNOWN_ENV
  * \errname msgERR_FORMAT_ENVLIST
  */
-mcsCOMPL_STAT msgMCS_ENV::LoadEnvListFile(void)
+mcsCOMPL_STAT msgMCS_ENVS::LoadEnvListFile(void)
 {
     // Resolve path of MCS environment list file
     char *fullPath;

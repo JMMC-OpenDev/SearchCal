@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.9 2004-12-05 19:13:38 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.10 2004-12-06 05:49:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,6 +16,7 @@
 *                        Minor changes in documentation 
 * lafrasse  03-Dec-2004  Added mcs environment name management
 * gzins     05-Dec-2004  Updated according to new msgMCS_ENV class API
+* gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
 *
 *
 *******************************************************************************/
@@ -25,7 +26,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.9 2004-12-05 19:13:38 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.10 2004-12-06 05:49:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -51,7 +52,7 @@ using namespace std;
 #include "msgPrivate.h"
 #include "msgErrors.h"
 #include "msgMANAGER_IF.h"
-#include "msgMCS_ENV.h"
+#include "msgMCS_ENVS.h"
 #include "msgSOCKET_CLIENT.h"
 
 
@@ -119,10 +120,10 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     mcsINT32 envPortNumber;
     if (strcmp (mcsGetEnvName(), mcsUNKNOWN_ENV) != 0)
     {
-        msgMCS_ENV mcsEnv;
+        msgMCS_ENVS mcsEnvs;
         // Get the host name on which environment is running
         const char *envHostName;
-        envHostName = mcsEnv.GetHostName();
+        envHostName = mcsEnvs.GetHostName();
         
         // Check environment if defined
         if (envHostName == NULL)
@@ -139,7 +140,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
         }
 
         // Get msgManager connection port number
-        envPortNumber = mcsEnv.GetPortNumber();
+        envPortNumber = mcsEnvs.GetPortNumber();
         
         // Check environment if defined
         if (envPortNumber == -1)
