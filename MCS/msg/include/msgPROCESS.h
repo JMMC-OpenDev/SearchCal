@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS.h,v 1.2 2005-01-24 15:39:54 gzins Exp $"
+ * "@(#) $Id: msgPROCESS.h,v 1.3 2005-01-29 19:56:16 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/24 15:39:54  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     06-Dec-2004  Created
  *
  ******************************************************************************/
@@ -48,6 +51,13 @@ public:
 
     virtual mcsCOMPL_STAT SetName(char *name);
     virtual const char   *GetName() const;
+
+    virtual mcsCOMPL_STAT SetId(mcsINT32 pid);
+    virtual mcsINT32      GetId() const;
+
+    virtual mcsCOMPL_STAT SetUnicity(mcsLOGICAL pid);
+    virtual mcsLOGICAL    IsUnique() const;
+
 protected:
 
 private:
@@ -58,6 +68,12 @@ private:
 
     // Name of the process; i.e. MCS registering name
     mcsPROCNAME _name;
+   
+    // Proces ID
+    mcsINT32 _id;
+
+    // Unicity flag
+    mcsLOGICAL _unicity;
 };
 
 #endif /*!msgPROCESS_H*/
