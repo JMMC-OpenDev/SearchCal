@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.5 2004-09-13 07:00:15 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.6 2004-11-17 08:30:19 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -79,7 +79,7 @@ public:
     vobsCATALOG_DENIS denis;*/
 protected:
     // Method to load scenario according to the request
-    virtual mcsCOMPL_STAT LoadScenario(vobsREQUEST      &request,
+    virtual mcsCOMPL_STAT LoadScenario(mcsSTRING16      band,
                                        vobsSTAR_LIST    &StarList,
                                        vobsSCENARIO     &scenario);
     
