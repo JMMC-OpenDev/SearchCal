@@ -1,0 +1,53 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: moduleDescription.template,v 1.1 2004-06-30 12:36:47 gluck Exp $" 
+#%# 
+#%#       REMARK: This file belongs to the "ctoo" module.
+#%# 
+#%# who        when         what
+#%# ---------  -----------  ----------------------------------------------------
+#%# gluck      30-Jun-2004  Created
+#%# 
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $I>-<d$"
+
+ who       when         what
+ ~~~~~~~~  ~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ NNNNNNNN  dd-mmm-yyyy  Created
+
+
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>LinuxPinguin</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="module">
+    <desc>description</desc>
+    <resp>responsible</resp>
+    <package>package</package>
+</module>
