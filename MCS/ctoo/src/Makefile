@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.17 2004-12-17 09:30:48 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.18 2005-01-24 14:28:38 gluck Exp $"
 #
 # Makefile of ctoo module
 #
-# who       when        what
-# --------  ----------  --------------------------------------------------------
+# History
+# -------
+# $>-Log-<$
 # gluck     18-May-2004 Created
 # gzins     09-Jun-2004 Added templates for doxygen
 # mella     24-Jun-2004 Add buildDocIndex related

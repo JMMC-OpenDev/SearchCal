@@ -3,10 +3,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.10 2004-12-17 09:33:47 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.11 2005-01-24 14:28:38 gluck Exp $"
 #
-# who       when        what
-# --------  --------    ------------------------------------------------
+# History
+# -------
+# $>-Log-<$
 # lgluck    23-Apr-2004 Created
 # gzins     04-Dec-2004 Look for templates in the following order:
 #                       ../templates, $INTROOT/templates and

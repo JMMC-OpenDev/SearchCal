@@ -3,10 +3,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.10 2005-01-24 11:02:40 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.11 2005-01-24 14:28:38 gluck Exp $"
 #
-# who       when         what
-# --------  --------     ------------------------------------------------
+# History
+# -------
+# $>-Log-<$
 # lgluck    23-Apr-2004  Created
 # gzins     04-Dec-2004  Changed C++ file extension to cpp
 #                        Look for templates in the following order:

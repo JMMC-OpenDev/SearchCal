@@ -2,10 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.2 2005-01-04 07:54:45 gzins Exp $"
+# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.3 2005-01-24 14:28:38 gluck Exp $"
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $>-Log-<$
 # gluck     17-Dec-2004  Created
 # gzins     04-Jan-2005  Changed ROOT_NAME to MOD_NAME 
 #

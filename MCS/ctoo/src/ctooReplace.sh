@@ -3,10 +3,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooReplace.sh,v 1.2 2004-12-11 15:36:26 lafrasse Exp $"
+# "@(#) $Id: ctooReplace.sh,v 1.3 2005-01-24 14:28:38 gluck Exp $"
 #
-# who       when        what
-# --------  --------    ------------------------------------------------
+# History
+# -------
+# $>-Log-<$
 # lafrasse  29/07/04    Forked form VLT Software
 # lafrasse  11/12/04    Changed documentation from VLT Software style to Doxygen
 #

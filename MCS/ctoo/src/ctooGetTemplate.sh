@@ -3,10 +3,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplate.sh,v 1.3 2004-12-04 19:53:42 gzins Exp $"
+# "@(#) $Id: ctooGetTemplate.sh,v 1.4 2005-01-24 14:28:38 gluck Exp $"
 #
-# who       when        what
-# --------  --------    ------------------------------------------------
+# History
+# -------
+# $>-Log-<$
 # lgluck    23-Apr-2004 Created
 # gzins     04-Dec-2004 Removed test related to directory structure 
 #
