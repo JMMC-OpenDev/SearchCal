@@ -30,6 +30,16 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[Could not read '%s' file : errno ='%d'.]]></errFormat>
    </error>
+   <error id="21">
+      <errName>DYN_BUF_COULD_NOT_SAVE_FILE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not save '%s' file : errno ='%d'.]]></errFormat>
+   </error>
+   <error id="23">
+      <errName>DYN_BUF_NOT_INITIALIZED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Dynamic Buffer not initialised.]]></errFormat>
+   </error>
    <error id="6">
       <errName>FILE_ENV_VAR_NOT_DEF</errName>
       <errSeverity>WARNING</errSeverity>
@@ -84,10 +94,5 @@
       <errName>STRING_MAX_SUBSTRING_NB_OVERFLOW</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Too many sub-strings found (more than '%d')]]></errFormat>
-   </error>
-   <error id="18">
-      <errName>STRUCT_NOT_INIT</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA['%s' structure not initialised.]]></errFormat>
    </error>
 </errorList>

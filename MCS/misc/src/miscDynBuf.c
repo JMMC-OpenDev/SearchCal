@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.26 2005-02-03 15:45:43 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.27 2005-02-10 10:08:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/02/03 15:45:43  gzins
+ * Updated miscDynBufVerifyIsInitialized to suppress all errResetStack calls
+ *
  * Revision 1.25  2005/02/03 08:59:31  gzins
  * Defined 'bytes' parameter as constant in miscDynBufAppendBytes
  * Defined 'str' parameter as constant in miscDynBufAppendString
@@ -103,7 +106,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.26 2005-02-03 15:45:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.27 2005-02-10 10:08:07 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -136,10 +139,10 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local functions declaration 
  */
-static mcsCOMPL_STAT miscDynBufCheckPositionParam(miscDYN_BUF       *dynBuf,
+static mcsCOMPL_STAT miscDynBufCheckPositionParam(const miscDYN_BUF *dynBuf,
                                                   const mcsUINT32   position);
 
-static mcsCOMPL_STAT miscDynBufCheckFromToParams(miscDYN_BUF       *dynBuf,
+static mcsCOMPL_STAT miscDynBufCheckFromToParams(const miscDYN_BUF *dynBuf,
                                                  const mcsUINT32   from,
                                                  const mcsUINT32   to);
 
@@ -148,7 +151,7 @@ static mcsCOMPL_STAT miscDynBufCheckBytesAndLengthParams(const char      *bytes,
 
 static mcsUINT32 miscDynBufVerifyStringParameterValidity(const char *str);
 
-static mcsLOGICAL miscDynBufVerifyIsInitialized(const miscDYN_BUF *dynBuf);
+static mcsLOGICAL miscDynBufIsInitialized(const miscDYN_BUF *dynBuf);
 
 /* 
  * Local functions definition
@@ -164,15 +167,22 @@ static mcsLOGICAL miscDynBufVerifyIsInitialized(const miscDYN_BUF *dynBuf);
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-static mcsLOGICAL miscDynBufVerifyIsInitialized(const miscDYN_BUF *dynBuf)
+static mcsLOGICAL miscDynBufIsInitialized(const miscDYN_BUF *dynBuf)
 {
+    /* Test the 'dynBuf' pointer validity */
+    if (dynBuf == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "dynBuf");
+        return mcsFALSE;
+    }
+
     /* Test the 'pointer to itself' and 'structure identifier magic number'
      * validity...
      */
     if (dynBuf->thisPointer != dynBuf
         || dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
     {
-        return (mcsFALSE);
+        return mcsFALSE;
     }
 
     return mcsTRUE;
@@ -191,16 +201,14 @@ static mcsLOGICAL miscDynBufVerifyIsInitialized(const miscDYN_BUF *dynBuf)
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 static        mcsCOMPL_STAT miscDynBufCheckPositionParam(
-                                             miscDYN_BUF        *dynBuf,
+                                             const miscDYN_BUF  *dynBuf,
                                              const mcsUINT32    position)
 {
-    /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
-        if (miscDynBufInit(dynBuf) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
+        return mcsFAILURE;
     }
 
     /* Test the position parameter validity... */
@@ -229,17 +237,15 @@ static        mcsCOMPL_STAT miscDynBufCheckPositionParam(
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 static        mcsCOMPL_STAT miscDynBufCheckFromToParams(
-                                             miscDYN_BUF       *dynBuf,
+                                             const miscDYN_BUF *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
-        if (miscDynBufInit(dynBuf) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
+        return mcsFAILURE;
     }
 
     /* Test the 'from' parameter validity */
@@ -386,13 +392,13 @@ mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf)
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
+mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF      *dynBuf,
                                              const mcsINT32   length)
 {
     char *newBuf = NULL;
 
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
@@ -460,7 +466,7 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
     char *newBuf = NULL;
 
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
@@ -517,7 +523,7 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
 mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
@@ -547,7 +553,7 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
@@ -578,16 +584,14 @@ mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
  *
  * \return the stored length of a Dynamic Buffer, or 0 if an error occured
  */
-mcsCOMPL_STAT miscDynBufGetNbStoredBytes(miscDYN_BUF       *dynBuf,
-                                             mcsUINT32         *storedBytes)
+mcsCOMPL_STAT miscDynBufGetNbStoredBytes(const miscDYN_BUF *dynBuf,
+                                               mcsUINT32 *storedBytes)
 {
-    /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
-        if (miscDynBufInit(dynBuf) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
+        return mcsFAILURE;
     }
 
     /* Return the Dynamic Buffer stored bytes number */
@@ -607,16 +611,14 @@ mcsCOMPL_STAT miscDynBufGetNbStoredBytes(miscDYN_BUF       *dynBuf,
  * \return the allocated length of a Dynamic Buffer, or 0 if an error occured
  */
 mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(
-                                             miscDYN_BUF       *dynBuf,
-                                             mcsUINT32         *allocatedBytes)
+                                             const miscDYN_BUF *dynBuf,
+                                                   mcsUINT32   *allocatedBytes)
 {
-    /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
-        if (miscDynBufInit(dynBuf) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
+        return mcsFAILURE;
     }
 
     /* Return the Dynamic Buffer allocated bytes number */
@@ -636,9 +638,10 @@ mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(
 char*         miscDynBufGetBuffer (const miscDYN_BUF       *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFAILURE)
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
-        return ((char*)NULL);
+        errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
+        return ((char*) NULL);
     }
 
     /* Return the Dynamic Buffer buffer address */
@@ -654,15 +657,14 @@ char*         miscDynBufGetBuffer (const miscDYN_BUF       *dynBuf)
  * \return a pointer to a Dynamic Buffer comment pattern, or NULL if an error
  * occured
  */
-char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf)
+const char*    miscDynBufGetCommentPattern   (const miscDYN_BUF  *dynBuf)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
-        if (miscDynBufInit(dynBuf) == mcsFAILURE)
-        {
-            return NULL;
-        }
+        errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
+        return ((const char *) NULL);
     }
 
     /* Return the Dynamic Buffer buffer address */
@@ -684,17 +686,15 @@ char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf)
  * \return a pointer to the next line of a Dynamic Buffer buffer, or NULL if an
  * error occured
  */
-char*         miscDynBufGetNextLine (miscDYN_BUF       *dynBuf,
-                                             const char        *currentLinePtr,
-                                             const mcsLOGICAL  skipCommentFlag)
+char*         miscDynBufGetNextLine (const miscDYN_BUF *dynBuf,
+                                     const char        *currentLinePtr,
+                                     const mcsLOGICAL  skipCommentFlag)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
-        if (miscDynBufInit(dynBuf) == mcsFAILURE)
-        {
-            return NULL;
-        }
+        errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
     }
 
     /* Get the current Dynamic Buffer internal buffer pointer */
@@ -778,8 +778,8 @@ char*         miscDynBufGetNextLine (miscDYN_BUF       *dynBuf,
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
-                                             char              *byte,
+mcsCOMPL_STAT miscDynBufGetByteAt           (const miscDYN_BUF *dynBuf,
+                                                   char        *byte,
                                              const mcsUINT32   position)
 {
     /* Test the 'dynBuf' and 'position' parameters validity */
@@ -815,8 +815,8 @@ mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
-                                             char              *bytes,
+mcsCOMPL_STAT miscDynBufGetBytesFromTo      (const miscDYN_BUF *dynBuf,
+                                                   char        *bytes,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
@@ -865,8 +865,8 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT miscDynBufGetStringFromTo     (miscDYN_BUF       *dynBuf,
-                                             char              *str,
+mcsCOMPL_STAT miscDynBufGetStringFromTo     (const miscDYN_BUF *dynBuf,
+                                                   char        *str,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
@@ -904,7 +904,7 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
                                              const char        *commentPattern)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {
@@ -960,6 +960,7 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
     struct stat fileStats;
     if ((stat(fileName, &fileStats) == -1) || (S_ISREG(fileStats.st_mode) == 0))
     {
+        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, strerror(errno));
         return mcsFAILURE;
     }
     size_t fileSize = fileStats.st_size;
@@ -974,6 +975,7 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
     FILE *file = fopen(fileName, "r");
     if (file == NULL)
     {
+        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, strerror(errno));
         return mcsFAILURE;
     }
 
@@ -981,9 +983,6 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
     size_t readSize = fread((void*)dynBuf->dynBuf, sizeof(char),
                             fileSize, file);
 
-    /* Close file */
-    fclose(file);
-    
     /* Test if the file seems to be loaded correctly */
     if ((readSize != fileSize) || (dynBuf->dynBuf == NULL))
     {
@@ -991,6 +990,9 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
         return mcsFAILURE;
     }
 
+    /* Close file */
+    fclose(file);
+    
     /* Update the Dynamic Buffer internal counters */
     dynBuf->storedBytes = fileSize;
 
@@ -1002,6 +1004,61 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
     
     /* Set the Dynamic Buffer comment pattern */
     return(miscDynBufSetCommentPattern(dynBuf, commentPattern));
+}
+
+
+/**
+ * Put a Dynamic Buffer content in a specified file.
+ *
+ * \warning The given file will be over-written on each call.
+ * \warning The given file path must have been \em resolved before this function
+ * call. See miscResolvePath() documentation for more information.\n\n
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param fileName the path specifying the file to be over-written with the
+ * Dynamic Buffer content
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
+                                             const char        *fileName)
+{
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Open (or create)  the specified file in 'write' mode */
+    FILE *file = fopen(fileName, "w");
+    if (file == NULL)
+    {
+        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, strerror(errno));
+        return mcsFAILURE;
+    }
+
+    /* Get the Dynamic Buffer size to be saved */
+    mcsUINT32 dynBufSize = 0;
+    if (miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    /* Put all the content of the Dynamic Buffer in the file */
+    size_t savedSize = fwrite((void*)miscDynBufGetBuffer(dynBuf), sizeof(char),
+                              dynBufSize, file);
+
+    /* Test if the Dynamic Buffer has been saved correctly */
+    if (savedSize != dynBufSize)
+    {
+        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, strerror(errno));
+        return mcsFAILURE;
+    }
+
+    /* Close file */
+    fclose(file);
+    
+    return mcsSUCCESS;
 }
 
 
@@ -1170,7 +1227,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length)
 {
     /* Initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufVerifyIsInitialized(dynBuf) == mcsFALSE)
+    if (miscDynBufIsInitialized(dynBuf) == mcsFALSE)
     {
         if (miscDynBufInit(dynBuf) == mcsFAILURE)
         {

@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.15 2005-02-03 08:59:24 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.16 2005-02-10 10:08:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/02/03 08:59:24  gzins
+ * Defined 'bytes' parameter as constant in miscDynBufAppendBytes
+ * Defined 'str' parameter as constant in miscDynBufAppendString
+ *
  * Revision 1.14  2005/01/28 18:10:17  gzins
  * Renamed miscDynBufGetBufferPointer to miscDynBufGetBuffer
  * Renamed miscDynBufGetNextLinePointer to miscDynBufGetNextLine
@@ -133,31 +137,32 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf);
 
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf);
 
-mcsCOMPL_STAT miscDynBufGetNbStoredBytes    (miscDYN_BUF       *dynBuf,
-                                             mcsUINT32         *storedBytes);
+mcsCOMPL_STAT miscDynBufGetNbStoredBytes    (const miscDYN_BUF *dynBuf,
+                                                   mcsUINT32   *storedBytes);
 
-mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (miscDYN_BUF       *dynBuf,
+mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (const miscDYN_BUF *dynBuf,
                                              mcsUINT32         *allocatedBytes);
 
-char*         miscDynBufGetBuffer           (const miscDYN_BUF       *dynBuf);
+char*         miscDynBufGetBuffer           (const miscDYN_BUF *dynBuf);
 #define miscDynBufGetBufferPointer miscDynBufGetBuffer
-char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf);
 
-char*         miscDynBufGetNextLine         (miscDYN_BUF       *dynBuf,
+const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
+
+char*         miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
                                              const char        *currentLinePtr,
                                              const mcsLOGICAL  skipCommentFlag);
 #define miscDynBufGetNextLinePointer miscDynBufGetNextLine
 
-mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
+mcsCOMPL_STAT miscDynBufGetByteAt           (const miscDYN_BUF *dynBuf,
                                              char              *byte,
                                              const mcsUINT32   position);
 
-mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
+mcsCOMPL_STAT miscDynBufGetBytesFromTo      (const miscDYN_BUF *dynBuf,
                                              char              *bytes,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
 
-mcsCOMPL_STAT miscDynBufGetStringFromTo     (miscDYN_BUF       *dynBuf,
+mcsCOMPL_STAT miscDynBufGetStringFromTo     (const miscDYN_BUF *dynBuf,
                                              char              *str,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
@@ -168,6 +173,9 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
 mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
                                              const char        *fileName,
                                              const char        *commentPattern);
+
+mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
+                                             const char        *fileName);
 
 mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
                                              char              byte,

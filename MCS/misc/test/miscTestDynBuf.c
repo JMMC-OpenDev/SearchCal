@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDynBuf.c,v 1.13 2005-01-19 10:28:08 gzins Exp $"
+* "@(#) $Id: miscTestDynBuf.c,v 1.14 2005-02-10 10:08:07 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -24,10 +24,11 @@
 *                        miscDynBufGetNbStoredBytes and
 *                        miscDynBufGetAllocatedBytesNumber to
 *                        miscDynBufGetNbAllocatedBytes
+* lafrasse  23-Jun-2004  Added miscDynBufSaveInFile() test
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.13 2005-01-19 10:28:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.14 2005-02-10 10:08:07 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -910,6 +911,20 @@ int main (int argc, char *argv[])
     displayDynBuf(&dynBuf);
     printf("\n");
 
+    /* miscDynBufSaveInFile */
+    printf("---------------------------------------------------------------\n");
+    bytes = "../tmp/";
+    printf("miscDynBufSaveInFile(%s) ", bytes);
+    executionStatusCode = miscDynBufSaveInFile(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    bytes = "../tmp/test.txt";
+    printf("miscDynBufSaveInFile(%s) ", bytes);
+    executionStatusCode = miscDynBufSaveInFile(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    printf("\n");
+
     /* miscDynBufGetNextLinePointer */
     printf("---------------------------------------------------------------\n");
     mcsLOGICAL skipFlag;
@@ -978,18 +993,15 @@ int main (int argc, char *argv[])
 
 void displayExecStatus(mcsCOMPL_STAT executionStatusCode)
 {
-    char *statusStr = NULL;
-
     if (executionStatusCode == FAILURE)
     {
-        statusStr = FAILED;
+        printf("%s\n", FAILED);
+        errCloseStack();
     }
     else
     {
-        statusStr = SUCCEED;
+        printf("%s\n", SUCCEED);
     }
-
-    printf("%s\n", statusStr);
 
     return;
 }
@@ -997,6 +1009,7 @@ void displayExecStatus(mcsCOMPL_STAT executionStatusCode)
 void displayDynBuf(miscDYN_BUF *dynBuf)
 {
     mcsUINT32 bytesNumber = 0;
+    char*     tmp         = NULL;
 
     printf("miscDynBufGetNbStoredBytes = ");
     if (miscDynBufGetNbStoredBytes(dynBuf, &bytesNumber) == FAILURE)
@@ -1018,11 +1031,29 @@ void displayDynBuf(miscDYN_BUF *dynBuf)
         printf("'%d'.\n", bytesNumber);
     }
 
-    printf("miscDynBufGetCommentPattern = \"%s\".\n",
-           miscDynBufGetCommentPattern(dynBuf));
+    printf("miscDynBufGetCommentPattern = ");
+    tmp = (char*)miscDynBufGetCommentPattern(dynBuf);
+    if (tmp == NULL)
+    {
+        printf("FAILURE.\n");
+    }
+    else
+    {
+        printf("\"%s\".\n", tmp);
+    }
 
-    printf("miscDynBufGetBufferPointer = \"%s\".\n",
-           miscDynBufGetBufferPointer(dynBuf));
+    printf("miscDynBufGetBufferPointer = ");
+    tmp = miscDynBufGetBufferPointer(dynBuf);
+    if (tmp == NULL)
+    {
+        printf("FAILURE.\n");
+    }
+    else
+    {
+        printf("\"%s\".\n", tmp);
+    }
+
+    errResetStack();
 }
 
 /*___oOo___*/
