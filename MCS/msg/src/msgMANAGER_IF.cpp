@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.13 2004-12-09 13:56:43 scetre Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.14 2004-12-15 10:02:33 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -23,6 +23,7 @@
 * gzins     09-Dec-2004  Fixed bug related to default port number;
 *                        msgMANAGER_PORT_NUMBER used instead of the one given
 *                        by envLIST class
+* gzins     15-Dec-2004  Used new command name definition (with _NAME)
 *
 *******************************************************************************/
 
@@ -31,7 +32,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.13 2004-12-09 13:56:43 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.14 2004-12-15 10:02:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -206,7 +207,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     }
 
     // Register with msgManager
-    if (SendCommand(msgREGISTER_CMD, "msgManager", NULL, 0) == FAILURE)
+    if (SendCommand(msgREGISTER_CMD_NAME, "msgManager", NULL, 0) == FAILURE)
     {
         _socket.Close();
         return FAILURE;
@@ -396,7 +397,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     }
 
     // Send a 'close command' message to msgManager
-    if (SendCommand(msgCLOSE_CMD, "msgManager", NULL, 0) == FAILURE)
+    if (SendCommand(msgCLOSE_CMD_NAME, "msgManager", NULL, 0) == FAILURE)
     {
         _socket.Close();
         return FAILURE;
