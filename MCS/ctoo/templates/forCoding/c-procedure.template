@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-procedure.template,v 1.5 2004-06-17 08:12:23 gluck Exp $"
+#%# "@(#) $Id: c-procedure.template,v 1.6 2004-06-17 08:50:31 gluck Exp $"
 #%# 
 #%# Template for c-procedure          
 #%# 
@@ -28,17 +28,34 @@
 *
 *******************************************************************************/
 
-
 static char *rcsId="@(#) $I>-<d$"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers
  */
+#include <stdio.h>
+
+
+/*
+ * MCS Headers 
+ */
+#include "mcs.h"
+#include "log.h"
 
 
 /* 
  * Local Headers
+ */
+
+
+/*
+ * Local Variables
+ */
+
+
+/*
+ * Local Functions
  */
 
 
