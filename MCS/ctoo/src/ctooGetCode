@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetCode,v 1.2 2004-06-17 07:14:31 gluck Exp $"
+# "@(#) $Id: ctooGetCode,v 1.3 2004-08-05 15:48:09 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -22,14 +22,13 @@
 #       2- c-procedure
 #       3- h-file
 #   
-#       4- c++-file
-#       5- c++-small-main
-#       6- c++-class-file
-#       7- c++-h-file
+#       4- c++-small-main
+#       5- c++-class-file
+#       6- c++-h-file
 #   
-#       8- script
+#       7- script
 #   
-#       9- Makefile
+#       8- Makefile
 #
 # FILES
 #
@@ -61,14 +60,13 @@ Templates are available for:
         2- c-procedure
         3- h-file
 
-        4- c++-file
-        5- c++-small-main
-        6- c++-class-file
-        7- c++-h-file
+        4- c++-small-main
+        5- c++-class-file
+        6- c++-h-file
         
-        8- script
+        7- script
         
-        9- Makefile
+        8- Makefile
 xyz
 
 # Propose the user to enter his choice
@@ -98,27 +96,23 @@ then
             ctooGetTemplateForCoding h-file
             ;;
         
-        4)  # c++-file choice
-            ctooGetTemplateForCoding c++-file 
-            ;;
-        
-        5)  # c++-small-main choice
+        4)  # c++-small-main choice
             ctooGetTemplateForCoding c++-small-main 
             ;;
         
-        6)  # c++-class-file choice
+        5)  # c++-class-file choice
             ctooGetTemplateForCoding c++-class-file 
             ;;
         
-        7)  # c++-h-file choice
+        6)  # c++-h-file choice
             ctooGetTemplateForCoding c++-h-file
             ;;
         
-        8)  # script file choice
+        7)  # script file choice
             ctooGetTemplateForCoding script
             ;;
         
-        9)  # Makefile choice
+        8)  # Makefile choice
             ctooGetTemplateForCoding Makefile
             ;;
         

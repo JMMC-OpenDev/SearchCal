@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.7 2004-06-30 14:02:00 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.8 2004-08-05 15:48:09 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -14,9 +14,8 @@
 #   ctooGetTemplateForCoding -  give available standard templates for coding
 # 
 # SYNOPSIS
-#   ctooGetTemplateForCoding c-main|c-procedure|h-file|c++-file|
-#                            c++-small-main|c++-class-file|c++-h-file|
-#                            script|Makefile
+#   ctooGetTemplateForCoding c-main|c-procedure|h-file|c++-small-main|
+#                            c++-class-file|c++-h-file|script|Makefile
 # 
 # DESCRIPTION
 #   See ctooGetTemplate
@@ -71,7 +70,7 @@ fi
 if [ $# != 1 ]
 then 
     echo -e "\n\tUsage: ctooGetTemplateForCoding c-main|c-procedure|h-file|" 
-    echo -e "c++-file|c++-small-main|c++-class-file|c++-h-file|script|Makefile"
+    echo -e "c++-small-main|c++-class-file|c++-h-file|script|Makefile"
     exit 1
 fi 
 
@@ -92,7 +91,7 @@ then
             MODE=644
             ;;
 
-        c++-small-main|c++-file|c++-class-file)
+        c++-small-main|c++-class-file)
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
             FILE_SUFFIX=".C"
@@ -199,7 +198,7 @@ then
         # invalid choice
         echo -e "\nInvalid choice."
         echo -e "\n\tUsage: getTemplateForCoding c-main|c-procedure|h-file| \ 
-                c++-file|c++-small-main|c++-class-file|c++-h-file|script| \
+                c++-small-main|c++-class-file|c++-h-file|script| \
                 Makefile"
         exit
     fi
