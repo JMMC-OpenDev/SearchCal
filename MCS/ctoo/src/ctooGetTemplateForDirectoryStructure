@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.6 2004-06-24 13:39:06 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.7 2004-06-24 14:03:36 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -72,6 +72,7 @@ makefile=$3
 # Directories that shall be present in any area 
 BASIC_DIRS="\
             config      \
+            doc         \
             bin         \
             include     \
             lib         \
@@ -82,7 +83,6 @@ BASIC_DIRS="\
 MODROOT_LIST="$BASIC_DIRS  \
               src          \
               object       \
-              doc          \
               test         \
               tmp          \
              "
