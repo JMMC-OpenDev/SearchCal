@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.h,v 1.4 2005-01-29 15:16:35 gzins Exp $"
+ * "@(#) $Id: evhINTERFACE.h,v 1.5 2005-02-15 14:05:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/01/29 15:16:35  gzins
+ * Added CVS log as modification history
+ *
  * gzins     06-Jan-2005  Created
  *
  ******************************************************************************/
@@ -67,7 +70,7 @@ public:
     virtual evhCB_COMPL_STAT ReplyCB(msgMESSAGE &msg, void*);
 
     // Get reply of the last sent command 
-    virtual char         *GetLastReply(void);
+    virtual const char       *GetLastReply(void);
 
 protected:
     
