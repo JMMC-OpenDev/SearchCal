@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgReceive.c,v 1.2 2004-10-07 08:59:36 lafrasse Exp $"
+* "@(#) $Id: msgReceive.c,v 1.3 2004-11-19 17:15:47 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  11-Aug-2004  Ported from CILAS software
 * lafrasse  07-Oct-2004  Added msgIsConnected
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -18,7 +19,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgReceive.c,v 1.2 2004-10-07 08:59:36 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgReceive.c,v 1.3 2004-11-19 17:15:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -60,7 +61,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT   msgReceive        (msgMESSAGE         *msg,
+mcsCOMPL_STAT   msgReceive        (msgMESSAGE_RAW     *msg,
                                    mcsINT32           timeoutInMs)
 {
     logExtDbg("msgSendReply()");
@@ -92,7 +93,7 @@ mcsCOMPL_STAT   msgReceive        (msgMESSAGE         *msg,
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT   msgReceiveFrom    (int                sd,
-                                   msgMESSAGE         *msg,
+                                   msgMESSAGE_RAW     *msg,
                                    mcsINT32           timeoutInMs)
 {
     struct timeval timeout ;

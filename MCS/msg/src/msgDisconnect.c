@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgDisconnect.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"
+* "@(#) $Id: msgDisconnect.c,v 1.4 2004-11-19 17:15:47 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  11-Aug-2004  Ported from CILAS software
 * lafrasse  07-Oct-2004  Added msgIsConnected
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -18,7 +19,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgDisconnect.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgDisconnect.c,v 1.4 2004-11-19 17:15:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -55,7 +56,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 mcsCOMPL_STAT   msgDisconnect     (void)
 {
-    msgMESSAGE msg;
+    msgMESSAGE_RAW msg;
 
     logExtDbg("msgDisconnect()");
 

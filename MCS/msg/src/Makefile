@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2004-10-07 08:59:36 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.8 2004-11-19 17:15:47 lafrasse Exp $"
 #
 # Makefile of msg
 #
@@ -9,6 +9,8 @@
 # --------  -----------  -------------------------------------------------------
 # lafrasse  10-Aug-2004  Created
 # gzins     01-Oct-2004  Added msgSendCommand
+# lafrasse  10-Aug-2004  Added msgMANAGER_IF.cpp  and msgMESSAGE.cpp compilation
+#                        directives
 #
 #
 #*******************************************************************************
@@ -35,22 +37,26 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = msgManager msgSendCommand
+EXECUTABLES     = msgManager msgSendCommand msgTestSendCommand
 EXECUTABLES_L   = 
 
 #
 # <brief description of msgManager program>
-msgManager_OBJECTS   = msgManager            \
-                       msgManagerForward     \
-                       msgManagerHandleCmd 	 \
-                       msgManagerProcess     \
-                       msgManagerProcessList
-msgManager_LDFLAGS   = -lgdome 
-msgManager_LIBS      = mcs log err cmd misc msg
+msgManager_OBJECTS           = msgManager            \
+                               msgManagerForward     \
+                               msgManagerHandleCmd 	 \
+                               msgManagerProcess     \
+                               msgManagerProcessList
+msgManager_LDFLAGS           = -lgdome 
+msgManager_LIBS              = mcs log err cmd misc msg C++
 
-msgSendCommand_OBJECTS   = msgSendCommand
-msgSendCommand_LDFLAGS   = -lgdome
-msgSendCommand_LIBS      = mcs log err cmd misc msg
+msgSendCommand_OBJECTS       = msgSendCommand
+msgSendCommand_LDFLAGS       = -lgdome
+msgSendCommand_LIBS          = mcs log err cmd misc msg C++
+
+msgTestSendCommand_OBJECTS   = msgTestSendCommand
+msgTestSendCommand_LDFLAGS   = -lgdome
+msgTestSendCommand_LIBS      = mcs log err cmd misc msg C++
 
 #
 # special compilation flags for single c sources
@@ -68,14 +74,18 @@ LIBRARIES       = msg
 LIBRARIES_L     =
 
 #
-# <brief description of lllll library>
-msg_OBJECTS   = msg               \
-				msgConnect        \
-				msgDisconnect     \
-				msgReceive        \
-				msgSend           \
-				msgSocket         \
-				msgGetMessageQueue
+# <brief description of msg library>
+msg_OBJECTS   = msg                \
+				msgConnect         \
+				msgDisconnect      \
+				msgReceive         \
+				msgSend            \
+				msgSocket          \
+				msgGetMessageQueue \
+				msgMANAGER_IF      \
+                msgMESSAGE         \
+                msgSOCKET
+
 
 #
 # Scripts (public and local)

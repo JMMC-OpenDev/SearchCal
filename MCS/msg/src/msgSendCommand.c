@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.c,v 1.1 2004-10-01 15:06:23 gzins Exp $"
+* "@(#) $Id: msgSendCommand.c,v 1.2 2004-11-19 17:15:47 lafrasse Exp $"
 *
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  16-Aug-2004  Ported from CILAS software
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -43,7 +44,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.c,v 1.1 2004-10-01 15:06:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.c,v 1.2 2004-11-19 17:15:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -77,15 +78,15 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 int main (int argc, char *argv[])
 {
-    mcsLOGICAL  verbose;
-    mcsINT32    cnt;
-    mcsPROCNAME process;
-    mcsCMD      command;
-    msgMESSAGE  msg;
-    mcsBYTES256 params;
-    mcsINT32    timeout;
-    mcsINT32    status;
-    mcsLOGICAL  lastReply;
+    mcsLOGICAL      verbose;
+    mcsINT32        cnt;
+    mcsPROCNAME     process;
+    mcsCMD          command;
+    msgMESSAGE_RAW  msg;
+    mcsBYTES256     params;
+    mcsINT32        timeout;
+    mcsINT32        status;
+    mcsLOGICAL      lastReply;
 
     errResetStack();
     verbose = mcsFALSE;

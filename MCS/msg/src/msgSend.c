@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSend.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"
+* "@(#) $Id: msgSend.c,v 1.4 2004-11-19 17:15:47 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  11-Aug-2004  Ported from CILAS software
 * lafrasse  07-Oct-2004  Added msgIsConnected
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -18,7 +19,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSend.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSend.c,v 1.4 2004-11-19 17:15:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -67,7 +68,7 @@ mcsCOMPL_STAT   msgSendCommand    (const char         *command,
                                    const char         *buffer,  
                                    mcsINT32           bufLen)
 {
-    msgMESSAGE msg;
+    msgMESSAGE_RAW msg;
 
     logExtDbg("msgSendCommand()");
 
@@ -108,7 +109,7 @@ mcsCOMPL_STAT   msgSendCommand    (const char         *command,
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT   msgSendTo         (int                sd,
-                                   msgMESSAGE         *msg)
+                                   msgMESSAGE_RAW     *msg)
 {
     mcsINT32   msgLen;
     mcsINT32   nbBytesSent;
@@ -147,7 +148,7 @@ mcsCOMPL_STAT   msgSendTo         (int                sd,
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT   msgSendReply      (msgMESSAGE         *msg,
+mcsCOMPL_STAT   msgSendReply      (msgMESSAGE_RAW     *msg,
                                    mcsLOGICAL         lastReply)
 {
     logExtDbg("msgSendReply()");
@@ -177,7 +178,7 @@ mcsCOMPL_STAT   msgSendReply      (msgMESSAGE         *msg,
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT   msgSendReplyTo    (int                sd,
-                                   msgMESSAGE         *msg,
+                                   msgMESSAGE_RAW     *msg,
                                    mcsLOGICAL         lastReply)
 {
     mcsINT32   msgLen;

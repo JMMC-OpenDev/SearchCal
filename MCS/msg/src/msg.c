@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msg.c,v 1.5 2004-10-01 13:07:43 gzins Exp $"
+* "@(#) $Id: msg.c,v 1.6 2004-11-19 17:15:47 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  11-Aug-2004  Ported from CILAS software
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -90,7 +91,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: msg.c,v 1.5 2004-10-01 13:07:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msg.c,v 1.6 2004-11-19 17:15:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -137,7 +138,7 @@ int msgManagerSd = -1;
  * \return FAILURE if the to-be-copied-in byte number is greater than the
  * message body maximum size, SUCCESS otherwise
  */
-mcsCOMPL_STAT   msgSetBody        (msgMESSAGE         *msg,
+mcsCOMPL_STAT   msgSetBody        (msgMESSAGE_RAW     *msg,
                                    char               *buffer,
                                    mcsINT32           bufLen)
 {
@@ -190,7 +191,7 @@ mcsCOMPL_STAT   msgSetBody        (msgMESSAGE         *msg,
  *
  * \return the address of the message body
  */
-char *          msgGetBodyPtr     (msgMESSAGE         *msg)
+char *          msgGetBodyPtr     (msgMESSAGE_RAW     *msg)
 {
     /* Return the message body address */
     return (msg->body);
@@ -204,7 +205,7 @@ char *          msgGetBodyPtr     (msgMESSAGE         *msg)
  *
  * \return the message body size
  */
-mcsINT32        msgGetBodySize    (msgMESSAGE         *msg)
+mcsINT32        msgGetBodySize    (msgMESSAGE_RAW     *msg)
 {
     mcsINT32 msgBodySize;
     /* Return the message body size in local host byte order */
@@ -220,7 +221,7 @@ mcsINT32        msgGetBodySize    (msgMESSAGE         *msg)
  *
  * \return the address of the message command name
  */
-char *          msgGetCommand     (msgMESSAGE         *msg)
+char *          msgGetCommand     (msgMESSAGE_RAW     *msg)
 {
     /* Return the message command name address */
     return (msg->header.command);
@@ -234,7 +235,7 @@ char *          msgGetCommand     (msgMESSAGE         *msg)
  *
  * \return the address of the message sender processus name
  */
-char *          msgGetSender      (msgMESSAGE         *msg)
+char *          msgGetSender      (msgMESSAGE_RAW     *msg)
 {
     /* Return the message sender processus name address */
     return (msg->header.sender);
@@ -248,7 +249,7 @@ char *          msgGetSender      (msgMESSAGE         *msg)
  *
  * \return the address of the message receiver processus name
  */
-char *          msgGetRecipient   (msgMESSAGE         *msg)
+char *          msgGetRecipient   (msgMESSAGE_RAW     *msg)
 {
     /* Return the message receiver processus name address */
     return (msg->header.recipient);
@@ -262,7 +263,7 @@ char *          msgGetRecipient   (msgMESSAGE         *msg)
  *
  * \return mcsTRUE or mcsFALSE
  */
-mcsLOGICAL      msgIsLastReply    (msgMESSAGE         *msg)
+mcsLOGICAL      msgIsLastReply    (msgMESSAGE_RAW     *msg)
 {
     /* Return weither it is the last message or not */
     return (msg->header.lastReply);
@@ -275,7 +276,7 @@ mcsLOGICAL      msgIsLastReply    (msgMESSAGE         *msg)
  *
  * \return the message type
  */
-msgTYPE         msgGetType        (msgMESSAGE         *msg)
+msgTYPE         msgGetType        (msgMESSAGE_RAW     *msg)
 {
     /* Return the message type */
     return (msg->header.type);

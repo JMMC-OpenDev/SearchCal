@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgManager.h,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgManager.h,v 1.2 2004-11-19 17:15:42 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  13-Aug-2004  Ported from CILAS software
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -43,6 +44,7 @@ extern "C" {
  * Local Headers 
  */
 #include "msg.h"
+#include "msgPrivate.h"
 
 
 /* 
@@ -111,15 +113,15 @@ mcsCOMPL_STAT   msgManagerProcessSetConnection(
 
 
 
-mcsCOMPL_STAT   msgManagerHandleCmd       (msgMESSAGE         *msg,
+mcsCOMPL_STAT   msgManagerHandleCmd       (msgMESSAGE_RAW     *msg,
                                            msgPROCESS         *process,
                                            msgPROCESS_LIST    *procList);
 
-mcsCOMPL_STAT   msgManagerForwardCmd      (msgMESSAGE         *msg,
+mcsCOMPL_STAT   msgManagerForwardCmd      (msgMESSAGE_RAW     *msg,
                                            msgPROCESS         *process,
                                            msgPROCESS_LIST    *procList);
 
-mcsCOMPL_STAT   msgManagerForwardReply    (msgMESSAGE         *msg,
+mcsCOMPL_STAT   msgManagerForwardReply    (msgMESSAGE_RAW     *msg,
                                            msgPROCESS         *process,
                                            msgPROCESS_LIST    *procList);
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgConnect.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"
+* "@(#) $Id: msgConnect.c,v 1.4 2004-11-19 17:15:47 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,6 +9,7 @@
 * gzins     01-Oct-2004  Added Error Stack restting if no MSG_MANAGER_HOST Env.
 *                        Var. is defined
 * lafrasse  07-Oct-2004  Added msgIsConnected
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -20,7 +21,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgConnect.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgConnect.c,v 1.4 2004-11-19 17:15:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -88,7 +89,7 @@ mcsCOMPL_STAT   msgConnect        (const mcsPROCNAME  procName,
     struct sockaddr_in addr;
     mcsINT32           nbRetry;
     mcsINT32           status;
-    msgMESSAGE         msg;
+    msgMESSAGE_RAW     msg;
 
     logExtDbg("msgConnect()");
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPrivate.h,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgPrivate.h,v 1.2 2004-11-19 17:15:42 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -55,6 +55,61 @@ extern "C" {
  * Connection with msgManager socket
  */
 extern int msgManagerSd;    
+
+mcsCOMPL_STAT   msgSetBody        (msgMESSAGE_RAW         *msg,
+                                   char               *buffer,
+                                   mcsINT32           bufLen);
+
+char *          msgGetBodyPtr     (msgMESSAGE_RAW         *msg);
+
+mcsINT32        msgGetBodySize    (msgMESSAGE_RAW         *msg);
+
+char *          msgGetCommand     (msgMESSAGE_RAW         *msg);
+
+char *          msgGetSender      (msgMESSAGE_RAW         *msg);
+
+char *          msgGetRecipient   (msgMESSAGE_RAW         *msg);
+
+mcsLOGICAL      msgIsLastReply    (msgMESSAGE_RAW         *msg);
+
+msgTYPE         msgGetType        (msgMESSAGE_RAW         *msg);
+
+mcsLOGICAL      msgIsConnected    (void);
+
+mcsCOMPL_STAT   msgConnect        (const mcsPROCNAME  procName,
+                                   const char*        msgManagerHost);
+
+mcsCOMPL_STAT   msgDisconnect     (void);
+
+mcsCOMPL_STAT   msgReceive        (msgMESSAGE_RAW     *msg,
+                                   mcsINT32           timeoutInMs);
+                                  
+mcsCOMPL_STAT   msgReceiveFrom    (int                sd,
+                                   msgMESSAGE_RAW     *msg,
+                                   mcsINT32           timeoutInMs);
+                                  
+
+
+mcsCOMPL_STAT   msgSendCommand    (const char         *command,
+                                   const mcsPROCNAME  destProc,
+                                   const char         *buffer,  
+                                   mcsINT32           bufLen);
+                                  
+mcsCOMPL_STAT   msgSendTo         (int                sd,
+                                   msgMESSAGE_RAW     *msg);
+                                  
+mcsCOMPL_STAT   msgSendReply      (msgMESSAGE_RAW     *msg,
+                                   mcsLOGICAL         lastReply);
+                                  
+mcsCOMPL_STAT   msgSendReplyTo    (int                sd,
+                                   msgMESSAGE_RAW     *msg,
+                                   mcsLOGICAL         lastReply);
+                                  
+int             msgSocketCreate   (unsigned short     *portNumberPt,
+                                   int                socketType);
+                                  
+mcsCOMPL_STAT   msgSocketClose    (int                sd);
+                                  
 
 
 #ifdef __cplusplus

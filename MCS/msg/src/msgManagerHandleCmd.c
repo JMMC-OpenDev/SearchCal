@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgManagerHandleCmd.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgManagerHandleCmd.c,v 1.2 2004-11-19 17:15:47 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  13-Aug-2004  Ported from CILAS software
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -17,7 +18,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgManagerHandleCmd.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgManagerHandleCmd.c,v 1.2 2004-11-19 17:15:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -63,7 +64,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT   msgManagerHandleCmd       (msgMESSAGE         *msg,
+mcsCOMPL_STAT   msgManagerHandleCmd       (msgMESSAGE_RAW     *msg,
                                            msgPROCESS         *process,
                                            msgPROCESS_LIST    *procList)
 {

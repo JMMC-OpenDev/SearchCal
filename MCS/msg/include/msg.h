@@ -3,19 +3,20 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msg.h,v 1.6 2004-10-07 08:59:36 lafrasse Exp $"
+* "@(#) $Id: msg.h,v 1.7 2004-11-19 17:15:42 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  10-Aug-2004  Ported from CILAS software
 * lafrasse  07-Oct-2004  Added msgIsConnected
+* lafrasse  19-Nov-2004  Moved all the C functions declaration to msgPrivate.h
 *
 *
 *******************************************************************************/
 
 /**
  * \file
- * This header contains all the 'msg' library functions declarations.
+ * This header contains all the 'msg' library structures declarations.
  *
  */
 
@@ -31,6 +32,7 @@ extern "C" {
  * MCS Headers 
  */
 #include "mcs.h"
+
 
 /* 
  * Constants definition
@@ -89,12 +91,16 @@ typedef enum
 typedef struct
 {
     mcsPROCNAME sender;          /**< Sender processus name */
+    mcsENVNAME  senderEnv;       /**< Sender environnement */
     mcsPROCNAME recipient;       /**< Receiver processus name  */
+    mcsENVNAME  recipientEnv;    /**< Receiver environnement */
+    mcsSTRING8  identifier;      /**< Identificator */
+    mcsLOGICAL  isInternal;      /**< FALSE if it is external >*/
     mcsUINT8    type;            /**< Message type */
     mcsCMD      command;         /**< Command name */
     mcsLOGICAL  lastReply;       /**< TRUE if it is the last answer */
     mcsBYTES32  timeStamp;       /**< Message date */
-    mcsBYTES8   msgBodySize;     /**< Message body size */
+    mcsSTRING8  msgBodySize;     /**< Message body size */
 } msgHEADER;
 
 
@@ -106,72 +112,13 @@ typedef struct
     msgHEADER  header;
     char       body[msgMAXLEN - sizeof(msgHEADER)];
 
-} msgMESSAGE;
-
+} msgMESSAGE_RAW;
 
 
 /*
  * Pubic functions declaration
  */
-mcsCOMPL_STAT   msgSetBody        (msgMESSAGE         *msg,
-                                   char               *buffer,
-                                   mcsINT32           bufLen);
 
-char *          msgGetBodyPtr     (msgMESSAGE         *msg);
-
-mcsINT32        msgGetBodySize    (msgMESSAGE         *msg);
-
-char *          msgGetCommand     (msgMESSAGE         *msg);
-
-char *          msgGetSender      (msgMESSAGE         *msg);
-
-char *          msgGetRecipient   (msgMESSAGE         *msg);
-
-mcsLOGICAL      msgIsLastReply    (msgMESSAGE         *msg);
-
-msgTYPE         msgGetType        (msgMESSAGE         *msg);
-
-
-mcsINT32        msgGetMessageQueue(void);
-
-mcsLOGICAL      msgIsConnected    (void);
-
-mcsCOMPL_STAT   msgConnect        (const mcsPROCNAME  procName,
-                                   const char*        msgManagerHost);
-                                  
-mcsCOMPL_STAT   msgDisconnect     (void);
-
-
-
-mcsCOMPL_STAT   msgReceive        (msgMESSAGE         *msg,
-                                   mcsINT32           timeoutInMs);
-                                  
-mcsCOMPL_STAT   msgReceiveFrom    (int                sd,
-                                   msgMESSAGE         *msg,
-                                   mcsINT32           timeoutInMs);
-                                  
-
-
-mcsCOMPL_STAT   msgSendCommand    (const char         *command,
-                                   const mcsPROCNAME  destProc,
-                                   const char         *buffer,  
-                                   mcsINT32           bufLen);
-                                  
-mcsCOMPL_STAT   msgSendTo         (int                sd,
-                                   msgMESSAGE         *msg);
-                                  
-mcsCOMPL_STAT   msgSendReply      (msgMESSAGE         *msg,
-                                   mcsLOGICAL         lastReply);
-                                  
-mcsCOMPL_STAT   msgSendReplyTo    (int                sd,
-                                   msgMESSAGE         *msg,
-                                   mcsLOGICAL         lastReply);
-                                  
-int             msgSocketCreate   (unsigned short     *portNumberPt,
-                                   int                socketType);
-                                  
-mcsCOMPL_STAT   msgSocketClose    (int                sd);
-                                  
 
 #ifdef __cplusplus
 }

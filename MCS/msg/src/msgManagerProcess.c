@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgManagerProcess.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgManagerProcess.c,v 1.2 2004-11-19 17:15:47 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  13-Aug-2004  Ported from CILAS software
+* lafrasse  19-Nov-2004  Changed msgMESSAGE structure name to msgMESSAGE_RAW
 *
 *
 *******************************************************************************/
@@ -17,7 +18,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgManagerProcess.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgManagerProcess.c,v 1.2 2004-11-19 17:15:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -78,7 +79,7 @@ mcsCOMPL_STAT   msgManagerProcessSetConnection(
     else
     {
         /* Try to receive the registering command */
-        msgMESSAGE msg;
+        msgMESSAGE_RAW msg;
         if (msgReceiveFrom(sd, &msg, 1000) == FAILURE)
         {
             /* Close the connection */
