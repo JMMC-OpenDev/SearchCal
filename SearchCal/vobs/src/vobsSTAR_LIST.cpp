@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.11 2005-02-13 15:56:55 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.12 2005-02-14 08:44:43 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/13 15:56:55  gzins
+* Added optional origin parameter to Load() method
+*
 * Revision 1.10  2005/02/13 15:27:53  gzins
 * Added Load() method
 * Updated Save() method to use new vobsCDATA class
@@ -25,7 +28,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.11 2005-02-13 15:56:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.12 2005-02-14 08:44:43 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -333,7 +336,7 @@ void vobsSTAR_LIST::Display(void)
  * \return always SUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
-                               mcsLOGICAL extendedFormat)
+                                  mcsLOGICAL extendedFormat)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
 
@@ -342,14 +345,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
     vobsSTAR  star;
     if (cData.Store(star, *this, extendedFormat) == mcsFAILURE)
     {
-        printf("cData.Store fails \n"); 
         return mcsFAILURE;
     }
     
     // Save into file
     if (cData.SaveInFile(filename) == mcsFAILURE)
     {
-        printf("cData.SaveInFile fails \n"); 
         return mcsFAILURE;
     }
 
