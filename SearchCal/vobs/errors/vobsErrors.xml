@@ -128,7 +128,7 @@
    <error id="32">
       <errName>INVALID_PROP_FORMAT</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Invalid property format '%.80s'; should be %.20s]]></errFormat>
+      <errFormat><![CDATA[Invalid property '%.80s' value '%.80s'; should be %.20s]]></errFormat>
    </error>
    <error id="33">
       <errName>DUPLICATED_PROPERTY</errName>
@@ -179,5 +179,15 @@
       <errName>INCONSISTENT_PARAMS_DESC</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Inconsistent parameters description; number of pararameter name (%d) differs from number of UCDs (%d).]]></errFormat>
+   </error>
+   <error id="45">
+      <errName>MISSING_UCDS</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Line containing the list of UCDs is missing.]]></errFormat>
+   </error>
+   <error id="46">
+      <errName>MISSING_PARAM_NAMES</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Line containing the list of parameter names is missing.]]></errFormat>
    </error>
 </errorList>
