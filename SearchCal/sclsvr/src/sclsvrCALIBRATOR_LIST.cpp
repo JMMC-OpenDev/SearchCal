@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.4 2004-12-07 16:28:32 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.5 2004-12-09 06:44:03 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    15-Sep-2004  Created
-*
+* gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.4 2004-12-07 16:28:32 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.5 2004-12-09 06:44:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -118,7 +118,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
     // Put each star of the vobsSTAR_LIST in the list
     for (unsigned int el = 0; el < list.Size(); el++)
     {
-        AddAtTail(*(list.GetNextStar((el==0))));
+        AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
     }
     return SUCCESS;
 }
@@ -174,7 +174,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
     for (unsigned int el = 0; el < Size(); el++)
     {
         // Complete the calibrator
-        if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))->Complete(request) 
+        if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))->Complete(request) 
             == FAILURE)
         {
             logTest("star %d not a calibrator\n", el+1);
@@ -215,7 +215,7 @@ void sclsvrCALIBRATOR_LIST::Display(void)
 
     for (unsigned int el = 0; el < Size(); el++)
     {
-        GetNextStar((el==0))->Display();
+        GetNextStar((mcsLOGICAL)(el==0))->Display();
     }
 }
 
@@ -233,7 +233,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
     for (unsigned int el = 0; el < Size(); el++)
     {
         // Pack in the buffer the caliobrators
-        if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))->Pack(buffer) 
+        if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))->Pack(buffer) 
             == FAILURE )
         {
             return FAILURE;
@@ -303,11 +303,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LI
     for (unsigned int el = 0; el < Size(); el++)
     {
         
-        if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))-> HadCoherentDiameter()
+        if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))-> HadCoherentDiameter()
             == mcsTRUE )
         {
             logTest("calibrator %d had coherent diameter\n", el+1);
-            //list->AddAtTail(( *(sclsvrCALIBRATOR *)GetNextStar((el==0)) ));
+            //list->AddAtTail(( *(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)) ));
         }
     }
     return SUCCESS;
@@ -327,7 +327,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVisibilityOkList(sclsvrCALIBRATOR_LIST *
     // for each calibrator of the list
     for (unsigned int el = 0; el < Size(); el++)
     {
-        if (((sclsvrCALIBRATOR *)GetNextStar((el==0)))-> VisibilityOk()
+        if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))-> VisibilityOk()
             == mcsTRUE )
         {
             logTest("calibrator %d had visibility OK\n", el+1);
