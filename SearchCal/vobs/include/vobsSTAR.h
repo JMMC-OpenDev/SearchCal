@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.9 2004-11-23 12:36:14 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.10 2004-11-25 13:04:56 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -119,7 +119,8 @@ public:
                                       mcsLOGICAL overwrite=mcsFALSE);
     virtual mcsCOMPL_STAT SetProperty(vobsUCD_ID ucdId, char *value,
                                       mcsLOGICAL overwrite=mcsFALSE);
-    
+    virtual mcsCOMPL_STAT SetProperty(vobsUCD_ID id, mcsFLOAT value,
+                                      mcsLOGICAL overwrite=mcsFALSE);
     // Methods to retreive the star properties
     virtual mcsCOMPL_STAT GetProperty(char *ucd, char *value) const;
     virtual mcsCOMPL_STAT GetProperty(vobsUCD_ID ucdId, char *value) const;
