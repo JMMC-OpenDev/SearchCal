@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.5 2005-02-08 20:30:37 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.6 2005-02-11 14:22:10 gluck Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/08 20:30:37  gzins
+* Changed _name type; mcsSTRING to string
+*
 * Revision 1.4  2005/02/07 19:40:58  gzins
 * Updated vobsREQUEST API
 *
@@ -19,11 +22,11 @@
 
 /**
  * \file
- * vobsCATALOG_ASCC class definition.
+ * Definition vobsCATALOG_ASCC class.
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.5 2005-02-08 20:30:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.6 2005-02-11 14:22:10 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,6 +53,7 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+
 /*
  * Class constructor
  */
@@ -57,10 +61,10 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_ASCC::vobsCATALOG_ASCC()
+vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG("I/280")
 {
-    SetName("I/280");
 }
+
 
 /*
  * Class destructor
@@ -73,6 +77,7 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
 {
     miscDynBufDestroy(&_query);
 }
+
 
 /*
  * Protected methods

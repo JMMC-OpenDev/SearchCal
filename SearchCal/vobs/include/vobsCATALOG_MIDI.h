@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.2 2005-02-04 15:10:25 gluck Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.3 2005-02-11 14:22:10 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/04 15:10:25  gluck
+ * Update documentation
+ *
  * Revision 1.1  2005/02/04 13:56:40  gzins
  * Created
  *
@@ -27,7 +30,7 @@
  * MCS header
  */
 #include "mcs.h"
-#include "vobsCATALOG.h"
+#include "vobsLOCAL_CATALOG.h"
 
 
 /*
@@ -55,7 +58,7 @@
  * \sa - vobsCATALOG class
  * \sa - JMMC-MEM-2600-0011 document
  */
-class vobsCATALOG_MIDI : public vobsCATALOG
+class vobsCATALOG_MIDI : public vobsLOCAL_CATALOG
 {
 public:
     // Class constructor
@@ -64,9 +67,6 @@ public:
     // Class destructor
     virtual ~vobsCATALOG_MIDI();
 
-    // Search for star list in MIDI catalog
-    virtual mcsCOMPL_STAT Search (vobsREQUEST &request, vobsSTAR_LIST &list);
-    
 protected:
     
 private:
@@ -75,17 +75,8 @@ private:
     vobsCATALOG_MIDI(const vobsCATALOG_MIDI&);
     vobsCATALOG_MIDI& operator=(const vobsCATALOG_MIDI&);
 
-    // Catalog filename to load
-    const char *_catalogFilename;
-
-    // Flag to know if catalog is loaded or not
-    mcsLOGICAL _loaded;
-
-    // Star list built from MIDI catalog stars
-    vobsSTAR_LIST _starList;
-
     // Load MIDI catalog
-    virtual mcsCOMPL_STAT Load(void);
+    virtual mcsCOMPL_STAT Load();
 };
 
 #endif /*!vobsCATALOG_MIDI_H*/

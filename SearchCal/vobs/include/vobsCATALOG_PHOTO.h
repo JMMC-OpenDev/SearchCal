@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.h,v 1.6 2005-02-07 19:32:52 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.h,v 1.7 2005-02-11 14:22:10 gluck Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/07 19:32:52  gzins
+* Updated vobsREQUEST API
+*
 * Revision 1.5  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -27,7 +30,7 @@
 /*
  * Local header
  */
-#include "vobsCATALOG.h"
+#include "vobsREMOTE_CATALOG.h"
 
 /*
  * Class declaration
@@ -44,7 +47,7 @@
  * 
  */
 
-class vobsCATALOG_PHOTO : public vobsCATALOG
+class vobsCATALOG_PHOTO : public vobsREMOTE_CATALOG
 {
 public:
     // Constructor

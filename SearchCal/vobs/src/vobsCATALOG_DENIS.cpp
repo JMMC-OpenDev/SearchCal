@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.4 2005-02-08 20:30:37 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.5 2005-02-11 14:22:10 gluck Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/02/08 20:30:37  gzins
+* Changed _name type; mcsSTRING to string
+*
 * Revision 1.3  2005/01/26 08:11:28  scetre
 * change history
 *
@@ -18,7 +21,7 @@
  * vobsCATALOG_DENIS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.4 2005-02-08 20:30:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.5 2005-02-11 14:22:10 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,9 +53,8 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_DENIS::vobsCATALOG_DENIS()
+vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG("B/denis")
 {
-    SetName("B/denis");
 }
 
 /*
