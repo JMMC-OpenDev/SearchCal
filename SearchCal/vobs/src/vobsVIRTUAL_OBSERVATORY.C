@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.16 2004-10-25 08:58:19 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.16 2004-10-25 08:58:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -129,7 +129,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST &request,
 
         scenario.Execute(request, starList);
 
-        starList.Display();
+        //starList.Display();
         printf("number of star found : %d\n", starList.Size());
     }
     return SUCCESS;
