@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.15 2005-02-08 04:44:14 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.16 2005-02-08 11:10:04 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/02/08 04:44:14  gzins
+* Cleared all input/output lists when creating scenario
+*
 * Revision 1.14  2005/02/07 19:40:58  gzins
 * Updated vobsREQUEST API
 *
@@ -43,7 +46,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.15 2005-02-08 04:44:14 gzins Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.16 2005-02-08 11:10:04 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -191,11 +194,11 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         if (starList.IsEmpty() == mcsTRUE)
         {
             // II/225
-            scenario.AddEntry(&_cio, NULL, &_starListP, COPY, criteriaListEmpty);
+            scenario.AddEntry(&_cio, NULL, &_starListP, vobsCOPY, criteriaListEmpty);
             // II/7A
-            scenario.AddEntry(&_photo, NULL, &_starListP, MERGE, criteriaList);
+            scenario.AddEntry(&_photo, NULL, &_starListP, vobsMERGE, criteriaList);
             // I/280
-            scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY,
+            scenario.AddEntry(&_ascc, &_starListP, &_starListS, vobsCOPY,
                               criteriaListEmpty);
         }
         // If the list is not empty, it is a single resarch
@@ -204,7 +207,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         {
             _starListP.Copy(starList);
             // I/280
-            scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY,
+            scenario.AddEntry(&_ascc, &_starListP, &_starListS, vobsCOPY,
                               criteriaList);
         }
 
@@ -234,7 +237,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         }
 
         // II/225
-        scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_cio, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         /*
          * Add mgV criteria
@@ -244,7 +247,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
             return mcsFAILURE;
         }
         // II/7A
-        scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_photo, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // Removed mgV criteria
         if (criteriaList.Remove(vobsSTAR_PHOT_JHN_V) == mcsFAILURE)
@@ -258,16 +261,16 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         }
         
         // 2MASS
-        scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_mass, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // LBSI
-        scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_lbsi, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // CHARM
-        scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_charm, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);        
         // DENIS
-        scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_denis, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);        
         // Removed mgK criteria
         if (criteriaList.Remove(vobsSTAR_PHOT_JHN_V) == mcsFAILURE)
@@ -281,13 +284,13 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
             return mcsFAILURE;
         }
         // I/196
-        scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_hic, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaListEmpty);
         // BSC
-        scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_bsc, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaListEmpty);
         // SBSC
-        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaListEmpty);
         
         
@@ -299,7 +302,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         // the primary is build with the result of the catalog I/280
         if (starList.IsEmpty() == mcsTRUE)
         {
-            scenario.AddEntry(&_ascc, NULL, &_starListS, COPY,
+            scenario.AddEntry(&_ascc, NULL, &_starListS, vobsCOPY,
                               criteriaListEmpty);
         }
         // If the list is not empty, it is a single resarch
@@ -307,37 +310,37 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         else
         {
             _starListP.Copy(starList);
-            scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY,
+            scenario.AddEntry(&_ascc, &_starListP, &_starListS, vobsCOPY,
                               criteriaList);
         }
         // The primary list is completed with the query on catalogs I/196,
         // MASS, II/225, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
         // I/196
-        scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_hic, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // MASS
-        scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_mass, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // II/225
-        scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_cio, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // LBSI
-        scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_lbsi, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // CHARM
-        scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_charm, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // II/7A
-        scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_photo, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // BSC
-        scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_bsc, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // SBSC
-        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
         // DENIS
-        scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY,
+        scenario.AddEntry(&_denis, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           criteriaList);
     }
     // Scenario in band N
@@ -345,7 +348,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
     {
         // Just consult MIDI catalog 
         _starListP.Copy(starList);
-        scenario.AddEntry(&_midi, NULL, &_starListS, COPY,
+        scenario.AddEntry(&_midi, NULL, &_starListS, vobsCOPY,
                           criteriaListEmpty);
     }
     // Until now, the virtual observatory can't find star in other band

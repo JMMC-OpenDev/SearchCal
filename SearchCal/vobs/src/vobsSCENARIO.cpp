@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.11 2005-02-08 11:10:04 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.12 2005-02-08 11:10:04 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/08 11:10:04  scetre
+* changed action enumerate <NAME> in vobs<NAME>
+*
 * Revision 1.10  2005/02/08 08:38:06  scetre
 * Removed printf used for debug purpose
 *
@@ -38,7 +41,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.11 2005-02-08 11:10:04 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.12 2005-02-08 11:10:04 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
