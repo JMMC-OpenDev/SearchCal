@@ -1,13 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.7 2005-02-07 19:40:58 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.8 2005-02-08 20:30:37 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/07 19:40:58  gzins
+ * Updated vobsREQUEST API
+ *
  * Revision 1.6  2005/02/07 09:47:08  gzins
- * Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
+ * Renamed vobsCDATA method to be compliant with programming standards; method
+ * name starts with capital
  *
  * Revision 1.5  2005/02/07 09:13:43  gzins
  * Added initialisation of _loaded
@@ -33,7 +37,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.7 2005-02-07 19:40:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.8 2005-02-08 20:30:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -102,14 +106,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // ------------------------------
     if (Load() == mcsFAILURE)
     {
-        // Get catalog name
-        mcsSTRING256 catalogName;
-        if (GetName(catalogName) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-
-        errAdd(vobsERR_CATALOG_LOAD, catalogName);
+        // Add error with specifying the catalog name
+        errAdd(vobsERR_CATALOG_LOAD, GetName());
         return mcsFAILURE;
     }
     logTest("MIDI catalog is correctly loaded in a star list");
@@ -136,24 +134,19 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     vobsSTAR referenceStar;
 
     // Add reference star properties
-    // ra is given as 'HH:MM:SS.TTT', replace ':' by ' '
-    mcsSTRING32 tmp;
-    strcpy(tmp, ra);
-    miscReplaceChrByChr(tmp, ':', ' '); 
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, tmp) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue
+        (vobsSTAR_POS_EQ_RA_MAIN, ra, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    // dec is given as 'DD:MM:SS.TTT', replace ':' by ' '
-    strcpy(tmp, dec);
-    miscReplaceChrByChr(tmp, ':', ' '); 
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, tmp) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue
+        (vobsSTAR_POS_EQ_DEC_MAIN, dec, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // N magnitude
     if (referenceStar.SetPropertyValue
-        (vobsSTAR_PHOT_JHN_N, magnitude) == mcsFAILURE)
+        (vobsSTAR_PHOT_JHN_N, magnitude, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -226,7 +219,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     
     // Set flux for reference star to the middle of the flux range
     if (referenceStar.SetPropertyValue("PHOT_FLUX_IR_12", 
-                                       middleNFlux) == mcsFAILURE)
+                                       middleNFlux, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -318,6 +311,9 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
     // buffer
     vobsCDATA cDataStructure;
     
+    // Set the catalog name
+    cDataStructure.SetCatalogName(GetName());
+
     // Set line to skip to -1 because in the CDATA AppendLines method, number of
     // lines to skip is increased of 1, because there is an empty line between
     // each data line (due to \n to \0 conversion). The CDATA AppendLines method
@@ -446,7 +442,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         
         // Compute magnitude
         magnitude = 4.1 - (2.5 * log(flux/0.89));
-        starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude);
+        starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName());
     }
 
     // If log level is DEBUG or EXTDBG

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.4 2005-02-07 19:40:58 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.5 2005-02-08 20:30:37 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/02/07 19:40:58  gzins
+* Updated vobsREQUEST API
+*
 * Revision 1.3  2005/01/26 08:11:28  scetre
 * change history
 *
@@ -20,7 +23,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.4 2005-02-07 19:40:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.5 2005-02-08 20:30:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,7 +59,7 @@ using namespace std;
  */
 vobsCATALOG_ASCC::vobsCATALOG_ASCC()
 {
-    strcpy(_name,"I/280");
+    SetName("I/280");
 }
 
 /*

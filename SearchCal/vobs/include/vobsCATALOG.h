@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.9 2005-02-07 19:32:52 gzins Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.10 2005-02-08 20:31:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -56,10 +56,10 @@ public:
    virtual ~vobsCATALOG();
 
     // Method to set catalog name
-   virtual mcsCOMPL_STAT SetName(char *name);
+   virtual mcsCOMPL_STAT SetName(const char *name);
    
    // Method to get the catalog name
-   virtual mcsCOMPL_STAT GetName(char *name);  
+   virtual const char *GetName(void);  
 
    // Method to get a  star list from the catalog
    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
@@ -84,17 +84,18 @@ protected:
    virtual mcsCOMPL_STAT StarList2Sring(miscDYN_BUF &strList,
                                         vobsSTAR_LIST &list);
 
-   // Name of the catalog
-    mcsSTRING32 _name;
-    
-    // Request to write and to send to the CDS
-    miscDYN_BUF _query;
+   // Request to write and to send to the CDS
+   miscDYN_BUF _query;
 
 private:
-    // Declaration of assignment operator as private
-    // method, in order to hide them from the users.
-    vobsCATALOG& operator=(const vobsCATALOG&);
-    vobsCATALOG (const vobsCATALOG&);
+   // Declaration of assignment operator as private
+   // method, in order to hide them from the users.
+   vobsCATALOG& operator=(const vobsCATALOG&);
+   vobsCATALOG (const vobsCATALOG&);
+
+   // Name of the catalog
+   string _name;
+    
 };
 
 #endif /*!vobsCATALOG_H*/

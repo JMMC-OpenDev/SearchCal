@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.3 2005-01-26 08:11:28 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.4 2005-02-08 20:30:37 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/26 08:11:28  scetre
+* change history
+*
 * scetre    28-Jul-2004  Created
 *
 *
@@ -15,7 +18,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.3 2005-01-26 08:11:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.4 2005-02-08 20:30:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,7 +52,7 @@ using namespace std;
  */
 vobsCATALOG_MASS::vobsCATALOG_MASS()
 {
-    strcpy(_name,"II/246/out");
+    SetName("II/246/out");
 }
 
 /*

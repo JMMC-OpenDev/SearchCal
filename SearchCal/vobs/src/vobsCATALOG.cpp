@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.cpp,v 1.8 2005-02-07 19:40:58 gzins Exp $"
+* "@(#) $Id: vobsCATALOG.cpp,v 1.9 2005-02-08 20:30:37 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/02/07 19:40:58  gzins
+* Updated vobsREQUEST API
+*
 * Revision 1.7  2005/01/31 13:31:38  scetre
 * changed misc...Pointer in misc...
 *
@@ -23,7 +26,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.8 2005-02-07 19:40:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.9 2005-02-08 20:30:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -67,7 +70,7 @@ using namespace std;
 vobsCATALOG::vobsCATALOG()
 {
     miscDynBufInit(&_query);
-    strcpy(_name,"");
+    _name = "";
 }
 
 /*
@@ -91,25 +94,15 @@ vobsCATALOG::~vobsCATALOG()
  *
  * \param name name value to set, in a string format
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- *
- * \b Error codes:\n
- * The possible errors are :
- * \li vobsERR_BAD_CATALOG_NAME
+ * \return mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCATALOG::SetName(char *name)
+mcsCOMPL_STAT vobsCATALOG::SetName(const char *name)
 {
     logExtDbg("vobsCATALOG::SetName()");
     
-    // Test if the name is correst
-    if ( (strcmp(name,"")==0) || (name==NULL) )
-    {
-        errAdd(vobsERR_BAD_CATALOG_NAME);
-        return mcsFAILURE;
-    }
-    
     // copy in the catalog name attribute the value to set
-    strcpy(_name, name);
+    _name = name;
+
     return mcsSUCCESS;
 }
 
@@ -118,25 +111,13 @@ mcsCOMPL_STAT vobsCATALOG::SetName(char *name)
  *
  * \param name  name to get, in a string format
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- *
- * \b Error codes:\n
- * The possible errors are :
- * \li vobsERR_BAD_CATALOG_NAME
+ * \return catalog name or NULL if not set.
  */
-mcsCOMPL_STAT vobsCATALOG::GetName(char *name)
+const char *vobsCATALOG::GetName()
 {
     logExtDbg("vobsCATALOG::GetName()");
     
-    // Check if the name is not aqual to NULL. it it is equal return error
-    if (_name==NULL)
-    {
-        errAdd(vobsERR_BAD_CATALOG_NAME);
-        return mcsFAILURE;
-    }
-    // copy the catalog name in the name to return
-    strcpy(name,_name);
-    return mcsSUCCESS;
+    return _name.c_str();
 }
 
 
@@ -173,7 +154,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
 
         // Get catalog name, and replace '/' by '_'
         mcsSTRING32 catalogName;
-        strcpy (catalogName, _name);
+        strcpy (catalogName, _name.c_str());
         miscReplaceChrByChr(catalogName, '/', '_');
         strcat(logFileName, "_");
         strcat(logFileName, catalogName);
@@ -216,8 +197,8 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     vobsPARSER parser;
     // the parser get the internet of the query and analyse th file coming
     // from this address
-    if (parser.Parse(miscDynBufGetBuffer(&_query), list, logFileName)
-        == mcsFAILURE)
+    if (parser.Parse(miscDynBufGetBuffer(&_query),
+                     GetName(), list, logFileName) == mcsFAILURE)
     {
         return mcsFAILURE; 
     }
@@ -325,7 +306,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryURIPart(void)
 
     if ((miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")==mcsFAILURE) ||
         (miscDynBufAppendString(&_query, "asu-xml?-source=")==mcsFAILURE) ||
-        (miscDynBufAppendString(&_query, _name)==mcsFAILURE) )
+        (miscDynBufAppendString(&_query, _name.c_str())==mcsFAILURE) )
     {
         errAdd(vobsERR_URI_WRITE_FAILED);
         return mcsFAILURE;

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.5 2005-02-08 08:36:13 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.6 2005-02-08 20:30:37 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/08 08:36:13  scetre
+* Added query reset before preparing a new query
+*
 * Revision 1.4  2005/02/07 19:40:58  gzins
 * Updated vobsREQUEST API
 *
@@ -21,7 +24,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.5 2005-02-08 08:36:13 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.6 2005-02-08 20:30:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -58,7 +61,7 @@ using namespace std;
  */
 vobsCATALOG_CIO::vobsCATALOG_CIO()
 {
-    strcpy(_name,"II/225/catalog");
+    SetName("II/225/catalog");
 }
 
 /*

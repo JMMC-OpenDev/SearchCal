@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.6 2005-02-08 14:25:05 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.7 2005-02-08 20:30:37 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/08 14:25:05  scetre
+* Changed bug in writing magnitude range in query
+*
 * Revision 1.5  2005/02/07 19:40:58  gzins
 * Updated vobsREQUEST API
 *
@@ -24,7 +27,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.6 2005-02-08 14:25:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.7 2005-02-08 20:30:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,7 +63,7 @@ using namespace std;
  */
 vobsCATALOG_PHOTO::vobsCATALOG_PHOTO()
 {
-    strcpy(_name,"II/7A/catalog");
+    SetName("II/7A/catalog");
 }
 
 /*
