@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscHash.h,v 1.2 2005-02-15 09:37:52 gzins Exp $"
+ * "@(#) $Id: miscHash.h,v 1.3 2005-04-06 12:59:33 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/15 09:37:52  gzins
+ * Added CVS log as file modification history
+ *
  * gzins     16-Dec-2004  Created
  *
  ******************************************************************************/
@@ -30,6 +33,7 @@ extern "C" {
 /*
  * Structure type definition
  */
+
 /**
  * Element of the hash table.
  *
@@ -65,7 +69,7 @@ mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize);
 mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE *hashTable,
                                  const char     *key,
                                  void           **data,
-                                 mcsLOGICAL      allocatedMemory);
+                                 mcsLOGICAL     allocatedMemory);
 
 mcsCOMPL_STAT miscHashDeleteElement(miscHASH_TABLE *hashTable,
                                     const char     *key);

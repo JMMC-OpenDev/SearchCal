@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscHash.c,v 1.2 2005-01-28 18:39:10 gzins Exp $"
+ * "@(#) $Id: miscHash.c,v 1.3 2005-04-06 12:59:33 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/28 18:39:10  gzins
+ * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
+ *
  * gzins     16-Dec-2004  Created
  *
  ******************************************************************************/
@@ -14,14 +17,14 @@
  * \file
  * Hash table management.
  *
- * The functions allow the user to create a hash table which associates a key
- * with any data, and perform classical operations such adding, deleting or
+ * Functions allow user to create a hash table which associates a key
+ * with any data, and perform classical operations such as adding, deleting or
  * getting an element. When an element is added in the hash-table with a data
- * defined as dynamically allocated, therefere this data is freed when the
+ * defined as dynamically allocated, therefore this data is freed when the
  * element is deleted from the hash table.
  *
- * The following code gives and example of hash table usage: 
  * \ex
+ * The following code gives and example of hash table usage: 
  * \code
  * /# 
  *  * System Headers 
@@ -111,7 +114,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscHash.c,v 1.2 2005-01-28 18:39:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscHash.c,v 1.3 2005-04-06 12:59:33 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -139,7 +142,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Local Variables
  */
-
 
 
 /*
@@ -184,7 +186,7 @@ static miscHASH_ELEMENT *miscHashLookUp(const miscHASH_TABLE *hashTable,
     hashValue = miscGetHashValue(key, hashTable->tableSize);  
 
     /* Get the first element of the hash table entry */
-    element    = hashTable->table[hashValue]; 
+    element = hashTable->table[hashValue]; 
 
     /* Search the key the list */
     while (element != NULL)
@@ -212,6 +214,7 @@ static miscHASH_ELEMENT *miscHashLookUp(const miscHASH_TABLE *hashTable,
 /*
  * Public functions definition
  */
+
 /**
  * Create the hash table.
  *
@@ -226,7 +229,8 @@ static miscHASH_ELEMENT *miscHashLookUp(const miscHASH_TABLE *hashTable,
  *
  * This function MUST be called before any operation on the hash table.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -236,7 +240,7 @@ mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize)
 {
     mcsINT32 i;
     
-    logExtDbg("miscHashInit()"); 
+    logExtDbg("miscHashCreate()"); 
 
     /* Create table */
     hashTable->table = calloc(tableSize, sizeof(miscHASH_ELEMENT *));
@@ -378,7 +382,8 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
  * \param key NULL-terminated string which is the key of the element to be
  * deleted.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -414,12 +419,12 @@ mcsCOMPL_STAT miscHashDeleteElement(miscHASH_TABLE  *hashTable,
     else
     {
         /* It is the first element of the list */
-        mcsUINT32        hashValue;
+        mcsUINT32 hashValue;
         hashValue = miscGetHashValue(key, hashTable->tableSize);  
         hashTable->table[hashValue] = element->next;
     }
 
-    /**** Delete element */
+    /* Delete element */
     /* Delete the key */
     free (element->key);
 
@@ -452,7 +457,7 @@ void *miscHashGetElement(const miscHASH_TABLE *hashTable,
 
     /* Look for the element entry in hash table */
     miscHASH_ELEMENT *element; 
-    element  = miscHashLookUp(hashTable, key); 
+    element = miscHashLookUp(hashTable, key); 
 
     /* If key found */
     if (element != NULL)
@@ -583,6 +588,7 @@ void miscHashDelete(miscHASH_TABLE *hashTable)
     mcsINT32 i;
     
     logExtDbg("miscHashFree()"); 
+    
     /* For all entries of the table */
     for (i = 0; i < hashTable->tableSize; i++)
     {
