@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_KEY.h,v 1.3 2004-12-22 08:56:18 gzins Exp $"
+* "@(#) $Id: evhCMD_KEY.h,v 1.4 2005-01-07 17:28:47 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
 
 /**
  * \file
- * evhCMD_KEY class declaration.
+ * Declaration of the evhCMD_KEY class.
  */
 
 
