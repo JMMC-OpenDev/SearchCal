@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: timlogTest.c,v 1.1 2004-12-17 10:06:44 gzins Exp $"
+* "@(#) $Id: timlogTest.c,v 1.2 2004-12-20 07:40:18 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Test program for timer log facility.
  */
 
-static char *rcsId="@(#) $Id: timlogTest.c,v 1.1 2004-12-17 10:06:44 gzins Exp $"; 
+static char *rcsId="@(#) $Id: timlogTest.c,v 1.2 2004-12-20 07:40:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,6 +36,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Local Headers 
  */
 #include "timlog.h"
+#include "timlogPrivate.h"
 
 /* 
  * Main
@@ -53,8 +54,8 @@ int main (int argc, char *argv[])
     }
 
     /* Start ACTION */
-    timlogStart(logINFO, "ACTION_1");
-    timlogStart(logINFO, "ACTION_2");
+    timlogInfoStart("ACTION_1");
+    timlogInfoStart("ACTION_2");
 
     sleep (1);
     timlogStop("ACTION_2");
