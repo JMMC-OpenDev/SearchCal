@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.9 2005-02-22 10:16:43 gzins Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.10 2005-02-22 16:18:13 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/22 10:16:43  gzins
+ * Removed \n in logTest message
+ *
  * Revision 1.8  2005/02/22 08:08:59  gzins
  * Changed printf to logTest
  *
@@ -45,7 +48,7 @@
  * \sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.9 2005-02-22 10:16:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.10 2005-02-22 16:18:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -143,7 +146,8 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
     int  lineNum=0;
     const char *pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, mcsTRUE)) != NULL)
+    while ((pos = miscDynBufGetNextLine
+            (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
     {
         logDebug("miscDynBufGetNextLine() = '%s'", line);
 
@@ -291,7 +295,8 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     int  lineNum=0;
     const char *pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, mcsTRUE)) != NULL)
+    while ((pos = miscDynBufGetNextLine
+            (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
     {
         logDebug("miscDynBufGetNextLine() = '%s'", line);
 
