@@ -1,15 +1,16 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: errTest.c,v 1.3 2005-01-27 14:15:39 gzins Exp $"
-*
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* gzins     17-Jun-2004  created
-*
-*-----------------------------------------------------------------------------*/
+ * JMMC project
+ *
+ * "@(#) $Id: errTest.c,v 1.4 2005-02-15 08:29:59 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     17-Jun-2004  created
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: errTest.c,v 1.3 2005-01-27 14:15:39 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errTest.c,v 1.4 2005-02-15 08:29:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -1,18 +1,19 @@
 /*******************************************************************************
-* JMMC project
-* 
-* "@(#) $Id: logPrivate.c,v 1.5 2005-02-15 08:18:43 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  05-Aug-2004  Created
-* lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.c
-* gzins     10-Nov-2004  Renamed logDisplayMessage to logPrintErrMessage
-*                        Removed logDisplayError
-*
-*******************************************************************************/
+ * JMMC project
+ * 
+ * "@(#) $Id: logPrivate.c,v 1.6 2005-02-15 08:27:12 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  05-Aug-2004  Created
+ * lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.c
+ * gzins     10-Nov-2004  Renamed logDisplayMessage to logPrintErrMessage
+ *                        Removed logDisplayError
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: logPrivate.c,v 1.5 2005-02-15 08:18:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: logPrivate.c,v 1.6 2005-02-15 08:27:12 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

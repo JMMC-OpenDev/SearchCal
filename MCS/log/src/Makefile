@@ -1,16 +1,16 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.7 2004-09-10 16:05:07 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.8 2005-02-15 08:27:12 gzins Exp $"
 #
 # Makefile of log 
 #
-# who       when         what
-# --------  -----------  ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # mella     12-May-2004  Created
 # lafrasse  03-Aug-2004  Added logManager and logPrivate stuff
 #                        Removed cross-dependencies with err and misc
-# 
 # 
 #*******************************************************************************
 # This Makefile follows VLT Standards (see Makefile(5) for more).
@@ -147,9 +147,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
