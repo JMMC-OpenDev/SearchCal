@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_KEY.cpp,v 1.2 2004-12-22 08:56:18 gzins Exp $"
+* "@(#) $Id: evhCMD_KEY.cpp,v 1.3 2005-01-07 18:13:43 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,10 +12,10 @@
 
 /**
  * \file
- * evhCMD_KEY class definition.
+ * Definition of the evhCMD_KEY class.
  */
 
-static char *rcsId="@(#) $Id: evhCMD_KEY.cpp,v 1.2 2004-12-22 08:56:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_KEY.cpp,v 1.3 2005-01-07 18:13:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -161,8 +161,8 @@ char *evhCMD_KEY::GetCommand() const
  *
  * \return reference to the object itself
  *
- * \warning If command name length exceeds 64 characters, it is
- * truncated
+ * \warning If command definition file name length exceeds 64 characters, it
+ * is truncated
  */
 evhCMD_KEY & evhCMD_KEY::SetCdf(const char *cdf)
 {
