@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.31 2005-02-16 14:39:55 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.32 2005-02-16 14:54:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2005/02/16 14:39:55  gzins
+ * Updated miscDynBufGetNextLine() function to do not alter buffer content.
+ *
  * Revision 1.30  2005/02/11 08:46:26  gzins
  * Fixed minor bug when testing if file to be opened is or not a regular file
  *
@@ -119,7 +122,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.31 2005-02-16 14:39:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.32 2005-02-16 14:54:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -688,9 +691,11 @@ const char*    miscDynBufGetCommentPattern   (const miscDYN_BUF  *dynBuf)
  * Return the next line of a Dynamic Buffer.
  *
  * It retrieves the next line from the given \em currentPos position in the
- * dynamic buffer and copies its content into the \em nextLine buffer. If the
- * given position is a NULL pointer, the search starts from the beginning of the
- * buffer.  If \em skipCommentFlag is set to mcsTRUE, the comment lines
+ * dynamic buffer and copies its content into the \em nextLine buffer. If there
+ * is no newline it copies until the end of the dynamic buffer or until the
+ * bytes read cannot be stored in the \em nextLine buffer.\n
+ * If the given position is a NULL pointer, the search starts from the beginning
+ * of the buffer. If \em skipCommentFlag is set to mcsTRUE, the comment lines
  * (starting with pattern defined either when loading file or using
  * miscDynBufSetCommentPattern) are skipped.
  *
