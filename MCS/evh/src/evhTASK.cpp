@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.cpp,v 1.3 2004-12-08 13:35:32 gzins Exp $"
+* "@(#) $Id: evhTASK.cpp,v 1.4 2004-12-20 13:37:33 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -9,9 +9,10 @@
 * gzins     18-Nov-2004  splitted parsing and usage methods to separate
 *                        options and arguments in command-line parameters
 * gzins     03-Dec-2004  Added -n command-line option  
+* gzins     03-Dec-2004  Removed -t command-line option and added -m
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.3 2004-12-08 13:35:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.4 2004-12-20 13:37:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -27,8 +28,10 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *     \arg <em>-l \<level></em> \n file log level
  *     \arg <em>-v \<level></em> \n stdout log level
  *     \arg <em>-a \<level></em> \n action log level
- *     \arg <em>-t \<level></em> \n timer log level
  *     \arg <em>-n \<name></em>  \n registering name to MCS services  
+ *     \arg <em>-m \<module></em>\n add module to the list of modules allowed
+ *                               to log messages on stdout. This option can be
+ *                               repeated to add several modules.
  *     \arg <em>-version</em>    \n print the version number of the SW
  *     \arg <em>-noDate</em>     \n turn off the display of date in stdout log
  *                               messages
@@ -169,7 +172,6 @@ evhTASK::evhTASK()
     _fileLogOption   = mcsFALSE;
     _stdoutLogOption = mcsFALSE;
     _actionLogOption = mcsFALSE;
-    _timerLogOption  = mcsFALSE;
 }
 
 // Class destructor 
@@ -278,9 +280,13 @@ mcsCOMPL_STAT evhTASK::PrintStdOptions()
     cout <<" Standard options: -l <level>   set file log level" << endl;
     cout <<"                   -v <level>   set stdout log level" << endl;
     cout <<"                   -a <level>   set action log level" << endl;
-    cout <<"                   -t <level>   set timer log level" << endl;
     cout <<"                   -n <name>    registering name to MCS services" 
         << endl; 
+    cout <<"                   -m <mod>     add module to the list of modules";
+    cout <<" allowed to log" << endl;
+    cout <<"                                messages on stdout. This option";
+    cout <<" can be repeated" << endl;
+    cout <<"                                to add several modules." << endl;
     cout <<"                   -h           print this help" << endl;
     cout <<"                   -version     print the version number of the ";
     cout <<"software" << endl;
@@ -501,22 +507,18 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
             return FAILURE;
         }
     }
-    // Else if timer level specified
-    else if (strcmp(argv[*optInd], "-t") == 0)
+    // Else if 'allowed modules' specified
+    else if (strcmp(argv[*optInd], "-m") == 0)
     {
-        // Set new timer log level
+        // Add module to the list 
         if ((*optInd + 1) < argc)
         {
             *optInd += 1;
             optarg = argv[*optInd];
-            if ( sscanf (optarg, "%d", &level) != 1)
+            if (logAddToStdoutLogAllowedModList(optarg) == FAILURE)
             {
-                logError ("%s: Argument to option %s is invalid: '%s'",
-                          Name(), argv[*optInd-1], optarg);
                 return FAILURE;
             }
-            //ixacTIMER_LOGS::SetLevel((logLEVEL)level);
-            _timerLogOption = mcsTRUE;
         }
         else
         {
@@ -650,18 +652,6 @@ mcsLOGICAL evhTASK::IsActionLogOption()
     logExtDbg ("evhTASK::IsActionLogOption ()");
 
     return _actionLogOption;
-}
-
-/**
- * Returns a flag indicating whether the timer log level has been specified on
- * the command line
- * \return timer log level option flag
- */
-mcsLOGICAL evhTASK::IsTimerLogOption()
-{
-    logExtDbg ("evhTASK::IsTimerLogOption ()");
-
-    return _timerLogOption;
 }
 
 /**
