@@ -1,13 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.3 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.4 2004-11-29 15:33:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    19-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
-*
+* gzins     29-Nov-2004  Fixed wrong returned value in IsConnected method
+*                        Do not read body if body size is 0 in Receive()
 *
 *******************************************************************************/
 
@@ -16,7 +17,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.3 2004-11-26 13:11:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.4 2004-11-29 15:33:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -48,6 +49,7 @@ msgSOCKET::msgSOCKET()
 {
     // Reset the socket structure
     memset(&_address, 0, sizeof(_address));
+    _descriptor = -1;
 }
 
 /*
@@ -111,10 +113,10 @@ mcsLOGICAL msgSOCKET::IsConnected(void)
 
     if (_descriptor == -1)
     {
-        return FAILURE;
+        return mcsFALSE;
     }
 
-    return SUCCESS;
+    return mcsTRUE;
 }
 
 /**
@@ -129,7 +131,7 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsINT32 port)
     logExtDbg("msgSOCKET::Bind()");
     
     // Check that the socket is connected
-    if (IsConnected() == FAILURE)
+    if (IsConnected() == mcsFALSE)
     {
         return FAILURE;
     }
@@ -170,7 +172,7 @@ mcsCOMPL_STAT msgSOCKET::Listen(void)
     logExtDbg("msgSOCKET::Listen()");
 
     // Check that the socket is connected
-    if ( IsConnected() == FAILURE )
+    if ( IsConnected() == mcsFALSE )
     {
         return FAILURE;
     }
@@ -199,7 +201,7 @@ mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
     socket._descriptor = accept(_descriptor, (sockaddr *)&_address,
                                 (socklen_t*)&addr_length);
 
-    if (socket.IsConnected() == FAILURE)
+    if (socket.IsConnected() == mcsFALSE)
     {
         return FAILURE;
     }
@@ -221,7 +223,7 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
     logExtDbg("msgSOCKET::Connect()");
 
     // Check that the socket is connected
-    if (IsConnected() == FAILURE)
+    if (IsConnected() == mcsFALSE)
     {
         return FAILURE;
     }
@@ -434,11 +436,15 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         }
 
         // Read the message body if it exists
-        nbBytesRead = recv(_descriptor, msg.GetBodyPtr(), msg.GetBodySize(), 0);
-        if (nbBytesRead != msg.GetBodySize())
+        memset(msg.GetBodyPtr(), '\0', (msgBODYMAXLEN + 1));
+        if (msg.GetBodySize() != 0)
         {
-            errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, msg.GetBodySize());
-            return (FAILURE); 
+            nbBytesRead = recv(_descriptor, msg.GetBodyPtr(), msg.GetBodySize(), 0);
+            if (nbBytesRead != msg.GetBodySize())
+            {
+                errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, msg.GetBodySize());
+                return (FAILURE); 
+            }
         }
     } 
 
