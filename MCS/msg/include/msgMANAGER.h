@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.h,v 1.6 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgMANAGER.h,v 1.7 2005-02-09 16:36:13 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.5  2005/01/29 09:56:46  gzins
  * Updated to notify client when a server is exiting abnormally
  *
@@ -87,17 +90,17 @@ protected:
     virtual mcsCOMPL_STAT AcceptConnection();
 
     // Send command/reply
-    virtual mcsCOMPL_STAT Forward (msgMESSAGE &msg);
+    virtual mcsCOMPL_STAT Forward     (msgMESSAGE &msg);
     virtual mcsCOMPL_STAT PrepareReply(msgMESSAGE &msg,
                                        mcsLOGICAL lastReply=mcsTRUE);
-    virtual mcsCOMPL_STAT SendReply (msgMESSAGE &msg,
-                                     msgPROCESS *sender=NULL);
+    virtual mcsCOMPL_STAT SendReply   (msgMESSAGE &msg,
+                                       msgPROCESS *sender=NULL);
 
     // Internal commands
-    virtual mcsCOMPL_STAT HandleCmd (msgMESSAGE &msg);
+    virtual mcsCOMPL_STAT HandleCmd   (msgMESSAGE &msg);
     
     // Management of processes which are waiting for reply
-    virtual mcsCOMPL_STAT ReleaseWaitingProcess(mcsINT32 procDescriptor);
+    virtual mcsCOMPL_STAT ReleaseWaitingProcess  (mcsINT32 procDescriptor);
     virtual mcsCOMPL_STAT RemoveProcessWaitingFor(mcsINT32 commandId);
 
 private:

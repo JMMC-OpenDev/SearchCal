@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.18 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.19 2005-02-09 16:36:13 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.17  2005/01/31 13:52:26  gzins
  * Fixed wrong returned completion status value in Forward()
  *
@@ -50,7 +53,7 @@
  * \sa msgMANAGER
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.18 2005-02-04 15:57:06 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.19 2005-02-09 16:36:13 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -258,7 +261,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                         {
                             // If the command is intended to msgManger...
                             if ((strcmp(msg.GetRecipient(), "msgManager") == 0)
-                                || (strcmp (msg.GetCommand(), msgPING_CMD_NAME)
+                                || (strcmp(msg.GetCommand(), msgPING_CMD_NAME)
                                  == 0))
                             {
                                 // Handle the received command
