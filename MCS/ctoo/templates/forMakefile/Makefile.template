@@ -1,13 +1,14 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: Makefile.template,v 1.5 2004-09-10 18:09:12 gzins Exp $" 
+#%# "@(#) $Id: Makefile.template,v 1.6 2004-12-10 07:08:12 gzins Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
 #%# who        when         what
 #%# ---------  -----------  ----------------------------------------------------
 #%# gluck      14-May-2004  Created
+#%# gzins      10-Dec-2004  Added target for Command Definition Files (CDF)
 #%# 
 #%# 
 #%# This file has been prepared to be pre-processed by "ctooGetTemplate".
@@ -138,6 +139,11 @@ JAVA_EXECUTABLES=
 jjjjjj_CLASS    =
 
 #
+# Command Definition Files (CDF)
+#
+CDF_FILES       = cmdVALID 
+
+#
 # man pages to be done
 # --------------------
 MANSECTIONS =
@@ -182,9 +188,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
