@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.12 2004-12-20 10:17:05 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.13 2004-12-20 13:52:22 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -57,31 +57,6 @@ typedef mcsSTRING32 sclsvrCALIBRATOR_PROPERTY;
 #define sclsvrCALIBRATOR_MULTIPLICITY "MULTIPLICITY"
 #define sclsvrCALIBRATOR_VISIBILITY "VISIBILITY"
 #define sclsvrCALIBRATOR_VISIBILITY_ERROR "VISIBILITY_ERROR"
-/**
- * sclsvrPROPERTY_ID is an enumeration which allow correspondance between an id
- * and an PROPERTY.
- */
-/* The following offset is used to have id for calibrator properties which
- * differs from the ucd id used by vobsSTAR class */
-typedef enum
-{
-    UNKNOWN_PROP_ID = -1,
-    ANGULAR_DIAMETER_ID,
-    ANGULAR_DIAMETER_ERROR_ID,
-    MO_ID,
-    LO_ID,
-    KO_ID,
-    HO_ID,
-    JO_ID,
-    IO_ID,
-    RO_ID,
-    VO_ID,
-    BO_ID,
-    MULTIPLICITY_ID,
-    VISIBILITY_ID,
-    VISIBILITY_ERROR_ID,
-    sclsvrNB_CALIBRATOR_PROPERTIES
-} sclsvrPROPERTY_ID;
 
 /*
  * Class declaration

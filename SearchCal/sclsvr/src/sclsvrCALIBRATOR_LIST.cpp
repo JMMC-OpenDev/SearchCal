@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.6 2004-12-20 10:17:05 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.7 2004-12-20 13:52:22 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.6 2004-12-20 10:17:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.7 2004-12-20 13:52:22 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -140,7 +140,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
  * This method display all elements of the list on the console, using the
  * sclsvrCALIBRATOR::Display method.
  */
-void sclsvrCALIBRATOR_LIST::Display(void)
+/*void sclsvrCALIBRATOR_LIST::Display(void)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::Display()");
 
@@ -148,7 +148,7 @@ void sclsvrCALIBRATOR_LIST::Display(void)
     {
         GetNextStar((mcsLOGICAL)(el==0))->Display();
     }
-}
+}*/
 
 /**
  * Pack a calibrator list in a dynamic buffer

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.11 2004-12-20 10:17:05 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.12 2004-12-20 13:52:22 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.11 2004-12-20 10:17:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.12 2004-12-20 13:52:22 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -50,13 +50,8 @@ using namespace std;
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR()
 {
-}
-
-/*
- * Class destructor
- */
-sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
-{
+    // Add all star properties 
+    AddProperties();
 }
 
 /*
@@ -64,8 +59,17 @@ sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR(vobsSTAR &star)
 {
-   // Add all star properties 
+    _propertyList = star._propertyList;
+   
+    // Add all star properties 
     AddProperties(); 
+}
+
+/*
+ * Class destructor
+ */
+sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
+{
 }
 
 /*
@@ -84,9 +88,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
     logExtDbg("sclsvrCALIBRATOR::Pack()");
     // Copy properties of the star in th buffer
     
-    /*map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
+    map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
     
-    for (propertyIter  = _propertyList.begin();
+    /*for (propertyIter  = _propertyList.begin();
          propertyIter != _propertyList.end();
          propertyIter++)
     {
@@ -690,20 +694,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
     //logExtDbg("vobsSTAR::AddProperties()");
     
-    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAMETER, "angDiam", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR, "angDiamErr", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY);
+    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAMETER, "angDiam", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR, "angDiamErr", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_MULTIPLICITY, "multiplicity", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_VISIBILITY, "visibility", vobsFLOAT_PROPERTY);
-    AddProperty(sclsvrCALIBRATOR_VISIBILITY_ERROR, "visibilityErr", vobsFLOAT_PROPERTY);
+    AddProperty(sclsvrCALIBRATOR_VISIBILITY, "visibility", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VISIBILITY_ERROR, "visibilityErr", vobsFLOAT_PROPERTY, "%.3f");
 
     return SUCCESS;
 }

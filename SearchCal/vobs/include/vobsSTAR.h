@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.14 2004-12-20 09:39:46 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.15 2004-12-20 13:51:40 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -140,6 +140,8 @@ public:
     
     // Method to print out all star properties
     virtual void Display(void);
+    map<string, vobsSTAR_PROPERTY> _propertyList;
+
 protected:
     // Method to add a property. Should be only called by constructors.
     mcsCOMPL_STAT AddProperty(char *id, char *name,
@@ -153,7 +155,6 @@ private:
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);
 
-    map<string, vobsSTAR_PROPERTY> _propertyList;
 };
 
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.8 2004-12-20 09:40:24 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.9 2004-12-20 13:51:40 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.8 2004-12-20 09:40:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.9 2004-12-20 13:51:40 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,7 +45,9 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
-/* Local variables */
+/*
+ * Definition of the star properties
+ */
 #define vobsSTAR_ID_MAIN                 "ID_MAIN"
 #define vobsSTAR_ID_ALTERNATIVE          "ID_ALTERNATIVE"
 #define vobsSTAR_POS_EQ_RA_MAIN          "POS_EQ_RA_MAIN"
@@ -76,7 +78,7 @@ using namespace std;
 #define vobsSTAR_PHOT_JHN_M              "PHOT_JHN_M"
 #define vobsSTAR_PHOT_IR_N_10_4          "PHOT_IR_N_10_4"
 #define vobsSTAR_VELOC_ROTAT             "VELOC_ROTAT"
-#define vobsSTAR_PHOT_COLOR_EXCESS       "PHOT_COLOR_EXCESS"      
+#define vobsSTAR_PHOT_COLOR_EXCESS       "PHOT_COLOR_EXCESS"
 
 /*
  * Class constructor
@@ -346,14 +348,6 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     mcsSTRING64 raHms;
     float hh,hm,hs; 
 
-    // Get RA  property
-    /*vobsSTAR_PROPERTY *property;
-    property = GetProperty(vobsSTAR_POS_EQ_RA_MAIN);
-    if (property == NULL)
-    {
-        return FAILURE;
-    }*/
-
     if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE)
     {
         // Return error
@@ -362,17 +356,6 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     }
     strcpy(raHms, GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
     
-    // If RA has been set
-    /*if (property->IsSet() == mcsFALSE)
-    {
-        // Return error
-        errAdd(vobsERR_RA_NOT_SET);
-        return FAILURE;
-    }
-    // End if
-
-    // Get hours, min and sec 
-    raHms=property->GetValue();*/
     if (sscanf(raHms, "%f %f %f", &hh, &hm, &hs) != 3)
     {
         errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
@@ -388,8 +371,6 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
         ra=-(360-ra);
     }
     
-    logTest("RA (deg) : %.5f", ra); 
-
     return SUCCESS;
 }
 
@@ -440,7 +421,6 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
         dec=-(360-dec);
     }
    
-    logTest("DEC (deg) : %.5f", dec); 
     return SUCCESS;
 }
 
@@ -665,28 +645,28 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "dec", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmdec", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_PMRA, "pmra", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY);
     AddProperty(vobsSTAR_SPECT_TYPE_MK, "tsp", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_VARIAB, "varflag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_MULT_FLAG, "multflag", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_POS_GAL_LAT, "glat", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_POS_GAL_LON, "glon", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_GAL_LAT, "glat", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_POS_GAL_LON, "glon", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_VELOC_HC, "radvel", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_EXTENSION_DIAM, "diam", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_OBS_METHOD, "meth", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "wlen", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "wlen", vobsFLOAT_PROPERTY);
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_U, "U", vobsFLOAT_PROPERTY, "%.2f");
-    AddProperty(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY);
-    AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY);
+    AddProperty(vobsSTAR_PHOT_JHN_U, "U", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_IR_N_10_4, "N", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_VELOC_ROTAT, "velocrotat", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY);

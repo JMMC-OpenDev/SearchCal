@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"
+ * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.5 2004-12-20 13:51:40 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.5 2004-12-20 13:51:40 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -299,15 +299,12 @@ void vobsSTAR_LIST::Display(void)
 
     // Display all element of the list 
     std::list<vobsSTAR *>::iterator iter;
-    /*for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
-    {
-        printf("%12s", propNameList[i]);
-    }*/
-    printf("\n");
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
         (*iter)->Display();
     }
+    printf("\n");
+
 }
 
 /**
