@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.29 2005-02-16 17:34:23 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.30 2005-02-17 09:24:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2005/02/16 17:34:23  gzins
+ * Changed prototype for Unpack; used const char* instead of miscoDYN_BUF
+ *
  * Revision 1.28  2005/02/16 16:56:30  gzins
  * Fixed wrong parameter name in documentation
  *
@@ -68,7 +71,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.29 2005-02-16 17:34:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.30 2005-02-17 09:24:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -674,14 +677,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
     logExtDbg("sclsvrCALIBRATOR_LIST::Delete(%d)", starNumber);
 
     // if the number is negative or higher than the list size, return erro
-    if ((starNumber < 0) || (starNumber > Size()))
+    if ((starNumber < 1) || (starNumber > Size()))
     {
         // todo err
         return mcsFAILURE;
     }
     sclsvrCALIBRATOR *calibrator;    
     // go to the star
-    for (unsigned int el = 0; el <= starNumber; el++)
+    for (unsigned int el = 0; el <= starNumber-1; el++)
     {
         calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
     }
