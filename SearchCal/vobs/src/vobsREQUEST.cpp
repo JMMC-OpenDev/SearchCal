@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: vobsREQUEST.cpp,v 1.2 2004-12-06 13:02:13 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.2 2004-12-06 13:02:13 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -229,9 +229,8 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId , char *
     //logExtDbg("vobsSTAR::GetConstraint()");
     
     // Check CONSTRAINT id
-    if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||
-        (constraintId < -1) ||
-        (constraintId > BASEMAX_ID))
+    if ((constraintId <= UNKNOWN_CONSTRAINT_ID) ||
+        (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
         return FAILURE;
@@ -289,9 +288,8 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, int *va
     //logExtDbg("vobsSTAR::GetConstraint()");
 
     // Check CONSTRAINT id
-    if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||
-        (constraintId < -1) ||
-        (constraintId > BASEMAX_ID))
+    if ((constraintId <= UNKNOWN_CONSTRAINT_ID) ||
+        (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
         return FAILURE;
@@ -353,9 +351,8 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, float *
     //logExtDbg("vobsREQUEST::GetConstraint()");
 
     // Check CONSTRAINT id
-    if ((constraintId == UNKNOWN_CONSTRAINT_ID) ||
-        (constraintId < -1) ||
-        (constraintId > BASEMAX_ID))
+    if ((constraintId <= UNKNOWN_CONSTRAINT_ID) ||
+        (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
         return FAILURE;

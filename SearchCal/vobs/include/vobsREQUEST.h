@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.9 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.10 2004-12-06 13:02:13 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -24,7 +24,6 @@
 /* 
  * Constants definition
  */
-#define vobsNB_REQUEST_CONSTRAINTS 14       /**< Number of contraints */
 #define vobsREQUEST_CONSTRAINT_NOT_SET  "00.00"  /**< Default value of the empty
                                           contraints */
 
@@ -60,6 +59,7 @@ typedef enum
     OBSERVED_BAND_ID,                   /**< band id */
     BASEMIN_ID,
     BASEMAX_ID,
+    vobsNB_REQUEST_CONSTRAINTS
 } vobsCONSTRAINT_ID;
 
 /*
