@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2005-02-04 09:59:37 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.14 2005-02-04 10:49:23 gzins Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2005/02/04 09:59:37  gzins
+# Added vobsCATALOG_MIDI class
+#
 # scetre    16-Jun-2004  created
 #
 #
@@ -23,7 +26,6 @@
 
 #
 # additional include and library search paths
-USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/include/ -I/usr/include/glib-2.0
 #USER_LIB = 
 
 #
@@ -147,7 +149,7 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES =
+INSTALL_FILES = ../config/vobsMidiCatalog.cfg
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
