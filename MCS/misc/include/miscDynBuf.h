@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.17 2005-02-15 12:40:22 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.18 2005-02-16 14:39:55 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/02/15 12:40:22  gzins
+ * Removed miscDynBufGetNextLinePointer and miscDynBufGetBufferPointer macros
+ *
  * Revision 1.16  2005/02/10 10:08:07  lafrasse
  * Added miscDynBufSaveInFile(), and moved as most miscDynBuf parameters as possible to const type
  *
@@ -115,12 +118,12 @@ typedef struct
                                      identifying the comment to be skipped. */
 
     mcsUINT32   storedBytes;       /**< An unsigned integer counting the number
-                                     of bytes effectively held by a Dynamic
+                                     of bytes effectively held by Dynamic
                                      Buffer.
                                      */
 
     mcsUINT32   allocatedBytes;    /**< An unsigned integer counting the number
-                                     of bytes allready allocated in a Dynamic
+                                     of bytes allready allocated in Dynamic
                                      Buffer. */
 } miscDYN_BUF;
 
@@ -150,8 +153,9 @@ char*         miscDynBufGetBuffer           (const miscDYN_BUF *dynBuf);
 
 const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
 
-char*         miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
-                                             const char        *currentLinePtr,
+const char*   miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
+                                             const char        *currentPos,
+                                             mcsSTRING1024     nextLine,
                                              const mcsLOGICAL  skipCommentFlag);
 
 mcsCOMPL_STAT miscDynBufGetByteAt           (const miscDYN_BUF *dynBuf,
