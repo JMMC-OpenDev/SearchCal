@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.17 2004-12-22 10:08:27 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.18 2005-01-03 14:38:51 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -145,6 +145,7 @@ public:
     map<string, vobsSTAR_PROPERTY>::iterator _propertyListIterator;
     map<int, string> _propertyOrder;
     map<int, string>::iterator _propertyOrderIterator;
+
 protected:
     // Method to add a property. Should be only called by constructors.
     mcsCOMPL_STAT AddProperty(char *id, char *name,
