@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2004-06-24 17:48:43 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2004-06-25 05:28:07 gzins Exp $"
 #
 # Makefile of ctoo module
 #
@@ -36,14 +36,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = ctooDoManPages
+EXECUTABLES     = 
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-ctooDoManPages_OBJECTS   = ctooDoManPages
-ctooDoManPages_LDFLAGS   =
-ctooDoManPages_LIBS      =
+xxxxx_OBJECTS   =
+xxxxx_LDFLAGS   =
+xxxxx_LIBS      =
 
 #
 # special compilation flags for single c sources
@@ -71,9 +71,7 @@ SCRIPTS         = ctooGetTemplate \
                   ctooGetDirectoryStructure \
                   ctooGetTemplateForDirectoryStructure \
                   ctooGetCode \
-                  ctooGetTemplateForCoding \
-                  ctooDoxygen \
-                  ctooBuildDocIndex
+                  ctooGetTemplateForCoding
 SCRIPTS_L       =
 
 #
@@ -148,9 +146,7 @@ INS_ROOT_DIR   =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../config/ctooBuildDocIndex.xsl \
-                ../config/ctooBuildDocIndex2.xsl
-
+INSTALL_FILES = 
 #
 # list of all possible C-sources (used to create automatic dependencies)
 # ----------------------------------------------------------------------
@@ -197,10 +193,10 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
-	@echo " . . . installation done"
 	-$(AT) cp -r ../templates/* ${TEMPLATES}
 	-$(AT) rm -f ${TEMPLATES}/*/*~
 	-$(AT) rm -f ${TEMPLATES}/*/.*.sw*
+	@echo " . . . installation done"
 
 db : db_all
 	@echo " . . . ../DB done"
