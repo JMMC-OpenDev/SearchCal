@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.17 2004-12-15 16:34:40 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.18 2005-01-29 20:05:27 gzins Exp $"
 #
 # Makefile of msg
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # lafrasse  10-Aug-2004  Created
 # gzins     01-Oct-2004  Added msgSendCommand
 # lafrasse  19-Nov-2004  Added msgMANAGER_IF.cpp and msgMESSAGE.cpp compilation
@@ -69,6 +70,7 @@ INCLUDES        = msg.h              \
 				  msgMESSAGE.h       \
 				  msgMANAGER_IF.h    \
 				  msgSOCKET.h        \
+				  msgDEBUG_CMD.h     \
 				  msgSOCKET_CLIENT.h \
 				  msgSOCKET_SERVER.h
 
@@ -84,6 +86,7 @@ msg_OBJECTS   = msgMANAGER_IF      \
 				msgMESSAGE         \
 				msgSOCKET          \
 				msgDEBUG_CMD       \
+				msgPROCLIST_CMD    \
 				msgSOCKET_CLIENT   \
 				msgSOCKET_SERVER
 
@@ -118,7 +121,7 @@ tttlll_OBJECTS  =
 #
 # Command Definition Files (CDF) 
 #----------------------------
-CDF_FILES       = msgDEBUG
+CDF_FILES       = msgDEBUG msgPROCLIST
 
 #
 # man pages to be done
@@ -174,9 +177,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
