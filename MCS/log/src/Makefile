@@ -1,7 +1,7 @@
 #*******************************************************************************
-# Jean-Marie Mariotti Center
+# JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-05-12 14:49:41 mella Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-05-12 15:08:20 mella Exp $"
 #
 # Makefile of log 
 #
