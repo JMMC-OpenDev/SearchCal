@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.5 2005-01-26 18:19:25 gzins Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.6 2005-01-29 15:15:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/01/26 18:19:25  gzins
+ * Implement methods related to state/sub-state handling
+ * Attached callback for STATE command
+ *
  * gzins     09-Nov-2004  Created
  * gzins     18-Nov-2004  Added PrintSynopsis, PrintArguments, ParseArguments,
  *                        Connect, Disconnect and MainLoop methods
@@ -24,7 +28,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.5 2005-01-26 18:19:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.6 2005-01-29 15:15:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -46,6 +50,7 @@ using namespace std;
  */
 #include "evhSERVER.h"
 #include "evhVERSION_CMD.h"
+#include "evhDEBUG_CMD.h"
 #include "evhHELP_CMD.h"
 #include "evhSTATE_CMD.h"
 #include "evhErrors.h"
@@ -163,9 +168,13 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
 
 /**
  * Initialization of server.
- * It registers callback for VERSION command.
+ * 
+ * It registers callbacks for DEBUG, HELP, STATE and VERSION commands. Then, it
+ * establishes connection with the message servivices (only if the command has
+ * not been given on the command-line). When completed, the state and sub-state
+ * are set to ONLINE/IDLE.
  *
- * \return mcsSUCCESS 
+ * \return mcsSUCCESS on successful completion or mcsFAILURE otherwise. 
  */
 mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
 {
@@ -183,6 +192,12 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
     // Add callback to VERSION command
     evhCMD_KEY key(evhVERSION_CMD_NAME, evhVERSION_CDF_NAME);
     evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD)&evhSERVER::VersionCB);
+    AddCallback(key, cb);
+    
+    // Add callback to DEBUG command
+    key.SetCommand(evhDEBUG_CMD_NAME);
+    key.SetCdf(evhDEBUG_CDF_NAME);
+    cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::DebugCB);
     AddCallback(key, cb);
     
     // Add callback to HELP command

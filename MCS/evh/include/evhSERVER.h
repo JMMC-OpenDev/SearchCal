@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.h,v 1.7 2005-01-26 18:09:49 gzins Exp $"
+ * "@(#) $Id: evhSERVER.h,v 1.8 2005-01-29 15:15:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/01/26 18:09:49  gzins
+ * Added methods related to state and sub-state hanlding
+ *
  * gzins     09-Nov-2004  Created
  * gzins     23-Nov-2004  Used new msg C++ library.
  *                        Added SendReply method
@@ -66,6 +69,7 @@ public:
     virtual const char   *GetSubStateStr(void);
     
     // Command callbacks
+    virtual evhCB_COMPL_STAT DebugCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT HelpCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT StateCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT VersionCB(msgMESSAGE &msg, void*);
