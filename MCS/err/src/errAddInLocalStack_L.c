@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.2 2004-06-23 16:56:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.3 2004-06-23 17:01:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -58,7 +58,7 @@ static char *errGetErrProp(const char *moduleId,
     GdomeNodeList *childs, *errs, *texts;
     GdomeException exc;
     GdomeDOMString *name, *value;
-    unsigned long i, j, nbChilds, nbTags;
+    unsigned long i, nbChilds, nbTags;
     mcsINT32 id;
     mcsINT32 node;
     static mcsSTRING256 propValue;
