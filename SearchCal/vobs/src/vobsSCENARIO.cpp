@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.10 2005-02-08 08:38:06 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.11 2005-02-08 11:10:04 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/08 08:38:06  scetre
+* Removed printf used for debug purpose
+*
 * Revision 1.9  2005/02/07 19:40:58  gzins
 * Updated vobsREQUEST API
 *
@@ -35,7 +38,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.10 2005-02-08 08:38:06 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.11 2005-02-08 11:10:04 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -209,9 +212,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         // There are 3 different action to do when the scenario is executed
         switch((*_entryIterator)._action)
         {
-            // first action is COPY. The list output will be clear and it will
-            // be merge from the temporary list which contain the list input
-            case COPY:
+            // first action is vobsCOPY. The list output will be clear and it
+            // will be merge from the temporary list which contain the list
+            // input
+            case vobsCOPY:
                 {
                     if (((*_entryIterator)._listOutput)->Clear() == mcsFAILURE)
                     {
@@ -223,10 +227,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                         return mcsFAILURE;
                     }
                 }
-            // second action is MERGE. The list output will be merge from the
-            // temporary list whitout being clear. The information which is
+            // second action is vobsMERGE. The list output will be merge from
+            // the temporary list whitout being clear. The information which is
             // stored in the the list output is preserved and can be modified
-            case MERGE:
+            case vobsMERGE:
                 {
                     if ( ((*_entryIterator)._listOutput)->
                          Merge(tempList, criteriaList) == mcsFAILURE )
@@ -234,10 +238,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                         return mcsFAILURE;
                     }
                 }
-            // third action is UPDATE_ONLY. The list output will be merge from
-            // thetemporary list, but this merge will not modified the existant
-            // information of the list output
-            case UPDATE_ONLY:
+            // third action is vobsUPDATE_ONLY. The list output will be merge
+            // from thetemporary list, but this merge will not modified the
+            // existant information of the list output
+            case vobsUPDATE_ONLY:
                 {
 
                     if ( ((*_entryIterator)._listOutput)->

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.3 2005-02-08 11:10:04 scetre Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.4 2005-02-08 11:10:04 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/08 11:10:04  scetre
+ * changed action enumerate <NAME> in vobs<NAME>
+ *
  * Revision 1.2  2005/01/27 15:55:54  scetre
  * scenario became a friend class of scenario entry to be able to access private members
  *
