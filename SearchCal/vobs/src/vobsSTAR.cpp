@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.5 2004-12-06 15:07:07 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.6 2004-12-09 08:29:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.5 2004-12-06 15:07:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.6 2004-12-09 08:29:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -48,8 +48,8 @@ using namespace std;
 /* Local variables */
 static char *ucdNameList[] =
 {
-   "DATA_LINK",
    "ID_MAIN",
+   "ID_ALTERNATIVE",
    "POS_EQ_RA_MAIN",
    "POS_EQ_DEC_MAIN",
    "POS_EQ_PMDEC",
