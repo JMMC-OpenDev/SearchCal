@@ -120,4 +120,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[file '%s' can't be loaded]]></errFormat>
    </error>
+   <error id="30">
+      <errName>PROPERTY_NOT_SET</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[property value not set : "%s"]]></errFormat>
+   </error>
 </errorList>
