@@ -1,18 +1,18 @@
 #ifndef err_H
 #define err_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: err.h,v 1.6 2004-12-14 13:12:38 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* berezne   02-Jun-2004  created
-* gzins     16-Jun-2004  completed implementation
-* lafrasse  14-Dec-2004  Added errMSG_MAX_LEN from errPrivate.H
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: err.h,v 1.7 2005-01-27 14:13:59 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * berezne   02-Jun-2004  created
+ * gzins     16-Jun-2004  completed implementation
+ * lafrasse  14-Dec-2004  Added errMSG_MAX_LEN from errPrivate.H
+ *
+ ******************************************************************************/
 
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
@@ -38,12 +38,14 @@ typedef struct
 
     mcsPROCNAME    procName;          /* The name of the process              */
     mcsFILE_LINE   location;          /* The location where the error occured */
-                                      /* File, line, etc...                 */
+                                      /* File, line, etc...                   */
     mcsMODULEID    moduleId;          /* Name of the software module          */
     mcsINT32       errorId;           /* The error identifier                 */
     char           severity;          /* The error severity                   */
+    mcsLOGICAL     isErrUser;         /* TRUE if it is an error message
+                                         intended to the end-user */ 
     mcsBYTES256    runTimePar;        /* Detailed information about the error */
-} errSTACK_ELEM;
+} errERROR;
 
 /* Max size of the error message */
 #define errMSG_MAX_LEN 256
@@ -54,17 +56,19 @@ typedef struct
      * initialized or not. When initialized, it contains pointer to itself */
     void *thisPtr;
 
-    errSTACK_ELEM  stack[errSTACK_SIZE]; /* Error stack                   */
-    mcsUINT8       stackSize;            /* Size of the error stack       */
-    mcsLOGICAL     stackOverflow;        /* True if the stack overflows   */
-    mcsLOGICAL     stackEmpty;           /* True if the stack is empty    */
-} errERROR;
+    errERROR       stack[errSTACK_SIZE]; /* Error stack                    */
+    mcsUINT8       stackSize;            /* Size of the error stack        */
+    mcsLOGICAL     stackOverflow;        /* True if the stack overflows    */
+    mcsLOGICAL     stackEmpty;           /* True if the stack is empty     */
+} errERROR_STACK;
 
 /* Prototypes of the public functions */
 mcsCOMPL_STAT errAddInStack (const mcsMODULEID moduleId,
                              const char        *fileLine,
                              mcsINT32          errorId,
+                             mcsLOGICAL        isErrUser,
                              ... );
+char         *errUserGet    (void);
 mcsLOGICAL    errIsInStack       (const mcsMODULEID moduleId,
                                   mcsINT32          errorId);
 mcsCOMPL_STAT errResetStack      (void);
@@ -77,19 +81,48 @@ mcsCOMPL_STAT errPackStack    (char       *buffer,
                                mcsUINT32  bufLen);
 mcsCOMPL_STAT errUnpackStack  (char       *buffer,
                                mcsUINT32  bufLen);
-/* Convenience macro */
-#define errAdd(errorId, arg...) \
-    errAddInStack(MODULE_ID, __FILE_LINE__, errorId, ##arg)
 
-/* Global variable */
-extern errERROR errGlobalStack;
+/* Convenience macro */
+/**
+ * Add an error message.
+ *
+ * Add an error message into the error stack, by calling the errAddInStack
+ * function. This fonction places the error in global stack with all useful
+ * information
+ *
+ * \param errorId error identifier
+ * \param arg optional argument list associated to the error
+ *
+ * \sa errAddInStack
+ */
+#define errAdd(errorId, arg...) \
+    errAddInStack(MODULE_ID, __FILE_LINE__, errorId, mcsFALSE, ##arg)
+
+/**
+ * Add an end-user oriented error message.
+ *
+ * Add an error message intended to the end-user; i.e. message which should be
+ * understable by the end-user of the software. This error message should be
+ * very simple and clear, and should not include technical information related
+ * to software development such name of source file, function name or system
+ * call which failed; such information should be already in error stack. The
+ * user message is the message which will be displayed when error is reported to
+ * user. The last end-user error message can be retreived using
+ * errGetForEndUser() function.
+ *
+ * \param errorId error identifier
+ * \param arg optional argument list associated to the error
+ *
+ * \sa errAddInStack, errUserGet
+ */
+#define errUserAdd(errorId, arg...) \
+    errAddInStack(MODULE_ID, __FILE_LINE__, errorId, mcsTRUE, ##arg)
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /*!err_H*/
-
 
 /*___oOo___*/
 
