@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.11 2005-02-10 10:46:33 gzins Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.12 2005-02-11 10:29:26 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/10 10:46:33  gzins
+* Changed column name to parameter name
+*
 * Revision 1.10  2005/02/08 20:35:24  gzins
 * Changed some parameters from char* to const char*
 *
@@ -72,6 +75,9 @@ private:
     // Recurvise parsing of XML document 
     mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node,
                                   vobsCDATA *cData);
+
+    // GetPropertyId
+    char *GetPropertyId(const char *paramName, const char *ucdName);
 };
 
 #endif /*!vobsPARSER_H*/
