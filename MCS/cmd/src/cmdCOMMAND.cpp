@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.3 2004-12-09 06:08:51 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.4 2004-12-09 17:52:13 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,6 +9,7 @@
 * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
 *                        fixed bug related to flag check
 * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
+* gzins     09-Dec-2004  Added cdfFilename argument to Parse() method
 *
 *
 *******************************************************************************/
@@ -19,7 +20,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.3 2004-12-09 06:08:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.4 2004-12-09 17:52:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -88,12 +89,16 @@ cmdCOMMAND::~cmdCOMMAND()
  */
 
 /** 
- *  This method should be called before any real action on any parameter.
- *  It calls  parseCdf and  parseParams.
+ * Parse the command-line parameters.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ * This method parses .
+ * It calls  parseCdf and  parseParams.
+ *
+ * \param cdfFilename  the cdf file name.
+ * 
+ * \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCOMMAND::Parse()
+mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfFilename)
 {
     logExtDbg ("cmdCOMMAND::Parse()");
     
@@ -104,16 +109,14 @@ mcsCOMPL_STAT cmdCOMMAND::Parse()
     }
 
     // find the correcsponding cdf file
-    string filename = _name;
-    filename.append(".cdf");
-    char * cdfFilename = miscLocateFile(filename.data());
+    char * fullCdfFilename = miscLocateFile(cdfFilename.data());
     // check if the cdf file has been found   
-    if (cdfFilename == NULL)
+    if (fullCdfFilename == NULL)
     {
         return FAILURE;
     }
         
-    if (ParseCdf(cdfFilename)==FAILURE)
+    if (ParseCdf(fullCdfFilename)==FAILURE)
     {
         return FAILURE;
     }
