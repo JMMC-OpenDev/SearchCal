@@ -1,38 +1,39 @@
 #ifndef miscDynBuf_H
 #define miscDynBuf_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: miscDynBuf.h,v 1.12 2004-12-21 15:33:25 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  06-Jul-2004  Created
-* lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
-* lafrasse  23-Jul-2004  Moved miscDYN_BUF_MAGIC_STRUCTURE_ID to miscPrivate.h,
-*                        added error management to
-*                        miscDynBufGetStoredBytesNumber and
-*                        miscDynBufGetAllocatedBytesNumber, plus
-*                        miscDynBufGetBytesFromTo parameter refinments.
-* lafrasse  02-Aug-2004  Moved mcs.h include in from miscDynBuf.c
-*                        Moved in null-terminated string specific functions
-*                        from miscDynStr.h
-* lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
-* lafrasse  30-Sep-2004  Changed miscDynBufAlloc second parameter type from
-*                        mcsUINT32 to mcsINT32
-* lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer() and
-*                        miscDynBufLoadFile() function, plus a new field in
-*                        the Dynamic Buffer structure to store the comment
-*                        pattern to be skipped by miscDynBufGetNextLinePointer()
-*                        with miscDynBufGetCommentPattern() and
-*                        miscDynBufSetCommentPattern() to deal with this field
-* gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
-*                        miscDynBufGetNbStoredBytes and
-*                        miscDynBufGetAllocatedBytesNumber to
-*                        miscDynBufGetNbAllocatedBytes
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: miscDynBuf.h,v 1.13 2005-01-28 17:54:41 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  06-Jul-2004  Created
+ * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
+ * lafrasse  23-Jul-2004  Moved miscDYN_BUF_MAGIC_STRUCTURE_ID to miscPrivate.h,
+ *                        added error management to
+ *                        miscDynBufGetStoredBytesNumber and
+ *                        miscDynBufGetAllocatedBytesNumber, plus
+ *                        miscDynBufGetBytesFromTo parameter refinments.
+ * lafrasse  02-Aug-2004  Moved mcs.h include in from miscDynBuf.c
+ *                        Moved in null-terminated string specific functions
+ *                        from miscDynStr.h
+ * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
+ * lafrasse  30-Sep-2004  Changed miscDynBufAlloc second parameter type from
+ *                        mcsUINT32 to mcsINT32
+ * lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer() and
+ *                        miscDynBufLoadFile() function, plus a new field in
+ *                        the Dynamic Buffer structure to store the comment
+ *                        pattern to be skipped by
+ *                        miscDynBufGetNextLinePointer() with
+ *                        miscDynBufGetCommentPattern() and
+ *                        miscDynBufSetCommentPattern() to deal with this field
+ * gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
+ *                        miscDynBufGetNbStoredBytes and
+ *                        miscDynBufGetAllocatedBytesNumber to
+ *
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -130,7 +131,7 @@ mcsCOMPL_STAT miscDynBufGetNbStoredBytes    (miscDYN_BUF       *dynBuf,
 mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *allocatedBytes);
 
-char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf);
+char*         miscDynBufGetBufferPointer    (const miscDYN_BUF       *dynBuf);
 
 char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf);
 
