@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.14 2005-02-16 15:55:42 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.15 2005-02-16 16:18:00 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/02/16 15:55:42  gzins
+* Fixed bug in AppendLines; missing CR after each line insertion
+*
 * Revision 1.13  2005/02/16 15:22:11  gzins
 * Updated call to miscoDYN_BUF::GetNextLine()
 *
@@ -46,7 +49,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.14 2005-02-16 15:55:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.15 2005-02-16 16:18:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -437,10 +440,6 @@ mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
         return mcsFAILURE;
     }
     SetCommentPattern("#");
-    if (miscReplaceChrByChr(_dynBuf.dynBuf, '\n', '\0') == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
 
     // Load header of the CDATA : build list of UCD and parameter names
     if (SetParamsDesc() == mcsFAILURE)

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.12 2005-02-16 15:55:42 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.13 2005-02-16 16:18:00 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/16 15:55:42  gzins
+* Fixed bug in AppendLines; missing CR after each line insertion
+*
 * Revision 1.11  2005/02/16 15:26:09  gzins
 * Updated call to miscoDYN_BUF::GetNextLine()
 *
@@ -248,7 +251,7 @@ public:
                 logPrint("vobs", logDEBUG, __FILE_LINE__,
                          "Next line = %s\n", line);
                 if ((lineNum > _nbLinesToSkip) && 
-                    (line != NULL) && 
+                    (from != NULL) && 
                     (miscIsSpaceStr(line) != mcsTRUE))
                 {
                     mcsSTRING256 lineSubStrings[1024];
