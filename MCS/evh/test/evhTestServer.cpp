@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTestServer.cpp,v 1.2 2004-12-08 17:58:42 gzins Exp $"
+* "@(#) $Id: evhTestServer.cpp,v 1.3 2004-12-22 09:04:03 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Test program for evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.2 2004-12-08 17:58:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.3 2004-12-22 09:04:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -61,7 +61,7 @@ public:
     virtual evhCB_COMPL_STAT Cb1 (msgMESSAGE &msg,void*)
     {
         printf("evhTEST::Cb1() : Command = %s, Params = %s\n",
-               msg.GetCommand(), msg.GetBodyPtr()); 
+               msg.GetCommand(), msg.GetBody()); 
         SendReply(msg);
         i++;
         printf("(i%2) = %d\n", (i%2)); 
