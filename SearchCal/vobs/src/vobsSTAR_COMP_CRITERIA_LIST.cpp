@@ -1,10 +1,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.4 2005-01-24 13:53:33 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.5 2005-01-26 08:14:09 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * scetre    14-Dec-2004  Created
 *
 *
@@ -15,7 +16,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.4 2005-01-24 13:53:33 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.5 2005-01-26 08:14:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,6 +37,7 @@ using namespace std;
  * Local Headers 
  */
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
+#include "vobsSTAR.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 /**
@@ -43,23 +45,20 @@ using namespace std;
  */
 vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
 {
+    // Put the criteria list iterator in first position of the list
     _criteriaIterator = _criteriaList.begin();    
 }
+
 /**
  * Copy Constructor
  */
-vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST(vobsSTAR_COMP_CRITERIA_LIST &criteriaList)
+vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST
+    (vobsSTAR_COMP_CRITERIA_LIST &criteriaList)
 {
-    // For each criteria of the criteria list in parameter
-    map<char *, float> ::iterator criteriaIterator;
-    for (criteriaIterator = _criteriaList.begin();
-         criteriaIterator != _criteriaList.end(); criteriaIterator++)
-    {
-        // Copy it in the criteria list
-        _criteriaList[(*criteriaIterator).first] = 
-            criteriaList._criteriaList[(*criteriaIterator).first];
-    }
+    // operator =
+    *this = criteriaList;
 }
+
 /**
  * Class destructor
  */
@@ -71,17 +70,11 @@ vobsSTAR_COMP_CRITERIA_LIST::~vobsSTAR_COMP_CRITERIA_LIST()
  * Assignment operator
  */
 vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
-(vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
+(const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
 {
     logExtDbg("vobsSTAR_COMP_CRITERIA_LIST::operator=()"); 
-    // For each criteria
-    map<char *, float> ::iterator criteriaIterator;
-    for (criteriaIterator = _criteriaList.begin();
-         criteriaIterator != _criteriaList.end(); criteriaIterator++)
-    {
-        _criteriaList[(*criteriaIterator).first] = 
-            criteriaList._criteriaList[(*criteriaIterator).first];
-    }
+    // Copy it in the criteria list
+    _criteriaList = criteriaList._criteriaList;
     return *this;
 }
 
@@ -101,11 +94,47 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
                                                mcsFLOAT range)
 {
     logExtDbg("vobsSTAR_COMP_CRITERIA_LIST::Add()");
-    
+  
+    // create a star
+    vobsSTAR star;
+    // this star gave method to check that a property is known
+    // If criteria is not a property return failure
+    if (star.IsProperty(propertyId) == mcsFALSE)
+    {
+        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId); 
+        return mcsFAILURE;
+    }
+
     // Put criteria in the list
     _criteriaList[propertyId]=range;
 
     return mcsSUCCESS;
+}
+
+/**
+ * Method to remove a criteria from the list of criteria
+ *
+ * \param propertyId the id of the criteria to removed
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(char *propertyId)
+{
+    // create a star
+    vobsSTAR star;
+    // this star gave method to check that a property is known
+    // If criteria is not a property return failure
+    if (star.IsProperty(propertyId) == mcsFALSE)
+    {
+        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId); 
+        return mcsFAILURE;
+    }
+
+    // Remove criteria from the list
+    _criteriaList.erase(propertyId);
+
+    return mcsSUCCESS;    
 }
 
 /**
@@ -125,8 +154,12 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
  *     }
  * \endcode
  * 
- * \return 
- * Always mcsSUCCESS.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ *
+ * \b Error codes:\n
+ * The possible errors are :
+ * \li vobsERR_NO_MORE_CRITERIA
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
                                                            mcsFLOAT *range,
@@ -138,17 +171,23 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
     {
         _criteriaIterator = _criteriaList.begin();
     }
+    // else, the value wanted is the next value of the list after the iterator
     else
     {
         _criteriaIterator++;
+        // If the the criteria iterator is at the end of the list, there are no
+        // more criteria in the list and return a failure
         if (_criteriaIterator == _criteriaList.end())
         {
             errAdd(vobsERR_NO_MORE_CRITERIA);
             return mcsFAILURE;
         }
     }
+
+    // copy the criteria name found and get the value of the range
     strcpy(propertyId, (*_criteriaIterator).first);
     *range = (*_criteriaIterator).second;
+    
     return mcsSUCCESS;
 }
 
@@ -161,14 +200,6 @@ int vobsSTAR_COMP_CRITERIA_LIST::Size()
 {
     return _criteriaList.size();
 }
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/
