@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.8 2004-09-30 08:43:02 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.9 2004-10-11 07:23:13 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.8 2004-09-30 08:43:02 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.9 2004-10-11 07:23:13 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -359,10 +359,7 @@ void vobsSTAR_LIST::Save(mcsSTRING256 filename)
     logExtDbg("vobsSTAR_LIST::Save()");
     
     FILE *f=NULL;
-    char *resolvedfileName=NULL;
-    miscResolvePath(filename, &resolvedfileName);
-    printf("%s\n",resolvedfileName);
-    f=fopen(resolvedfileName, "w+");
+    f=fopen(miscResolvePath(filename), "w+");
     if (f==NULL)
     {
         errAdd(vobsERR_NO_FILE, filename);
