@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.C,v 1.2 2004-11-18 17:39:03 gzins Exp $"
+* "@(#) $Id: evhSERVER.C,v 1.3 2004-11-23 09:15:46 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,7 @@
  * evhSERVER class definition.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.C,v 1.2 2004-11-18 17:39:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.C,v 1.3 2004-11-23 09:15:46 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -47,9 +47,6 @@ using namespace std;
  */
 evhSERVER::evhSERVER()
 {
-    memset(&_msg, '\0', sizeof(msgMESSAGE)); 
-    msgSetBody(&_msg, "", 0);
-    _isConnected = mcsFALSE;
 }
 
 /*
@@ -93,7 +90,7 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, mcsINT8 *argv[],
     logExtDbg ("evhSERVER::ParseArguments ()");
 
     // If command name not yet set
-    if (strlen (msgGetCommand(&_msg)) == 0)
+    if (strlen (_msg.GetCommand()) == 0)
     {
         // If argument is an option; i.e. start by '-'
         if (argv[*optInd][0] == '-')
@@ -104,16 +101,20 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, mcsINT8 *argv[],
         }
         // End if
 
-        // Get command name
-        strncpy(_msg.header.command, argv[*optInd], sizeof(mcsCMD));
+        // Set command name
+        if (_msg.SetCommand(argv[*optInd]) == FAILURE)
+        {
+            return FAILURE;
+        }
         return SUCCESS;
     }
     // Else command parameters not yet set
     else 
     {
-        if (msgGetBodySize(&_msg) == 0)
+        if (_msg.GetBodySize() == 0)
         {
-            if (msgSetBody(&_msg, argv[*optInd], strlen(argv[*optInd])) == FAILURE)
+            // Set command parameters 
+            if (_msg.SetBody(argv[*optInd], strlen(argv[*optInd])) == FAILURE)
             {
                 return FAILURE;
             }
@@ -150,7 +151,7 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
     AddCallback(key, cb);
     
     // If no command has been given in command-line arguments
-    if (strlen(msgGetCommand(&_msg)) == 0)
+    if (strlen(_msg.GetCommand()) == 0)
     {
         // Connection to message services
         if (Connect() == FAILURE)
@@ -167,11 +168,10 @@ mcsCOMPL_STAT evhSERVER::Connect()
     logExtDbg("evhSERVER::Connect()");
 
     // Connect to message services
-    if (msgConnect(Name(), NULL) == FAILURE)
+    if (_msgManager.Connect(Name(), NULL) == FAILURE)
     {
         return FAILURE;
     }
-    _isConnected = mcsTRUE;
 
     return SUCCESS;
 }
@@ -180,18 +180,11 @@ mcsCOMPL_STAT evhSERVER::Disconnect()
 {
     logExtDbg("evhSERVER::Disconnect()");
 
-    // If not connected, return
-    if (_isConnected == mcsFALSE)
-    {
-        return SUCCESS;
-    }
-    
     // Disconnect from message services
-    if (msgDisconnect() == FAILURE)
+    if (_msgManager.Disconnect() == FAILURE)
     {
         return FAILURE;
     }
-    _isConnected = mcsFALSE;
 
     return SUCCESS;
 }
@@ -200,7 +193,7 @@ mcsCOMPL_STAT evhSERVER::Disconnect()
 mcsCOMPL_STAT evhSERVER::MainLoop(msgMESSAGE *msg)
 {
     // If a message is given or no command given as argument 
-    if ((msg != NULL) || strlen(msgGetCommand(&_msg)) == 0)
+    if ((msg != NULL) || strlen(_msg.GetCommand()) == 0)
     {
         // Enter in the event handler main loop
         return (evhHANDLER::MainLoop(msg));
@@ -209,26 +202,38 @@ mcsCOMPL_STAT evhSERVER::MainLoop(msgMESSAGE *msg)
     else
     {
         // Execute callback(s) associated to the command given as argument
-        if (evhHANDLER::MainLoop(&_msg) == SUCCESS)
-        {
-            if (errStackIsEmpty() == mcsTRUE)
-            {
-                printf("%s\n", msgGetBodyPtr(&_msg));
-                return SUCCESS;
-            }
-            else
-            {
-                errDisplayStack();
-                errCloseStack();
-                return FAILURE;
-            }
-        }
-        else
-        {
-            return FAILURE;
-        }
+        return (evhHANDLER::MainLoop(&_msg));
     }
     // End if
 }
+
+mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
+{
+    logExtDbg("evhSERVER::SendReply()");
+
+    // If it is the command provided by user on command-line, just print out
+    // the result
+    if (&msg == &_msg)
+    {
+        if (errStackIsEmpty() == mcsTRUE)
+        {
+            printf("%s\n", msg.GetBodyPtr());
+            return SUCCESS;
+        }
+        else
+        {
+            errDisplayStack();
+            errCloseStack();
+            return FAILURE;
+        }
+    }
+    // Esle
+    else
+    {
+        // Send reply to the sended
+        return _msgManager.SendReply(msg, lastReply);
+    }
+}
+
 
 /*___oOo___*/
