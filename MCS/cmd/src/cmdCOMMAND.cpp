@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.17 2005-02-02 14:19:46 lafrasse Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.18 2005-02-03 11:13:26 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/02/02 14:19:46  lafrasse
+* Moved GetFirstSenteceOfDescription() code in GetShortDescription()
+*
 * Revision 1.16  2005/02/01 12:52:32  lafrasse
 * Refined the command and parameter descriptions
 *
@@ -24,10 +27,6 @@
 *                        Removed Parse(void) method
 *                        Renamed GetHelp to GetDescription
 *                        Added GetShortDescription
-* lafrasse  01-Feb-2005  Refined GetDescription output format and added
-*                        GetFirstSentenceOfDescription()
-* lafrasse  02-Feb-2005  Moved GetFirstSentenceOfDescription() code in
-*                        GetShortDescription()
 *
 *******************************************************************************/
 
@@ -38,7 +37,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.17 2005-02-02 14:19:46 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.18 2005-02-03 11:13:26 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -444,7 +443,9 @@ mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
 }
 
 /** 
- *  Get the user value of a parameter.
+ *  Get the value of a parameter. Begin to return the user value. If the parameter is not defined by the user, the default
+ *  is returned if it exist. If the parameter has neither user value nor default
+ *  value, then an error is returned.
  *
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
@@ -455,14 +456,33 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
 {
     logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
-    {
+
+    // Check if parameter does exit
+    if (GetParam(paramName, &p) == mcsFAILURE )
+    {   
+        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
         return FAILURE;
     }
-    return p->GetUserValue(param);
+
+    // Try to return the user value
+    if( p->GetUserValue(param) == mcsSUCCESS ){
+        return mcsSUCCESS;
+    }
+
+    // Else try to return the default value
+    if( p->HasDefaultValue() == mcsTRUE ){
+        return p->GetDefaultValue(param);    
+    }
+
+    // Finally return an error
+    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data()); 
+    return mcsFAILURE;   
 }
 
 /** 
+ *  Get the value of a parameter. Begin to return the user value. If the parameter is not defined by the user, the default
+ *  is returned if it exist. If the parameter has neither user value nor default
+ *  value, then an error is returned.
  *  Get the user value of a parameter.
  *
  * \param paramName  the name of the parameter.
@@ -474,15 +494,33 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
 {
     logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
-    {
+
+    // Check if parameter does exit
+    if (GetParam(paramName, &p) == mcsFAILURE )
+    {   
+        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
         return FAILURE;
     }
-    return p->GetUserValue(param);
+
+    // Try to return the user value
+    if( p->GetUserValue(param) == mcsSUCCESS ){
+        return mcsSUCCESS;
+    }
+
+    // Else try to return the default value
+    if( p->HasDefaultValue() == mcsTRUE ){
+        return p->GetDefaultValue(param);    
+    }
+
+    // Finally return an error
+    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data()); 
+    return mcsFAILURE;    
 }
 
 /** 
- *  Get the user value of a parameter.
+ *  Get the value of a parameter. Begin to return the user value. If the parameter is not defined by the user, the default
+ *  is returned if it exist. If the parameter has neither user value nor default
+ *  value, then an error is returned.
  *
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
@@ -493,15 +531,33 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
 {
     logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
-    {
+
+    // Check if parameter does exit
+    if (GetParam(paramName, &p) == mcsFAILURE )
+    {   
+        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
         return FAILURE;
     }
-    return p->GetUserValue(param);
+
+    // Try to return the user value
+    if( p->GetUserValue(param) == mcsSUCCESS ){
+        return mcsSUCCESS;
+    }
+
+    // Else try to return the default value
+    if( p->HasDefaultValue() == mcsTRUE ){
+        return p->GetDefaultValue(param);    
+    }
+
+    // Finally return an error
+    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data()); 
+    return mcsFAILURE;   
 }
 
 /** 
- *  Get the user value of a parameter.
+ *  Get the value of a parameter. Begin to return the user value. If the parameter is not defined by the user, the default
+ *  is returned if it exist. If the parameter has neither user value nor default
+ *  value, then an error is returned.
  *
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
@@ -512,15 +568,33 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
 {
     logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
-    {
+
+    // Check if parameter does exit
+    if (GetParam(paramName, &p) == mcsFAILURE )
+    {   
+        errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
         return FAILURE;
     }
-    return p->GetUserValue(param);
+
+    // Try to return the user value
+    if( p->GetUserValue(param) == mcsSUCCESS ){
+        return mcsSUCCESS;
+    }
+
+    // Else try to return the default value
+    if( p->HasDefaultValue() == mcsTRUE ){
+        return p->GetDefaultValue(param);    
+    }
+
+    // Finally return an error
+    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data()); 
+    return mcsFAILURE;   
 }
 
 /** 
- *  Get the default value of a parameter.
+ *  Get the value of a parameter. Begin to return the user value. If the parameter is not defined by the user, the default
+ *  is returned if it exist. If the parameter has neither user value nor default
+ *  value, then an error is returned.
  *
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
