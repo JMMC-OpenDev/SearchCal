@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.4 2005-02-17 15:33:18 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.5 2005-02-28 13:48:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/17 15:33:18  gzins
+ * Added GetCmdParamLine method
+ * Used _getCalCmd member
+ *
  * Revision 1.3  2005/02/16 16:56:30  gzins
  * Fixed wrong parameter name in documentation
  *
@@ -22,7 +26,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.4 2005-02-17 15:33:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.5 2005-02-28 13:48:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -202,7 +206,14 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
-    
+   
+    // Save File
+    char *saveFile;
+    if (_getCalCmd->GetFile(&saveFile) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     // Build the request object from the parameters of the command
     // Affect the reference object name
     if (SetObjectName(objectName) == mcsFAILURE)
@@ -260,6 +271,11 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
     // Affect the baseline length
     if (SetBaseline(baseMin, baseMax) ==  mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Affect the file name
+    if (SetSaveFileName(saveFile) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -373,6 +389,35 @@ mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisibility(mcsFLOAT vis,
     _visErr = visErr;
     
     return mcsSUCCESS;
+}
+
+/**
+ * Set the file name in which the value will be saved
+ *
+ * \param fileName the name of the save file
+ *
+ * \return mcsSUCCESS or mcsFAILURE
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetSaveFileName(mcsSTRING256 fileName)
+{
+    logExtDbg("sclsvrREQUEST::SetSaveFileName()");
+    
+    if (strcpy(_fileName, fileName) == NULL)
+    {
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;
+}
+
+/**
+ * Get the name of the save file
+ *
+ * \return name of the save file
+ */
+const char *sclsvrREQUEST::GetSaveFileName(void)
+{
+    logExtDbg("sclsvrREQUEST::GetSaveFileName()");
+    return (_fileName);
 }
 
 /**

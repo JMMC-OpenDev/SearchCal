@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.6 2005-02-14 15:10:17 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.7 2005-02-28 13:49:03 scetre Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.6  2005/02/14 15:10:17  scetre
+ changed m..RangeMag to m..MagRange
+
  Revision 1.5  2005/02/13 16:07:42  gzins
  Changed Min/MaxDeltaMag to Min/MaxRangeMag
 
@@ -39,7 +42,6 @@
             <name>mag</name>
             <type>double</type>
             <desc>science object magnitude</desc>
-            <unit></unit>
         </param>
         <param>
             <name>maxReturn</name>
@@ -122,6 +124,12 @@
             <type>double</type>
             <defaultValue><double>0.1</double></defaultValue>
             <desc>maximum error on visibility</desc>
+        </param>
+        <param optional="true">
+            <name>file</name>
+            <type>string</type>
+            <defaultValue><string>file.txt</string></defaultValue>
+            <desc>File in which you want to save results</desc>
         </param>
     </params>        
 </cmd>

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.3 2005-02-17 15:32:04 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.4 2005-02-28 13:48:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/17 15:32:04  gzins
+ * Added GetCmdParamLine method
+ *
  * Revision 1.2  2005/02/16 17:06:58  gzins
  * Added Parse method
  *
@@ -71,6 +74,10 @@ public:
     virtual mcsFLOAT GetExpectedVisibility(void);
     virtual mcsFLOAT GetExpectedVisibilityError(void);
 
+    // Save file 
+    virtual mcsCOMPL_STAT SetSaveFileName(mcsSTRING256 fileName);
+    virtual const char *GetSaveFileName(void);
+    
 protected:
     
 private:
@@ -82,11 +89,12 @@ private:
     // GETCAL command
     sclsvrGETCAL_CMD *_getCalCmd;
 
-    mcsFLOAT  _minBaselineLength;
-    mcsFLOAT  _maxBaselineLength;
-    mcsFLOAT  _observingWlen;
-    mcsFLOAT  _vis;
-    mcsFLOAT  _visErr;
+    mcsFLOAT        _minBaselineLength;
+    mcsFLOAT        _maxBaselineLength;
+    mcsFLOAT        _observingWlen;
+    mcsFLOAT        _vis;
+    mcsFLOAT        _visErr;
+    mcsSTRING256    _fileName;
 };
 
 #endif /*!sclsvrREQUEST_H*/
