@@ -1,14 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2005-01-21 15:39:39 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.4 2005-02-13 16:53:13 gzins Exp $"
 #
 # Makefile of ........
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # lafrasse  07-Dec-2004  Created
-#
 #
 #*******************************************************************************
 # REMARKS
@@ -165,9 +165,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___

@@ -2,10 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envStart.sh,v 1.2 2005-01-26 11:02:14 lafrasse Exp $"
+# "@(#) $Id: envStart.sh,v 1.3 2005-02-13 16:53:13 gzins Exp $"
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # lafrasse  21-Jan-2005  Created
 # lafrasse  25-Jan-2005  Added MCSENV label management (for the default MCSENV)
 #

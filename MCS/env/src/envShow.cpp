@@ -1,15 +1,15 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: envShow.cpp,v 1.3 2004-12-08 14:59:27 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  07-Dec-2004  Created
-* lafrasse  08-Dec-2004  Comment refinments
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: envShow.cpp,v 1.4 2005-02-13 16:53:13 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  07-Dec-2004  Created
+ * lafrasse  08-Dec-2004  Comment refinments
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -25,7 +25,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: envShow.cpp,v 1.3 2004-12-08 14:59:27 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envShow.cpp,v 1.4 2005-02-13 16:53:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

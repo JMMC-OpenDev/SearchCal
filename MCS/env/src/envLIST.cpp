@@ -1,26 +1,27 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: envLIST.cpp,v 1.5 2005-01-05 10:05:59 swmgr Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  07-Dec-2004  Created
-* lafrasse  08-Dec-2004  Comment refinments, added the default MCS env in the
-*                        internal map by default, factorized the 'file already
-*                        loaded' detection code from GetHostName(), Show() and
-*                        GetPortNumber() to LoadEnvListFile(), and refined the
-*                        output format of Show()
-* gzins     05-Jan-2005  Minor changes in documentation
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: envLIST.cpp,v 1.6 2005-02-13 16:53:13 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  07-Dec-2004  Created
+ * lafrasse  08-Dec-2004  Comment refinments, added the default MCS env in the
+ *                        internal map by default, factorized the 'file already
+ *                        loaded' detection code from GetHostName(), Show() and
+ *                        GetPortNumber() to LoadEnvListFile(), and refined the
+ *                        output format of Show()
+ * gzins     05-Jan-2005  Minor changes in documentation
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.5 2005-01-05 10:05:59 swmgr Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.6 2005-02-13 16:53:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

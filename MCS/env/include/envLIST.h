@@ -1,17 +1,17 @@
 #ifndef envLIST_H
 #define envLIST_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: envLIST.h,v 1.2 2004-12-08 14:59:27 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  07-Dec-2004  Created
-* lafrasse  08-Dec-2004  Comments refinments
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: envLIST.h,v 1.3 2005-02-13 16:53:13 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  07-Dec-2004  Created
+ * lafrasse  08-Dec-2004  Comments refinments
+ *
+ ******************************************************************************/
 
 /**
  * \file
