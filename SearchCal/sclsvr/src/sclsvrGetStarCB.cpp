@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.4 2004-12-22 10:07:04 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.5 2005-01-03 14:36:38 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.4 2004-12-22 10:07:04 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.5 2005-01-03 14:36:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -191,7 +191,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     }
     
 
-    printf("%s\n", miscDynBufGetBufferPointer(&dynBuff)); 
     
     msg.SetBody(miscDynBufGetBufferPointer(&dynBuff),
                 strlen(miscDynBufGetBufferPointer(&dynBuff)));

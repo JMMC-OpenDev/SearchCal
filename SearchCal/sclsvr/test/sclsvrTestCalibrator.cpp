@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.1 2004-12-22 10:07:42 scetre Exp $"
+* "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.2 2005-01-03 14:36:38 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.1 2004-12-22 10:07:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.2 2005-01-03 14:36:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     sclsvrCALIBRATOR calibrator;
     for (unsigned int el = 0; el < calibrator.NbProperties(); el++)
     {
-        printf("%s\n",calibrator.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
+        printf("%s\n",calibrator.GetNextProperty((mcsLOGICAL)(el==0))->GetValue());
     }
 
     errCloseStack();

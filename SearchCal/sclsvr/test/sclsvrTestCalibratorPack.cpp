@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestCalibratorPack.cpp,v 1.2 2004-12-22 10:07:42 scetre Exp $"
+* "@(#) $Id: sclsvrTestCalibratorPack.cpp,v 1.3 2005-01-03 14:36:38 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,7 @@
 *******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibratorPack.cpp,v 1.2 2004-12-22 10:07:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibratorPack.cpp,v 1.3 2005-01-03 14:36:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,7 +71,8 @@ int main(int argc, char *argv[])
     }
 
     logSetStdoutLogLevel(logQUIET);
-
+    
+     
     sclsvrCALIBRATOR calibrator1;
     sclsvrCALIBRATOR calibrator2;
     sclsvrCALIBRATOR_LIST calibratorList;
@@ -95,11 +96,14 @@ int main(int argc, char *argv[])
     calibrator3.SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAMETER, "1.8");
     calibratorList.AddAtTail(calibrator3);
     
+    
+    
     calibratorList.Display();
 
     miscDYN_BUF bufferList;
     calibratorList.Pack(& bufferList);    
-
+    printf("pack succeed\n");
+    printf("%s\n", miscDynBufGetBufferPointer(&bufferList));
     calibratorList2.UnPack(&bufferList);
     printf("Pack and Unpack in another list :\n");
     calibratorList2.Display();
