@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-12-08 06:18:42 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-12-08 18:48:42 gzins Exp $"
 #
 # Makefile of ........
 #
@@ -69,7 +69,7 @@ lllll_OBJECTS   =
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = sclinsInstall
 SCRIPTS_L       =
 
 #
