@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgConnect.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgConnect.c,v 1.2 2004-10-01 15:06:02 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgConnect.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgConnect.c,v 1.2 2004-10-01 15:06:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -113,6 +113,7 @@ mcsCOMPL_STAT   msgConnect        (const mcsPROCNAME  procName,
             {
                 return FAILURE;
             }
+            errResetStack();
         }
     }
 
