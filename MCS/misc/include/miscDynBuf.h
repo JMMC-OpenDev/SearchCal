@@ -3,11 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.14 2005-01-28 18:10:17 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.15 2005-02-03 08:59:24 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/01/28 18:10:17  gzins
+ * Renamed miscDynBufGetBufferPointer to miscDynBufGetBuffer
+ * Renamed miscDynBufGetNextLinePointer to miscDynBufGetNextLine
+ * Added macros for backward compatibility
+ *
  * Revision 1.13  2005/01/28 17:54:41  gzins
  * Declared dynBuf parameter of miscDynBufGetBufferPointer as const
  *
@@ -180,11 +185,11 @@ mcsCOMPL_STAT miscDynBufReplaceStringFromTo (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   to);
 
 mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
-                                             char              *bytes,
+                                             const char        *bytes,
                                              const mcsUINT32   length);
 
 mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
-                                             char              *str);
+                                             const char        *str);
 
 mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
                                              char              *bytes,

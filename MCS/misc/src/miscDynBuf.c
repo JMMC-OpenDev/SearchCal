@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.24 2005-01-28 18:35:10 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.25 2005-02-03 08:59:31 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/01/28 18:35:10  gzins
+ * Added automatic initialisation of structure when needed
+ *
  * Revision 1.23  2005/01/28 18:10:30  gzins
  * Renamed miscDynBufGetBufferPointer to miscDynBufGetBuffer
  * Renamed miscDynBufGetNextLinePointer to miscDynBufGetNextLine
@@ -96,7 +99,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.24 2005-01-28 18:35:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.25 2005-02-03 08:59:31 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -139,11 +142,11 @@ static        mcsCOMPL_STAT miscDynBufCheckFromToParams(
                                              const mcsUINT32   to);
 
 static        mcsCOMPL_STAT miscDynBufCheckBytesAndLengthParams(
-                                             char              *bytes,
+                                             const char        *bytes,
                                              const mcsUINT32   length);
 
 static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
-                                             char              *str);
+                                             const char        *str);
 
 
 /* 
@@ -292,7 +295,7 @@ static        mcsCOMPL_STAT miscDynBufCheckFromToParams(
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 static        mcsCOMPL_STAT miscDynBufCheckBytesAndLengthParams(
-                                             char              *bytes,
+                                             const char        *bytes,
                                              const mcsUINT32   length)
 {
     /* Test the 'bytes' parameter validity */
@@ -320,7 +323,7 @@ static        mcsCOMPL_STAT miscDynBufCheckBytesAndLengthParams(
  * \return the string length, or 0 if it is not valid
  */
 static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
-                                             char              *str)
+                                             const char         *str)
 {
     /* Test the 'str' parameter validity */
     if (str == NULL)
@@ -1215,7 +1218,7 @@ mcsCOMPL_STAT miscDynBufReplaceStringFromTo (miscDYN_BUF       *dynBuf,
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
-                                             char              *bytes,
+                                             const char        *bytes,
                                              const mcsUINT32   length)
 {
     /* Initialize the received Dynamic Buffer if it is not */
@@ -1267,7 +1270,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
-                                             char              *str)
+                                             const char        *str)
 {
     /* Test the 'str' parameter validity */
     mcsUINT32 stringLength = 0;
