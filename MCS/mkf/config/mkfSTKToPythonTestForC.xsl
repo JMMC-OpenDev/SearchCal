@@ -3,6 +3,7 @@
 	<xsl:output method="text" omit-xml-declaration="yes" indent="yes"/>
 
     <xsl:include href="mkfSTK_WriteType.xsl"/>
+    <xsl:include href="mkfSTK_WriteArrayName.xsl"/>
 
 	<!-- Fonction XSL ecrivant un script Python   -->
 	<!-- facilitant le test de fonction C ou C++ -->
