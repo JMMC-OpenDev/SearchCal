@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: errPrivate.h,v 1.2 2004-06-23 13:04:48 gzins Exp $"
+* "@(#) $Id: errPrivate.h,v 1.3 2004-08-30 13:42:32 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -26,41 +26,41 @@ extern C {
 #define MODULE_ID "err"
 
 /* Max size of the error message */
-#define errMSG_MAX_LEN 128
+#define errMSG_MAX_LEN 256
 
 /* Local functions */
-extern  mcsCOMPL_STAT errResetLocalStack (errERROR *error);
-extern  mcsCOMPL_STAT errCloseLocalStack (errERROR *error);
-extern  mcsCOMPL_STAT errDisplayLocalStack (errERROR *error);
-extern  mcsLOGICAL    errIsInLocalStack  (errERROR          *error,
-                                          const mcsMODULEID moduleId,
-                                          mcsINT32          errorId);
-extern  mcsLOGICAL    errLocalStackIsEmpty (errERROR          *error);
-extern  mcsINT8       errGetLocalStackSize (errERROR *error);
-extern  mcsCOMPL_STAT errPackLocalStack (errERROR   *error,
-                                         char       *buffer,
-                                         mcsUINT32  bufLen);
-extern  mcsCOMPL_STAT errUnpackLocalStack (errERROR   *error,
-                                           char       *buffer,
-                                           mcsUINT32  bufLen);
-extern mcsCOMPL_STAT errPushInLocalStack(errERROR   *error,
-                                         const char *timeStamp,
-                                         const char *procName,
-                                         const char *moduleId,
-                                         const char *location,
-                                         mcsINT32   errorId,
-                                         char       severity,
-                                         char       *runTimePar);
-extern  mcsCOMPL_STAT errAddInLocalStack (errERROR          *error, 
-                                          const mcsMODULEID moduleId,
-                                          const char        *fileLine,
-                                          mcsINT32          errorId,
-                                          ... );
-extern  mcsCOMPL_STAT errAddInLocalStack_v (errERROR          *error, 
-                                          const mcsMODULEID moduleId,
-                                          const char        *fileLine,
-                                          mcsINT32          errorId,
-                                          va_list           argPtr);
+mcsCOMPL_STAT errResetLocalStack (errERROR *error);
+mcsCOMPL_STAT errCloseLocalStack (errERROR *error);
+mcsCOMPL_STAT errDisplayLocalStack (errERROR *error);
+mcsLOGICAL    errIsInLocalStack  (errERROR          *error,
+                                  const mcsMODULEID moduleId,
+                                  mcsINT32          errorId);
+mcsLOGICAL    errLocalStackIsEmpty (errERROR          *error);
+mcsINT8       errGetLocalStackSize (errERROR *error);
+mcsCOMPL_STAT errPackLocalStack (errERROR   *error,
+                                 char       *buffer,
+                                 mcsUINT32  bufLen);
+mcsCOMPL_STAT errUnpackLocalStack (errERROR   *error,
+                                   char       *buffer,
+                                   mcsUINT32  bufLen);
+mcsCOMPL_STAT errPushInLocalStack(errERROR   *error,
+                                  const char *timeStamp,
+                                  const char *procName,
+                                  const char *moduleId,
+                                  const char *location,
+                                  mcsINT32   errorId,
+                                  char       severity,
+                                  char       *runTimePar);
+mcsCOMPL_STAT errAddInLocalStack (errERROR          *error, 
+                                  const mcsMODULEID moduleId,
+                                  const char        *fileLine,
+                                  mcsINT32          errorId,
+                                  ... );
+mcsCOMPL_STAT errAddInLocalStack_v (errERROR          *error, 
+                                    const mcsMODULEID moduleId,
+                                    const char        *fileLine,
+                                    mcsINT32          errorId,
+                                    va_list           argPtr);
 
 #ifdef __cplusplus
 }
