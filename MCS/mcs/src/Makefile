@@ -1,13 +1,16 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center 
 #
-# "@(#) $Id: Makefile,v 1.4 2005-01-28 18:50:52 gzins Exp $" 
+# "@(#) $Id: Makefile,v 1.5 2005-03-11 14:16:22 mella Exp $" 
 #
 # Makefile for MCS module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/01/28 18:50:52  gzins
+# Added CVS log as modification history
+#
 # gzins     11/04/04  Created
 #
 
@@ -51,7 +54,7 @@ mcs_OBJECTS     = mcs
 
 #
 # Scripts (public and local)
-SCRIPTS         = 
+SCRIPTS         = mcsRoot
 
 #
 # man pages to be done
