@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsInstall.sh,v 1.1 2004-12-08 18:48:18 gzins Exp $"
+# "@(#) $Id: sclinsInstall.sh,v 1.2 2004-12-09 06:25:55 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -40,7 +40,7 @@
 dir=$PWD
 
 # Propose the user to continue or abort
-echo -e "\n-> All the SCALIB modules will be installed and updated from"
+echo -e "\n-> All the SCALIB modules will be installed (or just updated) from"
 echo -e "   '$dir' directory\n"
 echo -e "   Press enter to continue or ^C to abort "
 read choice
