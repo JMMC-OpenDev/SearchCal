@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.25 2005-02-08 07:22:27 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.26 2005-02-08 20:43:11 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2005/02/08 07:22:27  gzins
+* Changed value parameter type: char* to const char*
+* Accepted RA and DEC with either ':' or ' ' as separator
+*
 * Revision 1.24  2005/02/07 09:14:00  gzins
 * Fixed wrong type for isComputed parameter; mcsFLOAT instead of mcsLOGICAL
 *
@@ -46,7 +50,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.25 2005-02-08 07:22:27 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.26 2005-02-08 20:43:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -140,8 +144,8 @@ vobsSTAR::~vobsSTAR()
  * The possible errors are :
  * \li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, const char *value,
-                                         mcsLOGICAL isComputed,
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
+                                         const char *origin,
                                          mcsINT32 confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
@@ -154,9 +158,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, const char *value,
     if (propertyIter != _propertyList.end())
     {
         // Set property
-        propertyIter->second.SetValue(value,
+        propertyIter->second.SetValue(value, origin,
                                       confidenceIndex,
-                                      isComputed,
                                       overwrite);
         return mcsSUCCESS;
     }
@@ -187,8 +190,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, const char *value,
  * The possible errors are :
  * \li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, mcsFLOAT value,
-                                         mcsLOGICAL isComputed,
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
+                                         const char *origin,
                                          mcsINT32 confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
@@ -201,8 +204,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, mcsFLOAT value,
     if (propertyIter != _propertyList.end())
     {
         // Set property
-        propertyIter->second.SetValue(value, confidenceIndex, 
-                                      isComputed, overwrite);
+        propertyIter->second.SetValue(value, origin, confidenceIndex, 
+                                      overwrite);
         return mcsSUCCESS;
     }
     // Else

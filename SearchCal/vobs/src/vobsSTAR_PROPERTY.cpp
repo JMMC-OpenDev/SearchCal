@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.4 2005-02-08 07:17:21 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.5 2005-02-08 20:43:11 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/02/08 07:17:21  gzins
+* Changed value parameter type: char* to const char*
+*
 * Revision 1.3  2005/01/26 08:18:33  scetre
 * change history
 *
@@ -18,7 +21,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.4 2005-02-08 07:17:21 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.5 2005-02-08 20:43:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -48,6 +51,7 @@ using namespace std;
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 {
     //logExtDbg("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()");
+    _origin = "-";
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
 }
 
@@ -82,6 +86,8 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name,
                 break;
         }
     }
+    _confidenceIndex = vobsCONFIDENCE_LOW;
+    _origin = "-";
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
 }
 
@@ -95,6 +101,8 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
     _name   = property._name;
     _type   = property._type;
     _format = property._format;
+    _confidenceIndex = property._confidenceIndex;
+    _origin = property._origin;
     strcpy(_value, property._value);
 }
 
@@ -108,6 +116,8 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _name   = property._name;
     _type   = property._type;
     _format = property._format;
+    _confidenceIndex = property._confidenceIndex;
+    _origin = property._origin;
     strcpy(_value, property._value);
     return *this;
 }
@@ -128,14 +138,15 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
  *
  * \param value property value to set (given as string)
  * \param confidenceIndex confidence index
- * \param isComputed booleen to know if it is a computed property
+ * \param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
+ * has been computed.
  * \param overwrite booleen to know if it is an overwrite property 
  *
  * \return mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
+                                          const char *origin,
                                           mcsINT32 confidenceIndex,
-                                          mcsFLOAT isComputed,
                                           mcsLOGICAL overwrite)
 {
     logExtDbg("vobsSTAR_PROPERTY::SetValue()");
@@ -146,6 +157,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
         strcpy(_value, value);
     }
     _confidenceIndex = confidenceIndex;
+    _origin = origin;
 
     return mcsSUCCESS;    
 }
@@ -155,7 +167,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
  *
  * \param value property value to set (given as float)
  * \param confidenceIndex confidence index
- * \param isComputed booleen to know if it is a computed property
+ * \param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
+ * has been computed.
  * \param overwrite booleen to know if it is an overwrite property 
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -165,8 +178,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
  * \li vobsERR_PROPERTY_TYPE
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
+                                          const char *origin,
                                           mcsINT32 confidenceIndex,
-                                          mcsFLOAT isComputed,
                                           mcsLOGICAL overwrite)
 {
     logExtDbg("vobsSTAR_PROPERTY::SetValue()");
@@ -185,6 +198,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
     }
 
     _confidenceIndex = confidenceIndex;
+    _origin = origin;
 
     return mcsSUCCESS;    
 }
@@ -245,6 +259,16 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
 }
 
 /**
+ * Get property origin
+ *
+ * \return property origin
+ */
+const char   *vobsSTAR_PROPERTY::GetOrigin()
+{
+    return _origin.c_str();
+}
+
+/**
  * Get value of the confidence index
  *
  * \return value of confidence index
@@ -265,14 +289,14 @@ mcsLOGICAL vobsSTAR_PROPERTY::IsComputed() const
 {
     logExtDbg("vobsSTAR_PROPERTY::IsComputed()");
 
-    // Check if property is not computed, i.e. _isComputed = mcsFALSE
-    if (_isComputed == mcsFALSE)
+    // Check whether property has been or not computed
+    if (_origin == vobsSTAR_COMPUTED_PROP)
     {
-        return mcsFALSE;
+        return mcsTRUE;
     }
     else
     {
-        return mcsTRUE;
+        return mcsFALSE;
     }
 }
 
