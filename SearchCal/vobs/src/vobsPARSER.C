@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.10 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.11 2004-09-30 08:43:02 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.10 2004-09-30 07:40:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.11 2004-09-30 08:43:02 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -161,10 +161,13 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
         FILE *f=NULL;
         if (strcmp(fileName,"")!=0)
         {
+            mcsSTRING256 file;
+            strcpy(file, "$INTROOT/tmp/");
+            strcat(file, fileName);
             char *resolvedfileName=NULL;
-            miscResolvePath(fileName, &resolvedfileName);
+            miscResolvePath(file, &resolvedfileName);
             printf("%s\n",resolvedfileName);
-            f=fopen(resolvedfileName, "w");
+            f=fopen(resolvedfileName, "w+");
             if (f==NULL)
             {
                 errAdd(vobsERR_NO_FILE,resolvedfileName);

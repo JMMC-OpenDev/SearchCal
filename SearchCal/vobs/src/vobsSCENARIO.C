@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.C,v 1.2 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.C,v 1.3 2004-09-30 08:43:02 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.2 2004-09-30 07:40:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.3 2004-09-30 08:43:02 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -143,7 +143,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         if (logGetStdoutLogLevel() == logEXTDBG)
         {
             mcsSTRING256 fileName;
-            strcpy(fileName, "list_");
+            strcpy(fileName, "$INTROOT/tmp/");
+            strcat(fileName, "list_");
             mcsSTRING256 tempName;
             ((*_entryIterator).catalog)->GetFileName(tempName);
             strcat(fileName, tempName);

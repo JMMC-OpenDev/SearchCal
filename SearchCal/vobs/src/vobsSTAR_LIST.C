@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.7 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.8 2004-09-30 08:43:02 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.7 2004-09-30 07:40:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.8 2004-09-30 08:43:02 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -23,13 +23,13 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-
+#include "misc.h"
 /*
  * Local Headers 
  */
-#include"vobsSTAR_LIST.h"
-#include"vobsPrivate.h"
-
+#include "vobsSTAR_LIST.h"
+#include "vobsPrivate.h"
+#include "vobsErrors.h"
 /* Local variables */
 static char *nameList[] =
 {
@@ -358,12 +358,15 @@ void vobsSTAR_LIST::Save(mcsSTRING256 filename)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
     
-    FILE *f;
-    f=fopen(filename, "w");
-    /*if (f==NULL)
+    FILE *f=NULL;
+    char *resolvedfileName=NULL;
+    miscResolvePath(filename, &resolvedfileName);
+    printf("%s\n",resolvedfileName);
+    f=fopen(resolvedfileName, "w+");
+    if (f==NULL)
     {
         errAdd(vobsERR_NO_FILE, filename);
-    }*/
+    }
     //else
     //{
         // Save all element of the list which are affected 
