@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.12 2004-09-02 09:25:56 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.13 2004-09-03 08:21:31 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -176,12 +176,13 @@ then
             sed -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
                 -e "1,$ s/#define _H/#define ${FILE_NAME}_H/g" \
                 -e "1,$ s/#endif \/\*!_H\*\//#endif \/\*!${FILE_NAME}_H\*\//g" \
-                ${FILE}.BAK > $FILE
+                $FILE > ${FILE}.BAK
+
+            # Remove the intermediate file ($FILE) and rename the output
+            # file
+            mv ${FILE}.BAK $FILE 
         fi
 
-        # Remove the temporary backup file
-        rm -f ${FILE}.BAK
-        
         # Change permissions of the new created file
         chmod $MODE $FILE
         
