@@ -1,12 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynStr.c,v 1.2 2004-07-22 09:23:57 lafrasse Exp $"
+ * "@(#) $Id: miscDynStr.c,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
  * lafrasse  13-Jul-2004  Created
  * lafrasse  22-Jul-2004  Removed all '\0' from char arrays
+ * lafrasse  23-Jul-2004  Added error code factorization, plus
+ *                        miscDynStrGetStringFromTo parameter refinments
  *
  *
  ******************************************************************************/
@@ -25,7 +27,7 @@
  * \sa To see all the other 'misc' module functions declarations, see misc.h
  */
 
-static char *rcsId="@(#) $Id: miscDynStr.c,v 1.2 2004-07-22 09:23:57 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynStr.c,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -71,12 +73,10 @@ static        mcsUINT32 miscDynStrVerifyStringParameterValidity(
 static        mcsUINT32 miscDynStrVerifyStringParameterValidity(
                                              char              *str)
 {
-    char *functionName = "miscDynBufVerifyPositionParameterValidity";
-
     /* Test the 'str' parameter validity */
     if (str == NULL)
     {
-        errAdd(miscERR_DYN_BUF_NULL_VALUE, functionName, "str");
+        errAdd(miscERR_NULL_PARAM, "str");
         return 0;
     }
 
@@ -106,25 +106,22 @@ static        mcsUINT32 miscDynStrVerifyStringParameterValidity(
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT miscDynStrGetStringFromTo     (miscDYN_BUF       *dynBuf,
-                                             char              **str,
+                                             char              *str,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    char *functionName = "miscDynStrGetStringFromTo";
-
     /* Try to get the requested bytes array from the Dynamic Buffer */
     if (miscDynBufGetBytesFromTo(dynBuf, str, from, to) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
     /* Compute the 'str' buffer length */
-    int bytesNumber = (to - miscDYN_BUF_BEGINNING_POSITION) 
-                      - (from - miscDYN_BUF_BEGINNING_POSITION);
+    mcsUINT32 stringLength = (to - miscDYN_BUF_BEGINNING_POSITION) 
+                             - (from - miscDYN_BUF_BEGINNING_POSITION);
 
     /* Add an '\0' at the end of the received result */
-    (*str)[bytesNumber + 1] = '\0';
+    str[stringLength + 1] = '\0';
 
     return SUCCESS;
 }
@@ -153,13 +150,10 @@ mcsCOMPL_STAT miscDynStrReplaceStringFromTo (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    char *functionName = "miscDynStrReplaceStringFromTo";
-    int bytesNumber = 0;
-    
     /* Test the 'str' parameter validity */
-    if ((bytesNumber = miscDynStrVerifyStringParameterValidity(str)) == 0)
+    mcsUINT32 stringLength = 0;
+    if ((stringLength = miscDynStrVerifyStringParameterValidity(str)) == 0)
     {
-        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
@@ -169,13 +163,13 @@ mcsCOMPL_STAT miscDynStrReplaceStringFromTo (miscDYN_BUF       *dynBuf,
         /* Increment the number of bytes to be copied from the string in order
          * to add the ending '\0' to the Dynamic Buffer
          */
-        ++bytesNumber;
+        ++stringLength;
     }
     
     /* Try to replace Dynamic Buffer specified bytes with the string (with or
      * without its ending '\0')
      */
-    return(miscDynBufReplaceBytesFromTo(dynBuf, str, bytesNumber-1, from, to));
+    return(miscDynBufReplaceBytesFromTo(dynBuf, str, stringLength-1, from, to));
 }
 
 
@@ -191,46 +185,46 @@ mcsCOMPL_STAT miscDynStrReplaceStringFromTo (miscDYN_BUF       *dynBuf,
 mcsCOMPL_STAT miscDynStrAppendString        (miscDYN_BUF       *dynBuf,
                                              char              *str)
 {
-    char *functionName = "miscDynStrAppendString";
-    int bytesNumber = 0;
-    
     /* Test the 'str' parameter validity */
-    if ((bytesNumber = miscDynStrVerifyStringParameterValidity(str)) == 0)
+    mcsUINT32 stringLength = 0;
+    if ((stringLength = miscDynStrVerifyStringParameterValidity(str)) == 0)
     {
-        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
+        return FAILURE;
+    }
+
+    /* Try to get the Dynamic Buffer stored bytes number */
+    mcsUINT32 storedBytes = 0;
+    if (miscDynBufGetStoredBytesNumber(dynBuf, &storedBytes) == FAILURE)
+    {
         return FAILURE;
     }
 
     /* If the Dynamic Buffer already contain something... */
-    if (miscDynBufGetStoredBytesNumber(dynBuf) != 0)
+    if (storedBytes != 0)
     {
+
         /* Try to get the last character of the Dynamic Buffer */
         char lastDynBufChr = '\0';
-        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr,
-                                miscDynBufGetStoredBytesNumber(dynBuf))
-            == FAILURE)
+        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == FAILURE)
         {
-            errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
             return FAILURE;
         }
     
-        /* If the Dynamic Buffer was already holding a null-terminated
-         * string...
+        /* If the Dynamic Buffer was already holding a null-terminated string...
          */
         if (lastDynBufChr == '\0')
         {
             /* Try to remove the ending '\0' from the Dynamic Buffer */
-            if (miscDynBufDeleteBytesFromTo(dynBuf, dynBuf->storedBytes,
-                                            dynBuf->storedBytes) == FAILURE)
+            if (miscDynBufDeleteBytesFromTo(dynBuf, storedBytes, storedBytes)
+                == FAILURE)
             {
-                errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
                 return FAILURE;
             }
         }
     }
 
     /* Try to append the string bytes, including its '\0' */
-    return(miscDynBufAppendBytes(dynBuf, str, bytesNumber));
+    return(miscDynBufAppendBytes(dynBuf, str, stringLength));
 }
 
 
@@ -253,18 +247,15 @@ mcsCOMPL_STAT miscDynStrInsertStringAt      (miscDYN_BUF       *dynBuf,
                                              char              *str,
                                              const mcsUINT32   position)
 {
-    char *functionName = "miscDynStrAppendString";
-    int bytesNumber = 0;
-    
     /* Test the 'str' parameter validity */
-    if ((bytesNumber = miscDynStrVerifyStringParameterValidity(str)) == 0)
+    int stringLength = 0;
+    if ((stringLength = miscDynStrVerifyStringParameterValidity(str)) == 0)
     {
-        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
     /* Try to insert the string without its ending '\0' in the Dynamic Buffer */
-    return(miscDynBufInsertBytesAt(dynBuf, str, bytesNumber - 1, position));
+    return(miscDynBufInsertBytesAt(dynBuf, str, stringLength - 1, position));
 }
 
 

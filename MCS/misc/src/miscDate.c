@@ -6,11 +6,19 @@
 * gzins     16-Jun-2004  Created
 * lafrasse  17-Jun-2004  Added miscGetLocalTimeStr
 * lafrasse  22-Jul-2004  Added error management
+* lafrasse  23-Jul-2004  Added error management code optimisation
 *
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.4 2004-07-22 15:29:15 lafrasse Exp $"; 
+/**
+ * \file
+ * Contains all the 'misc' Date and Time related functions definitions.
+ *
+ * \sa To see all the other 'misc' module functions declarations, see misc.h
+ */
+
+static char *rcsId="@(#) $Id: miscDate.c,v 1.5 2004-07-23 14:29:59 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -63,21 +71,21 @@ mcsCOMPL_STAT miscGetUtcTimeStr(mcsBYTES32 utcTime, mcsINT32 precision)
     /* Get the system time */
     if (gettimeofday(&time, NULL))
     {
-        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        errAdd(miscERR_FUNC_CALL, "gettimeofday");
         return FAILURE;
     }
  
     /* Compute the UTC time from it */
     if ((timeNow = gmtime(&time.tv_sec)) == NULL)
     {
-        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        errAdd(miscERR_FUNC_CALL, "gmtime");
         return FAILURE;
     }
 
     /* Compute a string from it */
     if (!strftime(utcTime, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow))
     {
-        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        errAdd(miscERR_FUNC_CALL, "strftime");
         return FAILURE;
     }
 
@@ -93,13 +101,13 @@ mcsCOMPL_STAT miscGetUtcTimeStr(mcsBYTES32 utcTime, mcsINT32 precision)
 
         if (strcpy(tmpBuf, (tmpBuf + 1)) == NULL)
         {
-            errAdd(miscERR_FILE_STR_FUNC_CALL);
+            errAdd(miscERR_FUNC_CALL, "strcpy");
             return FAILURE;
         }
 
         if (strcat(utcTime, tmpBuf) == NULL)
         {
-            errAdd(miscERR_FILE_STR_FUNC_CALL);
+            errAdd(miscERR_FUNC_CALL, "strcat");
             return FAILURE;
         }
     }
@@ -132,21 +140,21 @@ mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision)
     /* Get the system time */
     if (gettimeofday(&time, NULL))
     {
-        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        errAdd(miscERR_FUNC_CALL, "gettimeofday");
         return FAILURE;
     }
  
     /* Compute the local time from it */
     if ((timeNow = localtime(&time.tv_sec)) == NULL)
     {
-        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        errAdd(miscERR_FUNC_CALL, "gmtime");
         return FAILURE;
     }
 
     /* Compute a string from it */
     if (!strftime(localTime, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow))
     {
-        errAdd(miscERR_DATE_TIME_FUNC_CALL);
+        errAdd(miscERR_FUNC_CALL, "strftime");
         return FAILURE;
     }
  
@@ -162,13 +170,13 @@ mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision)
 
         if (strcpy(tmpBuf, (tmpBuf + 1)) == NULL)
         {
-            errAdd(miscERR_FILE_STR_FUNC_CALL);
+            errAdd(miscERR_FUNC_CALL, "strcpy");
             return FAILURE;
         }
         
         if (strcat(localTime, tmpBuf) == NULL)
         {
-            errAdd(miscERR_FILE_STR_FUNC_CALL);
+            errAdd(miscERR_FUNC_CALL, "strcat");
             return FAILURE;
         }
     }

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-07-19 15:31:05 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-07-23 14:29:59 lafrasse Exp $"
 #
 # Makefile of misc Tests
 #
@@ -40,6 +40,8 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = miscTestDate miscTestString miscTestFile miscTestDynBuf miscTestDynStr
+
+
 EXECUTABLES_L   = 
 
 #

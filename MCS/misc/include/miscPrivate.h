@@ -3,12 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscPrivate.h,v 1.2 2004-07-09 14:28:55 lafrasse Exp $"
+* "@(#) $Id: miscPrivate.h,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     24-Jun-2004  Created
 * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
+* lafrasse  23-Jul-2004  Added miscDYN_BUF_MAGIC_STRUCTURE_ID from miscDynBuf.h
 *
 *
 *******************************************************************************/
@@ -26,8 +27,19 @@ functions in C++-code.
 extern "C" {
 #endif
 
+
 /* Module name */ 
 #define MODULE_ID "misc"
+
+
+/**
+ * Unic MCS structure identifier.
+ *
+ * It is meant to allow the testing of a Dynamic Buffer struture initialization
+ * state (weither it has allready been initialized as a miscDYN_BUF or not).
+ */
+#define miscDYN_BUF_MAGIC_STRUCTURE_ID ((mcsUINT32) 2813741963u)
+
 
 #ifdef __cplusplus
 }

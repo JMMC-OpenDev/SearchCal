@@ -1,63 +1,33 @@
 <?xml version="1.0"?>
 <errorList moduleName="misc">
    <error id="1">
-      <errName>DYN_BUF_MEM_FAILURE</errName>
+      <errName>NULL_PARAM</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[%.100s(...) : could not allocate or copy memory.]]></errFormat>
+      <errFormat><![CDATA[received a NULL value for parameter '%s'.]]></errFormat>
    </error>
    <error id="2">
-      <errName>DYN_BUF_AUTO_INIT</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[%.100s(...) : could not initialize the received Dynamic Buffer.]]></errFormat>
-   </error>
-   <error id="3">
-      <errName>DYN_BUF_AUTO_ALLOC</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[%.100s(...) : could not allocate the received Dynamic Buffer.]]></errFormat>
-   </error>
-   <error id="4">
-      <errName>DYN_BUF_NULL_VALUE</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[%.100s(...) : received a NULL value for parameter '%.100s'.]]></errFormat>
-   </error>
-   <error id="5">
-      <errName>DYN_BUF_BAD_POSITION</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[%.100s(...) : received parameter '%.100s' outside the buffer.]]></errFormat>
-   </error>
-   <error id="6">
-      <errName>DYN_BUF_BAD_FROM_TO</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[%.100s(...) : received bad parameters 'from' and 'to' ('to' lower than 'from').]]></errFormat>
-   </error>
-   <error id="7">
-      <errName>DYN_BUF_BAD_PARAMETERS</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[%.100s(...) : received bad parameters.]]></errFormat>
-   </error>
-   <error id="8">
-      <errName>FILE_ENV_VAR_NOT_DEF</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA["$%s" environment variable is not defined.]]></errFormat>
-   </error>
-   <error id="9">
-      <errName>FILE_STR_FUNC_CALL</errName>
-      <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[could not perform a standard string.h system function call.]]></errFormat>
-   </error>
-   <error id="10">
       <errName>MEM_FAILURE</errName>
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[could not allocate or copy memory.]]></errFormat>
    </error>
-   <error id="11">
-      <errName>DATE_TIME_FUNC_CALL</errName>
+   <error id="3">
+      <errName>FUNC_CALL</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[could not perform a standard time.h system function call.]]></errFormat>
+      <errFormat><![CDATA[could not perform '%s' function call.]]></errFormat>
    </error>
-   <error id="12">
-      <errName>NULL_PARAM</errName>
+   <error id="4">
+      <errName>DYN_BUF_BAD_POSITION</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[received a NULL value for parameter '%s'.]]></errFormat>
+      <errFormat><![CDATA['%s' parameter outside of the Dynamic Buffer range.]]></errFormat>
+   </error>
+   <error id="5">
+      <errName>DYN_BUF_BAD_FROM_TO</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[received bad 'from' and 'to' parameters ('to' lower than 'from').]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>FILE_ENV_VAR_NOT_DEF</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA['%s' environment variable is not defined.]]></errFormat>
    </error>
 </errorList>

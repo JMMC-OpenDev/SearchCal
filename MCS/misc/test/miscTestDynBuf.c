@@ -1,18 +1,22 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDynBuf.c,v 1.6 2004-07-20 13:59:33 lafrasse Exp $"
+* "@(#) $Id: miscTestDynBuf.c,v 1.7 2004-07-23 14:29:59 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  23-Jun-2004  Created
 * lafrasse  09-Jul-2004  Passed some polish
 * lafrasse  20-Jul-2004  Removed all '\0' from char arrays
+* lafrasse  23-Jul-2004  Added error management to
+*                        miscDynBufGetStoredBytesNumber and
+*                        miscDynBufGetAllocatedBytesNumber, plus
+*                        miscDynBufGetBytesFromTo parameter refinments
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.6 2004-07-20 13:59:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.7 2004-07-23 14:29:59 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,7 +59,7 @@ int main (int argc, char *argv[])
     /* Give process name to mcs library */
     mcsInit(argv[0]);
     
-    mcsCOMPL_STAT  execStatus;
+    mcsCOMPL_STAT  executionStatusCode;
 
 	miscDYN_BUF    dynBuf;
 
@@ -64,9 +68,11 @@ int main (int argc, char *argv[])
 
     char           byte         = '\0';
 
-    int            position     = 0;
-    int            from         = 0;
-    int            to           = 0;
+    mcsUINT32      storedBytes       = 0;
+
+    mcsUINT32      position     = 0;
+    mcsUINT32      from         = 0;
+    mcsUINT32      to           = 0;
     
     /* miscDynBufInit */
     printf("---------------------------------------------------------------\n");
@@ -91,8 +97,8 @@ int main (int argc, char *argv[])
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
     printf("miscDynBufAppendBytes(&dynBuf = NULL) : ");
-    execStatus = miscDynBufAppendBytes(NULL, bytes, bytesNumber);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufAppendBytes(NULL, bytes, bytesNumber);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -100,8 +106,8 @@ int main (int argc, char *argv[])
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
     printf("miscDynBufAppendBytes(NULL, 0) ");
-    execStatus = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -109,8 +115,8 @@ int main (int argc, char *argv[])
     bytes = "hello dynBuf" ;
     bytesNumber = strlen(bytes);
     printf("miscDynBufAppendBytes(\"%s\", %d) ", bytes, bytesNumber);
-    execStatus = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
 	displayDynBuf(&dynBuf);
@@ -119,8 +125,8 @@ int main (int argc, char *argv[])
     bytes    = " ... :)" ;
     bytesNumber = strlen(bytes);
     printf("miscDynBufAppendBytes(\"%s\", %d) ", bytes, bytesNumber);
-    execStatus = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
 	displayDynBuf(&dynBuf);
@@ -129,8 +135,8 @@ int main (int argc, char *argv[])
     bytes    = " !!!" ;
     bytesNumber = strlen(bytes);
     printf("miscDynBufAppendBytes(\"%s\", %d) ", bytes, bytesNumber);
-    execStatus = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
 	displayDynBuf(&dynBuf);
@@ -143,57 +149,58 @@ int main (int argc, char *argv[])
     position = miscDYN_BUF_BEGINNING_POSITION - 1;
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
-    execStatus = miscDynBufGetByteAt(NULL, NULL, position);
+    executionStatusCode = miscDynBufGetByteAt(NULL, NULL, position);
     printf("miscDynBufGetByteAt(NULL, %d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
-    execStatus = miscDynBufGetByteAt(&dynBuf, NULL, position);
+    executionStatusCode = miscDynBufGetByteAt(&dynBuf, NULL, position);
     printf("miscDynBufGetByteAt(NULL, %d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
-    execStatus = miscDynBufGetByteAt(&dynBuf, &byte, position);
+    executionStatusCode = miscDynBufGetByteAt(&dynBuf, &byte, position);
     printf("miscDynBufGetByteAt(%d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     position = miscDYN_BUF_BEGINNING_POSITION;
-    execStatus = miscDynBufGetByteAt(&dynBuf, &byte, position);
+    executionStatusCode = miscDynBufGetByteAt(&dynBuf, &byte, position);
     printf("miscDynBufGetByteAt(%d) = \"%c\" ", position, byte);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     position = 7;
-    execStatus = miscDynBufGetByteAt(&dynBuf, &byte, position);
+    executionStatusCode = miscDynBufGetByteAt(&dynBuf, &byte, position);
     printf("miscDynBufGetByteAt(%d) = \"%c\" ", position, byte);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
-    position = miscDynBufGetStoredBytesNumber(&dynBuf);
-    execStatus = miscDynBufGetByteAt(&dynBuf, &byte, position);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &position);
+    executionStatusCode = miscDynBufGetByteAt(&dynBuf, &byte, position);
     printf("miscDynBufGetByteAt(%d) = \"%c\" ", position, byte);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
-    position = miscDynBufGetStoredBytesNumber(&dynBuf) + 1;
-    execStatus = miscDynBufGetByteAt(&dynBuf, &byte, position);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &position);
+    position += 1;
+    executionStatusCode = miscDynBufGetByteAt(&dynBuf, &byte, position);
     printf("miscDynBufGetByteAt(%d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -204,40 +211,40 @@ int main (int argc, char *argv[])
     printf("---------------------------------------------------------------\n");
     from = miscDYN_BUF_BEGINNING_POSITION - 1;
     to = 4;
-    bytes = calloc(sizeof(char),
-                          miscDynBufGetAllocatedBytesNumber(&dynBuf) + 1);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &storedBytes);
+    bytes = calloc(sizeof(char), storedBytes + 1);
     bytes[0] = '\0';
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
-    execStatus = miscDynBufGetBytesFromTo(NULL, &bytes, from, to);
+    executionStatusCode = miscDynBufGetBytesFromTo(NULL, bytes, from, to);
     printf("miscDynBufGetBytesFromTo(%d, %d) ", from, to);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
-    execStatus = miscDynBufGetBytesFromTo(&dynBuf, &bytes, from, to);
+    executionStatusCode = miscDynBufGetBytesFromTo(&dynBuf, bytes, from, to);
     printf("miscDynBufGetBytesFromTo(%d, %d) ", from, to);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     from = miscDYN_BUF_BEGINNING_POSITION;
     to = 12;
-    execStatus = miscDynBufGetBytesFromTo(&dynBuf, NULL, from, to);
+    executionStatusCode = miscDynBufGetBytesFromTo(&dynBuf, NULL, from, to);
     printf("miscDynBufGetBytesFromTo(NULL, %d, %d) ", from, to);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
-    execStatus = miscDynBufGetBytesFromTo(&dynBuf, &bytes, from, to);
+    executionStatusCode = miscDynBufGetBytesFromTo(&dynBuf, bytes, from, to);
     bytes[(to - from) + 1] = '\0';
     printf("miscDynBufGetBytesFromTo(%d, %d) = \"%s\" ", from, to, bytes);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     bytes[0] = '\0';
@@ -246,9 +253,9 @@ int main (int argc, char *argv[])
     from = 7;
     to = 16;
     bytes[(to - from) + 1] = '\0';
-    execStatus = miscDynBufGetBytesFromTo(&dynBuf, &bytes, from, to);
+    executionStatusCode = miscDynBufGetBytesFromTo(&dynBuf, bytes, from, to);
     printf("miscDynBufGetBytesFromTo(%d, %d) = \"%s\" ", from, to, bytes);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     bytes[0] = '\0';
@@ -257,37 +264,38 @@ int main (int argc, char *argv[])
     from = 6;
     to = 6;
     bytes[(to - from) + 1] = '\0';
-    execStatus = miscDynBufGetBytesFromTo(&dynBuf, &bytes, from, to);
+    executionStatusCode = miscDynBufGetBytesFromTo(&dynBuf, bytes, from, to);
     printf("miscDynBufGetBytesFromTo(%d, %d) = \"%s\" ", from, to, bytes);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     bytes[0] = '\0';
     printf("\n");
 
     from = 18;
-    to = miscDynBufGetStoredBytesNumber(&dynBuf);
-    execStatus = miscDynBufGetBytesFromTo(&dynBuf, &bytes, to, from);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &to);
+    executionStatusCode = miscDynBufGetBytesFromTo(&dynBuf, bytes, to, from);
     printf("miscDynBufGetBytesFromTo(%d, %d) ", to, from);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     bytes[0] = '\0';
     printf("\n");
 
-    execStatus = miscDynBufGetBytesFromTo(&dynBuf, &bytes, from, to);
+    executionStatusCode = miscDynBufGetBytesFromTo(&dynBuf, bytes, from, to);
     bytes[(to - from) + 1] = '\0';
     printf("miscDynBufGetBytesFromTo(%d, %d) = \"%s\" ", from, to, bytes);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     bytes[0] = '\0';
     printf("\n");
 
-    to = miscDynBufGetStoredBytesNumber(&dynBuf) + 1;
-    execStatus = miscDynBufGetBytesFromTo(&dynBuf, &bytes, from, to);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &to);
+    to += 1;
+    executionStatusCode = miscDynBufGetBytesFromTo(&dynBuf, bytes, from, to);
     printf("miscDynBufGetBytesFromTo(%d, %d) ", from, to);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     free(bytes);
@@ -301,26 +309,26 @@ int main (int argc, char *argv[])
     byte = 'H';
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
-    execStatus = miscDynBufReplaceByteAt(NULL, byte, position);
+    executionStatusCode = miscDynBufReplaceByteAt(NULL, byte, position);
     printf("miscDynBufReplaceByteAt(%d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
-    execStatus = miscDynBufReplaceByteAt(&dynBuf, byte, position);
+    executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     position = miscDYN_BUF_BEGINNING_POSITION;
-    execStatus = miscDynBufReplaceByteAt(&dynBuf, byte, position);
+    executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -328,9 +336,9 @@ int main (int argc, char *argv[])
 
     position = 7;
     byte = 'D';
-    execStatus = miscDynBufReplaceByteAt(&dynBuf, byte, position);
+    executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -338,28 +346,29 @@ int main (int argc, char *argv[])
 
     position = 13;
     byte = '\'';
-    execStatus = miscDynBufReplaceByteAt(&dynBuf, byte, position);
+    executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
-    position = miscDynBufGetStoredBytesNumber(&dynBuf);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &position);
     byte = '@';
-    execStatus = miscDynBufReplaceByteAt(&dynBuf, byte, position);
+    executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
-    position = miscDynBufGetStoredBytesNumber(&dynBuf) + 1;
-    execStatus = miscDynBufReplaceByteAt(&dynBuf, byte, position);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &position);
+    position += 1;
+    executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -370,9 +379,9 @@ int main (int argc, char *argv[])
     printf("---------------------------------------------------------------\n");
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
-    execStatus = miscDynBufInsertBytesAt(NULL, NULL, 0, 0);
+    executionStatusCode = miscDynBufInsertBytesAt(NULL, NULL, 0, 0);
     printf("miscDynBufInsertBytesAt(NULL, 0, 0) ");
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -380,17 +389,17 @@ int main (int argc, char *argv[])
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
     position = miscDYN_BUF_BEGINNING_POSITION - 1;
-    execStatus = miscDynBufInsertBytesAt(&dynBuf, NULL, 0, position);
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, NULL, 0, position);
     printf("miscDynBufInsertBytesAt(NULL, 0, %d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     position = miscDYN_BUF_BEGINNING_POSITION;
-    execStatus = miscDynBufInsertBytesAt(&dynBuf, NULL, 0, position);
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, NULL, 0, position);
     printf("miscDynBufInsertBytesAt(NULL, 0, %d) ", position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -399,17 +408,19 @@ int main (int argc, char *argv[])
     bytesNumber = 0;
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
-    displayExecStatus(execStatus);
-	displayDynBuf(&dynBuf);
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber,
+                                                  position);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     bytesNumber = strlen(bytes);
-    execStatus = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber, position);
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber,
+                                                  position);
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -418,51 +429,57 @@ int main (int argc, char *argv[])
     position = 18;
     bytes = "misc";
     bytesNumber = 0;
-    execStatus = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber, position);
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber,
+                                                  position);
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     bytesNumber = strlen(bytes);
-    execStatus = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber, position);
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber,
+                                                  position);
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
-    position = miscDynBufGetStoredBytesNumber(&dynBuf);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &position);
     bytes = "~~~";
     bytesNumber = 0;
-    execStatus = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber, position);
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber,
+                                                  position);
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, 0,
            position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     bytesNumber = strlen(bytes);
-    execStatus = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber, position);
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber,
+                                                  position);
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
-    position = miscDynBufGetStoredBytesNumber(&dynBuf) + 1;
-    execStatus = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber, position);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &position);
+    position += 1;
+    executionStatusCode = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber,
+                                                  position);
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -479,9 +496,9 @@ int main (int argc, char *argv[])
     printf("----------------\n");
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
-    execStatus = miscDynBufReplaceBytesFromTo(NULL, bytes, bytesNumber, from,
-                                              to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReplaceBytesFromTo(NULL, bytes, bytesNumber, 
+                                                       from, to);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -490,9 +507,9 @@ int main (int argc, char *argv[])
     printf("------------------\n");
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
-    execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from,
-                                              to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
+                                                       bytesNumber, from, to);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -502,9 +519,9 @@ int main (int argc, char *argv[])
     bytesNumber = strlen(bytes);
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
-    execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
-                                              to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
+                                                       bytesNumber, from, to);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -516,18 +533,18 @@ int main (int argc, char *argv[])
     bytesNumber = 0;
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, to, from);
-    execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, to,
+    executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, to,
                                               from);
-    displayExecStatus(execStatus);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
-    execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
-                                              to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
+                                                       bytesNumber, from, to);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -536,35 +553,36 @@ int main (int argc, char *argv[])
     to = 40;
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
-    execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
-                                              to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
+                                                       bytesNumber, from, to);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     from = 31;
-    to = miscDynBufGetStoredBytesNumber(&dynBuf);
+    miscDynBufGetStoredBytesNumber(&dynBuf, &to);
     bytes = " !";
     bytesNumber = strlen(bytes) + 1;
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
-    execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
-                                              to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
+                                                       bytesNumber, from, to);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     from = 31;
-    to = miscDynBufGetStoredBytesNumber(&dynBuf) + 1;
+    miscDynBufGetStoredBytesNumber(&dynBuf, &to);
+    to += 1;
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
-    execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
-                                              to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
+                                                       bytesNumber, from, to);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -576,8 +594,8 @@ int main (int argc, char *argv[])
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
-    execStatus = miscDynBufDeleteBytesFromTo(NULL, from, to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDeleteBytesFromTo(NULL, from, to);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -585,16 +603,16 @@ int main (int argc, char *argv[])
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
-    execStatus = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     from = miscDYN_BUF_BEGINNING_POSITION;
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
-    execStatus = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -603,15 +621,15 @@ int main (int argc, char *argv[])
     from = 7;
     to = 10;
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", to, from);
-    execStatus = miscDynBufDeleteBytesFromTo(&dynBuf, to, from);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, to, from);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
-    execStatus = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -620,28 +638,30 @@ int main (int argc, char *argv[])
     from = 13;
     to = 13;
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
-    execStatus = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     from = 13;
-    to = miscDynBufGetStoredBytesNumber(&dynBuf) - 1;
+    miscDynBufGetStoredBytesNumber(&dynBuf, &to);
+    to -= 1;
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
-    execStatus = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
     printf("\n");
 
     from = 12;
-    to = miscDynBufGetStoredBytesNumber(&dynBuf) + 1;
+    miscDynBufGetStoredBytesNumber(&dynBuf, &to);
+    to += 1;
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
-    execStatus = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -651,8 +671,8 @@ int main (int argc, char *argv[])
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
     printf("miscDynBufStrip() ");
-    execStatus = miscDynBufStrip(NULL);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufStrip(NULL);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -660,8 +680,8 @@ int main (int argc, char *argv[])
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
     printf("miscDynBufStrip() ");
-    execStatus = miscDynBufStrip(&dynBuf);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufStrip(&dynBuf);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -672,8 +692,8 @@ int main (int argc, char *argv[])
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
     printf("miscDynBufReset() ");
-    execStatus = miscDynBufReset(NULL);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReset(NULL);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -681,8 +701,8 @@ int main (int argc, char *argv[])
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
     printf("miscDynBufReset() ");
-    execStatus = miscDynBufReset(&dynBuf);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufReset(&dynBuf);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -693,8 +713,8 @@ int main (int argc, char *argv[])
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
     printf("miscDynBufDestroy() ");
-    execStatus = miscDynBufDestroy(NULL);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDestroy(NULL);
+    displayExecStatus(executionStatusCode);
     errDisplayStack();
     errCloseStack();
     printf("\n");
@@ -702,8 +722,8 @@ int main (int argc, char *argv[])
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
     printf("miscDynBufDestroy() ");
-    execStatus = miscDynBufDestroy(&dynBuf);
-    displayExecStatus(execStatus);
+    executionStatusCode = miscDynBufDestroy(&dynBuf);
+    displayExecStatus(executionStatusCode);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
@@ -713,31 +733,47 @@ int main (int argc, char *argv[])
 }
 
 
-void displayExecStatus(mcsCOMPL_STAT execStatus)
+void displayExecStatus(mcsCOMPL_STAT executionStatusCode)
 {
-	char *errorStr = NULL;
+	char *statusStr = NULL;
 
-    if (execStatus == FAILURE)
+    if (executionStatusCode == FAILURE)
     {
-        errorStr = FAILED;
+        statusStr = FAILED;
     }
     else
     {
-        errorStr = SUCCEED;
+        statusStr = SUCCEED;
     }
 
-    printf("%s\n", errorStr);
+    printf("%s\n", statusStr);
 
     return;
 }
 
 void displayDynBuf(miscDYN_BUF *dynBuf)
 {
-    printf("miscDynBufGetStoredBytesNumber = \"%d\".\n",
-            miscDynBufGetStoredBytesNumber(dynBuf));
+    mcsUINT32 bytesNumber = 0;
 
-    printf("miscDynBufGetAllocatedBytesNumber = \"%d\".\n",
-            miscDynBufGetAllocatedBytesNumber(dynBuf));
+    printf("miscDynBufGetStoredBytesNumber = ");
+    if (miscDynBufGetStoredBytesNumber(dynBuf, &bytesNumber) == FAILURE)
+    {
+        printf("FAILURE.\n");
+    }
+    else
+    {
+        printf("'%d'.\n", bytesNumber);
+    }
+
+    printf("miscDynBufGetAllocatedBytesNumber = ");
+    if (miscDynBufGetAllocatedBytesNumber(dynBuf, &bytesNumber) == FAILURE)
+    {
+        printf("FAILURE.\n");
+    }
+    else
+    {
+        printf("'%d'.\n", bytesNumber);
+    }
 
     printf("miscDynBufGetBufferPointer = \"%s\".\n",
             miscDynBufGetBufferPointer(dynBuf));

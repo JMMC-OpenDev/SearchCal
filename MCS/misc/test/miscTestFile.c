@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.2 2004-07-22 14:04:17 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -12,7 +12,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.2 2004-07-22 14:04:17 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,14 +55,24 @@ int main (int argc, char *argv[])
     printf("   -------------------------------+-------------------------\n");
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     printf("\n\n");
 
     /* Test of miscGetExtension() */
@@ -71,32 +81,60 @@ int main (int argc, char *argv[])
     printf("   -------------------------------+-------------------------\n");
     strcpy (fullFileName, "fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "./fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "../fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    errDisplayStack();
+    errCloseStack();
     printf("\n\n");
 
     /* Test of miscYankExtension() */
@@ -107,54 +145,80 @@ int main (int argc, char *argv[])
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "./fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "../fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     printf("\n\n");
 
     /* Test of miscGetEnvVarValue() */
@@ -169,7 +233,6 @@ int main (int argc, char *argv[])
         printf("FAILURE\n");
         errDisplayStack();
         errCloseStack();
-
     }
     else
     {
@@ -180,6 +243,8 @@ int main (int argc, char *argv[])
     if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -190,6 +255,8 @@ int main (int argc, char *argv[])
     if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -200,6 +267,8 @@ int main (int argc, char *argv[])
     if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -215,54 +284,80 @@ int main (int argc, char *argv[])
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "./fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "../fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "../fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | ", fullFileName);
     miscYankLastPath(fullFileName);
     printf("%s\n", fullFileName);
+    errDisplayStack();
+    errCloseStack();
     printf("\n\n");
 
     /* Test of miscResolvePath() */
@@ -273,6 +368,8 @@ int main (int argc, char *argv[])
     if (miscResolvePath(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -283,6 +380,8 @@ int main (int argc, char *argv[])
     if (miscResolvePath(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -293,6 +392,8 @@ int main (int argc, char *argv[])
     if (miscResolvePath(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -303,6 +404,8 @@ int main (int argc, char *argv[])
     if (miscResolvePath(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -313,6 +416,8 @@ int main (int argc, char *argv[])
     if (miscResolvePath(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -323,6 +428,8 @@ int main (int argc, char *argv[])
     if (miscResolvePath(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {
@@ -333,6 +440,8 @@ int main (int argc, char *argv[])
     if (miscResolvePath(fullFileName, &tmp) == FAILURE)
     {
         printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
     }
     else
     {

@@ -11,7 +11,14 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.6 2004-07-23 09:14:11 lafrasse Exp $";
+/**
+ * \file
+ * Contains all the 'misc' String related functions definitions.
+ *
+ * \sa To see all the other 'misc' module functions declarations, see misc.h
+ */
+
+static char *rcsId="@(#) $Id: miscString.c,v 1.7 2004-07-23 14:29:59 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*

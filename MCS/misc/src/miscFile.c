@@ -9,11 +9,19 @@
 *                        Added miscYankExtension
 * lafrasse  20-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
 *                        miscYankLastPath
+* lafrasse  23-Jul-2004  Added error management code optimisation
 *
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.6 2004-07-22 14:04:17 lafrasse Exp $"; 
+/**
+ * \file
+ * Contains all the 'misc' Unix file path related functions definitions.
+ *
+ * \sa To see all the other 'misc' module functions declarations, see misc.h
+ */
+
+static char *rcsId="@(#) $Id: miscFile.c,v 1.7 2004-07-23 14:29:59 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,8 +54,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * removed. For example, miscGetFileName("../data/myFile.fits") will return
  * "myFile.fits".
  *
- * \warning This function is \em not rentrant. The returned allocated buffer
- * will be deallocated on the next call !.\n\n
+ * \warning This function is \em NOT re-entrant. The returned allocated buffer
+ * will be deallocated on the next call !\n\n
  *
  * \param fullPath a null-terminated char array containing the full path.
  *
@@ -84,7 +92,7 @@ char *miscGetFileName(char *fullPath)
     /* Copy full file name into temporary buffer */
     if (strcpy(buffer, fullPath) == NULL)
     {
-        errAdd(miscERR_FILE_STR_FUNC_CALL);
+        errAdd(miscERR_FUNC_CALL, "strcpy");
         return ((char*)NULL);
     }
 
@@ -110,8 +118,8 @@ char *miscGetFileName(char *fullPath)
  * characters after the last dot in the file name. For example,
  * miscGetExtension("../data/myFile.fits") will return "fits".
  *
- * \warning This function is \em not rentrant. The returned allocated buffer
- * will be deallocated on the next call !.
+ * \warning This function is \em NOT re-entrant. The returned allocated buffer
+ * will be deallocated on the next call !
  * NULL is returned when there is no dot in the file name or the last
  * dot is the first character of the file name, e.g.:
  *              "/data/.dt"
@@ -131,36 +139,29 @@ char *miscGetExtension(char *fullPath)
     	/* Exits if no extension found */
         return ((char*)NULL);
     }
-    else
-	{
-    	/* Check that the 'extension' found is not part of the filepath	   
-	     * like e.g.:
-    	 *
-	     * "/data/.dt/cache"
-    	 *
-	     * Check also the following:
-    	 *
-	     * "/data/.dt"
-    	 *
-	     * In those cases there is no extension.
-    	 */
-        /* Makes chrPtr2 points to the last occurence of '/' */
-    	chrPtr2 = strrchr(fullPath, '/');
-	    if (chrPtr2 > chrPtr)
-        {
-            /* "/data/.dt/cache" */
-    	    return ((char*)NULL);
-        }
-    	else if (*(chrPtr - 1) == '/')
-        {
-            /* "/data/.dt" */
-    	    return ((char*)NULL);
-        }
-    	else
-        {
-	        return (chrPtr + 1);
-        }
-	}
+
+    /* Check that the 'extension' found is not part of the filepath
+     * like e.g.: "/data/.dt/cache"
+     *
+     * Check also the following: "/data/.dt"
+     *
+     * In those cases there is no extension.
+     */
+
+    /* Makes chrPtr2 points to the last occurence of '/' */
+    chrPtr2 = strrchr(fullPath, '/');
+
+    if (chrPtr2 > chrPtr) /* "/data/.dt/cache" */
+    {
+        return ((char*)NULL);
+    }
+
+    if (*(chrPtr - 1) == '/') /* "/data/.dt" */
+    {
+        return ((char*)NULL);
+    }
+
+    return (chrPtr + 1);
 }
 
 /**
@@ -184,7 +185,7 @@ char *miscGetExtension(char *fullPath)
  * \warning When an extension is specified, the function looks for the FIRST
  * occurance of the \em extention in the \em fileName ! Therefore if the given
  * file name is :'file.fitsname.fits' and the extention is 'fits' the
- * resulting file name is :'file'.
+ * resulting file name is :'file'.\n\n
  *
  * \param fullPath a null-terminated char array containing a full path
  * \param extension a null-terminated char array containing the file extension
@@ -251,8 +252,8 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
  * resolved as well. Note that it can resolve pathes that starts with or
  * includes patterns: ./ or ../
  *
- * \warning This function is \em not rentrant. The returned allocated buffer
- * will be deallocated on the next call !.
+ * \warning This function is \em NOT re-entrant. The returned allocated buffer
+ * will be deallocated on the next call !
  * No space is allowed in the input path name.\n\n
  *
  * \param orginalPath a null-terminated char array containing an unresolved path
@@ -291,7 +292,7 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 
             if (strncpy(tmpPath, (pathPtr + 1), len) == NULL)
             {
-                errAdd(miscERR_FILE_STR_FUNC_CALL);
+                errAdd(miscERR_FUNC_CALL, "strncpy");
                 return FAILURE;
             }
 
@@ -340,7 +341,7 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 
             if (strncpy(tmpPath, pathPtr, len) == NULL)
             {
-                errAdd(miscERR_FILE_STR_FUNC_CALL);
+                errAdd(miscERR_FUNC_CALL, "strncpy");
                 return FAILURE;
             }
 
@@ -417,8 +418,8 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 /**
  * Give back the value of a specified Environment Variable.
  *
- * \warning This function is \em not rentrant. The returned allocated buffer
- * will be deallocated on the next call !.\n\n
+ * \warning This function is \em NOT re-entrant. The returned allocated buffer
+ * will be deallocated on the next call !\n\n
  *
  * \param envVarName a null-terminated char array containing the searched
  * Environment Variable name \em without the '$'
@@ -469,7 +470,8 @@ mcsCOMPL_STAT miscYankLastPath(char *path)
 
     if ((chrPtr = strrchr(path, '/')) == NULL)
     {
-        return FAILURE;
+        /* There is no '/' in the received path */
+        return SUCCESS;
     }
 
     *chrPtr = '\0';

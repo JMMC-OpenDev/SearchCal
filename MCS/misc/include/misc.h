@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.16 2004-07-23 09:14:11 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.17 2004-07-23 14:29:59 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -43,7 +43,12 @@ functions in C++-code.
 extern "C" {
 #endif
 
+
+/*
+ * Local Headers 
+ */
 #include "miscDynStr.h"
+
 
 /*
  * Pubic functions declaration

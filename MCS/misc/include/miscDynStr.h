@@ -3,12 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynStr.h,v 1.2 2004-07-22 09:23:57 lafrasse Exp $"
+* "@(#) $Id: miscDynStr.h,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  13-Jul-2004  Created
 * lafrasse  22-Jul-2004  Removed a 'endcode' doxygen tag in excess
+* lafrasse  23-Jul-2004  Added miscDynStrGetStringFromTo parameter refinments
 *
 *
 *******************************************************************************/
@@ -62,7 +63,7 @@ extern "C" {
  */
 
 mcsCOMPL_STAT miscDynStrGetStringFromTo     (miscDYN_BUF       *dynBuf,
-                                             char              **str,
+                                             char              *str,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
 

@@ -3,12 +3,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynBuf.h,v 1.4 2004-07-13 14:09:39 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.h,v 1.5 2004-07-23 14:29:59 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  06-Jul-2004  Created
 * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
+* lafrasse  23-Jul-2004  Moved miscDYN_BUF_MAGIC_STRUCTURE_ID to miscPrivate.h,
+*                        added error management to
+*                        miscDynBufGetStoredBytesNumber and
+*                        miscDynBufGetAllocatedBytesNumber, plus
+*                        miscDynBufGetBytesFromTo parameter refinments.
 *
 *
 *******************************************************************************/
@@ -21,18 +26,23 @@
  * their number.
  *
  * \n \b Code \b Example:\n
- * \n A quick'n dirty main using a Dynamic Buffer.
+ * \n A simple main using a Dynamic Buffer.
  * \code
  * #include "miscDynBuf.h"
  *
  * int main (int argc, char *argv[])
  * {
  *     miscDYN_BUF dynBuf;
- *     char *tmp = "bytes to";
- *     miscDynBufAppendBytes(&dynBuf, tmp, strlen(tmp));
- *     tmp = " append...\0";
- *     miscDynBufAppendBytes(&dynBuf, tmp, strlen(tmp));
- *     printf("DynBuf contains \"%s\".\n", miscDynBufGetBufferPointer(&dynBuf));
+ *     char tab1[3] = {0, 1, 2};
+ *     miscDynBufAppendBytes(&dynBuf, (char*)tab1, 3 * sizeof(int));
+ *     .
+ *     . ...
+ *     .
+ *     char tab2[7] = {3, 4, 5, 6, 7, 8, 9};
+ *     miscDynBufAppendBytes(&dynBuf, (char*)tab2, 7 * sizeof(int));
+ *     .
+ *     . ...
+ *     .
  *     miscDynBufDestroy(&dynBuf);
  *     exit (EXIT_SUCCESS);
  * }
@@ -47,19 +57,15 @@ functions in C++ code.
 extern "C" {
 #endif
 
+/*
+ * Local Headers 
+ */
+#include "miscPrivate.h"
 
 
 /* 
  * Macro definition
  */
-    
-/**
- * Unic MCS structure identifier.
- *
- * It is meant to allow the testing of a Dynamic Buffer struture initialization
- * state (wether it has allready been initialized as a miscDYN_BUF or not).
- */
-#define miscDYN_BUF_MAGIC_STRUCTURE_ID ((mcsUINT32) 2813741963u)
 
 /**
  * Dynamic Buffer first position number abstraction.
@@ -69,7 +75,6 @@ extern "C" {
  * independant of our futur hypotetic implementation changes.
  */
 #define miscDYN_BUF_BEGINNING_POSITION  ((mcsUINT32) 1u)
-
 
 
 /*
@@ -110,7 +115,6 @@ typedef struct
 } miscDYN_BUF;
 
 
-
 /*
  * Pubic functions declaration
  */
@@ -124,10 +128,12 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf);
 
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf);
 
-mcsUINT32     miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf);
+mcsCOMPL_STAT miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf,
+                                             mcsUINT32         *storedBytes);
 
-mcsUINT32     miscDynBufGetAllocatedBytesNumber(
-                                             miscDYN_BUF       *dynBuf);
+mcsCOMPL_STAT miscDynBufGetAllocatedBytesNumber(
+                                             miscDYN_BUF       *dynBuf,
+                                             mcsUINT32         *allocatedBytes);
 
 char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf);
 
@@ -136,7 +142,7 @@ mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   position);
 
 mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
-                                             char              **bytes,
+                                             char              *bytes,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
 
