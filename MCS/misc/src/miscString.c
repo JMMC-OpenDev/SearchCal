@@ -10,7 +10,7 @@
 * lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
 *                        misc.h
 *                        Moved mcs.h include to miscString.h
-*
+* gzins     15-Dec-2004  Added miscTrimString function
 *
 *-----------------------------------------------------------------------------*/
 
@@ -19,7 +19,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.10 2004-09-27 07:48:13 scetre Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.11 2004-12-15 16:31:44 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -76,10 +76,10 @@ mcsCOMPL_STAT miscStripQuotes(char *string)
      */
 
     dstPtr = string;
-    /*= Find first '"' */
+    /* Find first '"' */
     srcPtr = strchr(string, '\"');
 
-    /*= If a quote has been found '"' */
+    /* If a quote has been found '"' */
     if (srcPtr != NULL)
     {
         /* Skip possible blanks after the quote */
@@ -115,6 +115,74 @@ mcsCOMPL_STAT miscStripQuotes(char *string)
     return SUCCESS;
 }
 
+/**
+ * Trim a string for leading and trailing characters
+ *
+ * Trim a string for leading and trailing characters according to the 
+ * characters given in the  \em trimChars string. The \em trimChars could be
+ * e.g. "{} ". In this case the string would be trimmed for all leading
+ * "{"'s, "}"'s and spaces.
+ *
+ * \param string the null-terminated string that shall be trimmed
+ * \param trimChars leading and trailing characters to be removed
+ *
+ * \return always SUCCESS
+ */
+mcsCOMPL_STAT miscTrimString(char *string, char *trimChars)
+{
+    char        *chrPtr;
+    mcsLOGICAL  run;
+
+    /* If pointer is not null */ 
+    if (*string != '\0')
+    {
+        /* Remove leading trim characters; i.e. look for the first character
+         * which is not a character to be trimmed */
+        run = mcsTRUE;
+        chrPtr = string;
+        do
+        {
+            if (strchr(trimChars, *chrPtr) != NULL)
+            {
+                chrPtr++;
+            }
+            else
+            {
+                run = mcsFALSE;
+            }
+        } while ((*chrPtr != '\0') && run);
+
+        /* If leading trim characters have been found */ 
+        if (string != chrPtr)
+        {
+            /* Copy string form the first 'good' character */
+            strcpy(string, chrPtr);
+        }
+        /* End if */
+
+        /* Remove trailing trim characters */
+        if (*chrPtr != '\0')
+        {
+            /* Got to the last characters and look for the first character
+             * which is not a character to be trimmed  */
+            chrPtr = (string + (strlen(string) - 1));
+            run = mcsTRUE;
+            do
+            {
+                if (strchr(trimChars, *chrPtr) != NULL)
+                {
+                    *chrPtr = '\0';
+                    chrPtr--;
+                }
+                else
+                    run = mcsFALSE;
+            }
+            while ((*chrPtr != '\0') && run);
+        }
+    }
+    return SUCCESS;
+}
+ 
 /**
  * Convert a string to upper case.
  *

@@ -3,13 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscString.h,v 1.3 2004-09-27 07:48:13 scetre Exp $"
+* "@(#) $Id: miscString.h,v 1.4 2004-12-15 16:31:44 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscString headers
 *                        Moved mcs.h include in from miscString.c
-*
+* gzins     15-Dec-2004  Added miscTrimString function
 *
 *******************************************************************************/
 
@@ -38,6 +38,7 @@ extern "C" {
  */
  
 mcsCOMPL_STAT miscStripQuotes    (char *string);
+mcsCOMPL_STAT miscTrimString(char *string, char *trimChars);
 mcsCOMPL_STAT miscStrToUpper     (char *string);
 mcsLOGICAL    miscIsSpaceStr     (char *string);
 mcsCOMPL_STAT miscReplaceChrByChr(char *string,
