@@ -1,0 +1,117 @@
+#! /bin/bash
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: errXmlToH,v 1.1 2004-06-24 07:24:31 mella Exp $"
+#
+# who       when         what
+# --------  -----------  -------------------------------------------------------
+# mella     24-Jun-2004  Created
+#
+#
+#*******************************************************************************
+#   NAME
+#   errXmlToH - Generate the error defines from the XML definition file. 
+#
+#   SYNOPSIS
+#   errXmlToH input.xml output.h   
+#
+#   DESCRIPTION
+#   errXmlToH generates a C header file. The output file defines each error's
+#   constant. Errors are defined into the XML input file 
+#
+#   FILES
+#
+#   ENVIRONMENT
+#
+#   RETURN VALUES
+#
+#   CAUTIONS
+#
+#   EXAMPLES
+#   errXmlToH ../errors/modErrors.xml ../include/modErrors.h   
+#   
+#
+#   SEE ALSO
+#
+#   BUGS     
+#
+#-------------------------------------------------------------------------------
+#
+
+# signal trap (if any)
+
+
+#___oOo___#Parameters Integrity Check
+
+#This function returns the complete pathname of the file given in parameter
+GETFILE()
+{
+	#Path list
+	path1="../config"
+
+	if [ -r "$path1/$1" ]
+	then
+		fullPath="$path1/$1"
+		return
+	#elif
+	else
+		fullPath="NULL"
+	fi
+}
+
+#Main Script
+if [ $# != 2 ];
+then
+	echo "USAGE : $0 ../errors/<mod>Errors.xml ../include/<mod>Errors.h"
+
+else
+	#XSD & XSL declaration files
+	GETFILE "errXmlToH.xsd"
+	if [ "$fullPath" = "NULL" ]
+	then
+		echo "XSD Schema File Not Found"
+		exit
+	fi
+	schema="$fullPath"
+	
+    GETFILE "errXmlToH.xsl"
+	if [ "$fullPath" = "NULL" ]
+	then
+		echo "XSL Transformation File Not Found"
+		exit
+	fi
+	xslt="$fullPath"
+
+	# Check Xml file validity
+	res=`xmllint --noout --schema $schema $1`
+	val="$1 validates"
+
+	if [ "$res" = "$val" ];
+	then
+		echo "$val"
+
+        # if output file exists then exit
+        if [ -a $2 ];
+        then 
+            echo "File $2 already exists."
+            echo "Please change filename and run it again.";
+            exit 1;
+        fi
+        
+		xsltproc $xslt $1 > $2
+		echo "Error header file $2 created successfully."
+	else
+		echo "$res"
+		echo "Sorry, validation error. You need to modify $1."
+	fi
+
+	#Delete temporary files
+	rm -rf $xmlVal
+fi
+
+
+
+
+
+

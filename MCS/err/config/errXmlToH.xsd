@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+<xs:element name="errorList">
+
+    <xs:complexType>
+
+    <xs:sequence>
+    <xs:element name="error" type="error" maxOccurs="unbounded"/>
+    </xs:sequence>
+
+    <xs:attribute name="moduleName" type="xs:string" use="required"/>
+
+    </xs:complexType>
+
+    <xs:unique name="uniqueId">
+    <xs:selector xpath="/errorList/error"/>
+    <xs:field xpath="@id"/>
+    </xs:unique>
+
+    <xs:unique name="uniqueErrName">
+    <xs:selector xpath="/errorList/error"/>
+    <xs:field xpath="./errName"/>
+    </xs:unique>
+    
+    </xs:element>
+    
+    
+    <xs:complexType name="error">
+    
+    <xs:sequence>
+    <xs:element name="errName" type="xs:string" use="required"/>
+    <xs:element name="errSeverity" type="errSeverity" use="required"/>
+    <xs:element name="errFormat" type="xs:string" use="required"/>
+    </xs:sequence>
+    
+    <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
+    
+    </xs:complexType>
+    
+    <xs:simpleType name="errSeverity">
+    <xs:restriction base="xs:string">
+    <xs:pattern value="WARNING|SEVERE|FATAL"/>
+    </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
