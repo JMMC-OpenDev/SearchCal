@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.8 2005-01-28 12:48:24 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.9 2005-02-04 07:43:16 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/01/28 12:48:24  scetre
+* changed association criteria
+*
 * Revision 1.7  2005/01/27 13:46:57  scetre
 * change order of entry in K band
 *
@@ -22,7 +25,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.8 2005-01-28 12:48:24 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.9 2005-02-04 07:43:16 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -183,8 +186,8 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
         {
             _starListP.Copy(starList);
             // I/280
-            scenario.AddEntry(&_ascc, &_starListP, &_starListS, UPDATE_ONLY,
-                              criteriaListEmpty);
+            scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY,
+                              criteriaList);
         }
 
         /* 
@@ -289,7 +292,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
         else
         {
             _starListP.Copy(starList);
-            scenario.AddEntry(&_ascc, &_starListP, &_starListS, MERGE,
+            scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY,
                               criteriaListEmpty);
         }
         // The primary list is completed with the query on catalogs I/196,
