@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2004-11-10 17:05:02 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.12 2004-12-17 08:17:55 gzins Exp $"
 #
 # Makefile of misc Library
 #
@@ -17,6 +17,7 @@
 # gzins     03-Aug-2004  Added installation of all include files 
 # lafrasse  10-Aug-2004  Removed miscPrivate. installation
 # gzins     09-Nov-2004  Added miscLocateFile compilation directives 
+# gzins     17-Dec-2004  Added miscHash
 #
 #
 #*******************************************************************************
@@ -59,12 +60,13 @@ miscLocateFile_LIBS      = mcs log err misc
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = misc.h \
-				  miscDate.h \
-				  miscDynBuf.h \
-				  miscFile.h \
+INCLUDES        = misc.h        \
+				  miscDate.h    \
+				  miscDynBuf.h  \
+				  miscFile.h    \
 				  miscNetwork.h \
-				  miscString.h
+				  miscString.h  \
+				  miscHash.h
 
 
 #
@@ -75,7 +77,12 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-misc_OBJECTS   = miscDate miscDynBuf miscFile miscNetwork miscString
+misc_OBJECTS   = miscDate    \
+				 miscDynBuf  \
+				 miscFile    \
+				 miscNetwork \
+				 miscString  \
+				 miscHash
 
 #
 # Scripts (public and local)
