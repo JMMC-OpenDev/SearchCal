@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynBuf.h,v 1.5 2004-07-23 14:29:59 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.h,v 1.6 2004-07-27 14:13:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -56,12 +56,6 @@ functions in C++ code.
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/*
- * Local Headers 
- */
-#include "miscPrivate.h"
-
 
 /* 
  * Macro definition
