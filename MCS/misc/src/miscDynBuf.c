@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.5 2004-07-19 15:29:38 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.6 2004-07-20 13:58:40 lafrasse Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -9,6 +9,7 @@
  * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
  * lafrasse  12-Jul-2004  Code factorization and error codes polishing
  * lafrasse  19-Jul-2004  Corrected some bugs ('from = to' parameters)
+ * lafrasse  20-Jul-2004  Used 'memmove()' instead of temporary buffers
  *
  *
  ******************************************************************************/
@@ -22,10 +23,9 @@
  * \sa To see all those functions declarations and a minimal code example, see
  * miscDynBuf.h
  * \sa To see all the other 'misc' module functions declarations, see misc.h
- *
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.5 2004-07-19 15:29:38 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.6 2004-07-20 13:58:40 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -652,8 +652,6 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
  * \param to the position of the last Dynamic Buffer byte to be substituted
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
- *
- * \todo use 'memmove()' instead of temporary buffers
  */
 mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
@@ -708,20 +706,11 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
     char *positionToWriteIn = dynBuf->dynBuf
                               + (from - miscDYN_BUF_BEGINNING_POSITION);
 
-    /* Try to allocate a temporary bytes buffer to hold the 'to be backep up'
-     * Dynamic Buffer bytes
+    /* Try to move the 'not-to-be-overwritten' Dynamic Buffer bytes to their
+     * definitive place
      */
-    char *tmpBuf = NULL;
-    if ((tmpBuf = calloc(lengthToBackup, sizeof(char))) == NULL)
-    {
-        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
-        return FAILURE;
-    }
-
-    /* Try to copy the 'to be backep up' Dynamic Buffer bytes in the temporary
-     * bytes buffer
-     */
-    if (memcpy(tmpBuf, positionToBackup, lengthToBackup) == NULL)
+    if (memmove(positionToWriteIn + length, positionToBackup, lengthToBackup)
+        == NULL)
     {
         errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
@@ -729,15 +718,6 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
 
     /* Try to copy the extern buffer bytes in the Dynamic Buffer */
     if (memcpy(positionToWriteIn, bytes, length) == NULL)
-    {
-        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
-        return FAILURE;
-    }
-
-    /* Try to copy the 'backep up' Dynamic Buffer bytes back inside the
-     * Dynamic Buffer at the good position
-     */
-    if (memcpy(positionToWriteIn + length, tmpBuf, lengthToBackup) == NULL)
     {
         errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
@@ -812,8 +792,6 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
  * \param position the position of the first Dynamic Buffer byte to write at
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
- *
- * \todo use 'memmove()' instead of temporary buffers
  */
 mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
@@ -852,20 +830,11 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
     char *positionToWriteIn = dynBuf->dynBuf
                               + (position - miscDYN_BUF_BEGINNING_POSITION);
 
-    /* Try to allocate a temporary bytes buffer to hold the 'to be backep up'
-     * Dynamic Buffer bytes
+    /* Try to move the 'not-to-be-overwritten' Dynamic Buffer bytes to their
+     * definitive place
      */
-    char *tmpBuf = NULL;
-    if ((tmpBuf = calloc(lengthToBackup, sizeof(char))) == NULL)
-    {
-        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
-        return FAILURE;
-    }
-
-    /* Try to copy the 'to be backep up' Dynamic Buffer bytes in the temporary
-     * bytes buffer
-     */
-    if (memcpy(tmpBuf, positionToWriteIn, lengthToBackup) == NULL)
+    if (memmove(positionToWriteIn + length, positionToWriteIn, lengthToBackup)
+        == NULL)
     {
         errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
@@ -873,17 +842,6 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
 
     /* Try to copy the extern buffer bytes in the Dynamic Buffer */
     if (memcpy(positionToWriteIn, bytes, length) == NULL)
-    {
-        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
-        return FAILURE;
-    }
-
-    /* Try to copy the 'backep up' Dynamic Buffer bytes back inside the
-     * Dynamic Buffer
-     */
-    if (memcpy(dynBuf->dynBuf + (position -
-        miscDYN_BUF_BEGINNING_POSITION) + length,
-        tmpBuf, lengthToBackup) == NULL)
     {
         errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
@@ -909,8 +867,6 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
  * \param to the position of the last Dynamic Buffer byte to be deleted
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
- *
- * \todo use 'memmove()' instead of temporary buffers
  */
 mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
@@ -937,29 +893,11 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
     char *positionToWriteIn = dynBuf->dynBuf
                               + (from - miscDYN_BUF_BEGINNING_POSITION);
 
-    /* Try to allocate a temporary bytes buffer to hold the 'to be backep up'
-     * Dynamic Buffer bytes
+    /* Try to move the 'not-to-be-deleted' Dynamic Buffer bytes to their
+     * definitive place
      */
-    char *tmpBuf = NULL;
-    if ((tmpBuf = calloc(lengthToBackup, sizeof(char))) == NULL)
-    {
-        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
-        return FAILURE;
-    }
-
-    /* Try to copy the 'to be backep up' Dynamic Buffer bytes in the temporary
-     * bytes buffer
-     */
-    if (memcpy(tmpBuf, positionToBackup, lengthToBackup) == NULL)
-    {
-        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
-        return FAILURE;
-    }
-
-    /* Try to copy the 'backep up' Dynamic Buffer bytes back inside the
-     * Dynamic Buffer
-     */
-    if (memcpy(positionToWriteIn, tmpBuf, lengthToBackup) == NULL)
+    if (memmove(positionToWriteIn, positionToBackup, lengthToBackup)
+        == NULL)
     {
         errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
