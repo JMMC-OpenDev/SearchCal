@@ -1,14 +1,14 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: mcsTest.c,v 1.1 2004-12-03 17:07:11 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  01-Dec-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: mcsTest.c,v 1.2 2005-02-13 16:43:42 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  01-Dec-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -16,7 +16,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: mcsTest.c,v 1.1 2004-12-03 17:07:11 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: mcsTest.c,v 1.2 2005-02-13 16:43:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -37,18 +37,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include "mcs.h"
 #include "mcsPrivate.h"
-
-
-/*
- * Local Variables
- */
-
- 
-
-/* 
- * Signal catching functions  
- */
-
 
 
 /* 
@@ -73,6 +61,5 @@ int main (int argc, char *argv[])
     /* Exit from the application with SUCCESS */
     exit (EXIT_SUCCESS);
 }
-
 
 /*___oOo___*/
