@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.cpp,v 1.5 2005-02-16 14:57:23 gzins Exp $"
+ * "@(#) $Id: miscoDYN_BUF.cpp,v 1.6 2005-02-22 15:10:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/16 14:57:23  gzins
+ * Updated prototype to GetNextLine
+ *
  * Revision 1.4  2005/02/14 08:09:04  gzins
  * Implemented assignment operator and copy constructor
  *
@@ -23,7 +26,7 @@
  * byte-based buffers.
  */
 
-static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.5 2005-02-16 14:57:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.6 2005-02-22 15:10:53 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -86,25 +89,7 @@ miscoDYN_BUF::~miscoDYN_BUF()
  */
 
 /**
- * Allocate and add a number of bytes to a Dynamic Buffer already allocated
- * bytes.
- *
- * If the Dynamic Buffer already has some allocated bytes, its length is
- * expanded by the desired one. If the Dynamic Buffer is enlarged, the previous
- * content will remain untouched after the reallocation. New allocated bytes
- * will all contain '0'.
- *
- * \remark The call to this function is optional, as a Dynamic Buffer will
- * expand itself on demand when invoquing other miscoDYN_BUF methods as
- * AppendBytes(), InsertBytesAt(), etc... So, this method is only usefull when
- * you know by advance the maximum bytes length the Dynamic Buffer can reach
- * accross its entire life, and thus want to minimize the CPU time spent to
- * expand the Dynamic Buffer allocated memory on demand.\n\n
- *  
- * \param length the number of bytes by which the Dynamic Buffer should be
- * \em expanded (if length value is less than or equal to 0, nothing is done).
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufAlloc() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::Alloc               (const mcsINT32    length)
 {
@@ -114,9 +99,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Alloc               (const mcsINT32    length)
 }
 
 /**
- * Dealloc the unused allocated memory of a Dynamic Buffer.
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufStrip() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::Strip               ()
 {
@@ -126,12 +109,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Strip               ()
 }
 
 /**
- * Reset a Dynamic Buffer.
- *
- * Possibly allocated memory remains untouched, until the reseted Dynamic Buffer
- * is reused to store other bytes.
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufReset() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::Reset               ()
 {
@@ -141,12 +119,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Reset               ()
 }
 
 /**
- * Give back the number of bytes stored in a Dynamic Buffer.
- *
- * \param storedBytes the address of to the extern mcsUINT32 that will hold
- * the Dynamic Buffer number of stored bytes
- *
- * \return the stored length of a Dynamic Buffer, or 0 if an error occured
+ * \sa miscDynBufGetNbStoredBytes() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::GetNbStoredBytes    (mcsUINT32   *storedBytes) const
 {
@@ -156,12 +129,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetNbStoredBytes    (mcsUINT32   *storedBytes) const
 }
 
 /**
- * Give back the number of bytes allocated in a Dynamic Buffer.
- *
- * \param allocatedBytes the address of to the extern mcsUINT32 that will hold
- * the Dynamic Buffer number of allocated bytes
- *
- * \return the allocated length of a Dynamic Buffer, or 0 if an error occured
+ * \sa miscDynBufGetNbAllocatedBytes() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::GetNbAllocatedBytes (mcsUINT32   *allocatedBytes) const
 {
@@ -171,9 +139,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetNbAllocatedBytes (mcsUINT32   *allocatedBytes) co
 }
 
 /**
- * Return a pointer to a Dynamic Buffer internal bytes buffer.
- *
- * \return a pointer to a Dynamic Buffer buffer, or NULL if an error occured
+ * \sa miscDynBufGetBuffer() documentation in the 'misc' module
  */
 char*         miscoDYN_BUF::GetBuffer           () const
 {
@@ -183,10 +149,7 @@ char*         miscoDYN_BUF::GetBuffer           () const
 }
 
 /**
- * Return a pointer to a Dynamic Buffer internal comment pattern string.
- *
- * \return a pointer to a Dynamic Buffer comment pattern, or NULL if an error
- * occured
+ * \sa miscDynBufGetCommentPattern() documentation in the 'misc' module
  */
 const char*   miscoDYN_BUF::GetCommentPattern   () const
 {
@@ -196,40 +159,34 @@ const char*   miscoDYN_BUF::GetCommentPattern   () const
 }
 
 /**
- * Return the next line of a Dynamic Buffer.
- *
- * \param currentPos the  position from which the next line will be searched, or
- * NULL to begin on the first line of the buffer.
- * \param nextLine buffer in which next line will be stored in.
- * \param skipCommentFlag the boolean specifying weither the line beginnig by
- * the Dynamic Buffer comment pattern should be skipped or not
- *
- * \sa miscDynBufGetNextLine()
- *
- * \return a pointer to the new buffer position to be used to get the next line,
- * or NULL if an error occured.
+ * \sa miscDynBufGetNextLine() documentation in the 'misc' module
  */
-const char*   miscoDYN_BUF::GetNextLine         (const char  *currentPos,
-                                              mcsSTRING1024  nextLine,
+const char*   miscoDYN_BUF::GetNextLine   (const char        *currentPos,
+                                                 char        *nextLine,
+                                           const mcsUINT32   maxLineLength,
                                            const mcsLOGICAL  skipCommentFlag)
 {
     logExtDbg("miscoDYN_BUF::GetNextLine()");
 
-    return miscDynBufGetNextLine(&_dynBuf, currentPos, 
-                                 nextLine, skipCommentFlag);
+    return miscDynBufGetNextLine(&_dynBuf, currentPos, nextLine, maxLineLength,
+                                 skipCommentFlag);
 }
 
 /**
- * Give back a Dynamic Buffer byte stored at a given position.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param byte the address of to the extern byte that will hold the seeked
- *  Dynamic Buffer byte
- * \param position the position of the Dynamic Buffer seeked byte
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufGetNextCommentLine() documentation in the 'misc' module
+ */
+const char* miscoDYN_BUF::GetNextCommentLine(const char        *currentPos,
+                                                   char        *nextLine,
+                                             const mcsUINT32   maxLineLength)
+{
+    logExtDbg("miscoDYN_BUF::GetNextCommentLine()");
+
+    return miscDynBufGetNextCommentLine(&_dynBuf, currentPos, nextLine,
+                                        maxLineLength);
+}
+
+/**
+ * \sa miscDynBufGetByteAt() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::GetByteAt           (char              *byte,
                                                  const mcsUINT32   position)
@@ -240,16 +197,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetByteAt           (char              *byte,
 }
 
 /**
- * Give back a part of a Dynamic Buffer in an already allocated extern buffer.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param bytes the address of the receiving, already allocated extern buffer
- * \param from the first Dynamic Buffer byte to be copied in the extern buffer
- * \param to the last Dynamic Buffer byte to be copied in the extern buffer
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufGetBytesFromTo() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::GetBytesFromTo      (char              *bytes,
                                                  const mcsUINT32   from,
@@ -261,17 +209,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetBytesFromTo      (char              *bytes,
 }
 
 /**
- * Give back a part of a Dynamic Buffer as a null terminated string, in an
- * already allocated extern buffer.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param str the address of the receiving, already allocated extern buffer
- * \param from the first Dynamic Buffer byte to be copied in the extern string
- * \param to the last Dynamic Buffer byte to be copied in the extern string
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufGetStringFromTo() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::GetStringFromTo     (char              *str,
                                                  const mcsUINT32   from,
@@ -283,16 +221,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetStringFromTo     (char              *str,
 }
 
 /**
- * Set the null-terminated string holding the comment pattern to be skipped when
- * running throughout the Dynamic Buffer line by line.
- *
- * If no comment pattern is specified, no line will be skipped while using
- * GetNextLine()
- *
- * \param commentPattern a null-terminated string defining the comment pattern
- * that can be skipped when using GetNextLine(), or NULL
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufSetCommentPattern() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::SetCommentPattern   (const char     *commentPattern)
 {
@@ -302,19 +231,7 @@ mcsCOMPL_STAT miscoDYN_BUF::SetCommentPattern   (const char     *commentPattern)
 }
 
 /**
- * Overwrite a Dynamic Buffer with the content of a specified file.
- *
- * \warning The given Dynamic Buffer content (if any) will be \em destroyed by
- * this function call.\n\n
- * \warning The given file path must have been \em resolved before this function
- * call. See miscResolvePath() documentation for more information.\n\n
- * \warning The file buffer will have all its '\\n' character replaced by '\\0'.
- *
- * \param fileName the path specifying the file to be loaded in the Dynamic
- * Buffer
- * \param commentPattern (OPTIONNAL) the bytes that defines the comment pattern
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufLoadFile() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::LoadFile            (const char     *fileName,
                                                  const char     *commentPattern)
@@ -325,16 +242,7 @@ mcsCOMPL_STAT miscoDYN_BUF::LoadFile            (const char     *fileName,
 }
 
 /**
- * Put a Dynamic Buffer content in a specified file.
- *
- * \warning The given file will be over-written on each call.
- * \warning The given file path must have been \em resolved before this function
- * call. See miscResolvePath() documentation for more information.\n\n
- *
- * \param fileName the path specifying the file to be over-written with the
- * Dynamic Buffer content
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufSaveInFile() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::SaveInFile          (const char        *fileName)
 {
@@ -344,15 +252,7 @@ mcsCOMPL_STAT miscoDYN_BUF::SaveInFile          (const char        *fileName)
 }
 
 /**
- * Overwrite a Dynamic Buffer byte at a given position.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param byte the byte to be written in the Dynamic Buffer
- * \param position the position of the Dynamic Buffer byte to be overwritten
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufReplaceByteAt() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::ReplaceByteAt       (char              byte,
                                                  const mcsUINT32   position)
@@ -363,20 +263,7 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceByteAt       (char              byte,
 }
 
 /**
- * Replace a given range of Dynamic Buffer bytes by extern buffer bytes.
- *
- * The Dynamic Buffer replaced bytes will be overwritten. Their range can be
- * smaller or bigger than the extern buffer bytes number.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param bytes the address of the extern buffer bytes to be written in
- * \param length the number of extern buffer bytes to be written in
- * \param from the position of the first Dynamic Buffer byte to be substituted
- * \param to the position of the last Dynamic Buffer byte to be substituted
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufReplaceBytesFromTo() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::ReplaceBytesFromTo  (char              *bytes,
                                                  const mcsUINT32   length,
@@ -389,21 +276,7 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceBytesFromTo  (char              *bytes,
 }
 
 /**
- * Replace a given range of Dynamic Buffer bytes by an extern string without its
- * ending '\\0'.
- *
- * The Dynamic Buffer replaced bytes will be overwritten. Their range can be
- * smaller or bigger than the extern string length. If the end of the Dynamic
- * Buffer is to be replaced, the string ending '\\0' is keeped.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param str the address of the extern string to be written in
- * \param from the position of the first Dynamic Buffer byte to be substituted
- * \param to the position of the last Dynamic Buffer byte to be substituted
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufReplaceStringFromTo() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::ReplaceStringFromTo (char              *str,
                                                  const mcsUINT32   from,
@@ -415,12 +288,7 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceStringFromTo (char              *str,
 }
 
 /**
- * Copy extern buffer bytes at the end of a Dynamic Buffer.
- *
- * \param bytes the address of the extern buffer bytes to be written in
- * \param length the number of extern buffer bytes to be written in
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufAppendBytes() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::AppendBytes         (const char        *bytes,
                                                  const mcsUINT32   length)
@@ -431,12 +299,7 @@ mcsCOMPL_STAT miscoDYN_BUF::AppendBytes         (const char        *bytes,
 }
 
 /**
- * Copy an extern string (a null terminated char array) at the end of a
- * Dynamic Buffer, adding an '\\0' at the end of it.
- *
- * \param str the address of the extern string to be written in
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufAppendString() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::AppendString        (const char        *str)
 {
@@ -446,18 +309,27 @@ mcsCOMPL_STAT miscoDYN_BUF::AppendString        (const char        *str)
 }
 
 /**
- * Insert extern buffer bytes in a Dynamic Buffer at a given position.
- *
- * The Dynamic Buffer bytes are not overwritten, but shiffted to the right.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param bytes a pointer to the extern buffer bytes to be inserted
- * \param length the number of extern buffer bytes to be inserted
- * \param position the position of the first Dynamic Buffer byte to write at
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufAppendLine() documentation in the 'misc' module
+ */
+mcsCOMPL_STAT miscoDYN_BUF::AppendLine          (const char        *line)
+{
+    logExtDbg("miscoDYN_BUF::AppendLine()");
+
+    return miscDynBufAppendLine(&_dynBuf, line);
+}
+
+/**
+ * \sa miscDynBufAppendCommentLine() documentation in the 'misc' module
+ */
+mcsCOMPL_STAT miscoDYN_BUF::AppendCommentLine   (const char        *line)
+{
+    logExtDbg("miscoDYN_BUF::AppendCommentLine()");
+
+    return miscDynBufAppendCommentLine(&_dynBuf, line);
+}
+
+/**
+ * \sa miscDynBufInsertBytesAt() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::InsertBytesAt       (char              *bytes,
                                                  const mcsUINT32   length,
@@ -469,18 +341,7 @@ mcsCOMPL_STAT miscoDYN_BUF::InsertBytesAt       (char              *bytes,
 }
 
 /**
- * Insert an extern string (a null terminated char array) without its ending
- * '\\0' in a Dynamic Buffer at a given position.
- *
- * The Dynamic Buffer bytes are not overwritten, but shiffted to the right.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param str a pointer to the extern string to be inserted
- * \param position the position of the first Dynamic Buffer byte to write at
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufInsertStringAt() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::InsertStringAt      (char              *str,
                                                  const mcsUINT32   position)
@@ -491,15 +352,7 @@ mcsCOMPL_STAT miscoDYN_BUF::InsertStringAt      (char              *str,
 }
 
 /**
- * Delete a given range of Dynamic Buffer bytes.
- *
- * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
- *
- * \param from the position of the first Dynamic Buffer byte to be deleted
- * \param to the position of the last Dynamic Buffer byte to be deleted
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \sa miscDynBufDeleteBytesFromTo() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::DeleteBytesFromTo   (const mcsUINT32   from,
                                                  const mcsUINT32   to)

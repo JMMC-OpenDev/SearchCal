@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.7 2005-02-16 14:57:23 gzins Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.8 2005-02-22 15:10:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/16 14:57:23  gzins
+ * Updated prototype to GetNextLine
+ *
  * Revision 1.6  2005/02/14 14:10:13  scetre
  * move _dynBuf from private to protected
  *
@@ -86,9 +89,14 @@ public:
 
     const char*   GetCommentPattern  () const;
 
-    const char*   GetNextLine        (const char       *currentPos,
-                                      mcsSTRING1024     nextLine,
-                                      const mcsLOGICAL skipCommentFlag=mcsTRUE);
+    const char*   GetNextLine        (const char        *currentPos,
+                                            char        *nextLine,
+                                      const mcsUINT32   maxLineLength,
+                                      const mcsLOGICAL  skipCommentFlag);
+
+    const char*   GetNextCommentLine (const char        *currentPos,
+                                            char        *nextLine,
+                                      const mcsUINT32   maxLineLength);
 
     mcsCOMPL_STAT GetByteAt          (      char       *byte,
                                       const mcsUINT32  position);
@@ -124,6 +132,10 @@ public:
                                       const mcsUINT32  length);
 
     mcsCOMPL_STAT AppendString       (const char       *str);
+
+    mcsCOMPL_STAT AppendLine         (const char       *line);
+
+    mcsCOMPL_STAT AppendCommentLine  (const char       *line);
 
     mcsCOMPL_STAT InsertBytesAt      (      char       *bytes,
                                       const mcsUINT32  length,

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoTestDynBuf.cpp,v 1.2 2005-02-11 11:04:38 lafrasse Exp $"
+ * "@(#) $Id: miscoTestDynBuf.cpp,v 1.3 2005-02-22 15:10:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/11 11:04:38  lafrasse
+ * Added miscoDYN_BUF
+ *
  * Revision 1.1  2005/02/11 09:39:57  gzins
  * Created
  *
@@ -19,7 +22,7 @@
  * \<miscOTestDynBuf\>
  */
 
-static char *rcsId="@(#) $Id: miscoTestDynBuf.cpp,v 1.2 2005-02-11 11:04:38 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscoTestDynBuf.cpp,v 1.3 2005-02-22 15:10:53 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -65,9 +68,9 @@ void displayExecStatus(mcsCOMPL_STAT);
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        // Exit from the application with FAILURE
+        // Exit from the application with mcsFAILURE
         exit (EXIT_FAILURE);
     }
 
@@ -765,59 +768,137 @@ int main(int argc, char *argv[])
 
     // buffer.GetNextLine
     cout << "---------------------------------------------------------" << endl;
-    mcsLOGICAL skipFlag;
+    mcsSTRING1024 line;
+    mcsUINT32     maxLineLength = sizeof(line);
+    mcsLOGICAL    skipFlag;
+    const char*   ptr = NULL;
     cout << "------------------" << endl;
-    bytes = NULL;
+    ptr = NULL;
     skipFlag = mcsFALSE;
     buffer.SetCommentPattern("\0");
     cout << "skipFlag = '" << (skipFlag == mcsFALSE?"WITHOUT":"WITH")
          << " Comment Skiping' | commentPattern = '"
          << buffer.GetCommentPattern() << "'" << endl;
-    while ((bytes = buffer.GetNextLine(bytes, skipFlag))
+    while ((ptr = buffer.GetNextLine(ptr, line, maxLineLength, skipFlag))
            != NULL)
     {
-        cout << "------------------" << endl;
-        cout << "buffer.GetNextLine() = '" << bytes << "'" << endl;
+        cout << "buffer.GetNextLine() = '" << line << "'" << endl;
     }
     cout << "------------------" << endl;
-    bytes = NULL;
+    ptr = NULL;
     skipFlag = mcsFALSE;
-    buffer.SetCommentPattern("#");
+    buffer.SetCommentPattern("*");
     cout << "skipFlag = '" << (skipFlag == mcsFALSE?"WITHOUT":"WITH")
          << " Comment Skiping' | commentPattern = '"
          << buffer.GetCommentPattern() << "'" << endl;
-    while ((bytes = buffer.GetNextLine(bytes, skipFlag))
+    while ((ptr = buffer.GetNextLine(ptr, line, maxLineLength, skipFlag))
            != NULL)
     {
-        cout << "------------------" << endl;
-        cout << "buffer.GetNextLine() = '" << bytes << "'" << endl;
+        cout << "buffer.GetNextLine() = '" << line << "'" << endl;
     }
     cout << "------------------" << endl;
-    bytes = NULL;
+    ptr = NULL;
     skipFlag = mcsTRUE;
     buffer.SetCommentPattern("\0");
     cout << "skipFlag = '" << (skipFlag == mcsFALSE?"WITHOUT":"WITH")
          << " Comment Skiping' | commentPattern = '"
          << buffer.GetCommentPattern() << "'" << endl;
-    while ((bytes = buffer.GetNextLine(bytes, skipFlag))
+    while ((ptr = buffer.GetNextLine(ptr, line, maxLineLength, skipFlag))
            != NULL)
     {
-        cout << "------------------" << endl;
-        cout << "buffer.GetNextLine() = '" << bytes << "'" << endl;
+        cout << "buffer.GetNextLine() = '" << line << "'" << endl;
     }
     cout << "------------------" << endl;
-    bytes = NULL;
+    ptr = NULL;
     skipFlag = mcsTRUE;
-    buffer.SetCommentPattern("#");
+    buffer.SetCommentPattern("*");
     cout << "skipFlag = '" << (skipFlag == mcsFALSE?"WITHOUT":"WITH")
          << " Comment Skiping' | commentPattern = '"
          << buffer.GetCommentPattern() << "'" << endl;
-    while ((bytes = buffer.GetNextLine(bytes, skipFlag))
+    while ((ptr = buffer.GetNextLine(ptr, line, maxLineLength, skipFlag))
            != NULL)
     {
-        cout << "------------------" << endl;
-        cout << "buffer.GetNextLine() = '" << bytes << "'" << endl;
+        cout << "buffer.GetNextLine() = '" << line << "'" << endl;
     }
+    cout << endl;
+
+
+
+    // buffer.GetNextCommentLine
+    cout << "---------------------------------------------------------" << endl;
+    cout << "------------------" << endl;
+    ptr = NULL;
+    skipFlag = mcsFALSE;
+    buffer.SetCommentPattern("\0");
+    cout << "commentPattern = '" << buffer.GetCommentPattern() << "'" << endl;
+    while ((ptr = buffer.GetNextCommentLine(ptr, line, maxLineLength)) != NULL)
+    {
+        cout << "buffer.GetNextCommentLine() = '" << line << "'" << endl;
+    }
+    cout << "------------------" << endl;
+    ptr = NULL;
+    skipFlag = mcsFALSE;
+    buffer.SetCommentPattern("*");
+    cout << "commentPattern = '" << buffer.GetCommentPattern() << "'" << endl;
+    while ((ptr = buffer.GetNextCommentLine(ptr, line, maxLineLength)) != NULL)
+    {
+        cout << "buffer.GetNextCommentLine() = '" << line << "'" << endl;
+    }
+    cout << endl;
+
+
+
+    // buffer.AppendLine
+    cout << "---------------------------------------------------------" << endl;
+    bytes = NULL;
+    cout << "buffer.AppendLine(NULL, 0) ";
+    executionStatusCode = buffer.AppendLine(bytes);
+    displayExecStatus(executionStatusCode);
+    errCloseStack();
+    cout << "------------------" << endl;
+    bytes = "Test de miscAppendLine() !";
+    cout << "buffer.AppendLine('" << bytes << "') ";
+    executionStatusCode = buffer.AppendLine(bytes);
+    displayExecStatus(executionStatusCode);
+    errCloseStack();
+    buffer.Display();
+    cout << endl;
+
+
+
+    // buffer.AppendCommentLine
+    cout << "---------------------------------------------------------" << endl;
+    bytes = NULL;
+    buffer.SetCommentPattern("");
+    cout << "commentPattern = '" << buffer.GetCommentPattern() << "'" << endl
+         << "buffer.AppendCommentLine(NULL, 0) ";
+    executionStatusCode = buffer.AppendCommentLine(bytes);
+    displayExecStatus(executionStatusCode);
+    errCloseStack();
+    cout << "------------------" << endl;
+    bytes = "Test de miscAppendCommentLine() !";
+    cout << "commentPattern = '" << buffer.GetCommentPattern() << "'" << endl
+         << "buffer.AppendCommentLine('" << bytes << "') ";
+    executionStatusCode = buffer.AppendCommentLine(bytes);
+    displayExecStatus(executionStatusCode);
+    errCloseStack();
+    buffer.Display();
+    cout << "------------------" << endl;
+    buffer.SetCommentPattern("#");
+    cout << "commentPattern = '" << buffer.GetCommentPattern() << "'" << endl
+         << "buffer.AppendCommentLine('" << bytes << "') ";
+    executionStatusCode = buffer.AppendCommentLine(bytes);
+    displayExecStatus(executionStatusCode);
+    errCloseStack();
+    buffer.Display();
+    cout << "------------------" << endl;
+    buffer.SetCommentPattern(" /*");
+    cout << "commentPattern = '" << buffer.GetCommentPattern() << "'" << endl
+         << "buffer.AppendCommentLine('" << bytes << "') ";
+    executionStatusCode = buffer.AppendCommentLine(bytes);
+    displayExecStatus(executionStatusCode);
+    errCloseStack();
+    buffer.Display();
     cout << endl;
 
 
@@ -853,7 +934,7 @@ int main(int argc, char *argv[])
 
 void displayExecStatus(mcsCOMPL_STAT executionStatusCode)
 {
-    if (executionStatusCode == FAILURE)
+    if (executionStatusCode == mcsFAILURE)
     {
         cout << "FAILED";
         errCloseStack();
