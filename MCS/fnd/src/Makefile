@@ -1,9 +1,9 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-09-22 08:53:19 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-09-22 13:43:56 gzins Exp $"
 #
-# Makefile of ........
+# Makefile of fnd module
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -38,12 +38,12 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = 
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   =
+xxxxx_OBJECTS   = 
 xxxxx_LDFLAGS   =
 xxxxx_LIBS      =
 
@@ -54,17 +54,18 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        = fnd.h 	  \
+				  fndOBJECT.h
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = fnd
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-lllll_OBJECTS   =
+fnd_OBJECTS     = fndOBJECT
 
 #
 # Scripts (public and local)
