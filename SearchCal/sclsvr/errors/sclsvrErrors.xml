@@ -15,4 +15,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Invalid property format '%.80s'; should be %.20s]]></errFormat>
    </error>
+   <error id="4">
+      <errName>PROPERTY_NOT_SET</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[property value not set : "%s"]]></errFormat>
+   </error>
 </errorList>
