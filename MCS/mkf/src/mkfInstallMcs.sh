@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfUpdateMcs.sh,v 1.1 2004-12-04 07:13:09 gzins Exp $"
+# "@(#) $Id: mkfInstallMcs.sh,v 1.1 2004-12-04 19:12:53 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -11,10 +11,10 @@
 #
 #*******************************************************************************
 #   NAME 
-#   mkfUpdateMcs - Install/Update MCS modules 
+#   mkfInstallMcs - Install/Update MCS modules 
 # 
 #   SYNOPSIS
-#   mkfUpdateMcs
+#   mkfInstallMcs
 # 
 #   DESCRIPTION
 #   This command retreives all the modules belonging to MCS from the CVS
@@ -41,7 +41,7 @@
 dir=$PWD
 
 # Propose the user to continue or abort
-echo -e "\n-> All the MCS modules will be updated and installed from"
+echo -e "\n-> All the MCS modules will be installed and updated from"
 echo -e "   '$dir' directory\n"
 echo -e "   Press enter to continue or ^C to abort "
 read choice
