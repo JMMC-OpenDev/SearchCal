@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestRequest.cpp,v 1.6 2005-02-15 15:26:06 gzins Exp $"
+ * "@(#) $Id: vobsTestRequest.cpp,v 1.7 2005-02-15 15:27:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 15:26:06  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.5  2005/02/13 08:54:00  gzins
  * Updated after vobs classes changes
  * Added CVS log as modifification history
@@ -73,7 +76,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.6 2005-02-15 15:26:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.7 2005-02-15 15:27:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -164,8 +167,8 @@ int main(int argc, char *argv[])
     request.SetSearchBand("M");
     request.SetDeltaRa(12);
     request.SetDeltaDec(8);
-    request.SetMinRangeMag(0.4);
-    request.SetMaxRangeMag(0.2);
+    request.SetMinMagRange(0.4);
+    request.SetMaxMagRange(0.2);
     request.SetMaxNbOfSelectedObjects(14);
 
     // Display affected request
@@ -183,8 +186,8 @@ int main(int argc, char *argv[])
     logDebug("Get search band = %c", request.GetSearchBand());
     logDebug("Get delta ra = %f", request.GetDeltaRa());
     logDebug("Get delta dec = %f", request.GetDeltaDec());
-    logDebug("Get min delta mag = %f", request.GetMinRangeMag());
-    logDebug("Get max delta mag = %f", request.GetMaxRangeMag());
+    logDebug("Get min delta mag = %f", request.GetMinMagRange());
+    logDebug("Get max delta mag = %f", request.GetMaxMagRange());
     logDebug("Get max nb of selected object = %i", 
              request.GetMaxNbOfSelectedObjects());
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestVOInKBand.cpp,v 1.3 2005-02-15 15:26:06 gzins Exp $"
+ * "@(#) $Id: vobsTestVOInKBand.cpp,v 1.4 2005-02-15 15:27:41 gzins Exp $"
  *
  * History
  * -------
@@ -9,7 +9,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVOInKBand.cpp,v 1.3 2005-02-15 15:26:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVOInKBand.cpp,v 1.4 2005-02-15 15:27:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
     request.SetSearchBand("K");
     request.SetDeltaRa(1800.0);
     request.SetDeltaDec(300.0);
-    request.SetMinRangeMag(-1);
-    request.SetMaxRangeMag(5);
+    request.SetMinMagRange(-1);
+    request.SetMaxMagRange(5);
     request.SetMaxNbOfSelectedObjects(50);
     request.Display();
 

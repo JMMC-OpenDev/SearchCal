@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.4 2005-02-15 15:26:06 gzins Exp $"
+ * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.5 2005-02-15 15:27:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 15:26:06  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.3  2005/02/13 08:54:00  gzins
  * Updated after vobs classes changes
  * Added CVS log as modifification history
@@ -73,7 +76,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.4 2005-02-15 15:26:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.5 2005-02-15 15:27:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -156,8 +159,8 @@ int main(int argc, char *argv[])
     request.SetSearchBand("N");
     request.SetDeltaRa(15.0);
     request.SetDeltaDec(5.0);
-    request.SetMinRangeMag(0.05);
-    request.SetMaxRangeMag(0.2);
+    request.SetMinMagRange(0.05);
+    request.SetMaxMagRange(0.2);
     request.SetMaxNbOfSelectedObjects(6);
     request.Display();
 
