@@ -190,4 +190,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Line containing the list of parameter names is missing.]]></errFormat>
    </error>
+   <error id="47">
+      <errName>NO_CDS_RETURN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Connexion to CDS failed]]></errFormat>
+   </error>
 </errorList>

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.22 2005-02-22 13:23:16 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.23 2005-02-24 13:12:43 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2005/02/22 13:23:16  scetre
+* Removed association criteria on magnitude
+*
 * Revision 1.21  2005/02/16 17:02:04  scetre
 * Updated criteria association
 *
@@ -64,7 +67,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.22 2005-02-22 13:23:16 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.23 2005-02-24 13:12:43 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -146,7 +149,11 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
     // Clear the resulting list
     starList.Clear();
     // Run the method to execute the scenario which had been loaded into memory
-    scenario.Execute(request, starList);
+    if (scenario.Execute(request, starList) == mcsFAILURE)
+    {
+        errUserAdd(vobsERR_NO_CDS_RETURN);
+        return mcsFAILURE;
+    }
     
     //starList.Display();
     logTest("Number of stars found : %d\n", starList.Size());
