@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2005-01-21 15:23:53 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.3 2005-02-12 15:19:47 gzins Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/01/21 15:23:53  gluck
+# Add instructions for module python tests
+#
 # Revision 1.1  2005/01/21 08:14:25  gluck
 # Creation
 #
@@ -43,7 +46,8 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = alxTestAngularDiameter alxTestMagnitude \
-				  alxTestGalacticCoordinates alxTestVisibility
+				  alxTestGalacticCoordinates alxTestVisibility \
+				  alxTestResearchArea
 EXECUTABLES_L   = 
 
 #
@@ -63,6 +67,10 @@ alxTestAngularDiameter_LIBS      = MCS alx
 alxTestVisibility_OBJECTS   = alxTestVisibility
 alxTestVisibility_LDFLAGS   =
 alxTestVisibility_LIBS      = MCS alx
+
+alxTestResearchArea_OBJECTS   = alxTestResearchArea
+alxTestResearchArea_LDFLAGS   =
+alxTestResearchArea_LIBS      = MCS alx
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
