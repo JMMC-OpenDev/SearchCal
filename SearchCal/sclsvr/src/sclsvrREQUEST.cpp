@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.3 2005-02-16 16:56:30 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.4 2005-02-17 15:33:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/16 16:56:30  gzins
+ * Fixed wrong parameter name in documentation
+ *
  * Revision 1.2  2005/02/15 15:54:00  gzins
  * Changed remaining SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -19,7 +22,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.3 2005-02-16 16:56:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.4 2005-02-17 15:33:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -39,7 +42,6 @@ using namespace std;
  * Local Headers 
  */
 #include "sclsvrREQUEST.h"
-#include "sclsvrGETCAL_CMD.h"
 #include "sclsvrPrivate.h"
 
 /**
@@ -52,6 +54,8 @@ sclsvrREQUEST::sclsvrREQUEST()
     _observingWlen = 0.0;
     _vis = 0.0;
     _visErr = 0.0;
+
+    _getCalCmd = NULL;
 }
 
 /**
@@ -59,6 +63,10 @@ sclsvrREQUEST::sclsvrREQUEST()
  */
 sclsvrREQUEST::~sclsvrREQUEST()
 {
+    if (_getCalCmd != NULL)
+    {
+        delete (_getCalCmd);
+    }
 }
 
 /*
@@ -70,123 +78,127 @@ sclsvrREQUEST::~sclsvrREQUEST()
  * It retrieves the GETCAL command parameter values and set its corresponding
  * members according.
  *
- * \param cmdParams GETCAL command parameters
+ * \param cmdParamLine GETCAL command parameters
  * \return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParams)
+mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 {
     logExtDbg("sclsvrREQUEST::Parse()");
 
     // GETCAL command
-    sclsvrGETCAL_CMD getCalCmd(sclsvrGETCAL_CMD_NAME, cmdParams);
+    if (_getCalCmd != NULL)
+    {
+        delete (_getCalCmd);
+    }
+    _getCalCmd = new sclsvrGETCAL_CMD(sclsvrGETCAL_CMD_NAME, cmdParamLine);
     
     // Parse command
-    if (getCalCmd.Parse() == mcsFAILURE)
+    if (_getCalCmd->Parse() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Object name
     char *objectName;
-    if (getCalCmd.GetObjectName(&objectName) == mcsFAILURE)
+    if (_getCalCmd->GetObjectName(&objectName) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Observed magnitude
     mcsDOUBLE magnitude;
-    if (getCalCmd.GetMag(&magnitude) == mcsFAILURE)
+    if (_getCalCmd->GetMag(&magnitude) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // max calibrator return
     mcsINT32 maxReturn;
-    if (getCalCmd.GetMaxReturn(&maxReturn) == mcsFAILURE)
+    if (_getCalCmd->GetMaxReturn(&maxReturn) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // diff ra
     mcsINT32 diffRa;
-    if (getCalCmd.GetDiffRa(&diffRa) == mcsFAILURE)
+    if (_getCalCmd->GetDiffRa(&diffRa) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // diff dec
     mcsINT32 diffDec;
-    if (getCalCmd.GetDiffDec(&diffDec) == mcsFAILURE)
+    if (_getCalCmd->GetDiffDec(&diffDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // band
     char *band;
-    if (getCalCmd.GetBand(&band) == mcsFAILURE)
+    if (_getCalCmd->GetBand(&band) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // minRangeMag
     mcsDOUBLE minRangeMag;
-    if (getCalCmd.GetMinMagRange(&minRangeMag) == mcsFAILURE)
+    if (_getCalCmd->GetMinMagRange(&minRangeMag) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // maxRangeMag
     mcsDOUBLE maxRangeMag;
-    if (getCalCmd.GetMaxMagRange(&maxRangeMag) == mcsFAILURE)
+    if (_getCalCmd->GetMaxMagRange(&maxRangeMag) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // ra
     char *ra;
-    if (getCalCmd.GetRa(&ra) == mcsFAILURE)
+    if (_getCalCmd->GetRa(&ra) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // dec
     char *dec;
-    if (getCalCmd.GetDec(&dec) == mcsFAILURE)
+    if (_getCalCmd->GetDec(&dec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // baseMin
     mcsDOUBLE baseMin;
-    if (getCalCmd.GetBaseMin(&baseMin) == mcsFAILURE)
+    if (_getCalCmd->GetBaseMin(&baseMin) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // baseMax
     mcsDOUBLE baseMax;
-    if (getCalCmd.GetBaseMax(&baseMax) == mcsFAILURE)
+    if (_getCalCmd->GetBaseMax(&baseMax) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // wlen
     mcsDOUBLE wlen;
-    if (getCalCmd.GetWlen(&wlen) == mcsFAILURE)
+    if (_getCalCmd->GetWlen(&wlen) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // visibility
     mcsDOUBLE vis;
-    if (getCalCmd.GetVis(&vis) == mcsFAILURE)
+    if (_getCalCmd->GetVis(&vis) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // visibility error
     mcsDOUBLE visErr;
-    if (getCalCmd.GetVisErr(&visErr) == mcsFAILURE)
+    if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -254,6 +266,34 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParams)
     return mcsSUCCESS;
 }
 
+/**
+ * Returns the GETCAL command parameter line.
+ *
+ * \return command parameter line or NULL if it is not initialized 
+ */
+mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine)
+{
+    logExtDbg("sclsvrREQUEST::GetCmdParamLine()");
+
+    memset(cmdParamLine, '\0', sizeof(mcsSTRING256)); 
+
+    // If no parameter has been given, return NULL 
+    if (_getCalCmd == NULL)
+    {
+        return mcsSUCCESS;
+    }
+
+    // Else build the command parameter line and return it
+    string str;
+    if (_getCalCmd->GetCmdParamLine(str) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    strncpy(cmdParamLine, str.c_str(), sizeof(mcsSTRING256) -1);
+
+    return mcsSUCCESS;
+}
 /**
  * Set the minimum and maximum lengths (in meter) of baseline.
  *
