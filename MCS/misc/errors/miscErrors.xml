@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<errorList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="desErr.xsd"
+    moduleName="misc">
+    <error id="1">
+        <errName>DYN_BUF_ACTION</errName>
+        <errSeverity>Warning</errSeverity>
+        <errFormat>Could not perform Dynamic Buffer action "%.100s". Reason: %.100s.</errFormat>
+    </error>
+    <error id="2">
+        <errName>DYN_BUF_AUTO_INIT</errName>
+        <errSeverity>Severe</errSeverity>
+        <errFormat>Could not initialize the received dynamic buffer in "%.100s".</errFormat>
+    </error>
+    <error id="3">
+        <errName>ALLOC_MEM</errName>
+        <errSeverity>Severe</errSeverity>
+        <errFormat>Could not allocate memory</errFormat>
+    </error>
+</errorList>

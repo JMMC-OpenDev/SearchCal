@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.7 2004-06-22 07:54:12 gzins Exp $"
+* "@(#) $Id: misc.h,v 1.8 2004-07-08 12:06:46 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -11,8 +11,11 @@
 * lafrasse  17-Jun-2004  added miscGetLocalTimeStr
 *                        added miscStripQuotes
 *                        added miscStrToUpper
-* lafrasse  18-Jun-2004  added miscGetExtension
-*                        added miscYankExtension
+*                        added miscGetExtension
+* lafrasse  18-Jun-2004  added miscYankExtension
+*                        added miscResolvePath
+* lafrasse  23-Jun-2004  added miscDynBuf stuff
+* lafrasse  01-Jul-2004  moved miscDynBuf stuff to miscDynBuf.h
 *
 *******************************************************************************/
  

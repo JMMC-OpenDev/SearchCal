@@ -1,15 +1,18 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-06-23 09:05:46 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-07-08 12:06:46 lafrasse Exp $"
 #
-# Makefile of ........
+# Makefile of misc Tests
 #
 # who       when		 what
 # --------  -----------	 -------------------------------------------------------
 # gzins     16-Jun-2004  created
 # lafrasse  23-Jun-2004  added miscTestDate.c
-#
+#                        added miscTestString.c
+#                        added miscTestFile.c
+#                        removed miscTestUtils.c
+#                        added miscTestDynBuf.c
 #
 #*******************************************************************************
 # REMARKS
@@ -35,26 +38,32 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = miscTestDate miscTestString miscTestFile
+EXECUTABLES     = miscTestDate miscTestString miscTestFile miscTestDynBuf
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
 miscTestDate_OBJECTS   = miscTestDate
-miscTestDate_LDFLAGS   =
-miscTestDate_LIBS      = mcs misc
+miscTestDate_LDFLAGS   = -lgdome
+miscTestDate_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
 miscTestString_OBJECTS   = miscTestString
-miscTestString_LDFLAGS   =
-miscTestString_LIBS      = mcs misc
+miscTestString_LDFLAGS   = -lgdome
+miscTestString_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
 miscTestFile_OBJECTS   = miscTestFile
-miscTestFile_LDFLAGS   =
-miscTestFile_LIBS      = mcs misc
+miscTestFile_LDFLAGS   = -lgdome
+miscTestFile_LIBS      = mcs err log misc
+
+#
+# <brief description of xxxxx program>
+miscTestDynBuf_OBJECTS   = miscTestDynBuf
+miscTestDynBuf_LDFLAGS   = -lgdome
+miscTestDynBuf_LIBS      = mcs err log misc
 
 #
 # special compilation flags for single c sources
