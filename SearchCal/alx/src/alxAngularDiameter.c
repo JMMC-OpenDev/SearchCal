@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.9 2005-02-22 16:51:58 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.10 2005-03-03 14:46:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/22 16:51:58  gzins
+ * Updated misDynBufGetNextLine API
+ * Added errors for B-V, V-R and V-K diameters
+ *
  * Revision 1.8  2005/02/22 14:05:13  scetre
  * Patch diam error : use 0.1*d_v_k insted of mean 0.1*diam
  *
@@ -45,7 +49,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.9 2005-02-22 16:51:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.10 2005-03-03 14:46:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -286,7 +290,7 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
         (fabs(*diamVr - meanDiam) > 2.0 * meanDiamErr) ||
         (fabs(*diamVk - meanDiam) > 2.0 * meanDiamErr) )
     {
-        *confidenceIdx = alxCONFIDENCE_LOW;
+        *confidenceIdx = alxNO_CONFIDENCE;
     }
     else
     {
@@ -296,7 +300,7 @@ mcsCOMPL_STAT alxComputeAngularDiameter(mcsFLOAT mgB,
     logTest("Diameter BV = %.3f(%.4f), VR = %.3f(%.4f), VK = %.3f(%.4f)", 
             *diamBv, *diamBvErr, *diamVr, *diamVrErr, *diamVk, *diamVkErr);
     logTest("Confidence index       = %s", 
-            (*confidenceIdx == alxCONFIDENCE_LOW) ? "LOW" : "HIGH");
+            (*confidenceIdx == alxNO_CONFIDENCE) ? "NO" : "HIGH");
 
     return mcsSUCCESS;
 }
