@@ -1,17 +1,17 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsTestCriteria.cpp,v 1.4 2005-01-26 08:21:21 scetre Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    14-Dec-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsTestCriteria.cpp,v 1.5 2005-02-13 08:54:00 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    14-Dec-2004  Created
+ *
+ ******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.4 2005-01-26 08:21:21 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.5 2005-02-13 08:54:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -108,12 +108,12 @@ int main(int argc, char *argv[])
     timlogStop("testCriteria");
     
     vobsSTAR star1;
-    star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08");
-    star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5");
+    star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
+    star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
 
     vobsSTAR star2;
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08");
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
 
     if (star1.IsSame(star2, criteriaList) == mcsFALSE)
     {

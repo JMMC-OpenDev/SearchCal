@@ -1,14 +1,17 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsTestStar.cpp,v 1.8 2005-02-04 10:04:55 gzins Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsTestStar.cpp,v 1.9 2005-02-13 08:54:00 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/04 10:04:55  gzins
+ * Clean-up
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.8 2005-02-04 10:04:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.9 2005-02-13 08:54:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,12 +49,12 @@ int main(int argc, char *argv[])
         printf("%s\t", star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
     }
     printf("\n");
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "-03 47 29.08");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "-03 47 29.08", "");
     mcsFLOAT ra;
     star.GetRa(ra);
     printf("ra (deg) = %f\n", ra);
 
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "24 06 18.5");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "24 06 18.5", "");
     mcsFLOAT dec;
     star.GetDec(dec);
     printf("dec (deg) = %f\n", dec);

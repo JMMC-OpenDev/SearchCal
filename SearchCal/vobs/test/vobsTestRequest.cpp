@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestRequest.cpp,v 1.4 2005-02-07 17:43:06 gluck Exp $"
+ * "@(#) $Id: vobsTestRequest.cpp,v 1.5 2005-02-13 08:54:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/07 17:43:06  gluck
+ * Clean up comment code
+ *
  * Revision 1.3  2005/02/07 17:28:34  gluck
  * New vobsREQUEST class implementation tests
  *
@@ -66,7 +69,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.4 2005-02-07 17:43:06 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.5 2005-02-13 08:54:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -151,14 +154,14 @@ int main(int argc, char *argv[])
     logDebug("-------------------------------------------------");
     logDebug("-> Test of set() methods ...");
     request.SetObjectName("ETA TAU");
-    request.SetObjectRa(36.2);
-    request.SetObjectDec(21.4);
+    request.SetObjectRa("12 04 36.2");
+    request.SetObjectDec("-30 91 21.4");
     request.SetObjectMag(1.3);
-    request.SetSearchBand('M');
+    request.SetSearchBand("M");
     request.SetDeltaRa(12);
     request.SetDeltaDec(8);
-    request.SetMinDeltaMag(0.4);
-    request.SetMaxDeltaMag(0.2);
+    request.SetMinRangeMag(0.4);
+    request.SetMaxRangeMag(0.2);
     request.SetMaxNbOfSelectedObjects(14);
 
     // Display affected request
@@ -176,8 +179,8 @@ int main(int argc, char *argv[])
     logDebug("Get search band = %c", request.GetSearchBand());
     logDebug("Get delta ra = %f", request.GetDeltaRa());
     logDebug("Get delta dec = %f", request.GetDeltaDec());
-    logDebug("Get min delta mag = %f", request.GetMinDeltaMag());
-    logDebug("Get max delta mag = %f", request.GetMaxDeltaMag());
+    logDebug("Get min delta mag = %f", request.GetMinRangeMag());
+    logDebug("Get max delta mag = %f", request.GetMaxRangeMag());
     logDebug("Get max nb of selected object = %i", 
              request.GetMaxNbOfSelectedObjects());
 

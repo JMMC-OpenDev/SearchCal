@@ -1,16 +1,16 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsTestVirtualObservatoryKBand.cpp,v 1.1 2005-02-13 08:49:49 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    25-Aug-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsTestVirtualObservatoryKBand.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    25-Aug-2004  Created
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualObservatoryKBand.cpp,v 1.1 2005-02-13 08:49:49 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualObservatoryKBand.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

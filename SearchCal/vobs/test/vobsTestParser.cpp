@@ -1,16 +1,16 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsTestParser.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    12-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsTestParser.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    12-Jul-2004  Created
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestParser.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestParser.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     char          *uri;
 
     uri = "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280";
-    if (parser.Parse(uri, starList) == FAILURE)
+    if (parser.Parse(uri, "I/280", starList) == FAILURE)
     {
         errDisplayStack();
         errCloseStack();

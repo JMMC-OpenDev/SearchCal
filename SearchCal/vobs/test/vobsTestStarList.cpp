@@ -1,16 +1,16 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsTestStarList.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    12-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    12-Jul-2004  Created
+ *
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.2 2005-02-13 08:54:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
         mcsSTRING16 ra;
         sprintf(id, "%d", i);
         sprintf(ra, "12 30 %d.3", i*10);
-        star[i].SetProperty("ID_MAIN", id);
-        star[i].SetProperty("POS_EQ_RA_MAIN", ra);
+        star[i].SetPropertyValue("ID_MAIN", id, "");
+        star[i].SetPropertyValue("POS_EQ_RA_MAIN", ra, "");
         starList.AddAtTail(star[i]); 
     }
     printf("Is star list empty? : %s\n", 
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     printf("Display all elements, one by one,  of the list.\n");
     for (unsigned int el = 0; el < starList.Size(); el++)
     {
-        starList.GetNextStar((el==0))->Display();
+        starList.GetNextStar((mcsLOGICAL)(el==0))->Display();
     }
     printf("Display first element of the list.\n");
     starList.GetNextStar(mcsTRUE)->Display();
