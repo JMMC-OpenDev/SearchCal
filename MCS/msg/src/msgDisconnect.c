@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgDisconnect.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgDisconnect.c,v 1.2 2004-10-01 14:18:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgDisconnect.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgDisconnect.c,v 1.2 2004-10-01 14:18:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -52,7 +52,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT   msgDisconnect     ()
+mcsCOMPL_STAT   msgDisconnect     (void)
 {
     msgMESSAGE msg;
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgGetMessageQueue.c,v 1.2 2004-10-01 13:08:16 gzins Exp $"
+* "@(#) $Id: msgGetMessageQueue.c,v 1.3 2004-10-01 14:18:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * msgGetMessageQueue function definition.
  */
 
-static char *rcsId="@(#) $Id: msgGetMessageQueue.c,v 1.2 2004-10-01 13:08:16 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgGetMessageQueue.c,v 1.3 2004-10-01 14:18:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -50,7 +50,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * (e.g. close()) by the process. Otherwise the monitoring system will lose
  * syncronization with the message manager.
  */
-mcsINT32 msgGetMessageQueue()
+mcsINT32 msgGetMessageQueue(void)
 {
     logExtDbg("msgGetMessageQueue()"); 
     return (msgManagerSd);
