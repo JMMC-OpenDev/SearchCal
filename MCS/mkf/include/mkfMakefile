@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.10 2004-12-10 07:05:15 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.11 2004-12-10 07:54:05 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
@@ -15,6 +15,7 @@
 # gzins     09-Dec-2004  Updated to add rules for all generated files (error
 #                        header file and C++ command class files)
 # gzins     10-Dec-2004  Added list of CDF files to be installed
+# gzins     10-Dec-2004  Added rules to clean-up generated C++ command classes
 # 
 #*******************************************************************************
 #   NAME
@@ -859,6 +860,8 @@ clean_all: rm_links $(CLEAN_TARGET)
 	-$(AT)$(RM) mkfMake_clean_tclScripts   $(foreach member, $(TCL_SCRIPTS)   $(TCL_SCRIPTS_L),  ../bin/$(member) ../object/$(member).dxt )                    $(OUTPUT)
 	-@$(ECHO) " .\c"
 	-$(AT)$(RM) mkfMake_clean_tclLibraries $(foreach member, $(TCL_LIBRARIES) $(TCL_LIBRARIES_L), ../lib/lib$(member).tcl ../object/$(member).dat )            $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_cdfClasses $(foreach member, $(CDF_FILES), ../include/$(member)_CMD.h ./$(member)_CMD.cpp )            $(OUTPUT)
 	-$(AT)$(RM) mkfMake_clean_indexfiles   ../object/mkfMakeGeneratedFiles.del  $(OUTPUT)
 	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \#\* -print | xargs -i $(RM) {}
