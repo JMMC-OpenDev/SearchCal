@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.10 2004-12-15 15:55:35 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.11 2004-12-21 06:57:30 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -19,6 +19,8 @@
 * gzins     08-Dec-2004  Implemented methods for SendId and MessageId 
 * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
 *                        misc Dynamic Buffer, and removed unused API
+* gzins     20-Dec-2004  Fixed bug in GetBodyPtr which returned a wrong pointer
+*                        when body was empty
 *
 *
 *******************************************************************************/
@@ -28,7 +30,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.10 2004-12-15 15:55:35 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.11 2004-12-21 06:57:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -44,7 +46,6 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-
 
 /*
  * Local Headers 
@@ -404,8 +405,19 @@ char* msgMESSAGE::GetBodyPtr(void)
 {
     logExtDbg("msgMESSAGE::GetBodyPtr()");
 
-    // Return a pointer to the message body
-    return miscDynBufGetBufferPointer(&_body);
+    // If message body is empty
+    if (GetBodySize() == 0)
+    {
+        // Return an empty string
+        return ("");
+    }
+    // Else
+    else
+    {
+        // Return a pointer to the message body
+        return miscDynBufGetBufferPointer(&_body);
+    }
+    // End if
 }
 
 /**
