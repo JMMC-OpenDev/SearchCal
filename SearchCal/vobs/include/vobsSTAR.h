@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.11 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.12 2004-12-06 13:27:41 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -27,7 +27,6 @@
  * Constants definition
  */
 
-#define vobsNB_STAR_PROPERTIES 31       /**< Number of properties */
 #define vobsSTAR_PROP_NOT_SET  "99.99"  /**< Default value of the empty
                                           properties */
 
@@ -80,7 +79,8 @@ typedef enum
     PHOT_JHN_M_ID,              /**< M id */
     PHOT_IR_N_10_4_ID,          /**< N id */
     VELOC_ROTAT_ID,             /**< veloc rotat id */
-    PHOT_COLOR_EXCESS_ID        /**< color id */
+    PHOT_COLOR_EXCESS_ID,       /**< color id */
+    vobsNB_STAR_PROPERTIES
 } vobsUCD_ID;
 
 

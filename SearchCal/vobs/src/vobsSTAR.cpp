@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.2 2004-12-06 13:27:41 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.2 2004-12-06 13:27:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -219,9 +219,8 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(vobsUCD_ID id,
     logExtDbg("sclsvrCALIBRATOR::SetProperty()");
 
     // If it is not a valid property id, return error
-    if ((id == UNKNOWN_UCD_ID) ||
-        (id < UNKNOWN_UCD_ID) ||
-        (id > PHOT_COLOR_EXCESS_ID))
+    if ((id <= UNKNOWN_UCD_ID) ||
+        (id >= vobsNB_STAR_PROPERTIES))
     {
         errAdd(vobsERR_INVALID_UCD_ID, id);
         return FAILURE;
@@ -313,9 +312,8 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, int *value) const
     logExtDbg("vobsSTAR::GetProperty()");
 
     // Check UCD id
-    if ((ucdId == UNKNOWN_UCD_ID) ||
-        (ucdId < -1) ||
-        (ucdId > PHOT_COLOR_EXCESS_ID))
+    if ((id <= UNKNOWN_UCD_ID) ||
+        (id >= vobsNB_STAR_PROPERTIES))
     {
         errAdd(vobsERR_INVALID_UCD_ID, ucdId);
         return FAILURE;
@@ -375,9 +373,8 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, float *value) const
     logExtDbg("vobsSTAR::GetProperty()");
     
     // Check UCD id
-    if ((ucdId == UNKNOWN_UCD_ID) ||
-        (ucdId < -1) ||
-        (ucdId > PHOT_COLOR_EXCESS_ID))
+    if ((id <= UNKNOWN_UCD_ID) ||
+        (id >= vobsNB_STAR_PROPERTIES))
     {
         errAdd(vobsERR_INVALID_UCD_ID, ucdId);
         return FAILURE;
@@ -409,11 +406,10 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, float *value) const
 mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, char *value) const
 {
     logExtDbg("vobsSTAR::GetProperty()");
-    
+
     // Check UCD id
-    if ((ucdId == UNKNOWN_UCD_ID) ||
-        (ucdId < -1) ||
-        (ucdId > PHOT_COLOR_EXCESS_ID))
+    if ((id <= UNKNOWN_UCD_ID) ||
+        (id >= vobsNB_STAR_PROPERTIES))
     {
         errAdd(vobsERR_INVALID_UCD_ID, ucdId);
         return FAILURE;
@@ -466,9 +462,8 @@ mcsLOGICAL vobsSTAR::IsPropertySet(vobsUCD_ID ucdId) const
     logExtDbg("vobsSTAR::GetProperty()");
 
     // Check UCD id
-    if ((ucdId == UNKNOWN_UCD_ID) ||
-        (ucdId < -1) ||
-        (ucdId > PHOT_COLOR_EXCESS_ID))
+    if ((id <= UNKNOWN_UCD_ID) ||
+        (id >= vobsNB_STAR_PROPERTIES))
     {
         return mcsFALSE;
     }
