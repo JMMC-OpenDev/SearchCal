@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c++-small-main.template,v 1.2 2004-06-17 07:14:31 gluck Exp $"
+#%# "@(#) $Id: c++-small-main.template,v 1.3 2004-06-17 07:28:16 gluck Exp $"
 #%# 
 #%# Template for c++ small main program
 #%# 
@@ -50,13 +50,12 @@
 *   BUGS   
 * 
 *-----------------------------------------------------------------------------*/
-#define _POSIX_SOURCE 1
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-static char *rcsId="@(#) $Id: c++-small-main.template,v 1.2 2004-06-17 07:14:31 gluck Exp $"; 
+static char *rcsId="@(#) $Id: c++-small-main.template,v 1.3 2004-06-17 07:28:16 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
