@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.28 2005-02-11 10:32:10 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.29 2005-02-11 10:44:00 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2005/02/11 10:32:10  gzins
+* Added UD, LD and UDDK diameter properties
+*
 * Revision 1.27  2005/02/10 08:07:38  scetre
 * changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
 *
@@ -56,7 +59,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.28 2005-02-11 10:32:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.29 2005-02-11 10:44:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -152,7 +155,7 @@ vobsSTAR::~vobsSTAR()
  */
 mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
                                          const char *origin,
-                                         mcsINT32 confidenceIndex,
+                                         vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
     logExtDbg("vobsSTAR::SetPropertyValue()");
@@ -198,7 +201,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
  */
 mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
                                          const char *origin,
-                                         mcsINT32 confidenceIndex,
+                                         vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
     logExtDbg("vobsSTAR::SetPropertyValue()");

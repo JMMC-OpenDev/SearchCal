@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.28 2005-02-10 16:42:38 gluck Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.29 2005-02-11 10:44:00 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2005/02/10 16:42:38  gluck
+* Correct wrong type for confidenceIndex: mcsINT32 -> vobsCONFIDENCE_INDEX
+*
 * Revision 1.27  2005/02/10 08:07:38  scetre
 * changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
 *
@@ -87,8 +90,12 @@
 #define vobsSTAR_POS_GAL_LAT                    "POS_GAL_LAT"
 #define vobsSTAR_POS_GAL_LON                    "POS_GAL_LON"
 #define vobsSTAR_VELOC_HC                       "VELOC_HC"
-#define vobsSTAR_EXTENSION_DIAM                 "EXTENSION_DIAM"
-#define vobsSTAR_EXTENSION_DIAM_ERROR           "EXTENSION_DIAM_ERROR"
+#define vobsSTAR_LD_DIAM                        "LD_DIAM"
+#define vobsSTAR_LD_DIAM_ERROR                  "LD_DIAM_ERROR"
+#define vobsSTAR_UD_DIAM                        "UD_DIAM"
+#define vobsSTAR_UD_DIAM_ERROR                  "UD_DIAM_ERROR"
+#define vobsSTAR_UDDK_DIAM                      "UDDK_DIAM"
+#define vobsSTAR_UDDK_DIAM_ERROR                "UDDK_DIAM_ERROR"
 #define vobsSTAR_OBS_METHOD                     "OBS_METHOD"
 #define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
 #define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
