@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeJavaClasspath.sh,v 1.1 2004-09-10 13:40:57 gzins Exp $"
+# "@(#) $Id: mkfMakeJavaClasspath.sh,v 1.2 2004-09-10 17:05:54 gzins Exp $"
 #
 # who       when         what
 # --------  --------     ----------------------------------------------
@@ -55,36 +55,65 @@ mod_list=`/bin/ls -1 ../lib/*.jar 2>/dev/null`
 int_list=`/bin/ls -1 $INTROOT/lib/*.jar 2>/dev/null`
 mcs_list=`/bin/ls -1 $MCSROOT/lib/*.jar 2>/dev/null`
 
-int_mod_list=`echo $mod_list`
+### echo ==== MOD ==== 
+### echo $mod_list
+### echo ==== INT ==== 
+### echo $int_list
+### echo ==== MCS ==== 
+### echo $mcs_list
 
-for file in `echo $int_list`
+#
+# The first step is to put in the list
+# all jar files in <MODROOT>/lib
+#
+### echo 1
+for file in $mod_list
 do
+  complete_jar_list="$complete_jar_list:$file"
+  ### echo 1.1 $complete_jar_list  
+done
+
+#
+# Now we add the files in $INTROOT/lib (i.e. $int_list)
+# that are not already in $complete_jar_list
+#
+### echo 2
+for file in $int_list
+do
+    ### echo 2.1 $file
     file_name=`basename $file` 
-    echo $mod_list | grep "\/$file_name" 1>/dev/null
+    echo $complete_jar_list | grep "\/$file_name" 1>/dev/null
+    echo $complete_jar_list | grep `basename $file` 1>/dev/null
     if [ $? != 0 ]
     then
-        int_mod_list=`echo $file; echo $int_mod_list`
+        complete_jar_list="$complete_jar_list:$file"
+        ### echo 2.1.1 $complete_jar_list  
     fi
 done
 
-mcs_list=`echo $int_mod_list`
-for file in `echo $mcs_list`
+#
+# Now we add the files in $ACSROOT/lib (i.e. $mcs_list)
+# that are not already in $complete_jar_list
+#
+### echo 3
+for file in $mcs_list
 do
-    file_name=`basename $file`
-    echo $int_mod_list | grep "\/$file_name" 1>/dev/null
+###     echo 3.1 $file
+###     echo 3.1.1
+    echo $complete_jar_list | grep `basename $file` 1>/dev/null
     if [ $? != 0 ]
     then
-        mcs_list=`echo $file; echo $mcs_list`
+###         echo 3.1.2
+        complete_jar_list="$complete_jar_list:$file"
+###         echo 3.1.3 $complete_jar_list  
     fi
 done
 
-tot_list=`echo $mcs_list`
+### echo 4
 
-#echo "Generating classpath for following JARs: "
-for file in $tot_list
-do
-    export CLASSPATH=$file:$CLASSPATH
-done
+###echo "Generating classpath for following JARs: "
+export CLASSPATH=$complete_jar_list:$CLASSPATH
+### echo 5
 
 echo $CLASSPATH
 
