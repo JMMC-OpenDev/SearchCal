@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.18 2005-02-22 15:59:43 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.19 2005-03-30 12:49:26 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/02/22 15:59:43  gzins
+* Updated because of a miscoDYN_BUFF::GetNextLine() API change (again)
+*
 * Revision 1.17  2005/02/22 15:48:38  lafrasse
 * Updated because of a miscoDYN_BUFF::GetNextLine() API change
 *
@@ -58,7 +61,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.18 2005-02-22 15:59:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.19 2005-03-30 12:49:26 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -353,6 +356,7 @@ mcsUINT32 vobsCDATA::GetNbLinesToSkip(void)
  * internal buffer. And they can be retrieved using GetNextLine().
  *
  * \param buffer pointer to the CDATA, which must be null-terminated
+ * \param nbLinesToSkip number of line to skip
  *
  * \return
  * mcsSUCCESS, or mcsFAILURE if an error occurs when manipuling internal dynamic
@@ -446,7 +450,7 @@ mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
 /**
  * Load a buffer into itself
  *
- * \param dynBuf the buffer to copy
+ * \param buffer the buffer in which the data will be loaded
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned. 

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.19 2005-03-06 20:25:50 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.20 2005-03-30 12:49:26 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/03/06 20:25:50  gzins
+* Updated Store method to remove duplicated code
+*
 * Revision 1.18  2005/03/04 15:49:57  scetre
 * Added in Store method the save with specific list of properties
 *
@@ -142,6 +145,7 @@ public:
      *
      * \param object object contained in the list
      * \param objectList list of objects
+     * \param ucdList list of UCD
      * \param extendedFormat if true, each property is stored with its
      * attributes (origin and confidence index), otherwise only only property is
      * stored.

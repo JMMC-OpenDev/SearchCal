@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.40 2005-03-06 10:44:03 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.41 2005-03-30 12:49:26 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.40  2005/03/06 10:44:03  gzins
+* Removed GetSpectralClass and GetLuminosityClass; not applicable due to the complexity of the spectral type format
+*
 * Revision 1.39  2005/03/04 06:36:18  gzins
 * Fixed bug related to RA/DEC conversion; -00:xx was seen as positive.
 *
@@ -94,7 +97,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.40 2005-03-06 10:44:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.41 2005-03-30 12:49:26 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -177,7 +180,7 @@ vobsSTAR::~vobsSTAR()
  *
  * \param id property id.
  * \param value property value to set
- * \param isComputed booleen to know if it is a computed property
+ * \param origin the origin of the property (catalog, computed, ...)
  * \param confidenceIndex confidence index
  * \param overwrite booleen to know if it is an overwrite property
  *
@@ -224,7 +227,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
  *
  * \param id property id.
  * \param value property value to set
- * \param isComputed booleen to know if it is a computed property
+ * \param origin the origin of the property (catalog, computed, ...)
  * \param confidenceIndex confidence index
  * \param overwrite booleen to know if it is an overwrite property
  *
@@ -810,8 +813,8 @@ mcsINT32 vobsSTAR::NbProperties()
 /**
  * Display all star properties on the console.
  *
- * \param showPropId if true display each star property in a form <propId> =
- * <value>, otherwise all properties are displayed on a single line.
+ * \param showPropId if true display each star property in a form \<propId\> =
+ * \<value\>, otherwise all properties are displayed on a single line.
  */
 void vobsSTAR::Display(mcsLOGICAL showPropId)
 {

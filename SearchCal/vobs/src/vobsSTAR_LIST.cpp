@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.16 2005-03-04 16:28:28 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.17 2005-03-30 12:49:26 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/03/04 16:28:28  scetre
+* Changed Call to Save method
+*
 * Revision 1.15  2005/03/04 16:05:51  scetre
 * Updated call to Save method
 *
@@ -40,7 +43,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.16 2005-03-04 16:28:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.17 2005-03-30 12:49:26 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -362,6 +365,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
  * Save the elements (stars) of the list in a file.
  *
  * \param filename the file where to save
+ * \param ucdList list of ucd to save
  * \param extendedFormat if true, each property is saved with its attributes
  * (origin and confidence index), otherwise only only property is saved.
  *

@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.cpp,v 1.10 2005-02-11 14:22:10 gluck Exp $"
+* "@(#) $Id: vobsCATALOG.cpp,v 1.11 2005-03-30 12:49:26 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/11 14:22:10  gluck
+* - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
+* - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
+* - Updated some comments
+*
 * Revision 1.9  2005/02/08 20:30:37  gzins
 * Changed _name type; mcsSTRING to string
 *
@@ -29,7 +34,7 @@
  * Definition vobsCATALOG class .
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.10 2005-02-11 14:22:10 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.11 2005-03-30 12:49:26 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -94,8 +99,6 @@ vobsCATALOG::~vobsCATALOG()
 
 /**
  * Get a catalog name in a string format
- *
- * \param name  name to get, in a string format
  *
  * \return catalog name or NULL if not set.
  */
