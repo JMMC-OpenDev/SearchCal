@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhTASK.cpp,v 1.2 2004-12-05 19:44:07 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -11,7 +11,7 @@
 * gzins     03-Dec-2004  Added -n command-line option  
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.2 2004-12-05 19:44:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -65,7 +65,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *      mymodSERVER() {};
  *      virtual ~mymodSERVER() {};
  *      virtual mcsCOMPL_STAT AppUsage();
- *      virtual mcsCOMPL_STAT ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
+ *      virtual mcsCOMPL_STAT ParseAppOptions(mcsINT32 argc, char *argv[],
  *                                            mcsINT32 *optInd, 
  *                                            mcsLOGICAL *optUsed);
  *  private:
@@ -85,7 +85,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *  
  *  }
  *  
- *  mcsCOMPL_STAT mymodSERVER::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
+ *  mcsCOMPL_STAT mymodSERVER::ParseAppOptions(mcsINT32 argc, char *argv[],
  *                                          mcsINT32 *optInd, 
  *                                          mcsLOGICAL *optUsed)
  *  {
@@ -339,7 +339,7 @@ mcsCOMPL_STAT evhTASK::PrintArguments()
  * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
  * error message is printed out accordingly.
  */
-mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, mcsINT8 *argv[])
+mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, char *argv[])
 {
     logExtDbg ("evhTASK::ParseOptions ()");
 
@@ -403,10 +403,13 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, mcsINT8 *argv[])
  * \param argc count of the arguments supplied to the method
  * \param argv array of pointers to the strings which are those arguments
  * \param optInd index of the arguments currently parsed 
+ * \param optUsed flag informing whether the current option has been
+ * processed or not.
+ *
  * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
  * error message is printed out accordingly.
  */
-mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
+mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
                                        mcsINT32 *optInd, mcsLOGICAL *optUsed)
 {
     mcsINT32  level;
@@ -577,7 +580,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
  * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
  * error message is printed out accordingly.
  */
-mcsCOMPL_STAT evhTASK::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
+mcsCOMPL_STAT evhTASK::ParseAppOptions(mcsINT32 argc, char *argv[],
                                        mcsINT32 *optInd, mcsLOGICAL *optUsed)
 {
     logExtDbg ("evhTASK::ParseAppOptions ()");
@@ -602,7 +605,7 @@ mcsCOMPL_STAT evhTASK::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
  * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
  * error message is printed out accordingly.
  */
-mcsCOMPL_STAT evhTASK::ParseArguments(mcsINT32 argc, mcsINT8 *argv[],
+mcsCOMPL_STAT evhTASK::ParseArguments(mcsINT32 argc, char *argv[],
                                       mcsINT32 *optInd, mcsLOGICAL *optUsed)
 {
     logExtDbg ("evhTASK::ParseArguments ()");

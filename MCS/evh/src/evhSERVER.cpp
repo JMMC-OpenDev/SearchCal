@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhSERVER.cpp,v 1.2 2004-12-05 19:44:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -18,7 +18,7 @@
  * evhSERVER class definition.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.2 2004-12-05 19:44:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -85,7 +85,7 @@ mcsCOMPL_STAT evhSERVER::PrintArguments()
     return SUCCESS;
 }
 
-mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, mcsINT8 *argv[],
+mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
                                         mcsINT32 *optInd, mcsLOGICAL *optUsed)
 {
     logExtDbg ("evhSERVER::ParseArguments ()");
