@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: errXmlToH.xsl,v 1.7 2005-02-15 12:55:56 gzins Exp $"
+ "@(#) $Id: errXmlToH.xsl,v 1.8 2005-03-04 13:49:54 mella Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.7  2005/02/15 12:55:56  gzins
+ Fixed file header problem; placed <?xml version=1.0 encoding=ISO-8859-1?> as first line
+
  Revision 1.6  2005/02/15 07:34:14  gzins
  Added file header
  
@@ -56,6 +59,7 @@
 
     <xsl:template name="PlaceXmlEntities">
         <xsl:param name="str"/>
+        <!-- Replace gt by entityname -->
         <xsl:variable name="tmp">
             <xsl:call-template name="SubstringReplace">
                 <xsl:with-param name="stringIn" select="$str"/>
@@ -63,6 +67,7 @@
                 <xsl:with-param name="substringOut" select="'&amp;gt;'"/>
             </xsl:call-template>
         </xsl:variable>
+        <!-- Replace lt by entityname -->
         <xsl:variable name="tmp2">
             <xsl:call-template name="SubstringReplace">
                 <xsl:with-param name="stringIn" select="$tmp"/>
@@ -70,8 +75,16 @@
                 <xsl:with-param name="substringOut" select="'&amp;lt;'"/>
             </xsl:call-template>
         </xsl:variable>
+        <!-- Replace %s by %80s -->
+        <xsl:variable name="tmp3">
+            <xsl:call-template name="SubstringReplace">
+                <xsl:with-param name="stringIn" select="$tmp"/>
+                <xsl:with-param name="substringIn" select="'%s'"/>
+                <xsl:with-param name="substringOut" select="'%80s'"/>
+            </xsl:call-template>
+        </xsl:variable>
         
-        <xsl:value-of select="$tmp2"/>
+        <xsl:value-of select="$tmp3"/>
     </xsl:template>
     
     <xsl:template name="SubstringReplace">
