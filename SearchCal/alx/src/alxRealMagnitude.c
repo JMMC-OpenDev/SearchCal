@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.10 2005-02-22 16:18:13 gzins Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.11 2005-03-30 12:48:15 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/22 16:18:13  gzins
+ * Updated misDynBufGetNextLine API
+ *
  * Revision 1.9  2005/02/22 10:16:43  gzins
  * Removed \n in logTest message
  *
@@ -48,7 +51,7 @@
  * \sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.10 2005-02-22 16:18:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.11 2005-03-30 12:48:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -82,7 +85,13 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void);
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION 
         *alxGetPolynamialForInterstellarAbsorption(void);
-
+static mcsCOMPL_STAT
+alxComputeExtinctionCoefficient(mcsFLOAT *av,
+                                mcsFLOAT paralax,
+                                mcsFLOAT gLat,
+                                mcsFLOAT gLon,
+                                alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
+                                    *polynomial);
 
 /* 
  * Local functions definition
@@ -339,6 +348,94 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     return (&polynomial);
 }
 
+/**
+ * Compute the extinction coefficient in V band according to the galatic
+ * lattitude
+ *
+ * \param av extinction coefficient to compute
+ * \param paralax paralax value
+ * \param gLat galactic Lattitude
+ * \param gLon galactic Longitude
+ * \param polynomial polynomial interstellar absorption structure
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned. 
+ */
+static mcsCOMPL_STAT
+    alxComputeExtinctionCoefficient(mcsFLOAT *av,
+                                    mcsFLOAT paralax,
+                                    mcsFLOAT gLat,
+                                    mcsFLOAT gLon,
+                                    alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
+                                        *polynomial)
+{
+    logExtDbg("alxComputeExtinctionCoefficient()");
+
+    /* Compute distance */
+    mcsFLOAT distance;
+    if (paralax == 0)
+    {
+        errAdd(alxERR_INVALID_PARALAX_VALUE, paralax);
+        return mcsFAILURE;
+    }
+    distance = (1 / paralax);
+    
+    /* Compute the extinction coefficient in V band according to the galatic
+     * lattitude. */
+    /* If the lattitude is greated than 50 degrees */
+    if (fabs(gLat) > 50)
+    {
+        /* Set extinction coefficient to 0. */
+        *av = 0;
+    }
+    /* If the lattitude is between 10 and 50 degrees */ 
+    else if ((fabs(gLat) < 50) && (fabs(gLat) > 10))
+    {
+        mcsFLOAT ho=0.120;
+        *av = (0.165 * ( 1.192 - fabs(tan(gLat * M_PI / 180)))) /
+            fabs(sin(gLat * M_PI / 180)) *
+            (1 - exp(-distance * fabs(sin(gLat * M_PI / 180)) / ho));
+    }
+    /* If the lattitude is less than 10 degrees */
+    else
+    {
+        /* Find longitude in polynomial table */ 
+        int i=0;
+        mcsLOGICAL found = mcsFALSE;
+        while ((found == mcsFALSE) && (i < polynomial->nbLines))
+        {
+            /* If longitude belongs to the range */
+            if (gLon >= polynomial->gLonMin[i] && 
+                gLon < polynomial->gLonMax[i])
+            {
+                /* Stop search */
+                found = mcsTRUE;
+            }
+            /* Else */
+            else
+            {
+                /* Go to the next line */
+                i++;
+            }
+        }
+        /* if not found add error */
+        if (found == mcsFALSE)
+        {
+            errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon);
+            return mcsFAILURE;
+        }
+        *av =  polynomial->coeff[i][0]*distance
+            + polynomial->coeff[i][1]*distance*distance
+            + polynomial->coeff[i][2]*distance*distance*distance
+            + polynomial->coeff[i][3]*distance*distance*distance*distance;
+    }
+    /* Display results */
+    logTest ("Galactic longitude          = %.3f", gLon);
+    logTest ("Distance                    = %.3f", distance);
+    logTest ("Extinction coefficient in V = %.3f", *av);
+    
+    return mcsSUCCESS;
+}
 
 /*
  * Public functions definition
@@ -366,7 +463,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
 mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
                                        mcsFLOAT gLat,
                                        mcsFLOAT gLon,
-                                       mcsFLOAT magnitudes[alxNB_BANDS])
+                                       alxMAGNITUDES magnitudes)
 {
     logExtDbg("alxComputeRealMagnitudes()");
 
@@ -386,89 +483,36 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
         return mcsFAILURE;        
     }
 
-    /* Compute distance */
-    mcsFLOAT distance;
-    if (paralax == 0)
+    /* Declare extinction coefficient */ 
+    mcsFLOAT av; 
+   
+    /* Compute extinction coefficient */
+    if (alxComputeExtinctionCoefficient(&av, paralax, gLat, gLon, polynomial) ==
+        mcsFAILURE)
     {
-        errAdd(alxERR_INVALID_PARALAX_VALUE, paralax);
         return mcsFAILURE;
     }
-    distance = (1 / paralax);
     
-    
-    /* Compute the extinction coefficient in V band according to the galatic
-     * lattitude. */
-    /* If the lattitude is greated than 50 degrees */
-    mcsFLOAT av;
-    if (fabs(gLat) > 50)
-    {
-        /* Set extinction coefficient to 0. */
-        av = 0;
-    }
-    /* If the lattitude is between 10 and 50 degrees */ 
-    else if ((fabs(gLat) < 50) && (fabs(gLat) > 10))
-    {
-        mcsFLOAT ho=0.120;
-        av = (0.165 * ( 1.192 - fabs(tan(gLat * M_PI / 180)))) /
-            fabs(sin(gLat * M_PI / 180)) *
-            (1 - exp(-distance * fabs(sin(gLat * M_PI / 180)) / ho));
-    }
-    /* If the lattitude is less than 10 degrees */
-    else
-    {
-        /* Find longitude in polynomial table */ 
-        int i=0;
-        mcsLOGICAL found = mcsFALSE;
-        while ((found == mcsFALSE) && (i < polynomial->nbLines))
-        {
-            /* If longitude belongs to the range */
-            if (gLon >= polynomial->gLonMin[i] && 
-                gLon < polynomial->gLonMax[i])
-            {
-                /* Stop search */
-                found = mcsTRUE;
-            }
-            /* Else */
-            else
-            {
-                /* Go to the next line */
-                i++;
-            }
-            /* End if */
-        }
-        if (found == mcsFALSE)
-        {
-            errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon);
-            return mcsFAILURE;
-        }
-        av =  polynomial->coeff[i][0]*distance
-            + polynomial->coeff[i][1]*distance*distance
-            + polynomial->coeff[i][2]*distance*distance*distance
-            + polynomial->coeff[i][3]*distance*distance*distance*distance;
-    }
-    logTest ("Galactic longitude          = %.3f", gLon);
-    logTest ("Distance                    = %.3f", distance);
-    logTest ("Extinction coefficient in V = %.3f", av);
-
     /* 
      * Computed corrected magnitudes.
      * Co = C - Ac
      * where Ac = Av*Rc/Rv, with Rv=3.10
      */
     /* 
-     * if the pointer of a magnitude is NULL that's mean that there is nothing
+     * If the pointer of a magnitude is NULL that's mean that there is nothing
      * to compute. In this case, do nothing
      */
     int band;
     for (band = alxB_BAND; band <= alxM_BAND; band++)
     {
-        if (magnitudes[band] != alxBLANKING_VALUE)
+        if (magnitudes[band].isSet == mcsTRUE)
         {
-            magnitudes[band] = magnitudes[band] 
+            magnitudes[band].value = magnitudes[band].value 
                 - (av * extinctionRatioTable->rc[band] / 3.10);
         }
         
-        logTest("Corrected magnitude[%d] = %0.3f", band, magnitudes[band]); 
+        logTest("Corrected magnitude[%d] = %0.3f",
+                band, magnitudes[band].value); 
     }
 
     return mcsSUCCESS;
