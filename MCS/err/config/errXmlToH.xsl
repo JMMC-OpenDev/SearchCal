@@ -1,3 +1,14 @@
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $Id: errXmlToH.xsl,v 1.6 2005-02-15 07:34:14 gzins Exp $"
+
+ History 
+ ~~~~~~~
+ $Log: not supported by cvs2svn $ 
+-->
+
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
