@@ -2,36 +2,42 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooDoxygen,v 1.4 2004-06-24 13:36:24 gzins Exp $"
+# "@(#) $Id: ctooDoxygen,v 1.5 2004-06-24 17:31:44 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # gzins     09-Jun-2004  created from ALMA doxygenize program
 #
 #************************************************************************
-#   NAME        ctooDoxygen
+# NAME 
+#   ctooDoxygen - front-end to doxygen utilities
 # 
-#   SYNOPSIS    ctooDoxygen [ clean ] 
+# SYNOPSIS  
+#   ctooDoxygen [ clean ] 
 # 
-#   DESCRIPTION calls doxygen onto a modules, modifying a standard all-purpose
+# DESCRIPTION
+#   Calls doxygen onto a modules, modifying a standard all-purpose
 #   template for IDL and API, and generating both html and RTF documentation
 #   This script is meant to be called by the make command when executing make
 #   doc
 #
-#   FILES   ${MCSROOT}/templates/forDoxygen/doxyfile
-#           ${MCSROOT}/templates/forDoxygen/doxygen-footer.html
-#           ${MCSROOT}/templates/forDoxygen/doxygen-header.html
+# FILES  
+#   ${MCSROOT}/templates/forDoxygen/doxyfile
+#   ${MCSROOT}/templates/forDoxygen/doxygen-footer.html
+#   ${MCSROOT}/templates/forDoxygen/doxygen-header.html
 #
-#   RETURN VALUES   0  for success
-#                   -1 for no template file
+# RETURN VALUES
+#   0  for success
+#   -1 for no template file
 #
-#   CAUTIONS    It assumes to be launched in the src of a CMM module
+# CAUTIONS
+#   It assumes to be launched in the src of a CMM module
 #
-#   EXAMPLES
+# EXAMPLES
 #
-#   SEE ALSO
+# SEE ALSO
 #
-#   BUGS     
+# BUGS     
 #
 #------------------------------------------------------------------------
 #
