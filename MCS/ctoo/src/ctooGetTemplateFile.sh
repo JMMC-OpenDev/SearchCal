@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateFile.sh,v 1.4 2004-09-06 14:32:02 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateFile.sh,v 1.5 2004-09-13 06:09:23 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -40,7 +40,7 @@
 # Create a customized template file.
 # 
 # \synopsis
-# \e ctooGetTemplateFile \e \<template\> \e <file>
+# \e ctooGetTemplateFile \e \<template\> \e \<file\>
 # 
 # \param template : original template filename (eventually with its path) 
 #                   from which the new customized template file is generated.
