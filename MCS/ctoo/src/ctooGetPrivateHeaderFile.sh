@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetPrivateHeaderFile.sh,v 1.1 2004-09-07 13:22:57 gluck Exp $"
+# "@(#) $Id: ctooGetPrivateHeaderFile.sh,v 1.2 2004-09-09 07:58:04 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -163,19 +163,15 @@ echo -e "\n \n" >> $privateHeaderFile
 
 # get line numero of lines beginning by #ifdef __cplusplus
 ifdefLineNo=(`grep -n "^#ifdef __cplusplus$" $privateHeaderTemplateFile | awk -F: '{print $1}'`)
-echo "tab = ${ifdefLineNo[*]}"
 
 # Element number of ifdefLineNo array
 arrayEltNb=${#ifdefLineNo[*]}
-echo "nb el : $arrayEltNb"
 
 # Index of last array element
 lastEltIndex=$(($arrayEltNb - 1))
-echo "last = $lastEltIndex"
 
 # get line numero of the first line of the last block
 firstLineLastBlockLineNo=${ifdefLineNo[$lastEltIndex]}
-echo "line = $firstLineLastBlockLineNo"
 
 # Get file line number
 fileLineNumber=(`wc -l $privateHeaderTemplateFile`)
