@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestVirtualobs.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"
+* "@(#) $Id: vobsTestVirtualobs.cpp,v 1.3 2004-12-21 09:52:27 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualobs.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualobs.cpp,v 1.3 2004-12-21 09:52:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    logSetStdoutLogLevel(logQUIET);
+    logSetStdoutLogLevel(logEXTDBG);
     
     logInfo("Starting ...");
     vobsREQUEST request;

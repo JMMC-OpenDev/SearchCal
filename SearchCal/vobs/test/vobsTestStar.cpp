@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestStar.cpp,v 1.3 2004-12-20 09:51:06 scetre Exp $"
+* "@(#) $Id: vobsTestStar.cpp,v 1.4 2004-12-21 09:52:27 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.3 2004-12-20 09:51:06 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.4 2004-12-21 09:52:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -97,7 +97,13 @@ int main(int argc, char *argv[])
     logSetStdoutLogLevel(logINFO);
     timlogStart(MODULE_ID, logINFO, "98", "testStar");
 
-    logInfo("Starting ...");
+    vobsSTAR star;
+    for (unsigned int el = 0; el < star.NbProperties(); el++)
+     {
+         printf("%s\n",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
+     }
+
+    /*logInfo("Starting ...");
 
     vobsSTAR_LIST list;
     
@@ -108,7 +114,7 @@ int main(int argc, char *argv[])
         list.AddAtTail(star);
     }
     timlogStop("testStar");
-    
+    */
 #if 0
     vobsSTAR star1;
     star1.SetPropertyValue(vobsSTAR_PHOT_JHN_U, 12);

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.10 2004-12-21 08:42:17 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.11 2004-12-21 09:52:27 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.10 2004-12-21 08:42:17 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.11 2004-12-21 09:52:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -197,6 +197,42 @@ vobsSTAR_PROPERTY *vobsSTAR::GetProperty(char *id)
     }
     // End if
 }
+
+/**
+ * Return the next property in the list
+ *
+ * This method returns the pointer to the next element of the list. If \em
+ * init is mcsTRUE, it returns the first element of the list.
+ *
+ * This method can be used to move forward in the list, as shown below:
+ * \code
+ *     for (unsigned int el = 0; el < star.NbProperties(); el++)
+ *     {
+ *         printf("%s",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
+ *     }
+ * \endcode
+ * 
+ * \return pointer to the next element of the list or NULL if the end of the
+ * list is reached.
+ */
+vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
+{
+    logExtDbg("vobsSTAR::GetNextProperty()");
+    if (init == mcsTRUE)
+    {
+        _propertyListIterator = _propertyList.begin();
+    }
+    else
+    {
+        _propertyListIterator++;
+        if ( _propertyListIterator== _propertyList.end())
+        {
+            return NULL;
+        }
+    }
+    return (&(_propertyListIterator->second));
+}
+
 
 /**
  * Get a star property.
