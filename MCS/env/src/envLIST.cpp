@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.cpp,v 1.12 2005-02-28 14:25:00 lafrasse Exp $"
+ * "@(#) $Id: envLIST.cpp,v 1.13 2005-03-24 15:32:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/28 14:25:00  lafrasse
+ * Reversed changelog order
+ *
  * Revision 1.11  2005/02/28 14:13:50  lafrasse
  * Moved the MCS 'default' environment definition from hard-coded values to the 'mcsEnvList' file
  *
@@ -39,7 +42,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.12 2005-02-28 14:25:00 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.13 2005-03-24 15:32:05 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -278,6 +281,16 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
                 errAdd(envERR_FORMAT_ENVLIST, currentLine,
                        "$MCSROOT/etc/mcsEnvList");
                 return mcsFAILURE;
+            }
+
+            // If 'hostName' contains the 'localhost' value
+            if (strcmp(hostName, "localhost") == 0)
+            {
+                // Replace it by the local host IP address
+                if (miscGetHostName(hostName, sizeof(hostName)) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
             }
 
             // Verify that there is not a 'parsedEnvName' element in the map
