@@ -29,9 +29,9 @@
     <xs:complexType name="error">
     
     <xs:sequence>
-    <xs:element name="errName" type="xs:string" use="required"/>
-    <xs:element name="errSeverity" type="errSeverity" use="required"/>
-    <xs:element name="errFormat" type="xs:string" use="required"/>
+    <xs:element name="errName" type="xs:string"/>
+    <xs:element name="errSeverity" type="errSeverity"/>
+    <xs:element name="errFormat" type="xs:string"/>
     </xs:sequence>
     
     <xs:attribute name="id" type="xs:positiveInteger" use="required"/>
