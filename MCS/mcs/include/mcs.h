@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.14 2005-01-06 07:41:10 gzins Exp $"
+* "@(#) $Id: mcs.h,v 1.15 2005-01-26 10:18:48 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -18,6 +18,7 @@
 *                        Changed value for mcsFAILURE to -1
 *                        Added FAILURE and SUCCESS macros for backward
 *                        compatibility
+* lafrasse  26-Jan-2005  Changed mcsUNKNOWN_ENV from "none" to "default"
 *
 *******************************************************************************/
 
@@ -40,7 +41,7 @@ extern "C" {
                                     /* 15 characters + 1 byte alignement*/
 #define mcsCMD_LEN              8   /* max. length of a command name    */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes  */
-#define mcsUNKNOWN_ENV  "none"      /* name used for unknown environment*/
+#define mcsUNKNOWN_ENV  "default"   /* name used for unknown environment*/
 
 /************************************************************************
  *                          MCS   Data  Types                           *
