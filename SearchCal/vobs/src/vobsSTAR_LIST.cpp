@@ -1,14 +1,16 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    06-Jul-2004  Created
-*
-*******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+ * JMMC project
+ *
+ * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"
+ *
+ * who       when         what
+ * --------  -----------  ------------------------------------------------------
+ * scetre    06-Jul-2004  Created
+ * gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
+ *
+ ******************************************************************************/
+
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -80,7 +82,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
      
     for (unsigned int el = 0; el < list.Size(); el++)
     {
-        AddAtTail(*(list.GetNextStar((el==0))));
+        AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
     }
     return SUCCESS;
 }
@@ -206,7 +208,7 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  * \code
  *     for (unsigned int el = 0; el < starList.Size(); el++)
  *     {
- *         starList.GetNextStar((el==0))->View();
+ *         starList.GetNextStar((mcsLOGICAL)(el==0))->View();
  *     }
  * \endcode
  * \return pointer to the next element of the list or NULL if the end of the
@@ -293,7 +295,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     for (unsigned int el = 0; el < nbStars; el++)
     {
         vobsSTAR *starPtr;
-        starPtr = list.GetNextStar((el==0));
+        starPtr = list.GetNextStar((mcsLOGICAL)(el==0));
         // If star is in the list
         vobsSTAR *starToUpdatePtr;
         starToUpdatePtr = GetStar(*starPtr, intervalRa, intervalDec);

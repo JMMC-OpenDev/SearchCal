@@ -1,15 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsPARSER.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+ * "@(#) $Id: vobsPARSER.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"
  *
  * who       when         what
- * --------  -----------  -------------------------------------------------------
+ * --------  -----------  ------------------------------------------------------
  * scetre    06-Jul-2004  Created
+ * gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
  *
- *******************************************************************************/
+ ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -135,7 +136,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
                 logTest("    +----------+--------------+--------------------+");
             }
             // Get the column name and UCD
-            if (cData.getNextColDesc(&colName, &ucdName, (i==0)) == FAILURE)
+            if (cData.getNextColDesc(&colName, 
+                                     &ucdName, (mcsLOGICAL)(i==0)) == FAILURE)
             {
                 return FAILURE;
             }
@@ -487,7 +489,8 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             for (int j=0; j < nbUcd; j++)
             {
                 // Get the column name and UCD
-                if (cData->getNextColDesc(&colName, &ucdName, (j==0)) == FAILURE)
+                if (cData->getNextColDesc(&colName, 
+                                          &ucdName, (mcsLOGICAL)(j==0)) == FAILURE)
                 {
                     return FAILURE;
                 }

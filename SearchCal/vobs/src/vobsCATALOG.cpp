@@ -1,14 +1,14 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsCATALOG.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    27-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsCATALOG.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"
+ *
+ * who       when         what
+ * --------  -----------  ------------------------------------------------------
+ * scetre    27-Jul-2004  Created
+ * gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
+ *
+ ******************************************************************************/
 
 
 /**
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.2 2004-12-09 06:43:12 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -510,7 +510,7 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
             mcsSTRING32 dec;
             mcsSTRING32 ddec, mdec, sdec;
             
-            vobsSTAR *star = list.GetNextStar((el==0));
+            vobsSTAR *star = list.GetNextStar((mcsLOGICAL)(el==0));
             star->GetProperty(POS_EQ_RA_MAIN_ID, ra);
             if (sscanf(ra, "%s %s %s", (char*)&hra, (char*)&mra, (char*)&sra) != 3)
             {
