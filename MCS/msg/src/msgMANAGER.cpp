@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.1 2004-12-07 07:39:26 gzins Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.2 2004-12-08 17:37:29 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
+* gzins     08-Dec-2004  Updated to support several processes with same name  
 *
 *
 *******************************************************************************/
@@ -15,7 +16,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.1 2004-12-07 07:39:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.2 2004-12-08 17:37:29 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,7 +60,14 @@ msgMANAGER::~msgMANAGER()
 /*
  * Public methods
  */
-
+/**
+ * Initialization of manager.
+ *
+ * It registers application to MCS services, parses the
+ * command-line parameters and open the connection socket.
+ *
+ * \return SUCCESS, or FAILURE if an error occurs.
+ */
 mcsCOMPL_STAT msgMANAGER::Init(int argc, char *argv[])
 {
     logExtDbg("msgMANAGER::Init()");
@@ -95,7 +103,10 @@ mcsCOMPL_STAT msgMANAGER::Init(int argc, char *argv[])
     return SUCCESS;
 }
 
-
+/**
+ * Main loop.
+ *
+ */
 mcsCOMPL_STAT msgMANAGER::MainLoop()
 {
     logExtDbg("msgMANAGER::MainLoop()");
@@ -192,13 +203,11 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                                     (strcmp (msg.GetCommand(), msgPING_CMD)
                                      == 0))
                                 {
-#if 1
                                     /* Handle the received command */
                                     if (HandleCmd(msg) == FAILURE)
                                     {
                                         errCloseStack();
                                     }
-#endif
                                 }
                                 else // If the command is not for msgManager
                                 {
@@ -365,6 +374,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
         {
             logError ("%s: Invalid option %s", 
                       mcsGetProcName(), argv[optInd] );
+            return FAILURE;
         }
     }
     return SUCCESS;
@@ -440,44 +450,21 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
             {
                 logTest("Connection demand received from %s ...",
                         msg.GetSender());
-                
-                /* If a similarly named process is already registered... */
-                if (_processList.GetProcess(msg.GetSender())
-                    != NULL)
+
+                logInfo("'%s' connection accepted", msg.GetSender());
+
+                /* Add the new process to the process list */
+                newProcess->SetName(msg.GetSender());
+                if (_processList.AddAtTail(newProcess) == FAILURE)
                 {
-                    logWarning(" - process already registered",
-                               "'%s' connection refused", msg.GetSender());
-
-                    /* Give back the error the requesting process */
-                    errAdd(msgERR_DUPLICATE_PROC, msg.GetSender());
-                    if (SendReply(msg, mcsTRUE, newProcess) == FAILURE)
-                    {
-                        errCloseStack();
-                    }
-
-                    /* Close the connection */
-                    delete(newProcess);
+                    errCloseStack();
                 }
-                else
-                {
-                    /* Send a registering validation messsage */
-                    msg.SetBody("OK", 0);
-                    if (SendReply(msg, mcsTRUE, newProcess) == FAILURE)
-                    {
-                        delete(newProcess);
-                        errCloseStack();
-                    }
-                    else
-                    {
-                        logInfo("'%s' connection accepted", msg.GetSender());
 
-                        /* Try to add the new process to the process list */
-                        newProcess->SetName(msg.GetSender());
-                        if (_processList.AddAtTail(newProcess) == FAILURE)
-                        {
-                            errCloseStack();
-                        }
-                    }
+                /* Send a registering validation messsage */
+                msg.SetBody("OK", 0);
+                if (SendReply(msg, mcsTRUE) == FAILURE)
+                {
+                    errCloseStack();
                 }
             }
             else /* Wrong message received... */
@@ -487,7 +474,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
                            "- '%s' process connection refused",
                            msg.GetCommand(), msgREGISTER_CMD,
                            msg.GetSender());
-                delete(newProcess);
+                delete (newProcess);
             }
         }
     }
@@ -585,7 +572,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
     // Get sender
     if (sender == NULL)
     {
-        sender = _processList.GetProcess(msg.GetSender());
+        sender = _processList.GetProcess(msg.GetSender(), msg.GetSenderId());
     }
     if (sender == NULL)
     {
@@ -812,12 +799,12 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
 
         /* Try to close the connection */
         logInfo("Connection with process '%s' closed", msg.GetSender());
-#if 0
-        if (msgManagerProcessListRemove(procList, process) == FAILURE)
+        msgPROCESS *sender;
+        sender = _processList.GetProcess(msg.GetSender(), msg.GetSenderId());
+        if (_processList.Remove(sender->GetDescriptor()) == FAILURE)
         {
             errCloseStack();
         }
-#endif
     }
     /* If the received command is a EXIT request... */
     else if (strcmp(msg.GetCommand(), msgEXIT_CMD) == 0)
