@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.14 2004-06-23 13:11:07 gzins Exp $"
+* "@(#) $Id: log.c,v 1.15 2004-06-23 14:22:27 gzins Exp $"
 *
 *
 * who       when                 what
@@ -134,9 +134,9 @@
 static logRULE logRule = {
     mcsTRUE,
     mcsTRUE,
-    logWARNING,
-    logWARNING,
-    logWARNING,
+    logINFO,
+    logINFO,
+    logINFO,
     mcsTRUE,
     mcsTRUE
 };
