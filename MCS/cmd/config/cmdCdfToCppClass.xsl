@@ -180,7 +180,7 @@ using namespace std;
  *
  * \param _<xsl:value-of select="./name"/>_ a pointer where to store the parameter.
  * 
- * \return an MCS completion status code (SUCCESS or FAILURE).
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */ 
 mcsCOMPL_STAT <xsl:value-of select="$className"/>::Get<xsl:value-of select="$paramName"/>(<xsl:call-template name="GetMcsTypeForParam"><xsl:with-param name="paramNode" select="."/></xsl:call-template>*_<xsl:value-of select="./name"/>_)
 {
@@ -215,7 +215,7 @@ mcsCOMPL_STAT <xsl:value-of select="$className"/>::Get<xsl:value-of select="$par
  *
  * \param _<xsl:value-of select="./name"/>_ a pointer where to store the parameter.
  * 
- * \return an MCS completion status code (SUCCESS or FAILURE).
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */ 
 mcsCOMPL_STAT <xsl:value-of select="$className"/>::GetDefault<xsl:value-of select="$paramName"/>(<xsl:call-template name="GetMcsTypeForParam"><xsl:with-param name="paramNode" select="."/></xsl:call-template>*_<xsl:value-of select="./name"/>_)
 {
