@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.20 2004-08-03 09:09:04 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.21 2004-12-17 08:14:09 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -28,6 +28,7 @@
 *                        string specific functions move from miscDynStr.h to
 *                        miscDynBuf.h
 * lafrasse  03-Aug-2004  Added miscNetwork.h
+* gzins     16-Dec-2004  Added miscHash.h
 *
 *
 *******************************************************************************/
@@ -55,7 +56,7 @@ extern "C" {
 #include "miscFile.h"
 #include "miscNetwork.h"
 #include "miscString.h"
-
+#include "miscHash.h"
 
 #ifdef __cplusplus
 }
