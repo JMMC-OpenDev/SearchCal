@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.11 2005-03-03 10:46:47 gzins Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.12 2005-03-03 16:13:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/03/03 10:46:47  gzins
+ * Fixed bug in range check of float parameters
+ *
  * Revision 1.10  2005/02/28 13:38:18  lafrasse
  * Added minimum and maximum parameter values information output in cmdPARAM:GetHelp()
  *
@@ -36,7 +39,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.11 2005-03-03 10:46:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.12 2005-03-03 16:13:43 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -198,14 +201,6 @@ string cmdPARAM::GetHelp()
         help.append("')");
     }
 
-    // If there is a given unit
-    if (! _unit.empty())
-    {
-        help.append(" (unit = '");
-        help.append(_unit);
-        help.append("')");
-    }
-
     // If there is a given minimum and maximum value
     if ((! _minValue.empty()) && (! _maxValue.empty()))
     {
@@ -225,14 +220,6 @@ string cmdPARAM::GetHelp()
     {
         help.append(" (maximum value of '");
         help.append(_maxValue);
-        help.append("')");
-    }
-
-    // If there is a given unit
-    if (! _unit.empty())
-    {
-        help.append(" (unit = '");
-        help.append(_unit);
         help.append("')");
     }
 
