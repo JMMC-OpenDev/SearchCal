@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.4 2004-11-22 15:55:08 scetre Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.5 2004-11-22 16:04:31 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -92,7 +92,7 @@ public:
     virtual mcsCOMPL_STAT Receive(msgMESSAGE &msg,
                                   mcsINT32 timeoutInMs);
 
-    virtual mcsCOMPL_STAT IsValid(void);
+    virtual mcsCOMPL_STAT IsConnected(void);
     
 protected:
 
