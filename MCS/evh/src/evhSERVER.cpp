@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.cpp,v 1.3 2004-12-22 09:02:01 gzins Exp $"
+* "@(#) $Id: evhSERVER.cpp,v 1.4 2005-01-07 18:22:52 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,15 +12,18 @@
 * gzins     03-Dec-2004  Added -n command-line option  
 * gzins     22-Dec-2004  Attached callback for HELP command
 *                        Replaced GetBodyPtr by GetBody
+* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+*                        Removed SendCommand()
+*                        Added some method documentation
 *
 *******************************************************************************/
 
 /**
  * \file
- * evhSERVER class definition.
+ * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.3 2004-12-22 09:02:01 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.4 2005-01-07 18:22:52 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -66,12 +69,12 @@ evhSERVER::~evhSERVER()
  *
  * This method gives information about the synopsis of the program.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhSERVER::PrintSynopsis()
 {
     std::cout << "Usage:" << Name() << " [OPTIONS] [<COMMAND> [<PARAMS>]]"<< endl;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -79,16 +82,25 @@ mcsCOMPL_STAT evhSERVER::PrintSynopsis()
  *
  * This method gives information about the arguments of the program.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhSERVER::PrintArguments()
 {
     cout <<" Argument        : COMMAND      name of command to be executed" 
         <<  endl;
     cout <<"                   PARAMS       command parameters" <<  endl;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
+/**
+ * Parse the specific arguments.
+ *
+ * This method parses the arguments (comand-line arguments which have not been
+ * identified as an option). The recognized arguments are the command and its
+ * associated parameters.
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
 mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
                                         mcsINT32 *optInd, mcsLOGICAL *optUsed)
 {
@@ -102,42 +114,42 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
         {
             // Do not proces argument, and return
             *optUsed = mcsFALSE;
-            return SUCCESS;
+            return mcsSUCCESS;
         }
         // End if
 
         // Set command name
-        if (_msg.SetCommand(argv[*optInd]) == FAILURE)
+        if (_msg.SetCommand(argv[*optInd]) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
-        return SUCCESS;
+        return mcsSUCCESS;
     }
-    // Else command parameters not yet set
+    // Else 
     else 
     {
         if (_msg.GetBodySize() == 0)
         {
             // Set command parameters 
-            if (_msg.SetBody(argv[*optInd], strlen(argv[*optInd])) == FAILURE)
+            if (_msg.SetBody(argv[*optInd], strlen(argv[*optInd])) == mcsFAILURE)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
-            return SUCCESS;
+            return mcsSUCCESS;
         }
     }
 
     // Argument has not been processed
     *optUsed = mcsFALSE;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
  * Initialization of server.
  * It registers callback for VERSION command.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
 {
@@ -147,9 +159,9 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
 
     // Registers application to MCS services and parses the command-line
     // parameters
-    if (evhTASK::Init(argc, argv) == FAILURE)
+    if (evhTASK::Init(argc, argv) == mcsFAILURE)
     {
-        return (FAILURE);
+        return (mcsFAILURE);
     }
 
     // Add callback to VERSION command
@@ -167,46 +179,51 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
     if (strlen(_msg.GetCommand()) == 0)
     {
         // Connection to message services
-        if (Connect() == FAILURE)
+        if (Connect() == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
  * Connection to the MCS message service.
  *
- * It registers callback for VERSION command.
+ * Establish the connection to the MCS message service.
  *
- * \return SUCCESS 
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT evhSERVER::Connect()
 {
     logExtDbg("evhSERVER::Connect()");
 
     // Connect to message services
-    if (_msgManager.Connect(Name()) == FAILURE)
+    if (_msgManager.Connect(Name()) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
+/**
+ * Close connection to the MCS message service.
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
 mcsCOMPL_STAT evhSERVER::Disconnect()
 {
     logExtDbg("evhSERVER::Disconnect()");
 
     // Disconnect from message services
-    if (_msgManager.Disconnect() == FAILURE)
+    if (_msgManager.Disconnect() == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -228,38 +245,13 @@ mcsCOMPL_STAT evhSERVER::MainLoop(msgMESSAGE *msg)
 }
 
 /**
- * Send a command message to a process.
- *
- * Send the \<command\>  to the \<destProc\> named process. The command
- * parameters (if any) has to be given in \<paramList\>. The parameter list
- * length can be specified using \<paramLen\>, if it is not given then the
- * length of the parameter list string is used.
- *
- * \param command command name
- * \param destProc remote process name
- * \param paramList parameter list stored in a string
- * \param paramsLen length of the parameter list string
- *
- * \return an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT evhSERVER::SendCommand(const char        *command,
-                                     const mcsPROCNAME  destProc,
-                                     const char        *paramList,  
-                                     mcsINT32           paramsLen)
-{
-    logExtDbg("evhSERVER::SendCommand()");
-
-    return _msgManager.SendCommand(command, destProc, paramList, paramsLen);
-}
- 
-/**
  * Send a reply message.
  *
  * \param msg the message to reply
  * \param lastReply flag to specify if the current message is the last one or
  * not
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
 {
@@ -272,13 +264,13 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
         if (errStackIsEmpty() == mcsTRUE)
         {
             printf("%s\n", msg.GetBody());
-            return SUCCESS;
+            return mcsSUCCESS;
         }
         else
         {
             errDisplayStack();
             errCloseStack();
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     // Esle
@@ -288,6 +280,5 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
         return _msgManager.SendReply(msg, lastReply);
     }
 }
-
 
 /*___oOo___*/
