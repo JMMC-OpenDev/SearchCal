@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.12 2004-10-11 07:23:13 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.13 2004-10-15 08:14:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.12 2004-10-11 07:23:13 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.13 2004-10-15 08:14:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,6 +59,7 @@ vobsPARSER::~vobsPARSER()
  *
  * \param uri URI from where XML document has to be loaded.
  * \param starList list where star has to be put.
+ * \param fileName file for the save of the result of the asking
  *
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
  * an error is added to the error stack. The possible errors are :
@@ -164,8 +165,10 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
             mcsSTRING256 file;
             strcpy(file, "$INTROOT/tmp/");
             strcat(file, fileName);
+
             //printf("%s\n",miscResolvePath(file));
             f=fopen(miscResolvePath(file), "w+");
+
             if (f==NULL)
             {
                 errAdd(vobsERR_NO_FILE,miscResolvePath(file));

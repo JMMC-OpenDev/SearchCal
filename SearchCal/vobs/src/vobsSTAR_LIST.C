@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.9 2004-10-11 07:23:13 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.10 2004-10-15 08:14:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.9 2004-10-11 07:23:13 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.10 2004-10-15 08:14:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -238,7 +238,8 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
  * found in list.
  */
 vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
-                                 float intervalRa, float intervalDec)
+                                 float intervalRa,
+                                 float intervalDec)
 {
     //logExtDbg("vobsSTAR_LIST::GetStar()");
 
@@ -353,12 +354,17 @@ void vobsSTAR_LIST::DisplayOne(void)
  * Save the elements (stars) of the list in a file.
  *
  * \param filename the file where to save
+ *
+ * \b Error codes:\n
+ * The possible errors are :
+ * \li vobsERR_NO_FILE
  */
 void vobsSTAR_LIST::Save(mcsSTRING256 filename)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
     
     FILE *f=NULL;
+
     f=fopen(miscResolvePath(filename), "w+");
     if (f==NULL)
     {
