@@ -34,10 +34,50 @@
             <xsl:text> </xsl:text>
             <xsl:value-of select="@id" />
             <xsl:text>   /**&lt;  </xsl:text>
-            <xsl:value-of select="errFormat" />
+            <xsl:call-template name="PlaceXmlEntities">
+                <xsl:with-param name="str" select="errFormat"/>
+            </xsl:call-template>
             <xsl:text> */&#xA;</xsl:text>
         </xsl:for-each>
     </xsl:template>
 
-
+    <xsl:template name="PlaceXmlEntities">
+        <xsl:param name="str"/>
+        <xsl:variable name="tmp">
+            <xsl:call-template name="SubstringReplace">
+                <xsl:with-param name="stringIn" select="$str"/>
+                <xsl:with-param name="substringIn" select="'&gt;'"/>
+                <xsl:with-param name="substringOut" select="'&amp;gt;'"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="tmp2">
+            <xsl:call-template name="SubstringReplace">
+                <xsl:with-param name="stringIn" select="$tmp"/>
+                <xsl:with-param name="substringIn" select="'&lt;'"/>
+                <xsl:with-param name="substringOut" select="'&amp;lt;'"/>
+            </xsl:call-template>
+        </xsl:variable>
+        
+        <xsl:value-of select="$tmp2"/>
+    </xsl:template>
+    
+    <xsl:template name="SubstringReplace">
+        <xsl:param name="stringIn"/>
+        <xsl:param name="substringIn"/>
+        <xsl:param name="substringOut"/>
+        <xsl:choose>
+            <xsl:when
+                test="contains($stringIn,$substringIn)">
+                <xsl:value-of select="concat(substring-before($stringIn,$substringIn),$substringOut)"/>
+                <xsl:call-template name="SubstringReplace">
+                    <xsl:with-param name="stringIn" select="substring-after($stringIn,$substringIn)"/>
+                    <xsl:with-param name="substringIn" select="$substringIn"/>
+                    <xsl:with-param name="substringOut" select="$substringOut"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$stringIn"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 </xsl:stylesheet>
