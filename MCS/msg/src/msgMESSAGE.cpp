@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.20 2005-01-29 19:54:46 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.21 2005-02-02 16:42:44 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/01/29 19:54:46  gzins
+ * Added AppendStringToBody method
+ *
  * Revision 1.19  2005/01/29 10:05:06  gzins
  * Changed msgMESSAGE.lastReply type from mcsLOGICAL to mcsSTRING8
  *
@@ -53,7 +56,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.20 2005-01-29 19:54:46 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.21 2005-02-02 16:42:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -86,6 +89,7 @@ msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
     memset(&_header, 0, sizeof(_header));
 
     // Initializing the body
+    miscDynBufInit(&_body);
     ClearBody(); 
 
     // Message is considered extern by default
@@ -486,7 +490,6 @@ mcsINT32 msgMESSAGE::GetBodySize(void) const
 mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
 {
     logExtDbg("msgMESSAGE::ClearBody()");
-
 
     // Empty the body buffer
     if (miscDynBufReset(&_body) == mcsFAILURE)
