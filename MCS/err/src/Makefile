@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-06-23 13:04:15 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-06-24 07:27:04 mella Exp $"
 #
 # Makefile of ........
 #
@@ -18,26 +18,26 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+#USER_CFLAGS =
 
 #
 # additional include and library search paths
 USER_INC = -I/usr/include/libgdome \
 		   -I/usr/lib/glib-2.0/include/ \
 		   -I/usr/include/glib-2.0
-#USER_LIB = 
+#USER_LIB =
 
 #
 # MODULE CODE DESCRIPTION:
 # ------------------------
-# As a general rule:  public file are "cleaned" and "installed"  
+# As a general rule:  public file are "cleaned" and "installed"
 #                     local (_L) are not "installed".
 
 #
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     =
-EXECUTABLES_L   = 
+EXECUTABLES_L   =
 
 #
 # <brief description of xxxxx program>
@@ -47,7 +47,7 @@ xxxxx_LIBS      =
 
 #
 # special compilation flags for single c sources
-#yyyyy_CFLAGS   = 
+#yyyyy_CFLAGS   =
 
 #
 # Includes (.h) files (public only)
@@ -85,7 +85,7 @@ err_OBJECTS   = errCloseLocalStack_L \
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = errXmlToH
 SCRIPTS_L       =
 
 #
@@ -97,8 +97,8 @@ TCL_SCRIPTS_L   =
 #
 # <brief description of tttttt tcl-script>
 tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
+tttttt_TCLSH    =
+tttttt_LIBS     =
 
 #
 # TCL libraries (public and local)
@@ -108,23 +108,23 @@ TCL_LIBRARIES_L =
 
 #
 # <brief description of tttlll library>
-tttlll_OBJECTS  = 
+tttlll_OBJECTS  =
 
 #
 # UIF panels (public and local)
 # -----------------------------
 PANELS   =
-PANELS_L = 
+PANELS_L =
 
 #
 # On-Line Database Files
 # ----------------------
-DBL_CLASSES = 
+DBL_CLASSES =
 DBL_BCF =
 DBL_FLAGS =
 xxxx_DBL_FLAGS =
 
-# 
+#
 # IDL Files and flags
 # -------------------
 IDL_FILES =
@@ -149,7 +149,7 @@ MANl =
 #
 # ASCII file to be converted into Framemaker-MIF
 # ----------------------------------------------
-ASCII_TO_MIF = 
+ASCII_TO_MIF =
 
 #
 # INS_ROOT files to be installed
@@ -160,7 +160,8 @@ INS_ROOT_DIR   =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES =
+INSTALL_FILES = ../config/errXmlToH.xsd \
+				../config/errXmlToH.xst
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
@@ -176,7 +177,7 @@ CSOURCENAMES = \
 # CHOSE PLATFORM
 # --------------
 # Default is UNIX, for VxVorks application next line MUST BE UNCOMMENTED
-#MAKE_VXWORKS = on   
+#MAKE_VXWORKS = on
 
 #
 # INCLUDE STANDARDS
@@ -188,15 +189,15 @@ include $(MAKEDIR)/mcsMakefile
 # TARGETS
 # -------
 all:	do_all
-	@echo " . . . 'all' done" 
+	@echo " . . . 'all' done"
 
-clean : clean_all 
+clean : clean_all
 	@echo " . . . clean done"
 
-clean_dist : clean_all clean_dist_all 
+clean_dist : clean_all clean_dist_all
 	@echo " . . . clean_dist done"
 
-man   : do_man 
+man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
