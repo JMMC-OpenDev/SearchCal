@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.8 2004-12-07 07:47:23 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.9 2004-12-08 17:39:28 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,6 +16,7 @@
 *                        includes cleaning
 * gzins     03-Dec-2004  Improved parameter check in SetBody method
 * gzins     07-Dec-2004  Removed invalid parameters from Display documentation 
+* gzins     08-Dec-2004  Implemented methods for SendId and MessageId 
 *
 *
 *******************************************************************************/
@@ -25,7 +26,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.8 2004-12-07 07:47:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.9 2004-12-08 17:39:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -63,10 +64,13 @@ msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
     _header = &(_message.header);
     _body   =   _message.body;
 
-    // The message is considered extern by default
+    // Message is considered extern by default
     _isInternal = isInternalMsg;
-}
 
+    // Reset Ids
+    SetSenderId(-1);
+    SetMessageId(-1);
+}
 
 /*
  * Class destructor
@@ -75,21 +79,20 @@ msgMESSAGE::~msgMESSAGE()
 {
 }
 
-
 /*
  * Public methods
  */
 
 /**
- * Return the sender processus name.
+ * Return the sender process name.
  *
- * \return the address of the message sender processus name
+ * \return the address of the message sender process name
  */
 char* msgMESSAGE::GetSender(void)
 {
     logExtDbg("msgMESSAGE::GetSender()");
 
-    // Return the sender processus name
+    // Return the sender process name
     return _header->sender;
 }
 
@@ -113,7 +116,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
 /**
  * Return the message sender environnement name.
  *
- * \return the address of the message sender processus environnement name
+ * \return the address of the message sender process environnement name
  */
 char* msgMESSAGE::GetSenderEnv(void)
 {
@@ -141,15 +144,49 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
 }
 
 /**
- * Return the message receiver processus name.
+ * Return the sender process id.
  *
- * \return the address of the message receiver processus name
+ * \return the id of the message sender process name
+ */
+mcsINT32 msgMESSAGE::GetSenderId(void)
+{
+    logExtDbg("msgMESSAGE::GetSenderId()");
+
+    // Get the sender id 
+    mcsINT32 id = -1;
+    sscanf(_header->senderId, "%d", &id);
+    
+    // Return sender id 
+    return id;
+}
+
+/**
+ * Set the id of the sender process.
+ *
+ * \param id the sender id 
+ * 
+ * \return always SUCCESS
+ */
+mcsCOMPL_STAT msgMESSAGE::SetSenderId(mcsINT32 id)
+{
+    logExtDbg("msgMESSAGE::SetSenderId()");
+
+    // Set the sender id
+    sprintf(_header->senderId, "%d", id);
+
+    return SUCCESS;
+}
+
+/**
+ * Return the message receiver process name.
+ *
+ * \return the address of the message receiver process name
  */
 char* msgMESSAGE::GetRecipient(void)
 {
     logExtDbg("msgMESSAGE::GetRecipient()");
 
-    // Return the message receiver processus name
+    // Return the message receiver process name
     return _header->recipient;
 }
 
@@ -173,7 +210,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
 /**
  * Return the recipient environnement name.
  *
- * \return the address of the message recipient processus environnement
+ * \return the address of the message recipient process environnement
  */
 char* msgMESSAGE::GetRecipientEnv(void)
 {
@@ -239,27 +276,32 @@ mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
  *
  * \return the identifier value of the message
  */
-char* msgMESSAGE::GetIdentifier(void)
+mcsINT32 msgMESSAGE::GetMessageId(void)
 {
-    logExtDbg("msgMESSAGE::GetIdentifier()");
+    logExtDbg("msgMESSAGE::GetMessageId()");
 
+    // Get the sender id 
+    mcsINT32 id = -1;
+    sscanf(_header->messageId, "%d", &id);
+    
+    // Return sender id 
+    return id;
     // Return the message identifier value
-    return _header->identifier;
 }
 
 /**
- * Copy the given identifier value into the message.
+ * Set the message Id.
  *
- * \param identifier the identifier value to be copied in
+ * \param id message Id 
  * 
  * \return always SUCCESS
  */
-mcsCOMPL_STAT msgMESSAGE::SetIdentifier(const char *identifier)
+mcsCOMPL_STAT msgMESSAGE::SetMessageId(const mcsINT32 id)
 {
     logExtDbg("msgMESSAGE::SetIdentifier()");
 
-    // Copy the given value in the message header associated field
-    strncpy(_header->identifier, identifier, sizeof(_header->identifier));
+    // Set the message id
+    sprintf(_header->messageId, "%d", id);
 
     return SUCCESS;
 }
@@ -351,31 +393,6 @@ msgHEADER* msgMESSAGE::GetHeaderPtr(void)
 }
 
 /**
- * Overwrite the current message header by the given one.
- *
- * \param header the address of an msgHEADER to replace the internal one
- *
- * \sa msgHEADER, the message header structure
- *
- * \return FAILURE if the given header pointer is NULL, SUCCESS otherwise
- */
-mcsCOMPL_STAT msgMESSAGE::SetHeader(const msgHEADER* header)
-{
-    logExtDbg("msgMESSAGE::SetHeader()");
-
-    // Test the header parameter vailidty
-    if (header == NULL)
-    {
-        return FAILURE;
-    }
-
-    // Copy the given value in the message header
-    memcpy(_header, header, msgHEADERLEN);
-
-    return SUCCESS;
-}
-
-/**
  * Return a pointer to the message body.
  *
  * \return the address of the message body
@@ -399,10 +416,10 @@ mcsINT32 msgMESSAGE::GetBodySize(void)
 
     // Get the message body size in the localhost byte order
     mcsINT32 msgBodySize = 0;
-    mcsINT32 readFieldNumber = sscanf(_header->msgBodySize, "%d", &msgBodySize);
+    mcsINT32 ndReadFields = sscanf(_header->msgBodySize, "%d", &msgBodySize);
 
     // Verify the body size was well read
-    if (readFieldNumber != 1)
+    if (ndReadFields != 1)
     {
         return -1;
     }
@@ -519,10 +536,11 @@ void  msgMESSAGE::Display(void)
          << "\t{"                                              << endl
          << "\t\tsender       = '" << GetSender()       << "'" << endl
          << "\t\tsenderEnv    = '" << GetSenderEnv()    << "'" << endl
+         << "\t\tsenderId     = '" << GetSenderId()     << "'" << endl
          << "\t\trecipient    = '" << GetRecipient()    << "'" << endl
          << "\t\trecipientEnv = '" << GetRecipientEnv() << "'" << endl
          << "\t\ttype         = '" << GetType()         << "'" << endl
-         << "\t\tidentifier   = '" << GetIdentifier()   << "'" << endl
+         << "\t\tmessageId    = '" << GetMessageId()    << "'" << endl
          << "\t\tcommand      = '" << GetCommand()      << "'" << endl
          << "\t\tlastReply    = '" << IsLastReply()     << "'" << endl
          << "\t}"                                              << endl
