@@ -3,10 +3,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.3 2004-12-20 09:39:46 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.4 2005-01-26 08:10:32 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * scetre    07-Sep-2004  Created
 *
 *
@@ -55,12 +56,19 @@ class vobsSCENARIO_ENTRY
 {
 public:
     vobsSCENARIO_ENTRY() {};
-
+    vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
+    {
+        catalog=scenarioEntry.catalog;
+        listInput=scenarioEntry.listInput;
+        listOutput=scenarioEntry.listOutput;
+        action=scenarioEntry.action;
+        criteriaList=scenarioEntry.criteriaList;
+    };
     vobsCATALOG                 *catalog;
     vobsSTAR_LIST               *listInput;
     vobsSTAR_LIST               *listOutput;
     vobsACTION                  action;
-    vobsSTAR_COMP_CRITERIA_LIST *criteriaList;
+    vobsSTAR_COMP_CRITERIA_LIST criteriaList;
 };
 
 
@@ -90,7 +98,7 @@ public :
                                    vobsSTAR_LIST *listInput,
                                    vobsSTAR_LIST *listOutput,
                                    vobsACTION action,
-                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList);
+                                   vobsSTAR_COMP_CRITERIA_LIST criteriaList);
   
     // Execute the scenario
     mcsCOMPL_STAT Execute(vobsREQUEST &request, vobsSTAR_LIST &starList);

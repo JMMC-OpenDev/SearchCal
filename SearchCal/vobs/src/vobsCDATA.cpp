@@ -1,10 +1,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.4 2005-01-24 10:58:44 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.5 2005-01-26 08:11:28 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * scetre    15-Nov-2004  Created
 *
 *
@@ -15,7 +16,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.4 2005-01-24 10:58:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.5 2005-01-26 08:11:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

@@ -3,10 +3,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.3 2005-01-24 13:53:48 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.4 2005-01-26 08:10:32 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * scetre    14-Dec-2004  Created
 *
 *
@@ -25,6 +26,10 @@
  * header files
  */
 #include<map>
+
+/*
+ * local header
+ */
 
 /*
  * Class declaration
@@ -46,10 +51,12 @@ public:
     virtual ~vobsSTAR_COMP_CRITERIA_LIST();
 
     // operator =
-    vobsSTAR_COMP_CRITERIA_LIST& operator=(vobsSTAR_COMP_CRITERIA_LIST&);
+    vobsSTAR_COMP_CRITERIA_LIST& operator=(const vobsSTAR_COMP_CRITERIA_LIST&);
     
     // Method to add a criteria in the list
     virtual mcsCOMPL_STAT Add(char *propertyId, mcsFLOAT range);
+    // Method to remove a criteria of the list
+    virtual mcsCOMPL_STAT Remove(char *propertyId);
     // Method to Get the next criteria
     virtual mcsCOMPL_STAT GetNextCriteria(char *propertyId,
                                           mcsFLOAT *range,

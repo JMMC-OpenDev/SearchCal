@@ -3,10 +3,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.h,v 1.4 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.h,v 1.5 2005-01-26 08:10:32 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * scetre    27-Jul-2004  Created
 *
 *

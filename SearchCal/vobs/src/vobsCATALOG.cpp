@@ -1,14 +1,15 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $"
- *
- * who       when         what
- * --------  -----------  ------------------------------------------------------
- * scetre    27-Jul-2004  Created
- * gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
- *
- ******************************************************************************/
+* JMMC project
+*
+* "@(#) $Id: vobsCATALOG.cpp,v 1.6 2005-01-26 08:11:28 scetre Exp $"
+*
+* History
+* -------
+* $Log: not supported by cvs2svn $
+* scetre    27-Jul-2004  Created
+* gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
+*
+******************************************************************************/
 
 
 /**
@@ -16,7 +17,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.6 2005-01-26 08:11:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

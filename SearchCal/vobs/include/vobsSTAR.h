@@ -3,10 +3,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.19 2005-01-24 11:01:02 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.20 2005-01-26 08:10:32 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * scetre    22-Jul-2004  Created
 *
 *
@@ -128,6 +129,9 @@ public:
 
     // Is property set?
     virtual mcsLOGICAL    IsPropertySet(char *propertyId);
+
+    // Is a name a property?
+    virtual mcsLOGICAL    IsProperty(char *propertyId);
 
     // Method to get RA and DEC (in arcsecond)
     virtual mcsCOMPL_STAT GetRa(float &ra);
