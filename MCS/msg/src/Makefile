@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-10-01 14:34:36 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-10-01 15:08:10 gzins Exp $"
 #
 # Makefile of msg
 #
@@ -34,7 +34,7 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = msgManager
+EXECUTABLES     = msgManager msgSendCommand
 EXECUTABLES_L   = 
 
 #
@@ -44,8 +44,12 @@ msgManager_OBJECTS   = msgManager            \
                        msgManagerHandleCmd 	 \
                        msgManagerProcess     \
                        msgManagerProcessList
-msgManager_LDFLAGS   = -lgdome -lstdc++
+msgManager_LDFLAGS   = -lgdome 
 msgManager_LIBS      = mcs log err cmd misc msg
+
+msgSendCommand_OBJECTS   = msgSendCommand
+msgSendCommand_LDFLAGS   = -lgdome
+msgSendCommand_LIBS      = mcs log err cmd misc msg
 
 #
 # special compilation flags for single c sources
