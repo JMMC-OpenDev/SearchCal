@@ -4,12 +4,15 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/24 14:49:18  gzins
+* Used CVS log as modification history
+*
 * gzins     17-Jun-2004  completed implementation
 * berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errPackLocalStack_L.c,v 1.4 2005-01-24 14:49:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPackLocalStack_L.c,v 1.5 2005-01-27 14:11:27 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,7 +38,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * 
  * \param  error Error structure to be reset.
  */
-mcsCOMPL_STAT errPackLocalStack(errERROR *error, char *buffer,
+mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
                                 mcsUINT32 bufSize)
 {
     mcsINT32     i;
@@ -59,9 +62,10 @@ mcsCOMPL_STAT errPackLocalStack(errERROR *error, char *buffer,
         char log[errMSG_MAX_LEN];
         char logBuf[512];
 
-        sprintf(logBuf,"%s %d %c %s",
+        sprintf(logBuf,"%s %d %d %c %s",
                 error->stack[i].location,
                 error->stack[i].errorId,
+                error->stack[i].isErrUser,
                 error->stack[i].severity,
                 error->stack[i].runTimePar);
 
