@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.18 2005-02-14 15:09:12 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.19 2005-02-14 15:22:29 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/02/14 15:09:12  scetre
+* changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
+*
 * Revision 1.17  2005/02/13 15:24:50  gzins
 * Change Min/MaxDeltaMag to Min/MaxRangeMag
 *
@@ -98,13 +101,13 @@ public:
 
     //  Set and get maximum magnitude difference between the selected object
     //  minimum magnitude and the science object magnitude
-    virtual mcsCOMPL_STAT SetMinMagRange(const mcsFLOAT minRangeMag);
-    virtual mcsFLOAT GetMinRangeMag(void) const;
+    virtual mcsCOMPL_STAT SetMinMagRange(const mcsFLOAT minMagRange);
+    virtual mcsFLOAT GetMinMagRange(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  maximum magnitude and the science object magnitude
-    virtual mcsCOMPL_STAT SetMaxMagRange(const mcsFLOAT maxRangeMag);
-    virtual mcsFLOAT GetMaxRangeMag(void) const;
+    virtual mcsCOMPL_STAT SetMaxMagRange(const mcsFLOAT maxMagRange);
+    virtual mcsFLOAT GetMaxMagRange(void) const;
     
     // Set and get maximum number of selected objects
     virtual mcsCOMPL_STAT SetMaxNbOfSelectedObjects(const mcsINT32 
@@ -150,13 +153,13 @@ private:
      * Maximum magnitude difference between the selected object minimum
      * magnitude and the science object magnitude
      */
-    mcsFLOAT _minRangeMag;
+    mcsFLOAT _minMagRange;
     
     /**
      * Maximum magnitude difference between the selected object maximum
      * magnitude and the science object magnitude
      */
-    mcsFLOAT _maxRangeMag;
+    mcsFLOAT _maxMagRange;
 
     /** Maximum number of selected objects */
     mcsINT32 _maxNbOfSelectedObjects;

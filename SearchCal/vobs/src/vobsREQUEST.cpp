@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.9 2005-02-13 15:24:50 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.10 2005-02-14 15:22:44 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/13 15:24:50  gzins
+ * Change Min/MaxDeltaMag to Min/MaxMagRange
+ *
  * Revision 1.8  2005/02/11 16:21:57  gluck
  * Changed Set/Get max number of selected object type parameters: mcsUINT32 -> mcsINT32
  *
@@ -22,7 +25,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.9 2005-02-13 15:24:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.10 2005-02-14 15:22:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -57,8 +60,8 @@ vobsREQUEST::vobsREQUEST()
     _searchBand = "";
     _deltaRa = 0.0;
     _deltaDec = 0.0;
-    _minRangeMag = 0.0;
-    _maxRangeMag = 0.0;
+    _minMagRange = 0.0;
+    _maxMagRange = 0.0;
     _maxNbOfSelectedObjects = 0;
 }
 
@@ -283,17 +286,17 @@ mcsFLOAT vobsREQUEST::GetDeltaDec(void) const
  * Set maximum magnitude difference between the selected object minimum
  * magnitude and the science object magnitude.
  *
- * \param minRangeMag maximum accepted magnitude difference correcponding to the
+ * \param minMagRange maximum accepted magnitude difference correcponding to the
  * minimum expected magnitude for the selected object.
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetMinRangeMag(const mcsFLOAT minRangeMag)
+mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsFLOAT minMagRange)
 {
-    logExtDbg("vobsREQUEST::SetMinRangeMag()");
+    logExtDbg("vobsREQUEST::SetMinMagRange()");
 
-    _minRangeMag = minRangeMag;
+    _minMagRange = minMagRange;
 
     return SUCCESS;
 }
@@ -305,11 +308,11 @@ mcsCOMPL_STAT vobsREQUEST::SetMinRangeMag(const mcsFLOAT minRangeMag)
  * \return maximum accepted magnitude difference correcponding to a minimum the
  * expected magnitude for the selected object.
  */
-mcsFLOAT vobsREQUEST::GetMinRangeMag(void) const
+mcsFLOAT vobsREQUEST::GetMinMagRange(void) const
 {
-    logExtDbg("vobsREQUEST::GetMinRangeMag()");
+    logExtDbg("vobsREQUEST::GetMinMagRange()");
 
-    return _minRangeMag;
+    return _minMagRange;
 }
 
 
@@ -317,17 +320,17 @@ mcsFLOAT vobsREQUEST::GetMinRangeMag(void) const
  * Set maximum magnitude difference between the selected object maximum
  * magnitude and the science object magnitude.
  *
- * \param maxRangeMag maximum accepted magnitude difference correcponding to the
+ * \param maxMagRange maximum accepted magnitude difference correcponding to the
  * maximum expected magnitude for the selected object.
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetMaxRangeMag(const mcsFLOAT maxRangeMag)
+mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsFLOAT maxMagRange)
 {
-    logExtDbg("vobsREQUEST::SetMaxRangeMag()");
+    logExtDbg("vobsREQUEST::SetMaxMagRange()");
 
-    _maxRangeMag = maxRangeMag;
+    _maxMagRange = maxMagRange;
 
     return SUCCESS;
 }
@@ -339,11 +342,11 @@ mcsCOMPL_STAT vobsREQUEST::SetMaxRangeMag(const mcsFLOAT maxRangeMag)
  * \return maximum accepted magnitude difference correcponding to a maximum the
  * expected magnitude for the selected object.
  */
-mcsFLOAT vobsREQUEST::GetMaxRangeMag(void) const
+mcsFLOAT vobsREQUEST::GetMaxMagRange(void) const
 {
-    logExtDbg("vobsREQUEST::GetMaxRangeMag()");
+    logExtDbg("vobsREQUEST::GetMaxMagRange()");
 
-    return _maxRangeMag;
+    return _maxMagRange;
 }
 
 /**
@@ -393,8 +396,8 @@ mcsCOMPL_STAT vobsREQUEST::Display(void)
     logInfo("search band = %s", _searchBand.c_str());
     logInfo("delta ra = %f", _deltaRa);
     logInfo("delta dec = %f", _deltaDec);
-    logInfo("min range mag = %f", _minRangeMag);
-    logInfo("max range mag = %f", _maxRangeMag);
+    logInfo("min mag range = %f", _minMagRange);
+    logInfo("max mag range = %f", _maxMagRange);
     logInfo("max nb of selected object = %i", _maxNbOfSelectedObjects);
     
     return SUCCESS;
