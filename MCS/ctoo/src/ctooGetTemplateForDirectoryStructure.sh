@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.8 2004-12-04 19:54:27 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.9 2004-12-17 07:35:12 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -11,6 +11,8 @@
 # gzins     04-Dec-2004 Look for templates in the following order:
 #                       ../templates, $INTROOT/templates and
 #                       $MCSROOT/templates
+# lgluck    17-Dec-2004 Add automatic brief description replacement in private 
+#                       header file when created in the module.
 #
 #*******************************************************************************
 
@@ -256,12 +258,23 @@ case $cvs in
             # Get module private header file in include directory
             ctooGetPrivateHeaderFile
 
+            # set new created file
+            FILE=${ROOT_NAME}Private.h
+            
+            # Replace general brief description by a specific one
+            briefDescription="$ROOT_NAME private header file."
+            sed -e "1,$ s/Brief.*/$briefDescription/g" $FILE > ${FILE}.BAK
+            
+            # Remove the intermediate file ($FILE) and rename the output
+            # file
+            mv ${FILE}.BAK $FILE
+            
             # Switch on the environment variable EDITOR, to trigger
             # the automatic editor pop up
             export EDITOR=gvim
             
             # Change permissions of the new created file
-            chmod $MODE ${ROOT_NAME}Private.h
+            chmod $MODE $FILE
 
             # Go back to the previous directory
             cd ../..
