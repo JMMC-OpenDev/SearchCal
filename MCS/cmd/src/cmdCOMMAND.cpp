@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.20 2005-02-15 10:58:58 gzins Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.21 2005-02-15 11:02:48 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/02/15 10:58:58  gzins
+ * Added CVS log as file modification history
+ *
  * Revision 1.19  2005/02/03 13:54:52  mella
  * Replace all c_str by data for strings
  * Correct bug with defaultValue that wasn't returned
@@ -44,7 +47,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.20 2005-02-15 10:58:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.21 2005-02-15 11:02:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -102,7 +105,7 @@ cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
 /** 
  *  Destructor.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 cmdCOMMAND::~cmdCOMMAND()
 {
@@ -137,7 +140,7 @@ cmdCOMMAND::~cmdCOMMAND()
  *
  * \param cdfName  the cdf file name.
  * 
- * \returns an MCS completion status code (SUCCESS or FAILURE)
+ * \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 {
@@ -146,7 +149,7 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
     // If command has been already parsed, return
     if ( _hasBeenYetParsed == mcsTRUE)
     {
-        return SUCCESS;
+        return mcsSUCCESS;
     }
 
    
@@ -156,26 +159,26 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
         _cdfName = cdfName;
     }
   
-    if (ParseCdf()==FAILURE)
+    if (ParseCdf()==mcsFAILURE)
     {
         errAdd (cmdERR_PARSE_CDF, _cdfName.data(), _name.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
     
-    if (ParseParams() == FAILURE)
+    if (ParseParams() == mcsFAILURE)
     {
         errAdd (cmdERR_PARSE_PARAMETERS, _params.data(), _name.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    if (CheckParams() == FAILURE)
+    if (CheckParams() == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
         
     // and flag a right performed parsing only after this point
     _hasBeenYetParsed = mcsTRUE;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -198,9 +201,9 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
     else
     {
         // Parse The cdf file to obtain full description
-        if (ParseCdf() == FAILURE)
+        if (ParseCdf() == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         if (_desc.empty())
@@ -229,7 +232,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -258,9 +261,9 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
     else
     {
         // Parse The cdf file to obtain full description
-        if (ParseCdf()==FAILURE)
+        if (ParseCdf()==mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         // append the command name
@@ -270,9 +273,9 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         // Append the first sentence of the command description
         string shortSentence;
         if (GetShortDescription(shortSentence) ==
-            FAILURE)
+            mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
         synopsis.append(" - ");
         synopsis.append(shortSentence);
@@ -336,7 +339,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
     desc.append(description);
     desc.append(options);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -344,13 +347,13 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
  *
  * \param param the parameter to add.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM *param)
 {
     logExtDbg ("cmdCOMMAND::AddParam()");
     _paramList.insert( make_pair(param->GetName(), param) );
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -360,17 +363,17 @@ mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM *param)
  * \param paramName  the name of the requested parameter.
  * \param param  a pointer where to store the parameter pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
- *  param should be considered valid only on SUCCESS case.
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ *  param should be considered valid only on mcsSUCCESS case.
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
 {
     logExtDbg ("cmdCOMMAND::GetParam()");
     
     // Parse parameter list 
-    if (Parse() == FAILURE )
+    if (Parse() == mcsFAILURE )
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
  
     // Get parameter from list
@@ -381,14 +384,14 @@ mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
     {
         // Return parameter value
         *param = iter->second;
-        return SUCCESS;
+        return mcsSUCCESS;
     }
     // Else
     else
     {
         // Handle error
         errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
     // End if
 }
@@ -404,7 +407,7 @@ mcsLOGICAL cmdCOMMAND::IsDefined(string paramName)
 {
     logExtDbg("cmdCOMMAND::IsDefined()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == mcsFAILURE )
     {
         logWarning("%s parameter doesn't exist",paramName.data());
         return mcsFALSE;
@@ -423,7 +426,7 @@ mcsLOGICAL cmdCOMMAND::HasDefaultValue(string paramName)
 {
     logExtDbg("cmdCOMMAND::HasDefaultValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == mcsFAILURE )
     {
         return mcsFALSE;
     }
@@ -441,7 +444,7 @@ mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
 {
     logExtDbg("cmdCOMMAND::IsOptional()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == mcsFAILURE )
     {
         logWarning("%s parameter doesn't exist",paramName.data());
         return mcsFALSE;
@@ -457,7 +460,7 @@ mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
 {
@@ -468,7 +471,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
     if (GetParam(paramName, &p) == mcsFAILURE )
     {   
         errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Try to return the user value
@@ -495,7 +498,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
 {
@@ -506,7 +509,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
     if (GetParam(paramName, &p) == mcsFAILURE )
     {   
         errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Try to return the user value
@@ -532,7 +535,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
 {
@@ -543,7 +546,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
     if (GetParam(paramName, &p) == mcsFAILURE )
     {   
         errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Try to return the user value
@@ -569,7 +572,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
 {
@@ -580,7 +583,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
     if (GetParam(paramName, &p) == mcsFAILURE )
     {   
         errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data()); 
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Try to return the user value
@@ -606,15 +609,15 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsINT32 *param)
 {
     logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == mcsFAILURE )
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     return p->GetDefaultValue(param);
 }
@@ -625,15 +628,15 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsINT32 *param
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, char **param)
 {
     logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == mcsFAILURE )
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     return p->GetDefaultValue(param);
 }
@@ -644,15 +647,15 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, char **param)
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsDOUBLE *param)
 {
     logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == mcsFAILURE )
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     return p->GetDefaultValue(param);
 }
@@ -663,15 +666,15 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsDOUBLE *para
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsLOGICAL *param)
 {
     logExtDbg("cmdCOMMAND::GetParamValue()");
     cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
+    if (GetParam(paramName, &p) == mcsFAILURE )
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     return p->GetDefaultValue(param);
 }
@@ -690,7 +693,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsLOGICAL *par
  *  Parse a cdf file and build new parameters for the command.
  *  After this step the parameters can be parsed.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
 {
@@ -699,7 +702,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     // If the cdf has been already parsed, return
     if ( _cdfHasBeenYetParsed == mcsTRUE)
     {
-        return SUCCESS;
+        return mcsSUCCESS;
     }
 
 
@@ -712,7 +715,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     if ( _cdfName.size() == 0 )
     {
         errAdd(cmdERR_NO_CDF, _name.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
  
     // find the correcsponding cdf file
@@ -720,7 +723,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     // check if the cdf file has been found   
     if (fullCdfFilename == NULL)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* Get a DOMImplementation reference */
@@ -750,13 +753,13 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     }
 
     /* Parse for Description */
-    if (ParseCdfForDesc(root)==FAILURE)
+    if (ParseCdfForDesc(root)==mcsFAILURE)
     {
         goto errCond;
     }
     
     /* Parse for Parameters */
-    if (ParseCdfForParameters(root)==FAILURE)
+    if (ParseCdfForParameters(root)==mcsFAILURE)
     {
         goto errCond;
     }
@@ -768,7 +771,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     gdome_di_unref (domimpl, &exc);
     xmlCleanupParser();
     _cdfHasBeenYetParsed = mcsTRUE;
-    return SUCCESS;
+    return mcsSUCCESS;
 
 errCond:
     /* Free the document structure and the DOMImplementation */
@@ -777,7 +780,7 @@ errCond:
     gdome_di_unref (domimpl, &exc);
     xmlCleanupParser();
     errAdd (cmdERR_PARSE_CDF, fullCdfFilename, _name.data());
-    return FAILURE;
+    return mcsFAILURE;
 }
 
 /** 
@@ -785,7 +788,7 @@ errCond:
  *
  * \param root  the root node of the cdf document.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
 {
@@ -806,7 +809,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
         logWarning ("Illegal format encountered for cdf file "
                     ". Element.childNodes() failed "
                     "with exception #%d", exc);
-        return FAILURE;
+        return mcsFAILURE;
     }
  
     nbChildren = gdome_nl_length (nl, &exc);
@@ -822,7 +825,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
                         ". NodeList.item(%d) failed "
                         "with exception #%d", 0, exc);
             gdome_nl_unref(nl, &exc);
-            return FAILURE;
+            return mcsFAILURE;
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
         value=gdome_el_nodeValue(el2,&exc);
@@ -834,7 +837,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
     
     gdome_nl_unref(nl, &exc);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -842,7 +845,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
  *
  * \param root  the root node of the cdf document.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
 {
@@ -863,7 +866,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
         logWarning ("Illegal format encountered for cdf file "
                     ". Element.childNodes() failed "
                     "with exception #%d", exc);
-        return FAILURE;
+        return mcsFAILURE;
     }
  
     nbChildren = gdome_nl_length (nl, &exc);
@@ -876,7 +879,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
             logWarning ("Illegal format encountered for cdf file "
                         ". NodeList.item(%d) failed "
                         "with exception #%d", 0, exc);
-            return FAILURE;
+            return mcsFAILURE;
         }
         gdome_nl_unref(nl, &exc);
 
@@ -890,7 +893,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
             logWarning ("Illegal format encountered for cdf file "
                         ". Element.childNodes() failed "
                         "with exception #%d", exc);
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         nbChildren = gdome_nl_length (nl, &exc);
@@ -905,21 +908,21 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
                                 ". NodeList.item(%d) failed "
                                 "with exception #%d", i, exc);
                     gdome_nl_unref(nl, &exc);
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
 
-                if (ParseCdfForParam(el)==FAILURE)
+                if (ParseCdfForParam(el)==mcsFAILURE)
                 {
                     gdome_el_unref(el, &exc);
                     gdome_nl_unref(nl, &exc);
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
                 gdome_el_unref(el, &exc);
             }
         }
     }
     gdome_nl_unref(nl, &exc);
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -927,7 +930,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
  *
  *  \param param  one param node of the cdf document.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
 {
@@ -940,16 +943,16 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     mcsLOGICAL optional;
     
     /* get mandatory name */
-    if (CmdGetNodeContent(param, "name", name) == FAILURE)
+    if (CmdGetNodeContent(param, "name", name) == mcsFAILURE)
     {
         // \todo add error
-        return FAILURE;   
+        return mcsFAILURE;   
     }
     /* get mandatory type */
-    if (CmdGetNodeContent(param, "type", type) == FAILURE)
+    if (CmdGetNodeContent(param, "type", type) == mcsFAILURE)
     {
         // \todo add error
-        return FAILURE;   
+        return mcsFAILURE;   
     }
     
     /* get optional description */
@@ -974,7 +977,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
             logWarning ("Illegal format encountered for cdf file "
                         ". Element.childNodes() failed "
                         "with exception #%d", exc);
-            return FAILURE;
+            return mcsFAILURE;
         }
         nbChildren = gdome_nl_length (nl, &exc);
         /* if a defaultValue does exist */
@@ -989,13 +992,13 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
                             ". NodeList.item(%d) failed "
                             "with exception #%d", 0, exc);
                 gdome_el_unref(el, &exc);
-                return FAILURE;
+                return mcsFAILURE;
             }
-            if (CmdGetNodeContent(el, type, defaultValue) == FAILURE )
+            if (CmdGetNodeContent(el, type, defaultValue) == mcsFAILURE )
             {
                 // \todo add error
                 gdome_el_unref(el, &exc);
-                return FAILURE;   
+                return mcsFAILURE;   
             }
             gdome_el_unref(el, &exc);
         }
@@ -1055,7 +1058,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     }
     AddParam(p);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -1066,7 +1069,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
  * \param tagName  the tag of the child or empty.
  * \param content  the storage string.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tagName, string &content)
 {
@@ -1096,7 +1099,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
         logWarning ("Illegal format encountered for cdf file "
                     ". Element.childNodes() failed "
                     "with exception #%d", exc);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     nbChildren = gdome_nl_length (nl, &exc);
@@ -1111,7 +1114,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
             logWarning ("Illegal format encountered for cdf file "
                         ". NodeList.item(%d) failed "
                         "with exception #%d", 0, exc);
-            return FAILURE;
+            return mcsFAILURE;
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
 
@@ -1120,7 +1123,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
             logDebug("searching content for '%s' element failed ",tagName.data());
             // \todo errAdd
             gdome_el_unref(el, &exc);
-            return FAILURE;
+            return mcsFAILURE;
         }
         
         value=gdome_el_nodeValue(el2,&exc);
@@ -1134,20 +1137,20 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     {
         logDebug("searching content for '%s' element failed, no element found ",tagName.data());
         // no child found
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     gdome_nl_unref(nl, &exc);
     logDebug("content of '%s' element is '%s'",tagName.data(),content.data());
    
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
  *  This method should be called before any real action on any parameter.
  *  It parses the parameters given to the constructor.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseParams()
 {
@@ -1175,9 +1178,9 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
                 }
                 else if (posEnd>0)
                 {
-                    if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==FAILURE)
+                    if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==mcsFAILURE)
                     {
-                        return FAILURE;
+                        return mcsFAILURE;
                     }
 
                     posStart=posEnd;
@@ -1198,13 +1201,13 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
     // parse last tuple if posEnd is not null
     if (posEnd>0)
     {
-        if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==FAILURE)
+        if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -1213,7 +1216,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
  *
  *  \param tuple  the name value tuple for the a parameter.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
 {
@@ -1238,7 +1241,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
         }
         // Handle error
         errAdd(cmdERR_PARAM_NAME, paramName.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
     // End if
 
@@ -1249,7 +1252,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     if (spacePos == string::npos)
     {
         errAdd(cmdERR_PARAMS_FORMAT, tuple.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     /* start from 1 to remove '-' and remove the last space*/
@@ -1270,13 +1273,13 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     else
     {
         errAdd(cmdERR_PARAM_UNKNOWN, paramName.data(), _name.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     /* assign value to the parameter */
     p->SetUserValue(paramValue);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -1284,7 +1287,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
  *  Check if all mandatory parameters have a user value.
  *  The actual code exit on the first error detection.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::CheckParams(){
     logExtDbg("cmdCOMMAND::CheckParams()");
@@ -1308,14 +1311,14 @@ mcsCOMPL_STAT cmdCOMMAND::CheckParams(){
             {
                 errAdd(cmdERR_MISSING_PARAM, child->GetName().data(),
                        _name.data());
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
         
         i++;
     }
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -1323,13 +1326,13 @@ mcsCOMPL_STAT cmdCOMMAND::CheckParams(){
  *
  * \param desc  the description string.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::SetDescription(string desc)
 {
     logExtDbg ("cmdCOMMAND::SetDescription()");
     _desc=desc;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

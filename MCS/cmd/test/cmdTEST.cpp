@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.6 2005-02-15 10:58:58 gzins Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.7 2005-02-15 11:02:48 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 10:58:58  gzins
+ * Added CVS log as file modification history
+ *
  * mella     16-Nov-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +18,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.6 2005-02-15 10:58:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.7 2005-02-15 11:02:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -68,11 +71,11 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
         
-        // Exit from the application with FAILURE
+        // Exit from the application with mcsFAILURE
         exit (EXIT_FAILURE);
     }
 
@@ -109,7 +112,7 @@ int main(int argc, char *argv[])
         
         string pName("dinteger");
         mcsINT32 v1;
-        if(myCmd.GetParamValue(pName,&v1)==FAILURE) {
+        if(myCmd.GetParamValue(pName,&v1)==mcsFAILURE) {
             cout << "Can't get user value into myCmd for parameter " << pName << endl;
             errCloseStack();
         } else {
@@ -118,7 +121,7 @@ int main(int argc, char *argv[])
 
         pName.assign("double");
         mcsDOUBLE v2;
-        if(myCmd.GetParamValue(pName,&v2)==FAILURE) {
+        if(myCmd.GetParamValue(pName,&v2)==mcsFAILURE) {
             cout << "Can't get user value into myCmd for parameter " << pName << endl;
             errCloseStack();
         } else {
@@ -126,7 +129,7 @@ int main(int argc, char *argv[])
         }
         pName.assign("boolean");
         mcsLOGICAL v3;
-        if(myCmd.GetParamValue(pName,&v3)==FAILURE) {
+        if(myCmd.GetParamValue(pName,&v3)==mcsFAILURE) {
             cout << "Can't get user value into myCmd for parameter " << pName << endl;
             errCloseStack();
         } else {
@@ -134,7 +137,7 @@ int main(int argc, char *argv[])
         }
         pName.assign("string");
         char * v4;
-        if(myCmd.GetParamValue(pName,&v4)==FAILURE) {
+        if(myCmd.GetParamValue(pName,&v4)==mcsFAILURE) {
             cout << "Can't get user value into myCmd for parameter " << pName << endl;
             errCloseStack();
         } else {
@@ -155,7 +158,7 @@ int main(int argc, char *argv[])
    
     // Print get dstring value
     char *dstringValue;
-     if(myCmd.GetParamValue("string",&dstringValue)==FAILURE) {
+     if(myCmd.GetParamValue("string",&dstringValue)==mcsFAILURE) {
             cout << "Can't get user value into myCmd for parameter dstring" << endl;
             errCloseStack();
         } else {
@@ -166,7 +169,7 @@ int main(int argc, char *argv[])
     // Close MCS services
     mcsExit();
     
-    // Exit from the application with SUCCESS
+    // Exit from the application with mcsSUCCESS
     exit (EXIT_SUCCESS);
 }
 

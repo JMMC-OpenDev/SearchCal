@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.5 2005-02-15 10:58:58 gzins Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.6 2005-02-15 11:02:48 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 10:58:58  gzins
+ * Added CVS log as file modification history
+ *
  * mella     15-Nov-2004  Created
  * gzins     15-Dec-2004  Added error handling
  * lafrasse  01-Feb-2005  Refined GetHelp output format and added type
@@ -18,7 +21,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.5 2005-02-15 10:58:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.6 2005-02-15 11:02:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -263,13 +266,13 @@ string cmdPARAM::GetHelp()
  *
  * \param value  the new user value.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
 {
     logExtDbg("cmdPARAM::SetUserValue()");
     _userValue=value;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -278,13 +281,13 @@ mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
  *
  * \param value  the new default value.
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
 {
     logExtDbg("cmdPARAM::SetDefaultValue()");
     _defaultValue=value;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -292,7 +295,7 @@ mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
 {
@@ -300,9 +303,9 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
     if (sscanf (_userValue.data(), "%d", value) != 1)
     {
         errAdd(cmdERR_INTEGER_VALUE, _userValue.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -310,7 +313,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
 {
@@ -318,9 +321,9 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
      if (sscanf (_userValue.data(), "%lf", value) != 1)
     {
         errAdd(cmdERR_DOUBLE_VALUE, _userValue.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -328,7 +331,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
 {
@@ -346,9 +349,9 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
     else
     {
         errAdd(cmdERR_LOGICAL_VALUE, _userValue.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -356,14 +359,14 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
 {
     logExtDbg("cmdPARAM::GetUserValue()");
 
     *value = (char *)_userValue.data();
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -371,7 +374,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
 {
@@ -379,9 +382,9 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
     if (sscanf (_defaultValue.data(), "%d", value) != 1)
     {
         errAdd(cmdERR_INTEGER_VALUE, _defaultValue.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
-    return SUCCESS;    
+    return mcsSUCCESS;    
 }
 
 /** 
@@ -389,7 +392,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
 {
@@ -397,9 +400,9 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
      if (sscanf (_userValue.data(), "%lf", value) != 1)
     {
         errAdd(cmdERR_DOUBLE_VALUE, _userValue.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -407,7 +410,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
 {
@@ -425,9 +428,9 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
     else
     {
         errAdd(cmdERR_LOGICAL_VALUE, _userValue.data());
-        return FAILURE;
+        return mcsFAILURE;
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /** 
@@ -435,14 +438,14 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
 
     *value = (char*)_userValue.data();
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*
