@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2005-01-27 13:45:55 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.13 2005-02-04 09:59:37 gzins Exp $"
 #
 # Makefile of vobs module 
 #
-# who       when		 what
-# --------  -----------	 -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # scetre    16-Jun-2004  created
 #
 #
@@ -68,6 +69,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_MASS.h 	   		\
 				  vobsCATALOG_PHOTO.h 	   		\
 				  vobsCATALOG_SBSC.h	   		\
+				  vobsCATALOG_MIDI.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
 				  vobsSCENARIO.h	       		\
@@ -97,6 +99,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_MASS 			\
 				   vobsCATALOG_PHOTO 			\
 				   vobsCATALOG_SBSC				\
+				   vobsCATALOG_MIDI 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\
 				   vobsSCENARIO             	\
