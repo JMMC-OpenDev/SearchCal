@@ -4,6 +4,10 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/27 14:11:52  gzins
+* Changed errERROR to errERROR_STACK
+* Added isErrUser parameter
+*
 * Revision 1.3  2005/01/24 14:49:18  gzins
 * Used CVS log as modification history
 *
@@ -12,7 +16,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errUnpackLocalStack_L.c,v 1.4 2005-01-27 14:11:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errUnpackLocalStack_L.c,v 1.5 2005-02-09 14:26:03 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -20,6 +24,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 /*
  * Common Software Headers
@@ -38,15 +43,25 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * 
  * \param  error Error structure to be reset.
  */
-mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error, char *buffer, 
-                                  mcsUINT32 bufLen)
+mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
+                                  const char     *buffer, 
+                                  mcsUINT32      bufLen)
 {
-    mcsUINT32    i;
-    mcsUINT32   nbErrors;
-    mcsUINT32   bufPos;
+    mcsUINT32 i;
+    mcsUINT32 nbErrors;
+    mcsUINT32 bufPos;
 
     logExtDbg("errUnpackLocalStack()"); 
     
+    /* Try tp copy the given buffer */
+    char *temp = (char*)malloc(bufLen);
+    if (temp == NULL)
+    {
+        logWarning("could NOT allocate temporary buffer");
+        return mcsFAILURE;
+    }
+    memcpy(temp, buffer, bufLen);
+
     /* If error stack is not initialised, do it */
     if (error->thisPtr != error)
     {
@@ -57,9 +72,9 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error, char *buffer,
     nbErrors = 0;
     for (i = 0; i < bufLen; i++)
     {
-        if (buffer[i] == '\n')
+        if (temp[i] == '\n')
         {
-            buffer[i] = '\0';
+            temp[i] = '\0';
             nbErrors += 1;
         }
     }
@@ -78,7 +93,7 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error, char *buffer,
         mcsPROCNAME  procName;
 
         /* Retreive error structure fields */
-        if (sscanf(&buffer[bufPos], "%s %*s %s %s %s %d %d %c %[^^]",
+        if (sscanf(&temp[bufPos], "%s %*s %s %s %s %d %d %c %[^^]",
                 timeStamp, moduleId, procName, location, &errorId, &isErrUser,
                 &severity, runTimePar) != 8)
         {
@@ -86,7 +101,7 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error, char *buffer,
             return mcsFAILURE;
         }
 
-        bufPos += strlen(&buffer[bufPos]) + 1;
+        bufPos += strlen(&temp[bufPos]) + 1;
         
         /* Add error to the stack */
         if (errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId, 
