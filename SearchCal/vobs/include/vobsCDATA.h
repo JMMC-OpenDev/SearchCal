@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.4 2005-02-07 09:47:08 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.5 2005-02-08 20:32:27 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/02/07 09:47:08  gzins
+* Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
+*
 * Revision 1.3  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -61,6 +64,9 @@ public:
     // Destructor
     virtual ~vobsCDATA();
 
+    virtual mcsCOMPL_STAT SetCatalogName(const char *name);
+    virtual const char   *GetCatalogName(void);
+
     virtual mcsCOMPL_STAT AddColName(char *colName);
     virtual mcsCOMPL_STAT AddUcdName(char *ucdName);
     virtual mcsUINT32     GetNbColumns(void);
@@ -72,15 +78,15 @@ public:
     virtual mcsUINT32     GetNbLines(void);
     virtual char         *GetNextLine(char *linePtr);
 
-    virtual mcsCOMPL_STAT Save(char *fileName);
+    virtual mcsCOMPL_STAT Save(const char *fileName);
 
 protected:
     
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-     vobsCDATA(const vobsCDATA&);
-     vobsCDATA& operator=(const vobsCDATA&);
+    vobsCDATA(const vobsCDATA&);
+    vobsCDATA& operator=(const vobsCDATA&);
 
     std::vector<char*> _colName; // Name of columns
     std::vector<char*> _ucdName; // Name of corresponding UCD
@@ -91,6 +97,8 @@ private:
                                  // section
     miscDYN_BUF _buffer;         // Dynamic buffer containg CDATA 
     int _nbLines;                // Number of lines stored in buffer
+
+    string _catalogName;         // Catalog name from where CDATA comming from 
 };
 
 #endif /*!vobsCDATA_H*/
