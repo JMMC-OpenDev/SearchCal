@@ -43,17 +43,17 @@
    <error id="9">
       <errName>PROC_NOT_FOUND</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%s| process not found in the process list]]></errFormat>
+      <errFormat><![CDATA['%s' process not found in the process list]]></errFormat>
    </error>
    <error id="10">
       <errName>PROC_ALREADY_CONNECTED</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[the connection to the communication server is already established]]></errFormat>
+      <errFormat><![CDATA[connection to the communication server is already established]]></errFormat>
    </error>
    <error id="11">
       <errName>PROC_NOT_CONNECTED</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[the process is not connected to the communication server]]></errFormat>
+      <errFormat><![CDATA[process is not connected to the communication server]]></errFormat>
    </error>
    <error id="12">
       <errName>SEND</errName>
@@ -93,17 +93,17 @@
    <error id="19">
       <errName>DUPLICATE_PROC</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[a |%s|-named process is already connected]]></errFormat>
+      <errFormat><![CDATA[a '%s'-named process is already connected]]></errFormat>
    </error>
    <error id="21">
       <errName>CMD_NOT_SUPPORTED</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%s| command is not supported by the communication server]]></errFormat>
+      <errFormat><![CDATA['%s' command is not supported by the communication server]]></errFormat>
    </error>
    <error id="22">
       <errName>RECIPIENT_NOT_CONNECTED</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%s| remote process, recipient of the |%s| command, is not reachable]]></errFormat>
+      <errFormat><![CDATA['%s' remote process, recipient of the '%s' command, is not reachable]]></errFormat>
    </error>
    <error id="23">
       <errName>MSG_TYPE</errName>
@@ -113,12 +113,12 @@
    <error id="24">
       <errName>PING</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%s| remote process is not reachable]]></errFormat>
+      <errFormat><![CDATA['%s' remote process is not reachable]]></errFormat>
    </error>
    <error id="25">
       <errName>SENDER_NOT_CONNECTED</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[|%s| process, sender of the |%s| command, is not connected]]></errFormat>
+      <errFormat><![CDATA['%s' process, sender of the '%s' command, is not connected]]></errFormat>
    </error>
    <error id="26">
       <errName>BUFFER_TOO_BIG</errName>
@@ -143,11 +143,16 @@
    <error id="32">
       <errName>FORMAT_ENVLIST</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[the MCS environment list file has not the awaited format]]></errFormat>
+      <errFormat><![CDATA[wrong format of the line '%s' in environment list file '%s'; should be 'envName' 'hostName' 'portNumber']]></errFormat>
    </error>
    <error id="31">
       <errName>UNKNOWN_ENV</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[the |%s| environment is not defined in the environment list file]]></errFormat>
+      <errFormat><![CDATA['%s' environment is not defined in the environment list file '%s']]></errFormat>
+   </error>
+   <error id="33">
+      <errName>REMOTE_ENV</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[connection with '%s' remote environment running on '%s' is not allowed]]></errFormat>
    </error>
 </errorList>
