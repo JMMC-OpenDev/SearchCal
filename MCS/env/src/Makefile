@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-12-07 16:45:56 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.3 2005-01-21 15:39:39 lafrasse Exp $"
 #
 # Makefile of ........
 #
@@ -70,7 +70,7 @@ env_OBJECTS   = envLIST
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = envCheck envStart envStop
 SCRIPTS_L       =
 
 #
