@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.5 2005-02-15 15:27:41 gzins Exp $"
+ * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.6 2005-02-16 15:30:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 15:27:41  gzins
+ * Changed min/maxRangeMag to min/maxMagRange
+ *
  * Revision 1.4  2005/02/15 15:26:06  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -76,7 +79,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.5 2005-02-15 15:27:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.6 2005-02-16 15:30:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -145,7 +148,7 @@ int main(int argc, char *argv[])
     evhTASK task;
 
     // Parse command line
-    if (task.Init(argc, argv) == mcsmcsFAILURE)
+    if (task.Init(argc, argv) == mcsFAILURE)
     {
         exit(EXIT_FAILURE);
     }
