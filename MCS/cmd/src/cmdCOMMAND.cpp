@@ -1,13 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.2 2004-12-06 10:08:45 scetre Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.3 2004-12-09 06:08:51 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * mella     15-Nov-2004  Created
 * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed and
 *                        fixed bug related to flag check
+* gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
 *
 *
 *******************************************************************************/
@@ -18,7 +19,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.2 2004-12-06 10:08:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.3 2004-12-09 06:08:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -513,7 +514,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
         // if double quotes are encountered it opens or closes a valueZone
         if (*i=='"')
         {
-            valueZone = ! valueZone;
+            valueZone = (mcsLOGICAL)!valueZone;
         }
         
         i++;

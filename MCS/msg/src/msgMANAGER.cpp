@@ -1,13 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.3 2004-12-08 18:02:35 gzins Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.4 2004-12-09 06:09:57 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
 * gzins     08-Dec-2004  Updated to support several processes with same name  
 * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+* gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
 *
 *******************************************************************************/
 
@@ -16,7 +17,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.3 2004-12-08 18:02:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.4 2004-12-09 06:09:57 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -123,7 +124,8 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
         for (unsigned int el = 0; el < _processList.Size(); el++)
         {
             // Get the socket descriptor
-            int sd = _processList.GetNextProcess((el==0))->GetDescriptor();
+            int sd = 
+                _processList.GetNextProcess((mcsLOGICAL)(el==0))->GetDescriptor();
 
             // Add it to the list of descriptors for reading
             if (sd != -1)
@@ -174,7 +176,8 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
             for (unsigned int el = 0; el < _processList.Size(); el++)
             {
                 // Get the socket descriptor
-                msgPROCESS *process = _processList.GetNextProcess((el==0));
+                msgPROCESS *process = 
+                    _processList.GetNextProcess((mcsLOGICAL)(el==0));
 
                 // Add it to the list of descriptors for reading
                 if ((process->GetDescriptor() != -1) && 
