@@ -67,6 +67,11 @@
 #include "cmd.h"
 
 /*
+ * Command name definition
+ */
+#define <xsl:value-of select="$className"/>_NAME "<xsl:value-of select="mnemonic"/>"
+
+/*
  * Class declaration
  */
         
