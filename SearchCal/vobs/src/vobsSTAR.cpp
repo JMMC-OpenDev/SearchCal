@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.33 2005-02-16 17:01:37 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.34 2005-02-21 11:07:47 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.33  2005/02/16 17:01:37  scetre
+* Changed HD HIP and DM number format from string to float
+*
 * Revision 1.32  2005/02/15 15:41:47  gzins
 * Fixed wrong mcsmcsSUCCESS and mcsmcsFAILURE
 *
@@ -71,7 +74,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.33 2005-02-16 17:01:37 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.34 2005-02-21 11:07:47 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -931,8 +934,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_SPECT_TYPE_MK, "tsp", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_VARIAB, "varflag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_MULT_FLAG, "multflag", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_POS_GAL_LAT, "glat", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(vobsSTAR_POS_GAL_LON, "glon", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_POS_GAL_LAT, "glat", vobsFLOAT_PROPERTY, "%.2f");
+    AddProperty(vobsSTAR_POS_GAL_LON, "glon", vobsFLOAT_PROPERTY, "%.2f");
     AddProperty(vobsSTAR_VELOC_HC, "radvel", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_LD_DIAM, "LD", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_LD_DIAM_ERROR, "e_LD", vobsFLOAT_PROPERTY, "%.3f");
