@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.13 2005-02-08 07:24:07 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.14 2005-02-08 20:47:15 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/02/08 07:24:07  gzins
+ * Changed char* to const char* when applicable
+ *
  * Revision 1.12  2005/02/08 04:38:50  gzins
  * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
  *
@@ -57,23 +60,18 @@ public:
     virtual ~sclsvrCALIBRATOR_LIST();//destructor
 
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
-    virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list);
-    virtual mcsCOMPL_STAT CopyIn(sclsvrCALIBRATOR_LIST *list,
-                                 mcsLOGICAL filterDiameterNok = mcsFALSE,
-                                 mcsLOGICAL filterVisibilityNok = mcsFALSE);
+    virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list,
+                               mcsLOGICAL copyDiameterNok = mcsTRUE,
+                               mcsLOGICAL copyVisibilityNok = mcsTRUE);
     virtual mcsCOMPL_STAT AddAtTail(sclsvrCALIBRATOR &calibrator);
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
  
     virtual mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
     
-    //virtual void Display();
-    
     virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(miscDYN_BUF *buffer);
    
-    // Method need by the graphical user interface
-    virtual mcsCOMPL_STAT GetCoherentDiameter(sclsvrCALIBRATOR_LIST *list);
-    virtual mcsCOMPL_STAT GetVisibilityOk(sclsvrCALIBRATOR_LIST *list);
+    // Method
     virtual mcsCOMPL_STAT FilterByDistanceSeparation(const char *scienceRa,
                                                      const char *scienceDec,
                                                      mcsFLOAT raRange,

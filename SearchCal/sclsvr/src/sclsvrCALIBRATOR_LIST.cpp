@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.23 2005-02-08 07:24:07 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.24 2005-02-08 20:48:11 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/02/08 07:24:07  gzins
+ * Changed char* to const char* when applicable
+ *
  * Revision 1.22  2005/02/08 04:39:32  gzins
  * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
  *
@@ -48,7 +51,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.23 2005-02-08 07:24:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.24 2005-02-08 20:48:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -89,8 +92,12 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 }
 
 /**
- * Copy Method from a vobsSTAR_LIST
- * \param list he list to copy
+ * Import list of calibrators from a list of stars.
+ *
+ * \param list list containing calibrators to be imported
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned. 
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
@@ -105,15 +112,36 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 
 /**
  * Copy Method from a sclsvrCALIBRATOR_LIST
- * \param list he list to copy 
+ * Import list of calibrators from another list.
+ *
+ * \param list list containing calibrators to be imported
+ * \param copyDiameterNok if mcsFALSE do not copy calibrator with a no coherent
+ * diameter
+ * \param copyVisibilityNok if mcsFALSE do not copy calibrator with a visibility
+ * less than the expected one.
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned. 
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
+                                          mcsLOGICAL copyDiameterNok,
+                                          mcsLOGICAL copyVisibilityNok)
 {
      
     logExtDbg("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
     for (unsigned int el = 0; el < list.Size(); el++)
     {
-        AddAtTail(*(sclsvrCALIBRATOR *)(list.GetNextStar((mcsLOGICAL)(el==0))));
+        // Get next calibrator
+        sclsvrCALIBRATOR *calibrator;
+        calibrator = (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
+        
+        if (((copyDiameterNok == mcsFALSE) && 
+             (calibrator->IsDiameterOk() == mcsFALSE)) ||
+            ((copyVisibilityNok == mcsFALSE) && 
+             (calibrator->IsVisibilityOk() == mcsFALSE)))
+        {
+            AddAtTail(*calibrator);
+        }
     }
     return mcsSUCCESS;
 }
@@ -180,25 +208,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 }
 
 /**
- * Method to print the list on the console
- */
-/**
- * Display the elements (calibrator) of the list.
- *
- * This method display all elements of the list on the console, using the
- * sclsvrCALIBRATOR::Display method.
- */
-/*void sclsvrCALIBRATOR_LIST::Display(void)
-{
-    logExtDbg("sclsvrCALIBRATOR_LIST::Display()");
-
-    for (unsigned int el = 0; el < Size(); el++)
-    {
-        GetNextStar((mcsLOGICAL)(el==0))->Display();
-    }
-}*/
-
-/**
  * Pack a calibrator list in a dynamic buffer
  *
  * This method shoulb be call after a call to request Pack method. If it is call
@@ -250,8 +259,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
     char *bufferLine=NULL;
    
     // Replace the '\n' by '\0' in the buffer where is stored the list
-    if (miscReplaceChrByChr(miscDynBufGetBuffer(buffer), '\n', '\0') == 
-        mcsFAILURE)
+    if (miscReplaceChrByChr(miscDynBufGetBuffer(buffer), '\n', '\0') == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -270,124 +278,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
             {
                 return mcsFAILURE;
             }
+            calibrator.Display();
             // add in the list the calibrator
             AddAtTail(calibrator); 
         }
     }
-    
     return mcsSUCCESS;    
-}
-
-/**
- * Copy in a list the current list
- *
- * \param list the list to copy in
- * \param filterDiameterNok flag to filter nok diameter star
- * \param filterVisibilityNok flag to filter nok visibility star
- *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned. 
- */
-mcsCOMPL_STAT
-sclsvrCALIBRATOR_LIST::CopyIn(sclsvrCALIBRATOR_LIST *list,
-                                 mcsLOGICAL filterDiameterNok,
-                                 mcsLOGICAL filterVisibilityNok)
-{
-    logExtDbg("sclsvrCALIBRATOR_LIST::CopyIn()");
-    // if the flag to remove diameter nok is true
-    if (filterDiameterNok == mcsTRUE)
-    {
-        sclsvrCALIBRATOR *calibrator;
-        for (unsigned int el = 0; el < Size(); el++)
-        {
-
-            if ((calibrator =
-                 ((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0))))->
-                IsDiameterOk()
-                == mcsTRUE )
-            {
-                logTest("calibrator %d had coherent diameter\n", el+1);
-                list->AddAtTail(*calibrator);
-            }
-        }
-    }
-    // if the flag to remove visibility nok is true    
-    if (filterVisibilityNok == mcsTRUE)
-    {
-        sclsvrCALIBRATOR *calibrator;
-        // for each calibrator of the list
-        for (unsigned int el = 0; el < Size(); el++)
-        {
-            if ((calibrator=
-                 ((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0))))->
-                IsVisibilityOk() 
-                == mcsTRUE )
-            {
-                logTest("calibrator %d had visibility OK\n", el+1);
-                list->AddAtTail(*calibrator);
-            }
-        }
-    }
-    return mcsSUCCESS;
-}
-
-/**
- * Get a list of calibrator with coherent diameter
- *
- * \param list the list to get
- *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- **/
-mcsCOMPL_STAT 
-    sclsvrCALIBRATOR_LIST::GetCoherentDiameter(sclsvrCALIBRATOR_LIST *list)
-{
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetCoherentDiameter()");
-    // for each calibrator of the list
-    sclsvrCALIBRATOR *calibrator;
-    for (unsigned int el = 0; el < Size(); el++)
-    {
-        
-        if ((calibrator =
-            ((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0))))->
-            IsDiameterOk()
-            == mcsTRUE )
-        {
-            logTest("calibrator %d had coherent diameter\n", el+1);
-            list->AddAtTail(*calibrator);
-        }
-    }
-    return mcsSUCCESS;
-
-}
-
-/**
- * Get a list of calibrator with visibility ok
- *
- * \param list the list to get
- *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- **/
-mcsCOMPL_STAT 
-    sclsvrCALIBRATOR_LIST::GetVisibilityOk(sclsvrCALIBRATOR_LIST *list)
-{
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetVisibilityOkList()");
-    sclsvrCALIBRATOR *calibrator;
-    // for each calibrator of the list
-    for (unsigned int el = 0; el < Size(); el++)
-    {
-        if ((calibrator=
-             ((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0))))->
-            IsVisibilityOk() 
-            == mcsTRUE )
-        {
-            logTest("calibrator %d had visibility OK\n", el+1);
-            list->AddAtTail(*calibrator);
-        }
-    }
-    return mcsSUCCESS;
-
 }
 
 /**
@@ -412,12 +308,12 @@ sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation(const char *scienceRa,
     // create a star correponding to the science object
     sclsvrCALIBRATOR scienceStar;
     if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,
-                                     scienceRa) == mcsFAILURE)
+                                     scienceRa, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN,
-                                     scienceDec) == mcsFAILURE)
+                                     scienceDec, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -482,7 +378,7 @@ sclsvrCALIBRATOR_LIST::FilterByMagnitude(const char *band,
     // create a star correponding to the science object
     sclsvrCALIBRATOR scienceStar;
     if (scienceStar.SetPropertyValue(magnitudeUcd,
-                                     magValue) == mcsFAILURE)
+                                     magValue, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
