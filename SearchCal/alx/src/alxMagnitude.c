@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.6 2005-02-12 15:13:55 gzins Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.7 2005-02-16 15:10:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/12 15:13:55  gzins
+ * Removed call to miscResolvePath; done by miscLocateFile
+ *
  * Revision 1.5  2005/01/31 13:32:37  scetre
  * changed misc...Pointer in misc...
  *
@@ -36,7 +39,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.6 2005-02-12 15:13:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.7 2005-02-16 15:10:57 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -203,9 +206,9 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
 
     /* For each line */
     int  lineNum=0;
-    char *line=NULL;
-    while ((line = miscDynBufGetNextLine(&dynBuf,
-                                                line, mcsTRUE)) != NULL)
+    const char *pos = NULL;
+    mcsSTRING1024 line;
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, mcsTRUE)) != NULL)
     {
         logDebug("miscDynBufGetNextLine() = '%s'", line);
 

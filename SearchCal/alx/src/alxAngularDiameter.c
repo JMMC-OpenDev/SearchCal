@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.6 2005-02-12 15:13:11 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.7 2005-02-16 15:10:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/12 15:13:11  gzins
+ * Removed call to miscResolvePath; done by miscLocateFile
+ *
  * Revision 1.5  2005/02/10 07:55:31  gzins
  * Updated alxComputeAngularDiameter to return diameter from B-V, V-R and V-K calibration
  *
@@ -36,7 +39,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.6 2005-02-12 15:13:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.7 2005-02-16 15:10:57 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -122,14 +125,14 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
 
     /* For each line */
     int  lineNum = 0;
-    char *line = NULL;
-    while ((line = miscDynBufGetNextLine(&dynBuf, line, mcsTRUE)) != NULL)
+    const char *pos = NULL;
+    mcsSTRING1024 line;
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, mcsTRUE)) != NULL)
     {
         logTest("miscDynBufGetNextLine() = '%s'", line);
 
         /* If line is not empty */
-        miscTrimString (line, " ");
-        if (strlen(line) != 0)
+        if (miscIsSpaceStr(line) == mcsFALSE)
         {
             /* Check if there is to many lines in file */
             if (lineNum >= alxNB_COLOR_INDEXES)

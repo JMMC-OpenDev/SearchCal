@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.1  2005/02/12 14:59:11  gzins
+* Created
+*
 * clausse     13-Jan-2005  Created
 *******************************************************************************/
 
@@ -16,7 +19,7 @@
  * \sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.1 2005-02-12 14:59:11 gzins Exp $";
+static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.2 2005-02-16 15:10:57 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -107,8 +110,9 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
 
     /* For each line */
     mcsINT32  lineNum=0;
-    char *line=NULL;
-    while ((line = miscDynBufGetNextLine(&dynBuf, line, mcsTRUE)) != NULL)
+    const char *pos = NULL;
+    mcsSTRING1024 line;
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, mcsTRUE)) != NULL)
     {
         /* If line is not empty */
         miscTrimString (line, " ");
