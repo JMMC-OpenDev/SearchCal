@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.14 2004-10-18 11:39:20 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.14 2004-10-18 11:39:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -41,9 +41,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCATALOG.h"
-#include "vobsREQUEST.h"
-#include "vobsPARSER.h"
+#include "vobs.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.C,v 1.4 2004-10-15 07:52:12 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.C,v 1.5 2004-10-20 12:17:20 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.4 2004-10-15 07:52:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.C,v 1.5 2004-10-20 12:17:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -38,8 +38,9 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsSCENARIO.h"
+#include "vobs.h"
 #include "vobsPrivate.h"
+#include "vobsErrors.h"
 
 
 /*

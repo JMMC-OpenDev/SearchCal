@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.8 2004-09-30 07:40:09 scetre Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.9 2004-10-20 12:17:20 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.8 2004-09-30 07:40:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.9 2004-10-20 12:17:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,7 +42,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsSTAR.h"
+#include "vobs.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 

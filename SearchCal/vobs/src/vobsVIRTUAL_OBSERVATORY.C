@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.14 2004-10-15 07:52:20 scetre Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.14 2004-10-15 07:52:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -33,20 +33,9 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsVIRTUAL_OBSERVATORY.h"
-#include "vobsCATALOG.h"
-#include "vobsCATALOG_ASCC.h"
-#include "vobsCATALOG_BSC.h"
-#include "vobsCATALOG_CHARM.h"
-#include "vobsCATALOG_CIO.h"
-#include "vobsCATALOG_DENIS.h"
-#include "vobsCATALOG_HIC.h"
-#include "vobsCATALOG_LBSI.h"
-#include "vobsCATALOG_MASS.h"
-#include "vobsCATALOG_PHOTO.h"
-#include "vobsCATALOG_SBSC.h"
-#include "vobsSCENARIO.h"
+#include "vobs.h"
 #include"vobsPrivate.h"
+#include "vobsErrors.h"
 
 /*
  * Class constructor

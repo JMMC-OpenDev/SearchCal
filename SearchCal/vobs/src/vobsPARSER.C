@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsPARSER.C,v 1.14 2004-10-19 14:47:54 scetre Exp $"
+ * "@(#) $Id: vobsPARSER.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.14 2004-10-19 14:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -33,7 +33,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsPARSER.h"
+#include "vobs.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 

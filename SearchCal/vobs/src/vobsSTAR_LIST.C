@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.10 2004-10-15 08:14:52 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.11 2004-10-20 12:17:20 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.10 2004-10-15 08:14:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.11 2004-10-20 12:17:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -27,9 +27,10 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsSTAR_LIST.h"
+#include "vobs.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
+
 /* Local variables */
 static char *nameList[] =
 {
