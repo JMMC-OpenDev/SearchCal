@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.11 2005-02-13 15:29:50 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.12 2005-02-14 14:11:22 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/13 15:29:50  gzins
+* Inherited from miscoDYN_BUF
+* Added methods to load from file or buffer
+* Added methods to store and extract list of stars
+*
 * Revision 1.10  2005/02/11 10:37:19  gzins
 * Added AddParamsDesc() method
 *
@@ -35,7 +40,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.11 2005-02-13 15:29:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.12 2005-02-14 14:11:22 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -425,6 +430,11 @@ mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
 
     // Get the content of the buffer and copy it in the CDATA
     if (AppendString(buffer) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    SetCommentPattern("#");
+    if (miscReplaceChrByChr(_dynBuf.dynBuf, '\n', '\0') == mcsFAILURE)
     {
         return mcsFAILURE;
     }
