@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestStar.cpp,v 1.4 2004-12-21 09:52:27 scetre Exp $"
+* "@(#) $Id: vobsTestStar.cpp,v 1.5 2005-01-26 08:21:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.4 2004-12-21 09:52:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.5 2005-01-26 08:21:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -103,6 +103,15 @@ int main(int argc, char *argv[])
          printf("%s\n",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
      }
 
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08");
+    mcsFLOAT ra;
+    star.GetRa(ra);
+    printf("ra (deg) = %f\n", ra);
+
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5");
+    mcsFLOAT dec;
+    star.GetDec(dec);
+    printf("dec (deg) = %f\n", dec);
     /*logInfo("Starting ...");
 
     vobsSTAR_LIST list;
