@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.5 2005-02-23 09:11:48 gzins Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.6 2005-03-30 12:48:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/23 09:11:48  gzins
+ * Added log for test
+ *
  * Revision 1.4  2005/02/18 08:29:42  scetre
  * Fixed Bug in dV compute
  *
@@ -34,7 +37,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: alxVisibility.c,v 1.5 2005-02-23 09:11:48 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxVisibility.c,v 1.6 2005-03-30 12:48:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -74,10 +77,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * \param angDiamError relative error on the angular diameter
  * \param baseMax maximal baseline(m)
  * \param wlen wavelength (nm)
- * \param vis the computed visibility
- * \param vis2 the computed square visibility
- * \param visError error on computed visibility
- * \param vis2Error error on computed square visibility
+ * \param visibilities the computed visibilities (vis, visErr, vis2, vis2Err)
  *
  * \return Always mcsSUCCESS
  */
@@ -85,10 +85,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
                                    mcsFLOAT angDiamError,
                                    mcsFLOAT baseMax,
                                    mcsFLOAT wlen,
-                                   mcsFLOAT *vis,
-                                   mcsFLOAT *vis2,
-                                   mcsFLOAT *visError,
-                                   mcsFLOAT *vis2Error)
+                                   alxVISIBILITIES *visibilities)
 {
     logExtDbg("alxComputeVisibility()");
     
@@ -96,24 +93,25 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
     x = 15.23 * baseMax * angDiam / (1000 * wlen);
 
     /* Compute V */
-    *vis = fabs(2 * j1f(x) / x);
+    visibilities->vis = fabs(2 * j1f(x) / x);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    *visError  = 2 * jnf(2, x) * angDiamError / angDiam;
+    visibilities->visError  = 2 * jnf(2, x) * angDiamError / angDiam;
 
     /* Compute V² */
-    *vis2 = pow(*vis, 2);
+    visibilities->vis2 = pow(visibilities->vis, 2);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    *vis2Error = 8 * jnf(2, x) * fabs(j1f(x)/x) * angDiamError / angDiam;
+    visibilities->vis2Error = 
+        8 * jnf(2, x) * fabs(j1f(x)/x) * angDiamError / angDiam;
     
     /* Print out result */
     logTest("Diam= %.3f(%.3f) - base = %.1f - wlen= %.3f",
             angDiam, angDiamError, baseMax, wlen);
-    logTest("V   = %.6f", *vis);
-    logTest("dV  = %.6f", *visError);
-    logTest("V²  = %.6f", *vis2);
-    logTest("dV² = %.6f", *vis2Error);
+    logTest("V   = %.6f", visibilities->vis);
+    logTest("dV  = %.6f", visibilities->visError);
+    logTest("V²  = %.6f", visibilities->vis2);
+    logTest("dV² = %.6f", visibilities->vis2Error);
 
     return mcsSUCCESS;
 }
