@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.10 2004-12-22 08:32:09 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.11 2004-12-22 13:00:55 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,7 +25,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.10 2004-12-22 08:32:09 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.11 2004-12-22 13:00:55 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -135,6 +135,7 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
     // check if the cdf file has been found   
     if (fullCdfFilename == NULL)
     {
+        
         return FAILURE;
     }
         
@@ -184,9 +185,19 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
     logExtDbg ("cmdCOMMAND::GetDescription()");
 
     string s;
-    
-    if (Parse() == FAILURE )
+    // find the correcsponding cdf file
+    char * fullCdfFilename = miscLocateFile(_cdfName.data());
+    // check if the cdf file has been found   
+    if (fullCdfFilename == NULL)
     {
+        s.append("Sorry help can't be generated because an error occured during parsing\n");        
+        desc.append(s);
+        return FAILURE;
+    }
+        
+    if (ParseCdf(fullCdfFilename)==FAILURE)
+    {
+        errAdd (cmdERR_PARSE_CDF, fullCdfFilename, _name.c_str());
         s.append("Sorry help can't be generated because an error occured during parsing\n");        
         desc.append(s);
         return FAILURE;
