@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestUtils.c,v 1.5 2004-06-17 15:17:58 lafrasse Exp $"
+* "@(#) $Id: miscTestUtils.c,v 1.6 2004-06-18 10:56:54 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -35,7 +35,7 @@
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.5 2004-06-17 15:17:58 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.6 2004-06-18 10:56:54 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -81,15 +81,33 @@ int main (int argc, char *argv[])
     printf("miscGetExtension() Function Test :\n\n");
     printf("   File Path                      | File Name\n");
     printf("   -------------------------------+---------------\n");
+    strcpy (fullFileName, "fileName");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     strcpy (fullFileName, "fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "./fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     strcpy (fullFileName, "./fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "../fileName");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     strcpy (fullFileName, "../fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "/fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     strcpy (fullFileName, "/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "/tmp/data/fileName");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     strcpy (fullFileName, "/tmp/data/fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "/tmp/.data/fileName");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "/tmp/.data/fileName.txt");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "/tmp/../p/.data/fileName");
+    printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
+    strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     printf("\n\n");
 
