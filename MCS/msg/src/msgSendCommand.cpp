@@ -1,25 +1,26 @@
 /*******************************************************************************
-* JMMC project
-* 
-* "@(#) $Id: msgSendCommand.cpp,v 1.9 2005-01-07 18:37:59 gzins Exp $"
-*
-*
-* who       when                 what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  16-Aug-2004  Ported from CILAS software
-* lafrasse  19-Nov-2004  Used argv[0] instead of the hard-coded "msgSendCommand"
-*                        value, and added the mcsExit() function call
-* lafrasse  23-Nov-2004  Cleaned included headers
-* gzins     29-Nov-2004  Fixed bug related to time-out handling
-*                        Set default time-out to WAIT_FOREVER
-* gzins     03-Dec-2004  Updated according to new msgMANAGER_IF::Connect API
-* gzins     07-Dec-2004  Removed no longer needed errStackDisplay() 
-* gzins     20-Dec-2004  Removed leading and trailing spaces to parameters
-* gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
-* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
-*                        Displayed error stack when receiving error reply
-*
-*******************************************************************************/
+ * JMMC project
+ * 
+ * "@(#) $Id: msgSendCommand.cpp,v 1.10 2005-01-24 15:02:47 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  16-Aug-2004  Ported from CILAS software
+ * lafrasse  19-Nov-2004  Used argv[0] instead of the hard-coded
+ *                        "msgSendCommand" value, and added the mcsExit()
+ *                        function call
+ * lafrasse  23-Nov-2004  Cleaned included headers
+ * gzins     29-Nov-2004  Fixed bug related to time-out handling
+ *                        Set default time-out to WAIT_FOREVER
+ * gzins     03-Dec-2004  Updated according to new msgMANAGER_IF::Connect API
+ * gzins     07-Dec-2004  Removed no longer needed errStackDisplay() 
+ * gzins     20-Dec-2004  Removed leading and trailing spaces to parameters
+ * gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *                        Displayed error stack when receiving error reply
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -53,7 +54,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.9 2005-01-07 18:37:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.10 2005-01-24 15:02:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*

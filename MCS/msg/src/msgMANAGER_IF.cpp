@@ -1,43 +1,44 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.17 2005-01-07 18:33:54 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  18-Nov-2004  Created
-* lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for _socket,
-*                        and refined comments
-* lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
-* lafrasse  24-Nov-2004  Comment refinments, and includes cleaning
-* gzins     29-Nov-2004  Fixed bug in Connect method
-* lafrasse  01-Dec-2004  Comment refinments
-* gzins     03-Dec-2004  Removed msgManagerHost param from Connect
-*                        Minor changes in documentation 
-* lafrasse  03-Dec-2004  Added mcs environment name management
-* gzins     05-Dec-2004  Updated according to new msgMCS_ENV class API
-* gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
-* gzins     07-Dec-2004  Updated according to the new msgMCS_ENVS class
-*                        Fixed bug related to error handling in Connect
-* gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
-* gzins     09-Dec-2004  Fixed bug related to default port number;
-*                        msgMANAGER_PORT_NUMBER used instead of the one given
-*                        by envLIST class
-* lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
-*                        misc Dynamic Buffer (no more msgMAXLEN)
-* gzins     15-Dec-2004  Used new command name definition (with _NAME)
-* gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
-* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
-*                        Updated SendCommand to return command Id
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgMANAGER_IF.cpp,v 1.18 2005-01-24 15:02:47 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  18-Nov-2004  Created
+ * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
+ *                        _socket, and refined comments
+ * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
+ * lafrasse  24-Nov-2004  Comment refinments, and includes cleaning
+ * gzins     29-Nov-2004  Fixed bug in Connect method
+ * lafrasse  01-Dec-2004  Comment refinments
+ * gzins     03-Dec-2004  Removed msgManagerHost param from Connect
+ *                        Minor changes in documentation 
+ * lafrasse  03-Dec-2004  Added mcs environment name management
+ * gzins     05-Dec-2004  Updated according to new msgMCS_ENV class API
+ * gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
+ * gzins     07-Dec-2004  Updated according to the new msgMCS_ENVS class
+ *                        Fixed bug related to error handling in Connect
+ * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+ * gzins     09-Dec-2004  Fixed bug related to default port number;
+ *                        msgMANAGER_PORT_NUMBER used instead of the one given
+ *                        by envLIST class
+ * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+ *                        misc Dynamic Buffer (no more msgMAXLEN)
+ * gzins     15-Dec-2004  Used new command name definition (with _NAME)
+ * gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *                        Updated SendCommand to return command Id
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.17 2005-01-07 18:33:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.18 2005-01-24 15:02:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

@@ -1,43 +1,44 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgMESSAGE.cpp,v 1.14 2005-01-07 18:35:45 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    17-Nov-2004  Created
-* lafrasse  19-Nov-2004  Re-commented, and replaced all the srtcpy by some
-*                        strNcpy in order to avoid segmentation faults as far
-*                        as possible
-* lafrasse  22-Nov-2004  Added void type for functions without parameters
-* lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
-*                        msgMESSAGE, added SetLastReplyFlag method
-* lafrasse  01-Dec-2004  Added error management code, comment refinments, and
-*                        includes cleaning
-* gzins     03-Dec-2004  Improved parameter check in SetBody method
-* gzins     07-Dec-2004  Removed invalid parameters from Display documentation 
-* gzins     08-Dec-2004  Implemented methods for SendId and MessageId 
-* lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
-*                        misc Dynamic Buffer, and removed unused API
-* gzins     20-Dec-2004  Fixed bug in GetBody which returned a wrong pointer
-*                        when body was empty
-* gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
-*                        Removed GetHeaderPtr
-*                        Declared AllocateBody as private
-*                        Renamed isInternal to IsInternal
-*                        Added ClearBody and AppendToBody
-* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
-*                        Implemented copy constructor and assignment operator
-*                        Changed messageId to commandId
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.15 2005-01-24 15:02:47 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    17-Nov-2004  Created
+ * lafrasse  19-Nov-2004  Re-commented, and replaced all the srtcpy by some
+ *                        strNcpy in order to avoid segmentation faults as far
+ *                        as possible
+ * lafrasse  22-Nov-2004  Added void type for functions without parameters
+ * lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
+ *                        msgMESSAGE, added SetLastReplyFlag method
+ * lafrasse  01-Dec-2004  Added error management code, comment refinments, and
+ *                        includes cleaning
+ * gzins     03-Dec-2004  Improved parameter check in SetBody method
+ * gzins     07-Dec-2004  Removed invalid parameters from Display documentation 
+ * gzins     08-Dec-2004  Implemented methods for SendId and MessageId 
+ * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+ *                        misc Dynamic Buffer, and removed unused API
+ * gzins     20-Dec-2004  Fixed bug in GetBody which returned a wrong pointer
+ *                        when body was empty
+ * gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
+ *                        Removed GetHeaderPtr
+ *                        Declared AllocateBody as private
+ *                        Renamed isInternal to IsInternal
+ *                        Added ClearBody and AppendToBody
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *                        Implemented copy constructor and assignment operator
+ *                        Changed messageId to commandId
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.14 2005-01-07 18:35:45 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.15 2005-01-24 15:02:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

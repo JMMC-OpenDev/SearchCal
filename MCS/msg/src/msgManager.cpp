@@ -1,16 +1,17 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgManager.cpp,v 1.3 2005-01-07 18:32:21 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     06-Dec-2004  Created
-* lafrasse  15-Dec-2004  Re-added Doxygen documentation from the npw removed
-*                        msgManager.c
-* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgManager.cpp,v 1.4 2005-01-24 15:02:47 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     06-Dec-2004  Created
+ * lafrasse  15-Dec-2004  Re-added Doxygen documentation from the npw removed
+ *                        msgManager.c
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -26,7 +27,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgManager.cpp,v 1.3 2005-01-07 18:32:21 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgManager.cpp,v 1.4 2005-01-24 15:02:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

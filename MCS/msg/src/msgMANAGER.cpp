@@ -1,33 +1,34 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgMANAGER.cpp,v 1.11 2005-01-21 15:37:40 lafrasse Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     06-Dec-2004  Created
-* gzins     08-Dec-2004  Updated to support several processes with same name  
-* gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
-* gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
-* gzins     12-Dec-2004  Added errno.h header file
-* lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
-*                        misc Dynamic Buffer (no more msgMAXLEN)
-* gzins     14-Dec-2004  Handled DEBUG command
-* gzins     20-Dec-2004  Fixed bug related to the use of GetNextProcess after
-*                        removing a process from the list.
-* gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
-* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
-* lafrasse  21-Jan-2005  Added a timeout when exiting in order to have
-*                        sufficient time to receive the 'EXIT' query answer
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgMANAGER.cpp,v 1.12 2005-01-24 15:02:47 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     06-Dec-2004  Created
+ * gzins     08-Dec-2004  Updated to support several processes with same name  
+ * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+ * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
+ * gzins     12-Dec-2004  Added errno.h header file
+ * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+ *                        misc Dynamic Buffer (no more msgMAXLEN)
+ * gzins     14-Dec-2004  Handled DEBUG command
+ * gzins     20-Dec-2004  Fixed bug related to the use of GetNextProcess after
+ *                        removing a process from the list.
+ * gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ * lafrasse  21-Jan-2005  Added a timeout when exiting in order to have
+ *                        sufficient time to receive the 'EXIT' query answer
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.11 2005-01-21 15:37:40 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.12 2005-01-24 15:02:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

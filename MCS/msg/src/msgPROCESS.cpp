@@ -1,21 +1,22 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgPROCESS.cpp,v 1.2 2005-01-07 18:36:38 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     06-Dec-2004  Created
-* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgPROCESS.cpp,v 1.3 2005-01-24 15:02:47 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     06-Dec-2004  Created
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * msgPROCESS class definition.
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS.cpp,v 1.2 2005-01-07 18:36:38 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS.cpp,v 1.3 2005-01-24 15:02:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

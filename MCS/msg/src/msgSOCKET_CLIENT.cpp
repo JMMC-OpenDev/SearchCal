@@ -1,25 +1,26 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.8 2005-01-07 18:38:46 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    22-Nov-2004  Created
-* lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
-* lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
-* gzins     06-Dec-2004  Implemented copy constructor
-* gzins     06-Dec-2004  Removed copy constructor
-* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.9 2005-01-24 15:02:47 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    22-Nov-2004  Created
+ * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+ * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * gzins     06-Dec-2004  Implemented copy constructor
+ * gzins     06-Dec-2004  Removed copy constructor
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * msgSOCKET_CLIENT class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.8 2005-01-07 18:38:46 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.9 2005-01-24 15:02:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

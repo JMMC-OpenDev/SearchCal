@@ -1,35 +1,36 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgSOCKET.cpp,v 1.13 2005-01-07 18:39:43 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    19-Nov-2004  Created
-* lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
-* lafrasse  25-Nov-2004  Added error management code
-* gzins     29-Nov-2004  Fixed wrong returned value in IsConnected method
-*                        Do not read body if body size is 0 in Receive()
-* lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
-* gzins     06-Dec-2004  Implemented copy constructor
-* gzins     06-Dec-2004  Removed copy constructor
-* gzins     08-Dec-2004  Set MessageId when sending message and set SenderId
-*                        when receiving message.
-* lafrasse  14-Dec-2004  Changed msgMESSAGE body type from statically sized
-*                        to a misc Dynamic Buffer, and removed unused API
-* gzins     22-Dec-2004  Updated Send and Receive which are defined as friend
-*                        of the msgMESSAGE class
-* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
-*                        Changed messageId to commandId
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgSOCKET.cpp,v 1.14 2005-01-24 15:02:47 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    19-Nov-2004  Created
+ * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+ * lafrasse  25-Nov-2004  Added error management code
+ * gzins     29-Nov-2004  Fixed wrong returned value in IsConnected method
+ *                        Do not read body if body size is 0 in Receive()
+ * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * gzins     06-Dec-2004  Implemented copy constructor
+ * gzins     06-Dec-2004  Removed copy constructor
+ * gzins     08-Dec-2004  Set MessageId when sending message and set SenderId
+ *                        when receiving message.
+ * lafrasse  14-Dec-2004  Changed msgMESSAGE body type from statically sized
+ *                        to a misc Dynamic Buffer, and removed unused API
+ * gzins     22-Dec-2004  Updated Send and Receive which are defined as friend
+ *                        of the msgMESSAGE class
+ * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+ *                        Changed messageId to commandId
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.13 2005-01-07 18:39:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.14 2005-01-24 15:02:47 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
