@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2004-09-10 17:43:55 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.15 2004-09-13 06:33:25 gluck Exp $"
 #
 # Makefile of ctoo module
 #
@@ -132,12 +132,6 @@ ifdef INTROOT
 endif
 #
 #>>>>> END OF standard rules
-
-#
-# CHOSE PLATFORM
-# --------------
-# Default is UNIX, for VxVorks application next line MUST BE UNCOMMENTED
-#MAKE_VXWORKS = on   
 
 #
 # INCLUDE STANDARDS
