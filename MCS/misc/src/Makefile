@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-08-02 15:23:40 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-08-03 09:09:04 lafrasse Exp $"
 #
 # Makefile of misc Library
 #
@@ -13,6 +13,7 @@
 # lafrasse  02-Aug-2004  Removed miscDynStr compilation due to null-terminated
 #                        string specific functions move from miscDynStr.h to
 #                        miscDynBuf.h
+# lafrasse  03-Aug-2004  Added miscNetwork stuff
 #
 #
 #*******************************************************************************
@@ -65,7 +66,7 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-misc_OBJECTS   = miscFile miscDate miscString miscDynBuf
+misc_OBJECTS   = miscDate miscDynBuf miscFile miscNetwork miscString
 
 #
 # Scripts (public and local)

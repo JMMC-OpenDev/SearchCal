@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.doc,v 1.6 2004-08-02 15:23:40 lafrasse Exp $"
+* "@(#) $Id: misc.doc,v 1.7 2004-08-03 09:09:04 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,6 +10,7 @@
 * lafrasse  02-Aug-2004  Removed miscDynStr due to null-terminated string
 *                        specific functions move from miscDynStr.h to
 *                        miscDynBuf.h
+* lafrasse  03-Aug-2004  Added miscNetwork stuff
 *
 *
 *******************************************************************************/
@@ -23,7 +24,8 @@ The 'Miscellaneous Functions' (misc) module is a collection of usefull functions
 <b>Detailed decription</b>\n
 As of today, the misc module contains functions to deal with :
 \li miscDate.c (getting local and UTC time)
-\li miscString.c (null-terminated string computing, like quotes stripping and upper casing)
-\li miscFile.c (UNIX-like file path computing, and environment variables resolving)
 \li miscDynBuf.c (auto-expanding, byte-based buffer)
+\li miscFile.c (UNIX-like file path computing, and environment variables resolving)
+\li miscNetwork.c (network-related utility functions)
+\li miscString.c (null-terminated string computing, like quotes stripping and upper casing)
 */

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-08-02 15:23:40 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.7 2004-08-03 09:09:04 lafrasse Exp $"
 #
 # Makefile of misc Tests
 #
@@ -17,6 +17,7 @@
 # lafrasse  02-Aug-2004  Removed miscTestDynStr compilation, due to
 #                        null-terminated string specific functions move from
 #                        miscDynStr.h to miscDynBuf.h
+# lafrasse  03-Aug-2004  Added miscTestNetwork.c
 #
 #
 #*******************************************************************************
@@ -43,7 +44,7 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = miscTestDate miscTestString miscTestFile miscTestDynBuf
+EXECUTABLES     = miscTestDate miscTestDynBuf miscTestFile miscTestNetwork miscTestString
 
 
 EXECUTABLES_L   = 
@@ -56,9 +57,9 @@ miscTestDate_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
-miscTestString_OBJECTS   = miscTestString
-miscTestString_LDFLAGS   = -lgdome
-miscTestString_LIBS      = mcs err log misc
+miscTestDynBuf_OBJECTS   = miscTestDynBuf
+miscTestDynBuf_LDFLAGS   = -lgdome
+miscTestDynBuf_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
@@ -68,9 +69,15 @@ miscTestFile_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
-miscTestDynBuf_OBJECTS   = miscTestDynBuf
-miscTestDynBuf_LDFLAGS   = -lgdome
-miscTestDynBuf_LIBS      = mcs err log misc
+miscTestNetwork_OBJECTS   = miscTestNetwork
+miscTestNetwork_LDFLAGS   = -lgdome
+miscTestNetwork_LIBS      = mcs err log misc
+
+#
+# <brief description of xxxxx program>
+miscTestString_OBJECTS   = miscTestString
+miscTestString_LDFLAGS   = -lgdome
+miscTestString_LIBS      = mcs err log misc
 
 #
 # special compilation flags for single c sources

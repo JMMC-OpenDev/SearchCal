@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.19 2004-08-02 15:23:40 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.20 2004-08-03 09:09:04 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -27,14 +27,15 @@
 *                        Removed miscDynStr.h include due to null-terminated
 *                        string specific functions move from miscDynStr.h to
 *                        miscDynBuf.h
+* lafrasse  03-Aug-2004  Added miscNetwork.h
 *
 *
 *******************************************************************************/
  
 /**
  * \file
- * This header include all the miscDate, miscFile and miscString functions
- * declarations hedears files.
+ * This header include all the miscDate, miscDynBuf, miscFile, miscNetwork and
+ * miscString headers files.
  */
 
 /* The following piece of code alternates the linkage type to C for all 
@@ -52,6 +53,7 @@ extern "C" {
 #include "miscDate.h"
 #include "miscDynBuf.h"
 #include "miscFile.h"
+#include "miscNetwork.h"
 #include "miscString.h"
 
 
