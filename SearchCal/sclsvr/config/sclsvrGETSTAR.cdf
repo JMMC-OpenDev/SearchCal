@@ -8,15 +8,15 @@
         the output result is write in this order :
 
         name of the star
+        position date
         right ascension
         declinaison
-        position date
+        Magnitude in band B V R I J H K L M
         hipparcos catalog number
         spectral type
         galactic lattitude
         galactic longitude
         paralax
-        Magnitude in band B V R I J H K L M
         Corrected Magnitude in band B V R I J H K L M
         angular diameter of the star
         angular diameter error

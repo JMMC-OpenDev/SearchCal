@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.10 2005-02-02 14:24:56 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.11 2005-02-02 14:45:56 scetre Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.10 2005-02-02 14:24:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.11 2005-02-02 14:45:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -142,18 +142,13 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     miscDynBufInit(&dynBuff);
 
     // Table where are stored magnitudes
-    mcsSTRING64 starMagnitudes[13];
+    mcsSTRING64 starPropertyValue[25];
     // The star asked
     vobsSTAR *tmpStar=(calibratorList.GetNextStar(mcsTRUE));
     // A property table wanted
     int nbProperties = 25;
     mcsSTRING64 starProperty[25] = 
     {
-        vobsSTAR_ID_ALTERNATIVE,
-        vobsSTAR_SPECT_TYPE_MK,
-        vobsSTAR_POS_GAL_LAT,
-        vobsSTAR_POS_GAL_LON,
-        vobsSTAR_POS_PARLX_TRIG,
         vobsSTAR_PHOT_JHN_B,
         vobsSTAR_PHOT_JHN_V,
         vobsSTAR_PHOT_JHN_R,
@@ -163,6 +158,11 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         vobsSTAR_PHOT_JHN_K,
         vobsSTAR_PHOT_JHN_L,
         vobsSTAR_PHOT_JHN_M,
+        vobsSTAR_ID_ALTERNATIVE,
+        vobsSTAR_SPECT_TYPE_MK,
+        vobsSTAR_POS_GAL_LAT,
+        vobsSTAR_POS_GAL_LON,
+        vobsSTAR_POS_PARLX_TRIG,
         sclsvrCALIBRATOR_BO,
         sclsvrCALIBRATOR_VO,
         sclsvrCALIBRATOR_RO,
@@ -178,7 +178,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     // for each property
     for (int i=0; i<nbProperties; i++)
     { 
-        strcpy(starMagnitudes[i], tmpStar->GetPropertyValue(starProperty[i]));
+        strcpy(starPropertyValue[i], tmpStar->GetPropertyValue(starProperty[i]));
     }
    
       
@@ -202,7 +202,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     for (int i=0; i<nbProperties; i++)
     {
         miscDynBufAppendString(&dynBuff, " ");
-        miscDynBufAppendString(&dynBuff, starMagnitudes[i]);
+        miscDynBufAppendString(&dynBuff, starPropertyValue[i]);
     }
     
 
