@@ -3,12 +3,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: timlog.h,v 1.1 2004-12-17 10:06:44 gzins Exp $"
+* "@(#) $Id: timlog.h,v 1.2 2004-12-20 07:39:38 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     17-Dec-2004  Created
-*
+* gzins     20-Dec-2004  Added moduleName and fileLine argument to timlogStart
+*                        Added timlogXxxStart macros
 *******************************************************************************/
 
 /**
@@ -29,9 +30,25 @@ extern "C" {
 /*
  * Public functions declaration
  */
-void timlogStart(const logLEVEL level, const char* actionName);
+void timlogStart(const mcsMODULEID moduleName,const logLEVEL level, 
+                 const char *fileLine, const char* actionName);
 void timlogStop(const char* actionName);
 void timlogClear();
+
+/*
+ * Convenience macros (see log)
+ */
+#define timlogInfoStart(action) \
+    timlogStart(MODULE_ID, logINFO, __FILE_LINE__, action)
+
+#define timlogTestStart(action) \
+    timlogStart(MODULE_ID, logTEST, __FILE_LINE__, action)
+
+#define timlogDebugStart(action) \
+    timlogStart(MODULE_ID, logDEBUG, __FILE_LINE__, action)
+
+#define timlogExtDbgStart(action) \
+    timlogStart(MODULE_ID, logEXTDBG, __FILE_LINE__, action)
 
 #ifdef __cplusplus
 }
