@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.20 2004-08-10 13:29:10 lafrasse Exp $"
+* "@(#) $Id: log.c,v 1.21 2004-10-21 07:46:47 mella Exp $"
 *
 *
 * who       when                 what
@@ -51,14 +51,14 @@
  *
  * The levels of information are controlled
  * individually by :
- *   \li logSetFileLogVerbosity()
- *   \li logSetStdoutLogVerbosity()
- *   \li logSetActionLogVerbosity()\n\n
+ *   \li logSetFileLogLevel()
+ *   \li logSetStdoutLogLevel()
+ *   \li logSetActionLogLevel()\n\n
  *
  * Current log levels can be retrieved with :
- *   \li logGetFileLogVerbosity()
- *   \li logGetStdoutLogVerbosity()
- *   \li logGetActionLogVerbosity()\n\n
+ *   \li logGetFileLogLevel()
+ *   \li logGetStdoutLogLevel()
+ *   \li logGetActionLogLevel()\n\n
  *
  * Logging levels range from \p logQUIET to \p logEXTDBG , where the lowest
  * number means the lowest priority. By default, each log level is set to
