@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.cpp,v 1.4 2004-12-20 13:37:33 gzins Exp $"
+* "@(#) $Id: evhTASK.cpp,v 1.5 2005-01-07 18:23:30 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -10,9 +10,10 @@
 *                        options and arguments in command-line parameters
 * gzins     03-Dec-2004  Added -n command-line option  
 * gzins     03-Dec-2004  Removed -t command-line option and added -m
+* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.4 2004-12-20 13:37:33 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.5 2005-01-07 18:23:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -84,7 +85,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *          "a CCS message" << endl;
  *      cout <<"                   -c <file>    specify application "
  *          "configuration file" << endl;
- *      return SUCCESS;
+ *      return mcsSUCCESS;
  *  
  *  }
  *  
@@ -98,7 +99,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *      if(strcmp(argv[*optInd], "-noTimeout") == 0)
  *      {
  *          noTimeout = mcsTRUE;
- *          return SUCCESS;
+ *          return mcsSUCCESS;
  *      }
  *      // Application configuration file option
  *      else if (strcmp(argv[*optInd], "-c") == 0)
@@ -111,21 +112,21 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *              {
  *                  logError ("%s: Argument to option %s is invalid: '%s'",
  *                              Name(), argv[*optInd-1], optarg);
- *                  return FAILURE;
+ *                  return mcsFAILURE;
  *              }
- *              return SUCCESS;
+ *              return mcsSUCCESS;
  *          }
  *          else
  *          {
  *              logError ("%s: Option %s requires an argument",
  *                          Name(), argv[*optInd]);
- *              return FAILURE;
+ *              return mcsFAILURE;
  *          }
  *      }
  *  
  *      // This option has not been processed. 
  *      *optUsed = mcsFALSE;
- *      return SUCCESS;
+ *      return mcsSUCCESS;
  *  }
  *  
  *  int main(int argc, char *argv[])
@@ -135,7 +136,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *      
  *      logInfo("Application starting ..");
  *      // Init application; register to MCS and parse input parameter
- *      if (mymodServer.Init(argc, argv) == FAILURE)
+ *      if (mymodServer.Init(argc, argv) == mcsFAILURE)
  *      {
  *          exit (EXIT_FAILURE);
  *      }
@@ -185,22 +186,22 @@ evhTASK::~evhTASK()
  * This method just registers application to MCS services and parses the
  * command-line parameters.
  *
- * \return SUCCESS, or FAILURE if an error occurs.
+ * \return mcsSUCCESS, or mcsFAILURE if an error occurs.
  */
 mcsCOMPL_STAT evhTASK::Init(mcsINT32 argc, char *argv[])
 {
     logExtDbg("evhTASK::Method()");
 
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        return (FAILURE);
+        return (mcsFAILURE);
     }
 
     // Parse input parameter
-    if (ParseOptions(argc, argv) == FAILURE)
+    if (ParseOptions(argc, argv) == mcsFAILURE)
     {
-        return (FAILURE);
+        return (mcsFAILURE);
     }
 
     // Perform specific application snitialization
@@ -215,13 +216,13 @@ mcsCOMPL_STAT evhTASK::Init(mcsINT32 argc, char *argv[])
  * default, this method does nothing.
  * This method is called by Init() method.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhTASK::AppInit()
 {
     logExtDbg("evhSERVER::AppInit()");
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
  
@@ -242,7 +243,7 @@ const char *evhTASK::Name()
  * standard options listed above, and then internally calls AppUsage(), which
  * gives information about the options specific to the application.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhTASK::Usage()
 {
@@ -252,7 +253,7 @@ mcsCOMPL_STAT evhTASK::Usage()
     PrintStdOptions();
     PrintAppOptions();
     PrintArguments();
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -260,12 +261,12 @@ mcsCOMPL_STAT evhTASK::Usage()
  *
  * This method gives information about the synopsis of the program.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhTASK::PrintSynopsis()
 {
     std::cout << "Usage:" << Name() << " [OPTIONS]"<< endl;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -273,7 +274,7 @@ mcsCOMPL_STAT evhTASK::PrintSynopsis()
  *
  * This method gives information about the standard options listed above.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhTASK::PrintStdOptions()
 {
@@ -297,7 +298,7 @@ mcsCOMPL_STAT evhTASK::PrintStdOptions()
     cout <<" and line number" << endl;
     cout <<"                                in stdout log messages" << endl; 
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -307,13 +308,13 @@ mcsCOMPL_STAT evhTASK::PrintStdOptions()
  * command-line options which are specific to the application. By default,
  * this method does nothing.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhTASK::PrintAppOptions()
 {
     logExtDbg("evhTASK::PrintAppOptions()");
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -323,13 +324,13 @@ mcsCOMPL_STAT evhTASK::PrintAppOptions()
  * command-line options which are specific to the application. By default,
  * this method does nothing.
  *
- * \return SUCCESS 
+ * \return mcsSUCCESS 
  */
 mcsCOMPL_STAT evhTASK::PrintArguments()
 {
     logExtDbg("evhTASK::PrintArguments()");
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -342,7 +343,7 @@ mcsCOMPL_STAT evhTASK::PrintArguments()
  * of the application.
  * \param argc count of the arguments supplied to the method
  * \param argv array of pointers to the strings which are those arguments
- * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
+ * \return On success, mcsSUCCESS is returned. On error, mcsFAILURE is returned, and
  * error message is printed out accordingly.
  */
 mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, char *argv[])
@@ -357,27 +358,27 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, char *argv[])
     {
         // Parses standard options
         optUsed = mcsTRUE;
-        if (ParseStdOptions(argc, argv, &optInd, &optUsed) == FAILURE)
+        if (ParseStdOptions(argc, argv, &optInd, &optUsed) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
         // If option has not been handled
         else if (optUsed == mcsFALSE)
         {
             // Parses application options
             optUsed = mcsTRUE;
-            if (ParseAppOptions(argc, argv, &optInd, &optUsed) != SUCCESS)
+            if (ParseAppOptions(argc, argv, &optInd, &optUsed) != mcsSUCCESS)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
             // If option has still not been handled
             else if (optUsed == mcsFALSE)
             {
                 // Parses arguments 
                 optUsed = mcsTRUE;
-                if (ParseArguments(argc, argv, &optInd, &optUsed) != SUCCESS)
+                if (ParseArguments(argc, argv, &optInd, &optUsed) != mcsSUCCESS)
                 {
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
                 else if (optUsed == mcsFALSE)
                 {  
@@ -391,7 +392,7 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, char *argv[])
                         logError ("%s: Invalid argument %s", 
                                   Name(), argv[optInd] );
                     }
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
             }
             // End if
@@ -400,7 +401,7 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, char *argv[])
     }
     // End for
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -412,7 +413,7 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, char *argv[])
  * \param optUsed flag informing whether the current option has been
  * processed or not.
  *
- * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
+ * \return On success, mcsSUCCESS is returned. On error, mcsFAILURE is returned, and
  * error message is printed out accordingly.
  */
 mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
@@ -447,7 +448,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
             {
                 logError ("%s: Argument to option %s is invalid: '%s'",
                           Name(), argv[*optInd-1], optarg);
-                return FAILURE;
+                return mcsFAILURE;
             }
             logSetFileLogLevel((logLEVEL)level);
             _fileLogOption = mcsTRUE;
@@ -456,7 +457,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         {
             logError ("%s: Option %s requires an argument",
                       Name(), argv[*optInd]);
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     // Else if stdout level specified
@@ -471,7 +472,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
             {
                 logError ("%s: Argument to option %s is invalid: '%s'",
                           Name(), argv[*optInd-1], optarg);
-                return FAILURE;
+                return mcsFAILURE;
             }
             logSetStdoutLogLevel((logLEVEL)level);
             _stdoutLogOption = mcsTRUE;
@@ -480,7 +481,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         {
             logError ("%s: Option %s requires an argument",
                       Name(), argv[*optInd]);
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     // Else if action level specified
@@ -495,7 +496,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
             {
                 logError ("%s: Argument to option %s is invalid: '%s'",
                           Name(), argv[*optInd-1], optarg);
-                return FAILURE;
+                return mcsFAILURE;
             }
             logSetActionLogLevel((logLEVEL)level);
             _actionLogOption = mcsTRUE;
@@ -504,7 +505,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         {
             logError ("%s: Option %s requires an argument",
                       Name(), argv[*optInd]);
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     // Else if 'allowed modules' specified
@@ -515,16 +516,16 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         {
             *optInd += 1;
             optarg = argv[*optInd];
-            if (logAddToStdoutLogAllowedModList(optarg) == FAILURE)
+            if (logAddToStdoutLogAllowedModList(optarg) == mcsFAILURE)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
         else
         {
             logError ("%s: Option %s requires an argument",
                       Name(), argv[*optInd]);
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     // Else if MCS registering name specified
@@ -536,16 +537,16 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
             *optInd += 1;
             optarg = argv[*optInd];
             // Re-initialize MCS services
-            if (mcsInit(argv[*optInd]) == FAILURE)
+            if (mcsInit(argv[*optInd]) == mcsFAILURE)
             {
-                return (FAILURE);
+                return (mcsFAILURE);
             }
         }
         else
         {
             logError ("%s: Option %s requires an argument",
                       Name(), argv[*optInd]);
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     // Else if '-noDate' option specified
@@ -566,7 +567,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         
         *optUsed = mcsFALSE;
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -579,7 +580,7 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
  * \param optInd index of the arguments currently parsed 
  * \param optUsed flag informing whether the current option has been
  * processed or not.
- * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
+ * \return On success, mcsSUCCESS is returned. On error, mcsFAILURE is returned, and
  * error message is printed out accordingly.
  */
 mcsCOMPL_STAT evhTASK::ParseAppOptions(mcsINT32 argc, char *argv[],
@@ -590,7 +591,7 @@ mcsCOMPL_STAT evhTASK::ParseAppOptions(mcsINT32 argc, char *argv[],
     // Option has not been processed
     *optUsed = mcsFALSE;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -604,7 +605,7 @@ mcsCOMPL_STAT evhTASK::ParseAppOptions(mcsINT32 argc, char *argv[],
  * \param optInd index of the arguments currently parsed 
  * \param optUsed flag informing whether the current option has been
  * processed or not.
- * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
+ * \return On success, mcsSUCCESS is returned. On error, mcsFAILURE is returned, and
  * error message is printed out accordingly.
  */
 mcsCOMPL_STAT evhTASK::ParseArguments(mcsINT32 argc, char *argv[],
@@ -615,7 +616,7 @@ mcsCOMPL_STAT evhTASK::ParseArguments(mcsINT32 argc, char *argv[],
     // Option has not been processed
     *optUsed = mcsFALSE;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**

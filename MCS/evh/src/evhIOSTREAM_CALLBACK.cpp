@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.2 2005-01-07 18:19:51 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
 * gzins     17-Nov-2004  Fixed bug in assignment operator method
+* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 *
 *******************************************************************************/
 
@@ -15,7 +16,7 @@
  * Definition of the evhIOSTREAM_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhIOSTREAM_CALLBACK.cpp,v 1.2 2005-01-07 18:19:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -124,14 +125,14 @@ evhCB_COMPL_STAT evhIOSTREAM_CALLBACK::Run(const int fd)
     /* If object is a null pointer */
     if(_object == reinterpret_cast<void *>(NULL))
     {
-        /* Return FAILURE */
+        /* Return mcsFAILURE */
         errAdd(evhERR_NULL_OBJECT);
         return evhCB_FAILURE;
     }
     /* Else if method has not been set */
     else if (_method == (evhIOSTREAM_CB_METHOD)NULL) 
     {
-        /* Return FAILURE */
+        /* Return mcsFAILURE */
         errAdd(evhERR_NULL_METHOD);
         return evhCB_FAILURE;
     }
@@ -146,7 +147,7 @@ evhCB_COMPL_STAT evhIOSTREAM_CALLBACK::Run(const int fd)
     /* If callback failed */
     if((stat & evhCB_FAILURE) != 0)
     {
-        /* Return FAILURE */
+        /* Return mcsFAILURE */
         errAdd(evhERR_RUN_CB);
         return stat;
     }
