@@ -1,14 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2005-02-04 08:06:44 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.14 2005-02-04 10:06:40 gzins Exp $"
 #
-# Makefile of vobs module 
+# Makefile for test of vobs module 
 #
-# who       when		 what
-# --------  -----------	 -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # scetre    16-Jun-2004  created
-#
 #
 #*******************************************************************************
 # REMARKS
@@ -34,7 +34,7 @@ USER_INC =
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV getInformation vobsTestCriteria vobsTestStar vobsTestRequest 
+EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV vobsTestCriteria vobsTestStar vobsTestMidiCatalog
 EXECUTABLES_L   = 
 
 #
@@ -59,10 +59,6 @@ vobsTestStarList_OBJECTS   = vobsTestStarList
 vobsTestStarList_LDFLAGS   = 
 vobsTestStarList_LIBS      = MCS C++ vobs
 
-vobsTestRequest_OBJECTS   = vobsTestRequest
-vobsTestRequest_LDFLAGS   = 
-vobsTestRequest_LIBS      = MCS C++ vobs
-
 vobsTestVirtualobs_OBJECTS   = vobsTestVirtualobs
 vobsTestVirtualobs_LDFLAGS   = 
 vobsTestVirtualobs_LIBS      = MCS C++ vobs
@@ -71,13 +67,13 @@ vobsTestVirtualObsV_OBJECTS   = vobsTestVirtualObsV
 vobsTestVirtualObsV_LDFLAGS   = 
 vobsTestVirtualObsV_LIBS      = MCS C++ vobs
 
-getInformation_OBJECTS   = getInformation
-getInformation_LDFLAGS   = 
-getInformation_LIBS      = MCS C++ vobs simcli
-
 vobsTestCriteria_OBJECTS   = vobsTestCriteria 
 vobsTestCriteria_LDFLAGS   = 
 vobsTestCriteria_LIBS      = MCS C++ vobs
+
+vobsTestMidiCatalog_OBJECTS   = vobsTestMidiCatalog 
+vobsTestMidiCatalog_LDFLAGS   = 
+vobsTestMidiCatalog_LIBS      = MCS C++ vobs
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
