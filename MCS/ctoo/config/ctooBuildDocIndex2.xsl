@@ -5,7 +5,7 @@
             <xsl:for-each select="/module">
             <tr>
                 <td> <xsl:value-of select="package"/> </td>
-                <td> <a href="./doc/{./@name}/api/html/index.html" target="module"> <xsl:value-of select="./@name"/> </a> </td>
+                <td> <xsl:value-of select="./@name"/> </td>
                 <td> <xsl:value-of select="./desc"/> </td>
                 <td><xsl:value-of select="./resp"/> </td>
         </tr>
