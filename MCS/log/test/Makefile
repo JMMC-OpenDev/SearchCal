@@ -1,13 +1,18 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.7 2005-01-26 17:28:22 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.8 2005-02-15 08:22:20 gzins Exp $"
 #
 # Makefile of log
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/01/26 17:28:22  lafrasse
+# Added automatic CVS history, refined user documentation, removed all
+# ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
+# mcsFAILURE
+#
 # lafrasse  03-Aug-2004  Removed cross-dependencies with err and misc
 #
 # mella     12-May-2004  Created
@@ -38,19 +43,13 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   = logTest logExample 
+EXECUTABLES_L   = logTest
 
 #
 # <brief description of xxxxx program>
 logTest_OBJECTS   =	logTest
 logTest_LDFLAGS   = 
 logTest_LIBS      = mcs log
-
-#
-# <brief description of xxxxx program>
-logExample_OBJECTS   =	logExample
-logExample_LDFLAGS   = 
-logExample_LIBS      = mcs log
 
 #
 # special compilation flags for single c sources
