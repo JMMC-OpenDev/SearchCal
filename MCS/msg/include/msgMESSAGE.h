@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.20 2005-01-29 10:05:06 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.21 2005-01-29 19:54:46 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/01/29 10:05:06  gzins
+ * Changed msgMESSAGE.lastReply type from mcsLOGICAL to mcsSTRING8
+ *
  * Revision 1.19  2005/01/29 07:17:59  gzins
  * Fixed wrong message body initialization in constructor
  *
@@ -211,6 +214,7 @@ public:
                                               mcsUINT32  bufLen=0);
     virtual mcsCOMPL_STAT    AppendToBody    (const char *buffer,
                                               mcsUINT32  bufLen=0);
+    virtual mcsCOMPL_STAT    AppendStringToBody(const char *str); 
 
     virtual void             Display         (void);
 

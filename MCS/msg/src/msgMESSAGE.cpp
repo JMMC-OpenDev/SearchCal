@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.19 2005-01-29 10:05:06 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.20 2005-01-29 19:54:46 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/01/29 10:05:06  gzins
+ * Changed msgMESSAGE.lastReply type from mcsLOGICAL to mcsSTRING8
+ *
  * Revision 1.18  2005/01/29 07:17:59  gzins
  * Fixed wrong message body initialization in constructor
  *
@@ -50,7 +53,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.19 2005-01-29 10:05:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.20 2005-01-29 19:54:46 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -600,6 +603,38 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
         }
     }
 
+    // Store the new body size in the header
+    mcsUINT32 bodySize;
+    miscDynBufGetNbStoredBytes(&_body, &bodySize);
+    sprintf(_header.msgBodySize, "%d", bodySize);
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Append \<str\> to the message body.
+ *
+ * \param str string to be appended to
+ *
+ * \return mcsSUCCESS on successful completion, and mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT msgMESSAGE::AppendStringToBody(const char *str)
+{
+    logExtDbg("msgMESSAGE::AppendStringToBody()");
+    
+    // If received a NULL pointer
+    if (str == NULL)
+    {
+        errAdd(msgERR_NULL_PARAM, "str");
+        return mcsFAILURE;
+    }
+    
+    // Append string to the dynamic buffer 
+    if (miscDynBufAppendString(&_body, (char*)str) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     // Store the new body size in the header
     mcsUINT32 bodySize;
     miscDynBufGetNbStoredBytes(&_body, &bodySize);
