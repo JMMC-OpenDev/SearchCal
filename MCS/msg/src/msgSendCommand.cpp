@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.11 2005-01-26 08:43:50 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.12 2005-01-29 19:59:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/01/26 08:43:50  gzins
+ * Suppressed useless 'MESSAGEBUFFER:' ouput when printing out command reply.
+ *
  * Revision 1.10  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
@@ -57,7 +60,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.11 2005-01-26 08:43:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.12 2005-01-29 19:59:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
