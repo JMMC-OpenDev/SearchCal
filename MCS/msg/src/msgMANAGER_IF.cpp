@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.5 2004-11-29 15:28:47 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,6 +10,7 @@
 *                        and refined comments
 * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
 * lafrasse  24-Nov-2004  Comment refinments, and includes cleaning
+* gzins     29-Nov-2004  Fixed bug in Connect method
 *
 *
 *******************************************************************************/
@@ -19,7 +20,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.5 2004-11-29 15:28:47 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -142,7 +143,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
     {
         // Try to connect to msgManager
         _socket.Open(hostName, msgMANAGER_PORT_NUMBER);
-        if (_socket.IsConnected() == mcsTRUE)
+        if (_socket.IsConnected() == mcsFALSE)
         {
             if (--nbRetry <= 0 )
             { 
