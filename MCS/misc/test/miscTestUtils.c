@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestUtils.c,v 1.1 2004-06-17 08:27:58 gzins Exp $"
+* "@(#) $Id: miscTestUtils.c,v 1.2 2004-06-17 11:55:58 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -35,7 +35,7 @@
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.1 2004-06-17 08:27:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.2 2004-06-17 11:55:58 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,8 +61,8 @@ int main (int argc, char *argv[])
     mcsBYTES32  utcTime;
 
     /* Test of miscGetFileName() */
-    printf("Test de la fonction miscGetFileName() :\n\n");
-    printf("   Chemin d'acces au fichier      | Nom du fichier\n");
+    printf("miscGetFileName() Function Test :\n\n");
+    printf("   File Path                      | File Name\n");
     printf("   -------------------------------+---------------\n");
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
@@ -77,21 +77,39 @@ int main (int argc, char *argv[])
     printf("\n\n");
 
     /* Test of miscGetUtcTimeStr() */
-    printf("Test de la fonction miscGetUtcTimeStr() :\n\n");
+    printf("miscGetUtcTimeStr() Function Test :\n\n");
     miscGetUtcTimeStr(utcTime, 0);
-    printf("   Heure locale                   = %s\n", utcTime);
+    printf("   UTC Time                      = %s\n", utcTime);
     miscGetUtcTimeStr(utcTime, 1);
-    printf("   Heure locale (precision s=1)  = %s\n", utcTime);
+    printf("   UTC Time     (precision s=1)  = %s\n", utcTime);
     miscGetUtcTimeStr(utcTime, 2);
-    printf("   Heure locale (precision s=2)  = %s\n", utcTime);
+    printf("   UTC Time     (precision s=2)  = %s\n", utcTime);
     miscGetUtcTimeStr(utcTime, 3);
-    printf("   Heure locale (precision s=3)  = %s\n", utcTime);
+    printf("   UTC Time     (precision s=3)  = %s\n", utcTime);
     miscGetUtcTimeStr(utcTime, 4);
-    printf("   Heure locale (precision s=4)  = %s\n", utcTime);
+    printf("   UTC Time     (precision s=4)  = %s\n", utcTime);
     miscGetUtcTimeStr(utcTime, 5);
-    printf("   Heure locale (precision s=5)  = %s\n", utcTime);
+    printf("   UTC Time     (precision s=5)  = %s\n", utcTime);
     miscGetUtcTimeStr(utcTime, 6);
-    printf("   Heure locale (precision s=5)  = %s\n", utcTime);
+    printf("   UTC Time     (precision s=5)  = %s\n", utcTime);
+    printf("\n\n");
+
+    /* Test of miscGetLocalTimeStr() */
+    printf("miscGetLocalTimeStr() Function Test :\n\n");
+    miscGetLocalTimeStr(utcTime, 0);
+    printf("   Local Time                    = %s\n", utcTime);
+    miscGetLocalTimeStr(utcTime, 1);
+    printf("   Local Time   (precision s=1)  = %s\n", utcTime);
+    miscGetLocalTimeStr(utcTime, 2);
+    printf("   Local Time   (precision s=2)  = %s\n", utcTime);
+    miscGetLocalTimeStr(utcTime, 3);
+    printf("   Local Time   (precision s=3)  = %s\n", utcTime);
+    miscGetLocalTimeStr(utcTime, 4);
+    printf("   Local Time   (precision s=4)  = %s\n", utcTime);
+    miscGetLocalTimeStr(utcTime, 5);
+    printf("   Local Time   (precision s=5)  = %s\n", utcTime);
+    miscGetLocalTimeStr(utcTime, 6);
+    printf("   Local Time   (precision s=5)  = %s\n", utcTime);
     printf("\n\n");
 
     exit (EXIT_SUCCESS);
