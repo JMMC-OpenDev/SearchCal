@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestCriteria.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"
+* "@(#) $Id: vobsTestCriteria.cpp,v 1.3 2004-12-20 09:51:06 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,7 @@
 *******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.3 2004-12-20 09:51:06 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    timlogStart(logINFO, "testCriteria");
+    timlogStart(MODULE_ID, logINFO, "73", "testCriteria");
     vobsSTAR_COMP_CRITERIA_LIST *criteriaList = new vobsSTAR_COMP_CRITERIA_LIST;
 
     // Add criteria in the list

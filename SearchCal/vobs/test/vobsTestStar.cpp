@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestStar.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"
+* "@(#) $Id: vobsTestStar.cpp,v 1.3 2004-12-20 09:51:06 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.3 2004-12-20 09:51:06 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     mcsInit(argv[0]);
 
     logSetStdoutLogLevel(logINFO);
-    timlogStart(logINFO, "testStar");
+    timlogStart(MODULE_ID, logINFO, "98", "testStar");
 
     logInfo("Starting ...");
 
