@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.13 2004-12-22 08:47:51 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.14 2005-01-07 18:35:45 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,6 +26,9 @@
 *                        Declared AllocateBody as private
 *                        Renamed isInternal to IsInternal
 *                        Added ClearBody and AppendToBody
+* gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+*                        Implemented copy constructor and assignment operator
+*                        Changed messageId to commandId
 *
 *******************************************************************************/
 
@@ -34,7 +37,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.13 2004-12-22 08:47:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.14 2005-01-07 18:35:45 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -75,7 +78,33 @@ msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
 
     // Reset Ids
     SetSenderId(-1);
-    SetMessageId(-1);
+    SetCommandId(-1);
+}
+
+/**
+ * Copy constructor
+ */
+msgMESSAGE::msgMESSAGE(msgMESSAGE& msg)
+{
+    *this = msg;
+}
+
+/**
+ * Assignment operator
+ */
+msgMESSAGE &msgMESSAGE::operator=(msgMESSAGE& msg)
+{
+    memcpy (&_header, &msg._header, sizeof(msgHEADER));
+    if (msg.GetBodySize() != 0)
+    {
+        SetBody(msg.GetBody(), msg.GetBodySize());
+    }
+    else
+    {
+        ClearBody();
+    }
+    _isInternal = msg._isInternal;
+    return *this;
 }
 
 /*
@@ -109,7 +138,7 @@ char* msgMESSAGE::GetSender(void)
  *
  * \param sender the sender name to be copied in
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
 {
@@ -118,7 +147,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
     // Copy the given value in the message header associated field
     strncpy(_header.sender, sender, sizeof(_header.sender));
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -139,7 +168,7 @@ char* msgMESSAGE::GetSenderEnv(void)
  *
  * \param senderEnv the sender environnement name to be copied in
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
 {
@@ -148,7 +177,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
     // Copy the given value in the message header associated field
     strncpy(_header.senderEnv, senderEnv, sizeof(_header.senderEnv));
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -173,7 +202,7 @@ mcsINT32 msgMESSAGE::GetSenderId(void)
  *
  * \param id the sender id 
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetSenderId(mcsINT32 id)
 {
@@ -182,7 +211,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderId(mcsINT32 id)
     // Set the sender id
     sprintf(_header.senderId, "%d", id);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -203,7 +232,7 @@ char* msgMESSAGE::GetRecipient(void)
  *
  * \param recipient the recipient name to be copied in
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
 {
@@ -212,7 +241,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
     // Copy the given value in the message header associated field
     strncpy(_header.recipient, recipient, sizeof(_header.recipient));
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -233,7 +262,7 @@ char* msgMESSAGE::GetRecipientEnv(void)
  *
  * \param recipientEnv the recipient environnement name to be copied in
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetRecipientEnv(const char *recipientEnv)
 {
@@ -242,7 +271,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipientEnv(const char *recipientEnv)
     // Copy the given value in the message header associated field
     strncpy(_header.recipientEnv, recipientEnv, sizeof(_header.recipientEnv));
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -267,7 +296,7 @@ msgTYPE msgMESSAGE::GetType(void)
  * 
  * \sa msgTYPE, the enumeration that list all the possible message types
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
 {
@@ -276,7 +305,7 @@ mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
     // Copy the given value in the message header associated field
     _header.type = type;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -284,13 +313,13 @@ mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
  *
  * \return the identifier value of the message
  */
-mcsINT32 msgMESSAGE::GetMessageId(void)
+mcsINT32 msgMESSAGE::GetCommandId(void)
 {
-    logExtDbg("msgMESSAGE::GetMessageId()");
+    logExtDbg("msgMESSAGE::GetCommandId()");
 
     // Get the sender id 
     mcsINT32 id = -1;
-    sscanf(_header.messageId, "%d", &id);
+    sscanf(_header.commandId, "%d", &id);
     
     // Return sender id 
     return id;
@@ -302,16 +331,16 @@ mcsINT32 msgMESSAGE::GetMessageId(void)
  *
  * \param id message Id 
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
-mcsCOMPL_STAT msgMESSAGE::SetMessageId(const mcsINT32 id)
+mcsCOMPL_STAT msgMESSAGE::SetCommandId(const mcsINT32 id)
 {
     logExtDbg("msgMESSAGE::SetIdentifier()");
 
     // Set the message id
-    sprintf(_header.messageId, "%d", id);
+    sprintf(_header.commandId, "%d", id);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -332,7 +361,7 @@ char* msgMESSAGE::GetCommand(void)
  *
  * \param command the command name to be copied in
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetCommand(const char *command)
 {
@@ -341,7 +370,7 @@ mcsCOMPL_STAT msgMESSAGE::SetCommand(const char *command)
     // Copy the given value in the message header associated field
     strncpy(_header.command, command, sizeof(_header.command));
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -362,7 +391,7 @@ mcsLOGICAL msgMESSAGE::IsLastReply(void)
  *
  * \param flag mcsTRUE if the message is the last one, mcsFALSE othewise
  * 
- * \return always SUCCESS
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetLastReplyFlag(mcsLOGICAL flag)
 {
@@ -371,7 +400,7 @@ mcsCOMPL_STAT msgMESSAGE::SetLastReplyFlag(mcsLOGICAL flag)
     // Copy the given value in the message header associated field
     _header.lastReply = flag;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -437,7 +466,7 @@ mcsINT32 msgMESSAGE::GetBodySize(void)
 /**
  * Clear the message body.
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
 {
@@ -445,15 +474,15 @@ mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
 
 
     // Empty the body buffer
-    if (miscDynBufReset(&_body) == FAILURE)
+    if (miscDynBufReset(&_body) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Reset the body size
     sprintf(_header.msgBodySize, "%d", 0);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -465,7 +494,7 @@ mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
  * \param buffer buffer to be copied in
  * \param bufLen buffer size
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -480,7 +509,7 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
     if (buffer == NULL)
     {
         errAdd(msgERR_NULL_PARAM, "buffer");
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // If to-be-copied-in byte number is not given...
@@ -494,29 +523,29 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
     if (bufLen > 0)
     {  
         // Reset the body buffer and allocate sufficient memory
-        if (AllocateBody(bufLen) == FAILURE)
+        if (AllocateBody(bufLen) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
 
-        if (miscDynBufAppendBytes(&_body, (char*)buffer, bufLen) == FAILURE)
+        if (miscDynBufAppendBytes(&_body, (char*)buffer, bufLen) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     else
     {
         // Empty the body buffer
-        if (miscDynBufReset(&_body) == FAILURE)
+        if (miscDynBufReset(&_body) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
     // Store the new body size in the header
     sprintf(_header.msgBodySize, "%d", bufLen);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -528,8 +557,8 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
  * \param buffer buffer to be appended to
  * \param bufLen buffer size 
  *
- * \return FAILURE if the to-be-copied-in byte number is greater than the
- * message body maximum size, SUCCESS otherwise
+ * \return mcsFAILURE if the to-be-copied-in byte number is greater than the
+ * message body maximum size, mcsSUCCESS otherwise
  */
 mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
                                        mcsUINT32  bufLen)
@@ -540,7 +569,7 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
     if (buffer == NULL)
     {
         errAdd(msgERR_NULL_PARAM, "buffer");
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // If to-be-appended byte number is not given...
@@ -553,9 +582,9 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
     // Fill the body buffer with the given length and content
     if (bufLen > 0)
     {  
-        if (miscDynBufAppendBytes(&_body, (char*)buffer, bufLen) == FAILURE)
+        if (miscDynBufAppendBytes(&_body, (char*)buffer, bufLen) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
@@ -564,7 +593,7 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
     miscDynBufGetNbStoredBytes(&_body, &bodySize);
     sprintf(_header.msgBodySize, "%d", bodySize);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -585,8 +614,8 @@ void  msgMESSAGE::Display(void)
          << "\t\trecipient    = '" << GetRecipient()    << "'" << endl
          << "\t\trecipientEnv = '" << GetRecipientEnv() << "'" << endl
          << "\t\ttype         = '" << GetType()         << "'" << endl
-         << "\t\tmessageId    = '" << GetMessageId()    << "'" << endl
          << "\t\tcommand      = '" << GetCommand()      << "'" << endl
+         << "\t\tcommandId    = '" << GetCommandId()    << "'" << endl
          << "\t\tlastReply    = '" << IsLastReply()     << "'" << endl
          << "\t\tmsgBodySize  = '" << GetBodySize()     << "'" << endl
          << "\t}"                                              << endl
@@ -618,25 +647,25 @@ void  msgMESSAGE::Display(void)
  *
  * \param bufLen the total needed buffer size
  *
- * \return SUCCESS on successfull completion, FAILURE otherwise
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT  msgMESSAGE::AllocateBody(const mcsUINT32 bufLen)
 {
     logExtDbg("msgMESSAGE::AllocateBody()");
 
     // Empty the body buffer
-    if (miscDynBufReset(&_body) == FAILURE)
+    if (miscDynBufReset(&_body) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Set the message body size
-    if (miscDynBufAlloc(&_body, bufLen) == FAILURE)
+    if (miscDynBufAlloc(&_body, bufLen) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/
