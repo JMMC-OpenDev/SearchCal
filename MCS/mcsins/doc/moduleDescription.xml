@@ -2,7 +2,7 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2004-12-08 06:18:22 sccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2004-12-08 18:19:20 gzins Exp $"
 
  who       when         what
  ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,7 +29,7 @@
 -->
 
 <module name="mcsins">
-    <desc>description</desc>
-    <resp>responsible</resp>
-    <package>package</package>
+    <desc>Installation module for MCS package</desc>
+    <resp>Gerard Zins</resp>
+    <package>MCS</package>
 </module>
