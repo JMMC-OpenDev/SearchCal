@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.2 2005-02-10 08:15:14 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/21 08:14:25  gluck
+ * Creation
+ *
  * 
  * scetre    11-Oct-2004  Created
  *
@@ -16,7 +19,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.2 2005-02-10 08:15:14 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -63,13 +66,9 @@ int main (int argc, char *argv[])
     mcsFLOAT mgV=8.402;
     mcsFLOAT mgR=6.60;
     mcsFLOAT mgK=3.21;
-    mcsFLOAT angularDiam, deltaAngularDiameter;
-    if (alxComputeAngularDiameter(mgB,
-                                  mgV,
-                                  mgR,
-                                  mgK,
-                                  &angularDiam,
-                                  &deltaAngularDiameter,
+    mcsFLOAT diamBv, diamVr, diamVk, diamError;
+    if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK,
+                                  &diamBv, &diamVr, &diamVk, &diamError,
                                   &confIdx)== FAILURE)
     {
         return FAILURE;
