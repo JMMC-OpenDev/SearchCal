@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.4 2005-02-04 15:10:25 gluck Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.5 2005-02-07 09:13:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/04 15:10:25  gluck
+ * Update documentation
+ *
  * Revision 1.3  2005/02/04 10:49:43  gzins
  * Fixed wrong MIDI catalog name
  *
@@ -22,7 +25,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.4 2005-02-04 15:10:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.5 2005-02-07 09:13:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,6 +58,7 @@ vobsCATALOG_MIDI::vobsCATALOG_MIDI() : _catalogFilename("vobsMidiCatalog.cfg")
 {
     // Set catalog name
     SetName("MIDI");
+    _loaded = mcsFALSE;
 }
 
 /**
@@ -100,7 +104,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
         errAdd(vobsERR_CATALOG_LOAD, catalogName);
         return mcsFAILURE;
     }
-    logDebug("MIDI catalog is correctly loaded in a star list");
+    logTest("MIDI catalog is correctly loaded in a star list");
     
     //
     // Build reference (science) object
@@ -116,38 +120,38 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     {
         return mcsFAILURE;
     }
-    printf("ra = %s\n", ra);
     
     // dec
     if (request.GetConstraint(DEC_ID, dec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    printf("dec = %s\n", dec);
     
     // magnitude
     if (request.GetConstraint(STAR_MAGNITUDE_ID, &magnitude) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    printf("magnitude = %f\n", magnitude);
     
     // Create the reference star
     vobsSTAR referenceStar;
 
     // Add reference star properties
-    // ra
+    // ra is given as 'HH:MM:SS.TTT', replace ':' by ' '
+    miscReplaceChrByChr(ra, ':', ' '); 
     if (referenceStar.SetPropertyValue("POS_EQ_RA_MAIN", ra) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    // dec
+    // dec is given as 'DD:MM:SS.TTT', replace ':' by ' '
+    miscReplaceChrByChr(dec, ':', ' '); 
     if (referenceStar.SetPropertyValue("POS_EQ_DEC_MAIN", dec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // N magnitude
-    if (referenceStar.SetPropertyValue("PHOT_JHN_N", magnitude) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue
+        (vobsSTAR_PHOT_JHN_N, magnitude) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -429,6 +433,24 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
     if (parser.ParseCData(&cDataStructure, _starList) == mcsFAILURE)
     {
         errAdd(vobsERR_PARSE_CDATA);
+    }
+
+    // Compute magnitude in N band
+    mcsUINT32 starIdx;
+    for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
+    {
+        // Get star
+        vobsSTAR *starPtr;
+        starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
+        
+        // Get IR flux
+        mcsFLOAT flux;
+        mcsFLOAT magnitude;
+        starPtr->GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, &flux);
+        
+        // Compute magnitude
+        magnitude = 4.1 - (2.5 * log(flux/0.89));
+        starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude);
     }
 
     // If log level is DEBUG or EXTDBG
