@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: envLIST.h,v 1.1 2004-12-07 16:45:56 lafrasse Exp $"
+* "@(#) $Id: envLIST.h,v 1.2 2004-12-08 14:59:27 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  07-Dec-2004  Created
+* lafrasse  08-Dec-2004  Comments refinments
 *
 *
 *******************************************************************************/
@@ -32,15 +33,16 @@
 
 /**
  * This class retrieve and verfiy all the MCS environments informations, used to
- * isolate one development environment from another at the message communication
+ * isolate one MCS environment from all the others at the message communication
  * level.
  * 
  * For exemple, you can launch multiple msgManager processes using differents
- * environments, thus enabling concurrent msg-based modules debuging.
+ * MCS environments, thus enabling concurrent msg-based modules debugging.
  * 
  * \usedfiles
  * In MCS all the environments are listed in the mcsEnvList file.
- * \filename mcsEnvList :  MCS environment list, in $MCSROOT/ect/mcsEnvList
+ * \filename mcsEnvList :  MCS environment list definition file, located in
+ * $MCSROOT/ect/mcsEnvList
  *
  * \n
  * \env

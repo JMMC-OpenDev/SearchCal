@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: envShow.cpp,v 1.2 2004-12-08 14:39:59 lafrasse Exp $"
+* "@(#) $Id: envShow.cpp,v 1.3 2004-12-08 14:59:27 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -20,11 +20,12 @@
  * \<envEnvShow\>
  *
  * \usedfiles
- * \filename mcsEnvList :  MCS environment List file, stored in $MCSROOT/etc
+ * \filename mcsEnvList :  MCS environment List definition file, located in
+ * $MCSROOT/etc/mcsEnvList
  * 
  */
 
-static char *rcsId="@(#) $Id: envShow.cpp,v 1.2 2004-12-08 14:39:59 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envShow.cpp,v 1.3 2004-12-08 14:59:27 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

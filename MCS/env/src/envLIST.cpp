@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: envLIST.cpp,v 1.3 2004-12-08 14:39:59 lafrasse Exp $"
+* "@(#) $Id: envLIST.cpp,v 1.4 2004-12-08 14:59:27 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  07-Dec-2004  Created
 * lafrasse  08-Dec-2004  Comment refinments, added the default MCS env in the
 *                        internal map by default, factorized the 'file already
-*                        loaded' detection code form GetHostName() and
+*                        loaded' detection code from GetHostName(), Show() and
 *                        GetPortNumber() to LoadEnvListFile(), and refined the
 *                        output format of Show()
 *
@@ -20,7 +20,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.3 2004-12-08 14:39:59 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.4 2004-12-08 14:59:27 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -67,7 +67,7 @@ envLIST::~envLIST()
  * Public methods
  */
 /**
- * Return the host name of the MCS environment.
+ * Return the host name of the given MCS environment.
  *
  * If the environment name is not given, the current environment, defined by
  * MCSENV environment variable, is used. If the MCSENV environment variable is
@@ -108,7 +108,7 @@ const char* envLIST::GetHostName(const char *envName)
 }
 
 /**
- * Return the port number of the MCS environment.
+ * Return the port number of the given MCS environment.
  *
  * This method returns the port number of the given MCS environment; i.e. the
  * connection port number with the manager process of the MCS message service.
@@ -158,15 +158,11 @@ void envLIST::Show(void)
 {
     logExtDbg("envLIST::Show()");
 
-    // If the MCS Env. List file has not been loaded yet
-    if (_fileAlreadyLoaded == mcsFALSE)
+    // Load the MCS Env. List file
+    if (LoadEnvListFile() == FAILURE)
     {
-        // Load it
-        if (LoadEnvListFile() == FAILURE)
-        {
-            cout << "Could not load '$MCSROOT/etc/mcsEnvList' file" << endl;
-            return;
-        }
+        cout << "Could not load '$MCSROOT/etc/mcsEnvList' file" << endl;
+        return;
     }
 
     // Show all the map content
