@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/02/09 06:27:35  gzins
+ * Fixed minor bug in miscFileExists; some errors was added even if addError was set to false
+ *
  * Revision 1.25  2005/02/07 14:41:47  lafrasse
  * Changed miscLocateFileInPath() error management behavior in order to report only one error (and not one for each directory) if the given file was not found in all the path directories
  *
@@ -43,7 +46,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.26 2005-02-09 06:27:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.27 2005-02-12 14:46:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -303,6 +306,7 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
 char*         miscResolvePath    (const char *unresolvedPath)
 {
     static miscDYN_BUF  builtPath;
+    miscDYN_BUF         pathToResolve;
     mcsSTRING256        tmpPath, tmpEnvVar;
     mcsINT32            length;
 
@@ -311,8 +315,13 @@ char*         miscResolvePath    (const char *unresolvedPath)
     {
         return NULL;
     }
+    if (miscDynBufReset(&pathToResolve) == mcsFAILURE)
+    {
+        return NULL;
+    }
+    miscDynBufAppendString(&pathToResolve, unresolvedPath);
 
-    char *leftToBeResolvedPathPtr  = (char*)unresolvedPath;
+    char *leftToBeResolvedPathPtr  = (char*)miscDynBufGetBuffer(&pathToResolve);
     char *nextSlashPtr             = strchr(leftToBeResolvedPathPtr, '/');
     do
     {
@@ -330,6 +339,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
             if (strncpy(tmpPath, (leftToBeResolvedPathPtr + 1), length) == NULL)
             {
                 errAdd(miscERR_FUNC_CALL, "strncpy");
+                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
 
@@ -338,11 +348,13 @@ char*         miscResolvePath    (const char *unresolvedPath)
             if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
                 == mcsFAILURE)
             {
+                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
 
             if (miscDynBufAppendString(&builtPath, tmpEnvVar) == mcsFAILURE)
             {
+                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
         }
@@ -354,11 +366,13 @@ char*         miscResolvePath    (const char *unresolvedPath)
             if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
                 == mcsFAILURE)
             {
+                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
 
             if (miscDynBufAppendString(&builtPath, tmpEnvVar) == mcsFAILURE)
             {
+                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
         }
@@ -376,6 +390,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
             if (strncpy(tmpPath, leftToBeResolvedPathPtr, length) == NULL)
             {
                 errAdd(miscERR_FUNC_CALL, "strncpy");
+                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
 
@@ -383,14 +398,16 @@ char*         miscResolvePath    (const char *unresolvedPath)
 
             if (miscDynBufAppendString(&builtPath, tmpPath) == mcsFAILURE)
             {
+                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
         }
-
         if (miscDynBufAppendString(&builtPath, "/") == mcsFAILURE)
         {
+            miscDynBufDestroy(&pathToResolve);
             return NULL;
         }
+
 
         if (nextSlashPtr != NULL)
         {
@@ -412,6 +429,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
         {
             if (miscDynBufAppendString(&builtPath, ":") == mcsFAILURE)
             {
+                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
 
@@ -428,13 +446,15 @@ char*         miscResolvePath    (const char *unresolvedPath)
     mcsUINT32 builtPathLength = 0;
     if (miscDynBufGetNbStoredBytes(&builtPath, &builtPathLength) == mcsFAILURE)
     {
+        miscDynBufDestroy(&pathToResolve);
         return NULL;
     }
 
     /* Get Dynamic Buffer internal buffer pointer */
     char *endingChar = NULL;
-    if ((endingChar = miscDynBufGetBufferPointer(&builtPath)) == NULL)
+    if ((endingChar = miscDynBufGetBuffer(&builtPath)) == NULL)
     {
+        miscDynBufDestroy(&pathToResolve);
         return NULL;
     }
     
@@ -454,10 +474,11 @@ char*         miscResolvePath    (const char *unresolvedPath)
     /* Strip the Dynamic Buffer */
     if (miscDynBufStrip(&builtPath) == mcsFAILURE)
     {
+        miscDynBufDestroy(&pathToResolve);
         return NULL;
     }
     
-    return miscDynBufGetBufferPointer(&builtPath);
+    return miscDynBufGetBuffer(&builtPath);
 }
 
 /**
@@ -664,7 +685,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
         miscDynBufAppendString(&tmpPath, (char*)fileName);
 
         /* If no file exists at the temporary path */
-        validPath = miscDynBufGetBufferPointer(&tmpPath);
+        validPath = miscDynBufGetBuffer(&tmpPath);
         if (miscFileExists(validPath, mcsFALSE) == mcsFALSE)
         {
             /* Reset the temporary path variable */
@@ -684,9 +705,8 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
                 path++;
             }
         }
-    }
-    while ((path != NULL) && (validPath == NULL));
-    
+    } while ((path != NULL) && (validPath == NULL));
+
     /* Minimize allocated memory used by the static Dynamic Buffer */
     if (miscDynBufStrip(&tmpPath) == mcsFAILURE)
     {
@@ -700,7 +720,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
         errAdd(miscERR_FILE_NOT_FOUND_IN_PATH, fileName, originalPath);
     }
 
-    return validPath;
+    return miscResolvePath(validPath);
 }
 
 /**
@@ -723,6 +743,17 @@ char* miscLocateFile (const char *fileName)
         errAdd(miscERR_NULL_PARAM, "fileName");
         return NULL;
     }
+    
+    /*
+     * Check first if the file exists; i.e if the given file corresponds
+     * to an accessible file.
+     */
+    if (miscFileExists(fileName, mcsFALSE) == mcsTRUE)
+    {
+        return miscResolvePath(fileName);
+    }
+
+    /* Get the file extension */
     char* fileExtension = miscGetExtension((char*)fileName);
     if (fileExtension == NULL)
     {
@@ -754,6 +785,7 @@ char* miscLocateFile (const char *fileName)
     }
     else
     {
+        errAdd(miscERR_FILE_EXTENSION_UNKNOWN, fileExtension, fileName);
         return NULL;
     }
 }
