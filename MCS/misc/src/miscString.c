@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/02/13 11:23:28  gzins
+ * Changed parameter type of miscIsSpaceString from char* to const char*
+ *
  * Revision 1.16  2005/01/31 12:54:45  gluck
  * Bug correction: in miscSplitString(), wrong (uncomplete) array initialisation to '\0'  with memset => add explicit '\0' at the end of each string
  *
@@ -28,7 +31,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.17 2005-02-13 11:23:28 gzins Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.18 2005-02-21 15:27:52 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -243,6 +246,40 @@ mcsLOGICAL miscIsSpaceStr (const char *string)
         string++;
     }
     return mcsTRUE;
+}
+
+/**
+ * Checks if the given line begins with any leading spaces or tabs and the
+ * given comment pattern.
+ * 
+ * It returns true (i.e. mcsTRUE) if the line  begins with the given comment
+ * pattern, false (i.e. mcsFALSE) otherwise.
+ *
+ * \warning line must be \em '\\n' or 'null' terminated.\n\n
+ *
+ * \param line the line that shall be checked.
+ * \param commentPattern the string characterizing a comment line.
+ *
+ * \return mcsTRUE if it is a comment line, mcsFALSE otherwise.
+ */
+mcsLOGICAL    miscIsCommentLine  (const char         *line,
+                                  const mcsSTRING4    commentPattern)
+{
+    /* Skip any leading spaces or tabs */
+    while ((*line == ' ') || (*line == '\t'))
+    {
+        line++;
+    }
+
+    /* If it is a comment line */
+    mcsUINT32 commentPatternLen = strlen(commentPattern);
+    if ((strlen(commentPattern) != 0) &&
+        (strncmp(line, commentPattern, commentPatternLen) == 0))
+    {
+        return mcsTRUE;
+    }
+
+    return mcsFALSE;
 }
 
 /**

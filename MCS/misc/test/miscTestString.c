@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestString.c,v 1.10 2005-02-15 09:44:37 gzins Exp $"
+ * "@(#) $Id: miscTestString.c,v 1.11 2005-02-21 15:27:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/15 09:44:37  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
  * lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
  * lafrasse  02-Aug-2004  Changed local includes to use miscString headers
@@ -14,7 +17,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.10 2005-02-15 09:44:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.11 2005-02-21 15:27:52 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,6 +48,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 int main (int argc, char *argv[])
 {
     mcsBYTES256 string;
+    mcsSTRING4  pattern;
 
     /* Test of miscStripQuotes() */
     printf("miscStripQuotes() Function Test :\n\n");
@@ -73,6 +77,7 @@ int main (int argc, char *argv[])
     }
     printf("\n\n");
 
+
     /* Test of miscTrimString() */
     printf("miscTrimString() Function Test :\n\n");
     strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      ");
@@ -88,6 +93,7 @@ int main (int argc, char *argv[])
         printf("|%s|\n", string);
     }
     printf("\n\n");
+
 
     /* Test of miscStrToUpper() */
     printf("miscStrToUpper() Function Test :\n\n");
@@ -115,6 +121,7 @@ int main (int argc, char *argv[])
         printf("|%s|\n", string);
     }
     printf("\n\n");
+
 
     /* Test of miscIsSpaceStr() */
     printf("miscIsSpaceStr() Function Test :\n\n");
@@ -201,6 +208,77 @@ int main (int argc, char *argv[])
     strcpy ((char *)string, "   ");
     printf("   miscIsSpaceStr(|%s|) = ", string);
     if (miscIsSpaceStr(string) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    printf("\n\n");
+
+
+    /* Test of miscIsCommentLine() */
+    printf("miscIsCommentLine() Function Test :\n\n");
+    strcpy ((char *)string, "    azerty\n    qwerty");
+    strcpy ((char *)pattern, "//");
+    printf("   miscIsCommentLine(|%s|,|%s|) = ", string, pattern);
+    if (miscIsCommentLine(string, pattern) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, "//    azerty\n    qwerty");
+    strcpy ((char *)pattern, "//");
+    printf("   miscIsCommentLine(|%s|,|%s|) = ", string, pattern);
+    if (miscIsCommentLine(string, pattern) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, " //   azerty\n    qwerty");
+    strcpy ((char *)pattern, "//");
+    printf("   miscIsCommentLine(|%s|,|%s|) = ", string, pattern);
+    if (miscIsCommentLine(string, pattern) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, " \t //   azerty\n    qwerty");
+    strcpy ((char *)pattern, "//");
+    printf("   miscIsCommentLine(|%s|,|%s|) = ", string, pattern);
+    if (miscIsCommentLine(string, pattern) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, " \t    azerty//\n    qwerty");
+    strcpy ((char *)pattern, "//");
+    printf("   miscIsCommentLine(|%s|,|%s|) = ", string, pattern);
+    if (miscIsCommentLine(string, pattern) == mcsFALSE)
+    {
+        printf("FALSE.\n");
+    }
+    else
+    {
+        printf("TRUE.\n");
+    }
+    strcpy ((char *)string, " \t    azerty\n//    qwerty");
+    strcpy ((char *)pattern, "//");
+    printf("   miscIsCommentLine(|%s|,|%s|) = ", string, pattern);
+    if (miscIsCommentLine(string, pattern) == mcsFALSE)
     {
         printf("FALSE.\n");
     }
