@@ -1,20 +1,21 @@
 #ifndef evhHANDLER_H
 #define evhHANDLER_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhHANDLER.h,v 1.5 2005-01-07 17:48:17 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     22-Sep-2004  Created based on VLT SW
-* gzins     23-Nov-2004  Used new msg C++ library.
-* gzins     22-Dec-2004  Added GetHelp()
-* gzins     07-Jan-2005  Renamed GetHelp() to HandeHelpCmd()
-*                        Added AddCallback() and Run() for command reply
-*                        Declared Run() and Find as protected
-*                        Added evhMainHandler global variable
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhHANDLER.h,v 1.6 2005-01-26 18:11:41 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     22-Sep-2004  Created based on VLT SW
+ * gzins     23-Nov-2004  Used new msg C++ library.
+ * gzins     22-Dec-2004  Added GetHelp()
+ * gzins     07-Jan-2005  Renamed GetHelp() to HandeHelpCmd()
+ *                        Added AddCallback() and Run() for command reply
+ *                        Declared Run() and Find as protected
+ *                        Added evhMainHandler global variable
+ ******************************************************************************/
 
 /**
  * \file
@@ -77,6 +78,8 @@ protected:
     virtual mcsCOMPL_STAT Run(const evhCMD_REPLY_KEY &key, msgMESSAGE &msg);
     virtual mcsCOMPL_STAT Run(const evhIOSTREAM_KEY &key, int fd);
 
+    virtual evhCMD_REPLY_KEY *CheckForTimeout();
+    
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
