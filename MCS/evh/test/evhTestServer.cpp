@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhTestServer.cpp,v 1.4 2005-01-07 18:25:25 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     24-Sep-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhTestServer.cpp,v 1.5 2005-01-29 07:20:11 gzins Exp $"
+ *
+ * History:
+ * --------
+ * gzins     24-Sep-2004  Created
+ *
+ *
+ ******************************************************************************/
 
 /**
  * \file
- * Test program for evhKEY class.
+ * Test program for evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.4 2005-01-07 18:25:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.5 2005-01-29 07:20:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -49,68 +49,75 @@ using namespace std;
 class evhTEST : public evhSERVER
 {
 public:
-    evhTEST() {i=0;};
-    virtual ~evhTEST(){};
+    evhTEST();
+    virtual ~evhTEST();
 
-    virtual evhCB_COMPL_STAT Cb1 (msgMESSAGE &msg,void*)
-    {
-        evhINTERFACE msgManagerIf("Message Manager", "mgManager"); 
-        printf("evhTEST::Cb1() : Command = %s, Params = %s\n",
-               msg.GetCommand(), msg.GetBody()); 
-        evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::CbReply1);
-        msgManagerIf.Forward("PING", "", cb1);
-        _msg = msg;
-        return evhCB_SUCCESS;
-    };
-    virtual evhCB_COMPL_STAT CbReply1 (msgMESSAGE &msg,void*)
-    {
-        printf("evhTEST::CbReply1() - Command = %s, Params = %s\n",
-               msg.GetCommand(), msg.GetBody()); 
-        if (errStackIsEmpty() == mcsFALSE)
-        {
-            errUnpackStack(msg.GetBody(), msg.GetBodySize());
-        }
-        else
-        {
-            _msg.SetBody(msg.GetBody());
-        }
-        SendReply(_msg);
-        return evhCB_DELETE;
-    };
-    virtual evhCB_COMPL_STAT Cb2 (const int,void*)
-    {
-        printf("evhTEST::Cb2()\n"); 
-        mcsSTRING80 msg;
-        scanf("%s", msg);
-        printf("Read string = %s\n", msg);
-        errDisplayStack();
-        return evhCB_SUCCESS | evhCB_DELETE;
-    };
-
-    virtual mcsCOMPL_STAT AppInit()
-    {
-        // Attach callback to the SETUP command
-        evhCMD_KEY key1("SETUP");
-        evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::Cb1);
- 
-        AddCallback(key1, cb1);
-
-        // Attach callback to stdin 
-        int fd;
-        evhIOSTREAM_CALLBACK cb2(this, (evhIOSTREAM_CB_METHOD)&evhTEST::Cb2);
-        fd = 0; 
-        evhIOSTREAM_KEY key2(fd);
-        AddCallback(key2, cb2);
-        return SUCCESS;
-    }
-
+    virtual mcsCOMPL_STAT AppInit();
+    virtual evhCB_COMPL_STAT SetupCB (msgMESSAGE &msg,void*);
+    virtual evhCB_COMPL_STAT SetupReplyCB (msgMESSAGE &msg,void*);
+    virtual evhCB_COMPL_STAT StdinCB (const int,void*);
 protected:
 
 private:
-    int i;
     msgMESSAGE _msg;
+    evhINTERFACE _msgManagerIf;
 };
 
+// Constructor & destructor
+evhTEST::evhTEST():_msgManagerIf("Message Manager", "mgManager") 
+{
+};
+evhTEST::~evhTEST() 
+{
+};
+
+// Application initialisation
+mcsCOMPL_STAT evhTEST::AppInit()
+{
+    logExtDbg("evhTEST::AppInit()()"); 
+    // Attach callback to the SETUP command
+    evhCMD_KEY key1("SETUP");
+    evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::SetupCB);
+    AddCallback(key1, cb1);
+
+    // Attach callback to stdin 
+    int fd;
+    evhIOSTREAM_CALLBACK cb2(this, (evhIOSTREAM_CB_METHOD)&evhTEST::StdinCB);
+    fd = 0; 
+    evhIOSTREAM_KEY key2(fd);
+    AddCallback(key2, cb2);
+    return SUCCESS;
+}
+
+// Callback for SETUP command
+evhCB_COMPL_STAT evhTEST::SetupCB (msgMESSAGE &msg,void*)
+{
+    logExtDbg("evhTEST::SetupCB ()"); 
+    evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::SetupReplyCB);
+    _msg = msg;
+    _msgManagerIf.Forward("PING", "", cb1);
+
+    return evhCB_SUCCESS;
+};
+
+// Callback for SETUP command reply
+evhCB_COMPL_STAT evhTEST::SetupReplyCB (msgMESSAGE &msg,void*)
+{
+    logExtDbg("evhTEST::SetupReplyCB()"); 
+    SendReply(_msg);
+    return evhCB_DELETE;
+};
+
+// Callback for stdin
+evhCB_COMPL_STAT evhTEST::StdinCB (const int,void*)
+{
+    logExtDbg("evhTEST::StdinCB()"); 
+    mcsSTRING80 msg;
+    scanf("%s", msg);
+    printf("Read string = %s\n", msg);
+    errDisplayStack();
+    return evhCB_SUCCESS;
+};
 
 /* 
  * Main
