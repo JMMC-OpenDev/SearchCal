@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.3 2004-12-12 09:34:40 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.4 2004-12-12 09:38:48 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -133,6 +133,7 @@ for mod in $mcs_modules; do
         exit 1
     fi
 done
-echo -e "Istallation done."
+
+echo -e "Installation done."
 echo -e "See log file '$logfile' for details."
 #___oOo___
