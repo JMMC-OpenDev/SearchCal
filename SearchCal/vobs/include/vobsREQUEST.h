@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.5 2004-10-18 11:38:58 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.6 2004-10-26 09:37:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,7 +25,7 @@
  * Constants definition
  */
 
-#define vobsNB_REQUEST_CONSTRAINTS 11       /**< Number of contraints */
+#define vobsNB_REQUEST_CONSTRAINTS 13       /**< Number of contraints */
 #define vobsREQUEST_CONSTRAINT_NOT_SET  "00.00"  /**< Default value of the empty
                                           contraints */
 
@@ -56,7 +56,9 @@ typedef enum
     SEARCH_BOX_DEC_ID,      /**< search Dec id */
     STAR_EXPECTED_VIS_ID,   /**< visibility id */
     STAR_MAX_ERR_VIS_ID,    /**< absolute errors id */
-    OBSERVED_BAND_ID        /**< band id */
+    OBSERVED_BAND_ID,       /**< band id */
+    BASEMIN_ID,
+    BASEMAX_ID,
 } vobsCONSTRAINT_ID;
 
 /*

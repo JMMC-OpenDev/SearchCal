@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.10 2004-10-20 12:17:20 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.11 2004-10-26 09:37:21 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.10 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.11 2004-10-26 09:37:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,6 +60,8 @@ static char *constraintNameList[] =
    "STAR_EXPECTED_VIS",
    "STAR_MAX_ERR_VIS",
    "OBSERVED_BAND",
+   "BASEMIN",
+   "BASEMAX",
    NULL
 };
 
