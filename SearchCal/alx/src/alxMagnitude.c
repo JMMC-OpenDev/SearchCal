@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.16 2005-04-04 07:22:11 scetre Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.17 2005-04-06 12:14:49 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/04/04 07:22:11  scetre
+ * Updated documentation
+ *
  * Revision 1.15  2005/03/30 12:48:10  scetre
  * Added structure in order to simplify the code.
  * Changed API with this structure.
@@ -69,7 +72,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.16 2005-04-04 07:22:11 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.17 2005-04-06 12:14:49 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -109,14 +112,14 @@ static mcsCOMPL_STAT
     alxComputeDiffMagnitude(mcsSTRING32 spType,
                             mcsFLOAT mgB,
                             mcsFLOAT mgV,
-                            alxDIFFERENTIAL_MAGNITUDES *diffMagnitudes);
+                            alxDIFFERENTIAL_MAGNITUDES diffMagnitudes);
 static mcsCOMPL_STAT
     alxComputeAllMagnitudes(alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
                             alxMAGNITUDES magnitudes,
                             mcsFLOAT mgV);
 static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
-                                         mcsFLOAT diffMag,
-                                         alxMAGNITUDE *magnitude,
+                                         alxDATA diffMag,
+                                         alxDATA *magnitude,
                                          alxCONFIDENCE_INDEX confIndex);
 /* 
  * Local functions definition
@@ -213,10 +216,10 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
             logTest("Type of star = DWARF"); 
             break;
         case alxGIANT:
-            logTest("Type of star = GIANT"); 
+            logTest("Type of star = GIANT");
             break;
         case alxSUPER_GIANT:
-            logTest("Type of star = SUPER GIANT"); 
+            logTest("Type of star = SUPER GIANT");
             break;
     }
 
@@ -321,7 +324,6 @@ static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
                                alxSPECTRAL_TYPE *spectralType)
 {
     logExtDbg("alxString2SpectralType()");
-
     /* 
      * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
      * number between 0 and 9 and LLL is the light class
@@ -368,8 +370,8 @@ static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
  * just after or -1 if no match is found or interpolation is impossible
  */
 static mcsINT32 alxGetLine(alxCOLOR_TABLE *colorTable,
-                         alxSPECTRAL_TYPE *spectralType,
-                         mcsSTRING32 spType)
+                           alxSPECTRAL_TYPE *spectralType,
+                           mcsSTRING32 spType)
 {
     logExtDbg("alxGetLine()");
 
@@ -454,10 +456,9 @@ static mcsCOMPL_STAT
     alxComputeDiffMagnitude(mcsSTRING32 spType,
                             mcsFLOAT mgB,
                             mcsFLOAT mgV,
-                            alxDIFFERENTIAL_MAGNITUDES *diffMagnitudes)
+                            alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
 {
     logExtDbg("alxComputeDiffMagnitude()");
-
     /* 
      * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
      * number between 0 and 9 and LLL is the light class
@@ -475,7 +476,6 @@ static mcsCOMPL_STAT
     {
         return mcsFAILURE;
     }
-
     /* Line corresponding to the spectral type */
     mcsINT32 line = alxGetLine(colorTable, &spectralType, spType);
     /* if line not found, i.e = -1, return mcsFAILURE */
@@ -483,16 +483,15 @@ static mcsCOMPL_STAT
     {
         return mcsFAILURE;
     }
-
     /* If the spectral type matches the line of the color table */
-    diffMagnitudes->b_v = alxBLANKING_VALUE;
-    diffMagnitudes->v_i = alxBLANKING_VALUE;
-    diffMagnitudes->v_r = alxBLANKING_VALUE;
-    diffMagnitudes->i_j = alxBLANKING_VALUE;
-    diffMagnitudes->j_h = alxBLANKING_VALUE;
-    diffMagnitudes->j_k = alxBLANKING_VALUE;
-    diffMagnitudes->k_l = alxBLANKING_VALUE;
-    diffMagnitudes->k_m = alxBLANKING_VALUE;
+    diffMagnitudes[alxB_V].value = alxBLANKING_VALUE;
+    diffMagnitudes[alxV_I].value = alxBLANKING_VALUE;
+    diffMagnitudes[alxV_R].value = alxBLANKING_VALUE;
+    diffMagnitudes[alxI_J].value = alxBLANKING_VALUE;
+    diffMagnitudes[alxJ_H].value = alxBLANKING_VALUE;
+    diffMagnitudes[alxJ_K].value = alxBLANKING_VALUE;
+    diffMagnitudes[alxK_L].value = alxBLANKING_VALUE;
+    diffMagnitudes[alxK_M].value = alxBLANKING_VALUE;
 
     if (colorTable->spectralType[line].quantity == spectralType.quantity)
     {
@@ -503,18 +502,19 @@ static mcsCOMPL_STAT
         if (fabs((mgB-mgV) - colorTable->index[line][alxB_V]) <= 0.1)
         {
             /* Get differential magnitudes */
-            diffMagnitudes->b_v = colorTable->index[line][alxB_V];
-            diffMagnitudes->v_i = colorTable->index[line][alxV_I];
-            diffMagnitudes->v_r = colorTable->index[line][alxV_R];
-            diffMagnitudes->i_j = colorTable->index[line][alxI_J];
-            diffMagnitudes->j_h = colorTable->index[line][alxJ_H];
-            diffMagnitudes->j_k = colorTable->index[line][alxJ_K];
-            diffMagnitudes->k_l = colorTable->index[line][alxK_L];
+            diffMagnitudes[alxB_V].value = colorTable->index[line][alxB_V];
+            diffMagnitudes[alxV_I].value = colorTable->index[line][alxV_I];
+            diffMagnitudes[alxV_R].value = colorTable->index[line][alxV_R];
+            diffMagnitudes[alxI_J].value = colorTable->index[line][alxI_J];
+            diffMagnitudes[alxJ_H].value = colorTable->index[line][alxJ_H];
+            diffMagnitudes[alxJ_K].value = colorTable->index[line][alxJ_K];
+            diffMagnitudes[alxK_L].value = colorTable->index[line][alxK_L];
             if ((colorTable->index[line][alxK_L] != alxBLANKING_VALUE) &&
-                (colorTable->index[line][alxL_M] != alxBLANKING_VALUE))
+                (colorTable->index[line][alxK_M] != alxBLANKING_VALUE))
             {
-                diffMagnitudes->k_m = colorTable->index[line][alxK_L] + 
-                                      colorTable->index[line][alxL_M];
+                diffMagnitudes[alxK_M].value = 
+                      colorTable->index[line][alxK_L] 
+                    + colorTable->index[line][alxK_M];
             }
         }
         else
@@ -532,7 +532,7 @@ static mcsCOMPL_STAT
         lineInf = line - 1;
         logTest("Inferior line = %d", lineInf);
         logTest("Superior line = %d", lineSup);
-        
+
         /*
          * Compare B-V star differential magnitude to the ones of the color
          * table inferior/superior lines; delta should be less than +/- 0.1 
@@ -545,12 +545,13 @@ static mcsCOMPL_STAT
                          / (colorTable->index[lineSup][alxB_V] 
                             - colorTable->index[lineInf][alxB_V]));
             logTest("Ratio = %f", ratio);
-
+            
             /* Compute differential magnitudes */
             if ((colorTable->index[lineSup][alxV_R] != alxBLANKING_VALUE) &&
                 (colorTable->index[lineInf][alxV_R] != alxBLANKING_VALUE))
             {
-                diffMagnitudes->v_r = colorTable->index[lineInf][alxV_R]
+                diffMagnitudes[alxV_R].value = 
+                    colorTable->index[lineInf][alxV_R]
                     + ratio * (colorTable->index[lineSup][alxV_R] 
                                - colorTable->index[lineInf][alxV_R]);
             }
@@ -558,7 +559,8 @@ static mcsCOMPL_STAT
             if ((colorTable->index[lineSup][alxV_I] != alxBLANKING_VALUE) &&
                 (colorTable->index[lineInf][alxV_I] != alxBLANKING_VALUE))
             {
-                diffMagnitudes->v_i = colorTable->index[lineInf][alxV_I] 
+                diffMagnitudes[alxV_I].value = 
+                    colorTable->index[lineInf][alxV_I] 
                     + ratio *(colorTable->index[lineSup][alxV_I] 
                               - colorTable->index[lineInf][alxV_I]);
             }
@@ -566,7 +568,8 @@ static mcsCOMPL_STAT
             if ((colorTable->index[lineSup][alxI_J] != alxBLANKING_VALUE) &&
                 (colorTable->index[lineInf][alxI_J] != alxBLANKING_VALUE))
             {
-                diffMagnitudes->i_j = colorTable->index[lineInf][alxI_J] 
+                diffMagnitudes[alxI_J].value =
+                    colorTable->index[lineInf][alxI_J] 
                     + ratio *(colorTable->index[lineSup][alxI_J] 
                               - colorTable->index[lineInf][alxI_J]);
             }
@@ -574,7 +577,8 @@ static mcsCOMPL_STAT
             if ((colorTable->index[lineSup][alxJ_H] != alxBLANKING_VALUE) &&
                 (colorTable->index[lineInf][alxJ_H] != alxBLANKING_VALUE))
             {
-                diffMagnitudes->j_h = colorTable->index[lineInf][alxJ_H] 
+                diffMagnitudes[alxJ_H].value = 
+                    colorTable->index[lineInf][alxJ_H] 
                     + ratio *(colorTable->index[lineSup][alxJ_H] 
                               - colorTable->index[lineInf][alxJ_H]);
             }
@@ -582,7 +586,8 @@ static mcsCOMPL_STAT
             if ((colorTable->index[lineSup][alxJ_K] != alxBLANKING_VALUE) &&
                 (colorTable->index[lineInf][alxJ_K] != alxBLANKING_VALUE))
             {
-                diffMagnitudes->j_k = colorTable->index[lineInf][alxJ_K] 
+                diffMagnitudes[alxJ_K].value =
+                    colorTable->index[lineInf][alxJ_K] 
                     + ratio *(colorTable->index[lineSup][alxJ_K] 
                               - colorTable->index[lineSup][alxJ_K]);
             }
@@ -590,22 +595,24 @@ static mcsCOMPL_STAT
             if ((colorTable->index[lineSup][alxK_L] != alxBLANKING_VALUE) &&
                 (colorTable->index[lineInf][alxK_L] != alxBLANKING_VALUE))
             {
-                diffMagnitudes->k_l = colorTable->index[lineInf][alxK_L]
+                diffMagnitudes[alxK_L].value =
+                    colorTable->index[lineInf][alxK_L]
                     + ratio * (colorTable->index[lineSup][alxK_L] 
                                - colorTable->index[lineInf][alxK_L]);
             }
 
             if ((colorTable->index[lineSup][alxK_L] != alxBLANKING_VALUE) &&
                 (colorTable->index[lineInf][alxK_L] != alxBLANKING_VALUE) &&
-                (colorTable->index[lineSup][alxL_M] != alxBLANKING_VALUE) &&
-                (colorTable->index[lineInf][alxL_M] != alxBLANKING_VALUE))
+                (colorTable->index[lineSup][alxK_M] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxK_M] != alxBLANKING_VALUE))
             {
-                diffMagnitudes->k_m = colorTable->index[lineInf][alxK_L] 
-                    + colorTable->index[lineInf][alxL_M] 
+                diffMagnitudes[alxK_M].value =
+                    colorTable->index[lineInf][alxK_L] 
+                    + colorTable->index[lineInf][alxK_M] 
                     + ratio *(colorTable->index[lineSup][alxK_L] 
-                              + colorTable->index[lineSup][alxL_M] 
+                              + colorTable->index[lineSup][alxK_M] 
                               - colorTable->index[lineInf][alxK_L] 
-                              - colorTable->index[lineInf][alxL_M]);
+                              - colorTable->index[lineInf][alxK_M]);
             }
         }
         else
@@ -613,10 +620,10 @@ static mcsCOMPL_STAT
             logTest("mgB-mgV = %.3f / B-V [%.3f..%.3f]; delta > 0.1",
                     (mgB-mgV), colorTable->index[lineInf][alxB_V], 
                     colorTable->index[lineSup][alxB_V]);
+
         }
-
     }
-
+    
     return mcsSUCCESS;
 }
 
@@ -632,27 +639,22 @@ static mcsCOMPL_STAT
  * \return always SUCCESS
  */
 static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
-                                         mcsFLOAT diffMag,
-                                         alxMAGNITUDE *magnitude,
+                                         alxDATA diffMag,
+                                         alxDATA *magnitude,
                                          alxCONFIDENCE_INDEX confIndex)
 {
     logExtDbg("alxDiffMagnitude()");
-    
-    /* If magnitude is set */
+    /* If magnitude is not set */
     if (magnitude->isSet == mcsFALSE)
     {
         /* If magnitude difference needed is equal to blanking value */
-        if (diffMag == alxBLANKING_VALUE)
-        {
-            /* Set no confidence index */
-            magnitude->confIndex = alxNO_CONFIDENCE;
-        }
-        else
+        if (diffMag.value != alxBLANKING_VALUE)
         {
             /* Else compute*/
-            magnitude->value = firstMag - diffMag;
+            magnitude->value = firstMag - diffMag.value;
             /* Set correct confidence index */
             magnitude->confIndex = confIndex;
+            magnitude->isSet = mcsTRUE;
         }
     }
     
@@ -687,34 +689,33 @@ static mcsCOMPL_STAT
     {
         confIndex = alxCONFIDENCE_HIGH;
     }
-
     /* Compute *missing* magnitudes in R, I, J, H, K, L and M bands */
     alxComputeMagnitude(mgV,
-                        diffMagnitudes.v_r,
+                        diffMagnitudes[alxV_R],
                         &(magnitudes[alxR_BAND]),
                         confIndex);
     alxComputeMagnitude(mgV,
-                        diffMagnitudes.v_i,
+                        diffMagnitudes[alxV_I],
                         &(magnitudes[alxI_BAND]),
                         confIndex);
     alxComputeMagnitude(magnitudes[alxI_BAND].value,
-                        diffMagnitudes.i_j,
+                        diffMagnitudes[alxI_J],
                         &(magnitudes[alxJ_BAND]),
                         confIndex);
     alxComputeMagnitude(magnitudes[alxJ_BAND].value,
-                        diffMagnitudes.j_h,
+                        diffMagnitudes[alxJ_H],
                         &(magnitudes[alxH_BAND]),
                         confIndex);
     alxComputeMagnitude(magnitudes[alxJ_BAND].value,
-                        diffMagnitudes.j_k,
+                        diffMagnitudes[alxJ_K],
                         &(magnitudes[alxK_BAND]),
                         confIndex);
     alxComputeMagnitude(magnitudes[alxK_BAND].value,
-                        diffMagnitudes.k_l,
+                        diffMagnitudes[alxK_L],
                         &(magnitudes[alxL_BAND]),
                         confIndex);
     alxComputeMagnitude(magnitudes[alxK_BAND].value,
-                        diffMagnitudes.k_m,
+                        diffMagnitudes[alxK_M],
                         &(magnitudes[alxM_BAND]),
                         confIndex);
 
@@ -778,15 +779,13 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
     /* Create a differential magnitudes structure */
     alxDIFFERENTIAL_MAGNITUDES diffMag;
     /* Compute differential magnitude */
-    if (alxComputeDiffMagnitude(spType, mgB, mgV, &diffMag) ==
+    if (alxComputeDiffMagnitude(spType, mgB, mgV, diffMag) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    
     /* Compute all new magnitude */
     alxComputeAllMagnitudes(diffMag, magnitudes, mgV);
-    
     /* Print out results */
     logTest("B = %0.3f", mgB);
     logTest("V = %0.3f", mgV);
