@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.1 2005-02-04 13:56:40 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.2 2005-02-04 15:10:25 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/04 13:56:40  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -32,42 +35,25 @@
  */
 
 /**
- * Class which allows to query MIDI catalog.
+ * Class used to query MIDI catalog.
  * 
- * OPTIONAL detailed description of the class follows here.
+ * Through MIDI catalog interrogation, this class alows to realise band N search
+ * from user request. Provided selected stars, extracted from MIDI catalog, will
+ * be caracterised by circumstellar dust lack and 12 mu IR flux greater than 5
+ * Jy.
+ *
+ * A star will be extracted if it is located in the search field.
+ *
+ * Search field is defined through user request by:
+ * - N magnitude range calculated from N object magnitude
+ * - field on sky (heigh and width corresponding to search box)
  *
  * \usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
+ * \filename vobsMidiCatalog.cfg : star list used for MIDI calibrator search
  *
  * \n
- * \env
- * OPTIONAL. If needed, environmental variables accessed by the class. For
- * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
- * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * \n
- * \ex
- * OPTIONAL. Code example if needed
- * \n Brief example description.
- * \code
- * Insert your code example here
- * \endcode
- *
- * \sa JMMC-MEM-2600-0011 document
- * 
- * \bug OPTIONAL. Bugs list if it exists.
- * \bug For example, description of the first bug
- * \bug For example, description of the second bug
- * 
- * \todo OPTIONAL. Things to forsee list, if needed. For example, 
- * \todo add other methods, dealing with operations.
- * 
+ * \sa - vobsCATALOG class
+ * \sa - JMMC-MEM-2600-0011 document
  */
 class vobsCATALOG_MIDI : public vobsCATALOG
 {

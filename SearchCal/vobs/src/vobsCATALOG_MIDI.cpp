@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.3 2005-02-04 10:49:43 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.4 2005-02-04 15:10:25 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/04 10:49:43  gzins
+ * Fixed wrong MIDI catalog name
+ *
  * Revision 1.2  2005/02/04 10:42:32  gzins
  * Added RA/DEC delta conversion (minutes (dm) to decimal degrees)
  *
@@ -19,7 +22,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.3 2005-02-04 10:49:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.4 2005-02-04 15:10:25 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -71,15 +74,11 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  * Build star list from MIDI catalog, where each list star verifies constraints
  * specified by user request.
  *
- * \param request search contraints
+ * \param request user request specifying search contraints
  * \param list star list provided by the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \sa vobsREQUEST class
- *
- * \b Errors codes:\n 
- * The possible errors are:
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
                                        vobsSTAR_LIST &list)
@@ -255,11 +254,6 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
 
 
 /*
- * Protected methods
- */
-
-
-/*
  * Private methods
  */
 
@@ -268,12 +262,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
  *
  * Build star list from MIDI catalog stars.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \sa vobsCATALOG class
- *
- * \b Errors codes:\n 
- * The possible errors are:
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
 {
