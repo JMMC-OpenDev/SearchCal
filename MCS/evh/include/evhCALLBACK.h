@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK.h,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhCALLBACK.h,v 1.2 2004-12-08 13:29:56 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
+* gzins     08-Dec-2004  Removed evhCB_RETURN and evhCB_NOCALLS callback
+*                        return values
+*                        Added IsDetached() method
 *
 *******************************************************************************/
 /**
@@ -33,12 +36,6 @@
  *	  - Bit 2 : evhCB_NO_DELETE or evhCB_DELETE \n
  *	    The callback must be deinstalled or not from the event handler. The
  *	    default is NO_DELETE.
- *	  - Bit 3 : evhCB_RETURN \n
- *	    The main loop must return immediately. No other callback will be
- *	    executed.
- *	  - Bit 4 : evhCB_NOCALLS \n
- *	    Not for users. Used internally by the main loop to comunicate that no
- *	    callback has been executed for a certain event.
  *
  * Group of values must be in OR to build the actual return code.
  * Some examples of return codes:\n
@@ -64,14 +61,6 @@ typedef mcsUINT32 evhCB_COMPL_STAT;
 /** Bit 2:    0 if NO DELETE     1 if delete requested */
 #define evhCB_NO_DELETE 0
 #define evhCB_DELETE    2
-
-/** Bit 3:    1 if return from main loop requested */
-#define evhCB_RETURN    4
-
-/** Bit 4:    1 if no callback installed for a received message */
-#define evhCB_NOCALLS   8
-
-/** Typedef for the callback proc type */
 
 /**
  * Base class to hold object's callback data for event.
@@ -107,6 +96,8 @@ public:
     virtual mcsLOGICAL IsSame (evhCALLBACK &callback);
 
     virtual mcsCOMPL_STAT Detach();
+
+    virtual mcsLOGICAL IsDetached();
 
 protected:
     fndOBJECT    *_object;   /** Object to which the method to be executed,
