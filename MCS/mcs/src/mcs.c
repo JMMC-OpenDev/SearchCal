@@ -7,7 +7,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: mcs.c,v 1.1 2004-06-16 14:06:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: mcs.c,v 1.2 2004-06-21 16:37:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -124,7 +124,7 @@ void mcsExit()
  *
  * Strips off from the process name the possible path, which could have been
  * specified to invoke the process.  For example  : "../bin/myProg" becomes
- * only "myProg" If the parameter given to mcsStoreMyName() is NULL, the name
+ * only "myProg". If the parameter given to mcsStoreMyName() is NULL, the name
  * of the process is set to mcsUNKNOWN_PROC.
  *
  * THIS FUNCTION IS FOR INTERNAL USE ONLY.
