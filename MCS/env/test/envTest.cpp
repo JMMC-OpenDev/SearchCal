@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envTest.cpp,v 1.3 2005-02-13 16:53:13 gzins Exp $"
+ * "@(#) $Id: envTest.cpp,v 1.4 2005-02-13 17:26:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/13 16:53:13  gzins
+ * Added CVS log as modification history
+ *
  * lafrasse  07-Dec-2004  Created
  * lafrasse  08-Dec-2004  Refined the output format
  *
@@ -20,7 +23,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: envTest.cpp,v 1.3 2005-02-13 16:53:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: envTest.cpp,v 1.4 2005-02-13 17:26:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,9 +74,9 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        // Exit from the application with FAILURE
+        // Exit from the application with mcsFAILURE
         exit (EXIT_FAILURE);
     }
 
@@ -101,7 +104,7 @@ int main(int argc, char *argv[])
     // Close MCS services
     mcsExit();
     
-    // Exit from the application with SUCCESS
+    // Exit from the application with mcsSUCCESS
     exit (EXIT_SUCCESS);
 }
 

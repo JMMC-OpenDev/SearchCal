@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envStop.sh,v 1.3 2005-02-13 16:53:13 gzins Exp $"
+# "@(#) $Id: envStop.sh,v 1.4 2005-02-13 17:26:51 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/13 16:53:13  gzins
+# Added CVS log as modification history
+#
 # lafrasse  21-Jan-2005  Created
 # lafrasse  25-Jan-2005  Added MCSENV label management (for the default MCSENV)
 #
@@ -14,17 +17,16 @@
 
 #/**
 # \file
-# Stop the msgManager process associated with currently defined environment, or
-# the one passed in argument.
+# Stop the environment (the current environment or the one passed as argument).
 #
 # \synopsis
 # \<envStop\> [\e \<MCS_environment_name\>]
 #
-# \param MCS_environment_name : the MCS environment the script should work in
+# \param MCS_environment_name : the MCS environment to stop
 #
 # \n
 # \env
-# MCSENV variable is read to get the currently defined MCS environment name.
+# MCSENV variable defines the current MCS environment name.
 # 
 # */
 

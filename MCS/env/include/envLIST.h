@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.h,v 1.3 2005-02-13 16:53:13 gzins Exp $"
+ * "@(#) $Id: envLIST.h,v 1.4 2005-02-13 17:26:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/13 16:53:13  gzins
+ * Added CVS log as modification history
+ *
  * lafrasse  07-Dec-2004  Created
  * lafrasse  08-Dec-2004  Comments refinments
  *
@@ -32,12 +35,9 @@
  */
 
 /**
- * This class retrieve and verfiy all the MCS environments informations, used to
- * isolate one MCS environment from all the others at the message communication
- * level.
- * 
- * For exemple, you can launch multiple msgManager processes using differents
- * MCS environments, thus enabling concurrent msg-based modules debugging.
+ * This class deals with the MCS environments. It can be used to show all MCS
+ * environments or to get informations (host name and port number) of a given
+ * environment.
  * 
  * \usedfiles
  * In MCS all the environments are listed in the mcsEnvList file.
@@ -46,7 +46,7 @@
  *
  * \n
  * \env
- * In MCS, the environment to be used is defined by the value of the $MCSENV
+ * The environment name to be used is defined by the value of the $MCSENV
  * evironment variable.
  * \envvar MCSENV :  MCS environment name to be used
  * 

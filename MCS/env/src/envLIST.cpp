@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.cpp,v 1.6 2005-02-13 16:53:13 gzins Exp $"
+ * "@(#) $Id: envLIST.cpp,v 1.7 2005-02-13 17:26:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/13 16:53:13  gzins
+ * Added CVS log as modification history
+ *
  * lafrasse  07-Dec-2004  Created
  * lafrasse  08-Dec-2004  Comment refinments, added the default MCS env in the
  *                        internal map by default, factorized the 'file already
@@ -21,7 +24,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.6 2005-02-13 16:53:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.7 2005-02-13 17:26:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -93,7 +96,7 @@ const char* envLIST::GetHostName(const char *envName)
     }
 
     // Load the MCS Env. List file
-    if (LoadEnvListFile() == FAILURE)
+    if (LoadEnvListFile() == mcsFAILURE)
     {
         return ((char*)NULL);
     }
@@ -136,7 +139,7 @@ const mcsINT32 envLIST::GetPortNumber(const char *envName)
     }
     
     // Load the MCS Env. List file
-    if (LoadEnvListFile() == FAILURE)
+    if (LoadEnvListFile() == mcsFAILURE)
     {
         return -1;
     }
@@ -160,7 +163,7 @@ void envLIST::Show(void)
     logExtDbg("envLIST::Show()");
 
     // Load the MCS Env. List file
-    if (LoadEnvListFile() == FAILURE)
+    if (LoadEnvListFile() == mcsFAILURE)
     {
         cout << "Could not load '$MCSROOT/etc/mcsEnvList' file" << endl;
         return;
@@ -203,12 +206,7 @@ void envLIST::Show(void)
  * The field are separated by spaces; one or more spaces between fields.
  * If no file exists, only the default MCS env. will be added.
  *
- * \return SUCCESS on successfull completion, or FAILURE otherwise.
- *
- * \err
- * The possible errors are :
- * \errname msgERR_UNKNOWN_ENV
- * \errname msgERR_FORMAT_ENVLIST
+ * \return mcsSUCCESS on successfull completion, or mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
 {
@@ -217,12 +215,12 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     // If the MCS Env. List file has not been loaded yet
     if (_fileAlreadyLoaded == mcsTRUE)
     {
-        return SUCCESS;
+        return mcsSUCCESS;
     }
     _fileAlreadyLoaded = mcsTRUE;
 
     // Put the default MCS env. host name and port number in the internal map
-    if (miscGetHostName(_hostName, sizeof(_hostName)) == FAILURE)
+    if (miscGetHostName(_hostName, sizeof(_hostName)) == mcsFAILURE)
     {
         strncpy(_hostName, "localhost", sizeof(_hostName));
     }
@@ -234,22 +232,20 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     fullPath = miscResolvePath("$MCSROOT/etc/mcsEnvList");
     if (fullPath == NULL)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    /* Load the MCS environment list file in a misc Dynamic Buffer for line by
-     * line parsing.
-     */
+    // Load the MCS environment list file in a misc Dynamic Buffer for line by
+    // line parsing.
     miscDYN_BUF envList;
     miscDynBufInit(&envList);
-    if (miscDynBufLoadFile(&envList, fullPath, "#") == FAILURE)
+    if (miscDynBufLoadFile(&envList, fullPath, "#") == mcsFAILURE)
     {
-        return SUCCESS;
+        return mcsSUCCESS;
     }
 
-    /* Jump all the headers and empty lines, and feed the map with the
-     * environments data found in the mcsEnvList file read line by line.
-     */
+    // Jump all the headers and empty lines, and feed the map with the
+    // environments data found in the mcsEnvList file read line by line.
     mcsINT32     nbReadValue = 0;
     mcsINT32     portNumber  = 0;
     mcsENVNAME   parsedEnvName;
@@ -262,7 +258,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
         // If the current line is not empty
         if ((currentLine != NULL) && (strlen(currentLine) != 0))
         {
-            // Try to read the line values
+            // Read the line values
             nbReadValue = sscanf(currentLine, "%s %s %d", parsedEnvName,
                                  hostName, &portNumber);
     
@@ -271,7 +267,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
             {
                 errAdd(envERR_FORMAT_ENVLIST, currentLine,
                        "$MCSROOT/etc/mcsEnvList");
-                return FAILURE;
+                return mcsFAILURE;
             }
 
             // Verify that there is not a 'parsedEnvName' element in the map
@@ -280,7 +276,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
             {
                 errAdd(envERR_DUPLICATE_ENV, parsedEnvName,
                        "$MCSROOT/etc/mcsEnvList");
-                return FAILURE;
+                return mcsFAILURE;
             }
 
             _map[parsedEnvName] = pair<string,int>(hostName, portNumber);
@@ -294,9 +290,8 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     // Destroy the temp Dynamic Buffer
     miscDynBufDestroy(&envList);
 
-    /* Verify that there is not two different environments using the same port
-     * number on the same host
-     */
+    // Verify that there is not two different environments using the same port
+    // number on the same host
     map<string,pair<string,int> > ::iterator i;
     for (i = _map.begin(); i != _map.end(); i++)
     {
@@ -310,13 +305,12 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
                         (*j).first.c_str(), (*i).first.c_str(),
                         (*j).second.first.c_str());
 
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
-
 
 /*___oOo___*/
