@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgConnect.c,v 1.2 2004-10-01 15:06:02 gzins Exp $"
+* "@(#) $Id: msgConnect.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  11-Aug-2004  Ported from CILAS software
+* gzins     01-Oct-2004  Added Error Stack restting if no MSG_MANAGER_HOST Env.
+*                        Var. is defined
+* lafrasse  07-Oct-2004  Added msgIsConnected
 *
 *
 *******************************************************************************/
@@ -17,7 +20,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgConnect.c,v 1.2 2004-10-01 15:06:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgConnect.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -51,6 +54,17 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
 /**
+ * Return weither the connection to msgManger is up and running, or not.
+ *
+ * \return an MCS logical (TRUE if the connection is up and running, or FALSE
+ * otherwise)
+ */
+mcsLOGICAL      msgIsConnected    (void)
+{
+    return ((msgManagerSd != -1)?mcsTRUE:mcsFALSE);
+}
+
+/**
  * Try to establish the connection with the communication server.
  *
  * The server host name is (in order) :
@@ -79,7 +93,7 @@ mcsCOMPL_STAT   msgConnect        (const mcsPROCNAME  procName,
     logExtDbg("msgConnect()");
 
     /* If a connection is already open... */
-    if (msgManagerSd != -1)
+    if (msgIsConnected() == mcsTRUE)
     {
         /* Raise an error */
         errAdd(msgERR_PROC_ALREADY_CONNECTED);

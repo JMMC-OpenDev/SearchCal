@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgReceive.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgReceive.c,v 1.2 2004-10-07 08:59:36 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  11-Aug-2004  Ported from CILAS software
+* lafrasse  07-Oct-2004  Added msgIsConnected
 *
 *
 *******************************************************************************/
@@ -17,7 +18,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgReceive.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgReceive.c,v 1.2 2004-10-07 08:59:36 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -65,7 +66,7 @@ mcsCOMPL_STAT   msgReceive        (msgMESSAGE         *msg,
     logExtDbg("msgSendReply()");
     
     /* If no connection is already open... */
-    if (msgManagerSd == -1)
+    if (msgIsConnected() == mcsFALSE)
     {
         /* Raise an error */
         errAdd(msgERR_PROC_NOT_CONNECTED);

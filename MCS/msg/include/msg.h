@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msg.h,v 1.5 2004-10-01 14:17:52 gzins Exp $"
+* "@(#) $Id: msg.h,v 1.6 2004-10-07 08:59:36 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  10-Aug-2004  Ported from CILAS software
+* lafrasse  07-Oct-2004  Added msgIsConnected
 *
 *
 *******************************************************************************/
@@ -132,6 +133,8 @@ msgTYPE         msgGetType        (msgMESSAGE         *msg);
 
 
 mcsINT32        msgGetMessageQueue(void);
+
+mcsLOGICAL      msgIsConnected    (void);
 
 mcsCOMPL_STAT   msgConnect        (const mcsPROCNAME  procName,
                                    const char*        msgManagerHost);

@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgDisconnect.c,v 1.2 2004-10-01 14:18:59 gzins Exp $"
+* "@(#) $Id: msgDisconnect.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  11-Aug-2004  Ported from CILAS software
+* lafrasse  07-Oct-2004  Added msgIsConnected
 *
 *
 *******************************************************************************/
@@ -17,7 +18,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgDisconnect.c,v 1.2 2004-10-01 14:18:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgDisconnect.c,v 1.3 2004-10-07 08:59:36 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -59,7 +60,7 @@ mcsCOMPL_STAT   msgDisconnect     (void)
     logExtDbg("msgDisconnect()");
 
     /* If no connection is already open... */
-    if (msgManagerSd == -1)
+    if (msgIsConnected() == mcsFALSE)
     {
         /* Raise an error */
         errAdd(msgERR_PROC_NOT_CONNECTED);
