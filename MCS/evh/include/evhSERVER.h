@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.h,v 1.1 2004-11-17 10:28:48 gzins Exp $"
+* "@(#) $Id: evhSERVER.h,v 1.2 2004-11-18 17:32:31 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -75,11 +75,27 @@ public:
     evhSERVER();
     virtual ~evhSERVER();
 
+    // Usage of the application 
+    virtual mcsCOMPL_STAT PrintSynopsis();
+    virtual mcsCOMPL_STAT PrintArguments();
+
+    // Parse command-line arguments 
+    virtual mcsCOMPL_STAT ParseArguments(mcsINT32 argc, char *argv[],
+                                         mcsINT32 *optInd,
+                                         mcsLOGICAL *optUsed);
+
     // Init method
-    virtual mcsCOMPL_STAT Init();
+    virtual mcsCOMPL_STAT Init(mcsINT32 argc, char *argv[]);
 
     // Command callbacks
     virtual evhCB_COMPL_STAT VersionCB(msgMESSAGE &msg, void*);
+
+    // Connection to MCS message manager
+    virtual mcsCOMPL_STAT Connect();
+    virtual mcsCOMPL_STAT Disconnect();
+
+    // Main loop
+    virtual mcsCOMPL_STAT MainLoop(msgMESSAGE *msg=NULL);
 
 protected:
 
@@ -88,6 +104,10 @@ private:
     // methods, in order to hide them from the users.
     evhSERVER& operator=(const evhSERVER&);
     evhSERVER (const evhSERVER&);
+
+    mcsLOGICAL _isConnected; // Is connected to MCS message manager ?
+
+    msgMESSAGE _msg;
 };
 
 #endif /*!evhSERVER_H*/
