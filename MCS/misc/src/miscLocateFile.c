@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscLocateFile.c,v 1.3 2004-11-23 09:11:15 gzins Exp $"
+* "@(#) $Id: miscLocateFile.c,v 1.4 2004-12-14 03:19:20 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -42,7 +42,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.3 2004-11-23 09:11:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.4 2004-12-14 03:19:20 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -103,8 +103,16 @@ int main (int argc, char *argv[])
     /* Close MCS services */
     mcsExit();
     
-    /* Exit from the application with SUCCESS */
-    exit (EXIT_SUCCESS);
+    /* Exit from the application with SUCCESS or FAILURE */
+    if (fullFileName != NULL)
+    {
+        exit (EXIT_SUCCESS);
+    }
+    else
+    {
+        exit (EXIT_FAILURE);
+    }
+
 }
 
 
