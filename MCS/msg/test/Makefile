@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-11-26 13:11:28 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.7 2004-12-08 17:57:39 gzins Exp $"
 #
 # Makefile of msgTest
 #
@@ -11,6 +11,7 @@
 # gzins     01-Oct-2004  Removed msgTestManagerSend
 # lafrasse  20-Nov-2004  Added C++ attributes to each executable LIBS to become
 #                        compatible with the new C++ code in the library
+# gzins     08-Dec-2004  Removed msgTestClient and msgTestServer
 #
 #
 #*******************************************************************************
@@ -38,34 +39,32 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   = msgTestClient        \
-                  msgTestServer        \
-                  msgTestSocketClient  \
+EXECUTABLES_L   = msgTestSocketClient  \
                   msgTestSocketServer
 
 #
 # <brief description of msgTestClient program>
 msgTestClient_OBJECTS   = msgTestClient
 msgTestClient_LDFLAGS   = -lgdome
-msgTestClient_LIBS      = mcs err log misc msg C++
+msgTestClient_LIBS      = mcs err log misc env msg C++
 
 #
 # <brief description of msgTestServer program>
 msgTestServer_OBJECTS   = msgTestServer
 msgTestServer_LDFLAGS   = -lgdome
-msgTestServer_LIBS      = mcs err log cmd misc msg C++
+msgTestServer_LIBS      = mcs err log cmd misc env msg C++
 
 #
 # <brief description of msgTestSocketClient program>
 msgTestSocketClient_OBJECTS   = msgTestSocketClient
 msgTestSocketClient_LDFLAGS   = -lgdome
-msgTestSocketClient_LIBS      = mcs err log cmd misc msg C++
+msgTestSocketClient_LIBS      = mcs err log env cmd misc msg C++
 
 #
 # <brief description of msgTestSocketServer program>
 msgTestSocketServer_OBJECTS   = msgTestSocketServer
 msgTestSocketServer_LDFLAGS   = -lgdome
-msgTestSocketServer_LIBS      = mcs err log cmd misc msg C++
+msgTestSocketServer_LIBS      = mcs err log env cmd misc msg C++
 
 #
 # special compilation flags for single c sources
