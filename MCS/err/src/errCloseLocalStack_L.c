@@ -5,10 +5,11 @@
 * --------  -----------	 -------------------------------------------------------
 * berezne   02-Jun-2004  created
 * gzins     17-Jun-2004  completed implementation
+* gzins     06-Dec-2004  printed-out error stack when closing it
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errCloseLocalStack_L.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errCloseLocalStack_L.c,v 1.2 2004-12-06 14:13:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -78,6 +79,9 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR *error)
             strcat(tab, " ");
         }
     }
+
+    /* Print-out error stack */
+    errDisplayStack();
 
     /* Re-initialise error stack */
     errResetLocalStack(error);
