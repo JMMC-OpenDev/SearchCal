@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.14 2005-02-09 06:10:44 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.15 2005-02-10 06:38:58 gzins Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/02/09 06:10:44  gzins
+* Changed vobsSTAR_COMP_CRITERIA_LIST& to vobsSTAR_COMP_CRITERIA_LIST* in vobsSCENARIO
+*
 * Revision 1.13  2005/02/08 20:42:06  gzins
 * Used new vobsCATALOG::GetName() method
 *
@@ -47,7 +50,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.14 2005-02-09 06:10:44 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.15 2005-02-10 06:38:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -169,14 +172,15 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             tempList.Copy(*(*_entryIterator)._listInput);
         }
         
-        // start research in entry's catalog
+        // Start research in entry's catalog
+        logInfo("Consulting %s ...", ((*_entryIterator)._catalog)->GetName());
         if (((*_entryIterator)._catalog)->Search(request,
                                                  tempList) == mcsFAILURE )
         {
             return mcsFAILURE;
         }
         
-        // if the verbose level is higher or equal to debug level, the back
+        // If the verbose level is higher or equal to debug level, the back
         // result will be stored in file
         if (logGetStdoutLogLevel() >= logDEBUG)
         {
@@ -213,7 +217,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         // There are 3 different action to do when the scenario is executed
         switch((*_entryIterator)._action)
         {
-            // first action is vobsCOPY. The list output will be clear and it
+            // First action is vobsCOPY. The list output will be clear and it
             // will be merge from the temporary list which contain the list
             // input
             case vobsCOPY:
@@ -256,12 +260,13 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         }
         _entryIterator++;
     }
-    
-    
+   
+    // Copy resulting list
     if (starList.Copy(*(_entryList.back())._listOutput) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+    logInfo("%d star(s) found.", starList.Size()); 
     
     return mcsSUCCESS;
 }
