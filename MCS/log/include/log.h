@@ -3,11 +3,20 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.11 2004-06-23 14:19:26 gzins Exp $"
+* "@(#) $Id: log.h,v 1.12 2004-07-30 14:34:58 lafrasse Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
-* mella     07-May-2004  created
+* mella     07-May-2004  Created
+* lafrasse  30-Jun-2004  Changed some APIs :
+*                        logSetLog -> logSetFileLogState
+*                        logSetLogLevel -> logSetFileLogVerbosity
+*                        logGetLogLevel -> logGetFileLogVerbosity
+*                        logSetVerbose -> logSetStdoutLogState
+*                        logSetVerboseLevel -> logSetStdoutLogVerbosity
+*                        logGetVerboseLevel -> logGetStdoutLogVerbosity
+*                        logSetActionLevel -> logSetActionLogVerbosity
+*                        logGetActionLevel -> logGetActionLogVerbosity
 *
 *
 *******************************************************************************/
@@ -54,23 +63,23 @@ mcsCOMPL_STAT logPrintAction(logLEVEL level,
                              const char *logText, ...);
 
 
-mcsCOMPL_STAT logSetLog(mcsLOGICAL flag);
+mcsCOMPL_STAT logSetFileLogState(mcsLOGICAL flag);
 
-mcsCOMPL_STAT logSetLogLevel(logLEVEL level);
+mcsCOMPL_STAT logSetFileLogVerbosity(logLEVEL level);
 
-logLEVEL      logGetLogLevel(void);
-
-
-mcsCOMPL_STAT logSetVerbose(mcsLOGICAL flag);
-
-mcsCOMPL_STAT logSetVerboseLevel(logLEVEL level);
-
-logLEVEL      logGetVerboseLevel(void);
+logLEVEL      logGetFileLogVerbosity(void);
 
 
-mcsCOMPL_STAT logSetActionLevel(logLEVEL level);
+mcsCOMPL_STAT logSetStdoutLogState(mcsLOGICAL flag);
 
-logLEVEL      logGetActionLevel(void);
+mcsCOMPL_STAT logSetStdoutLogVerbosity(logLEVEL level);
+
+logLEVEL      logGetStdoutLogVerbosity(void);
+
+
+mcsCOMPL_STAT logSetActionLogVerbosity(logLEVEL level);
+
+logLEVEL      logGetActionLogVerbosity(void);
 
 
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);

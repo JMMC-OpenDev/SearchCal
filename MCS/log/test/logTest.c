@@ -1,36 +1,24 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.6 2004-06-16 14:38:30 gzins Exp $"
+* "@(#) $Id: logTest.c,v 1.7 2004-07-30 14:34:58 lafrasse Exp $"
 *
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
-* mella     07-May-2004  created
+* mella     07-May-2004  Created
+* lafrasse  30-Jun-2004  Changed some APIs :
+*                        logSetLog -> logSetFileLogState
+*                        logSetLogLevel -> logSetFileLogVerbosity
+*                        logGetLogLevel -> logGetFileLogVerbosity
+*                        logSetVerbose -> logSetStdoutLogState
+*                        logSetVerboseLevel -> logSetStdoutLogVerbosity
+*                        logGetVerboseLevel -> logGetStdoutLogVerbosity
+*                        logSetActionLevel -> logSetActionLogVerbosity
+*                        logGetActionLevel -> logGetActionLogVerbosity
 *
 *
-********************************************************************************
-*   NAME
-*
-*   SYNOPSIS
-*
-*   DESCRIPTION
-*
-*   FILES
-*
-*   ENVIRONMENT
-*
-*   RETURN VALUES
-*
-*   CAUTIONS
-*
-*   EXAMPLES
-*
-*   SEE ALSO
-*
-*   BUGS
-*
-*-----------------------------------------------------------------------------*/
+*******************************************************************************/
 
 /* 
  * System Headers 
@@ -49,11 +37,6 @@
  * Local Headers 
  */
 #include "log.h"
-
-/*
- * Signal catching functions
- */
-
 
 /*
  *Local functions
@@ -88,48 +71,51 @@ mcsCOMPL_STAT testAll(void)
 {
     mcsUINT8 level;
 
-    logSetVerboseLevel(logQUIET);
+    logSetStdoutLogVerbosity(logQUIET);
     
     /* Repeat loop changing log level */
-    printf("################################################################################\n");
-    printf("Testing log\n");
-    printf("################################################################################\n");
-    for( level = logQUIET; level <= logEXTDBG; level++ ){
+    printf("###############################################################\n");
+    printf("Testing File Logging\n");
+    printf("###############################################################\n");
+    for( level = logQUIET; level <= logEXTDBG; level++ )
+    {
         /* Change verbose level */
-        logSetLogLevel(level);
+        logSetFileLogVerbosity(level);
     
         /* Print verbose level */
-        printf("log level is:%d\n",level);
+        printf("*** File logging verbosity level is : %d\n", level);
 
         /* do each log */
         doLogs();
     }
 
-    printf("################################################################################\n");
-    printf("Testing verbose\n");
-    printf("################################################################################\n");
+    printf("###############################################################\n");
+    printf("Testing Stdout Logging\n");
+    printf("###############################################################\n");
     /* Repeat loop changing verbose level */
-    for( level = logQUIET; level <= logEXTDBG; level++ ){
+    for( level = logQUIET; level <= logEXTDBG; level++ )
+    {
         /* Change verbose level */
-        logSetVerboseLevel(level);
+        logSetStdoutLogVerbosity(level);
 
         /* Print verbose level */
-        printf("verbose level is:%d\n",level);
+        printf("*** Stdout logging verbosity level is : %d\n", level);
         
         /* do each log */
         doLogs();
     }
     
-    printf("################################################################################\n");
-    printf("Testing action\n");
-    printf("################################################################################\n");
+    printf("###############################################################\n");
+    printf("Testing Action Logging\n");
+    printf("###############################################################\n");
     /* Repeat loop changing action level */
-    for( level = logQUIET; level <= logEXTDBG; level++ ){
+    for( level = logQUIET; level <= logEXTDBG; level++ )
+    {
         /* Change verbose level */
-        logSetActionLevel(level);
+        logSetActionLogVerbosity(level);
         
         /* Print verbose level */
-        printf("action level is:%d\n",level);
+        printf("*** Action logging verbosity level is : %d\n", level);
         
         /* do each log */
         doActionLogs();
@@ -142,12 +128,12 @@ mcsCOMPL_STAT test1(mcsLOGICAL log, mcsLOGICAL verbose)
 {
     logExtDbg("ENTER_FUNC test1");
     /* toggle log and verbose */
-    logSetLog(log);
-    logSetVerbose(verbose);
-    printf("tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
-    printf("log toggled to %d\n",log);
-    printf("verbose toggled to %d\n", verbose);
-    printf("tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
+    logSetFileLogState(log);
+    logSetStdoutLogState(verbose);
+    printf("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
+    printf("File logging switched %s\n",(log==mcsTRUE?"ON":"OFF"));
+    printf("Stdout logging switched %s\n",(verbose==mcsTRUE?"ON":"OFF"));
+    printf("ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt\n");
 
     /* and test log, verbose, action */
     testAll();
@@ -157,7 +143,8 @@ mcsCOMPL_STAT test1(mcsLOGICAL log, mcsLOGICAL verbose)
     return SUCCESS;
 }
 
-mcsCOMPL_STAT testNoFileLine(void){
+mcsCOMPL_STAT testNoFileLine(void)
+{
     logTest("ENTER_FUNC testNoFileLine");
     
     logSetPrintFileLine(mcsFALSE);
@@ -179,7 +166,7 @@ int main(int argc, char ** argv)
 {
     /* Init MCS services */
     mcsInit(argv[0]);
-    
+
     /* test1 loops 
      * \todo handle function returns
      */
@@ -187,17 +174,16 @@ int main(int argc, char ** argv)
     test1(mcsTRUE, mcsFALSE);
     test1(mcsTRUE, mcsTRUE);
     test1(mcsFALSE, mcsTRUE);
- 
+
     /*
      * set test level and stdout only
      */
-    logSetLog(mcsFALSE);
-    logSetVerbose(mcsTRUE);
-    logSetVerboseLevel(logTEST);
-    
+    logSetFileLogState(mcsFALSE);
+    logSetStdoutLogState(mcsTRUE);
+    logSetStdoutLogVerbosity(logTEST);
+
     testNoFileLine();
 
-    
     mcsExit();
 
     exit(EXIT_SUCCESS);

@@ -1,34 +1,45 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.16 2004-07-21 09:08:27 mella Exp $"
+* "@(#) $Id: log.c,v 1.17 2004-07-30 14:34:58 lafrasse Exp $"
 *
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
-* mella     07-May-2004  created preliminary version based on log from VLT/ESO
-* gzins     16-Jun-2004  removed logIdentify function; replaced by mcsInit and
+* mella     07-May-2004  Created preliminary version based on log from VLT/ESO
+* gzins     16-Jun-2004  Removed logIdentify function; replaced by mcsInit and
 *                        mcsGetProcName functions
-*-----------------------------------------------------------------------------*/
-
+* lafrasse  30-Jun-2004  Changed some APIs :
+*                        logSetLog -> logSetFileLogState
+*                        logSetLogLevel -> logSetFileLogVerbosity
+*                        logGetLogLevel -> logGetFileLogVerbosity
+*                        logSetVerbose -> logSetStdoutLogState
+*                        logSetVerboseLevel -> logSetStdoutLogVerbosity
+*                        logGetVerboseLevel -> logGetStdoutLogVerbosity
+*                        logSetActionLevel -> logSetActionLogVerbosity
+*                        logGetActionLevel -> logGetActionLogVerbosity
+*
+*
+*******************************************************************************/
 /**
  * \mainpage Log : MCS C Logging module
  * \section summary Summary
  * This module provides functions that enable users to handle the three types
  * of logs for the Event Logging. The types of logs are:
- *   \li Standard Logs : These logs are stored into the standard MCS logger.
- *   \li Verbose Logs  : These logs are written to stdout.
- *   \li Action Logs   : TBD.
+ *   \li File Logs   : These logs are stored into standard MCS logManager files.
+ *   \li Stdout Logs : These logs are written to stdout.
+ *   \li Action Logs : TBD.
  *
  * The three kinds of logs contain the same information, but are stored
  * in different locations and the levels of information are controlled
- * individually by logSetLogLevel(), logSetVerboseLevel() and
- * logSetActionLevel() methods. The current log levels can be retrieved by
- * logGetLogLevel(), logGetVerboseLevel() and logGetActionLevel() methods.
+ * individually by logSetFileLogVerbosity(), logSetStdoutLogVerbosity() and
+ * logSetActionLogVerbosity() methods. The current log levels can be retrieved
+ * by logGetFileLogVerbosity(), logGetStdoutLogVerbosity() and
+ * logGetActionLogVerbosity() methods.
  *
  * The logging levels range from \p logQUIET to \p logEXTDBG , where the
- * lowest number means the  lowest priority. By default, the level of all
- * the logs is set to \p logWARNING.
+ * lowest number means the lowest priority. By default, the level of all the
+ * logs is set to \p logINFO.
  * The log and verbose flags indicate if the log information are presented
  * respectively on the standard \p MCS logger or on the stdout device
  * (default is mcsTRUE).
@@ -232,118 +243,119 @@ mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
 
 
 /**
- * Set logging level.
+ * Switch file logging ON or OFF.
+ *
+ * \param flag mcsTRUE/mcsFALSE
+ *
+ * \return mcsCOMPL_STAT 
+ */
+mcsCOMPL_STAT logSetFileLogState(mcsLOGICAL flag)
+{
+   /* Set the file logging state to the specified one */
+   logRulePtr->log = flag;
+
+   return SUCCESS;
+}
+
+/**
+ * Set the file logging verbosity level.
  *  
  * \param level TBD
  *
  * \return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logSetLogLevel (logLEVEL level)
+mcsCOMPL_STAT logSetFileLogVerbosity (logLEVEL level)
 {
-    /* Set the logging level to the specified one */
+    /* Set the file logging verbosity level to the specified one */
     logRulePtr->logLevel = level;
 
     return SUCCESS; 
 }
 
 /**
- * Toggle the log.
+ * Get the file logging verbosity level.
  *
- * \param flag mcsTRUE/mcsFALSE
- *
- * \return mcsCOMPL_STAT 
+ * \return logLEVEL actual file logging verbosity level 
  */
-mcsCOMPL_STAT logSetLog(mcsLOGICAL flag)
+logLEVEL logGetFileLogVerbosity ()
 {
-   /* Set the logging mode to the specified one */
-   logRulePtr->log = flag;
-   return SUCCESS;
-}
-
-
-/**
- * Get logging level.
- *
- * \return logLEVEL actual logging level 
- */
-logLEVEL logGetLogLevel ()
-{
-    /* Returns the logging level  */
+    /* Returns the file logging verbosity level */
     return (logRulePtr->logLevel);
 }
 
 
 
 /**
- * Toggle the verbosity.
+ * Switch stdout logging ON or OFF.
  *
  * \param flag mcsTRUE/mcsFALSE
  * 
  * \return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logSetVerbose(mcsLOGICAL flag)
+mcsCOMPL_STAT logSetStdoutLogState(mcsLOGICAL flag)
 {
-
-    /* Set the verbose mode to the specified one */
+   /* Set the stdout logging state to the specified one */
     logRulePtr->verbose = flag;
-    return SUCCESS;
 
+    return SUCCESS;
 }
 
 /**
- * Set verbosity level.
+ * Set the stdout logging verbosity level.
  *
  * \param level  
  *
  * \return mcsCOMPL_STAT
  */
-mcsCOMPL_STAT logSetVerboseLevel (logLEVEL level)
+mcsCOMPL_STAT logSetStdoutLogVerbosity (logLEVEL level)
 {
     
-    /* Set the verbosity level to the specified one */
+    /* Set the stdout logging verbosity level to the specified one */
     logRulePtr->verboseLevel = level;
 
     return SUCCESS; 
 
 }
 
-
 /**
- * Get verbosity level.
+ * Get the stdout logging verbosity level.
+ *
+ * \return logLEVEL actual stdout logging verbosity level 
  */
-logLEVEL logGetVerboseLevel ()
+logLEVEL logGetStdoutLogVerbosity ()
 {
-
-    /* Returns the verbosity level  */
+    /* Returns the stdout logging verbosity level */
     return (logRulePtr->verboseLevel);
-
 }
 
 
 /**
- * Set action level.
+ * Set the action logging verbosity level.
  * 
  * \param level TBD
  * 
  * \return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logSetActionLevel (logLEVEL level)
+mcsCOMPL_STAT logSetActionLogVerbosity (logLEVEL level)
 {
-    /* Set the verbosity level to the specified one */
+    /* Set the action logging verbosity level to the specified one */
     logRulePtr->actionLevel = level;
 
     return SUCCESS; 
 }
 
-
 /**
- * Get action level.
+ * Get the file logging verbosity level.
+ *
+ * \return logLEVEL actual file logging verbosity level 
  */
-logLEVEL logGetActionLevel ()
+logLEVEL logGetActionLogVerbosity ()
 {
-    /* Returns the action level  */
+    /* Returns the action logging verbosity level */
     return (logRulePtr->actionLevel);
 }
+
+
 
 /**
  * Toggle the date output. Useful in test mode.
