@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: moduleDescription.template,v 1.3 2004-07-02 09:12:47 gluck Exp $" 
+#%# "@(#) $Id: moduleDescription.template,v 1.4 2004-08-06 09:40:21 gluck Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
@@ -40,7 +40,7 @@
  EXAMPLES
     <module name="dummymod">
         <desc>Dummy module description</desc>
-        <resp>Prenom Nom</resp>
+        <resp>FirstName LastName</resp>
         <package>MCS</package>
     </module>
 
