@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.8 2005-02-07 17:36:53 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.9 2005-02-07 19:40:58 gzins Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/02/07 17:36:53  scetre
+* added printf to resolve bug problem in multiple query
+*
 * Revision 1.7  2005/01/27 15:56:04  scetre
 * scenario became a friend class of scenario entry to be able to access private members
 *
@@ -29,7 +32,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.8 2005-02-07 17:36:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.9 2005-02-07 19:40:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -177,8 +180,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             strcpy(logFileName, "$MCSDATA/tmp/");
 
             // Get band used for search
-            mcsSTRING32 band;
-            request.GetConstraint(OBSERVED_BAND_ID,band);
+            const char *band;
+            band = request.GetSearchBand();
             strcat(logFileName, band);
 
             // Get catalog name, and replace '/' by '_'

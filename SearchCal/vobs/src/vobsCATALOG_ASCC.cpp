@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.3 2005-01-26 08:11:28 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.4 2005-02-07 19:40:58 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/26 08:11:28  scetre
+* change history
+*
 * scetre    28-Jul-2004  Created
 *
 *
@@ -17,7 +20,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.3 2005-01-26 08:11:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.4 2005-02-07 19:40:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -115,33 +118,36 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
 
     miscDynBufAppendString(&_query, "&");
-    mcsSTRING32 band;
-    // Get the oserved band from the constarints
-    request.GetConstraint(OBSERVED_BAND_ID,band);
+    
+    // Add band constraint
+    const char *band;
+    band = request.GetSearchBand();
     miscDynBufAppendString(&_query, band);
+    
+    // Add the magnitude range constraint
+    mcsSTRING32 deltaMag;
+    mcsFLOAT minDeltaMag;
+    mcsFLOAT maxDeltaMag;
+    minDeltaMag = request.GetMinDeltaMag();
+    maxDeltaMag = request.GetMaxDeltaMag();
+    sprintf(deltaMag, "%.2f..%.2f", minDeltaMag, maxDeltaMag);
     miscDynBufAppendString(&_query, "mag=");
-    mcsSTRING32 minMagRange;
-    // Get the minimum of the magnitude range
-    request.GetConstraint(MIN_MAGNITUDE_RANGE_ID,minMagRange);
-    miscDynBufAppendString(&_query, minMagRange);
-    miscDynBufAppendString(&_query, "..");
-    mcsSTRING32 maxMagRange;
-    // Get the maximum of the magnitude range
-    request.GetConstraint(MAX_MAGNITUDE_RANGE_ID,maxMagRange);
-    miscDynBufAppendString(&_query, maxMagRange);
+    miscDynBufAppendString(&_query, deltaMag);
+
+    // Add search box size
+    mcsSTRING32 separation;
+    mcsFLOAT deltaRa;
+    mcsFLOAT deltaDec;
+    deltaRa = request.GetDeltaRa();
+    deltaDec = request.GetDeltaDec();
+    sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
     miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
-    mcsSTRING32 searchBoxRa;
-    mcsSTRING32 searchBoxDec;
-    request.GetConstraint(SEARCH_BOX_RA_ID,searchBoxRa);
-    request.GetConstraint(SEARCH_BOX_DEC_ID,searchBoxDec);
-    miscDynBufAppendString(&_query, searchBoxRa);
-    miscDynBufAppendString(&_query, "/");
-    miscDynBufAppendString(&_query, searchBoxDec);
+    miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcsec");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");

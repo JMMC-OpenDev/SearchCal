@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.13 2005-02-07 17:36:00 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.14 2005-02-07 19:40:58 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/07 17:36:00  scetre
+* updated band V scenario
+*
 * Revision 1.12  2005/02/04 14:31:50  scetre
 * updated documentation
 *
@@ -37,7 +40,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.13 2005-02-07 17:36:00 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.14 2005-02-07 19:40:58 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -107,8 +110,8 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
     vobsSCENARIO scenario;
 
     // Get the observed band
-    mcsSTRING16 band;
-    request.GetConstraint(OBSERVED_BAND_ID, band);
+    const char *band;
+    band = request.GetSearchBand();
 
     // load the asking scenario with the method LoadScenario
     if (LoadScenario(band, starList, scenario) == mcsFAILURE)
@@ -145,7 +148,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
  * \b Errors codes:
  * The possible errors are:
  */
-mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
+mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
                                                     vobsSTAR_LIST   &starList,
                                                     vobsSCENARIO    &scenario)
 {
@@ -341,7 +344,6 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
     // Scenario in band N
     else if (strcmp(band, "N") == 0)
     {
-        printf("band = N ==> MIDI catalog\n"); 
         // Clear the list output which will be used
         _starListS.Clear();
 

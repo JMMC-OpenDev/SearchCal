@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.cpp,v 1.7 2005-01-31 13:31:38 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.cpp,v 1.8 2005-02-07 19:40:58 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/01/31 13:31:38  scetre
+* changed misc...Pointer in misc...
+*
 * Revision 1.6  2005/01/26 08:11:28  scetre
 * change history
 *
@@ -20,7 +23,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.7 2005-01-31 13:31:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.8 2005-02-07 19:40:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -161,14 +164,12 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     // if the log level is higher or equal to the debug level
     if (logGetStdoutLogLevel() >= logDEBUG)
     {
-        // build the first part of the file name in the MCSDATA directory
-        strcpy(logFileName, "$MCSDATA/tmp/list_");
-
         // Get band used for search
-        mcsSTRING32 band;
-        request.GetConstraint(OBSERVED_BAND_ID,band);
-        // copy the observed band in the filename
-        strcat(logFileName, band);
+        const char *band;
+        band = request.GetSearchBand();
+
+        // build the first part of the file name in the MCSDATA directory
+        sprintf(logFileName, "$MCSDATA/tmp/list_%c", band);
 
         // Get catalog name, and replace '/' by '_'
         mcsSTRING32 catalogName;
@@ -204,7 +205,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     // else, the asking is writing according to the request and the star list
     else 
     {
-        if (PrepareQuery(request, list)==mcsFAILURE)
+        if (PrepareQuery(request, list) == mcsFAILURE)
         { 
             return mcsFAILURE; 
         }
@@ -281,7 +282,8 @@ mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST &request)
  * The possible errors are:
  * \li vobsERR_QUERY_WRITE_FAILED
  */
-mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST request, vobsSTAR_LIST &tmpList)
+mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST &request, 
+                                        vobsSTAR_LIST &tmpList)
 {
     logExtDbg("vobsCATALOG::PrepareQuery()");
     
@@ -394,7 +396,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(void)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
 
@@ -416,14 +418,14 @@ mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(vobsREQUEST request)
  * The possible errors are:
  * vobsERR_POSITION_WRITE_FAILED
  */
-mcsCOMPL_STAT vobsCATALOG::WriteReferenceStarPosition(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG::GetAskingPosition()");
 
-    mcsSTRING32 ra;
-    request.GetConstraint(RA_ID,ra);
-    mcsSTRING32 dec;
-    request.GetConstraint(DEC_ID,dec);
+    const char *ra;
+    ra = request.GetObjectRa();
+    const char *dec;
+    dec = request.GetObjectDec();
     
     if ( (miscDynBufAppendString(&_query,"&-c.ra=")==mcsFAILURE) ||
          (miscDynBufAppendString(&_query,ra)==mcsFAILURE) ||

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.6 2005-02-07 09:47:08 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.7 2005-02-07 19:40:58 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/07 09:47:08  gzins
+ * Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
+ *
  * Revision 1.5  2005/02/07 09:13:43  gzins
  * Added initialisation of _loaded
  * Removed printf
@@ -30,7 +33,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.6 2005-02-07 09:47:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.7 2005-02-07 19:40:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -116,41 +119,35 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // --------------------------------
 
     // Get reference object properties
-    mcsSTRING256 ra;            // reference object right ascension
-    mcsSTRING256 dec;           // reference object declinaison
-    mcsFLOAT magnitude;         // reference object magnitude
+    const char *ra;          // reference object right ascension
+    const char *dec;         // reference object declinaison
+    mcsFLOAT magnitude;      // reference object magnitude
 
     // ra
-    if (request.GetConstraint(RA_ID, ra) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    ra = request.GetObjectRa();
     
     // dec
-    if (request.GetConstraint(DEC_ID, dec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    dec = request.GetObjectDec();
     
     // magnitude
-    if (request.GetConstraint(STAR_MAGNITUDE_ID, &magnitude) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    magnitude = request.GetObjectMag();
     
     // Create the reference star
     vobsSTAR referenceStar;
 
     // Add reference star properties
     // ra is given as 'HH:MM:SS.TTT', replace ':' by ' '
-    miscReplaceChrByChr(ra, ':', ' '); 
-    if (referenceStar.SetPropertyValue("POS_EQ_RA_MAIN", ra) == mcsFAILURE)
+    mcsSTRING32 tmp;
+    strcpy(tmp, ra);
+    miscReplaceChrByChr(tmp, ':', ' '); 
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, tmp) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // dec is given as 'DD:MM:SS.TTT', replace ':' by ' '
-    miscReplaceChrByChr(dec, ':', ' '); 
-    if (referenceStar.SetPropertyValue("POS_EQ_DEC_MAIN", dec) == mcsFAILURE)
+    strcpy(tmp, dec);
+    miscReplaceChrByChr(tmp, ':', ' '); 
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, tmp) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -167,20 +164,14 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // Aim is to set search field
     
     // Get reference object constraints
-    mcsINT32 diffRa;    // reference object ra constaint
-    mcsINT32 diffDec;   // reference object dec constaint
+    mcsFLOAT diffRa;    // reference object ra constaint
+    mcsFLOAT diffDec;   // reference object dec constaint
     // ra constraint
-    if (request.GetConstraint(SEARCH_BOX_RA_ID, &diffRa) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    diffRa = request.GetDeltaRa();
     // dec constraint
-    if (request.GetConstraint(SEARCH_BOX_DEC_ID, &diffDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    diffDec = request.GetDeltaDec();
     
-    // Convert minutes (dm) to decimal degrees
+    // Convert minutes (arcmin) to decimal degrees
     diffRa = diffRa / 60;
     diffDec = diffDec / 60;
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.3 2005-01-26 08:11:28 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.4 2005-02-07 19:40:58 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/26 08:11:28  scetre
+* change history
+*
 * scetre    28-Jul-2004  Created
 *
 *
@@ -15,7 +18,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.3 2005-01-26 08:11:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.4 2005-02-07 19:40:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -166,50 +169,51 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
  * The possible errors are:
  * \li vobsERR_UNKNOWN_BAND
  */
-mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG_CIO::GetAskingSpecificParameters()");
 
     miscDynBufAppendString(&_query, "&x_F(IR)=M");
     miscDynBufAppendString(&_query, "&F(IR)=");
     
-    mcsSTRING32 minMagRange;
-    request.GetConstraint(MIN_MAGNITUDE_RANGE_ID,minMagRange);
-    miscDynBufAppendString(&_query, minMagRange);
-    miscDynBufAppendString(&_query, "..");
-    mcsSTRING32 maxMagRange;
-    request.GetConstraint(MAX_MAGNITUDE_RANGE_ID,maxMagRange);
-    miscDynBufAppendString(&_query, maxMagRange);
+    // Add the magnitude range constraint
+    mcsSTRING32 deltaMag;
+    mcsFLOAT minDeltaMag;
+    mcsFLOAT maxDeltaMag;
+    minDeltaMag = request.GetMinDeltaMag();
+    maxDeltaMag = request.GetMaxDeltaMag();
+    sprintf(deltaMag, "%.2f..%.2f", minDeltaMag, maxDeltaMag);
+    miscDynBufAppendString(&_query, deltaMag);
     
     miscDynBufAppendString(&_query, "&lambda=");
 
-    /*mcsSTRING32 lambda;
-    request.GetConstraint(STAR_WLEN_ID,lambda);
-    miscDynBufAppendString(&_query, lambda);*/
 
-    mcsSTRING32 band;
-    request.GetConstraint(OBSERVED_BAND_ID, band);
-    request.GetConstraint(OBSERVED_BAND_ID,band);
-    if (strcmp(band,"K")==0)
+    // Add band constraint
+    const char *band;
+    band = request.GetSearchBand();
+    miscDynBufAppendString(&_query, "&lambda=");
+    if (band[0] =='K')
     {
         miscDynBufAppendString(&_query, "2.20");
     }
-    else if (strcmp(band,"H")==0)
+    else if (band[0] == 'H')
     {
         miscDynBufAppendString(&_query, "1.65");        
     }
-    else if (strcmp(band,"J")==0)
+    else if (band[0] == 'J')
     {
         miscDynBufAppendString(&_query, "1.25");        
     }
 
+    // Add search box size
+    mcsSTRING32 separation;
+    mcsFLOAT deltaRa;
+    mcsFLOAT deltaDec;
+    deltaRa = request.GetDeltaRa();
+    deltaDec = request.GetDeltaDec();
+    sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
     miscDynBufAppendString(&_query, "&-out.max=50&-c.bm=");
-    mcsSTRING32 searchBoxRa, searchBoxDec;
-    request.GetConstraint(SEARCH_BOX_RA_ID,searchBoxRa);
-    request.GetConstraint(SEARCH_BOX_DEC_ID,searchBoxDec);
-    miscDynBufAppendString(&_query, searchBoxRa);
-    miscDynBufAppendString(&_query, "/");
-    miscDynBufAppendString(&_query, searchBoxDec);
+    miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
     miscDynBufAppendString(&_query, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
