@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.12 2004-12-14 16:32:56 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.13 2004-12-17 10:46:09 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
@@ -17,6 +17,7 @@
 # gzins     10-Dec-2004  Added list of CDF files to be installed
 # gzins     10-Dec-2004  Added rules to clean-up generated C++ command classes
 # gzins     14-Dec-2004  Added path for libxml2 and libgdome header files
+# gzins     17-Dec-2004  Added timlog to the MCS library list
 # 
 #*******************************************************************************
 #   NAME
@@ -375,7 +376,7 @@ ifeq ($(platform),Linux)
     LIB_DEFAULT   = -L/usr/local/lib
     XINC_DEFAULT  = -I/usr/X11R6/include/X11 
     XLIB_DEFAULT  = -L/usr/X11R6/lib     
-    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc  
+    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -ltimlog
     MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lenv -lcmd -lmsg -levh
     MCSSTD_LIBLIST       := -lgdome -lm
     MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)  
