@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.3 2004-12-06 14:34:28 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.4 2004-12-06 14:37:38 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.3 2004-12-06 14:34:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.4 2004-12-06 14:37:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -311,8 +311,8 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, int *value) const
     logExtDbg("vobsSTAR::GetProperty()");
 
     // Check UCD id
-    if ((id <= UNKNOWN_UCD_ID) ||
-        (id >= vobsNB_STAR_PROPERTIES))
+    if ((ucdId <= UNKNOWN_UCD_ID) ||
+        (ucdId >= vobsNB_STAR_PROPERTIES))
     {
         errAdd(vobsERR_INVALID_UCD_ID, ucdId);
         return FAILURE;
@@ -372,8 +372,8 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, float *value) const
     logExtDbg("vobsSTAR::GetProperty()");
     
     // Check UCD id
-    if ((id <= UNKNOWN_UCD_ID) ||
-        (id >= vobsNB_STAR_PROPERTIES))
+    if ((ucdId <= UNKNOWN_UCD_ID) ||
+        (ucdId >= vobsNB_STAR_PROPERTIES))
     {
         errAdd(vobsERR_INVALID_UCD_ID, ucdId);
         return FAILURE;
@@ -407,8 +407,8 @@ mcsCOMPL_STAT vobsSTAR::GetProperty(vobsUCD_ID ucdId, char *value) const
     logExtDbg("vobsSTAR::GetProperty()");
 
     // Check UCD id
-    if ((id <= UNKNOWN_UCD_ID) ||
-        (id >= vobsNB_STAR_PROPERTIES))
+    if ((ucdId <= UNKNOWN_UCD_ID) ||
+        (ucdId >= vobsNB_STAR_PROPERTIES))
     {
         errAdd(vobsERR_INVALID_UCD_ID, ucdId);
         return FAILURE;
@@ -461,8 +461,8 @@ mcsLOGICAL vobsSTAR::IsPropertySet(vobsUCD_ID ucdId) const
     logExtDbg("vobsSTAR::GetProperty()");
 
     // Check UCD id
-    if ((id <= UNKNOWN_UCD_ID) ||
-        (id >= vobsNB_STAR_PROPERTIES))
+    if ((ucdId <= UNKNOWN_UCD_ID) ||
+        (ucdId >= vobsNB_STAR_PROPERTIES))
     {
         return mcsFALSE;
     }
