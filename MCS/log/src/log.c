@@ -1,13 +1,36 @@
 /*******************************************************************************
-*  JMMC Project
-*  
-*  "@(#) $Id: log.c,v 1.7 2004-05-27 13:18:20 mella Exp $"
+* JMMC project
+* 
+* "@(#) $Id: log.c,v 1.8 2004-06-02 07:46:40 mella Exp $"
 *
-* who       when      what
-* --------  --------  ----------------------------------------------
-* mella   07/05/04  Preliminary version based on log from VLT/ESO
-=* 
- */
+*
+* who       when                 what
+* --------  -----------  -------------------------------------------------------
+* mella     07-May-2004  created preliminary version based on log from VLT/ESO
+*
+*
+********************************************************************************
+*   NAME
+*
+*   SYNOPSIS
+*
+*   DESCRIPTION
+*
+*   FILES
+*
+*   ENVIRONMENT
+*
+*   RETURN VALUES
+*
+*   CAUTIONS
+*
+*   EXAMPLES
+*
+*   SEE ALSO
+*
+*   BUGS
+*
+*-----------------------------------------------------------------------------*/
 
 /**
 \mainpage Log : MCS C Logging module

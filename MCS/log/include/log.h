@@ -1,16 +1,21 @@
-#ifndef logLog_H
-#define logLog_H
+#ifndef log_H
+#define log_H
 /*******************************************************************************
-*  JMMC Project
-*  
-*  "@(#) $Id: log.h,v 1.3 2004-05-14 10:17:50 mella Exp $"
+* JMMC project
 *
-* who       when       what
-* --------  --------   ----------------------------------------------
-* mella     12 05 2004 creation 
-* 
-*/
+* "@(#) $Id: log.h,v 1.4 2004-06-02 07:46:40 mella Exp $"
+*
+* who       when                 what
+* --------  -----------  -------------------------------------------------------
+* mella     07-May-2004  created
+*
+*
+*******************************************************************************/
 
+/* The following piece of code alternates the linkage type to C for all
+functions declared within the braces, which is necessary to use the
+functions in C++-code.
+*/
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -137,4 +142,4 @@ extern mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag);
 };
 #endif
   
-#endif /*!logLog_H*/
+#endif /*!log_H*/

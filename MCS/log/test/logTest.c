@@ -1,13 +1,36 @@
 /*******************************************************************************
-*  JMMC Project
-*  
-*  "@(#) $Id: logTest.c,v 1.4 2004-05-14 10:06:34 mella Exp $"
-*
-* who       when        what
-* --------  --------    --------------------------------------------
-* mella     07/05/04    creation 
+* JMMC project
 * 
-*/
+* "@(#) $Id: logTest.c,v 1.5 2004-06-02 07:46:40 mella Exp $"
+*
+*
+* who       when                 what
+* --------  -----------  -------------------------------------------------------
+* mella     07-May-2004  created
+*
+*
+********************************************************************************
+*   NAME
+*
+*   SYNOPSIS
+*
+*   DESCRIPTION
+*
+*   FILES
+*
+*   ENVIRONMENT
+*
+*   RETURN VALUES
+*
+*   CAUTIONS
+*
+*   EXAMPLES
+*
+*   SEE ALSO
+*
+*   BUGS
+*
+*-----------------------------------------------------------------------------*/
 
 /* 
  * System Headers 
@@ -26,6 +49,15 @@
  * Local Headers 
  */
 #include "log.h"
+
+/*
+ * Signal catching functions
+ */
+
+
+/*
+ *Local functions
+ */
 
 mcsCOMPL_STAT doLogs(void)
 {
@@ -138,6 +170,11 @@ mcsCOMPL_STAT testNoFileLine(void){
     return SUCCESS;
 }
 
+
+/*
+ * Main
+ */
+
 int main(int argc, char ** argv)
 {
     /* Init names of process and module */
@@ -163,5 +200,3 @@ int main(int argc, char ** argv)
     
     exit(0);
 }
-   
-
