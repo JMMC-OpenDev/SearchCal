@@ -1,12 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.doc,v 1.5 2004-07-22 14:04:17 lafrasse Exp $"
+* "@(#) $Id: misc.doc,v 1.6 2004-08-02 15:23:40 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  18-Jul-2004  Created
 * lafrasse  22-Jul-2004  Added new File functions, and passed some polish
+* lafrasse  02-Aug-2004  Removed miscDynStr due to null-terminated string
+*                        specific functions move from miscDynStr.h to
+*                        miscDynBuf.h
+*
 *
 *******************************************************************************/
 
@@ -22,5 +26,4 @@ As of today, the misc module contains functions to deal with :
 \li miscString.c (null-terminated string computing, like quotes stripping and upper casing)
 \li miscFile.c (UNIX-like file path computing, and environment variables resolving)
 \li miscDynBuf.c (auto-expanding, byte-based buffer)
-\li miscDynStr.c (based on miscDynBuf.c, including specific functions to deal with null-terminated strings)
 */

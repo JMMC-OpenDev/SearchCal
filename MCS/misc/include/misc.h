@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.18 2004-08-02 14:08:46 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.19 2004-08-02 15:23:40 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -23,7 +23,10 @@
 * gzins     23-Jul-2004  Added miscIsSpaceStr to miscString
 * lafrasse  23-Jul-2004  Added error management to miscString
 * lafrasse  02-Aug-2004  Removed all functions declaration, and included
-*                        separated hedaear files instead
+*                        separated header files instead
+*                        Removed miscDynStr.h include due to null-terminated
+*                        string specific functions move from miscDynStr.h to
+*                        miscDynBuf.h
 *
 *
 *******************************************************************************/
@@ -48,7 +51,6 @@ extern "C" {
  */
 #include "miscDate.h"
 #include "miscDynBuf.h"
-#include "miscDynStr.h"
 #include "miscFile.h"
 #include "miscString.h"
 

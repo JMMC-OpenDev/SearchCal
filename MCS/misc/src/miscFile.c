@@ -13,6 +13,8 @@
 * lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
 *                        misc.h
 *                        Moved mcs.h include to miscFile.h
+*                        Changed includes due to null-terminated string specific
+*                        functions move from miscDynStr.h to miscDynBuf.h
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -22,7 +24,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.9 2004-08-02 14:25:25 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.10 2004-08-02 15:23:40 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,7 +47,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "miscFile.h"
 #include "miscPrivate.h"
 #include "miscErrors.h"
-#include "miscDynStr.h"
+#include "miscDynBuf.h"
 
 /**
  * Return the file name from a full path.
@@ -303,7 +305,7 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
                 return FAILURE;
             }
 
-            if (miscDynStrAppendString(&complPath, tmpPtr) == FAILURE)
+            if (miscDynBufAppendString(&complPath, tmpPtr) == FAILURE)
             {
                 return FAILURE;
             }
@@ -323,7 +325,7 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
                 return FAILURE;
             }
 
-            if (miscDynStrAppendString(&complPath, tmpPtr) == FAILURE)
+            if (miscDynBufAppendString(&complPath, tmpPtr) == FAILURE)
             {
                 return FAILURE;
             }
@@ -347,13 +349,13 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 
             *(tmpPath + len) = '\0';
 
-            if (miscDynStrAppendString(&complPath, tmpPath) == FAILURE)
+            if (miscDynBufAppendString(&complPath, tmpPath) == FAILURE)
             {
                 return FAILURE;
             }
         }
 
-        if (miscDynStrAppendString(&complPath, "/") == FAILURE)
+        if (miscDynBufAppendString(&complPath, "/") == FAILURE)
         {
             return FAILURE;
         }
@@ -376,7 +378,7 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 
         if (*pathPtr == ':')
         {
-            if (miscDynStrAppendString(&complPath, ":") == FAILURE)
+            if (miscDynBufAppendString(&complPath, ":") == FAILURE)
             {
                 return FAILURE;
             }
@@ -398,7 +400,7 @@ mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
      */
     if (complPath.storedBytes == complPath.allocatedBytes)
     {
-        if (miscDynStrAppendString(&complPath, " ") == FAILURE)
+        if (miscDynBufAppendString(&complPath, " ") == FAILURE)
         {
             return FAILURE;
         }
@@ -446,7 +448,7 @@ mcsCOMPL_STAT miscGetEnvVarValue(const char *envVarName, char **envVarValue)
         return FAILURE;
     }
 
-    if (miscDynStrAppendString(&envVarValueDynBuf, chrPtr) == FAILURE)
+    if (miscDynBufAppendString(&envVarValueDynBuf, chrPtr) == FAILURE)
     {
         return FAILURE;
     }

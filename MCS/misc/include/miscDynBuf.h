@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynBuf.h,v 1.7 2004-08-02 14:25:25 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.h,v 1.8 2004-08-02 15:23:40 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,9 @@
 *                        miscDynBufGetStoredBytesNumber and
 *                        miscDynBufGetAllocatedBytesNumber, plus
 *                        miscDynBufGetBytesFromTo parameter refinments.
-*                        Moved mcs.h include in from miscDynBuf.c
+* lafrasse  02-Aug-2004  Moved mcs.h include in from miscDynBuf.c
+*                        Moved in null-terminated string specific functions
+*                        from miscDynStr.h
 *
 *
 *******************************************************************************/
@@ -22,32 +24,6 @@
 /**
  * \file
  * This header contains all the miscDynBuf functions declarations.
- *
- * Those function declarations are isolated of the misc.h declarations due to
- * their number.
- *
- * \n \b Code \b Example:\n
- * \n A simple main using a Dynamic Buffer.
- * \code
- * #include "miscDynBuf.h"
- *
- * int main (int argc, char *argv[])
- * {
- *     miscDYN_BUF dynBuf;
- *     char tab1[3] = {0, 1, 2};
- *     miscDynBufAppendBytes(&dynBuf, (char*)tab1, 3 * sizeof(int));
- *     .
- *     . ...
- *     .
- *     char tab2[7] = {3, 4, 5, 6, 7, 8, 9};
- *     miscDynBufAppendBytes(&dynBuf, (char*)tab2, 7 * sizeof(int));
- *     .
- *     . ...
- *     .
- *     miscDynBufDestroy(&dynBuf);
- *     exit (EXIT_SUCCESS);
- * }
- * \endcode
  */
 
 /* The following piece of code alternates the linkage type to C for all 
@@ -148,6 +124,11 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
 
+mcsCOMPL_STAT miscDynBufGetStringFromTo     (miscDYN_BUF       *dynBuf,
+                                             char              *str,
+                                             const mcsUINT32   from,
+                                             const mcsUINT32   to);
+
 mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
                                              char              byte,
                                              const mcsUINT32   position);
@@ -158,13 +139,25 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
 
+mcsCOMPL_STAT miscDynBufReplaceStringFromTo (miscDYN_BUF       *dynBuf,
+                                             char              *str,
+                                             const mcsUINT32   from,
+                                             const mcsUINT32   to);
+
 mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
                                              const mcsUINT32   length);
 
+mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
+                                             char              *str);
+
 mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
                                              const mcsUINT32   length,
+                                             const mcsUINT32   position);
+
+mcsCOMPL_STAT miscDynBufInsertStringAt      (miscDYN_BUF       *dynBuf,
+                                             char              *str,
                                              const mcsUINT32   position);
 
 mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,

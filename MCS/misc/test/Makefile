@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-07-23 14:29:59 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-08-02 15:23:40 lafrasse Exp $"
 #
 # Makefile of misc Tests
 #
@@ -14,6 +14,10 @@
 #                        removed miscTestUtils.c
 #                        added miscTestDynBuf.c
 # lafrasse  13-Jul-2004  added miscTestDynStr.c
+# lafrasse  02-Aug-2004  Removed miscTestDynStr compilation, due to
+#                        null-terminated string specific functions move from
+#                        miscDynStr.h to miscDynBuf.h
+#
 #
 #*******************************************************************************
 # REMARKS
@@ -39,7 +43,7 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = miscTestDate miscTestString miscTestFile miscTestDynBuf miscTestDynStr
+EXECUTABLES     = miscTestDate miscTestString miscTestFile miscTestDynBuf
 
 
 EXECUTABLES_L   = 
@@ -67,12 +71,6 @@ miscTestFile_LIBS      = mcs err log misc
 miscTestDynBuf_OBJECTS   = miscTestDynBuf
 miscTestDynBuf_LDFLAGS   = -lgdome
 miscTestDynBuf_LIBS      = mcs err log misc
-
-#
-# <brief description of xxxxx program>
-miscTestDynStr_OBJECTS   = miscTestDynStr
-miscTestDynStr_LDFLAGS   = -lgdome
-miscTestDynStr_LIBS      = mcs err log misc
 
 #
 # special compilation flags for single c sources

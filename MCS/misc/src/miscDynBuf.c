@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.9 2004-08-02 14:25:25 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.10 2004-08-02 15:23:40 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -19,6 +19,8 @@
 *                        miscDynBufGetBytesFromTo parameter refinments and
 *                        error code factorization
 * lafrasse  02-Aug-2004  Moved mcs.h include to miscDynBuf.h
+*                        Moved in null-terminated string specific functions
+*                        from miscDynStr.c
 *
 *
 *******************************************************************************/
@@ -29,12 +31,39 @@
  * 
  * All the algorithms behind Dynamic Buffer management are grouped in this file.
  *
- * \sa To see all those functions declarations and a minimal code example, see
- * miscDynBuf.h
- * \sa To see all the other 'misc' module functions declarations, see misc.h
+ * \n \b Code \b Example:\n
+ * \n A simple main using a Dynamic Buffer.
+ * \code
+ * #include "miscDynBuf.h"
+ *
+ * int main (int argc, char *argv[])
+ * {
+ *     miscDYN_BUF dynBuf;
+ *     char tab1[3] = {0, 1, 2};
+ *     miscDynBufAppendBytes(&dynBuf, (char*)tab1, 3 * sizeof(int));
+ *     .
+ *     . ...
+ *     .
+ *     char tab2[7] = {3, 4, 5, 6, 7, 8, 9};
+ *     miscDynBufAppendBytes(&dynBuf, (char*)tab2, 7 * sizeof(int));
+ *     .
+ *     . ...
+ *     .
+ *     miscDynBufReset(&dynBuf);
+ *
+ *     char *tmp = "bytes to";
+ *     miscDynBufAppendString(&dynBuf, tmp);
+ *     tmp = " append...";
+ *     miscDynBufAppendString(&dynBuf, tmp);
+ *     printf("DynBuf contains '%s'.\n", miscDynBufGetBufferPointer(&dynBuf));
+ *     miscDynBufDestroy(&dynBuf);
+ *
+ *     exit (EXIT_SUCCESS);
+ * }
+ * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.9 2004-08-02 14:25:25 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.10 2004-08-02 15:23:40 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,20 +90,23 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local functions declaration 
  */
-static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF        *dynBuf);
+static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF       *dynBuf);
 
 static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
-                                             miscDYN_BUF        *dynBuf,
-                                             const mcsUINT32    position);
+                                             miscDYN_BUF       *dynBuf,
+                                             const mcsUINT32   position);
 
 static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
-                                             miscDYN_BUF        *dynBuf,
-                                             const mcsUINT32    from,
-                                             const mcsUINT32    to);
+                                             miscDYN_BUF       *dynBuf,
+                                             const mcsUINT32   from,
+                                             const mcsUINT32   to);
 
 static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
                                              char              *bytes,
                                              const mcsUINT32   length);
+
+static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
+                                             char              *str);
 
 
 /* 
@@ -238,6 +270,29 @@ static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
     return SUCCESS;
 }
 
+/**
+ * Verify if a received string (a null terminated char array) is valid or not.
+ *
+ * \param str the address of the receiving, already allocated extern buffer
+ *
+ * \return the string length, or 0 if it is not valid
+ */
+static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
+                                             char              *str)
+{
+    /* Test the 'str' parameter validity */
+    if (str == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "str");
+        return 0;
+    }
+
+    /* Return the number of bytes stored in the received string including its
+     * ending '\0'
+     */
+    return(strlen(str) + 1);
+}
+
 
 
 
@@ -347,7 +402,7 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT miscDynBufStrip(miscDYN_BUF *dynBuf)
+mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
 {
     char *newBuf = NULL;
 
@@ -595,6 +650,42 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
 
 
 /**
+ * Give back a part of a Dynamic Buffer as a null terminated string, in an
+ * already allocated extern buffer.
+ *
+ * \warning The first Dynamic Buffer byte has the position value defined by the
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param str the address of the receiving, already allocated extern buffer
+ * \param from the first Dynamic Buffer byte to be copied in the extern string
+ * \param to the last Dynamic Buffer byte to be copied in the extern string
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscDynBufGetStringFromTo     (miscDYN_BUF       *dynBuf,
+                                             char              *str,
+                                             const mcsUINT32   from,
+                                             const mcsUINT32   to)
+{
+    /* Try to get the requested bytes array from the Dynamic Buffer */
+    if (miscDynBufGetBytesFromTo(dynBuf, str, from, to) == FAILURE)
+    {
+        return FAILURE;
+    }
+
+    /* Compute the 'str' buffer length */
+    mcsUINT32 stringLength = (to - miscDYN_BUF_BEGINNING_POSITION) 
+                             - (from - miscDYN_BUF_BEGINNING_POSITION);
+
+    /* Add an '\0' at the end of the received result */
+    str[stringLength + 1] = '\0';
+
+    return SUCCESS;
+}
+
+
+/**
  * Overwrite a Dynamic Buffer byte at a given position.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
@@ -716,6 +807,52 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
 
 
 /**
+ * Replace a given range of Dynamic Buffer bytes by an extern string without its
+ * ending '\\0'.
+ *
+ * The Dynamic Buffer replaced bytes will bve overwritten. Their range can be
+ * smaller or bigger than the extern string length. If the end of the Dynamic
+ * Buffer is to be replaced, the string ending '\\0' is keeped.
+ *
+ * \warning The first Dynamic Buffer byte has the position value defined by the
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param str the address of the extern string to be written in
+ * \param from the position of the first Dynamic Buffer byte to be substituted
+ * \param to the position of the last Dynamic Buffer byte to be substituted
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscDynBufReplaceStringFromTo (miscDYN_BUF       *dynBuf,
+                                             char              *str,
+                                             const mcsUINT32   from,
+                                             const mcsUINT32   to)
+{
+    /* Test the 'str' parameter validity */
+    mcsUINT32 stringLength = 0;
+    if ((stringLength = miscDynBufVerifyStringParameterValidity(str)) == 0)
+    {
+        return FAILURE;
+    }
+
+    /* If the end of the Dynamic Buffer is to be replaced... */
+    if (to == dynBuf->storedBytes)
+    {
+        /* Increment the number of bytes to be copied from the string in order
+         * to add the ending '\0' to the Dynamic Buffer
+         */
+        ++stringLength;
+    }
+    
+    /* Try to replace Dynamic Buffer specified bytes with the string (with or
+     * without its ending '\0')
+     */
+    return(miscDynBufReplaceBytesFromTo(dynBuf, str, stringLength-1, from, to));
+}
+
+
+/**
  * Copy extern buffer bytes at the end of a Dynamic Buffer.
  *
  * \param dynBuf the address of a Dynamic Buffer structure
@@ -754,6 +891,61 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
     dynBuf->storedBytes += length;
 
     return SUCCESS;
+}
+
+
+/**
+ * Copy an extern string (a null terminated char array) at the end of a
+ * Dynamic Buffer, adding an '\\0' at the end of it.
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param str the address of the extern string to be written in
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
+                                             char              *str)
+{
+    /* Test the 'str' parameter validity */
+    mcsUINT32 stringLength = 0;
+    if ((stringLength = miscDynBufVerifyStringParameterValidity(str)) == 0)
+    {
+        return FAILURE;
+    }
+
+    /* Try to get the Dynamic Buffer stored bytes number */
+    mcsUINT32 storedBytes = 0;
+    if (miscDynBufGetStoredBytesNumber(dynBuf, &storedBytes) == FAILURE)
+    {
+        return FAILURE;
+    }
+
+    /* If the Dynamic Buffer already contain something... */
+    if (storedBytes != 0)
+    {
+
+        /* Try to get the last character of the Dynamic Buffer */
+        char lastDynBufChr = '\0';
+        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == FAILURE)
+        {
+            return FAILURE;
+        }
+    
+        /* If the Dynamic Buffer was already holding a null-terminated string...
+         */
+        if (lastDynBufChr == '\0')
+        {
+            /* Try to remove the ending '\0' from the Dynamic Buffer */
+            if (miscDynBufDeleteBytesFromTo(dynBuf, storedBytes, storedBytes)
+                == FAILURE)
+            {
+                return FAILURE;
+            }
+        }
+    }
+
+    /* Try to append the string bytes, including its '\0' */
+    return(miscDynBufAppendBytes(dynBuf, str, stringLength));
 }
 
 
@@ -827,6 +1019,37 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
     dynBuf->storedBytes += length;
 
     return SUCCESS;
+}
+
+
+/**
+ * Insert an extern string (a null terminated char array) without its ending
+ * '\\0' in a Dynamic Buffer at a given position.
+ *
+ * The Dynamic Buffer bytes are not overwritten, but shiffted to the right.
+ *
+ * \warning The first Dynamic Buffer byte has the position value defined by the
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param str a pointer to the extern string to be inserted
+ * \param position the position of the first Dynamic Buffer byte to write at
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscDynBufInsertStringAt      (miscDYN_BUF       *dynBuf,
+                                             char              *str,
+                                             const mcsUINT32   position)
+{
+    /* Test the 'str' parameter validity */
+    int stringLength = 0;
+    if ((stringLength = miscDynBufVerifyStringParameterValidity(str)) == 0)
+    {
+        return FAILURE;
+    }
+
+    /* Try to insert the string without its ending '\0' in the Dynamic Buffer */
+    return(miscDynBufInsertBytesAt(dynBuf, str, stringLength - 1, position));
 }
 
 

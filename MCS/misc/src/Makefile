@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-07-19 15:31:05 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-08-02 15:23:40 lafrasse Exp $"
 #
 # Makefile of misc Library
 #
@@ -10,6 +10,9 @@
 # lafrasse  24-Jun-2004  Created
 # lafrasse  01-Jul-2004  Added miscDynBuf.h
 # lafrasse  13-Jul-2004  Added miscDynStr.h
+# lafrasse  02-Aug-2004  Removed miscDynStr compilation due to null-terminated
+#                        string specific functions move from miscDynStr.h to
+#                        miscDynBuf.h
 #
 #
 #*******************************************************************************
@@ -52,7 +55,7 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = misc.h miscDynBuf.h miscDynStr.h
+INCLUDES        = misc.h
 
 #
 # Libraries (public and local)
@@ -62,7 +65,7 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-misc_OBJECTS   = miscFile miscDate miscString miscDynBuf miscDynStr
+misc_OBJECTS   = miscFile miscDate miscString miscDynBuf
 
 #
 # Scripts (public and local)
