@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.h,v 1.4 2004-12-15 17:40:28 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.h,v 1.5 2004-12-21 16:53:25 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -54,7 +54,7 @@ public:
 
     virtual mcsCOMPL_STAT Parse()=0;
      
-    virtual string GetHelp();
+    virtual mcsCOMPL_STAT GetHelp(string &help);
     
     /* methods to handle parameters */
     virtual mcsCOMPL_STAT AddParam(cmdPARAM *param);

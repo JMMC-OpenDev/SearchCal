@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.7 2004-12-20 13:34:52 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.8 2004-12-21 16:53:28 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -21,7 +21,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.7 2004-12-20 13:34:52 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.8 2004-12-21 16:53:28 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -145,7 +145,7 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfFilename)
  *
  *  \returns the help string.
  */
-string cmdCOMMAND::GetHelp()
+mcsCOMPL_STAT cmdCOMMAND::GetHelp(string &help)
 {
     logExtDbg ("cmdCOMMAND::getHelp()");
 
@@ -154,7 +154,8 @@ string cmdCOMMAND::GetHelp()
     if (Parse() == FAILURE )
     {
         s.append("Sorry help can't be generated because an error occured during parsing\n");        
-        return s;
+        help.append(s);
+        return FAILURE;
     }
     
     s.append("Help for ");
@@ -195,7 +196,9 @@ string cmdCOMMAND::GetHelp()
         s.append("This command takes no parameter\n");
     }
 
-    return s;
+    help.append(s);
+    
+    return SUCCESS;
 }
 
 /** 
