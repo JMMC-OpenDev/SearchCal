@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.3 2005-01-26 08:18:33 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.4 2005-02-08 07:17:21 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/26 08:18:33  scetre
+* change history
+*
 * gzins     13-Dec-2004  Created
 *
 *******************************************************************************/
@@ -15,7 +18,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.3 2005-01-26 08:18:33 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.4 2005-02-08 07:17:21 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -130,7 +133,7 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
  *
  * \return mcsSUCCESS
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(char *value,
+mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                                           mcsINT32 confidenceIndex,
                                           mcsFLOAT isComputed,
                                           mcsLOGICAL overwrite)

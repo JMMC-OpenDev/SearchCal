@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.4 2005-02-04 15:25:13 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.5 2005-02-08 07:16:56 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/02/04 15:25:13  gzins
+* Redefined confidence index
+*
 * Revision 1.3  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -67,7 +70,7 @@ public:
     virtual ~vobsSTAR_PROPERTY();
     
     // Set value
-    virtual mcsCOMPL_STAT SetValue(char *value,
+    virtual mcsCOMPL_STAT SetValue(const char *value,
                                    mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,
                                    mcsFLOAT isComputed=mcsFALSE,
                                    mcsLOGICAL overwrite=mcsFALSE);

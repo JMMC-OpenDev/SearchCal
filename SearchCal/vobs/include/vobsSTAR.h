@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.24 2005-02-07 09:10:04 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.25 2005-02-08 07:16:56 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2005/02/07 09:10:04  gzins
+* Fixed wrong type for isComputed parameter; mcsFLOAT instead of mcsLOGICAL
+*
 * Revision 1.23  2005/02/04 14:31:30  scetre
 * add getLuminosityClass method
 *
@@ -138,7 +141,7 @@ public:
     virtual ~vobsSTAR();
 
     // Method to set the star properties
-    virtual mcsCOMPL_STAT SetPropertyValue(char *id, char *value,
+    virtual mcsCOMPL_STAT SetPropertyValue(char *id, const char *value,
                                            mcsLOGICAL isComputed=mcsFALSE,
                                            mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
                                            mcsLOGICAL overwrite=mcsFALSE);
