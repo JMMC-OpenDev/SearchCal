@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.2 2004-07-20 07:21:48 scetre Exp $"
+* "@(#) $Id: vobs.h,v 1.3 2004-07-28 14:16:40 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,8 +17,8 @@
 #endif
 
 #include "vobsErrors.h"
-#include "vobsCALIBRATOR_STAR.h"
-#include "vobsCALIBRATOR_STAR_LIST.h"
+#include "vobsSTAR.h"
+#include "vobsSTAR_LIST.h"
 #include "vobsCATALOG.h"
 #include "vobsPARSER.h"
 #include "vobsREQUEST.h"

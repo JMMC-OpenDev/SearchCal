@@ -3,61 +3,94 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.1 2004-07-13 13:41:09 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.2 2004-07-28 14:16:30 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* scetre    06-Jul-2004  Created
+* scetre    27-Jul-2004  Created
 *
 *
 *******************************************************************************/
+
+/**
+ * \file
+ * vobsCATALOG class declaration.
+ */
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
 /*
- * header files
+ * Local header
  */
-#include<stdlib.h>
-#include<errno.h>
-#include<math.h>
-#include<string.h>
-//#include<times.h>
-#include <libxml/xmlreader.h>
-#include"vobsREQUEST.h"
-#include"vobsCALIBRATOR_STAR_LIST.h"
-#include"gdome.h"
-#include"vobsPARSER.h"
+#include "vobsREQUEST.h"
+#include "vobsSTAR_LIST.h"
 
+/*
+ * Class declaration
+ */
+
+/**
+ * vobsCATALOG is a class which caracterise a catalog.
+ * 
+ * vobsSTAR methods allow to
+ * \li Prepare a request
+ * \li Send this to the CDS
+ * \li Build a star list from the return of the CDS
+ *
+ * 
+ */
 class vobsCATALOG
 {
- public:
-  vobsCATALOG();
-  vobsCATALOG(char *x);
-  virtual ~vobsCATALOG();
+public:
+   // Constructor
+   vobsCATALOG();
 
-  void SetCatalogName(char *x);
-  char *GetCatalogName();
-  
-  char *PrepareFirst(vobsREQUEST r);
-  char *Prepare(vobsREQUEST r, char *listForK);
-  
-  std::list<vobsCALIBRATOR_STAR> Search(vobsREQUEST request, char *catName, int kindOfReq, char *listForK);
-  
-  std::list<vobsCALIBRATOR_STAR> SearchOne(vobsREQUEST request, int numberOfRequest, char * listOne);
- protected:
+   // Destructor
+   virtual ~vobsCATALOG();
 
- private:
-  //vobsREQUEST request;
-  std::list<vobsCALIBRATOR_STAR> listOfStar;
- 
-  vobsPARSER parser;
-  char *_name;
-  char *req;
+    // Method to set catalog name
+   virtual mcsCOMPL_STAT SetName(char *name);
+   
+   // Method to get the catalog name
+   virtual mcsCOMPL_STAT GetName(char *name);  
+
+   // Method to search in the catalog and to have the star list
+   virtual mcsCOMPL_STAT Search(vobsREQUEST request,
+                                vobsSTAR_LIST list);
+   
+
+protected:
+    // Method to preare the request as a string
+   virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST request);
+   virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST request,
+                                 vobsSTAR_LIST tmpList);
+
+   // Method to build all parts of the asking
+   virtual mcsCOMPL_STAT WriteAskingURI(void);
+   virtual mcsCOMPL_STAT WriteAskingConstant(void);
+   virtual mcsCOMPL_STAT WriteAskingSpecificParameters(void);
+   virtual mcsCOMPL_STAT WriteAskingSpecificParameters(vobsREQUEST request);
+   virtual mcsCOMPL_STAT WriteAskingPosition(vobsREQUEST request);
+   virtual mcsCOMPL_STAT WriteAskingEnd(vobsSTAR_LIST &list);
   
-  //char requete;
-  //vobsCALIBARTOR_STAR_LIST liste;
+   // Method to have a star list as a string from a normal star list
+   virtual mcsCOMPL_STAT StarList2Sring(char *stringList,
+                                        vobsSTAR_LIST &list);
+
+   // Name of the catalog
+    mcsSTRING32 _name;
+    
+   // Request to write and to send to the CDS
+    miscDYN_BUF _asking;
+
+private:
+    // Declaration of assignment operator as private
+    // method, in order to hide them from the users.
+    vobsCATALOG& operator=(const vobsCATALOG&);
+    vobsCATALOG (const vobsCATALOG&);
+    
 };
 
 #endif /*!vobsCATALOG_H*/

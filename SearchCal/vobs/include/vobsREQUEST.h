@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.2 2004-07-26 15:26:21 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.3 2004-07-28 14:16:43 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -45,7 +45,7 @@ typedef mcsSTRING32 vobsREQUEST_CONSTRAINT;
  */
 typedef enum
 {
-    UNKNOWN_ID = -1,        /**< id if no CONSTRAINT */  
+    UNKNOWN_CONSTRAINT_ID = -1,        /**< id if no CONSTRAINT */  
     STAR_NAME_ID,           /**< star name id */
     STAR_WLEN_ID,           /**< wavelength id */
     STAR_MAGNITUDE_ID,      /**< So magnitude id */
