@@ -1,0 +1,194 @@
+#!/bin/bash
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: ctooBuildDocIndex,v 1.1 2004-06-24 12:02:00 mella Exp $"
+#
+# who       when         what
+# --------  -----------  -------------------------------------------------------
+# mella     23-Jun-2004  Created
+#
+#
+#*******************************************************************************
+#   NAME 
+#   ctooBuildDocIndex - Generate index.html to access module's documentation
+# 
+#   SYNOPSIS
+#   ctooBuildDocIndex
+#   This command must be called under the doc directory.
+# 
+#   DESCRIPTION
+#   ctooBuildDocIndex generates one index.html file to access each installed
+#   modules in the doc directory.
+#
+#   FILES
+#
+#   ENVIRONMENT
+#
+#   RETURN VALUES
+#
+#   CAUTIONS
+#
+#   EXAMPLES
+#
+#   SEE ALSO
+#
+#   BUGS     
+#
+#-------------------------------------------------------------------------------
+#
+
+# signal trap (if any)
+
+#This function returns the complete pathname of the file given in parameter
+function getCfgFile
+{
+	#Path list
+	path="../config $INTROOT/config $MCSROOT/config"
+    for dir in $path
+    do
+        if [ -f "$dir/$1" ]
+        then
+            fullPath="$dir/$1"
+            return
+        fi
+    done
+    fullPath="NULL"
+}
+
+
+# create two temporary files
+TMPFILE=`mktemp -q /tmp/ctooBuildDocIndex.XXXXXX`
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp file,
+    exiting..."
+    exit 1
+fi
+TMP2FILE=`mktemp -q /tmp/ctooBuildDocIndex.XXXXXX`
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp file,
+    exiting..."
+    exit 1
+fi
+
+
+# check if ../doc does exist
+DOCLOCATION=`pwd`/../doc
+if [ ! -d $DOCLOCATION ]; then
+    echo "Can't find any doc directory. Go into a doc directory and run it
+    again.";
+    exit 1;
+fi
+
+# init xslt filenames
+getCfgFile "ctooBuildDocIndex.xsl"
+ if [ "$fullPath" = "NULL" ]
+    then
+        echo "XSL Transformation File For Modules Not Found"
+        exit 1;
+    fi
+XSL4MODULES=$fullPath;
+
+getCfgFile "ctooBuildDocIndex2.xsl"
+ if [ "$fullPath" = "NULL" ]
+    then
+        echo "XSL Transformation File For Modules Not Found"
+        exit 1;
+    fi
+XSL4INDEX2=$fullPath;
+
+
+# first echo comment
+echo "Processing doc from $DOCLOCATION for modules:";
+
+# prepare html head for modules.html
+echo -e "
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+    <head>
+        <meta http-equiv=\"Content-Type\" content=\"text/html;charset=iso-8859-1\">
+        <title>Modules List</title>
+        <link href=\"index.css\" rel=\"stylesheet\" type=\"text/css\">
+    </head>
+    <body>
+    |<a href="index2.html" target="module">HOME</a>|
+    " > $TMPFILE;
+
+# prepare html head for index2.html
+echo -e "
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+    <head>
+        <meta http-equiv=\"Content-Type\" content=\"text/html;charset=iso-8859-1\">
+        <title>Modules List</title>
+        <link href=\"index.css\" rel=\"stylesheet\" type=\"text/css\">
+    </head>
+    <body>
+    <table border=\"1\">" > $TMP2FILE;
+
+
+# process html bodies
+for longModName in $DOCLOCATION/*;
+do
+    # find modName and reject files ,CVS directory and mod dir without xml
+    # desc file
+    modName=${longModName##*/};
+    if [ $modName == "CVS" ]; then 
+        test; 
+    elif [ ! -d $longModName ]; then 
+        test;
+    elif [ ! -f $longModName/moduleDescription.xml ]; then
+        echo -e "$modName\t->[FAIL] Missing moduleDescription.xml file";
+    else
+        # perform line for modules.html
+        newLine=`xsltproc $XSL4MODULES $longModName/moduleDescription.xml`;
+        if [ -z "$newLine" ] ; then
+            echo -e "$modName\t->[FAIL] Can't add to \
+            modules.html";
+        else
+            echo "       $newLine" >> $TMPFILE;
+        fi
+
+        # perform infos for index2.html
+        newLine=`xsltproc $XSL4INDEX2 $longModName/moduleDescription.xml`;
+        if [ -z "$newLine" ] ; then
+            echo -e "$modName\t->[FAIL] $modName \t-> Can't add to index2.html";
+        else
+            echo -e "$modName\t->[PASS]";
+            echo "       $newLine" >> $TMP2FILE;
+        fi
+    fi
+done;
+
+# append html foot
+echo "   </body>
+</html>" >> $TMPFILE;
+
+# append html foot
+echo "   
+    </table>
+    </body>
+</html>" >> $TMP2FILE;
+
+# output result
+cat $TMPFILE > $DOCLOCATION/modules.html
+cat $TMP2FILE > $DOCLOCATION/index2.html
+rm -f $TMPFILE $TMP2FILE;
+# create index.html
+echo -e "
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">
+<html>
+    <head>
+        <meta http-equiv=\"Content-Type\" content=\"text/html;charset=iso-8859-1\">
+        <title>Modules List</title>
+        <link href=\"index.css\" rel=\"stylesheet\" type=\"text/css\">
+    </head>
+    <NOFRAMES> Sorry we use frames:( . Please go to <a href=\"modules.html\">the modules page</a>. </NOFRAMES>
+    <FRAMESET ROWS=\"50,*\">
+    <FRAME NAME=\"modules\" SRC=\"modules.html\"/>
+    <FRAME NAME=\"module\" SRC=\"index2.html\"/>
+    </FRAMESET>
+</html>" > $TMPFILE;
+cat $TMPFILE > $DOCLOCATION/index.html
+
+#___oOo___
