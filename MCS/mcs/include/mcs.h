@@ -1,7 +1,7 @@
 /*************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.3 2004-06-16 14:06:03 gzins Exp $"
+* "@(#) $Id: mcs.h,v 1.4 2004-06-16 15:03:31 gzins Exp $"
 *
 * mcs.h  -  MCS/Common Definitions - Interface File
 *
@@ -72,6 +72,12 @@ typedef enum
 mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName);
 const char *mcsGetProcName();
 void mcsExit();
+
+/*
+ * Convenience macros
+ */
+#define mcsMAX(a,b)  ((a)>=(b)?(a):(b))
+#define mcsMIN(a,b)  ((a)<=(b)?(a):(b))
 
 #ifdef __cplusplus
 }
