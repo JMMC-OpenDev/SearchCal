@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetModuleName.sh,v 1.5 2004-12-09 09:47:56 gzins Exp $"
+# "@(#) $Id: ctooGetModuleName.sh,v 1.6 2004-12-16 10:46:07 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -76,7 +76,7 @@ then
     echo "ERROR - ctooGetModuleName: Could not get module name." >&2
     exit 1
 else
-    # Export module name
+    # Print out module name
     echo $ROOT_NAME
     exit 0
 fi
