@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.4 2004-09-15 05:58:13 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.5 2004-09-15 06:48:15 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -84,17 +84,6 @@ BASIC_DIRS="config      \
             include     \
             lib         \
             errors      \
-            man         \
-            man/man1    \
-            man/man2    \
-            man/man3    \
-            man/man4    \
-            man/man5    \
-            man/man6    \
-            man/man7    \
-            man/man8    \
-            man/manl    \
-            man/mann    \
            "
 
 # directories that shall be present in any module area
