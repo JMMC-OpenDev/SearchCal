@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsServer.C,v 1.1 2004-07-13 13:25:16 scetre Exp $"
+* "@(#) $Id: vobsServer.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsServer.C,v 1.1 2004-07-13 13:25:16 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsServer.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -30,14 +30,8 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCALIBRATOR_STAR.h"
-#include "vobsCALIBRATOR_STAR_LIST.h"
-#include "vobsCATALOG.h"
-#include "vobsPARSER.h"
-#include "vobsREQUEST.h"
-#include "vobsVIRTUAL_OBSERVATORY.h"
 
-
+#include "vobs.h"
 /*
  * Local Variables
  */
@@ -70,7 +64,7 @@ int main(int argc, char *argv[])
     char *basemax="100";
 
 
-    /*char *starName="ZET_GEM";
+/*    char *starName="ZET_GEM";
     char *wavelength="0.65";
     char *magnitudeB="magnitudeB";
     char *band="V";
@@ -82,8 +76,8 @@ int main(int argc, char *argv[])
     char *reqAbsErr="reqAbsErr";
     char *visErr="1.2E-02";
     char *basemin="25";
-    char *basemax="60";*/
- 
+    char *basemax="60";
+*/ 
 
     vobsREQUEST request;
     request.Create(starName, wavelength, soMagnitude, magnitudeRange, searchRA, searchDEC, visibility, reqAbsErr, band);

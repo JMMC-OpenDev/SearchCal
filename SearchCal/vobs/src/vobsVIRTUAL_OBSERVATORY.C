@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.1 2004-07-13 13:41:09 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.1 2004-07-13 13:41:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -297,6 +297,7 @@ void vobsVIRTUAL_OBSERVATORY::UpdateCalibStar(vobsCALIBRATOR_STAR &calibStar1, v
     if ((strcmp(calibStar2.GetrotVel(),"99.99")!=0)&&((calibStar1.GetrotVel()==NULL)||(strcmp(calibStar1.GetrotVel(),"99.99")==0)))
     {
         calibStar1.SetrotVel(calibStar2.GetrotVel());
+                //printf("toto\n");
     }
     if ((strcmp(calibStar2.Gete_B_V(),"99.99")!=0)&&((calibStar1.Gete_B_V()==NULL)||(strcmp(calibStar1.Gete_B_V(),"99.99")==0)))
     {
@@ -324,7 +325,7 @@ void vobsVIRTUAL_OBSERVATORY::Merge(std::list<vobsCALIBRATOR_STAR>list2)
         Q=list2.begin();
         while (Q!=list2.end())
         {
-            if (CompareRaDec( (*P).Getraj2000(), (*P).Getdej2000(), (*Q).Getraj2000(), (*Q).Getdej2000(), 10, 10)==1)
+            if (CompareRaDec( (*P).Getraj2000(), (*P).Getdej2000(), (*Q).Getraj2000(), (*Q).Getdej2000(), 1, 1)==1)
             {
                 UpdateCalibStar(*P,*Q); 
                 R=Q;
@@ -366,7 +367,6 @@ std::list<vobsCALIBRATOR_STAR> vobsVIRTUAL_OBSERVATORY::FillAndErase( std::list<
         {
             if (CompareRaDec( (*P).Getraj2000(), (*P).Getdej2000(), (*Q).Getraj2000(), (*Q).Getdej2000(), 0.1, 0.1)==1)
             {
-                //printf("toto\n");
                 UpdateCalibStar(*P,*Q); 
                 ++Q;
             }
@@ -388,25 +388,28 @@ void vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request)
     {
         // 1ere interrogation de II/225/catalog -> liste L1
         vobsCATALOG cat1;
-        list=cat1.Search(request,"II/225/catalog",1,listForK); 
+        std::list<vobsCALIBRATOR_STAR>list1=cat1.Search(request,"II/225/catalog",1,listForK); 
         
         // 1ere interrogation de II/7A/catalog -> liste L2
         vobsCATALOG cat2;
         std::list<vobsCALIBRATOR_STAR>list2=cat2.Search(request,"II/7A/catalog",1,listForK);
-
-        logInfo("before Merge()\n");
         
-        // merge L1 et L2 -> L
-        Merge(list2);
-        logInfo("after Merge()\n");
-
+        // concatenation L1 et L2 -> L
+        std::list<vobsCALIBRATOR_STAR>::iterator It=list2.begin();
+        while (It!=list2.end())
+        {
+            list1.push_back(*It);
+            ++It;
+        }
+               
         // creation de la liste de coordonnees
         std::list<char *>coordRaList;
         std::list<char *>coordDeList; 
         char *tmp1;
         char *tmp2;
-        std::list<vobsCALIBRATOR_STAR>::iterator Q=list.begin();
-        while (Q!=list.end())
+        std::list<vobsCALIBRATOR_STAR>::iterator Q=list1.begin();
+        printf("taille de la liste %d\n",list1.size());
+        while (Q!=list1.end())
         {
             tmp1=new char[strlen((*Q).Getraj2000())+1];
             tmp2=new char[strlen((*Q).Getdej2000())+1];
@@ -424,7 +427,7 @@ void vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request)
         char *tmp;
         std::list<char *>::iterator I=coordRaList.begin();
         std::list<char *>::iterator J=coordDeList.begin();
-
+        
         while ((I!=coordRaList.end())&&(J!=coordDeList.end())&&(coordRaList.size()!=0)&&(coordDeList.size()!=0))
         {
             if (I==coordRaList.begin())
@@ -462,8 +465,8 @@ void vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request)
         {
             // interrogation de I/280 avec liste de coord -> liste L3
             vobsCATALOG cat3; 
-            std::list<vobsCALIBRATOR_STAR>list3=cat3.Search(request,"I/280",2,listForK);
-            Merge(list3);
+            list=cat3.Search(request,"I/280",2,listForK);
+            //Merge(list3);
             // merge L3 et L -> L
 
             // creation de la liste de coordonnees
@@ -653,7 +656,7 @@ vobsCALIBRATOR_STAR_LIST vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST request)
     LoadScenario(request);
     logInfo("apres LoadScenario\n");
 
-
+    FillAndErase(list);
     std::list<vobsCALIBRATOR_STAR>::iterator Q=list.begin();
     while (Q!=list.end())
     {

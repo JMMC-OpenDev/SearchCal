@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.1 2004-07-13 13:41:09 scetre Exp $"
+* "@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.1 2004-07-13 13:41:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -526,9 +526,9 @@ void vobsCALIBRATOR_STAR::AddElement(char *ucd, char *value)
         Sethip(value);
     else if (strcmp(ucd,"ID_MAIN")==0)
         Sethd(value);
-    else if (strcmp(ucd,"POS_EQ_RA_MAIN")==0)
+    else if ((strcmp(ucd,"POS_EQ_RA_MAIN")==0)&&(strcmp(Getraj2000(),"99.99")==0))
         Setraj2000(value);
-    else if (strcmp(ucd,"POS_EQ_DEC_MAIN")==0)
+    else if ((strcmp(ucd,"POS_EQ_DEC_MAIN")==0)&&(strcmp(Getdej2000(),"99.99")==0))
         Setdej2000(value);
     else if (strcmp(ucd,"POS_EQ_PMDEC")==0)
         SetpmDE(value);
