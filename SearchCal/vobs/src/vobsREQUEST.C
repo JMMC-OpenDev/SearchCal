@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.13 2004-11-24 14:39:09 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.14 2004-12-05 20:26:32 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.13 2004-11-24 14:39:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.14 2004-12-05 20:26:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -362,7 +362,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, float *
     }
 
     // Convert constraint string value to integer value
-    if (sscanf(_constraints[constraintId], "%lf", value) != 1)
+    if (sscanf(_constraints[constraintId], "%f", value) != 1)
     {
         errAdd(vobsERR_INVALID_CONSTRAINT_FORMAT, value, _constraints[constraintId]);
         return FAILURE;

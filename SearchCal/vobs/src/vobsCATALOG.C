@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.20 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.21 2004-12-05 20:26:32 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.20 2004-11-30 10:32:31 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.21 2004-12-05 20:26:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -512,7 +512,7 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
             
             vobsSTAR *star = list.GetNextStar((el==0));
             star->GetProperty(POS_EQ_RA_MAIN_ID, ra);
-            if (sscanf(ra, "%s %s %s", &hra, &mra, &sra) != 3)
+            if (sscanf(ra, "%s %s %s", (char*)&hra, (char*)&mra, (char*)&sra) != 3)
             {
                 return FAILURE;
             }
@@ -522,7 +522,7 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
             
             
             star->GetProperty(POS_EQ_DEC_MAIN_ID, dec);            
-            if (sscanf(dec, "%s %s %s", &ddec, &mdec, &sdec) != 3)
+            if (sscanf(dec, "%s %s %s", (char*)&ddec, (char*)&mdec, (char*)&sdec) != 3)
             {
                 return FAILURE;
             }
