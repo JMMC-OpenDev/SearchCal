@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.4 2005-02-28 13:48:56 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.5 2005-03-04 09:46:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/28 13:48:56  scetre
+ * Added save file option in the request
+ *
  * Revision 1.3  2005/02/17 15:32:04  gzins
  * Added GetCmdParamLine method
  *
@@ -74,9 +77,9 @@ public:
     virtual mcsFLOAT GetExpectedVisibility(void);
     virtual mcsFLOAT GetExpectedVisibilityError(void);
 
-    // Save file 
-    virtual mcsCOMPL_STAT SetSaveFileName(mcsSTRING256 fileName);
-    virtual const char *GetSaveFileName(void);
+    // File name where file should be saved 
+    virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
+    virtual const char *GetFileName(void);
     
 protected:
     
