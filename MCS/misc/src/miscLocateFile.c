@@ -1,11 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscLocateFile.c,v 1.2 2004-11-10 17:05:02 lafrasse Exp $"
+* "@(#) $Id: miscLocateFile.c,v 1.3 2004-11-23 09:11:15 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     09-Nov-2004  Created
+* gzins     23-Nov-2004  Returned a 'resolved' path; i.e. where environment
+*                        variables have substituated
 *
 *
 *******************************************************************************/
@@ -40,7 +42,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.2 2004-11-10 17:05:02 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.3 2004-11-23 09:11:15 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -95,7 +97,7 @@ int main (int argc, char *argv[])
     /* Print result */
     if (fullFileName != NULL)
     {
-        printf("%s\n", fullFileName);
+        printf("%s\n", miscResolvePath(fullFileName));
     }
 
     /* Close MCS services */
