@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.9 2004-12-05 19:07:50 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.10 2004-12-07 07:40:33 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,6 +15,7 @@
 *                        msgMESSAGE, added SetLastReplyFlag method
 * scetre    30-Nov-2004  Set message body size to 32000
 * lafrasse  01-Dec-2004  Comment refinments
+* scetre    06-Dec-2004  Updated to be only C++
 *
 *
 *******************************************************************************/
@@ -111,7 +112,6 @@ typedef struct
 
 } msgMESSAGE_RAW;
 
-#ifdef __cplusplus
 /*
  * System Headers 
  */
@@ -219,7 +219,6 @@ private:
      msgMESSAGE(const msgMESSAGE&);
      msgMESSAGE& operator=(const msgMESSAGE&);
 };
-#endif
 
 #endif /*!msgMESSAGE_H*/
 
