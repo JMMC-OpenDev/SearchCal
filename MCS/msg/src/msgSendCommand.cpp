@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.15 2005-02-09 14:23:07 lafrasse Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.16 2005-02-10 08:09:40 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/02/09 14:23:07  lafrasse
+ * Changed comments from C to C++ style
+ *
  * Revision 1.14  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -69,7 +72,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.15 2005-02-09 14:23:07 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.16 2005-02-10 08:09:40 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -117,11 +120,15 @@ int main (int argc, char *argv[])
     timeout = msgWAIT_FOREVER;
     status  = EXIT_SUCCESS;
 
+    // Disable message logging
+    logSetStdoutLogLevel(logQUIET);
+
     // Read command-line options
     if (argc > 2)
     {
         if (strcmp(argv[1], "-v") == 0)
         {
+            logSetStdoutLogLevel(logINFO);
             verbose = mcsTRUE;
             cnt += 1;
         }
