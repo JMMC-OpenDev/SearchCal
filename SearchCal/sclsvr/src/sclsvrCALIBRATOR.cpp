@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.6 2004-12-06 17:04:28 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.7 2004-12-07 13:47:53 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.6 2004-12-06 17:04:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.7 2004-12-07 13:47:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -688,7 +688,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
                 {
                     _coherentDiameter = mcsTRUE;
                     // Compute visibility and visibility error
-                    if (ComputeVisibility(request) == FAILURE)
+                    if (ComputeVisibility(request) != FAILURE)
                     {
                         // Get compute visibility
                         mcsFLOAT computedVisibility;

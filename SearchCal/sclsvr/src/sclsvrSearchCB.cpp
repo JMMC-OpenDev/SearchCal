@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.cpp,v 1.3 2004-12-06 17:04:28 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCB.cpp,v 1.4 2004-12-07 13:47:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.3 2004-12-06 17:04:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.4 2004-12-07 13:47:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -308,9 +308,14 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     msg.SetBody(miscDynBufGetBufferPointer(&dynBuff),
                 strlen(miscDynBufGetBufferPointer(&dynBuff)));
     
-    sclsvrCALIBRATOR_LIST *temp;
-    calibratorList.GetCoherentDiameterList(temp);
-    temp.Display();
+    sclsvrCALIBRATOR_LIST coherentDiamList;
+    calibratorList.GetCoherentDiameterList(&coherentDiamList);
+    coherentDiamList.Display();
+    
+
+    sclsvrCALIBRATOR_LIST visibilityOKList;
+    calibratorList.GetVisibilityOkList(&visibilityOKList);
+    visibilityOKList.Display();
     
     calibratorList.Clear();
     starList.Clear();
