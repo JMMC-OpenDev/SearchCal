@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2004-08-03 09:52:36 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.8 2004-08-10 13:19:40 lafrasse Exp $"
 #
 # Makefile of misc Library
 #
@@ -15,6 +15,7 @@
 #                        miscDynBuf.h
 # lafrasse  03-Aug-2004  Added miscNetwork stuff
 # gzins     03-Aug-2004  Added installation of all include files 
+# lafrasse  10-Aug-2004  Removed miscPrivate. installation
 #
 #
 #*******************************************************************************
@@ -62,7 +63,6 @@ INCLUDES        = misc.h \
 				  miscDynBuf.h \
 				  miscFile.h \
 				  miscNetwork.h \
-				  miscPrivate.h \
 				  miscString.h
 
 
