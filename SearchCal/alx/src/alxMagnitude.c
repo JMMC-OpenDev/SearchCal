@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/21 08:14:25  gluck
+ * Creation
+ *
  *
  * scetre    20-Sep-2004  Created
  * gzins     12-Jan-2005  - Updated to be compliant with programming standards
@@ -21,7 +24,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -288,20 +291,28 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
      * number between 0 and 9 and LLL is the light class
      */
     alxSPECTRAL_TYPE spectralType;
-    if (sscanf(spType, "%c%f%s",
-               &spectralType.code, 
-               &spectralType.quantity, 
-               spectralType.lightClass) != 3)
+    mcsINT32 nbItems;
+    nbItems = sscanf(spType, "%c%f%s",
+                     &spectralType.code, 
+                     &spectralType.quantity, 
+                     spectralType.lightClass);
+    if ((nbItems != 2) && (nbItems != 3))
     {
         errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spType);
         return mcsFAILURE;
+    }
+
+    /* If there is no light class in given spectral type, reset it */
+    if (nbItems != 2)
+    {
+        strcpy(spectralType.lightClass, ""); 
     }
 
     logTest("Type spectral = %s", spType);
     logTest("\tCode              = %c", spectralType.code);
     logTest("\tSub-type Quantity = %f", spectralType.quantity);
     logTest("\tLight class       = %s", spectralType.lightClass);
-
+    
     /* Get the color table according to the spectral type of the star */
     alxCOLOR_TABLE *colorTable;
     colorTable = alxGetColorTableForBrightStar(spectralType);

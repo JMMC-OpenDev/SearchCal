@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/21 08:14:25  gluck
+ * Creation
+ *
  *
  * scetre    22-Sep-2004  Created
  *
@@ -17,7 +20,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -99,6 +102,14 @@ int main (int argc, char *argv[])
     }
     if (alxComputeRealMagnitudes
         (10, 5, 165, &B, &V, &R, &I, &J, &H, &K, &L, &M) == FAILURE)
+    {
+        errCloseStack();
+        return FAILURE;
+    }
+
+    B=6.6, V=5.77;    
+    if (alxComputeMagnitudesForBrightStar
+        ("B7", B, V, &R, &I, &J, &H, &K, &L, &M, &confIdx) == FAILURE)
     {
         errCloseStack();
         return FAILURE;

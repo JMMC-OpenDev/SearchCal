@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/21 08:14:25  gluck
+ * Creation
+ *
  * 
  * scetre    28-Sep-2004  Created
  * gzins     12-Jan-2005  - Updated to be compliant with programming standards
@@ -21,7 +24,7 @@
  * \sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -452,26 +455,84 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
      * Co = C - Ac
      * where Ac = Av*Rc/Rv, with Rv=3.10
      */
-    *mgM = *mgM - (av * extinctionRatioTable->rc[alxFITZ_M] / 3.10);
-    *mgL = *mgL - (av * extinctionRatioTable->rc[alxFITZ_L] / 3.10);
-    *mgK = *mgK - (av * extinctionRatioTable->rc[alxFITZ_K] / 3.10);
-    *mgH = *mgH - (av * extinctionRatioTable->rc[alxFITZ_H] / 3.10);
-    *mgJ = *mgJ - (av * extinctionRatioTable->rc[alxFITZ_J] / 3.10);
-    *mgI = *mgI - (av * extinctionRatioTable->rc[alxFITZ_I] / 3.10);
-    *mgR = *mgR - (av * extinctionRatioTable->rc[alxFITZ_R] / 3.10);
-    *mgV = *mgV - (av * extinctionRatioTable->rc[alxFITZ_V] / 3.10);
-    *mgB = *mgB - (av * extinctionRatioTable->rc[alxFITZ_B] / 3.10);
+    /* 
+     * if the pointer of a magnitude is NULL that's mean that there is nothing
+     * to compute. In this case, do nothing
+     */
+    if (*mgM != 0)
+    {
+        *mgM = *mgM - (av * extinctionRatioTable->rc[alxFITZ_M] / 3.10);
+    }
+    if (*mgL != 0)
+    {
+        *mgL = *mgL - (av * extinctionRatioTable->rc[alxFITZ_L] / 3.10);
+    }
+    if (*mgK != 0)
+    {
+        *mgK = *mgK - (av * extinctionRatioTable->rc[alxFITZ_K] / 3.10);
+    }
+    if (*mgH != 0)
+    {
+        *mgH = *mgH - (av * extinctionRatioTable->rc[alxFITZ_H] / 3.10);
+    }
+    if (*mgJ != 0)
+    {
+        *mgJ = *mgJ - (av * extinctionRatioTable->rc[alxFITZ_J] / 3.10);
+    }
+    if (*mgI != 0)
+    {
+        *mgI = *mgI - (av * extinctionRatioTable->rc[alxFITZ_I] / 3.10);
+    }
+    if (*mgR != 0)
+    {
+        *mgR = *mgR - (av * extinctionRatioTable->rc[alxFITZ_R] / 3.10);
+    }
+    if (*mgV != 0)
+    {
+        *mgV = *mgV - (av * extinctionRatioTable->rc[alxFITZ_V] / 3.10);
+    }
+    if (*mgB != 0)
+    {
+        *mgB = *mgB - (av * extinctionRatioTable->rc[alxFITZ_B] / 3.10);
+    }
 
     /* Print out results */
-    logTest("B (corrected)    = %0.3f", *mgB);
-    logTest("V (corrected)    = %0.3f", *mgV);
-    logTest("R (corrected)    = %0.3lf", *mgR);
-    logTest("I (corrected)    = %0.3lf", *mgI);
-    logTest("J (corrected)    = %0.3lf", *mgJ);
-    logTest("H (corrected)    = %0.3lf", *mgH);
-    logTest("K (corrected)    = %0.3lf", *mgK);
-    logTest("L (corrected)    = %0.3lf", *mgL);
-    logTest("M (corrected)    = %0.3lf", *mgM);
+    if (*mgB != 0)
+    {
+        logTest("B (corrected)    = %0.3f", *mgB);
+    }
+    if (*mgV != 0)
+    {
+        logTest("V (corrected)    = %0.3f", *mgV);
+    }
+    if (*mgR != 0)
+    {
+        logTest("R (corrected)    = %0.3lf", *mgR);
+    }
+    if (*mgI != 0)
+    {
+        logTest("I (corrected)    = %0.3lf", *mgI);
+    }
+    if (*mgJ != 0)
+    {
+        logTest("J (corrected)    = %0.3lf", *mgJ);
+    }
+    if (*mgH != 0)
+    {
+        logTest("H (corrected)    = %0.3lf", *mgH);
+    }
+    if (*mgK != 0)
+    {
+        logTest("K (corrected)    = %0.3lf", *mgK);
+    }
+    if (*mgL != 0)
+    {
+        logTest("L (corrected)    = %0.3lf", *mgL);
+    }
+    if (*mgM != 0)
+    {
+        logTest("M (corrected)    = %0.3lf", *mgM);
+    }
 
     return mcsSUCCESS;
 }
