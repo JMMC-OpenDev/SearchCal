@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.8 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.9 2005-02-04 09:56:32 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    06-Jul-2004  Created
 *
 *
@@ -46,6 +49,10 @@ public:
     mcsCOMPL_STAT Parse(char *uri, 
                         vobsSTAR_LIST &starList,
                         char* logFileName);
+
+    // Parsing of the CDATA section
+    mcsCOMPL_STAT ParseCData(vobsCDATA *cData,
+                             vobsSTAR_LIST &starList);
     
 protected:
 
@@ -59,9 +66,7 @@ private:
     mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node,
                                   vobsCDATA *cData);
 
-    // Parsing of the CDATA section
-    mcsCOMPL_STAT ParseCData(vobsCDATA *cData,
-                             vobsSTAR_LIST &starList);
+    
 };
 
 #endif /*!vobsPARSER_H*/
