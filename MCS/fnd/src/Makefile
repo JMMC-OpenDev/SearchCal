@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-09-22 13:43:56 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2005-02-15 10:42:03 gzins Exp $"
 #
 # Makefile of fnd module
 #
@@ -165,9 +165,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
