@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.5 2004-06-09 16:22:58 gzins Exp $"
+* "@(#) $Id: log.h,v 1.6 2004-06-16 14:38:30 gzins Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -55,8 +55,6 @@ typedef enum {
 /*
  * Log/Verbose/Action Logging Functions
  */
-extern mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName);
-
 extern mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
                               const char *fileLine, 
                               const char *logText, ...);

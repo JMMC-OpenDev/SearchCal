@@ -1,35 +1,14 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.10 2004-06-09 16:06:21 gzins Exp $"
+* "@(#) $Id: log.c,v 1.11 2004-06-16 14:38:30 gzins Exp $"
 *
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
 * mella     07-May-2004  created preliminary version based on log from VLT/ESO
-*
-*
-********************************************************************************
-*   NAME
-*
-*   SYNOPSIS
-*
-*   DESCRIPTION
-*
-*   FILES
-*
-*   ENVIRONMENT
-*
-*   RETURN VALUES
-*
-*   CAUTIONS
-*
-*   EXAMPLES
-*
-*   SEE ALSO
-*
-*   BUGS
-*
+* gzins     16-Jun-2004  removed logIdentify function; replaced by mcsInit and
+*                        mcsGetProcName functions
 *-----------------------------------------------------------------------------*/
 
 /**
@@ -194,29 +173,6 @@ static logRULE logRule = {
 };
 static logRULE *logRulePtr = &logRule;
 
-static mcsPROCNAME logProcName = "procUNKNOWN";
-
-/**
- * Get names to identify the process. The module name must be given for each
- * logging call. If process is not identified, then default name is procUNKNOWN
- *
- * \param processName name of the process.
- *
- * \return mcsCOMPL_STAT 
- */
-mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName){
-    /* store values into global variables */
-    strncpy(logProcName, processName, mcsPROCNAME_LEN);
-
-    /* open syslog 
-     * using by convention LOCAL3 facility
-     * \todo use an environment variable to adjust the default LOCAL3 facility
-     */
-    openlog(processName, LOG_NDELAY, LOG_LOCAL3);
-        
-    return SUCCESS;
-}
-
 /**
  * Log data to logsystem if level satisfies and optionally
  * to the stdout if verbose is specified.
@@ -249,7 +205,7 @@ mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
     /* If the specified level is less than or egal to the logging level */
     if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
     {
-        fprintf(stdout, "%s - %s - ", logProcName, modName);
+        fprintf(stdout, "%s - %s - ", mcsGetProcName(), modName);
         if ( (fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
         {
             fprintf(stdout, "%s - ", fileLine);
@@ -452,6 +408,17 @@ static mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
                         const char *buffer)
 {
     int priority;       /* syslog priority */
+    static mcsLOGICAL logIsOpen = mcsFALSE;
+
+    /* open syslog 
+     * using by convention LOCAL3 facility
+     * \todo use an environment variable to adjust the default LOCAL3 facility
+     */
+    if (logIsOpen == mcsFALSE)
+    {
+        openlog(mcsGetProcName(), LOG_NDELAY, LOG_LOCAL3);
+        logIsOpen = mcsTRUE;
+    }
 
     /* initialize priority according given loglevel */
     switch (level){

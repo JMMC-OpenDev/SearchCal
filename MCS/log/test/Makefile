@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.1 2004-05-13 12:54:51 mella Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-06-16 14:38:30 gzins Exp $"
 #
 # Makefile of log
 #
@@ -42,7 +42,7 @@ EXECUTABLES_L   = logTest
 # <brief description of xxxxx program>
 logTest_OBJECTS   =	logTest
 logTest_LDFLAGS   =
-logTest_LIBS      = log
+logTest_LIBS      = mcs log
 
 #
 # special compilation flags for single c sources

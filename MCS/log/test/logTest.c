@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.5 2004-06-02 07:46:40 mella Exp $"
+* "@(#) $Id: logTest.c,v 1.6 2004-06-16 14:38:30 gzins Exp $"
 *
 *
 * who       when                 what
@@ -177,8 +177,8 @@ mcsCOMPL_STAT testNoFileLine(void){
 
 int main(int argc, char ** argv)
 {
-    /* Init names of process and module */
-    logIdentify(argv[0]);
+    /* Init MCS services */
+    mcsInit(argv[0]);
     
     /* test1 loops 
      * \todo handle function returns
@@ -198,5 +198,7 @@ int main(int argc, char ** argv)
     testNoFileLine();
 
     
-    exit(0);
+    mcsExit();
+
+    exit(EXIT_SUCCESS);
 }
