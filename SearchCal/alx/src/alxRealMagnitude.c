@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.4 2005-01-31 13:32:37 scetre Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.5 2005-02-12 15:13:55 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/01/31 13:32:37  scetre
+ * changed misc...Pointer in misc...
+ *
  * Revision 1.3  2005/01/26 15:49:09  scetre
  * solve memory problem with miscDYN_BUF
  *
@@ -30,7 +33,7 @@
  * \sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.4 2005-01-31 13:32:37 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.5 2005-02-12 15:13:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -115,13 +118,6 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
         return NULL;
     }
 
-    /* Resolve environment variables (if any) */
-    fileName = miscResolvePath(fileName);
-    if (fileName == NULL)
-    {
-        return NULL;
-    }
-    
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
@@ -270,13 +266,6 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
         return NULL;
     }
 
-    /* Resolve environment variables (if any) */
-    fileName = miscResolvePath(fileName);
-    if (fileName == NULL)
-    {
-        return NULL;
-    }
-    
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
@@ -308,8 +297,8 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
 
             /* Get polynomial coefficients */
             if (sscanf(line, "%f-%f %f %f %f %f",
-                       &polynomial.longMin[lineNum],
-                       &polynomial.longMax[lineNum],
+                       &polynomial.gLonMin[lineNum],
+                       &polynomial.gLonMax[lineNum],
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
@@ -432,8 +421,8 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
         while ((found == mcsFALSE) && (i < polynomial->nbLines))
         {
             /* If longitude belongs to the range */
-            if (gLon >= polynomial->longMin[i] && 
-                gLon < polynomial->longMax[i])
+            if (gLon >= polynomial->gLonMin[i] && 
+                gLon < polynomial->gLonMax[i])
             {
                 /* Stop search */
                 found = mcsTRUE;

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.5 2005-02-10 07:55:31 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.6 2005-02-12 15:13:11 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/10 07:55:31  gzins
+ * Updated alxComputeAngularDiameter to return diameter from B-V, V-R and V-K calibration
+ *
  * Revision 1.4  2005/02/04 13:50:39  gzins
  * Changed alxCONFIDENCE_VERY_LOW to alxCONFIDENCE_LOW
  *
@@ -33,7 +36,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.5 2005-02-10 07:55:31 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.6 2005-02-12 15:13:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -108,13 +111,6 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
         return NULL;
     }
 
-    /* Resolve environment variables (if any) */
-    fileName = miscResolvePath(fileName);
-    if (fileName == NULL)
-    {
-        return NULL;
-    }
-    
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
@@ -127,8 +123,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     /* For each line */
     int  lineNum = 0;
     char *line = NULL;
-    while ((line = miscDynBufGetNextLine(&dynBuf,
-                                                line, mcsTRUE)) != NULL)
+    while ((line = miscDynBufGetNextLine(&dynBuf, line, mcsTRUE)) != NULL)
     {
         logTest("miscDynBufGetNextLine() = '%s'", line);
 
