@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.h,v 1.3 2004-12-20 13:36:31 gzins Exp $"
+* "@(#) $Id: evhTASK.h,v 1.4 2005-01-07 17:29:58 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -13,6 +13,11 @@
 * gzins     20-Dec-2004  removed IsTimerLogOption method
 * 
 *******************************************************************************/
+
+/**
+ * \file
+ * Declaration of the evhTASK class.
+ */
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
