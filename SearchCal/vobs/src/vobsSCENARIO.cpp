@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.9 2005-02-07 19:40:58 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.10 2005-02-08 08:38:06 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/07 19:40:58  gzins
+* Updated vobsREQUEST API
+*
 * Revision 1.8  2005/02/07 17:36:53  scetre
 * added printf to resolve bug problem in multiple query
 *
@@ -32,7 +35,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.9 2005-02-07 19:40:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.10 2005-02-08 08:38:06 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -133,7 +136,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                                     vobsSTAR_LIST &starList)
 {
     logExtDbg("vobsSCENARIO::Execute()");
-   printf("starList.size begin= %d\n", starList.Size());
     
     // Create a temporary list of star in xhich will be store the lst input
     vobsSTAR_LIST tempList;
@@ -162,7 +164,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         {
             tempList.Copy(*(*_entryIterator)._listInput);
         }
-        printf("tmpListSize = %d\n", tempList.Size());
         
         // start research in entry's catalog
         if (((*_entryIterator)._catalog)->Search(request,
@@ -256,7 +257,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
     {
         return mcsFAILURE;
     }
-   printf("starList.size = %d\n", starList.Size());
     
     return mcsSUCCESS;
 }
