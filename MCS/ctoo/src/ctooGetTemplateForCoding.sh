@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.1 2004-09-10 17:40:27 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.2 2004-09-15 05:50:02 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -169,8 +169,8 @@ then
         # Get template file
         ctooGetTemplateFile $TEMPLATE $FILE
 
-        # For .h files insert file name in the pre-processing directives to
-        # avoid multiple inclusions
+        # For .h (h-file or c++-h-file) files insert file name in the
+        # pre-processing directives to avoid multiple inclusions
         if [ "$FILE_SUFFIX" = ".h" ]
         then
             sed -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
@@ -183,6 +183,25 @@ then
             mv ${FILE}.BAK $FILE 
         fi
 
+        # For .c (c-main, c-procedure), or .C (c++-small-main and
+        # c++-class-file) files insert module name in the pre-processing
+        # directives for header inclusion
+        if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".C" ]
+        then
+            # Get module name
+            source ctooGetModuleName
+            ROOT_NAME=$moduleName
+            unset moduleName
+            
+            sed -e "1,$ s/#include \"<moduleName>.h\"/#include \"$ROOT_NAME.h\"/g" \
+            -e "1,$ s/#include \"<moduleName>Private.h\"/#include \"${ROOT_NAME}Private.h\"/g" \
+            $FILE > ${FILE}.BAK
+
+            # Remove the intermediate file ($FILE) and rename the output
+            # file
+            mv ${FILE}.BAK $FILE
+        fi
+        
         # Change permissions of the new created file
         chmod $MODE $FILE
         
