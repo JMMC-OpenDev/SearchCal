@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.C,v 1.2 2004-11-17 09:52:13 gzins Exp $"
+* "@(#) $Id: evhHANDLER.C,v 1.3 2004-11-18 17:27:23 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,6 +9,9 @@
 * gzins     17-Nov-2004  Used evhXXX_CALLBACK pointer instead of instance
 *                        reference in order to fix bug related to the
 *                        referencing of deleted callback instance.
+* gzins     18-Nov-2004  Updated main loop to accept message as argument.
+*                        Returned error when no callback is attached to the
+*                        received command.
 *
 *******************************************************************************/
 
@@ -17,7 +20,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.C,v 1.2 2004-11-17 09:52:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.C,v 1.3 2004-11-18 17:27:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -143,56 +146,75 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhIOSTREAM_KEY &key,
     return SUCCESS;
 }
 
-mcsCOMPL_STAT evhHANDLER::MainLoop(void)
+mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
 {
     logExtDbg("evhHANDLER::MainLoop()");
 
-    // For ever
-    for(;;)
+    // If a message is given and it the command is not empty
+    if ((msg != NULL) && (strlen(msgGetCommand(msg)) != 0))
     {
-        evhKEY *key;
+        // Build event key
+        evhCMD_KEY key;
+        key.SetCommand(msgGetCommand(msg));
 
-        // Wait for event
-        key = Select();
-
-        // If an error occured
-        if (key == NULL)
+        // Run attached callback
+        if (Run(key, *msg) == FAILURE)
         {
-            // Stop loop
             return FAILURE;
         }
-        // Else if a command received 
-        else if (key->GetType() == evhTYPE_COMMAND)
+
+        return SUCCESS;
+    }
+    // Else enter in main loop
+    else
+    {
+        // For ever
+        for(;;)
         {
-            // Read message
-            msgMESSAGE msg;
-            if (msgReceive(&msg, 0) == FAILURE)
+            evhKEY *key;
+
+            // Wait for event
+            key = Select();
+
+            // If an error occured
+            if (key == NULL)
             {
+                // Stop loop
                 return FAILURE;
             }
-
-            // Build event key
-            ((evhCMD_KEY *)key)->SetCommand(msgGetCommand(&msg));
-
-            // Run attached callback
-            if (Run(*(evhCMD_KEY *)key, msg) == FAILURE)
+            // Else if a command received 
+            else if (key->GetType() == evhTYPE_COMMAND)
             {
-                return FAILURE;
-            }
+                // Read message
+                msgMESSAGE msg;
+                if (msgReceive(&msg, 0) == FAILURE)
+                {
+                    return FAILURE;
+                }
 
-            // If EXIT command received
-            if (strcmp(msgGetCommand(&msg), "EXIT") == 0)
+                // Build event key
+                ((evhCMD_KEY *)key)->SetCommand(msgGetCommand(&msg));
+
+                // Run attached callback
+                if (Run(*(evhCMD_KEY *)key, msg) == FAILURE)
+                {
+                    return FAILURE;
+                }
+
+                // If EXIT command received
+                if (strcmp(msgGetCommand(&msg), "EXIT") == 0)
+                {
+                    return SUCCESS;
+                }
+            }        
+            // Else if a I/O stream received 
+            else if (key->GetType() == evhTYPE_IOSTREAM)
             {
-                return SUCCESS;
-            }
-        }        
-        // Else if a I/O stream received 
-        else if (key->GetType() == evhTYPE_IOSTREAM)
-        {
-                        // Run attached callback
-            if (Run(*(evhIOSTREAM_KEY *)key, ((evhIOSTREAM_KEY *)key)->GetSd()) == FAILURE)
-            {
-                return FAILURE;
+                // Run attached callback
+                if (Run(*(evhIOSTREAM_KEY *)key, ((evhIOSTREAM_KEY *)key)->GetSd()) == FAILURE)
+                {
+                    return FAILURE;
+                }
             }
         }
     }
@@ -237,6 +259,9 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
 {
     logExtDbg("evhHANDLER::Run()");
 
+    // Number of callback attached to the received command 
+    mcsINT32 counter=0;
+
     // For each registered event
     std::list<pair<evhKEY *, evhCALLBACK_LIST *> > ::iterator iter;
     for (iter=_eventList.begin(); iter != _eventList.end(); ++iter)
@@ -244,6 +269,8 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
         // If event is the same than the specified one
         if (((*iter).first)->Match(key))
         {
+            counter++;
+
             // Add the new callback to the list
             if (((*iter).second)->Run(msg) == FAILURE)
             {
@@ -253,6 +280,17 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
         // End if
     }
     // End for
+
+    // If there is no callback attached to this command
+    if (counter == 0)
+    {
+        errAdd(evhERR_CMD_UNKNOWN, msgGetCommand(&msg));
+        if (msgSendReply(&msg, mcsTRUE)== FAILURE)
+        {
+            return FAILURE;
+        } 
+    }
+
     return SUCCESS;
 }
 
