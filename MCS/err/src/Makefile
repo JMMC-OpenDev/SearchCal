@@ -1,12 +1,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2005-01-31 13:29:21 mella Exp $"
+# "@(#) $Id: Makefile,v 1.15 2005-02-15 09:29:55 gzins Exp $"
 #
 # Makefile of err module 
 # History
 # -------
-# $Log: not supported by cvs2svn $ 
+# $Log: not supported by cvs2svn $
+# Revision 1.14  2005/01/31 13:29:21  mella
+# Add the cvs history tag
+# 
 #
 # sccmgr    02-Jun-2004  Created
 # gzins     14-Dec-2004  Run standard installation target first (to create
@@ -218,9 +221,5 @@ install_local_jar:
 	@$(foreach file, $(JAVA_JAR), echo "        $(file)" ;\
               cp -f ../lib/$(file) $(INSTALL_ROOT)/lib;)
 	@echo ""
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
