@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.20 2005-02-16 14:28:31 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.21 2005-02-16 17:02:04 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/02/16 14:28:31  scetre
+* *** empty log message ***
+*
 * Revision 1.19  2005/02/10 08:07:38  scetre
 * changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
 *
@@ -58,7 +61,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.20 2005-02-16 14:28:31 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.21 2005-02-16 17:02:04 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -281,7 +284,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         scenario.AddEntry(&_denis, &_starListS, &_starListS, vobsUPDATE_ONLY,
                           &criteriaList);        
         // Removed mgK criteria
-        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_V) == mcsFAILURE)
+        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_K) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -292,11 +295,14 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
             return mcsFAILURE;
         }
         // I/196
-        scenario.AddEntry(&_hic, &_starListS, &_starListS, vobsUPDATE_ONLY);
+        scenario.AddEntry(&_hic, &_starListS, &_starListS, vobsUPDATE_ONLY,
+                          &criteriaList);
         // BSC
-        scenario.AddEntry(&_bsc, &_starListS, &_starListS, vobsUPDATE_ONLY);
+        scenario.AddEntry(&_bsc, &_starListS, &_starListS, vobsUPDATE_ONLY,
+                          &criteriaList);
         // SBSC
-        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, vobsUPDATE_ONLY);
+        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, vobsUPDATE_ONLY,
+                          &criteriaList);
     }
     // Scenario in band V
     else if (strcmp(band, "V")==0)
