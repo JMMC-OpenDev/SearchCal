@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.3 2005-02-18 08:19:42 scetre Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.4 2005-02-18 08:29:42 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/18 08:19:42  scetre
+ * Fixed Bug in visibility error compute
+ *
  * Revision 1.2  2005/02/17 19:04:16  gzins
  * Updated formulas to compute dV and dV²
  *
@@ -28,7 +31,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: alxVisibility.c,v 1.3 2005-02-18 08:19:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxVisibility.c,v 1.4 2005-02-18 08:29:42 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -93,7 +96,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
     *vis = fabs(2 * j1f(x) / x);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    *visError  = 2 * jnf(2, x) * angDiamError;
+    *visError  = 2 * jnf(2, x) * angDiamError / angDiam;
 
     /* Compute V² */
     *vis2 = pow(*vis, 2);
