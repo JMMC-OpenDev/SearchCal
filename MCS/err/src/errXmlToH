@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: errXmlToH,v 1.4 2004-06-24 10:28:39 gzins Exp $"
+# "@(#) $Id: errXmlToH,v 1.5 2004-06-24 15:23:52 mella Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -64,13 +64,13 @@ function getCfgFile
 #Main Script
 if [ $# != 2 ];
 then
-	echo "USAGE : $0 ../errors/<mod>Errors.xml ../include/<mod>Errors.h"
+	echo "USAGE : $0 ../errors/<mod>Errors.xml ../include/<mod>Errors.h" > /dev/stderr
 else
 	#XSD & XSL declaration files
     getCfgFile "errXmlToH.xsd"
     if [ "$fullPath" = "NULL" ]
     then
-        echo "XSD Schema File Not Found"
+        echo "XSD Schema File Not Found" > /dev/stderr
         exit 1;
     fi
     schema="$fullPath"
@@ -78,7 +78,7 @@ else
     getCfgFile "errXmlToH.xsl"
     if [ "$fullPath" = "NULL" ]
     then
-        echo "XSL Transformation File Not Found"
+        echo "XSL Transformation File Not Found" > /dev/stderr
         exit 1;
     fi
     xslt="$fullPath"
@@ -94,16 +94,16 @@ else
         # if output file exists then exit
         if [ -a $2 ];
         then 
-            echo "File $2 already exists."
-            echo "Please change filename and run it again.";
+            echo "File $2 already exists." > /dev/stderr
+            echo "Please change filename and run it again." > /dev/stderr
             exit 1;
         fi
 
         xsltproc $xslt $1 > $2
-        echo "Error header file $2 created successfully."
+        echo "Header file $2 created successfully."
     else
-        echo "$res"
-        echo "Sorry, validation error. You need to modify $1."
+        echo "$res" > /dev/stderr
+        echo "Sorry, validation error. You need to modify $1." > /dev/stderr
     fi
 fi
 
