@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.8 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.9 2005-02-07 19:32:52 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -68,15 +68,15 @@ public:
 protected:
     // Method to prepare the request in a string format
    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
-   virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST request,
-                                 vobsSTAR_LIST &tmpList);
+   virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request,
+                                      vobsSTAR_LIST &tmpList);
 
    // Method to build all parts of the asking
    virtual mcsCOMPL_STAT WriteQueryURIPart(void);
    virtual mcsCOMPL_STAT WriteQueryConstantPart(void);
    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST request);
-   virtual mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST request);
+   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
+   virtual mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST &request);
    virtual mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
   
    // Method to get a star list in a string format from a normal star list

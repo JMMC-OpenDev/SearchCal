@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.11 2005-02-04 13:32:04 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.12 2005-02-07 19:32:52 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/04 13:32:04  gzins
+* Added MIDI catalog
+*
 * Revision 1.10  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -72,7 +75,7 @@ public:
     
 protected:
     // Method to load scenario according to the request
-    virtual mcsCOMPL_STAT LoadScenario(mcsSTRING16      band,
+    virtual mcsCOMPL_STAT LoadScenario(const char       *band,
                                        vobsSTAR_LIST    &StarList,
                                        vobsSCENARIO     &scenario);
     

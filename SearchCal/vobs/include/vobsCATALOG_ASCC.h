@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.h,v 1.5 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.h,v 1.6 2005-02-07 19:32:52 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    27-Jul-2004  Created
 *
 *
@@ -55,7 +58,7 @@ public:
 protected:
     // Method to build parts of the request
    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST request);
+   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
 
 private:
 };
