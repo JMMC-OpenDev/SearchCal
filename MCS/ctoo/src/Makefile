@@ -1,15 +1,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2004-06-24 17:33:02 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.8 2004-06-24 17:48:43 gzins Exp $"
 #
 # Makefile of ctoo module
 #
 # who       when        what
 # --------  ----------  --------------------------------------------------------
-# gluck		18-May-2004	Created
-# gzins     09-Jun-2004    added templates for doxygen
-# mella		24-Jun-2004	add buildDocIndex related
+# gluck     18-May-2004 Created
+# gzins     09-Jun-2004 added templates for doxygen
+# mella     24-Jun-2004 add buildDocIndex related
 #
 #
 #*******************************************************************************
@@ -68,12 +68,12 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         = ctooGetTemplate \
-				  ctooGetDirectoryStructure \
-				  ctooGetTemplateForDirectoryStructure \
-				  ctooGetCode \
-				  ctooGetTemplateForCoding \
-				  ctooDoxygen \
-				  ctooBuildDocIndex
+                  ctooGetDirectoryStructure \
+                  ctooGetTemplateForDirectoryStructure \
+                  ctooGetCode \
+                  ctooGetTemplateForCoding \
+                  ctooDoxygen \
+                  ctooBuildDocIndex
 SCRIPTS_L       =
 
 #
@@ -149,7 +149,7 @@ INS_ROOT_DIR   =
 # other files to be installed
 #----------------------------
 INSTALL_FILES = ../config/ctooBuildDocIndex.xsl \
-				../config/ctooBuildDocIndex2.xsl
+                ../config/ctooBuildDocIndex2.xsl
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
@@ -158,6 +158,14 @@ CSOURCENAMES = \
 	$(foreach exe, $(EXECUTABLES) $(EXECUTABLES_L), $($(exe)_OBJECTS)) \
 	$(foreach lib, $(LIBRARIES) $(LIBRARIES_L), $($(lib)_OBJECTS))
 
+# define basic paths to MCSROOT:
+ifdef MCSROOT
+    TEMPLATES  = $(MCSROOT)/templates
+endif
+# if INTROOT is defined, override or complete the search paths:
+ifdef INTROOT
+    TEMPLATES  = $(INTROOT)/templates
+endif
 #
 #>>>>> END OF standard rules
 
@@ -190,12 +198,11 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-	-$(AT) cp -r ../templates/* ${INTROOT}/templates/
-	-$(AT) rm -f ${INTROOT}/templates/*/*~
-	-$(AT) rm -f ${INTROOT}/templates/*/.*.sw*
+	-$(AT) cp -r ../templates/* ${TEMPLATES}
+	-$(AT) rm -f ${TEMPLATES}/*/*~
+	-$(AT) rm -f ${TEMPLATES}/*/.*.sw*
 
 db : db_all
 	@echo " . . . ../DB done"
-
 
 #___oOo___
