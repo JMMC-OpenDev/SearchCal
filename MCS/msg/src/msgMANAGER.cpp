@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.14 2005-01-26 17:54:42 gzins Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.15 2005-01-29 09:56:25 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/01/26 17:54:42  gzins
+ * Removed reference to action log
+ *
  * Revision 1.13  2005/01/26 08:47:18  gzins
  * Added PrepareReply to fix bug related to wrong message type when sending reply to sender.
  *
@@ -34,7 +37,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.14 2005-01-26 17:54:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.15 2005-01-29 09:56:25 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -160,7 +163,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
         
         // Wait for message
         int status;
-        logInfo("Waiting message...");
+        logTest("Waiting message...");
         status = select(msgMANAGER_SELECT_WIDTH, &readMask, (fd_set *) NULL,
                         (fd_set *) NULL, (struct timeval *) NULL );
         
@@ -179,7 +182,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
         /* If a new connection demand was received... */
         if (FD_ISSET(_connectionSocket.GetDescriptor() , &readMask))
         {
-            logInfo("Connection demand received...");
+            logTest("Connection demand received...");
 
             /* Init the new connection */
             if (SetConnection() == mcsFAILURE)
@@ -189,7 +192,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
         }
         else /* A message from an already connected process was received... */
         {
-            logInfo("Message received...");
+            logTest("Message received...");
             mcsINT32   nbBytesToRead ;
 
             // Look for the process which sent message
@@ -244,12 +247,30 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                                 {
                                     errCloseStack();
                                 }
+                                else
+                                {
+                                    // Get process which should sent the waited
+                                    // reply
+                                    msgPROCESS *replySender;        
+                                    replySender = _processList.GetProcess
+                                        (msg.GetRecipient());
+
+                                    // Add entry in the list of  waited command
+                                    // replies
+                                    _waitedCmdReplyList.push_back
+                                        (pair<int, msgMESSAGE>
+                                         (replySender->GetDescriptor(), msg));
+                                }
+
                             }
                         }
                         else // If the message is a reply...
                         {
                             // Send reply to the sender process
                             SendReply(msg);
+                            
+                            // Removed reply from the awaited commamd reply list
+                            RemoveProcessWaitingFor(msg.GetCommandId());
                         }
                     }
                 }
@@ -258,9 +279,16 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                     logWarning("Connection with '%s' process lost",
                                process->GetName());
 
-                    /* Close the connection */
-                    if (_processList.Remove(process->GetDescriptor())
-                        == mcsFAILURE)
+                     /* Close the connection */
+                    mcsINT32 procDescriptor=process->GetDescriptor();
+                    if (_processList.Remove(procDescriptor) == mcsFAILURE)
+                    {
+                        errCloseStack();
+                    }
+
+                    /* Release process which are waiting for from this 
+                     * process */
+                    if (ReleaseWaitingProcess(procDescriptor) == mcsFAILURE)
                     {
                         errCloseStack();
                     }
@@ -456,7 +484,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
                 logTest("Connection demand received from %s ...",
                         msg.GetSender());
 
-                logInfo("'%s' connection accepted", msg.GetSender());
+                logTest("'%s' connection accepted", msg.GetSender());
 
                 /* Add the new process to the process list */
                 newProcess->SetName(msg.GetSender());
@@ -497,7 +525,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
     msgPROCESS *recipient;
 
     logExtDbg("msgMANAGER::Forward()");
-    logInfo("Received '%s' command from '%s' for '%s'", msg.GetCommand(),
+    logTest("Received '%s' command from '%s' for '%s'", msg.GetCommand(),
             msg.GetSender(), msg.GetRecipient());
 
     /* Find the recipient process in the process list */
@@ -635,7 +663,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
 mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
 {
     logExtDbg("msgMANAGER::HandleCmd()");
-    logInfo("Received internal '%s' command from '%s'", msg.GetCommand(),
+    logTest("Received internal '%s' command from '%s'", msg.GetCommand(),
             msg.GetSender());
     
     /* If the received command is a PING request... */ 
@@ -736,7 +764,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         SendReply(msg);
 
         /* Close the connection */
-        logInfo("Connection with process '%s' closed", msg.GetSender());
+        logTest("Connection with process '%s' closed", msg.GetSender());
         msgPROCESS *sender;
         sender = _processList.GetProcess(msg.GetSender(), msg.GetSenderId());
         if (_processList.Remove(sender->GetDescriptor()) == mcsFAILURE)
@@ -756,7 +784,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         sleep(1);
 
         /* Quit msgManager process */
-        logInfo("msgManager exiting...");
+        logTest("msgManager exiting...");
         exit(EXIT_SUCCESS);
     }
     /* If the received command is an unknown request... */
@@ -772,6 +800,95 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
 
         return mcsFAILURE;
     }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Release all waiting processes.
+ *
+ * It releases all the processes which are waiting for a reply from the given
+ * process. It sends an error reply the process has abnornaly existed.
+ * 
+ * \param procDescriptor socket descriptor of dead process.
+ *
+ * \return an completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT msgMANAGER::ReleaseWaitingProcess(mcsINT32 procDescriptor)
+{
+    
+    logExtDbg("msgMANAGER::ReleaseWaitingProcess()");
+
+    // For each waited command replies 
+    list< pair<int, msgMESSAGE> >::iterator iter;
+    for (iter = _waitedCmdReplyList.begin();
+         iter != _waitedCmdReplyList.end(); ++iter)
+    {
+        // If process descriptors match
+        if ((*iter).first == procDescriptor)
+        {
+            // Send error reply
+            errAdd (msgERR_PROC_ABNORMALLY_EXIT, ((*iter).second).GetRecipient());
+            PrepareReply((*iter).second);
+            SendReply((*iter).second);            
+        }
+    }
+    
+    // Purge waited command replies
+    iter = _waitedCmdReplyList.begin();
+    while (iter != _waitedCmdReplyList.end())
+    {
+        // If the callback list is empty 
+        if ((*iter).first == procDescriptor)
+        {
+            // Remove it, and restart at the beginning of the list
+            _waitedCmdReplyList.erase(iter);
+            iter = _waitedCmdReplyList.begin();
+        }
+        else
+        {
+            iter++;
+        }
+    }
+
+    logDebug("Nb waited command replies = %d", _waitedCmdReplyList.size()); 
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Remove received reply from waited command replies.
+ *
+ * It removes the received reply from the list containing all awaited replies.
+ * 
+ * \param commandId command Id of the received reply.
+ *
+ * \return an completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT msgMANAGER::RemoveProcessWaitingFor(mcsINT32 commandId)
+{
+    
+    logExtDbg("msgMANAGER::RemoveProcessWaitingFor()");
+
+    // Remove received reply from list
+    list< pair<int, msgMESSAGE> >::iterator iter;
+    iter = _waitedCmdReplyList.begin();
+    while (iter != _waitedCmdReplyList.end())
+    {
+        // If the callback list is empty 
+        if (((*iter).second).GetCommandId() == commandId)
+        {
+            // Remove it, and restart at the beginning of the list
+            _waitedCmdReplyList.erase(iter);
+            iter = _waitedCmdReplyList.begin();
+        }
+        else
+        {
+            iter++;
+        }
+    }
+
+    logDebug("Nb waited command replies = %d", _waitedCmdReplyList.size()); 
 
     return mcsSUCCESS;
 }
