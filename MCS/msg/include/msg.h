@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msg.h,v 1.2 2004-09-07 14:25:37 gzins Exp $"
+* "@(#) $Id: msg.h,v 1.3 2004-10-01 13:06:50 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,12 +26,10 @@ functions in C++-code.
 extern "C" {
 #endif
 
-
 /*
  * MCS Headers 
  */
 #include "mcs.h"
-
 
 /* 
  * Constants definition
@@ -43,12 +41,10 @@ extern "C" {
 #define msgNO_WAIT               0   
 #define msgWAIT_FOREVER         -1
 
-
 /**
  * Maximum message size
  */
 #define msgMAXLEN                8192
-
 
 /**
  * Standard command names
@@ -58,8 +54,6 @@ extern "C" {
 #define msgEXIT_CMD             "EXIT"
 #define msgVERSION_CMD          "VERSION"
 
-
-
 /* 
  * Macro definition
  */
@@ -68,7 +62,6 @@ extern "C" {
  * Maximum message body size
  */
 #define msgBODYMAXLEN            (msgMAXLEN - sizeof(msgHEADER) - 1)
-
 
 /*
  * Enumeration type definition
@@ -80,11 +73,8 @@ extern "C" {
 typedef enum
 {
     msgTYPE_COMMAND = 1,         /**< Describe command messages. */
-
     msgTYPE_REPLY,               /**< Describe reply messages. */
-
     msgTYPE_ERROR_REPLY          /**< Describe error reply messages. */
-
 } msgTYPE;
 
 
@@ -98,19 +88,12 @@ typedef enum
 typedef struct
 {
     mcsPROCNAME sender;          /**< Sender processus name */
-
     mcsPROCNAME recipient;       /**< Receiver processus name  */
-
     mcsUINT8    type;            /**< Message type */
-
     mcsCMD      command;         /**< Command name */
-
     mcsLOGICAL  lastReply;       /**< TRUE if it is the last answer */
-
     mcsBYTES32  timeStamp;       /**< Message date */
-
     mcsBYTES8   msgBodySize;     /**< Message body size */
-
 } msgHEADER;
 
 
@@ -120,7 +103,6 @@ typedef struct
 typedef struct
 {
     msgHEADER  header;
-
     char       body[msgMAXLEN - sizeof(msgHEADER)];
 
 } msgMESSAGE;
