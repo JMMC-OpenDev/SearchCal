@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.8 2005-02-04 07:40:53 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.9 2005-02-04 15:25:40 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/02/04 07:40:53  gzins
+* Limited number of logged messages for test
+*
 * Revision 1.7  2005/01/27 13:45:30  scetre
 * Add functionnality to the parser to parse II/225 return
 *
@@ -17,7 +20,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.8 2005-02-04 07:40:53 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.9 2005-02-04 15:25:40 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -585,7 +588,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                         // If the given flux correspond to an expected magnitude
                         if (magId != NULL)
                         {
-                            logDebug("flux = %s and lambda = %s ==> mag %s\n",
+                            logDebug("Flux = %s and lambda = %s ==> mag %s",
                                      flux, lambda, magId);
                             star.SetPropertyValue(magId, flux); 
                         }
