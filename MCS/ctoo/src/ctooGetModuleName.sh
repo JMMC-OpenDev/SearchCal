@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetModuleName.sh,v 1.3 2004-09-15 14:47:24 gluck Exp $"
+# "@(#) $Id: ctooGetModuleName.sh,v 1.4 2004-12-09 09:45:27 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -45,8 +45,8 @@
 dir=../doc
 if [ ! -d $dir ]
 then
-    echo "error - ctooGetmoduleName: $dir directory does not exist."
-    echo "        please check your module directory structure"
+    echo "ERROR - ctooGetmoduleName: $dir directory does not exist." >&2
+    echo "        please check your module directory structure" >&2
     exit 1
 fi
 
@@ -54,8 +54,8 @@ fi
 file=../doc/moduleDescription.xml
 if [ ! -f $file ]
 then
-    echo "error - ctooGetmoduleName: $file file does not exist."
-    echo "        please check your module directory structure"
+    echo "ERROR - ctooGetmoduleName: $file file does not exist." >&2
+    echo "        please check your module directory structure"  >&2
     exit 1
 fi
     
@@ -72,14 +72,12 @@ ROOT_NAME=${rightSideOfModuleName%%\">}
 # If no module name can be found => error
 if [ "$ROOT_NAME" = "" ]
 then
-    echo "error - ctooGetModuleName: Could not get module name."
+    echo "ERROR - ctooGetModuleName: Could not get module name." >&2
     exit 1
 else
     # Export module name
-    export moduleName=$ROOT_NAME
+    echo $ROOT_NAME
+    exit 0
 fi
-
-# return with success
-return 0
 
 #___ooo___
