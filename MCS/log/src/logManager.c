@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logManager.c,v 1.1 2004-08-06 12:34:20 lafrasse Exp $"
+* "@(#) $Id: logManager.c,v 1.2 2004-08-23 15:31:09 lafrasse Exp $"
 *
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  30-Jun-2004  Forked and ported (Windows to Linux) from CILAS Soft
+* lafrasse  23-Aug-2004  Changed var. name logManagerPortNumber to portNumber
 *
 *
 *******************************************************************************/
@@ -108,7 +109,7 @@ int main(int argc, char** argv)
     mcsUINT32          logMaxFileSize = logMANAGER_DEFAULT_MAX_FILE_SIZE;
 
     /* Network stuff */
-    mcsUINT32          logManagerPortNumber = logMANAGER_DEFAULT_PORT_NUMBER;
+    mcsUINT32          portNumber = logMANAGER_DEFAULT_PORT_NUMBER;
     int                sock = 0;
     struct hostent     *hp = NULL;
     struct sockaddr_in from;
@@ -188,11 +189,11 @@ int main(int argc, char** argv)
 
             /* Copy the received port number in place of the default value */
             case 'p':
-                sscanf(optarg, "%d", &logManagerPortNumber);
-                if (logManagerPortNumber < 0 || logManagerPortNumber > 65535)
+                sscanf(optarg, "%d", &portNumber);
+                if (portNumber < 0 || portNumber > 65535)
                 {
-                    logManagerPortNumber = logMANAGER_DEFAULT_PORT_NUMBER;
-                    logDisplayMessage("received an out of range port value as parameter - will use the default '%d' value instead", logManagerPortNumber);
+                    portNumber = logMANAGER_DEFAULT_PORT_NUMBER;
+                    logDisplayMessage("received an out of range port value as parameter - will use the default '%d' value instead", portNumber);
                 }
                 break;
 
@@ -267,7 +268,7 @@ int main(int argc, char** argv)
     from.sin_family = hp->h_addrtype;
 
     /* Converts the port number from host byte order to network byte order */
-    from.sin_port = htons(logManagerPortNumber); 
+    from.sin_port = htons(portNumber); 
 
     /* Try to associate the local address with the socket */
     if (bind(sock, (struct sockaddr *)&from, sizeof(from)) == -1)
@@ -280,7 +281,7 @@ int main(int argc, char** argv)
     /* Display logManager start time and parameters */
     logDisplayMessage(
     "started listening on port '%d', will write up to '%d' bytes in file '%s'"
-    , logManagerPortNumber, logMaxFileSize, logFilePath);
+    , portNumber, logMaxFileSize, logFilePath);
 
 
 
