@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.10 2004-08-02 15:23:40 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.11 2004-08-23 15:08:02 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -21,6 +21,7 @@
 * lafrasse  02-Aug-2004  Moved mcs.h include to miscDynBuf.h
 *                        Moved in null-terminated string specific functions
 *                        from miscDynStr.c
+* lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
 *
 *
 *******************************************************************************/
@@ -40,6 +41,9 @@
  * {
  *     miscDYN_BUF dynBuf;
  *     char tab1[3] = {0, 1, 2};
+ *
+ *     miscDynBufInit(&dynBuf);
+ *
  *     miscDynBufAppendBytes(&dynBuf, (char*)tab1, 3 * sizeof(int));
  *     .
  *     . ...
@@ -56,6 +60,7 @@
  *     tmp = " append...";
  *     miscDynBufAppendString(&dynBuf, tmp);
  *     printf("DynBuf contains '%s'.\n", miscDynBufGetBufferPointer(&dynBuf));
+ *
  *     miscDynBufDestroy(&dynBuf);
  *
  *     exit (EXIT_SUCCESS);
@@ -63,7 +68,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.10 2004-08-02 15:23:40 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.11 2004-08-23 15:08:02 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -90,8 +95,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local functions declaration 
  */
-static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF       *dynBuf);
-
 static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
                                              miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   position);
@@ -112,47 +115,6 @@ static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
 /* 
  * Local functions definition
  */
-
-/**
- * Verify if a Dynamic Buffer has already been initialized, else initialize it.
- *
- * This function is used internally, in order to test if a Dynamic Buffer has
- * been initialized before use. If not, the Dynamic Buffer will be initialized.
- *
- * \param dynBuf the address of a Dynamic Buffer structure
- *
- * \return an MCS completion status code (SUCCESS or FAILURE)
- */
-static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF        *dynBuf)
-{
-    /* Test the 'dynBuf' parameter validity... */
-    if (dynBuf == NULL)
-    {
-        errAdd(miscERR_NULL_PARAM, "dynBuf");
-        return FAILURE;
-    }
-
-    /* Test the 'pointer to itself' and 'structure identifier magic number'
-     * validity...
-     */
-    if (dynBuf->thisPointer != dynBuf
-        || dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
-    {
-        /* Try to initialize all the structure with '0' */
-        if ((memset(dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
-        {
-            errAdd(miscERR_MEM_FAILURE);
-            return FAILURE;
-        }
-
-        /* Set its 'pointer to itself' correctly */
-        dynBuf->thisPointer = dynBuf;
-        /* Set its 'structure identifier magic number' correctly */
-        dynBuf->magicStructureId = miscDYN_BUF_MAGIC_STRUCTURE_ID;
-    }
-
-    return SUCCESS;
-}
 
 /**
  * Verify if a Dynamic Buffer has already been initialized, and if the given
@@ -304,6 +266,44 @@ static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
 /*
  * Public functions definition
  */
+
+/**
+ * Initialize a Dynamic Buffer.
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf)
+{
+    /* Test the 'dynBuf' parameter validity... */
+    if (dynBuf == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "dynBuf");
+        return FAILURE;
+    }
+
+    /* Test the 'pointer to itself' and 'structure identifier magic number'
+     * validity...
+     */
+    if (dynBuf->thisPointer != dynBuf
+        || dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
+    {
+        /* Try to initialize all the structure with '0' */
+        if ((memset(dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
+        {
+            errAdd(miscERR_MEM_FAILURE);
+            return FAILURE;
+        }
+
+        /* Set its 'pointer to itself' correctly */
+        dynBuf->thisPointer = dynBuf;
+        /* Set its 'structure identifier magic number' correctly */
+        dynBuf->magicStructureId = miscDYN_BUF_MAGIC_STRUCTURE_ID;
+    }
+
+    return SUCCESS;
+}
 
 /**
  * Allocate and add a number of bytes to a Dynamic Buffer already allocated

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynBuf.h,v 1.8 2004-08-02 15:23:40 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.h,v 1.9 2004-08-23 15:08:02 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,6 +17,7 @@
 * lafrasse  02-Aug-2004  Moved mcs.h include in from miscDynBuf.c
 *                        Moved in null-terminated string specific functions
 *                        from miscDynStr.h
+* lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
 *
 *
 *******************************************************************************/
@@ -96,6 +97,8 @@ typedef struct
 /*
  * Pubic functions declaration
  */
+
+mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf);
 
 mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length);

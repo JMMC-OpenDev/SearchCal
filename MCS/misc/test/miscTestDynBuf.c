@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDynBuf.c,v 1.8 2004-08-02 15:23:40 lafrasse Exp $"
+* "@(#) $Id: miscTestDynBuf.c,v 1.9 2004-08-23 15:08:02 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,11 +15,12 @@
 * lafrasse  02-Aug-2004  Added miscTesDynStr code, due to null-terminated
 *                        string specific functions move from miscDynStr.h to
 *                        miscDynBuf.h
+* lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.8 2004-08-02 15:23:40 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.9 2004-08-23 15:08:02 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -90,6 +91,7 @@ int main (int argc, char *argv[])
 
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
+	miscDynBufInit(&dynBuf);
 	displayDynBuf(&dynBuf);
     errDisplayStack();
     errCloseStack();
