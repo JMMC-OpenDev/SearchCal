@@ -4,12 +4,15 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/24 14:49:18  gzins
+* Used CVS log as modification history
+*
 * gzins     17-Jun-2004  completed implementation
 * berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errResetLocalStack_L.c,v 1.3 2005-01-24 14:49:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errResetLocalStack_L.c,v 1.4 2005-01-27 14:12:44 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -35,14 +38,14 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * 
  * \param  error Error structure to be reset.
  */
-mcsCOMPL_STAT errResetLocalStack(errERROR *error)
+mcsCOMPL_STAT errResetLocalStack(errERROR_STACK *error)
 {
     mcsINT32 i;
 
     logExtDbg("errResetLocalStack()");
 
     /* Initialize the error structure */
-    memset((char *)error, '\0', sizeof(errERROR));
+    memset((char *)error, '\0', sizeof(errERROR_STACK));
     for ( i = 0; i < error->stackSize; i++)
     {
         memset((char *)error->stack[i].timeStamp, '\0',

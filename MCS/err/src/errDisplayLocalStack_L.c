@@ -4,13 +4,16 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/01/24 14:49:18  gzins
+* Used CVS log as modification history
+*
 * gzins     18-Nov-2004  printed out error stack on stderr
 * gzins     17-Jun-2004  completed implementation
 * berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errDisplayLocalStack_L.c,v 1.5 2005-01-24 14:49:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errDisplayLocalStack_L.c,v 1.6 2005-01-27 14:10:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,7 +39,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * 
  * \param  error Error structure to be displayed.
  */
-mcsCOMPL_STAT errDisplayLocalStack(errERROR *error)
+mcsCOMPL_STAT errDisplayLocalStack(errERROR_STACK *error)
 {
     mcsINT32 i;
     mcsSTRING32 tab;

@@ -4,13 +4,16 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/24 14:49:18  gzins
+* Used CVS log as modification history
+*
 * gzins     06-Dec-2004  printed-out error stack when closing it
 * gzins     17-Jun-2004  completed implementation
 * berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errCloseLocalStack_L.c,v 1.4 2005-01-24 14:49:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errCloseLocalStack_L.c,v 1.5 2005-01-27 14:09:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,7 +39,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * 
  * \param  error Error structure containing previous error context.
  */
-mcsCOMPL_STAT errCloseLocalStack(errERROR *error)
+mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
 {
     mcsINT32     i;
     mcsSTRING128 tab;

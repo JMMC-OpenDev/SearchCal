@@ -4,12 +4,15 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.2  2005/01/24 14:49:18  gzins
+* Used CVS log as modification history
+*
 * gzins     17-Jun-2004  completed implementation
 * berezne   02-Jun-2004  created
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errLocalStackIsEmpty_L.c,v 1.2 2005-01-24 14:49:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errLocalStackIsEmpty_L.c,v 1.3 2005-01-27 14:10:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -37,7 +40,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *
  * \return mcsTRUE if the error stack is empty, otherwise mcsFALSE.
  */
-mcsLOGICAL errLocalStackIsEmpty (errERROR          *error)
+mcsLOGICAL errLocalStackIsEmpty (errERROR_STACK          *error)
 {
     logExtDbg("errLocalStackIsEmpty()");
 
