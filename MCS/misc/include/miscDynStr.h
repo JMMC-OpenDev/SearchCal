@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynStr.h,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"
+* "@(#) $Id: miscDynStr.h,v 1.4 2004-08-02 14:08:46 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -41,13 +41,6 @@
  */
 
 
-
-/* 
- * Local Headers
- */
-#include "miscDynBuf.h"
-
-
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
 functions in C++ code.
@@ -56,6 +49,12 @@ functions in C++ code.
 extern "C" {
 #endif
 
+
+
+/* 
+ * Local Headers
+ */
+#include "miscDynBuf.h"
 
 
 /*

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.17 2004-07-23 14:29:59 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.18 2004-08-02 14:08:46 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -22,17 +22,16 @@
 *                        Added error management to miscDate
 * gzins     23-Jul-2004  Added miscIsSpaceStr to miscString
 * lafrasse  23-Jul-2004  Added error management to miscString
+* lafrasse  02-Aug-2004  Removed all functions declaration, and included
+*                        separated hedaear files instead
 *
 *
 *******************************************************************************/
  
 /**
  * \file
- * This header contains all the miscDate, miscFile and miscString functions
- * declarations, but NOT those of miscDynBuf nor those of miscDynStr.
- *
- * miscDynBuf and miscDynStr functions (due to their number), have their own
- * include file, respectivally called miscDynBuf.h and miscDynStr.h.
+ * This header include all the miscDate, miscFile and miscString functions
+ * declarations hedears files.
  */
 
 /* The following piece of code alternates the linkage type to C for all 
@@ -47,31 +46,12 @@ extern "C" {
 /*
  * Local Headers 
  */
+#include "miscDate.h"
+#include "miscDynBuf.h"
 #include "miscDynStr.h"
+#include "miscFile.h"
+#include "miscString.h"
 
-
-/*
- * Pubic functions declaration
- */
- 
-/* miscDate stuff */
-mcsCOMPL_STAT miscGetUtcTimeStr  (mcsBYTES32 localTime, mcsINT32 precision);
-mcsCOMPL_STAT miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
-
-
-/* miscFile stuff */
-char *        miscGetFileName    (char *fullPath);
-char *        miscGetExtension   (char *fullPath);
-mcsCOMPL_STAT miscYankExtension  (char *fullPath, char *extension);
-mcsCOMPL_STAT miscResolvePath    (const char *orginalPath, char **resolvedPath);
-mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName, char **envVarValue);
-mcsCOMPL_STAT miscYankLastPath   (char *path);
-
-
-/* miscString stuff */
-mcsCOMPL_STAT miscStripQuotes    (char *string);
-mcsCOMPL_STAT miscStrToUpper     (char *string);
-mcsLOGICAL    miscIsSpaceStr     (char *string);
 
 #ifdef __cplusplus
 }

@@ -7,6 +7,8 @@
 * lafrasse  17-Jun-2004  Added miscStrToUpper
 * gzins     23-Jul-2004  Added miscIsSpaceStr
 * lafrasse  23-Jul-2004  Added error management
+* lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
+*                        misc.h
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -14,11 +16,9 @@
 /**
  * \file
  * Contains all the 'misc' String related functions definitions.
- *
- * \sa To see all the other 'misc' module functions declarations, see misc.h
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.7 2004-07-23 14:29:59 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.8 2004-08-02 14:08:46 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -27,8 +27,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
 #include <ctype.h>
 
 
@@ -42,7 +40,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Local Headers
  */
-#include "misc.h"
+#include "miscString.h"
 #include "miscPrivate.h"
 #include "miscErrors.h"
 

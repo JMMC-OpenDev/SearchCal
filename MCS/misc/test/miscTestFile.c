@@ -1,18 +1,19 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.4 2004-08-02 14:08:46 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
 * lafrasse  21-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
 *                        miscYankLastPath tests
+* lafrasse  02-Aug-2004  Changed local includes to use miscFile headers
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.4 2004-08-02 14:08:46 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -33,7 +34,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Local Headers 
  */
-#include "misc.h"
+#include "miscFile.h"
 
 
 /* 

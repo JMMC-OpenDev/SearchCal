@@ -1,18 +1,19 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDate.c,v 1.2 2004-07-22 15:29:15 lafrasse Exp $"
+* "@(#) $Id: miscTestDate.c,v 1.3 2004-08-02 14:08:46 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
 * lafrasse  22-Jul-2004  Correted some typos, code factorization, and error
 *                        management
+* lafrasse  02-Aug-2004  Changed local includes to use miscDate headers
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDate.c,v 1.2 2004-07-22 15:29:15 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDate.c,v 1.3 2004-08-02 14:08:46 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -33,7 +34,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Local Headers 
  */
-#include "misc.h"
+#include "miscDate.h"
 
 
 /* 
