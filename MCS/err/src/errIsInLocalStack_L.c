@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/31 15:51:18  mella
+* Correct typo error
+*
 * Revision 1.3  2005/01/27 14:10:37  gzins
 * Changed errERROR to errERROR_STACK
 *
@@ -15,7 +18,12 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errIsInLocalStack_L.c,v 1.4 2005-01-31 15:51:18 mella Exp $"; 
+/**
+ * \file
+ * Definition of errIsInLocalStack function.
+ */
+
+static char *rcsId="@(#) $Id: errIsInLocalStack_L.c,v 1.5 2005-02-15 08:09:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,8 +50,10 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * \param error Error structure containing current error context.
  * \param moduleId  Module identifier
  * \param errorId Error number
+ *
+ * \return mcsTRUE if given error is in stack, or mcsFALSE otherwise.
  */
-mcsLOGICAL errIsInLocalStack (errERROR_STACK          *error,
+mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
                               const mcsMODULEID moduleId,
                               mcsINT32          errorId)
 {

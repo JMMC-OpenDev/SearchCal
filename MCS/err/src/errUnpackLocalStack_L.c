@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/09 14:26:03  lafrasse
+* Changed errUnpackStack() parameters to const
+*
 * Revision 1.4  2005/01/27 14:11:52  gzins
 * Changed errERROR to errERROR_STACK
 * Added isErrUser parameter
@@ -16,7 +19,12 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errUnpackLocalStack_L.c,v 1.5 2005-02-09 14:26:03 lafrasse Exp $"; 
+/**
+ * \file
+ * Definition of errUnpackLocalStack function.
+ */
+
+static char *rcsId="@(#) $Id: errUnpackLocalStack_L.c,v 1.6 2005-02-15 08:09:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,6 +50,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Re-initialize the error structure to start a new error stack.
  * 
  * \param  error Error structure to be reset.
+ *
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
                                   const char     *buffer, 

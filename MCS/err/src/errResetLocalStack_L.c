@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/27 14:12:44  gzins
+* Changed errERROR to errERROR_STACK
+*
 * Revision 1.3  2005/01/24 14:49:18  gzins
 * Used CVS log as modification history
 *
@@ -12,7 +15,12 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errResetLocalStack_L.c,v 1.4 2005-01-27 14:12:44 gzins Exp $"; 
+/**
+ * \file
+ * Definition of errResetLocalStack function.
+ */
+
+static char *rcsId="@(#) $Id: errResetLocalStack_L.c,v 1.5 2005-02-15 08:09:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -37,6 +45,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Re-initialize the error structure to start a new error stack.
  * 
  * \param  error Error structure to be reset.
+ *
+ * \return mcsSUCCESS.
  */
 mcsCOMPL_STAT errResetLocalStack(errERROR_STACK *error)
 {
