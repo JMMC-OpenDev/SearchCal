@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.10 2004-12-07 16:28:32 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.11 2004-12-13 13:33:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -30,7 +30,7 @@
  * Constants definition
  */
 
-#define sclsvrCALIBRATOR_PROP_NOT_SET  "99.99"  /**< Default value of the empty
+#define sclsvrCALIBRATOR_PROP_NOT_SET  "-"  /**< Default value of the empty
                                           properties */
 
 /*

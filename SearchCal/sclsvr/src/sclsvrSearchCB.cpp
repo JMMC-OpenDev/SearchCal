@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.cpp,v 1.6 2004-12-10 08:17:15 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCB.cpp,v 1.7 2004-12-13 13:33:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.6 2004-12-10 08:17:15 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.7 2004-12-13 13:33:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -175,19 +175,19 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(STAR_NAME_ID, objName) 
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the right ascension position
     if (request.SetConstraint(RA_ID, ra) 
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the declinaison position
     if (request.SetConstraint(DEC_ID, dec) 
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the wavelength
     mcsSTRING256 wavelength;
@@ -195,7 +195,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(STAR_WLEN_ID, wavelength)
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the magnitude
     mcsSTRING256 mag;
@@ -203,19 +203,19 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(STAR_MAGNITUDE_ID, mag)
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the min of the magitude range
     if (request.SetConstraint(MIN_MAGNITUDE_RANGE_ID, minMagRange)
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the max of the magnitude range
     if (request.SetConstraint(MAX_MAGNITUDE_RANGE_ID, maxMagRange)
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the search box ra
     mcsSTRING256 dRa;
@@ -223,7 +223,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(SEARCH_BOX_RA_ID, dRa)
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the serach box dec
     mcsSTRING256 dDec;
@@ -231,7 +231,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(SEARCH_BOX_DEC_ID,dDec)
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the expected visibility
     mcsSTRING256 visi;
@@ -239,7 +239,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(STAR_EXPECTED_VIS_ID, visi)
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the error visibility
     mcsSTRING256 visError;
@@ -247,13 +247,13 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(STAR_MAX_ERR_VIS_ID, visError)
         == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the observed band
     if (request.SetConstraint(OBSERVED_BAND_ID, band)
         ==  FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the baseMin
     mcsSTRING256 baseMini;
@@ -261,7 +261,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(BASEMIN_ID, baseMini)
         ==  FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the baseMax
     mcsSTRING256 baseMaxi;
@@ -269,7 +269,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     if (request.SetConstraint(BASEMAX_ID, baseMaxi)
         ==  FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // Build the virtual observatory
@@ -281,7 +281,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     // start the research in the virtual observatory
     if (virtualObservatory.Search(request, starList)==FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // Build the list of calibrator
@@ -290,12 +290,12 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     // get the resulting star list and create a calibrator list
     if (calibratorList.Copy(starList) == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // complete the calibrators list
     if (calibratorList.Complete(request) == FAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     calibratorList.Display();
     
