@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.22 2005-02-16 17:33:20 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.23 2005-02-23 08:12:59 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/02/16 17:33:20  gzins
+ * Removed obsolete Pack and UnPack methods
+ *
  * Revision 1.21  2005/02/10 08:20:21  gzins
  * Added properties for diameter from B-V, V-K and V- R calibration
  *
@@ -56,7 +59,9 @@
 #define sclsvrCALIBRATOR_DIAM_BV            "DIAM_BV"
 #define sclsvrCALIBRATOR_DIAM_VR            "DIAM_VR"
 #define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
-#define sclsvrCALIBRATOR_DIAM_ERROR         "DIAM_ERROR"
+#define sclsvrCALIBRATOR_DIAM_BV_ERROR      "DIAM_BV_ERROR"
+#define sclsvrCALIBRATOR_DIAM_VR_ERROR      "DIAM_VR_ERROR"
+#define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 
 /*
