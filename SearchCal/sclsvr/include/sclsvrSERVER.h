@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSERVER.h,v 1.4 2005-01-27 15:56:29 scetre Exp $"
+* "@(#) $Id: sclsvrSERVER.h,v 1.5 2005-02-07 09:16:37 gzins Exp $"
 *
 * History
 * -------
@@ -23,6 +23,7 @@
 #endif
 
 #include "evh.h"
+#include "vobs.h"
 /*
  * Class declaration
  */
@@ -91,6 +92,9 @@ private:
     // methods, in order to hide them from the users.
     sclsvrSERVER(const sclsvrSERVER&);
     sclsvrSERVER& operator=(const sclsvrSERVER&); 
+
+    // Virtual observatory
+    vobsVIRTUAL_OBSERVATORY _virtualObservatory;
 };
 
 #endif /*!sclsvrSERVER_H*/
