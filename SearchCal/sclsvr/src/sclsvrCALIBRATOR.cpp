@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.40 2005-02-23 17:05:27 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.41 2005-02-23 17:16:06 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2005/02/23 17:05:27  scetre
+ * Added in compute visibility method the compute of visibility with wlen = 8 and 13 mu if it is a N observed band
+ *
  * Revision 1.39  2005/02/23 12:52:45  scetre
  * Changed test if visibility is ok or not
  *
@@ -66,7 +69,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.40 2005-02-23 17:05:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.41 2005-02-23 17:16:06 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -773,11 +776,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", 
                 vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(sclsvrCALIBRATOR_VIS2_8, "vis2(8)", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(sclsvrCALIBRATOR_VIS2_8_ERROR, "vis2Err(8)", 
+    AddProperty(sclsvrCALIBRATOR_VIS2_8, "vis2(8mu)", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS2_8_ERROR, "vis2Err(8mu)", 
                 vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(sclsvrCALIBRATOR_VIS2_13, "vis2(13)", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13)", 
+    AddProperty(sclsvrCALIBRATOR_VIS2_13, "vis2(13mu)", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13mu)", 
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2_FLAG, "vis2Flag", vobsSTRING_PROPERTY);
 

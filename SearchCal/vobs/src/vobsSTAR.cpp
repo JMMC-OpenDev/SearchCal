@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.36 2005-02-23 07:52:13 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.37 2005-02-23 17:15:32 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.36  2005/02/23 07:52:13  gzins
+* Added vobsSTAR_DIAM12 and vobsSTAR_DIAM12_ERROR properties
+*
 * Revision 1.35  2005/02/22 15:42:42  gzins
 * Set format for paralax to "%.2f"
 *
@@ -80,7 +83,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.36 2005-02-23 07:52:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.37 2005-02-23 17:15:32 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -929,20 +932,20 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     //logExtDbg("vobsSTAR::AddProperties()");
-    AddProperty(vobsSTAR_ID_HD, "hd", vobsFLOAT_PROPERTY, "%.0f");
-    AddProperty(vobsSTAR_ID_HIP, "hip", vobsFLOAT_PROPERTY, "%.0f");
-    AddProperty(vobsSTAR_ID_DM, "dm", vobsFLOAT_PROPERTY, "%.0f");    
-    AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "ra", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "dec", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmdec", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_POS_EQ_PMRA, "pmra", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "%.0f");
+    AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "%.0f");
+    AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "%.0f");    
+    AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "%.2f");
-    AddProperty(vobsSTAR_SPECT_TYPE_MK, "tsp", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_CODE_VARIAB, "varflag", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_CODE_MULT_FLAG, "multflag", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_POS_GAL_LAT, "glat", vobsFLOAT_PROPERTY, "%.2f");
-    AddProperty(vobsSTAR_POS_GAL_LON, "glon", vobsFLOAT_PROPERTY, "%.2f");
-    AddProperty(vobsSTAR_VELOC_HC, "radvel", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_VARIAB, "Vflag", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_MULT_FLAG, "Mflag", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "%.2f");
+    AddProperty(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "%.2f");
+    AddProperty(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_LD_DIAM, "LD", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_LD_DIAM_ERROR, "e_LD", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_UD_DIAM, "UD", vobsFLOAT_PROPERTY, "%.3f");
@@ -951,8 +954,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_DIAM12_ERROR, "e_dia12.", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(vobsSTAR_OBS_METHOD, "meth", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "wlen", vobsFLOAT_PROPERTY);
+    AddProperty(vobsSTAR_OBS_METHOD, "Meth", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "lambda", vobsFLOAT_PROPERTY);
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_PHOT_JHN_U, "U", vobsFLOAT_PROPERTY, "%.3f");
@@ -966,7 +969,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(vobsSTAR_VELOC_ROTAT, "velocrotat", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx",  vobsFLOAT_PROPERTY, 
