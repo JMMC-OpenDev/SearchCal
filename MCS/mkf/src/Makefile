@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-09-10 13:40:57 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-09-10 13:53:18 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
@@ -124,7 +124,24 @@ MANl =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../include/mkfMakefile
+INSTALL_FILES = ../include/mkfJavaMakefile  				\
+				../include/mkfMakefile  					\
+				../include/mkfMakefile.all  				\
+				../include/mkfPythonMakefile               	\
+				../config/mkfBuildDocIndex2.xsl             \
+				../config/mkfBuildDocIndex.xsl              \
+				../config/mkfSTKToInterface.xsl             \
+				../config/mkfSTKToPythonHelp.xsl            \
+				../config/mkfSTKToPythonTestForCpp.xsl      \
+				../config/mkfSTKToPythonTestForC.xsl        \
+				../config/mkfSTK_WriteArrayName.xsl         \
+				../config/mkfSTK_WriteFunctionParam.xsl     \
+				../config/mkfSTK_WriteFunctionPrototype.xsl \
+				../config/mkfSTK_WritePointerType.xsl       \
+				../config/mkfSTK_WriteStruct.xsl            \
+				../config/mkfSTK_WriteTypedef.xsl           \
+				../config/mkfSTK_WriteType.xsl
+
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
