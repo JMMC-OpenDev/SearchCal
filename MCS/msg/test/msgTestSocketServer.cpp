@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgTestSocketServer.cpp,v 1.1 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgTestSocketServer.cpp,v 1.2 2004-12-15 15:53:38 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  24-Nov-2004  Created
+* lafrasse  14-Dec-2004  Added error code management
 *
 *
 *******************************************************************************/
@@ -18,7 +19,7 @@
  * \<msgTestSocketServer\>
  */
 
-static char *rcsId="@(#) $Id: msgTestSocketServer.cpp,v 1.1 2004-11-26 13:11:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgTestSocketServer.cpp,v 1.2 2004-12-15 15:53:38 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -40,6 +41,7 @@ using namespace std;
  */
 #include "mcs.h"
 #include "log.h"
+#include "err.h"
 
 
 /*
@@ -54,6 +56,10 @@ using namespace std;
  */
 int main(int argc, char *argv[])
 {
+    msgMESSAGE msg;
+    string buffer;
+    msgSOCKET tempSocket;
+
     // Initialize MCS services
     if (mcsInit(argv[0]) == FAILURE)
     {
@@ -68,54 +74,108 @@ int main(int argc, char *argv[])
     cout << "OK" << endl;
 
     cout << "Server binding the new socket to port '" << portNumber << "' ... ";
-    serverSocket.Open(portNumber);
+    if (serverSocket.Open(portNumber) == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << "OK" << endl << endl;
 
     cout << "Server creating a new msgSOCKET object ... ";
-    msgSOCKET tempSocket;
     cout << "OK" << endl;
     cout << "Server waiting for a connection on port '" << portNumber
          << "' ... ";
-    serverSocket.Accept(tempSocket);
+    if (serverSocket.Accept(tempSocket) == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << "OK" << endl << endl;
 
-    string buffer;
     cout << "Server receiving '";
-    tempSocket.Receive(buffer);
+    if (tempSocket.Receive(buffer) == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << buffer << "' from client ... OK" << endl;
     buffer = "Hello client, server speaking !";
     cout << "Server sending   '" << buffer << "' to client ... ";
-    tempSocket.Send(buffer);
+    if (tempSocket.Send(buffer) == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << "OK" << endl;
     buffer = "Bye client said server !";
     cout << "Server sending   '" << buffer << "' to client ... ";
-    tempSocket.Send(buffer);
+    if (tempSocket.Send(buffer) == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << "OK" << endl;
     cout << "Server receiving '";
-    tempSocket.Receive(buffer);
+    if (tempSocket.Receive(buffer) == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << buffer << "' from client ... OK" << endl << endl;
 
-    msgMESSAGE msg;
     cout << "Server receiving '";
-    tempSocket.Receive(msg, 1000);
+    if (tempSocket.Receive(msg, 1000) == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     msg.Display();
     cout << "' from client ... OK" << endl << endl;
-    msg.SetSender("server");
-    msg.SetRecipient("client");
-    msg.SetType(msgTYPE_COMMAND);
-    msg.SetCommand("COMMAND");
-    msg.SetBody("Bye client said server !", sizeof("Bye client said server !"));
+    if (msg.SetSender("server") == FAILURE)
+    {
+        goto errCond;
+    }
+    if (msg.SetRecipient("client") == FAILURE)
+    {
+        goto errCond;
+    }
+    if (msg.SetType(msgTYPE_COMMAND) == FAILURE)
+    {
+        goto errCond;
+    }
+    if (msg.SetCommand("COMMAND") == FAILURE)
+    {
+        goto errCond;
+    }
+    if (msg.SetBody("Bye client said server !",
+                     sizeof("Bye client said server !")) == FAILURE)
+    {
+        goto errCond;
+    }
     cout << "Server sending '";
     msg.Display();
     cout << "' to client ... ";
-    tempSocket.Send(msg);
+    if (tempSocket.Send(msg) == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << "OK" << endl << endl;
 
     cout << "Server closing msgSOCKET socket to client ... ";
-    tempSocket.Close();
+    if (tempSocket.Close() == FAILURE)
+    {
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << "OK" << endl;
     cout << "Server closing msgSOCKET_SERVER listening socket ... ";
-    serverSocket.Close();
+    if (serverSocket.Close() == FAILURE)
+    {
+        cout << "KO" << endl;
+        cout << "KO" << endl;
+        goto errCond;
+    }
     cout << "OK" << endl;
 
     // Close MCS services
@@ -123,6 +183,17 @@ int main(int argc, char *argv[])
     
     // Exit from the application with SUCCESS
     exit (EXIT_SUCCESS);
+
+// If an error occured, show the error stack and exit
+errCond:
+    if (errStackIsEmpty() == mcsFALSE)
+    {
+        errDisplayStack();
+        errCloseStack();
+    }
+
+    mcsExit();
+    exit(EXIT_FAILURE);
 }
 
 
