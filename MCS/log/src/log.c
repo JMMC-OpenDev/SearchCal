@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.15 2004-06-23 14:22:27 gzins Exp $"
+* "@(#) $Id: log.c,v 1.16 2004-07-21 09:08:27 mella Exp $"
 *
 *
 * who       when                 what
@@ -129,7 +129,8 @@
 #include "logPrivate.h"
 
 /*
- * Default initialization
+ * Default initialization for logging levels printtime and so on..
+ * logRULE is defined in logPrivate.h
  */
 static logRULE logRule = {
     mcsTRUE,
