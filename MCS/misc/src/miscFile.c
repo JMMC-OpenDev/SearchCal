@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2005/02/17 14:32:42  gzins
+ * Improved intialisation of static dynamic buffers
+ *
  * Revision 1.27  2005/02/12 14:46:09  gzins
  * Updated miscLocateFile function:
  *  - added test of file existence before looking for in path list.
@@ -51,7 +54,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.28 2005-02-17 14:32:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.29 2005-03-08 07:17:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -316,6 +319,13 @@ char*         miscResolvePath    (const char *unresolvedPath)
     mcsSTRING256        tmpPath, tmpEnvVar;
     mcsINT32            length;
 
+    /* Check parameter */
+    if (unresolvedPath == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "unresolvedPath"); 
+        return NULL;
+    }
+
     /* Initialize buffer (if not already done */
     if (init == mcsFALSE)
     {
@@ -491,6 +501,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
         return NULL;
     }
     
+    miscDynBufDestroy(&pathToResolve);
     return miscDynBufGetBuffer(&builtPath);
 }
 
