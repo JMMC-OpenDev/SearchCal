@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.27 2005-02-10 08:07:38 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.28 2005-02-10 16:42:38 gluck Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2005/02/10 08:07:38  scetre
+* changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
+*
 * Revision 1.26  2005/02/08 20:36:14  gzins
 * Changed some parameters from char* to const char*
 *
@@ -148,15 +151,17 @@ public:
     virtual ~vobsSTAR();
 
     // Method to set the star properties
-    virtual mcsCOMPL_STAT SetPropertyValue(const char *id, const char *value,
-                                           const char *origin,
-                                           mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
-                                           mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetPropertyValue(const char *propertyId, 
-                                           mcsFLOAT value,
-                                           const char *origin,
-                                           mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
-                                           mcsLOGICAL overwrite=mcsFALSE);
+    virtual mcsCOMPL_STAT SetPropertyValue
+               (const char *id, const char *value,
+                const char *origin,
+                vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH, 
+                mcsLOGICAL overwrite=mcsFALSE);
+    virtual mcsCOMPL_STAT SetPropertyValue
+                (const char *propertyId, 
+                 mcsFLOAT value,
+                 const char *origin,
+                 vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH, 
+                 mcsLOGICAL overwrite=mcsFALSE);
 
     // Methods to retreive the star property
     virtual vobsSTAR_PROPERTY *GetProperty(char *id) ;
