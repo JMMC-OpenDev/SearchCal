@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.6 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.7 2004-11-30 16:41:47 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -13,6 +13,7 @@
 * lafrasse  22-Nov-2004  Added void type for functions without parameters
 * lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
 *                        msgMESSAGE, added SetLastReplyFlag method
+* scetre    30-Nov-2004  Set message body size to 3200
 *
 *
 *******************************************************************************/
@@ -40,7 +41,7 @@
 /**
  * Maximum message size
  */
-#define msgMAXLEN                8192
+#define msgMAXLEN                32000
 
 /**
  * Standard command names
