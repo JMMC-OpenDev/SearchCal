@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: fndOBJECT.h,v 1.1 2004-09-22 13:39:39 gzins Exp $"
+* "@(#) $Id: fndOBJECT.h,v 1.2 2004-09-27 10:17:28 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -66,10 +66,6 @@ public:
 protected:
 
 private:
-    // Declaration of copy constructor and assignment operator as private
-    // methods, in order to hide them from the users.
-    fndOBJECT& operator=(const fndOBJECT&);
-    fndOBJECT (const fndOBJECT&);
 };
 
 
