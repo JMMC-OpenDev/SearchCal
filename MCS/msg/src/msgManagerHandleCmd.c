@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgManagerHandleCmd.c,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgManagerHandleCmd.c,v 1.5 2004-11-26 14:18:38 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -18,7 +18,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgManagerHandleCmd.c,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgManagerHandleCmd.c,v 1.5 2004-11-26 14:18:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -36,7 +36,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-#include "cmd.h"
 
 
 /*
