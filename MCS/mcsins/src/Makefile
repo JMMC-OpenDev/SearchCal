@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-12-08 18:27:55 swmgr Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-12-09 06:13:54 gzins Exp $"
 #
 # Makefile for installation script of MCS 
 #
@@ -9,7 +9,7 @@
 # --------  -----------  -------------------------------------------------------
 # gzins     08-Dec-2004  Created
 # gzins     08-Dec-2004  Fixed bug when installing script in $MCSROOT/bin 
-#
+# gzins     09-Dec-2004  Renamed mcsinsInstallMcs to mcsinsInstall
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile
@@ -19,7 +19,7 @@
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = mcsinsInstallMcs
+SCRIPTS         = mcsinsInstall
 
 all:
 	@echo " . . . 'all' done" 

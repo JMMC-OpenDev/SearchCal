@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstallMcs.sh,v 1.2 2004-12-08 18:43:49 swmgr Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.1 2004-12-09 06:13:54 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -10,13 +10,14 @@
 # gzins     08-Dec-2004  Moved from mkf module
 #                        Added installation of env module
 # gzins     08-Dec-2004  Added installation of gwt module
+# gzins     09-Dec-2004  Renamed to mcsinsInstall
 #
 #*******************************************************************************
 #   NAME 
-#   mcsinsInstallMcs - Install/Update MCS modules 
+#   mcsinsInstall - Install/Update MCS modules 
 # 
 #   SYNOPSIS
-#   mcsinsInstallMcs
+#   mcsinsInstall
 # 
 #   DESCRIPTION
 #   This command retreives all the modules belonging to MCS from the CVS
