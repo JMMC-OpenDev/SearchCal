@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.3 2004-11-22 14:57:05 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,6 +9,7 @@
 * lafrasse  19-Nov-2004  Re-commented, and replaced all the srtcpy by some
 *                        strNcpy in order to avoid segmentation faults as far
 *                        as possible
+* lafrasse  22-Nov-2004  Added void type for functions without parameters
 *
 *
 *******************************************************************************/
@@ -18,7 +19,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.3 2004-11-22 14:57:05 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -47,11 +48,8 @@ using namespace std;
 #include "msgErrors.h"
 
 
-/**
- * Class constructor.
- *
- * \param isInternal specify weither the new message object will be internal
- * 
+/*
+ * Class constructor
  */
 msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternal)
 {
@@ -80,7 +78,7 @@ msgMESSAGE::~msgMESSAGE()
  *
  * \return the address of the message sender processus name
  */
-char* msgMESSAGE::GetSender()
+char* msgMESSAGE::GetSender(void)
 {
     logExtDbg("msgMESSAGE::GetSender()");
 
@@ -89,7 +87,7 @@ char* msgMESSAGE::GetSender()
 }
 
 /**
- * Copy the given sender name into the message
+ * Copy the given sender name into the message.
  *
  * \param sender the sender name to be copied in
  * 
@@ -110,7 +108,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
  *
  * \return the address of the message sender processus environnement name
  */
-char* msgMESSAGE::GetSenderEnv()
+char* msgMESSAGE::GetSenderEnv(void)
 {
     logExtDbg("msgMESSAGE::GetSenderEnv()");
 
@@ -119,7 +117,7 @@ char* msgMESSAGE::GetSenderEnv()
 }
 
 /**
- * Copy the given sender environnement name into the message
+ * Copy the given sender environnement name into the message.
  *
  * \param senderEnv the sender environnement name to be copied in
  * 
@@ -141,7 +139,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
  *
  * \return the address of the message receiver processus name
  */
-char* msgMESSAGE::GetRecipient()
+char* msgMESSAGE::GetRecipient(void)
 {
     logExtDbg("msgMESSAGE::GetRecipient()");
 
@@ -150,7 +148,7 @@ char* msgMESSAGE::GetRecipient()
 }
 
 /**
- * Copy the given recipient name into the message
+ * Copy the given recipient name into the message.
  *
  * \param recipient the recipient name to be copied in
  * 
@@ -172,7 +170,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
  *
  * \return the address of the message recipient processus environnement
  */
-char* msgMESSAGE::GetRecipientEnv()
+char* msgMESSAGE::GetRecipientEnv(void)
 {
     logExtDbg("msgMESSAGE::GetRecipientEnv()");
 
@@ -181,7 +179,7 @@ char* msgMESSAGE::GetRecipientEnv()
 }
 
 /**
- * Copy given the recipient environnement name into the message
+ * Copy given the recipient environnement name into the message.
  *
  * \param recipientEnv the recipient environnement name to be copied in
  * 
@@ -205,7 +203,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipientEnv(const char *recipientEnv)
  *
  * \return the message type
  */
-msgTYPE msgMESSAGE::GetType()
+msgTYPE msgMESSAGE::GetType(void)
 {
     logExtDbg("msgMESSAGE::GetType()");
 
@@ -214,7 +212,7 @@ msgTYPE msgMESSAGE::GetType()
 }
 
 /**
- * Set the type of the message
+ * Set the type of the message.
  *
  * \param type the type of th message
  * 
@@ -237,7 +235,7 @@ mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
  *
  * \return the identifier value of the message
  */
-char* msgMESSAGE::GetIdentifier()
+char* msgMESSAGE::GetIdentifier(void)
 {
     logExtDbg("msgMESSAGE::GetIdentifier()");
 
@@ -246,7 +244,7 @@ char* msgMESSAGE::GetIdentifier()
 }
 
 /**
- * Copy the given identifier value into the message
+ * Copy the given identifier value into the message.
  *
  * \param identifier the identifier value to be copied in
  * 
@@ -268,7 +266,7 @@ mcsCOMPL_STAT msgMESSAGE::SetIdentifier(const char *identifier)
  *
  * \return the address of the message command name
  */
-char* msgMESSAGE::GetCommand()
+char* msgMESSAGE::GetCommand(void)
 {
     logExtDbg("msgMESSAGE::GetCommand()");
 
@@ -277,7 +275,7 @@ char* msgMESSAGE::GetCommand()
 }
 
 /**
- * Copy the given command name into the message
+ * Copy the given command name into the message.
  *
  * \param command the command name to be copied in
  * 
@@ -298,7 +296,7 @@ mcsCOMPL_STAT msgMESSAGE::SetCommand(const char *command)
  *
  * \return mcsTRUE if the message is the last one, mcsFALSE othewise
  */
-mcsLOGICAL msgMESSAGE::IsLastReply()
+mcsLOGICAL msgMESSAGE::IsLastReply(void)
 {
     logExtDbg("msgMESSAGE::IsLastReply()");
 
@@ -311,7 +309,7 @@ mcsLOGICAL msgMESSAGE::IsLastReply()
  *
  * \return mcsTRUE if the message is internal, mcsFALSE otherwise
  */
-mcsLOGICAL msgMESSAGE::IsInternal()
+mcsLOGICAL msgMESSAGE::IsInternal(void)
 {
     logExtDbg("msgMESSAGE::IsInternal()");
 
@@ -324,7 +322,7 @@ mcsLOGICAL msgMESSAGE::IsInternal()
  *
  * \return the address of the message header
  */
-msgHEADER* msgMESSAGE::GetHeaderPtr()
+msgHEADER* msgMESSAGE::GetHeaderPtr(void)
 {
     logExtDbg("msgMESSAGE::GetHeaderPtr()");
 
@@ -337,7 +335,7 @@ msgHEADER* msgMESSAGE::GetHeaderPtr()
  *
  * \return the address of the message body
  */
-char* msgMESSAGE::GetBodyPtr()
+char* msgMESSAGE::GetBodyPtr(void)
 {
     logExtDbg("msgMESSAGE::GetBodyPtr()");
 
@@ -350,7 +348,7 @@ char* msgMESSAGE::GetBodyPtr()
  *
  * \return the message body size
  */
-mcsINT32 msgMESSAGE::GetBodySize()
+mcsINT32 msgMESSAGE::GetBodySize(void)
 {
     logExtDbg("msgMESSAGE::GetBodySize()");
 
@@ -419,24 +417,12 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
  *
  * \return the address of the internal msgMESSAGE_RAW structure
  */
-msgMESSAGE_RAW*  msgMESSAGE::GetMessageRaw ()
+msgMESSAGE_RAW*  msgMESSAGE::GetMessageRaw(void)
 {
     logExtDbg("msgMESSAGE::GetMessageRaw()");
 
     // Return a pointer to the message internal structure
     return &_message;
 }
-
-/*
- * Protected methods
- */
-
-
-
-/*
- * Private methods
- */
-
-
 
 /*___oOo___*/

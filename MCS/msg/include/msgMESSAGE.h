@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.3 2004-11-22 14:31:38 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.4 2004-11-22 14:57:05 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    17-Nov-2004  Created
 * lafrasse  19-Nov-2004  Changed all method name first letter to upper case, and
 *                        re-commented
+* lafrasse  22-Nov-2004  Added void type for functions without parameters
 *
 *
 *******************************************************************************/
@@ -127,41 +128,41 @@ public:
                                               = mcsFALSE);
 
     // Destructor
-    virtual ~msgMESSAGE                      ();
+    virtual ~msgMESSAGE                      (void);
     
     // Accessors
-    virtual char*            GetSender       ();
+    virtual char*            GetSender       (void);
     virtual mcsCOMPL_STAT    SetSender       (const char     *buffer);
 
-    virtual char*            GetSenderEnv    ();
+    virtual char*            GetSenderEnv    (void);
     virtual mcsCOMPL_STAT    SetSenderEnv    (const char     *senderEnv);
 
-    virtual char*            GetRecipient    ();
+    virtual char*            GetRecipient    (void);
     virtual mcsCOMPL_STAT    SetRecipient    (const char     *recipient);
 
-    virtual char*            GetRecipientEnv ();
+    virtual char*            GetRecipientEnv (void);
     virtual mcsCOMPL_STAT    SetRecipientEnv (const char     *recipientEnv);
 
-    virtual msgTYPE          GetType         ();
+    virtual msgTYPE          GetType         (void);
     virtual mcsCOMPL_STAT    SetType         (const msgTYPE   type);
 
-    virtual char*            GetIdentifier   ();
+    virtual char*            GetIdentifier   (void);
     virtual mcsCOMPL_STAT    SetIdentifier   (const char     *identificator);
 
-    virtual char*            GetCommand      ();
+    virtual char*            GetCommand      (void);
     virtual mcsCOMPL_STAT    SetCommand      (const char     *command);
 
-    virtual mcsLOGICAL       IsLastReply     ();
-    virtual mcsLOGICAL       IsInternal      ();
+    virtual mcsLOGICAL       IsLastReply     (void);
+    virtual mcsLOGICAL       IsInternal      (void);
 
-    virtual msgHEADER*       GetHeaderPtr    ();
+    virtual msgHEADER*       GetHeaderPtr    (void);
 
-    virtual char*            GetBodyPtr      ();
-    virtual mcsINT32         GetBodySize     ();
+    virtual char*            GetBodyPtr      (void);
+    virtual mcsINT32         GetBodySize     (void);
     virtual mcsCOMPL_STAT    SetBody         (const char     *buffer,
                                               const mcsINT32  bufLen=0);
 
-    virtual msgMESSAGE_RAW*  GetMessageRaw   ();
+    virtual msgMESSAGE_RAW*  GetMessageRaw   (void);
 
 
 protected:
