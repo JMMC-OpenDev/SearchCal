@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK.h,v 1.2 2004-12-08 13:29:56 gzins Exp $"
+* "@(#) $Id: evhCALLBACK.h,v 1.3 2004-12-22 08:52:13 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,7 @@
 * gzins     08-Dec-2004  Removed evhCB_RETURN and evhCB_NOCALLS callback
 *                        return values
 *                        Added IsDetached() method
+* gzins     22-Dec-2004  Added SetUserData()
 *
 *******************************************************************************/
 /**
@@ -92,6 +93,8 @@ public:
     evhCALLBACK& operator=(const evhCALLBACK&);
 
     evhCALLBACK(const evhCALLBACK &source);
+
+    virtual evhCALLBACK &SetUserData (void *userData);
 
     virtual mcsLOGICAL IsSame (evhCALLBACK &callback);
 

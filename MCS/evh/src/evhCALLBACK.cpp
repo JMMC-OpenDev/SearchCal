@@ -1,13 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK.cpp,v 1.2 2004-12-08 13:30:37 gzins Exp $"
+* "@(#) $Id: evhCALLBACK.cpp,v 1.3 2004-12-22 08:52:45 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created
 * gzins     08-Dec-2004  Implemented IsDetached()
-*
+* gzins     22-Dec-2004  Added SetUserData()
 *
 *******************************************************************************/
 
@@ -16,7 +16,7 @@
  * Definition of the evhCALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK.cpp,v 1.2 2004-12-08 13:30:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCALLBACK.cpp,v 1.3 2004-12-22 08:52:45 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -79,6 +79,23 @@ evhCALLBACK::~evhCALLBACK()
 /*
  * Public methods
  */
+/**
+ * Set the user data pointer to be passed to method
+ * 
+ * \param userData user data pointer passed to the method
+ *
+ * \return reference to the object itself
+ *
+ */
+evhCALLBACK &evhCALLBACK::SetUserData(void *userData)
+{
+    logExtDbg("evhCALLBACK::SetUserData()");
+
+    _userData = userData;
+
+    return *this;
+}
+
 /**
  * Detach the callback.
  *
