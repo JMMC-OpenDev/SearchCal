@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.19 2005-02-07 14:59:28 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.20 2005-02-08 04:38:50 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/02/07 14:59:28  gzins
+ * Added CVS log as modification history
+ *
  * scetre    13-Sep-2004  Created
  *
  ******************************************************************************/
@@ -24,7 +27,8 @@
 /*
  * Local header
  */
-#include"vobs.h"
+#include "vobs.h"
+#include "sclsvrREQUEST.h"
 
 /* 
  * Constants definition
@@ -62,7 +66,7 @@ public:
     virtual ~sclsvrCALIBRATOR();    
   
     // method to complete calibrator properties
-    mcsCOMPL_STAT Complete(vobsREQUEST request);
+    mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
  
     virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(char *calibratorString);
@@ -83,7 +87,7 @@ private:
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeInterstellarAbsorption();
     mcsCOMPL_STAT ComputeAngularDiameter();
-    mcsCOMPL_STAT ComputeVisibility(vobsREQUEST request);
+    mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeMultiplicity(); 
 };
 

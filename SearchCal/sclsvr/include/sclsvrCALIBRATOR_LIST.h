@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.11 2005-02-07 14:59:51 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.12 2005-02-08 04:38:50 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/02/07 14:59:51  gzins
+ * Reformated file header
+ *
  * Revision 1.10  2005/02/07 11:10:29  scetre
  * Removed obsolete class sclsvrSEARCH_CALIBRATOR trace and changed method name
  * in sclsvrCALIBRATOR_LIST
@@ -58,7 +61,7 @@ public:
     virtual mcsCOMPL_STAT AddAtTail(sclsvrCALIBRATOR &calibrator);
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
  
-    virtual mcsCOMPL_STAT Complete(vobsREQUEST request);
+    virtual mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
     
     //virtual void Display();
     

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.8 2005-02-07 15:01:11 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.9 2005-02-08 04:39:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/07 15:01:11  gzins
+ * Reformated file header
+ *
  * Revision 1.7  2005/02/07 14:44:03  gzins
  * Renamed lambda to wlen.
  * Renamed minMagRange to minDeltaMag, and maxMagRange to maxDeltaMag.
@@ -25,7 +28,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.8 2005-02-07 15:01:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.9 2005-02-08 04:39:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -72,8 +75,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     }
 
     // Object name
-    char *objName;
-    if (getCalCmd.GetObjectName(&objName) == mcsFAILURE)
+    char *objectName;
+    if (getCalCmd.GetObjectName(&objectName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -114,14 +117,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     }
 
     // minDeltaMag
-    char *minDeltaMag;
+    mcsDOUBLE minDeltaMag;
     if (getCalCmd.GetMinDeltaMag(&minDeltaMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // maxDeltaMag
-    char *maxDeltaMag;
+    mcsDOUBLE maxDeltaMag;
     if (getCalCmd.GetMaxDeltaMag(&maxDeltaMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
@@ -177,105 +180,65 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     }
     
     // Build the request object from the parameters of the command
-    vobsREQUEST request;
+    sclsvrREQUEST request;
 
     // Affect the reference object name
-    if (request.SetConstraint(STAR_NAME_ID, objName) 
-        == mcsFAILURE)
+    if (request.SetObjectName(objectName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the right ascension position
-    if (request.SetConstraint(RA_ID, ra) 
-        == mcsFAILURE)
+    if (request.SetObjectRa(ra) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the declinaison position
-    if (request.SetConstraint(DEC_ID, dec) 
-        == mcsFAILURE)
+    if (request.SetObjectDec(dec) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the wavelength
-    mcsSTRING256 wavelength;
-    sprintf(wavelength, "%f", wlen);
-    if (request.SetConstraint(STAR_WLEN_ID, wavelength)
-        == mcsFAILURE)
+    if (request.SetObservingWlen(wlen) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the magnitude
-    mcsSTRING256 mag;
-    sprintf(mag, "%f", magnitude);
-    if (request.SetConstraint(STAR_MAGNITUDE_ID, mag)
-        == mcsFAILURE)
+    if (request.SetObjectMag(magnitude) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the min of the magitude range
-    if (request.SetConstraint(MIN_MAGNITUDE_RANGE_ID, minDeltaMag)
-        == mcsFAILURE)
+    if (request.SetMinDeltaMag(minDeltaMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the max of the magnitude range
-    if (request.SetConstraint(MAX_MAGNITUDE_RANGE_ID, maxDeltaMag)
-        == mcsFAILURE)
+    if (request.SetMaxDeltaMag(maxDeltaMag) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the search box ra
-    mcsSTRING256 dRa;
-    sprintf(dRa, "%d", diffRa);
-    if (request.SetConstraint(SEARCH_BOX_RA_ID, dRa)
-        == mcsFAILURE)
+    if (request.SetDeltaRa(diffRa) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the serach box dec
-    mcsSTRING256 dDec;
-    sprintf(dDec, "%d", diffDec);
-    if (request.SetConstraint(SEARCH_BOX_DEC_ID,dDec)
-        == mcsFAILURE)
+    if (request.SetDeltaDec(diffDec) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the expected visibility
-    mcsSTRING256 visi;
-    sprintf(visi, "%f", vis);
-    if (request.SetConstraint(STAR_EXPECTED_VIS_ID, visi)
-        == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the error visibility
-    mcsSTRING256 visError;
-    sprintf(visError, "%f", visErr);
-    if (request.SetConstraint(STAR_MAX_ERR_VIS_ID, visError)
-        == mcsFAILURE)
+    if (request.SetExpectedVisibility(vis, visErr) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the observed band
-    if (request.SetConstraint(OBSERVED_BAND_ID, band) ==  mcsFAILURE)
+    if (request.SetSearchBand(band) ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-
-    // Affect the baseMin
-    mcsSTRING256 baseMini;
-    sprintf(baseMini, "%f", baseMin);
-    if (request.SetConstraint(BASEMIN_ID, baseMini)
-        ==  mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-    // Affect the baseMax
-    mcsSTRING256 baseMaxi;
-    sprintf(baseMaxi, "%f", baseMax);
-    if (request.SetConstraint(BASEMAX_ID, baseMaxi)
-        ==  mcsFAILURE)
+    // Affect the baseline length
+    if (request.SetBaseline(baseMin, baseMax) ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }

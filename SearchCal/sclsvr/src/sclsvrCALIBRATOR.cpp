@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.24 2005-02-07 15:00:48 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.25 2005-02-08 04:39:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/02/07 15:00:48  gzins
+ * Added CVS log as modification history
+ *
  * scetre    14-Sep-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +18,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.24 2005-02-07 15:00:48 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.25 2005-02-08 04:39:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -206,16 +209,13 @@ mcsLOGICAL sclsvrCALIBRATOR::IsVisibilityOk()
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
+mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 {
     logExtDbg("sclsvrCALIBRATOR::Complete()");
     
     // Get the observed band
-    mcsSTRING16 band;
-    if (request.GetConstraint(OBSERVED_BAND_ID, band) ==  mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    const char *band;
+    band = request.GetSearchBand();
 
     // Compute Galactic coordinates
     if (ComputeGalacticCoordinates() == mcsFAILURE)
@@ -263,16 +263,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
             // Get computed visibility
             GetPropertyValue(sclsvrCALIBRATOR_VIS, &computedVis);
 
-            // Get requested visibility
-            mcsFLOAT requestedVis;
-            if (request.GetConstraint(STAR_EXPECTED_VIS_ID, &requestedVis)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            // Get expected visibility
+            mcsFLOAT expectedVis;
+            expectedVis = request.GetExpectedVisibility();
+            
             // Check if the computed visibility is greater than the
             // requested one, and the flag accordingly
-            if (computedVis < requestedVis)
+            if (computedVis < expectedVis)
             {
                 SetPropertyValue(sclsvrCALIBRATOR_VIS_FLAG, "NOK");
             }
@@ -628,7 +625,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
  *
  * \return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
 {
     logExtDbg("sclsvrCALIBRATOR::ComputeVisibility()");
     mcsFLOAT diam, diamError;
@@ -667,9 +664,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
     }
 
     // Get value in request of the wavelength
-    request.GetConstraint(STAR_WLEN_ID, &wavelength);
-    // get value in request of the base max
-    request.GetConstraint(BASEMAX_ID, &baseMax);
+    wavelength = request.GetObservingWlen();
+
+    // Get value in request of the base max
+    baseMax = request.GetMaxBaselineLength();
     if (alxComputeVisibility(diam, diamError, baseMax, wavelength,
                              &vis, &vis2, &visErr, &vis2Err)==mcsFAILURE)
     {

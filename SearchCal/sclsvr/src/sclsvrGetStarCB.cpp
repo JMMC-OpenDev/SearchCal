@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.15 2005-02-07 14:38:45 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.16 2005-02-08 04:39:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/02/07 14:38:45  gzins
+ * Changed GetLambda to GetWlen
+ *
  * scetre    30-Nov-2004  Created
  *
  ******************************************************************************/
@@ -15,7 +18,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.15 2005-02-07 14:38:45 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.16 2005-02-08 04:39:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -77,8 +80,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     }
 
     // Get star name 
-    char *starName;
-    if (getStarCmd.GetObjectName(&starName) == mcsFAILURE)
+    char *objectName;
+    if (getStarCmd.GetObjectName(&objectName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }    
@@ -99,30 +102,27 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     
     // Get star position from SIMBAD
     mcsSTRING32 ra, dec;
-    if (simcliGetCoordinates(starName, ra, dec) == mcsFAILURE)
+    if (simcliGetCoordinates(objectName, ra, dec) == mcsFAILURE)
     {
-        errAdd(sclsvrERR_STAR_NOT_FOUND, starName, "SIMBAD");
+        errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "SIMBAD");
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // Prepare request to search information in other catalog
-    vobsREQUEST request;
-    if (request.SetConstraint(STAR_NAME_ID, starName) == mcsFAILURE)
+    sclsvrREQUEST request;
+    if (request.SetObjectName(objectName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    if (request.SetConstraint(OBSERVED_BAND_ID, "K") == mcsFAILURE)
+    if (request.SetSearchBand("K") ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    mcsSTRING32 buffer;
-    sprintf(buffer, "%f", wlen);
-    if (request.SetConstraint(STAR_WLEN_ID, buffer) == mcsFAILURE)
+    if (request.SetObservingWlen(wlen) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    sprintf(buffer, "%f", baseline);
-    if (request.SetConstraint(BASEMAX_ID, buffer) == mcsFAILURE)
+    if (request.SetBaseline(baseline, baseline) ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -185,7 +185,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     }
     else
     {
-        errAdd(sclsvrERR_STAR_NOT_FOUND, starName, "CDS catalogs");
+        errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "CDS catalogs");
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
