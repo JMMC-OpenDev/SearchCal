@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.9 2005-02-10 08:13:38 gzins Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.10 2005-02-15 13:39:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/10 08:13:38  gzins
+ * Removed logging message disabling
+ *
  * Revision 1.8  2005/01/29 20:52:00  gzins
  * Fixed forgotten 'unique' argument for Connect()
  *
@@ -37,7 +40,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.9 2005-02-10 08:13:38 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.10 2005-02-15 13:39:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -254,7 +257,7 @@ mcsCOMPL_STAT evhSERVER::SetState(mcsINT32 state)
 
     _state = state;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 /**
  * Get server state
@@ -305,7 +308,7 @@ mcsCOMPL_STAT evhSERVER::SetSubState(mcsINT32 subState)
 
     _subState = subState;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -465,7 +468,7 @@ mcsCOMPL_STAT evhSERVER::AddState(mcsINT32  id, char *name)
     }
     _stateList[id] = name;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -491,7 +494,7 @@ mcsCOMPL_STAT evhSERVER::AddSubState(mcsINT32 id, char *name)
     }
     _subStateList[id] = name;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

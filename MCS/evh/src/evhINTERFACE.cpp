@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.cpp,v 1.4 2005-01-29 06:47:26 gzins Exp $"
+ * "@(#) $Id: evhINTERFACE.cpp,v 1.5 2005-02-15 13:39:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/01/29 06:47:26  gzins
+ * Fixed wrong prototype of Forward method
+ *
  * Revision 1.3  2005/01/27 17:52:57  gzins
  * Implemented command reply callback: ReplyCB()
  *
@@ -21,7 +24,7 @@
  * evhINTERFACE class definition.
  */
 
-static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.4 2005-01-29 06:47:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.5 2005-02-15 13:39:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -246,7 +249,7 @@ evhCB_COMPL_STAT evhINTERFACE::ReplyCB(msgMESSAGE &msg, void*)
  *
  * \return pointer the last received reply  
  */
-char *evhINTERFACE::GetLastReply(void)
+const char *evhINTERFACE::GetLastReply(void)
 {
     return (_msg.GetBody());
 }
