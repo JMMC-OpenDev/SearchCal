@@ -1,22 +1,19 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDynBuf.c,v 1.5 2004-07-19 15:29:38 lafrasse Exp $"
+* "@(#) $Id: miscTestDynBuf.c,v 1.6 2004-07-20 13:59:33 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  23-Jun-2004  Created
 * lafrasse  09-Jul-2004  Passed some polish
+* lafrasse  20-Jul-2004  Removed all '\0' from char arrays
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.5 2004-07-19 15:29:38 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.6 2004-07-20 13:59:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
-/**
- * \todo remove all the '\\0' in the static char arrays
- */
 
 /* 
  * System Headers 
@@ -109,7 +106,7 @@ int main (int argc, char *argv[])
     errCloseStack();
     printf("\n");
 
-    bytes = "hello dynBuf\0" ;
+    bytes = "hello dynBuf" ;
     bytesNumber = strlen(bytes);
     printf("miscDynBufAppendBytes(\"%s\", %d) ", bytes, bytesNumber);
     execStatus = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
@@ -119,7 +116,7 @@ int main (int argc, char *argv[])
 	displayDynBuf(&dynBuf);
     printf("\n");
 
-    bytes    = " ... :)\0" ;
+    bytes    = " ... :)" ;
     bytesNumber = strlen(bytes);
     printf("miscDynBufAppendBytes(\"%s\", %d) ", bytes, bytesNumber);
     execStatus = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
@@ -129,7 +126,7 @@ int main (int argc, char *argv[])
 	displayDynBuf(&dynBuf);
     printf("\n");
 
-    bytes    = " !!!\0" ;
+    bytes    = " !!!" ;
     bytesNumber = strlen(bytes);
     printf("miscDynBufAppendBytes(\"%s\", %d) ", bytes, bytesNumber);
     execStatus = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
@@ -398,7 +395,7 @@ int main (int argc, char *argv[])
     errCloseStack();
     printf("\n");
 
-    bytes = "Encore un '\0";
+    bytes = "Encore un '";
     bytesNumber = 0;
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
@@ -419,7 +416,7 @@ int main (int argc, char *argv[])
     printf("\n");
 
     position = 18;
-    bytes = "misc\0";
+    bytes = "misc";
     bytesNumber = 0;
     execStatus = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber, position);
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
@@ -440,7 +437,7 @@ int main (int argc, char *argv[])
     printf("\n");
 
     position = miscDynBufGetStoredBytesNumber(&dynBuf);
-    bytes = "~~~\0";
+    bytes = "~~~";
     bytesNumber = 0;
     execStatus = miscDynBufInsertBytesAt(&dynBuf, bytes, bytesNumber, position);
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, 0,
@@ -501,7 +498,7 @@ int main (int argc, char *argv[])
     printf("\n");
 
     from = miscDYN_BUF_BEGINNING_POSITION;
-    bytes = "Toujours ce\0";
+    bytes = "Toujours ce";
     bytesNumber = strlen(bytes);
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
@@ -517,7 +514,7 @@ int main (int argc, char *argv[])
     to = 42;
     bytes = "X";
     bytesNumber = 0;
-    printf("miscDynBufReplaceBytesFromTo(\"%s\\0\", %d, %d, %d) ", bytes,
+    printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, to, from);
     execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, to,
                                               from);
@@ -526,7 +523,7 @@ int main (int argc, char *argv[])
     errCloseStack();
     printf("\n");
 
-    printf("miscDynBufReplaceBytesFromTo(\"%s\\0\", %d, %d, %d) ", bytes,
+    printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
     execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
                                               to);
@@ -537,7 +534,7 @@ int main (int argc, char *argv[])
 
     bytesNumber = strlen(bytes);
     to = 40;
-    printf("miscDynBufReplaceBytesFromTo(\"%s\\0\", %d, %d, %d) ", bytes,
+    printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
     execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
                                               to);
@@ -549,9 +546,9 @@ int main (int argc, char *argv[])
 
     from = 31;
     to = miscDynBufGetStoredBytesNumber(&dynBuf);
-    bytes = " !\0";
+    bytes = " !";
     bytesNumber = strlen(bytes) + 1;
-    printf("miscDynBufReplaceBytesFromTo(\"%s\\0\", %d, %d, %d) ", bytes,
+    printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
     execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
                                               to);
@@ -563,7 +560,7 @@ int main (int argc, char *argv[])
 
     from = 31;
     to = miscDynBufGetStoredBytesNumber(&dynBuf) + 1;
-    printf("miscDynBufReplaceBytesFromTo(\"%s\\0\", %d, %d, %d) ", bytes,
+    printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, from, to);
     execStatus = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, from, 
                                               to);
