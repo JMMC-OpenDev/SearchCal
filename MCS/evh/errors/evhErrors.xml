@@ -40,4 +40,19 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[No event handler available]]></errFormat>
    </error>
+   <error id="12">
+      <errName>DUPLICATED_STATE </errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Duplicated server state; id=%d - name '%.20s']]></errFormat>
+   </error>
+   <error id="13">
+      <errName>DUPLICATED_SUBSTATE </errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Duplicated server sub-state; id=%d - name '%.20s']]></errFormat>
+   </error>
+   <error id="14">
+      <errName>TIMEOUT_EXPIRED</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Timeout expired when waiting for reply of '%s' command. ]]></errFormat>
+   </error>
 </errorList>
