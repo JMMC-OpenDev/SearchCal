@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.2 2005-02-13 15:58:08 gzins Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.3 2005-02-24 17:01:35 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/13 15:58:08  gzins
+ * Updated Load() method to use new vobsCDATA class methods
+ *
  * Revision 1.1  2005/02/11 14:14:31  gluck
  * Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
  *
@@ -16,7 +19,7 @@
  *  Definition of vobsLOCAL_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.2 2005-02-13 15:58:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.3 2005-02-24 17:01:35 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -189,6 +192,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Search(vobsREQUEST &request,
         // referenceStarFlux > 100
         maxNFlux = 100;
     }
+
     diffNFlux = (maxNFlux - minNFlux) / 2;
     middleNFlux = (minNFlux + diffNFlux);
 
@@ -270,7 +274,10 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load()
     {
         return mcsFAILURE;
     }
-
+ 
+    // Set flag indicating a correct catalog load
+    _loaded = mcsTRUE;
+  
     return mcsSUCCESS;
 }
 
