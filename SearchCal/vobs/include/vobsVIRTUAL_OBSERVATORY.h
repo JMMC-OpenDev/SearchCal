@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.10 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.11 2005-02-04 13:32:04 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    06-Jul-2004  Created
 *
 *
@@ -38,6 +41,7 @@
 #include "vobsCATALOG_MASS.h"
 #include "vobsCATALOG_PHOTO.h"
 #include "vobsCATALOG_SBSC.h"
+#include "vobsCATALOG_MIDI.h"
 
 /*
  * Class declaration
@@ -89,6 +93,7 @@ private:
     vobsCATALOG_BSC   _bsc;
     vobsCATALOG_SBSC  _sbsc;
     vobsCATALOG_DENIS _denis;
+    vobsCATALOG_MIDI  _midi;
 
     // Star lists used in scenarion
     vobsSTAR_LIST     _starListP;
