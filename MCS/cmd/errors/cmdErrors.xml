@@ -13,7 +13,7 @@
    <error id="3">
       <errName>PARAMS_FORMAT</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Incorrect '%.80s' parameter format : must be 'Param1' 'Value1' 'Param2' 'Value2'...]]></errFormat>
+      <errFormat><![CDATA[Incorrect '%.80s' parameter format : must be '-param1' 'value1' '-param2' 'value2'...]]></errFormat>
    </error>
    <error id="4">
       <errName>PARAM_NAME</errName>
@@ -54,5 +54,20 @@
       <errName>MISSING_PARAM</errName>
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA['%s' parameter is missing]]></errFormat>
+   </error>
+   <error id="12">
+      <errName>PARAM_UNKNOWN</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Invalid parameter name '%.80s' for '%s' command]]></errFormat>
+   </error>
+   <error id="13">
+      <errName>PARSE_PARAMETERS</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not parse parameters '%s' for command %.80s. ]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>PARSE_CDF</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not parse command definition file '%.80s' for command %.80s. ]]></errFormat>
    </error>
 </errorList>
