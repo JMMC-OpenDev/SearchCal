@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.6 2005-01-26 08:20:00 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.7 2005-01-27 13:46:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/01/26 08:20:00  scetre
+* Chamge history. Use instence of criteria list instead of pointeur. Update criteria list affectation in LoadScenario()
+*
 * scetre    06-Jul-2004  Created
 *
 *
@@ -16,7 +19,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.6 2005-01-26 08:20:00 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.7 2005-01-27 13:46:57 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -181,10 +184,17 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
                               criteriaListEmpty);
         }
 
-        // The primary list is completed with the query on catalogs II/225, 
-        // I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
+        /* 
+         * The primary list is completed with the query on catalogs II/225, 
+         * I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
+         */
         
-        // Add mgV criteria
+        // II/225
+        scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
+                          criteriaList);
+        /*
+         * Add mgV criteria
+         */
         if (criteriaList.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -202,9 +212,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
         {
             return mcsFAILURE;
         }
-        // II/225
-        scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
-                          criteriaList);
+        
         // 2MASS
         scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY,
                           criteriaList);
