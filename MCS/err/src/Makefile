@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2004-09-10 16:40:22 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.8 2004-09-10 16:47:21 gzins Exp $"
 #
 # Makefile of err module 
 #
@@ -188,7 +188,7 @@ include $(MAKEDIR)/mkfMakefile
 #
 # TARGETS
 # -------
-all: copy_local_jar do_all
+all: move_scripts copy_local_jar do_all
 	@echo " . . . 'all' done"
 
 copy_local_jar:
@@ -196,6 +196,17 @@ copy_local_jar:
 	@$(foreach file, $(JAVA_JAR), echo "        $(file)" ;\
               cp -f ../jar/$(file) ../lib;)
 	@echo ""
+
+# when installing for the first time, the script errXmlToH is created locally,
+# to allow generation of error header file used for test 
+move_scripts:
+	@$(AT)  for scripts in $(SCRIPTS) ; \
+	do \
+		if [ ! -f ../bin/$${scripts} ] ; \
+		then \
+			mkfMakeScript $${scripts} ; \
+		fi; \
+	done
 
 clean : clean_all
 	@echo " . . . clean done"
