@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/04 10:43:44  gzins
+* Improved log for test
+*
 * Revision 1.11  2005/01/31 15:19:50  mella
 * Align some parentheses block
 *
@@ -20,7 +23,12 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.12 2005-02-04 10:43:44 gzins Exp $"; 
+/**
+ * \file
+ * Definition of errAddInLocalStack function.
+ */
+
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.13 2005-02-15 08:05:12 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,15 +68,26 @@ errERROR_STACK errGlobalStack;
 /*
  * Declaration of local functions
  */
-static char *errGetErrProp(const char *moduleId, 
+static const char *errGetErrProp(const char *moduleId, 
                            int errorId, const char * propName);
 
 /*
  * Definition of local functions
  */
-static char *errGetErrProp(const char *moduleId, 
-                           int errorId, const char * propName){
-    logExtDbg("errGetErrProp()"); 
+/**
+ * Get property of the given error.
+ *
+ * This function returns the requested property, as defined in error definition
+ * file (e.g. errSeverity or errFormat), of an error specified by \em errorId. 
+ *
+ * \param moduleId module identifier
+ * \param errorId error number
+ * \param propName name of property
+ *
+ * \return property value or NULL if not found. 
+ */
+static const char *errGetErrProp(const char *moduleId, 
+                                 int errorId, const char * propName){
 
     GdomeDOMImplementation *domimpl;
     GdomeDocument *doc;
@@ -369,6 +388,7 @@ errCond:
  * \param fileLine file name and line number from where the error has been added
  * \param errorId error number
  * \param isErrUser specify whether the error message is intended or not to the 
+ * end-user.
  * \param argPtr (optional) argument list associated to the error 
  *
  * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
@@ -383,10 +403,11 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     mcsSTRING64  timeStamp;
     char         severity;
     mcsSTRING256 format;
+    mcsSTRING256 errName;
     mcsSTRING256 runTimePar;
-    char         *propValue;
+    const char   *propValue;
 
-    logExtDbg("errAddInLocalStack()");
+    logExtDbg("errAddInLocalStack_v()");
 
     /* If error stack is not initialised, do it */
     if (error->thisPtr != error)
@@ -410,9 +431,16 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     }
     strcpy(format, propValue);
 
+    /* Get error format */
+    propValue = errGetErrProp(moduleId, errorId, "errName");
+    if (propValue == NULL)
+    {
+        return mcsFAILURE;
+    }
+    sprintf(errName, "%s_ERR_%s", moduleId, propValue);
+
     /* Get the current UTC date/time */
     logGetTimeStamp(timeStamp);
-
 
     /* Fill the error message */
     vsprintf(runTimePar, format, argPtr);
@@ -431,7 +459,8 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
  * \param fileLine file name and line number from where the error has been added
  * \param errorId error number
  * \param isErrUser specify whether the error message is intended or not to the 
- * \param argPtr (optional) argument list associated to the error 
+ * end-user.
+ * \param ... (optional) argument list associated to the error 
  *
  * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
  */
@@ -445,7 +474,7 @@ mcsCOMPL_STAT errAddInLocalStack(errERROR_STACK    *error,
     va_list       argPtr;
     mcsCOMPL_STAT status;
 
-    logExtDbg("errAddInStack()");
+    logExtDbg("errAddInLocalStack()");
 
     va_start(argPtr, isErrUser);
     status = errAddInLocalStack_v(error, moduleId, 
