@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynBuf.h,v 1.11 2004-11-10 17:05:02 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.h,v 1.12 2004-12-21 15:33:25 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,6 +26,10 @@
 *                        pattern to be skipped by miscDynBufGetNextLinePointer()
 *                        with miscDynBufGetCommentPattern() and
 *                        miscDynBufSetCommentPattern() to deal with this field
+* gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
+*                        miscDynBufGetNbStoredBytes and
+*                        miscDynBufGetAllocatedBytesNumber to
+*                        miscDynBufGetNbAllocatedBytes
 *
 *
 *******************************************************************************/
@@ -120,11 +124,10 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf);
 
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf);
 
-mcsCOMPL_STAT miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf,
+mcsCOMPL_STAT miscDynBufGetNbStoredBytes    (miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *storedBytes);
 
-mcsCOMPL_STAT miscDynBufGetAllocatedBytesNumber(
-                                             miscDYN_BUF       *dynBuf,
+mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *allocatedBytes);
 
 char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf);

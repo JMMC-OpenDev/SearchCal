@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.19 2004-12-21 15:30:41 scetre Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.20 2004-12-21 15:37:06 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,8 +14,8 @@
 *                        Corrected a bug in miscDynBufAlloc that could cause a
 *                        Segmentation fault when bytes were already allocated
 * lafrasse  23-Jul-2004  Added error management to
-*                        miscDynBufGetStoredBytesNumber and
-*                        miscDynBufGetAllocatedBytesNumber, plus
+*                        miscDynBufGetNbStoredBytes and
+*                        miscDynBufGetNbAllocatedBytes, plus
 *                        miscDynBufGetBytesFromTo parameter refinments and
 *                        error code factorization
 * lafrasse  02-Aug-2004  Moved mcs.h include to miscDynBuf.h
@@ -83,7 +83,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.19 2004-12-21 15:30:41 scetre Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.20 2004-12-21 15:37:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -551,7 +551,7 @@ mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
  *
  * \return the stored length of a Dynamic Buffer, or 0 if an error occured
  */
-mcsCOMPL_STAT miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf,
+mcsCOMPL_STAT miscDynBufGetNbStoredBytes(miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *storedBytes)
 {
     /* Initialize the received Dynamic Buffer if it is not */
@@ -576,7 +576,7 @@ mcsCOMPL_STAT miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf,
  *
  * \return the allocated length of a Dynamic Buffer, or 0 if an error occured
  */
-mcsCOMPL_STAT miscDynBufGetAllocatedBytesNumber(
+mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(
                                              miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *allocatedBytes)
 {
@@ -663,7 +663,7 @@ char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
 
     /* Get the current Dynamic Buffer internal buffer length */
     mcsUINT32 internalLength = 0;
-    if (miscDynBufGetStoredBytesNumber(dynBuf, &internalLength) == FAILURE)
+    if (miscDynBufGetNbStoredBytes(dynBuf, &internalLength) == FAILURE)
     {
         return ((char*)NULL);
     }
@@ -1188,7 +1188,7 @@ mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
 
     /* Get the Dynamic Buffer stored bytes number */
     mcsUINT32 storedBytes = 0;
-    if (miscDynBufGetStoredBytesNumber(dynBuf, &storedBytes) == FAILURE)
+    if (miscDynBufGetNbStoredBytes(dynBuf, &storedBytes) == FAILURE)
     {
         return FAILURE;
     }

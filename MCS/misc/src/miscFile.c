@@ -35,7 +35,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.21 2004-12-17 08:12:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.22 2004-12-21 15:37:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -418,7 +418,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
      */
     /* Get the Dynamic Buffer length */
     mcsUINT32 builtPathLength = 0;
-    if (miscDynBufGetStoredBytesNumber(&builtPath, &builtPathLength) == FAILURE)
+    if (miscDynBufGetNbStoredBytes(&builtPath, &builtPathLength) == FAILURE)
     {
         return NULL;
     }
