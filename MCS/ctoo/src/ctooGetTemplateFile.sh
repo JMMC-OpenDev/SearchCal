@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateFile.sh,v 1.1 2004-08-10 16:43:45 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateFile.sh,v 1.2 2004-08-11 10:00:22 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -42,10 +42,10 @@
 # \synopsis
 # \e ctooGetTemplateFile \e \<template\> \e <file> \e [remove]
 # 
-# \param template : original template file with its path, from which the new 
-#                   customized template file is generated.
-# \param file : customized generated template filename. The filename should
-#               have a suffix.
+# \param template : original template filename (eventually with its path) 
+#                   from which the new customized template file is generated.
+# \param file : customized generated template filename (eventually with its 
+#               path).
 # 
 # \n
 # \opt
@@ -58,8 +58,11 @@
 # 
 # \n
 # \details
-# Create a customized template file from an original template file. The new
-# template file is created in the directory where this script is executed.
+# Create a customized template file from an original template file. If no
+# paths are specified for template and file parameters, the script will look
+# for the template file and will create the new template file in the directory
+# where this script is executed. If paths are specified, script will use them
+# to get and create files, respectively.
 # 
 # \usedfiles
 # OPTIONAL. If files are used, for each one, name, and usage description.
@@ -85,7 +88,7 @@ fi
 TEMPLATE=$1
 
 # New file to create from the template
-file=$2
+FILE=$2
 
 # option to say if the generated temporary file should be removed or not
 backupFile=$3
@@ -94,7 +97,7 @@ backupFile=$3
 # Copy the template file in current directory.
 # The template file is copied in a new temporary file deleting the header of the
 # template
-if grep -v "#%#" $TEMPLATE > ${file}.BAK
+if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
 then
     # File copy succeeds
         
@@ -108,7 +111,7 @@ then
     sed -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
         -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
         -e "1,$ s/I>-<d/\Id/g" \
-        ${file}.BAK > $file
+        ${FILE}.BAK > $FILE
 
     case $backupFile in
         "")
@@ -116,7 +119,7 @@ then
             ;;
         remove)
             # Remove the temporary backup file
-            rm -f ${file}.BAK
+            rm -f ${FILE}.BAK
             ;;
         *)
             # Wrong parameter value
@@ -129,7 +132,7 @@ then
             
 else
     # File copy failed
-    echo -e "\n>>> CANNOT CREATE --> $file\n"
+    echo -e "\n>>> CANNOT CREATE --> $FILE\n"
 fi
 
 #___oOo___
