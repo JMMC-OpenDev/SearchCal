@@ -1,12 +1,13 @@
 #! /bin/sh
 # JMMC project
 #
-# "@(#) $Id: mkfMakeInstallCmdDefFiles.sh,v 1.2 2004-12-10 07:04:04 gzins Exp $" 
+# "@(#) $Id: mkfMakeInstallCmdDefFiles.sh,v 1.3 2004-12-10 17:01:23 scetre Exp $" 
 #
 # who       when         what
 # --------  --------     ----------------------------------------------
 # gzins     03-Dec-2004  Adapted from VLT
 # gzins     10-Dec-2004  Added list of files to be installed
+# gzins     10-Dec-2004  Removed 'touch CDF file' instruction 
 
 #************************************************************************
 #   NAME
@@ -91,7 +92,6 @@ then
     for file in $cdfList
     do
         FILE="`basename $file`.cdf"
-        echo -e "\t-\$(AT)touch ../config/$FILE"
         echo -e "$CDF_DIR/$FILE: ../config/$FILE"
         echo -e "\t-\$(AT)echo \"\t$FILE\";\\"
         echo -e "\t      cp ../config/$FILE  $CDF_DIR/$FILE; \\"
