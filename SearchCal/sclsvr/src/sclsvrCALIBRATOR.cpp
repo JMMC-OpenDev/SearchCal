@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.26 2005-02-08 20:54:06 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.27 2005-02-08 21:36:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/02/08 20:54:06  gzins
+ * Added 'computed' flag when setting computed star property
+ * Updated Pack() and Unpack() to store and retrieve origin and confidence index of star properties
+ *
  * Revision 1.25  2005/02/08 04:39:32  gzins
  * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
  *
@@ -21,7 +25,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.26 2005-02-08 20:54:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.27 2005-02-08 21:36:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -670,7 +674,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
         if (IsPropertySet(vobsSTAR_EXTENSION_DIAM_ERROR) == mcsTRUE)
         {
             GetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, &diamError);
-            diamError = diam * diamError / 100.0;
         }
         else
         {
