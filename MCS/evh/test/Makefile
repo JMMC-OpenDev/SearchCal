@@ -1,13 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-10-18 09:40:10 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.1 2004-10-18 09:40:10 gzins Exp $"
 #
-# Makefile of evh library
+# Makefile of test programs for evh module 
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# sccmgr    22-Sep-2004  Created
+# gzins     24-Sep-2004  Created
 #
 #
 #*******************************************************************************
@@ -38,14 +38,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = 
+EXECUTABLES     =  evhTestHandler
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-ex_OBJECTS   = ex
-ex_LDFLAGS   =
-ex_LIBS      = C++
+evhTestHandler_OBJECTS   = evhTestHandler
+evhTestHandler_LDFLAGS   =
+evhTestHandler_LIBS      = C++ msg MCS fnd evh
 
 #
 # special compilation flags for single c sources
@@ -59,19 +59,13 @@ INCLUDES        =
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = evh
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-evh_OBJECTS   = evhHANDLER        \
-				evhCALLBACK       \
-				evhCMD_CALLBACK   \
-				evhIOSTREAM_CALLBACK   \
-				evhCALLBACK_LIST  \
-				evhKEY        \
-				evhCMD_KEY    \
-				evhIOSTREAM_KEY
+lllll_OBJECTS   =
+
 #
 # Scripts (public and local)
 # --------------------------

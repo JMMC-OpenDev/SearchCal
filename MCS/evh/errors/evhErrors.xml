@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<errorList moduleName="evh">
+   <error id="3">
+      <errName>NULL_OBJECT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not run callback; object not set]]></errFormat>
+   </error>
+   <error id="4">
+      <errName>NULL_METHOD</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not run callback; method not set]]></errFormat>
+   </error>
+   <error id="5">
+      <errName>RUN_CB</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Failure running callback]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>SELECT</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[select() call fails - %s]]></errFormat>
+   </error>
+   <error id="8">
+      <errName>NO_STREAM_TO_LISTEN</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[no stream (message queue, file descriptor) to listen]]></errFormat>
+   </error>
+</errorList>

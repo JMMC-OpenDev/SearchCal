@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhPrivate.h,v 1.1 2004-09-22 08:54:16 sccmgr Exp $"
+* "@(#) $Id: evhPrivate.h,v 1.2 2004-10-18 09:40:10 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -31,7 +31,10 @@ extern "C" {
  */
 #define MODULE_ID "evh"
 
- 
+/*
+ * Maximum number of possible I/O stream descriptors
+ */
+#define evhMAX_NO_OF_SDS 256
 
 #ifdef __cplusplus
 }
