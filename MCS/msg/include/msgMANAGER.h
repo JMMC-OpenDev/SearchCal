@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.h,v 1.3 2005-01-24 15:39:54 gzins Exp $"
+ * "@(#) $Id: msgMANAGER.h,v 1.4 2005-01-26 08:47:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/24 15:39:54  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     06-Dec-2004  Created
  * gzins     15-Dec-2004  Set mcsTRUE as default value of lastReply parameter
  *                        of SendReply method
@@ -69,8 +72,9 @@ protected:
     virtual mcsCOMPL_STAT SetConnection();
 
     virtual mcsCOMPL_STAT Forward (msgMESSAGE &msg);
+    virtual mcsCOMPL_STAT PrepareReply(msgMESSAGE &msg,
+                                       mcsLOGICAL lastReply=mcsTRUE);
     virtual mcsCOMPL_STAT SendReply (msgMESSAGE &msg,
-                                     mcsLOGICAL lastReply=mcsTRUE,
                                      msgPROCESS *sender=NULL);
     virtual mcsCOMPL_STAT HandleCmd (msgMESSAGE &msg);
 private:

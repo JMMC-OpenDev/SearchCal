@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.12 2005-01-24 15:02:47 gzins Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.13 2005-01-26 08:47:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/01/24 15:02:47  gzins
+ * Added CVS logs as modification history
+ *
  * gzins     06-Dec-2004  Created
  * gzins     08-Dec-2004  Updated to support several processes with same name  
  * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
@@ -28,7 +31,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.12 2005-01-24 15:02:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.13 2005-01-26 08:47:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -243,7 +246,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                         else // If the message is a reply...
                         {
                             // Send reply to the sender process
-                            SendReply(msg, msg.IsLastReply());
+                            SendReply(msg);
                         }
                     }
                 }
@@ -485,6 +488,8 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
 
                 /* Send a registering validation messsage */
                 msg.SetBody("OK", 0);
+                
+                PrepareReply(msg);
                 SendReply(msg);
             }
             else /* Wrong message received... */
@@ -502,7 +507,7 @@ mcsCOMPL_STAT msgMANAGER::SetConnection()
 }
 
 /**
- * Forward command to its recepient process.
+ * Forward command to its recipient process.
  *
  * \param msg the message to be forwarded
  *
@@ -520,9 +525,10 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
     recipient = _processList.GetProcess(msg.GetRecipient());
     if (recipient == NULL)
     {
-        /* Raise the error to the sender */
+        /* Report error to the sender */
         errAdd(msgERR_RECIPIENT_NOT_CONNECTED, msg.GetRecipient(),
                msg.GetCommand());
+        PrepareReply(msg);
         SendReply(msg);
     }
     else
@@ -531,6 +537,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
         if (recipient->Send(msg) == mcsFAILURE)
         {
             /* Report this to the sender */
+            PrepareReply(msg);
             SendReply(msg);
         }
     }
@@ -539,20 +546,25 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
 }
 
 /**
- * Send a reply message.
+ * Prepare the reply message.
+ *
+ * It prepares the message to be send to the sender. This consists to set the
+ * last reply flag, the message type (REPLY or ERROR_REPLY) according the error
+ * stack status, and, if error stack size is not empty, to put the error list in
+ * the message buffer.
  *
  * \param msg the message to reply
  * \param lastReply flag to specify if the current message is the last one or
  * not
- * \param sender
  *
  * \return an completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
-                                     mcsLOGICAL lastReply,
-                                     msgPROCESS *sender)
+mcsCOMPL_STAT msgMANAGER::PrepareReply(msgMESSAGE &msg,
+                                       mcsLOGICAL lastReply)
 {
-    logExtDbg("msgMANAGER::SendReply()");
+    logExtDbg("msgMANAGER::PrepareReply()");
+
+    char *replyType;
 
     // Build the reply message header
     msg.SetLastReplyFlag(lastReply);
@@ -562,12 +574,14 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
     {
         // Set message type to REPLY
         msg.SetType(msgTYPE_REPLY);
+        replyType = "reply";
     }
     else
     {
         // Put the MCS error stack data in the message body
         char errStackContent[errSTACK_SIZE * errMSG_MAX_LEN];
-        if (errPackStack(errStackContent, sizeof(errStackContent)) == mcsFAILURE)
+        if (errPackStack(errStackContent, 
+                         sizeof(errStackContent)) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -577,12 +591,27 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
 
         // Set message type to ERROR_REPLY
         msg.SetType(msgTYPE_ERROR_REPLY);
+        replyType = "error reply";
 
         // Empty error stack
         errResetStack();
     }
+    return mcsSUCCESS;        
+}
 
-    logTest("Sending '%s' answer : %s", msg.GetCommand(), msg.GetBody());
+/**
+ * Send a reply message.
+ *
+ * \param msg the message to reply
+ * \param sender
+ *
+ * \return an completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
+                                     msgPROCESS *sender)
+{
+    logExtDbg("msgMANAGER::SendReply()");
+    logTest("Sending '%s' reply : %s", msg.GetCommand(), msg.GetBody());
 
     // Get sender
     if (sender == NULL)
@@ -647,6 +676,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         }
 
         /* Send the built reply message */
+        PrepareReply(msg);
         SendReply(msg);
     } 
     /* If the received command is a VERSION request... */ 
@@ -657,6 +687,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         memset(buffer, '\0', sizeof(buffer));
         sprintf(buffer, rcsId);
         msg.SetBody(buffer);
+        PrepareReply(msg);
         SendReply(msg);
     }  
     /* If the received command is a DEBUG request... */ 
@@ -667,6 +698,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         // Parses command
         if (debugCmd.Parse() == mcsFAILURE)
         {
+            PrepareReply(msg);
             SendReply(msg);
             return mcsFAILURE;
         }
@@ -713,6 +745,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         
         /* Send an hand-checking message */
         msg.SetBody("OK");
+        PrepareReply(msg);
         SendReply(msg);
     }  
     /* If the received command is a CLOSE request... */
@@ -720,6 +753,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
     {
         /* Send an hand-checking message */
         msg.SetBody("OK");
+        PrepareReply(msg);
         SendReply(msg);
 
         /* Close the connection */
@@ -736,6 +770,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
     {
         /* Send an hand-checking message */
         msg.SetBody("OK");
+        PrepareReply(msg);
         SendReply(msg);
 
         /* Wait 1 second to have enough time to get the 'EXIT' query answer */
@@ -753,6 +788,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
                  msg.GetCommand());
 
         errAdd(msgERR_CMD_NOT_SUPPORTED,  msg.GetCommand());
+        PrepareReply(msg);
         SendReply(msg);
 
         return mcsFAILURE;
