@@ -15,6 +15,8 @@
 *                        Moved mcs.h include to miscFile.h
 *                        Changed includes due to null-terminated string specific
 *                        functions move from miscDynStr.h to miscDynBuf.h
+* lafrasse  03-Aug-2004  Corrected a bug in miscResolvePath that was causing an
+*                        '\' append at the end of the computed path
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -24,7 +26,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.10 2004-08-02 15:23:40 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.11 2004-08-03 13:48:04 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -265,154 +267,171 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
  */
 mcsCOMPL_STAT miscResolvePath(const char *orginalPath, char **resolvedPath)
 {
-    static miscDYN_BUF  complPath;
-    char                *chrPtr, *pathPtr, *tmpPtr;
+    static miscDYN_BUF  builtPath;
+    char                *nextSlashPtr, *leftToBeResolvedPathPtr, *tmpEnvVarPtr;
     char                *nullTerm = "\0";
     mcsSTRING256        tmpPath;
-    mcsINT32            len;
+    mcsINT32            length;
 
-    if (miscDynBufReset(&complPath) == FAILURE)
+    /* Try to reset the static Dynamic Buffer */
+    if (miscDynBufReset(&builtPath) == FAILURE)
     {
         return FAILURE;
     }
 
     *resolvedPath = NULL;
-    pathPtr = (char *)orginalPath;
-    chrPtr = strchr(pathPtr, '/');
+    leftToBeResolvedPathPtr = (char *)orginalPath;
+    nextSlashPtr = strchr(leftToBeResolvedPathPtr, '/');
     do
     {
-        if (*pathPtr == '$')
+        if (*leftToBeResolvedPathPtr == '$')
         {	
-            if (chrPtr != NULL)
+            if (nextSlashPtr != NULL)
             {
-                len = ((chrPtr - pathPtr) - 1);
+                length = ((nextSlashPtr - leftToBeResolvedPathPtr) - 1);
             }
             else
             {
-                len = strlen(pathPtr);
+                length = strlen(leftToBeResolvedPathPtr);
             }
 
-            if (strncpy(tmpPath, (pathPtr + 1), len) == NULL)
+            if (strncpy(tmpPath, (leftToBeResolvedPathPtr + 1), length) == NULL)
             {
                 errAdd(miscERR_FUNC_CALL, "strncpy");
                 return FAILURE;
             }
 
-            *(tmpPath + len) = '\0';
+            *(tmpPath + length) = '\0';
 
-            if (miscGetEnvVarValue(tmpPath, &tmpPtr) == FAILURE)
+            if (miscGetEnvVarValue(tmpPath, &tmpEnvVarPtr) == FAILURE)
             {
                 return FAILURE;
             }
 
-            if (miscDynBufAppendString(&complPath, tmpPtr) == FAILURE)
+            if (miscDynBufAppendString(&builtPath, tmpEnvVarPtr) == FAILURE)
             {
                 return FAILURE;
             }
         }
-        else if (*pathPtr == '~')
+        else if (*leftToBeResolvedPathPtr == '~')
         {
-            /* Path of the format: "~/MY_DIR/" or "~<user>/"
-             */
+            /* Path of the format: "~/MY_DIR/" or "~<user>/" */
             if (memcpy(tmpPath, "HOME", 5) == NULL)
             {
                 errAdd(miscERR_MEM_FAILURE);
                 return FAILURE;
             }
 
-            if (miscGetEnvVarValue(tmpPath, &tmpPtr) == FAILURE)
+            if (miscGetEnvVarValue(tmpPath, &tmpEnvVarPtr) == FAILURE)
             {
                 return FAILURE;
             }
 
-            if (miscDynBufAppendString(&complPath, tmpPtr) == FAILURE)
+            if (miscDynBufAppendString(&builtPath, tmpEnvVarPtr) == FAILURE)
             {
                 return FAILURE;
             }
         }
         else
         {
-            if (chrPtr != NULL)
+            if (nextSlashPtr != NULL)
             {
-                len = (chrPtr - pathPtr);
+                length = (nextSlashPtr - leftToBeResolvedPathPtr);
             }
             else
             {
-                len = strlen(pathPtr);
+                length = strlen(leftToBeResolvedPathPtr);
             }
 
-            if (strncpy(tmpPath, pathPtr, len) == NULL)
+            if (strncpy(tmpPath, leftToBeResolvedPathPtr, length) == NULL)
             {
                 errAdd(miscERR_FUNC_CALL, "strncpy");
                 return FAILURE;
             }
 
-            *(tmpPath + len) = '\0';
+            *(tmpPath + length) = '\0';
 
-            if (miscDynBufAppendString(&complPath, tmpPath) == FAILURE)
+            if (miscDynBufAppendString(&builtPath, tmpPath) == FAILURE)
             {
                 return FAILURE;
             }
         }
 
-        if (miscDynBufAppendString(&complPath, "/") == FAILURE)
+        if (miscDynBufAppendString(&builtPath, "/") == FAILURE)
         {
             return FAILURE;
         }
 
-        if (chrPtr != NULL)
+        if (nextSlashPtr != NULL)
         {
-            if (*chrPtr != '\0')
+            if (*nextSlashPtr != '\0')
             {
-                pathPtr = (chrPtr + 1);
+                leftToBeResolvedPathPtr = (nextSlashPtr + 1);
             }
             else
             {
-                pathPtr = chrPtr;
+                leftToBeResolvedPathPtr = nextSlashPtr;
             }
         }
         else
         {
-            pathPtr = nullTerm;
+            leftToBeResolvedPathPtr = nullTerm;
         }
 
-        if (*pathPtr == ':')
+        if (*leftToBeResolvedPathPtr == ':')
         {
-            if (miscDynBufAppendString(&complPath, ":") == FAILURE)
+            if (miscDynBufAppendString(&builtPath, ":") == FAILURE)
             {
                 return FAILURE;
             }
 
-            pathPtr++;
+            leftToBeResolvedPathPtr++;
         }
     }
-    while (((chrPtr = strchr(pathPtr, '/')) != NULL) || (*pathPtr != '\0'));
+    while (((nextSlashPtr = strchr(leftToBeResolvedPathPtr, '/')) != NULL)
+           || (*leftToBeResolvedPathPtr != '\0'));
 
-    /* Since we cannot know if a filename is contained in the path, we
-     * should not allow slash in the end of the complete path
+    /* Since we cannot know if a filename is contained in the path, we should
+     * not allow slash in the end of the complete path
      */
-    if (*(complPath.dynBuf + complPath.storedBytes - 1) == '/')
+    /* Try to get the Dynamic Buffer length */
+    mcsUINT32 builtPathLength = 0;
+    if (miscDynBufGetStoredBytesNumber(&builtPath, &builtPathLength) == FAILURE)
     {
-        complPath.storedBytes--;
+        return FAILURE;
     }
 
-    /* Make sure the path name is terminated with '\0'
-     */
-    if (complPath.storedBytes == complPath.allocatedBytes)
+    /* Try to get Dynamic Buffer internal buffer pointer */
+    char *endingChar = NULL;
+    if ((endingChar = miscDynBufGetBufferPointer(&builtPath)) == NULL)
     {
-        if (miscDynBufAppendString(&complPath, " ") == FAILURE)
-        {
-            return FAILURE;
-        }
-
-        *(complPath.dynBuf + (complPath.storedBytes - 1)) = '\0';
+        return FAILURE;
     }
-    else
+    
+    /* Compute the last path character position */
+    endingChar += (builtPathLength - 2);
+
+    /* If the last path charater is an '/' */
+    if (*endingChar == '/')
     {
-        *(complPath.dynBuf + complPath.storedBytes) = '\0';
+        /* Replace with a '\0' */
+        *endingChar = '\0';
+
+        /* Decrease its length */
+        builtPath.storedBytes--;
     }
 
-    *resolvedPath = complPath.dynBuf;
+    /* Try to strip the Dynamic Buffer */
+    if (miscDynBufStrip(&builtPath) == FAILURE)
+    {
+        return FAILURE;
+    }
+    
+    /* Try to get Dynamic Buffer internal buffer pointer */
+    if ((*resolvedPath = miscDynBufGetBufferPointer(&builtPath)) == NULL)
+    {
+        return FAILURE;
+    }
 
     return SUCCESS;
 }
