@@ -1,14 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.C,v 1.1 2004-11-17 10:27:27 gzins Exp $"
+* "@(#) $Id: evhTASK.C,v 1.2 2004-11-18 17:37:19 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * gzins     09-Jun-2004  created
+* gzins     18-Nov-2004  splitted parsing and usage methods to separate
+*                        options and arguments in command-line parameters
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: evhTASK.C,v 1.1 2004-11-17 10:27:27 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTASK.C,v 1.2 2004-11-18 17:37:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -62,7 +64,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *      virtual ~mymodSERVER() {};
  *      virtual mcsCOMPL_STAT AppUsage();
  *      virtual mcsCOMPL_STAT ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
- *                                            mcsINT32 *optind);
+ *                                            mcsINT32 *optInd, 
+ *                                            mcsLOGICAL *optUsed);
  *  private:
  *      mcsLOGICAL  noTimeout;
  *      mcsBYTES256 configFileName;
@@ -81,42 +84,43 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *  }
  *  
  *  mcsCOMPL_STAT mymodSERVER::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
- *                                          mcsINT32 *optind)
+ *                                          mcsINT32 *optInd, 
+ *                                          mcsLOGICAL *optUsed)
  *  {
  *      logExtDbg("mymodSERVER::ParseAppOptions()"); 
  *
  *      // No timeout option
- *      if(strcmp(argv[*optind], "-noTimeout") == 0)
+ *      if(strcmp(argv[*optInd], "-noTimeout") == 0)
  *      {
  *          noTimeout = mcsTRUE;
  *          return SUCCESS;
  *      }
  *      // Application configuration file option
- *      else if (strcmp(argv[*optind], "-c") == 0)
+ *      else if (strcmp(argv[*optInd], "-c") == 0)
  *      {
- *          if ((*optind + 1) < argc)
+ *          if ((*optInd + 1) < argc)
  *          {
- *              *optind += 1;
- *              optarg = argv[*optind];
+ *              *optInd += 1;
+ *              optarg = argv[*optInd];
  *              if ( sscanf (optarg, "%s", configFileName) != 1)
  *              {
- *                  logWarning ("%s: Argument to option %s is invalid: '%s'",
- *                              Name(), argv[*optind-1], optarg);
+ *                  logError ("%s: Argument to option %s is invalid: '%s'",
+ *                              Name(), argv[*optInd-1], optarg);
  *                  return FAILURE;
  *              }
  *              return SUCCESS;
  *          }
  *          else
  *          {
- *              logWarning ("%s: Option %s requires an argument",
- *                          Name(), argv[*optind]);
+ *              logError ("%s: Option %s requires an argument",
+ *                          Name(), argv[*optInd]);
  *              return FAILURE;
  *          }
  *      }
  *  
- *      // Invalid argument
- *      logWarning ("%s: Invalid argument %s", Name(), argv[*optind] );
- *      return FAILURE;
+ *      // This option has not been processed. 
+ *      *optUsed = mcsFALSE;
+ *      return SUCCESS;
  *  }
  *  
  *  int main(int argc, char *argv[])
@@ -124,9 +128,9 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *      // Create objects living in the application
  *      mymodSERVER mymodServer;
  *      
- *      logInfo("Server starting ..");
- *      // Parse input parameter
- *      if (mymodServer.ParseOptions(argc, argv) == FAILURE)
+ *      logInfo("Application starting ..");
+ *      // Init application; register to MCS and parse input parameter
+ *      if (mymodServer.Init(argc, argv) == FAILURE)
  *      {
  *          exit (EXIT_FAILURE);
  *      }
@@ -134,7 +138,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *      // Specific application code
  *      ...
  *  
- *      logInfo("Server exiting ..");
+ *      logInfo("Application exiting ..");
  *      exit (EXIT_SUCCESS);
  *  }
  * \endcode
@@ -172,6 +176,52 @@ evhTASK::~evhTASK()
 }
  
 /**
+ * Initialization of the application.
+ *
+ * This method just registers application to MCS services and parses the
+ * command-line parameters.
+ *
+ * \return SUCCESS, or FAILURE if an error occurrs.
+ */
+mcsCOMPL_STAT evhTASK::Init(mcsINT32 argc, char *argv[])
+{
+    logExtDbg("evhTASK::Method()");
+
+    // Initialize MCS services
+    if (mcsInit(argv[0]) == FAILURE)
+    {
+        return (FAILURE);
+    }
+
+    // Parse input parameter
+    if (ParseOptions(argc, argv) == FAILURE)
+    {
+        return (FAILURE);
+    }
+
+    // Perform specific application snitialization
+    return (AppInit());
+}
+
+/**
+ * Application initialization.
+ *
+ * This method should be overloaded by the application classes which inherit
+ * from evhTASK, so as to perform initialization of the application. By
+ * default, this method does nothing.
+ * This method is called by Init() method.
+ *
+ * \return SUCCESS 
+ */
+mcsCOMPL_STAT evhTASK::AppInit()
+{
+    logExtDbg("evhSERVER::AppInit()");
+
+    return SUCCESS;
+}
+
+ 
+/**
  * Returns the name of application.
  * \return name of application.
  */
@@ -194,7 +244,35 @@ mcsCOMPL_STAT evhTASK::Usage()
 {
     logExtDbg("evhTASK::Usage()");
 
-    std::cout << Name() << " usage:" << endl;
+    PrintSynopsis();
+    PrintStdOptions();
+    PrintAppOptions();
+    PrintArguments();
+    return SUCCESS;
+}
+
+/**
+ * Synopsys of the program.
+ *
+ * This method gives information about the synopsis of the program.
+ *
+ * \return SUCCESS 
+ */
+mcsCOMPL_STAT evhTASK::PrintSynopsis()
+{
+    std::cout << "Usage:" << Name() << " [OPTIONS]"<< endl;
+    return SUCCESS;
+}
+
+/**
+ * Usage of the standard options/arguments.
+ *
+ * This method gives information about the standard options listed above.
+ *
+ * \return SUCCESS 
+ */
+mcsCOMPL_STAT evhTASK::PrintStdOptions()
+{
     cout <<" Standard options: -l <level>   set file log level" << endl;
     cout <<"                   -v <level>   set stdout log level" << endl;
     cout <<"                   -a <level>   set action log level" << endl;
@@ -209,13 +287,11 @@ mcsCOMPL_STAT evhTASK::Usage()
     cout <<" and line number" << endl;
     cout <<"                                in stdout log messages" << endl; 
 
-    AppUsage();
-
     return SUCCESS;
 }
 
 /**
- * Usage of the specific options/arguments.
+ * Usage of the specific options.
  * This method should be overloaded by the application classes which inherit
  * from evhTASK, so as to provide the user with information about the
  * command-line options which are specific to the application. By default,
@@ -223,164 +299,87 @@ mcsCOMPL_STAT evhTASK::Usage()
  *
  * \return SUCCESS 
  */
-mcsCOMPL_STAT evhTASK::AppUsage()
+mcsCOMPL_STAT evhTASK::PrintAppOptions()
 {
-    logExtDbg("evhTASK::AppUsage()");
+    logExtDbg("evhTASK::PrintAppOptions()");
+
+    return SUCCESS;
+}
+
+/**
+ * Usage of the specific arguments.
+ * This method should be overloaded by the application classes which inherit
+ * from evhTASK, so as to provide the user with information about the
+ * command-line options which are specific to the application. By default,
+ * this method does nothing.
+ *
+ * \return SUCCESS 
+ */
+mcsCOMPL_STAT evhTASK::PrintArguments()
+{
+    logExtDbg("evhTASK::PrintArguments()");
 
     return SUCCESS;
 }
 
 /**
  * Parses the options of the application.
- * The options peculiar to the application are parsed using the
- * ParseAppOptions method, which should be overloaded by the classes which
- * inherit from the present one (by default, the method provided here does
- * nothing, see below). Moreover, this method registers the process to MCS
- * services if not yet done.
+ * The ParseOptions() method parses the command line arguments. Its arguments
+ * argc and argv are the argument count and array as passed to the * main()
+ * function  on  program  invocation.
+ * For each options, it first calls ParseStdOptions() method to parse the
+ * standard options, and then ParseAppOptions() to deal with peculiar options
+ * of the application.
  * \param argc count of the arguments supplied to the method
  * \param argv array of pointers to the strings which are those arguments
  * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
  * error message is printed out accordingly.
- *   
  */
 mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, mcsINT8 *argv[])
 {
     logExtDbg ("evhTASK::ParseOptions ()");
 
-    mcsINT32  optind;
-    logLEVEL  level;
+    mcsINT32   optInd;
+    mcsLOGICAL optUsed;
 
-    // If process not yet registerer to MCS services, do it 
-    if (strcmp(mcsGetProcName(), mcsUNKNOWN_PROC) == 0)
-    {
-        mcsInit(argv[0]);
-    }
-    
     // For each command option
-    for (optind =  1; optind < argc; optind++)
+    for (optInd =  1; optInd < argc; optInd++)
     {
-        // If help option specified
-        if (strcmp(argv[optind], "-h") == 0)
-        {
-            // Print usage
-            Usage();
-            exit (EXIT_SUCCESS);
-        }
-        // Else if '-version' option specified
-        else if (strcmp(argv[optind], "-version") == 0)
-        {
-            // Prints the version number of the SW
-            printf ("%s\n", GetSwVersion());
-            exit (EXIT_SUCCESS);
-        }
-        // Else if logging level specified
-        else if (strcmp(argv[optind], "-l") == 0)
-        { 
-            // Set new logging level
-            if ((optind + 1) < argc)
-            {
-                optarg = argv[++optind];
-                if ( sscanf (optarg, "%d", &level) != 1)
-                {
-                    logWarning ("%s: Argument to option %s is invalid: '%s'",
-                                 Name(), argv[optind-1], optarg);
-                    return FAILURE;
-                }
-                logSetFileLogLevel(level);
-                _fileLogOption = mcsTRUE;
-            }
-            else
-            {
-                logWarning ("%s: Option %s requires an argument",
-                             Name(), argv[optind]);
-                return FAILURE;
-            }
-        }
-        // Else if stdout level specified
-        else if (strcmp(argv[optind], "-v") == 0)
-        {
-            // Set new stdout log level
-            if ((optind + 1) < argc)
-            {
-                optarg = argv[++optind];
-                if ( sscanf (optarg, "%d", &level) != 1)
-                {
-                    logWarning ("%s: Argument to option %s is invalid: '%s'",
-                                 Name(), argv[optind-1], optarg);
-                    return FAILURE;
-                }
-                logSetStdoutLogLevel(level);
-                _stdoutLogOption = mcsTRUE;
-            }
-            else
-            {
-                logWarning ("%s: Option %s requires an argument",
-                             Name(), argv[optind]);
-                return FAILURE;
-            }
-        }
-        // Else if action level specified
-        else if (strcmp(argv[optind], "-a") == 0)
-        {
-            // Set new action log level
-            if ((optind + 1) < argc)
-            {
-                optarg = argv[++optind];
-                if ( sscanf (optarg, "%d", &level) != 1)
-                {
-                    logWarning ("%s: Argument to option %s is invalid: '%s'",
-                                 Name(), argv[optind-1], optarg);
-                    return FAILURE;
-                }
-                logSetActionLogLevel(level);
-                _actionLogOption = mcsTRUE;
-            }
-            else
-            {
-                logWarning ("%s: Option %s requires an argument",
-                             Name(), argv[optind]);
-                return FAILURE;
-            }
-        }
-        // Else if timer level specified
-        else if (strcmp(argv[optind], "-t") == 0)
-        {
-            // Set new timer log level
-            if ((optind + 1) < argc)
-            {
-                optarg = argv[++optind];
-                if ( sscanf (optarg, "%d", &level) != 1)
-                {
-                    logWarning ("%s: Argument to option %s is invalid: '%s'",
-                                 Name(), argv[optind-1], optarg);
-                    return FAILURE;
-                }
-                //ixacTIMER_LOGS::SetLevel(level);
-                _timerLogOption = mcsTRUE;
-            }
-            else
-            {
-                logWarning ("%s: Option %s requires an argument",
-                             Name(), argv[optind]);
-                return FAILURE;
-            }
-        }
-        // Else if '-noDate' option specified
-        else if (strcmp(argv[optind], "-noDate") == 0)
-        {
-            // Turns off the display of date
-            logSetPrintDate(mcsFALSE);
-        }
-        // Else if '-noFileLine' option specified
-        else if (strcmp(argv[optind], "-noFileLine") == 0)
-        {
-            // Turns off the display of file/line
-            logSetPrintFileLine(mcsFALSE);
-        }
-        // Else calls application options parser function
-        else if (ParseAppOptions(argc, argv, &optind) != SUCCESS)
+        // Parses standard options
+        optUsed = mcsTRUE;
+        if (ParseStdOptions(argc, argv, &optInd, &optUsed) == FAILURE)
         {
             return FAILURE;
+        }
+        else if (optUsed == mcsFALSE)
+        {
+            optUsed = mcsTRUE;
+            if (ParseAppOptions(argc, argv, &optInd, &optUsed) != SUCCESS)
+            {
+                return FAILURE;
+            }
+            else if (optUsed == mcsFALSE)
+            {
+                optUsed = mcsTRUE;
+                if (ParseArguments(argc, argv, &optInd, &optUsed) != SUCCESS)
+                {
+                    return FAILURE;
+                }
+                else if (optUsed == mcsFALSE)
+                {  
+                    if (argv[optInd][0] == '-')
+                    {
+                        logError ("%s: Invalid option %s", 
+                                  Name(), argv[optInd] );
+                    }
+                    else
+                    {
+                        logError ("%s: Invalid argument %s", 
+                                  Name(), argv[optInd] );
+                    }
+                    return FAILURE;
+                }
+            }
         }
         // End if
     }
@@ -391,23 +390,197 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, mcsINT8 *argv[])
 
 /**
  * Parses the peculiar options of the application.
+ * It parses the standard command-line options.
+ * \param argc count of the arguments supplied to the method
+ * \param argv array of pointers to the strings which are those arguments
+ * \param optInd index of the arguments currently parsed 
+ * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
+ * error message is printed out accordingly.
+ */
+mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
+                                       mcsINT32 *optInd, mcsLOGICAL *optUsed)
+{
+    logLEVEL  level;
+
+    logExtDbg ("evhTASK::ParseStdOptions ()");
+    // If help option specified
+    if (strcmp(argv[*optInd], "-h") == 0)
+    {
+        // Print usage
+        Usage();
+        exit (EXIT_SUCCESS);
+    }
+    // Else if '-version' option specified
+    else if (strcmp(argv[*optInd], "-version") == 0)
+    {
+        // Prints the version number of the SW
+        printf ("%s\n", GetSwVersion());
+        exit (EXIT_SUCCESS);
+    }
+    // Else if logging level specified
+    else if (strcmp(argv[*optInd], "-l") == 0)
+    { 
+        // Set new logging level
+        if ((*optInd + 1) < argc)
+        {
+            *optInd += 1;
+            optarg = argv[*optInd];
+            if ( sscanf (optarg, "%d", &level) != 1)
+            {
+                logError ("%s: Argument to option %s is invalid: '%s'",
+                          Name(), argv[*optInd-1], optarg);
+                return FAILURE;
+            }
+            logSetFileLogLevel(level);
+            _fileLogOption = mcsTRUE;
+        }
+        else
+        {
+            logError ("%s: Option %s requires an argument",
+                      Name(), argv[*optInd]);
+            return FAILURE;
+        }
+    }
+    // Else if stdout level specified
+    else if (strcmp(argv[*optInd], "-v") == 0)
+    {
+        // Set new stdout log level
+        if ((*optInd + 1) < argc)
+        {
+            *optInd += 1;
+            optarg = argv[*optInd];
+            if ( sscanf (optarg, "%d", &level) != 1)
+            {
+                logError ("%s: Argument to option %s is invalid: '%s'",
+                          Name(), argv[*optInd-1], optarg);
+                return FAILURE;
+            }
+            logSetStdoutLogLevel(level);
+            _stdoutLogOption = mcsTRUE;
+        }
+        else
+        {
+            logError ("%s: Option %s requires an argument",
+                      Name(), argv[*optInd]);
+            return FAILURE;
+        }
+    }
+    // Else if action level specified
+    else if (strcmp(argv[*optInd], "-a") == 0)
+    {
+        // Set new action log level
+        if ((*optInd + 1) < argc)
+        {
+            *optInd += 1;
+            optarg = argv[*optInd];
+            if ( sscanf (optarg, "%d", &level) != 1)
+            {
+                logError ("%s: Argument to option %s is invalid: '%s'",
+                          Name(), argv[*optInd-1], optarg);
+                return FAILURE;
+            }
+            logSetActionLogLevel(level);
+            _actionLogOption = mcsTRUE;
+        }
+        else
+        {
+            logError ("%s: Option %s requires an argument",
+                      Name(), argv[*optInd]);
+            return FAILURE;
+        }
+    }
+    // Else if timer level specified
+    else if (strcmp(argv[*optInd], "-t") == 0)
+    {
+        // Set new timer log level
+        if ((*optInd + 1) < argc)
+        {
+            *optInd += 1;
+            optarg = argv[*optInd];
+            if ( sscanf (optarg, "%d", &level) != 1)
+            {
+                logError ("%s: Argument to option %s is invalid: '%s'",
+                          Name(), argv[*optInd-1], optarg);
+                return FAILURE;
+            }
+            //ixacTIMER_LOGS::SetLevel(level);
+            _timerLogOption = mcsTRUE;
+        }
+        else
+        {
+            logError ("%s: Option %s requires an argument",
+                      Name(), argv[*optInd]);
+            return FAILURE;
+        }
+    }
+    // Else if '-noDate' option specified
+    else if (strcmp(argv[*optInd], "-noDate") == 0)
+    {
+        // Turns off the display of date
+        logSetPrintDate(mcsFALSE);
+    }
+    // Else if '-noFileLine' option specified
+    else if (strcmp(argv[*optInd], "-noFileLine") == 0)
+    {
+        // Turns off the display of file/line
+        logSetPrintFileLine(mcsFALSE);
+    }
+    // Else option has not been used
+    else
+    {
+        
+        *optUsed = mcsFALSE;
+    }
+    return SUCCESS;
+}
+
+/**
+ * Parses the peculiar options of the application.
  * It parses the command-line options which are peculiar to the calling
  * application. By default, this method does nothing, and should be overloaded
  * by the classes which inherit from this one.
  * \param argc count of the arguments supplied to the method
  * \param argv array of pointers to the strings which are those arguments
- * \param optind index of the arguments currently parsed 
+ * \param optInd index of the arguments currently parsed 
+ * \param optUsed flag informing whether the current option has been
+ * processed or not.
  * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
  * error message is printed out accordingly.
  */
 mcsCOMPL_STAT evhTASK::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
-                                         mcsINT32 *optind)
+                                       mcsINT32 *optInd, mcsLOGICAL *optUsed)
 {
     logExtDbg ("evhTASK::ParseAppOptions ()");
 
-    logWarning ("%s: Invalid argument %s", Name(), argv[*optind] );
+    // Option has not been processed
+    *optUsed = mcsFALSE;
 
-    return FAILURE;
+    return SUCCESS;
+}
+
+/**
+ * Parses the arguments of application
+ * It parses the command-line arguments; i.e. which has not been handled
+ * neither by ParseStdOptions() nor ParseAppOptions() method. By default,
+ * this method does nothing, and should be overloaded by the classes which
+ * inherit from this one.
+ * \param argc count of the arguments supplied to the method
+ * \param argv array of pointers to the strings which are those arguments
+ * \param optInd index of the arguments currently parsed 
+ * \param optUsed flag informing whether the current option has been
+ * processed or not.
+ * \return On success, SUCCESS is returned. On error, FAILURE is returned, and
+ * error message is printed out accordingly.
+ */
+mcsCOMPL_STAT evhTASK::ParseArguments(mcsINT32 argc, mcsINT8 *argv[],
+                                      mcsINT32 *optInd, mcsLOGICAL *optUsed)
+{
+    logExtDbg ("evhTASK::ParseArguments ()");
+
+    // Option has not been processed
+    *optUsed = mcsFALSE;
+
+    return SUCCESS;
 }
 
 /**
