@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.2 2005-02-14 14:20:30 gzins Exp $
+# Version: $Id: mcs.sh,v 1.3 2005-02-15 16:49:11 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/02/14 14:20:30  gzins
+# Updated test for conditional environment variable setting; test LD_LIBRARY_PATH instead of PATH
+#
 # Revision 1.1  2005/01/29 13:11:44  gzins
 # Renamed bashrc to mcs.sh
 #
@@ -73,6 +76,7 @@ fi
 export MCSDATA=${MCSROOT}/data
 
 # Aliases
+alias psg='ps -aef | grep $*'
 alias m=more
 alias Pu='rm -f *~ .*~ core'
 alias gvim='gvim -geometry 80x45'
