@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.17 2005-02-08 20:57:22 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.18 2005-03-04 15:38:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/02/08 20:57:22  gzins
+ * Updated call to SetPropertyValue()
+ *
  * Revision 1.16  2005/02/08 04:39:32  gzins
  * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
  *
@@ -21,7 +24,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.17 2005-02-08 20:57:22 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.18 2005-03-04 15:38:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -38,6 +41,7 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "timlog.h"
 
 #include "vobs.h"
 
@@ -81,6 +85,9 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
+    
+    // Start timer log
+    timlogInfoStart(msg.GetCommand());
 
     // Get star name 
     char *objectName;
@@ -192,19 +199,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
+    // Stop timer log
+    timlogStop(msg.GetCommand());
+
     return evhCB_NO_DELETE;
 }
-
-/*
- * Protected methods
- */
-
-
-
-/*
- * Private methods
- */
-
-
 
 /*___oOo___*/

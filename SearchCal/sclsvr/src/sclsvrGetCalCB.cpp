@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.15 2005-03-04 09:47:17 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.16 2005-03-04 15:38:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/03/04 09:47:17  gzins
+ * Implemented -file option; i.e. save calibrator list in file if requested
+ *
  * Revision 1.14  2005/02/16 16:56:30  gzins
  * Fixed wrong parameter name in documentation
  *
@@ -46,7 +49,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.15 2005-03-04 09:47:17 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.16 2005-03-04 15:38:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -63,6 +66,7 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "timlog.h"
 
 #include "vobs.h"
 
@@ -88,6 +92,9 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
  
+    // Start timer log
+    timlogInfoStart(msg.GetCommand());
+
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
 
@@ -139,6 +146,9 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
+
+    // Stop timer log
+    timlogStop(msg.GetCommand());
     
     return evhCB_NO_DELETE;
 }
