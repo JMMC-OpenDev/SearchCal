@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-06-03 12:13:51 berezne Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-06-21 17:09:47 gzins Exp $"
 #
 # Makefile of ........
 #
@@ -162,7 +162,7 @@ CSOURCENAMES = \
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/vltMakefile
+include $(MAKEDIR)/mcsMakefile
 
 #
 # TARGETS
