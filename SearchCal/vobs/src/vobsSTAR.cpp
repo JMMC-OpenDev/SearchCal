@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.23 2005-02-04 14:31:30 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.24 2005-02-07 09:14:00 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/02/04 14:31:30  scetre
+* add getLuminosityClass method
+*
 * Revision 1.22  2005/02/04 09:50:12  gzins
 * Fixed major bug in RA and DEC convertion (sign was not correctly handled)
 * Merged IRAS and MSX IR flux properties
@@ -40,7 +43,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.23 2005-02-04 14:31:30 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.24 2005-02-07 09:14:00 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -134,7 +137,7 @@ vobsSTAR::~vobsSTAR()
  * \li vobsERR_INVALID_PROPERTY_ID
  */
 mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, char *value,
-                                         mcsFLOAT isComputed,
+                                         mcsLOGICAL isComputed,
                                          mcsINT32 confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
@@ -181,7 +184,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, char *value,
  * \li vobsERR_INVALID_PROPERTY_ID
  */
 mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, mcsFLOAT value,
-                                         mcsFLOAT isComputed,
+                                         mcsLOGICAL isComputed,
                                          mcsINT32 confidenceIndex,
                                          mcsLOGICAL overwrite)
 {

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.23 2005-02-04 14:31:30 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.24 2005-02-07 09:10:04 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/02/04 14:31:30  scetre
+* add getLuminosityClass method
+*
 * Revision 1.22  2005/02/04 09:59:05  gzins
 * Added star properties for MIDI catalog
 *
@@ -136,11 +139,11 @@ public:
 
     // Method to set the star properties
     virtual mcsCOMPL_STAT SetPropertyValue(char *id, char *value,
-                                           mcsFLOAT isComputed=mcsFALSE,
+                                           mcsLOGICAL isComputed=mcsFALSE,
                                            mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
                                            mcsLOGICAL overwrite=mcsFALSE);
     virtual mcsCOMPL_STAT SetPropertyValue(char *propertyId, mcsFLOAT value,
-                                           mcsFLOAT isComputed=mcsFALSE,
+                                           mcsLOGICAL isComputed=mcsFALSE,
                                            mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
                                            mcsLOGICAL overwrite=mcsFALSE);
 
