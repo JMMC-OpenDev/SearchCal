@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<errorList moduleName="alx">
+   <error id="5">
+      <errName>WRONG_FILE_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Wrong format of the line '%.120s' in file '%.120s']]></errFormat>
+   </error>
+   <error id="6">
+      <errName>TOO_MANY_LINES</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Too many line in file '%.120s']]></errFormat>
+   </error>
+   <error id="7">
+      <errName>WRONG_SPECTRAL_TYPE_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Wrong format of the spectral type '%.20s'; must be <code><quantity><light-class>]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>SPECTRAL_TYPE_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Spectral type '%.20s' not found in color table.]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>INVALID_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid band '%c' found in file '%.120s'.]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>MISSING_LINE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[There is missing line (%d instead of %d) line in file '%.120s']]></errFormat>
+   </error>
+   <error id="12">
+      <errName>DUPLICATED_LINE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Line '%.80s' is duplicated in file '%.120s']]></errFormat>
+   </error>
+   <error id="13">
+      <errName>INVALID_PARALAX_VALUE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid value '%.3f' for paralax; should be a non-zero value.]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>LONGITUDE_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Spectral type '%.20s' not found in interstellar extinction table.]]></errFormat>
+   </error>
+</errorList>
