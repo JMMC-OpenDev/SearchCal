@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestVOInKBand.cpp,v 1.2 2005-02-13 16:00:41 gzins Exp $"
+ * "@(#) $Id: vobsTestVOInKBand.cpp,v 1.3 2005-02-15 15:26:06 gzins Exp $"
  *
  * History
  * -------
@@ -9,7 +9,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVOInKBand.cpp,v 1.2 2005-02-13 16:00:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVOInKBand.cpp,v 1.3 2005-02-15 15:26:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     logInfo("Starting ...");
 
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         errCloseStack(); 
         exit (EXIT_FAILURE);
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     // Search in VO
     vobsSTAR_LIST starList;
     vobsVIRTUAL_OBSERVATORY vobs;
-    if (vobs.Search(request, starList)==FAILURE)
+    if (vobs.Search(request, starList)==mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);

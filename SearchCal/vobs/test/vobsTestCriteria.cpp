@@ -1,17 +1,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestCriteria.cpp,v 1.5 2005-02-13 08:54:00 gzins Exp $"
+ * "@(#) $Id: vobsTestCriteria.cpp,v 1.6 2005-02-15 15:26:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/13 08:54:00  gzins
+ * Updated after vobs classes changes
+ * Added CVS log as modifification history
+ *
  * scetre    14-Dec-2004  Created
  *
  ******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.5 2005-02-13 08:54:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.6 2005-02-15 15:26:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -62,11 +66,11 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
         
-        // Exit from the application with FAILURE
+        // Exit from the application with mcsFAILURE
         exit (EXIT_FAILURE);
     }
 
@@ -129,7 +133,7 @@ int main(int argc, char *argv[])
     // Close MCS services
     mcsExit();
     
-    // Exit from the application with SUCCESS
+    // Exit from the application with mcsSUCCESS
     exit (EXIT_SUCCESS);
 }
 
