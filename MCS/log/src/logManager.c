@@ -1,13 +1,14 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logManager.c,v 1.2 2004-08-23 15:31:09 lafrasse Exp $"
+* "@(#) $Id: logManager.c,v 1.3 2004-11-10 10:04:11 gzins Exp $"
 *
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  30-Jun-2004  Forked and ported (Windows to Linux) from CILAS Soft
 * lafrasse  23-Aug-2004  Changed var. name logManagerPortNumber to portNumber
+* gzins     10-Nov-2004  Changed default log file to $MCSDATA/log/logfile
 *
 *
 *******************************************************************************/
@@ -23,7 +24,7 @@
  *                   [\e \<-p\> listened port number] 
  *
  * \b Details:\n
- * \e \<logManager\> writes log messages in \e '$MCSROOT/log/logfile' (or at a
+ * \e \<logManager\> writes log messages in \e '$MCSDATA/log/logfile' (or at a
  * user-specified path), until the log file size reaches 1MBytes (or a
  * user-specified value). Then, the log file is suffixed with '.OLD',
  * overwritting any previous file named like this, and new empty log file is
@@ -31,8 +32,8 @@
  * a user-specified one).
  * 
  * \b Files:\n
- * \li \e \<$MCSROOT/log/logfile\> : default log file
- * \li \e \<$MCSROOT/log/logfile.OLD\> : default old log file
+ * \li \e \<$MCSDATA/log/logfile\> : default log file
+ * \li \e \<$MCSDATA/log/logfile.OLD\> : default old log file
  *
  * \warning Old log files are overwritten each time the current log file size
  * reaches 1Mbytes (or user-specified maximum size).
@@ -104,7 +105,7 @@ int main(int argc, char** argv)
     mcsBYTES256        hostName, logFilePath, oldLogFilePath, logMsg;
 
     /* Files stuff */
-    char*              mcsRootPath = NULL;
+    char*              mcsDataPath = NULL;
     FILE               *logFile = NULL;
     mcsUINT32          logMaxFileSize = logMANAGER_DEFAULT_MAX_FILE_SIZE;
 
@@ -129,17 +130,17 @@ int main(int argc, char** argv)
         logDisplayError("could not initalize logFilePath value");
     }
 
-    /* Try to get the $MCSROOT Environment Variable value */
-    mcsRootPath = getenv("MCSROOT");
-    if (mcsRootPath == NULL)
+    /* Try to get the $MCSDATA Environment Variable value */
+    mcsDataPath = getenv("MCSDATA");
+    if (mcsDataPath == NULL)
     {
-        logDisplayError("could not resolve $MCSROOT Env Var");
+        logDisplayError("could not resolve $MCSDATA Env Var");
     }
     
-    /* Try to copy $MCSROOT Env Var at the beginning of the log file path */
-    if (strcpy(logFilePath, mcsRootPath) == NULL)
+    /* Try to copy $MCSDATA Env Var at the beginning of the log file path */
+    if (strcpy(logFilePath, mcsDataPath) == NULL)
     {
-        logDisplayError("could not copy $MCSROOT Env Var value at the beginning of logFilePath");
+        logDisplayError("could not copy $MCSDATA Env Var value at the beginning of logFilePath");
     }
     
     /* Try to append the rest of the path */
