@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.20 2004-12-21 15:37:06 gzins Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.21 2005-01-17 16:21:38 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -38,6 +38,10 @@
 * gzins     07-Dec-2004  Closed open file in miscDynBufLoadFile
 * gzins     14-Dec-2004  Renamed miscERR_MEM_FAILURE to miscERR_ALLOC
 * scetre    21-Dec-2004  Added '\0' at the end of buffer in miscDynBufLoadFile
+* gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
+*                        miscDynBufGetNbStoredBytes and
+*                        miscDynBufGetAllocatedBytesNumber to
+*                        miscDynBufGetNbAllocatedBytes
 *
 *******************************************************************************/
 
@@ -83,7 +87,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.20 2004-12-21 15:37:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.21 2005-01-17 16:21:38 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
