@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.9 2005-02-04 07:43:16 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.10 2005-02-04 07:51:15 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/04 07:43:16  gzins
+* Fixed bug related to creation of primary list when porviding a existing list of stars; list was merged instaed of copied.
+*
 * Revision 1.8  2005/01/28 12:48:24  scetre
 * changed association criteria
 *
@@ -25,7 +28,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.9 2005-02-04 07:43:16 gzins Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.10 2005-02-04 07:51:15 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -110,7 +113,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
     scenario.Execute(request, starList);
     
     //starList.Display();
-    printf("number of star found : %d\n", starList.Size());
+    logTest("Number of stars found : %d\n", starList.Size());
 
     return mcsSUCCESS;
 }
