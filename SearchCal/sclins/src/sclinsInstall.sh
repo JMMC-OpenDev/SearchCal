@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsInstall.sh,v 1.4 2005-02-15 16:02:02 gzins Exp $"
+# "@(#) $Id: sclinsInstall.sh,v 1.5 2005-02-17 14:05:39 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/15 16:02:02  gzins
+# Added CVS log as file modification history
+#
 # gzins     04-Dec-2004  Created
 # gzins     09-Dec-2004  Added '-h' and '-u' options
 #                        Added logfile
@@ -121,7 +124,7 @@ for mod in $scalib_modules; do
         echo -e "\nERROR: 'cd $mod/src' failed ...\n";
         exit 1
     fi
-    make all man install  >> $logfile 2>&1
+    make clean all man install  >> $logfile 2>&1
     if [ $? != 0 ]
     then
         echo -e "\nERROR: 'make all man install' in $mod failed ...\n";
