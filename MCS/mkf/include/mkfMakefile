@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.1 2004-09-10 13:42:20 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.2 2004-09-10 15:47:16 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
@@ -984,6 +984,9 @@ clean_dist_all:
 install_all : $(INSTALL_TARGET) 
 #install_all : $(INSTALL_TARGET)
 	-@$(ECHO) "install_all: begin $(INSTALL_TARGET)" >> $(FILE)
+	-@$(ECHO) "Check $(INSTALL_ROOT) directory structure"
+	$(AT)mkfCreateInstallRootDirs $(INSTALL_ROOT)
+	-@$(ECHO) "	-@echo \"       done.\"" >>$(FILE);
 	-@$(ECHO) "begin:" >>$(FILE)
 	-@$(ECHO) "	-@echo \"\"; $(ECHO) \"Installing into target: $(INSTALL_ROOT)\"" >>$(FILE)
 
@@ -1093,20 +1096,6 @@ ifneq ($(strip $(TCL_LIBRARIES)),)
 		    $(ECHO) "	chmod -R $(P755) $(LIB)/lib$${member}.tcl" >>$(FILE);\
 		done;
 endif
-
-ifneq ($(strip $(PANELS)),)
-	-@$(ECHO) "install_panels: panels_begin $(foreach member, $(PANELS), $(BIN)/$(member) )" >>$(FILE)
-	-@$(ECHO) "panels_begin:" >>$(FILE)
-	-@$(ECHO) "	-@echo \"\"; $(ECHO) \".......panels:\"" >>$(FILE)
-	-$(AT)  for member in  $(foreach name, $(PANELS), $(name) ); \
-		do \
-		    $(ECHO) "$(BIN)/$${member}: ../bin/$${member}" >>$(FILE);\
-		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
-		    $(ECHO) "	cp ../bin/$${member} $(BIN)/$${member};\\" >>$(FILE);\
-		    $(ECHO) "	chmod $(P755) $(BIN)/$${member} " >>$(FILE);\
-		done;
-endif
-
 
 ifneq ($(strip $(INSTALL_FILES)),)
 # mkfMakeInstallFiles takes care to properly build the target "install_files"
