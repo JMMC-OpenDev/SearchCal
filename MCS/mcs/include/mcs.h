@@ -1,7 +1,7 @@
 /*************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.7 2004-06-21 16:58:06 gzins Exp $"
+* "@(#) $Id: mcs.h,v 1.8 2004-09-27 10:13:06 gzins Exp $"
 *
 * mcs.h  -  MCS/Common Definitions - Interface File
 *
@@ -71,6 +71,9 @@ typedef char mcsPROCNAME[mcsPROCNAME_LEN+1];      /* Process name           */
 typedef char mcsMODULEID[mcsMODULEID_LEN+1];      /* Software module name   */
 typedef char mcsFILE_LINE[64];                    /* File/line information  */
 typedef char mcsCMD[mcsCMD_LEN+1];                /* Command name */
+
+#define mcsNULL_CMD  ""
+
 /*
  *   Definition of the routine completion status
  */
