@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.3 2004-06-23 17:01:49 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.4 2004-08-23 13:35:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -92,7 +92,7 @@ static char *errGetErrProp(const char *moduleId,
         if (envVar != NULL)
         {
             /* Create error file name */
-            sprintf(errFileName, "%s/ERRORS/%sErrors.xml", envVar, moduleId);
+            sprintf(errFileName, "%s/errors/%sErrors.xml", envVar, moduleId);
 
             /* Test if file exists */
             if (stat(errFileName, &statBuf) == 0)
@@ -116,7 +116,7 @@ static char *errGetErrProp(const char *moduleId,
             struct stat statBuf;
 
             /* Create error file name */
-            sprintf(errFileName, "%s/ERRORS/%sErrors.xml", envVar, moduleId);
+            sprintf(errFileName, "%s/errors/%sErrors.xml", envVar, moduleId);
 
             /* Test if file exists */
             if (stat(errFileName, &statBuf) == 0)
