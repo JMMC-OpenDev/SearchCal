@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.11 2004-12-21 09:52:27 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.12 2004-12-21 09:58:40 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.11 2004-12-21 09:52:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.12 2004-12-21 09:58:40 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,6 +56,7 @@ vobsSTAR::vobsSTAR()
 {
     // Add all star properties 
     AddProperties();
+    _propertyListIterator=_propertyList.begin();
 }
 
 /**

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.15 2004-12-20 13:51:40 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.16 2004-12-21 09:58:26 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -118,6 +118,7 @@ public:
 
     // Methods to retreive the star property
     virtual vobsSTAR_PROPERTY *GetProperty(char *id) ;
+    virtual vobsSTAR_PROPERTY *GetNextProperty(mcsLOGICAL init = mcsFALSE);
     virtual const char *GetPropertyValue(char *id);
     virtual mcsCOMPL_STAT GetPropertyValue(char *id, mcsFLOAT *value);
 
@@ -141,6 +142,7 @@ public:
     // Method to print out all star properties
     virtual void Display(void);
     map<string, vobsSTAR_PROPERTY> _propertyList;
+    map<string, vobsSTAR_PROPERTY>::iterator _propertyListIterator;
 
 protected:
     // Method to add a property. Should be only called by constructors.
