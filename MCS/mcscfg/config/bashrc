@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/bashrc
 #
-# Version: $Id: bashrc,v 1.10 2004-11-19 07:28:47 mella Exp $
+# Version: $Id: bashrc,v 1.11 2005-01-04 11:12:59 gzins Exp $
 #
 # Purpose: bash configuration file
 #
@@ -78,3 +78,25 @@ alias Pu='rm -f *~ .*~ core'
 alias gvim='gvim -geometry 80x45'
 alias macam='make clean all man'
 alias macami='make clean all man install'
+
+# Functions
+# Function to create .h and .cpp files for a C++ class in the right
+# directories
+ctooGetTemplateForCppClass ()
+{
+    class=$1;
+    class=${class%.*};
+    class=`basename "$class"`
+    if [ "$class" != "" ]
+    then
+        echo "Creating source files for $class C++ class ..."
+        echo ../include/$class | ctooGetTemplateForCoding c++-h-file | grep CREATED
+        echo ../src/$class | ctooGetTemplateForCoding c++-class-file | grep CREATED
+        echo "Done."
+        echo ""
+    else
+        echo "ctooGetTemplateForCppClass <className>"
+        echo ""
+    fi
+}
+
