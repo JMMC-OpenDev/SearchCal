@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/bashrc
 #
-# Version: $Id: bashrc,v 1.6 2004-06-25 07:13:30 gzins Exp $
+# Version: $Id: bashrc,v 1.7 2004-09-10 11:46:49 mella Exp $
 #
 # Purpose: bash configuration file
 #
@@ -48,7 +48,15 @@ else
     export PATH=../bin
 fi
 
-# Add $INTROOT to LD_LIBRARY_PATH, PATH and MANPATH
+# Set MCS_XSLPATH
+if [ "$MCS_XSLPATH" != "" ]
+then
+    export MCS_XSLPATH=$MCS_XSLPATH:../config
+else
+    export MCS_XSLPATH=../config
+fi
+
+# Add $INTROOT to LD_LIBRARY_PATH, PATH, MCS_XSLPATH and MANPATH
 if [ "$INTROOT" != "" ]
 then
     if ! echo ${PATH} |grep -q $INTROOT
@@ -56,15 +64,18 @@ then
         export PATH="$PATH:$INTROOT/bin"
         export MANPATH="$MANPATH:$INTROOT/man"
         export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$INTROOT/lib
+        export MCS_XSLPATH=$MCS_XSLPATH:$INTROOT/config
     fi
 fi
 
-# Add $MCSROOT to LD_LIBRARY_PATH, PATH and MANPATH
+# Add $MCSROOT to LD_LIBRARY_PATH, PATH, MCS_XSLPATH and MANPATH
 if ! echo ${PATH} |grep -q $MCSROOT ; then
     export PATH="$PATH:$MCSROOT/bin"
     export MANPATH="$MANPATH:$MCSROOT/man"
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MCSROOT/lib
+    export MCS_XSLPATH=$MCS_XSLPATH:$MCSROOT/config
 fi
+
 
 # Aliases
 alias m=more
