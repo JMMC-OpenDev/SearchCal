@@ -1,12 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPROCESS_LIST.cpp,v 1.2 2004-12-08 17:40:31 gzins Exp $"
+* "@(#) $Id: msgPROCESS_LIST.cpp,v 1.3 2004-12-15 09:59:55 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
 * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
+* gzins     14-Dec-2004  Minor documentation changes 
 *
 *******************************************************************************/
 
@@ -15,7 +16,7 @@
  * msgPROCESS_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.2 2004-12-08 17:40:31 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.3 2004-12-15 09:59:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -57,9 +58,8 @@ msgPROCESS_LIST::~msgPROCESS_LIST()
 /**
  * Check whether the list is empty or not.  
  *
- * \return
- * True value (i.e. mcsTRUE) if the number of elements is zero, false (i.e.
- * mcsFALSE) otherwise.
+ * \return true value (i.e. mcsTRUE) if the number of elements is zero, false
+ * (i.e.  mcsFALSE) otherwise.
  */
 mcsLOGICAL msgPROCESS_LIST::IsEmpty(void)
 {
@@ -77,8 +77,7 @@ mcsLOGICAL msgPROCESS_LIST::IsEmpty(void)
 /**
  * Erase all elements from the list.
  *
- * \return
- * Always SUCCESS.
+ * \return always SUCCESS.
  */
 mcsCOMPL_STAT msgPROCESS_LIST::Clear(void)
 {
@@ -98,8 +97,8 @@ mcsCOMPL_STAT msgPROCESS_LIST::Clear(void)
  * Adds the element at the end of the list
  *
  * \param process element to be added to the list.
- * \return
- * Always SUCCESS.
+ *
+ * \return always SUCCESS.
  */
 mcsCOMPL_STAT msgPROCESS_LIST::AddAtTail(msgPROCESS *process)
 {
@@ -123,7 +122,7 @@ mcsCOMPL_STAT msgPROCESS_LIST::AddAtTail(msgPROCESS *process)
  *
  * \param sd socket descriptor of the process to be removed from the list.
  *
- * \return Always SUCCESS.
+ * \return always SUCCESS.
  */
 mcsCOMPL_STAT msgPROCESS_LIST::Remove(mcsINT32 sd)
 {
@@ -149,8 +148,8 @@ mcsCOMPL_STAT msgPROCESS_LIST::Remove(mcsINT32 sd)
 
 /**
  * Returns the number of elements (processes) currently stored in the list.
- * \return 
- * The numbers of processes in the list.
+ *
+ * \return numbers of processes in the list.
  */
 mcsUINT32 msgPROCESS_LIST::Size(void) 
 {
@@ -170,6 +169,10 @@ mcsUINT32 msgPROCESS_LIST::Size(void)
  *         processList.GetNextProcess((el==0))->Close();
  *     }
  * \endcode
+ *
+ * \param init if true return the element of the list, otherwise return the
+ * next one.
+ *
  * \return pointer to the next element of the list or NULL if the end of the
  * list is reached.
  */
@@ -206,10 +209,11 @@ msgPROCESS *msgPROCESS_LIST::GetNextProcess(mcsLOGICAL init)
 /**
  * Returns the process of the list, which is registered with the given name.
  *
- * This method looks for the process  which is registered with the specified
- * name in the list. If found, it returns the pointer to this element, and
- * NULL otherwise.
- * 
+ * This method looks, in the list, for the process which is registered with
+ * the specified name and which is connected to the socket \em sd. If \em sd
+ * is not specified, the the process with the given name found is returned.
+ * If found, it returns the pointer to this element, and NULL otherwise.
+ *  
  * This method can be used to know whether a process is in list or not, as shown
  * below:
  * \code
@@ -218,6 +222,10 @@ msgPROCESS *msgPROCESS_LIST::GetNextProcess(mcsLOGICAL init)
  *         printf ("Process not found in list !!");
  *     }
  * \endcode
+ * 
+ * \param name process name.
+ * \param sd socket descriptor to which process is connected.
+ * 
  * \return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
