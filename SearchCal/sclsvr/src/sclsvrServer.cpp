@@ -1,10 +1,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrServer.cpp,v 1.3 2005-01-24 13:40:27 scetre Exp $"
+* "@(#) $Id: sclsvrServer.cpp,v 1.4 2005-01-27 15:58:38 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
 * gzins     23-Nov-2004  Created
 *
 *
@@ -15,7 +15,7 @@
  * Search Calibrators SERVER
  */
 
-static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.3 2005-01-24 13:40:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.4 2005-01-27 15:58:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

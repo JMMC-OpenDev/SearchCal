@@ -3,10 +3,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSEARCH_CALIBRATORS.h,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvrSEARCH_CALIBRATORS.h,v 1.2 2005-01-27 15:56:29 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
 * scetre    15-Sep-2004  Created
 *
 *

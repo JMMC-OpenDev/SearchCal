@@ -1,10 +1,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.2 2005-01-24 13:40:27 scetre Exp $"
+* "@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.3 2005-01-27 15:58:28 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
 * scetre    15-Sep-2004  Created
 *
 *
@@ -15,7 +15,7 @@
  * sclsvrSEARCH_CALIBRATORS class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.2 2005-01-24 13:40:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.3 2005-01-27 15:58:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

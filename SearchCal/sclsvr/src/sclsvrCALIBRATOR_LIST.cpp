@@ -1,10 +1,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.8 2005-01-24 13:40:27 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.9 2005-01-27 15:58:08 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
 * scetre    15-Sep-2004  Created
 * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
 *
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.8 2005-01-24 13:40:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.9 2005-01-27 15:58:08 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -122,6 +122,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
             == mcsFAILURE)
         {
             errCloseStack();
+            errResetStack();
             logTest("star %d not a calibrator\n", el+1);
         }
         else 
@@ -201,7 +202,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
     mcsLOGICAL skipFlag = mcsFALSE;
     
     // Replace the '\n' by '\0' in the buffer where is stored the list
-    miscReplaceChrByChr(miscDynBufGetBufferPointer(buffer), '\n', '\0');
+    if (miscReplaceChrByChr(miscDynBufGetBufferPointer(buffer), '\n', '\0') == 
+        mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     
     // Get the first line of the buffer
     while ((bufferLine=miscDynBufGetNextLinePointer(buffer,
