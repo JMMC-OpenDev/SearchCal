@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.15 2005-02-16 16:18:00 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.16 2005-02-17 17:57:27 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/02/16 16:18:00  scetre
+* Fixed remaining bugs in Extract and Unpack methods
+*
 * Revision 1.14  2005/02/16 15:55:42  gzins
 * Fixed bug in AppendLines; missing CR after each line insertion
 *
@@ -49,7 +52,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.15 2005-02-16 16:18:00 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.16 2005-02-17 17:57:27 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -174,12 +177,23 @@ mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
     {
         return mcsFAILURE;
     }
+    // and remove trailind and leading blanks
+    for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
+    {
+        miscTrimString(ucdNameArray[i], " ");
+    }
+
 
     // Parse parameter name line and strore them in an array
     if (miscSplitString(paramNameLine, '\t', paramNameArray, 
                         nbMaxParams, &nbOfParamName) == mcsFAILURE)
     {
         return mcsFAILURE;
+    }
+    // and remove trailind and leading blanks
+    for (mcsUINT32 i = 0; i < nbOfParamName; i++)
+    {
+        miscTrimString(paramNameArray[i], " ");
     }
 
     // Check the numbers of parameters and of UCDs are the same
