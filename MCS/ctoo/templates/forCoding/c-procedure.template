@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-procedure.template,v 1.9 2004-09-07 14:26:31 gluck Exp $"
+#%# "@(#) $Id: c-procedure.template,v 1.10 2004-09-13 10:24:47 gluck Exp $"
 #%# 
 #%# Template for C procedures file          
 #%# 
@@ -91,7 +91,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local Headers
  */
-#include "<fileName>.h"
+#include "<moduleName>.h"
 #include "<moduleName>Private.h"
 
 

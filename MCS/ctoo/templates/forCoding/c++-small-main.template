@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c++-small-main.template,v 1.10 2004-09-13 06:19:32 gluck Exp $"
+#%# "@(#) $Id: c++-small-main.template,v 1.11 2004-09-13 10:24:47 gluck Exp $"
 #%# 
 #%# Template for C++ small main program
 #%# 
@@ -111,7 +111,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "<fileName>.h"
+#include "<moduleName>.h"
 #include "<moduleName>Private.h"
 
 
