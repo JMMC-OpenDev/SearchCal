@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.8 2005-02-27 19:44:17 gzins Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.9 2005-02-28 11:05:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/27 19:44:17  gzins
+ * Implemented parameter value range check
+ *
  * Revision 1.7  2005/02/27 09:27:41  gzins
  * Improved error handling
  *
@@ -27,7 +30,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.8 2005-02-27 19:44:17 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.9 2005-02-28 11:05:59 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -277,7 +280,6 @@ mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
 {
     logExtDbg("cmdPARAM::SetUserValue()");
 
-    printf("name = %s - value  = %s\n", _name.data(), value.data()); 
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
     {
