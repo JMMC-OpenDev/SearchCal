@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER.cpp,v 1.10 2005-01-07 18:32:45 gzins Exp $"
+* "@(#) $Id: msgMANAGER.cpp,v 1.11 2005-01-21 15:37:40 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,6 +17,8 @@
 *                        removing a process from the list.
 * gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
 * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
+* lafrasse  21-Jan-2005  Added a timeout when exiting in order to have
+*                        sufficient time to receive the 'EXIT' query answer
 *
 *******************************************************************************/
 
@@ -25,7 +27,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.10 2005-01-07 18:32:45 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.11 2005-01-21 15:37:40 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -734,7 +736,10 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         /* Send an hand-checking message */
         msg.SetBody("OK");
         SendReply(msg);
-        
+
+        /* Wait 1 second to have enough time to get the 'EXIT' query answer */
+        sleep(1);
+
         /* Quit msgManager process */
         logInfo("msgManager exiting...");
         exit(EXIT_SUCCESS);
