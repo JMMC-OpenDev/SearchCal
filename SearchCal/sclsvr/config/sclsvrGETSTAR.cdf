@@ -3,11 +3,13 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETSTAR.cdf,v 1.4 2005-02-03 10:38:32 gzins Exp $"
+ "@(#) $Id: sclsvrGETSTAR.cdf,v 1.5 2005-02-07 14:42:11 gzins Exp $"
 
  History 
  ~~~~~~~
- $Log: not supported by cvs2svn $ 
+ $Log: not supported by cvs2svn $
+ Revision 1.4  2005/02/03 10:38:32  gzins
+ Fixed conflict
 
  Definition of GETSTAR command.
 -->
@@ -21,19 +23,19 @@
         <param>
             <name>objectName</name>
             <type>string</type>
-            <desc>the star name</desc>
+            <desc>star name</desc>
         </param>
         <param>
             <name>baseline</name>
             <type>double</type>
             <defaultValue><double>100.00</double></defaultValue>
             <unit>m</unit>
-            <desc>the baseline used to compute visibility</desc>
+            <desc>baseline used to compute visibility</desc>
         </param>
         <param>
-            <name>lambda</name>
+            <name>wlen</name>
             <type>double</type>
-            <desc>the observing wavelength used to compute visibility</desc>
+            <desc>observing wavelength used to compute visibility</desc>
             <defaultValue><double>1.00</double></defaultValue>
             <unit>us</unit>
         </param>
