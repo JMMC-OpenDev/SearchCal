@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.13 2004-06-22 07:02:09 gzins Exp $"
+* "@(#) $Id: log.c,v 1.14 2004-06-23 13:11:07 gzins Exp $"
 *
 *
 * who       when                 what
@@ -12,136 +12,98 @@
 *-----------------------------------------------------------------------------*/
 
 /**
-\mainpage Log : MCS C Logging module
-
-\htmlonly
-<center>
-<a href="#summary">Summary</a>
-<a href="#requirements">Requirements</a>
-<a href="#installation">Installation</a>
-<a href="#config">Configuration</a>
-<a href="#copyright">Copyright</a>
-</center>
-\endhtmlonly
-
-\section summary Summary
-
-Log is a C module for logging to syslog or stdout. It is a module of the MCS
-software.
-Log is available from the CVS repository of JMMC or is included in the MCS
-distribution. 
-
-\section requirements Requirements
- 
-\subsection platforms Platforms
-
-log module was successfully compiled and run on the following platforms :
-
-\li Mandrake Linux release 9.2
-
-log module should compile and run on the following platforms, but has never
-been :
-
-\li Other Linux distributions
-
-\subsection software Software
-
-The following softwares are needed to generate the log library:
-
-\li MCS environment
-
-This library generates log messages using syslog(), which will  be
-distributed  by  syslogd. By default, log uses local3 facility.
-
-The following softwares are needed to use the log library:
-
-\li syslogd
-
-\section installation Installation
- 
-\subsection installation_cvs Building from cvs's sources
-
-The log module uses the MCS makefile system. The following commands should
-build log on the supported platforms:
-
-\code
-
-$ cvs co log
-$ cd log/src
-$ make
-
-\endcode
-
-The following command should install the log library into the INTROOT
-directory defined by the environment variable $INTROOT:
-
-\code
-
-$ make install
-
-\endcode
-
-\section config Configuration
-This modules makes call to the syslogd daemon. syslogd must be configured to
-route the messages to the correct destination.
-
-\subsection conf_files Configuration files
-In general, \p /etc/syslog.conf configures the sylogd. This file is taken
-into account at startup or after a SIGHUP signal sent. \p /etc/init.d/syslogd
-\p restart also makes \p syslogd reread configuration
-file.  
-
-\subsection conf_syntax Configuration syntax
-Simplest configuration lines is:
-\code
-
-local3.*                            /home/MCS/mcs.log
-
-\endcode
-
-See syslog.conf manual page for further information.
-
-\subsection env Environment variables
-
-No use at the present time.
-
-\section copyright Copyright
-
-All software in this package are Copyright © 2004 JMMC
-http://mariotti.ujf-grenoble.fr 
-
-*/
-
-/** \file
+ * \mainpage Log : MCS C Logging module
+ * \section summary Summary
  * This module provides functions that enable users to handle the three types
- *   of logs for the Event Logging. The types of logs are:
+ * of logs for the Event Logging. The types of logs are:
  *   \li Standard Logs : These logs are stored into the standard MCS logger.
  *   \li Verbose Logs  : These logs are written to stdout.
  *   \li Action Logs   : TBD.
  *
- *   The three kinds of logs contain the same information, but are stored
- *   in different locations and the levels of information are controlled
- *   individually by logSetLogLevel(), logSetVerboseLevel() and
- *   logSetActionLevel() methods. The current log levels can be retrieved by
- *   logGetLogLevel(), logGetVerboseLevel() and logGetActionLevel() methods.
+ * The three kinds of logs contain the same information, but are stored
+ * in different locations and the levels of information are controlled
+ * individually by logSetLogLevel(), logSetVerboseLevel() and
+ * logSetActionLevel() methods. The current log levels can be retrieved by
+ * logGetLogLevel(), logGetVerboseLevel() and logGetActionLevel() methods.
  *
- *   The logging levels range from \p logQUIET to \p logEXTDBG , where the
- *   lowest number means the  lowest priority. By default, the level of all
- *   the logs is set to \p logWARNING.
- *   The log and verbose flags indicate if the log information are presented
- *   respectively on the standard \p MCS logger or on the stdout device
- *   (default is mcsTRUE).
- *   The following enums should be used to set the log levels : \n
- *   \li \p logQUIET   (0) : no echo \n
- *   \li \p logWARNING (1) : errors or abnormal events for application.\n
- *   \li \p logINFO    (2) : major events
- *   (e.g when operational mode is modified).\n
- *   \li \p logTEST    (3) : software test activities.
- *   \li \p logDEBUG   (4) : debugging information.
- *   \li \p logEXTDBG  (5) : more detailed debugging information.
+ * The logging levels range from \p logQUIET to \p logEXTDBG , where the
+ * lowest number means the  lowest priority. By default, the level of all
+ * the logs is set to \p logWARNING.
+ * The log and verbose flags indicate if the log information are presented
+ * respectively on the standard \p MCS logger or on the stdout device
+ * (default is mcsTRUE).
+ * The following enums should be used to set the log levels : \n
+ *   \li \p logQUIET   : no echo \n
+ *   \li \p logWARNING : errors or abnormal events for application.\n
+ *   \li \p logINFO    : major events.\n
+ *   \li \p logTEST    : software test activities.
+ *   \li \p logDEBUG   : debugging information.
+ *   \li \p logEXTDBG  : more detailed debugging information.
  *
- *   Convenient macros are provided in log.h for logging standard and
- *   verbose information .
+ * The following convenient macros are provided in log.h for logging
+ * standard and verbose information : logWarning(), logInfo(), logTest(),
+ * logDebug() and logExtDbg().
+ *
+ * \section config Configuration
+ * This modules makes call to the syslogd daemon. syslogd must be configured to
+ * route the messages to the correct destination.
+ * 
+ * \subsection conf_files Configuration files
+ * In general, \p /etc/syslog.conf configures the sylogd. This file is taken
+ * into account at startup or after a SIGHUP signal sent. \p /etc/init.d/syslogd
+ * \p restart also makes \p syslogd reread configuration
+ * file.  
+ * 
+ * \subsection conf_syntax Configuration syntax
+ * Simplest configuration lines is:
+ * \code
+ * 
+ * local3.*                            /home/MCS/mcs.log
+ * 
+ * \endcode
+ *
+ * See syslog.conf manual page for further information.
+ *
+ * \section Files
+ * \li \c $MCS_LOG_FILES/logFile output file for normal logs
+ *
+ * \section Environment
+ * \li \c VLT_LOG_FILES directory containing logging-files
+ * 
+ * \b Code \b Example:
+* \code
+ *  #include <stdio.h>
+ *  #include <math.h>
+ *
+ *  #define MODULE_ID "mymod"
+ *  #include "mcs.h"
+ *  
+ *  mcsCOMPL_STAT mymodPrint(char *param)
+ *  {
+ *      logExtDbg("mymodSqrt()");
+ *
+ *      if (param == NULL)
+ *      {
+ *          logWarning("Parameter is a null pointer. Do nothing!");
+ *          return(SUCCESS);
+ *      }
+ *      printf("%s\n", param); 
+ *
+ *      return (SUCCESS);
+ *  }
+ *  
+ *  int main(int argc, char *argv[])
+ *  {
+ *      mcsInit(argv[0]);
+ *
+ *      logInfo("Server starting ..");
+ *
+ *      mymodPrint("My message");
+ *
+ *      logInfo("Server exiting ..");
+ *      exit (EXIT_SUCCESS);
+ *  }
+ * \endcode
  */
 
 /* 
@@ -412,11 +374,14 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
 
 /**
  * Place msg into the logging system.
- * \todo fill for the future 
  *  
- * \param msg message to store.
+ * \param modName name of the module relative.
+ * \param level level of message.
+ * \param timeStamp time stamp of the message.
+ * \param fileLine file name and line number from where the message is issued.
+ * \param buffer message to be logged.
  * 
- * \return mcsCOMPL_STAT 
+ * \return SUCCESS.
  */
 mcsCOMPL_STAT logData(const mcsMODULEID modName, 
                       logLEVEL level,

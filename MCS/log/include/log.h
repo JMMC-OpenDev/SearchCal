@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.9 2004-06-22 07:01:46 gzins Exp $"
+* "@(#) $Id: log.h,v 1.10 2004-06-23 13:12:22 gzins Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -91,18 +91,39 @@ void logGetTimeStamp(mcsBYTES32 timeStamp);
 
 /* Logging and Verbose */
 
+/**
+ * Log information about errors or abnormal events for application. The
+ * logging level is fixed to logWARNING.
+ */
 #define logWarning(format, arg...) \
     logPrint(MODULE_ID, logWARNING, __FILE_LINE__, format, ##arg)
 
+/** 
+ * Log information about major events. For example, when operational mode is
+ * modified. The logging level is fixed to logINFO.
+ */
 #define logInfo(format, arg...) \
     logPrint(MODULE_ID, logINFO, __FILE_LINE__, format, ##arg)
 
+/** 
+ * Log relevant information used for the software test activities. The logging
+ * level is fixed to logTEST.
+ */
 #define logTest(format, arg...) \
     logPrint(MODULE_ID, logTEST, __FILE_LINE__, format, ##arg)
 
+/**
+ * Log debugging information. The logging level is fixed to logDEBUG.
+ */
 #define logDebug(format, arg...) \
     logPrint(MODULE_ID, logDEBUG, __FILE_LINE__, format, ##arg)
 
+/**
+ * Log more detailed debugging information. This level is dedicated to log the
+ * name of the called function/method; i.e. it is used at the beginning of
+ * function/method to log the name of this function/method. The logging level
+ * is fixed to logEXTDBG.
+ */
 #define logExtDbg(format, arg...) \
     logPrint(MODULE_ID, logEXTDBG, __FILE_LINE__, format, ##arg)
 
