@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.3 2004-12-20 10:17:05 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.4 2004-12-22 10:07:04 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.3 2004-12-20 10:17:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.4 2004-12-22 10:07:04 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -68,7 +68,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     logExtDbg("sclsvrSERVER::GetStarCB()");
 
     // Search command
-    sclsvrGETSTAR_CMD getStarCmd(msg.GetCommand(), msg.GetBodyPtr());
+    sclsvrGETSTAR_CMD getStarCmd(msg.GetCommand(), msg.GetBody());
     
     // Parse command
     if (getStarCmd.Parse() == FAILURE)

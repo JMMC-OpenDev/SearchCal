@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.cpp,v 1.7 2004-12-13 13:33:48 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCB.cpp,v 1.8 2004-12-22 10:07:04 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.7 2004-12-13 13:33:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.8 2004-12-22 10:07:04 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -52,8 +52,8 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     logExtDbg("sclsvrSERVER::SearchCB()");
 
     // Search command
-    sclsvrSEARCH_CMD searchCmd(msg.GetCommand(), msg.GetBodyPtr());
-    //printf("msg.GetBodyPtr() = %s\n", msg.GetBodyPtr()); 
+    sclsvrSEARCH_CMD searchCmd(msg.GetCommand(), msg.GetBody());
+    //printf("msg.GetBody() = %s\n", msg.GetBody()); 
     
     // Parse command
     if (searchCmd.Parse() == FAILURE)

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.13 2004-12-21 08:45:08 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.14 2004-12-22 10:07:04 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.13 2004-12-21 08:45:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.14 2004-12-22 10:07:04 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -890,19 +890,33 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     //logExtDbg("vobsSTAR::AddProperties()");
     
     AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAMETER, "angDiam", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[31]=sclsvrCALIBRATOR_ANGULAR_DIAMETER;
     AddProperty(sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR, "angDiamErr", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[32]=sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR;
     AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[33]=sclsvrCALIBRATOR_MO;
     AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[34]=sclsvrCALIBRATOR_LO;
     AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[35]=sclsvrCALIBRATOR_KO;
     AddProperty(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[36]=sclsvrCALIBRATOR_HO;
     AddProperty(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[37]=sclsvrCALIBRATOR_JO;
     AddProperty(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[38]=sclsvrCALIBRATOR_IO;
     AddProperty(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[39]=sclsvrCALIBRATOR_RO;
     AddProperty(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[40]=sclsvrCALIBRATOR_VO;
     AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[41]=sclsvrCALIBRATOR_BO;
     AddProperty(sclsvrCALIBRATOR_MULTIPLICITY, "multiplicity", vobsFLOAT_PROPERTY);
+    _propertyOrder[42]=sclsvrCALIBRATOR_MULTIPLICITY;
     AddProperty(sclsvrCALIBRATOR_VISIBILITY, "visibility", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[43]=sclsvrCALIBRATOR_VISIBILITY;
     AddProperty(sclsvrCALIBRATOR_VISIBILITY_ERROR, "visibilityErr", vobsFLOAT_PROPERTY, "%.3f");
+    _propertyOrder[44]=sclsvrCALIBRATOR_VISIBILITY_ERROR;
 
     return SUCCESS;
 }
