@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-02-15 09:29:55 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-02-15 10:25:30 gzins Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/15 09:29:55  gzins
+# Removed unused target
+#
 # Revision 1.3  2005/02/15 08:29:59  gzins
 # Added CVS log as file modification history
 #
@@ -138,9 +141,6 @@ all:	do_all
 
 clean : clean_all 
 	@echo " . . . clean done"
-
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
 
 man   : do_man 
 	@echo " . . . man page(s) done"

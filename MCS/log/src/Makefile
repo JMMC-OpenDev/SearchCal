@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.8 2005-02-15 08:27:12 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2005-02-15 10:23:44 gzins Exp $"
 #
 # Makefile of log 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/02/15 08:27:12  gzins
+# Added CVS log as file modification history
+#
 # mella     12-May-2004  Created
 # lafrasse  03-Aug-2004  Added logManager and logPrivate stuff
 #                        Removed cross-dependencies with err and misc
@@ -138,9 +141,6 @@ all:	do_all
 
 clean : clean_all 
 	@echo " . . . clean done"
-
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
 
 man   : do_man 
 	@echo " . . . man page(s) done"

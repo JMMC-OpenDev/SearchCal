@@ -1,17 +1,17 @@
 #ifndef timlogPrivate_H
 #define timlogPrivate_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: timlogPrivate.h,v 1.3 2004-12-20 07:38:02 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* sccmgr    17-Dec-2004  Created
-* gzins     20-Dec-2004  Added moduleName and fileLine fields to timlogENTRY
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: timlogPrivate.h,v 1.4 2005-02-15 10:27:46 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * sccmgr    17-Dec-2004  Created
+ * gzins     20-Dec-2004  Added moduleName and fileLine fields to timlogENTRY
+ *
+ ******************************************************************************/
 
 /**
  * \file

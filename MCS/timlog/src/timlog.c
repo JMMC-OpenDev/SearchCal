@@ -1,21 +1,22 @@
 /*******************************************************************************
-* JMMC project
-* 
-* "@(#) $Id: timlog.c,v 1.2 2004-12-20 07:38:20 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     17-Dec-2004  Created
-* gzins     20-Dec-2004  Added moduleName and fileLine argument to timlogStart
-*
-*******************************************************************************/
+ * JMMC project
+ * 
+ * "@(#) $Id: timlog.c,v 1.3 2005-02-15 10:27:46 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     17-Dec-2004  Created
+ * gzins     20-Dec-2004  Added moduleName and fileLine argument to timlogStart
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Definition of timer log functions.
   */
 
-static char *rcsId="@(#) $Id: timlog.c,v 1.2 2004-12-20 07:38:20 gzins Exp $"; 
+static char *rcsId="@(#) $Id: timlog.c,v 1.3 2005-02-15 10:27:46 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

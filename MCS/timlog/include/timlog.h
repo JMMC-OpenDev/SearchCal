@@ -1,16 +1,18 @@
 #ifndef timlog_H
 #define timlog_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: timlog.h,v 1.2 2004-12-20 07:39:38 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     17-Dec-2004  Created
-* gzins     20-Dec-2004  Added moduleName and fileLine argument to timlogStart
-*                        Added timlogXxxStart macros
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: timlog.h,v 1.3 2005-02-15 10:27:46 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     17-Dec-2004  Created
+ * gzins     20-Dec-2004  Added moduleName and fileLine argument to timlogStart
+ *                        Added timlogXxxStart macros
+ *
+ ******************************************************************************/
 
 /**
  * \file

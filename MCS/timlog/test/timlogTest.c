@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: timlogTest.c,v 1.2 2004-12-20 07:40:18 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     17-Dec-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: timlogTest.c,v 1.3 2005-02-15 10:27:46 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     17-Dec-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Test program for timer log facility.
  */
 
-static char *rcsId="@(#) $Id: timlogTest.c,v 1.2 2004-12-20 07:40:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: timlogTest.c,v 1.3 2005-02-15 10:27:46 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

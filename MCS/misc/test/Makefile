@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2005-02-15 09:44:37 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.11 2005-02-15 10:26:22 gzins Exp $"
 #
 # Makefile of misc Tests
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2005/02/15 09:44:37  gzins
+# Added CVS log as file modification history
+#
 # gzins     16-Jun-2004  created
 # lafrasse  23-Jun-2004  added miscTestDate.c
 #                        added miscTestString.c
@@ -181,9 +184,6 @@ all:	do_all
 
 clean : clean_all 
 	@echo " . . . clean done"
-
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
 
 man   : do_man 
 	@echo " . . . man page(s) done"

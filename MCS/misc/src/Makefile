@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2005-02-15 09:40:34 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.14 2005-02-15 10:26:22 gzins Exp $"
 #
 # Makefile of misc Library
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2005/02/15 09:40:34  gzins
+# Added CVS log as file modification history
+#
 # lafrasse  24-Jun-2004  Created
 # lafrasse  01-Jul-2004  Added miscDynBuf.h
 # lafrasse  13-Jul-2004  Added miscDynStr.h
@@ -157,9 +160,6 @@ all:	do_all
 
 clean : clean_all 
 	@echo " . . . clean done"
-
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
 
 man   : do_man 
 	@echo " . . . man page(s) done"
