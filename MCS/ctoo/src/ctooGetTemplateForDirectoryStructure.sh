@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.12 2005-01-24 15:47:51 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.13 2005-02-15 15:50:35 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2005/01/24 15:47:51  gluck
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+#
 # lgluck    23-Apr-2004 Created
 # gzins     04-Dec-2004 Look for templates in the following order:
 #                       ../templates, $INTROOT/templates and
@@ -212,7 +215,7 @@ case $cvs in
             ctooGetTemplateFile $TEMPLATE $FILE
 
             # Replace module name
-            sed -e "1,$ s/moduleName/$ROOT_NAME/g" $FILE > ${FILE}.BAK
+            sed -e "1,$ s/<moduleName>/$ROOT_NAME/g" $FILE > ${FILE}.BAK
 
             # Remove the intermediate file ($FILE) and rename the output
             # file
@@ -238,6 +241,13 @@ case $cvs in
             # Get template file (Makefile) in src directory
             ctooGetTemplateFile $TEMPLATE $FILE
             
+            # Replace module name
+            sed -e "1,$ s/<moduleName>/$ROOT_NAME/g" $FILE > ${FILE}.BAK
+
+            # Remove the intermediate file ($FILE) and rename the output
+            # file
+            mv ${FILE}.BAK $FILE
+
             # Change permissions of the new created file
             chmod $MODE $FILE
         fi
