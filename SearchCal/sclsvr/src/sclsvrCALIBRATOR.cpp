@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.22 2005-02-07 09:21:27 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.23 2005-02-07 09:50:45 scetre Exp $"
  *
  * History
  * -------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.22 2005-02-07 09:21:27 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.23 2005-02-07 09:50:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -144,7 +144,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
 /**
  * Say if the calibrator had a coherent diameter
  */
-mcsLOGICAL sclsvrCALIBRATOR::HadCoherentDiameter()
+mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
 {
     // If diameter has not been computed
     if (IsPropertySet(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG) == mcsFALSE)
@@ -173,7 +173,7 @@ mcsLOGICAL sclsvrCALIBRATOR::HadCoherentDiameter()
 /**
  * Say if the visibility is ok
  */
-mcsLOGICAL sclsvrCALIBRATOR::VisibilityOk()
+mcsLOGICAL sclsvrCALIBRATOR::IsVisibilityOk()
 {
     // If visibility has not been computed
     if (IsPropertySet(sclsvrCALIBRATOR_VIS_FLAG) == mcsFALSE)

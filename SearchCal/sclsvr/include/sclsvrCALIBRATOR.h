@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.17 2005-02-04 15:30:43 gzins Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.18 2005-02-07 09:50:45 scetre Exp $"
 *
 * History
 * -------
@@ -68,9 +68,9 @@ public:
     virtual mcsCOMPL_STAT UnPack(char *calibratorString);
 
     // Say if the calibrator had coherent diameter
-    virtual mcsLOGICAL HadCoherentDiameter();
+    virtual mcsLOGICAL IsDiameterOk();
     // Say if the calibrator had visibility OK
-    virtual mcsLOGICAL VisibilityOk();
+    virtual mcsLOGICAL IsVisibilityOk();
 
 protected:
     

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.16 2005-02-07 09:22:40 gzins Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.17 2005-02-07 09:50:45 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/02/07 09:22:40  gzins
+* Added method to copy list from another sclsvrCALIBRATOR_LIST instance
+*
 * Revision 1.15  2005/02/04 15:49:00  gzins
 * Fixed wrong Id for visibility property
 *
@@ -25,7 +28,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.16 2005-02-07 09:22:40 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.17 2005-02-07 09:50:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -266,7 +269,7 @@ mcsCOMPL_STAT
         
         if ((calibrator =
             ((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0))))->
-            HadCoherentDiameter()
+            IsDiameterOk()
             == mcsTRUE )
         {
             logTest("calibrator %d had coherent diameter\n", el+1);
@@ -294,7 +297,7 @@ mcsCOMPL_STAT
     {
         if ((calibrator=
              ((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0))))->
-            VisibilityOk() 
+            IsVisibilityOk() 
             == mcsTRUE )
         {
             logTest("calibrator %d had visibility OK\n", el+1);
