@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.6 2004-12-03 17:05:50 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.7 2004-12-06 07:02:06 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    22-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+* gzins     06-Dec-2004  Declared copy constructor as public method
 *
 *
 *******************************************************************************/
@@ -47,10 +48,10 @@
  */
 class msgSOCKET_CLIENT : public msgSOCKET
 {
-
 public:
     // Brief description of the constructor
     msgSOCKET_CLIENT();
+    msgSOCKET_CLIENT(const msgSOCKET_CLIENT&);
 
     // Brief description of the destructor
     virtual ~msgSOCKET_CLIENT();
@@ -60,14 +61,11 @@ public:
 
 protected:
 
-    
 private:
-     // Declaration of copy constructor and assignment operator as private
-     // methods, in order to hide them from the users.
-     msgSOCKET_CLIENT(const msgSOCKET_CLIENT&);
-     msgSOCKET_CLIENT& operator=(const msgSOCKET_CLIENT&);
+    // Declaration of assignment operator as private methods, in order to hide
+    // it from the users.
+    msgSOCKET_CLIENT& operator=(const msgSOCKET_CLIENT&);
 };
-
 
 #endif /*!msgSOCKET_CLIENT_H*/
 

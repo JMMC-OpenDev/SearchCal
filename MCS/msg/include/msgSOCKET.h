@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.h,v 1.8 2004-12-03 17:05:50 lafrasse Exp $"
+* "@(#) $Id: msgSOCKET.h,v 1.9 2004-12-06 07:02:06 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    19-Nov-2004  Created
 * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+* gzins     06-Dec-2004  Declared copy constructor as public method
 *
 *
 *******************************************************************************/
@@ -62,12 +63,8 @@
  * Insert your code example here
  * \endcode
  *
- * \sa http://www.linuxgazette.com/issue74/tougher.html
- * 
  * \todo write code example 
  */
-
-
 const int MAXHOSTNAME    = 200;
 const int MAXCONNECTIONS = 5;
 const int MAXRECV        = 500;
@@ -78,6 +75,7 @@ class msgSOCKET
 public:
     // Brief description of the constructor
     msgSOCKET();
+    msgSOCKET(const msgSOCKET &socket);
 
     // Brief description of the destructor
     virtual ~msgSOCKET();
@@ -109,20 +107,15 @@ public:
     virtual mcsCOMPL_STAT Close        (void);
 
 protected:
-
     
 private:
-    // Declaration of copy constructor and assignment operator as private
-    // methods, in order to hide them from the users.
-     msgSOCKET(const msgSOCKET&);
+    // Declaration of assignment operator as private methods, in order to it
+    // them from the users.
      msgSOCKET& operator=(const msgSOCKET&);
 
     mcsINT32    _descriptor;  // Socket Descriptor
     sockaddr_in _address;     // Socket Data Structure
 };
-
-
-
 
 #endif /*!msgSOCKET_H*/
 
