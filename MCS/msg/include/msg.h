@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msg.h,v 1.4 2004-10-01 14:14:43 gzins Exp $"
+* "@(#) $Id: msg.h,v 1.5 2004-10-01 14:17:52 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -131,12 +131,12 @@ mcsLOGICAL      msgIsLastReply    (msgMESSAGE         *msg);
 msgTYPE         msgGetType        (msgMESSAGE         *msg);
 
 
-mcsINT32        msgGetMessageQueue();
+mcsINT32        msgGetMessageQueue(void);
 
 mcsCOMPL_STAT   msgConnect        (const mcsPROCNAME  procName,
                                    const char*        msgManagerHost);
                                   
-mcsCOMPL_STAT   msgDisconnect     ();
+mcsCOMPL_STAT   msgDisconnect     (void);
 
 
 
