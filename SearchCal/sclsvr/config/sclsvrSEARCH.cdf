@@ -7,7 +7,7 @@
         <desc>options definition of the SEARCH command</desc>
         <params>
             <param>
-                <name>objetName</name>
+                <name>objectName</name>
                 <type>string</type>
                 <desc>the science object name</desc>
                 </param>
