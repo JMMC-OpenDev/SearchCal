@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.19 2005-02-10 08:07:38 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.20 2005-02-16 14:28:31 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/02/10 08:07:38  scetre
+* changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
+*
 * Revision 1.18  2005/02/09 06:10:44  gzins
 * Changed vobsSTAR_COMP_CRITERIA_LIST& to vobsSTAR_COMP_CRITERIA_LIST* in vobsSCENARIO
 *
@@ -55,7 +58,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.19 2005-02-10 08:07:38 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.20 2005-02-16 14:28:31 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -202,8 +205,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
             // II/225
             scenario.AddEntry(&_cio, NULL, &_starListP, vobsCOPY);
             // II/7A
-            scenario.AddEntry(&_photo, NULL, &_starListP, vobsMERGE, 
-                              &criteriaList);
+            scenario.AddEntry(&_photo, NULL, &_starListP, vobsMERGE);
             // I/280
             scenario.AddEntry(&_ascc, &_starListP, &_starListS, vobsCOPY);
         }
