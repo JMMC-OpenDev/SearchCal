@@ -1,0 +1,165 @@
+"------------------------------------------------------------------------------
+" File:    $MCSROOT/etc/vimrc
+"
+" Version: $Id: vimrc,v 1.1 2004-05-14 15:33:19 gzins Exp $
+" 
+" Purpose: VIM special configuration file
+"
+" who       when        what
+" --------  ----------  ----------------------------------------------
+" gzins     14-05-2004  created
+"
+" 
+" To use it, added the following line in ~/.vimrc 
+"       source $MCSROOT/etc/vimrc
+"
+"------------------------------------------------------------------------------
+
+set nocompatible    " Use Vim defaults (much better!)
+set bs=2            " allow backspacing over everything in insert mode
+set ai              " always set autoindenting on
+set tw=78           " always limit the width of text to 78
+set backup          " keep a backup file
+set viminfo='20,\"50    " read/write a .viminfo file, don't store more
+" than 50 lines of registers
+set history=50      " keep 50 lines of command line history
+set ruler           " show the cursor position all the time
+" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
+" let &guioptions = substitute(&guioptions, "t", "", "g")
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" Make p in Visual mode replace the selected text with the "" register.
+vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+    syntax on
+    set hlsearch
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+    " In text files, always limit the width of text to 78 characters
+    autocmd BufRead *.txt set tw=78
+
+
+    augroup cprog
+        " Remove all cprog autocommands
+        au!
+
+        " When starting to edit a file:
+        "   For C and C++ files set formatting of comments and set C-indenting on.
+        "   For other files switch it off.
+        "   Don't change the order, it's important that the line with * comes first.
+        autocmd FileType *      set formatoptions=tcql nocindent comments&
+        autocmd FileType c,cpp,C,h  set formatoptions=croql cindent comments=sr:/*,mb:*,el:*/,://
+    augroup END
+
+    augroup gzip
+        " Remove all gzip autocommands
+        au!
+
+        " Enable editing of gzipped files
+        " set binary mode before reading the file
+        autocmd BufReadPre,FileReadPre    *.gz,*.bz2 set bin
+        autocmd BufReadPost,FileReadPost  *.gz call GZIP_read("gunzip")
+        autocmd BufReadPost,FileReadPost  *.bz2 call GZIP_read("bunzip2")
+        autocmd BufWritePost,FileWritePost    *.gz call GZIP_write("gzip")
+        autocmd BufWritePost,FileWritePost    *.bz2 call GZIP_write("bzip2")
+        autocmd BufWritePost,FileWritePost    *.gz call GZIP_write("gzip")
+        autocmd BufWritePost,FileWritePost    *.bz2 call GZIP_write("bzip2")
+        autocmd FileAppendPre         *.gz call GZIP_appre("gunzip")
+        autocmd FileAppendPre         *.bz2 call GZIP_appre("bunzip2")
+        autocmd FileAppendPost        *.gz call GZIP_write("gzip")
+        autocmd FileAppendPost        *.bz2 call GZIP_write("bzip2")
+
+        " After reading compressed file: Uncompress text in buffer with "cmd"
+        fun! GZIP_read(cmd)
+            let ch_save = &ch
+            set ch=2
+            execute "'[,']!" . a:cmd
+            set nobin
+            let &ch = ch_save
+            execute ":doautocmd BufReadPost " . expand("%:r")
+        endfun
+
+        " After writing compressed file: Compress written file with "cmd"
+        fun! GZIP_write(cmd)
+            if rename(expand("<afile>"), expand("<afile>:r")) == 0
+                execute "!" . a:cmd . " <afile>:r"
+            endif
+        endfun
+        " Before appending to compressed file: Uncompress file with "cmd"
+        fun! GZIP_appre(cmd)
+            execute "!" . a:cmd . " <afile>"
+            call rename(expand("<afile>:r"), expand("<afile>"))
+        endfun
+
+    augroup END
+
+    " This is disabled, because it changes the jumplist.  Can't use CTRL-O to go
+    " back to positions in previous files more than once.
+    if 0
+        " When editing a file, always jump to the last cursor position.
+        " This must be after the uncompress commands.
+        autocmd BufReadPost * if line("'\"") && line("'\"") <= line("$") | exe "normal `\"" | endif
+    endif
+endif " has("autocmd")
+
+set dictionary=/usr/dict/words
+set dictionary=/usr/dict/words
+
+"   laststatus:  show status line?  Yes, always!
+"   laststatus:  Even for only one buffer.
+set laststatus=2
+
+"   errorbells: damn this beep!  ;-)
+set noerrorbells
+
+"   Show cursor position
+"   Yes !
+set ruler
+
+"   Short messages
+"   just remove the intro message - option I
+set   shortmess=I
+
+"   visualbell:
+"   Yes !
+set   visualbell
+
+"   Enable mouse operations
+set mouse=a
+
+"
+" Naos customization
+"
+autocmd BufRead * let @z = expand("%:t:r")
+set autowrite
+
+"   expandtab:   expand tab to spaces
+set expandtab
+
+"   smarttab:   insert 'shiftwidth' in front of a line
+set smarttab
+
+"   tabstop:    Tab = 4 spaces
+set tabstop=4
+
+set shiftwidth=4
+
+"   cinoptions: indentation options
+set cinoptions=(0,g0
+
+"   cindent:    allow C indentation
+set cindent
+
+"   complete:   how to complete words (from which buffer)
+set complete=.,b,i
+
+"   path:   The list of directories to search when you specify
+"           a file with an edit command.
+set path=.,./src,../src,./include,../include,$INTROOT,$INTROOT/src,$INTROOT/include,$MCSROOT/src,$MCSROOT/include,/usr/include
