@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-06-17 08:27:58 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.1 2004-06-17 08:27:58 gzins Exp $"
 #
 # Makefile of ........
 #
@@ -19,7 +19,7 @@
 #
 # user definable C-compilation flags
 #USER_CFLAGS = 
-
+#MAKE_PURIFY = ON
 #
 # additional include and library search paths
 #USER_INC = 
@@ -34,14 +34,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = miscTestUtils
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+miscTestUtils_OBJECTS   = miscTestUtils
+miscTestUtils_LDFLAGS   =
+miscTestUtils_LIBS      = mcs misc
 
 #
 # special compilation flags for single c sources
@@ -50,17 +50,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = misc.h
+INCLUDES        =
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = misc
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-misc_OBJECTS   = miscFile miscDate miscString
+lllll_OBJECTS   =
 
 #
 # Scripts (public and local)
