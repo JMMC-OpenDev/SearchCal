@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.4 2005-02-02 14:24:56 scetre Exp $"
+* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.5 2005-02-04 15:29:54 gzins Exp $"
 *
 * History
 * -------
+* $Log: not supported by cvs2svn $
 * gzins     23-Nov-2004  Created
-*
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.4 2005-02-02 14:24:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.5 2005-02-04 15:29:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -53,7 +53,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 
     // GETCAL command
     sclsvrGETCAL_CMD getCalCmd(msg.GetCommand(), msg.GetBody());
-    //printf("msg.GetBody() = %s\n", msg.GetBody()); 
+
     
     // Parse command
     if (getCalCmd.Parse() == mcsFAILURE)
@@ -67,106 +67,104 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("objName = %s\n", objName);
+
     // Observed magnitude
     mcsDOUBLE magnitude;
     if (getCalCmd.GetMag(&magnitude) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("magnitude = %lf\n", magnitude);
+
     // max calibrator return
     mcsINT32 maxReturn;
     if (getCalCmd.GetMaxReturn(&maxReturn) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("max Return = %d\n", maxReturn);
+
     // diff ra
     mcsINT32 diffRa;
     if (getCalCmd.GetDiffRa(&diffRa) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("diffRa = %d\n", diffRa);
+    
     // diff dec
     mcsINT32 diffDec;
     if (getCalCmd.GetDiffDec(&diffDec) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("diffDec = %d\n", diffDec);
+
     // band
     char *band;
     if (getCalCmd.GetBand(&band) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("band = %s\n", band);
+
     // minMagRange
     char *minMagRange;
     if (getCalCmd.GetMinMagRange(&minMagRange) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("minMagRange = %s\n", minMagRange);
+
     // maxMagRange
     char *maxMagRange;
     if (getCalCmd.GetMaxMagRange(&maxMagRange) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("maxMagRange = %s\n", maxMagRange);
+
     // ra
     char *ra;
     if (getCalCmd.GetRa(&ra) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("ra = %s\n", ra);
+
     // dec
     char *dec;
     if (getCalCmd.GetDec(&dec) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("dec = %s\n", dec);
+
     // baseMin
     mcsDOUBLE baseMin;
     if (getCalCmd.GetBaseMin(&baseMin) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("baseMin = %f\n", baseMin);
+
     // baseMax
     mcsDOUBLE baseMax;
     if (getCalCmd.GetBaseMax(&baseMax) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("baseMax = %f\n", baseMax);
+
     // lambda
     mcsDOUBLE lambda;
     if (getCalCmd.GetLambda(&lambda) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("lambda = %f\n", lambda);
+
     // visibility
     mcsDOUBLE vis;
     if (getCalCmd.GetVis(&vis) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("visibility = %f\n", vis);
+
     // visibility error
     mcsDOUBLE visErr;
     if (getCalCmd.GetVisErr(&visErr) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    //printf("visibility error = %f\n", visErr);
-
     
     // Build the request object from the parameters of the command
     vobsREQUEST request;
@@ -250,11 +248,11 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the observed band
-    if (request.SetConstraint(OBSERVED_BAND_ID, band)
-        ==  mcsFAILURE)
+    if (request.SetConstraint(OBSERVED_BAND_ID, band) ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
+
     // Affect the baseMin
     mcsSTRING256 baseMini;
     sprintf(baseMini, "%f", baseMin);
