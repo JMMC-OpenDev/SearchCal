@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2004-12-08 18:24:29 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2004-12-09 17:37:09 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
@@ -13,6 +13,8 @@
 # gzins     04-Dec-2004  Added mkfUpdateMcs script
 # gzins     04-Dec-2004  Changed mkfUpdateMcs to mkfInstallMcs
 # gzins     08-Dec-2004  Moved mkfInstallMcs to mcsins
+# gzins     09-Dec-2004  Removed mkfMakeErrorFileDependencies and added
+#                        mkfMakeGeneratedFilesDependencies
 #
 #*******************************************************************************
 # REMARKS
@@ -70,8 +72,8 @@ SCRIPTS         = mkfBuildDocIndex \
                   mkfDoxygen \
                   mkfDoManPages \
                   mkfMakeCopySources \
+				  mkfMakeGeneratedFilesDependencies \
                   mkfMakeJavaClasspath \
-                  mkfMakeErrorFileDependencies \
                   mkfMakeExecutableDependencies \
                   mkfMakeJavaExecutable \
                   mkfMakeJavaDependencies \
