@@ -1,14 +1,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-06-17 07:14:31 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-06-24 12:06:54 mella Exp $"
 #
 # Makefile of ctoo module
 #
 # who       when        what
 # --------  ----------  --------------------------------------------------------
-# gluck		18-05-04	Created
-# gzins     09-06-04    added templates for doxygen
+# gluck		18-May-2004	Created
+# gzins     09-Jun-2004    added templates for doxygen
+# mella		24-Jun-2004	add buildDocIndex related
 #
 #
 #*******************************************************************************
@@ -71,7 +72,8 @@ SCRIPTS         = ctooGetTemplate \
 				  ctooGetTemplateForDirectoryStructure \
 				  ctooGetCode \
 				  ctooGetTemplateForCoding \
-				  ctooDoxygen
+				  ctooDoxygen \
+				  ctooBuildDocIndex
 SCRIPTS_L       =
 
 #
@@ -146,7 +148,8 @@ INS_ROOT_DIR   =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES =
+INSTALL_FILES = ../config/ctooBuildDocIndex.xsl \
+				../config/ctooBuildDocIndex2.xsl
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
