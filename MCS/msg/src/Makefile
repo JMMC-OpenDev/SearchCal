@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2004-11-19 23:55:17 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.10 2004-11-22 14:23:44 gzins Exp $"
 #
 # Makefile of msg
 #
@@ -61,7 +61,9 @@ msgSendCommand_LIBS          = mcs log err cmd misc msg C++
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = msg.h
+INCLUDES        = msg.h            \
+				  msgMESSAGE.h     \
+				  msgMANAGER_IF.h
 
 #
 # Libraries (public and local)
@@ -77,7 +79,6 @@ msg_OBJECTS   = msg                \
 				msgReceive         \
 				msgSend            \
 				msgSocket          \
-				msgGetMessageQueue \
 				msgMANAGER_IF      \
                 msgMESSAGE         \
                 msgSOCKET
