@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.17 2005-02-22 15:48:38 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.18 2005-03-04 15:49:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/02/22 15:48:38  lafrasse
+* Updated because of a miscoDYN_BUFF::GetNextLine() API change
+*
 * Revision 1.16  2005/02/22 13:24:02  scetre
 * Fixed bug in cast of wlen value when parsing magnitude from the flux
 *
@@ -82,6 +85,7 @@
 /*
  * Locale header files
  */
+#include "vobsSTAR_LIST.h"
 
 /*
  * Class declaration
@@ -144,72 +148,129 @@ public:
      */
     template <class obj, class list>
         mcsCOMPL_STAT vobsCDATA::Store(obj &object, list &objectList,
+                                       vobsSTAR_PROPERTY_ID_LIST ucdList, 
                                        mcsLOGICAL extendedFormat=mcsFALSE)
         {
             logPrint("vobs", logEXTDBG, __FILE_LINE__, "vobsCDATA::Store()");
 
-            // Get property ID and place them in the buffer
-            obj star;
-            mcsINT32 propIdx;
-            for (propIdx = 0; propIdx < star.NbProperties(); propIdx++)
+            // If the list is not empty, the list is save with only the ucd of
+            // the list
+            if (ucdList.size() != 0)
             {
-                vobsSTAR_PROPERTY *property;
-                property = star.GetNextProperty((mcsLOGICAL)(propIdx==0));
-                AppendString(property->GetId());
-                AppendString("\t");        
-                AddUcdName(property->GetId());
-            }
-            AppendString("\n");
-
-            // Get parameter name and place them in the buffer
-            for (propIdx = 0; propIdx < star.NbProperties(); propIdx++)
-            {
-                vobsSTAR_PROPERTY *property;
-                property = star.GetNextProperty((mcsLOGICAL)(propIdx==0));
-                AppendString(property->GetName());
-                AppendString("\t"); 
-                AddParamName(property->GetName());
-            }
-            AppendString("\n");
-
-            // For each object of the list    
-            obj *starPtr;
-            mcsUINT32 starIdx;
-            for (starIdx = 0; starIdx < objectList.Size(); starIdx++)
-            {
-                // Get each object of the list
-                starPtr = (obj *)objectList.GetNextStar((mcsLOGICAL)
-                                                        (starIdx==0));
-                // For each property of the object
-                for (propIdx = 0; propIdx < starPtr->NbProperties(); propIdx++)
+                vobsSTAR_PROPERTY_ID_LIST::iterator ucdListIterateur;
+                ucdListIterateur = ucdList.begin();
+                obj star;
+                // Write ech property name corresponding with the ucd into the
+                // buffer
+                while(ucdListIterateur != ucdList.end())
                 {
-                    // Get each property
                     vobsSTAR_PROPERTY *property;
-                    property = starPtr->GetNextProperty((mcsLOGICAL)
-                                                        (propIdx==0));
-                    // Each star property is placed in buffer in form :
-                    // 'value origin confidenceIndex'
-                    AppendString(property-> GetValue());
+                    property = star.GetProperty(*ucdListIterateur);  
+                    AppendString(property->GetName());
                     AppendString("\t");
-                    if (extendedFormat == mcsTRUE)
+                    AddUcdName(*ucdListIterateur);
+                    AddParamName(property->GetName());
+                    ucdListIterateur++;
+                }
+                AppendString("\n");
+                // For each object of the list
+                obj *starPtr;
+                mcsUINT32 starIdx;
+                for (starIdx = 0; starIdx < objectList.Size(); starIdx++)
+                {
+                    // Get each object of the list
+                    starPtr = (obj *)objectList.GetNextStar((mcsLOGICAL)
+                                                            (starIdx==0));
+                    ucdListIterateur=ucdList.begin();
+                    // For each property of the object
+                    while(ucdListIterateur != ucdList.end())
                     {
-                        AppendString(property-> GetOrigin());
+                        // Get each property
+                        vobsSTAR_PROPERTY *property;
+                        property = starPtr->GetProperty(*ucdListIterateur);
+                        // Each star property is placed in buffer in form :
+                        // 'value origin confidenceIndex'
+                        AppendString(property-> GetValue());
                         AppendString("\t");
-                        mcsSTRING16 confidenceIndex;
-                        sprintf(confidenceIndex, "%d", property->GetConfidenceIndex());
-                        AppendString(confidenceIndex);
-                        AppendString("\t");
+                        ucdListIterateur++;                        
+                    }
+                    // If it's not the last star of the list '\n' is written in
+                    // order to go to the next line
+                    if (starIdx != (objectList.Size() - 1))
+                    {
+                        AppendString("\n");
                     }
                 }
-                // If it's not the last star of the list '\n' is written in
-                // order to go to the next line
-                if (starIdx != (objectList.Size() - 1))
-                {
-                    AppendString("\n");
-                }
+                // Removed the '\0' character at the end of the buffer
+                _dynBuf.storedBytes -= 1;
             }
-            // Removed the '\0' character at the end of the buffer
-            _dynBuf.storedBytes -= 1;
+            // If the list is empty, that's mean that the satr list should be
+            // saved with all property
+            else
+            {
+                // Get property ID and place them in the buffer
+                obj star;
+                mcsINT32 propIdx;
+                for (propIdx = 0; propIdx < star.NbProperties(); propIdx++)
+                {
+                    vobsSTAR_PROPERTY *property;
+                    property = star.GetNextProperty((mcsLOGICAL)(propIdx==0));
+                    AppendString(property->GetId());
+                    AppendString("\t");        
+                    AddUcdName(property->GetId());
+                }
+                AppendString("\n");
+
+                // Get parameter name and place them in the buffer
+                for (propIdx = 0; propIdx < star.NbProperties(); propIdx++)
+                {
+                    vobsSTAR_PROPERTY *property;
+                    property = star.GetNextProperty((mcsLOGICAL)(propIdx==0));
+                    AppendString(property->GetName());
+                    AppendString("\t"); 
+                    AddParamName(property->GetName());
+                }
+                AppendString("\n");
+
+                // For each object of the list    
+                obj *starPtr;
+                mcsUINT32 starIdx;
+                for (starIdx = 0; starIdx < objectList.Size(); starIdx++)
+                {
+                    // Get each object of the list
+                    starPtr = (obj *)objectList.GetNextStar((mcsLOGICAL)
+                                                            (starIdx==0));
+                    // For each property of the object
+                    for (propIdx = 0; propIdx < starPtr->NbProperties(); propIdx++)
+                    {
+                        // Get each property
+                        vobsSTAR_PROPERTY *property;
+                        property = starPtr->GetNextProperty((mcsLOGICAL)
+                                                            (propIdx==0));
+                        // Each star property is placed in buffer in form :
+                        // 'value origin confidenceIndex'
+                        AppendString(property-> GetValue());
+                        AppendString("\t");
+                        if (extendedFormat == mcsTRUE)
+                        {
+                            AppendString(property-> GetOrigin());
+                            AppendString("\t");
+                            mcsSTRING16 confidenceIndex;
+                            sprintf(confidenceIndex, "%d", property->GetConfidenceIndex());
+                            AppendString(confidenceIndex);
+                            AppendString("\t");
+                        }
+                    }
+                    // If it's not the last star of the list '\n' is written in
+                    // order to go to the next line
+                    if (starIdx != (objectList.Size() - 1))
+                    {
+                        AppendString("\n");
+                    }
+                }
+                // Removed the '\0' character at the end of the buffer
+                _dynBuf.storedBytes -= 1;
+            }
             return mcsSUCCESS;
         }
 
