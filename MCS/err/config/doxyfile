@@ -1,0 +1,22 @@
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: doxyfile,v 1.1 2005-01-27 15:54:25 gzins Exp $"
+#
+# History
+# -------
+# $Log: not supported by cvs2svn $
+#*******************************************************************************
+
+# If the value of the INPUT tag contains directories, you can use the
+# EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude
+# certain files from those directories.
+
+EXCLUDE_PATTERNS       = *Private.* *_L.* *.java 
+
+# Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources
+# only. Doxygen will then generate output that is more tailored for C.
+# For instance, some of the names that are used will be different. The list
+# of all members will be omitted, etc.
+
+OPTIMIZE_OUTPUT_FOR_C  = YES
