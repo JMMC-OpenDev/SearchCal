@@ -4,62 +4,62 @@
     moduleName="dummyMod">
     <error id="1">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="2">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="3">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="4">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="5">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="6">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="7">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="8">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="9">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="10">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="11">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
     <error id="1">
         <errName>Err1</errName>
-        <errSeverity>S</errSeverity>
+        <errSeverity>SEVERE</errSeverity>
         <errFormat>Error number %d</errFormat>
     </error>
 </errorList>
