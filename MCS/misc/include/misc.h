@@ -3,12 +3,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.4 2004-06-17 15:17:58 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.5 2004-06-18 12:13:23 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * gzins     16-Jun-2004  created
-*
+* lafrasse  17-Jun-2004  added miscGetLocalTimeStr
+*                        added miscStripQuotes
+*                        added miscStrToUpper
+* lafrasse  18-Jun-2004  added miscGetExtension
+*                        added miscYankExtension
 *
 *******************************************************************************/
 
@@ -24,6 +28,7 @@ extern C {
 /* Public functions */
 char *miscGetFileName(char *fullPath);
 char *miscGetExtension(char *fullPath);
+void miscYankExtension(char *fullPath);
 
 void miscGetUtcTimeStr(mcsBYTES32 localTime, mcsINT32 precision);
 void miscGetLocalTimeStr(mcsBYTES32 localTime, mcsINT32 precision);

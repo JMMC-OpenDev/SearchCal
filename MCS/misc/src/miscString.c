@@ -4,10 +4,11 @@
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * gzins     16-Jun-2004  created
+* lafrasse  17-Jun-2004  added miscStrToUpper
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.3 2004-06-17 15:04:40 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.4 2004-06-18 12:13:23 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*

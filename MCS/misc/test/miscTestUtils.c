@@ -1,12 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestUtils.c,v 1.6 2004-06-18 10:56:54 lafrasse Exp $"
+* "@(#) $Id: miscTestUtils.c,v 1.7 2004-06-18 12:13:23 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * gzins     16-Jun-2004  created
-*
+* lafrasse  17-Jun-2004  added miscGetLocalTimeStr test
+*                        added miscStripQuotes test
+*                        added miscStrToUpper test
+* lafrasse  18-Jun-2004  added miscGetExtension test
+*                        added miscYankExtension test
 *
 ********************************************************************************
 *   NAME
@@ -35,7 +39,7 @@
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.6 2004-06-18 10:56:54 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestUtils.c,v 1.7 2004-06-18 12:13:23 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -64,7 +68,7 @@ int main (int argc, char *argv[])
     /* Test of miscGetFileName() */
     printf("miscGetFileName() Function Test :\n\n");
     printf("   File Path                      | File Name\n");
-    printf("   -------------------------------+---------------\n");
+    printf("   -------------------------------+-------------------------\n");
     strcpy (fullFileName, "fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetFileName(fullFileName));
     strcpy (fullFileName, "./fileName.txt");
@@ -79,8 +83,8 @@ int main (int argc, char *argv[])
 
     /* Test of miscGetExtension() */
     printf("miscGetExtension() Function Test :\n\n");
-    printf("   File Path                      | File Name\n");
-    printf("   -------------------------------+---------------\n");
+    printf("   File Path                      | File Extension\n");
+    printf("   -------------------------------+-------------------------\n");
     strcpy (fullFileName, "fileName");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     strcpy (fullFileName, "fileName.txt");
@@ -110,6 +114,66 @@ int main (int argc, char *argv[])
     strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
     printf("   %-30s | %s\n", fullFileName, miscGetExtension(fullFileName));
     printf("\n\n");
+
+    /* Test of miscYankExtension() */
+    printf("miscYankExtension() Function Test :\n\n");
+    printf("   File Path                      | Without Extension\n");
+    printf("   -------------------------------+-------------------------\n");
+    strcpy (fullFileName, "fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "./fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "./fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "../fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "../fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/data/fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/.data/fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/.data/fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/../p/.data/fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankExtension(fullFileName);
+    printf("%s\n", fullFileName);
+    printf("\n\n");
+
+    printf("=============================================================\n\n");
 
     /* Test of miscGetUtcTimeStr() */
     printf("miscGetUtcTimeStr() Function Test :\n\n");
@@ -146,6 +210,8 @@ int main (int argc, char *argv[])
     miscGetLocalTimeStr(utcTime, 6);
     printf("   Local Time   (precision s=5)  = %s\n", utcTime);
     printf("\n\n");
+
+    printf("=============================================================\n\n");
 
     /* Test of miscStripQuotes() */
     printf("miscStripQuotes() Function Test :\n\n");
