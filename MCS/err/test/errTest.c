@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: errTest.c,v 1.2 2004-06-23 16:57:26 gzins Exp $"
+* "@(#) $Id: errTest.c,v 1.3 2005-01-27 14:15:39 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errTest.c,v 1.2 2004-06-23 16:57:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errTest.c,v 1.3 2005-01-27 14:15:39 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -27,30 +27,32 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "log.h"
 #include "err.h"
 #include "errPrivate.h"
+#include "errErrors.h"
 
 /* 
  * Main
  */
 int main (int argc, char *argv[])
 {
-    int i;
-
     char     buffer[2048];
 
-    for (i = 1; i <= 10; i++)
-    {
-        errAdd(i,i);
-    }
+    printf ("Adding errors in stack...\n");
+    errAdd(errERR_NUM_1, 1234);
+    errUserAdd(errERR_USR_MSG);
+    errAdd(errERR_NUM_2, 9876);
 
-    printf ("Error 10 in stack ? : %s\n",
-            errIsInStack("err", 10)==mcsTRUE?"Oui":"Non");
-    printf ("Error 12 in stack ? : %s\n",
+    printf ("Error 1 in stack ? : %s\n",
+            errIsInStack("err", errERR_NUM_2)==mcsTRUE?"Oui":"Non");
+    printf ("Error 24 in stack ? : %s\n",
             errIsInStack("err", 24)==mcsTRUE?"Oui":"Non");
 
-    printf ("\nDisplay error stack\n");
+    printf ("\nGetting user message ...\n");
+    printf ("User message = %s\n", errUserGet()); 
+
+    printf ("\nDisplaying error stack...\n");
     errDisplayStack();
 
-    printf ("\nSave/restore error stack\n");
+    printf ("\nSaving/restoring error stack...\n");
     errPackStack(buffer, sizeof(buffer));
     errCloseStack();
     errUnpackStack(buffer, strlen(buffer));
