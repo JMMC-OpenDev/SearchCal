@@ -1,8 +1,8 @@
-#! /bin/ksh
+#! /bin/sh
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeInstallErrorFiles.sh,v 1.1 2004-09-10 13:40:57 gzins Exp $" 
+# "@(#) $Id: mkfMakeInstallErrorFiles.sh,v 1.2 2004-09-29 15:38:31 gzins Exp $" 
 #
 # who       when         what
 # --------  --------     ----------------------------------------------
@@ -75,24 +75,24 @@ then
     
     target="errors: errors_begin "
 
-    echo "errors_begin:"
-    echo "\t-@echo \"\"; echo \"..ERROR files:\""
+    echo -e "errors_begin:"
+    echo -e "\t-@echo \"\"; echo \"..ERROR files:\""
 
     for file in `ls ../errors/*Errors.xml 2>/dev/null`
     do
         FILE=`basename $file`
-        echo "$ERRORS/$FILE: ../errors/$FILE"
-        echo "\t-\$(AT)cp ../errors/$FILE  $ERRORS/$FILE; \\"  
-        echo "\t      chmod $MASK $ERRORS/$FILE"
+        echo -e "$ERRORS/$FILE: ../errors/$FILE"
+        echo -e "\t-\$(AT)cp ../errors/$FILE  $ERRORS/$FILE; \\"  
+        echo -e "\t      chmod $MASK $ERRORS/$FILE"
         target="$target $ERRORS/$FILE"
     done
 
     for file in `ls ../include/*Errors.h 2>/dev/null`
     do
         FILE=`basename $file`
-        echo "$ERRORS/../include/$FILE: ../include/$FILE"
-        echo "\t-\$(AT)cp ../include/$FILE $ERRORS/../include/$FILE; \\" 
-        echo "\t      chmod $MASK $ERRORS/../include/$FILE"
+        echo -e "$ERRORS/../include/$FILE: ../include/$FILE"
+        echo -e "\t-\$(AT)cp ../include/$FILE $ERRORS/../include/$FILE; \\" 
+        echo -e "\t      chmod $MASK $ERRORS/../include/$FILE"
         target="$target $ERRORS/../include/$FILE"
     done
 
@@ -101,16 +101,16 @@ then
         FILE=`basename $file`
         if [ $FILE != CVS ] 
         then
-            echo "$ERRORS/help/$FILE: ../errors/help/$FILE"
-            echo "\t-\$(AT)cp ../errors/help/$FILE $ERRORS/help/$FILE; \\"
-            echo "\t      chmod $MASK $ERRORS/help/$FILE"
+            echo -e "$ERRORS/help/$FILE: ../errors/help/$FILE"
+            echo -e "\t-\$(AT)cp ../errors/help/$FILE $ERRORS/help/$FILE; \\"
+            echo -e "\t      chmod $MASK $ERRORS/help/$FILE"
             target="$target $ERRORS/help/$FILE"
         fi
     done
-    echo $target
+    echo -e :"$target"
 else
-    echo "errors:"
-    echo "\t-@echo \"\""
+    echo -e "errors:"
+    echo -e "\t-@echo \"\""
 fi
 
 exit 0

@@ -1,8 +1,8 @@
-#! /bin/ksh
+#! /bin/sh
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeInstallFiles.sh,v 1.1 2004-09-10 13:40:57 gzins Exp $" 
+# "@(#) $Id: mkfMakeInstallFiles.sh,v 1.2 2004-09-29 15:38:40 gzins Exp $" 
 #
 # who       when         what
 # --------  --------     ----------------------------------------------
@@ -82,8 +82,8 @@ if [ "$fileList" != "" ]
 then     
     target="install_files: files_begin "
 
-    echo "files_begin:"
-    echo "\t-@echo \"\"; echo \"..other files:\""
+    echo -e "files_begin:"
+    echo -e "\t-@echo \"\"; echo \"..other files:\""
 
     for FILE in $fileList
     do
@@ -111,20 +111,20 @@ then
             exit 1
         fi  
 
-	echo "\t-\$(AT)touch $FILE"
-        echo "$TOFILE: $FILE"
-	echo "\t-\$(AT)echo \"\t$name\"; \\"
-        echo "\t      cp $FILE  $TOFILE; \\"  
-        echo "\t      chmod $MASK $TOFILE"
+        echo -e "\t-\$(AT)touch $FILE"
+        echo -e "$TOFILE: $FILE"
+        echo -e "\t-\$(AT)echo \"\t$name\"; \\"
+        echo -e "\t      cp $FILE  $TOFILE; \\"  
+        echo -e "\t      chmod $MASK $TOFILE"
         target="$target $TOFILE"
     done
 
-    echo $target
+    echo -e "$target"
 
 else
 
-    echo "files:"
-    echo "\t-@echo \"\""
+    echo -e "files:"
+    echo -e "\t-@echo \"\""
 
 fi
 
