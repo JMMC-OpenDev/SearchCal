@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.11 2005-02-04 10:50:37 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.12 2005-02-04 14:31:50 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/04 10:50:37  gzins
+* Added N band scenario
+*
 * Revision 1.10  2005/02/04 07:51:15  gzins
 * Changed printf to logTest
 *
@@ -31,7 +34,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.11 2005-02-04 10:50:37 gzins Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.12 2005-02-04 14:31:50 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -262,7 +265,8 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
         {
             return mcsFAILURE;
         }
-                // Add hd criteria
+
+        // Add hd criteria
         if (criteriaList.Add(vobsSTAR_ID_MAIN, 0) == mcsFAILURE)
         {
             return mcsFAILURE;

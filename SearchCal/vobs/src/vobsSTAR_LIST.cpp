@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.8 2005-01-26 14:12:24 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.9 2005-02-04 14:31:50 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/01/26 14:12:24  scetre
+* rewrite save method in vobsSTAR_LIST
+*
 * Revision 1.7  2005/01/26 08:18:15  scetre
 * change history
 *
@@ -14,7 +17,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.8 2005-01-26 14:12:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.9 2005-02-04 14:31:50 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -128,7 +131,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
  * the specified one.
  *
  * \warning if list contains more than one instance, only first occurence is
- * removed. 
+ * removed. This method should be used with the GetNextStar() method because it
+ * moves the _starIterator of the class according to GetNextStar();
  *
  * \param star element to be removed from the list.
  *
@@ -145,6 +149,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
         // If found
         if ((*iter)->IsSame(star) == mcsTRUE)
         {
+            _starIterator--;
             // Delete element
             delete (*iter);
             // Clear element from list
@@ -248,8 +253,8 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
  * one. If star is already stored in the list, it is just updated using
  * vobsSTAR::Update method, otherwise it is added to the list.
  * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned if
- * updating or adding star fails.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned if updating or adding star fails.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
