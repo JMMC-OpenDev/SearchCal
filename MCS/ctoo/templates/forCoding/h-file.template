@@ -1,13 +1,16 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: h-file.template,v 1.9 2005-01-24 11:17:40 gluck Exp $"
+#%# "@(#) $Id: h-file.template,v 1.10 2005-02-21 15:50:22 gluck Exp $"
 #%# 
 #%# Template for .h include files         
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.9  2005/01/24 11:17:40  gluck
+#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $)
+#%#
 #%# Revision 1.8  2005/01/21 16:13:10  gluck
 #%# - Correct alignment for generated files header from templates
 #%# - Add log message automatic insertion ($Log)
@@ -25,7 +28,7 @@
 #ifndef _H
 #define _H
 /*******************************************************************************
- * JMMC project
+ * <INSTITUTE> project
  *
  * "@(#) $I>-<d$"
  *

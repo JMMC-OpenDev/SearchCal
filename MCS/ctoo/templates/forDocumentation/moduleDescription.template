@@ -1,15 +1,21 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: moduleDescription.template,v 1.7 2005-02-03 10:34:30 mella Exp $" 
+#%# "@(#) $Id: moduleDescription.template,v 1.8 2005-02-21 15:50:22 gluck Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.7  2005/02/03 10:34:30  mella
+#%# Add xml header with UTF-8 default charset
+#%#
 #%# Revision 1.6  2005/01/24 11:17:40  gluck
-#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $)
+#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.7  2005/02/03 10:34:30  mella
+#%# Correct bug when add log message automatic insertion (Add xml header with UTF-8 default charset
+#%# Correct bug when add log message automatic insertion ()
 #%#
 #%# Revision 1.5  2005/01/21 16:13:10  gluck
 #%# - Correct alignment for generated files header from templates
@@ -27,7 +33,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ********************************************************************************
- JMMC project
+ <INSTITUTE> project
 
  "@(#) $I>-<d$"
 

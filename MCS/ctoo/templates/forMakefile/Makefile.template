@@ -1,13 +1,16 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: Makefile.template,v 1.13 2005-02-15 14:49:30 gluck Exp $" 
+#%# "@(#) $Id: Makefile.template,v 1.14 2005-02-21 15:50:22 gluck Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.13  2005/02/15 14:49:30  gluck
+#%# Insert <moduleName> in file comment header for automatic replacement
+#%#
 #%# Revision 1.12  2005/02/15 10:20:02  gzins
 #%# Merged clean_dist and clean
 #%#
@@ -16,6 +19,9 @@
 #%#
 #%# Revision 1.10  2005/01/24 11:17:40  gluck
 #%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.13  2005/02/15 14:49:30  gluck
+#%# Correct bug when add log message automatic insertion (Insert <moduleName> in file comment header for automatic replacement
+#%# Correct bug when add log message automatic insertion (
 #%# Correct bug when add log message automatic insertion (Revision 1.12  2005/02/15 10:20:02  gzins
 #%# Correct bug when add log message automatic insertion (Merged clean_dist and clean
 #%# Correct bug when add log message automatic insertion (
@@ -38,7 +44,7 @@
 #%# 
 #%#-----------------------------------------------------------------------------
 #*******************************************************************************
-# JMMC project
+# <INSTITUTE> project
 #
 # "@(#) $I>-<d$"
 #
