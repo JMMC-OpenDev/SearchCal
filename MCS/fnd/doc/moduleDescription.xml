@@ -2,7 +2,7 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2004-09-22 08:53:19 sccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2004-09-22 13:39:24 gzins Exp $"
 
  who       when         what
  ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,7 +29,7 @@
 -->
 
 <module name="fnd">
-    <desc>description</desc>
-    <resp>responsible</resp>
-    <package>package</package>
+    <desc>Foundation library</desc>
+    <resp>Gerard Zins</resp>
+    <package>MCS</package>
 </module>
