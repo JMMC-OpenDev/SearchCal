@@ -11,7 +11,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.4 2004-06-18 12:13:23 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.5 2004-06-22 07:58:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -91,19 +91,23 @@ char *miscGetFileName(char *fullPath)
 /**
  * Returns the file extension.
  * 
- * This function returns the file extension with any leading directory
- * components removed. For example, miscGetFileName("../data/myFile.fits") will
- * return "fits".
+ * This function returns the extention of the given file name, i.e. the
+ * characters after the last dot in the file name.
+ * miscGetExtension("../data/myFile.fits") will return "fits".
  *
- * \param fullPath the full path.
+ * /warning : NULL is returned when there is no dot in the file name or the
+ * last dot is the first character of the file name,e.g.:
+ *              "/data/.dt"
+ *              "/data/.dt/cache"
+ * \param fileName the file name.
  * \return the file extension.
  */
-char *miscGetExtension(char *fullPath)
+char *miscGetExtension(char *fileName)
 {
     char *chrPtr, *chrPtr2;
 
     /* Makes chrPtr points to the last occurence of '.' */
-    if ((chrPtr = strrchr(fullPath, '.')) == NULL)
+    if ((chrPtr = strrchr(fileName, '.')) == NULL)
     {
     	/* Exits if no extension found */
         return NULL;
@@ -113,24 +117,24 @@ char *miscGetExtension(char *fullPath)
     	/* Check that the 'extension' found is not part of the filepath	   
 	     * like e.g.:
     	 *
-	     * "/home/ins1b/jknudstr/.fhtHome/DICTIONARY/ALL"
+	     * "/data/.dt/cache"
     	 *
 	     * Check also the following:
     	 *
-	     * "/home/ins1b/jknudstr/.fhtHome"
+	     * "/data/.dt"
     	 *
 	     * In those cases there is no extension.
     	 */
         /* Makes chrPtr2 points to the last occurence of '/' */
-    	chrPtr2 = strrchr(fullPath, '/');
+    	chrPtr2 = strrchr(fileName, '/');
 	    if (chrPtr2 > chrPtr)
         {
-            /* "/home/ins1b/jknudstr/.fhtHome/DICTIONARY/ALL" */
+            /* "/data/.dt/cache" */
     	    return NULL;
         }
     	else if (*(chrPtr - 1) == '/')
         {
-            /* "/home/ins1b/jknudstr/.fhtHome" */
+            /* "/data/.dt" */
     	    return NULL;
         }
     	else
@@ -141,37 +145,67 @@ char *miscGetExtension(char *fullPath)
 }
 
 /**
- * Returns the full path without the file extension.
+ * Returns the file name without the file extension.
  * 
- * This function strips the file extension off the full path original buffer.
+ * This function cats down the given file extension off from the file name
+ * using the same original buffer.
+ * Note that when filename does not end with the given extention the function
+ * has no effect.
+ * The extention can be given with or without the dots, e.g.:  "fits", or
+ * ".fits".
+ * If \em extension is a null pointer, this function cats down the extention,
+ * found using miscGetExtension(), of the given 'fileName' if it has
+ * any extention.
+ *
  * For example, miscYankExtension("../data/myFile.fits") will give back 
  * "../data/myFile".
  *
- * \param fullPath the full path.
+ * \warning When extension is specified, the function looks for the FIRST
+ * occurance of the \em extention in the \em fileName ! Therefore if the given
+ * file name is :'file.fitsname.fits' and the extention is 'fits' the
+ * resulting file name is :'file'.
+ *
+ * \param fileName the file name.
+ * \param extension the file name.
+ * \return file name without extension 
  */
-void miscYankExtension(char *fullPath)
+void miscYankExtension(char *fileName, char *extension)
 {    
     int      pos;
     char     *extPtr;
 
-    /* return if the fullPath is null */
-    if (fullPath == NULL)
+    /* return if the file name is null */
+    if (fileName == NULL)
     {
         return;
     }
 
-    /* get the extention */
-    if ((extPtr = miscGetExtension(fullPath)) == NULL)
+    /* if extension is specified */
+    if (extension != NULL)
     {
-        return;
+        mcsSTRING32 extLoc;
+        if (*extension != '.')
+            sprintf(extLoc, ".%s", extension);
+        else
+            sprintf(extLoc, "%s", extension);
+        if ((extPtr = strstr(fileName, extLoc)) != NULL)
+            *extPtr = '\0';
     }
     else
     {
-        /* find the position of the extension */
-        pos = strlen(fullPath)-strlen(extPtr)-1;
+        /* get the extention */
+        if ((extPtr = miscGetExtension(fileName)) == NULL)
+        {
+            return;
+        }
+        else
+        {
+            /* find the position of the extension */
+            pos = strlen(fileName)-strlen(extPtr)-1;
 
-        /* cut the string there */
-        fullPath[pos] = '\0';
+            /* cut the string there */
+            fileName[pos] = '\0';
+        }
     }
 }
 
