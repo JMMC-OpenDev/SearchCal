@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.4 2005-01-24 15:47:51 gluck Exp $"
+# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.5 2005-02-21 15:47:02 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/01/24 15:47:51  gluck
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+#
 # gluck     17-Dec-2004  Created
 # gzins     04-Jan-2005  Changed ROOT_NAME to MOD_NAME 
 #
@@ -78,7 +81,7 @@ case $headerFileType in
        echo -e "\n\tUsage: ctooGetSpecificHeaderFile module|private \n";;
 esac
 
-# Generate an .h file template whom name is moduleNamePrivate.h
+# Generate an .h file template whom name is moduleName[Private].h
 echo $headerFilename | ctooGetTemplateForCoding h-file > /dev/null
 
 
