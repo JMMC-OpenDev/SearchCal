@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/27 14:08:57  gzins
+* Added isErrUser parameter
+*
 * Revision 1.3  2005/01/24 14:45:09  gzins
 * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 * Used CVS log as modification history
@@ -17,7 +20,7 @@
  * \file
  * Definition of errAddInStack function.
  */
-static char *rcsId="@(#) $Id: errAddInStack.c,v 1.4 2005-01-27 14:08:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInStack.c,v 1.5 2005-02-01 07:38:51 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,7 +45,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /**
  * Add a new log to the current error stack
  *
- * It places the error identified bu \em errorId into the global stack with all
+ * It places the error identified by \em errorId into the global stack with all
  * useful information such module name or file name and line number from where
  * this function has been called.
  *
