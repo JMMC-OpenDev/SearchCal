@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET.cpp,v 1.7 2004-12-06 07:02:25 gzins Exp $"
+* "@(#) $Id: msgSOCKET.cpp,v 1.8 2004-12-07 07:50:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,6 +12,7 @@
 *                        Do not read body if body size is 0 in Receive()
 * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
 * gzins     06-Dec-2004  Implemented copy constructor
+* gzins     06-Dec-2004  Removed copy constructor
 *
 *
 *******************************************************************************/
@@ -21,7 +22,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.7 2004-12-06 07:02:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.8 2004-12-07 07:50:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -70,6 +71,7 @@ msgSOCKET::msgSOCKET(const msgSOCKET &socket)
  */
 msgSOCKET::~msgSOCKET()
 {
+    logExtDbg("msgSOCKET::~msgSOCKET(%d)", _descriptor); 
     // If the socket is still connected, close it
     if (IsConnected() == mcsTRUE)
     {
@@ -355,7 +357,7 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 
     // Try to send the message
     mcsINT32 msgLength   = msgHEADERLEN + msg.GetBodySize();
-    mcsINT32 nbBytesSent = send(_descriptor, msg.GetSender(), msgLength, 0);
+    mcsINT32 nbBytesSent = send(_descriptor, msg.GetMessagePtr(), msgLength, 0);
 
     // If some sent bytes were lost...
     if (nbBytesSent != msgLength)
@@ -483,6 +485,7 @@ mcsCOMPL_STAT msgSOCKET::Close(void)
 
     // Close the socket
     close(_descriptor);
+    _descriptor = -1;
 
     return SUCCESS;
 }
