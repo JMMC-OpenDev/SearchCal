@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.12 2004-07-22 13:23:45 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.13 2004-07-22 14:04:17 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -40,7 +40,7 @@ functions declared within the braces, which is necessary to use the
 functions in C++-code.
 */
 #ifdef __cplusplus
-extern C {
+extern "C" {
 #endif
 
 #include "miscDynStr.h"

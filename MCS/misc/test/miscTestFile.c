@@ -1,40 +1,18 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.1 2004-06-23 09:05:46 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.2 2004-07-22 14:04:17 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
-* lafrasse  23-Jun-2004  forked from miscTestUtils.c
+* lafrasse  23-Jun-2004  Forked from miscTestUtils.c
+* lafrasse  21-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
+*                        miscYankLastPath tests
 *
-********************************************************************************
-*   NAME
-* 
-*   SYNOPSIS
-* 
-*   DESCRIPTION
 *
-*   FILES
-*
-*   ENVIRONMENT
-*
-*   COMMANDS
-*
-*   RETURN VALUES
-*
-*   CAUTIONS 
-*
-*   EXAMPLES
-*
-*   SEE ALSO
-*
-*   BUGS   
-* 
-*-----------------------------------------------------------------------------*/
+*******************************************************************************/
 
-#define _POSIX_SOURCE 1
-
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.1 2004-06-23 09:05:46 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.2 2004-07-22 14:04:17 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -44,11 +22,19 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <string.h>
 #include <stdlib.h>
 
+
 /*
  * Local Headers 
  */
 #include "mcs.h"
+#include "err.h"
+
+
+/*
+ * Local Headers 
+ */
 #include "misc.h"
+
 
 /* 
  * Main
@@ -56,7 +42,12 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 int main (int argc, char *argv[])
 {
-    mcsBYTES256 fullFileName;
+    /* Give process name to mcs library */
+    mcsInit(argv[0]);
+    
+    mcsSTRING256 fullFileName;
+    char *tmp = NULL;
+    tmp = calloc(sizeof(char), 256);
 
     /* Test of miscGetFileName() */
     printf("miscGetFileName() Function Test :\n\n");
@@ -165,6 +156,190 @@ int main (int argc, char *argv[])
     miscYankExtension(fullFileName, NULL);
     printf("%s\n", fullFileName);
     printf("\n\n");
+
+    /* Test of miscGetEnvVarValue() */
+    tmp[0] = '\0';
+    printf("miscGetEnvVarValue() Function Test :\n\n");
+    printf("   Environment Variable name      | Env. Var. value\n");
+    printf("   -------------------------------+-------------------------\n");
+    strcpy (fullFileName, "SHEL");
+    printf("   %-30s | ", fullFileName);
+    if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+        errDisplayStack();
+        errCloseStack();
+
+    }
+    else
+    {
+        printf("%s\n", tmp);
+    }
+    strcpy (fullFileName, "HOME");
+    printf("   %-30s | ", fullFileName);
+    if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("%s\n", tmp);
+    }
+    strcpy (fullFileName, "INTROOT");
+    printf("   %-30s | ", fullFileName);
+    if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("%s\n", tmp);
+    }
+    strcpy (fullFileName, "MCSROOT");
+    printf("   %-30s | ", fullFileName);
+    if (miscGetEnvVarValue(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("%s\n", tmp);
+    }
+    printf("\n\n");
+
+    /* Test of miscYankLastPath() */
+    printf("miscYankLastPath() Function Test :\n\n");
+    printf("   File Path                      | Without Last Path\n");
+    printf("   -------------------------------+-------------------------\n");
+    strcpy (fullFileName, "fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "./fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "./fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "../fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "../fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/data/fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/.data/fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/.data/fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/../p/.data/fileName");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
+    printf("   %-30s | ", fullFileName);
+    miscYankLastPath(fullFileName);
+    printf("%s\n", fullFileName);
+    printf("\n\n");
+
+    /* Test of miscResolvePath() */
+    printf("miscResolvePath() Function Test :\n\n");
+    printf("   ---------------------------------------------------------\n");
+    strcpy (fullFileName, "/tmp/../p/.data/fileName.txt");
+    printf("Unresolved Path = \"%s\"\n", fullFileName);
+    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("Resolved Path   = \"%s\"\n\n", tmp);
+    }
+    strcpy (fullFileName, "~/../p/.data/fileName.txt");
+    printf("Unresolved Path = \"%s\"\n", fullFileName);
+    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("Resolved Path   = \"%s\"\n\n", tmp);
+    }
+    strcpy (fullFileName, "$INTROOT/data/fileName.txt");
+    printf("Unresolved Path = \"%s\"\n", fullFileName);
+    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("Resolved Path   = \"%s\"\n\n", tmp);
+    }
+    strcpy (fullFileName, "/data/$INTROOT/data/fileName.txt");
+    printf("Unresolved Path = \"%s\"\n", fullFileName);
+    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("Resolved Path   = \"%s\"\n\n", tmp);
+    }
+    strcpy (fullFileName, "$MCSROOT/$INTROOT/data/fileName.txt");
+    printf("Unresolved Path = \"%s\"\n", fullFileName);
+    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("Resolved Path   = \"%s\"\n\n", tmp);
+    }
+    strcpy (fullFileName, "/data/$MCSROOT/$INTROOT/data/fileName.txt");
+    printf("Unresolved Path = \"%s\"\n", fullFileName);
+    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("Resolved Path   = \"%s\"\n\n", tmp);
+    }
+    strcpy (fullFileName, "~/data/$MCSROOT/$INTROOT/data/fileName.txt");
+    printf("Unresolved Path = \"%s\"\n", fullFileName);
+    if (miscResolvePath(fullFileName, &tmp) == FAILURE)
+    {
+        printf("FAILURE\n");
+    }
+    else
+    {
+        printf("Resolved Path   = \"%s\"\n\n", tmp);
+    }
+    printf("\n\n");
+    free(tmp);
 
     exit (EXIT_SUCCESS);
 }

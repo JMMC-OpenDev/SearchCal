@@ -3,36 +3,51 @@
    <error id="1">
       <errName>DYN_BUF_MEM_FAILURE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat>%.100s(...) : could not allocate or copy memory.</errFormat>
+      <errFormat><![CDATA[%.100s(...) : could not allocate or copy memory.]]></errFormat>
    </error>
    <error id="2">
       <errName>DYN_BUF_AUTO_INIT</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat>%.100s(...) : could not initialize the received Dynamic Buffer.</errFormat>
+      <errFormat><![CDATA[%.100s(...) : could not initialize the received Dynamic Buffer.]]></errFormat>
    </error>
    <error id="3">
       <errName>DYN_BUF_AUTO_ALLOC</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat>%.100s(...) : could not allocate the received Dynamic Buffer.</errFormat>
+      <errFormat><![CDATA[%.100s(...) : could not allocate the received Dynamic Buffer.]]></errFormat>
    </error>
    <error id="4">
       <errName>DYN_BUF_NULL_VALUE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat>%.100s(...) : received a NULL value for parameter '%.100s'.</errFormat>
+      <errFormat><![CDATA[%.100s(...) : received a NULL value for parameter '%.100s'.]]></errFormat>
    </error>
    <error id="5">
       <errName>DYN_BUF_BAD_POSITION</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat>%.100s(...) : received parameter '%.100s' outside the buffer.</errFormat>
+      <errFormat><![CDATA[%.100s(...) : received parameter '%.100s' outside the buffer.]]></errFormat>
    </error>
    <error id="6">
       <errName>DYN_BUF_BAD_FROM_TO</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat>%.100s(...) : received bad parameters 'from' and 'to' ('to' lower than 'from').</errFormat>
+      <errFormat><![CDATA[%.100s(...) : received bad parameters 'from' and 'to' ('to' lower than 'from').]]></errFormat>
    </error>
    <error id="7">
       <errName>DYN_BUF_BAD_PARAMETERS</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat>%.100s(...) : received bad parameters.</errFormat>
+      <errFormat><![CDATA[%.100s(...) : received bad parameters.]]></errFormat>
+   </error>
+   <error id="8">
+      <errName>FILE_ENV_VAR_NOT_DEF</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA["$%s" environment variable is not defined.]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>FILE_STR_FUNC_CALL</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[could not perform the standard string.h function call.]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>MEM_FAILURE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[could not allocate or copy memory.]]></errFormat>
    </error>
 </errorList>
