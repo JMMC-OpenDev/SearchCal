@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.28 2005-02-10 08:19:29 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.29 2005-02-11 10:53:17 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2005/02/10 08:19:29  gzins
+ * Added properties for diameter from B-V, V-K and V- R calibration
+ *
  * Revision 1.27  2005/02/08 21:36:41  gzins
  * Removed diameter error conversion (% to mas). Done at catalog level.
  *
@@ -28,7 +31,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.28 2005-02-10 08:19:29 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.29 2005-02-11 10:53:17 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -403,20 +406,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
     }
   
     // If property is ever set, do nothing, else write the computed value
-    SetPropertyValue(sclsvrCALIBRATOR_RO, mgR,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_IO, mgI,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_HO, mgH,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_KO, mgK,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_LO, mgL,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_MO, mgM,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_RO, mgR, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_IO, mgI, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_HO, mgH, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_KO, mgK, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_LO, mgL, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_MO, mgM, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
     
     return mcsSUCCESS;
 }
@@ -640,14 +643,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     }
 
     // Set compute value of the angular diameter
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diamBv,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, diamVr,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diamVk,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diamBv, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, diamVr, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diamVk, vobsSTAR_COMPUTED_PROP,
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
     SetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR, diamError,
-                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
+                     vobsSTAR_COMPUTED_PROP, 
+                     (vobsCONFIDENCE_INDEX)confidenceIndex);
    
     // Set flag according to the confidence index 
     if (confidenceIndex == alxCONFIDENCE_LOW)
@@ -677,13 +681,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
 
     // Get object diameter. First look at the diameter coming from catalog, and
     // if not found used the computed diameter.
-    if (IsPropertySet(vobsSTAR_EXTENSION_DIAM) == mcsTRUE)
+    if (IsPropertySet(vobsSTAR_UD_DIAM) == mcsTRUE)
     {
-        GetPropertyValue(vobsSTAR_EXTENSION_DIAM, &diam);
+        GetPropertyValue(vobsSTAR_UD_DIAM, &diam);
         // If diameter error was not found in catalog, it assume to 0  
-        if (IsPropertySet(vobsSTAR_EXTENSION_DIAM_ERROR) == mcsTRUE)
+        if (IsPropertySet(vobsSTAR_UD_DIAM_ERROR) == mcsTRUE)
         {
-            GetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, &diamError);
+            GetPropertyValue(vobsSTAR_UD_DIAM_ERROR, &diamError);
         }
         else
         {
