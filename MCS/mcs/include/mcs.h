@@ -1,7 +1,7 @@
 /*************************************************************************
 * JMMC project
 *
-* "@(#) $Id: mcs.h,v 1.4 2004-06-16 15:03:31 gzins Exp $"
+* "@(#) $Id: mcs.h,v 1.5 2004-06-21 16:36:09 gzins Exp $"
 *
 * mcs.h  -  MCS/Common Definitions - Interface File
 *
@@ -25,6 +25,7 @@ extern "C" {
 #define mcsPROCNAME_LEN        19   /* max. length of a process name      */
 #define mcsMODULEID_LEN         7   /* max. length of a module name       */
                                     /* 6 characters + 1 byte alignement   */
+#define mcsCMD_LEN 8                /* max. length of a command name */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes */
 #define mcsFALSE                0   /* False Logical */
 #define mcsTRUE                 1   /* True Logical */
@@ -56,7 +57,8 @@ typedef unsigned char      mcsBYTES256[256];
 
 typedef char mcsPROCNAME[mcsPROCNAME_LEN+1];      /* Process name           */
 typedef char mcsMODULEID[mcsMODULEID_LEN+1];      /* Software module name   */
-
+typedef char mcsFILE_LINE[64];                    /* File/line information  */
+typedef char mcsCMD[mcsCMD_LEN+1];                /* Command name */
 /*
  *   Definition of the routine completion status
  */
