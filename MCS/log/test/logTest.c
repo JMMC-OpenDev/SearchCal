@@ -1,21 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.11 2004-12-20 13:34:32 gzins Exp $"
+* "@(#) $Id: logTest.c,v 1.12 2005-01-26 17:28:22 lafrasse Exp $"
 *
 *
-* who       when                 what
-* --------  -----------  -------------------------------------------------------
-* mella     07-May-2004  Created
-* lafrasse  30-Jun-2004  Changed some APIs :
-*                        logSetLog -> logSetFileLogState
-*                        logSetLogLevel -> logSetFileLogLevel
-*                        logGetLogLevel -> logGetFileLogLevel
-*                        logSetVerbose -> logSetStdoutLogState
-*                        logSetVerboseLevel -> logSetStdoutLogLevel
-*                        logGetVerboseLevel -> logGetStdoutLogLevel
-*                        logSetActionLevel -> logSetActionLogLevel
-*                        logGetActionLevel -> logGetActionLogLevel
+* History
+* -------
+* $Log: not supported by cvs2svn $
+* gzins     20-Dec-2004  Added tests for logAddToStdoutLogAllowedModList and
+*                        logClearStdoutLogAllowedModList functions
+*
 * lafrasse  03-Aug-2004  Changed some APIs :
 *                        logSetFileLogVerbosity -> logSetFileLogLevel
 *                        logGetFileLogVerbosity -> logGetFileLogLevel
@@ -27,9 +21,18 @@
 *                        logDisableFileLog
 *                        Replaced logSetStdoutLogState by logEnableStdoutLog and
 *                        logDisableStdoutLog
-* gzins     20-Dec-2004  Added tests for logAddToStdoutLogAllowedModList and
-*                        logClearStdoutLogAllowedModList functions
 *
+* lafrasse  30-Jun-2004  Changed some APIs :
+*                        logSetLog -> logSetFileLogState
+*                        logSetLogLevel -> logSetFileLogLevel
+*                        logGetLogLevel -> logGetFileLogLevel
+*                        logSetVerbose -> logSetStdoutLogState
+*                        logSetVerboseLevel -> logSetStdoutLogLevel
+*                        logGetVerboseLevel -> logGetStdoutLogLevel
+*                        logSetActionLevel -> logSetActionLogLevel
+*                        logGetActionLevel -> logGetActionLogLevel
+*
+* mella     07-May-2004  Created
 *
 *******************************************************************************/
 
@@ -60,19 +63,7 @@ mcsCOMPL_STAT doLogs(void)
     logDebug("logging debug");
     logExtDbg("logging extended debug");
 
-    return SUCCESS;
-}
-
-mcsCOMPL_STAT doActionLogs(void)
-{
-    /* Perform each actionLog macro */
-    logWarningAction("logging warning action");
-    logInfoAction("logging info action");
-    logTestAction("logging test action");
-    logDebugAction("logging debug action");
-    logExtDbgAction("logging extended debug action");
-
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -114,23 +105,7 @@ mcsCOMPL_STAT testAll(void)
         doLogs();
     }
     
-    printf("###############################################################\n");
-    printf("Testing Action Logging\n");
-    printf("###############################################################\n");
-    /* Repeat loop changing action level */
-    for( level = logQUIET; level <= logEXTDBG; level++ )
-    {
-        /* Change verbose level */
-        logSetActionLogLevel(level);
-        
-        /* Print verbose level */
-        printf("*** Action logging verbosity level is : %d\n", level);
-        
-        /* do each log */
-        doActionLogs();
-    }
-    /* \todo handle bad cases */
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 mcsCOMPL_STAT test1(mcsLOGICAL fileLogState, mcsLOGICAL stdoutLogState)
@@ -167,7 +142,7 @@ mcsCOMPL_STAT test1(mcsLOGICAL fileLogState, mcsLOGICAL stdoutLogState)
      /* \todo handle bad cases */
     
     logExtDbg("EXIT_FUNC test1");
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 mcsCOMPL_STAT testNoFileLine(void)
@@ -181,7 +156,7 @@ mcsCOMPL_STAT testNoFileLine(void)
     logTest("FileLine must appear");
     
     logTest("EXIT_FUNC testNoFileLine");
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

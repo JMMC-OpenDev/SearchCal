@@ -1,15 +1,16 @@
 #*******************************************************************************
 # JMMC Project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-09-10 17:18:42 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2005-01-26 17:28:22 lafrasse Exp $"
 #
 # Makefile of log
 #
-# who       when         what
-# --------  -----------  ----------------------------------------------
-# mella     12-May-2004  Created
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # lafrasse  03-Aug-2004  Removed cross-dependencies with err and misc
 #
+# mella     12-May-2004  Created
 #
 #*******************************************************************************
 # This Makefile follows VLT Standards (see Makefile(5) for more).
@@ -37,13 +38,19 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   = logTest 
+EXECUTABLES_L   = logTest logExample 
 
 #
 # <brief description of xxxxx program>
 logTest_OBJECTS   =	logTest
 logTest_LDFLAGS   = 
 logTest_LIBS      = mcs log
+
+#
+# <brief description of xxxxx program>
+logExample_OBJECTS   =	logExample
+logExample_LDFLAGS   = 
+logExample_LIBS      = mcs log
 
 #
 # special compilation flags for single c sources

@@ -3,11 +3,16 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logPrivate.h,v 1.8 2004-11-10 22:07:54 gzins Exp $"
+*  "@(#) $Id: logPrivate.h,v 1.9 2005-01-26 17:27:47 lafrasse Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* mella     14-May-2004  Created
+* History
+* -------
+* $Log: not supported by cvs2svn $
+* gzins     10-Nov-2004  Renamed logDisplayMessage to logPrintErrMessage
+*                        Removed logDisplayError
+*
+* lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.h
+*
 * lafrasse  03-Aug-2004  Moved local functions logGetTimeStamp  and
 *                        logGetHostName declaration in
 *                        Added logManagerHostName and logManagerPortNumber to
@@ -15,9 +20,8 @@
 *                        Added logMANAGER_DEFAULT_PORT_NUMBER constant
 *                        Added logDisplayMessage and logDisplayError local
 *                        error message handling functions
-* lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.h
-* gzins     10-Nov-2004  Renamed logDisplayMessage to logPrintErrMessage
-*                        Removed logDisplayError
+*
+* mella     14-May-2004  Created
 *
 *******************************************************************************/
 
@@ -50,8 +54,8 @@ extern "C" {
 /*
  * Constants
  */
-#define MODULE_ID "log"
-#define logTEXT_LEN 64
+#define MODULE_ID    "log"
+#define logTEXT_LEN  64
 
 /**
  * logManager default listened network port number.
@@ -76,8 +80,8 @@ typedef struct {
 /*
  * Local Functions
  */
-mcsCOMPL_STAT logGetHostName(char *, mcsUINT32);
-void          logPrintErrMessage(const char *, ...);
+mcsCOMPL_STAT logGetHostName     (      char *, mcsUINT32);
+void          logPrintErrMessage (const char *, ...);
 
 #ifdef __cplusplus
 };

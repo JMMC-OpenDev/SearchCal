@@ -1,24 +1,27 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logManager.c,v 1.4 2004-11-10 22:13:00 gzins Exp $"
+* "@(#) $Id: logManager.c,v 1.5 2005-01-26 17:28:13 lafrasse Exp $"
 *
 *
-* who       when                 what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  30-Jun-2004  Forked and ported (Windows to Linux) from CILAS Soft
-* lafrasse  23-Aug-2004  Changed var. name logManagerPortNumber to portNumber
-* gzins     10-Nov-2004  Changed default log file to $MCSDATA/log/logfile
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * gzins     10-Nov-2004  Replaced logDisplayError by logPrintErrMessage
 *                        Changed access mode of log file to rw-rw-rw-
 *
+* gzins     10-Nov-2004  Changed default log file to $MCSDATA/log/logfile
+*
+* lafrasse  23-Aug-2004  Changed var. name logManagerPortNumber to portNumber
+*
+* lafrasse  30-Jun-2004  Forked and ported (Windows to Linux) from CILAS Soft
 *
 *******************************************************************************/
 
 /**
  * \file
- * \e \<logManager\> - logging daemon receiving log messages from extern
- * programs and libraries through a network connection.
+ * \e \<logManager\> - \em file logging daemon, receiving log messages from
+ * extern programs and libraries through a network connection.
  *
  * \b Synopsis:\n
  * \e \<logManager\> [\e \<-f\> path/to/logfile]
@@ -26,19 +29,23 @@
  *                   [\e \<-p\> listened port number] 
  *
  * \b Details:\n
- * \e \<logManager\> writes log messages in \e '$MCSDATA/log/logfile' (or at a
+ * \e \<logManager\> writes log messages in \e \<$MCSDATA/log/logfile\> (or at a
  * user-specified path), until the log file size reaches 1MBytes (or a
  * user-specified value). Then, the log file is suffixed with '.old',
- * overwritting any previous file named like this, and new empty log file is
- * then created. \e \<logManager\> listen on the network port number 8791 (or on
- * a user-specified one).
+ * overwritting any previous file named like this, and a new empty log file is
+ * then created.\n
+ * \e \<logManager\> listen on the network port number \e 8791 (or on a
+ * user-specified one).
  * 
  * \b Files:\n
- * \li \e \<$MCSDATA/log/logfile\> : default log file
- * \li \e \<$MCSDATA/log/logfile.old\> : default old log file
+ * \li \e \<$MCSDATA/log/logfile\>     : default log file;
+ * \li \e \<$MCSDATA/log/logfile.old\> : default old log file.
+ * \n\n
  *
  * \warning Old log files are overwritten each time the current log file size
- * reaches 1Mbytes (or user-specified maximum size).
+ * reaches 1Mbytes (or a user-specified maximum size).
+ * \n\n
+ *
  */
 
 /* 
@@ -75,7 +82,7 @@
  * logManager default 1MBytes maximum log file size (expressed in bytes).
  *
  * This value can be overwritten by a user-specified one using the '-s' option
- * when launching the logManger on CLI.
+ * when launching the logManger on a command-line interface (e.g console).
  */
 #define logMANAGER_DEFAULT_MAX_FILE_SIZE 1024*1024 /* 1 Mbytes */
 
