@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.13 2005-02-13 15:56:55 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.14 2005-03-04 15:50:45 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/13 15:56:55  gzins
+* Added optional origin parameter to Load() method
+*
 * Revision 1.12  2005/02/13 15:27:53  gzins
 * Added Load() method
 * Updated Save() method to use new vobsCDATA class
@@ -30,6 +33,9 @@
  */
 #include<list>
 #include"vobsSTAR.h"
+
+/** typedef of UCD order list*/
+typedef std::list<char *> vobsSTAR_PROPERTY_ID_LIST;
 
 /**
  * vobsSTAR_LIST is a class which caracterises a list of star.
@@ -70,6 +76,7 @@ class vobsSTAR_LIST
     virtual void          Display(void);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
+                               vobsSTAR_PROPERTY_ID_LIST ucdList,
                                mcsLOGICAL extendedFormat=mcsFALSE); 
     virtual mcsCOMPL_STAT Load(const char *filename,
                                mcsLOGICAL extendedFormat=mcsFALSE,
