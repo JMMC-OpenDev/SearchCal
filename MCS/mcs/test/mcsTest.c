@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mcsTest.c,v 1.2 2005-02-13 16:43:42 gzins Exp $"
+ * "@(#) $Id: mcsTest.c,v 1.3 2005-02-15 12:37:36 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/13 16:43:42  gzins
+ * Added CVS log as modification history
+ *
  * lafrasse  01-Dec-2004  Created
  *
  ******************************************************************************/
@@ -16,7 +19,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: mcsTest.c,v 1.2 2005-02-13 16:43:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: mcsTest.c,v 1.3 2005-02-15 12:37:36 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -46,9 +49,9 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 int main (int argc, char *argv[])
 {
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        /* Exit from the application with FAILURE */
+        /* Exit from the application with mcsFAILURE */
         exit (EXIT_FAILURE);
     }
 
@@ -58,7 +61,7 @@ int main (int argc, char *argv[])
     /* Close MCS services */
     mcsExit();
     
-    /* Exit from the application with SUCCESS */
+    /* Exit from the application with mcsSUCCESS */
     exit (EXIT_SUCCESS);
 }
 

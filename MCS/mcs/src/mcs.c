@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/01/28 18:50:52  gzins
+ * Added CVS log as modification history
+ *
  * gzins     15-Jun-2004  Created
  * lafrasse  01-Dec-2004  Added MCS environment name management
  * lafrasse  08-Dec-2004  Corrected a bug that caused an empty env. name instead
@@ -12,7 +15,7 @@
  *
  *----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: mcs.c,v 1.7 2005-01-28 18:50:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: mcs.c,v 1.8 2005-02-15 12:37:36 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,7 +58,7 @@ static mcsCOMPL_STAT mcsStoreEnvName  (const char *envName);
  *   
  *  int main(int argc, char *argv[])
  *  {
- *      if (mcsInit(argv[0]) == FAILURE)
+ *      if (mcsInit(argv[0]) == mcsFAILURE)
  *      {
  *          Process Error condition
  *          exit (EXIT_FAILURE);
@@ -83,7 +86,7 @@ static mcsCOMPL_STAT mcsStoreEnvName  (const char *envName);
  * phase of the applications, BEFORE any call to a MCS function (log, msg,...)
  * can be performed.
  *
- * \return SUCCESS
+ * \return mcsSUCCESS
  *
  * \sa mcsGetProcName, mcsGetEnvName.
  */
@@ -101,7 +104,7 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
         mcsStoreEnvName(envValue);
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -162,7 +165,7 @@ void mcsExit()
  *
  * THIS FUNCTION IS FOR INTERNAL USE ONLY.
  *
- * \return SUCCESS
+ * \return mcsSUCCESS
  *
  * \sa mcsInit
  */
@@ -179,7 +182,7 @@ mcsCOMPL_STAT mcsStoreProcName (const char *procName)
 
     strncpy((char *)mcsProcName, pchar, (sizeof(mcsProcName)-1));
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -190,7 +193,7 @@ mcsCOMPL_STAT mcsStoreProcName (const char *procName)
  *
  * THIS FUNCTION IS FOR INTERNAL USE ONLY.
  *
- * \return SUCCESS
+ * \return mcsSUCCESS
  *
  * \sa mcsInit
  */
@@ -198,12 +201,12 @@ mcsCOMPL_STAT mcsStoreEnvName (const char *envName)
 {
     if (envName == (char *) NULL)
     {
-        return SUCCESS;
+        return mcsSUCCESS;
     }
 
     strncpy((char *)mcsEnvName, envName, (sizeof(mcsEnvName)-1));
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/
