@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.6 2005-02-11 10:43:35 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.7 2005-02-13 15:35:02 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/11 10:43:35  gzins
+* Fixed bug related to vobsCONFIDENCE_INDEX type
+*
 * Revision 1.5  2005/02/08 20:43:11  gzins
 * Changed _isComputed by _origin
 *
@@ -24,7 +27,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.6 2005-02-11 10:43:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.7 2005-02-13 15:35:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -254,7 +257,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
     // Convert property string value to integer value
     if (sscanf(_value, "%f", value) != 1)
     {
-        errAdd (vobsERR_INVALID_PROP_FORMAT, _value, "float");
+        errAdd (vobsERR_INVALID_PROP_FORMAT, _name.c_str(), _value, "float");
         return mcsFAILURE;
     }
 
