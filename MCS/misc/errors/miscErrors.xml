@@ -65,4 +65,9 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[file '%s' cannot be accessed : errno='%d'.]]></errFormat>
    </error>
+   <error id="14">
+      <errName>FILE_EXTENSION_MISSING</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[file name '%s' has no extension.]]></errFormat>
+   </error>
 </errorList>

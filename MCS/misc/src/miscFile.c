@@ -22,6 +22,7 @@
 * lafrasse  27-Sep-2004  Added miscLocateFileInPath, corrected a bug in the
 *                        miscResolvePath use of misFileExists, and refined the
 *                        doxygen documentation
+* lafrasse  30-Sep-2004  Added miscLocateFile
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -31,7 +32,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.14 2004-09-30 09:15:19 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.15 2004-09-30 15:11:36 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -58,6 +59,18 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "miscPrivate.h"
 #include "miscErrors.h"
 #include "miscDynBuf.h"
+
+/* 
+ * Local Variables and Defines
+ */
+#define extensionPosition   0
+#define pathPosition        1
+static char *pathSearchList[][2] = {
+   {"cfg", "../config:$INTROOT/config"},
+   {"cdf", "../config:$INTROOT/cdf"},
+   {"xml", "../errors:$INTROOT/errors:$MCSROOT/errors"},
+   {NULL, NULL }
+};
 
 /**
  * Return the file name from a full path.
@@ -513,6 +526,9 @@ mcsCOMPL_STAT miscYankLastPath(char *path)
 /**
  * Test if a file exists at a given path.
  *
+ * \warning This function will place some informations in the error stack if it
+ * cannot find the specified file.\n\n
+ *
  * \param fullPath a null-terminated string containing the path to be tested
  *
  * \return SUCCESS if the file exit, FAILURE otherwise
@@ -664,6 +680,61 @@ char*         miscLocateFileInPath(const char *path, const char *fileName)
     }
 
     return validPath;
+}
+
+/**
+ * Search for a file according to its extension in the preconfigured
+ * pathSearchList path list.
+ *
+ * \warning This function is \em NOT re-entrant. The returned allocated buffer
+ * will be deallocated on the next call !\n\n
+ *
+ * \param fileName the seeked file name with its extension
+ *
+ * \return a pointer to the \em first path where the file lives, or NULL if not
+ * found
+ */
+char*         miscLocateFile     (const char *fileName)
+{
+    /* Test the fileName parameter validity */
+    if ((fileName == NULL) || (strlen(fileName) == 0))
+    {
+        errAdd(miscERR_NULL_PARAM, "fileName");
+        return NULL;
+    }
+    char* fileExtension = miscGetExtension((char*)fileName);
+    if (fileExtension == NULL)
+    {
+        errAdd(miscERR_FILE_EXTENSION_MISSING, fileName);
+        return NULL;
+    }
+
+    /*
+     * For each path of the list, until all of them were tested or a path
+     * corresponding to fileExtension was found
+     */
+    int i = 0;
+    int extensionComparisonResult = 0;
+    char* currentListExtension = NULL;
+    char* currentListPath = NULL;
+    do
+    {
+        /* Compare the file extension with the current one in the path list */
+        currentListExtension = pathSearchList[i][extensionPosition];
+        if (currentListExtension != NULL)
+        {
+            extensionComparisonResult = strcmp(fileExtension,
+                                               currentListExtension);
+        }
+
+        currentListPath = pathSearchList[i][pathPosition];
+        i++;
+    }
+    while ((currentListExtension != NULL) && (currentListPath != NULL) && 
+           (extensionComparisonResult != 0));
+
+    /* Return weither the file at the path or not */
+    return miscLocateFileInPath(currentListPath, fileName);
 }
 
 

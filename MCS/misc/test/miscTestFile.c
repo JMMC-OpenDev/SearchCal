@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.8 2004-09-30 09:15:19 lafrasse Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.9 2004-09-30 15:11:36 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -15,11 +15,12 @@
 * lafrasse  27-Sep-2004  Added miscFileExists test
 * lafrasse  28-Sep-2004  Added miscLocateFileInPath test and corrected a bug in
 *                        the miscResolvePath test
+* lafrasse  30-Sep-2004  Added miscLocateFile test
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.8 2004-09-30 09:15:19 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.9 2004-09-30 15:11:36 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -592,6 +593,7 @@ int main (int argc, char *argv[])
     {
         printf("        EXIST\n");
     }
+    printf("\n\n");
 
     /* Test of miscLocateFileInPath() */
     printf("miscLocateFileInPath() Function Test :\n\n");
@@ -637,6 +639,58 @@ int main (int argc, char *argv[])
     printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
     errDisplayStack();
     errCloseStack();
+    printf("\n\n");
+
+    /* Test of miscLocateFile() */
+    printf("miscLocateFile() Function Test :\n\n");
+    printf("   ---------------------------------------------------------\n");
+    printf("Tested File = \"%s\" ", "NULL");
+    if ((tmp = miscLocateFile(NULL)) == NULL)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST at : %s\n", tmp);
+    }
+    strcpy (fullFileName, "miscErrors");
+    printf("Tested File = \"%s\" ", fullFileName);
+    if ((tmp = miscLocateFile(fullFileName)) == NULL)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST at : %s\n", tmp);
+    }
+    strcpy (fullFileName, "miscErrors.xml");
+    printf("Tested File = \"%s\" ", fullFileName);
+    if ((tmp = miscLocateFile(fullFileName)) == NULL)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST at : %s\n", tmp);
+    }
+    strcpy (fullFileName, "miscConfig.cfg");
+    printf("Tested File = \"%s\" ", fullFileName);
+    if ((tmp = miscLocateFile(fullFileName)) == NULL)
+    {
+        printf("DOESN'T EXIST\n");
+        errDisplayStack();
+        errCloseStack();
+    }
+    else
+    {
+        printf("        EXIST at : %s\n", tmp);
+    }
 
 
     exit (EXIT_SUCCESS);
