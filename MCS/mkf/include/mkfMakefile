@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.16 2005-02-15 08:48:00 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.17 2005-02-15 10:03:15 gzins Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2005/02/15 08:48:00  gzins
+# Added CVS log as file modification history
+#
 # Revision 1.15  2005/02/11 09:45:51  gzins
 # Added misco to the MCS C++ library list
 #
@@ -693,7 +696,6 @@ default : all
 # (i.e., it will not be affected by an actual file with the same name)
 .PHONY : all
 .PHONY : clean
-.PHONY : clean_dist
 .PHONY : man
 .PHONY : install
 .PHONY : db
@@ -885,36 +887,6 @@ clean_all: rm_links $(CLEAN_TARGET)
 	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \*\.gdb_history -print | xargs -i $(RM) {}
 	-@$(ECHO) " .\c"
-
-
-	-@$(ECHO) " .\c"
-	-$(AT)$(RM) mkfMake_clean_testReport ./*.rep             $(OUTPUT)
-	-$(AT)$(RM) mkfMake_clean_install   ../object/mkfMakefile.install  $(OUTPUT)
-	-@$(ECHO) " .\c"
-
-#
-# clean TAT files
-#
-ifndef MAKE_FROMTAT
-	-@$(ECHO) " .\c"
-	-$(AT)  currentdir=`pwd`;\
-	  	current=`basename $$currentdir`;\
-		if [ -d ../test/tatlogs -a $$current = "test" ] ;\
-		then \
-	            $(RM) ../test/tatlogs;\
-		fi
-endif
-	-@$(ECHO) " ."
-
-.PHONY : rm_links
-rm_links: 
-ifneq ($(strip $(LINK_FILES)),)
-	$(AT) echo "Removing links ..."; $(RM) $(LINK_FILES)
-endif
-
-.PHONY : clean_dist_all
-clean_dist_all:
-	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \*\.o -print | xargs -i $(RM) {}    $(OUTPUT)
 	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \*\~ -print | xargs -i $(RM) {}    $(OUTPUT)
@@ -939,7 +911,29 @@ clean_dist_all:
 		then tat -nc cleanEnv ;\
 		fi
 	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_testReport ./*.rep             $(OUTPUT)
+	-$(AT)$(RM) mkfMake_clean_install   ../object/mkfMakefile.install  $(OUTPUT)
+	-@$(ECHO) " .\c"
 
+#
+# clean TAT files
+#
+ifndef MAKE_FROMTAT
+	-@$(ECHO) " .\c"
+	-$(AT)  currentdir=`pwd`;\
+	  	current=`basename $$currentdir`;\
+		if [ -d ../test/tatlogs -a $$current = "test" ] ;\
+		then \
+	            $(RM) ../test/tatlogs;\
+		fi
+endif
+	-@$(ECHO) " ."
+
+.PHONY : rm_links
+rm_links: 
+ifneq ($(strip $(LINK_FILES)),)
+	$(AT) echo "Removing links ..."; $(RM) $(LINK_FILES)
+endif
 
 #
 # set standard action for 'install'
