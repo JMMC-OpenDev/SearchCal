@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.C,v 1.1 2004-11-19 16:29:40 mella Exp $"
+* "@(#) $Id: cmdPARAM.C,v 1.2 2004-11-23 08:36:36 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.C,v 1.1 2004-11-19 16:29:40 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.C,v 1.2 2004-11-23 08:36:36 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -60,6 +60,7 @@ cmdPARAM::cmdPARAM(string name, string desc, string unit, mcsLOGICAL optional)
     _name = name;
     _desc = desc;
     _unit = unit;
+    _optional = optional;
 }
 
 
@@ -166,6 +167,24 @@ mcsLOGICAL cmdPARAM::hasDefaultValue()
 }
 
 /** 
+ * Return if the parameter has got a user value.  
+ *
+ *  \returns mcsTRUE or mcsFALSE
+ */
+mcsLOGICAL cmdPARAM::isDefined()
+{
+    logExtDbg("cmdPARAM::isDefined()");
+    if(_userValue.empty())
+    {
+        return mcsFALSE;
+    }
+    else
+    {
+        return mcsTRUE;
+    }
+}
+
+/** 
  *  Return the help of the parameter.
  *
  *  \returns the help string
@@ -193,32 +212,36 @@ string cmdPARAM::getHelp()
     /* If there is one given unit */
     if(! _unit.empty())
     {
-        s.append("\tUnit [");
+        s.append("\tUnit:[");
         s.append(_unit);
-        s.append("]\n");
+        s.append("]");
     }
+    
     /* If there is one given unit */
     if(! _userValue.empty())
     {
-        s.append("\tUser value [");
+        s.append("\tUser value:[");
         s.append(_userValue);
-        s.append("]\n");
+        s.append("]");
     }
+    
     /* If there is one defaultValue */
     if(hasDefaultValue())
     {
-        s.append("* default parameter \t -- ");
+        s.append("\tDefault value:[");
+        s.append(_defaultValue);
+        s.append("]");
     }
     
     /* If there is one given unit */
     if(! _desc.empty())
     {
-        s.append("\t");
+        s.append("\n\t");
         s.append(_desc);
     }
     else
     {
-        s.append("\tNo description");
+        s.append("\n\tNo description");
     }
     
     s.append("\n");

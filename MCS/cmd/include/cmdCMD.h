@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCMD.h,v 1.1 2004-11-19 16:29:38 mella Exp $"
+* "@(#) $Id: cmdCMD.h,v 1.2 2004-11-23 08:36:35 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -51,23 +51,26 @@ public:
     typedef map<string, cmdPARAM *> STRING2PARAM;
 
     virtual string getHelp();
+    
+    /* methods to handle parameters */
     virtual mcsCOMPL_STAT addParam(cmdPARAM *param);
     virtual mcsCOMPL_STAT getParam(string paramName, cmdPARAM **param);
-
-    /*
-     * \todo implements folowing methods
-    virtual mcsCOMPL_STAT getParamValue(string paramName, mcsINT32* param);
-    virtual mcsCOMPL_STAT getParamValue(string paramName, char* param);
-    virtual mcsCOMPL_STAT getParamValue(string paramName, mcsDOUBLE* param);
-    virtual mcsCOMPL_STAT getParamValue(string paramName, mcsLOGICAL* param);
-
+    virtual mcsLOGICAL isDefined(string paramName);
     virtual mcsLOGICAL hasDefaultValue(string paramName);
     virtual mcsLOGICAL isOptional(string paramName);
 
-    virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsINT32* param);
-    virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, char* param);
-    virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsDOUBLE* param);
-    virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsLOGICAL* param);
+    /*
+     * \todo implements following methods
+
+     virtual mcsCOMPL_STAT getParamValue(string paramName, mcsINT32* param);
+     virtual mcsCOMPL_STAT getParamValue(string paramName, char* param);
+     virtual mcsCOMPL_STAT getParamValue(string paramName, mcsDOUBLE* param);
+     virtual mcsCOMPL_STAT getParamValue(string paramName, mcsLOGICAL* param);
+     
+     virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsINT32* param);
+     virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, char* param);
+     virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsDOUBLE* param);
+     virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsLOGICAL* param);
      */
 
 protected:
@@ -92,7 +95,7 @@ private:
      
      virtual mcsCOMPL_STAT checkParams();
      
-     virtual mcsCOMPL_STAT setDesc(string desc);
+     virtual mcsCOMPL_STAT setDescription(string desc);
 
      /** given string to the constructor */
      string _params;

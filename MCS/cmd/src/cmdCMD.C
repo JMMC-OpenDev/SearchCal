@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCMD.C,v 1.1 2004-11-19 16:29:40 mella Exp $"
+* "@(#) $Id: cmdCMD.C,v 1.2 2004-11-23 08:36:36 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCMD.C,v 1.1 2004-11-19 16:29:40 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCMD.C,v 1.2 2004-11-23 08:36:36 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -83,61 +83,6 @@ cmdCMD::~cmdCMD()
  * Public methods
  */
 
-
-/** 
- *  Set the description of the command.
- *
- * \param desc  the description string.
- *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT cmdCMD::setDesc(string desc)
-{
-    logExtDbg ("cmdCMD::setDescription()");
-    _desc=desc;
-    return SUCCESS;
-}
-
-/** 
- *  Add a new parameter to the command.
- *
- * \param param the parameter to add.
- *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT cmdCMD::addParam(cmdPARAM *param)
-{
-    logExtDbg ("cmdCMD::addParam()");
-    _children.insert( make_pair(param->getName(), param) );
-    return SUCCESS;
-}
-
-/** 
- *  Get the parameter associated to paramName.
- *
- * \param paramName  the name of the requested parameter.
- * \param param  a pointer where to store the parameter pointer
- *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
- *  param should be considered valid only on SUCCESS case.
- */
-mcsCOMPL_STAT cmdCMD::getParam(string paramName, cmdPARAM **param)
-{
-    logExtDbg ("cmdCMD::getParam()");
-    STRING2PARAM::iterator iter = _children.find(paramName);
-  
-    if(iter!= _children.end())
-    {
-        *param = iter->second;
-        return SUCCESS;
-    }
-    else
-    {
-        // \todo errAdd
-        return FAILURE;
-    }
-}
-
 /** 
  *  Return the help of the command.
  *
@@ -198,6 +143,104 @@ string cmdCMD::getHelp()
 
     return s;
 }
+
+/** 
+ *  Add a new parameter to the command.
+ *
+ * \param param the parameter to add.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::addParam(cmdPARAM *param)
+{
+    logExtDbg ("cmdCMD::addParam()");
+    _children.insert( make_pair(param->getName(), param) );
+    return SUCCESS;
+}
+
+/** 
+ *  Get the parameter associated to paramName.
+ *
+ * \param paramName  the name of the requested parameter.
+ * \param param  a pointer where to store the parameter pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ *  param should be considered valid only on SUCCESS case.
+ */
+mcsCOMPL_STAT cmdCMD::getParam(string paramName, cmdPARAM **param)
+{
+    logExtDbg ("cmdCMD::getParam()");
+    STRING2PARAM::iterator iter = _children.find(paramName);
+  
+    if(iter!= _children.end())
+    {
+        *param = iter->second;
+        return SUCCESS;
+    }
+    else
+    {
+        // \todo errAdd
+        return FAILURE;
+    }
+}
+
+/** 
+ *  Indicates if the parameter has a defaultValue.
+ *
+ * \param paramName the name of the parameter. 
+ *
+ *  \returns mcsFALSE or mcsTRUE
+ */
+mcsLOGICAL cmdCMD::hasDefaultValue(string paramName)
+{
+    logExtDbg("cmdCMD::hasDefaultValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return mcsFALSE;
+    }
+    return p->hasDefaultValue();
+}
+
+/** 
+ *  Indicates if the parameter is optional.
+ *
+ * \param paramName the name of the parameter. 
+ *
+ *  \returns mcsFALSE or mcsTRUE
+ */
+mcsLOGICAL cmdCMD::isOptional(string paramName)
+{
+    logExtDbg("cmdCMD::isOptional()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return mcsFALSE;
+    }
+    return p->isOptional();
+}
+
+/** 
+ *  Indicates if the parameter is defined by the user parameters.
+ *
+ * \param paramName the name of the parameter. 
+ *
+ *  \returns mcsFALSE or mcsTRUE
+ */
+mcsLOGICAL cmdCMD::isDefined(string paramName)
+{
+    logExtDbg("cmdCMD::isDefined()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return mcsFALSE;
+    }
+    return p->isDefined();
+}
+
 
 /*
  * Protected methods
@@ -273,7 +316,6 @@ mcsCOMPL_STAT cmdCMD::parseParams()
         if(*i=='-')
         {
             if(! valueZone){
-                cout << "posA=" << posA << " posB=" <<  posB <<endl;
                 if (posA>0)
                 {
                     if(parseTupleParam(_params.substr(posB, posA-posB))==FAILURE)
@@ -325,7 +367,7 @@ mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
     string paramName = str.substr(1,spacePos-1);
     string paramValue = str.substr(spacePos+1);
     
-    cout << "tuple: ["<< str << "]: " << paramName<<"," << paramValue <<endl;
+    logDebug("found new tuple: [%s,%s]",paramName.data(),paramValue.data());
    
     cmdPARAM *p;
     /* If parameter does'nt exist in the cdf */
@@ -333,8 +375,7 @@ mcsCOMPL_STAT cmdCMD::parseTupleParam(string tuple)
     {
         return FAILURE;
     }
-    
-    cout<<    p->getHelp()<<endl;
+    /* assign value to the parameter */
     p->setUserValue(paramValue);
     
     return SUCCESS;
@@ -455,7 +496,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForDesc(GdomeElement *root)
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
         value=gdome_el_nodeValue(el2,&exc);
-        setDesc(value->str);
+        setDescription(value->str);
         gdome_str_unref(value);
         gdome_el_unref(el2, &exc);
         gdome_el_unref(el, &exc);
@@ -642,6 +683,7 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
     string type;
     string defaultValue;
     string unit;
+    mcsLOGICAL optional;
     
     /* get mandatory name */
     if( cmdGetNodeContent(param, "name", name)==FAILURE )
@@ -707,30 +749,115 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
         else
         {
             // there should not be any defaultValue
-            cout << "no defaultValue found " <<endl;
+            logDebug("no defaultValue found ");
         }
-
-
     }
+    /* check if it is an optional parameter */
+    { 
+        GdomeAttr *attribute;
+        GdomeException exc;
+        GdomeDOMString *attrName,*attrValue, *str, *str2;
 
-    cmdPARAM *p = new cmdPARAM(name, desc, unit, mcsFALSE);
+        attrName = gdome_str_mkref ("optional");
+        /* Get the reference to the optional element  */
+        attribute = gdome_el_getAttributeNode (param, attrName, &exc);
+        gdome_str_unref(attrName);
+        if (attribute == NULL)
+        {
+            // by default it is not optional.
+            optional = mcsFALSE;
+        }
+        else
+        {
+            cout << "it is optional#######################" <<endl;
+            attrValue = gdome_a_nodeValue(attribute, &exc);
+
+            str = gdome_str_mkref ("true");
+            str2 = gdome_str_mkref ("1");
+            if( gdome_str_equal(attrValue, str) )
+            {
+                optional = mcsTRUE;
+            }
+            else if( gdome_str_equal(attrValue,str2) )
+            {
+                optional =mcsTRUE;
+            }
+            else
+            {
+                optional = mcsFALSE;
+            }
+            
+            gdome_str_unref(str);
+            gdome_str_unref(str2);
+            gdome_str_unref(attrValue);
+        }
+    }
+    
+    cmdPARAM *p = new cmdPARAM(name, desc, unit, optional);
+
+    if ( ! defaultValue.empty())
+    {
+        p->setDefaultValue(defaultValue);
+    }
     
     addParam(p);
     
     return SUCCESS;
 }
 
-
 /** 
  *  Check if all mandatory parameters have a user value.
+ *  The actual code exit on the first error detection.
  *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
 mcsCOMPL_STAT cmdCMD::checkParams(){
     logExtDbg("cmdCMD::checkParams()");
 
+    STRING2PARAM::iterator i = _children.begin();
+    while(i != _children.end())
+    {
+        cmdPARAM * child = i->second;
+        if (child->isOptional())
+        {
+            // no problem
+        }
+        else if(child->hasDefaultValue())
+        {
+            // no problem
+        }
+        else
+        {
+            // there should be one userValue defined
+            if(child->getUserValue().empty()){
+                // \todo errAdd
+                logDebug(" %s parameter must be given",child->getName().data());
+                return FAILURE;
+            }
+        }
+        
+        i++;
+    }
+
+
+    
     return SUCCESS;
 }
+
+/** 
+ *  Set the description of the command.
+ *
+ * \param desc  the description string.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::setDescription(string desc)
+{
+    logExtDbg ("cmdCMD::setDescription()");
+    _desc=desc;
+    return SUCCESS;
+}
+
 
 
 /*___oOo___*/

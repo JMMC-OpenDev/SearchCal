@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.h,v 1.1 2004-11-19 16:29:38 mella Exp $"
+* "@(#) $Id: cmdPARAM.h,v 1.2 2004-11-23 08:36:35 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -46,6 +46,7 @@ public:
     virtual string getUnit();
     virtual string getUserValue();
     virtual string getDefaultValue();
+    virtual mcsLOGICAL isDefined();
     virtual mcsLOGICAL hasDefaultValue();
     virtual mcsLOGICAL isOptional();
     virtual string getHelp();

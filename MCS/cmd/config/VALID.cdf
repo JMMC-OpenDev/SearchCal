@@ -17,7 +17,7 @@
     <params>
         <param>
             <name>integer</name>
-            <desc> this parameter is mandatory and must be of integer type </desc>
+            <desc>This parameter is mandatory and must be of integer type.</desc>
             <type>integer</type>
             <unit>BogoMIPS</unit>
         </param>
@@ -36,7 +36,7 @@
         <param>
             <name>dinteger</name>
             <type>integer</type>
-            <desc>This parameter is not mandatory but must be of integer type </desc>
+            <desc>This parameter is not mandatory but must be of integer type.</desc>
             <defaultValue><integer>12</integer></defaultValue>
         </param>
         <param>
@@ -57,6 +57,7 @@
         <param optional="true">
             <name>ointeger</name>
             <type>integer</type>
+            <desc>This parameter is optional but must be of integer type.</desc>
         </param>
         <param optional="true">
             <name>odouble</name>
