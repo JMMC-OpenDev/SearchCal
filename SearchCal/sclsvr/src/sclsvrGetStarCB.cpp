@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.16 2005-02-08 04:39:32 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.17 2005-02-08 20:57:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/02/08 04:39:32  gzins
+ * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
+ *
  * Revision 1.15  2005/02/07 14:38:45  gzins
  * Changed GetLambda to GetWlen
  *
@@ -18,7 +21,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.16 2005-02-08 04:39:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.17 2005-02-08 20:57:22 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -129,8 +132,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 
     // Set star
     vobsSTAR star;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra);
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, "");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, "");
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
     if (_virtualObservatory.Search(request, starList) == mcsFAILURE)
