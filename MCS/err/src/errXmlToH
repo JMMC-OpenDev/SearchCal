@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: errXmlToH,v 1.3 2004-06-24 07:49:15 mella Exp $"
+# "@(#) $Id: errXmlToH,v 1.4 2004-06-24 10:28:39 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -46,19 +46,19 @@
 #___oOo___#Parameters Integrity Check
 
 #This function returns the complete pathname of the file given in parameter
-GETFILE()
+function getCfgFile
 {
 	#Path list
-	path1="../config"
-
-	if [ -r "$path1/$1" ]
-	then
-		fullPath="$path1/$1"
-		return
-	#elif
-	else
-		fullPath="NULL"
-	fi
+	path="../config $INTROOT/config $MCSROOT/config"
+    for dir in $path
+    do
+        if [ -f "$dir/$1" ]
+        then
+            fullPath="$dir/$1"
+            return
+        fi
+    done
+    fullPath="NULL"
 }
 
 #Main Script
@@ -67,7 +67,7 @@ then
 	echo "USAGE : $0 ../errors/<mod>Errors.xml ../include/<mod>Errors.h"
 else
 	#XSD & XSL declaration files
-    GETFILE "errXmlToH.xsd"
+    getCfgFile "errXmlToH.xsd"
     if [ "$fullPath" = "NULL" ]
     then
         echo "XSD Schema File Not Found"
@@ -75,7 +75,7 @@ else
     fi
     schema="$fullPath"
 
-    GETFILE "errXmlToH.xsl"
+    getCfgFile "errXmlToH.xsl"
     if [ "$fullPath" = "NULL" ]
     then
         echo "XSL Transformation File Not Found"
