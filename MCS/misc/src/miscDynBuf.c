@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.14 2004-11-15 16:31:08 scetre Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.15 2004-11-17 07:49:28 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -31,7 +31,9 @@
 *                        correctly initialize the new commentPattern field in
 *                        miscDynBufInit() and miscDynBufGetCommentPattern() and
 *                        miscDynBufSetCommentPattern() to deal with this field
-*
+* gzins     16-Nov-2004  Added miscDynBufVerifyIsInitialized() and update
+*                        miscDynBufInit() to inconditionaly initialize
+*                        the dynamic buffer.
 *
 *******************************************************************************/
 
@@ -77,7 +79,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.14 2004-11-15 16:31:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.15 2004-11-17 07:49:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -131,6 +133,38 @@ static        mcsUINT32 miscDynBufVerifyStringParameterValidity(
  */
 
 /**
+ * Verify if a Dynamic Buffer has already been initialized.
+ *
+ * This function is only used internally by funtions to check the dynamic
+ * buffer has been correctly initialized. If not, do it.
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+static        mcsCOMPL_STAT miscDynBufVerifyIsInitialized(
+                                             miscDYN_BUF        *dynBuf)
+{
+    /* Test the 'dynBuf' parameter validity... */
+    if (dynBuf == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "dynBuf");
+        return FAILURE;
+    }
+
+    /* Test the 'pointer to itself' and 'structure identifier magic number'
+     * validity...
+     */
+    if (dynBuf->thisPointer != dynBuf
+        || dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
+    {
+        return (miscDynBufInit(dynBuf));
+    }
+
+    return SUCCESS;
+}
+
+/**
  * Verify if a Dynamic Buffer has already been initialized, and if the given
  * 'position' is correct (eg. inside the Dynamic Buffer range.
  *
@@ -146,8 +180,8 @@ static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
                                              miscDYN_BUF        *dynBuf,
                                              const mcsUINT32    position)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -182,8 +216,8 @@ static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -296,26 +330,19 @@ mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf)
         return FAILURE;
     }
 
-    /* Test the 'pointer to itself' and 'structure identifier magic number'
-     * validity...
-     */
-    if (dynBuf->thisPointer != dynBuf
-        || dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
+    /* Initialize all the structure with '0' */
+    if ((memset(dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
     {
-        /* Try to initialize all the structure with '0' */
-        if ((memset(dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
-        {
-            errAdd(miscERR_MEM_FAILURE);
-            return FAILURE;
-        }
-
-        /* Set its 'pointer to itself' correctly */
-        dynBuf->thisPointer = dynBuf;
-        /* Set its 'structure identifier magic number' correctly */
-        dynBuf->magicStructureId = miscDYN_BUF_MAGIC_STRUCTURE_ID;
-        /* Set its 'comment pattern' to nothing */
-        dynBuf->commentPattern[0] = '\0';
+        errAdd(miscERR_MEM_FAILURE);
+        return FAILURE;
     }
+
+    /* Set its 'pointer to itself' correctly */
+    dynBuf->thisPointer = dynBuf;
+    /* Set its 'structure identifier magic number' correctly */
+    dynBuf->magicStructureId = miscDYN_BUF_MAGIC_STRUCTURE_ID;
+    /* Set its 'comment pattern' to nothing */
+    dynBuf->commentPattern[0] = '\0';
 
     return SUCCESS;
 }
@@ -348,8 +375,8 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
 {
     char *newBuf = NULL;
 
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -421,8 +448,8 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
 {
     char *newBuf = NULL;
 
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -475,8 +502,8 @@ mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -502,8 +529,8 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -538,8 +565,8 @@ mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
 mcsCOMPL_STAT miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *storedBytes)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -564,8 +591,8 @@ mcsCOMPL_STAT miscDynBufGetAllocatedBytesNumber(
                                              miscDYN_BUF       *dynBuf,
                                              mcsUINT32         *allocatedBytes)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -586,8 +613,8 @@ mcsCOMPL_STAT miscDynBufGetAllocatedBytesNumber(
  */
 char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return ((char*)NULL);
     }
@@ -607,8 +634,8 @@ char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf)
  */
 char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return ((char*)NULL);
     }
@@ -638,8 +665,8 @@ char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
 {
     /* TODO : Add error management */
 
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return ((char*)NULL);
     }
@@ -850,8 +877,8 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo     (miscDYN_BUF       *dynBuf,
 mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
                                              const char        *commentPattern)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -907,8 +934,8 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
         return FAILURE;
     }
 
-    /* Try to initialize the received Dynamic Buffer to start from scratch */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
@@ -1131,8 +1158,8 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
                                              const mcsUINT32   length)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    /* Initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufVerifyIsInitialized(dynBuf) == FAILURE)
     {
         return FAILURE;
     }
