@@ -1,14 +1,14 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: mkfTestMain.c,v 1.1 2004-09-10 13:43:54 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     09-Sep-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: mkfTestMain.c,v 1.2 2005-02-15 09:12:26 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     09-Sep-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
@@ -65,7 +65,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: mkfTestMain.c,v 1.1 2004-09-10 13:43:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: mkfTestMain.c,v 1.2 2005-02-15 09:12:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
