@@ -2,11 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooDoxygen,v 1.1 2004-06-09 16:00:36 gzins Exp $"
+# "@(#) $Id: ctooDoxygen,v 1.2 2004-06-17 07:14:31 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# gzins     09-Jun-2004  created from ALMA doxygenize program
+# gzins     09-Jun-2004  Created from ALMA doxygenize program
 #
 #************************************************************************
 #   NAME        ctooDoxygen
@@ -69,17 +69,17 @@ MODULE_NAME=`\pwd`
 MODULE_NAME=${MODULE_NAME%%/src}
 if  [ "${MODULE_NAME##*/}" = "ws" -o  "${MODULE_NAME##*/}" = "lcu" ]
 then
-	prelim=${MODULE_NAME}
-	prelim=${prelim%%/ws}
-	prelim=${prelim%%/lcu}
-	prelim=${prelim##*/}
-	MODULE_NAME=$prelim
+    prelim=${MODULE_NAME}
+    prelim=${prelim%%/ws}
+    prelim=${prelim%%/lcu}
+    prelim=${prelim##*/}
+    MODULE_NAME=$prelim
 else
-	MODULE_NAME=${MODULE_NAME##*/}
-fi
-#
-# determine the revision
-#
+    MODULE_NAME=${MODULE_NAME##*/}
+    
+    
+    termine the revision
+    
 #REVISION=`cmmLast $MODULE_NAME`
 #REVISION=${REVISION##*:}
 #REVISION=${REVISION%%modified*}
@@ -96,8 +96,8 @@ fi
 #
 if [ ! -f $BASELINE ] 
 then
-	echo "Could not find template"
-	exit -1
+    echo "Could not find template"
+    exit -1
 fi
 ###################################################
 
@@ -155,30 +155,30 @@ then
       VALUE=${VALUE##*=}
 
       case $VARIABLE in
-	  INPUT_IDL )
-	      echo $VALUE > /tmp/mytmp$$
-	      cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-	      INPUT_IDL=$(< /tmp/mytmp2$$);;
-	  INPUT_API )
-	      echo $VALUE > /tmp/mytmp$$
-	      cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-	      INPUT_API=$(< /tmp/mytmp2$$);;
-	  OUTPUT_IDL )
-	      echo $VALUE > /tmp/mytmp$$
-	      cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-	      OUTPUT_IDL=$(< /tmp/mytmp2$$);;
-	  OUTPUT_API )
-	      echo $VALUE > /tmp/mytmp$$
-	      cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-	      OUTPUT_API=$(< /tmp/mytmp2$$);;
-	  SKIP_IDL )
-	      echo $VALUE > /tmp/mytmp$$
-	      cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-	      SKIP_IDL=$(< /tmp/mytmp2$$);;
-	  SKIP_API )
-	      echo $VALUE > /tmp/mytmp$$
-	      cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-	      SKIP_API=$(< /tmp/mytmp2$$);;
+      INPUT_IDL )
+          echo $VALUE > /tmp/mytmp$$
+          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+          INPUT_IDL=$(< /tmp/mytmp2$$);;
+      INPUT_API )
+          echo $VALUE > /tmp/mytmp$$
+          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+          INPUT_API=$(< /tmp/mytmp2$$);;
+      OUTPUT_IDL )
+          echo $VALUE > /tmp/mytmp$$
+          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+          OUTPUT_IDL=$(< /tmp/mytmp2$$);;
+      OUTPUT_API )
+          echo $VALUE > /tmp/mytmp$$
+          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+          OUTPUT_API=$(< /tmp/mytmp2$$);;
+      SKIP_IDL )
+          echo $VALUE > /tmp/mytmp$$
+          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+          SKIP_IDL=$(< /tmp/mytmp2$$);;
+      SKIP_API )
+          echo $VALUE > /tmp/mytmp$$
+          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+          SKIP_API=$(< /tmp/mytmp2$$);;
       esac
     done
 
@@ -205,7 +205,7 @@ then
          
         if grep $VARIABLE $FILE > /tmp/to_be_removed
         then
-	    # Substitution of the variable with the customized value
+            # Substitution of the variable with the customized value
             echo $myline > /tmp/mytmp$$
             cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
             origin_line=$(< /tmp/mytmp2$$)
@@ -325,16 +325,16 @@ then
       # make the pdf file
       if [ $PDF = 1 ]
       then    
-	cd $OUTPUT/pdf
-	make pdf > /dev/null 2>&1
-	if [ $? = 0 ]
-	then
-	    mv refman.pdf .refman.pdf
-	    rm -f * 
-	    mv .refman.pdf refman.pdf
-	else
-	    echo "Compilation of PDF file failed"
-	fi
+    cd $OUTPUT/pdf
+    make pdf > /dev/null 2>&1
+    if [ $? = 0 ]
+    then
+        mv refman.pdf .refman.pdf
+        rm -f * 
+        mv .refman.pdf refman.pdf
+    else
+        echo "Compilation of PDF file failed"
+    fi
       fi
    fi
 fi
@@ -394,16 +394,16 @@ then
       # make the pdf file
       if [ $PDF = 1 ]
       then    
-	cd $OUTPUT/pdf
-	make pdf > /dev/null 2>&1
-	if [ $? = 0 ]
-	then
-	    mv refman.pdf .refman.pdf
-	    rm -f * 
-	    mv .refman.pdf refman.pdf
-	else
-	    echo "Compilation of PDF file failed"
-	fi
+    cd $OUTPUT/pdf
+    make pdf > /dev/null 2>&1
+    if [ $? = 0 ]
+    then
+        mv refman.pdf .refman.pdf
+        rm -f * 
+        mv .refman.pdf refman.pdf
+    else
+        echo "Compilation of PDF file failed"
+    fi
       fi
    fi
 fi 
