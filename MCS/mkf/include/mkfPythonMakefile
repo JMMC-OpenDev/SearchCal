@@ -1,0 +1,80 @@
+#*******************************************************************************
+# E.S.O. - VLT project
+#
+# "@(#) $Id: mkfPythonMakefile,v 1.1 2004-09-10 13:42:20 gzins Exp $"
+#
+# who       when      what
+# --------  --------  ----------------------------------------------
+# gzins     26-Aug-2004  Adapted from VLT
+#
+
+
+SHELL=/bin/ksh
+
+######################################
+# phony section
+######################################
+.PHONY : clean_python
+.PHONY : install_python_scripts
+.PHONY : do_python
+
+######################################
+# incrementing tasks
+######################################
+ifneq ($(strip $(PY_SCRIPTS)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_python
+endif
+
+ifneq ($(strip $(join $(PY_SCRIPTS), $(PY_SCRIPTS_L) ) ),)
+    CLEAN_TARGET := $(CLEAN_TARGET) clean_python
+endif
+
+ifneq ($(strip $(join $(PY_SCRIPTS), $(PY_SCRIPTS_L) ) ),)
+    ALL_TARGET := $(ALL_TARGET) do_python
+endif
+
+######################################
+# targets specification
+######################################
+
+##  clean
+##
+clean_python:
+	-$(AT)$(RM) vltMake_clean_scripts      $(foreach member, $(PY_SCRIPTS) $(PY_SCRIPTS_L), ../bin/$(member) ../object/$(member).ds ) ../object/vltMakeScriptDependencies.ds  $(OUTPUT)
+	-@$(ECHO) " .\c"
+
+## install
+##
+install_python:
+ifneq ($(strip $(PY_SCRIPTS)),)
+	-@$(ECHO) "install_python: python_scripts_begin $(foreach member, $(PY_SCRIPTS), $(BIN)/$(member)  )" >>$(FILE)
+	-@$(ECHO) "python_scripts_begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \"......python scripts:\"" >>$(FILE)
+	-$(AT) for member in $(foreach name, $(PY_SCRIPTS), $(name) ); \
+		do \
+		    $(ECHO) "$(BIN)/$${member}: ../bin/$${member}" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
+		    $(ECHO) "	cp ../bin/$${member} $(BIN)/$${member};\\" >>$(FILE);\
+		    $(ECHO) "	chmod $(P755) $(BIN)/$${member}" >>$(FILE);\
+		done
+endif
+
+do_python: $(TMP_DEP_PYSCRIPTS)
+	$(AT) for member in $(foreach name, $(PY_SCRIPT_LIST), $(name) ); \
+		do \
+		make -f ../object/$${member}.ds ../bin/$${member};\
+		done
+## all
+##
+# - for Automatic Dependencies for Python scripts
+#
+../object/%.ds:
+	- @echo "== Dependencies: $@"
+	$(AT)mkfMakeScriptDependencies $(*F)  >../object/$*.ds
+
+#
+PY_SCRIPT_LIST = $(PY_SCRIPTS) $(PY_SCRIPTS_L)
+TMP_DEP_PYSCRIPTS := $(addprefix ../object/, $(addsuffix .ds, $(PY_SCRIPT_LIST)))
+
+
+

@@ -1,0 +1,35 @@
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $Id: moduleDescription.xml,v 1.1 2004-09-10 13:46:49 gzins Exp $"
+
+ who       when         what
+ ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ mella     28-Jun-2004  Created
+
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>Prenom Nom</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="mkf">
+    <desc>Makefile definitions and utilities</desc>
+    <resp>Gerard Zins</resp>
+    <package>MCS</package>
+</module>
+

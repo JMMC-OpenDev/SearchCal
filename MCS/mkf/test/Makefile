@@ -1,25 +1,28 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-09-10 13:40:57 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.1 2004-09-10 13:43:54 gzins Exp $"
 #
-# Makefile for MCS customization of make
+# Makefile of ........
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# sccmgr    25-Jun-2004  Created
-# gzins     26-Aug-2004  Adapted from VLT
+# gzins     09-Sep-2004  Created
 #
 #
 #*******************************************************************************
 # REMARKS
-#    Makefile based on the VLT Makefile
+#    Makefile based on the VLT/ALMA Makefile
 #
 #-------------------------------------------------------------------------------
 
 #
 # user definable C-compilation flags
 #USER_CFLAGS = 
+
+#
+# user definable javac compilation flags
+#USER_JFLAGS = 
 
 #
 # additional include and library search paths
@@ -35,14 +38,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = mkfTestMain
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+mkfTestMain_OBJECTS   = mkfTestMain
+mkfTestMain_LDFLAGS   =
+mkfTestMain_LIBS      =
 
 #
 # special compilation flags for single c sources
@@ -51,71 +54,58 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        = mkfMakefile.all
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = mkfTest
 LIBRARIES_L     =
+
+#
+# <brief description of lllll library>
+mkfTest_OBJECTS = mkfTest
 
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = mkfBuildDocIndex \
-				  mkfDoxygen \
-				  mkfDoManPages \
-				  mkfMakeCopySources \
-				  mkfMakeJavaClasspath \
-				  mkfMakeErrorFileDependencies \
-				  mkfMakeExecutableDependencies \
-				  mkfMakeJavaExecutable \
-				  mkfMakeJavaDependencies \
-				  mkfMakeJarDependencies \
-				  mkfMakeLibraryDependencies \
-				  mkfMakeInstallDocFiles \
-				  mkfMakeInstallErrorFiles \
-				  mkfMakeInstallFiles \
-				  mkfFilterForDoxygen \
-				  mkfMakeTclLibDependencies \
-				  mkfMakeTclLib \
-				  mkfMakeTclScriptDependencies \
-				  mkfMakeTclScript \
-				  mkfMakeScriptDependencies \
-				  mkfMakeScript
+SCRIPTS         = mkfTest
 SCRIPTS_L       =
 
 #
 # TCL scripts (public and local)
 # ------------------------------
-TCL_SCRIPTS     =
+TCL_SCRIPTS     = mkfTestTcl
 TCL_SCRIPTS_L   =
 
 #
 # <brief description of tttttt tcl-script>
-tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
+mkfTestTcl_OBJECTS  = mkfTestTcl
+mkfTestTcl_TCLSH    = tclsh 
+mkfTestTcl_LIBS     = mkfTestTclLib
 
 #
 # TCL libraries (public and local)
 # --------------------------------
-TCL_LIBRARIES   =
+TCL_LIBRARIES   = mkfTestTclLib
 TCL_LIBRARIES_L =
 
 #
 # <brief description of tttlll library>
-tttlll_OBJECTS  = 
+mkfTestTclLib_OBJECTS  = mkfTestTclLib
+
+
 
 #
 # man pages to be done
 # --------------------
-MANSECTIONS = 1 
-MAN1 = $(addsuffix .sh, $(SCRIPTS))
+MANSECTIONS =
+MAN1 =
 MAN3 =
 MAN5 =
 MAN7 =
 MAN8 =
+
 #
 # local man pages
 # ---------------
@@ -124,7 +114,7 @@ MANl =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../include/mkfMakefile
+INSTALL_FILES =
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
@@ -136,15 +126,6 @@ CSOURCENAMES = \
 #
 #>>>>> END OF standard rules
 
-# define basic paths to MCSROOT:
-ifdef MCSROOT
-    TEMPLATES  = $(MCSROOT)/templates
-endif
-# if INTROOT is defined, override or complete the search paths:
-ifdef INTROOT
-    TEMPLATES  = $(INTROOT)/templates
-endif
-
 #
 # CHOSE PLATFORM
 # --------------
@@ -154,27 +135,14 @@ endif
 #
 # INCLUDE STANDARDS
 # -----------------
-MAKEDIR = ../include
+MAKEDIR = $(MCSROOT)/include
 include $(MAKEDIR)/mkfMakefile
 
 #
 # TARGETS
 # -------
-all:	move_scripts do_all
+all:	do_all
 	@echo " . . . 'all' done" 
-
-tet:
-	@echo '$$INTROOT' 
-# when installing for the first time, the file is created locally, so an
-# explicit cp is given to allow make to find them in ../bin 
-move_scripts:
-	@$(AT)  for scripts in $(SCRIPTS) ; \
-	do \
-		if [ ! -f ../bin/$${scripts} ] ; \
-		then \
-			. ./mkfMakeScript.sh $${scripts} ; \
-		fi; \
-	done
 
 clean : clean_all 
 	@echo " . . . clean done"
@@ -186,9 +154,6 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
-	-$(AT) cp -r ../templates/* ${TEMPLATES}
-	-$(AT) rm -f ${TEMPLATES}/*/*~
-	-$(AT) rm -f ${TEMPLATES}/*/.*.sw*
 	@echo " . . . installation done"
 
 db : db_all

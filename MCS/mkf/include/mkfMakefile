@@ -1,0 +1,1211 @@
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: mkfMakefile,v 1.1 2004-09-10 13:42:20 gzins Exp $" 
+#
+# who       when      what
+# --------  --------  ----------------------------------------------
+# gzins     26-Aug-2004  Adapted from VLT
+# 
+#*******************************************************************************
+#   NAME
+#   mkfMakefile - system wide make definitions for JMMC SW
+# 
+#   DESCRIPTION
+#   
+#   mkfMakefile sets common definitions that are valid for the whole MCS
+#   software. It also finds out on which platform and which operating system
+#   the software is being built on and sets variables accordingly.  In
+#   addition, mkfMakefile provides a set of activities normally required by
+#   every module (generation of automatic dependencies, clean, man pages,
+#   install). The scope of such standard actions is controlled by the calling
+#   Makefile via a set of variables (see Makefile for more).
+#
+#   This file shall be included by each Makefile used to build any piece of the
+#   JMMC software.
+#
+#   The variables set by mkfMakefile depends on the value of some
+#   shell-environment variables (see ENVIRONMENT) and on the operating system
+#   (type and version). Make defaults can apply as well.
+#
+#   mkfMakefile only works for UNIX systems.
+#                       
+#   In detail, it provides the definition of the following variables:
+#
+#   SHELL     the shell used to interpret the commands
+#             RULE: /bin/sh   (force Bourne shell)
+#
+#   CC        compiler to be used
+#
+#   CFLAGS    compilation flags
+#             RULE: a basic default is provided :
+#
+#                     CC     = gcc -ansi
+#                     CFLAGS = -Wall $(OPTIONS) 
+#
+#             The compilation options controlling optimization
+#             and debugging information generation are generated as follows:    
+#
+#                                                   $(OPTIONS) 
+#                  
+#                     default                    -O    -g -DDEBUG
+#
+#                          DEBUG='on'                  -g -DDEBUG
+#
+#     
+#                          OPTIMIZE='on'         -O                 
+#
+#                          OPTIMIZE=<n>          -O<n>              
+#                             <n>=[0|1|..|9]
+#
+#             If more than one variable are defined, the precedence is:
+#             DEBUG, OPTIMIZE
+#
+#             If defined, USER_CFLAGS are added to CFLAGS.
+#
+#     To turn off debug and optimization just define (from command line or
+#     in the Makefile or in your environment):
+#     OPTIMIZE=0
+#     (This is equivalent to OPTIMIZE=O0)
+#     To turn off debug only and use your preferred OPTIMIZATION levels define:
+#     OPTIMIZE=number  where number is in the range 1-3
+#
+#   C_PLUS_PLUS_FLAGS  C++ compilation flags
+#   CCDEP     compiler used to extract automatic dependencies (gcc -MM -ansi)
+#
+#   MCSINC    MCS includes  (integration area, if defined, and then root)
+#   MCSLIB    MCS libraries (integration area, if defined, and then root)
+#
+#   I_PATH    complete search path for include files
+#   L_PATH    complete search path for libraries 
+#             Each variable is build as an ordered list of directory 
+#             prefixed by -I or -L and followed by /include or ../lib (or LIBDIR)
+#             as appropriate. The directory used are:
+#                   - the current module (..) 
+#                   - user defined (USER_INC or USER_LIB).
+#                   - the integration (INTROOT)
+#                   - the additional integration areas (INTLIST)
+#                   - MCS root
+#
+#   MCS_LIBLIST ordered list of MCS libraries
+#
+#   AR        archive maintaining program
+#
+#   SHLIB_EXT extention for shared libraries: "sl" on HP, "so" for Sun
+#
+#   RANLIB    program to update Archive Symbol Directory (__.SYMDEF)
+#
+#   RM        shell commands to delete files or directory (rm -rf)
+#
+#   WISH      default tcl/tk shell (wish -f)
+#
+#   TCL_CHECKER default syntax checker for tcl/tk files (procheck)
+#
+#   INSTALL_ROOT  prefix directory for "install" operations
+#             RULE: set to either INTROOT or MCSROOT, if defined,
+#                   left undefined otherwise.
+#   INCLUDE   target directory for installing .h files    $(INSTALL_ROOT)/include
+#   BINDIR    binary directory: bin for WSs
+#   BIN       target directory for installing bin files   $(INSTALL_ROOT)/$(BINDIR)
+#   LIBDIR    library directory: lib for WSs
+#   LIB       target directory for installing bin files   $(INSTALL_ROOT)/$(LIBDIR)
+#   MAN       target directory for installing man files   $(INSTALL_ROOT)/man
+#   ERRORS    target directory for installing ERROR files $(*)/errors
+#   DOCROOT   target directory for installing documentation files $(*)/doc
+# 
+#     REMARK: if you do not like the value provided either by mkfMakefile
+#             or by make itself, you can still override each variable using
+#             the assignement at command line level:
+#
+#             Example:      make CC='cc' CFLAGS='-g' 
+#
+#   FILE
+#   MCSROOT/include/mkfMakefile
+#             MCS wide definitions for UNIX
+#
+#   MCSROOT/include/mkfMakefile.all 
+#   (or MAKEDIR/mkfMakefile.all)
+#             auxiliary file dealing with do_all
+#
+#   MCSROOT/template/forMakefile/Makefile.template   
+#             template for the preparation of module-Makefile
+#
+#   <module>/src/Makefile  
+#   <module>/test/Makefile   
+#             local make file, shall include mkfMakefile
+#
+#   
+#   ENVIRONMENT  
+#   The following variables, if defined either in the environment or by the
+#   calling Makefile, can control mkfMakefile 
+#
+#     GNU_ROOT     where to look for GNU stuff. NO DEFAULT!
+#     TCLTK_ROOT   where to look for TCL/TK stuff. NO DEFAULT!
+#     MAKEDIR      where to look for the mkfMakefile.all
+#                  default: $(MCSROOT)/include/mkfMakefile.all
+#     MAKE_VERBOSE if defined all commands are printed, by default only the
+#                  relevant (compilation) ones are printed
+#     MAKE_NOSHARED if defined, shared libraries are not used. The actual
+#                  behaviour is platform dependent.
+#     CC           if defined can force the usage of a specific compiler.
+#     CPU          (mandatory for LCU) cpu type
+#     MAKE_PURIFY  if defined executable are created in a Purify'd way
+#     MAKE_PURECOV if defined executable are instrumented for test coverage
+#     MAKE_ALL_WARNINGS if defined all compiler warnings are activated
+#     MAN2TXT      if this flag is "on" the conversion of all the man pages
+#                  to correspondifng txt files is performed. 
+#                  The output files are put under the directory doc of the
+#                  module and have the extension ".txt"
+#     MCSROOT      MCS Software root directory
+#     INTROOT      Current Integration area. If defined, it becomes the target 
+#                  directory for "install" operation
+#     INTLIST      ":"-separeted list of Auxiliary Integration areas. If defined, 
+#                  are used to build include and lib search paths.
+#                  Used ONLY if INTROOT is defined!
+#     USER_CFLAGS  list of additional C compilation flags
+#     USER_INC     list of additional include files  (formated as  -I<dir> ... )
+#     USER_LIB     list of additional libraries      (formated as  -L<dir> ...)
+#     MODVERSION   version identification
+#
+#   CAUTION
+#   - The variables defined by mkfMakefile should not be redefined inside 
+#     a Makefile. If you need to do that, clearly comment the rational behind.
+#   - Because of SPR 20010715, the mkfMakefile includes now the tplMakefile. 
+#     The mkfMakefile(.all) *AND* the tplMakefile are found by default in the directory
+#     $MAKEDIR. If the user changes the default location of, f. i., the 
+#     mkfMakfile.all and needs to use the tpl stuff also, he has to remember 
+#     to put in the same location the tplMakefile.
+#   - To make the make process valid for every type of MCSROOT, if the tplMakefile 
+#     is not found, no warnings/errors are issued.
+#
+#   EXAMPLES
+#
+#   SEE ALSO
+#   Makefile, (GNU) make
+#
+#   BUGS
+#------------------------------------------------------------------------
+
+#
+# mkfMakefile.all requires all make-variables being accesible 
+# to sub-make (see GNU make, p.60)
+#
+export
+
+#
+# set auxiliary variables according to the verbose flag
+#    AT      is used to prefix commands
+#    OUTPUT  is where the output is redirected 
+#
+ifdef MAKE_VERBOSE
+    AT = 
+    OUTPUT =
+else
+    AT = @
+    OUTPUT = > /dev/null
+endif
+
+#
+# force Bourne shell as the shell used to interpret the commands
+SHELL = /bin/ksh 
+
+##################################################################
+# machine-specific stuff, special options and syntax differences #
+##################################################################
+#
+# figure out the current platform.
+# 
+os     = $(shell uname)
+osrev  = $(shell uname -r)
+
+# HP-UX case
+ifeq ($(os),HP-UX)
+    ifeq ($(osrev),B.10.20)
+        platform = HP-10
+    endif
+    ifeq ($(osrev),B.11.00)
+        platform = HP-11
+    endif
+endif
+
+# SUN case
+ifeq ($(os),SunOS)
+    ifeq ($(osrev),5.4)
+        platform = Sun-Solaris2
+    endif  
+    ifeq ($(osrev),5.5)
+        platform = Sun-Solaris2
+    endif  
+    ifeq ($(osrev),5.5.1)
+        platform = Sun-Solaris2
+    endif  
+    ifeq ($(osrev),5.6)
+        platform = Sun-Solaris2
+    endif
+    ifeq ($(osrev),5.8)
+        platform = Sun-Solaris2
+    endif
+endif
+
+# Linux case; remark Linux uses Gnu-echo
+ifeq ($(os),Linux)
+   platform = Linux
+   ECHO = echo -e
+   WHAT = grep @\(#\)
+else
+   ECHO = echo
+   WHAT = what
+endif
+
+ifndef platform
+    # force a syntax error, so that mkfMake stops on a
+    UNSUPPORTED platform
+endif
+
+
+
+# define UNIX environment   
+CCDEP   = gcc -MM -ansi
+LD      = ld
+AR      = ar
+RANLIB  = ranlib
+
+# gcc flags
+# RSC: CXX added to differentiate between C and C++ compilers
+#
+ifeq ($(platform),Sun-Solaris2)
+    CC         = gcc 
+    CXX        = gcc 
+else
+    CC         = gcc -ansi
+    CXX        = gcc -ansi
+endif
+
+# default flags are all warning enabled and Position Independent Code
+# for shared libraries
+CC_FLAGS   = -Wall
+
+# all warnings left out for the default (see above) must be added here
+ifdef MAKE_ALL_WARNINGS
+    CC_FLAGS   := $(CC_FLAGS) -Wshadow     \
+                  -Wcast-qual            \
+                  -Wcast-align           \
+                  -Wundef                \
+                  -W                     \
+                  -Wno-unused            \
+                  -Wpointer-arith        \
+                  -Wwrite-strings        \
+                  -Wstrict-prototypes    \
+                  -Wmissing-prototypes   \
+                  -Wmissing-declarations
+endif
+
+CC_FLAGS   := $(CC_FLAGS) -fPIC
+C_PLUS_PLUS_FLAGS = -fno-operator-names -fpermissive
+
+
+# HP-UX case
+ifeq ($(platform),HP-11)
+    # between 2.7.2.2 and 2.8.1, the way gcc is generated
+    # has been modified. Before the  -D_HPUX_SOURCE was
+    # added automatically, now it is only when -ansi
+    # is NOT specified (see /vlt/gnu/lib/gcc-lib/hppa*/2.*/spec)
+    # The flags are now added explicitely!
+    CC_FLAGS   := $(CC_FLAGS) -D_HPUX_SOURCE -D_HIUX_SOURCE -D_XOPEN_SOURCE_EXTENDED -fno-builtin
+
+    #
+    # use SHLIB_PATH 
+    LD            = $(CC) -Xlinker +s  -Xlinker +b  -Xlinker :
+   
+    # in the last upgrade of HP-UX, some features have been
+    # declared obsolescent (may be not supported in future releases)
+    # At a first glance, it does not seem to be trivial to fix
+    # the problem, therefore I suppress the warning for the time being. 
+    # This should be removed after that the problem is solved
+    LD            := $(LD) -Xlinker +vnocompatwarnings 
+
+    NOSHARED_ON   =  -Xlinker -a -Xlinker archive 
+    NOSHARED_OFF  =  -Xlinker -a -Xlinker default 
+    SHLIB_EXT     = sl
+    RANLIB        = @/bin/true
+    RANLIB        = @/bin/true
+    LIB_DEFAULT   = -L/usr/local/lib
+    XINC_DEFAULT  = -I/usr/include/Motif2.1  
+    XLIB_DEFAULT  = -L/usr/lib/Motif2.1         
+endif
+
+# SUN case
+ifeq ($(platform),Sun-Solaris2)
+    LD            = $(CC)
+    NOSHARED_ON   = -Xlinker -Bstatic 
+    NOSHARED_OFF  = -Xlinker -Bdynamic
+    SHLIB_EXT     = so
+    RANLIB        = @/bin/true 
+    RANLIB        = @/bin/true
+    GEN_LIBLIST           =                -lsocket -lnsl
+    GEN_LIBLIST_NOSHARED  =                -lsocket -lnsl
+    LIB_DEFAULT   = -L/usr/local/lib
+    XINC_DEFAULT  = -I/opt/SUNWmotif/include -I/usr/openwin/include 
+    XLIB_DEFAULT  = -L/opt/SUNWmotif/lib     -L/usr/openwin/lib     
+endif
+
+# Linux-case
+ifeq ($(platform),Linux)
+    CC            = gcc -ansi
+    CCDEP         = gcc -MM -ansi
+    CXX           = c++ -ansi
+    LD            = gcc
+    NOSHARED_ON   = -Xlinker -Bstatic 
+    NOSHARED_OFF  = -Xlinker -Bdynamic
+    SHLIB_EXT     = so
+    RANLIB        = ranlib
+    RANLIB        = @/bin/true
+    LIB_DEFAULT   = -L/usr/local/lib
+    XINC_DEFAULT  = -I/usr/X11R6/include/X11 
+    XLIB_DEFAULT  = -L/usr/X11R6/lib     
+    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -lgdome -lm 
+    MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) -lmcs -llog -lerr -lmisc $(NOSHARED_OFF) -lgdome -lm 
+endif
+
+BINDIR   = bin
+LIBDIR   = lib
+
+# JAVA definitions
+ifndef JAVAC
+    JAVAC=javac
+endif
+
+#
+# complete CFLAGS definition
+ifdef NEED_DEBUG
+    # Purify and Purecoverage require the debug options. 
+    # Other user's choices are override, even if they come from 
+    # the command line (see override directive)
+    # 28/05/00 PSI: Purify is taken out (see SPR 990338)
+    override OPTIMIZE =
+    override DEBUG = defined
+endif
+
+# the user can ask one out of: optimized/non optimized/debuggable code
+ifdef DEBUG
+    CFLAGS = $(CC_FLAGS) -g -DDEBUG                
+endif
+
+ifdef OPTIMIZE
+    O_LEVEL = -O
+    ifeq ($(OPTIMIZE),0)
+        O_LEVEL = -O0
+    endif
+    ifeq ($(OPTIMIZE),1)
+        O_LEVEL = -O1
+    endif
+    ifeq ($(OPTIMIZE),2)
+        O_LEVEL = -O2
+    endif
+    ifeq ($(OPTIMIZE),3)
+        O_LEVEL = -O3
+    endif
+    ifeq ($(OPTIMIZE),4)
+        O_LEVEL = -O4
+    endif
+    ifeq ($(OPTIMIZE),5)
+        O_LEVEL = -O5
+    endif
+    ifeq ($(OPTIMIZE),6)
+        O_LEVEL = -O6
+    endif
+    ifeq ($(OPTIMIZE),7)
+        O_LEVEL = -O7
+    endif
+    ifeq ($(OPTIMIZE),8)
+        O_LEVEL = -O8
+    endif
+    ifeq ($(OPTIMIZE),9)
+        O_LEVEL = -O9
+    endif
+    ifdef DEBUG
+        CFLAGS = $(CC_FLAGS) -g -DDEBUG $(O_LEVEL)
+    else
+        CFLAGS = $(CC_FLAGS) $(O_LEVEL)
+    endif
+endif
+
+# default case, used during development, depends on OS
+ifndef DEBUG
+    ifndef OPTIMIZE
+        CFLAGS = $(CC_FLAGS) -g -DDEBUG -O
+    endif
+endif
+
+CFLAGS := $(CFLAGS) $(CCS_CFLAGS)                               
+
+ifdef USER_CFLAGS
+    CFLAGS := $(CFLAGS) $(USER_CFLAGS)                               
+endif
+
+#
+# shell command to remove files and/or directories
+RM = rm -rf
+
+#
+# default tcl/tk shell
+WISH = wish
+
+#
+# default syntax checker for tcl/tk files
+TCL_CHECKER = procheck -suppress nonPortCmd \
+	-suppress nonPortColor \
+	-suppress nonPortVar \
+	-suppress nonPortFile \
+	-suppress nonPortKeySym \
+	-suppress nonPortOption \
+	-suppress warnUndefProc \
+	-suppress warnVarRef
+# no tcl checker for the time being
+TCL_CHECKER = true
+
+##################################################################
+#   set search paths for include files and libraries             #
+##################################################################
+
+#
+# ... for GNU and TCLTK tools 
+
+# from MAY97 on, GNU, TCLTK, Data Flow tools are not installed under
+# /usr/local, but they have a dedicated directories.
+
+# Default values:
+# Porting to GCC 3.1: /usr/local/include does not exist on HP11 
+# and SUN 5.8 and it is empty on Linux RH 7.2
+TOOLS_LIB = $(LIB_DEFAULT)
+
+ifdef GNU_ROOT
+    TOOLS_LIB := -L$(GNU_ROOT)/lib       $(TOOLS_LIB)
+endif
+
+ifdef TCLTK_ROOT
+    TOOLS_INC := -I$(TCLTK_ROOT)/include $(TOOLS_INC)
+    TOOLS_LIB := -L$(TCLTK_ROOT)/lib     $(TOOLS_LIB)
+endif
+
+#
+# ... for JMMC software
+#         ----> file are searched in this order ---->
+#      [ [INTROOT] . . . [INTLIST] . . . ] MCSROOT
+#
+#   The building of MCS-INC/LIB starts from the highest level (MCSROOT)
+#   i.e., the last place where things will be searched in, and goes
+#   backward.
+#
+
+#
+# define basic paths to MCSROOT:
+ifdef MCSROOT
+    MCSINC := -I$(MCSROOT)/include
+    MCSLIB  = -L$(MCSROOT)/$(LIBDIR)
+    INSTALL_ROOT = $(MCSROOT)
+    ERRORS  = $(MCSROOT)/errors
+    DOCROOT = $(MCSROOT)/doc
+endif
+
+#
+# for each item in INTLIST add search paths:
+DIR_LIST = $(subst :, , $(INTLIST))
+
+AUXILIARY_INC = $(foreach dir, $(DIR_LIST), -I$(dir)/include)
+AUXILIARY_LIB = $(foreach dir, $(DIR_LIST), -L$(dir)/$(LIBDIR))
+
+#
+# if INTROOT is defined, override or complete the search paths:
+ifdef INTROOT
+    MCSINC := -I$(INTROOT)/include $(AUXILIARY_INC) $(MCSINC)
+    MCSLIB := -L$(INTROOT)/$(LIBDIR) $(AUXILIARY_LIB) $(MCSLIB)
+    INSTALL_ROOT = $(INTROOT)
+    ERRORS  = $(INTROOT)/errors
+    DOCROOT = $(INTROOT)/doc
+endif
+
+#
+# ... in the current module
+#
+MODINC = -I../include
+MODLIB = -L../lib 
+
+
+#
+# Merge all of them:
+#
+#         -local-   --user--    --MCS-- 
+I_PATH   = $(MODINC) $(USER_INC) $(MCSINC)
+L_PATH   = $(MODLIB) $(USER_LIB) $(MCSLIB)
+# --GNU&TCLTK-
+I_PATH := $(I_PATH) $(TOOLS_INC)
+L_PATH := $(L_PATH) $(TOOLS_LIB)
+
+#
+# force to use always the search path. 
+# By default, cpp gets an include from the current directory. So if an 
+# include file includes another one, the second is taken from where 
+# the first is found. To ihnibit such a behaviour and to force the 
+# compiler always to restart the search from the beginning of the 
+# search path, the -I- option is added (see Using and Porting GNU CC
+# for version 2.5, Oct 93, p.48, 3.12 Options for directory searching)
+#
+
+I_PATH := -I- $(I_PATH)
+
+#
+# REMARK about L_PATH
+#  an additional environment variable is used by the loader as default 
+#  search path for libraries. It is:
+#       on  HP     LPATH   
+#       on  SUN    LD_LIBRARY_PATH 
+#  the way the variable is used is also different see ld(1) on both systems
+#
+
+ifdef INSTALL_ROOT
+    BIN     = $(INSTALL_ROOT)/$(BINDIR)
+    LIB     = $(INSTALL_ROOT)/$(LIBDIR)
+    INCLUDE = $(INSTALL_ROOT)/include
+    MAN     = $(INSTALL_ROOT)/man
+endif
+
+#  
+#  define the "mode" masks for file installation. If the installation 
+#  is into INTROOT, the mask are set also as group writable, so
+#  a colleague can overwrite an existing application when the owner 
+#  is not available (holiday, illness, etc.)
+#
+ifdef INTROOT
+    P755 = 775
+    P644 = 664
+else
+    P755 = 755
+    P644 = 644
+endif
+
+TMP_SCRIPT_LIST :=
+TMP_SCRIPT_LIST := $(TMP_SCRIPT_LIST) $(SCRIPTS) 
+#################################################
+
+# 
+MANSECTIONS_INSTALL = $(filter-out l, $(MANSECTIONS))
+
+# this gives a unique number that can be used for the filename
+#     important: ":=" is needed to force the substitution here, and not at every occurence of $FILE
+UNIQUE_NUMBER := $(shell echo $$$$)
+USER_NAME     := $(shell whoami)
+
+FILE=/tmp/mkfMake_$(UNIQUE_NUMBER)_$(USER_NAME)
+
+#################################################
+# set installation target.                      #
+#################################################
+INSTALL_TARGET = 
+
+ifneq ($(strip $(EXECUTABLES)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_bin
+endif
+
+ifneq ($(strip $(TMP_SCRIPT_LIST)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_scripts
+endif
+
+ifneq ($(strip $(INCLUDES)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_includes
+endif
+
+INSTALL_TARGET := $(INSTALL_TARGET) install_standardfiles
+
+ifneq ($(strip $(LIBRARIES)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_libraries
+endif
+
+ifneq ($(strip $(TCL_SCRIPTS)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_TCLscripts
+endif
+
+ifneq ($(strip $(TCL_LIBRARIES)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_TCLlibraries
+endif
+
+ifneq ($(strip $(INS_ROOT_DIR)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_insrootdir
+endif
+
+ifneq ($(strip $(INS_ROOT_FILES)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_insrootfiles
+endif
+
+ifneq ($(strip $(INSTALL_FILES)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_files
+endif
+
+ifneq ($(strip $(MANSECTIONS_INSTALL)),)
+    INSTALL_TARGET := $(INSTALL_TARGET) install_man
+endif
+
+#################################################
+# set standard targets.                         #
+#################################################
+#
+# define 'all' as the default target (by definition, the default target is
+# the first that make encounters). 
+#
+# REMARK: having 'all' as the first target in Makefile should be enough,
+#         but I do this to have the possibility to define here other
+#         standard targets.
+default : all
+
+#
+# force each standard target name to be an independent target
+# (i.e., it will not be affected by an actual file with the same name)
+.PHONY : all
+.PHONY : clean
+.PHONY : clean_dist
+.PHONY : man
+.PHONY : install
+.PHONY : db
+.PHONY : test
+.PHONY : CppFiles
+
+
+# notify the user about current file in use and version
+.PHONY : version
+version:
+	-@$(ECHO) "mkfMakefile in use: $(MAKEDIR)/mkfMakefile"
+	-@$(WHAT) $(MAKEDIR)/mkfMakefile
+
+#################################################
+# entry points for various language specific
+# features
+# *********************************************
+include $(MAKEDIR)/mkfJavaMakefile
+include $(MAKEDIR)/mkfPythonMakefile
+# 
+
+#
+# set standard action for 'all' 
+# -----------------------------
+#
+#   The specific actions for scripts, executables and libraries, both public 
+#   and local and including the use of automatic dependencies, 
+#   are defined in an auxiliary file
+#
+
+AUXILIARY_FLAGS := -f $(MAKEDIR)/mkfMakefile.all --no-print-directory
+
+.PHONY : do_all
+do_all : make_links 
+	-$(AT) mkfMakeErrorFileDependencies >../object/mkfMakeErrorFileDependencies.del
+	$(MAKE) $(AUXILIARY_FLAGS) do_all
+
+.PHONY : do_exes
+do_exes: $(EXECUTABLE_LIST) 
+	-$(AT) mkfMakeErrorFileDependencies >../object/mkfMakeErrorFileDependencies.del
+	@$(MAKE) $(AUXILIARY_FLAGS) do_exes
+
+.PHONY : do_libs
+do_libs: $(LIBRARY_LIST)
+	-$(AT) mkfMakeErrorFileDependencies >../object/mkfMakeErrorFileDependencies.del
+	@$(MAKE) $(AUXILIARY_FLAGS) do_libs
+
+.PHONY : do_scripts
+do_scripts: 
+	@$(MAKE) $(AUXILIARY_FLAGS) do_scripts
+
+
+.PHONY : do_panels
+do_panels: 
+	@$(MAKE) $(AUXILIARY_FLAGS) do_panels
+
+.PHONY : do_tcl
+do_tcl: 
+	@$(MAKE) $(AUXILIARY_FLAGS) do_tcl
+
+.PHONY : make_links
+make_links: 
+ifeq ($(platform),Linux)
+ifeq ($(ENABLE_PURIFY),on)
+#	-$(AT)if  [ ! -d .purify ]; then mkdir .purify ; fi
+endif
+endif	
+ifneq ($(strip $(LINK_FILES)),)
+#	-@$(ECHO) "....do links:"
+	-$(AT) for member in $(LINK_FILES) ; do \
+	if [ ! -h $${member} ]; then echo "== Linking file: $${member}"; ln -s ../../ws/src/$${member} $${member}; fi \
+	done
+endif
+
+.PHONY : do_ERRORS
+do_ERRORS: 
+	-$(AT) mkfMakeErrorFileDependencies >../object/mkfMakeErrorFileDependencies.del
+	@$(MAKE) $(AUXILIARY_FLAGS) $@
+
+#
+# set standard action for 'CppFiles'
+# ----------------------------------
+#
+# c-preprocessor output files used by error check utility (SPR 950609)
+#
+vpath  %.cpp  ../object
+
+# IMPORTANT: 
+#   check the following rules with the ones in mkfMakefile.all used to
+#   compile .c and .C. Except for "-E" and the output suffix (.cpp), they
+#   must be the same!
+#
+# RSC: C++: use $CXX
+../object/%.cpp : %.c
+	  - @$(ECHO) "==  Preprocessing: $(<F)"
+	  $(AT)$(CC) -E -c $(CFLAGS) $(CPPFLAGS) $(I_PATH) $($*_CFLAGS) -o $@ $(@F:.cpp=.c)
+
+../object/%.cpp : %.C
+	  - @$(ECHO) "==  Preprocessing: $(<F)"
+	  $(AT)$(CXX) -E -c $(CFLAGS) $(CPPFLAGS) $(C_PLUS_PLUS_FLAGS) $(I_PATH) $($*_CFLAGS) -o $@ $(@F:.cpp=.C)
+
+CppFiles: $(addprefix ../object/, $(addsuffix .cpp, $(CSOURCENAMES)))
+
+
+#
+# set standard action for 'man'
+# -----------------------------
+#
+#    foreach section in the MANSECTIONS list, extract the man pages
+#    from the appropriate input file list
+.PHONY : do_man
+do_man: doxygen do_man_hello $(addprefix man, $(MANSECTIONS))
+
+.PHONY : do_man_hello
+do_man_hello:
+	-@$(ECHO) "\nman-pages..."
+
+.PHONY : man1
+man1:
+	-@$(ECHO) "....section 1:"
+	-$(AT) mkfDoManPages 1 $(MAN1) ;
+.PHONY : man2
+man2:
+	-@$(ECHO) "....section 2:"
+	-$(AT) mkfDoManPages 2 $(MAN2) ;
+.PHONY : man3
+man3:
+	-@$(ECHO) "....section 3:"
+	-$(AT) mkfDoManPages 3 $(MAN3) ;
+.PHONY : man4
+man4:
+	-@$(ECHO) "....section 4:"
+	-$(AT) mkfDoManPages 4 $(MAN4) ;
+.PHONY : man5
+man5:
+	-@$(ECHO) "....section 5:"
+	-$(AT) mkfDoManPages 5 $(MAN5) ;
+.PHONY : man6
+man6:
+	-@$(ECHO) "....section 6:"
+	-$(AT) mkfDoManPages 6 $(MAN6) ;
+.PHONY : man7
+man7:
+	-@$(ECHO) "....section 7:"
+	-$(AT) mkfDoManPages 7 $(MAN7) ;
+.PHONY : man8
+man8:
+	-@$(ECHO) "....section 8:"
+	-$(AT) mkfDoManPages 8 $(MAN8) ;
+
+
+#
+# generate doxygen documentation
+# 
+.PHONY : doxygen
+doxygen:
+	-@$(ECHO) "\ndocumentation doxygen $(DOXYGEN_PDF)..."
+	-@$(AT) mkfDoxygen $(DOXYGEN_PDF)
+
+
+#
+# set standard action for 'clean'
+# -------------------------------
+#    delete all the files that "do_all:" can create.
+#
+# REMARKS:
+#     - although this should be done with only one $(RM) command followed by 
+#       all the file names, I do an $(RM) for each group of files because
+#       due to number of file in the module, the unique list can be longer than 
+#       the allowed maximum string accepted by the shell.
+#     - on Solaris 2, a command like rm -rf and no arguments produces an error
+#       mesage (on HP-UX does not). Since I cannot know in advance whether a
+#       list of file is empty and I do not want to make the things too
+#       complicate, a fictitious file name "mkfMake_clean_xxxxx" is put in
+#       front of each list, so it is never empty (and, if somebody, by chance,
+#       will create a file with such a name, means that he has very bad luck
+#       and has not followed naming conventions).
+#         
+#
+.PHONY : clean_all
+clean_all: rm_links $(CLEAN_TARGET)
+#
+# clean Doxygen files
+#
+	-@$(AT) mkfDoxygen clean
+#
+# clean object files
+#
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_executables  $(foreach member, $(EXECUTABLES) $(EXECUTABLES_L), ../bin/$(member) ../object/$(member).dx )     $(OUTPUT)
+	-@$(ECHO)  " .\c"
+	-$(AT)$(RM) mkfMake_clean_libraries    $(foreach member, $(LIBRARIES)   $(LIBRARIES_L), ../lib/lib$(member).a ../lib/lib$(member).$(SHLIB_EXT) ../object/$(member).da ../object/$(member).dal )  $(OUTPUT)
+	-@$(ECHO)  " .\c"
+	-$(AT)$(RM) mkfMake_clean_scripts      $(foreach member, $(SCRIPTS) $(SCRIPTS_L) , ../bin/$(member) ../object/$(member).ds ) $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_.o_Files.    $(foreach member, $(CSOURCENAMES), ../object/$(member).o )                 $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_.d_Files     $(foreach member, $(CSOURCENAMES), ../object/$(member).d )                 $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_.cpp_Files   $(foreach member, $(CSOURCENAMES), ../object/$(member).cpp )                 $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_tclScripts   $(foreach member, $(TCL_SCRIPTS)   $(TCL_SCRIPTS_L),  ../bin/$(member) ../object/$(member).dxt )                    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_tclLibraries $(foreach member, $(TCL_LIBRARIES) $(TCL_LIBRARIES_L), ../lib/lib$(member).tcl ../object/$(member).dat )            $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_panels       $(foreach member, $(PANELS) $(PANELS_L), ../bin/$(member) ../object/$(member).dpan )             $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_indexfiles   ../object/mkfMakeErrorFileDependencies.del  $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \#\* -print | xargs -i $(RM) {}
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name core -print | xargs -i $(RM) {}
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.gdb_history -print | xargs -i $(RM) {}
+	-@$(ECHO) " .\c"
+
+
+	-@$(ECHO) " .\c"
+	-$(AT)$(RM) mkfMake_clean_testReport ./*.rep             $(OUTPUT)
+	-$(AT)$(RM) mkfMake_clean_install   ../object/mkfMakefile.install  $(OUTPUT)
+	-@$(ECHO) " .\c"
+
+#
+# clean TAT files
+#
+ifndef MAKE_FROMTAT
+	-@$(ECHO) " .\c"
+	-$(AT)  currentdir=`pwd`;\
+	  	current=`basename $$currentdir`;\
+		if [ -d ../test/tatlogs -a $$current = "test" ] ;\
+		then \
+	            $(RM) ../test/tatlogs;\
+		fi
+endif
+	-@$(ECHO) " ."
+
+.PHONY : rm_links
+rm_links: 
+ifneq ($(strip $(LINK_FILES)),)
+	$(AT) echo "Removing links ..."; $(RM) $(LINK_FILES)
+endif
+
+.PHONY : clean_dist_all
+clean_dist_all:
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.o -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\~ -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \.\*\~ -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.so -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.sl -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.d -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.ds -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.dx -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.dxt -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)find .. -name \*\.da -print | xargs -i $(RM) {}    $(OUTPUT)
+	-@$(ECHO) " .\c"
+	-$(AT)if [ -f .testSession ];\
+		then tat -nc cleanEnv ;\
+		fi
+	-@$(ECHO) " .\c"
+
+
+#
+# set standard action for 'install'
+# ---------------------------------
+#  copy the files that have been indicated in the lists the 
+#  caller prepared (only public ones) and the manpages to the
+#  appropriate target directories.
+#  To avoid to copy files that are already up-to-date, a makefile
+#  is created and then executed. In this way, only file newer than
+#  those already in the target area are copied. This means that 
+#  included and libraries are copied only when they are changed,
+#  therefore the recompilation of depending files is reduced to the
+#  minimum. 
+#
+#   - an explicit chmod is used to set permission
+#   - if any, all files under ../ALARMS, ../errors and ../LOGS are copied
+#     respectively into the $(ALARMS), $(ERRORS) and $(LOGS) directory.
+#     Please notice that such directory is always located at the level of 
+#     workstation application (INTROOT or MCSROOT) even if the application is an
+#     lcu application
+#   - all, but "l", mansections are installed
+#
+# To allow partial installation, e.g. installing only header files during
+# CCS library build, separated taerget instal_<type> are created.
+#
+
+# define PHONY all names used as targets
+.PHONY : install_all
+.PHONY : install_bin
+.PHONY : install_scripts
+.PHONY : install_includes
+.PHONY : install_standardfiles
+.PHONY : install_libraries
+.PHONY : install_TCLscripts
+.PHONY : install_TCLlibraries
+.PHONY : install_insrootdir
+.PHONY : install_insrootfiles
+.PHONY : install_files
+.PHONY : install_man
+
+
+
+
+#
+# Whatever install_<type> is requested, build the Makefile
+#
+# In order to avoid that left over files from ctrl-C interrupted
+# execution can cause troubles, remove possible old files
+install_all : $(INSTALL_TARGET) 
+#install_all : $(INSTALL_TARGET)
+	-@$(ECHO) "install_all: begin $(INSTALL_TARGET)" >> $(FILE)
+	-@$(ECHO) "begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \"Installing into target: $(INSTALL_ROOT)\"" >>$(FILE)
+
+ifneq ($(strip $(EXECUTABLES)),)
+	-@$(ECHO) "install_bin: bin_begin $(foreach member, $(EXECUTABLES), $(BIN)/$(member)  )" >>$(FILE)
+	-@$(ECHO) "bin_begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \".....binaries:\"" >>$(FILE)
+	-$(AT) for member in $(foreach name, $(EXECUTABLES), $(name) ); \
+		do \
+		    $(ECHO) "$(BIN)/$${member}: ../bin/$${member}" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
+		    $(ECHO) "	cp ../bin/$${member} $(BIN)/$${member};\\" >>$(FILE);\
+		    $(ECHO) "	chmod $(P755) $(BIN)/$${member}" >>$(FILE);\
+		done
+endif
+
+ifneq ($(strip $(TMP_SCRIPT_LIST)),)
+	-@$(ECHO) "install_scripts: scripts_begin $(foreach member, $(TMP_SCRIPT_LIST), $(BIN)/$(member)  )" >>$(FILE)
+	-@$(ECHO) "scripts_begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \"......scripts:\"" >>$(FILE)
+	-$(AT) for member in $(foreach name, $(TMP_SCRIPT_LIST), $(name) ); \
+		do \
+		    $(ECHO) "$(BIN)/$${member}: ../bin/$${member}" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
+		    $(ECHO) "	cp ../bin/$${member} $(BIN)/$${member};\\" >>$(FILE);\
+		    $(ECHO) "	chmod $(P755) $(BIN)/$${member}" >>$(FILE);\
+		done
+endif
+
+
+
+ifneq ($(strip $(INCLUDES)),)
+	-@$(ECHO) "install_includes: includes_begin $(foreach member, $(INCLUDES), $(INCLUDE)/$(member) )" >>$(FILE)
+	-@$(ECHO) "includes_begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \".....includes:\"" >>$(FILE)
+	-$(AT) for member in $(foreach name, $(INCLUDES),  $(name) ); \
+		do \
+		    $(ECHO) "$(INCLUDE)/$${member}: ../include/$${member}" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
+		    $(ECHO) "	cp ../include/$${member} $(INCLUDE)/$${member};\\" >>$(FILE);\
+		    $(ECHO) "	chmod $(P644) $(INCLUDE)/$${member}" >>$(FILE);\
+		done;
+endif
+
+	-@$(ECHO) "install_standardfiles: errors" >>$(FILE)
+	-$(AT)mkfMakeInstallErrorFiles $(ERRORS) $(P644) >>$(FILE)
+
+ifneq ($(strip $(LIBRARIES)),)
+	-@$(ECHO) "libraries_begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \"....libraries:\"" >>$(FILE)
+	-$(AT) target="install_libraries: libraries_begin";\
+	       for member in $(foreach name, $(LIBRARIES), $(name) ); \
+		do \
+		    target="$$target $(LIB)/lib$${member}.a";\
+		    $(ECHO) "$(LIB)/lib$${member}.a: ../lib/lib$${member}.a" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
+		    $(ECHO) "	cp ../lib/lib$${member}.a $(LIB)/lib$${member}.a;  \\" >>$(FILE);\
+		    $(ECHO) "	chmod $(P755) $(LIB)/lib$${member}.a" >>$(FILE);\
+	            if [ -f ../lib/lib$${member}.$(SHLIB_EXT) ];\
+	            then \
+	                target="$$target $(LIB)/lib$${member}.$(SHLIB_EXT)";\
+		        $(ECHO) "$(LIB)/lib$${member}.$(SHLIB_EXT): ../lib/lib$${member}.$(SHLIB_EXT)" >>$(FILE);\
+		        $(ECHO) "	-\$$(AT)rm -f $(LIB)/lib$${member}.$(SHLIB_EXT); \\" >>$(FILE);\
+		        $(ECHO) "	cp ../lib/lib$${member}.$(SHLIB_EXT) $(LIB)/lib$${member}.$(SHLIB_EXT);  \\" >>$(FILE);\
+		        $(ECHO) "	chmod $(P755) $(LIB)/lib$${member}.$(SHLIB_EXT); \\" >>$(FILE);\
+		        $(ECHO) "	chmod ugo-w $(LIB)/lib$${member}.$(SHLIB_EXT) " >>$(FILE);\
+	            fi;\
+	        done;\
+		$(ECHO) "$$target" >>$(FILE); $(ECHO) "	-@echo \"\"" >>$(FILE)
+endif
+ 
+ifneq ($(strip $(TCL_SCRIPTS)),)
+	-@$(ECHO) "install_TCLscripts: TCLscripts_begin $(foreach member, $(TCL_SCRIPTS), $(BIN)/$(member)) app-defaults" >>$(FILE)
+	-@$(ECHO) "TCLscripts_begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \"...TCLscripts:\"" >>$(FILE)
+	-$(AT) for member in $(foreach name, $(TCL_SCRIPTS), $(name) ); \
+		do \
+		    $(ECHO) "$(BIN)/$${member}: ../bin/$${member}" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\"  >>$(FILE);\
+		    $(ECHO) "	cp ../bin/$${member} $(BIN)/$${member};\\"  >>$(FILE);\
+		    $(ECHO) "	chmod $(P755) $(BIN)/$${member}" >>$(FILE);\
+	        done; 
+	-$(AT) target="app-defaults:";\
+	       for member in $(foreach name, $(TCL_SCRIPTS), $(name) ); \
+		do \
+			if [ -f ../app-defaults/X$${member} ];\
+			then \
+			    target="$$target $(INSTALL_ROOT)/app-defaults/X$${member}";\
+			    $(ECHO) "$(INSTALL_ROOT)/app-defaults/X$${member}: ../app-defaults/X$${member}" >>$(FILE);\
+			    $(ECHO) "	-\$$(AT)cp ../app-defaults/X$${member} $(INSTALL_ROOT)/app-defaults/X$${member};\\" >>$(FILE);\
+			    $(ECHO) "	chmod $(P644) $(INSTALL_ROOT)/app-defaults/X$${member}" >>$(FILE) ;  \
+			fi;\
+	        done; \
+		$(ECHO) "$$target" >>$(FILE); $(ECHO) "	-@echo \"\"" >>$(FILE)
+endif
+
+ifneq ($(strip $(TCL_LIBRARIES)),)
+	-@$(ECHO) "install_TCLlibraries: TCLlibraries_begin $(foreach member, $(TCL_LIBRARIES), $(LIB)/lib$(member).tcl) " >>$(FILE)
+	-@$(ECHO) "TCLlibraries_begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \".TCLlibraries:\"" >>$(FILE)
+	-$(AT) for member in $(foreach name, $(TCL_LIBRARIES), $(name) ); \
+		do \
+		    $(ECHO) "$(LIB)/lib$${member}.tcl: ../lib/lib$${member}.tcl" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
+		    $(ECHO) "	rm -rf $(LIB)/lib$${member}.tcl;\\" >>$(FILE);\
+		    $(ECHO) "	cp -r ../lib/lib$${member}.tcl $(LIB)/lib$${member}.tcl;\\" >>$(FILE);\
+		    $(ECHO) "	chmod -R $(P755) $(LIB)/lib$${member}.tcl" >>$(FILE);\
+		done;
+endif
+
+ifneq ($(strip $(PANELS)),)
+	-@$(ECHO) "install_panels: panels_begin $(foreach member, $(PANELS), $(BIN)/$(member) )" >>$(FILE)
+	-@$(ECHO) "panels_begin:" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \".......panels:\"" >>$(FILE)
+	-$(AT)  for member in  $(foreach name, $(PANELS), $(name) ); \
+		do \
+		    $(ECHO) "$(BIN)/$${member}: ../bin/$${member}" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}\";\\" >>$(FILE);\
+		    $(ECHO) "	cp ../bin/$${member} $(BIN)/$${member};\\" >>$(FILE);\
+		    $(ECHO) "	chmod $(P755) $(BIN)/$${member} " >>$(FILE);\
+		done;
+endif
+
+
+ifneq ($(strip $(INSTALL_FILES)),)
+# mkfMakeInstallFiles takes care to properly build the target "install_files"
+	$(AT)mkfMakeInstallFiles "$(INSTALL_FILES)" $(INSTALL_ROOT) $(P644) >>$(FILE)
+endif
+
+ifneq ($(strip $(MANSECTIONS_INSTALL)),)
+	-@$(ECHO) "install_man: " >>$(FILE)
+	-@$(ECHO) "	-@echo \"\"; $(ECHO) \"....man-pages:\"" >>$(FILE)
+	-@$(ECHO) "	-\$$(AT) $(foreach i, $(MANSECTIONS_INSTALL), $(ECHO) \"\tsection $(i)\"; cp ../doc/api/man/man$(i)/*.$(i) $(MAN)/man$(i) ;)" >>$(FILE)
+	-@$(ECHO) "	-@echo \"\";" >>$(FILE)
+endif
+
+	-@$(ECHO) "	-@mkfMakeInstallDocFiles $(DOCROOT) $(P755)" >>$(FILE)
+	-@$(ECHO) "	-@mkfMakeCopySources $(VW)" >>$(FILE)
+
+#
+# executing the created makefile. By passing the target, only the selected
+# part of the makefile, will be done.
+#
+	-@$(MAKE) -k -f $(FILE) --no-print-directory $(@)
+	-@$(RM) $(FILE)
+
+#
+# set standard action for 'db'
+# ---------------------------------
+#    "db" is a special target that has different behaviour depending
+#    whether is a module or an environment
+#    
+
+#
+# define the search path for include files. To allow commom definition 
+# between code and dbl files, the h-file path is added to the pure
+# dbl files (SPR950228)
+DBL_INC = $(subst include,dbl,$(MODINC) $(MCSINC)) $(I_PATH)
+
+#
+# set standard action for 'test'
+# ---------------------------------
+#    execute the TestDriver proccedure.
+#    This target cannot be customiized from the Makefile
+#
+test:
+	-$(AT)if [ -d ../test ];\
+		then  cd ../test ; if [ -f ./TestList.lite -o -f ./TestList.noccs -o -f ./TestList ];\
+					then chmod +x ./TestList*; tat -v -nc; \
+					else $(ECHO) "IMPOSSIBLE TO RUN THE TEST: TestList* not found" >&2;\
+					fi \
+		else $(ECHO) "IMPOSSIBLE TO CHANGE TO TEST DIRECTORY: test dir not found" >&2; \
+		fi
+
+#
+# set one target for each executable (required by SoftBench)
+# ----------------------------------
+$(addprefix ../bin/, $(foreach exe, $(EXECUTABLES) $(EXECUTABLES_L), $(exe))) :all
+
+
+#######################################################################
+# RATIONAL PURIFY AREA ################################################
+# MZA 2003-12-01 ######################################################
+# we need 3   targets: report generation, GUI creation,  and cleanup ## 
+# of the mess                       ###################################
+#######################################################################
+
+
+pureReport:
+ifeq ($(platform),Linux)
+# assuming test dir
+	$(AT) ls atlout.spt > /dev/null 2>&1; if [ $$? = "0" ]; then cp atlout.spt .purify ; atlsplit atlout.spt; else exit 1; fi
+	$(AT) ls attolcov.tio > /dev/null 2>&1; if [ $$? != "0" ]; then  exit 2; fi
+	$(AT) attolcov attolcov.tio ../src/.purify/*.fdc -output=CoverageReport
+	$(AT) echo "== Purify coverage report in 'CoverageReport'."
+	$(AT) ls atlout.rej > /dev/null 2>&1; if [ $$? != "0" ]; then  exit 3; fi
+else
+	$(AT) echo "== Purify coverage report in 'CoverageReport'."
+	$(AT) purecov -export=CoverageReport *.pcv
+endif
+
+pureGUI: 
+ifeq ($(platform),Linux)
+	$(AT) studio *.tpf *.tqf *.tdf *.tio ../src/.purify/{*.fdc,*.tsf} &
+else
+	$(AT) ls purecov*.pcv > /dev/null 2>&1; if [ $$? = "0" ]; then purecov -view purecov*.pcv &; fi
+	$(AT) ls purify*.pv > /dev/null 2>&1; if [ $$? = "0" ]; then \
+		for member in `ls purify*.pv`; \
+		do purify -view $$member &  \
+		done \
+	      fi
+endif
+
+pureClean:
+ifeq ($(platform),Linux)
+	$(AT) $(RM) *.tio *.tpf *.tqf *.tdf ../src/.purify/* ../test/.purify/*  CoverageReport 
+else
+	$(AT) $(RM) ../src/purecov-*.pcv ../src/purify-*.pv
+	$(AT) $(RM) ../test/purecov-*.pcv ../test/purify-*.pv
+	$(AT) $(RM) ./MemoryReport ./CoverageReport
+endif
+	$(AT) echo "Purify files cleaned."
+
+#___oOo___
+
