@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.6 2005-01-29 13:49:36 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.7 2005-02-11 09:45:11 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/01/29 13:49:36  gzins
+# Added CVS log as modification history
+# Forbid MCS installation as root
+#
 # gzins     04-Dec-2004  Created
 # gzins     08-Dec-2004  Moved from mkf module
 #                        Added installation of env module
@@ -96,7 +100,7 @@ echo -e "    Press enter to continue or ^C to abort "
 read choice
 
 # List of MCS modules
-mcs_modules="mkf ctoo mcs log err misc timlog modc modcpp fnd env cmd msg evh gwt"
+mcs_modules="mkf ctoo mcs log err misc timlog modc modcpp fnd misco env cmd msg evh gwt"
 
 # Delete modules first
 cd $dir
