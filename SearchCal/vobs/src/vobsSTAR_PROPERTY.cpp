@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.1 2004-12-20 09:40:24 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.1 2004-12-20 09:40:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -123,11 +123,15 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
  * Set a property value
  *
  * \param value property value to set (given as string)
+ * \param confidenceIndex confidence index
+ * \param isComputed booleen to know if it is a computed property
  * \param overwrite booleen to know if it is an overwrite property 
  *
- * \return SUCCESS
+ * \return mcsSUCCESS
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(char *value, 
+mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(char *value,
+                                          mcsINT32 confidenceIndex,
+                                          mcsFLOAT isComputed,
                                           mcsLOGICAL overwrite)
 {
     logExtDbg("vobsSTAR_PROPERTY::SetValue()");
@@ -137,23 +141,28 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(char *value,
     {
         strcpy(_value, value);
     }
+    _confidenceIndex = confidenceIndex;
 
-    return SUCCESS;    
+    return mcsSUCCESS;    
 }
 
 /**
  * Set a property value
  *
  * \param value property value to set (given as float)
+ * \param confidenceIndex confidence index
+ * \param isComputed booleen to know if it is a computed property
  * \param overwrite booleen to know if it is an overwrite property 
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Error codes:\n
  * The possible error is :
  * \li vobsERR_PROPERTY_TYPE
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value, 
+mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
+                                          mcsINT32 confidenceIndex,
+                                          mcsFLOAT isComputed,
                                           mcsLOGICAL overwrite)
 {
     logExtDbg("vobsSTAR_PROPERTY::SetValue()");
@@ -162,7 +171,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
     if (_type != vobsFLOAT_PROPERTY)
     {
         errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), "float", _format.c_str());
-        return (FAILURE);
+        return (mcsFAILURE);
     }
 
     // Affect value
@@ -171,13 +180,15 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
         sprintf(_value, _format.c_str(), value);
     }
 
-    return SUCCESS;    
+    _confidenceIndex = confidenceIndex;
+
+    return mcsSUCCESS;    
 }
 
 /**
  * Get value as a string.
  *
- * \return SUCCESS
+ * \return mcsSUCCESS
  */
 const char *vobsSTAR_PROPERTY::GetValue(void) const
 {
@@ -192,7 +203,7 @@ const char *vobsSTAR_PROPERTY::GetValue(void) const
  *
  * \param value pointer to store value.
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Error codes:\n
  * The possible errors are :
@@ -208,14 +219,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
     if (IsSet() == mcsFALSE)
     {
         errAdd (vobsERR_PROPERTY_NOT_SET, _id.c_str());
-        return (FAILURE);
+        return (mcsFAILURE);
     }
     
     // Check type
     if (_type != vobsFLOAT_PROPERTY)
     {
         errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), "float", _format.c_str());
-        return (FAILURE);
+        return (mcsFAILURE);
     }
 
     // Get value
@@ -223,11 +234,44 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
     if (sscanf(_value, "%f", value) != 1)
     {
         errAdd (vobsERR_INVALID_PROP_FORMAT, _value, "float");
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
+
+/**
+ * Get value of the confidence index
+ *
+ * \return value of confidence index
+ */
+mcsINT32 vobsSTAR_PROPERTY::GetConfidenceIndex()
+{
+    return _confidenceIndex;
+}
+
+/**
+ * Check whether the property is computed or not.  
+ * 
+ * \return
+ * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
+ * mcsFALSE) otherwise.
+ */
+mcsLOGICAL vobsSTAR_PROPERTY::IsComputed() const
+{
+    logExtDbg("vobsSTAR_PROPERTY::IsComputed()");
+
+    // Check if property is not computed, i.e. _isComputed = mcsFALSE
+    if (_isComputed == mcsFALSE)
+    {
+        return mcsFALSE;
+    }
+    else
+    {
+        return mcsTRUE;
+    }
+}
+
 
 /**
  * Check whether the property is set or not.  
@@ -254,7 +298,7 @@ mcsLOGICAL vobsSTAR_PROPERTY::IsSet() const
 /**
  * Get property id.
  *
- * \return SUCCESS
+ * \return mcsSUCCESS
  */
 const char *vobsSTAR_PROPERTY::GetId(void) const
 {
@@ -267,7 +311,7 @@ const char *vobsSTAR_PROPERTY::GetId(void) const
 /**
  * Get property name.
  *
- * \return SUCCESS
+ * \return mcsSUCCESS
  */
 const char *vobsSTAR_PROPERTY::GetName(void) const
 {

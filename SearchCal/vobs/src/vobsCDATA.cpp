@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.3 2004-12-13 15:54:06 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.4 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.3 2004-12-13 15:54:06 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.4 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -91,7 +91,7 @@ vobsCDATA::~vobsCDATA()
  * \param colName column name to be added to the list.
  *
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsCDATA::addColName(char *colName)
 {
@@ -99,7 +99,7 @@ mcsCOMPL_STAT vobsCDATA::addColName(char *colName)
 
     _colName.push_back(strdup(colName)); 
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 /**
  * Adds a column description (UCD) at the end of the list
@@ -111,7 +111,7 @@ mcsCOMPL_STAT vobsCDATA::addColName(char *colName)
  * \param ucdName corresponding UCD to be added to the list.
  *
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsCDATA::addUcdName(char *ucdName)
 {
@@ -119,7 +119,7 @@ mcsCOMPL_STAT vobsCDATA::addUcdName(char *ucdName)
 
     _ucdName.push_back(strdup(ucdName)); 
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -143,7 +143,7 @@ mcsUINT32 vobsCDATA::getNbColumns(void)
  * \param ucdName pointer to the corresponding UCD 
  * \param init
  * 
- * \return SUCCESS or FAILURE if the end of the column list is reached.
+ * \return mcsSUCCESS or mcsFAILURE if the end of the column list is reached.
  */
 mcsCOMPL_STAT vobsCDATA::getNextColDesc(char **colName, char **ucdName,
                                         mcsLOGICAL init) 
@@ -164,14 +164,14 @@ mcsCOMPL_STAT vobsCDATA::getNextColDesc(char **colName, char **ucdName,
         if ((_colNameIterator == _colName.end()) ||
             (_ucdNameIterator == _ucdName.end()))
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
     *colName = *_colNameIterator;
     *ucdName = *_ucdNameIterator;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -180,7 +180,7 @@ mcsCOMPL_STAT vobsCDATA::getNextColDesc(char **colName, char **ucdName,
  * \param nbLines number of lines to be skipped.
  *
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsCDATA::setNbLinesToSkip(mcsINT32 nbLines)
 {
@@ -188,7 +188,7 @@ mcsCOMPL_STAT vobsCDATA::setNbLinesToSkip(mcsINT32 nbLines)
 
     _nbLinesToSkip = nbLines;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -213,7 +213,7 @@ mcsUINT32 vobsCDATA::getNbLinesToSkip(void)
  * \param buffer pointer to the CDATA, which must be null-terminated
  *
  * \return
- * SUCCESS, or FAILURE if an error occurs when manipuling internal dynamic
+ * mcsSUCCESS, or mcsFAILURE if an error occurs when manipuling internal dynamic
  * buffer.
  */
 mcsCOMPL_STAT vobsCDATA::appendLines(char *buffer)
@@ -223,9 +223,9 @@ mcsCOMPL_STAT vobsCDATA::appendLines(char *buffer)
     // Store buffer into a temporary buffer
     miscDYN_BUF tmpBuffer;
     miscDynBufInit(&tmpBuffer);
-    if (miscDynBufAppendString(&tmpBuffer, buffer) == FAILURE)
+    if (miscDynBufAppendString(&tmpBuffer, buffer) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // Replace CR by '\0' in order to convert buffer to separated lines 
@@ -249,10 +249,10 @@ mcsCOMPL_STAT vobsCDATA::appendLines(char *buffer)
             logDebug("   > Add line : %s", linePtr);
             
             if (miscDynBufAppendBytes
-                (&_buffer, linePtr, strlen(linePtr) + 1) == FAILURE)
+                (&_buffer, linePtr, strlen(linePtr) + 1) == mcsFAILURE)
             {
                 miscDynBufDestroy(&tmpBuffer);
-                return FAILURE;
+                return mcsFAILURE;
             }
             _nbLines++;
         }
@@ -264,7 +264,7 @@ mcsCOMPL_STAT vobsCDATA::appendLines(char *buffer)
 
     miscDynBufDestroy(&tmpBuffer);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -295,7 +295,7 @@ char * vobsCDATA::getNextLine(char *linePtr)
  * Save the buffer contents into file
  *
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsCDATA::save(char *fileName)
 {
@@ -306,7 +306,7 @@ mcsCOMPL_STAT vobsCDATA::save(char *fileName)
     // If no file given, return;
     if (strcmp(fileName, "") ==0)
     {
-        return SUCCESS;
+        return mcsSUCCESS;
     }
 
     // Open file
@@ -314,7 +314,7 @@ mcsCOMPL_STAT vobsCDATA::save(char *fileName)
     if (filePtr==NULL)
     {
         logWarning("Could not open file '%s'", fileName);
-        return SUCCESS;
+        return mcsSUCCESS;
     } 
 
     // For each line in buffer, get the value for each defined UCD (value are
@@ -373,7 +373,7 @@ mcsCOMPL_STAT vobsCDATA::save(char *fileName)
     // Close file
     fclose(filePtr);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

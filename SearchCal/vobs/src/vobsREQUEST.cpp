@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.cpp,v 1.3 2004-12-06 14:34:28 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.cpp,v 1.4 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.3 2004-12-06 14:34:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.4 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -116,7 +116,7 @@ vobsREQUEST::~vobsREQUEST()
  * \param constraint CONSTRAINT name. 
  * \param value constraint value to set
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -133,12 +133,12 @@ mcsCOMPL_STAT vobsREQUEST::SetConstraint(char *constraint, char *value)
     if (constraintId == UNKNOWN_CONSTRAINT_ID)
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraint);
-        return FAILURE;
+        return mcsFAILURE;
     }
     // Affect constraint value
     strcpy(_constraints[constraintId], value);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -149,7 +149,7 @@ mcsCOMPL_STAT vobsREQUEST::SetConstraint(char *constraint, char *value)
  * \param constraintId CONSTRAINT id. 
  * \param value constraint value to set
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -164,12 +164,12 @@ mcsCOMPL_STAT vobsREQUEST::SetConstraint(vobsCONSTRAINT_ID constraintId, char *v
     if (constraintId == UNKNOWN_CONSTRAINT_ID)
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
-        return FAILURE;
+        return mcsFAILURE;
     }
     // Affect constraint value
     strcpy(_constraints[constraintId], value);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -181,7 +181,7 @@ mcsCOMPL_STAT vobsREQUEST::SetConstraint(vobsCONSTRAINT_ID constraintId, char *v
  * \param constraint CONSTRAINT name. 
  * \param value constraint value to get, as a string.
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -198,13 +198,13 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, char *value)
     if (constraintId == UNKNOWN_CONSTRAINT_ID)
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraint);
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // Retrieve constraint value
     strcpy(value,_constraints[constraintId]);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -216,7 +216,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, char *value)
  * \param constraintId CONSTRAINT id. 
  * \param value constraint value to get, as a string. 
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -231,13 +231,13 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId , char *
         (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
-        return FAILURE;
+        return mcsFAILURE;
     }
    
     // Retrieve string value form the constraint
     strcpy(value, _constraints[constraintId]);
             
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -249,7 +249,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId , char *
  * \param constraint CONSTRAINT name. 
  * \param value constraint value to get, as an integer. 
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  */
 mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, int *value)
@@ -273,7 +273,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, int *value)
  * \param constraintId CONSTRAINT id. 
  * \param value constraint value to get, as an integer. 
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -290,17 +290,17 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, int *va
         (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Convert constraint string value to integer value
     if (sscanf(_constraints[constraintId], "%d", value) != 1)
     {
         errAdd(vobsERR_INVALID_CONSTRAINT_FORMAT, value, _constraints[constraintId]);
-        return FAILURE;
+        return mcsFAILURE;
     }
         
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -312,7 +312,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, int *va
  * \param constraint CONSTRAINT name. 
  * \param value constraint value to get, as a float. 
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  */
 mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, float *value)
@@ -336,7 +336,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, float *value)
  * \param constraintId CONSTRAINT id. 
  * \param value constraint value to get, as a float. 
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors code:\n
  * The possible errors are :
@@ -353,17 +353,17 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, float *
         (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
     {
         errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Convert constraint string value to integer value
     if (sscanf(_constraints[constraintId], "%f", value) != 1)
     {
         errAdd(vobsERR_INVALID_CONSTRAINT_FORMAT, value, _constraints[constraintId]);
-        return FAILURE;
+        return mcsFAILURE;
     }
         
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**

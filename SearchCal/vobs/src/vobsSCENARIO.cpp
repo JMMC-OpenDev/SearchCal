@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.2 2004-12-20 09:40:24 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.3 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.2 2004-12-20 09:40:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.3 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -79,7 +79,7 @@ vobsSCENARIO::~vobsSCENARIO()
  * \param dec interval declinaison
  * 
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSCENARIO::AddEntry( vobsCATALOG *catalog,
                                       vobsSTAR_LIST *listInput,
@@ -99,7 +99,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry( vobsCATALOG *catalog,
     // Put element in the list    
     _entryList.push_back(entry);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -112,7 +112,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry( vobsCATALOG *catalog,
  * \param starList vobsSTAR_LIST which is the result of the interrogation,
  * this is the last list return of the last interrogation.
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned 
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
  */
 mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request, 
                                     vobsSTAR_LIST &starList)
@@ -123,9 +123,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
     // For each entry
     while (_entryIterator != _entryList.end())
     {
-        if ( tempList.Clear() == FAILURE )
+        if ( tempList.Clear() == mcsFAILURE )
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
         
         if ((*_entryIterator).listInput != NULL)
@@ -134,9 +134,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         }
         
         // start research in entry's catalog
-        if (((*_entryIterator).catalog)->Search(request, tempList) == FAILURE )
+        if (((*_entryIterator).catalog)->Search(request, tempList) == mcsFAILURE )
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
        
         if (logGetStdoutLogLevel() >= logDEBUG)
@@ -175,16 +175,16 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             case COPY:
                 {
                     if (((*_entryIterator).listOutput)->Clear() 
-                        == FAILURE)
+                        == mcsFAILURE)
                     {
-                        return FAILURE;
+                        return mcsFAILURE;
                     }
                     if (((*_entryIterator).listOutput)->
                         Merge(tempList,
                               (*_entryIterator).criteriaList) 
-                        == FAILURE)
+                        == mcsFAILURE)
                     {
-                        return FAILURE;
+                        return mcsFAILURE;
                     }
                 }
             case MERGE:
@@ -192,9 +192,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                     if ( ((*_entryIterator).listOutput)->
                          Merge(tempList,
                                (*_entryIterator).criteriaList)
-                         == FAILURE )
+                         == mcsFAILURE )
                     {
-                        return FAILURE;
+                        return mcsFAILURE;
                     }
                 }
             case UPDATE_ONLY:
@@ -204,9 +204,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                          Merge(tempList,
                                (*_entryIterator).criteriaList,
                                mcsTRUE)
-                         == FAILURE )
+                         == mcsFAILURE )
                     {
-                        return FAILURE;
+                        return mcsFAILURE;
                     }
                 }
             default:
@@ -215,11 +215,11 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         _entryIterator++;
     }
     
-    if (starList.Copy(*(_entryList.back()).listOutput) == FAILURE)
+    if (starList.Copy(*(_entryList.back()).listOutput) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

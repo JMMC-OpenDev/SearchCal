@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.5 2004-12-20 13:51:40 scetre Exp $"
+ * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.6 2005-01-24 10:58:44 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.5 2004-12-20 13:51:40 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.6 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -48,7 +48,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 //Class destructor
@@ -81,7 +81,7 @@ mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
  * Erase all elements from the list.
  *
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 {
@@ -94,7 +94,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 
     // Clear list
     _starList.clear();
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -102,7 +102,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
  *
  * \param star element to be added to the list.
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 {
@@ -111,7 +111,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
     vobsSTAR *newStar = new vobsSTAR(star);
     _starList.push_back(newStar);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -128,7 +128,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
  *
  * \param star element to be removed from the list.
  *
- * \return Always SUCCESS.
+ * \return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
 {
@@ -145,11 +145,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
             delete (*iter);
             // Clear element from list
             _starList.erase(iter);
-            return SUCCESS;
+            return mcsSUCCESS;
         }
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -244,7 +244,7 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
  * one. If star is already stored in the list, it is just updated using
  * vobsSTAR::Update method, otherwise it is added to the list.
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned if
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned if
  * updating or adding star fails.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
@@ -266,22 +266,22 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         if (starToUpdatePtr != NULL)
         {
             // Update the star
-            if (starToUpdatePtr->Update(*starPtr)== FAILURE)
+            if (starToUpdatePtr->Update(*starPtr)== mcsFAILURE)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
         else if (updateOnly == mcsFALSE)
         {
             // Else add it to the list
-            if (AddAtTail(*starPtr) == FAILURE)
+            if (AddAtTail(*starPtr) == mcsFAILURE)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
     }
  
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -327,7 +327,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
     if (filePtr==NULL)
     {
         logWarning("could not load file %s", miscResolvePath(filename));
-        return SUCCESS;
+        return mcsSUCCESS;
     }
     else
     {
@@ -352,7 +352,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
     // Close file
     fclose(filePtr);*/
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -77,7 +77,7 @@ vobsCATALOG_PHOTO::~vobsCATALOG_PHOTO()
  * which is write specificaly for each catalog.
  *
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -94,7 +94,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
             
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -106,7 +106,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
  *
  * \param request vobsREQUEST which help to restrict the search
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -148,7 +148,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST request)
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
     miscDynBufAppendString(&_query, "&-sort=_r");
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

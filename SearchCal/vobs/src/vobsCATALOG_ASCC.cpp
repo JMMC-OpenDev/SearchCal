@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -78,7 +78,7 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
  * which is write specificaly for each catalog.
  *
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -96,7 +96,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=v1&-out=d5&-out=HIP&-out=HD");
     miscDynBufAppendString(&_query, "&-out=DM&-sort=_r");
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -108,7 +108,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
  *
  * \param request vobsREQUEST which help to restrict the search
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -151,7 +151,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST request)
     miscDynBufAppendString(&_query, "&-out=v1&-out=d5");
     miscDynBufAppendString(&_query, "&-out=HIP&-out=HD&-out=DM&-sort=_r"); 
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsPARSER.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"
+ * "@(#) $Id: vobsPARSER.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -62,7 +62,7 @@ vobsPARSER::~vobsPARSER()
  * \param starList list where star has to be put.
  * \param logFileName file to save the result of the asking
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned and
  * an error is added to the error stack. The possible errors are :
  * \li vobsERR_GDOME_CALL
  */
@@ -91,7 +91,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
         xmlCleanupParser();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Get reference to the root element of the document
@@ -103,17 +103,17 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
         xmlCleanupParser();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Begin the recursif look of the tree
-    if (ParseXmlSubTree((GdomeNode *)root, &cData) == FAILURE)
+    if (ParseXmlSubTree((GdomeNode *)root, &cData) == mcsFAILURE)
     {
         gdome_el_unref(root, &exc);            
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
         xmlCleanupParser();
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Print out CDATA description
@@ -136,9 +136,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
             }
             // Get the column name and UCD
             if (cData.getNextColDesc(&colName, 
-                                     &ucdName, (mcsLOGICAL)(i==0)) == FAILURE)
+                                     &ucdName, (mcsLOGICAL)(i==0)) == mcsFAILURE)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
 
             logTest("    |      %3d | %12s | %18s |",
@@ -164,13 +164,13 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
         }
 
         // Parse the CDATA section
-        if (ParseCData(&cData, starListToReturn) == FAILURE)
+        if (ParseCData(&cData, starListToReturn) == mcsFAILURE)
         {
             gdome_el_unref(root, &exc);            
             gdome_doc_unref (doc, &exc);
             gdome_di_unref (domimpl, &exc);
             xmlCleanupParser();
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
 
@@ -183,7 +183,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
     starList.Clear();
     starList.Copy(starListToReturn); 
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -201,7 +201,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri,
  * \param node  XML document node to be parsed. 
  * \param cData data structure where CDATA description has to be stored.
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned and
  * an error is added to the error stack. The possible error is :
  * \li vobsERR_GDOME_CALL
  *
@@ -230,7 +230,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_n_childNodes", exc);
         gdome_nl_unref(nodeList, &exc);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // Get the number of children
@@ -239,14 +239,14 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_nl_length", exc);
         gdome_nl_unref(nodeList, &exc);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     // If there is no child; return
     if (nbChildren == 0)
     {
         gdome_nl_unref(nodeList, &exc);
-        return SUCCESS;
+        return mcsSUCCESS;
     }
 
     // For each child
@@ -259,7 +259,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             errAdd(vobsERR_GDOME_CALL, "gdome_nl_item", exc);
             gdome_n_unref(child, &exc);
             gdome_nl_unref(nodeList, &exc);
-            return FAILURE;
+            return mcsFAILURE;
         }
 
         // If it is the CDATA section
@@ -273,16 +273,16 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
                 gdome_nl_unref(nodeList, &exc);
-                return FAILURE;
+                return mcsFAILURE;
             }
             else
             {
-                if (cData->appendLines(nodeName->str) == FAILURE)
+                if (cData->appendLines(nodeName->str) == mcsFAILURE)
                 {
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
                     gdome_nl_unref(nodeList, &exc);
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
             }
             gdome_str_unref(nodeName);
@@ -298,7 +298,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
                 gdome_nl_unref(nodeList, &exc);
-                return FAILURE;
+                return mcsFAILURE;
             }
             logTest("Parsing node %s...", nodeName->str);
 
@@ -311,7 +311,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
                 gdome_nl_unref(nodeList, &exc);
-                return FAILURE;
+                return mcsFAILURE;
             }
 
             // Get the number of attributes
@@ -323,7 +323,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
                 gdome_nl_unref(nodeList, &exc);
-                return FAILURE;
+                return mcsFAILURE;
             }
 
             // For each attribute
@@ -339,7 +339,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
                     gdome_nl_unref(nodeList, &exc);
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
                 else
                 {
@@ -354,7 +354,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                         gdome_str_unref(nodeName);
                         gdome_n_unref(child, &exc);
                         gdome_nl_unref(nodeList, &exc);
-                        return FAILURE;
+                        return mcsFAILURE;
                     }
 
                     // Get the attribute name
@@ -369,7 +369,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                         gdome_str_unref(nodeName);
                         gdome_n_unref(child, &exc);
                         gdome_nl_unref(nodeList, &exc);
-                        return FAILURE;
+                        return mcsFAILURE;
                     }
 
                     // If it is the name of the column table of CDATA 
@@ -402,12 +402,12 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             // If there are children nodes, parse corresponding XML sub-tree
             if (gdome_n_hasChildNodes (child, &exc))
             {
-                if (ParseXmlSubTree(child, cData) == FAILURE)
+                if (ParseXmlSubTree(child, cData) == mcsFAILURE)
                 {
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
                     gdome_nl_unref(nodeList, &exc);
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
             }
             gdome_str_unref(nodeName);
@@ -419,14 +419,14 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             errAdd(vobsERR_GDOME_CALL, "gdome_n_unref", exc);
             gdome_nl_unref(nodeList, &exc);
             gdome_n_unref (child, &exc);
-            return FAILURE;
+            return mcsFAILURE;
         }
         gdome_n_unref(child, &exc);        
     }
 
     gdome_nl_unref(nodeList, &exc);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -447,7 +447,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
  * \param cData    data structure describing the CDATA section.
  * \param starList list where star has to be put.
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned and
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned and
  * an error is added to the error stack. The possible error is :
  * \li vobsERR_INVALID_CDATA_FORMAT
  */
@@ -489,9 +489,9 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             {
                 // Get the column name and UCD
                 if (cData->getNextColDesc(&colName, 
-                                          &ucdName, (mcsLOGICAL)(j==0)) == FAILURE)
+                                          &ucdName, (mcsLOGICAL)(j==0)) == mcsFAILURE)
                 {
-                    return FAILURE;
+                    return mcsFAILURE;
                 }
 
                 // Get the UCD value
@@ -512,7 +512,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     }
 
                     // Set star property
-                    if (star.SetPropertyValue(ucdName, ucdValue) == FAILURE)
+                    if (star.SetPropertyValue(ucdName, ucdValue) == mcsFAILURE)
                     {
                         // If ucd is not found, ignore error
                         if (errIsInStack(MODULE_ID, 
@@ -522,20 +522,20 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                         }
                         else
                         {
-                            return FAILURE;
+                            return mcsFAILURE;
                         }
                     }
                 }
             }
             // Put now the star in the star list
-            if (starList.AddAtTail(star) == FAILURE)
+            if (starList.AddAtTail(star) == mcsFAILURE)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
         }
     } while (linePtr != NULL);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -67,7 +67,7 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
  * \param starList list of Stars to build and to send as the result of the
  * research
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors codes:
  * The possible errors are:
@@ -87,9 +87,9 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
     request.GetConstraint(OBSERVED_BAND_ID, band);
 
     // load the asking scenario with the method LoadScenario
-    if (LoadScenario(band, starList, scenario) == FAILURE)
+    if (LoadScenario(band, starList, scenario) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     starList.Clear();
@@ -98,7 +98,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
     //starList.Display();
     printf("number of star found : %d\n", starList.Size());
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -114,7 +114,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
  * research
  * \param scenario the scenario to load
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors codes:
  * The possible errors are:
@@ -232,10 +232,10 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
     }
     else
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.2 2004-12-20 09:40:24 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.3 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.2 2004-12-20 09:40:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.3 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -94,7 +94,7 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
  * \param range the range value of the criteria.
  * 
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
                                                mcsFLOAT range)
@@ -104,7 +104,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
     // Put criteria in the list
     _criteriaList[propertyId]=range;
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -125,7 +125,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
  * \endcode
  * 
  * \return 
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
                                                            mcsFLOAT *range,
@@ -143,12 +143,12 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
         if (_criteriaIterator == _criteriaList.end())
         {
             errAdd(vobsERR_NO_MORE_CRITERIA);
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     strcpy(propertyId, (*_criteriaIterator).first);
     *range = (*_criteriaIterator).second;
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -79,7 +79,7 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
  *
  * \param request vobsREQUEST which have all the contraints for the search
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors codes:\n 
  * The possible errors are:
@@ -89,14 +89,14 @@ mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG::PrepareQuery()");
 
-    if ((WriteQueryURIPart()==FAILURE) ||
-        (WriteReferenceStarPosition(request)==FAILURE) ||
-        (WriteQuerySpecificPart(request)==FAILURE) )
+    if ((WriteQueryURIPart()==mcsFAILURE) ||
+        (WriteReferenceStarPosition(request)==mcsFAILURE) ||
+        (WriteQuerySpecificPart(request)==mcsFAILURE) )
     {
         errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
-        return FAILURE;
+        return mcsFAILURE;
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -106,7 +106,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
  * asking is the same.
  *
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n 
  * The possible errors are:
@@ -121,7 +121,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
     miscDynBufAppendString(&_query,"&-out.max=50");
     miscDynBufAppendString(&_query,"-c.r=1&-c.u=arcmin");
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -133,7 +133,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
  * which is write specificaly for each catalog.
  *
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -147,7 +147,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
     miscDynBufAppendString(&_query, "&-sort=_r");
             
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -159,7 +159,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
  *
  * \param request vobsREQUEST which help to restrict the search
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -214,7 +214,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST request)
     miscDynBufAppendString(&_query, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
     miscDynBufAppendString(&_query, "&-sort=_r");
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

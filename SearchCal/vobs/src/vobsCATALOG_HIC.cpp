@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_HIC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -75,7 +75,7 @@ vobsCATALOG_HIC::~vobsCATALOG_HIC()
  * which is write specificaly for each catalog.
  *
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -89,7 +89,7 @@ mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
     miscDynBufAppendString(&_query, "&-out=*VELOC_HC");
             
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 

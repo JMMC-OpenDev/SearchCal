@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.5 2005-01-24 10:58:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -84,7 +84,7 @@ vobsCATALOG::~vobsCATALOG()
  *
  * \param name name value to set, in a string format
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Error codes:\n
  * The possible errors are :
@@ -98,12 +98,12 @@ mcsCOMPL_STAT vobsCATALOG::SetName(char *name)
     if ( (strcmp(name,"")==0) || (name==NULL) )
     {
         errAdd(vobsERR_BAD_CATALOG_NAME);
-        return FAILURE;
+        return mcsFAILURE;
     }
     
     // copy in the catalog name attribute the value to set
     strcpy(_name, name);
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -111,7 +111,7 @@ mcsCOMPL_STAT vobsCATALOG::SetName(char *name)
  *
  * \param name  name to get, in a string format
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Error codes:\n
  * The possible errors are :
@@ -125,11 +125,11 @@ mcsCOMPL_STAT vobsCATALOG::GetName(char *name)
     if (_name==NULL)
     {
         errAdd(vobsERR_BAD_CATALOG_NAME);
-        return FAILURE;
+        return mcsFAILURE;
     }
     // copy the catalog name in the name to return
     strcpy(name,_name);
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -141,7 +141,7 @@ mcsCOMPL_STAT vobsCATALOG::GetName(char *name)
  * \param request a vobsREQUEST which have all the contraints for the search
  * \param list a vobsSTAR_LIST as the result of the search
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \sa vobsREQUEST
  *
@@ -192,17 +192,17 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     // if ok, the asking is writing according to only the request
     if (list.IsEmpty()==mcsTRUE)
     {
-        if (PrepareQuery(request)==FAILURE)
+        if (PrepareQuery(request)==mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
     }
     // else, the asking is writing according to the request and the star list
     else 
     {
-        if (PrepareQuery(request, list)==FAILURE)
+        if (PrepareQuery(request, list)==mcsFAILURE)
         { 
-            return FAILURE; 
+            return mcsFAILURE; 
         }
     }
     
@@ -212,12 +212,12 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     // the parser get the internet of the query and analyse th file coming
     // from this address
     if (parser.Parse(miscDynBufGetBufferPointer(&_query), list, logFileName)
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE; 
+        return mcsFAILURE; 
     }
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*
@@ -233,7 +233,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
  *
  * \param request vobsREQUEST which have all the contraints for the search
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors codes:\n 
  * The possible errors are:
@@ -251,15 +251,15 @@ mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST &request)
     // the location
     // the position of the reference star
     // the specific part of the query
-    if ((WriteQueryURIPart()==FAILURE) ||
-        (WriteReferenceStarPosition(request)==FAILURE) ||
-        (WriteQuerySpecificPart(request)==FAILURE) )
+    if ((WriteQueryURIPart()==mcsFAILURE) ||
+        (WriteReferenceStarPosition(request)==mcsFAILURE) ||
+        (WriteQuerySpecificPart(request)==mcsFAILURE) )
     {
         errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
-        return FAILURE;
+        return mcsFAILURE;
     }
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -271,7 +271,7 @@ mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST &request)
  * \param request vobsREQUEST which have all the contraints for the search  
  * \param tmpList vobsSTAR_LIST which come from an older ask to the CDS. 
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n 
  * The possible errors are:
@@ -287,16 +287,16 @@ mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST request, vobsSTAR_LIST &tmpL
     // the constant part of the query
     // the specific part of the query
     // the list to complete
-    if ( (WriteQueryURIPart()==FAILURE) ||
-         (WriteQueryConstantPart()==FAILURE) ||
-         (WriteQuerySpecificPart()==FAILURE) ||
-         (WriteQueryStarListPart(tmpList)==FAILURE) )
+    if ( (WriteQueryURIPart()==mcsFAILURE) ||
+         (WriteQueryConstantPart()==mcsFAILURE) ||
+         (WriteQuerySpecificPart()==mcsFAILURE) ||
+         (WriteQueryStarListPart(tmpList)==mcsFAILURE) )
     {
         errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -306,7 +306,7 @@ mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST request, vobsSTAR_LIST &tmpL
  * web server. It is possible to find them on the URL : 
  * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -317,15 +317,15 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryURIPart(void)
 {
     logExtDbg("vobsCATALOG::WriteQueryURI()");
 
-    if ((miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")==FAILURE) ||
-        (miscDynBufAppendString(&_query, "asu-xml?-source=")==FAILURE) ||
-        (miscDynBufAppendString(&_query, _name)==FAILURE) )
+    if ((miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")==mcsFAILURE) ||
+        (miscDynBufAppendString(&_query, "asu-xml?-source=")==mcsFAILURE) ||
+        (miscDynBufAppendString(&_query, _name)==mcsFAILURE) )
     {
         errAdd(vobsERR_URI_WRITE_FAILED);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -335,7 +335,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryURIPart(void)
  * asking is the same.
  *
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n 
  * The possible errors are:
@@ -345,15 +345,15 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryConstantPart(void)
 {
     logExtDbg("vobsCATALOG::GetAskingConstant()");
 
-    if ( (miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==FAILURE) ||
-         (miscDynBufAppendString(&_query,"&-out.max=50")==FAILURE) ||
-         (miscDynBufAppendString(&_query,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==FAILURE) )
+    if ( (miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==mcsFAILURE) ||
+         (miscDynBufAppendString(&_query,"&-out.max=50")==mcsFAILURE) ||
+         (miscDynBufAppendString(&_query,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==mcsFAILURE) )
     {
         errAdd(vobsERR_CONSTANT_WRITE_FAILED);
-        return FAILURE;
+        return mcsFAILURE;
     }
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -363,7 +363,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryConstantPart(void)
  * which is write specificaly for each catalog.
  *
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  *
  */
@@ -372,7 +372,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(void)
     logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
 
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -384,7 +384,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(void)
  *
  * \param request vobsREQUEST which help to restrict the search
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -395,7 +395,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(vobsREQUEST request)
     logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
 
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -406,7 +406,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(vobsREQUEST request)
  *
  * \param request vobsREQUEST which help to restrict the search 
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -421,16 +421,16 @@ mcsCOMPL_STAT vobsCATALOG::WriteReferenceStarPosition(vobsREQUEST request)
     mcsSTRING32 dec;
     request.GetConstraint(DEC_ID,dec);
     
-    if ( (miscDynBufAppendString(&_query,"&-c.ra=")==FAILURE) ||
-         (miscDynBufAppendString(&_query,ra)==FAILURE) ||
-         (miscDynBufAppendString(&_query,"&-c.dec=")==FAILURE) ||
-         (miscDynBufAppendString(&_query,dec)==FAILURE) )
+    if ( (miscDynBufAppendString(&_query,"&-c.ra=")==mcsFAILURE) ||
+         (miscDynBufAppendString(&_query,ra)==mcsFAILURE) ||
+         (miscDynBufAppendString(&_query,"&-c.dec=")==mcsFAILURE) ||
+         (miscDynBufAppendString(&_query,dec)==mcsFAILURE) )
     {
         errAdd(vobsERR_POSITION_WRITE_FAILED);
-        return FAILURE;
+        return mcsFAILURE;
     }
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -440,7 +440,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteReferenceStarPosition(vobsREQUEST request)
  *
  * \param list vobsSTAR_LIST which help to build the end part
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -457,17 +457,17 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
     StarList2Sring(strList, list);
     
     
-    if ( (miscDynBufAppendString(&_query,"&-out.form=List")==FAILURE) ||
-         (miscDynBufAppendString(&_query, miscDynBufGetBufferPointer(&strList))==FAILURE) )
+    if ( (miscDynBufAppendString(&_query,"&-out.form=List")==mcsFAILURE) ||
+         (miscDynBufAppendString(&_query, miscDynBufGetBufferPointer(&strList))==mcsFAILURE) )
     {
         errAdd(vobsERR_END_WRITE_FAILED);
         miscDynBufDestroy(&strList);
-        return FAILURE;
+        return mcsFAILURE;
     }
 
     miscDynBufDestroy(&strList);
     
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -480,7 +480,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
  * \param strList string list as a string
  * \param list star list to cnvert
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -518,14 +518,14 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
                 {
                     errResetStack();
                 }
-                return FAILURE;
+                return mcsFAILURE;
             }*/
             if (sscanf(ra, "%s %s %s",
                        (char*)&hra,
                        (char*)&mra,
                        (char*)&sra) != 3)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
             miscDynBufAppendString(&strList, hra);
             miscDynBufAppendString(&strList,"+");
@@ -543,14 +543,14 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
                 {
                     errResetStack();
                 }
-                return FAILURE;
+                return mcsFAILURE;
             }*/
             if (sscanf(dec, "%s %s %s",
                        (char*)&ddec,
                        (char*)&mdec,
                        (char*)&sdec) != 3)
             {
-                return FAILURE;
+                return mcsFAILURE;
             }
             if (ddec[0]=='+')
             {
@@ -573,7 +573,7 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
         miscDynBufAppendString(&strList,"&%3D%3D%3D%3Dresult1%5F280%2Etxt");
         
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 /*
  * Private methods

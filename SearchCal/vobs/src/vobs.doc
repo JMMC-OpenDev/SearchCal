@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.doc,v 1.3 2004-10-15 07:52:12 scetre Exp $"
+* "@(#) $Id: vobs.doc,v 1.4 2005-01-24 10:58:44 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -71,22 +71,22 @@ int main(int argc, char *argv[])
     vobsREQUEST request;
 
     // Affect the kind of request
-    if (request.SetKindOfRequest(1)==FAILURE)
+    if (request.SetKindOfRequest(1)==mcsFAILURE)
     {
         errDisplayStack();
         errCloseStack();
-        exit(EXIT_FAILURE); 
+        exit(EXIT_mcsFAILURE); 
     }
 
-    if ((request.SetConstraint(STAR_NAME_ID,"ETA TAU") == SUCCESS) &&
-        (request.SetConstraint(STAR_WLEN_ID,"0.65") == SUCCESS) &&
-        (request.SetConstraint(STAR_MAGNITUDE_ID,"2.87") == SUCCESS) &&
-        (request.SetConstraint(MAGNITUDE_RANGE_ID,"1..5") == SUCCESS) &&
-        (request.SetConstraint(SEARCH_BOX_RA_ID,"03+47+29.08") == SUCCESS) &&
-        (request.SetConstraint(SEARCH_BOX_DEC_ID,"+24+06+18.5") == SUCCESS) &&
-        (request.SetConstraint(STAR_EXPECTED_VIS_ID,"0.349") == SUCCESS) &&
-        (request.SetConstraint(STAR_MAX_ERR_VIS_ID,"0.035") == SUCCESS) &&
-        (request.SetConstraint(OBSERVED_BAND_ID,"V") == SUCCESS ))
+    if ((request.SetConstraint(STAR_NAME_ID,"ETA TAU") == mcsSUCCESS) &&
+        (request.SetConstraint(STAR_WLEN_ID,"0.65") == mcsSUCCESS) &&
+        (request.SetConstraint(STAR_MAGNITUDE_ID,"2.87") == mcsSUCCESS) &&
+        (request.SetConstraint(MAGNITUDE_RANGE_ID,"1..5") == mcsSUCCESS) &&
+        (request.SetConstraint(SEARCH_BOX_RA_ID,"03+47+29.08") == mcsSUCCESS) &&
+        (request.SetConstraint(SEARCH_BOX_DEC_ID,"+24+06+18.5") == mcsSUCCESS) &&
+        (request.SetConstraint(STAR_EXPECTED_VIS_ID,"0.349") == mcsSUCCESS) &&
+        (request.SetConstraint(STAR_MAX_ERR_VIS_ID,"0.035") == mcsSUCCESS) &&
+        (request.SetConstraint(OBSERVED_BAND_ID,"V") == mcsSUCCESS ))
     {
         // Check if the request is correctly build
         if (request.Check()==mcsTRUE)
@@ -98,14 +98,14 @@ int main(int argc, char *argv[])
         {
             errDisplayStack();
             errCloseStack();
-            exit(EXIT_FAILURE);
+            exit(EXIT_mcsFAILURE);
         }
     }
     else 
     {
         errDisplayStack();
         errCloseStack();
-        exit(EXIT_FAILURE);
+        exit(EXIT_mcsFAILURE);
     }
     errDisplayStack();
 
@@ -113,11 +113,11 @@ int main(int argc, char *argv[])
 
     vobsVIRTUAL_OBSERVATORY vobs;
 
-    if (vobs.Research(request, starList)==FAILURE)
+    if (vobs.Research(request, starList)==mcsFAILURE)
     {
         errDisplayStack();
         errCloseStack();
-        exit(EXIT_FAILURE);
+        exit(EXIT_mcsFAILURE);
     }
     /*else
     {
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
     errDisplayStack();
     
     logInfo("Exiting ...");
-    exit(EXIT_SUCCESS);
+    exit(EXIT_mcsSUCCESS);
 
 }
 
