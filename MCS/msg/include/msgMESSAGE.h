@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.11 2004-12-08 17:44:00 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.12 2004-12-15 09:57:54 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,6 +17,7 @@
 * lafrasse  01-Dec-2004  Comment refinments
 * gzins     06-Dec-2004  Updated to be only C++
 * gzins     08-Dec-2004  Added senderId and messageId, with associated methods
+* gzins     15-Dec-2004  Added _NAME to command name definitions
 *
 *******************************************************************************/
 
@@ -48,10 +49,10 @@
 /**
  * Standard command names
  */
-#define msgDEBUG_CMD            "DEBUG"
-#define msgPING_CMD             "PING"
-#define msgEXIT_CMD             "EXIT"
-#define msgVERSION_CMD          "VERSION"
+#define msgDEBUG_CMD_NAME        "DEBUG"
+#define msgPING_CMD_NAME         "PING"
+#define msgEXIT_CMD_NAME         "EXIT"
+#define msgVERSION_CMD_NAME      "VERSION"
 
 /* 
  * Macro definition

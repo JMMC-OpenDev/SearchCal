@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPrivate.h,v 1.5 2004-12-09 13:55:35 scetre Exp $"
+* "@(#) $Id: msgPrivate.h,v 1.6 2004-12-15 09:57:54 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,7 @@
 * gzins     06-Dec-2004  Removed no longer used C functions
 * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
 * gzins     09-Dec-2004  Removed msgMANAGER_PORT_NUMBER definition
+* gzins     15-Dec-2004  Added _NAME to command name definitions
 *
 *******************************************************************************/
 
@@ -44,8 +45,8 @@ extern "C" {
 /**
  * Private command name
  */
-#define msgREGISTER_CMD                 "REGISTER"
-#define msgCLOSE_CMD                    "CLOSE"
+#define msgREGISTER_CMD_NAME             "REGISTER"
+#define msgCLOSE_CMD_NAME                "CLOSE"
 
 
 /*
