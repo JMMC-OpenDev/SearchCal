@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: misc.doc,v 1.9 2005-02-15 09:40:34 gzins Exp $"
+ * "@(#) $Id: misc.doc,v 1.10 2005-02-22 08:08:33 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/15 09:40:34  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  18-Jul-2004  Created
  * lafrasse  22-Jul-2004  Added new File functions, and passed some polish
  * lafrasse  02-Aug-2004  Removed miscDynStr due to null-terminated string
@@ -19,14 +22,16 @@
 \mainpage misc : Miscellaneous functions
 
 <b>Brief description</b>\n
-The 'Miscellaneous Functions' (misc) module is a collection of usefull functions, meant to be used by every sort of programs and libraries.
+The 'Miscellaneous Functions' (misc) module is a collection of useful functions, meant to be used by every sort of programs and libraries.
 
 <b>Detailed decription</b>\n
 As of today, the misc module contains functions to deal with :
-\li miscDate.c (getting local and UTC time)
-\li miscDynBuf.c (auto-expanding, byte-based buffer)
-\li miscFile.c (UNIX-like file path computing, and environment variables resolving)
-\li miscNetwork.c (network-related utility functions)
-\li miscString.c (null-terminated string computing, like quotes stripping and upper casing)
-\li miscHash.c (hash table management)
+\li \b date: get local and UTC time (miscDate.c)
+\li <b> dynamic buffer </b>: auto-expanding, byte-based buffer (miscDynBuf.c)
+\li \b files: UNIX-like file path computing, and environment variables resolving
+(miscFile.c)
+\li \b network: network-related utility functions (miscNetwork.c)
+\li \b strings: null-terminated string computing, like quotes stripping and
+upper casing (miscString.c)
+\li \b hash table: hash table handling (miscHash.c)
 */
