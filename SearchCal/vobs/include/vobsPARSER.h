@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.6 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.7 2004-12-06 15:07:07 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -44,7 +44,7 @@ public:
     // Parse of the XML document from a URI
     mcsCOMPL_STAT Parse(char *uri, 
                         vobsSTAR_LIST &starList,
-                        mcsSTRING256 fileName);
+                        char* logFileName);
     
 protected:
 

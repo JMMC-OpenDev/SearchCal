@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.2 2004-12-06 15:07:07 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.2 2004-12-06 15:07:07 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -130,7 +130,8 @@ mcsUINT32 vobsCDATA::getNbColumns(void)
  * 
  * \param colName pointer to the name of the next column
  * \param ucdName pointer to the corresponding UCD 
- *
+ * \param init
+ * 
  * \return SUCCESS or FAILURE if the end of the column list is reached.
  */
 mcsCOMPL_STAT vobsCDATA::getNextColDesc(char **colName, char **ucdName,

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.4 2004-12-06 14:37:38 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.5 2004-12-06 15:07:07 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.4 2004-12-06 14:37:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.5 2004-12-06 15:07:07 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -447,7 +447,7 @@ mcsLOGICAL vobsSTAR::IsPropertySet(char *ucd) const
 /**
  * Check whether the property is set or not.  
  * 
- * \param ucd UCD id. 
+ * \param ucdId UCD id. 
  * 
  * \warning
  * If the given UCD id is invalid, this method returns false (i.e.  mcsFALSE)
