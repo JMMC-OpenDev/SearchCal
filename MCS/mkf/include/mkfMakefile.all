@@ -2,13 +2,14 @@
 #
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile.all,v 1.1 2004-09-10 13:42:20 gzins Exp $" 
+# "@(#) $Id: mkfMakefile.all,v 1.2 2004-12-09 17:41:07 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
 # gzins     26-Aug-2004  Adapted from VLT
-
-
+# gzins     09-Dec-2004  Removed rules to generate eroor header files (done
+#                        in mkfMakefile)
+#
 #*******************************************************************************
 #   NAME
 #   mkfMakefile.all - auxiliary file used by mkfMakefile
@@ -327,18 +328,6 @@ ifneq "$(strip $(TCL_LIBRARY_LIST))" ""
     include $(addprefix ../object/, $(addsuffix .dat, $(TCL_LIBRARY_LIST)))
 endif
 
-#
-# if the list of panels is not empty, include panel-dependencies files. 
-PANEL_LIST = $(PANELS) $(PANELS_L)
-ifneq "$(strip $(PANEL_LIST))" "" 
-    include $(addprefix ../object/, $(addsuffix .dpan, $(PANEL_LIST)))
-endif
-
-#
-# include error index dependency files (the file should have been created
-# by mkfMakefile) 
-include ../object/mkfMakeErrorFileDependencies.del
-
 #################################################
 #################################################
 # entry points for various language specific
@@ -352,13 +341,10 @@ include $(MAKEDIR)/mkfPythonMakefile
 # set standard targets.                         #
 #################################################
 #ALL_TARGET := $(ALL_TARGET) do_ERRORS make_links do_libs do_exes do_scripts do_tcl
-ALL_TARGET := do_ERRORS $(ALL_TARGET) make_links do_libs do_exes do_scripts do_tcl
+ALL_TARGET := $(ALL_TARGET) make_links do_libs do_exes do_scripts do_tcl
 
 .PHONY : do_all
 do_all :  $(ALL_TARGET)
-
-#
-# do_ERRORS is provided by mkfMakeErrorFileDependencies.del
 
 .PHONY : do_libs
 do_libs: $(LIBRARY_LIST)
