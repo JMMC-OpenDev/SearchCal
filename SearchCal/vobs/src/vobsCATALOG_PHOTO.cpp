@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.3 2005-01-26 08:11:28 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.4 2005-01-27 13:45:49 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/01/26 08:11:28  scetre
+* change history
+*
 * scetre    28-Jul-2004  Created
 *
 *
@@ -15,7 +18,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.3 2005-01-26 08:11:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.4 2005-01-27 13:45:49 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -144,7 +147,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST request)
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_R");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_I&-out=*PHOT_JHN_J");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_H&-out=*PHOT_JHN_K");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_K");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_U&-out=*PHOT_JHN_L");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_M&-out=*PHOT_IR_N:10.4");
     miscDynBufAppendString(&_query, "&-sort=_r");
