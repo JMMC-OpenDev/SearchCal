@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.15 2005-03-04 16:28:28 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.16 2005-03-06 20:24:30 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/03/04 16:28:28  scetre
+* Changed Call to Save method
+*
 * Revision 1.14  2005/03/04 15:50:45  scetre
 * Added typedef of vobsSTAR_PROPERTY_ID
 * Updated call to Store method of CDATA
@@ -39,7 +42,7 @@
 #include"vobsSTAR.h"
 
 /** typedef of UCD order list*/
-typedef std::list<char *> vobsSTAR_PROPERTY_ID_LIST;
+typedef std::list<string> vobsSTAR_PROPERTY_ID_LIST;
 
 /**
  * vobsSTAR_LIST is a class which caracterises a list of star.
