@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestVirtualObsV.C,v 1.5 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsTestVirtualObsV.C,v 1.6 2004-11-24 14:39:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualObsV.C,v 1.5 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualObsV.C,v 1.6 2004-11-24 14:39:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -65,14 +65,7 @@ int main(int argc, char *argv[])
     logInfo("Starting ...");
     vobsREQUEST request;
 
-    // Affect the kind of request
-    if (request.SetKindOfRequest(1)==FAILURE)
-    {
-        errDisplayStack();
-        errCloseStack();
-        exit(EXIT_FAILURE); 
-    }
-
+    
     if ((request.SetConstraint(STAR_NAME_ID,"ETA TAU") == SUCCESS) &&
         (request.SetConstraint(RA_ID,"03+47+29.08") == SUCCESS) &&
         (request.SetConstraint(DEC_ID,"+24+06+18.5") == SUCCESS) &&

@@ -2,7 +2,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: getInformation.C,v 1.4 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: getInformation.C,v 1.5 2004-11-24 14:39:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: getInformation.C,v 1.4 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: getInformation.C,v 1.5 2004-11-24 14:39:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -291,13 +291,6 @@ int main(int argc, char *argv[])
     logInfo("Starting ...");
     vobsREQUEST request;
 
-    // Affect the kind of request
-    if (request.SetKindOfRequest(0) == FAILURE)
-    {
-        errDisplayStack();
-        errCloseStack();
-        exit(EXIT_FAILURE); 
-    }
 
     if (request.SetConstraint(STAR_NAME_ID,miscDynBufGetBufferPointer(&starName)) == FAILURE)
     {
@@ -305,7 +298,12 @@ int main(int argc, char *argv[])
         errCloseStack();
         exit(EXIT_FAILURE);
     }
-
+    if (request.SetConstraint(OBSERVED_BAND_ID,"V") == FAILURE)
+    {
+        errDisplayStack();
+        errCloseStack();
+        exit(EXIT_FAILURE);
+    }
     vobsSTAR star;
     star.SetProperty(POS_EQ_RA_MAIN_ID, ra);
     star.SetProperty(POS_EQ_DEC_MAIN_ID, dec);
@@ -321,7 +319,7 @@ int main(int argc, char *argv[])
     }
 
     //errDisplayStack();
-
+    starList.Display();
 
 
     logInfo("Exiting ...");

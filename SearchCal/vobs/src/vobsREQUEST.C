@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.12 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.13 2004-11-24 14:39:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.12 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.13 2004-11-24 14:39:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -109,68 +109,6 @@ vobsREQUEST::~vobsREQUEST()
 /*
  * Public methods
  */
-
-/**
- * Set the kind of request.
- *
- * Set value corresponding to the kind of request (single star search or star
- * list search) 0 or 1
- *
- * \param value kind of request integer (0=star or 1=starlist)
- *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
- *
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_INVALID_KIND_OF_REQUEST
- */
-mcsCOMPL_STAT vobsREQUEST::SetKindOfRequest(int value)
-{
-    logExtDbg("vobsREQUEST::SetKindOfRequest()");
-   
-    // Compare value with 0 or 1
-    // to check if the kind of request format is correct
-    if ( (value<0) || (value>1) )
-    {
-        errAdd(vobsERR_INVALID_KIND_OF_REQUEST,value);
-        return FAILURE;
-    }
-    
-    // Affect kind of request value
-    kindOfRequest=value;
-    
-    return SUCCESS;
-}
-
-/**
- * Get the kind of request.
- *
- * \param value Kind of request to get as an integer
- *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
- *
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_KIND_OF_REQUEST_NOT_SET
- *
- */
-mcsCOMPL_STAT vobsREQUEST::GetKindOfRequest(int &value)
-{
-    logExtDbg("vobsREQUEST::GetKindOfRequest()");
-    // Compare Kind of request with 0 or 1
-    // to check if the kind of request is already affected
-    if ((kindOfRequest<0)||(kindOfRequest>1))
-    {
-        errAdd(vobsERR_KIND_OF_REQUEST_NOT_SET);
-        return FAILURE;
-    }
-    
-    // Retreive kind of request
-    value=kindOfRequest;
-    
-    return SUCCESS;
-    
-}
 
 /**
  * Set a request constraint.
@@ -446,38 +384,18 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, float *
 mcsLOGICAL vobsREQUEST::Check(void)
 {
     logExtDbg("vobsREQUEST::Check()");
-    
-    // Check if the kind of request is build
-    int kindOfReq=0;
-    if (GetKindOfRequest(kindOfReq)==FAILURE)
+
+    // Check if the CONSTRAINTS are build for the star list search
+    for (int i=0; i<vobsNB_REQUEST_CONSTRAINTS; i++)
     {
-        errAdd(vobsERR_CHECK_OF_KIND_OF_REQUEST_FAILED);
-        return mcsFALSE;
-    }
-   
-    // Check if the star name is build for the simple star search
-    if (kindOfRequest==0)
-    {
-        if (strcmp(_constraints[STAR_NAME_ID],vobsREQUEST_CONSTRAINT_NOT_SET)==0)
+        if (strcmp(_constraints[(vobsCONSTRAINT_ID)i],
+                   vobsREQUEST_CONSTRAINT_NOT_SET)==0)
         {
-            errAdd(vobsERR_CHECK_FOR_SIMPLE_STAR_FAILED);
+            errAdd(vobsERR_CHECK_FOR_STAR_LIST_FAILED);
             return mcsFALSE;
         }
     }
 
-    // Check if the CONSTRAINTS are build for the star list search
-    if (kindOfRequest==1)
-    {
-        for (int i=0; i<vobsNB_REQUEST_CONSTRAINTS; i++)
-        {
-            if (strcmp(_constraints[(vobsCONSTRAINT_ID)i],
-                       vobsREQUEST_CONSTRAINT_NOT_SET)==0)
-            {
-                errAdd(vobsERR_CHECK_FOR_STAR_LIST_FAILED);
-                return mcsFALSE;
-            }
-        }
-    }
     return mcsTRUE;
 }
 

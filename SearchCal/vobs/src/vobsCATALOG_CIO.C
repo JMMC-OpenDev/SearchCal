@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.C,v 1.11 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.C,v 1.12 2004-11-24 14:39:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.11 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.12 2004-11-24 14:39:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,31 +88,13 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
 mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG::PrepareQuery()");
-    
-    int kindOfRequest;
-    if (request.GetKindOfRequest(kindOfRequest) == FAILURE)
+
+    if ((WriteQueryURIPart()==FAILURE) ||
+        (WriteReferenceStarPosition(request)==FAILURE) ||
+        (WriteQuerySpecificPart(request)==FAILURE) )
     {
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return FAILURE;
-    }
-    if (kindOfRequest == 0)
-    {
-        miscDynBufAppendString(&_query,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=II/225/catalog&-out.max=100&name=");
-        mcsSTRING32 name;
-        request.GetConstraint(STAR_NAME_ID, name);
-        miscDynBufAppendString(&_query, name);
-        miscDynBufAppendString(&_query,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-        miscDynBufAppendString(&_query,"&-out=lambda&-out=F(IR)");
-        miscDynBufAppendString(&_query,"&-out=x_F(IR)&-sort=_r");
-    }
-    else
-    {
-        if ((WriteQueryURIPart()==FAILURE) ||
-            (WriteReferenceStarPosition(request)==FAILURE) ||
-            (WriteQuerySpecificPart(request)==FAILURE) )
-        {
-            errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
-            return FAILURE;
-        }
     }
     return SUCCESS;
 }

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.7 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.8 2004-11-24 14:39:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -84,12 +84,6 @@ public:
 
     // Destructor
     virtual ~vobsREQUEST();
-
-    // Methods to set the kind of request
-    virtual mcsCOMPL_STAT SetKindOfRequest(int value);
-    
-    // Method to get the kind of request
-    virtual mcsCOMPL_STAT GetKindOfRequest(int &value);
     
     // Methods to set the request contraints
     virtual mcsCOMPL_STAT SetConstraint(char *constraint, char *value);
@@ -120,7 +114,6 @@ private:
 
     /** Table containing the request constraints */
     vobsREQUEST_CONSTRAINT _constraints[vobsNB_REQUEST_CONSTRAINTS];
-    mcsINT32 kindOfRequest;
 };
 #endif /*!vobsREQUEST_H*/
 

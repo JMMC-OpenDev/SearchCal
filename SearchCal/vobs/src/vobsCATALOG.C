@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.18 2004-11-23 12:47:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.19 2004-11-24 14:39:09 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.18 2004-11-23 12:47:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.19 2004-11-24 14:39:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -328,7 +328,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteQueryConstantPart(void)
     logExtDbg("vobsCATALOG::GetAskingConstant()");
 
     if ( (miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==FAILURE) ||
-         (miscDynBufAppendString(&_query,"&-out.max=100")==FAILURE) ||
+         (miscDynBufAppendString(&_query,"&-out.max=50")==FAILURE) ||
          (miscDynBufAppendString(&_query,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==FAILURE) )
     {
         errAdd(vobsERR_CONSTANT_WRITE_FAILED);
