@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.13 2005-03-02 17:11:10 gzins Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.14 2005-03-04 17:51:02 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/03/02 17:11:10  gzins
+ * Set confidence index to alxCONFIDENCE_LOW when K-band magnitude is unknown.
+ *
  * Revision 1.12  2005/02/25 15:13:09  gluck
  * Changed 2 logTest to logInfo to have them in test outputs
  *
@@ -58,7 +61,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.13 2005-03-02 17:11:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.14 2005-03-04 17:51:02 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -445,7 +448,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         }
         else
         {
-            logInfo("mgB-mgV = %.3f / B-V %.3f; delta > 0.1",
+            logTest("mgB-mgV = %.3f / B-V %.3f; delta > 0.1",
                     (mgB-mgV), colorTable->index[line][alxB_V]);
         }
     }
@@ -534,7 +537,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         }
         else
         {
-            logInfo("mgB-mgV = %.3f / B-V [%.3f..%.3f]; delta > 0.1",
+            logTest("mgB-mgV = %.3f / B-V [%.3f..%.3f]; delta > 0.1",
                     (mgB-mgV), colorTable->index[lineInf][alxB_V], 
                     colorTable->index[lineSup][alxB_V]);
         }
