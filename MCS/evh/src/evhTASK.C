@@ -1,16 +1,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhTASK.C,v 1.2 2004-11-18 17:37:19 gzins Exp $"
+* "@(#) $Id: evhTASK.C,v 1.3 2004-12-03 08:55:39 gzins Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * gzins     09-Jun-2004  created
 * gzins     18-Nov-2004  splitted parsing and usage methods to separate
 *                        options and arguments in command-line parameters
+* gzins     03-Dec-2004  Added -n command-line option  
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: evhTASK.C,v 1.2 2004-11-18 17:37:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTASK.C,v 1.3 2004-12-03 08:55:39 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -27,6 +28,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  *     \arg <em>-v \<level></em> \n stdout log level
  *     \arg <em>-a \<level></em> \n action log level
  *     \arg <em>-t \<level></em> \n timer log level
+ *     \arg <em>-n \<name></em>  \n registering name to MCS services  
  *     \arg <em>-version</em>    \n print the version number of the SW
  *     \arg <em>-noDate</em>     \n turn off the display of date in stdout log
  *                               messages
@@ -277,6 +279,8 @@ mcsCOMPL_STAT evhTASK::PrintStdOptions()
     cout <<"                   -v <level>   set stdout log level" << endl;
     cout <<"                   -a <level>   set action log level" << endl;
     cout <<"                   -t <level>   set timer log level" << endl;
+    cout <<"                   -n <name>    registering name to MCS services" 
+        << endl; 
     cout <<"                   -h           print this help" << endl;
     cout <<"                   -version     print the version number of the ";
     cout <<"software" << endl;
@@ -351,15 +355,19 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, mcsINT8 *argv[])
         {
             return FAILURE;
         }
+        // If option has not been handled
         else if (optUsed == mcsFALSE)
         {
+            // Parses application options
             optUsed = mcsTRUE;
             if (ParseAppOptions(argc, argv, &optInd, &optUsed) != SUCCESS)
             {
                 return FAILURE;
             }
+            // If option has still not been handled
             else if (optUsed == mcsFALSE)
             {
+                // Parses arguments 
                 optUsed = mcsTRUE;
                 if (ParseArguments(argc, argv, &optInd, &optUsed) != SUCCESS)
                 {
@@ -380,6 +388,7 @@ mcsCOMPL_STAT evhTASK::ParseOptions(mcsINT32 argc, mcsINT8 *argv[])
                     return FAILURE;
                 }
             }
+            // End if
         }
         // End if
     }
@@ -505,6 +514,27 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, mcsINT8 *argv[],
             }
             //ixacTIMER_LOGS::SetLevel(level);
             _timerLogOption = mcsTRUE;
+        }
+        else
+        {
+            logError ("%s: Option %s requires an argument",
+                      Name(), argv[*optInd]);
+            return FAILURE;
+        }
+    }
+    // Else if MCS registering name specified
+    else if (strcmp(argv[*optInd], "-n") == 0)
+    {
+        // Set MCS registering name
+        if ((*optInd + 1) < argc)
+        {
+            *optInd += 1;
+            optarg = argv[*optInd];
+            // Re-initialize MCS services
+            if (mcsInit(argv[*optInd]) == FAILURE)
+            {
+                return (FAILURE);
+            }
         }
         else
         {

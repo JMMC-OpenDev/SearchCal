@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.C,v 1.3 2004-11-23 09:15:46 gzins Exp $"
+* "@(#) $Id: evhSERVER.C,v 1.4 2004-12-03 08:55:12 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,6 +9,7 @@
 * gzins     18-Nov-2004  Added PrintSynopsis, PrintArguments, ParseArguments,
 *                        Connect, Disconnect and MainLoop methods
 *                        Updated Init.
+* gzins     03-Dec-2004  Added -n command-line option  
 *
 *******************************************************************************/
 
@@ -17,7 +18,7 @@
  * evhSERVER class definition.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.C,v 1.3 2004-11-23 09:15:46 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.C,v 1.4 2004-12-03 08:55:12 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -127,6 +128,7 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, mcsINT8 *argv[],
 
     return SUCCESS;
 }
+
 /**
  * Initialization of server.
  * It registers callback for VERSION command.
@@ -163,12 +165,19 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
     return SUCCESS;
 }
 
+/**
+ * Connection to the MCS message service.
+ *
+ * It registers callback for VERSION command.
+ *
+ * \return SUCCESS 
+ */
 mcsCOMPL_STAT evhSERVER::Connect()
 {
     logExtDbg("evhSERVER::Connect()");
 
     // Connect to message services
-    if (_msgManager.Connect(Name(), NULL) == FAILURE)
+    if (_msgManager.Connect(Name()) == FAILURE)
     {
         return FAILURE;
     }
@@ -207,6 +216,40 @@ mcsCOMPL_STAT evhSERVER::MainLoop(msgMESSAGE *msg)
     // End if
 }
 
+/**
+ * Send a command message to a process.
+ *
+ * Send the \<command\>  to the \<destProc\> named process. The command
+ * parameters (if any) has to be given in \<paramList\>. The parameter list
+ * length can be specified using \<paramLen\>, if it is not given then the
+ * length of the parameter list string is used.
+ *
+ * \param command command name
+ * \param destProc remote process name
+ * \param paramList parameter list stored in a string
+ * \param paramsLen length of the parameter list string
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT evhSERVER::SendCommand(const char        *command,
+                                     const mcsPROCNAME  destProc,
+                                     const char        *paramList,  
+                                     mcsINT32           paramsLen)
+{
+    logExtDbg("evhSERVER::SendCommand()");
+
+    return _msgManager.SendCommand(command, destProc, paramList, paramsLen);
+}
+ 
+/**
+ * Send a reply message.
+ *
+ * \param msg the message to reply
+ * \param lastReply flag to specify if the current message is the last one or
+ * not
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
 mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
 {
     logExtDbg("evhSERVER::SendReply()");
