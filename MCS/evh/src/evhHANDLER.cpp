@@ -1,33 +1,34 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhHANDLER.cpp,v 1.5 2005-01-07 18:18:10 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     22-Sep-2004  Created
-* gzins     17-Nov-2004  Used evhXXX_CALLBACK pointer instead of instance
-*                        reference in order to fix bug related to the
-*                        referencing of deleted callback instance.
-* gzins     18-Nov-2004  Updated main loop to accept message as argument.
-*                        Returned error when no callback is attached to the
-*                        received command.
-* gzins     08-Dec-2004  Added some method documentation
-* gzins     08-Dec-2004  Added purge of events whith no more callback attached
-* gzins     22-Dec-2004  Implemented GetHelp()
-* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*                        Implemented AddCallback() and Run() for command reply
-*                        Updated MainLoop to support cammnd reply event
-*                        Added evhMainHandler global variable
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhHANDLER.cpp,v 1.6 2005-01-26 18:27:22 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     22-Sep-2004  Created
+ * gzins     17-Nov-2004  Used evhXXX_CALLBACK pointer instead of instance
+ *                        reference in order to fix bug related to the
+ *                        referencing of deleted callback instance.
+ * gzins     18-Nov-2004  Updated main loop to accept message as argument.
+ *                        Returned error when no callback is attached to the
+ *                        received command.
+ * gzins     08-Dec-2004  Added some method documentation
+ * gzins     08-Dec-2004  Added purge of events whith no more callback attached
+ * gzins     22-Dec-2004  Implemented GetHelp()
+ * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *                        Implemented AddCallback() and Run() for command reply
+ *                        Updated MainLoop to support cammnd reply event
+ *                        Added evhMainHandler global variable
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.5 2005-01-07 18:18:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.6 2005-01-26 18:27:22 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,6 +37,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <iostream>
 #include <list>
 using namespace std;
+#include <time.h>
+#include <sys/time.h>
 #include <errno.h>
 
 /*
@@ -120,7 +123,8 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhCMD_KEY &key,
         evhCMD_CALLBACK  *newCallback = new evhCMD_CALLBACK(callback);
         evhCALLBACK_LIST *newCbList   = new evhCALLBACK_LIST();
         newCbList->AddAtTail(newCallback);
-        _eventList.push_back(pair<evhKEY *, evhCALLBACK_LIST *>(newKey, newCbList));
+        _eventList.push_back(pair<evhKEY *,
+                             evhCALLBACK_LIST *>(newKey, newCbList));
     }
     // End if
 
@@ -162,7 +166,8 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhCMD_REPLY_KEY &key,
         evhCMD_CALLBACK  *newCallback = new evhCMD_CALLBACK(callback);
         evhCALLBACK_LIST *newCbList   = new evhCALLBACK_LIST();
         newCbList->AddAtTail(newCallback);
-        _eventList.push_back(pair<evhKEY *, evhCALLBACK_LIST *>(newKey, newCbList));
+        _eventList.push_back(pair<evhKEY *,
+                             evhCALLBACK_LIST *>(newKey, newCbList));
     }
     // End if
 
@@ -204,7 +209,8 @@ mcsCOMPL_STAT evhHANDLER::AddCallback(const evhIOSTREAM_KEY &key,
         evhIOSTREAM_CALLBACK *newCallback = new evhIOSTREAM_CALLBACK(callback);
         evhCALLBACK_LIST     *newCbList   = new evhCALLBACK_LIST();
         newCbList->AddAtTail(newCallback);
-        _eventList.push_back(pair<evhKEY *, evhCALLBACK_LIST *>(newKey, newCbList));
+        _eventList.push_back(pair<evhKEY *,
+                             evhCALLBACK_LIST *>(newKey, newCbList));
     }
     // End if
     return mcsSUCCESS;
@@ -280,7 +286,26 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
                 // Stop loop
                 return mcsFAILURE;
             }
-            // Else if a command received 
+            // Else if a timeout is expired
+            else if (key->GetType() == evhTYPE_COMMAND_REPLY)
+            {
+                // Add error 
+                errAdd(evhERR_TIMEOUT_EXPIRED,
+                       ((evhCMD_REPLY_KEY *)key)->GetCommand());
+                
+                // Build message with 
+                msgMESSAGE msg;
+                msg.SetCommand(((evhCMD_REPLY_KEY *)key)->GetCommand());
+                msg.SetCommandId(((evhCMD_REPLY_KEY *)key)->GetCommandId());
+                msg.SetType(msgTYPE_ERROR_REPLY);
+                
+                // Run attached callbacks
+                if (Run(*(evhCMD_REPLY_KEY *)key, msg) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // Else if a message (command or reply) received 
             else if (key->GetType() == evhTYPE_MESSAGE)
             {
                 // Read message
@@ -313,7 +338,7 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
                 {
                     // Build event key
                     evhCMD_REPLY_KEY cmdReplyEvent(msg.GetCommand(),
-                                                 msg.GetCommandId());
+                                                   msg.GetCommandId());
                     // Run attached callbacks
                     if (Run(cmdReplyEvent, msg) == mcsFAILURE)
                     {
@@ -385,22 +410,14 @@ mcsCOMPL_STAT evhHANDLER::HandeHelpCmd(msgMESSAGE &msg)
                 {
                     char *cdf;
                     cdf = ((evhCMD_KEY *)((*iter).first))->GetCdf();
-                    if (strlen(cdf) != 0)
+                    cmdCOMMAND cmd(command, "", cdf);
+                    string desc;
+                    if (cmd.GetDescription(desc) == mcsFAILURE)
                     {
-                        string desc;
-                        cmdCOMMAND cmd(command, "", cdf);
-                        if (cmd.GetDescription(desc) == mcsFAILURE)
-                        {
-                            return mcsFAILURE;
-                        }
-                        msg.AppendToBody(desc.c_str(), strlen(desc.c_str()));
-                        msg.AppendToBody("\n");
+                        return mcsFAILURE;
                     }
-                    else
-                    {
-                        msg.AppendToBody(command, strlen(command));
-                        msg.AppendToBody(" - no help available\n");
-                    }
+                    msg.AppendToBody(desc.c_str(), strlen(desc.c_str()));
+                    msg.AppendToBody("\n");
                     found = mcsTRUE;
                 }
             }
@@ -423,23 +440,13 @@ mcsCOMPL_STAT evhHANDLER::HandeHelpCmd(msgMESSAGE &msg)
                 char *cdf;
                 command = ((evhCMD_KEY *)((*iter).first))->GetCommand();
                 cdf = ((evhCMD_KEY *)((*iter).first))->GetCdf();
-                printf("command = %s\n", command); 
-                if (strlen(cdf) != 0)
+                string desc;
+                cmdCOMMAND cmd(command, "", cdf);
+                if (cmd.GetShortDescription(desc) == mcsFAILURE)
                 {
-                    string desc;
-                    cmdCOMMAND cmd(command, "", cdf);
-                    if (cmd.GetShortDescription(desc) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
-                    msg.AppendToBody(desc.c_str(), strlen(desc.c_str()));
-                    msg.AppendToBody("\n", 1);
+                    return mcsFAILURE;
                 }
-                else
-                {
-                    msg.AppendToBody(command, strlen(command));
-                    msg.AppendToBody(" - no help available\n", 21);
-                }
+                msg.AppendToBody(desc.c_str(), strlen(desc.c_str()));
             }
         }
         msg.AppendToBody("\0", 1);
@@ -458,7 +465,11 @@ mcsCOMPL_STAT evhHANDLER::HandeHelpCmd(msgMESSAGE &msg)
  * 
  * This method performs an asynchroneous wait for events. It returns whenever
  * a new message is received or a stream descriptor (see evhIOSTREAM_KEY) is
- * ready.
+ * ready. It returns a key corresponding to the received event:
+ * \li evhTYPE_MESSAGE event key if a message has been received (either command
+ * or reply)
+ * \li evhTYPE_IOSTREAM event key if an I/O stream is ready for reading
+ * \li evhTYPE_COMMAND_REPLY event key if a timeout is expired
  *
  * \return key corresponding to the received event or NULL if an error occurs.
  */
@@ -466,7 +477,7 @@ evhKEY *evhHANDLER::Select()
 {
     logExtDbg("evhHANDLER::Select()");
 
-    fd_set   readMask;
+    fd_set   readMask, refReadMask;
     
     mcsINT32 msgQueueSd = -1;
     mcsINT32 nbOfSds = 0;
@@ -500,27 +511,49 @@ evhKEY *evhHANDLER::Select()
     // End if
 
     // Set the set of descriptors for reading
-    FD_ZERO(&readMask);
+    FD_ZERO(&refReadMask);
     // Message queue
     if (_msgManager.IsConnected() == mcsTRUE)
     {
         // Get the socket descriptor for the message queue
         msgQueueSd = _msgManager.GetMsgQueue();
 
-        FD_SET(msgQueueSd, &readMask);
+        FD_SET(msgQueueSd, &refReadMask);
         maxSd = msgQueueSd + 1;
     }
 
     // I/O streams
     for (int sd=0; sd < nbOfSds; sd++)
     {
-        FD_SET(sds[sd], &readMask);
+        FD_SET(sds[sd], &refReadMask);
         maxSd = mcsMAX(maxSd, sds[sd] + 1);
     }
 
+     
     // Wait for message
     int status;
-    status = select(maxSd, &readMask, NULL, NULL, (struct timeval *)NULL);
+    do
+    {
+        // Accuracy for timer events; i.e. frequency at which the event handler
+        // look for timer events. 
+        struct timeval timeout ;
+        timeout.tv_sec = 1;
+        timeout.tv_usec = 100000; // 100 ms
+        readMask = refReadMask;
+        status = select(maxSd, &readMask, NULL, NULL, &timeout);
+        
+        // If no event is arrived 
+        if (status == 0)
+        {
+            // Check for timeout
+            evhCMD_REPLY_KEY *timeOutReplyKey;
+            timeOutReplyKey = CheckForTimeout();
+            if (timeOutReplyKey != NULL)
+            {
+                return timeOutReplyKey;
+            }
+        }
+    } while (status == 0);
 
     // If an error occured during select()
     if (status == -1)
@@ -650,7 +683,7 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
     if (counter == 0)
     {
         errAdd(evhERR_CMD_UNKNOWN, msg.GetCommand());
-        if (_msgManager.SendReply(msg, mcsTRUE)== mcsFAILURE)
+        if (_msgManager.SendReply(msg, mcsTRUE) == mcsFAILURE)
         {
             return mcsFAILURE;
         } 
@@ -718,14 +751,11 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_REPLY_KEY &key, msgMESSAGE &msg)
         }
     }
 
-    // If there is no callback attached to this command
+    // If there is no callback attached to this reply
     if (counter == 0)
     {
-        errAdd(evhERR_CMD_UNKNOWN, msg.GetCommand());
-        if (_msgManager.SendReply(msg, mcsTRUE)== mcsFAILURE)
-        {
-            return mcsFAILURE;
-        } 
+        logWarning("Received undesired command reply for %s command.",
+                   msg.GetCommand());
     }
 
     return mcsSUCCESS;
@@ -768,6 +798,49 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhIOSTREAM_KEY &key, int fd)
     }
     // End for
     return mcsSUCCESS;
+}
+
+/**
+ * Check expiration date of timeout.
+ *
+ * It scans the register event list, and check, for the command reply events, if
+ * the timeout is expired. If yes, it returns the pointer to this event. If
+ * there is no expired timeout, NULL is returned. 
+ * 
+ * \return pointer to event whose timeout is expired, or NULL if no timeout
+ * expired.
+ */
+evhCMD_REPLY_KEY *evhHANDLER::CheckForTimeout()
+{
+    // For each registered event
+    std::list<std::pair<evhKEY *, evhCALLBACK_LIST *> >::iterator iter;
+    for (iter=_eventList.begin(); iter != _eventList.end(); ++iter)
+    {
+        // If it is a command reply event
+        if (((*iter).first)->GetType() == evhTYPE_COMMAND_REPLY)
+        {
+            // It a timeout has been specified
+            if (((evhCMD_REPLY_KEY *)((*iter).first))->GetTimeout() !=
+                msgWAIT_FOREVER)
+            {
+                // Get the expiration date
+                struct timeval expDate;
+                ((evhCMD_REPLY_KEY *)((*iter).first))->GetTimeoutExpDate(&expDate);
+                // Get the system time
+                struct timeval  time;
+                gettimeofday(&time, NULL);
+
+                // Compare the expiration date and system time
+                if ((time.tv_sec > expDate.tv_sec) ||
+                    ((time.tv_sec == expDate.tv_sec) &&
+                     (time.tv_usec >= expDate.tv_usec)))
+                {
+                    return  ((evhCMD_REPLY_KEY *)((*iter).first));
+                }
+            }
+        }
+    }
+    return NULL;
 }
 
 /*___oOo___*/
