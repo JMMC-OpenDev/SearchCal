@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.5 2005-01-27 13:44:04 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.6 2005-01-27 15:55:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/01/27 13:44:04  scetre
+* remove vobsSCENARIO_ENTRY class
+*
 * Revision 1.4  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -68,7 +71,8 @@ public :
                                    vobsSTAR_COMP_CRITERIA_LIST criteriaList);
   
     // Execute the scenario
-    mcsCOMPL_STAT Execute(vobsREQUEST &request, vobsSTAR_LIST &starList);
+    mcsCOMPL_STAT Execute(vobsREQUEST &request,
+                                 vobsSTAR_LIST &starList);
 
 protected :
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.1 2005-01-27 13:42:54 scetre Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.2 2005-01-27 15:56:04 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/27 13:42:54  scetre
+ * vobsSCENARIO_ENTRY created. It move from vobsSCENARIO
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of vobsSCENARIO_ENTRY class.
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.1 2005-01-27 13:42:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.2 2005-01-27 15:56:04 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -47,24 +50,33 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY()
  */
 vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
 {
-    catalog=scenarioEntry.catalog;
-    listInput=scenarioEntry.listInput;
-    listOutput=scenarioEntry.listOutput;
-    action=scenarioEntry.action;
-    criteriaList=scenarioEntry.criteriaList;
+    _catalog=scenarioEntry._catalog;
+    _listInput=scenarioEntry._listInput;
+    _listOutput=scenarioEntry._listOutput;
+    _action=scenarioEntry._action;
+    _criteriaList=scenarioEntry._criteriaList;
 }
-
+/**
+ * Copy Constructor
+ */
+vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(vobsCATALOG                 *catalog,
+                                       vobsSTAR_LIST               *listInput,
+                                       vobsSTAR_LIST               *listOutput,
+                                       vobsACTION                  action,
+                                       vobsSTAR_COMP_CRITERIA_LIST criteriaList)
+{
+    _catalog=catalog;
+    _listInput=listInput;
+    _listOutput=listOutput;
+    _action=action;
+    _criteriaList=criteriaList;
+}
 /**
  * Class destructor
  */
 vobsSCENARIO_ENTRY::~vobsSCENARIO_ENTRY()
 {
 }
-
-/*
- * Public methods
- */
-
 
 /*
  * Protected methods
