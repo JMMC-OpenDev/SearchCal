@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.24 2005-02-07 09:14:00 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.25 2005-02-08 07:22:27 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2005/02/07 09:14:00  gzins
+* Fixed wrong type for isComputed parameter; mcsFLOAT instead of mcsLOGICAL
+*
 * Revision 1.23  2005/02/04 14:31:30  scetre
 * add getLuminosityClass method
 *
@@ -43,7 +46,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.24 2005-02-07 09:14:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.25 2005-02-08 07:22:27 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -59,6 +62,7 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "misc.h"
 
 /*
  * Local Headers
@@ -136,7 +140,7 @@ vobsSTAR::~vobsSTAR()
  * The possible errors are :
  * \li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, char *value,
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, const char *value,
                                          mcsLOGICAL isComputed,
                                          mcsINT32 confidenceIndex,
                                          mcsLOGICAL overwrite)
@@ -197,10 +201,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, mcsFLOAT value,
     if (propertyIter != _propertyList.end())
     {
         // Set property
-        propertyIter->second.SetValue(value,
-                                      confidenceIndex,
-                                      isComputed,
-                                      overwrite);
+        propertyIter->second.SetValue(value, confidenceIndex, 
+                                      isComputed, overwrite);
         return mcsSUCCESS;
     }
     // Else
@@ -450,8 +452,11 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
         errAdd(vobsERR_RA_NOT_SET);
         return mcsFAILURE;
     }
-    strcpy(raHms, GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
 
+    // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
+    // Replace ':' by ' '
+    strcpy(raHms, GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
+    miscReplaceChrByChr(raHms, ':', ' ');
     if (sscanf(raHms, "%f %f %f", &hh, &hm, &hs) != 3)
     {
         errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
@@ -497,8 +502,10 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
         return mcsFAILURE;
     }
 
+    // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
+    // Replace ':' by ' '
     strcpy(decDms, GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
-
+    miscReplaceChrByChr(decDms, ':', ' ');
     if (sscanf(decDms, "%f %f %f", &dd, &dm, &ds) != 3)
     {
         errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
