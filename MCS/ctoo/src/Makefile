@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2004-07-29 10:30:19 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.11 2004-08-10 16:48:35 gluck Exp $"
 #
 # Makefile of ctoo module
 #
@@ -69,10 +69,11 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         = ctooGetTemplate \
-                  ctooGetDirectoryStructure \
-                  ctooGetTemplateForDirectoryStructure \
-                  ctooGetCode \
-                  ctooGetTemplateForCoding \
+				  ctooGetDirectoryStructure \
+				  ctooGetTemplateForDirectoryStructure \
+				  ctooGetCode \
+				  ctooGetTemplateForCoding \
+				  ctooGetTemplateFile.sh \
                   ctooRename \
                   ctooReplace
 SCRIPTS_L       =
