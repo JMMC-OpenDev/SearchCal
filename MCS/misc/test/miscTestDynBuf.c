@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestDynBuf.c,v 1.16 2005-02-15 09:44:37 gzins Exp $"
+ * "@(#) $Id: miscTestDynBuf.c,v 1.17 2005-02-15 12:43:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/02/15 09:44:37  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  23-Jun-2004  Created
  * lafrasse  09-Jul-2004  Passed some polish
  * lafrasse  20-Jul-2004  Removed all '\0' from char arrays
@@ -29,7 +32,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.16 2005-02-15 09:44:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.17 2005-02-15 12:43:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -926,7 +929,7 @@ int main (int argc, char *argv[])
     displayDynBuf(&dynBuf);
     printf("\n");
 
-    /* miscDynBufGetNextLinePointer */
+    /* miscDynBufGetNextLine*/
     printf("---------------------------------------------------------------\n");
     mcsLOGICAL skipFlag;
     printf("------------------\n");
@@ -936,11 +939,11 @@ int main (int argc, char *argv[])
     printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-    while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
+    while ((bytes = miscDynBufGetNextLine(&dynBuf, bytes, skipFlag))
            != NULL)
     {
         printf("------------------\n");
-        printf("miscDynBufGetNextLinePointer() = '%s'\n", bytes);
+        printf("miscDynBufGetNextLine() = '%s'\n", bytes);
     }
     printf("------------------\n");
     bytes = NULL;
@@ -949,11 +952,11 @@ int main (int argc, char *argv[])
     printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-    while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
+    while ((bytes = miscDynBufGetNextLine(&dynBuf, bytes, skipFlag))
            != NULL)
     {
         printf("------------------\n");
-        printf("miscDynBufGetNextLinePointer() = '%s'\n", bytes);
+        printf("miscDynBufGetNextLine() = '%s'\n", bytes);
     }
     printf("------------------\n");
     bytes = NULL;
@@ -962,11 +965,11 @@ int main (int argc, char *argv[])
     printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-    while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
+    while ((bytes = miscDynBufGetNextLine(&dynBuf, bytes, skipFlag))
            != NULL)
     {
         printf("------------------\n");
-        printf("miscDynBufGetNextLinePointer() = '%s'\n", bytes);
+        printf("miscDynBufGetNextLine() = '%s'\n", bytes);
     }
     printf("------------------\n");
     bytes = NULL;
@@ -975,11 +978,11 @@ int main (int argc, char *argv[])
     printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-    while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
+    while ((bytes = miscDynBufGetNextLine(&dynBuf, bytes, skipFlag))
            != NULL)
     {
         printf("------------------\n");
-        printf("miscDynBufGetNextLinePointer() = '%s'\n", bytes);
+        printf("miscDynBufGetNextLine() = '%s'\n", bytes);
     }
     printf("\n");
 
@@ -1043,8 +1046,8 @@ void displayDynBuf(miscDYN_BUF *dynBuf)
         printf("\"%s\".\n", tmp);
     }
 
-    printf("miscDynBufGetBufferPointer = ");
-    tmp = miscDynBufGetBufferPointer(dynBuf);
+    printf("miscDynBufGetBuffer= ");
+    tmp = miscDynBufGetBuffer(dynBuf);
     if (tmp == NULL)
     {
         printf("mcsFAILURE.\n");
