@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.4 2005-02-18 08:29:42 scetre Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.5 2005-02-23 09:11:48 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/18 08:29:42  scetre
+ * Fixed Bug in dV compute
+ *
  * Revision 1.3  2005/02/18 08:19:42  scetre
  * Fixed Bug in visibility error compute
  *
@@ -31,7 +34,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: alxVisibility.c,v 1.4 2005-02-18 08:29:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxVisibility.c,v 1.5 2005-02-23 09:11:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -105,6 +108,8 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
     *vis2Error = 8 * jnf(2, x) * fabs(j1f(x)/x) * angDiamError / angDiam;
     
     /* Print out result */
+    logTest("Diam= %.3f(%.3f) - base = %.1f - wlen= %.3f",
+            angDiam, angDiamError, baseMax, wlen);
     logTest("V   = %.6f", *vis);
     logTest("dV  = %.6f", *visError);
     logTest("V²  = %.6f", *vis2);
