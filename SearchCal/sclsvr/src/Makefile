@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2005-02-15 15:52:00 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2005-02-15 15:52:39 gzins Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2005/02/15 15:52:00  gzins
+# Added CVS log as file modification history
+#
 # scetre    13-Sep-2004  Created
 #
 #*******************************************************************************
@@ -151,17 +154,10 @@ all:	do_all
 clean : clean_all 
 	@echo " . . . clean done"
 
-clean_dist : clean_all clean_dist_all 
-	@echo " . . . clean_dist done"
-
 man   : do_man 
 	@echo " . . . man page(s) done"
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___
