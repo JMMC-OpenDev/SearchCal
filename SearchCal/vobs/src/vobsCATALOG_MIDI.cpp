@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.10 2005-02-10 10:46:42 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.11 2005-02-11 10:31:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/10 10:46:42  gzins
+ * Changed column name to parameter name
+ *
  * Revision 1.9  2005/02/08 21:23:28  gzins
  * Convert diameter error expressed in % to mas
  *
@@ -43,7 +46,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.10 2005-02-10 10:46:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.11 2005-02-11 10:31:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -461,14 +464,14 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         // Get diameter and its associated error 
         mcsFLOAT diam;
         mcsFLOAT diamError;
-        starPtr->GetPropertyValue(vobsSTAR_EXTENSION_DIAM, &diam);
-        starPtr->GetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, &diamError);
+        starPtr->GetPropertyValue(vobsSTAR_UD_DIAM, &diam);
+        starPtr->GetPropertyValue(vobsSTAR_UD_DIAM_ERROR, &diamError);
         
         // Convert % to mas 
         diamError = diam * diamError / 100;
 
         // Rewrite diameter error
-        starPtr->SetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, diamError,
+        starPtr->SetPropertyValue(vobsSTAR_UD_DIAM_ERROR, diamError,
                                   GetName(), mcsTRUE);
     }
 
