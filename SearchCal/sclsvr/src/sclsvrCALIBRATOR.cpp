@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.31 2005-02-17 15:33:54 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.32 2005-02-21 14:46:53 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2005/02/17 15:33:54  gzins
+ * Removed printf used for debug
+ *
  * Revision 1.30  2005/02/16 17:33:20  gzins
  * Removed obsolete Pack and UnPack methods
  *
@@ -38,7 +41,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.31 2005-02-17 15:33:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.32 2005-02-21 14:46:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -536,10 +539,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     
     char *starPropertyId[4] = 
     {
-        sclsvrCALIBRATOR_BO,
-        sclsvrCALIBRATOR_VO,
-        sclsvrCALIBRATOR_RO,
-        sclsvrCALIBRATOR_KO
+        vobsSTAR_PHOT_JHN_B,
+        vobsSTAR_PHOT_JHN_V,
+        vobsSTAR_PHOT_JHN_R,
+        vobsSTAR_PHOT_JHN_K
     };
 
     // For each property needed to compute angular diameter, check if they are
