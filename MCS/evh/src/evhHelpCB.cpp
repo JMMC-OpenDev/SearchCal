@@ -1,13 +1,13 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHelpCB.cpp,v 1.1 2004-12-22 08:57:07 gzins Exp $"
+* "@(#) $Id: evhHelpCB.cpp,v 1.2 2005-01-07 18:19:24 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     09-Nov-2004  Created
-*
-*
+* gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+*                        Small changes in documentation
 *******************************************************************************/
 
 /**
@@ -15,7 +15,7 @@
  * Definition of the VERSION callback.
  */
 
-static char *rcsId="@(#) $Id: evhHelpCB.cpp,v 1.1 2004-12-22 08:57:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHelpCB.cpp,v 1.2 2005-01-07 18:19:24 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,18 +42,18 @@ using namespace std;
  * 
  * It returns a short description of the commands supported by the
  * application, or a description of a given command. It recognizes the
-*  following command parameter:
-*       -command <command>  specifies the command name to get detailed help on
-
+ *  following command parameter:
+ *   \li command \em &lt;command&gt;  specifies the command name to get detailed
+ *        help on
  *
- * \return evhCB_NO_DELETE.
+ * \return evhCB_COMPL_STAT.
  */
 evhCB_COMPL_STAT evhSERVER::HelpCB(msgMESSAGE &msg, void*)
 {
     logExtDbg("evhSERVER::HelpCB()");
 
     // Get help 
-    if (GetHelp(msg) == FAILURE)
+    if (HandeHelpCmd(msg) == mcsFAILURE)
     {
         SendReply(msg);
         return (evhCB_NO_DELETE|evhCB_FAILURE);
