@@ -1,9 +1,9 @@
-#! /bin/bash
+#!/bin/bash
 
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.10 2004-06-25 06:50:58 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.11 2004-06-28 07:14:45 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -54,10 +54,10 @@
 
 
 # Input parameters given should be 3 and in the correct format:
-if [ $# != 2 || $# != 3 ]
+if [ $# != 2 -a $# != 3 ]
 then 
-    echo -e "\n\tUsage: ctooGetTemplateForDirectoryStructure \
-            MODROOT|INTROOT|VLTROOT|VLTDATA <name> [noMakefile]\n"
+    echo -e "\n\tUsage: ctooGetTemplateForDirectoryStructure"
+    echo -e "MODROOT|INTROOT|VLTROOT|VLTDATA <name> [noMakefile]\n"
     exit 1
 fi 
 
@@ -266,5 +266,6 @@ case $choice in
 
 esac
 
+
 #
-# ___oOo___
+#___oOo___
