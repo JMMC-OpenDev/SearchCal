@@ -3,16 +3,22 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.14 2005-02-15 14:55:26 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.15 2005-02-15 15:48:11 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2005/02/15 14:55:26  gluck
+# Correct wrapping line bug
+#
 # Revision 1.13  2005/02/15 14:51:16  gluck
 # Add module name automatic replacement in Makefile comment header
 #
 # Revision 1.12  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.14  2005/02/15 14:55:26  gluck
+# Bug correction for log message automatic insertion (Correct wrapping line bug
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.13  2005/02/15 14:51:16  gluck
 # Bug correction for log message automatic insertion (Add module name automatic replacement in Makefile comment header
 # Bug correction for log message automatic insertion ()
@@ -273,7 +279,7 @@ then
         # constructor and destructor replacement
         # -> For Makefile insert module name in file comment header
         if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" -o \
-            "$FILE_NAME" = "Makefile"]
+            "$FILE_NAME" = "Makefile" ]
         then
             sed -e "1,$ s/<moduleName>/${MOD_NAME}/g" \
                 -e "1,$ s/<className>/${BASE_NAME}/g" \
