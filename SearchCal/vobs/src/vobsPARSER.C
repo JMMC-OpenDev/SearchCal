@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsPARSER.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"
+ * "@(#) $Id: vobsPARSER.C,v 1.16 2004-10-27 08:42:54 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
  *
  *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.15 2004-10-20 12:17:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.16 2004-10-27 08:42:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -316,6 +316,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 return FAILURE;
             }
             listCDATA.push_back(cDataForList);
+            //delete cDataForList->ptr;
         }
 
         // If it is an element node, try to get information on attributes
