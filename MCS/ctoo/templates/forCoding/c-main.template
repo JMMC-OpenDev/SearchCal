@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-main.template,v 1.7 2004-08-23 09:55:31 mella Exp $"
+#%# "@(#) $Id: c-main.template,v 1.8 2004-09-01 10:28:41 gluck Exp $"
 #%# 
 #%# Template for C main file          
 #%# 
@@ -104,8 +104,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Local Headers 
  */
-#include "<moduleName>Private.h"
 #include "<fileName>.h"
+#include "<moduleName>Private.h"
 
 
 /*
