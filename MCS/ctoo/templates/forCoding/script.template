@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: script.template,v 1.5 2004-09-13 06:19:32 gluck Exp $"
+#%# "@(#) $Id: script.template,v 1.6 2004-09-14 08:02:29 gluck Exp $"
 #%# 
 #%# Template for script files          
 #%# 
@@ -86,5 +86,10 @@
 
 # signal trap (if any)
 
+
+
+
+# Exit with success
+exit 0
 
 #___oOo___
