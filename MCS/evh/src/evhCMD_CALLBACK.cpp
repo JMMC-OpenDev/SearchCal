@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.5 2005-01-29 15:17:02 gzins Exp $"
+ * "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.6 2005-02-03 06:53:21 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/01/29 15:17:02  gzins
+ * Added CVS log as modification history
+ *
  * gzins     22-Sep-2004  Created
  * gzins     17-Nov-2004  Fixed bug in assignment operator method
  * gzins     22-Dec-2004  Added SetMethod()
@@ -18,7 +21,7 @@
  * Definition of the evhCMD_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.5 2005-01-29 15:17:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.6 2005-02-03 06:53:21 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -132,6 +135,9 @@ mcsLOGICAL evhCMD_CALLBACK::IsSame(evhCALLBACK &callback)
  * arguments the message passed in the Run() method call and the void
  * pointer stored in the evhCMD_CALLBACK.
  * 
+ * If a callback returns with the evhCB_FAILURE bit set, the method send reply
+ * to sender process (if it is not an internal message).
+ *
  * \param msg message to be passed to the callback (see evhCMD_CALLBACK).
  */
 evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
@@ -169,6 +175,14 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
     /* If callback failed */
     if ((stat & evhCB_FAILURE) != 0)
     {
+        // If it is not an internal message
+        if (msg.IsInternal() == mcsFALSE)
+        {
+            msgMESSAGE newMsg;
+            newMsg = msg;
+            msgMANAGER_IF    msgManager;
+            msgManager.SendReply(newMsg, mcsTRUE);
+        }
         /* Return mcsFAILURE */
         errAdd(evhERR_RUN_CB);
         return stat;
