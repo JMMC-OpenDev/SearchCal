@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.2 2005-01-03 14:36:38 scetre Exp $"
+* "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.3 2005-01-26 14:17:55 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.2 2005-01-03 14:36:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.3 2005-01-26 14:17:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -63,12 +63,43 @@ int main(int argc, char *argv[])
 
     logSetStdoutLogLevel(logINFO);
     timlogStart(MODULE_ID, logINFO, "98", "testCalibrator");
-
-    sclsvrCALIBRATOR calibrator;
-    for (unsigned int el = 0; el < calibrator.NbProperties(); el++)
+    
+    // add property to a star
+    vobsSTAR star;
+    star.SetPropertyValue(vobsSTAR_ID_MAIN, "25123");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5");
+    printf("STAR\n");
+    for (int el2 = 0; el2 < star.NbProperties(); el2++)
     {
-        printf("%s\n",calibrator.GetNextProperty((mcsLOGICAL)(el==0))->GetValue());
+        printf("%s\t",star.GetNextProperty((mcsLOGICAL)(el2==0))
+               ->GetName());
     }
+    printf("\n");
+
+    for (int el = 0; el < star.NbProperties(); el++)
+    {
+        printf("%s\t",star.GetNextProperty((mcsLOGICAL)(el==0))
+               ->GetValue());
+    }
+    printf("\n");
+
+    // create a calibrator from a star
+    sclsvrCALIBRATOR calibrator(star);
+    printf("CALIBRATOR\n");
+    for (int el3 = 0; el3 < calibrator.NbProperties(); el3++)
+     {
+         printf("%s\t",calibrator.GetNextProperty((mcsLOGICAL)(el3==0))
+                ->GetName());
+     }
+    printf("\n");
+    
+    for (int el4 = 0; el4 < calibrator.NbProperties(); el4++)
+    {
+        printf("%s\t",calibrator.GetNextProperty((mcsLOGICAL)(el4==0))->GetValue());
+    }
+
+    printf("\n");
 
     errCloseStack();
     logInfo("Exiting ...");

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.17 2005-01-24 13:52:58 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.18 2005-01-26 14:17:55 scetre Exp $"
  *
- * who       when         what
- * --------  -----------  -------------------------------------------------------
+ * History
+ * -------
  * scetre    14-Sep-2004  Created
  *
  *
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.17 2005-01-24 13:52:58 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.18 2005-01-26 14:17:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -59,11 +59,13 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR()
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR(vobsSTAR &star)
 {
-    _propertyList = star._propertyList;
-    _propertyOrder = star._propertyOrder;
+    (*this).vobsSTAR::operator=(star); 
+
     // Add all star properties 
     AddProperties(); 
 }
+
+
 
 /*
  * Class destructor
