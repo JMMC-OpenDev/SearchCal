@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: Makefile.template,v 1.1 2004-05-25 16:14:20 gluck Exp $" 
+#%# "@(#) $Id: Makefile.template,v 1.2 2004-06-09 11:48:04 gzins Exp $" 
 #%# 
 #%#       REMARK: This file belongs to the "ctoo" module.
 #%# 
@@ -174,7 +174,7 @@ CSOURCENAMES = \
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/vltMakefile
+include $(MAKEDIR)/mcsMakefile
 
 #
 # TARGETS
