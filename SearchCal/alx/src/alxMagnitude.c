@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.11 2005-02-22 16:20:13 gzins Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.12 2005-02-25 15:13:09 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/02/22 16:20:13  gzins
+ * Updated misDynBufGetNextLine API
+ * Added check of B-V before computing missing magnitude; delta between V-B (star) and B-V (color table) must be less than 0.1
+ *
  * Revision 1.10  2005/02/22 10:16:10  gzins
  * Fixed bug; only computed missing magnitudes.
  *
@@ -51,7 +55,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.11 2005-02-22 16:20:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.12 2005-02-25 15:13:09 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -435,7 +439,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         }
         else
         {
-            logTest("mgB-mgV = %.3f / B-V %.3f; delta > 0.1",
+            logInfo("mgB-mgV = %.3f / B-V %.3f; delta > 0.1",
                     (mgB-mgV), colorTable->index[line][alxB_V]);
         }
     }
@@ -524,7 +528,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         }
         else
         {
-            logTest("mgB-mgV = %.3f / B-V [%.3f..%.3f]; delta > 0.1",
+            logInfo("mgB-mgV = %.3f / B-V [%.3f..%.3f]; delta > 0.1",
                     (mgB-mgV), colorTable->index[lineInf][alxB_V], 
                     colorTable->index[lineSup][alxB_V]);
         }
