@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.22 2005-02-08 04:39:32 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.23 2005-02-08 07:24:07 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/02/08 04:39:32  gzins
+ * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
+ *
  * Revision 1.21  2005/02/07 15:00:59  gzins
  * Reformated file header
  *
@@ -45,7 +48,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.22 2005-02-08 04:39:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.23 2005-02-08 07:24:07 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -399,22 +402,22 @@ mcsCOMPL_STAT
  * returned.
  */
 mcsCOMPL_STAT
-    sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation(char *scienceStarRa,
-                                                      char *scienceStarDec,
-                                                      mcsFLOAT raRange,
-                                                      mcsFLOAT decRange)
+sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation(const char *scienceRa,
+                                                  const char *scienceDec,
+                                                  mcsFLOAT raRange,
+                                                  mcsFLOAT decRange)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation()");
     
     // create a star correponding to the science object
     sclsvrCALIBRATOR scienceStar;
     if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,
-                                     scienceStarRa) == mcsFAILURE)
+                                     scienceRa) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN,
-                                     scienceStarDec) == mcsFAILURE)
+                                     scienceDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -466,7 +469,7 @@ mcsCOMPL_STAT
  * returned.
  */
 mcsCOMPL_STAT
-sclsvrCALIBRATOR_LIST::FilterByMagnitude(char *band,
+sclsvrCALIBRATOR_LIST::FilterByMagnitude(const char *band,
                                          mcsFLOAT magValue,
                                          mcsFLOAT magRange)
 {

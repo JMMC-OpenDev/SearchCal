@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.12 2005-02-08 04:38:50 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.13 2005-02-08 07:24:07 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/08 04:38:50  gzins
+ * Updated for new vobsREQUEST API and used new sclsvrREQUEST class
+ *
  * Revision 1.11  2005/02/07 14:59:51  gzins
  * Reformated file header
  *
@@ -71,11 +74,11 @@ public:
     // Method need by the graphical user interface
     virtual mcsCOMPL_STAT GetCoherentDiameter(sclsvrCALIBRATOR_LIST *list);
     virtual mcsCOMPL_STAT GetVisibilityOk(sclsvrCALIBRATOR_LIST *list);
-    virtual mcsCOMPL_STAT FilterByDistanceSeparation(char *scienceStarRa,
-                                                     char *scienceStarDec,
+    virtual mcsCOMPL_STAT FilterByDistanceSeparation(const char *scienceRa,
+                                                     const char *scienceDec,
                                                      mcsFLOAT raRange,
                                                      mcsFLOAT decRange);
-    virtual mcsCOMPL_STAT FilterByMagnitude(char *band,
+    virtual mcsCOMPL_STAT FilterByMagnitude(const char *band,
                                             mcsFLOAT magValue,
                                             mcsFLOAT magRange);
     virtual mcsCOMPL_STAT FilterBySpectralType(std::list<char *> spectTypeList);
