@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.h,v 1.2 2004-11-19 23:55:17 lafrasse Exp $"
+* "@(#) $Id: msgMANAGER_IF.h,v 1.3 2004-11-22 14:31:04 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -73,14 +73,15 @@ public:
     virtual mcsCOMPL_STAT Receive     (msgMESSAGE        &msg,
                                        const mcsINT32     timeoutInMs);
 
-    virtual mcsLOGICAL    IsConnected ();
+    virtual mcsLOGICAL    IsConnected (void);
 
-    virtual mcsCOMPL_STAT Disconnect  ();
+    virtual mcsCOMPL_STAT Disconnect  (void);
 
+    virtual mcsINT32      GetMsgQueue (void);
 protected:
 
 private:
-    int _socket;
+    static int _socket;
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
