@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evh.doc,v 1.1 2004-09-22 08:54:16 sccmgr Exp $"
+* "@(#) $Id: evh.doc,v 1.2 2005-01-05 12:47:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,49 +11,21 @@
 *******************************************************************************/
 
 /**
-\mainpage evh : Summary module description sentence
+\mainpage evh : event handling toolkit 
 
 \bdesc
-Brief module description. There could be one or more sentences in this short
-module description.
 
 \ddesc
-Detailed module description.
+This module provides a set of classes to implement event driven applications;
+i.e based on an event handler. The event handler tells the program how to act
+in response to a specific event (e.g. receiving a command). 
 
-\usedfiles
-OPTIONAL. If files are used, for each one, name, and usage description, as
-below. 
-\filename filename 1 :  usage description of fileName1
-\filename filename 2 :  usage description of fileName2
+The following types of events are handled:
+	- Command         
+	- Reply
+	- I/O available from unix file descriptors
 
-\n
-\env
-OPTIONAL. If needed, environmental variables accessed by the program. For each
-variable, name, and usage description, as below.
-\envvar envVar1 :  usage description of envVar1
-\envvar envVar2 :  usage description of envVar2
-
-\n
-\ex
-OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
-example list with the \\li marker.
-\n Brief example description.
-\code
-Insert code for example
-\endcode
-
-\sa OPTIONAL. See also section in which you can refer other documented entities.
-Using the \\sa marker, doxygen will create the link automatically.
-An example is given below.
-\sa \<entity to refer\>
-
-\bug OPTIONAL. Known bugs list if it exists.
-\bug Bug 1 : bug 1 description
-\bug Bug 2 : bug 2 description
-
-\todo OPTIONAL. Things to forsee list, if needed.
-\todo Action 1 : action 1 description
-\todo Action 2 : action 2 description
-\n
-
+The core of the toolkit is the evhHANDLER class. It is an event dispatcher that
+receives events, and calls methods which have been attached to handle those
+events.  
 */
