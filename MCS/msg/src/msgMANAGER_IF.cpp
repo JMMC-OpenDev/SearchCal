@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.12 2004-12-08 18:02:35 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.13 2004-12-09 13:56:43 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -20,6 +20,9 @@
 * gzins     07-Dec-2004  Updated according to the new msgMCS_ENVS class
 *                        Fixed bug related to error handling in Connect
 * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+* gzins     09-Dec-2004  Fixed bug related to default port number;
+*                        msgMANAGER_PORT_NUMBER used instead of the one given
+*                        by envLIST class
 *
 *******************************************************************************/
 
@@ -28,7 +31,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.12 2004-12-08 18:02:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.13 2004-12-09 13:56:43 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -169,7 +172,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     else
     {
         // Use default port number
-        envPortNumber = msgMANAGER_PORT_NUMBER; /* Definir */
+        envPortNumber = envList.GetPortNumber(); /* Definir */
     }
     // End if
 
