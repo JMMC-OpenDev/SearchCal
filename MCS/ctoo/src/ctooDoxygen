@@ -2,11 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooDoxygen,v 1.2 2004-06-17 07:14:31 gluck Exp $"
+# "@(#) $Id: ctooDoxygen,v 1.3 2004-06-22 06:30:43 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# gzins     09-Jun-2004  Created from ALMA doxygenize program
+# gzins     09-Jun-2004  created from ALMA doxygenize program
 #
 #************************************************************************
 #   NAME        ctooDoxygen
@@ -76,10 +76,10 @@ then
     MODULE_NAME=$prelim
 else
     MODULE_NAME=${MODULE_NAME##*/}
-    
-    
-    termine the revision
-    
+fi
+#
+# determine the revision
+#
 #REVISION=`cmmLast $MODULE_NAME`
 #REVISION=${REVISION##*:}
 #REVISION=${REVISION%%modified*}
@@ -133,7 +133,7 @@ then
     # Cautional remotion
     if [ -f /tmp/doxyfile.old ]
     then
-       rm /tmp/doxyfile.old
+        rm /tmp/doxyfile.old
     fi
 
     # Remotion of all spaces before and after char "=" in the customized file
@@ -141,7 +141,7 @@ then
     mv /tmp/doxyfile.old /tmp/doxyfile_clean
     cat /tmp/doxyfile_clean | sed s/=\ */=/g >> /tmp/doxyfile.old
     mv /tmp/doxyfile.old /tmp/doxyfile_clean
-    
+
     # Trick: spaces converted in #
     cat /tmp/doxyfile_clean | sed s/\ /#/g >> /tmp/doxyfile.old
     mv /tmp/doxyfile.old /tmp/doxyfile_clean   
@@ -149,37 +149,37 @@ then
     # Storing eventually new INPUT OUTPUT settings for IDL and API
     for myline in $(cat  /tmp/doxyfile_clean) 
     do
-      VARIABLE=$myline
-      VALUE=$myline
-      VARIABLE=${VARIABLE%%=*}
-      VALUE=${VALUE##*=}
+        VARIABLE=$myline
+        VALUE=$myline
+        VARIABLE=${VARIABLE%%=*}
+        VALUE=${VALUE##*=}
 
-      case $VARIABLE in
-      INPUT_IDL )
-          echo $VALUE > /tmp/mytmp$$
-          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-          INPUT_IDL=$(< /tmp/mytmp2$$);;
-      INPUT_API )
-          echo $VALUE > /tmp/mytmp$$
-          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-          INPUT_API=$(< /tmp/mytmp2$$);;
-      OUTPUT_IDL )
-          echo $VALUE > /tmp/mytmp$$
-          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-          OUTPUT_IDL=$(< /tmp/mytmp2$$);;
-      OUTPUT_API )
-          echo $VALUE > /tmp/mytmp$$
-          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-          OUTPUT_API=$(< /tmp/mytmp2$$);;
-      SKIP_IDL )
-          echo $VALUE > /tmp/mytmp$$
-          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-          SKIP_IDL=$(< /tmp/mytmp2$$);;
-      SKIP_API )
-          echo $VALUE > /tmp/mytmp$$
-          cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
-          SKIP_API=$(< /tmp/mytmp2$$);;
-      esac
+        case $VARIABLE in
+            INPUT_IDL )
+            echo $VALUE > /tmp/mytmp$$
+            cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+            INPUT_IDL=$(< /tmp/mytmp2$$);;
+            INPUT_API )
+            echo $VALUE > /tmp/mytmp$$
+            cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+            INPUT_API=$(< /tmp/mytmp2$$);;
+            OUTPUT_IDL )
+            echo $VALUE > /tmp/mytmp$$
+            cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+            OUTPUT_IDL=$(< /tmp/mytmp2$$);;
+            OUTPUT_API )
+            echo $VALUE > /tmp/mytmp$$
+            cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+            OUTPUT_API=$(< /tmp/mytmp2$$);;
+            SKIP_IDL )
+            echo $VALUE > /tmp/mytmp$$
+            cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+            SKIP_IDL=$(< /tmp/mytmp2$$);;
+            SKIP_API )
+            echo $VALUE > /tmp/mytmp$$
+            cat /tmp/mytmp$$ | sed s/#/\ /g > /tmp/mytmp2$$
+            SKIP_API=$(< /tmp/mytmp2$$);;
+        esac
     done
 
     # Remotion of each INPUT OUTPUT IDL API info
@@ -199,10 +199,10 @@ then
     # Update of the doxyfile file with the info in doxyfile_clean
     for myline in $(cat  /tmp/doxyfile_clean) 
     do
-        
+
         VARIABLE=$myline
         VARIABLE=${VARIABLE%%=*}
-         
+
         if grep $VARIABLE $FILE > /tmp/to_be_removed
         then
             # Substitution of the variable with the customized value
@@ -223,23 +223,23 @@ then
     # Remotion of temporary files
     if [ -f /tmp/to_be_removed ]
     then
-       rm /tmp/to_be_removed
+        rm /tmp/to_be_removed
     fi
     if [ -f /tmp/mytmp$$ ]
     then
-       rm /tmp/mytmp$$
+        rm /tmp/mytmp$$
     fi
     if [ -f /tmp/mytmp2$$ ]
     then
-       rm /tmp/mytmp2$$
+        rm /tmp/mytmp2$$
     fi
     if [ -f /tmp/doxyfile_clean ]
     then
-       rm /tmp/doxyfile_clean
+        rm /tmp/doxyfile_clean
     fi
     if [ -f /tmp/doxyfile.old ]
     then
-       rm /tmp/doxyfile.old
+        rm /tmp/doxyfile.old
     fi
 fi
 
@@ -252,7 +252,7 @@ then
     echo $OUTPUT_API > /tmp/mytmp$$
     cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
     OUTPUT_API=$(< /tmp/mytmp2$$)
-      
+
     # Remotion of char "
     echo $OUTPUT_IDL > /tmp/mytmp$$
     cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
@@ -263,11 +263,11 @@ then
     # Remotion of temporary files
     if [ -f /tmp/mytmp$$ ]
     then
-       rm /tmp/mytmp$$
+        rm /tmp/mytmp$$
     fi
     if [ -f /tmp/mytmp2$$ ]
     then
-       rm /tmp/mytmp2$$
+        rm /tmp/mytmp2$$
     fi
     rm -f $FILE
 
@@ -280,63 +280,63 @@ fi
 #
 if [ "$SKIP_IDL" = "NO" ]
 then
- 
-   OUTPUT=$OUTPUT_IDL
-   INPUT=$INPUT_IDL
 
-   PROCEED="YES"
+    OUTPUT=$OUTPUT_IDL
+    INPUT=$INPUT_IDL
 
-   # Remotion of char "
-   echo $INPUT > /tmp/mytmp$$
-   cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
-   INPUT=$(< /tmp/mytmp2$$)
-     
-   # Remotion of char "
-   echo $OUTPUT > /tmp/mytmp$$
-   cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
-   OUTPUT=$(< /tmp/mytmp2$$)
+    PROCEED="YES"
 
-   # checking about the list of input direcory/ies
-   for dir_name in $(echo $INPUT)
-   do
-     if [ ! -d $dir_name ]
-     then
-        PROCEED="NO"
-     fi
-   done
+    # Remotion of char "
+    echo $INPUT > /tmp/mytmp$$
+    cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
+    INPUT=$(< /tmp/mytmp2$$)
 
-   # Proceed if all input directories exist
-   if [ "$PROCEED" = "YES" ] 
-   then 
+    # Remotion of char "
+    echo $OUTPUT > /tmp/mytmp$$
+    cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
+    OUTPUT=$(< /tmp/mytmp2$$)
 
-       # Creation of output directories
-       for dir_name in $(echo $OUTPUT)
-       do 
-         if [ ! -d $dir_name ]
-         then
-            mkdir -p $dir_name
-         fi
-       done
+    # checking about the list of input direcory/ies
+    for dir_name in $(echo $INPUT)
+    do
+        if [ ! -d $dir_name ]
+        then
+            PROCEED="NO"
+        fi
+    done
 
-       echo "calling doxygen for IDL"
-       sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME IDL\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#" $FILE | doxygen -
-      # copy the nice picture. To be re-thought!
-      #
-      # make the pdf file
-      if [ $PDF = 1 ]
-      then    
-    cd $OUTPUT/pdf
-    make pdf > /dev/null 2>&1
-    if [ $? = 0 ]
-    then
-        mv refman.pdf .refman.pdf
-        rm -f * 
-        mv .refman.pdf refman.pdf
-    else
-        echo "Compilation of PDF file failed"
+    # Proceed if all input directories exist
+    if [ "$PROCEED" = "YES" ] 
+    then 
+
+        # Creation of output directories
+        for dir_name in $(echo $OUTPUT)
+        do 
+            if [ ! -d $dir_name ]
+            then
+                mkdir -p $dir_name
+            fi
+        done
+
+        echo "calling doxygen for IDL"
+        sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME IDL\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#" $FILE | doxygen -
+        # copy the nice picture. To be re-thought!
+        #
+        # make the pdf file
+        if [ $PDF = 1 ]
+        then    
+            cd $OUTPUT/pdf
+            make pdf > /dev/null 2>&1
+            if [ $? = 0 ]
+            then
+                mv refman.pdf .refman.pdf
+                rm -f * 
+                mv .refman.pdf refman.pdf
+            else
+                echo "Compilation of PDF file failed"
+            fi
+        fi
     fi
-      fi
-   fi
 fi
 cd $BASECAMP
 
@@ -346,76 +346,76 @@ cd $BASECAMP
 #if [ `ls ../include | grep -c ".h"` != 0 ]
 if [ "$SKIP_API" = "NO" ]
 then
- 
-   OUTPUT=$OUTPUT_API
-   INPUT=$INPUT_API
 
-   PROCEED="YES"
+    OUTPUT=$OUTPUT_API
+    INPUT=$INPUT_API
 
-   # Remotion of char "
-   echo $INPUT > /tmp/mytmp$$
-   cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
-   INPUT=$(< /tmp/mytmp2$$)
-     
-   # Remotion of char "
-   echo $OUTPUT > /tmp/mytmp$$
-   cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
-   OUTPUT=$(< /tmp/mytmp2$$)
+    PROCEED="YES"
 
-   # checking about the list of input direcory/ies
-   for dir_name in $(echo $INPUT)
-   do
-     if [ ! -d $dir_name ]
-     then
-        PROCEED="NO"
-     fi
-   done
+    # Remotion of char "
+    echo $INPUT > /tmp/mytmp$$
+    cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
+    INPUT=$(< /tmp/mytmp2$$)
 
-   # Proceed if all input directories exist
-   if [ "$PROCEED" = "YES" ] 
-   then 
+    # Remotion of char "
+    echo $OUTPUT > /tmp/mytmp$$
+    cat /tmp/mytmp$$ | sed s/\"//g  > /tmp/mytmp2$$
+    OUTPUT=$(< /tmp/mytmp2$$)
 
-       # Creation of output directories
-       for dir_name in $(echo $OUTPUT)
-       do 
-         if [ ! -d $dir_name ]
-         then
-            mkdir -p $dir_name
-         fi
-       done
+    # checking about the list of input direcory/ies
+    for dir_name in $(echo $INPUT)
+    do
+        if [ ! -d $dir_name ]
+        then
+            PROCEED="NO"
+        fi
+    done
 
-      echo "calling doxygen for API"
-      sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME API\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#" $FILE | doxygen -
-      #
-      # copy the nice picture. To be re-thought!
+    # Proceed if all input directories exist
+    if [ "$PROCEED" = "YES" ] 
+    then 
 
-      cp -f $IMAGE $OUTPUT/html
-      #
-      # make the pdf file
-      if [ $PDF = 1 ]
-      then    
-    cd $OUTPUT/pdf
-    make pdf > /dev/null 2>&1
-    if [ $? = 0 ]
-    then
-        mv refman.pdf .refman.pdf
-        rm -f * 
-        mv .refman.pdf refman.pdf
-    else
-        echo "Compilation of PDF file failed"
+        # Creation of output directories
+        for dir_name in $(echo $OUTPUT)
+        do 
+            if [ ! -d $dir_name ]
+            then
+                mkdir -p $dir_name
+            fi
+        done
+
+        echo "calling doxygen for API"
+        sed -e "s#^OUTPUT_DIRECTORY.*#OUTPUT_DIRECTORY  = $OUTPUT#g;s#^INPUT .*#INPUT = $INPUT#;s#^HTML_HEADER.*#HTML_HEADER = $HEADER#;s/^PROJECT_NAME.*/PROJECT_NAME = \"$MODULE_NAME API\"/;s/^PROJECT_NUMBER.*/PROJECT_NUMBER = $REVISION/;s#^HTML_FOOTER.*#HTML_FOOTER = $FOOTER#" $FILE | doxygen -
+        #
+        # copy the nice picture. To be re-thought!
+
+        cp -f $IMAGE $OUTPUT/html
+        #
+        # make the pdf file
+        if [ $PDF = 1 ]
+        then    
+            cd $OUTPUT/pdf
+            make pdf > /dev/null 2>&1
+            if [ $? = 0 ]
+            then
+                mv refman.pdf .refman.pdf
+                rm -f * 
+                mv .refman.pdf refman.pdf
+            else
+                echo "Compilation of PDF file failed"
+            fi
+        fi
     fi
-      fi
-   fi
 fi 
-   
+
 # Remotion of temporary files
 if [ -f /tmp/mytmp$$ ]
 then
-   rm /tmp/mytmp$$
+    rm /tmp/mytmp$$
 fi
 if [ -f /tmp/mytmp2$$ ]
 then
-   rm /tmp/mytmp2$$
+    rm /tmp/mytmp2$$
 fi
 
 cd $BASECAMP
