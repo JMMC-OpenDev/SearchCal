@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.27 2005-02-27 19:44:17 gzins Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.28 2005-03-08 09:46:48 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2005/02/27 19:44:17  gzins
+ * Implemented parameter value range check
+ *
  * Revision 1.26  2005/02/27 09:27:41  gzins
  * Improved error handling
  *
@@ -66,7 +69,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.27 2005-02-27 19:44:17 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.28 2005-03-08 09:46:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -952,7 +955,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
     GdomeException exc;
     GdomeDOMString *name;
     int nbChildren;
-    
     name = gdome_str_mkref ("params");
     // Get the reference to the params childrens of the root element
     params_nl = gdome_el_getElementsByTagName (root, name, &exc);
@@ -965,7 +967,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
     gdome_str_unref(name);
  
     nbChildren = gdome_nl_length (params_nl, &exc);
-
     if (nbChildren == 1)    // If params does exist
     {
         GdomeElement *params_el;
@@ -974,6 +975,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
         if (params_el == NULL)
         {
             errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
+            gdome_str_unref(name);
             gdome_nl_unref(params_nl, &exc);
             return mcsFAILURE;
         }
@@ -995,7 +997,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
         if (nbChildren > 0)
         {  
             int i;
-            for (i=0;i<nbChildren;i++)
+            for (i=0; i<nbChildren; i++)
             {
                 GdomeElement *param_el;
                 param_el = (GdomeElement *)gdome_nl_item (param_nl, i, &exc);
@@ -1022,11 +1024,11 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
             }
         }
         gdome_str_unref(name);
-        gdome_el_unref(params_el, &exc);
         gdome_nl_unref(param_nl, &exc);
+        gdome_el_unref(params_el, &exc);
     }
-    
     gdome_nl_unref(params_nl, &exc);
+
     return mcsSUCCESS;
 }
 
@@ -1048,7 +1050,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     string maxValue;
     string unit;
     mcsLOGICAL optional;
-    
+
     // Get mandatory name
     if (CmdGetNodeContent(param, "name", name) == mcsFAILURE)
     {
@@ -1070,7 +1072,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     {
         return mcsFAILURE;   
     }
-   
     // Get optional defaultValue
     GdomeElement *el;
     GdomeException exc;
@@ -1087,7 +1088,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
                 gdome_el_unref(el, &exc);
                 return mcsFAILURE;   
             }
-            gdome_el_unref(el, &exc);
         }
         else
         {
@@ -1095,9 +1095,10 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
             logDebug("No defaultValue for %.40s parameter", name.data());
         }
     }
-    
+    gdome_el_unref(el, &exc);
+
     // Get optional minValue
-   if (CmdGetNodeElement(param, "minValue", &el, mcsTRUE) == mcsFAILURE)
+    if (CmdGetNodeElement(param, "minValue", &el, mcsTRUE) == mcsFAILURE)
     { 
         return mcsFAILURE;   
     }
@@ -1110,7 +1111,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
                 gdome_el_unref(el, &exc);
                 return mcsFAILURE;   
             }
-            gdome_el_unref(el, &exc);
         }
         else
         {
@@ -1118,9 +1118,10 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
             logDebug("No minValue for %.40s parameter", name.data());
         }
     }
+    gdome_el_unref(el, &exc);
 
     // Get optional maxValue
-   if (CmdGetNodeElement(param, "maxValue", &el, mcsTRUE) == mcsFAILURE)
+    if (CmdGetNodeElement(param, "maxValue", &el, mcsTRUE) == mcsFAILURE)
     { 
         return mcsFAILURE;   
     }
@@ -1133,7 +1134,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
                 gdome_el_unref(el, &exc);
                 return mcsFAILURE;   
             }
-            gdome_el_unref(el, &exc);
         }
         else
         {
@@ -1141,6 +1141,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
             logDebug("No maxValue for %.40s parameter", name.data());
         }
     }
+    gdome_el_unref(el, &exc);
 
     // Check if it is an optional parameter
     { 
@@ -1179,7 +1180,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
             gdome_str_unref(str);
             gdome_str_unref(str2);
             gdome_str_unref(attrValue);
-            gdome_a_unref(attribute,&exc);
+            gdome_a_unref(attribute, &exc);
         }
     }
     
@@ -1207,7 +1208,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         }
     }
     AddParam(p);
-    
+
     return mcsSUCCESS;
 }
 
@@ -1220,7 +1221,6 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeElement(GdomeElement *parentNode,
     GdomeException exc;
     GdomeDOMString *name;
     int nbChildren;
-
     // Get the reference to the node elements
     name = gdome_str_mkref(nodeName.data());
     nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
@@ -1251,14 +1251,21 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeElement(GdomeElement *parentNode,
     {
         // Return error
         errAdd (cmdERR_CDF_NO_NODE_ELEMENT, name->str);
+        gdome_str_unref(name);
+        gdome_nl_unref(nl, &exc);
         return mcsFAILURE; 
     }
     else
     {
         // Else return NULL element
         *element = NULL;
+        gdome_str_unref(name);
+        gdome_nl_unref(nl, &exc);
         return mcsSUCCESS;
     }
+
+    gdome_str_unref(name);
+    gdome_nl_unref(nl, &exc);
 
     return mcsSUCCESS;
 }
