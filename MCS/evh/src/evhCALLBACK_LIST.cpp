@@ -1,13 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.3 2004-12-08 13:32:53 gzins Exp $"
+* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.4 2004-12-08 15:52:04 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     23-Sep-2004  Created
 * gzins     08-Dec-2004  Handled evhCB_DELETE callback return value
 *                        Added some method documentation
+* lafrasse  08-Dec-2004  Added Purge().
+*
 *
 *******************************************************************************/
 
@@ -16,7 +18,7 @@
  * Definition of the evhCALLBACK_LIST class.
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.3 2004-12-08 13:32:53 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.4 2004-12-08 15:52:04 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -149,6 +151,38 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Remove(evhCALLBACK *callback)
 }
 
 /**
+ * Delete all detached callbacks.
+ *
+ * \return
+ * Always SUCCESS.
+ */
+mcsCOMPL_STAT evhCALLBACK_LIST::Purge(void)
+{
+    logExtDbg("evhCALLBACK_LIST::Purge()"); 
+
+    // For each callback
+    std::list<evhCALLBACK *>::iterator i = _callbackList.begin();
+    while (i != _callbackList.end())
+    {
+        // If the current callback is detached
+        if ((*i)->IsDetached() == mcsTRUE)
+        {
+            std::list<evhCALLBACK *>::iterator j = i;
+            i++;
+
+            // Remove it
+            _callbackList.erase(j);
+
+            break;
+        }
+
+        i++;
+    }
+
+    return SUCCESS;
+}
+
+/**
  * Returns the number of elements (callbacks) currently stored in the list.
  * \return
  * The numbers of callbacks in the list.
@@ -169,8 +203,7 @@ mcsUINT32 evhCALLBACK_LIST::Size(void)
  * immediately, i.e. the remaining callbacks in the list are not executed.
  *
  * If a callback returns with the evhCB_DELETE bit set, the method just
- * detaches the callback (i.e. it is not removed from the list). The method
- * Clean() to remove the detached event from the list.
+ * delete it.
  *           
  * \return SUCCESS or FAILURE (see above).
  */
@@ -196,6 +229,12 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const msgMESSAGE &msg)
     }
     // End for
 
+    // Delete detached callbacks
+    if (Purge() == FAILURE)
+    {
+        return FAILURE;
+    }
+
     return SUCCESS;
 }
 
@@ -209,8 +248,7 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const msgMESSAGE &msg)
  * immediately, i.e. the remaining callbacks in the list are not executed.
  *
  * If a callback returns with the evhCB_DELETE bit set, the method just
- * detaches the callback (i.e. it is not removed from the list). The method
- * Clean() to remove the detached event from the list.
+ * delete it.
  *           
  * \return SUCCESS or FAILURE (see above).
  */
@@ -235,6 +273,12 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const int fd)
         }
     }
     // End for
+    
+    // Delete detached callbacks
+    if (Purge() == FAILURE)
+    {
+        return FAILURE;
+    }
 
     return SUCCESS;
 }

@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK_LIST.h,v 1.1 2004-10-18 09:40:10 gzins Exp $"
+* "@(#) $Id: evhCALLBACK_LIST.h,v 1.2 2004-12-08 15:52:04 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     23-Sep-2004  Created from VLT SW.
+* lafrasse  08-Dec-2004  Added Purge().
 *
 *
 *******************************************************************************/
@@ -60,6 +61,8 @@ private:
     // methods, in order to hide them from the users.
     evhCALLBACK_LIST& operator=(const evhCALLBACK_LIST&);
     evhCALLBACK_LIST (const evhCALLBACK_LIST&);
+
+    virtual mcsCOMPL_STAT Purge(void);
 
     // List of callbacks
     std::list<evhCALLBACK *>           _callbackList;
