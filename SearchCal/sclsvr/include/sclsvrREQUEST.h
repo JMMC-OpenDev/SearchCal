@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.5 2005-03-04 09:46:04 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.6 2005-03-07 13:39:46 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/03/04 09:46:04  gzins
+ * Rename Set/GetSaveFileName to  Set/GetFileName
+ *
  * Revision 1.4  2005/02/28 13:48:56  scetre
  * Added save file option in the request
  *
@@ -64,8 +67,7 @@ public:
     virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine);
     
     // Baseline
-    virtual mcsCOMPL_STAT SetBaseline(mcsFLOAT minLength, mcsFLOAT maxLength);
-    virtual mcsFLOAT GetMinBaselineLength(void);
+    virtual mcsCOMPL_STAT SetMaxBaselineLength(mcsFLOAT length);
     virtual mcsFLOAT GetMaxBaselineLength(void);
 
     // Wavelengh 
@@ -92,7 +94,6 @@ private:
     // GETCAL command
     sclsvrGETCAL_CMD *_getCalCmd;
 
-    mcsFLOAT        _minBaselineLength;
     mcsFLOAT        _maxBaselineLength;
     mcsFLOAT        _observingWlen;
     mcsFLOAT        _vis;

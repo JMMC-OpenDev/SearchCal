@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.18 2005-03-04 15:38:10 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.19 2005-03-07 13:41:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/03/04 15:38:10  gzins
+ * Added timer log
+ *
  * Revision 1.17  2005/02/08 20:57:22  gzins
  * Updated call to SetPropertyValue()
  *
@@ -24,7 +27,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.18 2005-03-04 15:38:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.19 2005-03-07 13:41:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -132,7 +135,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    if (request.SetBaseline(baseline, baseline) ==  mcsFAILURE)
+    if (request.SetMaxBaselineLength(baseline) ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
