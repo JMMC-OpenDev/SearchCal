@@ -34,7 +34,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.17 2004-10-07 14:11:26 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.18 2004-11-09 14:55:31 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -65,8 +65,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local Variables and Defines
  */
-#define extensionPosition   0
-#define pathPosition        1
+#define miscEXT_IDX   0
+#define miscPATH_IDX  1
 static char *pathSearchList[][2] = {
    {"cfg", "../config:$INTROOT/config"},
    {"cdf", "../config:$INTROOT/cdf"},
@@ -597,10 +597,10 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
  * \param path the list of path to be searched, each separated by colons (':')
  * \param fileName the seeked file name
  *
- * \return a pointer to the \em first path where the file lives, or NULL if not
+ * \return a pointer to the \em first path where the file is, or NULL if not
  * found
  */
-char*         miscLocateFileInPath(const char *path, const char *fileName)
+char* miscLocateFileInPath(const char *path, const char *fileName)
 {
     static miscDYN_BUF tmpPath;
 
@@ -665,7 +665,7 @@ char*         miscLocateFileInPath(const char *path, const char *fileName)
             path = strchr(path, ':');
             if (path != NULL)
             {
-                /* Make path ponter point to the next part beginning */
+                /* Make path pointer point to the next part beginning */
                 path++;
             }
         }
@@ -695,12 +695,12 @@ char*         miscLocateFileInPath(const char *path, const char *fileName)
  * \warning This function is \em NOT re-entrant. The returned allocated buffer
  * will be deallocated on the next call !\n\n
  *
- * \param fileName the seeked file name with its extension
+ * \param fileName the name of the searched file with its extension
  *
- * \return a pointer to the \em first path where the file lives, or NULL if not
+ * \return a pointer to the \em first path where the file is, or NULL if not
  * found
  */
-char*         miscLocateFile     (const char *fileName)
+char* miscLocateFile (const char *fileName)
 {
     /* Test the fileName parameter validity */
     if ((fileName == NULL) || (strlen(fileName) == 0))
@@ -720,27 +720,27 @@ char*         miscLocateFile     (const char *fileName)
      * corresponding to fileExtension was found
      */
     int i = 0;
-    int extensionComparisonResult = 0;
-    char *currentListExtension = NULL;
-    char *currentListPath = NULL;
-    do
+    mcsLOGICAL found = mcsFALSE;
+    while (pathSearchList[i][miscEXT_IDX] != NULL)
     {
         /* Compare the file extension with the current one in the path list */
-        currentListExtension = pathSearchList[i][extensionPosition];
-        if (currentListExtension != NULL)
+        if (strcmp(fileExtension, pathSearchList[i][miscEXT_IDX]) == 0)
         {
-            extensionComparisonResult = strcmp(fileExtension,
-                                               currentListExtension);
+            found = mcsTRUE;
+            break;
         }
-
-        currentListPath = pathSearchList[i][pathPosition];
         i++;
     }
-    while ((currentListExtension != NULL) && (currentListPath != NULL) && 
-           (extensionComparisonResult != 0));
-
     /* Return weither the file at the path or not */
-    return miscLocateFileInPath(currentListPath, fileName);
+    if (found == mcsTRUE)
+    {
+        return miscLocateFileInPath(pathSearchList[i][miscPATH_IDX],
+                                    fileName);
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 
