@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.1 2004-09-10 13:52:54 gzins Exp $"
+# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.2 2004-09-10 14:00:31 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -16,7 +16,7 @@
 # File filter for doxygen.
 #
 # \synopsis
-# mkfFilterForDoxygen \e \<file\>
+# \b mkfFilterForDoxygen \e \<file\>
 #
 # \param file : file to be filtered out
 #
@@ -38,19 +38,10 @@
 # \usedfiles
 # \filename $FILE : input file feeding doxygen
 #
-# \n \n
-# \include mkfFilterForDoxygen
-# 
 # */
 
 # File to filter out
 FILE=$1
-
-#Set basename
-FILENAME=`basename $1`
-
-# Strip off file extension
-FILENAME=${FILENAME%%.*}
 
 # Get file extension
 fileExtension=${FILE##*.}
@@ -87,6 +78,7 @@ case $fileExtension in
         }
         
         {
+            # If a line has to be printed (inside the comment block)
             if (printLine == "yes")
             {
                 # Set the line, deleting the # character
@@ -94,12 +86,13 @@ case $fileExtension in
                 # Print the new line adding in front of each one " *"
                 print " *"line
             }
-        }
-
-        END {
-            # Print the name of the file at the end, to let doxygen work
-            # correctly : it need to rely a comment block to some C like code
-            print "No source file for "file
+        else
+            {
+                # The line has not to be print
+                # Comment the line (it is used to have the source code in the
+                # documentation)
+                print "// "$0
+            }
         }
         ' $FILE
         ;;
