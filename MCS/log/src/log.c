@@ -1,13 +1,43 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: log.c,v 1.2 2004-05-13 14:04:40 mella Exp $"
+*  "@(#) $Id: log.c,v 1.3 2004-05-14 10:04:09 mella Exp $"
 *
 * who       when      what
 * --------  --------  ----------------------------------------------
-* mella   07/05/04  Preliminary version based on IBAC from VLT/ESO
-* 
-*/
+* mella   07/05/04  Preliminary version based on log from VLT/ESO
+=* 
+ */
+
+/** \file
+ * This module provides functions that enable users to handle the three types
+ *   of logs for the Event Logging. The types of logs are:
+ *       . Standard Logs : These logs are stored into the standard MCS logger.
+ *       . Verbose Logs  : These logs are written to stdout.
+ *       . Action Logs   : TBD.
+ *   The three kinds of logs contain the same information, but are stored
+ *   in different locations and the levels of information are controlled
+ *   individually by logSetLogLevel(), logSetVerboseLevel() and
+ *   logSetActionLevel() methods. The current log levels can be retrieved by
+ *   logGetLogLevel(), logGetVerboseLevel() and logGetActionLevel() methods.
+ *
+ *   The logging levels range from logQUIET to logEXTDBG, where the lowest 
+ *   number means the  lowest priority. By default, the level of all the 
+ *   logs is set to logWARNING.
+ *   The log and verbose flags indicate if the log information are presented
+ *   respectively on the standard MCS logger or on the stdout device
+ *   (default is mcsTRUE).
+ *   The following enums should be used to set the log levels :
+ *       logQUIET (0)   : no echo
+ *       logWARNING (1) : errors or abnormal events for application.
+ *       logINFO (2)    : major events (e.g when operational mode is modified).
+ *       logTEST (3)    : software test activities.
+ *       logDEBUG (4)   : debugging information
+ *       logEXTDBG (5)  : more detailed debugging information
+ *
+ *   Convenient macros are provided for logging standard and
+ *   verbose information .
+ */
 
 /* 
  * System Headers 
@@ -21,6 +51,7 @@
  * Local Headers 
  */
 #include "log.h"
+#include "logPrivate.h"
 
 /*
  * Default initialization
@@ -38,22 +69,17 @@ static logRULE *logRulePtr = &logRule;
 
 static mcsPROCNAME logProcName = "procUNKNOWN";
 
-static mcsMODULEID logModName = "NoMOD";
-
 /**
- * Get names to identify the process and the module where it comes from.
- * One not identified process is named procUNKNOWN and relates to NoMOD module
- * name.
+ * Get names to identify the process. The module name must be given for each
+ * logging call. If process is not identified, then default name is procUNKNOWN
  *
- * @param processName name of the process.
- * @param moduleName name of the software module.
+ * \param processName name of the process.
  *
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName, const mcsMODULEID moduleName){
+mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName){
     /* store values into global variables */
     strncpy(logProcName, processName, mcsPROCNAME_LEN);
-    strncpy(logModName, moduleName, mcsMODULEID_LEN);
     return SUCCESS;
 }
 
@@ -61,12 +87,17 @@ mcsCOMPL_STAT logIdentify(const mcsPROCNAME processName, const mcsMODULEID modul
  * Log data to logsystem if level satisfies and optionally
  * to the stdout if verbose is specified.
  * 
- * @return mcsCOMPL_STAT 
+ * \param modName name of the module relative.
+ * \param level of message.
+ * \param fileLine fileLine pointing source code of message.
+ * \param logFormat format of given message.
+ * 
+ * \return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logPrint( logLEVEL level,
+mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
                         const char *fileLine,
                         const char *logFormat, ...)
-{ 
+{
     char buffer[4*logTEXT_LEN];
     va_list         argPtr;
     mcsCOMPL_STAT   stat = SUCCESS;
@@ -84,7 +115,7 @@ mcsCOMPL_STAT logPrint( logLEVEL level,
     /* If the specified level is less than or egal to the logging level */
     if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
     {
-        fprintf(stdout, "%s[%s] - ", logProcName, logModName);
+        fprintf(stdout, "%s - %s - ", logProcName, modName);
         if ( (fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
         {
             fprintf(stdout, "%s - ", fileLine);
@@ -103,10 +134,10 @@ mcsCOMPL_STAT logPrint( logLEVEL level,
 /**
  * Print action log.
  *
- * @param level  TBD
- * @param logFormat msg 
+ * \param level  TBD
+ * \param logFormat msg 
  *
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
 mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
 { 
@@ -133,9 +164,9 @@ mcsCOMPL_STAT logPrintAction(logLEVEL level, const char *logFormat, ...)
 /**
  * Set logging level.
  *  
- * @param level TBD
+ * \param level TBD
  *
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
 mcsCOMPL_STAT logSetLogLevel (logLEVEL level)
 {
@@ -148,9 +179,9 @@ mcsCOMPL_STAT logSetLogLevel (logLEVEL level)
 /**
  * Toggle the log.
  *
- * @param flag mcsTRUE/mcsFALSE
+ * \param flag mcsTRUE/mcsFALSE
  *
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
 mcsCOMPL_STAT logSetLog(mcsLOGICAL flag)
 {
@@ -163,7 +194,7 @@ mcsCOMPL_STAT logSetLog(mcsLOGICAL flag)
 /**
  * Get logging level.
  *
- * @return logLEVEL actual logging level 
+ * \return logLEVEL actual logging level 
  */
 logLEVEL logGetLogLevel ()
 {
@@ -176,9 +207,9 @@ logLEVEL logGetLogLevel ()
 /**
  * Toggle the verbosity.
  *
- * @param flag mcsTRUE/mcsFALSE
+ * \param flag mcsTRUE/mcsFALSE
  * 
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
 mcsCOMPL_STAT logSetVerbose(mcsLOGICAL flag)
 {
@@ -192,9 +223,9 @@ mcsCOMPL_STAT logSetVerbose(mcsLOGICAL flag)
 /**
  * Set verbosity level.
  *
- * @param level  
+ * \param level  
  *
- * @return mcsCOMPL_STAT
+ * \return mcsCOMPL_STAT
  */
 mcsCOMPL_STAT logSetVerboseLevel (logLEVEL level)
 {
@@ -222,9 +253,9 @@ logLEVEL logGetVerboseLevel ()
 /**
  * Set action level.
  * 
- * @param level TBD
+ * \param level TBD
  * 
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
 mcsCOMPL_STAT logSetActionLevel (logLEVEL level)
 {
@@ -247,9 +278,9 @@ logLEVEL logGetActionLevel ()
 /**
  * Toggle the date output. Useful in test mode.
  * 
- * @param flag mcsTRUE/mcsFALSE
+ * \param flag mcsTRUE/mcsFALSE
  *
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
 {
@@ -261,9 +292,9 @@ mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
 /**
  * Toggle the fileline output. Useful in test mode.
  * 
- * @param flag mcsTRUE/mcsFALSE
+ * \param flag mcsTRUE/mcsFALSE
  *
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
 mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
 {
@@ -276,9 +307,9 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
  * Place msg into the logging system.
  * \todo fill for the future 
  *  
- * @param msg message to store.
+ * \param msg message to store.
  * 
- * @return mcsCOMPL_STAT 
+ * \return mcsCOMPL_STAT 
  */
 mcsCOMPL_STAT logData(const char * msg)
 {
