@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.9 2005-03-04 09:17:49 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.10 2005-03-04 09:51:23 gzins Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.9  2005/03/04 09:17:49  scetre
+ *** empty log message ***
+
  Revision 1.7  2005/02/28 13:49:03  scetre
  Added save file option in the request
 
@@ -108,7 +111,6 @@
             <name>baseMin</name>
             <type>double</type>
             <desc>minimum baseline length</desc>
-            <defaultValue><double>46.64</double></defaultValue>
             <minValue><double>0</double></minValue>
             <maxValue><double>100</double></maxValue>
             <unit>m</unit>                
@@ -117,9 +119,8 @@
             <name>baseMax</name>
             <type>double</type>
             <desc>maximum baseline length</desc>
-            <defaultValue><double>102.45</double></defaultValue>
-            <minValue><double>0</double></minValue>
-            <maxValue><double>202</double></maxValue>
+            <defaultValue><double>100</double></defaultValue>
+            <minValue><double>0.1</double></minValue>
             <unit>m</unit>                
         </param>
         <param>
@@ -134,22 +135,22 @@
             <name>vis</name>
             <type>double</type>
             <defaultValue><double>1.0</double></defaultValue>
-            <minValue><double>0</double></minValue>
-            <maxValue><double>1</double></maxValue>
+            <minValue><double>0.0</double></minValue>
+            <maxValue><double>1.0</double></maxValue>
             <desc>calibrator expected visibility</desc>
         </param>
         <param>
             <name>visErr</name>
             <type>double</type>
             <defaultValue><double>0.1</double></defaultValue>
-            <minValue><double>0</double></minValue>
-            <maxValue><double>1</double></maxValue>
+            <minValue><double>0.0</double></minValue>
+            <maxValue><double>1.0</double></maxValue>
             <desc>maximum error on visibility</desc>
         </param>
         <param optional="true">
             <name>file</name>
             <type>string</type>
-            <desc>File in which you want to save results</desc>
+            <desc>name of file in which results will be saved</desc>
         </param>
     </params>        
 </cmd>
