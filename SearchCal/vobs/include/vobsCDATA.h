@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.6 2005-02-10 10:46:33 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.7 2005-02-11 10:37:19 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/10 10:46:33  gzins
+* Changed column name to parameter name
+*
 * Revision 1.5  2005/02/08 20:32:27  gzins
 * Added name of catalog form where data is coming from
 *
@@ -70,10 +73,13 @@ public:
     virtual mcsCOMPL_STAT SetCatalogName(const char *name);
     virtual const char   *GetCatalogName(void);
 
+    virtual mcsCOMPL_STAT AddParamsDesc(char *paramNameLine, char *ucdNameLine);
     virtual mcsCOMPL_STAT AddParamName(char *paramName);
     virtual mcsCOMPL_STAT AddUcdName(char *ucdName);
+
     virtual mcsUINT32     GetNbParams(void);
-    virtual mcsCOMPL_STAT GetNextParamDesc(char **paramName, char **ucdName,
+    virtual mcsCOMPL_STAT GetNextParamDesc(char **paramName,
+                                           char **ucdName,
                                            mcsLOGICAL init);
     virtual mcsCOMPL_STAT SetNbLinesToSkip(mcsINT32 nbLines);
     virtual mcsUINT32     GetNbLinesToSkip(void);
