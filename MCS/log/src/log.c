@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.8 2004-06-02 07:46:40 mella Exp $"
+* "@(#) $Id: log.c,v 1.9 2004-06-02 10:10:13 mella Exp $"
 *
 *
 * who       when                 what
@@ -69,7 +69,7 @@ The following softwares are needed to generate the log library:
 
 \li MCS environment
 
-This library generates log messages using syslog(), which will  be  distributed  by  syslogd.
+This library generates log messages using syslog(), which will  be  distributed  by  syslogd. By default, log uses local3 facility.
 
 The following softwares are needed to use the log library:
 
@@ -98,10 +98,21 @@ $ make install
 \endcode
 
 \section config Configuration
+This modules makes call to the syslogd daemon. syslogd must be configured to route the messages to the correct destination.
 
 \subsection conf_files Configuration files
+In general, \p /etc/syslog.conf configures the sylogd.
+This file is taken into account at startup or after a SIGHUP signal sent. \p /etc/init.d/syslogd \p restart also makes \p syslogd reread configuration file.  
 
 \subsection conf_syntax Configuration syntax
+Simplest configuration lines is:
+\code
+
+local3.*                            /home/MCS/mcs.log
+
+\endcode
+
+See syslog.conf manual page for further information.
 
 \subsection env Environment variables
 
