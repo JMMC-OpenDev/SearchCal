@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.18 2005-01-03 14:38:51 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.19 2005-01-24 11:01:02 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -112,8 +112,12 @@ public:
 
     // Method to set the star properties
     virtual mcsCOMPL_STAT SetPropertyValue(char *id, char *value,
+                                           mcsFLOAT isComputed=mcsFALSE,
+                                           mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
                                            mcsLOGICAL overwrite=mcsFALSE);
     virtual mcsCOMPL_STAT SetPropertyValue(char *propertyId, mcsFLOAT value,
+                                           mcsFLOAT isComputed=mcsFALSE,
+                                           mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
                                            mcsLOGICAL overwrite=mcsFALSE);
 
     // Methods to retreive the star property
