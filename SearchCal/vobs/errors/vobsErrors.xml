@@ -23,7 +23,7 @@
    <error id="10">
       <errName>INVALID_UCD_ID</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Invalid UCD id '%d']]></errFormat>
+      <errFormat><![CDATA[Invalid UCD id '%s']]></errFormat>
    </error>
    <error id="11">
       <errName>INVALID_UCD_FORMAT</errName>
@@ -138,7 +138,7 @@
    <error id="34">
       <errName>INVALID_PROPERTY_ID</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Invalid property id '%d']]></errFormat>
+      <errFormat><![CDATA[Invalid property id '%s']]></errFormat>
    </error>
    <error id="35">
       <errName>NO_MORE_CRITERIA</errName>
@@ -174,5 +174,10 @@
       <errName>INVALID_BAND</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Incorrect band. It should be '%.80s' band]]></errFormat>
+   </error>
+   <error id="44">
+      <errName>INCONSISTENT_PARAMS_DESC</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Inconsistent parameters description; number of pararameter name (%d) differs from number of UCDs (%d).]]></errFormat>
    </error>
 </errorList>
