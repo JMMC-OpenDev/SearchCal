@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.3 2005-02-15 08:40:15 gzins Exp $"
+# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.4 2005-02-22 13:56:50 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/15 08:40:15  gzins
+# Added CVS log as file modification history
+#
 # lgluck    27/07/04    Created
 #
 #*******************************************************************************
@@ -34,7 +37,10 @@
 #   - shell scripts .sh
 #   .
 # \n
-# -# put comments into doxygen documentation blocks
+# -# unescape comments into doxygen documentation blocks. In case user wants to
+# include C-style comments in a doxygen code examples block (~ nested comment,
+# are not possible), C-style comment pattern pair should be escaped by /#
+# and #/ pattern pair.
 # 
 # \usedfiles
 # \filename $FILE : input file feeding doxygen
@@ -87,7 +93,7 @@ case $fileExtension in
                 # Print the new line adding in front of each one " *"
                 print " *"line
             }
-        else
+            else
             {
                 # The line has not to be print
                 # Comment the line (it is used to have the source code in the
