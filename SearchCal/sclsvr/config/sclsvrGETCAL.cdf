@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.7 2005-02-28 13:49:03 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.8 2005-03-04 07:36:42 scetre Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.7  2005/02/28 13:49:03  scetre
+ Added save file option in the request
+
  Revision 1.6  2005/02/14 15:10:17  scetre
  changed m..RangeMag to m..MagRange
 
@@ -42,6 +45,8 @@
             <name>mag</name>
             <type>double</type>
             <desc>science object magnitude</desc>
+            <minValue><double>-5.0</double></minValue>
+            <maxValue><double>20</double></maxValue>
         </param>
         <param>
             <name>maxReturn</name>
@@ -54,6 +59,8 @@
             <type>integer</type>
             <defaultValue><integer>1800</integer></defaultValue>
             <desc>right ascension value of the search box size</desc>
+            <minValue><integer>0</integer></minValue>
+            <maxValue><integer>3600</integer></maxValue>
             <unit>arcmin</unit>                
         </param>
         <param>
@@ -61,6 +68,8 @@
             <type>integer</type>
             <defaultValue><integer>600</integer></defaultValue>
             <desc>declinaison value of the search box size</desc>
+            <minValue><integer>0</integer></minValue>
+            <maxValue><integer>1800</integer></maxValue>
             <unit>arcmin</unit>
         </param>
         <param>
@@ -72,24 +81,26 @@
         <param>
             <name>minMagRange</name>
             <type>double</type>
+            <minValue><double>-5.0</double></minValue>
+            <maxValue><double>20</double></maxValue>
             <desc>minimum of the range magnitude</desc>
         </param>
         <param>
             <name>maxMagRange</name>
             <type>double</type>
+            <minValue><double>-5.0</double></minValue>
+            <maxValue><double>20</double></maxValue>
             <desc>maximum of the range magnitude</desc>
         </param>
         <param>
             <name>ra</name>
             <type>string</type>
-            <defaultValue><string>03:47:29.79</string></defaultValue>
             <desc>right ascension coordinate of the science object</desc>
             <unit>HH:MM:SS.TT</unit>
         </param>
         <param>
             <name>dec</name>
             <type>string</type>
-            <defaultValue><string>+24:06:18.50</string></defaultValue>
             <desc>declinaison coordinate of the science object</desc>
             <unit>DD:MM:SS.TT</unit>                
         </param>
@@ -98,6 +109,8 @@
             <type>double</type>
             <desc>minimum baseline length</desc>
             <defaultValue><double>46.64</double></defaultValue>
+            <minValue><double>0</double></minValue>
+            <maxValue><double>100</double></maxValue>
             <unit>m</unit>                
         </param>
         <param>
@@ -105,30 +118,37 @@
             <type>double</type>
             <desc>maximum baseline length</desc>
             <defaultValue><double>102.45</double></defaultValue>
+            <minValue><double>0</double></minValue>
+            <maxValue><double>202</double></maxValue>
             <unit>m</unit>                
         </param>
         <param>
             <name>wlen</name>
             <type>double</type>
             <desc>observing wavelength</desc>
+            <minValue><double>0.5</double></minValue>
+            <maxValue><double>20</double></maxValue>
             <unit>um</unit>
         </param>
         <param>
             <name>vis</name>
             <type>double</type>
             <defaultValue><double>1.0</double></defaultValue>
+            <minValue><double>0</double></minValue>
+            <maxValue><double>1</double></maxValue>
             <desc>calibrator expected visibility</desc>
         </param>
         <param>
             <name>visErr</name>
             <type>double</type>
             <defaultValue><double>0.1</double></defaultValue>
+            <minValue><double>0</double></minValue>
+            <maxValue><double>1</double></maxValue>
             <desc>maximum error on visibility</desc>
         </param>
         <param optional="true">
             <name>file</name>
             <type>string</type>
-            <defaultValue><string>file.txt</string></defaultValue>
             <desc>File in which you want to save results</desc>
         </param>
     </params>        
