@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.16 2005-02-22 13:24:02 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.17 2005-02-22 15:48:38 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/02/22 13:24:02  scetre
+* Fixed bug in cast of wlen value when parsing magnitude from the flux
+*
 * Revision 1.15  2005/02/17 17:38:01  gzins
 * Removed trailing and leading spaces of read values when parsing buffer
 *
@@ -245,13 +248,14 @@ public:
             // For each line in buffer, get the value for each defined UCD
             // (value are separated by '\t' character), store them in object
             // object and add this new object in the list.
-            const char *from=NULL;
+            const char*   from=NULL;
             mcsSTRING1024 line;
-            mcsINT32 lineNum = 0;
+            mcsUINT32     maxLineLength = sizeof(line);
+            mcsINT32      lineNum = 0;
             do
             {
                 // Get next line
-                from = GetNextLine(from, line);
+                from = GetNextLine(from, line, maxLineLength);
                 lineNum++;
 
                 logPrint("vobs", logDEBUG, __FILE_LINE__,

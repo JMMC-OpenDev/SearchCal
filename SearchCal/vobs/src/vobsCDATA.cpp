@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.16 2005-02-17 17:57:27 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.17 2005-02-22 15:48:38 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/02/17 17:57:27  gzins
+* Removed trailing and leading spaces of read values when adding parameter description
+*
 * Revision 1.15  2005/02/16 16:18:00  scetre
 * Fixed remaining bugs in Extract and Unpack methods
 *
@@ -52,7 +55,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.16 2005-02-17 17:57:27 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.17 2005-02-22 15:48:38 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -480,9 +483,10 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
     logExtDbg("vobsCDATA::SetParamsDesc()");
 
     // Get pointer to the UCDs 
-    const char *from=NULL;
+    const char    *from=NULL;
     mcsSTRING1024 ucdNameLine;
-    from = GetNextLine(from, ucdNameLine);
+    mcsUINT32     ucdNameLineMaxLength = sizeof(ucdNameLine);
+    from = GetNextLine(from, ucdNameLine, ucdNameLineMaxLength);
     if (ucdNameLine == NULL)
     {
         errAdd(vobsERR_MISSING_UCDS);
@@ -491,7 +495,7 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
 
     // Get pointer to the parameter names 
     mcsSTRING1024 paramNameLine;
-    from = GetNextLine(from, paramNameLine);
+    from = GetNextLine(from, paramNameLine, ucdNameLineMaxLength);
     if (paramNameLine == NULL)
     {
         errAdd(vobsERR_MISSING_PARAM_NAMES);
