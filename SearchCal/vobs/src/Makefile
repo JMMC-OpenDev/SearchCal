@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-08-03 13:44:10 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.5 2004-09-13 07:00:15 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -76,6 +76,7 @@ vobs_OBJECTS   =   vobsSTAR 				\
 				   vobsCATALOG_PHOTO 		\
 				   vobsCATALOG_SBSC			\
 				   vobsVIRTUAL_OBSERVATORY	\
+				   vobsSCENARIO             \
 
 
 #
