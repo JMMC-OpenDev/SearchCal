@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.10 2005-02-22 10:16:10 gzins Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.11 2005-02-22 16:20:13 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/22 10:16:10  gzins
+ * Fixed bug; only computed missing magnitudes.
+ *
  * Revision 1.9  2005/02/22 08:08:20  gzins
  * Updated to set confidence index to alxNO_CONFIDENCE when magnitude can not be computed
  *
@@ -48,7 +51,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.10 2005-02-22 10:16:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.11 2005-02-22 16:20:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -217,7 +220,8 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
     int  lineNum=0;
     const char *pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, mcsTRUE)) != NULL)
+    while ((pos = miscDynBufGetNextLine
+            (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
     {
         logDebug("miscDynBufGetNextLine() = '%s'", line);
 
@@ -399,25 +403,40 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
     
     /* If the spectral type matches the line of the color table */
     mcsFLOAT b_v, v_i, v_r, i_j, j_h, j_k, k_l, k_m;
+    b_v = alxBLANKING_VALUE;
+    v_i = alxBLANKING_VALUE;
+    v_r = alxBLANKING_VALUE;
+    i_j = alxBLANKING_VALUE;
+    j_h = alxBLANKING_VALUE;
+    j_k = alxBLANKING_VALUE;
+    k_l = alxBLANKING_VALUE;
+    k_m = alxBLANKING_VALUE;
+
     if (colorTable->spectralType[line].quantity == spectralType.quantity)
     {
-        /* Get differential magnitudes */
-        b_v = colorTable->index[line][alxB_V];
-        v_i = colorTable->index[line][alxV_I];
-        v_r = colorTable->index[line][alxV_R];
-        i_j = colorTable->index[line][alxI_J];
-        j_h = colorTable->index[line][alxJ_H];
-        j_k = colorTable->index[line][alxJ_K];
-        k_l = colorTable->index[line][alxK_L];
-        if ((colorTable->index[line][alxK_L] == alxBLANKING_VALUE) ||
-            (colorTable->index[line][alxL_M] == alxBLANKING_VALUE))
+        /* Compare B-V star differential magnitude to the one of the color table
+         * line; delta should be less than +/- 0.1 */
+        if (fabs((mgB-mgV) - colorTable->index[line][alxB_V]) <= 0.1)
         {
-            k_m = alxBLANKING_VALUE;
+            /* Get differential magnitudes */
+            b_v = colorTable->index[line][alxB_V];
+            v_i = colorTable->index[line][alxV_I];
+            v_r = colorTable->index[line][alxV_R];
+            i_j = colorTable->index[line][alxI_J];
+            j_h = colorTable->index[line][alxJ_H];
+            j_k = colorTable->index[line][alxJ_K];
+            k_l = colorTable->index[line][alxK_L];
+            if ((colorTable->index[line][alxK_L] != alxBLANKING_VALUE) &&
+                (colorTable->index[line][alxL_M] != alxBLANKING_VALUE))
+            {
+                k_m = colorTable->index[line][alxK_L] + 
+                    colorTable->index[line][alxL_M];
+            }
         }
         else
         {
-            k_m = colorTable->index[line][alxK_L] + 
-                colorTable->index[line][alxL_M];
+            logTest("mgB-mgV = %.3f / B-V %.3f; delta > 0.1",
+                    (mgB-mgV), colorTable->index[line][alxB_V]);
         }
     }
     /* Else, interpolate */
@@ -430,101 +449,86 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         logTest("Inferior line = %d", lineInf);
         logTest("Superior line = %d", lineSup);
         
-        /* Compute ratio for interpolation */
-        ratio = fabs(((mgB-mgV) - colorTable->index[lineInf][alxB_V]) /
-                     (colorTable->index[lineSup][alxB_V] -
-                      colorTable->index[lineInf][alxB_V]));
-        logTest("Ratio = %f", ratio);
+        /* Compare B-V star differential magnitude to the ones of the color
+         * table inferior/superior lines; delta should be less than +/- 0.1 */
+        if ((fabs((mgB-mgV) - colorTable->index[lineSup][alxB_V]) <= 0.1) ||
+            (fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V]) <= 0.1))
+        {
+            /* Compute ratio for interpolation */
+            ratio = fabs(((mgB-mgV) - colorTable->index[lineInf][alxB_V]) /
+                         (colorTable->index[lineSup][alxB_V] -
+                          colorTable->index[lineInf][alxB_V]));
+            logTest("Ratio = %f", ratio);
 
-        /* Compute differential magnitudes */
-        if ((colorTable->index[lineSup][alxV_R] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineInf][alxV_R] == alxBLANKING_VALUE))
-        {
-            v_r = alxBLANKING_VALUE;
+            /* Compute differential magnitudes */
+            if ((colorTable->index[lineSup][alxV_R] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxV_R] != alxBLANKING_VALUE))
+            {
+                v_r = colorTable->index[lineInf][alxV_R] +
+                    ratio *(colorTable->index[lineSup][alxV_R] -
+                            colorTable->index[lineInf][alxV_R]);
+            }
+
+            if ((colorTable->index[lineSup][alxV_I] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxV_I] != alxBLANKING_VALUE))
+            {
+                v_i = colorTable->index[lineInf][alxV_I] +
+                    ratio *(colorTable->index[lineSup][alxV_I] -
+                            colorTable->index[lineInf][alxV_I]);
+            }
+
+            if ((colorTable->index[lineSup][alxI_J] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxI_J] != alxBLANKING_VALUE))
+            {
+                i_j = colorTable->index[lineInf][alxI_J] +
+                    ratio *(colorTable->index[lineSup][alxI_J] -
+                            colorTable->index[lineInf][alxI_J]);
+            }
+
+            if ((colorTable->index[lineSup][alxJ_H] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxJ_H] != alxBLANKING_VALUE))
+            {
+                j_h = colorTable->index[lineInf][alxJ_H] +
+                    ratio *(colorTable->index[lineSup][alxJ_H] -
+                            colorTable->index[lineInf][alxJ_H]);
+            }
+
+            if ((colorTable->index[lineSup][alxJ_K] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxJ_K] != alxBLANKING_VALUE))
+            {
+                j_k = colorTable->index[lineInf][alxJ_K] +
+                    ratio *(colorTable->index[lineSup][alxJ_K] -
+                            colorTable->index[lineSup][alxJ_K]);
+            }
+
+            if ((colorTable->index[lineSup][alxK_L] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxK_L] != alxBLANKING_VALUE))
+            {
+                k_l = colorTable->index[lineInf][alxK_L] +
+                    ratio * (colorTable->index[lineSup][alxK_L] -
+                             colorTable->index[lineInf][alxK_L]);
+            }
+
+            if ((colorTable->index[lineSup][alxK_L] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxK_L] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineSup][alxL_M] != alxBLANKING_VALUE) &&
+                (colorTable->index[lineInf][alxL_M] != alxBLANKING_VALUE))
+            {
+                k_m = colorTable->index[lineInf][alxK_L] +
+                    colorTable->index[lineInf][alxL_M] +
+                    ratio *(colorTable->index[lineSup][alxK_L] +
+                            colorTable->index[lineSup][alxL_M] -
+                            colorTable->index[lineInf][alxK_L] -
+                            colorTable->index[lineInf][alxL_M]);
+            }
         }
         else
         {
-            v_r = colorTable->index[lineInf][alxV_R] +
-                ratio *(colorTable->index[lineSup][alxV_R] -
-                        colorTable->index[lineInf][alxV_R]);
-        }
-        
-        if ((colorTable->index[lineSup][alxV_I] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineInf][alxV_I] == alxBLANKING_VALUE))
-        {
-            v_i = alxBLANKING_VALUE;
-        }
-        else
-        {
-            v_i = colorTable->index[lineInf][alxV_I] +
-                ratio *(colorTable->index[lineSup][alxV_I] -
-                        colorTable->index[lineInf][alxV_I]);
-        }
-        
-        if ((colorTable->index[lineSup][alxI_J] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineInf][alxI_J] == alxBLANKING_VALUE))
-        {
-            i_j = alxBLANKING_VALUE;
-        }
-        else
-        {
-            i_j = colorTable->index[lineInf][alxI_J] +
-                ratio *(colorTable->index[lineSup][alxI_J] -
-                        colorTable->index[lineInf][alxI_J]);
+            logTest("mgB-mgV = %.3f / B-V [%.3f..%.3f]; delta > 0.1",
+                    (mgB-mgV), colorTable->index[lineInf][alxB_V], 
+                    colorTable->index[lineSup][alxB_V]);
         }
 
-        if ((colorTable->index[lineSup][alxJ_H] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineInf][alxJ_H] == alxBLANKING_VALUE))
-        {
-            j_h = alxBLANKING_VALUE;
-        }
-        else
-        {
-            j_h = colorTable->index[lineInf][alxJ_H] +
-                ratio *(colorTable->index[lineSup][alxJ_H] -
-                        colorTable->index[lineInf][alxJ_H]);
-        }
-
-        if ((colorTable->index[lineSup][alxJ_K] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineInf][alxJ_K] == alxBLANKING_VALUE))
-        {
-            j_k = alxBLANKING_VALUE;
-        }
-        else
-        {
-            j_k = colorTable->index[lineInf][alxJ_K] +
-                ratio *(colorTable->index[lineSup][alxJ_K] -
-                        colorTable->index[lineSup][alxJ_K]);
-        }
-
-        if ((colorTable->index[lineSup][alxK_L] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineInf][alxK_L] == alxBLANKING_VALUE))
-        {
-            k_l = alxBLANKING_VALUE;
-        }
-        else
-        {
-            k_l = colorTable->index[lineInf][alxK_L] +
-                ratio * (colorTable->index[lineSup][alxK_L] -
-                         colorTable->index[lineInf][alxK_L]);
-        }
-
-        if ((colorTable->index[lineSup][alxK_L] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineInf][alxK_L] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineSup][alxL_M] == alxBLANKING_VALUE) ||
-            (colorTable->index[lineInf][alxL_M] == alxBLANKING_VALUE))
-        {
-            k_m = alxBLANKING_VALUE;
-        }
-        else
-        {
-            k_m = colorTable->index[lineInf][alxK_L] +
-                colorTable->index[lineInf][alxL_M] +
-                ratio *(colorTable->index[lineSup][alxK_L] +
-                        colorTable->index[lineSup][alxL_M] -
-                        colorTable->index[lineInf][alxK_L] -
-                        colorTable->index[lineInf][alxL_M]);
-        }
     }
 
     /* Compute *missing* magnitudes in R, I, J, H, K, L and M bands */
