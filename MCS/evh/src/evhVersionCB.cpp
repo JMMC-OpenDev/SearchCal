@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhVersionCB.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"
+* "@(#) $Id: evhVersionCB.cpp,v 1.2 2005-01-26 18:13:13 gzins Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * gzins     09-Nov-2004  Created
-*
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * Definition of the VERSION callback.
  */
 
-static char *rcsId="@(#) $Id: evhVersionCB.cpp,v 1.1 2004-12-05 19:00:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhVersionCB.cpp,v 1.2 2005-01-26 18:13:13 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,10 +50,10 @@ evhCB_COMPL_STAT evhSERVER::VersionCB(msgMESSAGE &msg, void*)
 
     // Get the version string
     mcsSTRING256 version;
-    strcpy(version,  GetSwVersion());
+    strcpy(version, GetSwVersion());
 
     // Set the reply buffer
-    msg.SetBody(version, strlen(version));
+    msg.SetBody(version);
 
     // Send reply
     SendReply(msg);
