@@ -1,17 +1,18 @@
 #ifndef msgMANAGER_H
 #define msgMANAGER_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgMANAGER.h,v 1.2 2004-12-15 09:55:46 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     06-Dec-2004  Created
-* gzins     15-Dec-2004  Set mcsTRUE as default value of lastReply parameter
-*                        of SendReply method
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgMANAGER.h,v 1.3 2005-01-24 15:39:54 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     06-Dec-2004  Created
+ * gzins     15-Dec-2004  Set mcsTRUE as default value of lastReply parameter
+ *                        of SendReply method
+ *
+ ******************************************************************************/
 
 /**
  * \file

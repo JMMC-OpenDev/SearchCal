@@ -1,24 +1,25 @@
 #ifndef msgMANAGER_IF_H
 #define msgMANAGER_IF_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgMANAGER_IF.h,v 1.8 2005-01-07 18:30:24 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  18-Nov-2004  Created
-* lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for _socket,
-*                        and added the class description comment
-* lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
-* lafrasse  01-Dec-2004  Comment refinments
-* gzins     03-Dec-2004  Removed msgManagerHost param from Connect
-*                        Gave default value to paramList and paramLen
-*                        arguments of SendCommand
-* gzins     07-Jan-2005  Updated SendCommand prototype to return command Id
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgMANAGER_IF.h,v 1.9 2005-01-24 15:39:54 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  18-Nov-2004  Created
+ * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
+ *                        _socket, and added the class description comment
+ * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
+ * lafrasse  01-Dec-2004  Comment refinments
+ * gzins     03-Dec-2004  Removed msgManagerHost param from Connect
+ *                        Gave default value to paramList and paramLen
+ *                        arguments of SendCommand
+ * gzins     07-Jan-2005  Updated SendCommand prototype to return command Id
+ *
+ *
+ ******************************************************************************/
 
 /**
  * \file

@@ -1,19 +1,20 @@
 #ifndef msgSOCKET_CLIENT_H
 #define msgSOCKET_CLIENT_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.8 2004-12-07 07:41:59 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    22-Nov-2004  Created
-* lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
-* lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
-* gzins     06-Dec-2004  Declared copy constructor as public method
-* gzins     06-Dec-2004  Declared copy constructor as private method
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgSOCKET_CLIENT.h,v 1.9 2005-01-24 15:39:54 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    22-Nov-2004  Created
+ * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+ * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * gzins     06-Dec-2004  Declared copy constructor as public method
+ * gzins     06-Dec-2004  Declared copy constructor as private method
+ *
+ ******************************************************************************/
 
 /**
  * \file

@@ -1,16 +1,17 @@
 #ifndef msgPROCESS_LIST_H
 #define msgPROCESS_LIST_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgPROCESS_LIST.h,v 1.2 2004-12-08 17:44:45 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     06-Dec-2004  Created
-* gzins     08-Dec-2004  Added descriptor argument to GetProcess()
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgPROCESS_LIST.h,v 1.3 2005-01-24 15:39:54 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     06-Dec-2004  Created
+ * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
+ *
+ ******************************************************************************/
 
 /**
  * \file

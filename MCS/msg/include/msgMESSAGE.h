@@ -1,37 +1,38 @@
 #ifndef msgMESSAGE_H
 #define msgMESSAGE_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgMESSAGE.h,v 1.16 2005-01-07 18:31:21 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    17-Nov-2004  Created
-* lafrasse  19-Nov-2004  Changed all method name first letter to upper case, and
-*                        re-commented
-* lafrasse  22-Nov-2004  Added void type for functions without parameters
-* lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
-*                        msgMESSAGE, added SetLastReplyFlag method
-* scetre    30-Nov-2004  Set message body size to 32000
-* lafrasse  01-Dec-2004  Comment refinments
-* gzins     06-Dec-2004  Updated to be only C++
-* gzins     08-Dec-2004  Added senderId and messageId, with associated methods
-* lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
-*                        misc Dynamic Buffer, and removed unused API
-* gzins     15-Dec-2004  Added _NAME to command name definitions
-* gzins     15-Dec-2004  Removed msgDEBUG_CMD_NAME definition (defined in
-*                        msgDEBUG_CMD.h)
-* gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
-*                        Removed GetHeaderPtr
-*                        Declared AllocateBody as private
-*                        Renamed isInternal to IsInternal
-*                        Added ClearBody and AppendToBody
-*                        Declared msgSOCKET::Send and msgSOCKET::Receive as
-*                        friend
-* gzins     07-Jan-2005  Changed messageId to commandId
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgMESSAGE.h,v 1.17 2005-01-24 15:39:54 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    17-Nov-2004  Created
+ * lafrasse  19-Nov-2004  Changed all method name first letter to upper case,
+ *                        and re-commented
+ * lafrasse  22-Nov-2004  Added void type for functions without parameters
+ * lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
+ *                        msgMESSAGE, added SetLastReplyFlag method
+ * scetre    30-Nov-2004  Set message body size to 32000
+ * lafrasse  01-Dec-2004  Comment refinments
+ * gzins     06-Dec-2004  Updated to be only C++
+ * gzins     08-Dec-2004  Added senderId and messageId, with associated methods
+ * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
+ *                        misc Dynamic Buffer, and removed unused API
+ * gzins     15-Dec-2004  Added _NAME to command name definitions
+ * gzins     15-Dec-2004  Removed msgDEBUG_CMD_NAME definition (defined in
+ *                        msgDEBUG_CMD.h)
+ * gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
+ *                        Removed GetHeaderPtr
+ *                        Declared AllocateBody as private
+ *                        Renamed isInternal to IsInternal
+ *                        Added ClearBody and AppendToBody
+ *                        Declared msgSOCKET::Send and msgSOCKET::Receive as
+ *                        friend
+ * gzins     07-Jan-2005  Changed messageId to commandId
+ *
+ ******************************************************************************/
 
 /**
  * \file

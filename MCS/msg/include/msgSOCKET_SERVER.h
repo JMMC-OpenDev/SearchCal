@@ -1,19 +1,19 @@
 #ifndef msgSOCKET_SERVER_H
 #define msgSOCKET_SERVER_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgSOCKET_SERVER.h,v 1.8 2004-12-07 07:42:38 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* scetre    22-Nov-2004  Created
-* lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
-* lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
-* lafrasse  06-Dec-2004  Fixed wrong header file name
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgSOCKET_SERVER.h,v 1.9 2005-01-24 15:39:54 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    22-Nov-2004  Created
+ * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
+ * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
+ * lafrasse  06-Dec-2004  Fixed wrong header file name
+ *
+ ******************************************************************************/
 
 /**
  * \file

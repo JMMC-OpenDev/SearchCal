@@ -1,19 +1,20 @@
 #ifndef msgPrivate_H
 #define msgPrivate_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgPrivate.h,v 1.6 2004-12-15 09:57:54 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* lafrasse  10-Aug-2004  Ported from CILAS software
-* gzins     06-Dec-2004  Removed no longer used C functions
-* gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
-* gzins     09-Dec-2004  Removed msgMANAGER_PORT_NUMBER definition
-* gzins     15-Dec-2004  Added _NAME to command name definitions
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: msgPrivate.h,v 1.7 2005-01-24 15:39:54 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * lafrasse  10-Aug-2004  Ported from CILAS software
+ * gzins     06-Dec-2004  Removed no longer used C functions
+ * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
+ * gzins     09-Dec-2004  Removed msgMANAGER_PORT_NUMBER definition
+ * gzins     15-Dec-2004  Added _NAME to command name definitions
+ *
+ ******************************************************************************/
 
 /**
  * \file
