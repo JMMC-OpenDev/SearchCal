@@ -1,10 +1,11 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.3 2005-01-26 08:18:33 scetre Exp $"
 *
-* who       when         what
-* --------  -----------  -------------------------------------------------------
+* History
+* -------
+* $Log: not supported by cvs2svn $
 * gzins     13-Dec-2004  Created
 *
 *******************************************************************************/
@@ -14,7 +15,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.2 2005-01-24 10:58:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.3 2005-01-26 08:18:33 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

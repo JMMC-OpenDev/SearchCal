@@ -1,16 +1,17 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.6 2005-01-24 10:58:44 scetre Exp $"
- *
- * who       when         what
- * --------  -----------  ------------------------------------------------------
- * scetre    06-Jul-2004  Created
- * gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
- *
- ******************************************************************************/
+* JMMC project
+*
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.7 2005-01-26 08:18:15 scetre Exp $"
+*
+* History
+* -------
+* $Log: not supported by cvs2svn $
+* scetre    06-Jul-2004  Created
+* gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
+*
+******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.6 2005-01-24 10:58:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.7 2005-01-26 08:18:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -320,7 +321,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
     
-    /*FILE *filePtr;
+#if 0
+    FILE *filePtr;
     mcsSTRING32 property;
 
     filePtr=fopen(miscResolvePath(filename), "w+");
@@ -345,13 +347,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
 
             }
             fprintf(filePtr, "\n");
-
         }
     }
 
     // Close file
-    fclose(filePtr);*/
-
+    fclose(filePtr);
+#endif
     return mcsSUCCESS;
 }
 
