@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.7 2005-02-07 09:47:08 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.8 2005-02-08 20:59:33 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/02/07 09:47:08  gzins
+* Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
+*
 * Revision 1.6  2005/01/31 13:31:38  scetre
 * changed misc...Pointer in misc...
 *
@@ -22,7 +25,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.7 2005-02-07 09:47:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.8 2005-02-08 20:59:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -82,12 +85,40 @@ vobsCDATA::~vobsCDATA()
 
     _colName.clear();
     _ucdName.clear();
+
+    _catalogName = "";
 }
 
 /*
  * Public methods
  */
 
+/**
+ * Set the catalog name from where data is coming from 
+ *
+ * \return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char *name)
+{
+    logExtDbg("vobsCDATA::SetCatalogName()");
+
+    _catalogName = name;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get the catalog name from where data is coming from 
+ *
+ * \return catalog name.
+ */
+const char *vobsCDATA::GetCatalogName()
+{
+    logExtDbg("vobsCDATA::GetCatalogName()");
+
+    return _catalogName.c_str();
+}
+ 
 /**
  * Adds a column description (column name) at the end of the list
  *
@@ -304,7 +335,7 @@ char * vobsCDATA::GetNextLine(char *linePtr)
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::Save(char *fileName)
+mcsCOMPL_STAT vobsCDATA::Save(const char *fileName)
 {
     logExtDbg("vobsCDATA::Save()");
 
