@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-07-08 12:06:46 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-07-19 15:31:05 lafrasse Exp $"
 #
 # Makefile of misc Library
 #
@@ -9,6 +9,7 @@
 # --------  -----------  -------------------------------------------------------
 # lafrasse  24-Jun-2004  Created
 # lafrasse  01-Jul-2004  Added miscDynBuf.h
+# lafrasse  13-Jul-2004  Added miscDynStr.h
 #
 #
 #*******************************************************************************
@@ -51,7 +52,7 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = misc.h miscDynBuf.h
+INCLUDES        = misc.h miscDynBuf.h miscDynStr.h
 
 #
 # Libraries (public and local)
@@ -61,7 +62,7 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-misc_OBJECTS   = miscFile miscDate miscString miscDynBuf
+misc_OBJECTS   = miscFile miscDate miscString miscDynBuf miscDynStr
 
 #
 # Scripts (public and local)

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.10 2004-07-13 14:09:39 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.11 2004-07-19 15:31:05 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -17,16 +17,18 @@
 * lafrasse  23-Jun-2004  added miscDynBuf stuff
 * lafrasse  01-Jul-2004  moved miscDynBuf stuff to miscDynBuf.h
 * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
+* lafrasse  19-Jul-2004  Added miscDynStr doxygen comment
+*
 *
 *******************************************************************************/
  
 /**
  * \file
  * This header contains all the miscDate, miscFile and miscString functions
- * declarations, but NOT those of miscDynBuf.
+ * declarations, but NOT those of miscDynBuf nor those of miscDynStr.
  *
- * miscDynBuf functions (due to their number), have their own include file,
- * called miscDynBuf.h.
+ * miscDynBuf and miscDynStr functions (due to their number), have their own
+ * include file, respectivally called miscDynBuf.h and miscDynStr.h.
  */
 
 /* The following piece of code alternates the linkage type to C for all 

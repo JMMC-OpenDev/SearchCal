@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-07-08 12:06:46 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-07-19 15:31:05 lafrasse Exp $"
 #
 # Makefile of misc Tests
 #
@@ -13,6 +13,7 @@
 #                        added miscTestFile.c
 #                        removed miscTestUtils.c
 #                        added miscTestDynBuf.c
+# lafrasse  13-Jul-2004  added miscTestDynStr.c
 #
 #*******************************************************************************
 # REMARKS
@@ -38,7 +39,7 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = miscTestDate miscTestString miscTestFile miscTestDynBuf
+EXECUTABLES     = miscTestDate miscTestString miscTestFile miscTestDynBuf miscTestDynStr
 EXECUTABLES_L   = 
 
 #
@@ -64,6 +65,12 @@ miscTestFile_LIBS      = mcs err log misc
 miscTestDynBuf_OBJECTS   = miscTestDynBuf
 miscTestDynBuf_LDFLAGS   = -lgdome
 miscTestDynBuf_LIBS      = mcs err log misc
+
+#
+# <brief description of xxxxx program>
+miscTestDynStr_OBJECTS   = miscTestDynStr
+miscTestDynStr_LDFLAGS   = -lgdome
+miscTestDynStr_LIBS      = mcs err log misc
 
 #
 # special compilation flags for single c sources
