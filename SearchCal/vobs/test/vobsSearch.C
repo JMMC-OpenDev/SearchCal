@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSearch.C,v 1.1 2004-07-13 13:25:16 scetre Exp $"
+* "@(#) $Id: vobsSearch.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSearch.C,v 1.1 2004-07-13 13:25:16 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSearch.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -27,17 +27,17 @@ using namespace std;
 #include "log.h"
 
 #define MODULE_ID "vobs"
-
+#include "vobs.h"
 /*
  * Local Headers 
  */
-#include "vobsCALIBRATOR_STAR.h"
+/*#include "vobsCALIBRATOR_STAR.h"
 #include "vobsCALIBRATOR_STAR_LIST.h"
 #include "vobsCATALOG.h"
 #include "vobsPARSER.h"
 #include "vobsREQUEST.h"
 #include "vobsVIRTUAL_OBSERVATORY.h"
-
+*/
 /*
  * Local Variables
  */
@@ -56,8 +56,9 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    logSetVerboseLevel(logINFO );
-
+    logSetVerboseLevel(logINFO);
+    
+    logInfo("Starting ...");
     char *starInit=argv[1];
     //star=new char[strlen(argv)+1];
     //strcpy(star,argv);
@@ -74,7 +75,7 @@ int main(int argc, char *argv[])
             strcat(star,"%20");
     }
 
-    //cout << star << endl;
+    cout << star << endl;
 
     char *wavelength="2.2";
     char *magnitudeB="magnitudeB";
@@ -93,8 +94,14 @@ vobsREQUEST request;
     vobsVIRTUAL_OBSERVATORY virtualObservatory;
     
     vobsCALIBRATOR_STAR_LIST calibObjList;
+    
     calibObjList=virtualObservatory.ResearchOne(request);
+
+    logInfo("size of the list = %d",calibObjList.Size());
+    
     calibObjList.Print();
+    
+    logInfo("exiting ...");
     return 0;
 
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -25,13 +25,13 @@ using namespace std;
  */
 #include "mcs.h"
 #include "log.h"
-
+#include "err.h"
 /*
  * Local Headers 
  */
-#include "log.h"
-#include "vobsPrivate.h"
-#include "vobsVIRTUAL_OBSERVATORY.h"
+
+#include "vobs.h"
+//#include "vobsVIRTUAL_OBSERVATORY.h"
 
 
 /* 
@@ -325,7 +325,7 @@ void vobsVIRTUAL_OBSERVATORY::Merge(std::list<vobsCALIBRATOR_STAR>list2)
         Q=list2.begin();
         while (Q!=list2.end())
         {
-            if (CompareRaDec( (*P).Getraj2000(), (*P).Getdej2000(), (*Q).Getraj2000(), (*Q).Getdej2000(), 1, 1)==1)
+            if (CompareRaDec( (*P).Getraj2000(), (*P).Getdej2000(), (*Q).Getraj2000(), (*Q).Getdej2000(), 5, 5)==1)
             {
                 UpdateCalibStar(*P,*Q); 
                 R=Q;
@@ -384,6 +384,7 @@ std::list<vobsCALIBRATOR_STAR> vobsVIRTUAL_OBSERVATORY::FillAndErase( std::list<
 void vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request)
 {
     logExtDbg("vobsCATALOG::LoadScenario()\n");
+    
     if ((strcmp(request.GetBand(),"K")==0)||(strcmp(request.GetBand(),"J")==0)||(strcmp(request.GetBand(),"H")==0))
     {
         // 1ere interrogation de II/225/catalog -> liste L1
@@ -657,21 +658,17 @@ vobsCALIBRATOR_STAR_LIST vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST request)
     logInfo("apres LoadScenario\n");
 
     FillAndErase(list);
-    std::list<vobsCALIBRATOR_STAR>::iterator Q=list.begin();
+    /*std::list<vobsCALIBRATOR_STAR>::iterator Q=list.begin();
     while (Q!=list.end())
     {
         (*Q).View();
         ++Q;
-    }
+    }*/
 
     // here we take the data the catalog class give to us
     logInfo("--------- return of the list gave by the catalog -----------------\n \n");
 
-    // we use the differents filters it is possible to apply according to the parameters
-    logInfo("!!!!!!!!!!!!!!!!!!           ACHTUNG             !!!!!!!!!!!!!!!!\n");
-    logInfo("!!!!!!!!!!!!!!!!!!   here we'll use the filters  !!!!!!!!!!!!!!!!\n");
-    logInfo("!!!!!!!!!!!!!!!!!!        END OF ACHTUNG         !!!!!!!!!!!!!!!!\n\n");
-
+    StarList.Set(list);
     // at the end, we return the list
     return StarList;
 }
@@ -681,15 +678,15 @@ vobsCALIBRATOR_STAR_LIST vobsVIRTUAL_OBSERVATORY::ResearchOne(vobsREQUEST reques
     logExtDbg("vobsVIRTUAL_OBSERVATORY::ResearchOne()\n");
 
     vobsCATALOG cat1;
-    list=cat1.SearchOne(request,1,listOne);
+    std::list<vobsCALIBRATOR_STAR>list1=cat1.SearchOne(request,1,listOne);
 
     // creation de la liste de coordonnees
     std::list<char *>coordRaList;
     std::list<char *>coordDeList; 
     char *tmp1;
     char *tmp2;
-    std::list<vobsCALIBRATOR_STAR>::iterator Q=list.begin();
-    while (Q!=list.end())
+    std::list<vobsCALIBRATOR_STAR>::iterator Q=list1.begin();
+    while (Q!=list1.end())
     {
         tmp1=new char[strlen((*Q).Getraj2000())+1];
         tmp2=new char[strlen((*Q).Getdej2000())+1];
@@ -739,12 +736,14 @@ vobsCALIBRATOR_STAR_LIST vobsVIRTUAL_OBSERVATORY::ResearchOne(vobsREQUEST reques
         }
         ++J;
     }
-    //printf("%s\n",listOne);
+    printf("%s\n",listOne);
     vobsCATALOG cat2;
     std::list<vobsCALIBRATOR_STAR>list2=cat2.SearchOne(request,2,listOne);
     std::list<vobsCALIBRATOR_STAR>list3=FillAndErase(list2);
+    
+    //list=list3;
     StarList.Set(list3);
-
+    
     return StarList;
 
 }

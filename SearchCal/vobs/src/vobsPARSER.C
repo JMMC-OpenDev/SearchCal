@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.1 2004-07-13 13:41:09 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.1 2004-07-13 13:41:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -25,14 +25,14 @@ using namespace std;
  */
 #include "mcs.h"
 #include "log.h"
-
+#include "err.h"
 
 /*
  * Local Headers 
  */
 
-#include"vobsPARSER.h"
-
+//#include"vobsPARSER.h"
+#include "vobs.h"
 /*
  * Local Variables
  */
@@ -71,6 +71,7 @@ int vobsPARSER::MainParser(char *request)
     doc = gdome_di_createDocFromURI(domimpl, request, GDOME_LOAD_PARSING, &exc);
     if (doc == NULL) {
         fprintf (stderr, "DOMImplementation.createDocFromURI: failed\n\tException #%d\n", exc);
+        errAdd(vobsERR_ACTION,"DOMImplementation.createDocFromURI: failed");
         return 1;
     }
 

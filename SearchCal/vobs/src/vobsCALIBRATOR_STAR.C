@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"
+* "@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.2 2004-07-19 09:25:00 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -29,11 +29,12 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #define MODULE_ID "vobs"
-
+#include "err.h"
 /*
  * Local Headers 
  */
-#include "vobsCALIBRATOR_STAR.h"
+#include "vobs.h"
+//#include "vobsCALIBRATOR_STAR.h"
 
 /*
  * Local Variables

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCALIBRATOR_STAR_LIST.h,v 1.1 2004-07-13 13:41:09 scetre Exp $"
+* "@(#) $Id: vobsCALIBRATOR_STAR_LIST.h,v 1.2 2004-07-20 07:21:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -52,6 +52,8 @@ class vobsCALIBRATOR_STAR_LIST
     void Save();
     
     void Print();
+
+    int Size();
  protected:
 
  private:

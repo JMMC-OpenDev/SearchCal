@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.1 2004-07-19 09:25:00 scetre Exp $"
+* "@(#) $Id: vobs.h,v 1.2 2004-07-20 07:21:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,6 +16,7 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+#include "vobsErrors.h"
 #include "vobsCALIBRATOR_STAR.h"
 #include "vobsCALIBRATOR_STAR_LIST.h"
 #include "vobsCATALOG.h"

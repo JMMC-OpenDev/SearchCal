@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.1 2004-07-13 13:41:09 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.1 2004-07-13 13:41:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -26,17 +26,18 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #define MODULE_ID "vobs"
+#include "vobs.h"
 
 /*
  * Local Headers 
  */
-
+#include "vobs.h"
+//#include"vobsCATALOG.h"
 
 /*
  * Local Variables
  */
 
-#include"vobsCATALOG.h"
 
 /*
  * Local Functions
