@@ -2,11 +2,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeLibraryDependencies.sh,v 1.1 2004-09-10 13:40:57 gzins Exp $" 
+# "@(#) $Id: mkfMakeLibraryDependencies.sh,v 1.2 2004-11-18 16:26:35 gzins Exp $" 
 #
 # who       when         what
 # --------  --------     ----------------------------------------------
 # gzins     26-Aug-2004  Adapted from VLT
+# gzins     18-Nov-2004  Added MCS C++ libraries only when MCS and C++ are
+#                        specified
 #
 
 #************************************************************************
@@ -125,6 +127,7 @@ then
             mcs="yes"
             ;;
         C++):
+            cpp="yes"
             case "`uname`" in
 
             HP-UX):
@@ -194,6 +197,11 @@ then
         echo "mcs = $mcs" 
         libraryList="${libraryList} \$(MCS_LIBLIST)"
         libraryListNoshared="${libraryListNoshared} \$(MCS_LIBLIST_NOSHARED)"
+        if [ "${cpp}" = "yes" ]
+        then 
+            libraryList="${libraryList} \$(MCSCPP_LIBLIST)"
+            libraryListNoshared="${libraryListNoshared} \$(MCSCPP_LIBLIST_NOSHARED)"
+        fi
     fi
     
     echo "libraryList = $libraryList"
