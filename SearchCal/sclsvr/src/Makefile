@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2004-12-10 08:17:15 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-01-25 11:07:48 gzins Exp $"
 #
 # Makefile of sclsvr
 #
@@ -54,6 +54,8 @@ INCLUDES        = sclsvr.h					\
 				  sclsvrCALIBRATOR.h		\
 				  sclsvrCALIBRATOR_LIST.h	\
 				  sclsvrSEARCH_CALIBRATORS.h\
+				  sclsvrGETCAL_CMD.h        \
+				  sclsvrGETSTAR_CMD.h       \
 				  sclsvrSERVER.h
 
 
@@ -68,9 +70,9 @@ LIBRARIES_L     =
 sclsvr_OBJECTS   = sclsvrCALIBRATOR      \
 				   sclsvrCALIBRATOR_LIST \
 				   sclsvrSERVER          \
-				   sclsvrSEARCH_CMD      \
+				   sclsvrGETCAL_CMD      \
 				   sclsvrGETSTAR_CMD     \
-				   sclsvrSearchCB		 \
+				   sclsvrGetCalCB		 \
 				   sclsvrGetStarCB
 
 #
@@ -104,7 +106,7 @@ tttlll_OBJECTS  =
 #
 # Command Definition Files (CDF) 
 #----------------------------
-CDF_FILES     = sclsvrSEARCH sclsvrGETSTAR
+CDF_FILES     = sclsvrGETCAL sclsvrGETSTAR
 
 
 #

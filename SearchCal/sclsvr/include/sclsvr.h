@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvr.h,v 1.1 2004-11-25 13:12:55 scetre Exp $"
+* "@(#) $Id: sclsvr.h,v 1.2 2005-01-25 11:06:29 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
 
 /**
  * \file
- * Brief description of the header file, which ends at this dot.
+ * Header files of sclsvr module.
  */
 
 
@@ -22,9 +22,11 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
-
 #include "sclsvrCALIBRATOR.h"
 #include "sclsvrCALIBRATOR_LIST.h"
+#include "sclsvrErrors.h"
+#include "sclsvrGETCAL_CMD.h"
+#include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrSEARCH_CALIBRATORS.h"
 #include "sclsvrSERVER.h"
 
