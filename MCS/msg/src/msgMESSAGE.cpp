@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.7 2004-12-03 08:50:54 gzins Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.8 2004-12-07 07:47:23 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,6 +15,7 @@
 * lafrasse  01-Dec-2004  Added error management code, comment refinments, and
 *                        includes cleaning
 * gzins     03-Dec-2004  Improved parameter check in SetBody method
+* gzins     07-Dec-2004  Removed invalid parameters from Display documentation 
 *
 *
 *******************************************************************************/
@@ -24,7 +25,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.7 2004-12-03 08:50:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.8 2004-12-07 07:47:23 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -507,9 +508,6 @@ mcsCOMPL_STAT msgMESSAGE::SetMessage(const msgMESSAGE_RAW* message)
 /**
  * Write the msgMESSAGE content on output stream.
  *
- * \param o the output stream to write in
- * \param msg the msgMESSAGE object content to write
- * 
  * \return the address of the internal msgMESSAGE_RAW structure
  */
 //ostream& operator<<(ostream &o, const msgMESSAGE &msg)
