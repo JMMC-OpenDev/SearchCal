@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.14 2004-12-15 15:55:35 lafrasse Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.15 2004-12-22 08:42:06 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -22,7 +22,13 @@
 * gzins     15-Dec-2004  Added _NAME to command name definitions
 * gzins     15-Dec-2004  Removed msgDEBUG_CMD_NAME definition (defined in
 *                        msgDEBUG_CMD.h)
-*
+* gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
+*                        Removed GetHeaderPtr
+*                        Declared AllocateBody as private
+*                        Renamed isInternal to IsInternal
+*                        Added ClearBody and AppendToBody
+*                        Declared msgSOCKET::Send and msgSOCKET::Receive as
+*                        friend
 *
 *******************************************************************************/
 
@@ -37,6 +43,7 @@
 #include "mcs.h"
 #include "misc.h"
 
+#include "msgSOCKET.h"
 /* 
  * Constants definition
  */
@@ -180,34 +187,40 @@ public:
     virtual mcsLOGICAL       IsLastReply     (void);
     virtual mcsCOMPL_STAT    SetLastReplyFlag(mcsLOGICAL      flag);
 
-    virtual mcsLOGICAL       isInternal      (void);
+    virtual mcsLOGICAL       IsInternal      (void);
 
-    virtual msgHEADER*       GetHeaderPtr    (void);
-
-    virtual char*            GetBodyPtr      (void);
+    virtual char*            GetBody         (void);
     virtual mcsINT32         GetBodySize     (void);
-    virtual mcsCOMPL_STAT    SetBody         (const char     *buffer,
-                                              const mcsUINT32 bufLen=0);
-    virtual mcsCOMPL_STAT    AllocateBody    (const mcsUINT32 bufLen);
+    virtual mcsCOMPL_STAT    ClearBody       (void);
+    virtual mcsCOMPL_STAT    SetBody         (const char *buffer,
+                                              mcsUINT32  bufLen=0);
+    virtual mcsCOMPL_STAT    AppendToBody    (const char *buffer,
+                                              mcsUINT32  bufLen=0);
 
     virtual void             Display         (void);
+
+    friend mcsCOMPL_STAT     msgSOCKET::Send(msgMESSAGE &msg);
+    friend mcsCOMPL_STAT     msgSOCKET::Receive(msgMESSAGE &msg,
+                                                mcsINT32   timeoutInMs);
 
 protected:
 
     
 private:
-     // The members
-     msgHEADER   _header;     // The complete message header
-     miscDYN_BUF _body;       // A convenient pointer to the _message body
+    virtual mcsCOMPL_STAT    AllocateBody    (const mcsUINT32 bufLen);
 
-     mcsLOGICAL  _isInternal; /* A flag to say weither the message is of
-                               * internal process use or not (see evh module)
-                               */
+    // The members
+    msgHEADER   _header;     // The complete message header
+    miscDYN_BUF _body;       // A convenient pointer to the _message body
+
+    mcsLOGICAL  _isInternal; /* A flag to say weither the message is of
+                              * internal process use or not (see evh module)
+                              */
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-     msgMESSAGE(const msgMESSAGE&);
-     msgMESSAGE& operator=(const msgMESSAGE&);
+    msgMESSAGE(const msgMESSAGE&);
+    msgMESSAGE& operator=(const msgMESSAGE&);
 };
 
 #endif /*!msgMESSAGE_H*/
