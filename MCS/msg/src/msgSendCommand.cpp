@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.10 2005-01-24 15:02:47 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.11 2005-01-26 08:43:50 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/01/24 15:02:47  gzins
+ * Added CVS logs as modification history
+ *
  * lafrasse  16-Aug-2004  Ported from CILAS software
  * lafrasse  19-Nov-2004  Used argv[0] instead of the hard-coded
  *                        "msgSendCommand" value, and added the mcsExit()
@@ -54,7 +57,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.10 2005-01-24 15:02:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.11 2005-01-26 08:43:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -101,7 +104,8 @@ int main (int argc, char *argv[])
     cnt     = 1;
     timeout = msgWAIT_FOREVER;
     status  = EXIT_SUCCESS;
-    /* Try to read CLI Options */
+
+    /* Read command-line options */
     if (argc > 2)
     {
         if (strcmp(argv[1], "-v") == 0)
@@ -131,7 +135,7 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("\nUsage : \tmsgSendCommand <process> <command> <commandPar> [<time-out>]\n");
+        printf("Usage : \tmsgSendCommand <process> <command> <commandPar> [<time-out>]\n");
         exit(EXIT_FAILURE);
     }
 
@@ -143,80 +147,96 @@ int main (int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    /* Try to send the specified command to the specified process */
-    if (manager.SendCommand(command, process, params) == mcsFAILURE)
-    {
-        goto exit;
-    }
-    else
+    /* Send the specified command to the specified process */
+    mcsINT32 cmdId;
+    cmdId = manager.SendCommand(command, process, params);
+    if (cmdId != mcsFAILURE)
     {
         if (verbose == mcsTRUE)
         {
             logInfo("Command sent, waiting for reply...\n");
         }
-    }
 
-    /* While last reply hasn't been received... */
-    while (manager.Receive(msg, timeout) == mcsSUCCESS)
-    {
-        /* Test the received reply command name validity */
-        if (strcmp(command, msg.GetCommand()) != 0)
+        /* While last reply hasn't been received... */
+        while (manager.Receive(msg, timeout) == mcsSUCCESS)
         {
-            logWarning("Received '%s' command reply instead of '%s'\n",
-                       command, msg.GetCommand());
-        }
-
-        /* Test the reply type */
-        lastReply = msg.IsLastReply();
-        switch (msg.GetType())
-        {
-            case msgTYPE_REPLY:
-                if (verbose == mcsTRUE)
-                {
-                   logInfo("msgSendCommand : Normal reply received\n");
-                }
-
-                if (msg.GetBodySize() > 0)
-                {
-                    printf("MESSAGEBUFFER :\n%s\n", msg.GetBody());
-                }
-                break;
-
-            case msgTYPE_ERROR_REPLY:
-                errUnpackStack(msg.GetBody(), msg.GetBodySize());
-                errCloseStack();
-                break;
-
-            default:
-                errAdd(msgERR_MSG_TYPE, msg.GetType());
-                lastReply = mcsTRUE;
-                break;
-        }
-
-        /* If the reply was the last... */
-        if (lastReply == mcsTRUE)
-        {
-            /* Exit from the receiving loop */
-            break;
-        }
-        else
-        {
-            if(verbose)
+            /* Test the received reply command name validity */
+            if (strcmp(command, msg.GetCommand()) != 0)
             {
-                logInfo("msgSendCommand : Waiting next reply...\n");
+                logWarning("Received '%s' command reply instead of '%s'\n",
+                           command, msg.GetCommand());
+            }
+
+            /* Test the reply type */
+            lastReply = msg.IsLastReply();
+            switch (msg.GetType())
+            {
+                /* Normal reply */
+                case msgTYPE_REPLY:
+                    if (verbose == mcsTRUE)
+                    {
+                        logInfo("Normal reply received\n");
+                    }
+
+                    if (msg.GetBodySize() > 0)
+                    {
+                        if (verbose == mcsTRUE)
+                        {
+                            printf("MESSAGEBUFFER :\n");
+                        }
+                        printf("%s\n", msg.GetBody());
+                    }
+                    break;
+
+                    /* Error reply */
+                case msgTYPE_ERROR_REPLY:
+                    if (verbose == mcsTRUE)
+                    {
+                        logInfo("Error reply received\n");
+                    }
+                    errUnpackStack(msg.GetBody(), msg.GetBodySize());
+                    errCloseStack();
+                    break;
+
+                    /* Unknown reply */
+                default:
+                    errAdd(msgERR_MSG_TYPE, msg.GetType());
+                    lastReply = mcsTRUE;
+                    break;
+            }
+
+            /* If the reply was the last... */
+            if (lastReply == mcsTRUE)
+            {
+                /* Exit from the receiving loop */
+                break;
+            }
+            else
+            {
+                if(verbose)
+                {
+                    logInfo("msgSendCommand : Waiting next reply...\n");
+                }
             }
         }
+        /* End of while() loop */
     }
-    /* End of while() loop */
+    else
+    {
+        if (verbose == mcsTRUE)
+        {
+            logInfo("Sending of command to '%s' failed...\n", process);
+        }
+    }
 
-/* Try to disconnect from msgManager */
-exit:
+    /* Print out error stack if it is not empty */
     if (errStackIsEmpty() == mcsFALSE)
     {
         errCloseStack();
         status = EXIT_FAILURE;
     }
 
+    /* Disconnect from msgManager */
     manager.Disconnect();
 
     mcsExit();
