@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.10 2005-02-11 10:37:19 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.11 2005-02-13 15:29:50 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/11 10:37:19  gzins
+* Added AddParamsDesc() method
+*
 * Revision 1.9  2005/02/10 10:46:42  gzins
 * Changed column name to parameter name
 *
@@ -32,7 +35,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.10 2005-02-11 10:37:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.11 2005-02-13 15:29:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -66,7 +69,6 @@ vobsCDATA::vobsCDATA()
 {
     _nbLines = 0;
     _nbLinesToSkip = 0;
-    miscDynBufInit(&_buffer);
 }
 
 /*
@@ -90,7 +92,6 @@ vobsCDATA::~vobsCDATA()
     }
 
     // Free all strings containing UCD names
-    miscDynBufDestroy(&_buffer);
 
     _paramName.clear();
     _ucdName.clear();
@@ -129,7 +130,7 @@ const char *vobsCDATA::GetCatalogName()
 }
  
 /** 
- * Adds description (name and ucd) for all parameters
+ * Add description (name and ucd) for all parameters
  *
  * This method parses the two lines containing the description of the parameters
  * contain in the CDATA section. The first line contains the parameter names,
@@ -199,7 +200,7 @@ mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::AddParamName(char *paramName)
+mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
 {
     logExtDbg("vobsCDATA::AddParamName(%s)", paramName);
 
@@ -219,7 +220,7 @@ mcsCOMPL_STAT vobsCDATA::AddParamName(char *paramName)
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::AddUcdName(char *ucdName)
+mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
 {
     logExtDbg("vobsCDATA::AddUcdName(%s)", ucdName);
 
@@ -323,7 +324,7 @@ mcsUINT32 vobsCDATA::GetNbLinesToSkip(void)
  * mcsSUCCESS, or mcsFAILURE if an error occurs when manipuling internal dynamic
  * buffer.
  */
-mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer)
+mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
 {
     logExtDbg("vobsCDATA::AppendLines()");
 
@@ -348,13 +349,13 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer)
     {
         linePtr = miscDynBufGetNextLine(&tmpBuffer, linePtr, mcsFALSE);
         lineNum++;
-        if ((linePtr != NULL) && (lineNum > (_nbLinesToSkip)) &&
+        if ((linePtr != NULL) && (lineNum > (nbLinesToSkip)) &&
             (miscIsSpaceStr(linePtr) == mcsFALSE))
         {
             logDebug("   > Add line : %s", linePtr);
             
-            if (miscDynBufAppendBytes
-                (&_buffer, linePtr, strlen(linePtr) + 1) == mcsFAILURE)
+            if (AppendBytes
+                (linePtr, strlen(linePtr) + 1) == mcsFAILURE)
             {
                 miscDynBufDestroy(&tmpBuffer);
                 return mcsFAILURE;
@@ -384,102 +385,171 @@ mcsUINT32 vobsCDATA::GetNbLines(void)
 }
 
 /**
- * Return the next line stored in the internal buffer.
+ * Load a file into itself
  *
- * \return
- * Pointer to buffer containing CDATA section.
+ * \param fileName the file to load
+ * 
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned. 
  */
-char * vobsCDATA::GetNextLine(char *linePtr)
+mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
 {
-    //logExtDbg("vobsCDATA::GetNextLine()");
-
-    return (miscDynBufGetNextLine(&_buffer, linePtr, mcsFALSE));
+    logExtDbg("vobsCDATA::Load(file)");
+    
+    // Use miscoDYN_BUF method to load file into the dynBuf of the class
+    if (miscoDYN_BUF::LoadFile(fileName, "#") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    // Load header of the CDATA : build list of UCD and parameter names
+    if (SetParamsDesc() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    return mcsSUCCESS;
 }
 
 /**
- * Save the buffer contents into file
+ * Load a buffer into itself
  *
- * \return
- * Always mcsSUCCESS.
+ * \param dynBuf the buffer to copy
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned. 
  */
-mcsCOMPL_STAT vobsCDATA::Save(const char *fileName)
+mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
 {
-    logExtDbg("vobsCDATA::Save()");
+    logExtDbg("vobsCDATA::Load(dynBuf)");
 
-    FILE *filePtr;
-
-    // If no file given, return;
-    if (strcmp(fileName, "") ==0)
+    // Get the content of the buffer and copy it in the CDATA
+    if (AppendString(buffer) == mcsFAILURE)
     {
-        return mcsSUCCESS;
+        return mcsFAILURE;
     }
 
-    // Open file
-    filePtr=fopen(miscResolvePath(fileName), "w+");
-    if (filePtr==NULL)
+    // Load header of the CDATA : build list of UCD and parameter names
+    if (SetParamsDesc() == mcsFAILURE)
     {
-        logWarning("Could not open file '%s'", fileName);
-        return mcsSUCCESS;
-    } 
+        return mcsFAILURE;
+    }
+    
+    return mcsSUCCESS;
+}
 
-    // For each line in buffer, get the value for each defined UCD (value are
-    // separated by '\t' character), store them in file.
-    char *linePtr=NULL;
-    char *delimiters = "\t";
-    do
+/**
+ * Set the parameter descriptions.
+ *
+ * The two first lines of the buffer contain the parameter description. i.e. the
+ * UCDs and the parameter names lists. This method retreives these two lines and
+ * set the parameter description using the AddParamsDesc() method. It also sets
+ * the number of line to be skipped to 2.
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned. 
+ */
+mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
+{
+    logExtDbg("vobsCDATA::SetParamsDesc()");
+
+    // Get pointer to the UCDs 
+    char *ucdNameLine;
+    ucdNameLine = GetNextLine(NULL, mcsTRUE);
+    if (ucdNameLine == NULL)
     {
-        // Get next line
-        linePtr = GetNextLine(linePtr);
+        errAdd(vobsERR_MISSING_UCDS);
+        return mcsFAILURE;
+    }
 
-        if (linePtr != NULL)
-        {
-            char line[1024];
-            int  nbUcd;
-            char *ucdValue;
-
-            // Copy line into temporary buffer
-            strcpy(line, linePtr);
-
-            // Number of UCDs per line
-            nbUcd = GetNbParams();
-
-            // Scan UCD list
-            char *nextLinePtr;
-            char *currLinePtr=line;
-            for (int j=0; j < nbUcd; j++)
-            {
-                // Get the UCD value
-                ucdValue = strtok_r(currLinePtr, delimiters, &nextLinePtr);
-                if (ucdValue == NULL)
-                {
-                    // End of line reached; stop UCD scan
-                    break;
-                }
-                else
-                {
-                    currLinePtr = nextLinePtr;
-
-                    // Check if value if empty
-                    if (miscIsSpaceStr(ucdValue) == mcsTRUE)
-                    {
-                        ucdValue = vobsSTAR_PROP_NOT_SET;
-                    }
-
-                    // Save UCD value
-                    fprintf(filePtr, "%10s", ucdValue);
-                }
-            }
-
-            // Add CR
-            fprintf(filePtr, "\n");
-        }
-    } while (linePtr != NULL);
-
-    // Close file
-    fclose(filePtr);
+    // Get pointer to the parameter names 
+    char *paramNameLine;
+    paramNameLine = GetNextLine(ucdNameLine, mcsTRUE);
+    if (paramNameLine == NULL)
+    {
+        errAdd(vobsERR_MISSING_PARAM_NAMES);
+        return mcsFAILURE;
+    }
+    
+    // Update parameters description 
+    if (AddParamsDesc(paramNameLine, ucdNameLine) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    // Set the number of lines to skip to 2; the two lines containing containing
+    // parameter description.
+    SetNbLinesToSkip(2);
 
     return mcsSUCCESS;
 }
 
+/**
+ * Get the property ID corresponding to the given parameter name and UCD.
+ *
+ * This method returns the property ID corresponding to the parameter name and
+ * UCD, or NULL if they do not correspond to an existing object property.
+ *
+ * \param paramName parameter name
+ * \param ucdName UCD name
+ *
+ * \return property Id or NULL
+ */
+char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
+{
 
+    // object identifiers 
+    if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
+    {
+        if (strcmp(paramName, "HD") == 0)
+        {
+            return vobsSTAR_ID_HD;
+        }
+        else if (strcmp(paramName, "HIP") == 0)
+        {
+            return vobsSTAR_ID_HIP;
+        }
+        else if (strcmp(paramName, "DM") == 0)
+        {
+            return vobsSTAR_ID_DM;
+        }
+    }
+
+    // Diameters
+    if (strcmp(ucdName, "EXTENSION_DIAM") == 0)
+    {
+        if (strcmp(paramName, "LD") == 0)
+        {
+            return vobsSTAR_LD_DIAM;
+        }
+        else if (strcmp(paramName, "UD") == 0)
+        {
+            return vobsSTAR_UD_DIAM;
+        }
+        else if (strcmp(paramName, "UDDK") == 0)
+        {
+            return vobsSTAR_UDDK_DIAM;
+        }
+    }
+
+    // Diameter errors
+    if (strcmp(ucdName, "ERROR") == 0)
+    {
+        if (strcmp(paramName, "e_LD") == 0)
+        {
+            return vobsSTAR_LD_DIAM_ERROR;
+        }
+        else if (strcmp(paramName, "e_UD") == 0)
+        {
+            return vobsSTAR_UD_DIAM_ERROR;
+        }
+        else if (strcmp(paramName, "e_UDDK") == 0)
+        {
+            return vobsSTAR_UDDK_DIAM_ERROR;
+        }
+    }
+
+    // No property corresponding to the parameter name/UCD
+    return NULL;
+}
 /*___oOo___*/
