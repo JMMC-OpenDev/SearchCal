@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.4 2005-03-07 10:52:53 mella Exp $
+# Version: $Id: mcs.sh,v 1.5 2005-03-14 08:32:04 mella Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/03/07 10:52:53  mella
+# Append path to environment variables with individual tests
+#
 # Revision 1.3  2005/02/15 16:49:11  gzins
 # Added psg alias
 #
@@ -97,7 +100,7 @@ alias Pu='rm -f *~ .*~ core'
 alias gvim='gvim -geometry 80x45'
 alias macam='make clean all man'
 alias macami='make clean all man install'
-
+alias setMcsRoot='source /home/MCS/DEVELOPMENT/bin/mcsRoot'
 # Functions
 # Function to create .h and .cpp files for a C++ class in the right
 # directories
