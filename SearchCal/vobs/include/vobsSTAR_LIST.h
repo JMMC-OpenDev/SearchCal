@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.14 2005-03-04 15:50:45 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.15 2005-03-04 16:28:28 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/03/04 15:50:45  scetre
+* Added typedef of vobsSTAR_PROPERTY_ID
+* Updated call to Store method of CDATA
+*
 * Revision 1.13  2005/02/13 15:56:55  gzins
 * Added optional origin parameter to Load() method
 *
@@ -74,6 +78,9 @@ class vobsSTAR_LIST
                                 mcsLOGICAL updateOnly=mcsFALSE);
 
     virtual void          Display(void);
+
+    virtual mcsCOMPL_STAT Save(const char *filename,
+                               mcsLOGICAL extendedFormat=mcsFALSE);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                vobsSTAR_PROPERTY_ID_LIST ucdList,

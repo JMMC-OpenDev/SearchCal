@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.34 2005-03-04 15:51:21 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.35 2005-03-04 16:28:52 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2005/03/04 15:51:21  scetre
+ * Updated call to Save method
+ *
  * Revision 1.33  2005/03/03 16:48:22  scetre
  * Added GetScienceObject method
  *
@@ -83,7 +86,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.34 2005-03-04 15:51:21 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.35 2005-03-04 16:28:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -759,6 +762,27 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
     return mcsSUCCESS;
 }
 
+/**
+ * Save the elements (calibrators) of the list in a file.
+ *
+ * If given, the request is placed in the file, as a comment line.
+ *
+ * \param filename the file where to save
+ * \param extendedFormat if true, each property is saved with its attributes
+ * (origin and confidence index), otherwise only property is saved.
+ * \param request request used to get this list 
+ *
+ * \return always mcsSUCCESS
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
+                                          mcsLOGICAL extendedFormat,
+                                          sclsvrREQUEST *request)
+{
+    logExtDbg("sclsvrCALIBRATOR_LIST::Save()");
+
+    vobsSTAR_PROPERTY_ID_LIST ucdList;
+    return Save(filename, ucdList, extendedFormat, request);
+}
 
 /**
  * Load elements (calibrators) from a file.

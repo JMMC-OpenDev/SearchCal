@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.19 2005-03-04 15:51:21 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.20 2005-03-04 16:28:52 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/03/04 15:51:21  scetre
+ * Updated call to Save method
+ *
  * Revision 1.18  2005/03/03 16:48:22  scetre
  * Added GetScienceObject method
  *
@@ -105,6 +108,10 @@ public:
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                vobsSTAR_PROPERTY_ID_LIST ucdList,
+                               mcsLOGICAL extendedFormat=mcsFALSE,
+                               sclsvrREQUEST *request=NULL);
+    
+    virtual mcsCOMPL_STAT Save(const char *filename,
                                mcsLOGICAL extendedFormat=mcsFALSE,
                                sclsvrREQUEST *request=NULL);
 

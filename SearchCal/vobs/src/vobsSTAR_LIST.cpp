@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.15 2005-03-04 16:05:51 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.16 2005-03-04 16:28:28 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/03/04 16:05:51  scetre
+* Updated call to Save method
+*
 * Revision 1.14  2005/02/15 15:41:47  gzins
 * Fixed wrong mcsmcsSUCCESS and mcsmcsFAILURE
 *
@@ -37,7 +40,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.15 2005-03-04 16:05:51 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.16 2005-03-04 16:28:28 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -334,6 +337,26 @@ void vobsSTAR_LIST::Display(void)
     printf("\n");
 
 }
+
+/**
+ * Save the elements (stars) of the list in a file.
+ *
+ * \param filename the file where to save
+ * \param extendedFormat if true, each property is saved with its attributes
+ * (origin and confidence index), otherwise only only property is saved.
+ *
+ * \return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
+                                  mcsLOGICAL extendedFormat)
+{
+    logExtDbg("vobsSTAR_LIST::Save()");
+
+    vobsSTAR_PROPERTY_ID_LIST ucdList;
+    
+    return Save(filename, ucdList, extendedFormat);
+}
+
 
 /**
  * Save the elements (stars) of the list in a file.
