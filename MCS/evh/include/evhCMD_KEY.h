@@ -3,12 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCMD_KEY.h,v 1.2 2004-11-17 10:32:57 gzins Exp $"
+* "@(#) $Id: evhCMD_KEY.h,v 1.3 2004-12-22 08:56:18 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     27-Sep-2004  Created
-*
+* gzins     22-Dec-2004  Added command definition file (CDF)
 *
 *******************************************************************************/
 
@@ -43,7 +43,7 @@
 class evhCMD_KEY : public evhKEY
 {
 public:
-    evhCMD_KEY(const mcsCMD command = "");
+    evhCMD_KEY(const mcsCMD command = "", const char *cdf = NULL);
     evhCMD_KEY (const evhCMD_KEY&);
     virtual ~evhCMD_KEY();
 
@@ -52,13 +52,17 @@ public:
     virtual mcsLOGICAL IsSame(const evhKEY& key);
     virtual mcsLOGICAL Match(const evhKEY& key);
 
-    virtual evhCMD_KEY &SetCommand(const mcsCMD type);
+    virtual evhCMD_KEY &SetCommand(const mcsCMD command);
     virtual char       *GetCommand() const;
+
+    virtual evhCMD_KEY &SetCdf(const char *cdf);
+    virtual char       *GetCdf() const;
 
 protected:
 
 private:
-    mcsCMD  _command;  /** Command name */
+    mcsCMD      _command;  /** Command name */
+    mcsSTRING64 _cdf;      /** Command definition file */
 };
 
 #endif /*!evhCMD_KEY_H*/
