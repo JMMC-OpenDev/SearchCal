@@ -36,7 +36,7 @@
         <param>
             <name>dinteger</name>
             <type>integer</type>
-            <desc> this parameter is not mandatory but must be of integer type </desc>
+            <desc>This parameter is not mandatory but must be of integer type </desc>
             <defaultValue><integer>12</integer></defaultValue>
         </param>
         <param>
