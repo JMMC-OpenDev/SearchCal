@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.10 2005-02-14 08:56:35 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.11 2005-02-16 15:26:09 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/14 08:56:35  gzins
+* Updated to skip empty line when extracting star from buffer
+*
 * Revision 1.9  2005/02/14 08:45:24  scetre
 * change vobsSTAR class to obj class in template Store()
 *
@@ -230,12 +233,13 @@ public:
             // For each line in buffer, get the value for each defined UCD
             // (value are separated by '\t' character), store them in object
             // object and add this new object in the list.
-            char *line=NULL;
+            const char *from=NULL;
+            mcsSTRING1024 line;
             mcsINT32 lineNum = 0;
             do
             {
                 // Get next line
-                line = GetNextLine(line);
+                from = GetNextLine(from, line);
                 lineNum++;
 
                 logPrint("vobs", logDEBUG, __FILE_LINE__,

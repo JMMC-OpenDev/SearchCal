@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.12 2005-02-14 14:11:22 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.13 2005-02-16 15:22:11 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/14 14:11:22  scetre
+* replace \n y \0 in LoadBuffer() method
+*
 * Revision 1.11  2005/02/13 15:29:50  gzins
 * Inherited from miscoDYN_BUF
 * Added methods to load from file or buffer
@@ -40,7 +43,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.12 2005-02-14 14:11:22 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.13 2005-02-16 15:22:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -334,47 +337,40 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
     logExtDbg("vobsCDATA::AppendLines()");
 
     // Store buffer into a temporary buffer
-    miscDYN_BUF tmpBuffer;
-    miscDynBufInit(&tmpBuffer);
-    if (miscDynBufAppendString(&tmpBuffer, buffer) == mcsFAILURE)
+    miscoDYN_BUF tmpBuffer;
+    if (tmpBuffer.AppendString(buffer) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
-    // Replace CR by '\0' in order to convert buffer to separated lines 
-    miscReplaceChrByChr(miscDynBufGetBuffer(&tmpBuffer), '\n', '\0');
-
     logDebug("Buffer to process : %s", buffer);
 
     // Store usefull line into internal buffer; i.e skip header lines and
     // empty lines
     int lineNum   = 0;
-    char *linePtr = NULL;
+    const char *from = NULL;
+    mcsSTRING1024 line;
     do 
     {
-        linePtr = miscDynBufGetNextLine(&tmpBuffer, linePtr, mcsFALSE);
+        from = tmpBuffer.GetNextLine(from, line, mcsFALSE);
         lineNum++;
-        if ((linePtr != NULL) && (lineNum > (nbLinesToSkip)) &&
-            (miscIsSpaceStr(linePtr) == mcsFALSE))
+        if ((from != NULL) && (lineNum > (nbLinesToSkip)) &&
+            (miscIsSpaceStr(line) == mcsFALSE))
         {
-            logDebug("   > Add line : %s", linePtr);
+            logDebug("   > Add line : %s", line);
             
-            if (AppendBytes
-                (linePtr, strlen(linePtr) + 1) == mcsFAILURE)
+            if (AppendString(line) == mcsFAILURE)
             {
-                miscDynBufDestroy(&tmpBuffer);
                 return mcsFAILURE;
             }
             _nbLines++;
         }
         else
         {
-            logDebug("   > Skip line : %s", linePtr);
+            logDebug("   > Skip line : %s", line);
         }
-    } while (linePtr != NULL);
+    } while (line != NULL);
  
-    miscDynBufDestroy(&tmpBuffer);
-
     return mcsSUCCESS;
 }
 
@@ -464,8 +460,9 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
     logExtDbg("vobsCDATA::SetParamsDesc()");
 
     // Get pointer to the UCDs 
-    char *ucdNameLine;
-    ucdNameLine = GetNextLine(NULL, mcsTRUE);
+    const char *from=NULL;
+    mcsSTRING1024 ucdNameLine;
+    from = GetNextLine(from, ucdNameLine);
     if (ucdNameLine == NULL)
     {
         errAdd(vobsERR_MISSING_UCDS);
@@ -473,8 +470,8 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
     }
 
     // Get pointer to the parameter names 
-    char *paramNameLine;
-    paramNameLine = GetNextLine(ucdNameLine, mcsTRUE);
+    mcsSTRING1024 paramNameLine;
+    from = GetNextLine(from, paramNameLine);
     if (paramNameLine == NULL)
     {
         errAdd(vobsERR_MISSING_PARAM_NAMES);
