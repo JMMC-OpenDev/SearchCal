@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.4 2004-08-19 16:33:24 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.5 2004-08-24 14:45:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.4 2004-08-19 16:33:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.5 2004-08-24 14:45:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -29,6 +29,43 @@ using namespace std;
  */
 #include"vobsSTAR_LIST.h"
 #include"vobsPrivate.h"
+
+/* Local variables */
+static char *nameList[] =
+{
+   "hd",
+   "hip",
+   "ra",
+   "dec",
+   "pmdec",
+   "pmra",
+   "plx",
+   "tsp",
+   "varflag",
+   "multflag",
+   "glat",
+   "glon",
+   "radvel",
+   "diam",
+   "meth",
+   "wlen",
+   "photflux",
+   "units",
+   "U",
+   "B",
+   "V",
+   "R",
+   "I",
+   "J",
+   "H",
+   "K",
+   "L",
+   "M",
+   "N",
+   "velocrotat",
+   "color",
+   NULL
+};
 
 //Class conctructor
 vobsSTAR_LIST::vobsSTAR_LIST()
@@ -94,45 +131,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 {
     //logExtDbg("vobsSTAR_LIST::AddAtTail()");
-    vobsSTAR *starOfList;
-    unsigned int same=0;
-    
-    for (unsigned int el = 0; el < Size(); el++)
-    {
-        starOfList=GetNextStar((el==0));
-        // if the star is the same than one of the star list, the element of
-        // the list is update with property of the star
-        if ( starOfList->IsSameCoordonate(star) == mcsTRUE )
-        {
-            starOfList->Update(star);
-            same=1;            
-            for (unsigned int i=0; i<vobsNB_STAR_PROPERTIES; i++)
-            {
-                mcsSTRING32 property1;
-                mcsSTRING32 property2;
-                
-                if ((starOfList->GetProperty((vobsUCD_ID)i, property1)
-                                                                ==FAILURE)||
-                    (star.GetProperty((vobsUCD_ID)i, property2) == FAILURE))
-                {
-                    return FAILURE;
-                }
-                if ((strcmp(property1, vobsSTAR_PROP_NOT_SET)==0)
-                    &&((strcmp(property2, vobsSTAR_PROP_NOT_SET)!=0)))
-                {
-                    if (star.SetProperty((vobsUCD_ID)i, property2)==FAILURE)
-                    {
-                        return FAILURE;
-                    }
-                }
-            }
-        }
-    }
-    if (same==0)
-    {
-        // Put element in the list
-        _starList.push_back(star);
-    }
+    // Put element in the list
+    _starList.push_back(star);
 
     return SUCCESS;
 }
@@ -237,7 +237,8 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
  * \return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
-vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star)
+vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
+                                 float intervalRa, float intervalDec)
 {
     //logExtDbg("vobsSTAR_LIST::GetStar()");
 
@@ -245,7 +246,7 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star)
     std::list<vobsSTAR>::iterator iter;
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
-        if ((*iter).IsSame(star) == mcsTRUE)
+        if ((*iter).IsSameCoordinate(star, intervalRa, intervalDec) == mcsTRUE)
         {
             return &(*iter);
         }
@@ -265,7 +266,10 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star)
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned if
  * updating or adding star fails.
  */
-mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list)
+mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
+                                   float intervalRa,
+                                   float intervalDec,
+                                   mcsLOGICAL updateOnly)
 {
     logExtDbg("vobsSTAR_LIST::Merge()");
 
@@ -278,7 +282,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list)
         starPtr = list.GetNextStar((el==0));
         // If star is in the list
         vobsSTAR *starToUpdatePtr;
-        starToUpdatePtr = GetStar(*starPtr);
+        starToUpdatePtr = GetStar(*starPtr, intervalRa, intervalDec);
         if (starToUpdatePtr != NULL)
         {
             // Update the star
@@ -287,7 +291,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list)
                 return FAILURE;
             }
         }
-        else
+        else if (updateOnly == mcsFALSE)
         {
             // Else add it to the list
             if (AddAtTail(*starPtr) == FAILURE)
@@ -315,6 +319,11 @@ void vobsSTAR_LIST::Display(void)
 
     // Display all element of the list 
     std::list<vobsSTAR>::iterator iter;
+    for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+    {
+        printf("%12s",nameList[i]);
+    }
+    printf("\n");
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
         (*iter).Display();

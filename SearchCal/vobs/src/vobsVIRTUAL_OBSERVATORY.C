@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.8 2004-08-19 16:33:24 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.9 2004-08-24 14:45:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.8 2004-08-19 16:33:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.9 2004-08-24 14:45:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -149,7 +149,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
         // list2 is the result of the first search
         // -> star list as parameter
 
-        if (list1.Merge(list2) == FAILURE )
+        if (list1.Merge(list2, 0.1, 0.1) == FAILURE )
         {
             return FAILURE;
         }
@@ -174,6 +174,15 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
         {
             return FAILURE;
         }
+        if (list3.Clear() == FAILURE)
+        {
+            return FAILURE;
+        }
+        if (list3.Copy(starList) == FAILURE)
+        {
+            return FAILURE;
+        }
+
         
         if ((list1.Clear() == FAILURE)||
             (list2.Clear() == FAILURE) )
@@ -193,12 +202,12 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
         {
             return FAILURE;
         }
-        
-        if (starList.Merge(list3) == FAILURE)
+
+        if (starList.Merge(list3, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
-
+         
         if ((list3.Clear() == FAILURE) ||
             (list3.Copy(list1) == FAILURE) )
         {
@@ -213,7 +222,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
 
-        if (starList.Merge(list1) == FAILURE)
+        if (starList.Merge(list1, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -225,7 +234,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
         
-        if (starList.Merge(list2) == FAILURE)
+        if (starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -249,7 +258,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
 
-        if (starList.Merge(list1) == FAILURE)
+        if (starList.Merge(list1, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -261,7 +270,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
 
-        if (starList.Merge(list2) == FAILURE)
+        if (starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -286,7 +295,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
 
-        if (starList.Merge(list1) == FAILURE)
+        if (starList.Merge(list1, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
                 return FAILURE;
         }
@@ -298,7 +307,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
 
-        if (starList.Merge(list2) == FAILURE)
+        if (starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -316,7 +325,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
 
-        if (starList.Merge(list1) == FAILURE)
+        if (starList.Merge(list1, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -328,7 +337,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
             return FAILURE;
         }
 
-        if (starList.Merge(list3) == FAILURE)
+        if (starList.Merge(list3, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -366,7 +375,9 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
         {
             return FAILURE;
         }
-
+        starList.Display();
+        printf("number of star found : %d\n", starList.Size());
+        exit(0);
         // list2 is put in final list starlist
         if ( list2.Clear() == FAILURE)
         {
@@ -389,7 +400,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 2 become a result list
 
-        if ( starList.Merge(list2) == FAILURE)
+        if ( starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -416,7 +427,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 2 become a result list
 
-        if ( starList.Merge(list2) == FAILURE)
+        if ( starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -443,7 +454,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 2 become a result list
 
-        if ( starList.Merge(list2) == FAILURE)
+        if ( starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -470,7 +481,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 2 become a result list
 
-        if ( starList.Merge(list2) == FAILURE)
+        if ( starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -497,7 +508,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 2 become a result list
 
-        if ( starList.Merge(list2) == FAILURE)
+        if ( starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -524,7 +535,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 2 become a result list
 
-        if ( starList.Merge(list2) == FAILURE)
+        if ( starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -551,7 +562,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 2 become a result list
 
-        if ( starList.Merge(list2) == FAILURE)
+        if ( starList.Merge(list2, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }
@@ -567,7 +578,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(vobsREQUEST request,
 
         // list 1 become a result list
 
-        if ( starList.Merge(list1) == FAILURE)
+        if ( starList.Merge(list1, 0.0, 0.0, mcsTRUE) == FAILURE)
         {
             return FAILURE;
         }

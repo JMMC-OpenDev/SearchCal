@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.3 2004-08-06 13:07:52 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.4 2004-08-24 14:45:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -83,6 +83,8 @@ typedef enum
     PHOT_COLOR_EXCESS_ID        /**< color id */
 } vobsUCD_ID;
 
+
+
 /*
  * Class declaration
  */
@@ -132,10 +134,9 @@ public:
     
     // Method to know if another star is the same than this one
     virtual mcsLOGICAL IsSame (vobsSTAR &star);
-    virtual mcsLOGICAL IsSameCoordonate (vobsSTAR &star);
-    virtual mcsLOGICAL IsSameCoordonate (vobsSTAR &star, 
-                                         float intervalRa,
-                                         float intervalDec);    
+    virtual mcsLOGICAL IsSameCoordinate (vobsSTAR &star, 
+                                         float intervalRa = 0.0,
+                                         float intervalDec = 0.0);    
     virtual mcsLOGICAL IsSameHip (vobsSTAR &star);    
 
     // Method to update star properties from the given star

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.4 2004-08-19 16:33:24 scetre Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.5 2004-08-24 14:45:52 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.4 2004-08-19 16:33:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.5 2004-08-24 14:45:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -503,33 +503,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
 }
 
 /**
- * Test if this star is the same than another one with the coordonate.
- *
- * \param star the other star.
- *
- * \return TRUE on successful completion. Otherwise FALSE is returned.
- *
- */
-mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star)
-{
-    //logExtDbg("vobsSTAR::IsSameCoordonate()");
-    
-    mcsSTRING32 valueRA;
-    mcsSTRING32 valueDEC;
-    
-    star.GetProperty(POS_EQ_RA_MAIN_ID, valueRA);
-    star.GetProperty(POS_EQ_DEC_MAIN_ID, valueDEC);
-    
-    if ((strcmp(_properties[POS_EQ_RA_MAIN_ID], valueRA) !=0)
-        || (strcmp(_properties[POS_EQ_DEC_MAIN_ID], valueDEC) !=0))
-    {
-        return mcsFALSE;
-    }
-    return mcsTRUE;
-}
-
-/**
- * Test if this star is the same than another one with the coordonate and an
+ * Test if this star is the same than another one with the coordinate and an
  * interval.
  *
  * \param star the other star.
@@ -537,7 +511,7 @@ mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star)
  * \return TRUE on successful completion. Otherwise FALSE is returned.
  *
  */
-mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star,
+mcsLOGICAL vobsSTAR::IsSameCoordinate(vobsSTAR &star,
                                       float intervalRa,
                                       float intervalDec)
 {
@@ -553,8 +527,8 @@ mcsLOGICAL vobsSTAR::IsSameCoordonate(vobsSTAR &star,
     star.GetRa(valueRA2);
     star.GetDec(valueDEC2);
     
-    if ((fabs(valueRA1-valueRA2)<=intervalRa) ||
-        (fabs(valueDEC1-valueDEC2)<=intervalDec) )
+    if ((fabs(valueRA1-valueRA2) > intervalRa) ||
+        (fabs(valueDEC1-valueDEC2) > intervalDec) )
     {
         return mcsFALSE;
     }
@@ -621,12 +595,19 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
  */
 void vobsSTAR::Display()
 {
-    logExtDbg("vobsSTAR::Display()");
+    //logExtDbg("vobsSTAR::Display()");
     cout << "-----------------------------------------" << endl;
+    /*for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+    {
+        printf("%20s",ucdNameList[i]);
+    }
+    printf("\n");*/
     for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
     {
-        printf("%21s = %13s\n",ucdNameList[i], _properties[i]);
+         printf("%12s", _properties[i]);
     }
+    printf("\n");
+
 }
 
 /*
