@@ -18,16 +18,26 @@
    <error id="6">
       <errName>SELECT</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[select() call fails - %s]]></errFormat>
+      <errFormat><![CDATA[Select() call fails - %s]]></errFormat>
    </error>
    <error id="8">
       <errName>NO_STREAM_TO_LISTEN</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[no stream (message queue, file descriptor) to listen]]></errFormat>
+      <errFormat><![CDATA[No stream (message queue, file descriptor) to listen]]></errFormat>
    </error>
    <error id="9">
       <errName>CMD_UNKNOWN</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[unknown command %.20s]]></errFormat>
+      <errFormat><![CDATA[Unknown command %.20s]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>REPLY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Error reply received from %.80s for command %.80s ]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>NO_HANDLER_INSTANCE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[No event handler available]]></errFormat>
    </error>
 </errorList>
