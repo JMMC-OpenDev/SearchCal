@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.14 2005-02-07 19:40:58 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.15 2005-02-08 04:44:14 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/02/07 19:40:58  gzins
+* Updated vobsREQUEST API
+*
 * Revision 1.13  2005/02/07 17:36:00  scetre
 * updated band V scenario
 *
@@ -40,7 +43,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.14 2005-02-07 19:40:58 gzins Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.15 2005-02-08 04:44:14 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -155,6 +158,10 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
     logExtDbg("vobsVIRTUAL_OBSERVATORY::LoadScenario()");
    
 
+    // Clear the list input and list output which will be used
+    _starListP.Clear();
+    _starListS.Clear();
+
     // Create a criteria list
     vobsSTAR_COMP_CRITERIA_LIST criteriaList;
 
@@ -178,10 +185,6 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         (strcmp(band, "H")==0)||
         (strcmp(band, "K")==0) )
     {
-        // Clear the list input and list output which will be used
-        _starListP.Clear();
-        _starListS.Clear();
-
         // If the lis is empty, it is a calibrator research
         // the primary is build with the result of the catalog II/225, II/7A and
         // I/280
@@ -292,10 +295,6 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
     // Scenario in band V
     else if (strcmp(band, "V")==0)
     {
-        // Clear the list input and list output which will be used
-        _starListP.Clear();
-        _starListS.Clear();
-
         // If the lis is empty, it is a calibrator research
         // the primary is build with the result of the catalog I/280
         if (starList.IsEmpty() == mcsTRUE)
@@ -344,9 +343,6 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
     // Scenario in band N
     else if (strcmp(band, "N") == 0)
     {
-        // Clear the list output which will be used
-        _starListS.Clear();
-
         // Just consult MIDI catalog 
         _starListP.Copy(starList);
         scenario.AddEntry(&_midi, NULL, &_starListS, COPY,
