@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.6 2004-12-04 19:55:07 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.7 2004-12-06 06:05:19 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -12,6 +12,8 @@
 #                       Look for templates in the following order:
 #                       ../templates, $INTROOT/templates and
 #                       $MCSROOT/templates
+# gzins     06-Dec-2004 Added class and module names substitution in C++
+#                       header files
 #
 #*******************************************************************************
 # NAME
@@ -225,6 +227,8 @@ then
         if [ "$FILE_SUFFIX" = ".h" ]
         then
             sed -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
+                -e "1,$ s/<moduleName>/$ROOT_NAME/g" \
+                -e "1,$ s/<className>/$FILE_NAME/g" \
                 -e "1,$ s/#define _H/#define ${FILE_NAME}_H/g" \
                 -e "1,$ s/#endif \/\*!_H\*\//#endif \/\*!${FILE_NAME}_H\*\//g" \
                 -e "1,$ s/<className>/$FILE_NAME/g" \
@@ -235,13 +239,13 @@ then
             mv ${FILE}.BAK $FILE 
         fi
 
-        # For .c and .C 
+        # For .c and .cpp 
         # -> For .c (c-main, c-procedure) and  .C (c++-small-main,
         # c++-class-file) files insert module name in the pre-processing
         # directives for header inclusion
         # -> For .C (c++-class-file) insert class name in the pre-processing
         # directives for header inclusion and in the doxygen header block
-        if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".C" ]
+        if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" ]
         then
             # Get module name
             source ctooGetModuleName
