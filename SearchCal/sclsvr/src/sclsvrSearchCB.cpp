@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
+* "@(#) $Id: sclsvrSearchCB.cpp,v 1.2 2004-12-06 13:05:55 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.2 2004-12-06 13:05:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -257,7 +257,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     }
     // Affect the baseMin
     mcsSTRING256 baseMini;
-    sprintf(baseMini, "%d", baseMin);
+    sprintf(baseMini, "%f", baseMin);
     if (request.SetConstraint(BASEMIN_ID, baseMini)
         ==  FAILURE)
     {
@@ -265,7 +265,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     }
     // Affect the baseMax
     mcsSTRING256 baseMaxi;
-    sprintf(baseMaxi, "%d", baseMax);
+    sprintf(baseMaxi, "%f", baseMax);
     if (request.SetConstraint(BASEMAX_ID, baseMaxi)
         ==  FAILURE)
     {
