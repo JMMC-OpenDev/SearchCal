@@ -2,7 +2,7 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2004-12-08 06:18:42 sccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2004-12-08 18:49:46 gzins Exp $"
 
  who       when         what
  ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,7 +29,7 @@
 -->
 
 <module name="sclins">
-    <desc>description</desc>
-    <resp>responsible</resp>
-    <package>package</package>
+    <desc>Installation module for SCALIB package</desc>
+    <resp>Sylvain Cetre</resp>
+    <package>SCALIB</package>
 </module>
