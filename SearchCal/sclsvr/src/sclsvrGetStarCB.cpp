@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.14 2005-02-07 09:24:55 gzins Exp $"
-*
-* History
-* -------
-* scetre    30-Nov-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.15 2005-02-07 14:38:45 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * scetre    30-Nov-2004  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.14 2005-02-07 09:24:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.15 2005-02-07 14:38:45 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -84,15 +84,15 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     }    
 
     // Get observed wavelength 
-    double lambda;
-    if (getStarCmd.GetLambda(&lambda) == mcsFAILURE)
+    double wlen;
+    if (getStarCmd.GetWlen(&wlen) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }      
 
     // Get baseline 
     double baseline;
-    if (getStarCmd.GetLambda(&baseline) == mcsFAILURE)
+    if (getStarCmd.GetWlen(&baseline) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }        
@@ -116,7 +116,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     mcsSTRING32 buffer;
-    sprintf(buffer, "%f", lambda);
+    sprintf(buffer, "%f", wlen);
     if (request.SetConstraint(STAR_WLEN_ID, buffer) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
