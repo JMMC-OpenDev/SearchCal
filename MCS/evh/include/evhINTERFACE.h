@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhINTERFACE.h,v 1.2 2005-01-27 17:51:55 gzins Exp $"
+* "@(#) $Id: evhINTERFACE.h,v 1.3 2005-01-29 06:47:26 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -62,7 +62,7 @@ public:
     // Forward command
     virtual mcsCOMPL_STAT Forward(const char *command,
                                   const char *parameters,  
-                                  evhCMD_CALLBACK callback,
+                                  evhCMD_CALLBACK &callback,
                                   mcsINT32   timeout=-2);
     virtual evhCB_COMPL_STAT ReplyCB(msgMESSAGE &msg, void*);
 

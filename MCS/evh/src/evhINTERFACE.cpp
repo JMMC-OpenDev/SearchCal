@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.cpp,v 1.3 2005-01-27 17:52:57 gzins Exp $"
+ * "@(#) $Id: evhINTERFACE.cpp,v 1.4 2005-01-29 06:47:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/27 17:52:57  gzins
+ * Implemented command reply callback: ReplyCB()
+ *
  * Revision 1.2  2005/01/26 18:18:08  gzins
  * Added timeout when attaching callback for command reply.
  *
@@ -18,7 +21,7 @@
  * evhINTERFACE class definition.
  */
 
-static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.3 2005-01-27 17:52:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.4 2005-01-29 06:47:26 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -163,7 +166,7 @@ mcsCOMPL_STAT evhINTERFACE::Send(const char *command,
  */
 mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
                                     const char *parameters,  
-                                    evhCMD_CALLBACK callback,
+                                    evhCMD_CALLBACK &callback,
                                     mcsINT32   timeout)
 {
     logExtDbg("evhINTERFACE::Forward()");
