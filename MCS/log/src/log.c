@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.12 2004-06-21 16:53:35 gzins Exp $"
+* "@(#) $Id: log.c,v 1.13 2004-06-22 07:02:09 gzins Exp $"
 *
 *
 * who       when                 what
@@ -152,12 +152,13 @@ http://mariotti.ujf-grenoble.fr
 #include <stdarg.h>
 #include <stdio.h>
 #include <syslog.h>
+#include <time.h>
+#include <sys/time.h>
 
 /*
  * MCS Headers 
  */
 #include "mcs.h"
-#include "misc.h"
 
 /*
  * Local Headers 
@@ -200,7 +201,7 @@ mcsCOMPL_STAT logPrint( const mcsMODULEID modName, logLEVEL level,
     mcsBYTES32      infoTime;
 
     /* Get UNIX-style time and display as number and string. */
-    miscGetUtcTimeStr(infoTime, 6);
+    logGetTimeStamp(infoTime);
 
     /* If the specified level is less than or egal to the logging level */
     if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
@@ -454,5 +455,32 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName,
     return SUCCESS;
 }
 
+/**
+ * Format the current date and time, to be used as time stamp.
+ *
+ * This function generates the string corresponding to the current date,
+ * expressed in Coordinated Universal Time (UTC), using the following format
+ * YYYY-MM-DDThh:mm:ss[.ssssss], as shown in the following example :
+ *    
+ *     2004-06-16T16:16:48.02941
+ * 
+ * \param timeStamp character array where the resulting date is stored
+ */
+void logGetTimeStamp(mcsBYTES32 timeStamp)
+{
+    struct timeval time;
+    struct tm      *timeNow;
+    mcsSTRING32    tmpBuf;
 
-
+    /* Get local time */
+    gettimeofday(&time, NULL);
+ 
+    /* Format the date */
+    timeNow = gmtime(&time.tv_sec);
+    strftime(timeStamp, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow);
+ 
+    /* Add ms and us */
+    sprintf(tmpBuf, "%.6f", time.tv_usec/1e6);
+    strcpy(tmpBuf, (tmpBuf + 1));
+    strcat(timeStamp, tmpBuf);
+}

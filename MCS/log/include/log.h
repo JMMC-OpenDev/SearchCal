@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.8 2004-06-21 16:57:04 gzins Exp $"
+* "@(#) $Id: log.h,v 1.9 2004-06-22 07:01:46 gzins Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -82,6 +82,9 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName,
                       const char *timeStamp,
                       const char *fileLine,
                       const char *buffer);
+
+void logGetTimeStamp(mcsBYTES32 timeStamp);
+
 /*
  * Convenience macros
  */
