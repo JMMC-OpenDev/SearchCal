@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.3 2004-11-29 16:02:05 scetre Exp $"
 *
 *
 * who       when                 what
@@ -10,7 +10,8 @@
 * lafrasse  19-Nov-2004  Used argv[0] instead of the hard-coded "msgSendCommand"
 *                        value, and added the mcsExit() function call
 * lafrasse  23-Nov-2004  Cleaned included headers
-*
+* gzins     29-Nov-2004  Fixed bug related to time-out handling
+*                        Set default time-out to WAIT_FOREVER
 *
 *******************************************************************************/
 
@@ -27,7 +28,7 @@
  * \param command    : name of the command to be sent
  * \param commandPar : command parameter list
  * \param time-out   : maximum waiting time-out, in milliseconds (by default,
- *                     there is no time-out)
+ *                     wait forever)
  *
  * \optname v        : enable verbose mode
  *
@@ -46,9 +47,8 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.3 2004-11-29 16:02:05 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
 
 /*
  * System Headers
@@ -58,7 +58,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <stdlib.h>
 #include <time.h>
 
-
 /*
  * MCS Headers
  */
@@ -66,14 +65,12 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "log.h"
 #include "err.h"
 
-
 /*
  * Local Headers
  */
 #include "msg.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
-
 
 /*
  * Main
@@ -95,7 +92,7 @@ int main (int argc, char *argv[])
 
     verbose = mcsFALSE;
     cnt     = 1;
-    timeout = msgNO_WAIT;
+    timeout = msgWAIT_FOREVER;
     status  = EXIT_SUCCESS;
 
     /* Try to read CLI Options */
@@ -119,7 +116,7 @@ int main (int argc, char *argv[])
         memset(params, '\0', sizeof(params));
         strncpy((char *)params, argv[cnt++], (sizeof(params) -1));
 
-        if ((argc - cnt) == 4)
+        if ((argc - cnt) == 1)
         {
             timeout = atoi(argv[cnt]);
         }
@@ -130,6 +127,7 @@ int main (int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    printf ("timeout = %d\n", timeout);
     /* Try to connect to msgManager */
     msgMANAGER_IF manager;
     if (manager.Connect(argv[0], NULL) == FAILURE)
@@ -153,7 +151,7 @@ int main (int argc, char *argv[])
     }
 
     /* While last reply hasn't been received... */
-    while (manager.Receive(msg, 1000) == SUCCESS)
+    while (manager.Receive(msg, timeout) == SUCCESS)
     {
         /* Test the received reply command name validity */
         if (strcmp(command, msg.GetCommand()) != 0)
