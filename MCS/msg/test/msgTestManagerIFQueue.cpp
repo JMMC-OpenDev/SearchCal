@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.1 2005-02-09 16:42:26 lafrasse Exp $"
+ * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.2 2005-02-10 14:13:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/09 16:42:26  lafrasse
+ * Added msgMESSAGE_FILTER class to manage message queues
+ *
  ******************************************************************************/
 
 /**
@@ -16,7 +19,7 @@
  * \<msgTestManagerIFQueue\>
  */
 
-static char *rcsId="@(#) $Id: msgTestManagerIFQueue.cpp,v 1.1 2005-02-09 16:42:26 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgTestManagerIFQueue.cpp,v 1.2 2005-02-10 14:13:05 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -120,7 +123,15 @@ int main(int argc, char *argv[])
     cout << "OK" << endl;
 
     // Display the received message content
-    cout << "Received " << message << endl;
+    cout << "Expected Receive : " << message << endl;
+
+    // Get all the queued messages
+    cout << manager.QueuedMessagesNb() << " Unexpected Receive(s) : " << endl;
+    while (manager.QueuedMessagesNb() > 0)
+    {
+        manager.GetNextQueuedMessage(message);
+        cout << message << endl;
+    }
 
     // Disconnect from msgManager
     manager.Disconnect();
