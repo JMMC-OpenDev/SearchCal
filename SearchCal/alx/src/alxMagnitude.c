@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.7 2005-02-16 15:10:57 gzins Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.8 2005-02-21 19:32:44 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/16 15:10:57  gzins
+ * Updated call to miscDynBufGetNextLine()
+ *
  * Revision 1.6  2005/02/12 15:13:55  gzins
  * Removed call to miscResolvePath; done by miscLocateFile
  *
@@ -39,7 +42,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.7 2005-02-16 15:10:57 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.8 2005-02-21 19:32:44 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -225,7 +228,7 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
             }
 
             /* Get polynomial coefficients */
-            if (sscanf(line, "%c%f %f %f %f %f %f %f %f %f %f %f",   
+            if (sscanf(line, "%c%f %f %f %f %f %f %f %f %f",   
                        &colorTables[starType].spectralType[lineNum].code,
                        &colorTables[starType].spectralType[lineNum].quantity,
                        &colorTables[starType].index[lineNum][0],
@@ -235,9 +238,7 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
                        &colorTables[starType].index[lineNum][4],
                        &colorTables[starType].index[lineNum][5],
                        &colorTables[starType].index[lineNum][6],
-                       &colorTables[starType].index[lineNum][7],
-                       &colorTables[starType].index[lineNum][8],
-                       &colorTables[starType].index[lineNum][9]) != 
+                       &colorTables[starType].index[lineNum][7]) != 
                 (alxNB_DIFF_MAG + 2))
             {
                 miscDynBufDestroy(&dynBuf);
@@ -267,35 +268,28 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
  *
  * It computes magnitudes in R, I, J, H, K, L and M bands according to the
  * spectral type and the magnitudes in B and V bands for a bright star.
+ * If magnitude can not be computed, its associated confidence index is set to
+ * alxCONFIDENCE_LOW.
  *
  * \param spType spectral type
- * \param mgB magnitude in band B
- * \param mgV magnitude in band V
- * \param mgR computed magnitude in band R
- * \param mgI computed magnitude in band I
- * \param mgJ computed magnitude in band J
- * \param mgH computed magnitude in band H
- * \param mgK computed magnitude in band K
- * \param mgL computed magnitude in band L
- * \param mgM computed magnitude in band M
- * \param confIdx confidence index
+ * \param magnitudes contains magnitudes in B and V bands, and the computed
+ * magnitudes in R, I, J, H, K, L and M bands
+ * \param confIndexes confidence indexes for computed magnitudes
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
-                                                mcsFLOAT            mgB,
-                                                mcsFLOAT            mgV,
-                                                mcsFLOAT            *mgR,
-                                                mcsFLOAT            *mgI,
-                                                mcsFLOAT            *mgJ,
-                                                mcsFLOAT            *mgH,
-                                                mcsFLOAT            *mgK,
-                                                mcsFLOAT            *mgL,
-                                                mcsFLOAT            *mgM,
-                                                alxCONFIDENCE_INDEX *confIdx)
+mcsCOMPL_STAT 
+alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
+                                  mcsFLOAT magnitudes[alxNB_BANDS],
+                                  alxCONFIDENCE_INDEX confIndexes[alxNB_BANDS])
 { 
     logExtDbg("alxComputeMagnitudesForBrightStar()");
+
+    /* Get magnitudes in B and V bands */
+    mcsFLOAT mgB, mgV;
+    mgB = magnitudes[alxB_BAND];
+    mgV = magnitudes[alxV_BAND];
 
     /* 
      * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
@@ -401,7 +395,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
     mcsFLOAT b_v, v_i, v_r, i_j, j_h, j_k, k_l, k_m;
     if (colorTable->spectralType[line].quantity == spectralType.quantity)
     {
-        /* Compute magnitude in R, I, J, H, K, L and M bands */
+        /* Get differential magnitudes */
         b_v = colorTable->index[line][alxB_V];
         v_i = colorTable->index[line][alxV_I];
         v_r = colorTable->index[line][alxV_R];
@@ -409,15 +403,16 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         j_h = colorTable->index[line][alxJ_H];
         j_k = colorTable->index[line][alxJ_K];
         k_l = colorTable->index[line][alxK_L];
-        k_m = colorTable->index[line][alxK_L] + colorTable->index[line][alxL_M];
-        *mgR = mgV - v_r;
-        *mgI = mgV - v_i;
-        *mgJ = *mgI - i_j;
-        *mgH = *mgJ - j_h;
-        *mgK = *mgJ - j_k;
-        *mgL = *mgK - k_l;
-        *mgM = mgV - k_m;
-        *confIdx = alxCONFIDENCE_HIGH;
+        if ((colorTable->index[line][alxK_L] == alxBLANKING_VALUE) ||
+            (colorTable->index[line][alxL_M] == alxBLANKING_VALUE))
+        {
+            k_m = alxBLANKING_VALUE;
+        }
+        else
+        {
+            k_m = colorTable->index[line][alxK_L] + 
+                colorTable->index[line][alxL_M];
+        }
     }
     /* Else, interpolate */
     else
@@ -436,53 +431,197 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
         logTest("Ratio = %f", ratio);
 
         /* Compute differential magnitudes */
-        v_r = colorTable->index[lineInf][alxV_R] +
-            ratio *(colorTable->index[lineSup][alxV_R] -
-                    colorTable->index[lineInf][alxV_R]);
-        v_i = colorTable->index[lineInf][alxV_I] +
-            ratio *(colorTable->index[lineSup][alxV_I] -
-                    colorTable->index[lineInf][alxV_I]);
-        i_j = colorTable->index[lineInf][alxI_J] +
-            ratio *(colorTable->index[lineSup][alxI_J] -
-                    colorTable->index[lineInf][alxI_J]);
-        j_h = colorTable->index[lineInf][alxJ_H] +
-            ratio *(colorTable->index[lineSup][alxJ_H] -
-                    colorTable->index[lineInf][alxJ_H]);
-        j_k = colorTable->index[lineInf][alxJ_K] +
-            ratio *(colorTable->index[lineSup][alxJ_K] -
-                    colorTable->index[lineSup][alxJ_K]);
-        k_l = colorTable->index[lineInf][alxK_L] +
-            ratio * (colorTable->index[lineSup][alxK_L] -
-                     colorTable->index[lineInf][alxK_L]);
-        k_m = colorTable->index[lineInf][alxK_L] +
-            colorTable->index[lineInf][alxL_M] +
-            ratio *(colorTable->index[lineSup][alxK_L] +
-                    colorTable->index[lineSup][alxL_M] -
-                    colorTable->index[lineInf][alxK_L] -
-                    colorTable->index[lineInf][alxL_M]);
+        if ((colorTable->index[lineSup][alxV_R] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineInf][alxV_R] == alxBLANKING_VALUE))
+        {
+            v_r = alxBLANKING_VALUE;
+        }
+        else
+        {
+            v_r = colorTable->index[lineInf][alxV_R] +
+                ratio *(colorTable->index[lineSup][alxV_R] -
+                        colorTable->index[lineInf][alxV_R]);
+        }
+        
+        if ((colorTable->index[lineSup][alxV_I] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineInf][alxV_I] == alxBLANKING_VALUE))
+        {
+            v_i = alxBLANKING_VALUE;
+        }
+        else
+        {
+            v_i = colorTable->index[lineInf][alxV_I] +
+                ratio *(colorTable->index[lineSup][alxV_I] -
+                        colorTable->index[lineInf][alxV_I]);
+        }
+        
+        if ((colorTable->index[lineSup][alxI_J] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineInf][alxI_J] == alxBLANKING_VALUE))
+        {
+            i_j = alxBLANKING_VALUE;
+        }
+        else
+        {
+            i_j = colorTable->index[lineInf][alxI_J] +
+                ratio *(colorTable->index[lineSup][alxI_J] -
+                        colorTable->index[lineInf][alxI_J]);
+        }
 
-        /* Compute magnitudes in R, I, J, H, K, L and M bands */
-        *mgR =  mgV - v_r;
-        *mgI =  mgV - v_i;
-        *mgJ = *mgI - i_j;
-        *mgH = *mgJ - j_h;
-        *mgK = *mgJ - j_k;
-        *mgL = *mgK - k_l;
-        *mgM =  mgV - k_m;
-        *confIdx = alxCONFIDENCE_HIGH;
+        if ((colorTable->index[lineSup][alxJ_H] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineInf][alxJ_H] == alxBLANKING_VALUE))
+        {
+            j_h = alxBLANKING_VALUE;
+        }
+        else
+        {
+            j_h = colorTable->index[lineInf][alxJ_H] +
+                ratio *(colorTable->index[lineSup][alxJ_H] -
+                        colorTable->index[lineInf][alxJ_H]);
+        }
+
+        if ((colorTable->index[lineSup][alxJ_K] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineInf][alxJ_K] == alxBLANKING_VALUE))
+        {
+            j_k = alxBLANKING_VALUE;
+        }
+        else
+        {
+            j_k = colorTable->index[lineInf][alxJ_K] +
+                ratio *(colorTable->index[lineSup][alxJ_K] -
+                        colorTable->index[lineSup][alxJ_K]);
+        }
+
+        if ((colorTable->index[lineSup][alxK_L] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineInf][alxK_L] == alxBLANKING_VALUE))
+        {
+            k_l = alxBLANKING_VALUE;
+        }
+        else
+        {
+            k_l = colorTable->index[lineInf][alxK_L] +
+                ratio * (colorTable->index[lineSup][alxK_L] -
+                         colorTable->index[lineInf][alxK_L]);
+        }
+
+        if ((colorTable->index[lineSup][alxK_L] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineInf][alxK_L] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineSup][alxL_M] == alxBLANKING_VALUE) ||
+            (colorTable->index[lineInf][alxL_M] == alxBLANKING_VALUE))
+        {
+            k_m = alxBLANKING_VALUE;
+        }
+        else
+        {
+            k_m = colorTable->index[lineInf][alxK_L] +
+                colorTable->index[lineInf][alxL_M] +
+                ratio *(colorTable->index[lineSup][alxK_L] +
+                        colorTable->index[lineSup][alxL_M] -
+                        colorTable->index[lineInf][alxK_L] -
+                        colorTable->index[lineInf][alxL_M]);
+        }
     }
+
+    /* Compute magnitudes in R, I, J, H, K, L and M bands */
+    if (v_r == alxBLANKING_VALUE)
+    {
+        magnitudes [alxR_BAND] = alxBLANKING_VALUE;
+        confIndexes[alxR_BAND] = alxCONFIDENCE_LOW;
+    }
+    else
+    {
+        magnitudes [alxR_BAND] = mgV - v_r;
+        confIndexes[alxR_BAND] = alxCONFIDENCE_HIGH;
+    }
+
+    if (v_i == alxBLANKING_VALUE)
+    {
+        magnitudes [alxI_BAND] = alxBLANKING_VALUE;
+        confIndexes[alxI_BAND] = alxCONFIDENCE_LOW;
+    }
+    else
+    {
+        magnitudes [alxI_BAND] = mgV - v_i;
+        confIndexes[alxI_BAND] = alxCONFIDENCE_HIGH;
+    }
+
+    if ((magnitudes [alxI_BAND] == alxBLANKING_VALUE) ||
+        (i_j == alxBLANKING_VALUE))
+    {
+        magnitudes [alxJ_BAND] = alxBLANKING_VALUE;
+        confIndexes[alxJ_BAND] = alxCONFIDENCE_LOW;
+    }
+    else
+    {
+        magnitudes [alxJ_BAND] = magnitudes [alxI_BAND] - i_j;
+        confIndexes[alxJ_BAND] = alxCONFIDENCE_HIGH;
+    }
+
+    if ((magnitudes [alxJ_BAND] == alxBLANKING_VALUE) ||
+        (j_h == alxBLANKING_VALUE))
+    {
+        magnitudes [alxH_BAND] = alxBLANKING_VALUE;
+        confIndexes[alxH_BAND] = alxCONFIDENCE_LOW;
+    }
+    else
+    {
+        magnitudes [alxH_BAND] = magnitudes [alxJ_BAND] - j_h;
+        confIndexes[alxH_BAND] = alxCONFIDENCE_HIGH;
+    }
+
+    if ((magnitudes [alxJ_BAND] == alxBLANKING_VALUE) ||
+        (j_k == alxBLANKING_VALUE))
+    {
+        magnitudes [alxK_BAND] = alxBLANKING_VALUE;
+        confIndexes[alxK_BAND] = alxCONFIDENCE_LOW;
+    }
+    else
+    {
+        magnitudes [alxK_BAND] = magnitudes [alxJ_BAND] - j_k;
+        confIndexes[alxK_BAND] = alxCONFIDENCE_HIGH;
+    }
+
+    if ((magnitudes [alxK_BAND] == alxBLANKING_VALUE) ||
+        (k_l == alxBLANKING_VALUE))
+    {
+        magnitudes [alxL_BAND] = alxBLANKING_VALUE;
+        confIndexes[alxL_BAND] = alxCONFIDENCE_LOW;
+    }
+    else
+    {
+        magnitudes [alxL_BAND] = magnitudes [alxK_BAND] - k_l;
+        confIndexes[alxL_BAND] = alxCONFIDENCE_HIGH;
+    }
+
+    if ((magnitudes [alxK_BAND] == alxBLANKING_VALUE) ||
+        (k_m == alxBLANKING_VALUE))
+    {
+        magnitudes [alxM_BAND] = alxBLANKING_VALUE;
+        confIndexes[alxM_BAND] = alxCONFIDENCE_LOW;
+    }
+    else
+    {
+        magnitudes [alxM_BAND] = magnitudes [alxK_BAND] - k_m;
+        confIndexes[alxM_BAND] = alxCONFIDENCE_HIGH;
+    }
+
 
     /* Print out results */
     logTest("B                = %0.3f", mgB);
     logTest("V                = %0.3f", mgV);
-    logTest("R                = %0.3lf", *mgR);
-    logTest("I                = %0.3lf", *mgI);
-    logTest("J                = %0.3lf", *mgJ);
-    logTest("H                = %0.3lf", *mgH);
-    logTest("K                = %0.3lf", *mgK);
-    logTest("L                = %0.3lf", *mgL);
-    logTest("M                = %0.3lf", *mgM);
-    logTest("Confidence index = %d", *confIdx);
+    logTest("R                = %0.3lf (%d)",
+            magnitudes[alxR_BAND], confIndexes[alxR_BAND]);
+    logTest("I                = %0.3lf (%d)",
+            magnitudes[alxI_BAND], confIndexes[alxI_BAND]);
+    logTest("J                = %0.3lf (%d)",
+            magnitudes[alxJ_BAND], confIndexes[alxJ_BAND]);
+    logTest("H                = %0.3lf (%d)",
+            magnitudes[alxH_BAND], confIndexes[alxH_BAND]);
+    logTest("K                = %0.3lf (%d)",
+            magnitudes[alxK_BAND], confIndexes[alxK_BAND]);
+    logTest("L                = %0.3lf (%d)",
+            magnitudes[alxL_BAND], confIndexes[alxL_BAND]);
+    logTest("M                = %0.3lf (%d)",
+            magnitudes[alxM_BAND], confIndexes[alxM_BAND]);
 
     return mcsSUCCESS;
 }
