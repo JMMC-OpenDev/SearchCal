@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-06-24 07:27:04 mella Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-06-24 07:31:19 gzins Exp $"
 #
 # Makefile of ........
 #
@@ -161,7 +161,7 @@ INS_ROOT_DIR   =
 # other files to be installed
 #----------------------------
 INSTALL_FILES = ../config/errXmlToH.xsd \
-				../config/errXmlToH.xst
+				../config/errXmlToH.xsl
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
