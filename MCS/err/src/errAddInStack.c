@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInStack.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInStack.c,v 1.2 2004-11-18 13:54:31 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,7 +46,7 @@ mcsCOMPL_STAT errAddInStack(const mcsMODULEID moduleId,
     va_list       argPtr;
     mcsCOMPL_STAT status;
 
-    logExtDbg("errAddInStack()");
+    logExtDbg("errAddInStack(%s, %d)", moduleId, errorId);
     /* Call the error message */
     va_start(argPtr, errorId);
     status = errAddInLocalStack_v(&errGlobalStack, moduleId, 
