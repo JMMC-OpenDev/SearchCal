@@ -1,11 +1,12 @@
 #! /bin/sh
 # JMMC project
 #
-# "@(#) $Id: mkfMakeInstallCmdDefFiles.sh,v 1.1 2004-12-03 18:14:21 gzins Exp $" 
+# "@(#) $Id: mkfMakeInstallCmdDefFiles.sh,v 1.2 2004-12-10 07:04:04 gzins Exp $" 
 #
 # who       when         what
 # --------  --------     ----------------------------------------------
 # gzins     03-Dec-2004  Adapted from VLT
+# gzins     10-Dec-2004  Added list of files to be installed
 
 #************************************************************************
 #   NAME
@@ -13,7 +14,7 @@
 # 
 #   SYNOPSIS
 #
-#   vltMakeInstallTableFiles <CDF_DIR> <protectionMask>
+#   mkfMakeInstallCmdDefFiles <cdfList> <CDF_DIR> <protectionMask>
 #
 # 
 #   DESCRIPTION
@@ -25,8 +26,8 @@
 #
 #           ../config/*.cdf     --->   <CDF_DIR>
 #
-#   <CDF_DIR>   where to copy ".cdf" files
-#
+#   <cdfList>         CDF files to be copied
+#   <CDF_DIR>         where to copy ".cdf" files
 #   <protectionMask>  how to set the protection of created file
 #
 #   FILES
@@ -43,19 +44,20 @@
 #
 #----------------------------------------------------------------------
 
-if [ $# != 2 ]
+if [ $# != 3 ]
 then
     echo "" >&2
     echo " ERROR: mkfMakeInstallCmdDefFiles: $*" >&2
-    echo " Usage: mkfMakeInstallCmdDefFiles <CDF_DIR> <protectionMask>" >&2
+    echo " Usage: mkfMakeInstallCmdDefFiles <cdfList> <CDF_DIR> <protectionMask>" >&2
     echo "" >&2
     exit 1
 fi
 
+cdfList=${1}
 #
 # check correctness of destination directory
 #
-CDF_DIR=$1
+CDF_DIR=${2}
 if [ "${CDF_DIR}" != ""  -a  ! -d $CDF_DIR ]
 then 
     echo "" >&2
@@ -68,7 +70,7 @@ fi
 #
 # get protection mask
 #
-MASK=$2
+MASK=${3}
 
 
 #
@@ -79,16 +81,16 @@ target="tables: "
 #
 # Command definition files
 #
-if [ -d ../config  -a  "`ls ../config/*.cdf 2>/dev/null`" != "" ]
+if [ "$cdfList" != "" ]
 then 
     target="$target CDFs_begin "
 
     echo -e "CDFs_begin:"
     echo -e "\t-@echo \"\"; echo \"....CDF files:\""
 
-    for file in `ls ../config/*.cdf 2>/dev/null`
+    for file in $cdfList
     do
-        FILE=`basename $file`
+        FILE="`basename $file`.cdf"
         echo -e "\t-\$(AT)touch ../config/$FILE"
         echo -e "$CDF_DIR/$FILE: ../config/$FILE"
         echo -e "\t-\$(AT)echo \"\t$FILE\";\\"
