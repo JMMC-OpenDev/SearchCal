@@ -2,11 +2,14 @@
 #*****************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateFile.sh,v 1.11 2005-01-24 15:47:51 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateFile.sh,v 1.12 2005-01-26 13:40:14 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2005/01/24 15:47:51  gluck
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+#
 # gluck     10-Aug-2004  Created
 #
 #
@@ -77,17 +80,8 @@ if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
 then
     # File copy succeeds
 
-    # Replacement in the new temporary file, to include for CVS, $Id: ctooGetTemplateFile.sh,v 1.11 2005-01-24 15:47:51 gluck Exp $ 
-    # and $Log: not supported by cvs2svn $
-    # and Revision 1.10  2005/01/24 14:28:38  gluck
-    # and Update for log message automatic insertion ($Log: not supported by cvs2svn $)
-    # and
-    # and Revision 1.9  2005/01/24 10:58:24  gluck
-    # and Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
-    # and Correct bug when add log message automatic insertion (Revision 1.10  2005/01/24 14:28:38  gluck
-    # and Correct bug when add log message automatic insertion (Update for log message automatic insertion ($Log: not supported by cvs2svn $)
-    # and Correct bug when add log message automatic insertion ()
-    # and. Then create the permanent file.
+    # Replacement in the new temporary file, to include from CVS, id and message
+    # log automatic insertion. Then create the permanent file.
     sed -e "1,$ s/I>-<d/\Id/g" \
         -e "1,$ s/>-Log-</Log/g" \
         ${FILE}.BAK > $FILE
