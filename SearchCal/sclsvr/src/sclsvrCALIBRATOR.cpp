@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.21 2005-02-04 15:49:23 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.22 2005-02-07 09:21:27 gzins Exp $"
  *
  * History
  * -------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.21 2005-02-04 15:49:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.22 2005-02-07 09:21:27 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -34,6 +34,7 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "alx.h"
+#include "alxErrors.h"
 
 /*
  * Local Headers 
@@ -111,29 +112,30 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Pack(miscDYN_BUF *buffer)
 mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
 { 
     logExtDbg("sclsvrCALIBRATOR::UnPack()");
-    char *parsingString=NULL;
+    mcsSTRING256 propertyList[100];
 
-    // Initialise the buffer which will contain the calibrator
-    miscDYN_BUF localBuffer;
-    miscDynBufInit(&localBuffer);
+    // Split string into list of properties 
+    mcsINT32 nbProperties;
+    miscSplitString(calibratorString, '\t', 
+                    propertyList, 100, (mcsUINT32 *)&nbProperties);
 
-    // Copy the calibrator in the local buffer
-    miscDynBufAppendString(&localBuffer, calibratorString);
-
-    // Parse the buffer
-    parsingString = (char *) strtok(miscDynBufGetBuffer(&localBuffer), "\t");
-    
-    for (_propertyOrderIterator = _propertyOrder.begin();
-         _propertyOrderIterator != _propertyOrder.end();
-         _propertyOrderIterator++)
+    // Check the number of found properties 
+    if (nbProperties != NbProperties())
     {
-        _propertyList[(*_propertyOrderIterator).second].SetValue(parsingString);
-
-        parsingString = (char *) strtok(NULL, "\t");
-
+        errAdd(sclsvrERR_WRONG_BUFFER_FORMAT, calibratorString);
     }
-    
-    miscDynBufDestroy(&localBuffer);
+    else
+    {
+        mcsINT32 propIdx;
+        for (_propertyOrderIterator = _propertyOrder.begin(), propIdx = 0;
+             _propertyOrderIterator != _propertyOrder.end();
+             _propertyOrderIterator++, propIdx++)
+        {
+            vobsSTAR_PROPERTY *property;
+            property = &(_propertyList[(*_propertyOrderIterator).second]);
+            property->SetValue(propertyList[propIdx]);
+        }
+    } 
 
     return mcsSUCCESS;
 }
@@ -240,11 +242,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
             }
 
             // Compute Angular Diameter
-            if (ComputeAngularDiameter() != mcsFAILURE)
+            if (ComputeAngularDiameter() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
         }
+    }
+    else
+    {
+         SetPropertyValue(sclsvrCALIBRATOR_ANGULAR_DIAM_FLAG, "OK");
     }
 
     // Compute visibility and visibility error
@@ -356,38 +362,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
                                           &mgH, &mgK, &mgL, &mgM,
                                           &confidenceIndex) == mcsFAILURE)
     {
-        return mcsFAILURE;
+        if ((errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE) ||
+            (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) == mcsTRUE))
+        {
+            errResetStack();
+            return mcsSUCCESS;
+        }
+        else
+        {
+            return mcsFAILURE;
+        }
     }
   
     // If property is ever set, do nothing, else write the computed value
-    if (IsPropertySet(sclsvrCALIBRATOR_RO) != mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_RO, mgR, mcsTRUE, confidenceIndex);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_IO) != mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_IO, mgI, mcsTRUE, confidenceIndex);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_JO) != mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ, mcsTRUE, confidenceIndex);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_HO) != mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_HO, mgH, mcsTRUE, confidenceIndex);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_KO) != mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_KO, mgK, mcsTRUE, confidenceIndex);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_LO) != mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_LO, mgL, mcsTRUE, confidenceIndex);
-    }
-    if (IsPropertySet(sclsvrCALIBRATOR_MO) != mcsTRUE)
-    {
-        SetPropertyValue(sclsvrCALIBRATOR_MO, mgM, mcsTRUE, confidenceIndex);
-    }
+    SetPropertyValue(sclsvrCALIBRATOR_RO, mgR, mcsFALSE, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_IO, mgI, mcsFALSE, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_JO, mgJ, mcsFALSE, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_HO, mgH, mcsFALSE, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_KO, mgK, mcsFALSE, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_LO, mgL, mcsFALSE, confidenceIndex);
+    SetPropertyValue(sclsvrCALIBRATOR_MO, mgM, mcsFALSE, confidenceIndex);
     
     return mcsSUCCESS;
 }
@@ -490,7 +484,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else 
     {
-        logWarning("can't compute interstellar absorption because paralax not set");
+        errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_PARLX_TRIG,
+               "interstellar absorption");
         return mcsFAILURE;
     }
     if (IsPropertySet(vobsSTAR_POS_GAL_LAT) == mcsTRUE)
@@ -499,7 +494,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else
     {
-        logWarning("can't compute interstellar absorption because galactic Lattitude not set");
+        errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_GAL_LAT,
+               "interstellar absorption");
         return mcsFAILURE;
     }
     if (IsPropertySet(vobsSTAR_POS_GAL_LON) == mcsTRUE)
@@ -508,7 +504,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     }
     else 
     {
-        logWarning("can't compute interstellar absorption because galactic Longitude not set");
+        errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_GAL_LON,
+               "interstellar absorption");
         return mcsFAILURE;
     }
 
@@ -581,7 +578,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
         sclsvrCALIBRATOR_KO
     };
 
-    // for each property needed to compute angular diameter, check if they are
+    // For each property needed to compute angular diameter, check if they are
     // affected
     for (int i=0; i<4; i++)
     { 
@@ -591,8 +588,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
         }
         else
         {
-            errAdd(sclsvrERR_PROPERTY_NOT_SET, "Corrected magnitude");
-            return mcsFAILURE;
+            // Do nothing
+            return mcsSUCCESS;
         }
     }
     mgB=starProperty[0];
@@ -643,7 +640,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
     if (IsPropertySet(vobsSTAR_EXTENSION_DIAM) == mcsTRUE)
     {
         GetPropertyValue(vobsSTAR_EXTENSION_DIAM, &diam);
-        GetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, &diamError);
+        // If diameter error was not found in catalog, it assume to 0  
+        if (IsPropertySet(vobsSTAR_EXTENSION_DIAM_ERROR) == mcsTRUE)
+        {
+            GetPropertyValue(vobsSTAR_EXTENSION_DIAM_ERROR, &diamError);
+            diamError = diam * diamError / 100.0;
+        }
+        else
+        {
+            diamError = 0.0;
+        }
     }
     else
     {
@@ -655,7 +661,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
         else
         {
             // If diameter is not available, do not compute visibility
-            logWarning("Coul not compute visibility, no diameter available");
+            logWarning("Could not compute visibility, no diameter available");
             return mcsSUCCESS;
         }
     }
@@ -664,7 +670,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
     request.GetConstraint(STAR_WLEN_ID, &wavelength);
     // get value in request of the base max
     request.GetConstraint(BASEMAX_ID, &baseMax);
-    
     if (alxComputeVisibility(diam, diamError, baseMax, wavelength,
                              &vis, &vis2, &visErr, &vis2Err)==mcsFAILURE)
     {
