@@ -2,11 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfInstallMcs.sh,v 1.1 2004-12-04 19:12:53 gzins Exp $"
+# "@(#) $Id: mkfInstallMcs.sh,v 1.2 2004-12-04 19:20:12 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# mella     23-Jun-2004  Created
+# gzins     04-Dec-2004  Created
 #
 #
 #*******************************************************************************
@@ -48,7 +48,7 @@ read choice
 
 # List of MCS modules
 mcs_modules="mkf ctoo mcs log err misc modc modcpp fnd cmd msg evh"
-mcs_modules="msg evh"
+
 # Retrieve modules from CVS repository
 cd $dir
 cvs co $mcs_modules
