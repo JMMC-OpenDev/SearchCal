@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.1 2005-02-07 14:43:41 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.2 2005-02-16 17:06:58 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/07 14:43:41  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -46,6 +49,9 @@ public:
     // Class destructor
     virtual ~sclsvrREQUEST();
 
+    // Parse command parameters 
+    virtual mcsCOMPL_STAT Parse(const char *cmdParams);
+    
     // Baseline
     virtual mcsCOMPL_STAT SetBaseline(mcsFLOAT minLength, mcsFLOAT maxLength);
     virtual mcsFLOAT GetMinBaselineLength(void);
