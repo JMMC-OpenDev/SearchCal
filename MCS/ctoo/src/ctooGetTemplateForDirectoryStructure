@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.15 2004-07-01 15:06:20 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.16 2004-07-27 06:56:01 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -11,10 +11,10 @@
 #
 #*******************************************************************************
 # NAME
-#   ctooGetDirectoryStructure - create/check standard directory structure
+#   ctooGetTemplateForDirectoryStructure - create/check standard directory structure
 #
 # SYNOPSIS
-#   ctooGetDirectoryStructure MODROOT|INTROOT|MCSROOT|MCSDATA <name>
+#   ctooGetTemplateForDirectoryStructure MODROOT|INTROOT|MCSROOT|MCSDATA <name>
 #
 # DESCRIPTION
 #   Utility used ot create new or missing part of MCS directory structure for:
