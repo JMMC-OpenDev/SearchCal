@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.3 2004-08-24 16:05:52 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.4 2004-08-25 14:53:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,15 +16,17 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.3 2004-08-24 16:05:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.4 2004-08-25 14:53:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
 #include <iostream>
-using namespace std; /**< Export standard iostream objects (cin, cout,...) */
-
+using namespace std; 
+/**
+ * Export standard iostream objects (cin, cout,...).
+ */
 
 /*
  * MCS Headers 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.7 2004-08-19 16:33:24 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.8 2004-08-25 14:53:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,14 +16,17 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.7 2004-08-19 16:33:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.8 2004-08-25 14:53:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
 #include <iostream>
-using namespace std;  /**< Export standard iostream objects (cin, cout,...) */
+using namespace std;  
+/**
+ * Export standard iostream objects (cin, cout,...).
+ */
 
 
 /*
@@ -414,7 +417,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
  * asking the list of coordonate as a string. This method convert the position
  * of all star present in a star list in a string.
  *
- * \param stringList string list as a string
+ * \param strList string list as a string
  * \param list star list to cnvert
  *
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.

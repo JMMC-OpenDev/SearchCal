@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.7 2004-08-25 14:53:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,15 +15,20 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.6 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.7 2004-08-25 14:53:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
 #include <iostream>
-using namespace std; /**< Export standard iostream objects (cin, cout,...) */
+using namespace std; 
+/**
+ * Export standard iostream objects (cin, cout,...).
+ */
+
 #define MODULE_ID "vobs"
+
 
 /*
  * MCS Headers 
@@ -202,7 +207,7 @@ mcsCOMPL_STAT vobsREQUEST::SetConstraint(char *constraint, char *value)
  *
  * Set value constraint corresponding to the CONSTRAINT definition
  * 
- * \param ucd CONSTRAINT id. 
+ * \param constraintId CONSTRAINT id. 
  * \param value constraint value to set
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
@@ -269,7 +274,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, char *value)
  * Get value constraint, as a string, corresponding to the CONSTRAINT
  * definition
  * 
- * \param constraintID CONSTRAINT id. 
+ * \param constraintId CONSTRAINT id. 
  * \param value constraint value to get, as a string. 
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
@@ -327,7 +332,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, int *value)
  * Get value constraint value, as an integer, corresponding to the CONSTRAINT
  * definition
  * 
- * \param constraint CONSTRAINT id. 
+ * \param constraintId CONSTRAINT id. 
  * \param value constraint value to get, as an integer. 
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
@@ -391,7 +396,7 @@ mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, float *value)
  * Get value constraint value, as a float, corresponding to the CONSTRAINT
  * definition
  * 
- * \param constraint CONSTRAINT id. 
+ * \param constraintId CONSTRAINT id. 
  * \param value constraint value to get, as a float. 
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.

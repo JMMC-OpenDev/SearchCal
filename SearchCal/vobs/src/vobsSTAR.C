@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.C,v 1.5 2004-08-24 14:45:52 scetre Exp $"
+* "@(#) $Id: vobsSTAR.C,v 1.6 2004-08-25 14:53:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.5 2004-08-24 14:45:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.C,v 1.6 2004-08-25 14:53:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -24,7 +24,11 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <math.h>
 #include <iostream>
-using namespace std;  /**< Export standard iostream objects (cin, cout,...) */
+using namespace std;  
+/**
+ * Export standard iostream objects (cin, cout,...).
+ */
+
 #define MODULE_ID "vobs"
 
 /*
@@ -125,7 +129,8 @@ vobsSTAR::~vobsSTAR()
  * 
  * \param ucd UCD name. 
  * \param value property value to set
- * 
+ * \param overwrite booleen to know if it is an overwrite property 
+ *
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
  *
  * \b Error codes:\n
@@ -163,8 +168,9 @@ mcsCOMPL_STAT vobsSTAR::SetProperty(char *ucd, char *value,
  *
  * Set value property corresponding to the UCD
  * 
- * \param ucd UCD id. 
+ * \param ucdId UCD id. 
  * \param value property value to set
+ * \param overwrite booleen to know if it is an overwrite property 
  * 
  * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
  *
@@ -507,7 +513,9 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
  * interval.
  *
  * \param star the other star.
- *
+ * \param intervalRa interval of rihght ascension
+ * \param intervalDec interval of declinaison
+ * 
  * \return TRUE on successful completion. Otherwise FALSE is returned.
  *
  */
