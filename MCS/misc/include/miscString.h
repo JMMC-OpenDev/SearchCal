@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscString.h,v 1.7 2005-01-19 10:29:42 gzins Exp $"
+* "@(#) $Id: miscString.h,v 1.8 2005-02-13 11:23:28 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -46,7 +46,7 @@ mcsCOMPL_STAT miscTrimString     (char               *string,
 
 mcsCOMPL_STAT miscStrToUpper     (char               *string);
 
-mcsLOGICAL    miscIsSpaceStr     (char               *string);
+mcsLOGICAL    miscIsSpaceStr     (const char         *string);
 
 mcsCOMPL_STAT miscReplaceChrByChr(char               *string,
                                   char                originalChar,

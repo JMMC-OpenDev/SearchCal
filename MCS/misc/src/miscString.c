@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/01/31 12:54:45  gluck
+ * Bug correction: in miscSplitString(), wrong (uncomplete) array initialisation to '\0'  with memset => add explicit '\0' at the end of each string
+ *
  * Revision 1.15  2005/01/28 18:39:10  gzins
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
@@ -25,7 +28,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.16 2005-01-31 12:54:45 gluck Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.17 2005-02-13 11:23:28 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -229,7 +232,7 @@ mcsCOMPL_STAT miscStrToUpper(char *string)
  *
  * \return mcsTRUE if it is a white-space string, mcsFALSE otherwise.
  */
-mcsLOGICAL miscIsSpaceStr (char *string)
+mcsLOGICAL miscIsSpaceStr (const char *string)
 {
     while (*string != '\0')
     {
