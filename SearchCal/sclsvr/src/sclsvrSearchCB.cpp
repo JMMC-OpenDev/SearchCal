@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSearchCB.cpp,v 1.8 2004-12-22 10:07:04 scetre Exp $"
+* "@(#) $Id: sclsvrSearchCB.cpp,v 1.9 2005-01-24 13:40:27 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSearchCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.8 2004-12-22 10:07:04 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSearchCB.cpp,v 1.9 2005-01-24 13:40:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -56,112 +56,112 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     //printf("msg.GetBody() = %s\n", msg.GetBody()); 
     
     // Parse command
-    if (searchCmd.Parse() == FAILURE)
+    if (searchCmd.Parse() == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // Object name
     char *objName;
-    if (searchCmd.GetObjectName(&objName) == FAILURE)
+    if (searchCmd.GetObjectName(&objName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("objName = %s\n", objName);
     // Observed magnitude
     mcsDOUBLE magnitude;
-    if (searchCmd.GetMag(&magnitude) == FAILURE)
+    if (searchCmd.GetMag(&magnitude) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("magnitude = %lf\n", magnitude);
     // max calibrator return
     mcsINT32 maxReturn;
-    if (searchCmd.GetMaxReturn(&maxReturn) == FAILURE)
+    if (searchCmd.GetMaxReturn(&maxReturn) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("max Return = %d\n", maxReturn);
     // diff ra
     mcsINT32 diffRa;
-    if (searchCmd.GetDiffRa(&diffRa) == FAILURE)
+    if (searchCmd.GetDiffRa(&diffRa) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("diffRa = %d\n", diffRa);
     // diff dec
     mcsINT32 diffDec;
-    if (searchCmd.GetDiffDec(&diffDec) == FAILURE)
+    if (searchCmd.GetDiffDec(&diffDec) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("diffDec = %d\n", diffDec);
     // band
     char *band;
-    if (searchCmd.GetBand(&band) == FAILURE)
+    if (searchCmd.GetBand(&band) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("band = %s\n", band);
     // minMagRange
     char *minMagRange;
-    if (searchCmd.GetMinMagRange(&minMagRange) == FAILURE)
+    if (searchCmd.GetMinMagRange(&minMagRange) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("minMagRange = %s\n", minMagRange);
     // maxMagRange
     char *maxMagRange;
-    if (searchCmd.GetMaxMagRange(&maxMagRange) == FAILURE)
+    if (searchCmd.GetMaxMagRange(&maxMagRange) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("maxMagRange = %s\n", maxMagRange);
     // ra
     char *ra;
-    if (searchCmd.GetRa(&ra) == FAILURE)
+    if (searchCmd.GetRa(&ra) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("ra = %s\n", ra);
     // dec
     char *dec;
-    if (searchCmd.GetDec(&dec) == FAILURE)
+    if (searchCmd.GetDec(&dec) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("dec = %s\n", dec);
     // baseMin
     mcsDOUBLE baseMin;
-    if (searchCmd.GetBaseMin(&baseMin) == FAILURE)
+    if (searchCmd.GetBaseMin(&baseMin) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("baseMin = %f\n", baseMin);
     // baseMax
     mcsDOUBLE baseMax;
-    if (searchCmd.GetBaseMax(&baseMax) == FAILURE)
+    if (searchCmd.GetBaseMax(&baseMax) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("baseMax = %f\n", baseMax);
     // lambda
     mcsDOUBLE lambda;
-    if (searchCmd.GetLambda(&lambda) == FAILURE)
+    if (searchCmd.GetLambda(&lambda) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("lambda = %f\n", lambda);
     // visibility
     mcsDOUBLE vis;
-    if (searchCmd.GetVis(&vis) == FAILURE)
+    if (searchCmd.GetVis(&vis) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //printf("visibility = %f\n", vis);
     // visibility error
     mcsDOUBLE visErr;
-    if (searchCmd.GetVisErr(&visErr) == FAILURE)
+    if (searchCmd.GetVisErr(&visErr) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -173,19 +173,19 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
 
     // Affect the reference object name
     if (request.SetConstraint(STAR_NAME_ID, objName) 
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the right ascension position
     if (request.SetConstraint(RA_ID, ra) 
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the declinaison position
     if (request.SetConstraint(DEC_ID, dec) 
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -193,7 +193,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     mcsSTRING256 wavelength;
     sprintf(wavelength, "%f", lambda);
     if (request.SetConstraint(STAR_WLEN_ID, wavelength)
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -201,19 +201,19 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     mcsSTRING256 mag;
     sprintf(mag, "%f", magnitude);
     if (request.SetConstraint(STAR_MAGNITUDE_ID, mag)
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the min of the magitude range
     if (request.SetConstraint(MIN_MAGNITUDE_RANGE_ID, minMagRange)
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the max of the magnitude range
     if (request.SetConstraint(MAX_MAGNITUDE_RANGE_ID, maxMagRange)
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -221,7 +221,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     mcsSTRING256 dRa;
     sprintf(dRa, "%d", diffRa);
     if (request.SetConstraint(SEARCH_BOX_RA_ID, dRa)
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -229,7 +229,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     mcsSTRING256 dDec;
     sprintf(dDec, "%d", diffDec);
     if (request.SetConstraint(SEARCH_BOX_DEC_ID,dDec)
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -237,7 +237,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     mcsSTRING256 visi;
     sprintf(visi, "%f", vis);
     if (request.SetConstraint(STAR_EXPECTED_VIS_ID, visi)
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -245,13 +245,13 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     mcsSTRING256 visError;
     sprintf(visError, "%f", visErr);
     if (request.SetConstraint(STAR_MAX_ERR_VIS_ID, visError)
-        == FAILURE)
+        == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // Affect the observed band
     if (request.SetConstraint(OBSERVED_BAND_ID, band)
-        ==  FAILURE)
+        ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -259,7 +259,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     mcsSTRING256 baseMini;
     sprintf(baseMini, "%f", baseMin);
     if (request.SetConstraint(BASEMIN_ID, baseMini)
-        ==  FAILURE)
+        ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -267,7 +267,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     mcsSTRING256 baseMaxi;
     sprintf(baseMaxi, "%f", baseMax);
     if (request.SetConstraint(BASEMAX_ID, baseMaxi)
-        ==  FAILURE)
+        ==  mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -279,7 +279,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     vobsSTAR_LIST starList;
 
     // start the research in the virtual observatory
-    if (virtualObservatory.Search(request, starList)==FAILURE)
+    if (virtualObservatory.Search(request, starList)==mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -288,12 +288,12 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     sclsvrCALIBRATOR_LIST calibratorList;
    
     // get the resulting star list and create a calibrator list
-    if (calibratorList.Copy(starList) == FAILURE)
+    if (calibratorList.Copy(starList) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // complete the calibrators list
-    if (calibratorList.Complete(request) == FAILURE)
+    if (calibratorList.Complete(request) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -320,7 +320,7 @@ evhCB_COMPL_STAT sclsvrSERVER::SearchCB(msgMESSAGE &msg, void*)
     calibratorList.Clear();
     starList.Clear();
     // Send reply
-    if (SendReply(msg) == FAILURE)
+    if (SendReply(msg) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }

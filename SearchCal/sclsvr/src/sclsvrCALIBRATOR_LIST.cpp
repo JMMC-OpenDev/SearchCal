@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.7 2004-12-20 13:52:22 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.8 2005-01-24 13:40:27 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.7 2004-12-20 13:52:22 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.8 2005-01-24 13:40:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -64,7 +64,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -73,7 +73,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
  *
  * \param calibrator element to be added to the list.
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
 {
@@ -82,7 +82,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(calibrator);
     _starList.push_back(newCalibrator);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -90,7 +90,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
  *
  * \param star element to be added to the list.
  * \return
- * Always SUCCESS.
+ * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
 {
@@ -100,7 +100,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(star);
     _starList.push_back(newCalibrator);
 
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 
@@ -109,7 +109,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
  *
  * Method to complete all calibrator of the list
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
 {
@@ -119,8 +119,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
     {
         // Complete the calibrator
         if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))->Complete(request) 
-            == FAILURE)
+            == mcsFAILURE)
         {
+            errCloseStack();
             logTest("star %d not a calibrator\n", el+1);
         }
         else 
@@ -128,7 +129,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
             logTest("star %d is a calibrator\n", el+1);
         }
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -155,7 +156,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
  *
  * \param buffer the dynamic buffer in which the calibrator will be pack
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
 {
@@ -165,9 +166,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
     {
         // Pack in the buffer the caliobrators
         if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))->Pack(buffer) 
-            == FAILURE )
+            == mcsFAILURE )
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
         // if it's not the last star of the list '\n' is written in order to
         // go to the next line
@@ -181,7 +182,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
             miscDynBufAppendString(buffer, "\0");            
         }
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /**
@@ -189,7 +190,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
  *
  * \param buffer the dynamic buffer where is stord the list
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
 {
@@ -210,14 +211,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
         // If the line had been get
         sclsvrCALIBRATOR calibrator;
         // unpack the calibrator which is in the line
-        if (calibrator.UnPack(bufferLine) == FAILURE)
+        if (calibrator.UnPack(bufferLine) == mcsFAILURE)
         {
-            return FAILURE;
+            return mcsFAILURE;
         }
         // add in the list the calibrator
         AddAtTail(calibrator); 
     }
-    return SUCCESS;    
+    return mcsSUCCESS;    
 }
 
 /**
@@ -225,7 +226,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
  *
  * \param list the list to get
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  **/
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LIST *list)
 {
@@ -241,7 +242,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LI
             //list->AddAtTail(( *(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)) ));
         }
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 
 }
 
@@ -250,7 +251,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LI
  *
  * \param list the list to get
  *
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  **/
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVisibilityOkList(sclsvrCALIBRATOR_LIST *list)
 {
@@ -265,7 +266,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVisibilityOkList(sclsvrCALIBRATOR_LIST *
             //list->AddAtTail(( *(sclsvrCALIBRATOR *)GetNextStar((el==0)) ));
         }
     }
-    return SUCCESS;
+    return mcsSUCCESS;
 
 }
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.6 2005-01-07 14:13:12 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.7 2005-01-24 13:40:27 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.6 2005-01-07 14:13:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.7 2005-01-24 13:40:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,13 +71,13 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     sclsvrGETSTAR_CMD getStarCmd(msg.GetCommand(), msg.GetBody());
     
     // Parse command
-    if (getStarCmd.Parse() == FAILURE)
+    if (getStarCmd.Parse() == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     char *starName;
-    if (getStarCmd.GetObjectName(&starName) == FAILURE)
+    if (getStarCmd.GetObjectName(&starName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }    
@@ -102,13 +102,13 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     vobsREQUEST request;
 
 
-    if (request.SetConstraint(STAR_NAME_ID,starName) == FAILURE)
+    if (request.SetConstraint(STAR_NAME_ID,starName) == mcsFAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    if (request.SetConstraint(OBSERVED_BAND_ID,"V") == FAILURE)
+    if (request.SetConstraint(OBSERVED_BAND_ID,"V") == mcsFAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     vobsSTAR star;
     star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra);
@@ -117,23 +117,23 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     starList.AddAtTail(star);
     vobsVIRTUAL_OBSERVATORY vobs;
 
-    if (vobs.Search(request, starList)==FAILURE)
+    if (vobs.Search(request, starList) == mcsFAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     
     // Build the list of calibrator
     sclsvrCALIBRATOR_LIST calibratorList;
 
     // get the resulting star list and create a calibrator list
-    if (calibratorList.Copy(starList) == FAILURE)
+    if (calibratorList.Copy(starList) == mcsFAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     // complete the calibrators list
-    if (calibratorList.Complete(request) == FAILURE)
+    if (calibratorList.Complete(request) == mcsFAILURE)
     {
-        return FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     //calibratorList.Display();
 
@@ -205,7 +205,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     //calibratorList.Clear();
     //starList.Clear();
     // Send reply
-    if (SendReply(msg) == FAILURE)
+    if (SendReply(msg) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }

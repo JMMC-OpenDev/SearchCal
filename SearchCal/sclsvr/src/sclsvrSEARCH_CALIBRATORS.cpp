@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"
+* "@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.2 2005-01-24 13:40:27 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrSEARCH_CALIBRATORS class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.1 2004-12-05 21:05:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSEARCH_CALIBRATORS.cpp,v 1.2 2005-01-24 13:40:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -66,7 +66,7 @@ sclsvrSEARCH_CALIBRATORS::~sclsvrSEARCH_CALIBRATORS()
  * \param argc count of the arguments supplied to the method
  * \param argv array of pointers to the strings which are those arguments
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrSEARCH_CALIBRATORS::DecodeCommand(int argc, char *argv[])
 {
@@ -74,84 +74,84 @@ mcsCOMPL_STAT sclsvrSEARCH_CALIBRATORS::DecodeCommand(int argc, char *argv[])
     
     sclsvrSERVER sclsvrServer;
     // Parse input parameter
-    if (sclsvrServer.ParseOptions(argc, argv) == FAILURE)
+    if (sclsvrServer.ParseOptions(argc, argv) == mcsFAILURE)
     {
-        exit (EXIT_FAILURE);
+        exit (EXIT_mcsFAILURE);
     }
     sclsvrServer.Display();
 
-    if (request.SetKindOfRequest(1)==FAILURE)
+    if (request.SetKindOfRequest(1)==mcsFAILURE)
     {
-        return FAILURE; 
+        return mcsFAILURE; 
     }
     if (request.SetConstraint(STAR_NAME_ID,sclsvrServer.GetObjectName()) 
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(RA_ID,sclsvrServer.GetRa()) 
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(DEC_ID,sclsvrServer.GetDec()) 
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(STAR_WLEN_ID,sclsvrServer.GetLambda())
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(STAR_MAGNITUDE_ID,sclsvrServer.GetMag())
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(MAGNITUDE_RANGE_ID,sclsvrServer.GetMagrange())
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(SEARCH_BOX_RA_ID,sclsvrServer.GetDiffRa())
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(SEARCH_BOX_DEC_ID,sclsvrServer.GetDiffDec())
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(STAR_EXPECTED_VIS_ID,sclsvrServer.GetVis())
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(STAR_MAX_ERR_VIS_ID,sclsvrServer.GetVisErr())
-        == FAILURE)
+        == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(OBSERVED_BAND_ID,sclsvrServer.GetBand())
-        ==  FAILURE)
+        ==  mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(BASEMIN_ID,sclsvrServer.GetBaseMin())
-        ==  FAILURE)
+        ==  mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     if (request.SetConstraint(BASEMAX_ID,sclsvrServer.GetBaseMax())
-        ==  FAILURE)
+        ==  mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     //request.Display();
 
-    return SUCCESS;
+    return mcsSUCCESS;
     
 }
 
@@ -162,28 +162,28 @@ mcsCOMPL_STAT sclsvrSEARCH_CALIBRATORS::DecodeCommand(int argc, char *argv[])
  * begin a research, get the resuting list of star and complete it to have a
  * final list of potential calibrators.
  * 
- * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrSEARCH_CALIBRATORS::Run()
 {
     logExtDbg("sclsvrSEARCH_CALIBRATORS::Run()");
     // start the research in the virtual observatory
-    if (virtualObservatory.Search(request, starList)==FAILURE)
+    if (virtualObservatory.Search(request, starList)==mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     // get the resulting star list and create a calibrator list
-    if (calibratorList.Copy(starList) == FAILURE)
+    if (calibratorList.Copy(starList) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     // complete the calibrators list
-    if (calibratorList.Complete(request) == FAILURE)
+    if (calibratorList.Complete(request) == mcsFAILURE)
     {
-        return FAILURE;
+        return mcsFAILURE;
     }
     calibratorList.Display();
-    return SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*
