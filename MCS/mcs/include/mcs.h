@@ -1,7 +1,7 @@
 /*************************************************************************
 * JMMC project
 *
-* "@(#) $Id $"
+* "@(#) $Id: mcs.h,v 1.2 2004-05-12 05:02:05 gzins Exp $"
 *
 * mcs.h  -  MCS/Common Definitions - Interface File
 *
