@@ -1,16 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <errorList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="desErr.xsd"
-moduleName="dummyMod">
-
-   <error id="1">
-      <errName>Err1</errName>
-      <errSeverity>S</errSeverity>
-      <errFormat>Bad number %d</errFormat>
-   </error>
-   <error id="2">
-      <errName>FileNotFound</errName>
-      <errSeverity>F</errSeverity>
-      <errFormat>File #%d not found</errFormat>
-   </error>
+    moduleName="dummyMod">
+    <error id="1">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="2">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="3">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="4">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="5">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="6">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="7">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="8">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="9">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="10">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="11">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
+    <error id="1">
+        <errName>Err1</errName>
+        <errSeverity>S</errSeverity>
+        <errFormat>Error number %d</errFormat>
+    </error>
 </errorList>
