@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.42 2005-03-03 16:48:55 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.43 2005-03-04 09:59:38 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2005/03/03 16:48:55  scetre
+ * Trace the confidence index from the computed magnitude until visibility
+ *
  * Revision 1.41  2005/02/23 17:16:06  scetre
  * Updated property name
  *
@@ -72,7 +75,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.42 2005-03-03 16:48:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.43 2005-03-04 09:59:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -722,7 +725,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     }
      
     // Affect visibility property
-    SetPropertyValue(sclsvrCALIBRATOR_VIS2, vis2, vobsSTAR_COMPUTED_PROP);
+    SetPropertyValue(sclsvrCALIBRATOR_VIS2, vis2, vobsSTAR_COMPUTED_PROP,
+                     confidenceIndex);
     SetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, vis2Err,
                      vobsSTAR_COMPUTED_PROP, confidenceIndex);
     
