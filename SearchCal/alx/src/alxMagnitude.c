@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.3 2005-01-24 13:35:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/24 10:56:25  scetre
+ * Changed valid format for spectral type
+ *
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
@@ -24,7 +27,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.2 2005-01-24 10:56:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.3 2005-01-24 13:35:59 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -303,7 +306,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
     }
 
     /* If there is no light class in given spectral type, reset it */
-    if (nbItems != 2)
+    if (nbItems == 2)
     {
         strcpy(spectralType.lightClass, ""); 
     }
