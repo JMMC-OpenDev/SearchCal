@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscFile.h,v 1.7 2004-10-01 08:59:09 lafrasse Exp $"
+* "@(#) $Id: miscFile.h,v 1.8 2004-10-07 14:11:26 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -14,6 +14,7 @@
 * lafrasse  27-Sep-2004  Added miscLocateFileInPath
 * lafrasse  30-Sep-2004  Added miscLocateFile
 * lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
+* lafrasse  07-Oct-2004  Changed miscFileExists API
 *
 *
 *******************************************************************************/
@@ -42,17 +43,28 @@ extern "C" {
  * Pubic functions declaration
  */
  
-char *        miscGetFileName    (char *fullPath);
-char *        miscGetExtension   (char *fullPath);
-mcsCOMPL_STAT miscYankExtension  (char *fullPath, char *extension);
-char*         miscResolvePath    (const char *orginalPath);
-mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
-                                  char *envVarValueBuffer,
-                                  mcsUINT32 envVarValueBufferLength);
-mcsCOMPL_STAT miscYankLastPath   (char *path);
-mcsCOMPL_STAT miscFileExists     (const char *fullPath);
-char*         miscLocateFileInPath(const char *path, const char *fileName);
-char*         miscLocateFile     (const char *fileName);
+char *        miscGetFileName       (char             *fullPath);
+
+char *        miscGetExtension      (char             *fullPath);
+
+mcsCOMPL_STAT miscYankExtension     (char             *fullPath,
+                                     char             *extension);
+
+char*         miscResolvePath       (const char       *orginalPath);
+
+mcsCOMPL_STAT miscGetEnvVarValue    (const char       *envVarName,
+                                     char             *envVarValueBuffer,
+                                     mcsUINT32         envVarValueBufferLength);
+
+mcsCOMPL_STAT miscYankLastPath      (char             *path);
+
+mcsLOGICAL    miscFileExists        (const char       *fullPath,
+                                     mcsLOGICAL        addError);
+
+char*         miscLocateFileInPath  (const char       *path,
+                                     const char       *fileName);
+
+char*         miscLocateFile        (const char       *fileName);
 
 #ifdef __cplusplus
 }

@@ -24,6 +24,7 @@
 *                        doxygen documentation
 * lafrasse  30-Sep-2004  Added miscLocateFile
 * lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
+* lafrasse  07-Oct-2004  Changed miscFileExists API
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -33,7 +34,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.16 2004-10-01 08:59:09 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.17 2004-10-07 14:11:26 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -518,66 +519,73 @@ mcsCOMPL_STAT miscYankLastPath(char *path)
 /**
  * Test if a file exists at a given path.
  *
- * \warning This function will place some informations in the error stack if it
- * cannot find the specified file.\n\n
- *
  * \param fullPath a null-terminated string containing the path to be tested
+ * \param addError an mcsLOGICAL to specify weither or not this function should
+ * raise an error that tries to explain the reason why the file was not found
  *
- * \return SUCCESS if the file exit, FAILURE otherwise
+ * \return TRUE if the file exists, FALSE otherwise
  */
-mcsCOMPL_STAT miscFileExists     (const char *fullPath)
+mcsLOGICAL    miscFileExists        (const char       *fullPath,
+                                     mcsLOGICAL        addError)
 {
     /* Test the fullPath parameter validity */
     if ((fullPath == NULL) || (strlen(fullPath) == 0))
     {
         errAdd(miscERR_NULL_PARAM, "fullPath");
-        return FAILURE;
+        return mcsFALSE;
     }
 
     /* Try to resolve any Env. Var contained in the given path */
     char* resolvedPath =  miscResolvePath(fullPath);
     if ( resolvedPath == NULL)
     {
-        return FAILURE;
+        return mcsFALSE;
     }
 
     /* Try to get file system informations of the file to be tested */
     struct stat fileInformationBuffer;
     if (stat(resolvedPath, &fileInformationBuffer) == -1)
     {
-        switch (errno)
+        /* If an explaining error should be raised */
+        if (addError == mcsTRUE)
         {
-            case EACCES:
-                /* Permission denied */
-                errAdd(miscERR_FILE_PERMISSION_DENIED, resolvedPath);
-                break;
-    
-            case ENAMETOOLONG:
-                /* File name too long */
-                errAdd(miscERR_FILE_NAME_TOO_LONG, resolvedPath);
-                break;
-    
-            case ENOENT:
-                /* A component of the path doesn't exist */
-            case ENOTDIR:
-                /* A component of the path is not a directory */
-                errAdd(miscERR_FILE_DOESNT_EXIST, resolvedPath);
-                break;
-    
-            case ELOOP:
-                /* Too many symbolic links encountered while traversing the path
-                 */
-                errAdd(miscERR_FILE_TOO_MANY_SYM_LINKS, resolvedPath);
-                break;
-    
-            default : 
-                errAdd(miscERR_FILE_UNDEFINED_ERRNO, resolvedPath, errno);
+            /* Raise an error according to the problem detected by the 'stat'
+             * function call
+             */
+            switch (errno)
+            {
+                case EACCES:
+                    /* Permission denied */
+                    errAdd(miscERR_FILE_PERMISSION_DENIED, resolvedPath);
+                    break;
+        
+                case ENAMETOOLONG:
+                    /* File name too long */
+                    errAdd(miscERR_FILE_NAME_TOO_LONG, resolvedPath);
+                    break;
+        
+                case ENOENT:
+                    /* A component of the path doesn't exist */
+                case ENOTDIR:
+                    /* A component of the path is not a directory */
+                    errAdd(miscERR_FILE_DOESNT_EXIST, resolvedPath);
+                    break;
+        
+                case ELOOP:
+                    /* Too many sym. links encountered while traversing the path
+                     */
+                    errAdd(miscERR_FILE_TOO_MANY_SYM_LINKS, resolvedPath);
+                    break;
+        
+                default : 
+                    errAdd(miscERR_FILE_UNDEFINED_ERRNO, resolvedPath, errno);
+            }
         }
 
-        return FAILURE;
+        return mcsFALSE;
     }
 
-    return SUCCESS;
+    return mcsTRUE;
 }
 
 /**
@@ -640,14 +648,13 @@ char*         miscLocateFileInPath(const char *path, const char *fileName)
         miscDynBufAppendBytes(&tmpPath, "/", 1);
         miscDynBufAppendString(&tmpPath, (char*)fileName);
 
-        /* If a file exists at the temporary path */
-        if (miscFileExists(miscDynBufGetBufferPointer(&tmpPath)) == SUCCESS)
+        /* If no file exists at the temporary path */
+        validPath = miscDynBufGetBufferPointer(&tmpPath);
+        if (miscFileExists(validPath, mcsTRUE) == mcsFALSE)
         {
-            /* Prepare to return the temporary path */
-            validPath = miscDynBufGetBufferPointer(&tmpPath);
-        }
-        else
-        {
+            /* Reset the temporary path variable */
+            validPath = NULL;
+
             /* Try to reset the static Dynamic Buffer */
             if (miscDynBufReset(&tmpPath) == FAILURE)
             {
@@ -669,6 +676,13 @@ char*         miscLocateFileInPath(const char *path, const char *fileName)
     if (miscDynBufStrip(&tmpPath) == FAILURE)
     {
         return NULL;
+    }
+
+    /* If one of the path was valid */
+    if (validPath != NULL)
+    {
+        /* Remove all the previous errors from the Errors Stack */
+        errResetStack();
     }
 
     return validPath;
