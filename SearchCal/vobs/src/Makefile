@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2004-12-20 09:40:24 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.12 2005-01-27 13:45:55 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -69,6 +69,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_PHOTO.h 	   		\
 				  vobsCATALOG_SBSC.h	   		\
 				  vobsVIRTUAL_OBSERVATORY.h		\
+				  vobsSCENARIO_ENTRY.h			\
 				  vobsSCENARIO.h	       		\
 				  vobsSTAR_COMP_CRITERIA_LIST.h	\
 #
@@ -97,6 +98,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_PHOTO 			\
 				   vobsCATALOG_SBSC				\
 				   vobsVIRTUAL_OBSERVATORY		\
+				   vobsSCENARIO_ENTRY			\
 				   vobsSCENARIO             	\
 				   vobsSTAR_COMP_CRITERIA_LIST	\
 #
