@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.14 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.15 2005-02-09 14:23:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.13  2005/02/03 11:09:24  gzins
  * Returned EXIT_FAILURE when error reply is received
  *
@@ -66,7 +69,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.14 2005-02-04 15:57:06 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.15 2005-02-09 14:23:07 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -114,7 +117,7 @@ int main (int argc, char *argv[])
     timeout = msgWAIT_FOREVER;
     status  = EXIT_SUCCESS;
 
-    /* Read command-line options */
+    // Read command-line options
     if (argc > 2)
     {
         if (strcmp(argv[1], "-v") == 0)
@@ -134,6 +137,7 @@ int main (int argc, char *argv[])
 
         memset(params, '\0', sizeof(params));
         strncpy((char *)params, argv[cnt++], (sizeof(params) -1));
+
         // Removed leading and trailing space
         miscTrimString(params, " ");
 
@@ -148,7 +152,7 @@ int main (int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    /* Try to connect to msgManager */
+    // Try to connect to msgManager
     msgMANAGER_IF manager;
     if (manager.Connect(argv[0]) == mcsFAILURE)
     {
@@ -156,7 +160,7 @@ int main (int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    /* Send the specified command to the specified process */
+    // Send the specified command to the specified process
     mcsINT32 cmdId;
     cmdId = manager.SendCommand(command, process, params);
     if (cmdId != mcsFAILURE)
@@ -166,21 +170,21 @@ int main (int argc, char *argv[])
             logInfo("Command sent, waiting for reply...\n");
         }
 
-        /* While last reply hasn't been received... */
+        // While last reply hasn't been received...
         while (manager.Receive(msg, timeout) == mcsSUCCESS)
         {
-            /* Test the received reply command name validity */
+            // Test the received reply command name validity
             if (strcmp(command, msg.GetCommand()) != 0)
             {
                 logWarning("Received '%s' command reply instead of '%s'\n",
                            command, msg.GetCommand());
             }
 
-            /* Test the reply type */
+            // Test the reply type
             lastReply = msg.IsLastReply();
             switch (msg.GetType())
             {
-                /* Normal reply */
+                // Normal reply
                 case msgTYPE_REPLY:
                     if (verbose == mcsTRUE)
                     {
@@ -197,7 +201,7 @@ int main (int argc, char *argv[])
                     }
                     break;
 
-                    /* Error reply */
+                    // Error reply
                 case msgTYPE_ERROR_REPLY:
                     if (verbose == mcsTRUE)
                     {
@@ -206,17 +210,17 @@ int main (int argc, char *argv[])
                     errUnpackStack(msg.GetBody(), msg.GetBodySize());
                     break;
 
-                    /* Unknown reply */
+                    // Unknown reply
                 default:
                     errAdd(msgERR_MSG_TYPE, msg.GetType());
                     lastReply = mcsTRUE;
                     break;
             }
 
-            /* If the reply was the last... */
+            // If the reply was the last...
             if (lastReply == mcsTRUE)
             {
-                /* Exit from the receiving loop */
+                // Exit from the receiving loop
                 break;
             }
             else
@@ -227,7 +231,7 @@ int main (int argc, char *argv[])
                 }
             }
         }
-        /* End of while() loop */
+        // End of while() loop
     }
     else
     {
@@ -237,14 +241,14 @@ int main (int argc, char *argv[])
         }
     }
 
-    /* Print out error stack if it is not empty */
+    // Print out error stack if it is not empty
     if (errStackIsEmpty() == mcsFALSE)
     {
         errCloseStack();
         status = EXIT_FAILURE;
     }
 
-    /* Disconnect from msgManager */
+    // Disconnect from msgManager
     manager.Disconnect();
 
     mcsExit();
