@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.43 2005-03-04 09:59:38 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.44 2005-03-04 12:50:11 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.43  2005/03/04 09:59:38  gzins
+ * Set confidence index of computed visibility
+ *
  * Revision 1.42  2005/03/03 16:48:55  scetre
  * Trace the confidence index from the computed magnitude until visibility
  *
@@ -75,7 +78,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.43 2005-03-04 09:59:38 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.44 2005-03-04 12:50:11 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -223,22 +226,29 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         // If paralax of the star if known
         if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
         {
-            // Compute Interstellar extinction
-            if (ComputeInterstellarAbsorption() == mcsFAILURE)
+            // If paralax is greater than 1 mas, compute real magnitudes,
+            // missing magnitudes and the angular diameter 
+            mcsFLOAT paralax;
+            GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax);
+            if (paralax >= 1)
             {
-                return mcsFAILURE;
-            }
+                // Compute Interstellar extinction
+                if (ComputeInterstellarAbsorption() == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
 
-            // Compute Missing Magnitude
-            if (ComputeMissingMagnitude() == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+                // Compute Missing Magnitude
+                if (ComputeMissingMagnitude() == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
 
-            // Compute Angular Diameter
-            if (ComputeAngularDiameter() == mcsFAILURE)
-            {
-                return mcsFAILURE;
+                // Compute Angular Diameter
+                if (ComputeAngularDiameter() == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
             }
         }
     }
@@ -278,7 +288,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 
             computedRelativeError = (computedVisError / computedVis)
                 + (deltaMu2/gamma2) * ( 1/computedVis + 1/ expectedVis);
-           
             
             // Check if the computed visibility is greater than the
             // requested one, and the flag accordingly
