@@ -1,12 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: logManager.c,v 1.7 2005-02-15 08:25:13 gzins Exp $"
+ * "@(#) $Id: logManager.c,v 1.8 2005-03-06 18:05:41 gzins Exp $"
  *
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/15 08:25:13  gzins
+ * Minor change in header indentation
+ *
  * Revision 1.6  2005/02/15 08:18:43  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -116,7 +119,6 @@ int main(int argc, char** argv)
     struct hostent     *hp = NULL;
     struct sockaddr_in from;
     int                fromLen = 0;
-    unsigned int       loggedMsgNumber = 0;
 
     /* 'getopt()' stuff */
     int index;
@@ -352,13 +354,6 @@ int main(int argc, char** argv)
 
         /* Empty temporary fprintf() system buffer in our log file */
         fflush(logFile);
-
-        /* Inform that 10 new messages have been logged */
-        loggedMsgNumber++;
-        if ((loggedMsgNumber % 10) == 0)
-        {
-            logPrintErrMessage("logged %d messages", loggedMsgNumber);
-        }
     }
     /* End forever */
 
