@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.15 2005-02-17 17:38:01 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.16 2005-02-22 13:24:02 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/02/17 17:38:01  gzins
+* Removed trailing and leading spaces of read values when parsing buffer
+*
 * Revision 1.14  2005/02/17 15:39:36  gzins
 * Fixed minor bug related to remaining '\0' at the end of buffer when storing list in buffer
 *
@@ -384,15 +387,15 @@ public:
                             {
                                 // Determnine to corresponding magnitude
                                 char *magId;
-                                if (lambdaValue == 1.25)
+                                if (lambdaValue == (mcsFLOAT)1.25)
                                 {
                                     magId = vobsSTAR_PHOT_JHN_J;
                                 }
-                                else if (lambdaValue == 1.65)
+                                else if (lambdaValue == (mcsFLOAT)1.65)
                                 {
                                     magId = vobsSTAR_PHOT_JHN_H;
                                 }
-                                else if (lambdaValue == 2.20)
+                                else if (lambdaValue == (mcsFLOAT)2.20)
                                 {
                                     magId = vobsSTAR_PHOT_JHN_K;
                                 }
