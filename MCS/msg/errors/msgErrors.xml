@@ -155,4 +155,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[connection with '%s' remote environment running on '%s' is not allowed]]></errFormat>
    </error>
+   <error id="34">
+      <errName>NULL_PARAM</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Received a NULL value for parameter '%.80s'.]]></errFormat>
+   </error>
 </errorList>
