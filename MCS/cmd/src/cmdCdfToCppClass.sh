@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdCdfToCppClass.sh,v 1.6 2005-01-31 07:48:03 mella Exp $"
+# "@(#) $Id: cmdCdfToCppClass.sh,v 1.7 2005-02-07 11:25:19 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -73,7 +73,7 @@ then
 fi
 
 # Check if xslt file exist
-if [ -z $xslFile ]
+if [ -z "$xslFile" ]
 then
     echo "ERROR: No $xslFileName stylesheet file found to convert cdf into cpp" >&2
     echo "" >&2
