@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeInstallErrorFiles.sh,v 1.2 2004-09-29 15:38:31 gzins Exp $" 
+# "@(#) $Id: mkfMakeInstallErrorFiles.sh,v 1.3 2004-09-30 08:14:50 gzins Exp $" 
 #
 # who       when         what
 # --------  --------     ----------------------------------------------
@@ -107,7 +107,7 @@ then
             target="$target $ERRORS/help/$FILE"
         fi
     done
-    echo -e :"$target"
+    echo -e "$target"
 else
     echo -e "errors:"
     echo -e "\t-@echo \"\""
