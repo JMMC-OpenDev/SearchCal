@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.2 2004-05-14 15:33:39 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-06-25 06:25:01 gzins Exp $"
 #
 # Makefile of ........
 #
@@ -11,7 +11,7 @@
 #
 
 #*******************************************************************************
-# This Makefile follows VLT Standards (see Makefile(5) for more).
+# This Makefile follows MCS Standards (see Makefile(5) for more).
 #*******************************************************************************
 # REMARKS
 #    None
@@ -158,13 +158,14 @@ CSOURCENAMES = \
 	$(foreach lib, $(LIBRARIES) $(LIBRARIES_L), $($(lib)_OBJECTS))
 
 #
+
 #>>>>> END OF standard rules
 
 #
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/vltMakefile
+include $(MAKEDIR)/mcsMakefile
 
 #
 # TARGETS
@@ -182,9 +183,12 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
-	@echo "Installing configuration files: "
-	@$(foreach file, $(CFG_FILES), echo "        `basename $(file)`" ;\
-		cp -f $(file) $(MCSROOT)/etc;)
+	@if [ "$(INTROOT)" = "" ]; \
+	then \
+		echo "Installing configuration files: ";\
+		$(foreach file, $(CFG_FILES), echo "        `basename $(file)`" ;\
+			cp -f $(file) $(MCSROOT)/etc;) \
+	fi
 	@echo " . . . installation done"
 
 db : db_all
