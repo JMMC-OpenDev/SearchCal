@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2005-02-04 10:49:23 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.15 2005-02-11 14:10:43 gluck Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2005/02/04 10:49:23  gzins
+# Added installation of MIDI catalog
+#
 # Revision 1.13  2005/02/04 09:59:37  gzins
 # Added vobsCATALOG_MIDI class
 #
@@ -61,6 +64,8 @@ INCLUDES        = vobs.h						\
 				  vobsCDATA.h			   		\
 				  vobsPARSER.h			   		\
 				  vobsCATALOG.h 		   		\
+				  vobsREMOTE_CATALOG.h 			\
+				  vobsLOCAL_CATALOG.h 			\
 				  vobsCATALOG_ASCC.h 	   		\
 				  vobsCATALOG_BSC.h 	   		\
 				  vobsCATALOG_CHARM.h 	   		\
@@ -91,6 +96,8 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCDATA					\
 				   vobsPARSER					\
 				   vobsCATALOG 					\
+				   vobsREMOTE_CATALOG			\
+				   vobsLOCAL_CATALOG			\
 				   vobsCATALOG_ASCC 			\
 				   vobsCATALOG_BSC 				\
 				   vobsCATALOG_CHARM 			\
