@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.3 2005-01-25 06:33:21 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.4 2005-02-04 13:50:05 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/25 06:33:21  gzins
+ * Removed wrong description for alxCONFIDENCE_INDEX
+ *
  * Revision 1.2  2005/01/21 08:10:30  gluck
  * - Updated
  * - Insert automatic rcs log in header file
@@ -43,11 +46,9 @@ extern "C" {
  */
 typedef enum
 {
-    alxCONFIDENCE_VERY_LOW=0,
-    alxCONFIDENCE_2,
-    alxCONFIDENCE_3, 
-    alxCONFIDENCE_4,
-    alxCONFIDENCE_HIGH 
+    alxCONFIDENCE_LOW = 0,  /** Low confidence in computed value */
+    alxCONFIDENCE_MEDIUM,   /** Medium confidence in computed value */
+    alxCONFIDENCE_HIGH      /** High confidence in computed value */
 } alxCONFIDENCE_INDEX;
 
 /*
