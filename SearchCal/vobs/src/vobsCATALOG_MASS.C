@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,7 +60,7 @@ vobsCATALOG_MASS::vobsCATALOG_MASS()
  */
 vobsCATALOG_MASS::~vobsCATALOG_MASS()
 {
-    miscDynBufDestroy(&_asking);
+    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -81,12 +81,12 @@ vobsCATALOG_MASS::~vobsCATALOG_MASS()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_MASS::WriteAskingSpecificParameters(void)
+mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG_MASS::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_asking, "&-out=Jmag&-out=Hmag&-out=Kmag");
-    miscDynBufAppendString(&_asking, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
+    miscDynBufAppendString(&_query, "&-out=Jmag&-out=Hmag&-out=Kmag");
+    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
             
     return SUCCESS;
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestVirtualObsV.C,v 1.4 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsTestVirtualObsV.C,v 1.5 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestVirtualObsV.C,v 1.4 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestVirtualObsV.C,v 1.5 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
     vobsVIRTUAL_OBSERVATORY vobs;
 
-    if (vobs.Research(request, starList)==FAILURE)
+    if (vobs.Search(request, starList)==FAILURE)
     {
         errDisplayStack();
         errCloseStack();

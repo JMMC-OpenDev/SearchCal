@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_DENIS.h,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_DENIS.h,v 1.3 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -48,9 +48,11 @@ public:
 
    // Destructor
    virtual ~vobsCATALOG_DENIS();
+   
 protected:
     // Method to build parts of the request
-    virtual mcsCOMPL_STAT WriteAskingSpecificParameters(void);
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
+
 private:
 };
 

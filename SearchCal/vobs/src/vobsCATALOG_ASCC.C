@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.9 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.C,v 1.10 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.9 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.C,v 1.10 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -64,7 +64,7 @@ vobsCATALOG_ASCC::vobsCATALOG_ASCC()
  */
 vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
 {
-    miscDynBufDestroy(&_asking);
+    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -84,17 +84,17 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC::WriteAskingSpecificParameters(void)
+mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
     
-    miscDynBufAppendString(&_asking,"&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
-    miscDynBufAppendString(&_asking,"&-out=*POS_PARLX_TRIG");
-    miscDynBufAppendString(&_asking,"&-out=*SPECT_TYPE_MK");
-    miscDynBufAppendString(&_asking,"&SpType=%5bOBAFGKM%5d*");
-    miscDynBufAppendString(&_asking,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_asking,"&-out=v1&-out=d5&-out=HIP&-out=HD");
-    miscDynBufAppendString(&_asking,"&-out=DM&-sort=_r");
+    miscDynBufAppendString(&_query,"&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
+    miscDynBufAppendString(&_query,"&-out=*POS_PARLX_TRIG");
+    miscDynBufAppendString(&_query,"&-out=*SPECT_TYPE_MK");
+    miscDynBufAppendString(&_query,"&SpType=%5bOBAFGKM%5d*");
+    miscDynBufAppendString(&_query,"&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_query,"&-out=v1&-out=d5&-out=HIP&-out=HD");
+    miscDynBufAppendString(&_query,"&-out=DM&-sort=_r");
     
     return SUCCESS;
 }
@@ -114,38 +114,38 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteAskingSpecificParameters(void)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC::WriteAskingSpecificParameters(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST request)
 {
     logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
 
-    miscDynBufAppendString(&_asking, "&");
+    miscDynBufAppendString(&_query, "&");
     mcsSTRING32 band;
     request.GetConstraint(OBSERVED_BAND_ID,band);
-    miscDynBufAppendString(&_asking, band);
-    miscDynBufAppendString(&_asking, "mag=");
+    miscDynBufAppendString(&_query, band);
+    miscDynBufAppendString(&_query, "mag=");
     mcsSTRING32 minMagRange;
     request.GetConstraint(MIN_MAGNITUDE_RANGE_ID,minMagRange);
-    miscDynBufAppendString(&_asking, minMagRange);
-    miscDynBufAppendString(&_asking, "..");
+    miscDynBufAppendString(&_query, minMagRange);
+    miscDynBufAppendString(&_query, "..");
     mcsSTRING32 maxMagRange;
     request.GetConstraint(MAX_MAGNITUDE_RANGE_ID,maxMagRange);
-    miscDynBufAppendString(&_asking, maxMagRange);
-    miscDynBufAppendString(&_asking, "&-c.eq=J2000&-out.max=100&-c.bm=");
+    miscDynBufAppendString(&_query, maxMagRange);
+    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
     mcsSTRING32 searchBoxRa, searchBoxDec;
     request.GetConstraint(SEARCH_BOX_RA_ID,searchBoxRa);
     request.GetConstraint(SEARCH_BOX_DEC_ID,searchBoxDec);
-    miscDynBufAppendString(&_asking, searchBoxRa);
-    miscDynBufAppendString(&_asking, "/");
-    miscDynBufAppendString(&_asking, searchBoxDec);
-    miscDynBufAppendString(&_asking, "&-c.u=arcsec");
-    miscDynBufAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_asking, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
-    miscDynBufAppendString(&_asking, "&-out=*POS_PARLX_TRIG");
-    miscDynBufAppendString(&_asking, "&-out=*SPECT_TYPE_MK");
-    miscDynBufAppendString(&_asking, "&SpType=%5bOBAFGKM%5d*");
-    miscDynBufAppendString(&_asking, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_asking, "&-out=v1&-out=d5");
-    miscDynBufAppendString(&_asking, "&-out=HIP&-out=HD&-out=DM&-sort=_r"); 
+    miscDynBufAppendString(&_query, searchBoxRa);
+    miscDynBufAppendString(&_query, "/");
+    miscDynBufAppendString(&_query, searchBoxDec);
+    miscDynBufAppendString(&_query, "&-c.u=arcsec");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
+    miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
+    miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
+    miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_query, "&-out=v1&-out=d5");
+    miscDynBufAppendString(&_query, "&-out=HIP&-out=HD&-out=DM&-sort=_r"); 
     
     return SUCCESS;
 }

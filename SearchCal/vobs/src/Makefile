@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2004-11-17 07:58:07 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2004-11-23 12:47:48 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -34,14 +34,14 @@ USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/i
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = 
+EXECUTABLES     =  
 EXECUTABLES_L   = 
 
 #
 # <brief description of vobsServer program>
-#vobsServer_OBJECTS   = vobsServer
-#vobsServer_LDFLAGS   = -lxml2 -lgdome -lstdc++
-#vobs_LIBS      = mcs err log bcc misc vobs
+vobsServer_OBJECTS   = vobsSERVER 
+vobsServer_LDFLAGS   = 
+vobsServer_LIBS      = MCS C++ vobs
 
 #
 # special compilation flags for single c sources

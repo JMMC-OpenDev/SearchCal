@@ -24,7 +24,7 @@
 #define vobsERR_CHECK_FOR_SIMPLE_STAR_FAILED 21   /**<  constraint for simple star search not ok */
 #define vobsERR_CHECK_FOR_STAR_LIST_FAILED 22   /**<  constraints for star list search not ok */
 #define vobsERR_BAD_CATALOG_NAME 23   /**<  bad catalog name */
-#define vobsERR_ASKING_WRITE_FAILED 24   /**<  The asking is not writing correctly : %s */
+#define vobsERR_QUERY_WRITE_FAILED 24   /**<  The query is not writing correctly : %s */
 #define vobsERR_URI_WRITE_FAILED 25   /**<  The URI is not writing correctly */
 #define vobsERR_CONSTANT_WRITE_FAILED 26   /**<  The Constants are not writing correctly */
 #define vobsERR_POSITION_WRITE_FAILED 27   /**<  The position are not writing correctly */

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.17 2004-11-23 12:32:10 gzins Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.18 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.17 2004-11-23 12:32:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.18 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,7 +59,7 @@ using namespace std;
  */
 vobsCATALOG::vobsCATALOG()
 {
-    miscDynBufInit(&_asking);
+    miscDynBufInit(&_query);
     strcpy(_name,"");
 }
 
@@ -72,7 +72,7 @@ vobsCATALOG::vobsCATALOG()
  */
 vobsCATALOG::~vobsCATALOG()
 {
-    miscDynBufDestroy(&_asking);
+    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -186,7 +186,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     // if ok, the asking is writing according to only the request
     if (list.IsEmpty()==mcsTRUE)
     {
-        if (PrepareAsking(request)==FAILURE)
+        if (PrepareQuery(request)==FAILURE)
         {
             return FAILURE;
         }
@@ -194,14 +194,14 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
     // else, the asking is writing according to the request and the star list
     else 
     {
-        if (PrepareAsking(request, list)==FAILURE)
+        if (PrepareQuery(request, list)==FAILURE)
         { 
             return FAILURE; 
         }
     }
     
     vobsPARSER parser;
-    if (parser.Parse(miscDynBufGetBufferPointer(&_asking), list, logFileName)
+    if (parser.Parse(miscDynBufGetBufferPointer(&_query), list, logFileName)
         == FAILURE)
     {
         return FAILURE; 
@@ -228,21 +228,21 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
  *
  * \b Errors codes:\n 
  * The possible errors are:
- * \li vobsERR_ASKING_WRITE_FAILED
+ * \li vobsERR_QUERY_WRITE_FAILED
  *
  */
-mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST &request)
+mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST &request)
 {
-    logExtDbg("vobsCATALOG::PrepareAsking()");
+    logExtDbg("vobsCATALOG::PrepareQuery()");
     
         
-    miscDynBufReset(&_asking);
+    miscDynBufReset(&_query);
 
-    if ((WriteAskingURI()==FAILURE) ||
-        (WriteAskingPosition(request)==FAILURE) ||
-        (WriteAskingSpecificParameters(request)==FAILURE) )
+    if ((WriteQueryURIPart()==FAILURE) ||
+        (WriteReferenceStarPosition(request)==FAILURE) ||
+        (WriteQuerySpecificPart(request)==FAILURE) )
     {
-        errAdd(vobsERR_ASKING_WRITE_FAILED, _asking);
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return FAILURE;
     }
     
@@ -262,19 +262,19 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST &request)
  * 
  * \b Errors codes:\n 
  * The possible errors are:
- * \li vobsERR_ASKING_WRITE_FAILED
+ * \li vobsERR_QUERY_WRITE_FAILED
  */
-mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmpList)
+mcsCOMPL_STAT vobsCATALOG::PrepareQuery(vobsREQUEST request, vobsSTAR_LIST &tmpList)
 {
-    logExtDbg("vobsCATALOG::PrepareAsking()");
+    logExtDbg("vobsCATALOG::PrepareQuery()");
     
-    miscDynBufReset(&_asking);
-    if ( (WriteAskingURI()==FAILURE) ||
-         (WriteAskingConstant()==FAILURE) ||
-         (WriteAskingSpecificParameters()==FAILURE) ||
-         (WriteAskingEnd(tmpList)==FAILURE) )
+    miscDynBufReset(&_query);
+    if ( (WriteQueryURIPart()==FAILURE) ||
+         (WriteQueryConstantPart()==FAILURE) ||
+         (WriteQuerySpecificPart()==FAILURE) ||
+         (WriteQueryStarListPart(tmpList)==FAILURE) )
     {
-        errAdd(vobsERR_ASKING_WRITE_FAILED, _asking);
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return FAILURE;
     }
 
@@ -295,13 +295,13 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmp
  * \li vobsERR_URI_WRITE_FAILED
  *
  */
-mcsCOMPL_STAT vobsCATALOG::WriteAskingURI(void)
+mcsCOMPL_STAT vobsCATALOG::WriteQueryURIPart(void)
 {
-    logExtDbg("vobsCATALOG::WriteAskingURI()");
+    logExtDbg("vobsCATALOG::WriteQueryURI()");
 
-    if ((miscDynBufAppendString(&_asking, "http://vizier.u-strasbg.fr/viz-bin/")==FAILURE) ||
-        (miscDynBufAppendString(&_asking, "asu-xml?-source=")==FAILURE) ||
-        (miscDynBufAppendString(&_asking, _name)==FAILURE) )
+    if ((miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")==FAILURE) ||
+        (miscDynBufAppendString(&_query, "asu-xml?-source=")==FAILURE) ||
+        (miscDynBufAppendString(&_query, _name)==FAILURE) )
     {
         errAdd(vobsERR_URI_WRITE_FAILED);
         return FAILURE;
@@ -323,13 +323,13 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingURI(void)
  * The possible errors are:
  * \li vobsERR_CONSTANT_WRITE_FAILED
  */
-mcsCOMPL_STAT vobsCATALOG::WriteAskingConstant(void)
+mcsCOMPL_STAT vobsCATALOG::WriteQueryConstantPart(void)
 {
     logExtDbg("vobsCATALOG::GetAskingConstant()");
 
-    if ( (miscDynBufAppendString(&_asking,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==FAILURE) ||
-         (miscDynBufAppendString(&_asking,"&-out.max=100")==FAILURE) ||
-         (miscDynBufAppendString(&_asking,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==FAILURE) )
+    if ( (miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&-c.r=1&-c.u=arcmin")==FAILURE) ||
+         (miscDynBufAppendString(&_query,"&-out.max=100")==FAILURE) ||
+         (miscDynBufAppendString(&_query,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==FAILURE) )
     {
         errAdd(vobsERR_CONSTANT_WRITE_FAILED);
         return FAILURE;
@@ -349,7 +349,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingConstant(void)
  * 
  *
  */
-mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(void)
+mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
 
@@ -372,7 +372,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(void)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG::WriteQuerySpecificPart(vobsREQUEST request)
 {
     logExtDbg("vobsCATALOG::GetAskingSpecificParameters()");
 
@@ -394,7 +394,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingSpecificParameters(vobsREQUEST request)
  * The possible errors are:
  * vobsERR_POSITION_WRITE_FAILED
  */
-mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG::WriteReferenceStarPosition(vobsREQUEST request)
 {
     logExtDbg("vobsCATALOG::GetAskingPosition()");
 
@@ -403,10 +403,10 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
     mcsSTRING32 dec;
     request.GetConstraint(DEC_ID,dec);
     
-    if ( (miscDynBufAppendString(&_asking,"&-c.ra=")==FAILURE) ||
-         (miscDynBufAppendString(&_asking,ra)==FAILURE) ||
-         (miscDynBufAppendString(&_asking,"&-c.dec=")==FAILURE) ||
-         (miscDynBufAppendString(&_asking,dec)==FAILURE) )
+    if ( (miscDynBufAppendString(&_query,"&-c.ra=")==FAILURE) ||
+         (miscDynBufAppendString(&_query,ra)==FAILURE) ||
+         (miscDynBufAppendString(&_query,"&-c.dec=")==FAILURE) ||
+         (miscDynBufAppendString(&_query,dec)==FAILURE) )
     {
         errAdd(vobsERR_POSITION_WRITE_FAILED);
         return FAILURE;
@@ -428,7 +428,7 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
+mcsCOMPL_STAT vobsCATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::GetAskingEnd()");
     // Build of the stringlist
@@ -437,8 +437,8 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
     StarList2Sring(strList, list);
     
     
-    if ( (miscDynBufAppendString(&_asking,"&-out.form=List")==FAILURE) ||
-         (miscDynBufAppendString(&_asking, miscDynBufGetBufferPointer(&strList))==FAILURE) )
+    if ( (miscDynBufAppendString(&_query,"&-out.form=List")==FAILURE) ||
+         (miscDynBufAppendString(&_query, miscDynBufGetBufferPointer(&strList))==FAILURE) )
     {
         errAdd(vobsERR_END_WRITE_FAILED);
         miscDynBufDestroy(&strList);

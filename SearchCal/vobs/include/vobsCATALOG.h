@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.6 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.7 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -67,17 +67,17 @@ public:
    
 protected:
     // Method to preare the request as a string
-   virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST &request);
-   virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST request,
+   virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
+   virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST request,
                                  vobsSTAR_LIST &tmpList);
 
    // Method to build all parts of the asking
-   virtual mcsCOMPL_STAT WriteAskingURI(void);
-   virtual mcsCOMPL_STAT WriteAskingConstant(void);
-   virtual mcsCOMPL_STAT WriteAskingSpecificParameters(void);
-   virtual mcsCOMPL_STAT WriteAskingSpecificParameters(vobsREQUEST request);
-   virtual mcsCOMPL_STAT WriteAskingPosition(vobsREQUEST request);
-   virtual mcsCOMPL_STAT WriteAskingEnd(vobsSTAR_LIST &list);
+   virtual mcsCOMPL_STAT WriteQueryURIPart(void);
+   virtual mcsCOMPL_STAT WriteQueryConstantPart(void);
+   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
+   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST request);
+   virtual mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST request);
+   virtual mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
   
    // Method to have a star list as a string from a normal star list
    virtual mcsCOMPL_STAT StarList2Sring(miscDYN_BUF &strList,
@@ -87,7 +87,7 @@ protected:
     mcsSTRING32 _name;
     
     // Request to write and to send to the CDS
-    miscDYN_BUF _asking;
+    miscDYN_BUF _query;
 
 private:
     // Declaration of assignment operator as private

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CHARM.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_CHARM.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CHARM class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CHARM.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CHARM.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,7 +60,7 @@ vobsCATALOG_CHARM::vobsCATALOG_CHARM()
  */
 vobsCATALOG_CHARM::~vobsCATALOG_CHARM()
 {
-    miscDynBufDestroy(&_asking);
+    miscDynBufDestroy(&_query);
 }
 
 
@@ -82,15 +82,15 @@ vobsCATALOG_CHARM::~vobsCATALOG_CHARM()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_CHARM::WriteAskingSpecificParameters(void)
+mcsCOMPL_STAT vobsCATALOG_CHARM::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG_CHARM::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_asking, "&-out=*POS_EQ_RA_MAIN");
-    miscDynBufAppendString(&_asking, "&-out=*POS_EQ_DEC_MAIN&-out=LD");
-    miscDynBufAppendString(&_asking, "&-out=e_LD&-out=UD&-out=e_UD");
-    miscDynBufAppendString(&_asking, "&-out=*OBS_METHOD&-out=*PHOT_JHN_K");
-    miscDynBufAppendString(&_asking, "&Inst=,LBI,LO,SPE&-out=Lambda");
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_RA_MAIN");
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_DEC_MAIN&-out=LD");
+    miscDynBufAppendString(&_query, "&-out=e_LD&-out=UD&-out=e_UD");
+    miscDynBufAppendString(&_query, "&-out=*OBS_METHOD&-out=*PHOT_JHN_K");
+    miscDynBufAppendString(&_query, "&Inst=,LBI,LO,SPE&-out=Lambda");
             
     return SUCCESS;
 }

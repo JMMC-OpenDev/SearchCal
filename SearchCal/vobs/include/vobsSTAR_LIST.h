@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.7 2004-11-23 12:36:23 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.8 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -48,6 +48,7 @@ class vobsSTAR_LIST
     virtual void          Display(void);
 
     virtual mcsCOMPL_STAT Save(mcsSTRING256 filename); 
+
  protected:
     // List of stars
     std::list<vobsSTAR *>           _starList;

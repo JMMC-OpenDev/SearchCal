@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSearch.C,v 1.4 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsSearch.C,v 1.5 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSearch.C,v 1.4 2004-08-03 13:44:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSearch.C,v 1.5 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -100,7 +100,7 @@ vobsREQUEST request;
     
     vobsCALIBRATOR_STAR_LIST calibObjList;
     
-    calibObjList=virtualObservatory.ResearchOne(request);
+    calibObjList=virtualObservatory.SearchOne(request);
 
     logInfo("size of the list = %d",calibObjList.Size());
     

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.7 2004-11-18 07:21:59 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.8 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -62,7 +62,7 @@ public:
     virtual ~vobsVIRTUAL_OBSERVATORY();
  
     // Method to star the research in the different catalog
-    virtual mcsCOMPL_STAT Research(vobsREQUEST &request,
+    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
                                    vobsSTAR_LIST &StarList);
     
 protected:

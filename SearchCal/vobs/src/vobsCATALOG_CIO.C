@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.C,v 1.10 2004-11-23 09:57:15 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.C,v 1.11 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.10 2004-11-23 09:57:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.11 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -63,7 +63,7 @@ vobsCATALOG_CIO::vobsCATALOG_CIO()
  */
 vobsCATALOG_CIO::~vobsCATALOG_CIO()
 {
-    miscDynBufDestroy(&_asking);
+    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -83,11 +83,11 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
  *
  * \b Errors codes:\n 
  * The possible errors are:
- *  \li vobsERR_ASKING_WRITE_FAILED
+ *  \li vobsERR_QUERY_WRITE_FAILED
  */
-mcsCOMPL_STAT vobsCATALOG_CIO::PrepareAsking(vobsREQUEST &request)
+mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
 {
-    logExtDbg("vobsCATALOG::PrepareAsking()");
+    logExtDbg("vobsCATALOG::PrepareQuery()");
     
     int kindOfRequest;
     if (request.GetKindOfRequest(kindOfRequest) == FAILURE)
@@ -96,21 +96,21 @@ mcsCOMPL_STAT vobsCATALOG_CIO::PrepareAsking(vobsREQUEST &request)
     }
     if (kindOfRequest == 0)
     {
-        miscDynBufAppendString(&_asking,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=II/225/catalog&-out.max=100&name=");
+        miscDynBufAppendString(&_query,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=II/225/catalog&-out.max=100&name=");
         mcsSTRING32 name;
         request.GetConstraint(STAR_NAME_ID, name);
-        miscDynBufAppendString(&_asking, name);
-        miscDynBufAppendString(&_asking,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-        miscDynBufAppendString(&_asking,"&-out=lambda&-out=F(IR)");
-        miscDynBufAppendString(&_asking,"&-out=x_F(IR)&-sort=_r");
+        miscDynBufAppendString(&_query, name);
+        miscDynBufAppendString(&_query,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+        miscDynBufAppendString(&_query,"&-out=lambda&-out=F(IR)");
+        miscDynBufAppendString(&_query,"&-out=x_F(IR)&-sort=_r");
     }
     else
     {
-        if ((WriteAskingURI()==FAILURE) ||
-            (WriteAskingPosition(request)==FAILURE) ||
-            (WriteAskingSpecificParameters(request)==FAILURE) )
+        if ((WriteQueryURIPart()==FAILURE) ||
+            (WriteReferenceStarPosition(request)==FAILURE) ||
+            (WriteQuerySpecificPart(request)==FAILURE) )
         {
-            errAdd(vobsERR_ASKING_WRITE_FAILED, _asking);
+            errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
             return FAILURE;
         }
     }
@@ -130,14 +130,14 @@ mcsCOMPL_STAT vobsCATALOG_CIO::PrepareAsking(vobsREQUEST &request)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingConstant(void)
+mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
 {
     logExtDbg("vobsCATALOG_CIO::GetAskingConstant()");
 
-    miscDynBufAppendString(&_asking,"&-file=-c&-c.eq=J2000&&x_F(IR)=M");
-    miscDynBufAppendString(&_asking,"&lambda=1.25,1.65,2.20");
-    miscDynBufAppendString(&_asking,"&-out.max=50");
-    miscDynBufAppendString(&_asking,"-c.r=1&-c.u=arcmin");
+    miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&&x_F(IR)=M");
+    miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20");
+    miscDynBufAppendString(&_query,"&-out.max=50");
+    miscDynBufAppendString(&_query,"-c.r=1&-c.u=arcmin");
     
     return SUCCESS;
 }
@@ -157,13 +157,13 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingConstant(void)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingSpecificParameters(void)
+mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG_CIO::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_asking, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
-    miscDynBufAppendString(&_asking, "&-sort=_r");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
+    miscDynBufAppendString(&_query, "&-sort=_r");
             
     return SUCCESS;
 }
@@ -183,54 +183,54 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingSpecificParameters(void)
  * The possible errors are:
  * \li vobsERR_UNKNOWN_BAND
  */
-mcsCOMPL_STAT vobsCATALOG_CIO::WriteAskingSpecificParameters(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST request)
 {
     logExtDbg("vobsCATALOG_CIO::GetAskingSpecificParameters()");
 
-    miscDynBufAppendString(&_asking, "&x_F(IR)=M");
-    miscDynBufAppendString(&_asking, "&F(IR)=");
+    miscDynBufAppendString(&_query, "&x_F(IR)=M");
+    miscDynBufAppendString(&_query, "&F(IR)=");
     
     mcsSTRING32 minMagRange;
     request.GetConstraint(MIN_MAGNITUDE_RANGE_ID,minMagRange);
-    miscDynBufAppendString(&_asking, minMagRange);
-    miscDynBufAppendString(&_asking, "..");
+    miscDynBufAppendString(&_query, minMagRange);
+    miscDynBufAppendString(&_query, "..");
     mcsSTRING32 maxMagRange;
     request.GetConstraint(MAX_MAGNITUDE_RANGE_ID,maxMagRange);
-    miscDynBufAppendString(&_asking, maxMagRange);
+    miscDynBufAppendString(&_query, maxMagRange);
     
-    miscDynBufAppendString(&_asking, "&lambda=");
+    miscDynBufAppendString(&_query, "&lambda=");
 
     /*mcsSTRING32 lambda;
     request.GetConstraint(STAR_WLEN_ID,lambda);
-    miscDynBufAppendString(&_asking, lambda);*/
+    miscDynBufAppendString(&_query, lambda);*/
 
     mcsSTRING32 band;
     request.GetConstraint(OBSERVED_BAND_ID, band);
     request.GetConstraint(OBSERVED_BAND_ID,band);
     if (strcmp(band,"K")==0)
     {
-        miscDynBufAppendString(&_asking, "2.20");
+        miscDynBufAppendString(&_query, "2.20");
     }
     else if (strcmp(band,"H")==0)
     {
-        miscDynBufAppendString(&_asking, "1.65");        
+        miscDynBufAppendString(&_query, "1.65");        
     }
     else if (strcmp(band,"J")==0)
     {
-        miscDynBufAppendString(&_asking, "1.25");        
+        miscDynBufAppendString(&_query, "1.25");        
     }
 
-    miscDynBufAppendString(&_asking, "&-out.max=50&-c.bm=");
+    miscDynBufAppendString(&_query, "&-out.max=50&-c.bm=");
     mcsSTRING32 searchBoxRa, searchBoxDec;
     request.GetConstraint(SEARCH_BOX_RA_ID,searchBoxRa);
     request.GetConstraint(SEARCH_BOX_DEC_ID,searchBoxDec);
-    miscDynBufAppendString(&_asking, searchBoxRa);
-    miscDynBufAppendString(&_asking, "/");
-    miscDynBufAppendString(&_asking, searchBoxDec);
-    miscDynBufAppendString(&_asking, "&-c.u=arcmin");
-    miscDynBufAppendString(&_asking, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_asking, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
-    miscDynBufAppendString(&_asking, "&-sort=_r");
+    miscDynBufAppendString(&_query, searchBoxRa);
+    miscDynBufAppendString(&_query, "/");
+    miscDynBufAppendString(&_query, searchBoxDec);
+    miscDynBufAppendString(&_query, "&-c.u=arcmin");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
+    miscDynBufAppendString(&_query, "&-sort=_r");
     
     return SUCCESS;
 }

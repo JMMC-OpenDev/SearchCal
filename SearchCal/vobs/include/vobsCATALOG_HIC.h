@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_HIC.h,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_HIC.h,v 1.3 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -49,9 +49,10 @@ public:
    
    // Destructor
    virtual ~vobsCATALOG_HIC();
+   
 protected:
    // Method to build specific asking part
-   virtual mcsCOMPL_STAT WriteAskingSpecificParameters(void);
+   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
     
 private:
 };

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.20 2004-11-18 07:23:55 gzins Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.21 2004-11-23 12:47:48 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.20 2004-11-18 07:23:55 gzins Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.21 2004-11-23 12:47:48 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -75,7 +75,7 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
 /*
  * Public methods
  */
-mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST &request,
+mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
                                                 vobsSTAR_LIST &starList)
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::Research()");

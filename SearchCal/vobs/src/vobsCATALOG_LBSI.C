@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_LBSI.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_LBSI.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsCATALOG_LBSI class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,7 +61,7 @@ vobsCATALOG_LBSI::vobsCATALOG_LBSI()
  */
 vobsCATALOG_LBSI::~vobsCATALOG_LBSI()
 {
-    miscDynBufDestroy(&_asking);
+    miscDynBufDestroy(&_query);
 }
 
 
@@ -83,12 +83,12 @@ vobsCATALOG_LBSI::~vobsCATALOG_LBSI()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_LBSI::WriteAskingSpecificParameters(void)
+mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_asking, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag");
-    miscDynBufAppendString(&_asking, "&-out=UDDK,e_UDDK");
+    miscDynBufAppendString(&_query, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag");
+    miscDynBufAppendString(&_query, "&-out=UDDK,e_UDDK");
             
     return SUCCESS;
 }

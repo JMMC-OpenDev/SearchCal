@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_BSC.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_BSC.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsCATALOG_BSC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_BSC.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_BSC.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,7 +61,7 @@ vobsCATALOG_BSC::vobsCATALOG_BSC()
  */
 vobsCATALOG_BSC::~vobsCATALOG_BSC()
 {
-    miscDynBufDestroy(&_asking);
+    miscDynBufDestroy(&_query);
 }
 
 
@@ -83,11 +83,11 @@ vobsCATALOG_BSC::~vobsCATALOG_BSC()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_BSC::WriteAskingSpecificParameters(void)
+mcsCOMPL_STAT vobsCATALOG_BSC::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG_BSC::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_asking, "&-out=*VELOC_ROTAT&-out=HD");
+    miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT&-out=HD");
             
     return SUCCESS;
 }

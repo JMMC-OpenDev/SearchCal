@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_HIC.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_HIC.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_HIC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_HIC.C,v 1.5 2004-11-17 07:58:07 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_HIC.C,v 1.6 2004-11-23 12:47:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,7 +60,7 @@ vobsCATALOG_HIC::vobsCATALOG_HIC()
  */
 vobsCATALOG_HIC::~vobsCATALOG_HIC()
 {
-    miscDynBufDestroy(&_asking);
+    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -81,13 +81,13 @@ vobsCATALOG_HIC::~vobsCATALOG_HIC()
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG_HIC::WriteAskingSpecificParameters(void)
+mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
 {
     logExtDbg("vobsCATALOG_HIC::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_asking, "&-out=*POS_GAL_LAT");
-    miscDynBufAppendString(&_asking, "&-out=*POS_GAL_LON");
-    miscDynBufAppendString(&_asking, "&-out=*VELOC_HC");
+    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
+    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
+    miscDynBufAppendString(&_query, "&-out=*VELOC_HC");
             
     return SUCCESS;
 }

@@ -91,9 +91,9 @@
       <errFormat><![CDATA[bad catalog name]]></errFormat>
    </error>
    <error id="24">
-      <errName>ASKING_WRITE_FAILED</errName>
+      <errName>QUERY_WRITE_FAILED</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[The asking is not writing correctly : %s]]></errFormat>
+      <errFormat><![CDATA[The query is not writing correctly : %s]]></errFormat>
    </error>
    <error id="25">
       <errName>URI_WRITE_FAILED</errName>
