@@ -1,7 +1,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: log.c,v 1.4 2004-05-14 11:05:35 mella Exp $"
+*  "@(#) $Id: log.c,v 1.5 2004-05-14 13:43:29 mella Exp $"
 *
 * who       when      what
 * --------  --------  ----------------------------------------------
@@ -12,30 +12,32 @@
 /** \file
  * This module provides functions that enable users to handle the three types
  *   of logs for the Event Logging. The types of logs are:
- *       . Standard Logs : These logs are stored into the standard MCS logger.
- *       . Verbose Logs  : These logs are written to stdout.
- *       . Action Logs   : TBD.
+ *   \li Standard Logs : These logs are stored into the standard MCS logger.
+ *   \li Verbose Logs  : These logs are written to stdout.
+ *   \li Action Logs   : TBD.
+ *
  *   The three kinds of logs contain the same information, but are stored
  *   in different locations and the levels of information are controlled
  *   individually by logSetLogLevel(), logSetVerboseLevel() and
  *   logSetActionLevel() methods. The current log levels can be retrieved by
  *   logGetLogLevel(), logGetVerboseLevel() and logGetActionLevel() methods.
  *
- *   The logging levels range from logQUIET to logEXTDBG, where the lowest 
+ *   The logging levels range from \p logQUIET to \p logEXTDBG , where the lowest 
  *   number means the  lowest priority. By default, the level of all the 
- *   logs is set to logWARNING.
+ *   logs is set to \p logWARNING.
  *   The log and verbose flags indicate if the log information are presented
- *   respectively on the standard MCS logger or on the stdout device
+ *   respectively on the standard \p MCS logger or on the stdout device
  *   (default is mcsTRUE).
- *   The following enums should be used to set the log levels :
- *       logQUIET (0)   : no echo
- *       logWARNING (1) : errors or abnormal events for application.
- *       logINFO (2)    : major events (e.g when operational mode is modified).
- *       logTEST (3)    : software test activities.
- *       logDEBUG (4)   : debugging information
- *       logEXTDBG (5)  : more detailed debugging information
+ *   The following enums should be used to set the log levels : \n
+ *   \li \p logQUIET   (0) : no echo \n
+ *   \li \p logWARNING (1) : errors or abnormal events for application.\n
+ *   \li \p logINFO    (2) : major events
+ *   (e.g when operational mode is modified).\n
+ *   \li \p logTEST    (3) : software test activities.
+ *   \li \p logDEBUG   (4) : debugging information.
+ *   \li \p logEXTDBG  (5) : more detailed debugging information.
  *
- *   Convenient macros are provided for logging standard and
+ *   Convenient macros are provided in log.h for logging standard and
  *   verbose information .
  */
 
@@ -313,7 +315,7 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
  * 
  * \return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logData(const char * msg)
+static mcsCOMPL_STAT logData(const char * msg)
 {
     /* TBD */
     /* fprintf(stdout, "logData [%s]\n", msg); */
