@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/01/28 18:39:10  gzins
+ * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
+ *
  * gzins     16-Jun-2004  Created from VLT file 'slxUtils.c'
  * lafrasse  17-Jun-2004  Added miscGetExtension
  * lafrasse  18-Jun-2004  Debugged miscGetExtension
@@ -37,7 +40,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.24 2005-01-28 18:39:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.25 2005-02-07 14:41:47 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -604,18 +607,19 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
 char* miscLocateFileInPath(const char *path, const char *fileName)
 {
     static miscDYN_BUF tmpPath;
-
-    /* Test the fileName parameter validity */
-    if ((fileName == NULL) || (strlen(fileName) == 0))
-    {
-        errAdd(miscERR_NULL_PARAM, "fileName");
-        return NULL;
-    }
+    const char* originalPath = path;
 
     /* Test the path parameter validity */
     if ((path == NULL) || (strlen(path) == 0))
     {
         errAdd(miscERR_NULL_PARAM, "path");
+        return NULL;
+    }
+
+    /* Test the fileName parameter validity */
+    if ((fileName == NULL) || (strlen(fileName) == 0))
+    {
+        errAdd(miscERR_NULL_PARAM, "fileName");
         return NULL;
     }
 
@@ -651,7 +655,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
 
         /* If no file exists at the temporary path */
         validPath = miscDynBufGetBufferPointer(&tmpPath);
-        if (miscFileExists(validPath, mcsTRUE) == mcsFALSE)
+        if (miscFileExists(validPath, mcsFALSE) == mcsFALSE)
         {
             /* Reset the temporary path variable */
             validPath = NULL;
@@ -679,11 +683,11 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
         return NULL;
     }
 
-    /* If one of the path was valid */
-    if (validPath != NULL)
+    /* If the file was not found along the path */
+    if (validPath == NULL)
     {
-        /* Remove all the previous errors from the Errors Stack */
-        errResetStack();
+        /* Add an error in the Errors Stack */
+        errAdd(miscERR_FILE_NOT_FOUND_IN_PATH, fileName, originalPath);
     }
 
     return validPath;

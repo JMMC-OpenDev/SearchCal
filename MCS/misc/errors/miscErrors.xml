@@ -70,6 +70,11 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[File name '%s' has no extension.]]></errFormat>
    </error>
+   <error id="20">
+      <errName>FILE_NOT_FOUND_IN_PATH</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[File '%s' cannot be found in '%s' path.]]></errFormat>
+   </error>
    <error id="16">
       <errName>HASH_KEY_NOT_FOUND</errName>
       <errSeverity>WARNING</errSeverity>
