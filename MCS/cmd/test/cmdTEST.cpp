@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.9 2005-02-22 12:39:11 mella Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.10 2005-02-27 09:28:37 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/22 12:39:11  mella
+ * Place main code into a new lock {} to perform a better c++ housekeeping
+ *
  * Revision 1.8  2005/02/17 18:00:10  gzins
  * Included test for GetCmdParamLine()
  *
@@ -24,7 +27,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.9 2005-02-22 12:39:11 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.10 2005-02-27 09:28:37 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -87,7 +90,7 @@ int main(int argc, char *argv[])
             exit (EXIT_FAILURE);
         }
 
-        logSetStdoutLogLevel(logEXTDBG);
+        logSetStdoutLogLevel(logTEST);
         string mnemo, params; 
 
         if(argc == 1)
@@ -113,6 +116,25 @@ int main(int argc, char *argv[])
 
         cmdVALID_CMD myCmd(mnemo, params);
 
+        // Print help for myCmd
+        string help;
+        if (myCmd.GetDescription(help) == mcsFAILURE)
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        };
+        cout<<"Description:" <<endl;
+        cout<<help<<endl;
+
+        // Print short description
+        if (myCmd.GetShortDescription(help) == mcsFAILURE)
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        };
+        cout<<"Short Description:" <<endl;
+        cout<<help<<endl;
+
         if (argc != 3)
         {
             // we have parsed a VALID command
@@ -120,56 +142,57 @@ int main(int argc, char *argv[])
 
             string pName("dinteger");
             mcsINT32 v1;
-            if(myCmd.GetParamValue(pName,&v1)==mcsFAILURE) {
-                cout << "Can't get user value into myCmd for parameter " << pName << endl;
+            if (myCmd.GetParamValue(pName, &v1) == mcsFAILURE)
+            {
                 errCloseStack();
-            } else {
+                exit (EXIT_FAILURE);
+            }
+            else
+            {
                 cout << pName << " parameter from myCmd gets the next user value: " << v1 << endl;
             }
 
             pName.assign("double");
             mcsDOUBLE v2;
-            if(myCmd.GetParamValue(pName,&v2)==mcsFAILURE) {
-                cout << "Can't get user value into myCmd for parameter " << pName << endl;
+            if (myCmd.GetParamValue(pName, &v2) == mcsFAILURE)
+            {
                 errCloseStack();
-            } else {
+                exit (EXIT_FAILURE);
+            }
+            else
+            {
                 cout << pName << " parameter from myCmd gets the next user value: " << v2 << endl;
             }
             pName.assign("boolean");
             mcsLOGICAL v3;
-            if(myCmd.GetParamValue(pName,&v3)==mcsFAILURE) {
-                cout << "Can't get user value into myCmd for parameter " << pName << endl;
+            if (myCmd.GetParamValue(pName, &v3) == mcsFAILURE)
+            {
                 errCloseStack();
-            } else {
+                exit (EXIT_FAILURE);
+            }
+            else
+            {
                 cout << pName << " parameter from myCmd gets the next user value: " << (int)v3 << endl;
             }
             pName.assign("string");
             char * v4;
-            if(myCmd.GetParamValue(pName,&v4)==mcsFAILURE) {
-                cout << "Can't get user value into myCmd for parameter " << pName << endl;
+            if (myCmd.GetParamValue(pName, &v4) == mcsFAILURE)
+            {
                 errCloseStack();
-            } else {
+                exit (EXIT_FAILURE);
+            } 
+            else
+            {
                 cout << pName << " parameter from myCmd gets the next user value: " << v4 << endl;
             }
         }
 
-        // Print help for myCmd
-        string help;
-        myCmd.GetDescription(help);
-        cout<<"Description:" <<endl;
-        cout<<help<<endl;
-
-        // Print short description
-        myCmd.GetShortDescription(help);
-        cout<<"Short Description:" <<endl;
-        cout<<help<<endl;
-
         // Print get dstring value
         char *dstringValue;
-        if (myCmd.GetParamValue("string",&dstringValue) == mcsFAILURE) 
+        if (myCmd.GetParamValue("string", &dstringValue) == mcsFAILURE) 
         {
-            cout << "Can't get user value into myCmd for parameter dstring" << endl;
             errCloseStack();
+            exit (EXIT_FAILURE);
         }
         else
         {
@@ -179,8 +202,8 @@ int main(int argc, char *argv[])
         string cmdParamline;
         if (myCmd.GetCmdParamLine(cmdParamline) == mcsFAILURE) 
         {
-            cout << "Can't get command parameter line" << endl;
             errCloseStack();
+            exit (EXIT_FAILURE);
         }
         else
         {
