@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.23 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.24 2005-02-09 16:37:49 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.22  2005/02/03 06:51:42  gzins
  * Defined IsInternal method as constant
  *
@@ -64,7 +67,7 @@
  * \sa msgMESSAGE
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.23 2005-02-04 15:57:06 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.24 2005-02-09 16:37:49 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -153,7 +156,7 @@ msgMESSAGE::~msgMESSAGE()
  *
  * \return a character pointer on the message sender process name
  */
-char* msgMESSAGE::GetSender(void)
+const char* msgMESSAGE::GetSender(void) const
 {
     logExtDbg("msgMESSAGE::GetSender()");
 
@@ -184,7 +187,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
  * \return a character pointer on the message sender process MCS environment
  * name
  */
-char* msgMESSAGE::GetSenderEnv(void)
+const char *msgMESSAGE::GetSenderEnv(void) const
 {
     logExtDbg("msgMESSAGE::GetSenderEnv()");
 
@@ -214,7 +217,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
  *
  * \return the identifier of the message sender
  */
-mcsINT32 msgMESSAGE::GetSenderId(void)
+mcsINT32 msgMESSAGE::GetSenderId(void) const
 {
     logExtDbg("msgMESSAGE::GetSenderId()");
 
@@ -248,7 +251,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderId(mcsINT32 identifier)
  *
  * \return a character pointer on the message receiver process name
  */
-char* msgMESSAGE::GetRecipient(void)
+const char *msgMESSAGE::GetRecipient(void) const
 {
     logExtDbg("msgMESSAGE::GetRecipient()");
 
@@ -279,7 +282,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
  * \return a character pointer on the message recipient process MCS environment
  * name
  */
-char* msgMESSAGE::GetRecipientEnv(void)
+const char *msgMESSAGE::GetRecipientEnv(void) const
 {
     logExtDbg("msgMESSAGE::GetRecipientEnv()");
 
@@ -312,7 +315,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipientEnv(const char *recipientEnv)
  *
  * \return the message type
  */
-msgTYPE msgMESSAGE::GetType(void)
+msgTYPE msgMESSAGE::GetType(void) const
 {
     logExtDbg("msgMESSAGE::GetType()");
 
@@ -344,7 +347,7 @@ mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
  *
  * \return the message identifier
  */
-mcsINT32 msgMESSAGE::GetCommandId(void)
+mcsINT32 msgMESSAGE::GetCommandId(void) const
 {
     logExtDbg("msgMESSAGE::GetCommandId()");
 
@@ -378,7 +381,7 @@ mcsCOMPL_STAT msgMESSAGE::SetCommandId(const mcsINT32 identifier)
  *
  * \return a character pointer on the message command name
  */
-char* msgMESSAGE::GetCommand(void)
+const char *msgMESSAGE::GetCommand(void) const
 {
     logExtDbg("msgMESSAGE::GetCommand()");
 
@@ -408,7 +411,7 @@ mcsCOMPL_STAT msgMESSAGE::SetCommand(const char *command)
  *
  * \return mcsTRUE if the message is the last reply, mcsFALSE otherwise
  */
-mcsLOGICAL msgMESSAGE::IsLastReply(void)
+mcsLOGICAL msgMESSAGE::IsLastReply(void) const
 {
     logExtDbg("msgMESSAGE::GetLastReplyFlag()");
 
@@ -451,7 +454,7 @@ mcsLOGICAL msgMESSAGE::IsInternal(void) const
  *
  * \return a character pointer on the message body, or NULL if an error occured
  */
-char* msgMESSAGE::GetBody(void) const
+const char *msgMESSAGE::GetBody(void) const
 {
     logExtDbg("msgMESSAGE::GetBody()");
 
@@ -657,38 +660,39 @@ mcsCOMPL_STAT msgMESSAGE::AppendStringToBody(const char *str)
 /**
  * Show the msgMESSAGE content on the standard output.
  */
-void  msgMESSAGE::Display(void)
+std::ostream& operator<< (      std::ostream&  stream,
+                          const msgMESSAGE&    message)
 {
-    cout << "msgMESSAGE ="                                     << endl
-         << "{"                                                << endl
-         << "\tmsgHEADER ="                                    << endl
-         << "\t{"                                              << endl
-         << "\t\tsender       = '" << GetSender()       << "'" << endl
-         << "\t\tsenderEnv    = '" << GetSenderEnv()    << "'" << endl
-         << "\t\tsenderId     = '" << GetSenderId()     << "'" << endl
-         << "\t\trecipient    = '" << GetRecipient()    << "'" << endl
-         << "\t\trecipientEnv = '" << GetRecipientEnv() << "'" << endl
-         << "\t\ttype         = '" << GetType()         << "'" << endl
-         << "\t\tcommand      = '" << GetCommand()      << "'" << endl
-         << "\t\tcommandId    = '" << GetCommandId()    << "'" << endl
-         << "\t\tlastReply    = '" << IsLastReply()     << "'" << endl
-         << "\t\tmsgBodySize  = '" << GetBodySize()     << "'" << endl
-         << "\t}"                                              << endl
-         << "\t" << "body = '";
+    stream << "msgMESSAGE ="                                      << endl
+           << "{"                                                 << endl
+           << "\tmsgHEADER ="                                     << endl
+           << "\t{"                                               << endl
+           << "\t\tsender       = '" << message.GetSender()       << "'" << endl
+           << "\t\tsenderEnv    = '" << message.GetSenderEnv()    << "'" << endl
+           << "\t\tsenderId     = '" << message.GetSenderId()     << "'" << endl
+           << "\t\trecipient    = '" << message.GetRecipient()    << "'" << endl
+           << "\t\trecipientEnv = '" << message.GetRecipientEnv() << "'" << endl
+           << "\t\ttype         = '" << message.GetType()         << "'" << endl
+           << "\t\tcommand      = '" << message.GetCommand()      << "'" << endl
+           << "\t\tcommandId    = '" << message.GetCommandId()    << "'" << endl
+           << "\t\tlastReply    = '" << message.IsLastReply()     << "'" << endl
+           << "\t\tmsgBodySize  = '" << message.GetBodySize()     << "'" << endl
+           << "\t}"                                               << endl
+           << "\t" << "body = '";
 
     // If the body exists
-    if (GetBodySize() != 0)
+    if (message.GetBodySize() != 0)
     {
         // Show it
-        cout << GetBody(); 
+        stream << message.GetBody(); 
     }
     else
     {
-        cout << "(null)";
+        stream << "(null)";
     }
 
-    cout << "'" << endl
-         << "}";
+    return stream << "'" << endl
+                  << "}";
 }
 
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS_LIST.h,v 1.4 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgPROCESS_LIST.h,v 1.5 2005-02-09 16:35:13 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.3  2005/01/24 15:39:54  gzins
  * Added CVS logs as modification history
  *
@@ -64,8 +67,8 @@ public:
 
     virtual mcsCOMPL_STAT AddAtTail(msgPROCESS *process);
 
-    virtual msgPROCESS    *GetNextProcess(mcsLOGICAL init = mcsFALSE);
-    virtual msgPROCESS    *GetProcess(char *name, mcsINT32 sd=-1);
+    virtual msgPROCESS    *GetNextProcess(const mcsLOGICAL init = mcsFALSE);
+    virtual msgPROCESS    *GetProcess(const char *name, const mcsINT32 sd=-1);
 
     virtual mcsCOMPL_STAT Remove(mcsINT32 sd);
     virtual mcsCOMPL_STAT Clear(void);

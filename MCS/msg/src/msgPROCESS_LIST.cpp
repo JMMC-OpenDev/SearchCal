@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.7 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.8 2005-02-09 16:38:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.6  2005/01/29 20:01:00  gzins
  * Minor change in code example
  *
@@ -26,7 +29,7 @@
  * \sa msgPROCESS_LIST
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.7 2005-02-04 15:57:06 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.8 2005-02-09 16:38:29 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -133,7 +136,7 @@ mcsCOMPL_STAT msgPROCESS_LIST::AddAtTail(msgPROCESS *process)
  * \return a pointer on the next element of the list, or NULL if the end of the
  * list is reached
  */
-msgPROCESS *msgPROCESS_LIST::GetNextProcess(mcsLOGICAL init) 
+msgPROCESS *msgPROCESS_LIST::GetNextProcess(const mcsLOGICAL init) 
 {
     logExtDbg("msgPROCESS_LIST::GetNextProcess()");
     
@@ -183,7 +186,7 @@ msgPROCESS *msgPROCESS_LIST::GetNextProcess(mcsLOGICAL init)
  * \return a pointer on the searched process, or NULL if the process was not
  * found in list.
  */
-msgPROCESS *msgPROCESS_LIST::GetProcess(char *name, mcsINT32 sd)
+msgPROCESS *msgPROCESS_LIST::GetProcess(const char *name, const mcsINT32 sd)
 {
     logExtDbg("msgPROCESS_LIST::GetProcess()");
 

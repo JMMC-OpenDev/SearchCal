@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS.cpp,v 1.5 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgPROCESS.cpp,v 1.6 2005-02-09 16:38:11 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.4  2005/01/29 19:56:16  gzins
  * Added SetId/GetId and SetUnicity/IsUnique methods
  *
@@ -25,7 +28,7 @@
  * \sa msgPROCESS
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS.cpp,v 1.5 2005-02-04 15:57:06 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS.cpp,v 1.6 2005-02-09 16:38:11 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -69,7 +72,7 @@ msgPROCESS::~msgPROCESS()
  *
  * \return always mcsSUCCESS
  */
-mcsCOMPL_STAT msgPROCESS::SetName(char *name)
+mcsCOMPL_STAT msgPROCESS::SetName(const char *name)
 {
     logExtDbg("msgPROCESS::SetName()");
 
@@ -83,7 +86,7 @@ mcsCOMPL_STAT msgPROCESS::SetName(char *name)
  *
  * \return a character pointer on the process name
  */
-const char *msgPROCESS::GetName() const
+const char *msgPROCESS::GetName(void) const
 {
     logExtDbg("msgPROCESS::GetName()");
 
@@ -95,7 +98,7 @@ const char *msgPROCESS::GetName() const
  *
  * \return always mcsSUCCESS
  */
-mcsCOMPL_STAT msgPROCESS::SetId(mcsINT32 pid)
+mcsCOMPL_STAT msgPROCESS::SetId(const mcsINT32 pid)
 {
     logExtDbg("msgPROCESS::SetId()");
 
@@ -109,7 +112,7 @@ mcsCOMPL_STAT msgPROCESS::SetId(mcsINT32 pid)
  *
  * \return the process identifier
  */
-mcsINT32 msgPROCESS::GetId() const
+mcsINT32 msgPROCESS::GetId(void) const
 {
     logExtDbg("msgPROCESS::GetId()");
 
@@ -126,7 +129,7 @@ mcsINT32 msgPROCESS::GetId() const
  *
  * \return mcsSUCCESS
  */
-mcsCOMPL_STAT msgPROCESS::SetUnicity(mcsLOGICAL flag)
+mcsCOMPL_STAT msgPROCESS::SetUnicity(const mcsLOGICAL flag)
 {
     logExtDbg("msgPROCESS::SetUnicity()");
 
@@ -142,7 +145,7 @@ mcsCOMPL_STAT msgPROCESS::SetUnicity(mcsLOGICAL flag)
  * \return mcsTRUE if your process is the only one with its name allowed to be
  * connected to the \<msgManager\> at a given time, mcsFALSE otherwise
  */
-mcsLOGICAL msgPROCESS::IsUnique() const
+mcsLOGICAL msgPROCESS::IsUnique(void) const
 {
     logExtDbg("msgPROCESS::GetId()");
 

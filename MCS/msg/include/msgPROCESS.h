@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS.h,v 1.4 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgPROCESS.h,v 1.5 2005-02-09 16:34:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.3  2005/01/29 19:56:16  gzins
  * Added SetId/GetId and SetUnicity/IsUnique methods
  *
@@ -53,14 +56,14 @@ public:
     // Class destructor
     virtual ~msgPROCESS();
 
-    virtual mcsCOMPL_STAT SetName(char *name);
-    virtual const char   *GetName() const;
+    virtual mcsCOMPL_STAT SetName     (const char*);
+    virtual const char   *GetName     (void       ) const;
 
-    virtual mcsCOMPL_STAT SetId(mcsINT32 pid);
-    virtual mcsINT32      GetId() const;
+    virtual mcsCOMPL_STAT SetId       (const mcsINT32);
+    virtual mcsINT32      GetId       (void          ) const;
 
-    virtual mcsCOMPL_STAT SetUnicity(mcsLOGICAL pid);
-    virtual mcsLOGICAL    IsUnique() const;
+    virtual mcsCOMPL_STAT SetUnicity  (const mcsLOGICAL);
+    virtual mcsLOGICAL    IsUnique    (void            ) const;
 
 protected:
 

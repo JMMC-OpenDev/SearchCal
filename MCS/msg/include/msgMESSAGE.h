@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.23 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.24 2005-02-09 16:34:12 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.22  2005/02/03 06:51:42  gzins
  * Defined IsInternal method as constant
  *
@@ -213,36 +216,36 @@ public:
     virtual ~msgMESSAGE                      (void);
     
     // Accessors
-    virtual char            *GetSender       (void);
+    virtual const char      *GetSender       (void) const;
     virtual mcsCOMPL_STAT    SetSender       (const char     *sender);
 
-    virtual char            *GetSenderEnv    (void);
+    virtual const char      *GetSenderEnv    (void) const;
     virtual mcsCOMPL_STAT    SetSenderEnv    (const char     *senderEnv);
 
-    virtual mcsINT32         GetSenderId     (void);
+    virtual mcsINT32         GetSenderId     (void) const;
     virtual mcsCOMPL_STAT    SetSenderId     (const mcsINT32 identifier);
 
-    virtual char            *GetRecipient    (void);
+    virtual const char      *GetRecipient    (void) const;
     virtual mcsCOMPL_STAT    SetRecipient    (const char     *recipient);
 
-    virtual char            *GetRecipientEnv (void);
+    virtual const char      *GetRecipientEnv (void) const;
     virtual mcsCOMPL_STAT    SetRecipientEnv (const char     *recipientEnv);
 
-    virtual msgTYPE          GetType         (void);
+    virtual msgTYPE          GetType         (void) const;
     virtual mcsCOMPL_STAT    SetType         (const msgTYPE   type);
 
-    virtual mcsINT32         GetCommandId    (void);
+    virtual mcsINT32         GetCommandId    (void) const;
     virtual mcsCOMPL_STAT    SetCommandId    (const mcsINT32 identifier);
 
-    virtual char            *GetCommand      (void);
+    virtual const char      *GetCommand      (void) const;
     virtual mcsCOMPL_STAT    SetCommand      (const char     *command);
 
-    virtual mcsLOGICAL       IsLastReply     (void);
+    virtual mcsLOGICAL       IsLastReply     (void) const;
     virtual mcsCOMPL_STAT    SetLastReplyFlag(mcsLOGICAL      flag);
 
     virtual mcsLOGICAL       IsInternal      (void) const; 
 
-    virtual char            *GetBody         (void) const;
+    virtual const char      *GetBody         (void) const;
     virtual mcsINT32         GetBodySize     (void) const;
     virtual mcsCOMPL_STAT    ClearBody       (void);
     virtual mcsCOMPL_STAT    SetBody         (const char *buffer,
@@ -251,7 +254,8 @@ public:
                                               mcsUINT32  bufLen=0);
     virtual mcsCOMPL_STAT    AppendStringToBody(const char *str); 
 
-    virtual void             Display         (void);
+    friend  std::ostream&    operator<<      (       std::ostream& stream,
+                                               const msgMESSAGE&   message);
 
     friend mcsCOMPL_STAT     msgSOCKET::Send(msgMESSAGE &msg);
     friend mcsCOMPL_STAT     msgSOCKET::Receive(msgMESSAGE &msg,
