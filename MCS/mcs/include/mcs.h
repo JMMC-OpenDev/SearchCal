@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mcs.h,v 1.16 2005-01-28 18:50:22 gzins Exp $"
+ * "@(#) $Id: mcs.h,v 1.17 2005-01-28 23:37:35 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/01/28 18:50:22  gzins
+ * Changed command and module max lenght to 15
+ * Changed process name max lenght to 31
+ *
  * mella     07-May-2004  Preliminary version based on MCS from VLT/ESO
  * gzins     11-May-2004  Add RCS Id and removed unused definitions
  * lafrasse  01-Dec-2004  Added mcsUNKNOWN_ENV
@@ -35,12 +39,12 @@ extern "C" {
 /************************************************************************
  *                           MCS  Constants                             *
  ************************************************************************/
-#define mcsPROCNAME_LEN        31   /* max. length of a process name    */
-#define mcsMODULEID_LEN        15   /* max. length of a module name     */
+#define mcsPROCNAME_LEN        19   /* max. length of a process name    */
+#define mcsMODULEID_LEN         7   /* max. length of a module name     */
                                     /* 15 characters + 1 byte alignement */
 #define mcsENVNAME_LEN         15   /* max. length of an environnement  */
                                     /* 15 characters + 1 byte alignement*/
-#define mcsCMD_LEN             15   /* max. length of a command name    */
+#define mcsCMD_LEN              8   /* max. length of a command name    */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes  */
 #define mcsUNKNOWN_ENV  "default"   /* name used for unknown environment*/
 
