@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.5 2004-12-06 10:30:54 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.6 2004-12-06 13:05:12 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -123,9 +123,10 @@ public:
     virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(mcsSTRING256 calibratorString);
 
+    virtual mcsLOGICAL HaveCoherentDiameter();
+    virtual mcsLOGICAL VisibilityOk();
+
 protected:
-    // Is UCD id?
-    virtual mcsLOGICAL    IsUcdId(int id) const;
 
     // Method to obtain id from the UCD
     virtual sclsvrPROPERTY_ID Property2Id(char *ucd) const;

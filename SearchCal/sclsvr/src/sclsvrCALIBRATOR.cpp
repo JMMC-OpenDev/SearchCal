@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.2 2004-12-06 10:30:54 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.3 2004-12-06 13:05:12 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.2 2004-12-06 10:30:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.3 2004-12-06 13:05:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -414,18 +414,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::UnPack(char *calibratorString)
 }
 
 
-mcsLOGICAL sclsvrCALIBRATOR::IsUcdId(int id) const
+/**
+ * Say if the calibrator had a coherent diameter
+ */
+mcsLOGICAL sclsvrCALIBRATOR::HaveCoherentDiameter()
 {
-    logExtDbg("sclsvrCALIBRATOR::IsUcdId(%d)", id);
+    return _coherentDiameter;
+}
 
-    if ((id <= UNKNOWN_UCD_ID) || (id > PHOT_COLOR_EXCESS_ID))
-    {
-        return mcsFALSE;
-    }
-    else
-    {
-        return mcsTRUE;
-    }
+/**
+ * Say if the visibility is ok
+ */
+mcsLOGICAL sclsvrCALIBRATOR::VisibilityOk()
+{
+    return _correctVisibility;
 }
 
 
@@ -681,53 +683,54 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(vobsREQUEST request)
     _correctVisibility = mcsFALSE;
     
     // Compute Galactic coordinates
-    if (ComputeGalacticCoordinates() == FAILURE)
+    if (ComputeGalacticCoordinates() != FAILURE)
     {
-        return FAILURE;
-    }
-    // Compute Interstellar extinction
-    if (ComputeInterstellarAbsorption() == FAILURE)
-    {
-        return FAILURE;
-    }
-    // Compute Missing Magnitude
-    if (ComputeMissingMagnitude() == FAILURE)
-    {
-        return FAILURE;
-    }
-    // Compute Angular Diameter
-    if (ComputeAngularDiameter() == FAILURE)
-    {
-        return FAILURE;
-    }
-    _coherentDiameter = mcsTRUE;
-    // Compute visibility and visibility error
-    if (ComputeVisibility(request) == FAILURE)
-    {
-        return FAILURE;
-    }
-    // Get compute visibility
-    mcsFLOAT computedVisibility;
-    if (GetProperty(VISIBILITY_ID, &computedVisibility) == FAILURE)
-    {
-        return FAILURE;
-    }
-    // Get wanted visibility
-    mcsFLOAT requestedVisibility;
-    if (request.GetConstraint(STAR_EXPECTED_VIS_ID, &requestedVisibility) == FAILURE)
-    {
-        return FAILURE;
-    }
-    // check if the compute visibility is inferior to the wnated visibility
-    if (computedVisibility <= requestedVisibility)
-    {
-        _correctVisibility = mcsTRUE;    
+        // Compute Interstellar extinction
+        if (ComputeInterstellarAbsorption() != FAILURE)
+        {
+            // Compute Missing Magnitude
+            if (ComputeMissingMagnitude() != FAILURE)
+            {
+                // Compute Angular Diameter
+                if (ComputeAngularDiameter() != FAILURE)
+                {
+                    _coherentDiameter = mcsTRUE;
+                    // Compute visibility and visibility error
+                    if (ComputeVisibility(request) == FAILURE)
+                    {
+                        // Get compute visibility
+                        mcsFLOAT computedVisibility;
+                        if (GetProperty(VISIBILITY_ID,
+                                        &computedVisibility)
+                            == FAILURE)
+                        {
+                            return FAILURE;
+                        }
+                        // Get wanted visibility
+                        mcsFLOAT requestedVisibility;
+                        if (request.GetConstraint(STAR_EXPECTED_VIS_ID,
+                                                  &requestedVisibility)
+                            == FAILURE)
+                        {
+                            return FAILURE;
+                        }
+                        // check if the compute visibility is inferior to 
+                        // the wanted visibility
+                        if (computedVisibility >= requestedVisibility)
+                        {
+                            _correctVisibility = mcsTRUE;    
+                        }
+                    }
+                }
+            }
+        }
     }
     // compute visibility
     if (ComputeMultiplicity() == FAILURE)
     {
         return FAILURE;
-    }
+    } // end visibility
+
 
     return SUCCESS;
 }
@@ -1095,11 +1098,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(vobsREQUEST request)
     GetProperty(ANGULAR_DIAMETER_ID, &angularDiameter) ;
     GetProperty(ANGULAR_DIAMETER_ERROR_ID, &angularDiameterError);
     
-    // Get calue of base max and wavelength
+    // Get value of base max and wavelength
     GetProperty(INST_WAVELENGTH_VALUE_ID, &wavelength);
-    
-    request.GetConstraint(BASEMAX_ID, &baseMax);
 
+    request.GetConstraint(BASEMAX_ID, &baseMax);
+    printf("\nbaseMax %f\n", baseMax);
+    printf("%d\n", BASEMAX_ID);
+    request.Display();
+    
     if (alxComputeVisibility(angularDiameter,
                              angularDiameterError,
                              baseMax,
