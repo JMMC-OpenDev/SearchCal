@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.4 2004-06-23 05:54:15 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.5 2004-06-23 09:11:53 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -68,7 +68,7 @@ BASIC_DIRS="\
             bin         \
             include     \
             lib         \
-            ERRORS
+            errors      \
            "
 
 # directories that shall be present in any module area
