@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.4 2004-09-24 08:33:05 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.5 2004-09-24 09:36:32 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -223,9 +223,9 @@ then
         fi
 
         # For .c and .C 
-        # -> For .c (c-main, c-procedure) and  .C (c++-small-main ) files
-        # insert module name in the pre-processing directives for header
-        # inclusion
+        # -> For .c (c-main, c-procedure) and  .C (c++-small-main,
+        # c++-class-file) files insert module name in the pre-processing
+        # directives for header inclusion
         # -> For .C (c++-class-file) insert class name in the pre-processing
         # directives for header inclusion and in the doxygen header block
         if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".C" ]
