@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPROCESS_LIST.cpp,v 1.1 2004-12-07 07:39:26 gzins Exp $"
+* "@(#) $Id: msgPROCESS_LIST.cpp,v 1.2 2004-12-08 17:40:31 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
-*
+* gzins     08-Dec-2004  Added descriptor argument to GetProcess()
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * msgPROCESS_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.1 2004-12-07 07:39:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.2 2004-12-08 17:40:31 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -221,7 +221,7 @@ msgPROCESS *msgPROCESS_LIST::GetNextProcess(mcsLOGICAL init)
  * \return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
-msgPROCESS *msgPROCESS_LIST::GetProcess(char *name)
+msgPROCESS *msgPROCESS_LIST::GetProcess(char *name, mcsINT32 sd)
 {
     logExtDbg("msgPROCESS_LIST::GetProcess()");
 
@@ -230,7 +230,8 @@ msgPROCESS *msgPROCESS_LIST::GetProcess(char *name)
     for (iter=_processList.begin(); iter != _processList.end(); iter++)
     {
         // If found
-        if (strcmp((*iter)->GetName(), name) == 0)
+        if ((strcmp((*iter)->GetName(), name) == 0) &&
+            ((sd == -1) || ((*iter)->GetDescriptor() == sd)))
         {
             // Return pointer to the element 
             return (*iter);

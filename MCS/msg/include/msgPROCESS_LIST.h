@@ -3,12 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPROCESS_LIST.h,v 1.1 2004-12-07 07:39:08 gzins Exp $"
+* "@(#) $Id: msgPROCESS_LIST.h,v 1.2 2004-12-08 17:44:45 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     06-Dec-2004  Created
-*
+* gzins     08-Dec-2004  Added descriptor argument to GetProcess()
 *
 *******************************************************************************/
 
@@ -58,7 +58,7 @@ public:
     virtual mcsUINT32     Size(void);
 
     virtual msgPROCESS    *GetNextProcess(mcsLOGICAL init = mcsFALSE);
-    virtual msgPROCESS    *GetProcess(char *name);
+    virtual msgPROCESS    *GetProcess(char *name, mcsINT32 sd=-1);
 
 protected:
     // List of clients
