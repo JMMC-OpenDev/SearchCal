@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.1 2005-02-04 09:54:42 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.2 2005-02-04 10:42:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/04 09:54:42  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.1 2005-02-04 09:54:42 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.2 2005-02-04 10:42:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -166,6 +169,10 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
         return mcsFAILURE;
     }
     
+    // Convert minutes (dm) to decimal degrees
+    diffRa = diffRa / 60;
+    diffDec = diffDec / 60;
+
     // Create reference object constraint list
     vobsSTAR_COMP_CRITERIA_LIST constraintlist;
     
