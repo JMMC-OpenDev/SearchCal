@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.9 2004-06-02 10:10:13 mella Exp $"
+* "@(#) $Id: log.c,v 1.10 2004-06-09 16:06:21 gzins Exp $"
 *
 *
 * who       when                 what
@@ -47,8 +47,10 @@
 
 \section summary Summary
 
-Log is a C module for logging to syslog or stdout. It is a module of the MCS software.
-Log is available from the CVS repository of JMMC or is included in the MCS distribution. 
+Log is a C module for logging to syslog or stdout. It is a module of the MCS
+software.
+Log is available from the CVS repository of JMMC or is included in the MCS
+distribution. 
 
 \section requirements Requirements
  
@@ -69,7 +71,8 @@ The following softwares are needed to generate the log library:
 
 \li MCS environment
 
-This library generates log messages using syslog(), which will  be  distributed  by  syslogd. By default, log uses local3 facility.
+This library generates log messages using syslog(), which will  be
+distributed  by  syslogd. By default, log uses local3 facility.
 
 The following softwares are needed to use the log library:
 
@@ -79,7 +82,8 @@ The following softwares are needed to use the log library:
  
 \subsection installation_cvs Building from cvs's sources
 
-The log module uses the MCS makefile system. The following commands should build log on the supported platforms:
+The log module uses the MCS makefile system. The following commands should
+build log on the supported platforms:
 
 \code
 
@@ -89,7 +93,8 @@ $ make
 
 \endcode
 
-The following command should install the log library into the INTROOT directory defined by the environment variable $INTROOT:
+The following command should install the log library into the INTROOT
+directory defined by the environment variable $INTROOT:
 
 \code
 
@@ -98,11 +103,14 @@ $ make install
 \endcode
 
 \section config Configuration
-This modules makes call to the syslogd daemon. syslogd must be configured to route the messages to the correct destination.
+This modules makes call to the syslogd daemon. syslogd must be configured to
+route the messages to the correct destination.
 
 \subsection conf_files Configuration files
-In general, \p /etc/syslog.conf configures the sylogd.
-This file is taken into account at startup or after a SIGHUP signal sent. \p /etc/init.d/syslogd \p restart also makes \p syslogd reread configuration file.  
+In general, \p /etc/syslog.conf configures the sylogd. This file is taken
+into account at startup or after a SIGHUP signal sent. \p /etc/init.d/syslogd
+\p restart also makes \p syslogd reread configuration
+file.  
 
 \subsection conf_syntax Configuration syntax
 Simplest configuration lines is:
