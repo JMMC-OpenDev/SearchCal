@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.2 2005-02-10 08:15:14 gzins Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.3 2005-02-12 15:18:56 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/10 08:15:14  gzins
+ * Updated for new alxComputeAngularDiameter API
+ *
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
@@ -19,7 +22,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.2 2005-02-10 08:15:14 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.3 2005-02-12 15:18:56 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -50,6 +53,11 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 int main (int argc, char *argv[])
 {
+    /* Configure logging service */
+    logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == FAILURE)
     {
@@ -58,8 +66,6 @@ int main (int argc, char *argv[])
         /* Exit from the application with FAILURE */
         exit (EXIT_FAILURE);
     }
-
-    logSetStdoutLogLevel(logTEST);
 
     alxCONFIDENCE_INDEX confIdx;
     mcsFLOAT mgB=10.063;

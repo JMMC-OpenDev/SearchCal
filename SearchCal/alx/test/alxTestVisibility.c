@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestVisibility.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+ * "@(#) $Id: alxTestVisibility.c,v 1.2 2005-02-12 15:18:56 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/21 08:14:25  gluck
+ * Creation
+ *
  * 
  * scetre    21-Oct-2004  Created
  *
@@ -16,7 +19,7 @@
  * Test program of the function which computes visibilities.
  */ 
 
-static char *rcsId="@(#) $Id: alxTestVisibility.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxTestVisibility.c,v 1.2 2005-02-12 15:18:56 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -60,6 +63,13 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 int main (int argc, char *argv[])
 {
+     /* Configure logging service */
+    logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
+    logInfo("Starting...");
+   
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == FAILURE)
     {
@@ -69,9 +79,6 @@ int main (int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    logSetStdoutLogLevel(logEXTDBG);
-    logInfo("Starting...");
-   
     mcsFLOAT angularDiameter=1.35;
     mcsFLOAT angularDiameterError=0.13;
     mcsFLOAT baseMax=100;

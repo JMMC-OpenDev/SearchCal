@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.3 2005-01-31 13:32:53 scetre Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.4 2005-02-12 15:18:56 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/31 13:32:53  scetre
+ * *** empty log message ***
+ *
  * Revision 1.2  2005/01/24 10:56:25  scetre
  * Changed valid format for spectral type
  *
@@ -23,7 +26,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.3 2005-01-31 13:32:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.4 2005-02-12 15:18:56 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -67,6 +70,11 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 int main (int argc, char *argv[])
 {
+    /* Configure logging service */
+    logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == FAILURE)
     {
@@ -76,8 +84,6 @@ int main (int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    logSetStdoutLogLevel(logTEST);
- 
     mcsFLOAT B=6.6, V=5.77; 
     mcsFLOAT R, I, J, H, K, L, M;    
     alxCONFIDENCE_INDEX confIdx;
