@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.15 2004-12-07 07:52:05 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.16 2004-12-08 18:01:27 gzins Exp $"
 #
 # Makefile of msg
 #
@@ -15,7 +15,7 @@
 # lafrasse  03-Dec-2004  Added msgMCS_ENV compilation directives
 # gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
 # gzins     07-Dec-2004  Updated after C++ conversion 
-#
+# gzins     08-Dec-2004  Removed msgMCS_ENVS and added env library 
 #
 #*******************************************************************************
 # REMARKS
@@ -51,11 +51,11 @@ msgManager_OBJECTS           = msgManager        \
 							   msgPROCESS_LIST   \
 							   msgMANAGER
 msgManager_LDFLAGS           = -lgdome
-msgManager_LIBS              = mcs log err cmd misc msg C++
+msgManager_LIBS              = mcs log err cmd misc env msg C++
 
 msgSendCommand_OBJECTS       = msgSendCommand
 msgSendCommand_LDFLAGS       = -lgdome
-msgSendCommand_LIBS          = mcs log err cmd misc msg C++
+msgSendCommand_LIBS          = mcs log err cmd misc env msg C++
 
 #
 # special compilation flags for single c sources
@@ -69,8 +69,7 @@ INCLUDES        = msg.h              \
 				  msgMANAGER_IF.h    \
 				  msgSOCKET.h        \
                   msgSOCKET_CLIENT.h \
-				  msgSOCKET_SERVER.h \
-				  msgMCS_ENVS.h
+				  msgSOCKET_SERVER.h
 
 #
 # Libraries (public and local)
@@ -84,8 +83,7 @@ msg_OBJECTS   = msgMANAGER_IF      \
                 msgMESSAGE         \
                 msgSOCKET		   \
 				msgSOCKET_CLIENT   \
-				msgSOCKET_SERVER   \
-				msgMCS_ENVS
+				msgSOCKET_SERVER
 
 #
 # Scripts (public and local)
