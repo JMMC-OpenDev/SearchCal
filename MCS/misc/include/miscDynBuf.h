@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynBuf.h,v 1.10 2004-09-30 12:39:19 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.h,v 1.11 2004-11-10 17:05:02 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -20,6 +20,12 @@
 * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
 * lafrasse  30-Sep-2004  Changed miscDynBufAlloc second parameter type from
 *                        mcsUINT32 to mcsINT32
+* lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer() and
+*                        miscDynBufLoadFile() function, plus a new field in
+*                        the Dynamic Buffer structure to store the comment
+*                        pattern to be skipped by miscDynBufGetNextLinePointer()
+*                        with miscDynBufGetCommentPattern() and
+*                        miscDynBufSetCommentPattern() to deal with this field
 *
 *
 *******************************************************************************/
@@ -85,6 +91,9 @@ typedef struct
     char        *dynBuf;           /**< A pointer to the Dynamic Buffer internal
                                      bytes buffer. */
 
+    mcsSTRING4  commentPattern;    /**< A byte array containing the pattern
+                                     identifying the comment to be skipped. */
+
     mcsUINT32   storedBytes;       /**< An unsigned integer counting the number
                                      of bytes effectively held by a Dynamic
                                      Buffer.
@@ -120,6 +129,12 @@ mcsCOMPL_STAT miscDynBufGetAllocatedBytesNumber(
 
 char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf);
 
+char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf);
+
+char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
+                                             const char        *currentLinePtr,
+                                             const mcsLOGICAL  skipCommentFlag);
+
 mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
                                              char              *byte,
                                              const mcsUINT32   position);
@@ -133,6 +148,13 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo     (miscDYN_BUF       *dynBuf,
                                              char              *str,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
+
+mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
+                                             const char        *commentPattern);
+
+mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
+                                             const char        *fileName,
+                                             const char        *commentPattern);
 
 mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
                                              char              byte,

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: miscDynBuf.c,v 1.12 2004-09-30 12:39:19 lafrasse Exp $"
+* "@(#) $Id: miscDynBuf.c,v 1.13 2004-11-10 17:05:02 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -26,6 +26,11 @@
 *                        corrected to memory allocation bug in miscDynBufAlloc,
 *                        miscDynBufStrip, miscDynBufReplaceBytesFromTo and
 *                        miscDynBufAppenBytes
+* lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer() and
+*                        miscDynBufLoadFile() function, plus the code to
+*                        correctly initialize the new commentPattern field in
+*                        miscDynBufInit() and miscDynBufGetCommentPattern() and
+*                        miscDynBufSetCommentPattern() to deal with this field
 *
 *
 *******************************************************************************/
@@ -72,7 +77,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.12 2004-09-30 12:39:19 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.13 2004-11-10 17:05:02 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -80,6 +85,10 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 
 /*
@@ -303,6 +312,8 @@ mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf)
         dynBuf->thisPointer = dynBuf;
         /* Set its 'structure identifier magic number' correctly */
         dynBuf->magicStructureId = miscDYN_BUF_MAGIC_STRUCTURE_ID;
+        /* Set its 'comment pattern' to nothing */
+        dynBuf->commentPattern[0] = '\0';
     }
 
     return SUCCESS;
@@ -586,6 +597,112 @@ char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf)
 
 
 /**
+ * Return a pointer to a Dynamic Buffer internal comment pattern string.
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ *
+ * \return a pointer to a Dynamic Buffer comment pattern, or NULL if an error
+ * occured
+ */
+char*         miscDynBufGetCommentPattern   (miscDYN_BUF       *dynBuf)
+{
+    /* Try to initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufInit(dynBuf) == FAILURE)
+    {
+        return ((char*)NULL);
+    }
+
+    /* Return the Dynamic Buffer buffer address */
+    return dynBuf->commentPattern;
+}
+
+
+/**
+ * Return a pointer to the next line of a Dynamic Buffer, skipping lines
+ * beginning with the defined comment pattern (see miscDynBufSetCommentPattern)
+ * if specified.
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param currentLinePtr the address of the line from which we need to find the
+ * next, or NULL to begin on the first line of the file
+ * \param skipCommentFlag the boolean specifying weither the line beginnig by
+ * the Dynamic Buffer comment pattern should be skipped or not
+ *
+ * \return a pointer to the next line of a Dynamic Buffer buffer, or NULL if an
+ * error occured
+ */
+char*         miscDynBufGetNextLinePointer  (miscDYN_BUF       *dynBuf,
+                                             const char        *currentLinePtr,
+                                             const mcsLOGICAL  skipCommentFlag)
+{
+    /* TODO : Add error management */
+
+    /* Try to initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufInit(dynBuf) == FAILURE)
+    {
+        return ((char*)NULL);
+    }
+
+    /* Try to get the current Dynamic Buffer internal buffer pointer */
+    char *internalBuffer = miscDynBufGetBufferPointer(dynBuf);
+
+    /* Try to get the current Dynamic Buffer internal buffer length */
+    mcsUINT32 internalLength = 0;
+    if (miscDynBufGetStoredBytesNumber(dynBuf, &internalLength) == FAILURE)
+    {
+        return ((char*)NULL);
+    }
+
+    /* If the given current Line Pointer parameter is NULL */
+    if (currentLinePtr == NULL)
+    {
+        /* Return a pointer to the beginning of the Dynamic Buffer */
+        return (internalBuffer);
+    }
+
+    /* If the given current Line Pointer is outside of the Dynamic Buffer */
+    if ((currentLinePtr < internalBuffer) ||
+        (currentLinePtr > (internalBuffer + internalLength)))
+    {
+        return ((char*)NULL);
+    }
+
+    /* Gets the next '\n' occurence after currentLinePtr */
+    char* nextCarrigeReturnPtr = strchr(currentLinePtr, '\n');
+
+    /* If an '\n' occurence doesn't exist */
+    if (nextCarrigeReturnPtr == NULL)
+    {
+        return ((char*)NULL);
+    }
+
+    /* If the '\n' occurence is not the last char of the Dynamic Buffer */
+    if ((nextCarrigeReturnPtr + 1) < (internalBuffer + internalLength))
+    {
+        char* commentPattern = dynBuf->commentPattern;
+        mcsUINT32 commentPatternLength = strlen(dynBuf->commentPattern);
+
+        /* If commented lines should be skipped */
+        if ((skipCommentFlag == mcsTRUE) && (dynBuf->commentPattern[0] != '\0'))
+        {
+            /* Skip every line beginning with the comment pattern */
+            while ((nextCarrigeReturnPtr != NULL) &&
+                   (strncmp((nextCarrigeReturnPtr + 1), commentPattern,
+                    commentPatternLength) == 0))
+            {
+                nextCarrigeReturnPtr = strchr((nextCarrigeReturnPtr + 1), '\n');
+            }
+        }
+
+        /* Return the position of the first character next to this '\n' */
+        return (nextCarrigeReturnPtr + 1);
+    }
+
+    return ((char*)NULL);
+}
+
+
+/**
  * Give back a Dynamic Buffer byte stored at a given position.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
@@ -704,6 +821,124 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo     (miscDYN_BUF       *dynBuf,
     str[stringLength + 1] = '\0';
 
     return SUCCESS;
+}
+
+
+/**
+ * Set the null-terminated string holding the comment pattern to be skipped when
+ * running throughout the Dynamic Buffer line by line.
+ *
+ * If no comment pattern is specified, no line will be skipped while using
+ * miscDynBufGetNextLinePointer()
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param commentPattern a null-terminated string defining the comment pattern
+ * that can be skipped when using miscDynBufGetNextLinePointer(), or NULL
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
+                                             const char        *commentPattern)
+{
+    /* Try to initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufInit(dynBuf) == FAILURE)
+    {
+        return FAILURE;
+    }
+    
+    /* If the commentPattern parameter is undefined */
+    if (commentPattern == NULL)
+    {
+        dynBuf->commentPattern[0] = '\0';
+    }
+    else
+    {
+        /* Try to store the commentPattern in the Dynamic Buffer */
+        if (strncpy(dynBuf->commentPattern,
+                    commentPattern,
+                    sizeof(dynBuf->commentPattern))
+            == NULL)
+        {
+            dynBuf->commentPattern[0] = '\0';
+            errAdd(miscERR_MEM_FAILURE);
+            return FAILURE;
+        }
+        dynBuf->commentPattern[sizeof(dynBuf->commentPattern) - 1] = '\0';
+    }
+
+    return SUCCESS;
+}
+
+
+/**
+ * Overwrite a Dynamic Buffer with the content of a specified file.
+ *
+ * \warning The given Dynamic Buffer content (if any) will be \em destroyed by
+ * this function call.
+ * \warning The given file path must have been \em resolved before this function
+ * call. See miscResolvePath() documentation for more information.\n\n
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param fileName the path specifying the file to be loaded in the Dynamic
+ * Buffer
+ * \param commentPattern the bytes that defines the comment pattern, or NULL
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
+                                             const char        *fileName,
+                                             const char        *commentPattern)
+{
+    /* TODO : Add error management */
+
+    /* Try to destroy the received Dynamic Buffer first */
+    if (miscDynBufDestroy(dynBuf) == FAILURE)
+    {
+        return FAILURE;
+    }
+
+    /* Try to initialize the received Dynamic Buffer to start from scratch */
+    if (miscDynBufInit(dynBuf) == FAILURE)
+    {
+        return FAILURE;
+    }
+
+    /* Try to get the file size and verify it is a regular file */
+    struct stat fileStats;
+    if ((stat(fileName, &fileStats) == -1) || (S_ISREG(fileStats.st_mode) == 0))
+    {
+        return FAILURE;
+    }
+    size_t fileSize = fileStats.st_size;
+
+    /* Try to allocate some memory to store the file content */
+    if (miscDynBufAlloc(dynBuf, fileSize) == FAILURE)
+    {
+        return FAILURE;
+    }
+
+    /* Try to open the specified file */
+    FILE *file = fopen(fileName, "r");
+    if (file == NULL)
+    {
+        return FAILURE;
+    }
+
+    /* Try to get all the content of the specified file */
+    size_t readSize = fread((void*)dynBuf->dynBuf, sizeof(char),
+                            fileSize, file);
+
+    /* Test if the file seems to be loaded correctly */
+    if ((readSize != fileSize) || (dynBuf->dynBuf == NULL))
+    {
+        return FAILURE;
+    }
+
+    /* Update the Dynamic Buffer internal counters */
+    dynBuf->storedBytes = fileSize;
+
+    /* Try to set the Dynamic Buffer comment pattern */
+    return(miscDynBufSetCommentPattern(dynBuf, commentPattern));
 }
 
 

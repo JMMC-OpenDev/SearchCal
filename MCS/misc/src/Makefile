@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2004-11-09 14:53:55 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.11 2004-11-10 17:05:02 lafrasse Exp $"
 #
 # Makefile of misc Library
 #
@@ -16,6 +16,7 @@
 # lafrasse  03-Aug-2004  Added miscNetwork stuff
 # gzins     03-Aug-2004  Added installation of all include files 
 # lafrasse  10-Aug-2004  Removed miscPrivate. installation
+# gzins     09-Nov-2004  Added miscLocateFile compilation directives 
 #
 #
 #*******************************************************************************
