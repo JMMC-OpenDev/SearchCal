@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.cpp,v 1.2 2005-01-26 18:18:08 gzins Exp $"
+ * "@(#) $Id: evhINTERFACE.cpp,v 1.3 2005-01-27 17:52:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/26 18:18:08  gzins
+ * Added timeout when attaching callback for command reply.
+ *
  * gzins     06-Jan-2005  Created
  *
  ******************************************************************************/
@@ -15,7 +18,7 @@
  * evhINTERFACE class definition.
  */
 
-static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.2 2005-01-26 18:18:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.3 2005-01-27 17:52:57 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,6 +52,7 @@ evhINTERFACE::evhINTERFACE(const char *name, const char *procName,
     _name = name;
     strncpy(_procName, procName, sizeof(mcsPROCNAME));
     _timeout = timeout;
+    _replyCb = NULL;
 }
 
 /**
@@ -56,6 +60,10 @@ evhINTERFACE::evhINTERFACE(const char *name, const char *procName,
  */
 evhINTERFACE::~evhINTERFACE()
 {
+    if (_replyCb != NULL)
+    {
+        delete (_replyCb);
+    }
 }
 
 /*
@@ -182,15 +190,52 @@ mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
         {
             timeout = _timeout;
         }
+
+        // Save user reply callback
+        if (_replyCb != NULL)
+        {
+            delete (_replyCb);
+        }
+        _replyCb = new evhCMD_CALLBACK(callback);
+
         // Attach callback for reply
         evhCMD_REPLY_KEY key(command, cmdId, timeout);
-        if (evhMainHandler->AddCallback(key, callback) == mcsFAILURE)
+        evhCMD_CALLBACK cmdReplyCB
+            (this, (evhCMD_CB_METHOD)&evhINTERFACE::ReplyCB);
+        if (evhMainHandler->AddCallback(key, cmdReplyCB) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
     }
 
     return mcsSUCCESS;
+}
+
+/**
+ * Callback attached to the command reply.
+ * 
+ * It is the callback which is attached to the reply of the command sent by
+ * Forward() method. When reply is received, it unpack error message in error
+ * stack if an erro occured during command execution, and then executes the
+ * callback specified by in Forword().
+ *
+ * \param msg received message reply.
+ *
+ * \return return value of user callback. 
+ */
+evhCB_COMPL_STAT evhINTERFACE::ReplyCB(msgMESSAGE &msg, void*)
+{
+    logExtDbg("evhINTERFACE::ReplyCB");
+
+    // If an error reply is received
+    if (msg.GetType() == msgTYPE_ERROR_REPLY)
+    {
+        // Unpack error stack
+        errUnpackStack(msg.GetBody(), msg.GetBodySize());
+    }
+    
+    // Then execute user callback 
+    return (_replyCb->Run(msg));
 }
 
 /**
