@@ -3,10 +3,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.21 2004-12-17 08:14:09 gzins Exp $"
+* "@(#) $Id: misc.h,v 1.22 2005-01-19 10:29:42 gzins Exp $"
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * gzins     16-Jun-2004  Created
 * lafrasse  17-Jun-2004  Added miscGetLocalTimeStr, miscStripQuotes,
 *                        miscStrToUpper and miscGetExtension

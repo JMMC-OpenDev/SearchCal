@@ -1,8 +1,8 @@
 /*******************************************************************************
 * JMMC project
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * gzins     16-Jun-2004  Created from VLT file 'slxUtils.c'
 * lafrasse  17-Jun-2004  Added miscGetExtension
 * lafrasse  18-Jun-2004  Debugged miscGetExtension
@@ -35,7 +35,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.22 2004-12-21 15:37:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.23 2005-01-19 10:25:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -167,7 +167,7 @@ char *miscGetExtension(char *fullPath)
     /* Makes chrPtr points to the last occurence of '.' */
     if ((chrPtr = strrchr(fullPath, '.')) == NULL)
     {
-    	/* Exits if no extension found */
+        /* Exits if no extension found */
         return ((char*)NULL);
     }
 
@@ -309,7 +309,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
     do
     {
         if (*leftToBeResolvedPathPtr == '$')
-        {	
+        {
             if (nextSlashPtr != NULL)
             {
                 length = ((nextSlashPtr - leftToBeResolvedPathPtr) - 1);

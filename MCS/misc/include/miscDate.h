@@ -3,10 +3,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDate.h,v 1.2 2004-08-02 14:25:25 lafrasse Exp $"
+* "@(#) $Id: miscDate.h,v 1.3 2005-01-19 10:29:42 gzins Exp $"
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscDate headers
 *                        Moved mcs.h include in from miscDate.c
 *

@@ -1,8 +1,8 @@
 /*******************************************************************************
 * JMMC project
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * gzins     16-Jun-2004  Created
 * lafrasse  17-Jun-2004  Added miscStrToUpper
 * gzins     23-Jul-2004  Added miscIsSpaceStr
@@ -21,7 +21,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.13 2005-01-18 22:11:19 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.14 2005-01-19 10:24:09 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -229,13 +229,13 @@ mcsLOGICAL miscIsSpaceStr (char *string)
 {
     while (*string != '\0')
     {
-		if (!isspace(*string))
+        if (!isspace(*string))
         {
-			return mcsFALSE;
+            return mcsFALSE;
         }
         string++;
     }
-	return mcsTRUE;
+    return mcsTRUE;
 }
 
 /**

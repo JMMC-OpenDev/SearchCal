@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDynBuf.c,v 1.12 2005-01-19 10:21:18 gzins Exp $"
+* "@(#) $Id: miscTestDynBuf.c,v 1.13 2005-01-19 10:28:08 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -27,7 +27,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.12 2005-01-19 10:21:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.13 2005-01-19 10:28:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -69,10 +69,10 @@ int main (int argc, char *argv[])
 {
     /* Give process name to mcs library */
     mcsInit(argv[0]);
-    
+
     mcsCOMPL_STAT  executionStatusCode;
 
-	miscDYN_BUF    dynBuf;
+    miscDYN_BUF    dynBuf;
 
     char           *bytes       = NULL;
     int            bytesNumber  = 0;
@@ -84,21 +84,21 @@ int main (int argc, char *argv[])
     mcsUINT32      position     = 0;
     mcsUINT32      from         = 0;
     mcsUINT32      to           = 0;
-    
+
 
 
     /* miscDynBufInit */
     printf("---------------------------------------------------------------\n");
     printf("&dynBuf = NULL :\n");
     printf("----------------\n");
-	displayDynBuf(NULL);
+    displayDynBuf(NULL);
     errCloseStack();
     printf("\n");
 
     printf("dynBuf Allocated :\n");
     printf("------------------\n");
-	miscDynBufInit(&dynBuf);
-	displayDynBuf(&dynBuf);
+    miscDynBufInit(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -128,7 +128,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("\n");
 
     bytes    = " ... :)" ;
@@ -137,7 +137,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("\n");
 
     bytes    = " !!!" ;
@@ -146,7 +146,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufAppendBytes(&dynBuf, bytes, bytesNumber);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("\n");
 
 
@@ -318,7 +318,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -327,7 +327,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -336,7 +336,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -345,7 +345,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufReplaceByteAt(&dynBuf, byte, position);
     printf("miscDynBufReplaceByteAt(%d) = \"%c\" ", position, byte);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -401,7 +401,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -422,7 +422,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -434,7 +434,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, 0,
            position);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -444,7 +444,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufInsertBytesAt(\"%s\", %d, %d) ", bytes, bytesNumber,
            position);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -494,7 +494,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
                                                        bytesNumber, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -505,7 +505,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufReplaceBytesFromTo(\"%s\", %d, %d, %d) ", bytes,
            bytesNumber, to, from);
     executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes, bytesNumber, to,
-                                              from);
+                                                       from);
     displayExecStatus(executionStatusCode);
     errCloseStack();
     printf("\n");
@@ -525,7 +525,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
                                                        bytesNumber, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -538,7 +538,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufReplaceBytesFromTo(&dynBuf, bytes,
                                                        bytesNumber, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -579,7 +579,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
     executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -594,7 +594,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
     executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -603,7 +603,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
     executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -613,7 +613,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufDeleteBytesFromTo(%d, %d) ", from, to);
     executionStatusCode = miscDynBufDeleteBytesFromTo(&dynBuf, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -643,10 +643,10 @@ int main (int argc, char *argv[])
     printf("miscDynBufStrip() ");
     executionStatusCode = miscDynBufStrip(&dynBuf);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
-    
+
 
 
     /* miscDynBufReset */
@@ -664,7 +664,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufReset() ");
     executionStatusCode = miscDynBufReset(&dynBuf);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -694,7 +694,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufAppendString(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("\n");
 
     bytes    = " ... :)" ;
@@ -702,7 +702,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufAppendString(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("\n");
 
     bytes    = " !!!" ;
@@ -710,7 +710,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufAppendString(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
     errCloseStack();
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("\n");
 
 
@@ -745,7 +745,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufInsertStringAt(&dynBuf, bytes, position);
     printf("miscDynBufInsertStringAt(\"%s\", %d) ", bytes, position);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -754,7 +754,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufInsertStringAt(&dynBuf, bytes, position);
     printf("miscDynBufInsertStringAt(\"%s\", %d) ", bytes, position);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -763,7 +763,7 @@ int main (int argc, char *argv[])
     executionStatusCode = miscDynBufInsertStringAt(&dynBuf, bytes, position);
     printf("miscDynBufInsertStringAt(\"%s\", %d) ", bytes, position);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -803,7 +803,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufReplaceStringFromTo(\"%s\", %d, %d) ", bytes, from, to);
     executionStatusCode = miscDynBufReplaceStringFromTo(&dynBuf, bytes, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -827,7 +827,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufReplaceStringFromTo(\"%s\", %d, %d) ", bytes, from, to);
     executionStatusCode = miscDynBufReplaceStringFromTo(&dynBuf, bytes, from, to);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -857,7 +857,7 @@ int main (int argc, char *argv[])
     printf("miscDynBufDestroy() ");
     executionStatusCode = miscDynBufDestroy(&dynBuf);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     errCloseStack();
     printf("\n");
 
@@ -869,31 +869,31 @@ int main (int argc, char *argv[])
     printf("miscDynBufSetCommentPattern(%s) ", bytes);
     executionStatusCode = miscDynBufSetCommentPattern(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("------------------\n");
     bytes = "//";
     printf("miscDynBufSetCommentPattern(%s) ", bytes);
     executionStatusCode = miscDynBufSetCommentPattern(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("------------------\n");
     bytes = "/**";
     printf("miscDynBufSetCommentPattern(%s) ", bytes);
     executionStatusCode = miscDynBufSetCommentPattern(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("------------------\n");
     bytes = ";--;";
     printf("miscDynBufSetCommentPattern(%s) ", bytes);
     executionStatusCode = miscDynBufSetCommentPattern(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("------------------\n");
     bytes = NULL;
     printf("miscDynBufSetCommentPattern(%s) ", bytes);
     executionStatusCode = miscDynBufSetCommentPattern(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("\n");
 
     /* miscDynBufLoadFile */
@@ -902,66 +902,66 @@ int main (int argc, char *argv[])
     printf("miscDynBufLoadFile(%s) ", bytes);
     executionStatusCode = miscDynBufLoadFile(&dynBuf, bytes, NULL);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     bytes = "../config/doxyfile";
     printf("miscDynBufLoadFile(%s) ", bytes);
     executionStatusCode = miscDynBufLoadFile(&dynBuf, bytes, NULL);
     displayExecStatus(executionStatusCode);
-	displayDynBuf(&dynBuf);
+    displayDynBuf(&dynBuf);
     printf("\n");
-    
+
     /* miscDynBufGetNextLinePointer */
     printf("---------------------------------------------------------------\n");
-	mcsLOGICAL skipFlag;
-	printf("------------------\n");
-	bytes = NULL;
-	skipFlag = mcsFALSE;
-	miscDynBufSetCommentPattern(&dynBuf, "\0");
-	printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
+    mcsLOGICAL skipFlag;
+    printf("------------------\n");
+    bytes = NULL;
+    skipFlag = mcsFALSE;
+    miscDynBufSetCommentPattern(&dynBuf, "\0");
+    printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-	while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
-	       != NULL)
-	{
+    while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
+           != NULL)
+    {
         printf("------------------\n");
         printf("miscDynBufGetNextLinePointer() = '%s'\n", bytes);
     }
-	printf("------------------\n");
-	bytes = NULL;
-	skipFlag = mcsFALSE;
-	miscDynBufSetCommentPattern(&dynBuf, "#");
-	printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
+    printf("------------------\n");
+    bytes = NULL;
+    skipFlag = mcsFALSE;
+    miscDynBufSetCommentPattern(&dynBuf, "#");
+    printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-	while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
-	       != NULL)
-	{
+    while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
+           != NULL)
+    {
         printf("------------------\n");
         printf("miscDynBufGetNextLinePointer() = '%s'\n", bytes);
     }
-	printf("------------------\n");
-	bytes = NULL;
-	skipFlag = mcsTRUE;
-	miscDynBufSetCommentPattern(&dynBuf, "\0");
-	printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
+    printf("------------------\n");
+    bytes = NULL;
+    skipFlag = mcsTRUE;
+    miscDynBufSetCommentPattern(&dynBuf, "\0");
+    printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-	while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
-	       != NULL)
-	{
+    while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
+           != NULL)
+    {
         printf("------------------\n");
         printf("miscDynBufGetNextLinePointer() = '%s'\n", bytes);
     }
-	printf("------------------\n");
-	bytes = NULL;
-	skipFlag = mcsTRUE;
-	miscDynBufSetCommentPattern(&dynBuf, "#");
-	printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
+    printf("------------------\n");
+    bytes = NULL;
+    skipFlag = mcsTRUE;
+    miscDynBufSetCommentPattern(&dynBuf, "#");
+    printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-	while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
-	       != NULL)
-	{
+    while ((bytes = miscDynBufGetNextLinePointer(&dynBuf, bytes, skipFlag))
+           != NULL)
+    {
         printf("------------------\n");
         printf("miscDynBufGetNextLinePointer() = '%s'\n", bytes);
     }
@@ -971,14 +971,14 @@ int main (int argc, char *argv[])
     printf("---------------------------------------------------------------\n");
     printf("                      THAT'S ALL FOLKS ;)                      \n");
     printf("---------------------------------------------------------------\n");
-    
-	exit(0);
+
+    exit(0);
 }
 
 
 void displayExecStatus(mcsCOMPL_STAT executionStatusCode)
 {
-	char *statusStr = NULL;
+    char *statusStr = NULL;
 
     if (executionStatusCode == FAILURE)
     {
@@ -1019,10 +1019,10 @@ void displayDynBuf(miscDYN_BUF *dynBuf)
     }
 
     printf("miscDynBufGetCommentPattern = \"%s\".\n",
-            miscDynBufGetCommentPattern(dynBuf));
+           miscDynBufGetCommentPattern(dynBuf));
 
     printf("miscDynBufGetBufferPointer = \"%s\".\n",
-            miscDynBufGetBufferPointer(dynBuf));
+           miscDynBufGetBufferPointer(dynBuf));
 }
 
 /*___oOo___*/

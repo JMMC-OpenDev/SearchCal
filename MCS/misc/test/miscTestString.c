@@ -1,10 +1,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestString.c,v 1.8 2005-01-19 10:21:18 gzins Exp $"
+* "@(#) $Id: miscTestString.c,v 1.9 2005-01-19 10:28:08 gzins Exp $"
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
 * lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
 * lafrasse  02-Aug-2004  Changed local includes to use miscString headers
@@ -13,7 +13,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.8 2005-01-19 10:21:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.9 2005-01-19 10:28:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -43,7 +43,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 int main (int argc, char *argv[])
 {
-    mcsBYTES256	string;
+    mcsBYTES256 string;
 
     /* Test of miscStripQuotes() */
     printf("miscStripQuotes() Function Test :\n\n");

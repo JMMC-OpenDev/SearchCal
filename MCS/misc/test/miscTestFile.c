@@ -1,10 +1,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestFile.c,v 1.13 2005-01-19 10:21:18 gzins Exp $"
+* "@(#) $Id: miscTestFile.c,v 1.14 2005-01-19 10:28:08 gzins Exp $"
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
 * lafrasse  21-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
 *                        miscYankLastPath tests
@@ -22,7 +22,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.13 2005-01-19 10:21:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.14 2005-01-19 10:28:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -1,10 +1,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestDate.c,v 1.4 2005-01-19 10:21:18 gzins Exp $"
+* "@(#) $Id: miscTestDate.c,v 1.5 2005-01-19 10:28:08 gzins Exp $"
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
 * lafrasse  22-Jul-2004  Correted some typos, code factorization, and error
 *                        management
@@ -13,7 +13,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDate.c,v 1.4 2005-01-19 10:21:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDate.c,v 1.5 2005-01-19 10:28:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -1,16 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscTestNetwork.c,v 1.2 2005-01-19 10:21:18 gzins Exp $"
+* "@(#) $Id: miscTestNetwork.c,v 1.3 2005-01-19 10:28:08 gzins Exp $"
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * lafrasse  03-Aug-2004  Created
 *
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.2 2005-01-19 10:21:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.3 2005-01-19 10:28:08 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

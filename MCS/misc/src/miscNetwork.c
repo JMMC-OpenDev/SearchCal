@@ -1,8 +1,8 @@
 /*******************************************************************************
 * JMMC project
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * lafrasse  03-Aug-2004  Created
 *
 *
@@ -13,7 +13,7 @@
  * Contains all the 'misc' Network related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscNetwork.c,v 1.1 2004-08-03 09:09:04 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscNetwork.c,v 1.2 2005-01-19 10:25:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -1,8 +1,8 @@
 /*******************************************************************************
 * JMMC project
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * gzins     16-Jun-2004  Created
 * lafrasse  17-Jun-2004  Added miscGetLocalTimeStr
 * lafrasse  22-Jul-2004  Added error management
@@ -19,7 +19,7 @@
  * Contains all the 'misc' Date and Time related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.7 2004-08-02 14:25:25 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.8 2005-01-19 10:25:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -3,10 +3,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscFile.h,v 1.8 2004-10-07 14:11:26 lafrasse Exp $"
+* "@(#) $Id: miscFile.h,v 1.9 2005-01-19 10:29:42 gzins Exp $"
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscFile headers
 *                        Moved mcs.h include in from miscFile.c
 * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API

@@ -3,10 +3,10 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscString.h,v 1.6 2005-01-18 22:11:19 lafrasse Exp $"
+* "@(#) $Id: miscString.h,v 1.7 2005-01-19 10:29:42 gzins Exp $"
 *
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
+* who       when         what
+* --------  -----------  -------------------------------------------------------
 * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscString headers
 *                        Moved mcs.h include in from miscString.c
 * gzins     15-Dec-2004  Added miscTrimString function
