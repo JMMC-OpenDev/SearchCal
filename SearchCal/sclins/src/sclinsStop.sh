@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsStop.sh,v 1.1 2005-02-25 11:16:50 scetre Exp $"
+# "@(#) $Id: sclinsStop.sh,v 1.2 2005-03-04 15:05:52 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/02/25 11:16:50  scetre
+# Added script to star, stop and run Search Calibrators
+#
 #*******************************************************************************
 
 #/**
@@ -66,36 +69,26 @@
 # 
 # */
 
-# Ping sclsvrServer, if ping don't answer, do nothing, else stop server
-msgSendCommand sclsvrServer PING "" >> /dev/null 2>&1
-if [ $? != 0 ]
-then 
-    echo "sclsvrServer is already stopped"
-else
-    msgSendCommand sclsvrServer EXIT "" >> /dev/null 2>&1
-    if [ $? != 0 ]
+# For each process of search calibrators software
+for process in sclsvrServer sclguiPanel
+do
+    # If proces is running 
+    msgSendCommand $process PING "" >> /dev/null 2>&1
+    if [ $? == 0 ]
     then 
-        echo "sclsvrServer stopped"
+        # Send EXIT command
+        msgSendCommand $process EXIT "" >> /dev/null
+        if [ $? == 0 ]
+        then 
+            echo "'$process' stopped"
+        else
+            echo "ERROR: could not stop '$process'"  >&2
+        fi
     else
-        echo "ERROR: can't stop sclsvrServer"
+        echo "'$process' ALREADY stopped"
     fi
-fi
+done
 
-# Ping sclguiPanel, if ping don't answer, do nothing, else stop gui
-msgSendCommand sclguiPanel PING "" >> /dev/null 2>&1
-if [ $? != 0 ]
-then 
-    echo -e "sclguiPanel is already stopped"
-else
-    msgSendCommand sclguiPanel EXIT "" >> /dev/null 2>&1
-    if [ $? != 0 ]
-    then 
-        echo "sclguiPanel stopped"
-    else
-        echo "ERROR: can't stop sclguiPanel"
-    fi
-fi
-
-
+exit 0
 
 #___oOo___

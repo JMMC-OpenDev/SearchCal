@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsQuery.sh,v 1.4 2005-02-28 13:48:24 scetre Exp $"
+# "@(#) $Id: sclinsQuery.sh,v 1.5 2005-03-04 15:05:52 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/28 13:48:24  scetre
+# *** empty log message ***
+#
 # Revision 1.3  2005/02/25 15:06:00  scetre
 # *** empty log message ***
 #
@@ -76,51 +79,49 @@
 # */
 
 # Start the servers
-sclinsStart
+sclinsStart >> /dev/null
 if [ $? != 0 ]
 then
-    echo "Failed to start Search Calibrators..." >&2
     exit 1
 fi
 
 # Check arguments
-if [ $# -lt 30 ]
+if [ $# == 1 ]
 then
-    if [ $# == 1 ]
+    if [ "$1" == "-h" ]
     then
-        if [ "$1" == "-h" ]
-        then
-            echo -e "Help ..."
-            msgSendCommand sclsvrServer HELP "-command GETCAL" 
-            exit 1
-        fi
+        msgSendCommand sclsvrServer HELP "-command GETCAL" 
+        exit $?
     else
-        echo -e "Bad parameter, see [-h] option"
-        echo -e "Usage: 'sclinsQuery -h'"
+        echo -e "Invalid parameter, see [-h] option"
         exit 1
     fi
 fi
 
-sleep 1
-
-# Check if server sclgui is IDLE, if not exit 
-sclguiPanelState=`msgSendCommand sclguiPanel STATE ""` >> /dev/null 2>&1
-sclguiPanelSubState=${sclguiPanelState##*/}
-if [ "$sclguiPanelSubState" != "IDLE" ]
-then
-    echo -e "\tsclguiPanel is not IDLE"
+# Check if SW is IDLE, if not exit 
+state=`msgSendCommand sclguiPanel STATE ""` >> /dev/null
+if [ $? != 0 ]
+then 
+    echo "ERROR: could not send command to 'sclguiPanel'"  >&2
     exit 1
 fi
 
-echo -e "Search Calibrators is running..."
+subState=${state##*/}
+if [ "$subState" != "IDLE" ]
+then
+    echo -e "ERROR: Server is busy. Could not handle your request." 2>&1
+    exit 1
+fi
+
 # Send Command to sclguiPanel
-msgSendCommand sclguiPanel GETCAL "$*" >> /dev/null 2>&1
+msgSendCommand sclguiPanel GETCAL "$*"
 if [ $? != 0 ]
 then
-    echo -e "\t Search Calibrators failed."
+    echo -e "ERROR: Request failed." 2>&1
+    exit 1
 else
-    echo -e "\t Search Calibrators succeed"
+    echo -e "Request succeed."
+    exit 0
 fi
-#test ok
 
 #___oOo___

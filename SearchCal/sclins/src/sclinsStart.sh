@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsStart.sh,v 1.2 2005-02-25 15:06:00 scetre Exp $"
+# "@(#) $Id: sclinsStart.sh,v 1.3 2005-03-04 15:05:52 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/02/25 15:06:00  scetre
+# *** empty log message ***
+#
 # Revision 1.1  2005/02/25 11:16:50  scetre
 # Added script to star, stop and run Search Calibrators
 #
@@ -69,7 +72,6 @@
 # 
 # */
 
-
 # Check -h option 
 if [ $# == 1 ]
     then  
@@ -77,13 +79,9 @@ if [ $# == 1 ]
     then
         echo -e "Usage: sclinsStart [-h]"
         echo -e "\t-h\tprint this help."
-        echo -e "\tThis script start the different servers of the "
-        echo -e "\tSearch Calibrator v?.? software :"
-        echo -e "\t\t- sclsvrServer"
-        echo -e "\t\t- sclguiPanel"
+        echo -e "\tThis script start Search Calibrators software."
     fi
 fi
-
 
 # Start the environnement
 envStart
@@ -92,51 +90,38 @@ then
     exit 1
 fi
 
-i=0
-limit=10
-# Ping the server sclsvr. If it is not started, start it
-msgSendCommand sclsvrServer PING "" >> /dev/null 2>&1
-if [ $? != 0 ]
-then 
-    sclsvrServer >> /dev/null &
-    toto=$?
-    while [ "$toto" != "0" -a ""$i" -le "$limit"" ]
-    do
-        i=`expr $i + 1`
-        sclsvrServer >> /dev/null 2>&1 &
-        toto=$?
-    done
-    if [ "$i" -ge "$limit" ]
-    then
-        echo -e "ERROR: starting 'sclsvrServer' failed" >&2
-    fi
-    echo -e "'sclsvrServer' started"
-else
-    echo -e "'sclsvrServer' ALREADY started"
-fi
+# For each process of search calibrators software
+for process in sclsvrServer sclguiPanel
+do
+    # Ping the process If it is not started, start it
+    msgSendCommand $process PING "" >> /dev/null 2>&1
+    if [ $? != 0 ]
+    then 
+        # Start process
+        $process >> /dev/null &
 
+        # Wait that process is registered 
+        for (( i=0; $i<10; i++)); 
+        do  
+            msgSendCommand $process PING "" >> /dev/null 2>&1
+            if [ $? == 0 ]; 
+            then 
+                echo "'$process' started"
+                break; 
+            fi; 
+            sleep 1
+        done
 
-i=0
-# Ping the server sclguiPanel. If it is not started, start it
-msgSendCommand sclguiPanel PING "" >> /dev/null 2>&1
-if [ $? != 0 ]
-then 
-    sclguiPanel >> /dev/null &
-    toto=$?
-    while  [ "$toto" != "0" -a ""$i" -le "$limit"" ]
-    do
-        i=`expr $i + 1`
-        sclguiPanel >> /dev/null 2>&1 &
-        toto=$?
-    done
-    if [ "$i" -ge "$limit" ]
-    then
-        echo -e "\n\t\tERROR: starting 'sclguiPanel' failed\n" >&2
+        # If process did not reply
+        if [ $i == 10 ] 
+        then
+            echo -e "ERROR: Could not start '$process'" >&2
+            exit 1
+        fi
+    else
+        echo "'$process' ALREADY started"
     fi
-        echo -e "'sclguiPanel' started"
-else
-    echo -e "'sclguiPanel' ALREADY started"
-fi
+done
 
 exit 0
 #___oOo___
