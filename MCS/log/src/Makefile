@@ -1,14 +1,14 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.1.1.1 2004-05-12 14:00:04 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2004-05-12 14:49:41 mella Exp $"
 #
-# Makefile of ........
+# Makefile of log 
 #
 # who       when        what
 # --------  ----------  ----------------------------------------------
-# NNNNNN    DD-MM-YYYY  created
-#
+# mella    12-05-2004  created
+# 
 
 #*******************************************************************************
 # This Makefile follows VLT Standards (see Makefile(5) for more).
@@ -51,17 +51,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        = log.h
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = log
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-lllll_OBJECTS   =
+log_OBJECTS   = log
 
 #
 # Scripts (public and local)
