@@ -1,12 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2005-01-27 14:15:16 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.14 2005-01-31 13:29:21 mella Exp $"
 #
 # Makefile of err module 
+# History
+# -------
+# $Log: not supported by cvs2svn $ 
 #
-# who       when		 what
-# --------  -----------	 -------------------------------------------------------
 # sccmgr    02-Jun-2004  Created
 # gzins     14-Dec-2004  Run standard installation target first (to create
 #                        INTROOT if needed) before installing jar files
