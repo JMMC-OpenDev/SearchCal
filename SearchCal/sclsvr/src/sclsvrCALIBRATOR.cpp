@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.38 2005-02-23 09:06:28 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.39 2005-02-23 12:52:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.38  2005/02/23 09:06:28  scetre
+ * Extract the visibility ok list with the visErr parameter and the vis instead of the only visi
+ *
  * Revision 1.37  2005/02/23 08:15:19  gzins
  * Changed DIAM_ERROR to DIAM_BV_ERROR, DIAM_VR_ERROR and DIAM_VK_ERROR
  * Updated visibility computation to use diameters from catalogs, and if not found the computed diameter from V-K
@@ -60,7 +63,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.38 2005-02-23 09:06:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.39 2005-02-23 12:52:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -252,10 +255,22 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             expectedVis = request.GetExpectedVisibility();
             expectedVisError = request.GetExpectedVisibilityError();
             
+            // compute deltaV2(user) / V2(user)
+            mcsFLOAT expectedRelativeError;
+            expectedRelativeError = expectedVisError / expectedVis;
+            
+            mcsFLOAT computedRelativeError;
+            // fix constant value
+            mcsFLOAT deltaMu2 = 0.005;
+            mcsFLOAT gamma2 = 0.64;
+
+            computedRelativeError = (computedVisError / computedVis)
+                + (deltaMu2/gamma2) * ( 1/computedVis + 1/ expectedVis);
+           
+            
             // Check if the computed visibility is greater than the
             // requested one, and the flag accordingly
-            if ((computedVis < expectedVis) ||
-                (computedVisError > expectedVisError))
+            if (expectedRelativeError < computedRelativeError)
             {
                 SetPropertyValue(sclsvrCALIBRATOR_VIS2_FLAG, "NOK",
                                  vobsSTAR_COMPUTED_PROP);
