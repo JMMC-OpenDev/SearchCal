@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetPrivateHeaderFile.sh,v 1.3 2004-09-14 08:59:58 gluck Exp $"
+# "@(#) $Id: ctooGetPrivateHeaderFile.sh,v 1.4 2004-09-15 05:47:50 gluck Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -69,8 +69,9 @@ fi
 
 
 # Get module name
-ROOT_NAME=`ctooGetModuleName`
-
+source ctooGetModuleName
+ROOT_NAME=$moduleName
+unset moduleName
 
 #
 # Get a "standard" .h header file
