@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.3 2004-07-28 14:16:43 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.4 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -115,7 +115,7 @@ private:
 
     /** Table containing the request constraints */
     vobsREQUEST_CONSTRAINT _constraints[vobsNB_REQUEST_CONSTRAINTS];
-    int kindOfRequest;
+    mcsINT32 kindOfRequest;
 };
 #endif /*!vobsREQUEST_H*/
 

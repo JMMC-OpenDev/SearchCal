@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.4 2004-08-24 14:45:52 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.5 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -144,6 +144,7 @@ public:
 
     // Method to print out all star properties
     virtual void Display();
+    virtual void DisplayOne();
     
 protected:
     // Method to obtain id from the UCD

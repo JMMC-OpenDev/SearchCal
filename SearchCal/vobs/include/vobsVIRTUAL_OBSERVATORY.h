@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.3 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.4 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -51,12 +51,12 @@ public:
     virtual ~vobsVIRTUAL_OBSERVATORY();
  
     // Method to star the research in the different catalog
-    virtual mcsCOMPL_STAT Research(vobsREQUEST request,
+    virtual mcsCOMPL_STAT Research(vobsREQUEST &request,
                                    vobsSTAR_LIST &StarList);
 
 protected:
     // Method to load scenario according to the request
-    mcsCOMPL_STAT LoadScenario(vobsREQUEST request,
+    virtual mcsCOMPL_STAT LoadScenario(vobsREQUEST &request,
                                vobsSTAR_LIST &StarList);
 
 private:

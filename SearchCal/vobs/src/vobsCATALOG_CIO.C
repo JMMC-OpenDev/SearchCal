@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.C,v 1.3 2004-08-25 14:53:12 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.C,v 1.4 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.3 2004-08-25 14:53:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.C,v 1.4 2004-09-07 11:56:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -68,6 +68,60 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
 /*
  * Protected methods
  */
+/**
+ * Prepare the asking for the CIO catalog.
+ *
+ * Prepare the asking according to the request (constraints) for a first ask
+ * to the CDS, that's mean that the use of this asking will help to have a
+ * list of possible star. If the request is for a single research, this method
+ * will write the spécific asking.
+ *
+ * \param request vobsREQUEST which have all the contraints for the search
+ *
+ * \return SUCCESS on successful completion. Otherwise FAILURE is returned.
+ *
+ * \b Errors codes:\n 
+ * The possible errors are:
+ *  \li vobsERR_ASKING_WRITE_FAILED
+ */
+mcsCOMPL_STAT vobsCATALOG_CIO::PrepareAsking(vobsREQUEST &request)
+{
+    logExtDbg("vobsCATALOG::PrepareAsking()");
+    
+    int kindOfRequest;
+    if (request.GetKindOfRequest(kindOfRequest) == FAILURE)
+    {
+        return FAILURE;
+    }
+    if (kindOfRequest == 0)
+    {
+        miscDynBufAppendString(&_asking,"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=II/225/catalog&-out.max=1&name=");
+        mcsSTRING32 name;
+        request.GetConstraint(STAR_NAME_ID, name);
+        miscDynBufAppendString(&_asking, name);
+        miscDynBufAppendString(&_asking,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+        miscDynBufAppendString(&_asking,"&-out=lambda&-out=F(IR)");
+        miscDynBufAppendString(&_asking,"&-out=x_F(IR)&-sort=_r");
+    }
+    else
+    {
+        if ((WriteAskingURI()==FAILURE) ||
+            (WriteAskingPosition(request)==FAILURE) ||
+            (WriteAskingSpecificParameters(request)==FAILURE) )
+        {
+            errAdd(vobsERR_ASKING_WRITE_FAILED, _asking);
+            return FAILURE;
+        }
+    }
+    return SUCCESS;
+}
+
+
+
+
+
+
+
 
 /**
  * Build the constant part of the asking for CIO catalog

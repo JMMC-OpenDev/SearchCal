@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.h,v 1.2 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.h,v 1.3 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -50,6 +50,9 @@ public:
    // Destructor
    virtual ~vobsCATALOG_CIO();
 protected:
+    // Method to prepare the request as a string
+    virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST &request);
+       
     // Method to build parts of the request
     virtual mcsCOMPL_STAT WriteAskingConstant(void);
     virtual mcsCOMPL_STAT WriteAskingSpecificParameters(void);

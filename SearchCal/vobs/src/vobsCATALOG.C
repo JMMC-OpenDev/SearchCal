@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.8 2004-08-25 14:53:12 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.9 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.8 2004-08-25 14:53:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.9 2004-09-07 11:56:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -146,7 +146,7 @@ mcsCOMPL_STAT vobsCATALOG::GetName(char *name)
  * \b Errors codes:\n 
  * The possible errors are:
  */
-mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST request, vobsSTAR_LIST &list)
+mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::Search()");
        
@@ -162,7 +162,6 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST request, vobsSTAR_LIST &list)
     // else, the asking is writing according to the request and the star list
     else 
     {
-        printf("list not empty\n");
         if (PrepareAsking(request, list)==FAILURE)
         { 
             return FAILURE; 
@@ -197,7 +196,7 @@ mcsCOMPL_STAT vobsCATALOG::Search(vobsREQUEST request, vobsSTAR_LIST &list)
  * The possible errors are:
  *
  */
-mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request)
+mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST &request)
 {
     logExtDbg("vobsCATALOG::PrepareAsking()");
 
@@ -229,7 +228,6 @@ mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request)
 mcsCOMPL_STAT vobsCATALOG::PrepareAsking(vobsREQUEST request, vobsSTAR_LIST &tmpList)
 {
     logExtDbg("vobsCATALOG::PrepareAsking()");
-    printf("Prepare asking 2\n");
     if ( (WriteAskingURI()==FAILURE) ||
          (WriteAskingConstant()==FAILURE) ||
          (WriteAskingSpecificParameters()==FAILURE) ||
@@ -393,12 +391,10 @@ mcsCOMPL_STAT vobsCATALOG::WriteAskingPosition(vobsREQUEST request)
 mcsCOMPL_STAT vobsCATALOG::WriteAskingEnd(vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::GetAskingEnd()");
-    printf("tailli list in write end %d\n", list.Size());
     // Build of the stringlist
     miscDYN_BUF strList;
     StarList2Sring(strList, list);
     
-    printf("%s\n",miscDynBufGetBufferPointer(&strList));
     
     if ( (miscDynBufAppendString(&_asking,"&-out.form=List")==FAILURE) ||
          (miscDynBufAppendString(&_asking, miscDynBufGetBufferPointer(&strList))==FAILURE) )
@@ -430,7 +426,6 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
                                           vobsSTAR_LIST &list)
 {
     logExtDbg("vobsCATALOG::StarList2Sring()");
-    printf("tailli list in l2strl %d\n", list.Size());
     
     if (list.Size()!=0)
     {

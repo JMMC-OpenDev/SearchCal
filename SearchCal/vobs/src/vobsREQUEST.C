@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.7 2004-08-25 14:53:12 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.8 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsREQUEST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.7 2004-08-25 14:53:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.8 2004-09-07 11:56:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -121,7 +121,7 @@ vobsREQUEST::~vobsREQUEST()
  */
 mcsCOMPL_STAT vobsREQUEST::SetKindOfRequest(int value)
 {
-    logExtDbg("vobsSTAR::SetKindOfRequest()");
+    logExtDbg("vobsREQUEST::SetKindOfRequest()");
    
     // Compare value with 0 or 1
     // to check if the kind of request format is correct
@@ -151,12 +151,10 @@ mcsCOMPL_STAT vobsREQUEST::SetKindOfRequest(int value)
  */
 mcsCOMPL_STAT vobsREQUEST::GetKindOfRequest(int &value)
 {
-    logExtDbg("vobsSTAR::GetKindOfRequest()");
-
+    logExtDbg("vobsREQUEST::GetKindOfRequest()");
     // Compare Kind of request with 0 or 1
     // to check if the kind of request is already affected
-    if (kindOfRequest<0||
-        kindOfRequest>1)
+    if ((kindOfRequest<0)||(kindOfRequest>1))
     {
         errAdd(vobsERR_KIND_OF_REQUEST_NOT_SET);
         return FAILURE;

@@ -1,14 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.C,v 1.5 2004-08-24 14:45:52 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.C,v 1.6 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    06-Jul-2004  Created
 *
 *******************************************************************************/
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.5 2004-08-24 14:45:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.C,v 1.6 2004-09-07 11:56:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -329,4 +329,24 @@ void vobsSTAR_LIST::Display(void)
         (*iter).Display();
     }
 }
+
+/**
+ * Display the elements (stars) of the list of single star.
+ *
+ * This method display the star on the console, using the
+ * vobsSTAR::DisplayOne method.
+ */
+void vobsSTAR_LIST::DisplayOne(void)
+{
+    logExtDbg("vobsSTAR_LIST::Display()");
+
+    // Display all element of the list 
+    std::list<vobsSTAR>::iterator iter;
+    
+    for (iter=_starList.begin(); iter != _starList.end(); iter++)
+    {
+        (*iter).DisplayOne();
+    }
+}
+
 /*___oOo___*/

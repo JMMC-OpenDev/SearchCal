@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.3 2004-08-03 13:44:10 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.4 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -62,13 +62,13 @@ public:
    virtual mcsCOMPL_STAT GetName(char *name);  
 
    // Method to search in the catalog and to have the star list
-   virtual mcsCOMPL_STAT Search(vobsREQUEST request,
+   virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
                                 vobsSTAR_LIST &list);
    
 
 protected:
     // Method to preare the request as a string
-   virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST request);
+   virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST &request);
    virtual mcsCOMPL_STAT PrepareAsking(vobsREQUEST request,
                                  vobsSTAR_LIST &tmpList);
 

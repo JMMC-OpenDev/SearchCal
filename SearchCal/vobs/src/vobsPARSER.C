@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.8 2004-08-19 16:33:24 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.9 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,7 +9,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.8 2004-08-19 16:33:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.9 2004-09-07 11:56:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -108,7 +108,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
         gdome_di_unref (domimpl, &exc);
         return FAILURE;
     }
-    printf("there is %d CDATA section\n", listCDATA.size());
     std::vector<vobsCDATA *>::iterator iterCDATA=listCDATA.begin();
     while (iterCDATA!=listCDATA.end())
     {
@@ -162,7 +161,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(char *uri, vobsSTAR_LIST &starList)
         while (iterCDATA!=listCDATA.end())
         {
             //printf("%deme passage\n",i);
-            printf("%s\n\n",(**iterCDATA).ptr);
+            //printf("%s\n\n",(**iterCDATA).ptr);
             // Parse the CDATA section
             if (ParseCData((*iterCDATA), starListToReturn) == FAILURE)
             {
@@ -471,7 +470,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData, vobsSTAR_LIST &starList)
             if (ucdValue == NULL)
             {
                 errAdd(vobsERR_INVALID_CDATA_FORMAT, linePtr);
-                printf("titi\n");
+                //printf("titi\n");
                 //return FAILURE;
             }
             else

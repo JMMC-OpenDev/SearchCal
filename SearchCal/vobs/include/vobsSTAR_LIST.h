@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.3 2004-08-24 14:45:52 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.4 2004-09-07 11:56:53 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -51,7 +51,8 @@ class vobsSTAR_LIST
                                 mcsLOGICAL updateOnly=mcsFALSE);
 
     void                  Display(void);
-
+    void                  DisplayOne(void);
+    
  protected:
 
  private:
