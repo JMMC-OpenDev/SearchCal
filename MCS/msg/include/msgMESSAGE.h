@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.21 2005-01-29 19:54:46 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.22 2005-02-03 06:51:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/01/29 19:54:46  gzins
+ * Added AppendStringToBody method
+ *
  * Revision 1.20  2005/01/29 10:05:06  gzins
  * Changed msgMESSAGE.lastReply type from mcsLOGICAL to mcsSTRING8
  *
@@ -205,7 +208,7 @@ public:
     virtual mcsLOGICAL       IsLastReply     (void);
     virtual mcsCOMPL_STAT    SetLastReplyFlag(mcsLOGICAL      flag);
 
-    virtual mcsLOGICAL       IsInternal      (void);
+    virtual mcsLOGICAL       IsInternal      (void) const; 
 
     virtual char            *GetBody         (void) const;
     virtual mcsINT32         GetBodySize     (void) const;

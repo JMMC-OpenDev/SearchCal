@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.21 2005-02-02 16:42:44 scetre Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.22 2005-02-03 06:51:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/02/02 16:42:44  scetre
+ * Added mcsDynBufInit on the _body
+ *
  * Revision 1.20  2005/01/29 19:54:46  gzins
  * Added AppendStringToBody method
  *
@@ -56,7 +59,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.21 2005-02-02 16:42:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.22 2005-02-03 06:51:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -427,7 +430,7 @@ mcsCOMPL_STAT msgMESSAGE::SetLastReplyFlag(mcsLOGICAL flag)
  *
  * \return mcsTRUE if the message is internal, mcsFALSE otherwise
  */
-mcsLOGICAL msgMESSAGE::IsInternal(void)
+mcsLOGICAL msgMESSAGE::IsInternal(void) const
 {
     logExtDbg("msgMESSAGE::IsInternal()");
 
