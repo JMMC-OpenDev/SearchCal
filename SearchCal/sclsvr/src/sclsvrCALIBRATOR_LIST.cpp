@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.15 2005-02-04 15:49:00 gzins Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.16 2005-02-07 09:22:40 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/02/04 15:49:00  gzins
+* Fixed wrong Id for visibility property
+*
 * Revision 1.14  2005/02/04 15:30:19  gzins
 * Updated Complete method
 *
@@ -22,7 +25,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.15 2005-02-04 15:49:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.16 2005-02-07 09:22:40 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -74,6 +77,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
     return mcsSUCCESS;
 }
 
+//Copy constructor
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list)
+{
+     
+    logExtDbg("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
+    for (unsigned int el = 0; el < list.Size(); el++)
+    {
+        AddAtTail(*(sclsvrCALIBRATOR *)(list.GetNextStar((mcsLOGICAL)(el==0))));
+    }
+    return mcsSUCCESS;
+}
 
 /**
  * Adds the element at the end of the list
@@ -205,9 +219,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
     logExtDbg("sclsvrCALIBRATOR_LIST::UnPack()");
     char *bufferLine=NULL;
    
-    // Fix no skip flag
-    mcsLOGICAL skipFlag = mcsFALSE;
-
     // Replace the '\n' by '\0' in the buffer where is stored the list
     if (miscReplaceChrByChr(miscDynBufGetBuffer(buffer), '\n', '\0') == 
         mcsFAILURE)
@@ -216,19 +227,22 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
     }
 
     // Get the first line of the buffer
-    while ((bufferLine=miscDynBufGetNextLine(buffer,
-                                             bufferLine,
-                                             skipFlag)) != NULL)
+    while ((bufferLine=miscDynBufGetNextLine(buffer, bufferLine,
+                                             mcsFALSE)) != NULL)
     {
-        // If the line had been get
-        sclsvrCALIBRATOR calibrator;
-        // unpack the calibrator which is in the line
-        if (calibrator.UnPack(bufferLine) == mcsFAILURE)
+        // If it is not an empty line
+        if (miscIsSpaceStr(bufferLine) == mcsFALSE)
         {
-            return mcsFAILURE;
+            // If the line had been get
+            sclsvrCALIBRATOR calibrator;
+            // unpack the calibrator which is in the line
+            if (calibrator.UnPack(bufferLine) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            // add in the list the calibrator
+            AddAtTail(calibrator); 
         }
-        // add in the list the calibrator
-        AddAtTail(calibrator); 
     }
     
     return mcsSUCCESS;    
@@ -309,7 +323,6 @@ mcsCOMPL_STAT
                                                       mcsFLOAT decRange)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::GetScienceObjectSeparation()");
-            printf("sizeOfTheList = %d\n", Size());
     
     // create a star correponding to the science object
     sclsvrCALIBRATOR scienceStar;
@@ -439,7 +452,6 @@ sclsvrCALIBRATOR_LIST::GetSpectralType(std::list<char *> spectTypeList)
         }
         else
         {
-            printf("%s\n", spectralClass);
             isSameSpectralClass=mcsFALSE;
             // compare the sectral class of te class with all the spectral
             // class in the list
@@ -493,7 +505,6 @@ sclsvrCALIBRATOR_LIST::GetLuminosityClass(std::list<char *> luminosityList)
         }
         else
         {
-            printf("%s\n", luminosityClass);
             isSameLuminosityClass=mcsFALSE;
             // compare the luminosity class of te class with all the spectral
             // class in the list
