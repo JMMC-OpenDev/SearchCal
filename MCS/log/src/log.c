@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.21 2004-10-21 07:46:47 mella Exp $"
+* "@(#) $Id: log.c,v 1.22 2004-11-10 22:20:32 gzins Exp $"
 *
 *
 * who       when                 what
@@ -35,6 +35,7 @@
 *                        logSetLogManagerPortNumber functions
 * lafrasse  10-Aug-2004  Moved logGetTimeStamp back in
 *                        Changed back to logData original API
+* gzins     10-Nov-2004  Replaced logDisplayError by logPrintErrMessage
 *
 *
 *******************************************************************************/
@@ -198,14 +199,14 @@ mcsCOMPL_STAT logSetLogManagerHostName(mcsBYTES256 hostName)
     /* If the socket to the logManager has already been opened... */
     if (logSocketIsAlreadyOpen == mcsTRUE)
     {
-        logDisplayMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the connection to it is already opened");
+        logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the connection to it is already opened");
         return FAILURE;
     }
 
     /* If the given host name seems bad... */
     if ((hostName == NULL) || (strlen(hostName) == 0))
     {
-        logDisplayMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the received parameter seems bad");
+        logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the received parameter seems bad");
         return FAILURE;
     }
 
@@ -234,14 +235,14 @@ mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 portNumber)
     /* If the socket to the logManager has already been opened... */
     if (logSocketIsAlreadyOpen == mcsTRUE)
     {
-        logDisplayMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the connection to it is already opened");
+        logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the connection to it is already opened");
         return FAILURE;
     }
 
     /* If the given port number is out of range... */
     if (portNumber < 0 || portNumber > 65535)
     {
-        logDisplayMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the received parameter is out of range");
+        logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the received parameter is out of range");
         return FAILURE;
     }
 
@@ -600,7 +601,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
                                sizeof(logRulePtr->logManagerHostName))
                 == FAILURE)
             {
-                logDisplayMessage("- LOG LIBRARY ERROR - logGetHostName() failed - %s", strerror(errno));
+                logPrintErrMessage("- LOG LIBRARY ERROR - logGetHostName() failed - %s", strerror(errno));
                 return FAILURE;
             }
             
@@ -608,7 +609,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
             if ((logRulePtr->logManagerHostName == NULL)
                 || (strlen(logRulePtr->logManagerHostName) == 0))
             {
-                logDisplayMessage("- LOG LIBRARY ERROR - got an empty hostname");
+                logPrintErrMessage("- LOG LIBRARY ERROR - got an empty hostname");
                 return FAILURE;
             }
         }
@@ -619,7 +620,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
         sock = socket(AF_INET, SOCK_DGRAM, 0);
         if (sock == -1) 
         {
-            logDisplayMessage("- LOG LIBRARY ERROR - socket() failed - %s",
+            logPrintErrMessage("- LOG LIBRARY ERROR - socket() failed - %s",
                     strerror(errno));
             return FAILURE;
         }
@@ -627,7 +628,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
         hp = gethostbyname(logRulePtr->logManagerHostName);
         if (hp == NULL )
         {
-            logDisplayMessage("- LOG LIBRARY ERROR - gethostbyname(%s) failed", logRulePtr->logManagerHostName);
+            logPrintErrMessage("- LOG LIBRARY ERROR - gethostbyname(%s) failed", logRulePtr->logManagerHostName);
             return FAILURE;
         }
 
@@ -646,7 +647,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     if (sendto(sock, (void *)logMsg, strlen(logMsg), 0,
                (const struct sockaddr *)&server, sizeof(server)) == -1)
     {
-        logDisplayMessage("- LOG LIBRARY ERROR - sendto() failed - %s",
+        logPrintErrMessage("- LOG LIBRARY ERROR - sendto() failed - %s",
                 strerror(errno));
         return FAILURE;
     }
