@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.14 2005-01-24 15:02:47 gzins Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.15 2005-01-27 17:11:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/01/24 15:02:47  gzins
+ * Added CVS logs as modification history
+ *
  * scetre    19-Nov-2004  Created
  * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
  * lafrasse  25-Nov-2004  Added error management code
@@ -30,7 +33,7 @@
  * msgSOCKET class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.14 2005-01-24 15:02:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.15 2005-01-27 17:11:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -429,7 +432,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     fd_set         readMask ;
     mcsINT32       status, nbBytesToRead, nbBytesRead;
 
-    logExtDbg("msgReceiveFrom()");
+    logExtDbg("msgSOCKET::Receive()");
 
     // Compute the timeout value
     if (timeoutInMs == msgNO_WAIT)
