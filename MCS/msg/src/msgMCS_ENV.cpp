@@ -1,12 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMCS_ENV.cpp,v 1.1 2004-12-03 17:05:50 lafrasse Exp $"
+* "@(#) $Id: msgMCS_ENV.cpp,v 1.2 2004-12-05 19:14:48 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  03-Dec-2004  Created
-*
+* gzins     05-Dec-2004  Changed method prototypes and class members
 *
 *******************************************************************************/
 
@@ -15,7 +15,7 @@
  * msgMCS_ENV class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMCS_ENV.cpp,v 1.1 2004-12-03 17:05:50 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMCS_ENV.cpp,v 1.2 2004-12-05 19:14:48 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -46,11 +46,8 @@ using namespace std;
  */
 msgMCS_ENV::msgMCS_ENV()
 {
-    _initialized = mcsFALSE;
-
-    memset(_hostName, 0, sizeof(_hostName));
-
-    _portNumber = 0;
+    _envListFileLoaded = mcsFALSE;
+    miscDynBufInit(&_envList);
 }
 
 
@@ -59,11 +56,7 @@ msgMCS_ENV::msgMCS_ENV()
  */
 msgMCS_ENV::~msgMCS_ENV()
 {
-    _initialized = mcsFALSE;
-
-    memset(_hostName, 0, sizeof(_hostName));
-
-    _portNumber = 0;
+    miscDynBufDestroy(&_envList);    
 }
 
 
@@ -71,86 +64,127 @@ msgMCS_ENV::~msgMCS_ENV()
  * Public methods
  */
 /**
- * Return the msgManager host name.
+ * Return the host name of the MCS environment.
  *
- * \return the address of the host name, or NULL if an error occured
+ * If the environment name is not given, the current environment, defined by
+ * MCSENV environment variable, is used.
+ *
+ * \return the host name of a given environment or NULL if environment name is
+ * unknown.
  */
-const char* msgMCS_ENV::GetHostName(void)
+const char* msgMCS_ENV::GetHostName(char *envName)
 {
     logExtDbg("msgMCS_ENV::GetHostName()");
 
-    // If the host name and the port number have not been retrieved yet
-    if (_initialized == mcsFALSE)
+    // If the file has not been loaded yet
+    if (_envListFileLoaded == mcsFALSE)
     {
         // Try to retrieve them
-        if (RetrieveHostNameAndPortNumber() == FAILURE)
+        if (LoadEnvListFile() == FAILURE)
         {
-            return ((char*)NULL);
+            return NULL;
         }
-
-        _initialized = mcsTRUE;
     }
 
-    // Return the host name
-    return _hostName;
+    // Retrieve the environment name in the list
+    mcsLOGICAL found=mcsFALSE;
+    
+    // If found
+    if (found == mcsTRUE)
+    {
+        // Return host name
+        return NULL;
+    }
+    else
+    {
+        // Add error and return NULL
+        return NULL;
+    }
 }
 
 /**
- * Return the msgManager port number.
+ * Return the port number of the MCS environment.
  *
- * \return the port number, or 0 if an error occured
+ * This method returns the port number of the given MCS environment; i.e. the
+ * connection port number with the manager process of the MCS message service.
+ * If the environment name is not given, the current environment, defined by
+ * MCSENV environment variable, is used.
+ *
+ * \return the port number or -1 if environment name is unknown.
  */
-const mcsUINT16 msgMCS_ENV::GetPortNumber(void)
+const mcsINT32 msgMCS_ENV::GetPortNumber(char *envName)
 {
     logExtDbg("msgMCS_ENV::GetPortNumber()");
 
-    // If the host name and the port number have not been retrieved yet
-    if (_initialized == mcsFALSE)
+    // If the file has not been loaded yet
+    if (_envListFileLoaded == mcsFALSE)
     {
         // Try to retrieve them
-        if (RetrieveHostNameAndPortNumber() == FAILURE)
+        if (LoadEnvListFile() == FAILURE)
         {
-            return 0;
+            return -1;
         }
-
-        _initialized = mcsTRUE;
     }
 
-    // Return the port number
-    return _portNumber;
+   // Retrieve the environment name in the list
+    mcsLOGICAL found=mcsFALSE;
+    
+    // If found
+    if (found == mcsTRUE)
+    {
+        // Return the port number
+        return -1;
+    }
+    else
+    {
+        // Add error and return -1
+        return -1;
+    }
 }
-
 
 /*
  * Protected methods
  */
 
-
-
 /*
  * Private methods
  */
 /**
- * Retrieve the msgManager host name and port number from the $MCSENV
- * environment variable, and the mcsEnvList file (located in
- * $MCSROOT/etc/mcsEnvList).
+ * Load file containing the environment list definition.
  *
- * \return an MCS completion status code (SUCCESS or FAILURE)
+ * This method loads in an internal buffer the file, named mcsEnvList and
+ * located in $MCSROOT/etc directory, containing informations about the
+ * defined MCS environments. A environment is defined by the host name on
+ * which it is running, and the connection port number to the message manager.
+ * This file has one entry (line) for each defined environment. The format of
+ * each line is :
+ *   <envName>   <hostName>  <portNumber>
+ *
+ * The field are separated by spaces; one or more spaces between fields.
+ *
+ * \return SUCCESS on successfull completion, or FAILURE otherwise.
+ *
+ * \err
+ * The possible errors are :
+ * \errname msgERR_UNKNOWN_ENV
+ * \errname msgERR_FORMAT_ENVLIST
  */
-mcsCOMPL_STAT msgMCS_ENV::RetrieveHostNameAndPortNumber(void)
+mcsCOMPL_STAT msgMCS_ENV::LoadEnvListFile(void)
 {
-    // Get the MCS environment name
-    const char* searchedEnvName = mcsGetEnvName();
-
-    // Try to load the MCS environment list file
-    miscDYN_BUF envList;
-    if (miscDynBufLoadFile(&envList, miscResolvePath("$MCSROOT/etc/mcsEnvList"),
-                           "#")
-        == FAILURE)
+    // Resolve path of MCS environment list file
+    char *fullPath;
+    fullPath = miscResolvePath("$MCSROOT/etc/mcsEnvList");
+    if (fullPath == NULL);
     {
         return FAILURE;
     }
 
+    // Load the MCS environment list file
+    if (miscDynBufLoadFile(&_envList, fullPath, "#") == FAILURE)
+    {
+        return FAILURE;
+    }
+#if 0
     /* Jump all the headers and empty lines, and try to find a host name and
      * port number corresponding to the MCS environment name
      */
@@ -179,7 +213,7 @@ mcsCOMPL_STAT msgMCS_ENV::RetrieveHostNameAndPortNumber(void)
     }
     while ((strcmp(parsedEnvName, searchedEnvName) != 0) &&
            (currentLine != NULL));
-
+#endif
     return SUCCESS;
 }
 

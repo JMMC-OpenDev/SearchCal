@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMCS_ENV.h,v 1.1 2004-12-03 17:05:50 lafrasse Exp $"
+* "@(#) $Id: msgMCS_ENV.h,v 1.2 2004-12-05 19:11:59 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  03-Dec-2004  Created
+* gzins     05-Dec-2004  Changed method prototypes and class members
 *
 *
 *******************************************************************************/
@@ -22,16 +23,21 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+#include "misc.h"
 
 /*
  * Class declaration
  */
 
 /**
- * Give back the host name and port number of the msgManager process associated
- * with the current MCS environment name available the environment variable
- * $MCSENV.
+ * Class handling MCS environment.
+ *
+ * The msgMCS_ENV class contains methods to get informations (host name
+ * and port number) of MCS environments. 
  * 
+ * \usedfiles
+ * \filename $MCSROOT/etc/mcsEnvList : file containing definition of MCS
+ * environments.
  */
 class msgMCS_ENV
 {
@@ -43,21 +49,19 @@ public:
     // Brief description of the destructor
     virtual ~msgMCS_ENV();
 
-    virtual const char*      GetHostName(void);
-    virtual const mcsUINT16  GetPortNumber(void);
-
+    virtual const char*    GetHostName(char *envName=NULL);
+    virtual const mcsINT32 GetPortNumber(char *envName=NULL);
 
 protected:
-
     
 private:
-    mcsLOGICAL   _initialized; /* Flag that tell waither the host name and the
-                                * port number have already been retrived or not
-                                */
-    mcsSTRING256 _hostName;    // the msgManager host name
-    mcsUINT16    _portNumber;  // the msgManager port number
-
-    mcsCOMPL_STAT RetrieveHostNameAndPortNumber(void);
+    mcsCOMPL_STAT LoadEnvListFile(void);
+    miscDYN_BUF   _envList;           /* Internal buffer containing
+                                         environment list */
+    mcsLOGICAL    _envListFileLoaded; /* Flag that tell weither the file
+                                         containing the environment list
+                                         definition has already been loaded or
+                                         not */
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
