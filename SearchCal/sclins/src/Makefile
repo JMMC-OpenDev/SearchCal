@@ -1,14 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-12-08 18:48:42 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2005-02-15 16:02:02 gzins Exp $"
 #
-# Makefile of ........
+# Makefile of mcsins module 
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # sccmgr    08-Dec-2004  Created
-#
 #
 #*******************************************************************************
 # REMARKS
@@ -164,9 +164,5 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
-
-db : db_all
-	@echo " . . . ../DB done"
-
 
 #___oOo___

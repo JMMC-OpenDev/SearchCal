@@ -2,10 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsInstall.sh,v 1.3 2004-12-12 09:45:12 gzins Exp $"
+# "@(#) $Id: sclinsInstall.sh,v 1.4 2005-02-15 16:02:02 gzins Exp $"
 #
-# who       when         what
-# --------  -----------  -------------------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     04-Dec-2004  Created
 # gzins     09-Dec-2004  Added '-h' and '-u' options
 #                        Added logfile
