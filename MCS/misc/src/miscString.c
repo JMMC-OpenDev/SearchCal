@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/01/28 18:39:10  gzins
+ * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
+ *
  * gzins     16-Jun-2004  Created
  * lafrasse  17-Jun-2004  Added miscStrToUpper
  * gzins     23-Jul-2004  Added miscIsSpaceStr
@@ -22,7 +25,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.15 2005-01-28 18:39:10 gzins Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.16 2005-01-31 12:54:45 gluck Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -315,8 +318,6 @@ char *miscDuplicateString (const char *string)
  * parameter. The number of found sub-string is returned by the 'subStringNb'
  * parameter.
  * 
- * \warning The 'subStrings' array will be zero-ed on each call.\n\n
- * 
  * \param string the null-terminated string to be parsed.
  * \param delimiter the character on which the sub-strings should be found.
  * \param subStrings the allocated array used to return the null-terminated
@@ -355,9 +356,6 @@ mcsCOMPL_STAT miscSplitString    (const char         *string,
         return mcsFAILURE;
     }
 
-    /* Reset all the subStrings array to 0 */
-    memset(subStrings, 0, sizeof(subStrings));
-
     char*     floatingPtr        = (char*)string;
     char*     subString          = NULL;
     mcsUINT32 length             = 0;
@@ -380,6 +378,8 @@ mcsCOMPL_STAT miscSplitString    (const char         *string,
 
             /* Copy the sub-string in the sub-string array */
             strncpy(subStrings[i], floatingPtr, length);
+            /* Add end of string explicitly */
+            subStrings[i][length] = '\0';
         }
         else
         {
