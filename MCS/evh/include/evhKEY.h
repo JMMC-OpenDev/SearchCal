@@ -3,14 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhKEY.h,v 1.2 2004-11-19 06:34:06 gzins Exp $"
+* "@(#) $Id: evhKEY.h,v 1.3 2005-01-07 18:09:21 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     24-Sep-2004  Created
 * gzins     19-Nov-2004  Added evhTYPE_COMMAND_REPLY
-*
-*
+* gzins     07-Jan-2005  Added evhTYPE_MESSAGE
+*                        Declared Match() as no pure virtual
 *******************************************************************************/
 
 /**
@@ -30,6 +30,7 @@
 typedef enum 
 {
     evhTYPE_UNDEFINED = 0,
+    evhTYPE_MESSAGE, 
     evhTYPE_COMMAND, 
     evhTYPE_COMMAND_REPLY, 
     evhTYPE_IOSTREAM 
@@ -56,7 +57,7 @@ public:
     evhKEY& operator=(const evhKEY&);
     
     virtual mcsLOGICAL IsSame(const evhKEY& key);
-    virtual mcsLOGICAL Match(const evhKEY& key) = 0;
+    virtual mcsLOGICAL Match(const evhKEY& key);
 
     virtual evhKEY     &SetType(const evhTYPE type);
     virtual evhTYPE    GetType() const;
