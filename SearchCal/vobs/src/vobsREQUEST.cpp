@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.13 2005-03-04 06:37:01 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.14 2005-03-04 07:51:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/03/04 06:37:01  gzins
+ * Checked and reformated RA and DEC parameter
+ *
  * Revision 1.12  2005/02/15 15:41:47  gzins
  * Fixed wrong mcsmcsSUCCESS and mcsmcsFAILURE
  *
@@ -34,7 +37,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.13 2005-03-04 06:37:01 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.14 2005-03-04 07:51:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -133,8 +136,8 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
     // Check format
     vobsSTAR star;
     mcsFLOAT ra;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, objectRa);
-    if (star.GetRa(&ra) == mcsFAILURE)
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, objectRa, "");
+    if (star.GetRa(ra) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -183,8 +186,8 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
     // Check format
     vobsSTAR star;
     mcsFLOAT dec;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, objectDec);
-    if (star.GetDec(&dec) == mcsFAILURE)
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, objectDec, "");
+    if (star.GetDec(dec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
