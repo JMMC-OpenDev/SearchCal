@@ -1,11 +1,12 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.3 2004-10-01 08:06:01 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.4 2004-11-17 10:52:24 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
 # gzins     26-Aug-2004  Adapted from VLT
+# gzins     17-Nov-2004  Added fnd, evh and msg to the MCS library list
 # 
 #*******************************************************************************
 #   NAME
@@ -363,8 +364,8 @@ ifeq ($(platform),Linux)
     LIB_DEFAULT   = -L/usr/local/lib
     XINC_DEFAULT  = -I/usr/X11R6/include/X11 
     XLIB_DEFAULT  = -L/usr/X11R6/lib     
-    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -lgdome -lm 
-    MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) -lmcs -llog -lerr -lmisc $(NOSHARED_OFF) -lgdome -lm 
+    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -lfnd -lmsg -levh -lgdome -lm 
+    MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) -lmcs -llog -lerr -lmisc -lfnd -lmsg -levh $(NOSHARED_OFF) -lgdome -lm 
 endif
 
 BINDIR   = bin
