@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSend.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msgSend.c,v 1.2 2004-09-07 14:25:46 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -17,7 +17,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSend.c,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSend.c,v 1.2 2004-09-07 14:25:46 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -201,7 +201,7 @@ mcsCOMPL_STAT   msgSendReplyTo    (int                sd,
         }
 
         /* Store the message body size in network byte order */
-        msg->header.msgBodySize = htonl(strlen(msg->body));
+        sprintf( msg->header.msgBodySize, "%d", strlen(msg->body));
 
         /* Set message type to ERROR_REPLY */
         msg->header.type = msgTYPE_ERROR_REPLY;

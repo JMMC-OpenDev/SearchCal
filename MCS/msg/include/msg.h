@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msg.h,v 1.1 2004-08-24 15:01:53 lafrasse Exp $"
+* "@(#) $Id: msg.h,v 1.2 2004-09-07 14:25:37 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -109,7 +109,7 @@ typedef struct
 
     mcsBYTES32  timeStamp;       /**< Message date */
 
-    mcsINT32    msgBodySize;     /**< Message body size */
+    mcsBYTES8   msgBodySize;     /**< Message body size */
 
 } msgHEADER;
 
