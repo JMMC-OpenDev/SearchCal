@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+# "@(#) $Id: Makefile,v 1.2 2005-01-21 15:23:53 gluck Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/01/21 08:14:25  gluck
+# Creation
+#
 #
 # scetre    22-Sep-2004  Created
 #
@@ -180,4 +183,65 @@ install : install_all
 
 db : db_all
 	@echo " . . . ../DB done"
+
+###########################################################
+#
+#   Makefile to create a test module for C and C++ library
+#   with python
+#
+###########################################################
+
+#### WARNING : test not available for the moment. alx.i file does not take into
+# consideration the alxCONFIDENCE_INDEX enumeration.
+#
+# Test generation: make gentest => ok
+# Test execution: python testPyAlxComputeMissingMagnitudeBrightObj.py => not ok
+# Error is :
+# Traceback (most recent call last):
+#  File "testPyAlxComputeMissingMagnitudeBrightObj.py", line 140, in ?
+#    confIdx = pyAlx.new_alxCONFIDENCE_INDEXp()
+# AttributeError: 'module' object has no attribute 'new_alxCONFIDENCE_INDEXp'
+#
+# The following line is not generated in the alx.i file (if it is added in the
+# alx.i file, it works)
+# %pointer_functions(alxCONFIDENCE_INDEX,alxCONFIDENCE_INDEXp);
+# Error may be in the xsl files located in /home/MCS/config directory
+
+XSL_SOURCE = /home/MCS/config/
+
+MODULE_NAME = pyAlx
+
+HEADER_FILE = alx
+
+SOURCE_FILE = 
+
+OBJECT_FILE = 
+
+HEADER_PATH =  -I../include -I/home/MCS/include
+
+LIBRARYtoPROCESS =  -lalx -lmcs -llog -lerr -lmisc -lgdome
+
+LIBRARY_PATH =  -L../lib -L/home/MCS/lib
+
+
+gentest: $(MODULE_NAME).so
+
+$(HEADER_FILE).i: ../include/$(HEADER_FILE).h
+	swig -I$(HEADER_PATH) -includeall -ignoremissing -module $(MODULE_NAME) -xml -o $(HEADER_FILE).xml ../include/$(HEADER_FILE).h
+	xsltproc $(XSL_SOURCE)/mkfSTKToInterface.xsl $(HEADER_FILE).xml > $(HEADER_FILE).i
+
+$(HEADER_FILE)_wrap.c: $(HEADER_FILE).i
+	swig $(HEADER_PATH) -includeall -ignoremissing -python $(HEADER_FILE).i
+	xsltproc $(XSL_SOURCE)/mkfSTKToPythonHelp.xsl $(HEADER_FILE).xml >> $(MODULE_NAME).py
+
+$(HEADER_FILE)_wrap.o: $(HEADER_FILE)_wrap.c
+	gcc -I/usr/include/python2.3/ -c -fpic $(SOURCE_FILE) $(HEADER_FILE)_wrap.c $(HEADER_PATH)
+
+$(MODULE_NAME).so: $(HEADER_FILE)_wrap.o 
+	gcc -shared $(LIBRARYtoPROCESS) $(LIBRARY_PATH) $(OBJECT_FILE) $(HEADER_FILE)_wrap.o -o _$(MODULE_NAME).so
+	xsltproc $(XSL_SOURCE)/mkfSTKToPythonTestForC.xsl $(HEADER_FILE).xml > test_$(MODULE_NAME).py
+
+cleantest:
+	rm -f *~ $(HEADER_FILE).i *_wrap.* $(HEADER_FILE).xml $(OBJECT_FILE) _$(MODULE_NAME).so $(MODULE_NAME).py* test_$(MODULE_NAME).py
+
 #___oOo___
