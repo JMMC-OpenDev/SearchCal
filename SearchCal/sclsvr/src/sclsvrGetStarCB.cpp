@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.9 2005-01-31 13:33:54 scetre Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.10 2005-02-02 14:24:56 scetre Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.9 2005-01-31 13:33:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.10 2005-02-02 14:24:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -146,9 +146,23 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     // The star asked
     vobsSTAR *tmpStar=(calibratorList.GetNextStar(mcsTRUE));
     // A property table wanted
-    int nbProperties = 13;
-    mcsSTRING64 starProperty[13] = 
+    int nbProperties = 25;
+    mcsSTRING64 starProperty[25] = 
     {
+        vobsSTAR_ID_ALTERNATIVE,
+        vobsSTAR_SPECT_TYPE_MK,
+        vobsSTAR_POS_GAL_LAT,
+        vobsSTAR_POS_GAL_LON,
+        vobsSTAR_POS_PARLX_TRIG,
+        vobsSTAR_PHOT_JHN_B,
+        vobsSTAR_PHOT_JHN_V,
+        vobsSTAR_PHOT_JHN_R,
+        vobsSTAR_PHOT_JHN_I,
+        vobsSTAR_PHOT_JHN_J,
+        vobsSTAR_PHOT_JHN_H,
+        vobsSTAR_PHOT_JHN_K,
+        vobsSTAR_PHOT_JHN_L,
+        vobsSTAR_PHOT_JHN_M,
         sclsvrCALIBRATOR_BO,
         sclsvrCALIBRATOR_VO,
         sclsvrCALIBRATOR_RO,
@@ -158,10 +172,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         sclsvrCALIBRATOR_KO,
         sclsvrCALIBRATOR_LO,
         sclsvrCALIBRATOR_MO,
-        vobsSTAR_SPECT_TYPE_MK,
-        vobsSTAR_POS_GAL_LAT,
-        vobsSTAR_POS_GAL_LON,
-        vobsSTAR_POS_PARLX_TRIG
+        sclsvrCALIBRATOR_ANGULAR_DIAMETER,
+        sclsvrCALIBRATOR_ANGULAR_DIAMETER_ERROR,
     };
     // for each property
     for (int i=0; i<nbProperties; i++)

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.3 2005-01-31 13:33:54 scetre Exp $"
+* "@(#) $Id: sclsvrGetCalCB.cpp,v 1.4 2005-02-02 14:24:56 scetre Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.3 2005-01-31 13:33:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.4 2005-02-02 14:24:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -302,19 +302,11 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     // Pack the list result in a buffer in order to send it
     miscDYN_BUF dynBuff;
     miscDynBufInit(&dynBuff);
+    
     calibratorList.Pack(&dynBuff);
 
     msg.SetBody(miscDynBufGetBuffer(&dynBuff));
-    
-    sclsvrCALIBRATOR_LIST coherentDiamList;
-    calibratorList.GetCoherentDiameterList(&coherentDiamList);
-    //coherentDiamList.Display();
-    
-
-    sclsvrCALIBRATOR_LIST visibilityOKList;
-    calibratorList.GetVisibilityOkList(&visibilityOKList);
-    //visibilityOKList.Display();
-    
+   
     calibratorList.Clear();
     starList.Clear();
     // Send reply
