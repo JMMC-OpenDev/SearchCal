@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCMD.C,v 1.2 2004-11-23 08:36:36 mella Exp $"
+* "@(#) $Id: cmdCMD.C,v 1.3 2004-11-23 13:19:29 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCMD.C,v 1.2 2004-11-23 08:36:36 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCMD.C,v 1.3 2004-11-23 13:19:29 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -241,6 +241,173 @@ mcsLOGICAL cmdCMD::isDefined(string paramName)
     return p->isDefined();
 }
 
+/** 
+ *  Get the user value of a parameter.
+ *
+ * \param paramName  the name of the parameter.
+ * \param param  the storage data pointer.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsINT32 *param)
+{
+    logExtDbg("cmdCMD::getParamValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        // \todo errAdd 
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return FAILURE;
+    }
+    return p->getUserValue(param);
+}
+
+/** 
+ *  Get the user value of a parameter.
+ *
+ * \param paramName  the name of the parameter.
+ * \param param  the storage data pointer.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, char **param)
+{
+    logExtDbg("cmdCMD::getParamValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        // \todo errAdd 
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return FAILURE;
+    }
+    return p->getUserValue(param);
+}
+
+/** 
+ *  Get the user value of a parameter.
+ *
+ * \param paramName  the name of the parameter.
+ * \param param  the storage data pointer.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsDOUBLE *param)
+{
+    logExtDbg("cmdCMD::getParamValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        // \todo errAdd 
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return FAILURE;
+    }
+    return p->getUserValue(param);
+}
+
+/** 
+ *  Get the user value of a parameter.
+ *
+ * \param paramName  the name of the parameter.
+ * \param param  the storage data pointer.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::getParamValue(string paramName, mcsLOGICAL *param)
+{
+    logExtDbg("cmdCMD::getParamValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        // \todo errAdd 
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return FAILURE;
+    }
+    return p->getUserValue(param);
+}
+
+/** 
+ *  Get the default value of a parameter.
+ *
+ * \param paramName  the name of the parameter.
+ * \param param  the storage data pointer.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsINT32 *param)
+{
+    logExtDbg("cmdCMD::getParamValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        // \todo errAdd 
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return FAILURE;
+    }
+    return p->getDefaultValue(param);
+}
+
+/** 
+ *  Get the default value of a parameter.
+ *
+ * \param paramName  the name of the parameter.
+ * \param param  the storage data pointer.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, char **param)
+{
+    logExtDbg("cmdCMD::getParamValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        // \todo errAdd 
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return FAILURE;
+    }
+    return p->getDefaultValue(param);
+}
+
+/** 
+ *  Get the default value of a parameter.
+ *
+ * \param paramName  the name of the parameter.
+ * \param param  the storage data pointer.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsDOUBLE *param)
+{
+    logExtDbg("cmdCMD::getParamValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        // \todo errAdd 
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return FAILURE;
+    }
+    return p->getDefaultValue(param);
+}
+
+/** 
+ *  Get the default value of a parameter.
+ *
+ * \param paramName  the name of the parameter.
+ * \param param  the storage data pointer.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCMD::getDefaultParamValue(string paramName, mcsLOGICAL *param)
+{
+    logExtDbg("cmdCMD::getParamValue()");
+    cmdPARAM *p;
+    if( getParam(paramName, &p) == FAILURE )
+    {
+        // \todo errAdd 
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return FAILURE;
+    }
+    return p->getDefaultValue(param);
+}
 
 /*
  * Protected methods
@@ -769,7 +936,6 @@ mcsCOMPL_STAT cmdCMD::parseCdfForParam(GdomeElement *param)
         }
         else
         {
-            cout << "it is optional#######################" <<endl;
             attrValue = gdome_a_nodeValue(attribute, &exc);
 
             str = gdome_str_mkref ("true");

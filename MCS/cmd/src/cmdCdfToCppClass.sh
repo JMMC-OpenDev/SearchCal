@@ -2,7 +2,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdCdfToCppClass.sh,v 1.2 2004-11-21 19:59:02 mella Exp $"
+# "@(#) $Id: cmdCdfToCppClass.sh,v 1.3 2004-11-23 13:19:29 mella Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
@@ -52,6 +52,7 @@ fi
 
 MODULENAME=$2
 XSLFILE=`miscLocateFile cmdCdfToCppClass.xsl`
+
 echo "Transforming $1 with $XSLFILE"
 
 xsltproc --stringparam "moduleName" $MODULENAME $XSLFILE $1

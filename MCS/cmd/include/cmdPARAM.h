@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.h,v 1.2 2004-11-23 08:36:35 mella Exp $"
+* "@(#) $Id: cmdPARAM.h,v 1.3 2004-11-23 13:19:28 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -52,6 +52,14 @@ public:
     virtual string getHelp();
     virtual mcsCOMPL_STAT setUserValue(string value);
     virtual mcsCOMPL_STAT setDefaultValue(string value);
+    virtual mcsCOMPL_STAT getUserValue(mcsINT32 *value);
+    virtual mcsCOMPL_STAT getUserValue(mcsDOUBLE *value);
+    virtual mcsCOMPL_STAT getUserValue(mcsLOGICAL *value);
+    virtual mcsCOMPL_STAT getUserValue(char **value);
+    virtual mcsCOMPL_STAT getDefaultValue(mcsINT32 *value);
+    virtual mcsCOMPL_STAT getDefaultValue(mcsDOUBLE *value);
+    virtual mcsCOMPL_STAT getDefaultValue(mcsLOGICAL *value);
+    virtual mcsCOMPL_STAT getDefaultValue(char **value);
 
 protected:
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCMD.h,v 1.2 2004-11-23 08:36:35 mella Exp $"
+* "@(#) $Id: cmdCMD.h,v 1.3 2004-11-23 13:19:28 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -58,20 +58,14 @@ public:
     virtual mcsLOGICAL isDefined(string paramName);
     virtual mcsLOGICAL hasDefaultValue(string paramName);
     virtual mcsLOGICAL isOptional(string paramName);
-
-    /*
-     * \todo implements following methods
-
-     virtual mcsCOMPL_STAT getParamValue(string paramName, mcsINT32* param);
-     virtual mcsCOMPL_STAT getParamValue(string paramName, char* param);
-     virtual mcsCOMPL_STAT getParamValue(string paramName, mcsDOUBLE* param);
-     virtual mcsCOMPL_STAT getParamValue(string paramName, mcsLOGICAL* param);
-     
-     virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsINT32* param);
-     virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, char* param);
-     virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsDOUBLE* param);
-     virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsLOGICAL* param);
-     */
+    virtual mcsCOMPL_STAT getParamValue(string paramName, mcsINT32 *param);
+    virtual mcsCOMPL_STAT getParamValue(string paramName, char **param);
+    virtual mcsCOMPL_STAT getParamValue(string paramName, mcsDOUBLE *param);
+    virtual mcsCOMPL_STAT getParamValue(string paramName, mcsLOGICAL *param);
+    virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsINT32 *param);
+    virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, char **param);
+    virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsDOUBLE *param);
+    virtual mcsCOMPL_STAT getDefaultParamValue(string paramName, mcsLOGICAL *param);
 
 protected:
 

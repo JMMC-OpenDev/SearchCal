@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdTEST.C,v 1.2 2004-11-23 08:36:39 mella Exp $"
+* "@(#) $Id: cmdTEST.C,v 1.3 2004-11-23 13:19:30 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  *  Simple test file for cmdCMD class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.C,v 1.2 2004-11-23 08:36:39 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.C,v 1.3 2004-11-23 13:19:30 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -77,34 +77,69 @@ int main(int argc, char *argv[])
     }
 
     logSetStdoutLogLevel(logEXTDBG);
-   
+    string mnemo, params; 
 
     if(argc == 1)
     {
-        cout<<"Simple default command"<<endl;
-        cmdCMD myCmd("VALID", "-integer 1 -double 0.1 -boolean true -string \"str with blank and --\"");
-        string help;
-        help = myCmd.getHelp();
-        cout<<help<<endl;
+        mnemo.assign("VALID");
+        params.assign("-integer 1 -double 0.1 -boolean true -string \"str with blank and --\"");
     }
-    
     if(argc == 2)
     {
-        cout<<"User command " << argv[1] <<endl;
-        cmdCMD myCmd(argv[1], "-integer 1 -double 0.1 -boolean true -string \"str with blank and --\"");
-        string help;
-        help = myCmd.getHelp();
-        cout<<help<<endl;
+        mnemo.assign("VALID");
+        params.assign(argv[1]);
     }
     
     if(argc == 3)
     {
-        cout<<"User command " << argv[1] <<endl;
-        cout<<"User param " << argv[2] <<endl;
-        cmdCMD myCmd(argv[1], argv[2]);
-        string help;
-        help = myCmd.getHelp();
-        cout<<help<<endl;
+        mnemo.assign(argv[1]);
+        params.assign(argv[2]);
+    }
+    
+    // printf things to parse
+    cout<<"MNEMO = " << mnemo <<endl;
+    cout<<"PARAMS = " << params <<endl;
+
+    cmdCMD myCmd(mnemo, params);
+    
+    string help;
+    help = myCmd.getHelp();
+    cout<<help<<endl;
+
+    if (argc != 3)
+    {
+        // we have parsed a VALID command
+        // get variables from mandatory parameters
+        
+        string pName("integer");
+        mcsINT32 v1;
+        if(myCmd.getParamValue(pName,&v1)==FAILURE) {
+            cout << "Can't get user value into myCmd for parameter " << pName << endl;
+        } else {
+            cout << pName << " parameter from myCmd gets the next user value: " << v1 << endl;
+        }
+
+        pName.assign("double");
+        mcsDOUBLE v2;
+        if(myCmd.getParamValue(pName,&v2)==FAILURE) {
+            cout << "Can't get user value into myCmd for parameter " << pName << endl;
+        } else {
+            cout << pName << " parameter from myCmd gets the next user value: " << v2 << endl;
+        }
+        pName.assign("boolean");
+        mcsLOGICAL v3;
+        if(myCmd.getParamValue(pName,&v3)==FAILURE) {
+            cout << "Can't get user value into myCmd for parameter " << pName << endl;
+        } else {
+            cout << pName << " parameter from myCmd gets the next user value: " << (int)v3 << endl;
+        }
+        pName.assign("string");
+        char * v4;
+        if(myCmd.getParamValue(pName,&v4)==FAILURE) {
+            cout << "Can't get user value into myCmd for parameter " << pName << endl;
+        } else {
+            cout << pName << " parameter from myCmd gets the next user value: " << v4 << endl;
+        }
     }
     
     

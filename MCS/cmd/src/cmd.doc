@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmd.doc,v 1.4 2004-11-23 08:36:36 mella Exp $"
+* "@(#) $Id: cmd.doc,v 1.5 2004-11-23 13:19:29 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -74,18 +74,18 @@ Because MYCOMMAND is not complex, here is the end of the description.</desc>
     <params>
         <param>
             <name>p1</name>
-            <type>integer<type>
+            <type>integer</type>
             <desc>first parameter with description</desc>
         </param>
         <param>
             <name>p2</name>
-            <type>integer<type>
+            <type>integer</type>
             <defaultValue><integer>1</integer></defaultValue>
             <unit>second</unit>
         </param>
         <param>
             <name>p3</name>
-            <type>integer<type>
+            <type>integer</type>
             <desc>optional</desc>
         </param>
     </params>

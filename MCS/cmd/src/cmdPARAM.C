@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.C,v 1.2 2004-11-23 08:36:36 mella Exp $"
+* "@(#) $Id: cmdPARAM.C,v 1.3 2004-11-23 13:19:29 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.C,v 1.2 2004-11-23 08:36:36 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.C,v 1.3 2004-11-23 13:19:29 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -259,7 +259,6 @@ string cmdPARAM::getHelp()
 mcsCOMPL_STAT cmdPARAM::setUserValue(string value)
 {
     logExtDbg("cmdPARAM::setUserValue()");
-        cout << "value is " << value << endl;
     _userValue=value;
     return SUCCESS;
 }
@@ -279,6 +278,171 @@ mcsCOMPL_STAT cmdPARAM::setDefaultValue(string value)
     return SUCCESS;
 }
 
+/** 
+ * Get the user value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::getUserValue(mcsINT32 *value)
+{
+    logExtDbg("cmdPARAM::getUserValue()");
+    if (sscanf (_userValue.data(), "%d", value) != 1)
+    {
+        // \todo errAdd(cmdERR_INTEGER_VALUE, _userValue);
+        return FAILURE;
+    }
+    return SUCCESS;
+}
+
+/** 
+ * Get the user value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::getUserValue(mcsDOUBLE *value)
+{
+    logExtDbg("cmdPARAM::getUserValue()");
+     if (sscanf (_userValue.data(), "%lf", value) != 1)
+    {
+        // \todo errAdd(cmdERR_DOUBLE_VALUE, _userValue);
+        return FAILURE;
+    }
+    return SUCCESS;
+}
+
+/** 
+ * Get the user value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::getUserValue(mcsLOGICAL *value)
+{
+    logExtDbg("cmdPARAM::getUserValue()");
+    if ( (_userValue.compare("1") == 0) ||
+         (_userValue.compare("true") == 0))
+    {
+        *value = mcsTRUE;
+    }
+    else if ( (_userValue.compare("0") == 0) ||
+              (_userValue.compare("false") == 0))
+    {
+        *value = mcsFALSE;
+    }
+    else
+    {
+        // \todo errAdd(cmdERR_LOGICAL_VALUE, _userValue);
+        return FAILURE;
+    }
+    return SUCCESS;
+}
+
+/** 
+ * Get the user value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::getUserValue(char **value)
+{
+    logExtDbg("cmdPARAM::getUserValue()");
+    if(_userValue.empty())
+    {
+        // \todo errAdd(cmdERR_STRING_VALUE, _userValue);
+        return FAILURE;
+    }
+    *value = (char *)_userValue.data();
+    return SUCCESS;
+}
+
+/** 
+ * Get the default value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsINT32 *value)
+{
+    logExtDbg("cmdPARAM::getDefaultValue()");
+    if (sscanf (_userValue.data(), "%d", value) != 1)
+    {
+        // \todo errAdd(cmdERR_INTEGER_VALUE, _userValue);
+        return FAILURE;
+    }
+    return SUCCESS;    
+}
+
+/** 
+ * Get the default value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsDOUBLE *value)
+{
+    logExtDbg("cmdPARAM::getDefaultValue()");
+     if (sscanf (_userValue.data(), "%lf", value) != 1)
+    {
+        // \todo errAdd(cmdERR_DOUBLE_VALUE, _userValue);
+        return FAILURE;
+    }
+    return SUCCESS;
+}
+
+/** 
+ * Get the default value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::getDefaultValue(mcsLOGICAL *value)
+{
+    logExtDbg("cmdPARAM::getDefaultValue()");
+    if ( (_userValue.compare("1") == 0) ||
+         (_userValue.compare("true") == 0))
+    {
+        *value = mcsTRUE;
+    }
+    else if ( (_userValue.compare("0") == 0) ||
+              (_userValue.compare("false") == 0))
+    {
+        *value = mcsFALSE;
+    }
+    else
+    {
+        // \todo errAdd(cmdERR_LOGICAL_VALUE, _userValue);
+        return FAILURE;
+    }
+    return SUCCESS;
+}
+
+/** 
+ * Get the default value.
+ *
+ * \param value the storage data pointer
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdPARAM::getDefaultValue(char **value)
+{
+    logExtDbg("cmdPARAM::getDefaultValue()");
+    if(_userValue.empty())
+    {
+        // \todo errAdd(cmdERR_STRING_VALUE, _userValue);
+        return FAILURE;
+    }
+    *value = (char*)_userValue.data();
+    return SUCCESS;
+}
 
 /*
  * Protected methods
