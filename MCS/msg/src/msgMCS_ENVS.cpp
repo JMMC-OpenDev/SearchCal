@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMCS_ENVS.cpp,v 1.2 2004-12-06 16:35:08 lafrasse Exp $"
+* "@(#) $Id: msgMCS_ENVS.cpp,v 1.3 2004-12-07 07:55:35 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,9 @@
 * gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
 * lafrasse  03-Dec-2004  Added GetEnvLine() method and completed GetHostName()
 *                        and GetPortNumber() methods
-*
+* gzins     07-Dec-2004  Improved error messages
+*                        Fixed bug when testing result of miscResolvePath in
+*                        LoadEnvListFile method
 *
 *******************************************************************************/
 
@@ -19,7 +21,7 @@
  * msgMCS_ENVS class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMCS_ENVS.cpp,v 1.2 2004-12-06 16:35:08 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMCS_ENVS.cpp,v 1.3 2004-12-07 07:55:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -125,13 +127,13 @@ const char* msgMCS_ENVS::GetHostName(const char *envName)
     }
 
     // Read the line host name value
-    mcsINT32 readValueNumber = 0;
-    readValueNumber = sscanf(envLine, "%*s %s %*d", _hostName);
+    mcsINT32 nbReadValue = 0;
+    nbReadValue = sscanf(envLine, "%*s %s %*d", _hostName);
 
     // If the sscanf didn't read the right number of values
-    if (readValueNumber != 1)
+    if (nbReadValue != 1)
     {
-        errAdd(msgERR_FORMAT_ENVLIST);
+        errAdd(msgERR_FORMAT_ENVLIST, envLine, "$MCSROOT/etc/mcsEnvList");
         return ((char*)NULL);
     }
 
@@ -174,7 +176,7 @@ const mcsINT32 msgMCS_ENVS::GetPortNumber(const char *envName)
             return portNumber;
         }
     }
-
+    
     // If the MCS Env. List file has not been loaded yet
     if (_envListFileLoaded == mcsFALSE)
     {
@@ -194,13 +196,13 @@ const mcsINT32 msgMCS_ENVS::GetPortNumber(const char *envName)
     }
 
     // Read the line host name value
-    mcsINT32 readValueNumber = 0;
-    readValueNumber = sscanf(envLine, "%*s %*s %d", &portNumber);
+    mcsINT32 nbReadValue = 0;
+    nbReadValue = sscanf(envLine, "%*s %*s %d", &portNumber);
 
     // If the sscanf didn't read the right number of values
-    if (readValueNumber != 1)
+    if (nbReadValue != 1)
     {
-        errAdd(msgERR_FORMAT_ENVLIST);
+        errAdd(msgERR_FORMAT_ENVLIST, envLine, "$MCSROOT/etc/mcsEnvList");
         return -1;
     }
 
@@ -231,10 +233,11 @@ const mcsINT32 msgMCS_ENVS::GetPortNumber(const char *envName)
  */
 mcsCOMPL_STAT msgMCS_ENVS::LoadEnvListFile(void)
 {
+    logExtDbg("msgMCS_ENVS::LoadEnvListFile()"); 
     // Resolve path of MCS environment list file
     char *fullPath;
     fullPath = miscResolvePath("$MCSROOT/etc/mcsEnvList");
-    if (fullPath == NULL);
+    if (fullPath == NULL)
     {
         return FAILURE;
     }
@@ -265,7 +268,7 @@ char* msgMCS_ENVS::GetEnvLine(const char *envName)
      */
     mcsENVNAME parsedEnvName;
     memset(parsedEnvName, 0, sizeof(parsedEnvName));
-    mcsINT32 readValueNumber = 0;
+    mcsINT32 nbReadValue = 0;
     char* currentLine = miscDynBufGetNextLinePointer(&_envList, NULL, mcsTRUE);
     do
     {
@@ -273,17 +276,17 @@ char* msgMCS_ENVS::GetEnvLine(const char *envName)
         if ((currentLine != NULL) && (strlen(currentLine) != 0))
         {
             // Try to read the line values
-            readValueNumber = sscanf(currentLine, "%s %*s %*d", parsedEnvName);
+            nbReadValue = sscanf(currentLine, "%s %*s %*d", parsedEnvName);
     
             // If the sscanf didn't read the right number of values
-            if (readValueNumber != 1)
+            if (nbReadValue != 1)
             {
-                errAdd(msgERR_FORMAT_ENVLIST);
+                errAdd(msgERR_FORMAT_ENVLIST, currentLine, "$MCSROOT/etc/mcsEnvList");
                 return ((char*)NULL);
             }
 
             // If the searched environmnt name is in the current line
-            if (strcmp(parsedEnvName, envName) != 0)
+            if (strcmp(parsedEnvName, envName) == 0)
             {
                 return currentLine;
             }
@@ -294,7 +297,8 @@ char* msgMCS_ENVS::GetEnvLine(const char *envName)
     }
     while (currentLine != NULL);
 
-    errAdd(msgERR_UNKNOWN_ENV, envName);
+    errAdd(msgERR_UNKNOWN_ENV, envName, "$MCSROOT/etc/mcsEnvList");
+
     return ((char*)NULL);
 }
 
