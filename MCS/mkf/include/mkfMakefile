@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.5 2004-11-18 16:23:01 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.6 2004-11-18 16:56:56 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
@@ -9,6 +9,7 @@
 # gzins     17-Nov-2004  Added fnd, evh and msg to the MCS library list
 # gzins     18-Nov-2004  Removed MCS C++ library from MCS_LIBLIST, and put
 #                        them in a separated list named MCSCPP_LIBLIST
+# gzins     18-Nov-2004  Fixed bug related to MCS C++ libraries
 # 
 #*******************************************************************************
 #   NAME
@@ -366,9 +367,11 @@ ifeq ($(platform),Linux)
     LIB_DEFAULT   = -L/usr/local/lib
     XINC_DEFAULT  = -I/usr/X11R6/include/X11 
     XLIB_DEFAULT  = -L/usr/X11R6/lib     
-    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -lfnd -lmsg -levh -lgdome -lm 
-    MCSCPP_LIBLIST       := -lfnd -lcmd -lmsg -levh
-    MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) -lmcs -llog -lerr -lmisc -lfnd -lmsg -levh $(NOSHARED_OFF) -lgdome -lm 
+    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc  
+    MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lcmd -lmsg -levh
+    MCSSTD_LIBLIST       := -lgdome -lm
+    MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)  
+    MCSCPP_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(MCSCPP_LIBLIST) $(NOSHARED_OFF) $(MCSSTD_LIBLIST)
 endif
 
 BINDIR   = bin
