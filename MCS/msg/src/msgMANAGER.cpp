@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.13 2005-01-26 08:47:18 gzins Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.14 2005-01-26 17:54:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/01/26 08:47:18  gzins
+ * Added PrepareReply to fix bug related to wrong message type when sending reply to sender.
+ *
  * Revision 1.12  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
@@ -31,7 +34,7 @@
  * msgMANAGER class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.13 2005-01-26 08:47:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.14 2005-01-26 17:54:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -359,29 +362,6 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
                 return mcsFAILURE;
             }
         }
-        // Else if action level specified
-        else if (strcmp(argv[optInd], "-a") == 0)
-        {
-            // Set new action log level
-            if ((optInd + 1) < argc)
-            {
-                optInd += 1;
-                optarg = argv[optInd];
-                if ( sscanf (optarg, "%d", &level) != 1)
-                {
-                    logError ("%s: Argument to option %s is invalid: '%s'",
-                              mcsGetProcName(), argv[optInd-1], optarg);
-                    return mcsFAILURE;
-                }
-                logSetActionLogLevel((logLEVEL)level);
-            }
-            else
-            {
-                logError ("%s: Option %s requires an argument",
-                          mcsGetProcName(), argv[optInd]);
-                return mcsFAILURE;
-            }
-        }
         // Else if '-noDate' option specified
         else if (strcmp(argv[optInd], "-noDate") == 0)
         {
@@ -417,7 +397,6 @@ mcsCOMPL_STAT msgMANAGER::Usage(void)
     cout << "Usage:" << mcsGetProcName() << " [OPTIONS]"<< endl;
     cout <<" Standard options: -l <level>   set file log level" << endl;
     cout <<"                   -v <level>   set stdout log level" << endl;
-    cout <<"                   -a <level>   set action log level" << endl;
     cout <<"                   -h           print this help" << endl;
     cout <<"                   -version     print the version number of the ";
     cout <<"software" << endl;
