@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.1 2005-02-08 06:38:44 gzins Exp $"
+ * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.2 2005-02-11 16:41:40 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/08 06:38:44  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -63,7 +66,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.1 2005-02-08 06:38:44 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.2 2005-02-11 16:41:40 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -139,16 +142,16 @@ int main(int argc, char *argv[])
 
     // Set request
     vobsREQUEST request;
-    request.SetConstraint(STAR_NAME_ID, "ETA TAU");
-    request.SetConstraint(RA_ID, "00 09 24.64");
-    request.SetConstraint(DEC_ID, "-45 44 50.7");
-    request.SetConstraint(STAR_MAGNITUDE_ID, "2.50");
-    request.SetConstraint(OBSERVED_BAND_ID, "N");
-    request.SetConstraint(SEARCH_BOX_RA_ID, "15");
-    request.SetConstraint(SEARCH_BOX_DEC_ID, "5");
-    request.SetConstraint(STAR_WLEN_ID, "2.20");
-    request.SetConstraint(STAR_EXPECTED_VIS_ID, "2");
-    request.SetConstraint(STAR_MAX_ERR_VIS_ID, "0.00032");
+    request.SetObjectName("ETA TAU");
+    request.SetObjectRa("00 09 24.64");
+    request.SetObjectDec("-45 44 50.7");
+    request.SetObjectMag(2.50);
+    request.SetSearchBand("N");
+    request.SetDeltaRa(15.0);
+    request.SetDeltaDec(5.0);
+    request.SetMinDeltaMag(0.05);
+    request.SetMaxDeltaMag(0.2);
+    request.SetMaxNbOfSelectedObjects(6);
     request.Display();
 
     // Create a star list
