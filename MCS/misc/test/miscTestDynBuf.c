@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestDynBuf.c,v 1.17 2005-02-15 12:43:26 gzins Exp $"
+ * "@(#) $Id: miscTestDynBuf.c,v 1.18 2005-02-16 14:40:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/02/15 12:43:26  gzins
+ * Removed Pointer suffix to miscDynBufGetNextLine and miscDynBufGetBuffer
+ *
  * Revision 1.16  2005/02/15 09:44:37  gzins
  * Added CVS log as file modification history
  *
@@ -32,7 +35,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.17 2005-02-15 12:43:26 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.18 2005-02-16 14:40:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -932,57 +935,58 @@ int main (int argc, char *argv[])
     /* miscDynBufGetNextLine*/
     printf("---------------------------------------------------------------\n");
     mcsLOGICAL skipFlag;
+    mcsSTRING1024 nextLine;
     printf("------------------\n");
-    bytes = NULL;
+    const char *pos = NULL;
     skipFlag = mcsFALSE;
     miscDynBufSetCommentPattern(&dynBuf, "\0");
     printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-    while ((bytes = miscDynBufGetNextLine(&dynBuf, bytes, skipFlag))
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, nextLine, skipFlag))
            != NULL)
     {
         printf("------------------\n");
-        printf("miscDynBufGetNextLine() = '%s'\n", bytes);
+        printf("miscDynBufGetNextLine() = '%s'\n", nextLine);
     }
     printf("------------------\n");
-    bytes = NULL;
+    pos = NULL;
     skipFlag = mcsFALSE;
     miscDynBufSetCommentPattern(&dynBuf, "#");
     printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-    while ((bytes = miscDynBufGetNextLine(&dynBuf, bytes, skipFlag))
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, nextLine, skipFlag))
            != NULL)
     {
         printf("------------------\n");
-        printf("miscDynBufGetNextLine() = '%s'\n", bytes);
+        printf("miscDynBufGetNextLine() = '%s'\n", nextLine);
     }
     printf("------------------\n");
-    bytes = NULL;
+    pos = NULL;
     skipFlag = mcsTRUE;
     miscDynBufSetCommentPattern(&dynBuf, "\0");
     printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-    while ((bytes = miscDynBufGetNextLine(&dynBuf, bytes, skipFlag))
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, nextLine, skipFlag))
            != NULL)
     {
         printf("------------------\n");
-        printf("miscDynBufGetNextLine() = '%s'\n", bytes);
+        printf("miscDynBufGetNextLine() = '%s'\n", nextLine);
     }
     printf("------------------\n");
-    bytes = NULL;
+    pos = NULL;
     skipFlag = mcsTRUE;
     miscDynBufSetCommentPattern(&dynBuf, "#");
     printf("skipFlag = '%s Comment Skiping' | commentPattern = '%s'\n",
            (skipFlag == mcsFALSE?"WITHOUT":"WITH"),
            miscDynBufGetCommentPattern(&dynBuf));
-    while ((bytes = miscDynBufGetNextLine(&dynBuf, bytes, skipFlag))
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, nextLine, skipFlag))
            != NULL)
     {
         printf("------------------\n");
-        printf("miscDynBufGetNextLine() = '%s'\n", bytes);
+        printf("miscDynBufGetNextLine() = '%s'\n", nextLine);
     }
     printf("\n");
 
