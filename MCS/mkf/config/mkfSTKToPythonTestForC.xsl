@@ -43,7 +43,7 @@
 				<xsl:value-of select="$module"/>
 				<xsl:text>.</xsl:text>
 				<xsl:value-of select="$Type"/>
-				<xsl:text>_lire()&#xA;</xsl:text>
+                <xsl:text>_lire(**</xsl:text><xsl:value-of select="$type"/><xsl:text>**)&#xA;</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

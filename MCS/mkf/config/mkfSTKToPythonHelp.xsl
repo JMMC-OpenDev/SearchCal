@@ -3,6 +3,7 @@
 	<xsl:output method="text" omit-xml-declaration="yes" indent="yes"/>
 
 	<xsl:include href="mkfSTK_WriteFunctionPrototype.xsl"/>
+    <xsl:include href="mkfSTK_WriteType.xsl"/>
 
 	<xsl:template name="Lire_structure">           
 		<xsl:param name="Type"/>
