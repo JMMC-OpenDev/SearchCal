@@ -2,7 +2,7 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2004-11-23 09:21:10 sccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2004-11-23 09:27:14 sccmgr Exp $"
 
  who       when         what
  ~~~~~~~~  ~~~~~~~~~~~  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,7 +29,7 @@
 -->
 
 <module name="sclsvr">
-    <desc>description</desc>
-    <resp>responsible</resp>
-    <package>package</package>
+    <desc>Search calibrators Server</desc>
+    <resp>S. Cetre</resp>
+    <package>SCALIB</package>
 </module>
