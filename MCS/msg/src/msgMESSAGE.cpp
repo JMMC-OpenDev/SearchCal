@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.18 2005-01-29 07:17:59 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.19 2005-01-29 10:05:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/01/29 07:17:59  gzins
+ * Fixed wrong message body initialization in constructor
+ *
  * Revision 1.17  2005/01/28 23:49:44  gzins
  * Defined GetBody and GetBodySize as constant method
  *
@@ -47,7 +50,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.18 2005-01-29 07:17:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.19 2005-01-29 10:05:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -392,7 +395,7 @@ mcsLOGICAL msgMESSAGE::IsLastReply(void)
     logExtDbg("msgMESSAGE::GetLastReplyFlag()");
 
     // Return weither the current message is the last one or not
-    return _header.lastReply;
+    return ((_header.lastReply == 'T') ? mcsTRUE : mcsFALSE);
 }
 
 /**
@@ -407,7 +410,7 @@ mcsCOMPL_STAT msgMESSAGE::SetLastReplyFlag(mcsLOGICAL flag)
     logExtDbg("msgMESSAGE::SetLastReplyFlag()");
 
     // Copy the given value in the message header associated field
-    _header.lastReply = flag;
+    _header.lastReply = (flag == mcsTRUE) ? 'T' : 'F';
 
     return mcsSUCCESS;
 }
@@ -444,7 +447,7 @@ char* msgMESSAGE::GetBody(void) const
     else
     {
         // Return a pointer to the message body
-        return miscDynBufGetBufferPointer(&_body);
+        return miscDynBufGetBuffer(&_body);
     }
     // End if
 }

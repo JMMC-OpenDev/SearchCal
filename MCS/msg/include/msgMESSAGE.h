@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.19 2005-01-29 07:17:59 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.20 2005-01-29 10:05:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/01/29 07:17:59  gzins
+ * Fixed wrong message body initialization in constructor
+ *
  * Revision 1.18  2005/01/28 23:50:00  gzins
  * Defined GetBody and GetBodySize as constant method
  *
@@ -114,7 +117,7 @@ typedef struct
     msgTYPE     type;            /**< Message type */
     mcsCMD      command;         /**< Command name */
     mcsSTRING16 commandId;       /**< Command Id */
-    mcsLOGICAL  lastReply;       /**< TRUE if it is the last answer */
+    mcsINT8     lastReply;       /**< 'T' if it is the last answer */
     mcsBYTES32  timeStamp;       /**< Message date */
     mcsSTRING8  msgBodySize;     /**< Message body size */
 } msgHEADER;
@@ -172,19 +175,19 @@ public:
     virtual ~msgMESSAGE                      (void);
     
     // Accessors
-    virtual char*            GetSender       (void);
-    virtual mcsCOMPL_STAT    SetSender       (const char     *buffer);
+    virtual char            *GetSender       (void);
+    virtual mcsCOMPL_STAT    SetSender       (const char     *sender);
 
-    virtual char*            GetSenderEnv    (void);
+    virtual char            *GetSenderEnv    (void);
     virtual mcsCOMPL_STAT    SetSenderEnv    (const char     *senderEnv);
 
     virtual mcsINT32         GetSenderId     (void);
     virtual mcsCOMPL_STAT    SetSenderId     (const mcsINT32 id);
 
-    virtual char*            GetRecipient    (void);
+    virtual char            *GetRecipient    (void);
     virtual mcsCOMPL_STAT    SetRecipient    (const char     *recipient);
 
-    virtual char*            GetRecipientEnv (void);
+    virtual char            *GetRecipientEnv (void);
     virtual mcsCOMPL_STAT    SetRecipientEnv (const char     *recipientEnv);
 
     virtual msgTYPE          GetType         (void);
@@ -193,7 +196,7 @@ public:
     virtual mcsINT32         GetCommandId    (void);
     virtual mcsCOMPL_STAT    SetCommandId    (const mcsINT32 id);
 
-    virtual char*            GetCommand      (void);
+    virtual char            *GetCommand      (void);
     virtual mcsCOMPL_STAT    SetCommand      (const char     *command);
 
     virtual mcsLOGICAL       IsLastReply     (void);
@@ -201,7 +204,7 @@ public:
 
     virtual mcsLOGICAL       IsInternal      (void);
 
-    virtual char*            GetBody         (void) const;
+    virtual char            *GetBody         (void) const;
     virtual mcsINT32         GetBodySize     (void) const;
     virtual mcsCOMPL_STAT    ClearBody       (void);
     virtual mcsCOMPL_STAT    SetBody         (const char *buffer,
