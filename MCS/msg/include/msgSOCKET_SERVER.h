@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_SERVER.h,v 1.4 2004-11-23 08:25:25 scetre Exp $"
+* "@(#) $Id: msgSOCKET_SERVER.h,v 1.5 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    22-Nov-2004  Created
+* lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
 *
 *
 *******************************************************************************/
@@ -21,6 +22,17 @@
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
+
+/*
+ * MCS Headers 
+ */
+#include "mcs.h"
+
+
+/*
+ * Local Headers 
+ */
+#include "msgSOCKET_SERVER.h"
 
 
 /*
@@ -43,8 +55,6 @@
  * 
  * \todo write code example
  */
-#include "msgSOCKET.h"
-
 class msgSOCKET_SERVER : public msgSOCKET
 {
 
@@ -55,17 +65,17 @@ public:
     // Brief description of the destructor
     virtual ~msgSOCKET_SERVER();
 
-    virtual mcsCOMPL_STAT Open(std::string host, mcsINT32 port);
+    // Open a server socket on the given port number
+    virtual mcsCOMPL_STAT Open(mcsINT32 port);
+
 protected:
 
     
 private:
-    // Declaration of copy constructor and assignment operator as private
-    // methods, in order to hide them from the users.
+     // Declaration of copy constructor and assignment operator as private
+     // methods, in order to hide them from the users.
      msgSOCKET_SERVER(const msgSOCKET_SERVER&);
      msgSOCKET_SERVER& operator=(const msgSOCKET_SERVER&);
-
-
 };
 
 

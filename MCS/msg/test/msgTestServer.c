@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgTestServer.c,v 1.3 2004-11-22 14:34:13 gzins Exp $"
+* "@(#) $Id: msgTestServer.c,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"
 *
 *
 * who       when                 what
@@ -25,7 +25,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgTestServer.c,v 1.3 2004-11-22 14:34:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgTestServer.c,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -61,6 +61,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 mcsCOMPL_STAT msgDebugCB(msgMESSAGE_RAW *msg)
 {
+#if 0
     mcsINT32        index;
     mcsLOGICAL      log, verbose, printDate, printFileLine;
     mcsINT32        logLevel, verboseLevel;
@@ -202,7 +203,7 @@ mcsCOMPL_STAT msgDebugCB(msgMESSAGE_RAW *msg)
     {
         errCloseStack();
     }
-
+#endif
     return SUCCESS;
 }
 

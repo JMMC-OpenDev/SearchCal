@@ -3,13 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msg.h,v 1.9 2004-11-22 14:30:27 gzins Exp $"
+* "@(#) $Id: msg.h,v 1.10 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  10-Aug-2004  Ported from CILAS software
 * lafrasse  07-Oct-2004  Added msgIsConnected
 * lafrasse  19-Nov-2004  Moved all the C functions declaration to msgPrivate.h
+* gzins     22-Nov-2004  Moved all the C structures declaration to msgMESSAGE.h
+* lafrasse  23-Nov-2004  Added all the socket and error related headers
 *
 *
 *******************************************************************************/
@@ -20,20 +22,11 @@
  *
  */
 
-/* The following piece of code alternates the linkage type to C for all 
-functions declared within the braces, which is necessary to use the 
-functions in C++-code.
-*/
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+#include "msgSOCKET.h"
+#include "msgSOCKET_CLIENT.h"
+#include "msgSOCKET_SERVER.h"
 #include "msgMESSAGE.h"
 #include "msgMANAGER_IF.h"
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /*!msg_H*/
 

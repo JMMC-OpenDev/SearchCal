@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.cpp,v 1.4 2004-11-23 08:25:25 scetre Exp $"
+* "@(#) $Id: msgMESSAGE.cpp,v 1.5 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,6 +10,8 @@
 *                        strNcpy in order to avoid segmentation faults as far
 *                        as possible
 * lafrasse  22-Nov-2004  Added void type for functions without parameters
+* lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
+*                        msgMESSAGE, added SetLastReplyFlag method
 *
 *
 *******************************************************************************/
@@ -19,7 +21,7 @@
  * msgMESSAGE class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.4 2004-11-23 08:25:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.5 2004-11-26 13:11:28 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -51,13 +53,17 @@ using namespace std;
 /*
  * Class constructor
  */
-msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternal)
+msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
 {
     // Reset all the message structure to 0
-    memset(&_message, 0, sizeof(_message));
+    memset(&_message, 0, msgMAXLEN);
+
+    // Initializing short-cuts
+    _header = &(_message.header);
+    _body   = _message.body;
 
     // The message is considered extern by default
-    _message.header.isInternal = isInternal;
+    _isInternal = isInternalMsg;
 }
 
 
@@ -83,7 +89,7 @@ char* msgMESSAGE::GetSender(void)
     logExtDbg("msgMESSAGE::GetSender()");
 
     // Return the sender processus name
-    return _message.header.sender;
+    return _header->sender;
 }
 
 /**
@@ -98,7 +104,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
     logExtDbg("msgMESSAGE::SetSender()");
 
     // Copy the given value in the message header associated field
-    strncpy(_message.header.sender, sender, sizeof(_message.header.sender));
+    strncpy(_header->sender, sender, sizeof(_header->sender));
 
     return SUCCESS;
 }
@@ -113,7 +119,7 @@ char* msgMESSAGE::GetSenderEnv(void)
     logExtDbg("msgMESSAGE::GetSenderEnv()");
 
     // Return the message sender environnement name
-    return _message.header.senderEnv;
+    return _header->senderEnv;
 }
 
 /**
@@ -128,8 +134,7 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
     logExtDbg("msgMESSAGE::SetSenderEnv()");
 
     // Copy the given value in the message header associated field
-    strncpy(_message.header.senderEnv, senderEnv,
-            sizeof(_message.header.senderEnv));
+    strncpy(_header->senderEnv, senderEnv, sizeof(_header->senderEnv));
 
     return SUCCESS;
 }
@@ -144,7 +149,7 @@ char* msgMESSAGE::GetRecipient(void)
     logExtDbg("msgMESSAGE::GetRecipient()");
 
     // Return the message receiver processus name
-    return _message.header.recipient;
+    return _header->recipient;
 }
 
 /**
@@ -159,8 +164,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
     logExtDbg("msgMESSAGE::SetRecipient()");
 
     // Copy the given value in the message header associated field
-    strncpy(_message.header.recipient, recipient,
-            sizeof(_message.header.recipient));
+    strncpy(_header->recipient, recipient, sizeof(_header->recipient));
 
     return SUCCESS;
 }
@@ -175,7 +179,7 @@ char* msgMESSAGE::GetRecipientEnv(void)
     logExtDbg("msgMESSAGE::GetRecipientEnv()");
 
     // Return the recipient environnement name
-    return _message.header.recipientEnv;
+    return _header->recipientEnv;
 }
 
 /**
@@ -190,8 +194,7 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipientEnv(const char *recipientEnv)
     logExtDbg("msgMESSAGE::SetRecipientEnv()");
 
     // Copy the given value in the message header associated field
-    strncpy(_message.header.recipientEnv, recipientEnv,
-            sizeof(_message.header.recipientEnv));
+    strncpy(_header->recipientEnv, recipientEnv, sizeof(_header->recipientEnv));
 
     return SUCCESS;
 }
@@ -208,13 +211,13 @@ msgTYPE msgMESSAGE::GetType(void)
     logExtDbg("msgMESSAGE::GetType()");
 
     // Return the message type
-    return _message.header.type;
+    return _header->type;
 }
 
 /**
  * Set the type of the message.
  *
- * \param type the type of th message
+ * \param type the type of the message
  * 
  * \sa msgTYPE, the enumeration that list all the possible message types
  * 
@@ -225,7 +228,7 @@ mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
     logExtDbg("msgMESSAGE::SetType()");
 
     // Copy the given value in the message header associated field
-    _message.header.type = type;
+    _header->type = type;
 
     return SUCCESS;
 }
@@ -240,7 +243,7 @@ char* msgMESSAGE::GetIdentifier(void)
     logExtDbg("msgMESSAGE::GetIdentifier()");
 
     // Return the message identifier value
-    return _message.header.identifier;
+    return _header->identifier;
 }
 
 /**
@@ -255,8 +258,7 @@ mcsCOMPL_STAT msgMESSAGE::SetIdentifier(const char *identifier)
     logExtDbg("msgMESSAGE::SetIdentifier()");
 
     // Copy the given value in the message header associated field
-    strncpy(_message.header.identifier, identifier,
-            sizeof(_message.header.identifier));
+    strncpy(_header->identifier, identifier, sizeof(_header->identifier));
 
     return SUCCESS;
 }
@@ -271,7 +273,7 @@ char* msgMESSAGE::GetCommand(void)
     logExtDbg("msgMESSAGE::GetCommand()");
 
     // Return the message command name
-    return _message.header.command;
+    return _header->command;
 }
 
 /**
@@ -286,7 +288,7 @@ mcsCOMPL_STAT msgMESSAGE::SetCommand(const char *command)
     logExtDbg("msgMESSAGE::SetCommand()");
 
     // Copy the given value in the message header associated field
-    strncpy(_message.header.command, command, sizeof(_message.header.command));
+    strncpy(_header->command, command, sizeof(_header->command));
 
     return SUCCESS;
 }
@@ -298,10 +300,27 @@ mcsCOMPL_STAT msgMESSAGE::SetCommand(const char *command)
  */
 mcsLOGICAL msgMESSAGE::IsLastReply(void)
 {
-    logExtDbg("msgMESSAGE::IsLastReply()");
+    logExtDbg("msgMESSAGE::GetLastReplyFlag()");
 
     // Return weither the current message is the last one or not
-    return _message.header.lastReply;
+    return _header->lastReply;
+}
+
+/**
+ * Set weither the current message is the last one or not.
+ *
+ * \param flag mcsTRUE if the message is the last one, mcsFALSE othewise
+ * 
+ * \return always SUCCESS
+ */
+mcsCOMPL_STAT msgMESSAGE::SetLastReplyFlag(mcsLOGICAL flag)
+{
+    logExtDbg("msgMESSAGE::SetLastReplyFlag()");
+
+    // Copy the given value in the message header associated field
+    _header->lastReply = flag;
+
+    return SUCCESS;
 }
 
 /**
@@ -309,12 +328,12 @@ mcsLOGICAL msgMESSAGE::IsLastReply(void)
  *
  * \return mcsTRUE if the message is internal, mcsFALSE otherwise
  */
-mcsLOGICAL msgMESSAGE::IsInternal(void)
+mcsLOGICAL msgMESSAGE::isInternal(void)
 {
-    logExtDbg("msgMESSAGE::IsInternal()");
+    logExtDbg("msgMESSAGE::GetInternalFlag()");
 
     // Return weither the current message is an internal one or not
-    return _message.header.isInternal;
+    return _isInternal;
 }
 
 /**
@@ -327,7 +346,24 @@ msgHEADER* msgMESSAGE::GetHeaderPtr(void)
     logExtDbg("msgMESSAGE::GetHeaderPtr()");
 
     // Return a pointer to the message header
-    return &_message.header;
+    return _header;
+}
+
+/**
+ * Set weither the current message is the last one or not.
+ *
+ * \param header mcsTRUE if the message is the last one, mcsFALSE othewise
+ *
+ * \return always SUCCESS
+ */
+mcsCOMPL_STAT msgMESSAGE::SetHeader(const msgHEADER* header)
+{
+    logExtDbg("msgMESSAGE::SetHeader()");
+
+    // Copy the given value in the message header
+    memcpy(_header, header, msgHEADERLEN);
+
+    return SUCCESS;
 }
 
 /**
@@ -340,7 +376,7 @@ char* msgMESSAGE::GetBodyPtr(void)
     logExtDbg("msgMESSAGE::GetBodyPtr()");
 
     // Return a pointer to the message body
-    return _message.body;
+    return _body;
 }
 
 /**
@@ -354,7 +390,7 @@ mcsINT32 msgMESSAGE::GetBodySize(void)
 
     // Return the message body size in the localhost byte order
     mcsINT32 msgBodySize = 0;
-    sscanf(_message.header.msgBodySize, "%d", &msgBodySize);
+    sscanf(_header->msgBodySize, "%d", &msgBodySize);
 
     return msgBodySize;
 }
@@ -372,8 +408,8 @@ mcsINT32 msgMESSAGE::GetBodySize(void)
  * \return FAILURE if the to-be-copied-in byte number is greater than the
  * message body maximum size, SUCCESS otherwise
  */
-mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
-                                  mcsINT32 bufLen)
+mcsCOMPL_STAT msgMESSAGE::SetBody(const char  *buffer,
+                                  mcsINT32     bufLen)
 {
     logExtDbg("msgMESSAGE::SetBody()");
     
@@ -400,9 +436,9 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
     }
     
     // Store the new message body size, in network byte order
-    sprintf(_message.header.msgBodySize, "%d", bufLen);
+    sprintf(_header->msgBodySize, "%d", bufLen);
     // Fill the message body with the given length and buffer content
-    strncpy(_message.body, buffer, bufLen);
+    memcpy(_body, buffer, bufLen);
     
     return SUCCESS;
 }
@@ -412,12 +448,63 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
  *
  * \return the address of the internal msgMESSAGE_RAW structure
  */
-msgMESSAGE_RAW*  msgMESSAGE::GetMessageRaw(void)
+msgMESSAGE_RAW* msgMESSAGE::GetMessagePtr(void)
 {
-    logExtDbg("msgMESSAGE::GetMessageRaw()");
+    logExtDbg("msgMESSAGE::GetMessagePtr()");
 
     // Return a pointer to the message internal structure
     return &_message;
+}
+
+/**
+ * Copy the given content in the message.
+ *
+ * \param message the content be copied in
+ *
+ * \return FAILURE if the given message pointer is NULL, SUCCESS otherwise
+ */
+mcsCOMPL_STAT msgMESSAGE::SetMessage(const msgMESSAGE_RAW* message)
+{
+    logExtDbg("msgMESSAGE::SetMessage()");
+    
+    // If there is nothing to copy in...
+    if (message == NULL)
+    {
+        return FAILURE;
+    }
+
+    // Overwrite the message with the given content
+    memcpy(&_message, message, msgMAXLEN);
+    
+    return SUCCESS;
+}
+
+/**
+ * Write the msgMESSAGE content on output stream.
+ *
+ * \param o the output stream to write in
+ * \param msg the msgMESSAGE object content to write
+ * 
+ * \return the address of the internal msgMESSAGE_RAW structure
+ */
+//ostream& operator<<(ostream &o, const msgMESSAGE &msg)
+void  msgMESSAGE::Display(void)
+{
+    cout << "msgMESSAGE ="                                     << endl
+         << "{"                                                << endl
+         << "\tmsgHEADER ="                                    << endl
+         << "\t{"                                              << endl
+         << "\t\tsender       = '" << GetSender()       << "'" << endl
+         << "\t\tsenderEnv    = '" << GetSenderEnv()    << "'" << endl
+         << "\t\trecipient    = '" << GetRecipient()    << "'" << endl
+         << "\t\trecipientEnv = '" << GetRecipientEnv() << "'" << endl
+         << "\t\ttype         = '" << GetType()         << "'" << endl
+         << "\t\tidentifier   = '" << GetIdentifier()   << "'" << endl
+         << "\t\tcommand      = '" << GetCommand()      << "'" << endl
+         << "\t\tlastReply    = '" << IsLastReply()     << "'" << endl
+         << "\t}"                                              << endl
+         << "\t" << "body = '"     << GetBodyPtr()      << "'" << endl
+         << "}";
 }
 
 /*___oOo___*/

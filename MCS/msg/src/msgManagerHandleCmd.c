@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgManagerHandleCmd.c,v 1.3 2004-11-22 14:17:43 gzins Exp $"
+* "@(#) $Id: msgManagerHandleCmd.c,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -18,7 +18,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgManagerHandleCmd.c,v 1.3 2004-11-22 14:17:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgManagerHandleCmd.c,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -111,6 +111,7 @@ mcsCOMPL_STAT   msgManagerHandleCmd       (msgMESSAGE_RAW     *msg,
     /* If the received command is a DEBUG request... */ 
     else if (strcmp(msgGetCommand(msg), msgDEBUG_CMD) == 0)
     {
+#if 0
         mcsINT32   index;
         mcsLOGICAL log, verbose, printDate, printFileLine;
         mcsINT32   logLevel, verboseLevel;
@@ -252,6 +253,7 @@ mcsCOMPL_STAT   msgManagerHandleCmd       (msgMESSAGE_RAW     *msg,
         {
             errCloseStack();
         }
+#endif
     }  
     /* If the received command is a CLOSE request... */
     else if (strcmp(msgGetCommand(msg), msgCLOSE_CMD) == 0)

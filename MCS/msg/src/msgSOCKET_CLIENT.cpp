@@ -1,11 +1,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.1 2004-11-23 08:25:52 scetre Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * scetre    22-Nov-2004  Created
+* lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
 *
 *
 *******************************************************************************/
@@ -15,7 +16,7 @@
  * msgSOCKET_CLIENT class definition.
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.1 2004-11-23 08:25:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -37,21 +38,23 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "msgSOCKET.h"
-#include "msgMESSAGE.h"
 #include "msgSOCKET_CLIENT.h"
 #include "msgPrivate.h"
 
 /*
  * Class constructor
  */
-
+msgSOCKET_CLIENT::msgSOCKET_CLIENT()
+{
+}
 
 
 /*
  * Class destructor
  */
-
+msgSOCKET_CLIENT::~msgSOCKET_CLIENT()
+{
+}
 
 
 /*
@@ -59,23 +62,25 @@ using namespace std;
  */
 
 /**
- * Open a socket 
+ * Create and connect a new socket to the given host name and port number
  *
- * @param host 
- * @param port the port where the socket will be bind
+ * \param host the remote machine host name to which the socket should connect
+ * \param port the remote machine port number to which the socket should connect
  *
- * @return SUCCESS on successfull completion otherwise FAILURE is return 
- **/
-mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host,
-                   mcsINT32 port)
+ * \return SUCCESS on successfull completion otherwise FAILURE is return
+ */
+mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host, mcsINT32 port)
 {
-    // Create the socket
-    if (Create()==FAILURE)
+    logExtDbg("msgSOCKET_SERVER::Open()");
+
+    // Try to create a new socket
+    if (Create() == FAILURE)
     {
         return FAILURE;
     }
-    // Connect the socket
-    if (Connect(host, port)==FAILURE)
+
+    // Try to connect the new socket to the remote host and port
+    if (Connect(host, port) == FAILURE)
     {
         return FAILURE;
     }

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgPrivate.h,v 1.2 2004-11-19 17:15:42 lafrasse Exp $"
+* "@(#) $Id: msgPrivate.h,v 1.3 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -50,6 +50,18 @@ extern "C" {
 /*
  * Private Globals
  */
+
+
+
+
+
+
+#include "msgMESSAGE.h"
+
+
+
+
+
 
 /**
  * Connection with msgManager socket

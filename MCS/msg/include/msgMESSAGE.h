@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMESSAGE.h,v 1.5 2004-11-23 08:25:25 scetre Exp $"
+* "@(#) $Id: msgMESSAGE.h,v 1.6 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,6 +11,8 @@
 * lafrasse  19-Nov-2004  Changed all method name first letter to upper case, and
 *                        re-commented
 * lafrasse  22-Nov-2004  Added void type for functions without parameters
+* lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
+*                        msgMESSAGE, added SetLastReplyFlag method
 *
 *
 *******************************************************************************/
@@ -53,9 +55,14 @@
  */
 
 /**
+ * Message header size
+ */
+#define msgHEADERLEN             (sizeof(msgHEADER))
+
+/**
  * Maximum message body size
  */
-#define msgBODYMAXLEN            (msgMAXLEN - sizeof(msgHEADER) - 1)
+#define msgBODYMAXLEN            (msgMAXLEN - msgHEADERLEN - 1)
 
 /*
  * Enumeration type definition
@@ -85,7 +92,6 @@ typedef struct
     mcsPROCNAME recipient;       /**< Receiver processus name  */
     mcsENVNAME  recipientEnv;    /**< Receiver environnement */
     mcsSTRING8  identifier;      /**< Identifier */
-    mcsLOGICAL  isInternal;      /**< FALSE if it is external >*/
     msgTYPE     type;            /**< Message type */
     mcsCMD      command;         /**< Command name */
     mcsLOGICAL  lastReply;       /**< TRUE if it is the last answer */
@@ -104,6 +110,11 @@ typedef struct
 } msgMESSAGE_RAW;
 
 #ifdef __cplusplus
+/*
+ * System Headers 
+ */
+#include <iostream>
+
 /*
  * Class declaration
  */
@@ -124,7 +135,7 @@ class msgMESSAGE
 
 public:
     // Constructor
-    msgMESSAGE                               (const mcsLOGICAL isInternal
+    msgMESSAGE                               (const mcsLOGICAL isInternalMsg
                                               = mcsFALSE);
 
     // Destructor
@@ -153,17 +164,23 @@ public:
     virtual mcsCOMPL_STAT    SetCommand      (const char     *command);
 
     virtual mcsLOGICAL       IsLastReply     (void);
-    virtual mcsLOGICAL       IsInternal      (void);
+    virtual mcsCOMPL_STAT    SetLastReplyFlag(mcsLOGICAL      flag);
+
+    virtual mcsLOGICAL       isInternal      (void);
 
     virtual msgHEADER*       GetHeaderPtr    (void);
+    virtual mcsCOMPL_STAT    SetHeader       (const msgHEADER* header);
 
     virtual char*            GetBodyPtr      (void);
     virtual mcsINT32         GetBodySize     (void);
     virtual mcsCOMPL_STAT    SetBody         (const char     *buffer,
                                               const mcsINT32  bufLen=0);
 
-    virtual msgMESSAGE_RAW*  GetMessageRaw   (void);
+    virtual msgMESSAGE_RAW*  GetMessagePtr   (void);
+    virtual mcsCOMPL_STAT    SetMessage      (const msgMESSAGE_RAW* message);
 
+//    friend  ostream&         operator<<      (ostream &o,const msgMESSAGE &msg);
+    virtual void             Display         (void);
 
 protected:
 
@@ -171,6 +188,9 @@ protected:
 private:
      // The only member
      msgMESSAGE_RAW _message;
+     msgHEADER*     _header;
+     char*          _body;
+     mcsLOGICAL     _isInternal;
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

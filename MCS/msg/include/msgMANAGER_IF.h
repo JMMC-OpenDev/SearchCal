@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.h,v 1.3 2004-11-22 14:31:04 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.h,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  18-Nov-2004  Created
 * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for _socket,
 *                        and added the class description comment
+* lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
 *
 *
 *******************************************************************************/
@@ -33,7 +34,9 @@
 /*
  * Local Headers 
  */
+#include "msgSOCKET_CLIENT.h"
 #include "msgMESSAGE.h"
+#include "msgErrors.h"
 
 
 /*
@@ -61,7 +64,7 @@ public:
     virtual ~msgMANAGER_IF();
 
     virtual mcsCOMPL_STAT Connect     (const mcsPROCNAME  procName,
-                                       const char        *msgManagerHost);
+                                       const char        *msgManagerHost =NULL);
 
     virtual mcsCOMPL_STAT SendCommand (const char        *command,
                                        const mcsPROCNAME  destProc,
@@ -81,7 +84,7 @@ public:
 protected:
 
 private:
-    static int _socket;
+    static msgSOCKET_CLIENT _socket;
 
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

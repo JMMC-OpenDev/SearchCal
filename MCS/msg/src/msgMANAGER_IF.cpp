@@ -1,13 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgMANAGER_IF.cpp,v 1.3 2004-11-22 14:19:40 gzins Exp $"
+* "@(#) $Id: msgMANAGER_IF.cpp,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  18-Nov-2004  Created
 * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for _socket,
 *                        and refined comments
+* lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
+* lafrasse  24-Nov-2004  Comment refinments, and includes cleaning
 *
 *
 *******************************************************************************/
@@ -17,22 +19,16 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.3 2004-11-22 14:19:40 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.4 2004-11-26 13:11:28 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
 /* 
  * System Headers 
  */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <errno.h>
 #include <iostream>
 using namespace std;
+
 
 /*
  * MCS Headers 
@@ -42,14 +38,21 @@ using namespace std;
 #include "err.h"
 #include "misc.h"
 
+
 /*
  * Local Headers 
  */
-#include "msgMANAGER_IF.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
+#include "msgMANAGER_IF.h"
+#include "msgSOCKET_CLIENT.h"
 
-int msgMANAGER_IF::_socket = -1;
+
+/*
+ * Static Class Members Initialization 
+ */
+msgSOCKET_CLIENT msgMANAGER_IF::_socket;
+
 
 /*
  * Class constructor
@@ -63,18 +66,13 @@ msgMANAGER_IF::msgMANAGER_IF()
  */
 msgMANAGER_IF::~msgMANAGER_IF()
 {
-    // If the connection to the msgManager process is still up
-    if (IsConnected() == mcsTRUE)
-    {
-        // Close this connection
-        Disconnect();
-    }
 }
 
 
 /*
  * Public methods
  */
+
 /**
  * Try to establish the connection with the communication server.
  *
@@ -93,14 +91,10 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
 {
     logExtDbg("msgMANAGER_IF::Connect()");
 
-    struct hostent    *remoteHostEnt;
-    mcsSTRING256        hostName;
-    
-    int                sd;
-    struct sockaddr_in addr;
-    mcsINT32           nbRetry;
-    mcsINT32           status;
+    mcsSTRING256       hostName;
     msgMESSAGE         msg;
+    mcsINT32           nbRetry = 0;
+    mcsINT32           status  = 0;
 
     // If a connection is already open...
     if (IsConnected() == mcsTRUE)
@@ -140,37 +134,15 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
             errResetStack();
         }
     }
-
-    // Get msgManager server data
     logTest("'msgManager' server host name is '%s'", hostName );
-    remoteHostEnt = gethostbyname(hostName);
-    if (remoteHostEnt == (struct hostent *) NULL)
-    {
-        errAdd(msgERR_GETHOSTBYNAME, strerror(errno));
-        return FAILURE;
-    }
 
     // Try to establish the connection, retry otherwise...
     nbRetry = 2;
     do 
     {
-        // Create the socket
-        sd = socket(AF_INET, SOCK_STREAM, 0);
-        if(sd == -1)
-        { 
-            errAdd(msgERR_SOCKET, strerror(errno));
-            return FAILURE; 
-        }
-
-        // Initialize sockaddr_in
-        memset((char *) &addr, 0, sizeof(addr));
-        addr.sin_port = htons(msgMANAGER_PORT_NUMBER);
-        memcpy(&(addr.sin_addr), remoteHostEnt->h_addr,remoteHostEnt->h_length);
-        addr.sin_family = AF_INET;
-
         // Try to connect to msgManager
-        status = connect(sd , (struct sockaddr *)&addr, sizeof(addr));
-        if (status == -1)
+        _socket.Open(hostName, msgMANAGER_PORT_NUMBER);
+        if (_socket.IsConnected() == mcsTRUE)
         {
             if (--nbRetry <= 0 )
             { 
@@ -181,28 +153,23 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
             {
                 logWarning("Cannot connect to 'msgManager'. Trying again...");
                 sleep(1);
-                close(sd);
+                _socket.Close();
             }
         }
     } while (status == -1);
 
 
-    // Store the established connection socket
-    _socket = sd;
-
     // Try to register with msgManager
     if (SendCommand(msgREGISTER_CMD, "msgManager", NULL, 0) == FAILURE)
     {
-        close(_socket);
-        _socket = -1;
+        _socket.Close();
         return FAILURE;
     }
     
     // Wait for its answer
     if (Receive(msg, 1000) == FAILURE)
     {
-        close(_socket);
-        _socket = -1;
+        _socket.Close();
         return FAILURE;
     }
 
@@ -215,8 +182,8 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect   (const mcsPROCNAME  procName,
         {
             return FAILURE;
         }
-        close(_socket);
-        _socket = -1;       
+
+        _socket.Close();
         return FAILURE;
     }
     
@@ -235,7 +202,7 @@ mcsLOGICAL msgMANAGER_IF::IsConnected(void)
 {
     logExtDbg("msgMANAGER_IF::IsConnected()");
 
-    return ((_socket != -1)?mcsTRUE:mcsFALSE);
+    return (_socket.IsConnected());
 }
  
 /**
@@ -285,7 +252,7 @@ mcsCOMPL_STAT msgMANAGER_IF::SendCommand         (const char        *command,
     }
 
     // Try to send the message
-    return (msgSendTo(_socket, msg.GetMessageRaw()));
+    return (_socket.Send(msg));
 }
 
 /**
@@ -311,8 +278,35 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (msgMESSAGE        &msg,
         return FAILURE;
     }
 
-    // Try to send the reply message
-    return (msgSendReplyTo(_socket, msg.GetMessageRaw(), lastReply));
+    /* Build the reply message header */
+    msg.SetLastReplyFlag(lastReply);
+    /* If there is no error in the MCS error stack */
+    if (errStackIsEmpty() == mcsTRUE)
+    {
+        /* Set message type to REPLY */
+        msg.SetType(msgTYPE_REPLY);
+    }
+    else
+    {
+        char errStackContent[msgBODYMAXLEN];
+        /* Try to put the MCS error stack data in the message body */
+        if (errPackStack(errStackContent, msgBODYMAXLEN) == FAILURE)
+        {
+            return FAILURE;
+        }
+
+        /* Store the message body size in network byte order */
+        msg.SetBody(errStackContent, msgBODYMAXLEN);
+
+        /* Set message type to ERROR_REPLY */
+        msg.SetType(msgTYPE_ERROR_REPLY);
+
+        /* Empty MCS error stack */
+        errResetStack();
+    }
+
+    logTest("Sending '%s' answer : %s", msg.GetCommand(), msg.GetBodyPtr());
+    return _socket.Send(msg);
 }
 
 /**
@@ -342,7 +336,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE        &msg,
     }
 
     // Return weither a message was received or not
-    return (msgReceiveFrom(_socket, msg.GetMessageRaw(), timeoutInMs));
+    return (_socket.Receive(msg, timeoutInMs));
 }
 
 /**
@@ -367,8 +361,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     // Try to send a 'close command' message to msgManager
     if (SendCommand(msgCLOSE_CMD, "msgManager", NULL, 0) == FAILURE)
     {
-        close(_socket);
-        _socket = -1;
+        _socket.Close();
         return FAILURE;
     }
     
@@ -376,8 +369,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     msgMESSAGE msg;
     if (Receive(msg, 1000) == FAILURE)
     {
-        close(_socket);
-        _socket = -1;
+        _socket.Close();
         return FAILURE;
     }
 
@@ -386,14 +378,12 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     {
         // Put the received error in the local MCS error stack
         errUnpackStack(msg.GetBodyPtr(), msg.GetBodySize());
-        close(_socket);
-        _socket = -1;       
+        _socket.Close();
         return (FAILURE);
     }
     
     // Close the socket
-    close(_socket);
-    _socket = -1;       
+    _socket.Close();
 
     logExtDbg("Connection to 'msgManager' closed");
 
@@ -416,7 +406,7 @@ mcsINT32 msgMANAGER_IF::GetMsgQueue()
 {
     logExtDbg("msgMANAGER_IF::GetMsgQueue()");
 
-    return _socket;
+    return _socket.GetDescriptor();
 }
  
 /*___oOo___*/

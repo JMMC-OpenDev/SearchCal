@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgSendCommand.cpp,v 1.1 2004-11-19 23:55:17 lafrasse Exp $"
+* "@(#) $Id: msgSendCommand.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"
 *
 *
 * who       when                 what
@@ -9,6 +9,7 @@
 * lafrasse  16-Aug-2004  Ported from CILAS software
 * lafrasse  19-Nov-2004  Used argv[0] instead of the hard-coded "msgSendCommand"
 *                        value, and added the mcsExit() function call
+* lafrasse  23-Nov-2004  Cleaned included headers
 *
 *
 *******************************************************************************/
@@ -45,7 +46,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.1 2004-11-19 23:55:17 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.2 2004-11-26 13:11:28 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -70,7 +71,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Local Headers
  */
 #include "msg.h"
-#include "msgMANAGER_IF.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
 

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2004-11-23 08:25:25 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.12 2004-11-26 13:11:28 lafrasse Exp $"
 #
 # Makefile of msg
 #
@@ -9,8 +9,9 @@
 # --------  -----------  -------------------------------------------------------
 # lafrasse  10-Aug-2004  Created
 # gzins     01-Oct-2004  Added msgSendCommand
-# lafrasse  19-Nov-2004  Added msgMANAGER_IF.cpp  and msgMESSAGE.cpp compilation
+# lafrasse  19-Nov-2004  Added msgMANAGER_IF.cpp and msgMESSAGE.cpp compilation
 #                        directives
+# lafrasse  23-Nov-2004  Added all the socket-related header
 #
 #
 #*******************************************************************************
@@ -47,7 +48,7 @@ msgManager_OBJECTS           = msgManager            \
                                msgManagerHandleCmd 	 \
                                msgManagerProcess     \
                                msgManagerProcessList
-msgManager_LDFLAGS           = -lgdome 
+msgManager_LDFLAGS           = -lgdome
 msgManager_LIBS              = mcs log err cmd misc msg C++
 
 msgSendCommand_OBJECTS       = msgSendCommand
@@ -61,7 +62,12 @@ msgSendCommand_LIBS          = mcs log err cmd misc msg C++
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = msg.h            \
+INCLUDES        = msg.h              \
+				  msgMESSAGE.h       \
+				  msgMANAGER_IF.h    \
+				  msgSOCKET.h        \
+                  msgSOCKET_CLIENT.h \
+				  msgSOCKET_SERVER.h
 
 #
 # Libraries (public and local)
@@ -80,8 +86,8 @@ msg_OBJECTS   = msg                \
 				msgMANAGER_IF      \
                 msgMESSAGE         \
                 msgSOCKET		   \
-				msgSOCKET_SERVER   \
 				msgSOCKET_CLIENT   \
+				msgSOCKET_SERVER
 
 
 #

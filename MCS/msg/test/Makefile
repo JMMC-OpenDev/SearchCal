@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-11-19 23:55:17 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-11-26 13:11:28 lafrasse Exp $"
 #
 # Makefile of msgTest
 #
@@ -38,7 +38,10 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   = msgTestClient msgTestServer
+EXECUTABLES_L   = msgTestClient        \
+                  msgTestServer        \
+                  msgTestSocketClient  \
+                  msgTestSocketServer
 
 #
 # <brief description of msgTestClient program>
@@ -51,6 +54,18 @@ msgTestClient_LIBS      = mcs err log misc msg C++
 msgTestServer_OBJECTS   = msgTestServer
 msgTestServer_LDFLAGS   = -lgdome
 msgTestServer_LIBS      = mcs err log cmd misc msg C++
+
+#
+# <brief description of msgTestSocketClient program>
+msgTestSocketClient_OBJECTS   = msgTestSocketClient
+msgTestSocketClient_LDFLAGS   = -lgdome
+msgTestSocketClient_LIBS      = mcs err log cmd misc msg C++
+
+#
+# <brief description of msgTestSocketServer program>
+msgTestSocketServer_OBJECTS   = msgTestSocketServer
+msgTestSocketServer_LDFLAGS   = -lgdome
+msgTestSocketServer_LIBS      = mcs err log cmd misc msg C++
 
 #
 # special compilation flags for single c sources
