@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.17 2004-08-10 16:47:27 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.18 2004-08-11 10:01:51 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -215,26 +215,20 @@ case $directoryStructureTtype in
                     echo -e "\n>>> Copying module description file\n"
                     TEMPLATE="$MCSTEMPLATES/forDocumentation/moduleDescription.template"
                     FILE=$ROOT_NAME/doc/moduleDescription.xml
-                    # Copy module description in doc directory
-                    if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
-                    then
-                        # module description file copy succeeds
-                        # Change permissions
-                        chmod $MODE ${FILE}.BAK
-                        # setup author and date:
-                        AUTHOR=`whoami`
-                        AUTHOR=`printf "%-8s" $AUTHOR`
-                        DATE=`date "+%d-%b-%Y"`
-                        sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
-                        -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
-                        -e "1,$ s/I>-<d/\Id/g" \
-                        -e "1,$ s/<module name=\"module\">/<module name=\"$ROOT_NAME\">/g" \
-                        ${FILE}.BAK > $FILE
-                        rm -f ${FILE}.BAK
-                    else
-                        # File copy failed
-                        echo -e "\n>>>  CANNOT CREATE --> $FILE\n"
-                    fi
+
+                    # Get template file (module description file) in doc
+                    # directory
+                    ctooGetTemplateFile.sh $TEMPLATE $FILE
+
+                    # Replace module name
+                    sed -e "1,$ s/<module name=\"module\">/<module name=\"$ROOT_NAME\">/g" \
+                         ${FILE}.BAK > $FILE
+
+                    # Remove the temporary backup file
+                    rm -f ${FILE}.BAK
+                    
+                    # Change permissions of the new created file
+                    chmod $MODE $FILE
                 fi
 
                 # Check Makefile existence
@@ -247,25 +241,12 @@ case $directoryStructureTtype in
                     echo -e "\n>>> Copying Makefile template for code\n"
                     TEMPLATE=$MCSTEMPLATES/forMakefile/Makefile.template
                     FILE=$ROOT_NAME/src/Makefile
-                    # Copy Makefile in src directory
-                    if grep -v "#%#" $TEMPLATE > ${FILE}.BAK
-                    then
-                        # Makefile copy succeeds
-                        # Change permissions
-                        chmod $MODE ${FILE}.BAK
-                        # setup author and date:
-                        AUTHOR=`whoami`
-                        AUTHOR=`printf "%-8s" $AUTHOR`
-                        DATE=`date "+%d-%b-%Y"`
-                        sed  -e "1,$ s/NNNNNNNN/$AUTHOR/g" \
-                        -e "1,$ s/dd-mmm-yyyy/$DATE/g" \
-                        -e "1,$ s/I>-<d/\Id/g" \
-                        ${FILE}.BAK > $FILE
-                        rm -f ${FILE}.BAK
-                    else
-                        # Makefile copy failed
-                        echo -e "\ncannot create >>$FILE<<."
-                    fi
+                    
+                    # Get template file (Makefile) in src directory
+                    ctooGetTemplateFile.sh $TEMPLATE $FILE remove
+                    
+                    # Change permissions of the new created file
+                    chmod $MODE $FILE
                 fi
                 ;;
                 
