@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.cpp,v 1.20 2005-01-27 17:10:02 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.cpp,v 1.21 2005-01-29 20:02:24 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/01/27 17:10:02  gzins
+ * Minor code indentation change.
+ *
  * Revision 1.19  2005/01/26 08:42:22  gzins
  * Printed out reply type in log test message when receiving message
  *
@@ -44,7 +47,7 @@
  * msgMANAGER_IF class definition.
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.20 2005-01-27 17:10:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.21 2005-01-29 20:02:24 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -54,6 +57,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <iostream>
 using namespace std;
 #include <errno.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 
 /*
@@ -106,11 +111,18 @@ msgMANAGER_IF::~msgMANAGER_IF()
  * The server host name is found via the $MCSENV environment variable, and the
  * mcsEnvList file (located in $MCSROOT/etc/mcsEnvList).
  *
- * \param procName the local processus name
+ * If unicity flag, \<unique\> is true, this means the process is unique;
+ * it will not be possible that another instance establishes connection with the
+ * message service at the same time.
+ *
+ * \param procName  processus name
+ * \param unique    if mcsTRUE, only one instance will be allowed to be
+ * connected to the message service.  
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
+mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
+                                      mcsLOGICAL        unique)
 {
     logExtDbg("msgMANAGER_IF::Connect()");
 
@@ -219,7 +231,9 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME  procName)
     }
 
     // Register with msgManager
-    if (SendCommand(msgREGISTER_CMD_NAME, "msgManager", "") == mcsFAILURE)
+    mcsSTRING256 params; 
+    sprintf(params, "%d %d", getpid(), unique);
+    if (SendCommand(msgREGISTER_CMD_NAME, "msgManager", params) == mcsFAILURE)
     {
         _socket.Close();
         return mcsFAILURE;
