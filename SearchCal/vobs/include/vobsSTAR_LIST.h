@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.11 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.12 2005-02-13 15:27:53 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    06-Jul-2004  Created
 *
 *
@@ -53,15 +56,18 @@ class vobsSTAR_LIST
 
     virtual vobsSTAR      *GetNextStar(mcsLOGICAL init = mcsFALSE);
     virtual vobsSTAR      *GetStar(vobsSTAR &star,
-                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList);
+                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
     
     virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
-                                vobsSTAR_COMP_CRITERIA_LIST *criteriaList, 
+                                vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL, 
                                 mcsLOGICAL updateOnly=mcsFALSE);
 
     virtual void          Display(void);
 
-    virtual mcsCOMPL_STAT Save(mcsSTRING256 filename); 
+    virtual mcsCOMPL_STAT Save(const char *filename,
+                               mcsLOGICAL extendedFormat=mcsFALSE); 
+    virtual mcsCOMPL_STAT Load(const char *filename,
+                               mcsLOGICAL extendedFormat=mcsFALSE); 
 
  protected:
     // List of stars

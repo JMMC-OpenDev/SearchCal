@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.9 2005-02-04 14:31:50 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.10 2005-02-13 15:27:53 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/04 14:31:50  scetre
+* updated documentation
+*
 * Revision 1.8  2005/01/26 14:12:24  scetre
 * rewrite save method in vobsSTAR_LIST
 *
@@ -17,7 +20,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.9 2005-02-04 14:31:50 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.10 2005-02-13 15:27:53 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -37,6 +40,7 @@ using namespace std;
  * Local Headers 
  */
 #include "vobsSTAR_LIST.h"
+#include "vobsCDATA.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -234,9 +238,7 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
     std::list<vobsSTAR *>::iterator iter;
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
-        if ((*iter)->IsSame(star,
-                            criteriaList)
-            == mcsTRUE)
+        if ((*iter)->IsSame(star, criteriaList) == mcsTRUE)
         {
             return (*iter);
         }
@@ -320,44 +322,64 @@ void vobsSTAR_LIST::Display(void)
  * Save the elements (stars) of the list in a file.
  *
  * \param filename the file where to save
+ * \param extendedFormat if true, each property is saved with its attributes
+ * (origin and confidence index), otherwise only only property is saved.
  *
  * \return always SUCCESS
  */
-mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
+mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
+                               mcsLOGICAL extendedFormat)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
 
-    // file where will be save information
-    FILE *filePtr;
-
-    filePtr=fopen(miscResolvePath(filename), "w+");
-    if (filePtr==NULL)
+    // Store list into the CDATA
+    vobsCDATA cData;
+    vobsSTAR  star;
+    if (cData.Store(star, *this, extendedFormat) == mcsFAILURE)
     {
-        logWarning("could not load file %s", miscResolvePath(filename));
-        return mcsSUCCESS;
+        printf("cData.Store fails \n"); 
+        return mcsFAILURE;
     }
-    else
+    
+    // Save into file
+    if (cData.SaveInFile(filename) == mcsFAILURE)
     {
-        vobsSTAR *star;
-        for (unsigned int el = 0; el < Size(); el++)
-        {
-            star = GetNextStar((mcsLOGICAL)(el==0));
-
-            for (int elem = 0; elem < star->NbProperties(); elem++)
-            {
-                fprintf(filePtr, "%12s",
-                        (star->GetNextProperty((mcsLOGICAL)(elem==0)))->
-                        GetValue());
-            }
-
-            fprintf(filePtr, "\n");
-        }
+        printf("cData.SaveInFile fails \n"); 
+        return mcsFAILURE;
     }
-
-    // Close file
-    fclose(filePtr);
 
     return mcsSUCCESS;
 }
 
+/**
+ * Load elements (stars) from a file.
+ *
+ * \param filename the file containing star list
+ * \param extendedFormat if true, each property is has been saved with its
+ * attributes (origin and confidence index), otherwise only only property has
+ * been saved.
+ *
+ * \return always SUCCESS
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::Load(const char *filename,
+                                  mcsLOGICAL extendedFormat)
+{
+    logExtDbg("vobsSTAR_LIST::Load()");
+
+    // Load file
+    vobsCDATA cData;
+    if (cData.LoadFile(filename) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Extract list from the CDATA
+    vobsSTAR  star;
+    if (cData.Extract(star, *this, extendedFormat) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    return mcsSUCCESS;
+}
 /*___oOo___*/
