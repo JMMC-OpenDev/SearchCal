@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.21 2005-02-04 08:09:28 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.22 2005-02-04 09:50:12 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/02/04 08:09:28  gzins
+* Added star properties for MIDI catalog
+*
 * Revision 1.20  2005/02/04 07:44:43  gzins
 * Limited number of logged messages for test
 *
@@ -33,7 +36,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.21 2005-02-04 08:09:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.22 2005-02-04 09:50:12 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -426,7 +429,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     logExtDbg("vobsSTAR::GetRa()");
 
     mcsSTRING64 raHms;
-    float hh,hm,hs;
+    mcsFLOAT    hh, hm, hs;
 
     // Check if the value is set
     if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE)
@@ -443,13 +446,17 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
         return mcsFAILURE;
     }
 
+    // Get sign of hh which has to be propagated to hm and hs
+    mcsFLOAT sign;
+    sign = (hh >= 0) ? 1.0 : -1.0;
+
     // Convert to degrees
-    ra  = (hh + hm/60.0 + hs/3600.0)*15.0;
+    ra  = (hh + sign*hm/60.0 + sign*hs/3600.0) * 15.0;
 
     // Set angle range [-180 - 180]
     if (ra > 180)
     {
-        ra=-(360-ra);
+        ra = -1.0 * (360 - ra);
     }
 
     return mcsSUCCESS;
@@ -486,16 +493,12 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
         return mcsFAILURE;
     }
 
-    if (dd > 0)
-    {
-        // Convert to degrees
-        dec = dd + dm/60 + ds / 3600;
-    }
-    else
-    {
-        // Convert to degrees
-        dec = -1 * ( dd + dm/60 + ds / 3600 );
-    }
+    // Get sign of hh which has to be propagated to hm and hs
+    mcsFLOAT sign;
+    sign = (dd >= 0) ? 1.0 : -1.0;
+    
+    // Convert to degrees
+    dec  = dd + sign*dm/60.0 + sign*ds/3600.0;
 
     return mcsSUCCESS;
 }
@@ -752,19 +755,15 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(vobsSTAR_PHOT_JHN_N, "N", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_VELOC_ROTAT, "velocrotat", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx",  vobsFLOAT_PROPERTY, 
                 "%.3f");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_IRAS, "Fnu_12",  vobsFLOAT_PROPERTY, 
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_12, "F12",  vobsFLOAT_PROPERTY, 
                 "%.3f");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_IRAS_QUALITY, "Fqual_12",  
-                vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_MSX, "F12", vobsFLOAT_PROPERTY, 
-                "%.3f");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_MSX_ERROR, "e_F12",  
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12",  
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, 
