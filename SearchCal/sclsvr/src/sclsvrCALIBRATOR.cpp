@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.41 2005-02-23 17:16:06 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.42 2005-03-03 16:48:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2005/02/23 17:16:06  scetre
+ * Updated property name
+ *
  * Revision 1.40  2005/02/23 17:05:27  scetre
  * Added in compute visibility method the compute of visibility with wlen = 8 and 13 mu if it is a N observed band
  *
@@ -69,7 +72,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.41 2005-02-23 17:16:06 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.42 2005-03-03 16:48:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -595,6 +598,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
         return mcsFAILURE;
     }
 
+    // If diameter is OK (i.e. confidence index is alxCONFIDENCE_HIGH), set
+    // confidence index of the computed diameter according to the ones of
+    // magnitudes used to compute it. 
+    if (confidenceIndex == alxCONFIDENCE_HIGH)
+    {
+        vobsSTAR_PROPERTY *property;
+        property = GetProperty(sclsvrCALIBRATOR_KO);
+        if (property->GetConfidenceIndex() == vobsCONFIDENCE_LOW)
+        {
+            confidenceIndex = alxCONFIDENCE_LOW;
+        }
+        property = GetProperty(sclsvrCALIBRATOR_RO);
+        if (property->GetConfidenceIndex() == vobsCONFIDENCE_LOW)
+        {
+            confidenceIndex = alxCONFIDENCE_LOW;
+        }
+    }
+    
     // Set compute value of the angular diameter
     SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diamBv, vobsSTAR_COMPUTED_PROP,
                      (vobsCONFIDENCE_INDEX)confidenceIndex);
@@ -613,7 +634,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
                      (vobsCONFIDENCE_INDEX)confidenceIndex);
    
     // Set flag according to the confidence index 
-    if (confidenceIndex == alxCONFIDENCE_LOW)
+    if (confidenceIndex == alxNO_CONFIDENCE)
     {
          SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, 
                           "NOK", vobsSTAR_COMPUTED_PROP);
@@ -626,6 +647,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
    
     return mcsSUCCESS;
 }
+
 /**
  * Compute Visibility
  *
@@ -637,7 +659,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     mcsFLOAT diam, diamError;
     mcsFLOAT baseMax, wavelength;
     mcsFLOAT vis, vis2, visErr, vis2Err;
-   
+    vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH;
+
     // Get object diameter. First look at the diameters coming from catalog
     char *diamId[4][2] = 
     {
@@ -647,6 +670,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
         {vobsSTAR_DIAM12, vobsSTAR_DIAM12_ERROR}
     };
     mcsLOGICAL found = mcsFALSE;
+
     // For each possible diameters
     for (int i = 0; (i < 4) && (found == mcsFALSE); i++)
     {
@@ -658,6 +682,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
             GetPropertyValue(diamId[i][0], &diam);
             GetPropertyValue(diamId[i][1], &diamError);
             found = mcsTRUE;
+
+            // Set confidence index to high (value coming form catalog)
+            confidenceIndex = vobsCONFIDENCE_HIGH;
         }
     }
 
@@ -670,6 +697,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
             // Get V-K diameter and associated error value
             GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &diam);
             GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR, &diamError);
+
+            // Get confidence index of computed diameter
+            vobsSTAR_PROPERTY *property;
+            property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
+            confidenceIndex = property->GetConfidenceIndex();
         }
         // Else do not compute visibility
         else
@@ -684,7 +716,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     // Get value in request of the base max
     baseMax = request.GetMaxBaselineLength();
     if (alxComputeVisibility(diam, diamError, baseMax, wavelength,
-                             &vis, &vis2, &visErr, &vis2Err)==mcsFAILURE)
+                             &vis, &vis2, &visErr, &vis2Err) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -692,15 +724,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     // Affect visibility property
     SetPropertyValue(sclsvrCALIBRATOR_VIS2, vis2, vobsSTAR_COMPUTED_PROP);
     SetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, vis2Err,
-                     vobsSTAR_COMPUTED_PROP);
+                     vobsSTAR_COMPUTED_PROP, confidenceIndex);
     
-    // Get the observed Band in order to compute visibility with wlen = 8 and
-    // lambda = 13 for band N
-    // If the observed band is N, computed visibility with wlen = 8 and 13
+    // If the observed band is N, computed visibility with wlen = 8 and 13 um
     if (strcmp(request.GetSearchBand(), "N") == 0)
     {
         if (alxComputeVisibility(diam, diamError, baseMax, 8,
-                                 &vis, &vis2, &visErr, &vis2Err)==mcsFAILURE)
+                                 &vis, &vis2, &visErr, &vis2Err) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -709,7 +739,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
         SetPropertyValue(sclsvrCALIBRATOR_VIS2_8, vis2,
                          vobsSTAR_COMPUTED_PROP);
         SetPropertyValue(sclsvrCALIBRATOR_VIS2_8_ERROR, vis2Err,
-                         vobsSTAR_COMPUTED_PROP);
+                         vobsSTAR_COMPUTED_PROP, confidenceIndex);
 
         if (alxComputeVisibility(diam, diamError, baseMax, 13,
                                  &vis, &vis2, &visErr, &vis2Err)==mcsFAILURE)
@@ -721,8 +751,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
         SetPropertyValue(sclsvrCALIBRATOR_VIS2_13, vis2,
                          vobsSTAR_COMPUTED_PROP);
         SetPropertyValue(sclsvrCALIBRATOR_VIS2_13_ERROR, vis2Err,
-                         vobsSTAR_COMPUTED_PROP);
-
+                         vobsSTAR_COMPUTED_PROP, confidenceIndex);
     }
 
     return mcsSUCCESS;
