@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.cpp,v 1.2 2004-12-08 13:34:33 gzins Exp $"
+* "@(#) $Id: evhHANDLER.cpp,v 1.3 2004-12-08 17:30:29 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -13,6 +13,8 @@
 *                        Returned error when no callback is attached to the
 *                        received command.
 * gzins     08-Dec-2004  Added some method documentation
+* gzins     08-Dec-2004  Added purge of events whith no more callback attached
+*                        to
 *
 *******************************************************************************/
 
@@ -21,7 +23,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.2 2004-12-08 13:34:33 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.3 2004-12-08 17:30:29 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -332,6 +334,23 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
         // End if
     }
     // End for
+
+    // Purge events where there is no more callback
+    iter = _eventList.begin();
+    while (iter != _eventList.end())
+    {
+        // If the callback list is empty 
+        if (((*iter).second)->IsEmpty() == mcsTRUE)
+        {
+            // Remove it, and restart at the beginning of the list
+            _eventList.erase(iter);
+            iter = _eventList.begin();
+        }
+        else
+        {
+            iter++;
+        }
+    }
 
     // If there is no callback attached to this command
     if (counter == 0)
