@@ -1,7 +1,7 @@
 "------------------------------------------------------------------------------
 " File:    $MCSROOT/etc/vimrc
 "
-" Version: $Id: vimrc,v 1.8 2005-01-05 08:07:08 gzins Exp $
+" Version: $Id: vimrc,v 1.9 2005-01-06 08:01:23 gzins Exp $
 " 
 " Purpose: VIM special configuration file
 "
@@ -18,6 +18,7 @@
 " gzins     16-12-2004  redefined mcsTRUE, mcsFALSE, SUCCESS and FAILURE as
 "                       cConstant 
 " gzins     05-01-2005  changed textwidth to 80 instead of 78
+" gzins     06-01-2005  changed FAILURE and SUCCESS to mcsFAILURE and mcsSUCCESS
 " 
 " To use it, added the following line in ~/.vimrc 
 "       source $MCSROOT/etc/vimrc
@@ -174,4 +175,4 @@ set path=.,./src,../src,./include,../include,$INTROOT,$INTROOT/src,$INTROOT/incl
 
 "   syntax: Added MCS types
 autocmd BufRead *.c,*.C,*.h,*.cpp syn keyword cType mcsINT8 mcsUINT8 mcsINT16 mcsUINT16 mcsINT32 mcsUINT32 mcsLOGICAL mcsDOUBLE mcsFLOAT mcsBYTES4 mcsBYTES8 mcsBYTES12 mcsBYTES16 mcsBYTES20 mcsBYTES32 mcsBYTES48 mcsBYTES64 mcsBYTES80 mcsBYTES128 mcsBYTES256 mcsSTRING4 mcsSTRING8 mcsSTRING12 mcsSTRING16 mcsSTRING20 mcsSTRING32 mcsSTRING48 mcsSTRING64 mcsSTRING80 mcsSTRING128 mcsSTRING256 mcsCOMPL_STAT mcsPROCNAME mcsENVNAME mcsMODULEID mcsFILE_LINE mcsCMD
-autocmd BufRead *.c,*.C,*.h,*.cpp syn keyword cConstant mcsTRUE mcsFALSE FAILURE SUCCESS
+autocmd BufRead *.c,*.C,*.h,*.cpp syn keyword cConstant mcsTRUE mcsFALSE mcsFAILURE mcsSUCCESS
