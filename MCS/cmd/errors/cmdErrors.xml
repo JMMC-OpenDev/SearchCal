@@ -53,12 +53,12 @@
    <error id="11">
       <errName>MISSING_PARAM</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA['%s' parameter is missing]]></errFormat>
+      <errFormat><![CDATA['%s' parameter is missing for command %.80s]]></errFormat>
    </error>
    <error id="12">
       <errName>PARAM_UNKNOWN</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Invalid parameter name '%.80s' for '%s' command]]></errFormat>
+      <errFormat><![CDATA[Invalid parameter name '%.80s' for command %.80s]]></errFormat>
    </error>
    <error id="13">
       <errName>PARSE_PARAMETERS</errName>
