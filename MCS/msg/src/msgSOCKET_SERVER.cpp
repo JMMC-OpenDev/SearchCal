@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.7 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.8 2005-04-04 15:09:36 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.6  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
@@ -23,7 +26,7 @@
  * \sa msgSOCKET_SERVER
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.7 2005-02-04 15:57:06 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.8 2005-04-04 15:09:36 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -80,13 +83,13 @@ mcsCOMPL_STAT msgSOCKET_SERVER::Open(mcsUINT16 port)
 {
     logExtDbg("msgSOCKET_SERVER::Open()");
 
-    // Try to create a new socket
+    // Create a new socket
     if (Create() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // Try to bind the new socket to the given port number
+    // Bind the new socket to the given port number
     if (Bind(port) == mcsFAILURE)
     {
         return mcsFAILURE;
