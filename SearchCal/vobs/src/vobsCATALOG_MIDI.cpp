@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.9 2005-02-08 21:23:28 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.10 2005-02-10 10:46:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/08 21:23:28  gzins
+ * Convert diameter error expressed in % to mas
+ *
  * Revision 1.8  2005/02/08 20:30:37  gzins
  * Changed _name type; mcsSTRING to string
  *
@@ -40,7 +43,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.9 2005-02-08 21:23:28 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.10 2005-02-10 10:46:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -367,27 +370,27 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
             }
             else if (lineNb == 2)
             {
-                // It's the second line: UCD column name line
-                // Parse UCD column name line and strore them in an array
-                mcsSTRING256 ucdColNameArray[25];
-                mcsUINT32 nbOfUcdColName;
-                if (miscSplitString(line, '\t', ucdColNameArray, 
-                                    25, &nbOfUcdColName) == mcsFAILURE)
+                // It's the second line: parameter name line
+                // Parse parameter name line and strore them in an array
+                mcsSTRING256 paramNameArray[25];
+                mcsUINT32 nbOfParamName;
+                if (miscSplitString(line, '\t', paramNameArray, 
+                                    25, &nbOfParamName) == mcsFAILURE)
                 {
                     errAdd(vobsERR_INVALID_PARSING_UCD_FORMAT);
 
                     miscDynBufDestroy(&dynBuf);
                     return mcsFAILURE;
                 }
-                // For each UCD column description stored in the array
-                logDebug("\t-> Add UCD column name to CDATA structure ...");
-                logDebug("\t\tNumber of UCD column name = %i", \
-                         nbOfUcdColName);
-                for (mcsUINT32 i=0; i<nbOfUcdColName; i++)
+                // For each parameter description stored in the array
+                logDebug("\t-> Add parameter name to CDATA structure ...");
+                logDebug("\t\tNumber of parameter name = %i", \
+                         nbOfParamName);
+                for (mcsUINT32 i=0; i<nbOfParamName; i++)
                 {
-                    // add UCD colomn name to CDATA structure
-                    logDebug("\t\t%d- %s\n", i, ucdColNameArray[i]);
-                    if (cDataStructure.AddColName(ucdColNameArray[i]) == 
+                    // add parameter name to CDATA structure
+                    logDebug("\t\t%d- %s\n", i, paramNameArray[i]);
+                    if (cDataStructure.AddParamName(paramNameArray[i]) == 
                         mcsFAILURE)
                     {
                         // Do not raise an error because the method returns

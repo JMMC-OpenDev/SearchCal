@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.5 2005-02-08 20:32:27 gzins Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.6 2005-02-10 10:46:33 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/08 20:32:27  gzins
+* Added name of catalog form where data is coming from
+*
 * Revision 1.4  2005/02/07 09:47:08  gzins
 * Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
 *
@@ -48,7 +51,7 @@
  *
  * It is build with several part :
  * \li a list of UCD name.
- * \li a list of colum name.
+ * \li a list of parameter name.
  * \li a number of line to skip in order to get the information data in the
  * CDATA block
  * \li the body of the CDATA
@@ -67,11 +70,11 @@ public:
     virtual mcsCOMPL_STAT SetCatalogName(const char *name);
     virtual const char   *GetCatalogName(void);
 
-    virtual mcsCOMPL_STAT AddColName(char *colName);
+    virtual mcsCOMPL_STAT AddParamName(char *paramName);
     virtual mcsCOMPL_STAT AddUcdName(char *ucdName);
-    virtual mcsUINT32     GetNbColumns(void);
-    virtual mcsCOMPL_STAT GetNextColDesc(char **colName, char **ucdName,
-                                         mcsLOGICAL init);
+    virtual mcsUINT32     GetNbParams(void);
+    virtual mcsCOMPL_STAT GetNextParamDesc(char **paramName, char **ucdName,
+                                           mcsLOGICAL init);
     virtual mcsCOMPL_STAT SetNbLinesToSkip(mcsINT32 nbLines);
     virtual mcsUINT32     GetNbLinesToSkip(void);
     virtual mcsCOMPL_STAT AppendLines(char *buffer);
@@ -88,9 +91,9 @@ private:
     vobsCDATA(const vobsCDATA&);
     vobsCDATA& operator=(const vobsCDATA&);
 
-    std::vector<char*> _colName; // Name of columns
+    std::vector<char*> _paramName; // Name of parameters
     std::vector<char*> _ucdName; // Name of corresponding UCD
-    std::vector<char *>::iterator _colNameIterator;
+    std::vector<char *>::iterator _paramNameIterator;
     std::vector<char *>::iterator _ucdNameIterator;
 
     int _nbLinesToSkip;          // Number of lines to be skipped in CDATA

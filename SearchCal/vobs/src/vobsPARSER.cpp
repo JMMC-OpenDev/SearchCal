@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.14 2005-02-10 08:07:38 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.15 2005-02-10 10:46:42 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/02/10 08:07:38  scetre
+* changed parser and hd, hip, dm number id in order to get all of them even if they have the same UCD
+*
 * Revision 1.13  2005/02/10 06:28:29  gzins
 * Fixed bug related to ERRO UCD handling
 *
@@ -36,7 +39,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.14 2005-02-10 08:07:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.15 2005-02-10 10:46:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -153,32 +156,32 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         logDebug("CDATA description");
         logDebug("   Number of lines to be skipped : %d", 
                 cData.GetNbLinesToSkip());
-        logDebug("   Number of columns in table    : %d", cData.GetNbColumns());
-        char *colName;
+        logDebug("   Number of parameters in table : %d", cData.GetNbParams());
+        char *paramName;
         char *ucdName;
-        for (unsigned int i = 0; i < cData.GetNbColumns(); i++)
+        for (unsigned int i = 0; i < cData.GetNbParams(); i++)
         {
             // Table header
             if (i == 0)
             {
                 logDebug("   +----------+--------------+--------------------+");
-                logDebug("   | Column # | Name         | UCD                |");
+                logDebug("   | Param #  | Name         | UCD                |");
                 logDebug("   +----------+--------------+--------------------+");
             }
-            // Get the column name and UCD
-            if (cData.GetNextColDesc(&colName, 
-                                     &ucdName, (mcsLOGICAL)(i==0)) == mcsFAILURE)
+            // Get the parameter name and UCD
+            if (cData.GetNextParamDesc(&paramName, &ucdName,
+                                       (mcsLOGICAL)(i==0)) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
 
             logDebug("   |      %3d | %12s | %18s |",
-                    i+1, colName, ucdName);
-            ++colName;
+                    i+1, paramName, ucdName);
+            ++paramName;
             ++ucdName;
 
             // Table footer
-            if (i == (cData.GetNbColumns() -1))
+            if (i == (cData.GetNbParams() -1))
             {
                 logDebug("   +----------+--------------+--------------------+");
             }
@@ -222,11 +225,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
  *
  * This method recursively parses the XML document (i.e. node by node), and
  * extract informations related to the CDATA section which contains the star
- * table. These informations are the name of the columns with the
+ * table. These informations are the name of the parameters with the
  * corresponding UCD, the number lines to be skipped in CDATA section and the
  * pointer to the CDATA buffer (see vobsCDATA data structure).
- * Informations about columns are given by 'FIELD' node; 'name' attribute for
- * the column name and 'UCD' for UCD, and the number of line to skip is given
+ * Informations about parameters are given by 'FIELD' node; 'name' attribute for
+ * the parameter name and 'UCD' for UCD, and the number of line to skip is given
  * by 'CSV' node and 'headlines' attribute.
  *
  * \param node  XML document node to be parsed. 
@@ -403,15 +406,15 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                         return mcsFAILURE;
                     }
 
-                    // If it is the name of the column table of CDATA 
+                    // If it is the name a parameter of CDATA 
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
                         (strcmp(attrName->str, "name")  == 0))
                     {
-                        cData->AddColName(attrValue->str); 
+                        cData->AddParamName(attrValue->str); 
                     }
 
                     // If it is the UCD name of the corresponding
-                    // column table  
+                    // parameter
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
                         (strcmp(attrName->str, "ucd")  == 0))
                     {
@@ -469,7 +472,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
  * in one line, and separated by the '\\t' character. The list of star
  * properties to be extracted is given by \em ucd.ucdName list.
  *
- * The first lines of the CDATA containing the description of the column table
+ * The first lines of the CDATA containing the description of the parameters
  * has to be skipped. The number of lines to be skipped is given by \em
  * ucd.nbLineToJump 
  *
@@ -505,7 +508,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
         {
             char line[1024];
             int  nbUcd;
-            char *colName;
+            char *paramName;
             char *ucdName;
             char *prevUcdName=NULL;
             char *ucdValue;
@@ -517,7 +520,7 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
             strcpy(line, linePtr);
 
             // Number of UCDs per line
-            nbUcd = cData->GetNbColumns();
+            nbUcd = cData->GetNbParams();
 
             // Scan UCD list
             char *nextLinePtr;
@@ -531,8 +534,8 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
 
             for (int j=0; j < nbUcd; j++)
             {
-                // Get the column name and UCD
-                if (cData->GetNextColDesc(&colName, 
+                // Get the parameter name and UCD
+                if (cData->GetNextParamDesc(&paramName, 
                                           &ucdName,
                                           (mcsLOGICAL)(j==0)) == mcsFAILURE)
                 {
@@ -561,18 +564,18 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                 if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
                 {
                     // Three properties have the same UCD. Until now, the only
-                    // method to compare them is to compare the colum name
-                    if (strcmp(colName, "HD") == 0)
+                    // method to compare them is to compare the parameter name
+                    if (strcmp(paramName, "HD") == 0)
                     {
                         sprintf(newUcdName, "%s", vobsSTAR_ID_HD);
                         ucdName = newUcdName;
                     }
-                    else if (strcmp(colName, "HIP") == 0)
+                    else if (strcmp(paramName, "HIP") == 0)
                     {
                         sprintf(newUcdName, "%s", vobsSTAR_ID_HIP);
                         ucdName = newUcdName;
                     }
-                    else if (strcmp(colName, "DM") == 0)
+                    else if (strcmp(paramName, "DM") == 0)
                     {
                         sprintf(newUcdName, "%s", vobsSTAR_ID_DM);
                         ucdName = newUcdName;

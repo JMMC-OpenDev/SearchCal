@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.8 2005-02-08 20:59:33 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.9 2005-02-10 10:46:42 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/02/08 20:59:33  gzins
+* Added name of catalog from where data is coming from
+* Changed some parameter types from char* to const char*
+*
 * Revision 1.7  2005/02/07 09:47:08  gzins
 * Renamed vobsCDATA method to be compliant with programming standards; method name starts with capital
 *
@@ -25,7 +29,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.8 2005-02-08 20:59:33 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.9 2005-02-10 10:46:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -66,11 +70,12 @@ vobsCDATA::vobsCDATA()
  */
 vobsCDATA::~vobsCDATA()
 {
-    // Free all strings containing column names
-    std::vector<char *>::iterator colName;
-    for (colName = _colName.begin(); colName != _colName.end(); colName++)
+    // Free all strings containing parameter names
+    std::vector<char *>::iterator paramName;
+    for (paramName = _paramName.begin(); 
+         paramName != _paramName.end(); paramName++)
     {
-        free(*colName);
+        free(*paramName);
     }
 
     // Free all strings containing UCD names
@@ -83,7 +88,7 @@ vobsCDATA::~vobsCDATA()
     // Free all strings containing UCD names
     miscDynBufDestroy(&_buffer);
 
-    _colName.clear();
+    _paramName.clear();
     _ucdName.clear();
 
     _catalogName = "";
@@ -120,30 +125,30 @@ const char *vobsCDATA::GetCatalogName()
 }
  
 /**
- * Adds a column description (column name) at the end of the list
+ * Adds a parameter description (parameter name) at the end of the list
  *
- * This method adds the description (column name) of a column in the
- * CDATA section. The description of the columns has to be done in the same
+ * This method adds the description (parameter name) of a parameter in the
+ * CDATA section. The description of the parameters has to be done in the same
  * order they appear in the CDATA section.
  *
- * \param colName column name to be added to the list.
+ * \param paramName parameter name to be added to the list.
  *
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::AddColName(char *colName)
+mcsCOMPL_STAT vobsCDATA::AddParamName(char *paramName)
 {
-    logExtDbg("vobsCDATA::AddColName(%s)", colName);
+    logExtDbg("vobsCDATA::AddParamName(%s)", paramName);
 
-    _colName.push_back(strdup(colName)); 
+    _paramName.push_back(strdup(paramName)); 
 
     return mcsSUCCESS;
 }
 /**
- * Adds a column description (UCD) at the end of the list
+ * Adds a parameter description (UCD) at the end of the list
  *
- * This method adds the description (UCD) of a column in the
- * CDATA section. The description of the columns has to be done in the same
+ * This method adds the description (UCD) of a parameter in the
+ * CDATA section. The description of the parameters has to be done in the same
  * order they appear in the CDATA section.
  *
  * \param ucdName corresponding UCD to be added to the list.
@@ -165,48 +170,48 @@ mcsCOMPL_STAT vobsCDATA::AddUcdName(char *ucdName)
  * \return 
  * The number of lines to be skipped in CDATA.
  */
-mcsUINT32 vobsCDATA::GetNbColumns(void) 
+mcsUINT32 vobsCDATA::GetNbParams(void) 
 {
-    return _colName.size();
+    return _paramName.size();
 }
  
 /**
- * Returns the next column description in the CDATA section.
+ * Returns the next parameter description in the CDATA section.
  *
- * This method returns the pointers to the name and teh UCD of the next column
- * of the CDATA. If \em init is mcsTRUE, it returns the escription of the
- * first column.
+ * This method returns the pointers to the name and teh UCD of the next
+ * parameter of the CDATA. If \em init is mcsTRUE, it returns the escription of
+ * the first parameter.
  * 
- * \param colName pointer to the name of the next column
+ * \param paramName pointer to the name of the next parameter
  * \param ucdName pointer to the corresponding UCD 
  * \param init
  * 
- * \return mcsSUCCESS or mcsFAILURE if the end of the column list is reached.
+ * \return mcsSUCCESS or mcsFAILURE if the end of the parameter list is reached.
  */
-mcsCOMPL_STAT vobsCDATA::GetNextColDesc(char **colName, char **ucdName,
-                                        mcsLOGICAL init) 
+mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName, char **ucdName,
+                                          mcsLOGICAL init) 
 {
-    //logExtDbg("vobsCDATA::GetNextColDesc()");
+    //logExtDbg("vobsCDATA::GetNextParamDesc()");
 
     if (init == mcsTRUE)
     {
         // Get first element
-        _colNameIterator = _colName.begin();
+        _paramNameIterator = _paramName.begin();
         _ucdNameIterator = _ucdName.begin();
     }
     else
     {
         // Get next element
-        _colNameIterator++;
+        _paramNameIterator++;
         _ucdNameIterator++;
-        if ((_colNameIterator == _colName.end()) ||
+        if ((_paramNameIterator == _paramName.end()) ||
             (_ucdNameIterator == _ucdName.end()))
         {
             return mcsFAILURE;
         }
     }
 
-    *colName = *_colNameIterator;
+    *paramName = *_paramNameIterator;
     *ucdName = *_ucdNameIterator;
 
     return mcsSUCCESS;
@@ -230,9 +235,9 @@ mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
 }
 
 /**
- * Returns the number of colum CDATA.
+ * Returns the number of lines to be skipped in CDATA.
  * \return 
- * The number of colum in CDATA.
+ * The number of lines to be skipped
  */
 mcsUINT32 vobsCDATA::GetNbLinesToSkip(void) 
 {
@@ -374,7 +379,7 @@ mcsCOMPL_STAT vobsCDATA::Save(const char *fileName)
             strcpy(line, linePtr);
 
             // Number of UCDs per line
-            nbUcd = GetNbColumns();
+            nbUcd = GetNbParams();
 
             // Scan UCD list
             char *nextLinePtr;

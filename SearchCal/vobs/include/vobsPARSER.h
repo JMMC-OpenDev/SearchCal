@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.10 2005-02-08 20:35:24 gzins Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.11 2005-02-10 10:46:33 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/02/08 20:35:24  gzins
+* Changed some parameters from char* to const char*
+*
 * Revision 1.9  2005/02/04 09:56:32  gzins
 * Declared ParseCData as public (for temporary MIDI catalog needs)
 *
@@ -69,8 +72,6 @@ private:
     // Recurvise parsing of XML document 
     mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node,
                                   vobsCDATA *cData);
-
-    
 };
 
 #endif /*!vobsPARSER_H*/
