@@ -1,21 +1,19 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: sclsvrSERVER.cpp,v 1.3 2005-01-25 11:05:39 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     23-Nov-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.4 2005-01-26 13:13:04 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ ******************************************************************************/
 
 /**
  * \file
- * sclsvrSERVER class definition.
+ * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.3 2005-01-25 11:05:39 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.4 2005-01-26 13:13:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -63,11 +61,11 @@ mcsCOMPL_STAT sclsvrSERVER::AppInit()
 {
     logExtDbg("sclsvrSERVER::AppInit()");
 
-    evhCMD_KEY key(sclsvrGETCAL_CMD_NAME);
+    evhCMD_KEY key(sclsvrGETCAL_CMD_NAME, sclsvrGETCAL_CDF_NAME);
     evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD)&sclsvrSERVER::GetCalCB);
     AddCallback(key, cb);
     
-    evhCMD_KEY key1(sclsvrGETSTAR_CMD_NAME);
+    evhCMD_KEY key1(sclsvrGETSTAR_CMD_NAME, sclsvrGETSTAR_CDF_NAME);
     evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&sclsvrSERVER::GetStarCB);
     AddCallback(key1, cb1);
     
