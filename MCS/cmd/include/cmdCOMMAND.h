@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.h,v 1.10 2005-02-15 10:58:58 gzins Exp $"
+ * "@(#) $Id: cmdCOMMAND.h,v 1.11 2005-02-17 09:03:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/15 10:58:58  gzins
+ * Added CVS log as file modification history
+ *
  * mella     15-Nov-2004  Created
  * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed
  * gzins     09-Dec-2004  Added pure virtual Parse() method
@@ -32,6 +35,7 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+#include <list>
 #include <map>
 #include "cmdPARAM.h"
 
@@ -58,7 +62,7 @@ public:
     virtual ~cmdCOMMAND();
 
     /** typedef for map of cmdPARAM */
-    typedef map<string, cmdPARAM *> STRING2PARAM;
+    typedef std::list<std::pair<string, cmdPARAM *> > STRING2PARAM;
 
     virtual mcsCOMPL_STAT Parse(string cdfName="");
      
@@ -85,6 +89,9 @@ public:
     virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName,
                                                mcsLOGICAL *param);
 
+    /* methods to get command parameter line */
+    virtual mcsCOMPL_STAT GetCmdParamLine(string &paramLine);
+
 protected:
     
 private:
@@ -106,6 +113,8 @@ private:
      virtual mcsCOMPL_STAT CheckParams();
      
      virtual mcsCOMPL_STAT SetDescription(string desc);
+
+     virtual STRING2PARAM::iterator FindParam(string name);
 
      /** Flag that indicates if the params have been parsed */
      mcsLOGICAL _hasBeenYetParsed;

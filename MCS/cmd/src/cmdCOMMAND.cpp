@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.21 2005-02-15 11:02:48 gzins Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.22 2005-02-17 09:03:01 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/02/15 11:02:48  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.20  2005/02/15 10:58:58  gzins
  * Added CVS log as file modification history
  *
@@ -47,7 +50,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.21 2005-02-15 11:02:48 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.22 2005-02-17 09:03:01 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -352,7 +355,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
 mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM *param)
 {
     logExtDbg ("cmdCOMMAND::AddParam()");
-    _paramList.insert( make_pair(param->GetName(), param) );
+    _paramList.push_back( make_pair(param->GetName(), param) );
     return mcsSUCCESS;
 }
 
@@ -377,7 +380,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
     }
  
     // Get parameter from list
-    STRING2PARAM::iterator iter = _paramList.find(paramName);
+    STRING2PARAM::iterator iter = FindParam(paramName);
   
     // If found
     if (iter!= _paramList.end())
@@ -678,6 +681,70 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsLOGICAL *par
     }
     return p->GetDefaultValue(param);
 }
+
+/** 
+ * Get the command parameter line.
+ *
+ * \param paramLine string in which the list of parameters with associated value
+ * will be stored.
+ *
+ *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
+{
+    logExtDbg("cmdCOMMAND::GetCmdParamLine()");
+
+    // Parse parameter list 
+    if (Parse() == mcsFAILURE )
+    {
+        return mcsFAILURE;
+    }
+
+    if (_paramList.size() > 0)
+    {
+        STRING2PARAM::iterator i = _paramList.begin();
+        while(i != _paramList.end())
+        {
+            cmdPARAM * child = i->second;
+
+            if (child->IsOptional())
+            {
+                if (child->IsDefined())
+                {
+                    paramLine.append("-");
+                    paramLine.append(child->GetName());
+                    paramLine.append(" ");
+                    paramLine.append(child->GetUserValue());
+                    paramLine.append(" ");
+                }
+            }
+            else
+            {
+                if (child->IsDefined())
+                {
+                    paramLine.append("-");
+                    paramLine.append(child->GetName());
+                    paramLine.append(" ");
+                    paramLine.append(child->GetUserValue());
+                    paramLine.append(" ");
+                }
+                else if (child->HasDefaultValue())
+                {
+                    paramLine.append("-");
+                    paramLine.append(child->GetName());
+                    paramLine.append(" ");
+                    paramLine.append(child->GetDefaultValue());
+                    paramLine.append(" ");
+                }
+            }
+
+            i++;
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
 
 /*
  * Protected methods
@@ -1265,7 +1332,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
    
     cmdPARAM *p;
     /* If parameter does'nt exist in the cdf */
-    STRING2PARAM::iterator iter = _paramList.find(paramName);
+    STRING2PARAM::iterator iter = FindParam(paramName);
     if (iter != _paramList.end())
     {
         p = iter->second;
@@ -1333,6 +1400,28 @@ mcsCOMPL_STAT cmdCOMMAND::SetDescription(string desc)
     logExtDbg ("cmdCOMMAND::SetDescription()");
     _desc=desc;
     return mcsSUCCESS;
+}
+
+/** 
+ * Look at the parameter in the parameter list.  
+ *
+ * \param name name of the searched parameter. 
+ *
+ * \returns iterator on the found paramater, or end of list if not found.
+ */
+cmdCOMMAND::STRING2PARAM::iterator cmdCOMMAND::FindParam(string name)
+{
+    STRING2PARAM::iterator i = _paramList.begin();
+    while(i != _paramList.end())
+    {
+        cmdPARAM * child = i->second;
+        if (child->GetName() == name)
+        {
+            break ;
+        }
+        i++;
+    }
+    return(i);
 }
 
 /*___oOo___*/
