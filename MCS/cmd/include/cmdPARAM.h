@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdPARAM.h,v 1.4 2004-12-05 18:57:21 gzins Exp $"
+* "@(#) $Id: cmdPARAM.h,v 1.5 2005-01-29 14:38:36 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -22,6 +22,11 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+/*
+ * System headers
+ */
+#include <string>
+using namespace std;
 
 /*
  * Class declaration
