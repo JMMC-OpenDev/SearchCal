@@ -2,12 +2,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetModuleName.sh,v 1.4 2004-12-09 09:45:27 gzins Exp $"
+# "@(#) $Id: ctooGetModuleName.sh,v 1.5 2004-12-09 09:47:56 gzins Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # gluck     14-Sep-2004  Created
-#
+# gzins     09-Dec-2004  Updated to print module name on stdout instead of
+#                        returning value in shell variable.
 #
 #*******************************************************************************
 
