@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding,v 1.4 2004-06-30 13:46:28 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding,v 1.5 2004-06-30 13:55:16 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -52,8 +52,8 @@ then
 fi
 
 # Set templates directories and verify they exist
-CODE_DIR=$MCSROOT/templates/forCoding
-MAKEFILE_DIR=$MCSROOT/templates/forMakefile
+CODE_DIR=$MCSTEMPLATES/forCoding
+MAKEFILE_DIR=$MCSTEMPLATES/forMakefile
 
 if [ ! -d "$CODE_DIR" ]
 then 
