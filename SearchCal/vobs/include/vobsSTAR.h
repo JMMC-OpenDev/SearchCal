@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.30 2005-02-13 15:25:59 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.31 2005-02-23 07:50:42 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.30  2005/02/13 15:25:59  gzins
+* Added showPropId parameter to Display() method
+*
 * Revision 1.29  2005/02/11 10:44:00  gzins
 * Added UD, LD and UDDK diameter star properties
 *
@@ -99,6 +102,8 @@
 #define vobsSTAR_UD_DIAM_ERROR                  "UD_DIAM_ERROR"
 #define vobsSTAR_UDDK_DIAM                      "UDDK_DIAM"
 #define vobsSTAR_UDDK_DIAM_ERROR                "UDDK_DIAM_ERROR"
+#define vobsSTAR_DIAM12                         "DIAM12"
+#define vobsSTAR_DIAM12_ERROR                   "DIAM12_ERROR"
 #define vobsSTAR_OBS_METHOD                     "OBS_METHOD"
 #define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
 #define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
