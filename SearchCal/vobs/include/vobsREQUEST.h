@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.16 2005-02-11 14:44:11 gluck Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.17 2005-02-13 15:24:50 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/02/11 14:44:11  gluck
+* Changed Set/Get max number of selected object type parameters: mcsUINT32 -> mcsINT32
+*
 * Revision 1.15  2005/02/11 14:08:08  gluck
 * Changed max number of selected object type: mcsUINT32 -> mcsINT32
 *
@@ -92,19 +95,19 @@ public:
 
     //  Set and get maximum magnitude difference between the selected object
     //  minimum magnitude and the science object magnitude
-    virtual mcsCOMPL_STAT SetMinDeltaMag(const mcsFLOAT minDeltaMag);
-    virtual mcsFLOAT GetMinDeltaMag(void) const;
+    virtual mcsCOMPL_STAT SetMinRangeMag(const mcsFLOAT minRangeMag);
+    virtual mcsFLOAT GetMinRangeMag(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  maximum magnitude and the science object magnitude
-    virtual mcsCOMPL_STAT SetMaxDeltaMag(const mcsFLOAT maxDeltaMag);
-    virtual mcsFLOAT GetMaxDeltaMag(void) const;
+    virtual mcsCOMPL_STAT SetMaxRangeMag(const mcsFLOAT maxRangeMag);
+    virtual mcsFLOAT GetMaxRangeMag(void) const;
     
     // Set and get maximum number of selected objects
     virtual mcsCOMPL_STAT SetMaxNbOfSelectedObjects(const mcsINT32 
-                                           maxNbOfSelectedObjects);
+                                                    maxNbOfSelectedObjects);
     virtual mcsINT32 GetMaxNbOfSelectedObjects(void) const;
-    
+
     // Display request containt (constraints)
     virtual mcsCOMPL_STAT Display(void);
 
@@ -144,13 +147,13 @@ private:
      * Maximum magnitude difference between the selected object minimum
      * magnitude and the science object magnitude
      */
-    mcsFLOAT _minDeltaMag;
+    mcsFLOAT _minRangeMag;
     
     /**
      * Maximum magnitude difference between the selected object maximum
      * magnitude and the science object magnitude
      */
-    mcsFLOAT _maxDeltaMag;
+    mcsFLOAT _maxRangeMag;
 
     /** Maximum number of selected objects */
     mcsINT32 _maxNbOfSelectedObjects;

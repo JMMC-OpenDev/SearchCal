@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.6 2005-02-11 14:22:10 gluck Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.7 2005-02-13 15:29:04 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/11 14:22:10  gluck
+* - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
+* - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
+* - Updated some comments
+*
 * Revision 1.5  2005/02/08 20:30:37  gzins
 * Changed _name type; mcsSTRING to string
 *
@@ -26,7 +31,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.6 2005-02-11 14:22:10 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.7 2005-02-13 15:29:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -138,14 +143,14 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, band);
     
     // Add the magnitude range constraint
-    mcsSTRING32 deltaMag;
-    mcsFLOAT minDeltaMag;
-    mcsFLOAT maxDeltaMag;
-    minDeltaMag = request.GetMinDeltaMag();
-    maxDeltaMag = request.GetMaxDeltaMag();
-    sprintf(deltaMag, "%.2f..%.2f", minDeltaMag, maxDeltaMag);
+    mcsSTRING32 rangeMag;
+    mcsFLOAT minRangeMag;
+    mcsFLOAT maxRangeMag;
+    minRangeMag = request.GetMinRangeMag();
+    maxRangeMag = request.GetMaxRangeMag();
+    sprintf(rangeMag, "%.2f..%.2f", minRangeMag, maxRangeMag);
     miscDynBufAppendString(&_query, "mag=");
-    miscDynBufAppendString(&_query, deltaMag);
+    miscDynBufAppendString(&_query, rangeMag);
 
     // Add search box size
     mcsSTRING32 separation;
