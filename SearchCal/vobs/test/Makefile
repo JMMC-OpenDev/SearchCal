@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2004-12-14 14:45:16 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.12 2004-12-20 09:40:57 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -22,7 +22,7 @@
 
 #
 # additional include and library search paths
-USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/include/ -I/usr/include/glib-2.0
+USER_INC =
 #USER_LIB = 
 
 #
@@ -34,50 +34,50 @@ USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/i
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV getInformation vobsTestCriteria 
+EXECUTABLES     = vobsTestVirtualobs vobsTestVirtualObsV getInformation vobsTestCriteria vobsTestStar 
 EXECUTABLES_L   = 
 
 #
 # <brief description of vobsServer program>
 vobsServer_OBJECTS   = vobsServer
-vobsServer_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsServer_LIBS      = mcs err log  vobs
+vobsServer_LDFLAGS   = 
+vobsServer_LIBS      = MCS C++ vobs
 
 vobsSearch_OBJECTS   = vobsSearch
-vobsSearch_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsSearch_LIBS      = mcs err log  vobs
+vobsSearch_LDFLAGS   = 
+vobsSearch_LIBS      = MCS C++ vobs
 
 vobsTestParser_OBJECTS   = vobsTestParser
-vobsTestParser_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestParser_LIBS      = mcs err log misc  vobs
+vobsTestParser_LDFLAGS   = 
+vobsTestParser_LIBS      = MCS C++ vobs
 
 vobsTestStar_OBJECTS   = vobsTestStar
-vobsTestStar_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestStar_LIBS      = mcs err log misc  vobs
+vobsTestStar_LDFLAGS   = 
+vobsTestStar_LIBS      = MCS C++ vobs
 
 vobsTestStarList_OBJECTS   = vobsTestStarList
-vobsTestStarList_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestStarList_LIBS      = mcs err log misc  vobs
+vobsTestStarList_LDFLAGS   = 
+vobsTestStarList_LIBS      = MCS C++ vobs
 
 vobsTestRequest_OBJECTS   = vobsTestRequest
-vobsTestRequest_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestRequest_LIBS      = mcs err log misc  vobs
+vobsTestRequest_LDFLAGS   = 
+vobsTestRequest_LIBS      = MCS C++ vobs
 
 vobsTestVirtualobs_OBJECTS   = vobsTestVirtualobs
-vobsTestVirtualobs_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestVirtualobs_LIBS      = mcs err log misc  vobs
+vobsTestVirtualobs_LDFLAGS   = 
+vobsTestVirtualobs_LIBS      = MCS C++ vobs
 
 vobsTestVirtualObsV_OBJECTS   = vobsTestVirtualObsV
-vobsTestVirtualObsV_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestVirtualObsV_LIBS      = mcs err log misc  vobs
+vobsTestVirtualObsV_LDFLAGS   = 
+vobsTestVirtualObsV_LIBS      = MCS C++ vobs
 
 getInformation_OBJECTS   = getInformation
-getInformation_LDFLAGS   = -lxml2 -lgdome -lstdc++
-getInformation_LIBS      = mcs err log misc  vobs simcli
+getInformation_LDFLAGS   = 
+getInformation_LIBS      = MCS C++ vobs simcli
 
 vobsTestCriteria_OBJECTS   = vobsTestCriteria 
-vobsTestCriteria_LDFLAGS   = -lxml2 -lgdome -lstdc++
-vobsTestCriteria_LIBS      = mcs err log misc  vobs 
+vobsTestCriteria_LDFLAGS   = 
+vobsTestCriteria_LIBS      = MCS C++ vobs
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 

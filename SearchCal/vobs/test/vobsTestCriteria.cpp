@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsTestCriteria.cpp,v 1.1 2004-12-14 14:45:16 scetre Exp $"
+* "@(#) $Id: vobsTestCriteria.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,7 @@
 *******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.1 2004-12-14 14:45:16 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -34,7 +34,7 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-
+#include "timlog.h"
 
 /*
  * Local Headers 
@@ -70,30 +70,33 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    vobsSTAR_COMP_CRITERIA_LIST criteriaList;
+    timlogStart(logINFO, "testCriteria");
+    vobsSTAR_COMP_CRITERIA_LIST *criteriaList = new vobsSTAR_COMP_CRITERIA_LIST;
 
     // Add criteria in the list
     printf("we added a comparaison criteria 'ra' and a range of '0.1'\n");
-    criteriaList.Add("ra", 0.1);
+    criteriaList->Add("ra", 0.1);
     printf("we added a comparaison criteria 'dec' and a range of '0.2'\n");
-    criteriaList.Add("dec", 0.2);
+    criteriaList->Add("dec", 0.2);
     printf("we added a comparaison criteria 'mgK' and a range of '0.0'\n");
-    criteriaList.Add("mgK", 0.0);
+    criteriaList->Add("mgK", 0.0);
 
     // printf all criteria
     mcsSTRING32 propertyId;
     mcsFLOAT range;
-    int listSize=criteriaList.Size();
+    int listSize=criteriaList->Size();
     printf("size of the criteria list created = %d\n", listSize);    
     for (int el = 0; el < listSize; el++)
     {
-        criteriaList.GetNextCriteria(propertyId,
+        criteriaList->GetNextCriteria(propertyId,
                                      &range,
                                      (mcsLOGICAL)(el==0));
         printf("%s = %.1f\n", propertyId, range);
     }
 
     
+    delete criteriaList;
+    timlogStop("testCriteria");
     
     // Close MCS services
     mcsExit();

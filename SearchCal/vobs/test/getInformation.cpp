@@ -2,7 +2,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: getInformation.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: getInformation.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -11,7 +11,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: getInformation.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: getInformation.cpp,v 1.2 2004-12-20 09:40:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -305,8 +305,8 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     vobsSTAR star;
-    star.SetProperty(POS_EQ_RA_MAIN_ID, ra);
-    star.SetProperty(POS_EQ_DEC_MAIN_ID, dec);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec);
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
     vobsVIRTUAL_OBSERVATORY vobs;
