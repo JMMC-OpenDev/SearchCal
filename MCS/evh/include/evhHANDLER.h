@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.h,v 1.2 2004-11-18 17:28:36 gzins Exp $"
+* "@(#) $Id: evhHANDLER.h,v 1.3 2004-11-23 09:12:27 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     22-Sep-2004  Created based on VLT SW
+* gzins     23-Nov-2004  Used new msg C++ library.
 *
 *
 *******************************************************************************/
@@ -61,7 +62,6 @@ public:
                                       evhIOSTREAM_CALLBACK &callback);
     virtual mcsCOMPL_STAT MainLoop(msgMESSAGE *msg=NULL);
 
-    
     virtual mcsCOMPL_STAT Run(const evhCMD_KEY &key, msgMESSAGE &msg);
     virtual mcsCOMPL_STAT Run(const evhIOSTREAM_KEY &key, int fd);
     virtual evhCALLBACK_LIST *Find(const evhKEY &key);
@@ -74,11 +74,13 @@ private:
     evhHANDLER& operator=(const evhHANDLER&);
     evhHANDLER (const evhHANDLER&);
 
-    std::list<std::pair<evhKEY *, evhCALLBACK_LIST *> >           _eventList;
-    std::list<std::pair<evhKEY *, evhCALLBACK_LIST *> >::iterator _eventIterator;
+    std::list<std::pair<evhKEY*, evhCALLBACK_LIST *> >           _eventList;
+    std::list<std::pair<evhKEY*, evhCALLBACK_LIST *> >::iterator _eventIterator;
 
     evhCMD_KEY      _cmdEvent;
     evhIOSTREAM_KEY _iostreamEvent;
+
+    msgMANAGER_IF   _msgManager; // Interface to message manager
 };
 
 #endif /*!evhHANDLER_H*/

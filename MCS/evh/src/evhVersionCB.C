@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhVersionCB.C,v 1.1 2004-11-17 10:27:32 gzins Exp $"
+* "@(#) $Id: evhVersionCB.C,v 1.2 2004-11-23 09:15:19 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * Definition of the VERSION callback.
  */
 
-static char *rcsId="@(#) $Id: evhVersionCB.C,v 1.1 2004-11-17 10:27:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhVersionCB.C,v 1.2 2004-11-23 09:15:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -53,10 +53,10 @@ evhCB_COMPL_STAT evhSERVER::VersionCB(msgMESSAGE &msg, void*)
     strcpy(version,  GetSwVersion());
 
     // Set the reply buffer
-    msgSetBody(&msg, version, strlen(version));
+    msg.SetBody(version, strlen(version));
 
     // Send reply
-    msgSendReply(&msg, mcsTRUE);
+    SendReply(msg);
 
     return evhCB_NO_DELETE;
 }

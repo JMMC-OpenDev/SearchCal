@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhHANDLER.C,v 1.3 2004-11-18 17:27:23 gzins Exp $"
+* "@(#) $Id: evhHANDLER.C,v 1.4 2004-11-23 09:15:10 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -20,7 +20,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.C,v 1.3 2004-11-18 17:27:23 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.C,v 1.4 2004-11-23 09:15:10 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -151,11 +151,11 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
     logExtDbg("evhHANDLER::MainLoop()");
 
     // If a message is given and it the command is not empty
-    if ((msg != NULL) && (strlen(msgGetCommand(msg)) != 0))
+    if ((msg != NULL) && (strlen(msg->GetCommand()) != 0))
     {
         // Build event key
         evhCMD_KEY key;
-        key.SetCommand(msgGetCommand(msg));
+        key.SetCommand(msg->GetCommand());
 
         // Run attached callback
         if (Run(key, *msg) == FAILURE)
@@ -187,13 +187,13 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
             {
                 // Read message
                 msgMESSAGE msg;
-                if (msgReceive(&msg, 0) == FAILURE)
+                if (_msgManager.Receive(msg, 0) == FAILURE)
                 {
                     return FAILURE;
                 }
 
                 // Build event key
-                ((evhCMD_KEY *)key)->SetCommand(msgGetCommand(&msg));
+                ((evhCMD_KEY *)key)->SetCommand(msg.GetCommand());
 
                 // Run attached callback
                 if (Run(*(evhCMD_KEY *)key, msg) == FAILURE)
@@ -202,7 +202,7 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
                 }
 
                 // If EXIT command received
-                if (strcmp(msgGetCommand(&msg), "EXIT") == 0)
+                if (strcmp(msg.GetCommand(), "EXIT") == 0)
                 {
                     return SUCCESS;
                 }
@@ -284,8 +284,8 @@ mcsCOMPL_STAT evhHANDLER::Run(const evhCMD_KEY &key, msgMESSAGE &msg)
     // If there is no callback attached to this command
     if (counter == 0)
     {
-        errAdd(evhERR_CMD_UNKNOWN, msgGetCommand(&msg));
-        if (msgSendReply(&msg, mcsTRUE)== FAILURE)
+        errAdd(evhERR_CMD_UNKNOWN, msg.GetCommand());
+        if (_msgManager.SendReply(msg, mcsTRUE)== FAILURE)
         {
             return FAILURE;
         } 
@@ -328,15 +328,12 @@ evhKEY *evhHANDLER::Select()
 {
     logExtDbg("evhHANDLER::Select()");
 
-    fd_set      readMask;
+    fd_set   readMask;
     
-    mcsINT32 msgQueueSd;
+    mcsINT32 msgQueueSd = -1;
     mcsINT32 nbOfSds = 0;
     mcsINT32 sds[evhMAX_NO_OF_SDS];
     mcsINT32 maxSd = 0;
-
-    // Get the socket descriptor for the message queue
-    msgQueueSd = msgGetMessageQueue();
 
     // Get the list of listened I/O streams
     std::list<pair<evhKEY *, evhCALLBACK_LIST *> > ::iterator iter;
@@ -354,7 +351,7 @@ evhKEY *evhHANDLER::Select()
     // End for
     
     // If there is no I/O to listen
-    if ((msgQueueSd == -1) && (nbOfSds == 0))
+    if ((_msgManager.IsConnected() == mcsFALSE) && (nbOfSds == 0))
     {
         // Raise an error
         errAdd(evhERR_NO_STREAM_TO_LISTEN);
@@ -367,11 +364,15 @@ evhKEY *evhHANDLER::Select()
     // Set the set of descriptors for reading
     FD_ZERO(&readMask);
     // Message queue
-    if (msgQueueSd != -1)
+    if (_msgManager.IsConnected() == mcsTRUE)
     {
+        // Get the socket descriptor for the message queue
+        msgQueueSd = _msgManager.GetMsgQueue();
+
         FD_SET(msgQueueSd, &readMask);
         maxSd = msgQueueSd + 1;
     }
+
     // I/O streams
     for (int sd=0; sd < nbOfSds; sd++)
     {
@@ -394,7 +395,8 @@ evhKEY *evhHANDLER::Select()
     }
  
     // If a message is received from message manager 
-    if ((msgQueueSd != -1) && (FD_ISSET(msgQueueSd , &readMask)))
+    if ((_msgManager.IsConnected() == mcsTRUE) && 
+        (FD_ISSET(msgQueueSd , &readMask)))
     {
         logTest("Message received...");
         return &(_cmdEvent.SetCommand(mcsNULL_CMD));
