@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center 
 #
-# "@(#) $Id: Makefile,v 1.2 2004-06-16 14:06:03 gzins Exp $" 
+# "@(#) $Id: Makefile,v 1.3 2004-09-10 15:54:15 gzins Exp $" 
 #
 # Makefile for MCS module 
 #
@@ -28,15 +28,15 @@ EXECUTABLES_L   =
 
 #
 # to set the shell to be used by panels
-xxxx_OBJECTS   = 
-xxxx_LDFLAGS   =
-xxxx_LIBS      =
+xxxx_OBJECTS    = 
+xxxx_LDFLAGS    =
+xxxx_LIBS       =
 
 
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES = mcs.h 
+INCLUDES        = mcs.h 
 
 #
 # Libraries (public and local)
@@ -46,11 +46,11 @@ LIBRARIES_L     =
 
 #
 # <brief description of msg library>
-mcs_OBJECTS   = mcs
+mcs_OBJECTS     = mcs
 
 #
 # Scripts (public and local)
-SCRIPTS  = 	
+SCRIPTS         = 
 
 #
 # man pages to be done
@@ -59,16 +59,6 @@ MANSECTIONS =
 MAN1 = 
 MAN5 = 
 MAN7 = 
-
-#
-# local man pages
-# ---------------
-MANl = $(SCRIPTS)
-
-#
-# ASCII file to be converted into Framemaker-MIF
-# --------------------
-ASCII_TO_MIF = 
 
 #
 # other files to be installed
@@ -99,7 +89,7 @@ CSOURCENAMES =\
 # installation on an empty system.
 #
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/mcsMakefile
+include $(MAKEDIR)/mkfMakefile
 
 #
 # TARGETS
