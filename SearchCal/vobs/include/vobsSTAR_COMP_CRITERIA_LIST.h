@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.1 2004-12-14 14:44:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.2 2004-12-20 09:39:46 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -40,10 +40,14 @@ class vobsSTAR_COMP_CRITERIA_LIST
 public:
     // Class constructor
     vobsSTAR_COMP_CRITERIA_LIST();
+    vobsSTAR_COMP_CRITERIA_LIST(vobsSTAR_COMP_CRITERIA_LIST&);
 
     // Class destructor
     virtual ~vobsSTAR_COMP_CRITERIA_LIST();
 
+    // operator =
+    vobsSTAR_COMP_CRITERIA_LIST& operator=(vobsSTAR_COMP_CRITERIA_LIST&);
+    
     // Method to add a criteria in the list
     virtual mcsCOMPL_STAT Add(char *propertyId, mcsFLOAT range);
     // Method to Get the next criteria
@@ -56,11 +60,6 @@ public:
 protected:
     
 private:
-    // Declaration of copy constructor and assignment operator as private
-    // methods, in order to hide them from the users.
-    vobsSTAR_COMP_CRITERIA_LIST(const vobsSTAR_COMP_CRITERIA_LIST&);
-    vobsSTAR_COMP_CRITERIA_LIST& operator=(const vobsSTAR_COMP_CRITERIA_LIST&);
-
     // List of stars
     std::map<char *, float>           _criteriaList;
     std::map<char *, float>::iterator _criteriaIterator;

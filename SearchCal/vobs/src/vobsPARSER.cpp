@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsPARSER.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"
+ * "@(#) $Id: vobsPARSER.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -512,11 +512,11 @@ mcsCOMPL_STAT vobsPARSER::ParseCData(vobsCDATA *cData,
                     }
 
                     // Set star property
-                    if (star.SetProperty(ucdName, ucdValue) == FAILURE)
+                    if (star.SetPropertyValue(ucdName, ucdValue) == FAILURE)
                     {
                         // If ucd is not found, ignore error
                         if (errIsInStack(MODULE_ID, 
-                                         vobsERR_INVALID_UCD_NAME) == mcsTRUE)
+                                         vobsERR_INVALID_PROPERTY_ID) == mcsTRUE)
                         {
                             errResetStack();
                         }

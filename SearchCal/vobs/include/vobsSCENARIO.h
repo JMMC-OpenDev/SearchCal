@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.2 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.3 2004-12-20 09:39:46 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,10 +25,10 @@
 /*
  * header files
  */
-#include<list>
-#include"vobsSTAR_LIST.h"
-#include"vobsCATALOG.h"
-
+#include <list>
+#include "vobsSTAR_LIST.h"
+#include "vobsCATALOG.h"
+#include "vobsSTAR_COMP_CRITERIA_LIST.h"
 /*
  * Enumeration type definition
  */
@@ -51,15 +51,17 @@ typedef enum
  * Data structure containing description of ENTRY
  * INTERNAL USED ONLY
  */
-typedef struct
+class vobsSCENARIO_ENTRY
 {
-    vobsCATALOG   *catalog;
-    vobsSTAR_LIST *listInput;
-    vobsSTAR_LIST *listOutput;
-    vobsACTION    action;
-    float         deltaRa;
-    float         deltaDec;
-}vobsSCENARIO_ENTRY;
+public:
+    vobsSCENARIO_ENTRY() {};
+
+    vobsCATALOG                 *catalog;
+    vobsSTAR_LIST               *listInput;
+    vobsSTAR_LIST               *listOutput;
+    vobsACTION                  action;
+    vobsSTAR_COMP_CRITERIA_LIST *criteriaList;
+};
 
 
 /*
@@ -88,8 +90,7 @@ public :
                                    vobsSTAR_LIST *listInput,
                                    vobsSTAR_LIST *listOutput,
                                    vobsACTION action,
-                                   float ra,
-                                   float dec );
+                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList);
   
     // Execute the scenario
     mcsCOMPL_STAT Execute(vobsREQUEST &request, vobsSTAR_LIST &starList);

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2004-11-23 12:47:48 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.11 2004-12-20 09:40:24 scetre Exp $"
 #
 # Makefile of vobs module 
 #
@@ -50,25 +50,27 @@ vobsServer_LIBS      = MCS C++ vobs
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = vobs.h					\
-				  vobsSTAR.h 				\
-				  vobsSTAR_LIST.h 			\
-				  vobsREQUEST.h 			\
-				  vobsCDATA.h				\
-				  vobsPARSER.h				\
-				  vobsCATALOG.h 			\
-				  vobsCATALOG_ASCC.h 		\
-				  vobsCATALOG_BSC.h 		\
-				  vobsCATALOG_CHARM.h 		\
-				  vobsCATALOG_CIO.h 		\
-				  vobsCATALOG_DENIS.h 		\
-				  vobsCATALOG_HIC.h 		\
-				  vobsCATALOG_LBSI.h 		\
-				  vobsCATALOG_MASS.h 		\
-				  vobsCATALOG_PHOTO.h 		\
-				  vobsCATALOG_SBSC.h		\
-				  vobsVIRTUAL_OBSERVATORY.h	\
-				  vobsSCENARIO.h	        \
+INCLUDES        = vobs.h						\
+				  vobsSTAR.h 			   		\
+				  vobsSTAR_PROPERTY.h 			\
+				  vobsSTAR_LIST.h 		   		\
+				  vobsREQUEST.h 		   		\
+				  vobsCDATA.h			   		\
+				  vobsPARSER.h			   		\
+				  vobsCATALOG.h 		   		\
+				  vobsCATALOG_ASCC.h 	   		\
+				  vobsCATALOG_BSC.h 	   		\
+				  vobsCATALOG_CHARM.h 	   		\
+				  vobsCATALOG_CIO.h 	   		\
+				  vobsCATALOG_DENIS.h 	   		\
+				  vobsCATALOG_HIC.h 	   		\
+				  vobsCATALOG_LBSI.h 	   		\
+				  vobsCATALOG_MASS.h 	   		\
+				  vobsCATALOG_PHOTO.h 	   		\
+				  vobsCATALOG_SBSC.h	   		\
+				  vobsVIRTUAL_OBSERVATORY.h		\
+				  vobsSCENARIO.h	       		\
+				  vobsSTAR_COMP_CRITERIA_LIST.h	\
 #
 # Libraries (public and local)
 # ----------------------------
@@ -77,25 +79,26 @@ LIBRARIES_L     =
 
 #
 # <brief description of vobs library>
-vobs_OBJECTS   =   vobsSTAR 				\
-				   vobsSTAR_LIST 			\
-				   vobsREQUEST 				\
-				   vobsCDATA				\
-				   vobsPARSER				\
-				   vobsCATALOG 				\
-				   vobsCATALOG_ASCC 		\
-				   vobsCATALOG_BSC 			\
-				   vobsCATALOG_CHARM 		\
-				   vobsCATALOG_CIO 			\
-				   vobsCATALOG_DENIS 		\
-				   vobsCATALOG_HIC 			\
-				   vobsCATALOG_LBSI 		\
-				   vobsCATALOG_MASS 		\
-				   vobsCATALOG_PHOTO 		\
-				   vobsCATALOG_SBSC			\
-				   vobsVIRTUAL_OBSERVATORY	\
-				   vobsSCENARIO             \
-
+vobs_OBJECTS   =   vobsSTAR 					\
+				   vobsSTAR_PROPERTY			\
+				   vobsSTAR_LIST 				\
+				   vobsREQUEST 					\
+				   vobsCDATA					\
+				   vobsPARSER					\
+				   vobsCATALOG 					\
+				   vobsCATALOG_ASCC 			\
+				   vobsCATALOG_BSC 				\
+				   vobsCATALOG_CHARM 			\
+				   vobsCATALOG_CIO 				\
+				   vobsCATALOG_DENIS 			\
+				   vobsCATALOG_HIC 				\
+				   vobsCATALOG_LBSI 			\
+				   vobsCATALOG_MASS 			\
+				   vobsCATALOG_PHOTO 			\
+				   vobsCATALOG_SBSC				\
+				   vobsVIRTUAL_OBSERVATORY		\
+				   vobsSCENARIO             	\
+				   vobsSTAR_COMP_CRITERIA_LIST	\
 #
 # Scripts (public and local)
 # --------------------------

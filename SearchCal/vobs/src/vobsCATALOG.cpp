@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -16,7 +16,7 @@
  * vobsCATALOG class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -45,7 +45,7 @@ using namespace std;
 #include "vobsCATALOG.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
-
+#include "vobsSTAR.h"
 /*
  * Local Variables
  */
@@ -511,7 +511,7 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
             mcsSTRING32 ddec, mdec, sdec;
             
             vobsSTAR *star = list.GetNextStar((mcsLOGICAL)(el==0));
-            star->GetProperty(POS_EQ_RA_MAIN_ID, ra);
+            strcpy(ra, star->GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
             /*{
                 if (errIsInStack(MODULE_ID, 
                                  vobsERR_PROPERTY_NOT_SET) == mcsTRUE)
@@ -534,7 +534,7 @@ mcsCOMPL_STAT vobsCATALOG::StarList2Sring(miscDYN_BUF &strList,
             miscDynBufAppendString(&strList, sra);
             
 
-            star->GetProperty(POS_EQ_DEC_MAIN_ID, dec);
+            strcpy(dec, star->GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
             /*{
                 // if get property failed because of property not set, ignore
                 // error 

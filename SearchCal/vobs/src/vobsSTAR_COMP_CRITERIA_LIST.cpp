@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.1 2004-12-14 14:44:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.2 2004-12-20 09:40:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -15,7 +15,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.1 2004-12-14 14:44:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.2 2004-12-20 09:40:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -23,6 +23,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <iostream>
 using namespace std;
+#include <map>
 
 /*
  * MCS Headers 
@@ -44,12 +45,43 @@ vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
 {
     _criteriaIterator = _criteriaList.begin();    
 }
-
+/**
+ * Copy Constructor
+ */
+vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST(vobsSTAR_COMP_CRITERIA_LIST &criteriaList)
+{
+    // For each criteria
+    map<char *, float> ::iterator criteriaIterator;
+    for (criteriaIterator = _criteriaList.begin();
+         criteriaIterator != _criteriaList.end(); criteriaIterator++)
+    {
+        _criteriaList[(*criteriaIterator).first] = 
+            criteriaList._criteriaList[(*criteriaIterator).first];
+    }
+}
 /**
  * Class destructor
  */
 vobsSTAR_COMP_CRITERIA_LIST::~vobsSTAR_COMP_CRITERIA_LIST()
 {
+}
+
+/**
+ * Assignment operator
+ */
+vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
+(vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
+{
+    logExtDbg("vobsSTAR_COMP_CRITERIA_LIST::operator=()"); 
+    // For each criteria
+    map<char *, float> ::iterator criteriaIterator;
+    for (criteriaIterator = _criteriaList.begin();
+         criteriaIterator != _criteriaList.end(); criteriaIterator++)
+    {
+        _criteriaList[(*criteriaIterator).first] = 
+            criteriaList._criteriaList[(*criteriaIterator).first];
+    }
+    return *this;
 }
 
 /*
@@ -99,6 +131,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
                                                            mcsFLOAT *range,
                                                            mcsLOGICAL init)
 {
+    logExtDbg("vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria()");
     // if init == mcsTRUE the wanted criteria is the first of the list
     if (init == mcsTRUE)
     {
@@ -109,7 +142,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
         _criteriaIterator++;
         if (_criteriaIterator == _criteriaList.end())
         {
-            errAdd(vobsERR_NO_OTHER_STAR_IN_THE_LIST);
+            errAdd(vobsERR_NO_MORE_CRITERIA);
             return FAILURE;
         }
     }

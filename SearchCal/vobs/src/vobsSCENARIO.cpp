@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.2 2004-12-20 09:40:24 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -16,7 +16,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.1 2004-12-05 21:00:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.2 2004-12-20 09:40:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -85,18 +85,16 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry( vobsCATALOG *catalog,
                                       vobsSTAR_LIST *listInput,
                                       vobsSTAR_LIST *listOutput,
                                       vobsACTION action,
-                                      float ra,
-                                      float dec )
+                                      vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    logExtDbg("vobsSCENARIO::AddEntry(0x%x, 0x%x, 0x%x, %d)", catalog, listInput, listOutput, action);
+    logExtDbg("vobsSCENARIO::AddEntry(0x%x, 0x%x, 0x%x, %d, 0x%x)", catalog, listInput, listOutput, action, criteriaList);
     vobsSCENARIO_ENTRY entry;
     
-    entry.catalog=catalog;
-    entry.listInput=listInput;
-    entry.listOutput=listOutput;
-    entry.action=action;
-    entry.deltaRa=ra;
-    entry.deltaDec=dec;
+    entry.catalog = catalog;
+    entry.listInput = listInput;
+    entry.listOutput = listOutput;
+    entry.action = action;
+    entry.criteriaList = criteriaList;
 
     // Put element in the list    
     _entryList.push_back(entry);
@@ -129,6 +127,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         {
             return FAILURE;
         }
+        
         if ((*_entryIterator).listInput != NULL)
         {
             tempList.Copy(*(*_entryIterator).listInput);
@@ -180,7 +179,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                     {
                         return FAILURE;
                     }
-                    if (((*_entryIterator).listOutput)->Merge(tempList) 
+                    if (((*_entryIterator).listOutput)->
+                        Merge(tempList,
+                              (*_entryIterator).criteriaList) 
                         == FAILURE)
                     {
                         return FAILURE;
@@ -188,9 +189,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                 }
             case MERGE:
                 {
-                    if ( ((*_entryIterator).listOutput)->Merge(tempList,
-                                                          (*_entryIterator).deltaRa,
-                                                          (*_entryIterator).deltaDec) 
+                    if ( ((*_entryIterator).listOutput)->
+                         Merge(tempList,
+                               (*_entryIterator).criteriaList)
                          == FAILURE )
                     {
                         return FAILURE;
@@ -198,11 +199,11 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                 }
             case UPDATE_ONLY:
                 {
-                    
-                    if ( ((*_entryIterator).listOutput)->Merge(tempList,
-                                                          (*_entryIterator).deltaRa,
-                                                          (*_entryIterator).deltaDec,
-                                                          mcsTRUE)
+
+                    if ( ((*_entryIterator).listOutput)->
+                         Merge(tempList,
+                               (*_entryIterator).criteriaList,
+                               mcsTRUE)
                          == FAILURE )
                     {
                         return FAILURE;

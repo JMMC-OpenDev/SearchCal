@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"
+ * "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  -------------------------------------------------------
@@ -14,7 +14,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -124,6 +124,10 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
                                                     vobsSCENARIO    &scenario)
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::LoadScenario()");
+    vobsSTAR_COMP_CRITERIA_LIST *criteriaList = new vobsSTAR_COMP_CRITERIA_LIST;
+    criteriaList->Add(vobsSTAR_POS_EQ_RA_MAIN, 0.1);
+    criteriaList->Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.1);
+    
 
     // Scenario in band K
     if ((strcmp(band, "I")==0)||
@@ -133,40 +137,52 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
     {
         _starListP.Clear();
         _starListS.Clear();
-        
+       
+
         if (starList.IsEmpty() == mcsTRUE)
         {
             // II/225
-            scenario.AddEntry(&_cio, NULL, &_starListP, COPY, 0.0, 0.0);
+            scenario.AddEntry(&_cio, NULL, &_starListP, COPY, NULL);
             // II/7A
-            scenario.AddEntry(&_photo, NULL, &_starListP, MERGE, 0.1, 0.1);
+            scenario.AddEntry(&_photo, NULL, &_starListP, MERGE, criteriaList);
             // I/280
-            scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY, 0.0, 0.0);
+            scenario.AddEntry(&_ascc, &_starListP, &_starListS, COPY,
+                              NULL);
         }
         else
         {
             _starListP.Copy(starList);
             // I/280
-            scenario.AddEntry(&_ascc, &_starListP, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+            scenario.AddEntry(&_ascc, &_starListP, &_starListS, UPDATE_ONLY,
+                              criteriaList);
         }
         // II/225
-        scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY, 0.1, 0.1);
+        scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // I/196
-        scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY, 0.1, 0.1);
+        scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // 2MASS
-        scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // LBSI
-        scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY, 0.1, 0.1);
+        scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // CHARM
-        scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY, 0.1, 0.1);
+        scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // II/7A
-        scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY, 0.1, 0.1);
+        scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // BSC
-        scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY, 0.1, 0.1);
+        scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // SBSC
-        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // DENIS
-        scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
     }
     // Scenario in band V
     else if (strcmp(band, "V")==0)
@@ -177,37 +193,47 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(mcsSTRING16     band,
         // I/280
         if (starList.IsEmpty() == mcsTRUE)
         {
-            scenario.AddEntry(&_ascc, NULL, &_starListS, COPY, 0.0, 0.0);
+            scenario.AddEntry(&_ascc, NULL, &_starListS, COPY,
+                              NULL);
         }
         else
         {
             _starListP.Copy(starList);
-            scenario.AddEntry(&_ascc, &_starListP, &_starListS, MERGE, 0.1, 0.1);
+            scenario.AddEntry(&_ascc, &_starListP, &_starListS, MERGE,
+                              criteriaList);
         }
         // I/196
-        scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_hic, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // MASS
-        scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_mass, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // II/225
-        scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_cio, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // LBSI
-        scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_lbsi, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // CHARM
-        scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_charm, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // II/7A
-        scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_photo, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // BSC
-        scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_bsc, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // SBSC
-        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_sbsc, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
         // DENIS
-        scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY, 0.0, 0.0);
+        scenario.AddEntry(&_denis, &_starListS, &_starListS, UPDATE_ONLY,
+                          NULL);
     }
     else
     {
         return FAILURE;
     }
-
 
     return SUCCESS;
 }

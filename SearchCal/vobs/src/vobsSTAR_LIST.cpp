@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"
+ * "@(#) $Id: vobsSTAR_LIST.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.3 2004-12-13 13:36:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.4 2004-12-20 09:40:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -33,43 +33,6 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
-/* Local variables */
-static char *propNameList[] =
-{
-   "hd",
-   "hip",
-   "ra",
-   "dec",
-   "pmdec",
-   "pmra",
-   "plx",
-   "tsp",
-   "varflag",
-   "multflag",
-   "glat",
-   "glon",
-   "radvel",
-   "diam",
-   "meth",
-   "wlen",
-   "photflux",
-   "units",
-   "U",
-   "B",
-   "V",
-   "R",
-   "I",
-   "J",
-   "H",
-   "K",
-   "L",
-   "M",
-   "N",
-   "velocrotat",
-   "color",
-   NULL
-};
-
 //Class conctructor
 vobsSTAR_LIST::vobsSTAR_LIST()
 {
@@ -80,6 +43,7 @@ vobsSTAR_LIST::vobsSTAR_LIST()
 mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 {
      
+    logExtDbg("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
     for (unsigned int el = 0; el < list.Size(); el++)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
@@ -216,7 +180,7 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  */
 vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init) 
 {
-    //logExtDbg("vobsSTAR_LIST::GetNextStar()");
+    logExtDbg("vobsSTAR_LIST::GetNextStar()");
 
     if (init == mcsTRUE)
     {
@@ -253,8 +217,7 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
  * found in list.
  */
 vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
-                                 float intervalRa,
-                                 float intervalDec)
+                                 vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
     //logExtDbg("vobsSTAR_LIST::GetStar()");
 
@@ -262,7 +225,9 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
     std::list<vobsSTAR *>::iterator iter;
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
-        if ((*iter)->IsSameCoordinate(star, intervalRa, intervalDec) == mcsTRUE)
+        if ((*iter)->IsSame(star,
+                            criteriaList)
+            == mcsTRUE)
         {
             return (*iter);
         }
@@ -283,8 +248,7 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
  * updating or adding star fails.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
-                                   float intervalRa,
-                                   float intervalDec,
+                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                    mcsLOGICAL updateOnly)
 {
     logExtDbg("vobsSTAR_LIST::Merge()");
@@ -298,7 +262,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         starPtr = list.GetNextStar((mcsLOGICAL)(el==0));
         // If star is in the list
         vobsSTAR *starToUpdatePtr;
-        starToUpdatePtr = GetStar(*starPtr, intervalRa, intervalDec);
+        starToUpdatePtr = GetStar(*starPtr, criteriaList);
         if (starToUpdatePtr != NULL)
         {
             // Update the star
@@ -335,10 +299,10 @@ void vobsSTAR_LIST::Display(void)
 
     // Display all element of the list 
     std::list<vobsSTAR *>::iterator iter;
-    for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
+    /*for (int i=0; i<vobsNB_STAR_PROPERTIES; i++)
     {
         printf("%12s", propNameList[i]);
-    }
+    }*/
     printf("\n");
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
@@ -359,7 +323,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
     
-    FILE *filePtr;
+    /*FILE *filePtr;
     mcsSTRING32 property;
 
     filePtr=fopen(miscResolvePath(filename), "w+");
@@ -380,16 +344,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
             {
                 // Get one property
                 (*iter)->GetProperty((vobsUCD_ID)i, property);
-                /*{
-                    // if get property failed because of property not set,
-                    // ignore error 
-                    if (errIsInStack(MODULE_ID, 
-                                     vobsERR_PROPERTY_NOT_SET) == mcsTRUE)
-                    {
-                        errResetStack();
-                    }
-                    return FAILURE;
-                }*/
                 fprintf(filePtr, "%12s", property);
 
             }
@@ -399,7 +353,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(mcsSTRING256 filename)
     }
 
     // Close file
-    fclose(filePtr);
+    fclose(filePtr);*/
 
     return SUCCESS;
 }

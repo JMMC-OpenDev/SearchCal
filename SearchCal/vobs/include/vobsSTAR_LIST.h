@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.9 2004-11-30 10:32:31 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.10 2004-12-20 09:39:46 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -52,12 +52,10 @@ class vobsSTAR_LIST
 
     virtual vobsSTAR      *GetNextStar(mcsLOGICAL init = mcsFALSE);
     virtual vobsSTAR      *GetStar(vobsSTAR &star,
-                                   float intervalRa=0,
-                                   float intervalDec=0);
+                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList);
     
     virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
-                                float intervalRa=0,
-                                float intervalDec=0,
+                                vobsSTAR_COMP_CRITERIA_LIST *criteriaList, 
                                 mcsLOGICAL updateOnly=mcsFALSE);
 
     virtual void          Display(void);
