@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msgGetMessageQueue.c,v 1.1 2004-10-01 13:05:41 gzins Exp $"
+* "@(#) $Id: msgGetMessageQueue.c,v 1.2 2004-10-01 13:08:16 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -12,10 +12,10 @@
 
 /**
  * \file
- * msgGetMessageQueue function declaration.
+ * msgGetMessageQueue function definition.
  */
 
-static char *rcsId="@(#) $Id: msgGetMessageQueue.c,v 1.1 2004-10-01 13:05:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgGetMessageQueue.c,v 1.2 2004-10-01 13:08:16 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

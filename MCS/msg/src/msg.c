@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: msg.c,v 1.4 2004-10-01 13:05:41 gzins Exp $"
+* "@(#) $Id: msg.c,v 1.5 2004-10-01 13:07:43 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -90,7 +90,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: msg.c,v 1.4 2004-10-01 13:05:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msg.c,v 1.5 2004-10-01 13:07:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
