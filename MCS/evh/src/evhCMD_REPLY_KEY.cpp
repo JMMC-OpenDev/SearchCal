@@ -1,21 +1,21 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: evhCMD_REPLY_KEY.cpp,v 1.1 2005-01-07 17:43:55 gzins Exp $"
-*
-* who       when         what
-* --------  -----------  -------------------------------------------------------
-* gzins     04-Jan-2005  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: evhCMD_REPLY_KEY.cpp,v 1.2 2005-01-26 18:15:45 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     04-Jan-2005  Created
+ *
+ ******************************************************************************/
 
 /**
  * \file
  * evhCMD_REPLY_KEY class definition.
  */
 
-static char *rcsId="@(#) $Id: evhCMD_REPLY_KEY.cpp,v 1.1 2005-01-07 17:43:55 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_REPLY_KEY.cpp,v 1.2 2005-01-26 18:15:45 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -23,6 +23,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <iostream>
 using namespace std;
+#include <time.h>
+#include <sys/time.h>
 
 /*
  * MCS Headers 
@@ -39,13 +41,20 @@ using namespace std;
 
 /**
  * Class constructor
+ * \param command command name associated to callback.
+ * \param commandId command Id associated to callback.
+ * \param timeout specify the maximum waiting time for reply. If timeout
+ * expires before reply is received the callback is executed with message
+ * tagged as 'error reply'.
  */
 evhCMD_REPLY_KEY::evhCMD_REPLY_KEY(const mcsCMD command,
-                                   const mcsINT32 commandId):
+                                   const mcsINT32 commandId,
+                                   const mcsINT32 timeout):
     evhKEY(evhTYPE_COMMAND_REPLY)
 {
     SetCommand(command);
     SetCommandId(commandId);
+    SetTimeout(timeout);
 }
 
 /**
@@ -73,6 +82,7 @@ evhCMD_REPLY_KEY& evhCMD_REPLY_KEY::operator =( const evhCMD_REPLY_KEY& key)
 
     SetCommand(key._command);
     SetCommandId(key._commandId);
+    SetTimeout(key._timeout);
 
     return *this;
 }
@@ -91,7 +101,7 @@ mcsLOGICAL evhCMD_REPLY_KEY::IsSame(const evhKEY& key)
 {
     logExtDbg("evhCMD_REPLY_KEY::IsSame()");
 
-    // If it is the same event type (i.e. command event)
+    // If it is the same event type (i.e. command reply event)
     if (evhKEY::IsSame(key) == mcsTRUE)
     {
         // Check the command name and Id match
@@ -116,7 +126,7 @@ mcsLOGICAL evhCMD_REPLY_KEY::Match(const evhKEY& key)
 {
     logExtDbg("evhCMD_REPLY_KEY::Match()");
 
-    // If it is the same event type (i.e. command event)
+    // If it is the same event type (i.e. command reply event)
     if (evhKEY::IsSame(key) == mcsTRUE)
     {
         // Check whether the command is NULL or the command name and Id match
@@ -183,6 +193,76 @@ mcsINT32 evhCMD_REPLY_KEY::GetCommandId() const
     logExtDbg("evhCMD_REPLY_KEY::GetCommandId()");
 
     return (_commandId);
+}
+
+/**
+ * Set timeout, i.e. maximum time for waiting reply. 
+ *
+ * \return reference to the object itself
+ */
+evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetTimeout(const mcsINT32 timeout)
+{
+    logExtDbg("evhCMD_REPLY_KEY::SetTimeout()");
+
+    _timeout = timeout;
+
+    // If there is a timeout
+    if (timeout != msgWAIT_FOREVER)
+    {
+        // Get the system time
+        struct timeval  time;
+        gettimeofday(&time, NULL);
+
+        // Compute the expiration time
+        _expirationDate.tv_sec  = time.tv_sec  + (mcsINT32)(timeout/1000);
+        _expirationDate.tv_usec = time.tv_usec + (timeout % 1000) * 1000;
+
+        // If N usec is greater than 1 sec
+        if (_expirationDate.tv_usec >= (1000 * 1000))
+        {
+            // Re-computed sec and usec
+            _expirationDate.tv_sec  += (_expirationDate.tv_usec / (1000*1000));
+            _expirationDate.tv_usec %= 1000*1000;
+        }
+        // End if
+    }
+    // Else
+    else
+    {
+        // Set expiration date to 0
+        _expirationDate.tv_sec = 0;
+        _expirationDate.tv_usec = 0;
+    }
+    // End if
+
+    return *this;
+}
+
+/**
+ * Get timeout
+ *
+ * \return timeout
+ */
+mcsINT32 evhCMD_REPLY_KEY::GetTimeout() const
+{
+    logExtDbg("evhCMD_REPLY_KEY::GetTimeout()");
+
+    return (_timeout);
+}
+
+/**
+ * Get expiration date of the timeout
+ *
+ * \return mcsSUCCESS
+ */
+mcsCOMPL_STAT evhCMD_REPLY_KEY::GetTimeoutExpDate(struct timeval *expDate) const
+{
+    logExtDbg("evhCMD_REPLY_KEY::GetTimeoutExpDate()");
+
+    expDate->tv_sec = _expirationDate.tv_sec;
+    expDate->tv_usec = _expirationDate.tv_usec;
+
+    return (mcsSUCCESS);
 }
 
 /*___oOo___*/
