@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.7 2005-02-22 10:18:08 gzins Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.8 2005-02-22 16:22:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/02/22 10:18:08  gzins
+ * Initialized magnitudes to blanked value before alxComputeMagnitudesForBrightStar
+ *
  * Revision 1.6  2005/02/21 19:36:30  gzins
  * Updated according to alxComputeMagnitudesForBrightStar and alxComputeRealMagnitudes changes.
  *
@@ -35,7 +38,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.7 2005-02-22 10:18:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.8 2005-02-22 16:22:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -101,7 +104,7 @@ int main (int argc, char *argv[])
         magnitudes[band] = alxBLANKING_VALUE;
     }
     magnitudes[alxB_BAND] = 6.6;
-    magnitudes[alxV_BAND] = 5.77;
+    magnitudes[alxV_BAND] = 6.67;
     if (alxComputeMagnitudesForBrightStar
         ("B2.5V", magnitudes, confIndexes) == mcsFAILURE)
     {
@@ -125,7 +128,7 @@ int main (int argc, char *argv[])
         magnitudes[band] = alxBLANKING_VALUE;
     }
     magnitudes[alxB_BAND] = 6.6;
-    magnitudes[alxV_BAND] = 5.77;
+    magnitudes[alxV_BAND] = 6.67;
     if (alxComputeMagnitudesForBrightStar
         ("A0I", magnitudes, confIndexes) == mcsFAILURE)
     {
