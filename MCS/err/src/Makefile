@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2004-09-10 17:08:24 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2004-11-10 09:05:00 scetre Exp $"
 #
 # Makefile of err module 
 #
@@ -24,7 +24,8 @@
 # additional include and library search paths
 USER_INC = -I/usr/include/libgdome \
 		   -I/usr/lib/glib-2.0/include/ \
-		   -I/usr/include/glib-2.0
+		   -I/usr/include/glib-2.0		\
+		   -I/usr/include/libxml2
 #USER_LIB =
 
 #

@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.5 2004-10-01 14:53:05 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.6 2004-11-10 09:05:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -27,6 +27,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <unistd.h>
 
 #include <libgdome/gdome.h>
+#include <libxml/parser.h>
 
 #include <stdlib.h>
 /*
@@ -148,6 +149,9 @@ static char *errGetErrProp(const char *moduleId,
         logWarning ("Illegal format encountered for error definition file "
                     "'%.100s'. DOMImplementation.createDocFromURI() failed "
                     "with exception #%d", errFileName, exc);
+        gdome_doc_unref (doc, &exc);
+        gdome_di_unref (domimpl, &exc);
+        xmlCleanupParser();
         return NULL;
     }
 
@@ -157,7 +161,10 @@ static char *errGetErrProp(const char *moduleId,
         logWarning ("Illegal format encountered for error definition file "
                     "'%.100s'. Document.documentElement() failed "
                     "with exception #%d", errFileName, exc);
+        gdome_el_unref(root, &exc);            
+        gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
+        xmlCleanupParser();        
         return NULL;
     }
 
@@ -182,6 +189,7 @@ static char *errGetErrProp(const char *moduleId,
             logWarning ("Illegal format encountered for error definition file "
                         "'%.100s'. NodeList.item(%d) failed "
                         "with exception #%d", errFileName, (int)i, exc);
+            gdome_el_unref(el, &exc);
             goto errCond;
         }
         if (gdome_el_nodeType (el, &exc) == GDOME_ELEMENT_NODE)
@@ -195,6 +203,9 @@ static char *errGetErrProp(const char *moduleId,
                             "file '%.100s'. Element.getAttribute(node=#%d, "
                             "name=%s) failed with exception #%d", 
                             errFileName, (int)node, name, exc);
+                gdome_str_unref(name);
+                gdome_str_unref(value);    
+                gdome_el_unref(el, &exc);
                 goto errCond;
             }
             if (sscanf(value->str, "%d", &id) != 1)
@@ -202,10 +213,14 @@ static char *errGetErrProp(const char *moduleId,
                 logWarning ("Illegal format encountered for error definition "
                             "file '%.100s'. Invalid error identifier for "
                             "node #%d", errFileName, (int)node);
+                gdome_str_unref(name);                
+                gdome_str_unref(value);
+                gdome_el_unref(el, &exc);
                 goto errCond;  
             }
             if (errorId == id)
             {
+                gdome_str_unref(name);                
                 name = gdome_str_mkref (propName);
                 errs = gdome_el_getElementsByTagName (el, name, &exc);
                 if (errs == NULL)
@@ -215,6 +230,10 @@ static char *errGetErrProp(const char *moduleId,
                                 "Element.childNodes(node=#%d, "
                                 "name=%s) failed with exception #%d", 
                                 errFileName, (int)node, name, exc);
+                    gdome_nl_unref(errs, &exc);
+                    gdome_str_unref(value);    
+                    gdome_str_unref(name);
+                    gdome_el_unref(el, &exc);
                     goto errCond;            
                 }
                 /* Check number of tags for the node */
@@ -225,6 +244,10 @@ static char *errGetErrProp(const char *moduleId,
                                 "definition file '%.100s'. "
                                 "Tag '%s' not found for node #%d", 
                                 errFileName, propName, (int)node);
+                    gdome_nl_unref(errs, &exc);
+                    gdome_str_unref(value); 
+                    gdome_str_unref(name);
+                    gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
                 if (nbTags != 1)
@@ -233,6 +256,10 @@ static char *errGetErrProp(const char *moduleId,
                                 "definition file '%.100s'. "
                                 "Duplicated tag '%s' for node #%d", 
                                 errFileName, propName, (int)node);
+                    gdome_nl_unref(errs, &exc);
+                    gdome_str_unref(value); 
+                    gdome_str_unref(name);
+                    gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
 
@@ -246,10 +273,18 @@ static char *errGetErrProp(const char *moduleId,
                                 "Element.childNodes(node=#%d, "
                                 "name=%s) failed with exception #%d", 
                                 errFileName, (int)node, propName, exc);
+                    gdome_nl_unref(texts, &exc);    
+                    gdome_el_unref(elerr, &exc);
+                    gdome_nl_unref(errs, &exc);
+                    gdome_str_unref(value); 
+                    gdome_str_unref(name);    
+                    gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
                 /*This element must contain one child : TextElement*/
+                gdome_el_unref(elerr, &exc);
                 elerr = (GdomeElement *)gdome_nl_item (texts, 0, &exc);
+                gdome_str_unref(value); 
                 value = gdome_el_nodeValue(elerr, &exc);
                 if (value == NULL)
                 {
@@ -258,6 +293,12 @@ static char *errGetErrProp(const char *moduleId,
                                 "Element.nodeValue(node=#%d, "
                                 "name=%s) failed with exception #%d", 
                                 errFileName, (int)node, propName, exc);
+                    gdome_nl_unref(texts, &exc);    
+                    gdome_el_unref(elerr, &exc);
+                    gdome_nl_unref(errs, &exc);
+                    gdome_str_unref(value); 
+                    gdome_str_unref(name);
+                    gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
                 
@@ -269,12 +310,24 @@ static char *errGetErrProp(const char *moduleId,
                                 "too long; max=%d, current=%d",
                                 propName, errorId, sizeof(mcsSTRING256), 
                                 strlen(value->str));
+                    gdome_nl_unref(texts, &exc);    
+                    gdome_el_unref(elerr, &exc);
+                    gdome_nl_unref(errs, &exc);
+                    gdome_str_unref(value); 
+                    gdome_str_unref(name);
+                    gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
 
                 strncpy(propValue, value->str, sizeof(mcsSTRING256)-1);
                 retVal = propValue;
+
+                gdome_nl_unref(texts, &exc);                 
+                gdome_el_unref(elerr, &exc);
+                gdome_nl_unref(errs, &exc);
             }
+            gdome_str_unref(value); 
+            gdome_str_unref(name);
         }
         gdome_el_unref (el, &exc);
     }
@@ -289,8 +342,11 @@ static char *errGetErrProp(const char *moduleId,
     
     /* Free the document structure and the DOMImplementation */
 errCond:
-    gdome_di_freeDoc (domimpl, doc, &exc);
+    gdome_nl_unref(childs, &exc);            
+    gdome_el_unref(root, &exc);
+    gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
+    xmlCleanupParser();
 
     /* Return property value */
     return retVal;
