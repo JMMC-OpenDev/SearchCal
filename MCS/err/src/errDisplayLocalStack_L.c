@@ -8,7 +8,7 @@
 *
 *-----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: errDisplayLocalStack_L.c,v 1.1 2004-06-23 13:04:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errDisplayLocalStack_L.c,v 1.2 2004-07-22 10:08:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -48,6 +48,7 @@ mcsCOMPL_STAT errDisplayLocalStack(errERROR *error)
     } 
 
     /* For each error message */
+    memset(tab , '\0', sizeof(tab)); 
     for ( i = 0; i < error->stackSize; i++)
     {
         /* Display error message */
