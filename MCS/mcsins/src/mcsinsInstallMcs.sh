@@ -2,13 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstallMcs.sh,v 1.1 2004-12-08 18:21:48 gzins Exp $"
+# "@(#) $Id: mcsinsInstallMcs.sh,v 1.2 2004-12-08 18:43:49 swmgr Exp $"
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # gzins     04-Dec-2004  Created
 # gzins     08-Dec-2004  Moved from mkf module
 #                        Added installation of env module
+# gzins     08-Dec-2004  Added installation of gwt module
 #
 #*******************************************************************************
 #   NAME 
@@ -48,7 +49,7 @@ echo -e "   Press enter to continue or ^C to abort "
 read choice
 
 # List of MCS modules
-mcs_modules="mkf ctoo mcs log err misc modc modcpp fnd env cmd msg evh"
+mcs_modules="mkf ctoo mcs log err misc modc modcpp fnd env cmd msg evh gwt"
 
 # Retrieve modules from CVS repository
 cd $dir
