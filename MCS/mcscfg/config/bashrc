@@ -1,0 +1,17 @@
+# $MCSROOT/etc/profile -*- Mode: shell-script -*-
+# (c) jmmc
+
+# define VLTROOT to MCSROOT
+export VLTROOT=$MCSROOT
+
+# Add $MCSROOT to PATH
+if ! echo ${PATH} |grep -q $MCSROOT ; then
+    PATH="$PATH:$INTROOT/bin:$MCSROOT/bin"
+fi
+
+# Set LD_LIBRARY_PATH (path for dynamic linked libraries)
+export LD_LIBRARY_PATH=../lib:$INTROOT/lib:$MCSROOT/lib
+
+# export variables
+export MCSROOT
+export PATH
