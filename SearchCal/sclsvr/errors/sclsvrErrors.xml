@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<errorList moduleName="sclsvr">
+   <error id="1">
+      <errName>INVALID_PROPERTY_ID</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid property id '%d']]></errFormat>
+   </error>
+   <error id="2">
+      <errName>INVALID_PROPERTY_NAME</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid property name '%s']]></errFormat>
+   </error>
+   <error id="3">
+      <errName>INVALID_PROPERTY_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid property format '%.80s'; should be %.20s]]></errFormat>
+   </error>
+</errorList>
