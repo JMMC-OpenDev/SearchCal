@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.2 2005-02-17 19:04:16 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/21 08:14:25  gluck
+ * Creation
+ *
  *
  * scetre    19-Oct-2004  Created
  * gzins     12-Jan-2005  - Updated to be compliant with programming standards
@@ -22,7 +25,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: alxVisibility.c,v 1.1 2005-01-21 08:14:25 gluck Exp $"; 
+static char *rcsId="@(#) $Id: alxVisibility.c,v 1.2 2005-02-17 19:04:16 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -87,19 +90,19 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
     *vis = fabs(2 * j1f(x) / x);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    *visError  = x * jnf(2, x) / j1f(x) * angDiamError;
+    *visError  = 2 * jnf(2, x) * angDiamError;
 
     /* Compute V² */
     *vis2 = pow(*vis, 2);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    *vis2Error = 8 * fabs(x * jnf(2, x) / j1f(x)) * angDiamError;
+    *vis2Error = 8 * jnf(2, x) * fabs(j1f(x)/x) * angDiamError;
     
     /* Print out result */
-    logTest("V      = %.3f", *vis);
-    logTest("dV/V   = %.3f", *visError);
-    logTest("V²     = %.3f", *vis2);
-    logTest("dV²/V² = %.3f", *vis2Error);
+    logTest("V   = %.6f", *vis);
+    logTest("dV  = %.6f", *visError);
+    logTest("V²  = %.6f", *vis2);
+    logTest("dV² = %.6f", *vis2Error);
 
     return mcsSUCCESS;
 }
