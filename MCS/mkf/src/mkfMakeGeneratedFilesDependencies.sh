@@ -2,10 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeGeneratedFilesDependencies.sh,v 1.1 2004-12-09 17:34:54 gzins Exp $" 
+# "@(#) $Id: mkfMakeGeneratedFilesDependencies.sh,v 1.2 2004-12-09 17:59:32 gzins Exp $" 
 # who       when         what
 # --------  --------     ----------------------------------------------
 # gzins     09-Dec-2004  Created
+# gzins     09-Dec-2004  Removed ../src from rule for C++ command class 
 #
 
 #************************************************************************
@@ -101,10 +102,10 @@ then
     # For each CDF, add rule for C++ class file
     for member in ${cdfList}
     do
-        echo "../src/${member}_CMD.cpp: ../config/${member}.cdf"
+        echo "./${member}_CMD.cpp: ../config/${member}.cdf"
         echo "	-@echo == Generating C++ class: ${member}_CMD.cpp and ${member}_CMD.h"
         echo "	@\$(AT)cmdCdfToCppClass ../config/${member}.cdf>/dev/null"
-        target="$target ../src/${member}_CMD.cpp"
+        target="$target ./${member}_CMD.cpp"
     done
     # And rule for header file
     for member in ${cdfList}
