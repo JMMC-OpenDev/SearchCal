@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.7 2004-09-22 07:23:48 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.8 2004-12-04 19:54:27 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
-# lgluck    23/04/04    Created
+# lgluck    23-Apr-2004 Created
+# gzins     04-Dec-2004 Look for templates in the following order:
+#                       ../templates, $INTROOT/templates and
+#                       $MCSROOT/templates
 #
 #*******************************************************************************
 
@@ -62,7 +65,16 @@ ROOT_NAME=$1
 cvs=$2
 
 # Set templates directories
-MCSTEMPLATES=$MCSROOT/templates
+# Set templates directories
+if [ -d ../templates/forMakefile ]
+then
+    TEMPLATES=../templates
+elif [ -d $INTROOT/templates/forMakefile ]
+then
+    TEMPLATES=$INTROOT/templates
+else
+    TEMPLATES=$MCSROOT/templates      
+fi
 
 # directories that shall be present in any module area
 MODROOT_LIST="bin           \
@@ -135,9 +147,9 @@ done
 MODE=644
 
 # check environment : verify that templates directory exists
-if [ ! -d "$MCSTEMPLATES" ]
+if [ ! -d "$TEMPLATES" ]
 then 
-    echo "ERROR - ctooGetTemplateForDirectoryStructure: $MCSTEMPLATES "
+    echo "ERROR - ctooGetTemplateForDirectoryStructure: $TEMPLATES "
     echo "        is not available. Please check your MCS environment"
     exit 1
 fi
@@ -155,7 +167,7 @@ case $cvs in
         else
             # The module description file does not exist
             echo -e "\n>>> Copying module description file\n"
-            TEMPLATE="$MCSTEMPLATES/forDocumentation/moduleDescription.template"
+            TEMPLATE="$TEMPLATES/forDocumentation/moduleDescription.template"
             FILE=$ROOT_NAME/doc/moduleDescription.xml
 
             # Get template file (module description file) in doc
@@ -184,7 +196,7 @@ case $cvs in
         else
             # The module documentation file does not exist
             echo -e "\n>>> Copying module documentation file\n"
-            TEMPLATE="$MCSTEMPLATES/forDocumentation/moduleDocumentation.template"
+            TEMPLATE="$TEMPLATES/forDocumentation/moduleDocumentation.template"
             FILE=$ROOT_NAME/src/$ROOT_NAME.doc
 
             # Get template file (module documentation file) in src
@@ -212,7 +224,7 @@ case $cvs in
         else
             # a Makefile does not exist
             echo -e "\n>>> Copying Makefile template for code\n"
-            TEMPLATE=$MCSTEMPLATES/forMakefile/Makefile.template
+            TEMPLATE=$TEMPLATES/forMakefile/Makefile.template
             FILE=$ROOT_NAME/src/Makefile
             
             # Get template file (Makefile) in src directory
