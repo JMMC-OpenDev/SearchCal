@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.13 2005-02-07 17:28:11 gluck Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.14 2005-02-07 19:35:05 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/07 17:28:11  gluck
+* New vobsREQUEST class implementation
+*
 * Revision 1.12  2005/02/04 08:06:28  scetre
 * changed mcsSTRING32 to mcsSTRING256 for constraints
 *
@@ -56,20 +59,20 @@ public:
     virtual const char * GetObjectName(void) const;
     
     // Set and get science object right ascension */
-    virtual mcsCOMPL_STAT SetObjectRa(const mcsFLOAT objectRa);
-    virtual mcsFLOAT GetObjectRa(void) const;
+    virtual mcsCOMPL_STAT SetObjectRa(const char *objectRa);
+    virtual const char *GetObjectRa(void) const;
     
     // Set and get science object declinaison
-    virtual mcsCOMPL_STAT SetObjectDec(const mcsFLOAT objectDec);
-    virtual mcsFLOAT GetObjectDec(void) const;
+    virtual mcsCOMPL_STAT SetObjectDec(const char *objectDec);
+    virtual const char *GetObjectDec(void) const;
 
     // Set and get science object magnitude
     virtual mcsCOMPL_STAT SetObjectMag(const mcsFLOAT objectMag);
     virtual mcsFLOAT GetObjectMag(void) const;
 
     // Set and get search band
-    virtual mcsCOMPL_STAT SetSearchBand(const char searchBand);
-    virtual char GetSearchBand(void) const;
+    virtual mcsCOMPL_STAT SetSearchBand(const char *searchBand);
+    virtual const char *GetSearchBand(void) const;
 
     // Set and get object ra difference in which catalog stars will be 
     // selected
@@ -111,10 +114,10 @@ private:
     string _objectName;
     
     /** Science object right ascension */
-    mcsFLOAT _objectRa;
+    string _objectRa;
     
     /** Science object declinaison */
-    mcsFLOAT _objectDec;
+    string _objectDec;
 
     /** Science object magnitude */
     mcsFLOAT _objectMag;
@@ -123,7 +126,7 @@ private:
      * Band on which search should be realised and which correspond to a
      * specific catalog
      */
-    char _searchBand;
+    string _searchBand;
 
     /** Object ra range in which catalog stars will be selected */
     mcsFLOAT _deltaRa;

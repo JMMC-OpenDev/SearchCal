@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.6 2005-02-07 17:28:11 gluck Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.7 2005-02-07 19:35:05 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/07 17:28:11  gluck
+ * New vobsREQUEST class implementation
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.6 2005-02-07 17:28:11 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.7 2005-02-07 19:35:05 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,10 +45,10 @@ using namespace std;
 vobsREQUEST::vobsREQUEST()
 {
     _objectName = "";
-    _objectRa = 0.0;
-    _objectDec = 0.0;
+    _objectRa = "";
+    _objectDec = "";
     _objectMag = 0.0;
-    _searchBand = '\0';
+    _searchBand = "";
     _deltaRa = 0.0;
     _deltaDec = 0.0;
     _minDeltaMag = 0.0;
@@ -104,7 +107,7 @@ const char * vobsREQUEST::GetObjectName(void) const
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const mcsFLOAT objectRa)
+mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
 {
     logExtDbg("vobsREQUEST::SetObjectRa()");
 
@@ -118,11 +121,11 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const mcsFLOAT objectRa)
  *
  * \return science object right ascension in hms units (hh mm ss).
  */
-mcsFLOAT vobsREQUEST::GetObjectRa(void) const
+const char *vobsREQUEST::GetObjectRa(void) const
 {
     logExtDbg("vobsREQUEST::GetObjectRa()");
 
-    return _objectRa;
+    return _objectRa.c_str();
 }
 
 /**
@@ -133,7 +136,7 @@ mcsFLOAT vobsREQUEST::GetObjectRa(void) const
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const mcsFLOAT objectDec)
+mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
 {
     logExtDbg("vobsREQUEST::SetObjectDec()");
 
@@ -147,11 +150,11 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const mcsFLOAT objectDec)
  *
  * \return science object declinaison in dms units (dd mm ss).
  */
-mcsFLOAT vobsREQUEST::GetObjectDec(void) const
+const char *vobsREQUEST::GetObjectDec(void) const
 {
     logExtDbg("vobsREQUEST::GetObjectDec()");
 
-    return _objectDec;
+    return _objectDec.c_str();
 }
 
 /**
@@ -191,7 +194,7 @@ mcsFLOAT vobsREQUEST::GetObjectMag(void) const
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char searchBand)
+mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char *searchBand)
 {
     logExtDbg("vobsREQUEST::SetSearchBand()");
 
@@ -205,11 +208,11 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char searchBand)
  *
  * \return search band which is a letter (H, M, N, R, V ...).
  */
-char vobsREQUEST::GetSearchBand(void) const
+const char *vobsREQUEST::GetSearchBand(void) const
 {
     logExtDbg("vobsREQUEST::GetSearchBand()");
 
-    return _searchBand;
+    return _searchBand.c_str();
 }
 
 /**
@@ -378,10 +381,10 @@ mcsCOMPL_STAT vobsREQUEST::Display(void)
     logExtDbg("vobsREQUEST::Display()");
     
     logInfo("object name = %s", _objectName.c_str());
-    logInfo("object ra = %f", _objectRa);
-    logInfo("object dec = %f", _objectDec);
+    logInfo("object ra = %s", _objectRa.c_str());
+    logInfo("object dec = %s", _objectDec.c_str());
     logInfo("object magnitude = %f", _objectMag);
-    logInfo("search band = %c", _searchBand);
+    logInfo("search band = %s", _searchBand.c_str());
     logInfo("delta ra = %f", _deltaRa);
     logInfo("delta dec = %f", _deltaDec);
     logInfo("min delta mag = %f", _minDeltaMag);
