@@ -1,13 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-11-19 16:29:40 mella Exp $"
+# "@(#) $Id: Makefile,v 1.1 2004-11-19 16:29:41 mella Exp $"
 #
-# Makefile of cmd
+# Makefile of cmdTest
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
-# gzins     17-Jun-2004  Created
+# lafrasse  11-Aug-2004  Created
 #
 #
 #*******************************************************************************
@@ -22,11 +22,8 @@
 
 #
 # additional include and library search paths
-USER_INC = -I/usr/include/libgdome \
-		   -I/usr/lib/glib-2.0/include/ \
-		   -I/usr/include/glib-2.0 \
-		   -I/usr/include/libxml2
-
+#USER_INC = 
+USER_INC = -I/usr/include/libxml2/ -I/usr/include/libgdome -I/usr/lib/glib-2.0/include/ -I/usr/include/glib-2.0
 #USER_LIB = 
 
 #
@@ -39,14 +36,14 @@ USER_INC = -I/usr/include/libgdome \
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     =
-EXECUTABLES_L   = 
+EXECUTABLES_L   = cmdTEST
+
 
 #
-# <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
-
+# <brief description of cmdTest program>
+cmdTEST_OBJECTS   = cmdTEST
+cmdTEST_LDFLAGS   = -lgdome
+cmdTEST_LIBS      = MCS C++ cmd
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
@@ -54,22 +51,22 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = cmd.h
+INCLUDES        =
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = cmd
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-cmd_OBJECTS   = cmdCMD cmdPARAM
+lllll_OBJECTS   =
 
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = cmdCdfToCppClass cmdIsCDTValid 
+SCRIPTS         =
 SCRIPTS_L       =
 
 #

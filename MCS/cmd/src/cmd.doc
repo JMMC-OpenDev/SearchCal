@@ -1,59 +1,27 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmd.doc,v 1.1 2004-11-19 15:57:12 sccmgr Exp $"
+* "@(#) $Id: cmd.doc,v 1.2 2004-11-19 16:29:40 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
-* sccmgr    19-Nov-2004  Created
+* lafrasse  12-Aug-2004  Created
 *
 *
 *******************************************************************************/
 
 /**
-\mainpage cmd : Summary module description sentence
+\mainpage cmd : C++ representation of a command
 
-\bdesc
-Brief module description. There could be one or more sentences in this short
-module description.
+<b>Brief description</b>\n
+The 'cmd' module is a collection of classes to deal with parameters of a
+command.
 
-\ddesc
-Detailed module description.
+<b>Detailed decription</b>\n
+The main use of this module is to build a command object that corresponds to a
+parameter list. The model is builded using a command definition file according to the given command mnemonic.
 
-\usedfiles
-OPTIONAL. If files are used, for each one, name, and usage description, as
-below. 
-\filename filename 1 :  usage description of fileName1
-\filename filename 2 :  usage description of fileName2
 
-\n
-\env
-OPTIONAL. If needed, environmental variables accessed by the program. For each
-variable, name, and usage description, as below.
-\envvar envVar1 :  usage description of envVar1
-\envvar envVar2 :  usage description of envVar2
-
-\n
-\ex
-OPTIONAL but STRONGLY RECOMMENDED. Code examples if needed. You can make an
-example list with the \\li marker.
-\n Brief example description.
-\code
-Insert code for example
-\endcode
-
-\sa OPTIONAL. See also section in which you can refer other documented entities.
-Using the \\sa marker, doxygen will create the link automatically.
-An example is given below.
-\sa \<entity to refer\>
-
-\bug OPTIONAL. Known bugs list if it exists.
-\bug Bug 1 : bug 1 description
-\bug Bug 2 : bug 2 description
-
-\todo OPTIONAL. Things to forsee list, if needed.
-\todo Action 1 : action 1 description
-\todo Action 2 : action 2 description
-\n
-
+\todo explain the xml format of cdf
+\todo order methods in the h and C files
 */

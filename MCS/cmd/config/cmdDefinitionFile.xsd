@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<xs:schema 
+xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+elementFormDefault="qualified">
+
+    <!-- TYPE DEFINITION : cmd  -->
+	<xs:element name="cmd">
+    <xs:complexType name="cmd">
+    <xs:sequence>
+    <xs:element name="mnemonic" minOccurs="1" maxOccurs="1">
+    <xs:simpleType>
+    <xs:restriction base="xs:string">
+    <xs:minLength value="3"/>
+    <xs:maxLength value="12"/>
+    </xs:restriction>
+    </xs:simpleType>
+    </xs:element>
+    <xs:element name="desc" type="xs:string" minOccurs="1" maxOccurs="1"/>
+    <xs:element name="params" type="params" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    </xs:complexType>
+    </xs:element>
+
+
+    <!-- TYPE DEFINITION : params  -->
+    <xs:complexType name="params">
+    <xs:sequence>
+    <xs:element name="param" type="param" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    </xs:complexType>
+    
+    <!-- TYPE DEFINITION : param  -->
+    <xs:complexType name="param">
+    <xs:all>
+    <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+    <xs:element name="desc" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    <xs:element name="type" type="paramType" minOccurs="1" maxOccurs="1"/>
+    <xs:element name="defaultValue" type="value" minOccurs="0" maxOccurs="1"/>
+    <xs:element name="unit" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+    <xs:attribute name="optional" type="xs:boolean" default="false" use="optional"/>
+    </xs:complexType>
+
+    <!-- TYPE DEFINITION : value  -->
+    <xs:complexType name="value">
+    <xs:choice>
+    <xs:element name="integer" type="xs:integer"/>
+    <xs:element name="double" type="xs:double"/>
+    <xs:element name="boolean" type="xs:boolean"/>
+    <xs:element name="string" type="xs:string"/>
+    </xs:choice>
+    </xs:complexType>
+
+    <xs:simpleType name="paramType">
+    <xs:restriction base="xs:string">
+    <xs:pattern value="integer|double|boolean|string"/>
+    </xs:restriction>
+    </xs:simpleType>
+
+
+</xs:schema>
