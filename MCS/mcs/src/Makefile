@@ -1,12 +1,13 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center 
 #
-# "@(#) $Id: Makefile,v 1.3 2004-09-10 15:54:15 gzins Exp $" 
+# "@(#) $Id: Makefile,v 1.4 2005-01-28 18:50:52 gzins Exp $" 
 #
 # Makefile for MCS module 
 #
-# who       when      what
-# --------  --------  ----------------------------------------------
+# History
+# -------
+# $Log: not supported by cvs2svn $
 # gzins     11/04/04  Created
 #
 

@@ -1,17 +1,18 @@
 /*******************************************************************************
-* JMMC project
-*
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* gzins     15-Jun-2004  Created
-* lafrasse  01-Dec-2004  Added MCS environment name management
-* lafrasse  08-Dec-2004  Corrected a bug that caused an empty env. name instead
-*                        of a mcsUNKNOWN_ENV env. name when $MCSENV was reset to 
-*                        "" after being used with another value
-*
-*-----------------------------------------------------------------------------*/
+ * JMMC project
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * gzins     15-Jun-2004  Created
+ * lafrasse  01-Dec-2004  Added MCS environment name management
+ * lafrasse  08-Dec-2004  Corrected a bug that caused an empty env. name instead
+ *                        of a mcsUNKNOWN_ENV env. name when $MCSENV was reset
+ *                        to "" after being used with another value
+ *
+ *----------------------------------------------------------------------------*/
 
-static char *rcsId="@(#) $Id: mcs.c,v 1.6 2004-12-08 10:15:02 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: mcs.c,v 1.7 2005-01-28 18:50:52 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
