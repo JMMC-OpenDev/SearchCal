@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.16 2005-01-26 08:17:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.17 2005-01-26 08:50:25 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/01/26 08:17:54  scetre
+* Change History, add documentation, add checking method on property.
+* Change problem (vobsSTAR_POS_EQ_RA_MAIN -> ...DEC_MAIN). Update IsSame Method
+*
 * scetre    22-Jul-2004  Created
 *
 *
@@ -17,7 +21,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.16 2005-01-26 08:17:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.17 2005-01-26 08:50:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -85,6 +89,8 @@ vobsSTAR::~vobsSTAR()
  * 
  * \param id property id. 
  * \param value property value to set
+ * \param isComputed booleen to know if it is a computed property
+ * \param confidenceIndex confidence index
  * \param overwrite booleen to know if it is an overwrite property 
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
@@ -131,6 +137,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, char *value,
  * 
  * \param id property id. 
  * \param value property value to set
+ * \param isComputed booleen to know if it is a computed property
+ * \param confidenceIndex confidence index
  * \param overwrite booleen to know if it is an overwrite property 
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -139,7 +147,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, char *value,
  * The possible errors are :
  * \li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, float value,
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, mcsFLOAT value,
                                          mcsFLOAT isComputed,
                                          mcsINT32 confidenceIndex,
                                          mcsLOGICAL overwrite)
@@ -175,8 +183,6 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(char *id, float value,
  * Set property value corresponding to the UCD
  * 
  * \param id property id. 
- * \param value property value to set
- * \param overwrite booleen to know if it is an overwrite property 
  *
  * \return pointer to the found star property object on successful completion.
  * Otherwise NULL is returned.

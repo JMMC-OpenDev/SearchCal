@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.4 2005-01-26 08:20:39 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.5 2005-01-26 08:50:25 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/26 08:20:39  scetre
+* change history
+*
 * scetre    08-Sep-2004  Created
 *
 *
@@ -17,7 +20,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.4 2005-01-26 08:20:39 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.5 2005-01-26 08:50:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -72,8 +75,7 @@ vobsSCENARIO::~vobsSCENARIO()
  * \param listInput list of star in enter of the research
  * \param listOutput list of star resulting of the asking of the catalog
  * \param action enumerate representing the action to do
- * \param ra interval right acscension
- * \param dec interval declinaison
+ * \param criteriaList list of comparaison criteria
  * 
  * \return
  * Always mcsSUCCESS.
