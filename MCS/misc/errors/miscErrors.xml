@@ -28,12 +28,12 @@
    <error id="15">
       <errName>DYN_BUF_COULD_NOT_READ_FILE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Could not read '%s' file : errno ='%d'.]]></errFormat>
+      <errFormat><![CDATA[Could not read '%s' file : '%s'.]]></errFormat>
    </error>
    <error id="21">
       <errName>DYN_BUF_COULD_NOT_SAVE_FILE</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[Could not save '%s' file : errno ='%d'.]]></errFormat>
+      <errFormat><![CDATA[Could not save '%s' file : '%s'.]]></errFormat>
    </error>
    <error id="23">
       <errName>DYN_BUF_NOT_INITIALIZED</errName>
