@@ -1,26 +1,27 @@
 #ifndef MCS_H
 #define MCS_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: mcs.h,v 1.15 2005-01-26 10:18:48 lafrasse Exp $"
-*
-* who       when		 what
-* --------  -----------	 -------------------------------------------------------
-* mella     07-May-2004  Preliminary version based on MCS from VLT/ESO
-* gzins     11-May-2004  Add RCS Id and removed unused definitions
-* lafrasse  01-Dec-2004  Added mcsUNKNOWN_ENV
-* gzins     09-Dec-2004  Defined mcsLOGICAL as an enumerate
-* lafrasse  14-Dec-2004  Increased environment name length constant
-*                        mcsENVNAME_LEN from 7 to 15
-* gzins     06-Jan-2005  Changed FAILURE to mcsFAILURE and SUCCESS to
-*                        mcsSUCCESS
-*                        Changed value for mcsFAILURE to -1
-*                        Added FAILURE and SUCCESS macros for backward
-*                        compatibility
-* lafrasse  26-Jan-2005  Changed mcsUNKNOWN_ENV from "none" to "default"
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: mcs.h,v 1.16 2005-01-28 18:50:22 gzins Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ * mella     07-May-2004  Preliminary version based on MCS from VLT/ESO
+ * gzins     11-May-2004  Add RCS Id and removed unused definitions
+ * lafrasse  01-Dec-2004  Added mcsUNKNOWN_ENV
+ * gzins     09-Dec-2004  Defined mcsLOGICAL as an enumerate
+ * lafrasse  14-Dec-2004  Increased environment name length constant
+ *                        mcsENVNAME_LEN from 7 to 15
+ * gzins     06-Jan-2005  Changed FAILURE to mcsFAILURE and SUCCESS to
+ *                        mcsSUCCESS
+ *                        Changed value for mcsFAILURE to -1
+ *                        Added FAILURE and SUCCESS macros for backward
+ *                        compatibility
+ * lafrasse  26-Jan-2005  Changed mcsUNKNOWN_ENV from "none" to "default"
+ *
+ ******************************************************************************/
 
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the functions
@@ -34,12 +35,12 @@ extern "C" {
 /************************************************************************
  *                           MCS  Constants                             *
  ************************************************************************/
-#define mcsPROCNAME_LEN        19   /* max. length of a process name    */
-#define mcsMODULEID_LEN         7   /* max. length of a module name     */
-                                    /* 6 characters + 1 byte alignement */
+#define mcsPROCNAME_LEN        31   /* max. length of a process name    */
+#define mcsMODULEID_LEN        15   /* max. length of a module name     */
+                                    /* 15 characters + 1 byte alignement */
 #define mcsENVNAME_LEN         15   /* max. length of an environnement  */
                                     /* 15 characters + 1 byte alignement*/
-#define mcsCMD_LEN              8   /* max. length of a command name    */
+#define mcsCMD_LEN             15   /* max. length of a command name    */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes  */
 #define mcsUNKNOWN_ENV  "default"   /* name used for unknown environment*/
 
