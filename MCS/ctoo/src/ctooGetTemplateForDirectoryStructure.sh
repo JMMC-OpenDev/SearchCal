@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.6 2004-09-15 14:49:38 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.7 2004-09-22 07:23:48 gzins Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -160,7 +160,7 @@ case $cvs in
 
             # Get template file (module description file) in doc
             # directory
-            ctooGetTemplateFile.sh $TEMPLATE $FILE
+            ctooGetTemplateFile $TEMPLATE $FILE
 
             # Replace module name
             sed -e "1,$ s/<module name=\"module\">/<module name=\"$ROOT_NAME\">/g" \
@@ -189,7 +189,7 @@ case $cvs in
 
             # Get template file (module documentation file) in src
             # directory
-            ctooGetTemplateFile.sh $TEMPLATE $FILE
+            ctooGetTemplateFile $TEMPLATE $FILE
 
             # Replace module name
             sed -e "1,$ s/moduleName/$ROOT_NAME/g" $FILE > ${FILE}.BAK
@@ -216,7 +216,7 @@ case $cvs in
             FILE=$ROOT_NAME/src/Makefile
             
             # Get template file (Makefile) in src directory
-            ctooGetTemplateFile.sh $TEMPLATE $FILE
+            ctooGetTemplateFile $TEMPLATE $FILE
             
             # Change permissions of the new created file
             chmod $MODE $FILE
