@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhSERVER.h,v 1.3 2004-11-23 09:13:22 gzins Exp $"
+* "@(#) $Id: evhSERVER.h,v 1.4 2004-12-03 08:53:34 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     09-Nov-2004  Created
 * gzins     23-Nov-2004  Used new msg C++ library.
 *                        Added SendReply method
+* gzins     03-Dec-2004  Added SendCommand
 *
 *******************************************************************************/
 
@@ -98,7 +99,11 @@ public:
     // Main loop
     virtual mcsCOMPL_STAT MainLoop(msgMESSAGE *msg=NULL);
 
-    // Main loop
+    // Send command/reply
+    virtual mcsCOMPL_STAT SendCommand(const char        *command,
+                                      const mcsPROCNAME  destProc,
+                                      const char        *paramList=NULL,  
+                                      mcsINT32           paramsLen=0);
     virtual mcsCOMPL_STAT SendReply(msgMESSAGE &msg, 
                                     mcsLOGICAL lastReply=mcsTRUE);
 
