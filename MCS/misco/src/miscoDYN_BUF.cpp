@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.cpp,v 1.2 2005-02-11 11:04:38 lafrasse Exp $"
+ * "@(#) $Id: miscoDYN_BUF.cpp,v 1.3 2005-02-12 20:04:44 gzins Exp $"
  *
  * History
  * -------
@@ -15,11 +15,9 @@
  * \file
  * Interface class providing all the necessary API to manage auto-expanding,
  * byte-based buffers.
- *
- * \sa miscoDYN_BUF
  */
 
-static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.2 2005-02-11 11:04:38 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.3 2005-02-12 20:04:44 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,8 +44,7 @@ using namespace std;
  */
 miscoDYN_BUF::miscoDYN_BUF()
 {
-    buffer = &dynBuf;
-    miscDynBufInit(buffer);
+    miscDynBufInit(&_dynBuf);
 }
 
 /**
@@ -55,8 +52,7 @@ miscoDYN_BUF::miscoDYN_BUF()
  */
 miscoDYN_BUF::~miscoDYN_BUF()
 {
-    miscDynBufDestroy(buffer);
-    buffer = NULL;
+    miscDynBufDestroy(&_dynBuf);
 }
 
 /*
@@ -88,7 +84,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Alloc               (const mcsINT32    length)
 {
     logExtDbg("miscoDYN_BUF::Alloc()");
 
-    return miscDynBufAlloc(buffer, length);
+    return miscDynBufAlloc(&_dynBuf, length);
 }
 
 /**
@@ -100,7 +96,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Strip               ()
 {
     logExtDbg("miscoDYN_BUF::Strip()");
 
-    return miscDynBufStrip(buffer);
+    return miscDynBufStrip(&_dynBuf);
 }
 
 /**
@@ -115,7 +111,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Reset               ()
 {
     logExtDbg("miscoDYN_BUF::Reset()");
 
-    return miscDynBufReset(buffer);
+    return miscDynBufReset(&_dynBuf);
 }
 
 /**
@@ -130,7 +126,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetNbStoredBytes    (mcsUINT32   *storedBytes) const
 {
     logExtDbg("miscoDYN_BUF::GetNbStoredBytes()");
 
-    return miscDynBufGetNbStoredBytes(buffer, storedBytes);
+    return miscDynBufGetNbStoredBytes(&_dynBuf, storedBytes);
 }
 
 /**
@@ -145,7 +141,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetNbAllocatedBytes (mcsUINT32   *allocatedBytes) co
 {
     logExtDbg("miscoDYN_BUF::GetNbAllocatedBytes()");
 
-    return miscDynBufGetNbAllocatedBytes(buffer, allocatedBytes);
+    return miscDynBufGetNbAllocatedBytes(&_dynBuf, allocatedBytes);
 }
 
 /**
@@ -157,7 +153,7 @@ char*         miscoDYN_BUF::GetBuffer           () const
 {
     logExtDbg("miscoDYN_BUF::GetBuffer()");
 
-    return miscDynBufGetBuffer(buffer);
+    return miscDynBufGetBuffer(&_dynBuf);
 }
 
 /**
@@ -170,7 +166,7 @@ const char*   miscoDYN_BUF::GetCommentPattern   () const
 {
     logExtDbg("miscoDYN_BUF::GetCommentPattern()");
 
-    return miscDynBufGetCommentPattern(buffer);
+    return miscDynBufGetCommentPattern(&_dynBuf);
 }
 
 /**
@@ -192,7 +188,7 @@ char*         miscoDYN_BUF::GetNextLine         (const char  *currentLinePtr,
 {
     logExtDbg("miscoDYN_BUF::GetNextLine()");
 
-    return miscDynBufGetNextLine(buffer, currentLinePtr, skipCommentFlag);
+    return miscDynBufGetNextLine(&_dynBuf, currentLinePtr, skipCommentFlag);
 }
 
 /**
@@ -212,7 +208,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetByteAt           (char              *byte,
 {
     logExtDbg("miscoDYN_BUF::GetByteAt()");
 
-    return miscDynBufGetByteAt(buffer, byte, position);
+    return miscDynBufGetByteAt(&_dynBuf, byte, position);
 }
 
 /**
@@ -233,7 +229,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetBytesFromTo      (char              *bytes,
 {
     logExtDbg("miscoDYN_BUF::GetBytesFromTo()");
 
-    return miscDynBufGetBytesFromTo(buffer, bytes, from, to);
+    return miscDynBufGetBytesFromTo(&_dynBuf, bytes, from, to);
 }
 
 /**
@@ -255,7 +251,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetStringFromTo     (char              *str,
 {
     logExtDbg("miscoDYN_BUF::GetStringFromTo()");
 
-    return miscDynBufGetStringFromTo(buffer, str, from, to);
+    return miscDynBufGetStringFromTo(&_dynBuf, str, from, to);
 }
 
 /**
@@ -274,7 +270,7 @@ mcsCOMPL_STAT miscoDYN_BUF::SetCommentPattern   (const char     *commentPattern)
 {
     logExtDbg("miscoDYN_BUF::SetCommentPattern()");
 
-    return miscDynBufSetCommentPattern(buffer, commentPattern);
+    return miscDynBufSetCommentPattern(&_dynBuf, commentPattern);
 }
 
 /**
@@ -297,7 +293,7 @@ mcsCOMPL_STAT miscoDYN_BUF::LoadFile            (const char     *fileName,
 {
     logExtDbg("miscoDYN_BUF::LoadFile()");
 
-    return miscDynBufLoadFile(buffer, fileName, commentPattern);
+    return miscDynBufLoadFile(&_dynBuf, fileName, commentPattern);
 }
 
 /**
@@ -316,7 +312,7 @@ mcsCOMPL_STAT miscoDYN_BUF::SaveInFile          (const char        *fileName)
 {
     logExtDbg("miscoDYN_BUF::SaveInFile()");
 
-    return miscDynBufSaveInFile(buffer, fileName);
+    return miscDynBufSaveInFile(&_dynBuf, fileName);
 }
 
 /**
@@ -335,7 +331,7 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceByteAt       (char              byte,
 {
     logExtDbg("miscoDYN_BUF::ReplaceByteAt()");
 
-    return miscDynBufReplaceByteAt(buffer, byte, position);
+    return miscDynBufReplaceByteAt(&_dynBuf, byte, position);
 }
 
 /**
@@ -361,7 +357,7 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceBytesFromTo  (char              *bytes,
 {
     logExtDbg("miscoDYN_BUF::ReplaceBytesFromTo()");
 
-    return miscDynBufReplaceBytesFromTo(buffer, bytes, length, from, to);
+    return miscDynBufReplaceBytesFromTo(&_dynBuf, bytes, length, from, to);
 }
 
 /**
@@ -387,7 +383,7 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceStringFromTo (char              *str,
 {
     logExtDbg("miscoDYN_BUF::ReplaceStringFromTo()");
 
-    return miscDynBufReplaceStringFromTo(buffer, str, from, to);
+    return miscDynBufReplaceStringFromTo(&_dynBuf, str, from, to);
 }
 
 /**
@@ -403,7 +399,7 @@ mcsCOMPL_STAT miscoDYN_BUF::AppendBytes         (const char        *bytes,
 {
     logExtDbg("miscoDYN_BUF::AppendBytes()");
 
-    return miscDynBufAppendBytes(buffer, bytes, length);
+    return miscDynBufAppendBytes(&_dynBuf, bytes, length);
 }
 
 /**
@@ -418,7 +414,7 @@ mcsCOMPL_STAT miscoDYN_BUF::AppendString        (const char        *str)
 {
     logExtDbg("miscoDYN_BUF::AppendString()");
 
-    return miscDynBufAppendString(buffer, str);
+    return miscDynBufAppendString(&_dynBuf, str);
 }
 
 /**
@@ -441,7 +437,7 @@ mcsCOMPL_STAT miscoDYN_BUF::InsertBytesAt       (char              *bytes,
 {
     logExtDbg("miscoDYN_BUF::InsertBytesAt()");
 
-    return miscDynBufInsertBytesAt(buffer, bytes, length, position);
+    return miscDynBufInsertBytesAt(&_dynBuf, bytes, length, position);
 }
 
 /**
@@ -463,7 +459,7 @@ mcsCOMPL_STAT miscoDYN_BUF::InsertStringAt      (char              *str,
 {
     logExtDbg("miscoDYN_BUF::InsertStringAt()");
 
-    return miscDynBufInsertStringAt(buffer, str, position);
+    return miscDynBufInsertStringAt(&_dynBuf, str, position);
 }
 
 /**
@@ -482,7 +478,7 @@ mcsCOMPL_STAT miscoDYN_BUF::DeleteBytesFromTo   (const mcsUINT32   from,
 {
     logExtDbg("miscoDYN_BUF::DeleteBytesFromTo()");
 
-    return miscDynBufDeleteBytesFromTo(buffer, from, to);
+    return miscDynBufDeleteBytesFromTo(&_dynBuf, from, to);
 }
 
 
@@ -508,7 +504,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Display   () const
     if (GetNbAllocatedBytes(&allocatedBytesNb) == mcsFAILURE)
     {
         cout << "\tInvalid object" << endl
-             << "}" << endl;
+             << "}"<< endl;;
         return mcsFAILURE;
     }
 
@@ -526,7 +522,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Display   () const
         cout << "\tdynBuf = '(null)'"                         << endl;
     }
 
-    cout << "}";
+    cout << "}"<< endl;;
     return mcsSUCCESS;
 
 /*    stream << "miscoDYN_BUF ="                                << endl

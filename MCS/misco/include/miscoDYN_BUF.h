@@ -3,7 +3,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.2 2005-02-11 11:04:38 lafrasse Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.3 2005-02-12 20:04:44 gzins Exp $"
  *
  * History
  * -------
@@ -40,43 +40,10 @@
  * 
  * \n
  * \ex
+ * TODO : Code example
+ * \n Brief example description.
  * \code
- * #include <stdlib.h>
- * #include <iostream>
- * 
- * using namespace std;
- * 
- * #define MODULE_ID "mymod"
- *
- * #include "mcs.h"
- * #include "log.h"
- * #include "err.h"
- * #include "misco.h"
- * 
- * int main(int argc, char *argv[])
- * {
- *     // Initialize MCS services
- *     if (mcsInit(argv[0]) == FAILURE)
- *     {
- *         // Exit from the application with FAILURE
- *         exit (EXIT_FAILURE);
- *     }
- * 
- *     miscoDYN_BUF buf;
- * 
- *     buf.LoadFile("../doc/moduleDescription.xml");
- *     char* temp = NULL;
- *     while ((temp = buf.GetNextLine(temp, mcsTRUE)) != NULL)
- *     {
- *         cout << "Line = '" << temp << "'" << endl;
- *     }
- * 
- *     // Close MCS services
- *     mcsExit();
- *     
- *     // Exit from the application with SUCCESS
- *     exit (EXIT_SUCCESS);
- * }
+ * Insert your code example here
  * \endcode
  */
 class miscoDYN_BUF
@@ -164,8 +131,7 @@ private:
     miscoDYN_BUF(const miscoDYN_BUF&);
     miscoDYN_BUF& operator=(const miscoDYN_BUF&);
 
-    miscDYN_BUF  dynBuf;
-    miscDYN_BUF* buffer;
+    miscDYN_BUF  _dynBuf;
 };
 
 #endif /*!miscoDYN_BUF_H*/
