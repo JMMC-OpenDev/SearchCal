@@ -3,7 +3,7 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logPrivate.h,v 1.1 2004-05-14 09:11:56 mella Exp $"
+*  "@(#) $Id: logPrivate.h,v 1.2 2004-05-26 08:59:18 mella Exp $"
 *
 * who       when       what
 * --------  --------   ----------------------------------------------
@@ -32,7 +32,7 @@ typedef struct {
 
 
 /* Private functions */
-extern mcsCOMPL_STAT logData(const char * msg);
+static mcsCOMPL_STAT logData(const char * msg);
 
 #ifdef __cplusplus
 };
