@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.4 2004-12-08 15:52:04 lafrasse Exp $"
+* "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.5 2004-12-08 17:30:41 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -9,6 +9,7 @@
 * gzins     08-Dec-2004  Handled evhCB_DELETE callback return value
 *                        Added some method documentation
 * lafrasse  08-Dec-2004  Added Purge().
+* gzins     08-Dec-2004  Updated Purge().
 *
 *
 *******************************************************************************/
@@ -18,7 +19,7 @@
  * Definition of the evhCALLBACK_LIST class.
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.4 2004-12-08 15:52:04 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.5 2004-12-08 17:30:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -161,22 +162,20 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Purge(void)
     logExtDbg("evhCALLBACK_LIST::Purge()"); 
 
     // For each callback
-    std::list<evhCALLBACK *>::iterator i = _callbackList.begin();
-    while (i != _callbackList.end())
+    std::list<evhCALLBACK *>::iterator iter = _callbackList.begin();
+    while (iter != _callbackList.end())
     {
         // If the current callback is detached
-        if ((*i)->IsDetached() == mcsTRUE)
+        if ((*iter)->IsDetached() == mcsTRUE)
         {
-            std::list<evhCALLBACK *>::iterator j = i;
-            i++;
-
-            // Remove it
-            _callbackList.erase(j);
-
-            break;
+            // Remove it, and restart at the beginning of the list
+            _callbackList.erase(iter);
+            iter = _callbackList.begin();
         }
-
-        i++;
+        else
+        {
+            iter++;
+        }
     }
 
     return SUCCESS;
@@ -224,7 +223,10 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const msgMESSAGE &msg)
         }
         if ((status & evhCB_DELETE) != 0)
         {
-            return ((evhCMD_CALLBACK *)(*iter))->Detach();
+            if (((evhCMD_CALLBACK *)(*iter))->Detach() == FAILURE)
+            {
+                return FAILURE;
+            }
         }
     }
     // End for
@@ -269,7 +271,10 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const int fd)
         }
         if ((status & evhCB_DELETE) != 0)
         {
-            return ((evhIOSTREAM_CALLBACK *)(*iter))->Detach();
+            if (((evhIOSTREAM_CALLBACK *)(*iter))->Detach() == FAILURE)
+            {
+                return FAILURE;
+            }
         }
     }
     // End for
