@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.5 2005-02-08 20:43:11 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.6 2005-02-11 10:43:35 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/08 20:43:11  gzins
+* Changed _isComputed by _origin
+*
 * Revision 1.4  2005/02/08 07:17:21  gzins
 * Changed value parameter type: char* to const char*
 *
@@ -21,7 +24,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.5 2005-02-08 20:43:11 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.6 2005-02-11 10:43:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -146,7 +149,7 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                                           const char *origin,
-                                          mcsINT32 confidenceIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
 {
     logExtDbg("vobsSTAR_PROPERTY::SetValue()");
@@ -179,7 +182,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
                                           const char *origin,
-                                          mcsINT32 confidenceIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
 {
     logExtDbg("vobsSTAR_PROPERTY::SetValue()");

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.6 2005-02-08 20:26:16 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.7 2005-02-11 10:43:35 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/08 20:26:16  gzins
+* Changed _isComputed by _origin
+*
 * Revision 1.5  2005/02/08 07:16:56  gzins
 * Changed value parameter type: char* to const char*
 *
@@ -76,11 +79,11 @@ public:
     // Set value
     virtual mcsCOMPL_STAT SetValue(const char *value,
                                    const char *origin,
-                                   mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,
+                                   vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite=mcsFALSE);
     virtual mcsCOMPL_STAT SetValue(mcsFLOAT value,
                                    const char *origin,
-                                   mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,
+                                   vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite=mcsFALSE);
     
     // Get value
