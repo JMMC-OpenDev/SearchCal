@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.2 2004-11-22 16:26:52 scetre Exp $"
+* "@(#) $Id: msgSOCKET_CLIENT.h,v 1.3 2004-11-22 16:35:48 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -43,6 +43,7 @@
  * 
  * \todo write code example
  */
+#include "msgSOCKET.h"
 class msgSOCKET_CLIENT : public msgSOCKET
 {
 
