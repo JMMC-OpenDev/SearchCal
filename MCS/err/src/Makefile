@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2004-06-21 17:09:47 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.4 2004-06-23 13:04:15 gzins Exp $"
 #
 # Makefile of ........
 #
@@ -22,7 +22,9 @@
 
 #
 # additional include and library search paths
-#USER_INC = 
+USER_INC = -I/usr/include/libgdome \
+		   -I/usr/lib/glib-2.0/include/ \
+		   -I/usr/include/glib-2.0
 #USER_LIB = 
 
 #
@@ -60,7 +62,25 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-err_OBJECTS   = err
+err_OBJECTS   = errCloseLocalStack_L \
+				errResetLocalStack_L \
+				errDisplayLocalStack_L \
+				errIsInLocalStack_L \
+				errLocalStackIsEmpty_L \
+				errGetLocalStackSize_L \
+				errPackLocalStack_L \
+				errUnpackLocalStack_L \
+				errPushInLocalStack_L \
+				errAddInLocalStack_L \
+				errCloseStack \
+				errResetStack \
+				errDisplayStack \
+				errIsInStack \
+				errStackIsEmpty \
+				errGetStackSize \
+				errPackStack \
+				errUnpackStack \
+				errAddInStack
 
 #
 # Scripts (public and local)
