@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.16 2004-07-27 06:56:01 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure,v 1.17 2004-08-10 16:47:27 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -15,6 +15,7 @@
 #
 # SYNOPSIS
 #   ctooGetTemplateForDirectoryStructure MODROOT|INTROOT|MCSROOT|MCSDATA <name>
+#                                        [noMakefile]
 #
 # DESCRIPTION
 #   Utility used ot create new or missing part of MCS directory structure for:
@@ -23,11 +24,14 @@
 #       - MCSROOT   for a MCS Root directory structure
 #       - MCSDATA   for a MCS Data directory structure
 #
+#       <directoryStructureTtype> directory structure type to create.
+#                                 It should be one of the 4 following values :
+#                                 MODROOT, INTROOT, MCSROOT or MCSDATA
 #       <name> the name of the directory from which the directory structure
 #              starts. If not existing already, directory/ies are created.
 #
 #       Remark : for MODROOT directory structure, a Makefile template is added
-#       to the src subdirectory.
+#                to the src subdirectory.
 #
 #   Option :
 #       [noMakefile] : if this option is used, no Makefile is added to the
@@ -53,16 +57,16 @@
 # signal trap (if any)
 
 
-# Input parameters given should be 3 and in the correct format:
+# Input parameters given should be 2 or 3 and in the correct format:
 if [ $# != 2 -a $# != 3 ]
 then 
     echo -e "\n\tUsage: ctooGetTemplateForDirectoryStructure"
-    echo -e "MODROOT|INTROOT|VLTROOT|VLTDATA <name> [noMakefile]\n"
+    echo -e "MODROOT|INTROOT|VLTROOT|VLTDATA <root name> [noMakefile]\n"
     exit 1
 fi 
 
 # Get the input parameters
-choice=$1
+directoryStructureTtype=$1
 ROOT_NAME=$2
 makefile=$3
 
@@ -117,7 +121,7 @@ MCSDATA_LIST="tmp"
 
 
 # Define directories list of the structure to build
-case $choice in
+case $directoryStructureTtype in
     MODROOT)
         echo -e "\nCreating/checking Module directory"
         DIR_LIST="$MODROOT_LIST"
@@ -135,7 +139,8 @@ case $choice in
         DIR_LIST="$MCSDATA_LIST"
         ;;
     *)  
-        echo "ERROR >>$choice<< is not a valid directory structure."
+        echo "ERROR >>$directoryStructureTtype<< is not a valid directory "
+        echo "structure."
         echo -e "\n\tUsage: getTemplateForDirectory \
                 MODROOT|INTROOT|VLTROOT|VLTDATA <name> [noMakefile]\n"
         exit 1
@@ -196,7 +201,7 @@ done
 
 # Additional case specific actions:
 MODE=644
-case $choice in
+case $directoryStructureTtype in
     MODROOT)
         case $makefile in
             "")
@@ -227,8 +232,8 @@ case $choice in
                         ${FILE}.BAK > $FILE
                         rm -f ${FILE}.BAK
                     else
-                        # Makefile copy failed
-                        echo -e "\ncannot create >>$FILE<<."
+                        # File copy failed
+                        echo -e "\n>>>  CANNOT CREATE --> $FILE\n"
                     fi
                 fi
 
@@ -270,6 +275,7 @@ case $choice in
                 ;;
 
             *)
+                # Wrong parameter value
                 echo "ERROR third option is not a valid."
                 echo -e "\n\tUsage: getTemplateForDirectory MODROOT|INTROOT|"
                 echo -e "         VLTROOT|VLTDATA <name> [noMakefile]\n"
