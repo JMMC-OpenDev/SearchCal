@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.h,v 1.3 2004-12-09 17:51:07 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.h,v 1.4 2004-12-15 17:40:28 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -66,10 +66,14 @@ public:
     virtual mcsCOMPL_STAT GetParamValue(string paramName, char **param);
     virtual mcsCOMPL_STAT GetParamValue(string paramName, mcsDOUBLE *param);
     virtual mcsCOMPL_STAT GetParamValue(string paramName, mcsLOGICAL *param);
-    virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName, mcsINT32 *param);
-    virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName, char **param);
-    virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName, mcsDOUBLE *param);
-    virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName, mcsLOGICAL *param);
+    virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName, 
+                                               mcsINT32 *param);
+    virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName, 
+                                               char **param);
+    virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName,
+                                               mcsDOUBLE *param);
+    virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName,
+                                               mcsLOGICAL *param);
 
 protected:
     virtual mcsCOMPL_STAT Parse(string cdfFilename);
@@ -84,7 +88,8 @@ private:
      virtual mcsCOMPL_STAT ParseCdfForDesc(GdomeElement *node);
      virtual mcsCOMPL_STAT ParseCdfForParameters(GdomeElement *node);
      virtual mcsCOMPL_STAT ParseCdfForParam(GdomeElement *param);
-     virtual mcsCOMPL_STAT CmdGetNodeContent(GdomeElement *parentNode, string tagName, string &content);
+     virtual mcsCOMPL_STAT CmdGetNodeContent(GdomeElement *parentNode,
+                                             string tagName, string &content);
 
      virtual mcsCOMPL_STAT ParseParams();
      virtual mcsCOMPL_STAT ParseTupleParam(string tuple);
@@ -96,7 +101,7 @@ private:
      /** given string to the constructor */
      string _params;
      /** map of params */
-     STRING2PARAM _children;
+     STRING2PARAM _paramList;
      /** Flag that indicates if the params have been parsed */
      mcsLOGICAL _hasBeenYetParsed;
      /** name of the command */
