@@ -1,33 +1,26 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsREQUEST.cpp,v 1.5 2005-01-26 08:11:28 scetre Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* scetre    26-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project
+ *
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.6 2005-02-07 17:28:11 gluck Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ ******************************************************************************/
 
 /**
  * \file
- * vobsREQUEST class definition.
+ *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.5 2005-01-26 08:11:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.6 2005-02-07 17:28:11 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers 
  */
 #include <iostream>
-using namespace std; 
-/**
- * Export standard iostream objects (cin, cout,...).
- */
-
+using namespace std;
 
 /*
  * MCS Headers 
@@ -36,405 +29,366 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 
-
 /*
  * Local Headers 
  */
 #include "vobsREQUEST.h"
 #include "vobsPrivate.h"
-#include "vobsErrors.h"
 
-
-/* Local variables */
-static char *constraintNameList[] =
-{
-   "STAR_NAME",
-   "RA_ID",
-   "DEC_ID",
-   "STAR_WLEN",
-   "STAR_MAGNITUDE",
-   "MIN_MAGNITUDE_RANGE",
-   "MAX_MAGNITUDE_RANGE",   
-   "SEARCH_BOX_RA",
-   "SEARCH_BOX_DEC",
-   "STAR_EXPECTED_VIS",
-   "STAR_MAX_ERR_VIS",
-   "OBSERVED_BAND",
-   "BASEMIN",
-   "BASEMAX",
-   NULL
-};
-
-/*
- * Class constructor
- */
 
 /**
- * Build a request object.
- *
- * \n 
- * \sa OPTIONAL. See also section, in witch you can refer other documented
- * entities. Doxygen will create the link automatically.
- * \sa For example modcppPERSON(char *name).
- * 
+ * Class constructor
  */
 vobsREQUEST::vobsREQUEST()
 {
-    for (int constraintId=0; constraintId<vobsNB_REQUEST_CONSTRAINTS; constraintId++)
-    {
-        strcpy(_constraints[constraintId], vobsREQUEST_CONSTRAINT_NOT_SET);
-    }
-}
-/**
- * Build a request object from another one (copy constructor).
- */
-vobsREQUEST::vobsREQUEST(const vobsREQUEST &request)
-{
-    for (int constraintId=0; constraintId<vobsNB_REQUEST_CONSTRAINTS; constraintId++)
-    {
-        request.GetConstraint((vobsCONSTRAINT_ID)constraintId, (char *)_constraints[constraintId]);
-    }
+    _objectName = "";
+    _objectRa = 0.0;
+    _objectDec = 0.0;
+    _objectMag = 0.0;
+    _searchBand = '\0';
+    _deltaRa = 0.0;
+    _deltaDec = 0.0;
+    _minDeltaMag = 0.0;
+    _maxDeltaMag = 0.0;
+    _maxNbOfSelectedObjects = 0;
 }
 
-/*
+
+/**
  * Class destructor
  */
-
-/** Delete a request object. */
 vobsREQUEST::~vobsREQUEST()
 {
 }
+
 
 /*
  * Public methods
  */
 
 /**
- * Set a request constraint.
+ * Set science object name.
  *
- * Set value constraint corresponding to the CONSTRAINT definition
- * 
- * \param constraint CONSTRAINT name. 
- * \param value constraint value to set
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \param objectName science object name.
  *
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_INVALID_CONSTRAINT
- *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetConstraint(char *constraint, char *value)
+mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char *objectName)
 {
-    //logExtDbg("vobsSTAR::SetConstraint()");
+    logExtDbg("vobsREQUEST::SetObjectName()");
 
-    // Get Id corresponding to the specified CONSTRAINT
-    vobsCONSTRAINT_ID constraintId;
-    constraintId = Constraint2Id(constraint);
-    if (constraintId == UNKNOWN_CONSTRAINT_ID)
-    {
-        errAdd(vobsERR_INVALID_CONSTRAINT, constraint);
-        return mcsFAILURE;
-    }
-    // Affect constraint value
-    strcpy(_constraints[constraintId], value);
+    _objectName = objectName;
 
-    return mcsSUCCESS;
+    return SUCCESS;
 }
 
 /**
- * Set a request constraint.
+ * Get science object name.
  *
- * Set value constraint corresponding to the CONSTRAINT definition
- * 
- * \param constraintId CONSTRAINT id. 
- * \param value constraint value to set
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- *
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_INVALID_CONSTRAINT
- *
+ * \return science object name.
  */
-mcsCOMPL_STAT vobsREQUEST::SetConstraint(vobsCONSTRAINT_ID constraintId, char *value)
+const char * vobsREQUEST::GetObjectName(void) const
 {
-    //logExtDbg("vobsSTAR::SetConstraint()");
+    logExtDbg("vobsREQUEST::GetObjectName()");
 
-    // Get Id corresponding to the specified CONSTRAINT
-    if (constraintId == UNKNOWN_CONSTRAINT_ID)
-    {
-        errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
-        return mcsFAILURE;
-    }
-    // Affect constraint value
-    strcpy(_constraints[constraintId], value);
-
-    return mcsSUCCESS;
+    // Return and convert object name to regular C string
+    return _objectName.c_str();
 }
 
 /**
- * Get a request constraint, as a string.
+ * Set science object right ascension.
  *
- * Get value constraint, as a string, corresponding to the CONSTRAINT
- * definition
- * 
- * \param constraint CONSTRAINT name. 
- * \param value constraint value to get, as a string.
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \param objectRa science object right ascension in hms units (hh mm ss).
  *
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_INVALID_CONSTRAINT
- *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, char *value)
+mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const mcsFLOAT objectRa)
 {
-    //logExtDbg("vobsSTAR::GetConstraint()");
+    logExtDbg("vobsREQUEST::SetObjectRa()");
 
-    // Get Id corresponding to the specified CONSTRAINT
-    vobsCONSTRAINT_ID constraintId;
-    constraintId = Constraint2Id(constraint);
-    if (constraintId == UNKNOWN_CONSTRAINT_ID)
-    {
-        errAdd(vobsERR_INVALID_CONSTRAINT, constraint);
-        return mcsFAILURE;
-    }
+    _objectRa = objectRa;
+
+    return SUCCESS;
+}
+
+/**
+ * Get science object right ascension.
+ *
+ * \return science object right ascension in hms units (hh mm ss).
+ */
+mcsFLOAT vobsREQUEST::GetObjectRa(void) const
+{
+    logExtDbg("vobsREQUEST::GetObjectRa()");
+
+    return _objectRa;
+}
+
+/**
+ * Set science object declinaison.
+ *
+ * \param objectDec science object declinaison in dms units (dd mm ss).
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const mcsFLOAT objectDec)
+{
+    logExtDbg("vobsREQUEST::SetObjectDec()");
+
+    _objectDec = objectDec;
     
-    // Retrieve constraint value
-    strcpy(value,_constraints[constraintId]);
-
-    return mcsSUCCESS;
+    return SUCCESS;
 }
 
 /**
- * Get a request constraint, as a string.
+ * Get science object declinaison.
  *
- * Get value constraint, as a string, corresponding to the CONSTRAINT
- * definition
- * 
- * \param constraintId CONSTRAINT id. 
- * \param value constraint value to get, as a string. 
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- *
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_INVALID_CONSTRAINT
+ * \return science object declinaison in dms units (dd mm ss).
  */
-mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId , char *value) const
+mcsFLOAT vobsREQUEST::GetObjectDec(void) const
 {
-    //logExtDbg("vobsSTAR::GetConstraint()");
-    
-    // Check CONSTRAINT id
-    if ((constraintId <= UNKNOWN_CONSTRAINT_ID) ||
-        (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
-    {
-        errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
-        return mcsFAILURE;
-    }
-   
-    // Retrieve string value form the constraint
-    strcpy(value, _constraints[constraintId]);
-            
-    return mcsSUCCESS;
+    logExtDbg("vobsREQUEST::GetObjectDec()");
+
+    return _objectDec;
 }
 
 /**
- * Get a request constraint, as an integer.
+ * Set science object magnitude.
  *
- * Get value constraint, as an integer, corresponding to the CONSTRAINT
- * definition
- * 
- * \param constraint CONSTRAINT name. 
- * \param value constraint value to get, as an integer. 
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \param objectMag science object magnitude.
  *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, int *value)
+mcsCOMPL_STAT vobsREQUEST::SetObjectMag(const mcsFLOAT objectMag)
 {
-    //logExtDbg("vobsSTAR::GetConstraint()");
+    logExtDbg("vobsREQUEST::SetObjectMag()");
 
-    // Get Id corresponding to the specified CONSTRAINT
-    vobsCONSTRAINT_ID constraintId;
-    constraintId = Constraint2Id(constraint);
+    _objectMag = objectMag;
 
-    // Retrieve and return constraint value
-    return (GetConstraint(constraintId, value));
+    return SUCCESS;
 }
 
 /**
- * Get a request constraint, as an integer.
+ * Get science object magnitude.
  *
- * Get value constraint value, as an integer, corresponding to the CONSTRAINT
- * definition
- * 
- * \param constraintId CONSTRAINT id. 
- * \param value constraint value to get, as an integer. 
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- *
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_INVALID_CONSTRAINT
- * \li vobsERR_INVALID_CONSTRAINT_FORMAT
- *
+ * \return science object magnitude.
  */
-mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, int *value) const
+mcsFLOAT vobsREQUEST::GetObjectMag(void) const
 {
-    //logExtDbg("vobsSTAR::GetConstraint()");
+    logExtDbg("vobsREQUEST::GetObjectMag()");
 
-    // Check CONSTRAINT id
-    if ((constraintId <= UNKNOWN_CONSTRAINT_ID) ||
-        (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
-    {
-        errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
-        return mcsFAILURE;
-    }
-
-    // Convert constraint string value to integer value
-    if (sscanf(_constraints[constraintId], "%d", value) != 1)
-    {
-        errAdd(vobsERR_INVALID_CONSTRAINT_FORMAT, value, _constraints[constraintId]);
-        return mcsFAILURE;
-    }
-        
-    return mcsSUCCESS;
+    return _objectMag;
 }
 
 /**
- * Get a request constraint, as a float.
+ * Set search band.
  *
- * Get value constraint, as a float, corresponding to the CONSTRAINT
- * definition
- * 
- * \param constraint CONSTRAINT name. 
- * \param value constraint value to get, as a float. 
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \param searchBand search band which is a letter (H, M, N, R, V ...).
  *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::GetConstraint(char *constraint, float *value)
+mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char searchBand)
 {
-    //logExtDbg("vobsSTAR::GetConstraint()");
+    logExtDbg("vobsREQUEST::SetSearchBand()");
 
-    // Get Id corresponding to the specified CONSTRAINT
-    vobsCONSTRAINT_ID constraintId;
-    constraintId = Constraint2Id(constraint);
+    _searchBand = searchBand;
 
-    // Retrieve and return constraint value
-    return (GetConstraint(constraintId, value));
+    return SUCCESS;
 }
 
 /**
- * Get a request constraint, as a float.
+ * Get search band.
  *
- * Get value constraint value, as a float, corresponding to the CONSTRAINT
- * definition
- * 
- * \param constraintId CONSTRAINT id. 
- * \param value constraint value to get, as a float. 
- * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- *
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_INVALID_CONSTRAINT
- * \li vobsERR_INVALID_CONSTRAINT_FORMAT
- *
+ * \return search band which is a letter (H, M, N, R, V ...).
  */
-mcsCOMPL_STAT vobsREQUEST::GetConstraint(vobsCONSTRAINT_ID constraintId, float *value) const
+char vobsREQUEST::GetSearchBand(void) const
 {
-    //logExtDbg("vobsREQUEST::GetConstraint()");
+    logExtDbg("vobsREQUEST::GetSearchBand()");
 
-    // Check CONSTRAINT id
-    if ((constraintId <= UNKNOWN_CONSTRAINT_ID) ||
-        (constraintId >= vobsNB_REQUEST_CONSTRAINTS))
-    {
-        errAdd(vobsERR_INVALID_CONSTRAINT, constraintId);
-        return mcsFAILURE;
-    }
-
-    // Convert constraint string value to integer value
-    if (sscanf(_constraints[constraintId], "%f", value) != 1)
-    {
-        errAdd(vobsERR_INVALID_CONSTRAINT_FORMAT, value, _constraints[constraintId]);
-        return mcsFAILURE;
-    }
-        
-    return mcsSUCCESS;
+    return _searchBand;
 }
 
 /**
- * Test if the request is build correctly
+ * Set object ra difference in which catalog stars will be selected.
  *
- * \return TRUE on successful completion. Otherwise FALSE is returned.
- * \b Errors code:\n
- * The possible errors are :
- * \li vobsERR_CHECK_OF_KIND_OF_REQUEST_FAILED
- * \li vobsERR_CHECK_FOR_SIMPLE_STAR_FAILED
- * \li vobsERR_CHECK_FOR_STAR_LIST_FAILED
+ * \param deltaRa accepted object ra difference in hms units (hh mm ss).
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsLOGICAL vobsREQUEST::Check(void)
+mcsCOMPL_STAT vobsREQUEST::SetDeltaRa(const mcsFLOAT deltaRa)
 {
-    logExtDbg("vobsREQUEST::Check()");
+    logExtDbg("vobsREQUEST::SetDeltaRa()");
 
-    // Check if the CONSTRAINTS are build for the star list search
-    for (int i=0; i<vobsNB_REQUEST_CONSTRAINTS; i++)
-    {
-        if (strcmp(_constraints[(vobsCONSTRAINT_ID)i],
-                   vobsREQUEST_CONSTRAINT_NOT_SET)==0)
-        {
-            errAdd(vobsERR_CHECK_FOR_STAR_LIST_FAILED);
-            return mcsFALSE;
-        }
-    }
+    _deltaRa = deltaRa;
 
-    return mcsTRUE;
+    return SUCCESS;
 }
 
 /**
- * Display all request constraints on the console.
+ * Get object ra difference in which catalog stars will be selected.
  *
- * 
+ * \return accepted object ra difference in hms units (hh mm ss).
  */
-void vobsREQUEST::Display(void)
+mcsFLOAT vobsREQUEST::GetDeltaRa(void) const
+{
+    logExtDbg("vobsREQUEST::GetDeltaRa()");
+
+    return _deltaRa;
+}
+
+/**
+ * Set object dec difference in which catalog stars will be selected.
+ *
+ * \param deltaDec accepted object dec difference in dms units (dd mm ss).
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::SetDeltaDec(const mcsFLOAT deltaDec)
+{
+    logExtDbg("vobsREQUEST::SetDeltaDec()");
+
+    _deltaDec = deltaDec;
+
+    return SUCCESS;
+}
+
+/**
+ * Get object dec difference in which catalog stars will be selected.
+ *
+ * \return accepted object dec difference in dms units (dd mm ss).
+ */
+mcsFLOAT vobsREQUEST::GetDeltaDec(void) const
+{
+    logExtDbg("vobsREQUEST::GetDeltaDec()");
+
+    return _deltaDec;
+}
+
+/**
+ * Set maximum magnitude difference between the selected object minimum
+ * magnitude and the science object magnitude.
+ *
+ * \param minDeltaMag maximum accepted magnitude difference correcponding to the
+ * minimum expected magnitude for the selected object.
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::SetMinDeltaMag(const mcsFLOAT minDeltaMag)
+{
+    logExtDbg("vobsREQUEST::SetMinDeltaMag()");
+
+    _minDeltaMag = minDeltaMag;
+
+    return SUCCESS;
+}
+
+/**
+ * Get maximum magnitude difference between the selected object minimum
+ * magnitude and the science object magnitude.
+ *
+ * \return maximum accepted magnitude difference correcponding to a minimum the
+ * expected magnitude for the selected object.
+ */
+mcsFLOAT vobsREQUEST::GetMinDeltaMag(void) const
+{
+    logExtDbg("vobsREQUEST::GetMinDeltaMag()");
+
+    return _minDeltaMag;
+}
+
+
+/**
+ * Set maximum magnitude difference between the selected object maximum
+ * magnitude and the science object magnitude.
+ *
+ * \param maxDeltaMag maximum accepted magnitude difference correcponding to the
+ * maximum expected magnitude for the selected object.
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::SetMaxDeltaMag(const mcsFLOAT maxDeltaMag)
+{
+    logExtDbg("vobsREQUEST::SetMaxDeltaMag()");
+
+    _maxDeltaMag = maxDeltaMag;
+
+    return SUCCESS;
+}
+
+/**
+ * Get maximum magnitude difference between the selected object maximum
+ * magnitude and the science object magnitude.
+ *
+ * \return maximum accepted magnitude difference correcponding to a maximum the
+ * expected magnitude for the selected object.
+ */
+mcsFLOAT vobsREQUEST::GetMaxDeltaMag(void) const
+{
+    logExtDbg("vobsREQUEST::GetMaxDeltaMag()");
+
+    return _maxDeltaMag;
+}
+
+/**
+ * Set maximum number of selected objects.
+ *
+ * \param maxNbOfSelectedObjects maximum number of selected objects.
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsUINT32 
+                                                     maxNbOfSelectedObjects)
+{
+    logExtDbg("vobsREQUEST::SetMaxNbOfSelectedObjects()");
+
+    _maxNbOfSelectedObjects = maxNbOfSelectedObjects;
+
+    return SUCCESS;
+}
+
+/**
+ * Get maximum number of selected objects.
+ *
+ * \return maximum number of selected objects.
+ */
+mcsUINT32 vobsREQUEST::GetMaxNbOfSelectedObjects(void) const
+{
+    logExtDbg("vobsREQUEST::GetMaxNbOfSelectedObjects()");
+
+    return _maxNbOfSelectedObjects;
+}
+
+/**
+ * Display request containt (constraints).
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::Display(void)
 {
     logExtDbg("vobsREQUEST::Display()");
-    cout << "-----------------------------------------" << endl;
-    for (int i=0; i<vobsNB_REQUEST_CONSTRAINTS; i++)
-    {
-        cout << constraintNameList[i] << " = " << _constraints[i] << endl;
-    }
-}
-
-/*
- * Protected methods
- */
-
-/**
- * Convert a given CONSTRAINT to an id.
- *
- * \param constraint CONSTRAINT name.
- *
- * \return an CONSTRAINT id.
- *
- */
-vobsCONSTRAINT_ID vobsREQUEST::Constraint2Id(char *constraint) const
-{
-    logExtDbg("vobsREQUEST::Constraint2Id()");
     
-    for (int i=0; i<vobsNB_REQUEST_CONSTRAINTS; i++)
-    {
-        if (strcmp(constraintNameList[i], constraint) == 0)
-        {
-            return (vobsCONSTRAINT_ID)i;
-        }
-    }
-
-    return UNKNOWN_CONSTRAINT_ID;
+    logInfo("object name = %s", _objectName.c_str());
+    logInfo("object ra = %f", _objectRa);
+    logInfo("object dec = %f", _objectDec);
+    logInfo("object magnitude = %f", _objectMag);
+    logInfo("search band = %c", _searchBand);
+    logInfo("delta ra = %f", _deltaRa);
+    logInfo("delta dec = %f", _deltaDec);
+    logInfo("min delta mag = %f", _minDeltaMag);
+    logInfo("max delta mag = %f", _maxDeltaMag);
+    logInfo("max nb of selected object = %i", _maxNbOfSelectedObjects);
+    
+    return SUCCESS;
 }
 
 /*___oOo___*/

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.12 2005-02-04 08:06:28 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.13 2005-02-07 17:28:11 gluck Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/04 08:06:28  scetre
+* changed mcsSTRING32 to mcsSTRING256 for constraints
+*
 * Revision 1.11  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -18,7 +21,7 @@
 
 /**
  * \file
- * vobsREQUEST class declaration.
+ * Declaration of vobsREQUEST class.
  */
 
 #ifndef __cplusplus
@@ -26,103 +29,122 @@
 #endif
 
 
-/* 
- * Constants definition
- */
-#define vobsREQUEST_CONSTRAINT_NOT_SET  "00.00"  /**< Default value of the empty
-                                          contraints */
-
-/*
- * Type definition
- */
-/**
- * definition of the request constraint as a string
- **/
-typedef mcsSTRING256 vobsREQUEST_CONSTRAINT;
-
-/*
- * Enumeration type definition
- */
-/**
- * vobsCONSTRAINT_ID is an enumeration which allow correspondance between 
- * an id and a CONSTRAINT.
- */
-typedef enum
-{
-    UNKNOWN_CONSTRAINT_ID = -1,         /**< id if no CONSTRAINT */      
-    STAR_NAME_ID,                       /**< star name id */
-    RA_ID,                              /**< right ascension coordinate */
-    DEC_ID,                             /**< declinaison coordinate */
-    STAR_WLEN_ID,                       /**< wavelength id */
-    STAR_MAGNITUDE_ID,                  /**< So magnitude id */
-    MIN_MAGNITUDE_RANGE_ID,             /**< min magnitude range id */
-    MAX_MAGNITUDE_RANGE_ID,             /**< max magnitude range id */    
-    SEARCH_BOX_RA_ID,                   /**< search Ra id */
-    SEARCH_BOX_DEC_ID,                  /**< search Dec id */
-    STAR_EXPECTED_VIS_ID,               /**< visibility id */
-    STAR_MAX_ERR_VIS_ID,                /**< absolute errors id */
-    OBSERVED_BAND_ID,                   /**< band id */
-    BASEMIN_ID,
-    BASEMAX_ID,
-    vobsNB_REQUEST_CONSTRAINTS
-} vobsCONSTRAINT_ID;
-
 /*
  * Class declaration
  */
 
 /**
- * vobsREQUEST is a class which caracterise the user contraints.
+ * Class containing user requirements for catalog interrogation.
  *
- * A constraint is a parameter as the magnitude or the coordinates... The star
- * which will be found should have a value which should fulfill with the
- * parameter.
- * 
- * vobsREQUEST methods allow to
- * \li modify
- * \li read
- * request contraints
- * 
+ * Class used to store user requirements needed to query a catalog. User
+ * requirements can be considered as constraints in the catalog interrogation
+ * context. Indeed, star search in catalogs will be based on these requirements
+ * (constraints) to select stars which satisfy them. These constraints may be
+ * star position (ra, dec, ...), star magnitude, ... 
  */
 class vobsREQUEST
 {
 public:
     // Constructor
     vobsREQUEST();
-    vobsREQUEST(const vobsREQUEST &request);
 
     // Destructor
     virtual ~vobsREQUEST();
     
-    // Methods to set the request contraints
-    virtual mcsCOMPL_STAT SetConstraint(char *constraint, char *value);
-    virtual mcsCOMPL_STAT SetConstraint(vobsCONSTRAINT_ID constraintId, char *value);
-     
-    // Methods to retreive the request constraints
-    virtual mcsCOMPL_STAT GetConstraint(char *constraint, char *value);
-    virtual mcsCOMPL_STAT GetConstraint(vobsCONSTRAINT_ID constraintId, char *value) const;
-    virtual mcsCOMPL_STAT GetConstraint(char *constraint, int *value);
-    virtual mcsCOMPL_STAT GetConstraint(vobsCONSTRAINT_ID constraintId , int *value) const;
-    virtual mcsCOMPL_STAT GetConstraint(char *constraint, float *value);
-    virtual mcsCOMPL_STAT GetConstraint(vobsCONSTRAINT_ID constraintId , float *value) const;
-
-    // Method to check if the request is build correctly
-    virtual mcsLOGICAL Check(void);
+    // Set and get science object name
+    virtual mcsCOMPL_STAT SetObjectName(const char *objectName);
+    virtual const char * GetObjectName(void) const;
     
-    // Method to print out all request constraints
-    virtual void Display(void);
+    // Set and get science object right ascension */
+    virtual mcsCOMPL_STAT SetObjectRa(const mcsFLOAT objectRa);
+    virtual mcsFLOAT GetObjectRa(void) const;
+    
+    // Set and get science object declinaison
+    virtual mcsCOMPL_STAT SetObjectDec(const mcsFLOAT objectDec);
+    virtual mcsFLOAT GetObjectDec(void) const;
+
+    // Set and get science object magnitude
+    virtual mcsCOMPL_STAT SetObjectMag(const mcsFLOAT objectMag);
+    virtual mcsFLOAT GetObjectMag(void) const;
+
+    // Set and get search band
+    virtual mcsCOMPL_STAT SetSearchBand(const char searchBand);
+    virtual char GetSearchBand(void) const;
+
+    // Set and get object ra difference in which catalog stars will be 
+    // selected
+    virtual mcsCOMPL_STAT SetDeltaRa(const mcsFLOAT deltaRa);
+    virtual mcsFLOAT GetDeltaRa(void) const;
+
+    // Set and get object dec difference in which catalog stars will be 
+    // selected
+    virtual mcsCOMPL_STAT SetDeltaDec(const mcsFLOAT deltaDec);
+    virtual mcsFLOAT GetDeltaDec(void) const;
+
+    //  Set and get maximum magnitude difference between the selected object
+    //  minimum magnitude and the science object magnitude
+    virtual mcsCOMPL_STAT SetMinDeltaMag(const mcsFLOAT minDeltaMag);
+    virtual mcsFLOAT GetMinDeltaMag(void) const;
+
+    //  Set and get maximum magnitude difference between the selected object
+    //  maximum magnitude and the science object magnitude
+    virtual mcsCOMPL_STAT SetMaxDeltaMag(const mcsFLOAT maxDeltaMag);
+    virtual mcsFLOAT GetMaxDeltaMag(void) const;
+    
+    // Set and get maximum number of selected objects
+    virtual mcsCOMPL_STAT SetMaxNbOfSelectedObjects(const mcsUINT32 
+                                           maxNbOfSelectedObjects);
+    virtual mcsUINT32 GetMaxNbOfSelectedObjects(void) const;
+    
+    // Display request containt (constraints)
+    virtual mcsCOMPL_STAT Display(void);
 
 protected:
-    // Method to obtain id from the CONTRAINT
-    virtual vobsCONSTRAINT_ID Constraint2Id(char *constraint) const;
-    
+
 private:
-    // Declaration of copy constructor and assignment operator as private
-    // methods, in order to hide them from the users.
+    // Declaration of assignment operator as private methods, in order to hide
+    // them from the users.
+    vobsREQUEST(const vobsREQUEST&);
     vobsREQUEST& operator=(const vobsREQUEST&);
 
-    /** Table containing the request constraints */
-    vobsREQUEST_CONSTRAINT _constraints[vobsNB_REQUEST_CONSTRAINTS];
+    /** Science object name */
+    string _objectName;
+    
+    /** Science object right ascension */
+    mcsFLOAT _objectRa;
+    
+    /** Science object declinaison */
+    mcsFLOAT _objectDec;
+
+    /** Science object magnitude */
+    mcsFLOAT _objectMag;
+
+    /**
+     * Band on which search should be realised and which correspond to a
+     * specific catalog
+     */
+    char _searchBand;
+
+    /** Object ra range in which catalog stars will be selected */
+    mcsFLOAT _deltaRa;
+
+    /** Object dec range in which catalog stars will be selected */
+    mcsFLOAT _deltaDec;
+
+    /**
+     * Maximum magnitude difference between the selected object minimum
+     * magnitude and the science object magnitude
+     */
+    mcsFLOAT _minDeltaMag;
+    
+    /**
+     * Maximum magnitude difference between the selected object maximum
+     * magnitude and the science object magnitude
+     */
+    mcsFLOAT _maxDeltaMag;
+
+    /** Maximum number of selected objects */
+    mcsUINT32 _maxNbOfSelectedObjects;
 };
 #endif /*!vobsREQUEST_H*/
 
