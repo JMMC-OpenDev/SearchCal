@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.9 2005-02-04 09:56:32 gzins Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.10 2005-02-08 20:35:24 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/04 09:56:32  gzins
+* Declared ParseCData as public (for temporary MIDI catalog needs)
+*
 * Revision 1.8  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -46,9 +49,10 @@ public:
     virtual ~vobsPARSER();
     
     // Parse of the XML document from a URI
-    mcsCOMPL_STAT Parse(char *uri, 
+    mcsCOMPL_STAT Parse(const char *uri, 
+                        const char *catalogName,
                         vobsSTAR_LIST &starList,
-                        char* logFileName);
+                        const char *logFileName);
 
     // Parsing of the CDATA section
     mcsCOMPL_STAT ParseCData(vobsCDATA *cData,

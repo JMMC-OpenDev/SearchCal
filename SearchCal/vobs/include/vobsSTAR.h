@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.25 2005-02-08 07:16:56 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.26 2005-02-08 20:36:14 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2005/02/08 07:16:56  gzins
+* Changed value parameter type: char* to const char*
+*
 * Revision 1.24  2005/02/07 09:10:04  gzins
 * Fixed wrong type for isComputed parameter; mcsFLOAT instead of mcsLOGICAL
 *
@@ -141,12 +144,13 @@ public:
     virtual ~vobsSTAR();
 
     // Method to set the star properties
-    virtual mcsCOMPL_STAT SetPropertyValue(char *id, const char *value,
-                                           mcsLOGICAL isComputed=mcsFALSE,
+    virtual mcsCOMPL_STAT SetPropertyValue(const char *id, const char *value,
+                                           const char *origin,
                                            mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
                                            mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetPropertyValue(char *propertyId, mcsFLOAT value,
-                                           mcsLOGICAL isComputed=mcsFALSE,
+    virtual mcsCOMPL_STAT SetPropertyValue(const char *propertyId, 
+                                           mcsFLOAT value,
+                                           const char *origin,
                                            mcsINT32 confidenceIndex=vobsCONFIDENCE_HIGH,                                           
                                            mcsLOGICAL overwrite=mcsFALSE);
 
