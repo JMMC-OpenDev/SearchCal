@@ -3,7 +3,7 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.8 2005-03-04 07:36:42 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.9 2005-03-04 09:17:49 scetre Exp $"
 
  History 
  ~~~~~~~
