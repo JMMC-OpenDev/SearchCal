@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.6 2004-11-18 16:56:56 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.7 2004-12-03 18:14:07 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
@@ -10,6 +10,7 @@
 # gzins     18-Nov-2004  Removed MCS C++ library from MCS_LIBLIST, and put
 #                        them in a separated list named MCSCPP_LIBLIST
 # gzins     18-Nov-2004  Fixed bug related to MCS C++ libraries
+# gzins     03-Dec-2004  Added rule to install CDF files
 # 
 #*******************************************************************************
 #   NAME
@@ -115,6 +116,7 @@
 #   LIB       target directory for installing bin files   $(INSTALL_ROOT)/$(LIBDIR)
 #   MAN       target directory for installing man files   $(INSTALL_ROOT)/man
 #   ERRORS    target directory for installing ERROR files $(*)/errors
+#   CDF_DIR   target directory for installing CDF files $(*)/cdf
 #   DOCROOT   target directory for installing documentation files $(*)/doc
 # 
 #     REMARK: if you do not like the value provided either by mkfMakefile
@@ -512,6 +514,7 @@ ifdef MCSROOT
     MCSLIB  = -L$(MCSROOT)/$(LIBDIR)
     INSTALL_ROOT = $(MCSROOT)
     ERRORS  = $(MCSROOT)/errors
+    CDF_DIR = $(MCSROOT)/config
     DOCROOT = $(MCSROOT)/doc
 endif
 
@@ -529,6 +532,7 @@ ifdef INTROOT
     MCSLIB := -L$(INTROOT)/$(LIBDIR) $(AUXILIARY_LIB) $(MCSLIB)
     INSTALL_ROOT = $(INTROOT)
     ERRORS  = $(INTROOT)/errors
+    CDF_DIR = $(INTROOT)/config
     DOCROOT = $(INTROOT)/doc
 endif
 
@@ -1038,8 +1042,9 @@ ifneq ($(strip $(INCLUDES)),)
 		done;
 endif
 
-	-@$(ECHO) "install_standardfiles: errors" >>$(FILE)
+	-@$(ECHO) "install_standardfiles: errors tables" >>$(FILE)
 	-$(AT)mkfMakeInstallErrorFiles $(ERRORS) $(P644) >>$(FILE)
+	-$(AT)mkfMakeInstallCmdDefFiles $(CDF_DIR) $(P644) >>$(FILE)
 
 ifneq ($(strip $(LIBRARIES)),)
 	-@$(ECHO) "libraries_begin:" >>$(FILE)
