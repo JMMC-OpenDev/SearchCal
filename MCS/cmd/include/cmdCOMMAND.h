@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.h,v 1.1 2004-12-05 18:57:21 gzins Exp $"
+* "@(#) $Id: cmdCOMMAND.h,v 1.2 2004-12-06 10:08:20 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * mella     15-Nov-2004  Created
+* gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed
 *
 *
 *******************************************************************************/
@@ -96,7 +97,7 @@ private:
      /** map of params */
      STRING2PARAM _children;
      /** Flag that indicates if the params have been parsed */
-     mcsLOGICAL _hasNotBeenYetParsed;
+     mcsLOGICAL _hasBeenYetParsed;
      /** name of the command */
      string _name;
      /** description of the command */
