@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.3 2004-09-14 08:55:51 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.4 2004-09-15 05:58:13 gluck Exp $"
 #
 # who       when        what
 # --------  --------    ------------------------------------------------
@@ -73,14 +73,6 @@ cvs=$3
 
 # Set templates directories
 MCSTEMPLATES=$MCSROOT/templates
-
-# check environment : verify that templates directory exist
-if [ ! -d "$MCSTEMPLATES" ]
-then 
-    echo "ERROR - ctooGetTemplateForDirectoryStructure: $MCSTEMPLATES not
-                  available. Please check your MCS environment"
-    exit 1
-fi
 
 
 # Define the content of each area 
@@ -204,6 +196,14 @@ done
 MODE=644
 case $directoryStructureTtype in
     MODROOT)
+        # check environment : verify that templates directory exist
+        if [ ! -d "$MCSTEMPLATES" ]
+        then 
+            echo "ERROR - ctooGetTemplateForDirectoryStructure: $MCSTEMPLATES "
+            echo "        is not available. Please check your MCS environment"
+            exit 1
+        fi
+        
         case $cvs in
             "")
                 # If not exist, get module description file
