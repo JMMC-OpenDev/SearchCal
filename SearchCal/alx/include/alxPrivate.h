@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.3 2005-02-12 15:09:43 gzins Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.4 2005-02-21 19:30:56 gzins Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/12 15:09:43  gzins
+ * Added type definition for alxGetResearchSize function
+ *
  * Revision 1.2  2005/01/21 08:10:30  gluck
  * - Updated
  * - Insert automatic rcs log in header file
@@ -91,7 +94,7 @@ typedef struct
  * The number of column in the table comes from the number of difference it is
  * necessary to have to compute the missing magnitude
  */
-#define alxNB_DIFF_MAG 10
+#define alxNB_DIFF_MAG 8
 /*
  * Colum identificator of magnitude difference.
  */
@@ -104,9 +107,7 @@ typedef enum
     alxJ_H,                 /* value of MagJ - MagH */
     alxJ_K,                 /* value of MagJ - MagK */
     alxK_L,                 /* value of MagK - MagL */
-    alxL_M,                 /* value of MagL - MagM */
-    alxMv,
-    alxM    
+    alxL_M                  /* value of MagL - MagM */
 } alxDIFF_MAG;
 
 /*
@@ -140,25 +141,11 @@ typedef enum
  * Fitzpatrick Id for M, B, V, R, I, J, H and K bands, used to retreive the
  * extinction ratio.
  */
-typedef enum
-{
-   alxFITZ_M = 0,  /* Id for band M */
-   alxFITZ_L,      /* Id for band L */
-   alxFITZ_K,      /* Id for band K */
-   alxFITZ_H,      /* Id for band H */
-   alxFITZ_J,      /* Id for band J */
-   alxFITZ_I,      /* Id for band I */
-   alxFITZ_R,      /* Id for band R */
-   alxFITZ_V,      /* Id for band V */
-   alxFITZ_B       /* Id for band B */
-} alxFITZ_ID;
-#define alxNB_FITZ_IDS 9
-
 typedef struct
 {
     mcsLOGICAL  loaded;    
     char       *fileName;
-    mcsFLOAT    rc[alxNB_FITZ_IDS];
+    mcsFLOAT    rc[alxNB_BANDS];
 } alxEXTINCTION_RATIO_TABLE;
 /*
  * Polynomial to compute the interstellar absorbtion is made by 4 coefficients
@@ -198,6 +185,12 @@ typedef struct
     mcsFLOAT   mag[alxNB_MAG_STEPS];
     mcsINT32   nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
 } alxSTAR_POPULATION;
+
+
+/*
+ * Blanking value
+ */
+#define alxBLANKING_VALUE (float)99.99
 
 #ifdef __cplusplus
 }
