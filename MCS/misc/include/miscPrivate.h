@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscPrivate.h,v 1.6 2005-02-15 09:37:52 gzins Exp $"
+ * "@(#) $Id: miscPrivate.h,v 1.7 2005-03-03 16:11:51 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 09:37:52  gzins
+ * Added CVS log as file modification history
+ *
  * gzins     24-Jun-2004  Created
  * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
  * lafrasse  23-Jul-2004  Added miscDYN_BUF_MAGIC_STRUCTURE_ID from miscDynBuf.h
@@ -17,7 +20,7 @@
 
 /**
  * \file
- * Private misc module header file, only holding the MODULE_NAME definition.
+ * Private header file of misc module.
  */
 
 /* The following piece of code alternates the linkage type to C for all 
@@ -34,14 +37,23 @@ extern "C" {
 #include "mcs.h"
 
 
+/*
+ * Constants definition
+ */
+
 /* Module name */ 
 #define MODULE_ID "misc"
 
+
+/*
+ * Macro definition
+ */
+
 /**
- * Unic MCS structure identifier.
+ * Unique MCS structure identifier.
  *
- * It is meant to allow the testing of a Dynamic Buffer struture initialization
- * state (weither it has allready been initialized as a miscDYN_BUF or not).
+ * It is meant to allow Dynamic Buffer struture initialization state test
+ * (whether it has allready been initialized as a miscDYN_BUF or not).
  */
 #define miscDYN_BUF_MAGIC_STRUCTURE_ID ((mcsUINT32) 2813741963u)
 
