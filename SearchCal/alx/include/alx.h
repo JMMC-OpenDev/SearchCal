@@ -3,17 +3,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.2 2005-01-21 08:10:30 gluck Exp $"
+ * "@(#) $Id: alx.h,v 1.3 2005-01-25 06:33:21 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/21 08:10:30  gluck
+ * - Updated
+ * - Insert automatic rcs log in header file
+ *
  *
  * scetre    20-Sep-2004  Created
  * gzins     12-Jan-2005  - Update to be compliant with programming standards
  *                        - Move private declaration (structures, macros, ...)
  *                        in alxPrivate.h
- *
  *
  ******************************************************************************/
 
@@ -41,25 +44,25 @@ extern "C" {
 typedef enum
 {
     alxCONFIDENCE_VERY_LOW=0,
-    alxCONFIDENCE_2, /* id of the coefficient a1 in the table */
-    alxCONFIDENCE_3, /* id of the coefficient a2 in the table */
-    alxCONFIDENCE_4, /* id of the coefficient a3 in the table */
-    alxCONFIDENCE_HIGH  /* id of the coefficient a4 in the table */
+    alxCONFIDENCE_2,
+    alxCONFIDENCE_3, 
+    alxCONFIDENCE_4,
+    alxCONFIDENCE_HIGH 
 } alxCONFIDENCE_INDEX;
 
 /*
  * Pubic functions declaration
  */
-mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32         spType,
-                                                mcsFLOAT            mgB,
-                                                mcsFLOAT            mgV,
-                                                mcsFLOAT            *mgR,
-                                                mcsFLOAT            *mgI,
-                                                mcsFLOAT            *mgJ,
-                                                mcsFLOAT            *mgH,
-                                                mcsFLOAT            *mgK,
-                                                mcsFLOAT            *mgL,
-                                                mcsFLOAT            *mgM,
+mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
+                                                mcsFLOAT mgB,
+                                                mcsFLOAT mgV,
+                                                mcsFLOAT *mgR,
+                                                mcsFLOAT *mgI,
+                                                mcsFLOAT *mgJ,
+                                                mcsFLOAT *mgH,
+                                                mcsFLOAT *mgK,
+                                                mcsFLOAT *mgL,
+                                                mcsFLOAT *mgM,
                                                 alxCONFIDENCE_INDEX *confIdx);
 
 mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT plx,
@@ -96,11 +99,9 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
                                    mcsFLOAT *vis2,
                                    mcsFLOAT *visError,
                                    mcsFLOAT *vis2Error);
-
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /*!alx_H*/
 
