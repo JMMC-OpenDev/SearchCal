@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.15 2005-03-04 08:07:58 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.16 2005-03-04 16:53:16 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/03/04 08:07:58  gzins
+ * Removed undesirated '\n' when re-formatting RA/DEC
+ *
  * Revision 1.14  2005/03/04 07:51:30  gzins
  * Fixed bug in new added code for RA/DEC check
  *
@@ -40,7 +43,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.15 2005-03-04 08:07:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.16 2005-03-04 16:53:16 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -148,13 +151,18 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
     // Reformat string as +/-HH:MM:SS.TT
     mcsSTRING64 raHms;
     mcsFLOAT    hh, hm, hs;
+    // Be sure RA is positive [0 - 360]
+    if (ra < 0)
+    {
+        ra = ra + 360;
+    }
     ra = ra/15.0;
     hh = (int) (ra);
     hm = (int) ((ra - hh)*60.0);
     hs = (ra - hh - hm/60.0)*3600.0;
 
-    sprintf(raHms, "%c%02d:%02d:%02.2f", 
-            (ra < 0)?'-':'+', (int)fabs(hh), (int)fabs(hm), fabs(hs));
+    sprintf(raHms, "%02d:%02d:%02.2f", 
+            (int)fabs(hh), (int)fabs(hm), fabs(hs));
 
     // Set RA
     _objectRa = raHms;
