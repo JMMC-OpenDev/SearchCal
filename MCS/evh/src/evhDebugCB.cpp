@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhDebugCB.cpp,v 1.1 2005-01-29 15:19:13 gzins Exp $"
+ * "@(#) $Id: evhDebugCB.cpp,v 1.2 2005-02-03 06:54:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/29 15:19:13  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of evhDebugCB class.
  */
 
-static char *rcsId="@(#) $Id: evhDebugCB.cpp,v 1.1 2005-01-29 15:19:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhDebugCB.cpp,v 1.2 2005-02-03 06:54:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,7 +64,6 @@ evhCB_COMPL_STAT evhSERVER::DebugCB(msgMESSAGE &msg, void*)
     // Parses command
     if (debugCmd.Parse() == mcsFAILURE)
     {
-        SendReply(msg);
         return (evhCB_FAILURE | evhCB_NO_DELETE);
     }
 

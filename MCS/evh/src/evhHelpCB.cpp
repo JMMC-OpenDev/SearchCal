@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhHelpCB.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"
+ * "@(#) $Id: evhHelpCB.cpp,v 1.4 2005-02-03 06:54:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/29 15:17:02  gzins
+ * Added CVS log as modification history
+ *
  * gzins     09-Nov-2004  Created
  * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *                        Small changes in documentation
@@ -16,7 +19,7 @@
  * Definition of the VERSION callback.
  */
 
-static char *rcsId="@(#) $Id: evhHelpCB.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHelpCB.cpp,v 1.4 2005-02-03 06:54:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,7 +59,6 @@ evhCB_COMPL_STAT evhSERVER::HelpCB(msgMESSAGE &msg, void*)
     // Get help 
     if (HandeHelpCmd(msg) == mcsFAILURE)
     {
-        SendReply(msg);
         return (evhCB_NO_DELETE|evhCB_FAILURE);
     }
     

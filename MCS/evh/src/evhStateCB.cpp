@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhStateCB.cpp,v 1.1 2005-01-26 18:19:54 gzins Exp $"
+ * "@(#) $Id: evhStateCB.cpp,v 1.2 2005-02-03 06:54:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/01/26 18:19:54  gzins
+ * Created
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of StateCB callback.
  */
 
-static char *rcsId="@(#) $Id: evhStateCB.cpp,v 1.1 2005-01-26 18:19:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhStateCB.cpp,v 1.2 2005-02-03 06:54:42 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,7 +55,6 @@ evhCB_COMPL_STAT evhSERVER::StateCB(msgMESSAGE &msg, void*)
     evhSTATE_CMD stateCmd(msg.GetCommand(), msg.GetBody());
     if (stateCmd.Parse() == mcsFAILURE)
     {
-        SendReply(msg);
         return evhCB_NO_DELETE|evhCB_FAILURE;
     }
 
@@ -61,7 +63,6 @@ evhCB_COMPL_STAT evhSERVER::StateCB(msgMESSAGE &msg, void*)
     sprintf(reply, "%s/%s", GetStateStr(), GetSubStateStr());
     if (msg.SetBody(reply) == mcsFAILURE)
     {
-        SendReply(msg);
         return (evhCB_NO_DELETE|evhCB_FAILURE);
     }
 
