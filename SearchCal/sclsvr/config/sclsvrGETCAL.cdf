@@ -3,11 +3,15 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.11 2005-03-07 13:41:04 gzins Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.12 2005-03-07 16:06:38 gzins Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.11  2005/03/07 13:41:04  gzins
+ Removed min baseline length
+ Defined magnitude range option as optional (not used in N band)
+
  Revision 1.10  2005/03/04 09:51:23  gzins
  Updated parameter ranges
 
@@ -125,22 +129,6 @@
             <minValue><double>0.5</double></minValue>
             <maxValue><double>20</double></maxValue>
             <unit>um</unit>
-        </param>
-        <param>
-            <name>vis</name>
-            <type>double</type>
-            <defaultValue><double>1.0</double></defaultValue>
-            <minValue><double>0.0</double></minValue>
-            <maxValue><double>1.0</double></maxValue>
-            <desc>calibrator expected visibility</desc>
-        </param>
-        <param>
-            <name>visErr</name>
-            <type>double</type>
-            <defaultValue><double>0.1</double></defaultValue>
-            <minValue><double>0.0</double></minValue>
-            <maxValue><double>1.0</double></maxValue>
-            <desc>maximum error on visibility</desc>
         </param>
         <param optional="true">
             <name>file</name>
