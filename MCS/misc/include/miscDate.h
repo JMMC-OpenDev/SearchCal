@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDate.h,v 1.6 2005-02-22 10:23:35 gluck Exp $"
+ * "@(#) $Id: miscDate.h,v 1.7 2005-03-03 15:45:28 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/22 10:23:35  gluck
+ * Code review corrections: doxygen file header
+ *
  * Revision 1.5  2005/02/22 10:08:15  gluck
  * Code review corrections
  *
@@ -43,8 +46,8 @@ extern "C" {
  * Pubic functions declaration
  */
  
-mcsCOMPL_STAT miscGetUtcTimeStr  (mcsSTRING32 localTime, mcsINT32 precision);
-mcsCOMPL_STAT miscGetLocalTimeStr(mcsSTRING32 localTime, mcsINT32 precision);
+mcsCOMPL_STAT miscGetUtcTimeStr  (mcsINT32 precision, mcsSTRING32 utcTime);
+mcsCOMPL_STAT miscGetLocalTimeStr(mcsINT32 precision, mcsSTRING32 localTime);
 
 
 #ifdef __cplusplus
