@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.6 2005-02-07 15:00:23 gzins Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.7 2005-03-06 20:29:40 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/07 15:00:23  gzins
+ * Added CVS log as modification history
+ *
  * scetre    04-Oct-2004  Created
  *
  ******************************************************************************/
@@ -81,6 +84,9 @@ public:
     // Application initialization 
     virtual mcsCOMPL_STAT AppInit();
     
+    // Software version 
+    virtual const char *GetSwVersion();
+
     // Command callbacks
     virtual evhCB_COMPL_STAT GetCalCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT GetStarCB(msgMESSAGE &msg, void*);

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.4 2005-01-26 13:13:04 gzins Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.5 2005-03-06 20:29:40 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/01/26 13:13:04  gzins
+ * Added CVS log as modification history.
+ * Added CDF file when attaching command callbacks.
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +17,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.4 2005-01-26 13:13:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.5 2005-03-06 20:29:40 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -39,6 +43,7 @@ using namespace std;
 #include "sclsvrGETCAL_CMD.h"
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrPrivate.h"
+#include "sclsvrVersion.h"
 
 /*
  * Class constructor
@@ -73,6 +78,13 @@ mcsCOMPL_STAT sclsvrSERVER::AppInit()
 }
  
 
+/**
+ * Return the version number of the software.
+ */
+const char *sclsvrSERVER::GetSwVersion()
+{
+    return sclsvrVERSION;
+}
 
 /*
  * Protected methods
