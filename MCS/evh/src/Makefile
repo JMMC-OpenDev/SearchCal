@@ -1,13 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2004-10-18 09:40:10 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2004-11-17 10:27:12 gzins Exp $"
 #
 # Makefile of evh library
 #
 # who       when         what
 # --------  -----------  -------------------------------------------------------
 # sccmgr    22-Sep-2004  Created
+# gzins     17-Nov-2004  Added evhTASK and evhSERVER class
 #
 #
 #*******************************************************************************
@@ -42,19 +43,25 @@ EXECUTABLES     =
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
-ex_OBJECTS   = ex
-ex_LDFLAGS   =
-ex_LIBS      = C++
-
-#
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
 
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        =  evhCALLBACK.h          \
+				   evhCALLBACK_LIST.h     \
+				   evhCMD_CALLBACK.h      \
+				   evhCMD_KEY.h           \
+				   evhErrors.h            \
+				   evh.h                  \
+				   evhHANDLER.h           \
+				   evhSERVER.h            \
+				   evhIOSTREAM_CALLBACK.h \
+				   evhIOSTREAM_KEY.h      \
+				   evhKEY.h               \
+				   evhTASK.h
+
 
 #
 # Libraries (public and local)
@@ -64,14 +71,17 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-evh_OBJECTS   = evhHANDLER        \
-				evhCALLBACK       \
-				evhCMD_CALLBACK   \
-				evhIOSTREAM_CALLBACK   \
-				evhCALLBACK_LIST  \
-				evhKEY        \
-				evhCMD_KEY    \
-				evhIOSTREAM_KEY
+evh_OBJECTS   = evhHANDLER           \
+				evhCALLBACK          \
+				evhCMD_CALLBACK      \
+				evhIOSTREAM_CALLBACK \
+				evhCALLBACK_LIST     \
+				evhKEY               \
+				evhCMD_KEY           \
+				evhTASK              \
+				evhSERVER            \
+				evhIOSTREAM_KEY      \
+				evhVersionCB
 #
 # Scripts (public and local)
 # --------------------------
