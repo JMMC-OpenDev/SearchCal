@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrSERVER.h,v 1.2 2004-11-30 15:48:09 scetre Exp $"
+* "@(#) $Id: sclsvrSERVER.h,v 1.3 2005-01-25 11:06:43 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -81,7 +81,7 @@ public:
     virtual mcsCOMPL_STAT AppInit();
     
     // Command callbacks
-    virtual evhCB_COMPL_STAT SearchCB(msgMESSAGE &msg, void*);
+    virtual evhCB_COMPL_STAT GetCalCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT GetStarCB(msgMESSAGE &msg, void*);
 
 protected:
