@@ -1,9 +1,9 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2004-06-24 07:31:19 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2004-09-10 16:40:22 gzins Exp $"
 #
-# Makefile of ........
+# Makefile of err module 
 #
 # who       when		 what
 # --------  -----------	 -------------------------------------------------------
@@ -111,32 +111,36 @@ TCL_LIBRARIES_L =
 tttlll_OBJECTS  =
 
 #
-# UIF panels (public and local)
-# -----------------------------
-PANELS   =
-PANELS_L =
+# Python scripts (public and local)
+# ---------------------------------
+PY_SCRIPTS     =
+PY_SCRIPTS_L   =
 
 #
-# On-Line Database Files
-# ----------------------
-DBL_CLASSES =
-DBL_BCF =
-DBL_FLAGS =
-xxxx_DBL_FLAGS =
+# Jarfiles and their directories
+# ---------------------------------
+JARFILES        = err
 
 #
-# IDL Files and flags
-# -------------------
-IDL_FILES =
-IDL_TAO_FLAGS =
-USER_IDL =
+# <brief description of jjjfff jar files>
+err_DIRS     	= jmmc
+err_EXTRAS   	= 
+
+#
+# Java programs
+# ---------------------------------
+JAVA_EXECUTABLES=errEditor
+
+#
+# <brief description of jjjjjj java program>
+errEditor_CLASS    = jmmc.mcs.err.ErrMenu
 
 #
 # man pages to be done
 # --------------------
-MANSECTIONS =
+MANSECTIONS = 3
 MAN1 =
-MAN3 =
+MAN3 =$(addsuffix .c, $(err_OBJECTS))
 MAN5 =
 MAN7 =
 MAN8 =
@@ -150,12 +154,6 @@ MANl =
 # ASCII file to be converted into Framemaker-MIF
 # ----------------------------------------------
 ASCII_TO_MIF =
-
-#
-# INS_ROOT files to be installed
-#-------------------------------
-INS_ROOT_FILES =
-INS_ROOT_DIR   =
 
 #
 # other files to be installed
@@ -179,29 +177,40 @@ CSOURCENAMES = \
 # Default is UNIX, for VxVorks application next line MUST BE UNCOMMENTED
 #MAKE_VXWORKS = on
 
+JAVA_JAR = xercesImpl.jar  xmlParserAPIs.jar
+
 #
 # INCLUDE STANDARDS
 # -----------------
 MAKEDIR = $(MCSROOT)/include
-include $(MAKEDIR)/mcsMakefile
+include $(MAKEDIR)/mkfMakefile
 
 #
 # TARGETS
 # -------
-all:	do_all
+all: copy_local_jar do_all
 	@echo " . . . 'all' done"
+
+copy_local_jar:
+	@echo "Copy local JAR files into ../lib"
+	@$(foreach file, $(JAVA_JAR), echo "        $(file)" ;\
+              cp -f ../jar/$(file) ../lib;)
+	@echo ""
 
 clean : clean_all
 	@echo " . . . clean done"
 
-clean_dist : clean_all clean_dist_all
-	@echo " . . . clean_dist done"
-
 man   : do_man
 	@echo " . . . man page(s) done"
 
-install : install_all
+install : install_local_jar install_all
 	@echo " . . . installation done"
+
+install_local_jar:
+	@echo "Copy local JAR files into $(INSTALL_ROOT)/lib"
+	@$(foreach file, $(JAVA_JAR), echo "        $(file)" ;\
+              cp -f ../lib/$(file) $(INSTALL_ROOT)/lib;)
+	@echo ""
 
 db : db_all
 	@echo " . . . ../DB done"
