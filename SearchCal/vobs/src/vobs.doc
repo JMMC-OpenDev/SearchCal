@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.doc,v 1.1 2004-08-25 13:20:09 scetre Exp $"
+* "@(#) $Id: vobs.doc,v 1.2 2004-08-25 13:33:03 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -23,25 +23,15 @@ with a XML parser in order to sent a list of stars.
 \n
 \ex
 Exemple of a usage of vobs.
-\n Brief example description.
 \code
-/* 
- * System Headers 
- */
+
 #include <iostream>
 using namespace std;
 
-/*
- * MCS Headers 
- */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
-
-/*
- * Local Headers 
- */
 #include "vobsSTAR.h"
 #include "vobsSTAR_LIST.h"
 #include "vobsREQUEST.h"
