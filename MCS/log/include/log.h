@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.6 2004-06-16 14:38:30 gzins Exp $"
+* "@(#) $Id: log.h,v 1.7 2004-06-21 16:51:34 gzins Exp $"
 *
 * who       when                 what
 * --------  -----------  -------------------------------------------------------
@@ -44,6 +44,7 @@ extern "C" {
  */
 
 typedef enum {
+    logERROR,
     logQUIET,
     logWARNING,
     logINFO,
@@ -55,38 +56,42 @@ typedef enum {
 /*
  * Log/Verbose/Action Logging Functions
  */
-extern mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
-                              const char *fileLine, 
-                              const char *logText, ...);
+mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
+                       const char *fileLine, 
+                       const char *logText, ...);
 
-extern mcsCOMPL_STAT logPrintAction(logLEVEL level,
-                                    const char *logText, ...);
-
-
-extern mcsCOMPL_STAT logSetLog(mcsLOGICAL flag);
-
-extern mcsCOMPL_STAT logSetLogLevel(logLEVEL level);
-
-extern logLEVEL      logGetLogLevel(void);
+mcsCOMPL_STAT logPrintAction(logLEVEL level,
+                             const char *logText, ...);
 
 
-extern mcsCOMPL_STAT logSetVerbose(mcsLOGICAL flag);
+mcsCOMPL_STAT logSetLog(mcsLOGICAL flag);
 
-extern mcsCOMPL_STAT logSetVerboseLevel(logLEVEL level);
+mcsCOMPL_STAT logSetLogLevel(logLEVEL level);
 
-extern logLEVEL      logGetVerboseLevel(void);
-
-
-extern mcsCOMPL_STAT logSetActionLevel(logLEVEL level);
-
-extern logLEVEL      logGetActionLevel(void);
+logLEVEL      logGetLogLevel(void);
 
 
-extern mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);
+mcsCOMPL_STAT logSetVerbose(mcsLOGICAL flag);
 
-extern mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag);
+mcsCOMPL_STAT logSetVerboseLevel(logLEVEL level);
+
+logLEVEL      logGetVerboseLevel(void);
 
 
+mcsCOMPL_STAT logSetActionLevel(logLEVEL level);
+
+logLEVEL      logGetActionLevel(void);
+
+
+mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);
+
+mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag);
+
+mcsCOMPL_STAT logData(const mcsMODULEID modName, 
+                      logLEVEL level,
+                      const char *timeStamp,
+                      const char *fileLine,
+                      const char *buffer);
 /*
  * Convenience macros
  */
