@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynStr.h,v 1.4 2004-08-02 14:08:46 lafrasse Exp $"
+* "@(#) $Id: miscDynStr.h,v 1.5 2004-08-02 14:25:25 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * lafrasse  13-Jul-2004  Created
 * lafrasse  22-Jul-2004  Removed a 'endcode' doxygen tag in excess
 * lafrasse  23-Jul-2004  Added miscDynStrGetStringFromTo parameter refinments
+*                        Moved mcs.h include in from miscDynStr.c
 *
 *
 *******************************************************************************/
@@ -49,6 +50,11 @@ functions in C++ code.
 extern "C" {
 #endif
 
+
+/* 
+ * MCS Headers
+ */
+#include "mcs.h"
 
 
 /* 

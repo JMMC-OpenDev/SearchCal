@@ -1,17 +1,18 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: miscDynStr.c,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"
- *
- * who       when         what
- * --------  -----------  ------------------------------------------------------
- * lafrasse  13-Jul-2004  Created
- * lafrasse  22-Jul-2004  Removed all '\0' from char arrays
- * lafrasse  23-Jul-2004  Added error code factorization, plus
- *                        miscDynStrGetStringFromTo parameter refinments
- *
- *
- ******************************************************************************/
+* JMMC project
+* 
+* "@(#) $Id: miscDynStr.c,v 1.4 2004-08-02 14:25:25 lafrasse Exp $"
+*
+* who       when         what
+* --------  -----------  -------------------------------------------------------
+* lafrasse  13-Jul-2004  Created
+* lafrasse  22-Jul-2004  Removed all '\0' from char arrays
+* lafrasse  23-Jul-2004  Added error code factorization, plus
+*                        miscDynStrGetStringFromTo parameter refinments
+* lafrasse  02-Aug-2004  Moved mcs.h include to miscDynStr.h
+*
+*
+*******************************************************************************/
 
 /**
  * \file
@@ -27,7 +28,7 @@
  * \sa To see all the other 'misc' module functions declarations, see misc.h
  */
 
-static char *rcsId="@(#) $Id: miscDynStr.c,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynStr.c,v 1.4 2004-08-02 14:25:25 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -40,7 +41,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * MCS Headers 
  */
-#include "mcs.h"
 #include "err.h"
 
 

@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscPrivate.h,v 1.3 2004-07-23 14:29:59 lafrasse Exp $"
+* "@(#) $Id: miscPrivate.h,v 1.4 2004-08-02 14:25:25 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * gzins     24-Jun-2004  Created
 * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
 * lafrasse  23-Jul-2004  Added miscDYN_BUF_MAGIC_STRUCTURE_ID from miscDynBuf.h
+* lafrasse  02-Aug-2004  Added mcs.h include
 *
 *
 *******************************************************************************/
@@ -26,6 +27,12 @@ functions in C++-code.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/* 
+ * MCS Headers
+ */
+#include "mcs.h"
 
 
 /* Module name */ 

@@ -1,26 +1,27 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: miscDynBuf.c,v 1.8 2004-07-23 14:29:59 lafrasse Exp $"
- *
- * who       when         what
- * --------  -----------  ------------------------------------------------------
- * lafrasse  05-Jul-2004  Created
- * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
- * lafrasse  12-Jul-2004  Code factorization and error codes polishing
- * lafrasse  19-Jul-2004  Corrected some bugs ('from = to' parameters)
- * lafrasse  20-Jul-2004  Used 'memmove()' instead of temporary buffers
- * lafrasse  22-Jul-2004  Removed all '\0' from char arrays
- *                        Corrected a bug in miscDynBufAlloc that could cause a
- *                        Segmentation fault when bytes were already allocated
- * lafrasse  23-Jul-2004  Added error management to
- *                        miscDynBufGetStoredBytesNumber and
- *                        miscDynBufGetAllocatedBytesNumber, plus
- *                        miscDynBufGetBytesFromTo parameter refinments and
- *                        error code factorization
- *
- *
- ******************************************************************************/
+* JMMC project
+* 
+* "@(#) $Id: miscDynBuf.c,v 1.9 2004-08-02 14:25:25 lafrasse Exp $"
+*
+* who       when         what
+* --------  -----------  -------------------------------------------------------
+* lafrasse  05-Jul-2004  Created
+* lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
+* lafrasse  12-Jul-2004  Code factorization and error codes polishing
+* lafrasse  19-Jul-2004  Corrected some bugs ('from = to' parameters)
+* lafrasse  20-Jul-2004  Used 'memmove()' instead of temporary buffers
+* lafrasse  22-Jul-2004  Removed all '\0' from char arrays
+*                        Corrected a bug in miscDynBufAlloc that could cause a
+*                        Segmentation fault when bytes were already allocated
+* lafrasse  23-Jul-2004  Added error management to
+*                        miscDynBufGetStoredBytesNumber and
+*                        miscDynBufGetAllocatedBytesNumber, plus
+*                        miscDynBufGetBytesFromTo parameter refinments and
+*                        error code factorization
+* lafrasse  02-Aug-2004  Moved mcs.h include to miscDynBuf.h
+*
+*
+*******************************************************************************/
 
 /**
  * \file
@@ -33,7 +34,7 @@
  * \sa To see all the other 'misc' module functions declarations, see misc.h
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.8 2004-07-23 14:29:59 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.9 2004-08-02 14:25:25 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,7 +47,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * MCS Headers 
  */
-#include "mcs.h"
 #include "err.h"
 
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscDynBuf.h,v 1.6 2004-07-27 14:13:35 gzins Exp $"
+* "@(#) $Id: miscDynBuf.h,v 1.7 2004-08-02 14:25:25 lafrasse Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -14,6 +14,7 @@
 *                        miscDynBufGetStoredBytesNumber and
 *                        miscDynBufGetAllocatedBytesNumber, plus
 *                        miscDynBufGetBytesFromTo parameter refinments.
+*                        Moved mcs.h include in from miscDynBuf.c
 *
 *
 *******************************************************************************/
@@ -56,6 +57,13 @@ functions in C++ code.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/* 
+ * MCS Headers
+ */
+#include "mcs.h"
+
 
 /* 
  * Macro definition

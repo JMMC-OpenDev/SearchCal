@@ -9,6 +9,7 @@
 * lafrasse  23-Jul-2004  Added error management code optimisation
 * lafrasse  02-Aug-2004  Changed includes to isolate miscDate headers from
 *                        misc.h
+*                        Moved mcs.h include to miscDate.h
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -18,7 +19,7 @@
  * Contains all the 'misc' Date and Time related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.6 2004-08-02 14:08:46 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.7 2004-08-02 14:25:25 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -34,7 +35,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * MCS Headers
  */
-#include "mcs.h"
 #include "err.h"
 
 

@@ -3,11 +3,12 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: miscString.h,v 1.1 2004-08-02 14:08:46 lafrasse Exp $"
+* "@(#) $Id: miscString.h,v 1.2 2004-08-02 14:25:25 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
 * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscString headers
+*                        Moved mcs.h include in from miscString.c
 *
 *
 *******************************************************************************/
@@ -24,6 +25,12 @@ functions in C++-code.
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/* 
+ * MCS Headers
+ */
+#include "mcs.h"
 
 
 /*

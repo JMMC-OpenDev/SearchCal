@@ -9,6 +9,7 @@
 * lafrasse  23-Jul-2004  Added error management
 * lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
 *                        misc.h
+*                        Moved mcs.h include to miscString.h
 *
 *
 *-----------------------------------------------------------------------------*/
@@ -18,7 +19,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.8 2004-08-02 14:08:46 lafrasse Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.9 2004-08-02 14:25:25 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -33,7 +34,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * MCS Headers
  */
-#include "mcs.h"
 #include "err.h"
 
 
