@@ -3,18 +3,19 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.8 2004-12-09 09:46:52 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.9 2005-01-04 07:53:30 gzins Exp $"
 #
-# who       when        what
-# --------  --------    ------------------------------------------------
-# lgluck    23-Apr-2004 Created
-# gzins     04-Dec-2004 Changed C++ file extension to cpp
-#                       Look for templates in the following order:
-#                       ../templates, $INTROOT/templates and
-#                       $MCSROOT/templates
-# gzins     06-Dec-2004 Added class and module names substitution in C++
-#                       header files
+# who       when         what
+# --------  --------     ------------------------------------------------
+# lgluck    23-Apr-2004  Created
+# gzins     04-Dec-2004  Changed C++ file extension to cpp
+#                        Look for templates in the following order:
+#                        ../templates, $INTROOT/templates and
+#                        $MCSROOT/templates
+# gzins     06-Dec-2004  Added class and module names substitution in C++
+#                        header files
 # gzins     09-Dec-2004  Changed call to ctooGetModuleName
+# gzins     04-Jan-2005  Updated to accept relative path when giving file name
 #
 #*******************************************************************************
 # NAME
@@ -193,6 +194,7 @@ then
             echo -e "\n-> Enter output file name (without extention) or press"
             echo -e "   <Enter> to quit: \c"
             read FILE_NAME
+            # If no file name is given
             if [ "$FILE_NAME" = "" ]
             then 
                 exit
@@ -220,6 +222,20 @@ then
         # Get template file
         ctooGetTemplateFile $TEMPLATE $FILE
 
+        # Get module name
+        MOD_NAME=`ctooGetModuleName`
+        if [ $? != 0 ]
+        then
+            exit 1
+        fi
+
+        # Strip directory and suffix from filename
+        BASE_NAME=`basename $FILE_NAME`
+        if [ $? != 0 ]
+        then
+            exit 1
+        fi
+
         # For .h and .H
         # -> For .h (h-file or c++-h-file) files insert file name in the
         # pre-processing directives to avoid multiple inclusions
@@ -227,12 +243,10 @@ then
         # block
         if [ "$FILE_SUFFIX" = ".h" ]
         then
-            sed -e "1,$ s/#ifndef _H/#ifndef ${FILE_NAME}_H/g" \
-                -e "1,$ s/<moduleName>/$ROOT_NAME/g" \
-                -e "1,$ s/<className>/$FILE_NAME/g" \
-                -e "1,$ s/#define _H/#define ${FILE_NAME}_H/g" \
-                -e "1,$ s/#endif \/\*!_H\*\//#endif \/\*!${FILE_NAME}_H\*\//g" \
-                -e "1,$ s/<className>/$FILE_NAME/g" \
+            sed -e "1,$ s/#ifndef _H/#ifndef ${BASE_NAME}_H/g" \
+                -e "1,$ s/#define _H/#define ${BASE_NAME}_H/g" \
+                -e "1,$ s/#endif \/\*!_H\*\//#endif \/\*!${BASE_NAME}_H\*\//g" \
+                -e "1,$ s/<className>/$BASE_NAME/g" \
                 $FILE > ${FILE}.BAK
 
             # Remove the intermediate file ($FILE) and rename the output
@@ -248,17 +262,8 @@ then
         # directives for header inclusion and in the doxygen header block
         if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" ]
         then
-            # Get module name
-            ROOT_NAME=`ctooGetModuleName`
-            if [ $? != 0 ]
-            then
-                exit 1
-            fi
-
-            sed -e "1,$ s/#include \"<moduleName>.h\"/#include \"$ROOT_NAME.h\"/g" \
-                -e "1,$ s/#include \"<moduleName>Private.h\"/#include \"${ROOT_NAME}Private.h\"/g" \
-                -e "1,$ s/#include \"<className>.h\"/#include \"$FILE_NAME.h\"/g" \
-                -e "1,$ s/<className>/$FILE_NAME/g" \
+            sed -e "1,$ s/<moduleName>/${MOD_NAME}/g" \
+                -e "1,$ s/<className>/${BASE_NAME}/g" \
             $FILE > ${FILE}.BAK
 
             # Remove the intermediate file ($FILE) and rename the output
