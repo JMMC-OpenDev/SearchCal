@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.cpp,v 1.11 2004-12-22 13:00:55 mella Exp $"
+* "@(#) $Id: cmdCOMMAND.cpp,v 1.12 2005-01-04 08:08:45 mella Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -25,7 +25,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.11 2004-12-22 13:00:55 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.12 2005-01-04 08:08:45 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -62,6 +62,7 @@ using namespace std;
  *
  * \param name  the name of the command (mnemonic).
  * \param params  the arguments of the command.
+ * \param cdfName the name of the command definition file.
  *
  */
 cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
@@ -86,6 +87,17 @@ cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
 cmdCOMMAND::~cmdCOMMAND()
 {
     logExtDbg("cmdCOMMAND::~cmdCOMMAND()");
+
+    // for each parameter entry: delete each object associated to the pointer object
+    if (_paramList.size()>0)
+    {
+        STRING2PARAM::iterator i;
+        for(i = _paramList.begin(); i != _paramList.end(); i++)
+        {
+            delete (i->second);
+        }
+    }
+
     // \todo delete _paramList ...
     _paramList.clear();
 }
@@ -117,31 +129,16 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
         return SUCCESS;
     }
 
-    // Check a command definition file name has been given
-    if ((cdfName.size() == 0) && (_cdfName.size() == 0))
-    {
-        errAdd(cmdERR_NO_CDF, _name.c_str());
-        return FAILURE;
-    }
-
+   
     // Use the given CDF (if any)
     if (cdfName.size() != 0)
     {
         _cdfName = cdfName;
     }
-    
-    // find the correcsponding cdf file
-    char * fullCdfFilename = miscLocateFile(_cdfName.data());
-    // check if the cdf file has been found   
-    if (fullCdfFilename == NULL)
+  
+    if (ParseCdf()==FAILURE)
     {
-        
-        return FAILURE;
-    }
-        
-    if (ParseCdf(fullCdfFilename)==FAILURE)
-    {
-        errAdd (cmdERR_PARSE_CDF, fullCdfFilename, _name.c_str());
+        errAdd (cmdERR_PARSE_CDF, _cdfName.data(), _name.c_str());
         return FAILURE;
     }
     
@@ -185,32 +182,22 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
     logExtDbg ("cmdCOMMAND::GetDescription()");
 
     string s;
-    // find the correcsponding cdf file
-    char * fullCdfFilename = miscLocateFile(_cdfName.data());
-    // check if the cdf file has been found   
-    if (fullCdfFilename == NULL)
+    
+    // Parse The cdf file to obtain full description
+    if (ParseCdf()==FAILURE)
     {
-        s.append("Sorry help can't be generated because an error occured during parsing\n");        
-        desc.append(s);
-        return FAILURE;
-    }
-        
-    if (ParseCdf(fullCdfFilename)==FAILURE)
-    {
-        errAdd (cmdERR_PARSE_CDF, fullCdfFilename, _name.c_str());
-        s.append("Sorry help can't be generated because an error occured during parsing\n");        
+        s.append("Sorry help can't be generated because an error occured during parsing\n");
         desc.append(s);
         return FAILURE;
     }
     
-    s.append("Help for ");
     s.append(_name);
-    s.append(":\n");
+    s.append(" :\n");
    
     // append description of command
     if (_desc.empty())
     {
-        s.append("Sorry, no description found.");
+        s.append("No description found.");
     }
     else
     {
@@ -301,6 +288,25 @@ mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
 }
 
 /** 
+ *  Indicates if the parameter is defined by the user parameters.
+ *
+ * \param paramName the name of the parameter. 
+ *
+ *  \returns mcsFALSE or mcsTRUE
+ */
+mcsLOGICAL cmdCOMMAND::IsDefined(string paramName)
+{
+    logExtDbg("cmdCOMMAND::IsDefined()");
+    cmdPARAM *p;
+    if (GetParam(paramName, &p) == FAILURE )
+    {
+        logWarning("%s parameter doesn't exist",paramName.data());
+        return mcsFALSE;
+    }
+    return p->IsDefined();
+}
+
+/** 
  *  Indicates if the parameter has a defaultValue.
  *
  * \param paramName the name of the parameter. 
@@ -335,25 +341,6 @@ mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
         return mcsFALSE;
     }
     return p->IsOptional();
-}
-
-/** 
- *  Indicates if the parameter is defined by the user parameters.
- *
- * \param paramName the name of the parameter. 
- *
- *  \returns mcsFALSE or mcsTRUE
- */
-mcsLOGICAL cmdCOMMAND::IsDefined(string paramName)
-{
-    logExtDbg("cmdCOMMAND::IsDefined()");
-    cmdPARAM *p;
-    if (GetParam(paramName, &p) == FAILURE )
-    {
-        logWarning("%s parameter doesn't exist",paramName.data());
-        return mcsFALSE;
-    }
-    return p->IsDefined();
 }
 
 /** 
@@ -518,164 +505,48 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, mcsLOGICAL *par
  * Private methods
  */
 
-
-/** 
- *  This method should be called before any real action on any parameter.
- *  It parses the parameters given to the constructor.
- *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT cmdCOMMAND::ParseParams()
-{
-    logExtDbg ("cmdCOMMAND::ParseParams()");
-
-    logDebug ( "working on params '%s'", _params.data());
-   
-    string::iterator i = _params.begin();
-    int posStart=0;
-    int posEnd=0;
-
-    // we start walking out of a parameter value.
-    mcsLOGICAL valueZone=mcsFALSE;
-
-    while(i != _params.end())
-    {
-        if (*i=='-')
-        {
-            /* If the dash is not included into a string value */
-            if (! valueZone){
-                
-                if( ( *(i+1) >= '0' ) &&  ( *(i+1) <= '9' ))
-                {
-                    /* do nothing because all the tuple string must be catched */
-                }
-                else if (posEnd>0)
-                {
-                    if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==FAILURE)
-                    {
-                        return FAILURE;
-                    }
-                    posStart=posEnd;
-                }
-            }
-        }
-
-        // if double quotes are encountered it opens or closes a valueZone
-        if (*i=='"')
-        {
-            valueZone = (mcsLOGICAL)!valueZone;
-        }
-        
-        i++;
-        posEnd++;
-    }
-
-    // parse last tuple if posEnd is not null
-    if (posEnd>0)
-    {
-        if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==FAILURE)
-        {
-            return FAILURE;
-        }
-    }
-
-    return SUCCESS;
-}
-
-/** 
- *  Parse a tuple (-<paramName> <paramValue>). Tuples are extracted from the
- *  line of parameter by the parseParams method.
- *
- *  \param tuple  the name value tuple for the a parameter.
- *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
-{
-    logExtDbg ("cmdCOMMAND::ParseTupleParam()");
-    
-    unsigned int dashPos = tuple.find_first_of("-");
-    unsigned int endPos = tuple.find_last_not_of(" ");
-
-    // If parameter name does not start with '-'
-    if ((dashPos == string::npos) || (endPos == string::npos))
-    {
-        // Find parameter name
-        string paramName;
-        unsigned int spacePos = tuple.find_first_of(" ");
-        if (spacePos == string::npos)
-        {
-            paramName = tuple;
-        }
-        else
-        {
-            paramName = tuple.substr(0, spacePos);
-        }
-        // Handle error
-        errAdd(cmdERR_PARAM_NAME, paramName.c_str());
-        return FAILURE;
-    }
-    // End if
-
-    string str = tuple.substr(dashPos, endPos+1);
-
-    // Find end of parameter name
-    unsigned int spacePos = str.find_first_of(" ");
-    if (spacePos == string::npos)
-    {
-        errAdd(cmdERR_PARAMS_FORMAT, tuple.c_str());
-        return FAILURE;
-    }
-    
-    /* start from 1 to remove '-' and remove the last space*/
-    /* \todo enhance code to accept more than one space between name and value
-     * */
-    string paramName = str.substr(1, spacePos-1);
-    string paramValue = str.substr(spacePos+1);
-    
-    logDebug("found new tuple: [%s,%s]", paramName.data(), paramValue.data());
-   
-    cmdPARAM *p;
-    /* If parameter does'nt exist in the cdf */
-    STRING2PARAM::iterator iter = _paramList.find(paramName);
-    if (iter != _paramList.end())
-    {
-        p = iter->second;
-    }
-    else
-    {
-        errAdd(cmdERR_PARAM_UNKNOWN, paramName.c_str(), _name.c_str());
-        return FAILURE;
-    }
-
-    /* assign value to the parameter */
-    p->SetUserValue(paramValue);
-    
-    return SUCCESS;
-}
-
 /** 
  *  Parse a cdf file and build new parameters for the command.
  *  After this step the parameters can be parsed.
  *
- * \param cdfName  the cdf file name.
- *
  *  \returns an MCS completion status code (SUCCESS or FAILURE)
  */
-mcsCOMPL_STAT cmdCOMMAND::ParseCdf(string cdfName)
+mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
 {
     logExtDbg ("cmdCOMMAND::ParseCdf()");
+
+    // If the cdf has been already parsed, return
+    if ( _cdfHasBeenYetParsed == mcsTRUE)
+    {
+        return SUCCESS;
+    }
+
 
     GdomeDOMImplementation *domimpl;
     GdomeDocument *doc;
     GdomeElement *root=NULL;
     GdomeException exc;
-    
+  
+    // Check that a command definition file name has been given
+    if ( _cdfName.size() == 0 )
+    {
+        errAdd(cmdERR_NO_CDF, _name.c_str());
+        return FAILURE;
+    }
+ 
+    // find the correcsponding cdf file
+    char * fullCdfFilename = miscLocateFile(_cdfName.data());
+    // check if the cdf file has been found   
+    if (fullCdfFilename == NULL)
+    {
+        return FAILURE;
+    }
+
     /* Get a DOMImplementation reference */
     domimpl = gdome_di_mkref ();
 
     /* create a new Document from the cdf file */
-    const char *xmlFilename = miscResolvePath(cdfName.data());
+    const char *xmlFilename = miscResolvePath(fullCdfFilename);
     logDebug("Using cdf file %s",xmlFilename);
     doc = gdome_di_createDocFromURI(domimpl, xmlFilename, GDOME_LOAD_PARSING,
                                     &exc);
@@ -715,6 +586,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf(string cdfName)
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
     xmlCleanupParser();
+    _cdfHasBeenYetParsed = mcsTRUE;
     return SUCCESS;
 
 errCond:
@@ -723,6 +595,7 @@ errCond:
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
     xmlCleanupParser();
+    errAdd (cmdERR_PARSE_CDF, fullCdfFilename, _name.c_str());
     return FAILURE;
 }
 
@@ -866,83 +739,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
 }
 
 /** 
- * Get the content of the first child node using tagName. If tagName is empty
- * the first child is used without any care of the child's tag.
- *
- * \param parentNode the parent node. 
- * \param tagName  the tag of the child or empty.
- * \param content  the storage string.
- *
- *  \returns an MCS completion status code (SUCCESS or FAILURE)
- */
-mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tagName, string &content)
-{
-    logExtDbg("cmdCOMMAND::CmdGetNodeContent()");
-    logDebug("searching content for '%s' element\n",tagName.data());
-    
-    GdomeElement *el, *el2;
-    GdomeNodeList *nl;
-    GdomeException exc;
-    GdomeDOMString *name, *value;
-    int nbChildren;
-    
-   if (tagName.empty())
-   {
-        nl = gdome_el_childNodes(parentNode, &exc);
-   }else{
-       name = gdome_str_mkref (tagName.data());
-       /* Get the reference to the childrens NodeList of the root element */
-       nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
-       gdome_str_unref(name);
-   }
-    
-   if (nl == NULL)
-    {
-        logWarning ("Illegal format encountered for cdf file "
-                    ". Element.childNodes() failed "
-                    "with exception #%d", exc);
-        gdome_nl_unref(nl, &exc);
-        return FAILURE;
-    }
-    nbChildren = gdome_nl_length (nl, &exc);
-    /* if a desc does exist */
-    if (nbChildren > 0)
-    {
-        el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
-        if (el == NULL)
-        {
-            logWarning ("Illegal format encountered for cdf file "
-                        ". NodeList.item(%d) failed "
-                        "with exception #%d", 0, exc);
-            return FAILURE;
-        }
-        el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
-
-        if (el2 == NULL)
-        {
-            // \todo errAdd
-            return FAILURE;
-        }
-        
-        value=gdome_el_nodeValue(el2,&exc);
-        content.append(value->str);
-        
-        gdome_str_unref(value);
-        gdome_el_unref(el2, &exc);
-        gdome_el_unref(el, &exc);
-    }
-    else
-    {
-        // \todo add error
-        return FAILURE;
-    }
-    
-    gdome_nl_unref(nl, &exc);
-   
-    return SUCCESS;
-}
-
-/** 
  *  Parse the cdf document to extract the parameters.
  *
  *  \param param  one param node of the cdf document.
@@ -1077,6 +873,219 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
     
     return SUCCESS;
 }
+
+/** 
+ * Get the content of the first child node using tagName. If tagName is empty
+ * the first child is used without any care of the child's tag.
+ *
+ * \param parentNode the parent node. 
+ * \param tagName  the tag of the child or empty.
+ * \param content  the storage string.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tagName, string &content)
+{
+    logExtDbg("cmdCOMMAND::CmdGetNodeContent()");
+    logDebug("searching content for '%s' element\n",tagName.data());
+    
+    GdomeElement *el, *el2;
+    GdomeNodeList *nl;
+    GdomeException exc;
+    GdomeDOMString *name, *value;
+    int nbChildren;
+    
+   if (tagName.empty())
+   {
+        nl = gdome_el_childNodes(parentNode, &exc);
+   }else{
+       name = gdome_str_mkref (tagName.data());
+       /* Get the reference to the childrens NodeList of the root element */
+       nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
+       gdome_str_unref(name);
+   }
+    
+   if (nl == NULL)
+    {
+        logWarning ("Illegal format encountered for cdf file "
+                    ". Element.childNodes() failed "
+                    "with exception #%d", exc);
+        gdome_nl_unref(nl, &exc);
+        return FAILURE;
+    }
+    nbChildren = gdome_nl_length (nl, &exc);
+    /* if a desc does exist */
+    if (nbChildren > 0)
+    {
+        el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
+        if (el == NULL)
+        {
+            logWarning ("Illegal format encountered for cdf file "
+                        ". NodeList.item(%d) failed "
+                        "with exception #%d", 0, exc);
+            return FAILURE;
+        }
+        el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
+
+        if (el2 == NULL)
+        {
+            // \todo errAdd
+            return FAILURE;
+        }
+        
+        value=gdome_el_nodeValue(el2,&exc);
+        content.append(value->str);
+        
+        gdome_str_unref(value);
+        gdome_el_unref(el2, &exc);
+        gdome_el_unref(el, &exc);
+    }
+    else
+    {
+        // \todo add error
+        return FAILURE;
+    }
+    
+    gdome_nl_unref(nl, &exc);
+   
+    return SUCCESS;
+}
+
+/** 
+ *  This method should be called before any real action on any parameter.
+ *  It parses the parameters given to the constructor.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCOMMAND::ParseParams()
+{
+    logExtDbg ("cmdCOMMAND::ParseParams()");
+
+    logDebug ( "working on params '%s'", _params.data());
+   
+    string::iterator i = _params.begin();
+    int posStart=0;
+    int posEnd=0;
+
+    // we start walking out of a parameter value.
+    mcsLOGICAL valueZone=mcsFALSE;
+
+    while(i != _params.end())
+    {
+        if (*i=='-')
+        {
+            /* If the dash is not included into a string value */
+            if (! valueZone){
+                
+                if( ( *(i+1) >= '0' ) &&  ( *(i+1) <= '9' ))
+                {
+                    /* do nothing because all the tuple string must be catched */
+                }
+                else if (posEnd>0)
+                {
+                    if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==FAILURE)
+                    {
+                        return FAILURE;
+                    }
+                    posStart=posEnd;
+                }
+            }
+        }
+
+        // if double quotes are encountered it opens or closes a valueZone
+        if (*i=='"')
+        {
+            valueZone = (mcsLOGICAL)!valueZone;
+        }
+        
+        i++;
+        posEnd++;
+    }
+
+    // parse last tuple if posEnd is not null
+    if (posEnd>0)
+    {
+        if (ParseTupleParam(_params.substr(posStart, posEnd-posStart))==FAILURE)
+        {
+            return FAILURE;
+        }
+    }
+
+    return SUCCESS;
+}
+
+/** 
+ *  Parse a tuple (-<paramName> <paramValue>). Tuples are extracted from the
+ *  line of parameter by the parseParams method.
+ *
+ *  \param tuple  the name value tuple for the a parameter.
+ *
+ *  \returns an MCS completion status code (SUCCESS or FAILURE)
+ */
+mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
+{
+    logExtDbg ("cmdCOMMAND::ParseTupleParam()");
+    
+    unsigned int dashPos = tuple.find_first_of("-");
+    unsigned int endPos = tuple.find_last_not_of(" ");
+
+    // If parameter name does not start with '-'
+    if ((dashPos == string::npos) || (endPos == string::npos))
+    {
+        // Find parameter name
+        string paramName;
+        unsigned int spacePos = tuple.find_first_of(" ");
+        if (spacePos == string::npos)
+        {
+            paramName = tuple;
+        }
+        else
+        {
+            paramName = tuple.substr(0, spacePos);
+        }
+        // Handle error
+        errAdd(cmdERR_PARAM_NAME, paramName.c_str());
+        return FAILURE;
+    }
+    // End if
+
+    string str = tuple.substr(dashPos, endPos+1);
+
+    // Find end of parameter name
+    unsigned int spacePos = str.find_first_of(" ");
+    if (spacePos == string::npos)
+    {
+        errAdd(cmdERR_PARAMS_FORMAT, tuple.c_str());
+        return FAILURE;
+    }
+    
+    /* start from 1 to remove '-' and remove the last space*/
+    /* \todo enhance code to accept more than one space between name and value
+     * */
+    string paramName = str.substr(1, spacePos-1);
+    string paramValue = str.substr(spacePos+1);
+    
+    logDebug("found new tuple: [%s,%s]", paramName.data(), paramValue.data());
+   
+    cmdPARAM *p;
+    /* If parameter does'nt exist in the cdf */
+    STRING2PARAM::iterator iter = _paramList.find(paramName);
+    if (iter != _paramList.end())
+    {
+        p = iter->second;
+    }
+    else
+    {
+        errAdd(cmdERR_PARAM_UNKNOWN, paramName.c_str(), _name.c_str());
+        return FAILURE;
+    }
+
+    /* assign value to the parameter */
+    p->SetUserValue(paramValue);
+    
+    return SUCCESS;
+}
+
 
 /** 
  *  Check if all mandatory parameters have a user value.
