@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.5 2005-01-27 15:56:29 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.6 2005-02-02 14:24:17 scetre Exp $"
 *
 * History
 * -------
@@ -48,8 +48,19 @@ public:
     virtual mcsCOMPL_STAT Pack(miscDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(miscDYN_BUF *buffer);
    
-    virtual mcsCOMPL_STAT GetCoherentDiameterList(sclsvrCALIBRATOR_LIST *list);
-    virtual mcsCOMPL_STAT GetVisibilityOkList(sclsvrCALIBRATOR_LIST *list);
+    // Method need by the graphical user interface
+    virtual mcsCOMPL_STAT GetCoherentDiameter(sclsvrCALIBRATOR_LIST *list);
+    virtual mcsCOMPL_STAT GetVisibilityOk(sclsvrCALIBRATOR_LIST *list);
+    virtual mcsCOMPL_STAT GetScienceObjectSeparation();
+    virtual mcsCOMPL_STAT GetMaximalMagnitudeSeparation();
+    virtual mcsCOMPL_STAT GetSpectralType();
+    virtual mcsCOMPL_STAT GetLuminosityClass();
+    virtual mcsCOMPL_STAT GetMaximalExpectedRelativeAccuracy();
+    virtual mcsCOMPL_STAT GetVariability();
+    virtual mcsCOMPL_STAT GetMultiplicity();
+    virtual mcsCOMPL_STAT Delete();
+    virtual mcsCOMPL_STAT Load();
+    virtual mcsCOMPL_STAT Save();
 protected:
 
 private:

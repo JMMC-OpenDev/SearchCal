@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.15 2005-01-26 14:17:55 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR.h,v 1.16 2005-02-02 14:24:17 scetre Exp $"
 *
 * History
 * -------
@@ -86,10 +86,7 @@ public:
 protected:
     
 private:
-    // Declaration of assignment operator as private method, in order to hide
-    // them from the users.
-    sclsvrCALIBRATOR& operator=(const sclsvrCALIBRATOR&);
-    
+        
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);
 

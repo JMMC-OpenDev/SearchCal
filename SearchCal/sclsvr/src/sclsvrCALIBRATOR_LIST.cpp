@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.10 2005-01-31 13:33:54 scetre Exp $"
+* "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.11 2005-02-02 14:24:17 scetre Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.10 2005-01-31 13:33:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.11 2005-02-02 14:24:17 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -155,6 +155,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(vobsREQUEST request)
 /**
  * Pack a calibrator list in a dynamic buffer
  *
+ * This method shoulb be call after a call to request Pack method. If it is call
+ * before, or if the request Pack method is not called, it is necessary to write
+ * in the buffer before the call of this method to write an empty line. 
+ *
  * \param buffer the dynamic buffer in which the calibrator will be pack
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -187,7 +191,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscDYN_BUF *buffer)
 }
 
 /**
- * Unpack dynamic buffer and create a list
+ * Unpack dynamic buffer and create a list.
  *
  * \param buffer the dynamic buffer where is stord the list
  *
@@ -197,21 +201,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::UnPack()");
     char *bufferLine=NULL;
-    
+   
     // Fix no skip flag
     mcsLOGICAL skipFlag = mcsFALSE;
-    
+
     // Replace the '\n' by '\0' in the buffer where is stored the list
     if (miscReplaceChrByChr(miscDynBufGetBuffer(buffer), '\n', '\0') == 
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    
+
     // Get the first line of the buffer
     while ((bufferLine=miscDynBufGetNextLine(buffer,
-                                                    bufferLine,
-                                                    skipFlag)) != NULL)
+                                             bufferLine,
+                                             skipFlag)) != NULL)
     {
         // If the line had been get
         sclsvrCALIBRATOR calibrator;
@@ -223,6 +227,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
         // add in the list the calibrator
         AddAtTail(calibrator); 
     }
+    
     return mcsSUCCESS;    
 }
 
@@ -233,14 +238,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(miscDYN_BUF *buffer)
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  **/
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LIST *list)
+mcsCOMPL_STAT 
+    sclsvrCALIBRATOR_LIST::GetCoherentDiameter(sclsvrCALIBRATOR_LIST *list)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetCoherentDiameterList()");
+    logExtDbg("sclsvrCALIBRATOR_LIST::GetCoherentDiameter()");
     // for each calibrator of the list
     for (unsigned int el = 0; el < Size(); el++)
     {
         
-        if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))-> HadCoherentDiameter()
+        if (((sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0)))->
+            HadCoherentDiameter()
             == mcsTRUE )
         {
             logTest("calibrator %d had coherent diameter\n", el+1);
@@ -258,7 +265,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetCoherentDiameterList(sclsvrCALIBRATOR_LI
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  **/
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVisibilityOkList(sclsvrCALIBRATOR_LIST *list)
+mcsCOMPL_STAT 
+    sclsvrCALIBRATOR_LIST::GetVisibilityOk(sclsvrCALIBRATOR_LIST *list)
 {
     logExtDbg("sclsvrCALIBRATOR_LIST::GetCoherentDiameterList()");
     // for each calibrator of the list
@@ -275,4 +283,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVisibilityOkList(sclsvrCALIBRATOR_LIST *
 
 }
 
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObjectSeparation(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetMaximalMagnitudeSeparation(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetSpectralType(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetLuminosityClass(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetMaximalExpectedRelativeAccuracy(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetVariability(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetMultiplicity(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(){return mcsSUCCESS;}
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(){return mcsSUCCESS;}
 /*___oOo___*/
