@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/02/07 14:41:47  lafrasse
+ * Changed miscLocateFileInPath() error management behavior in order to report only one error (and not one for each directory) if the given file was not found in all the path directories
+ *
  * Revision 1.24  2005/01/28 18:39:10  gzins
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
@@ -40,7 +43,7 @@
  * Contains all the 'misc' Unix file path related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.25 2005-02-07 14:41:47 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.26 2005-02-09 06:27:35 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -535,7 +538,10 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
     /* Test the fullPath parameter validity */
     if ((fullPath == NULL) || (strlen(fullPath) == 0))
     {
-        errAdd(miscERR_NULL_PARAM, "fullPath");
+        if (addError == mcsTRUE)
+        {
+            errAdd(miscERR_NULL_PARAM, "fullPath");
+        }
         return mcsFALSE;
     }
 
@@ -543,6 +549,10 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
     char* resolvedPath =  miscResolvePath(fullPath);
     if ( resolvedPath == NULL)
     {
+        if (addError == mcsFALSE)
+        {
+            errResetStack();
+        }
         return mcsFALSE;
     }
 
