@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.5 2005-01-26 08:50:25 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.6 2005-01-27 13:44:04 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/01/26 08:50:25  scetre
+* upated documentation
+*
 * Revision 1.4  2005/01/26 08:20:39  scetre
 * change history
 *
@@ -20,7 +23,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.5 2005-01-26 08:50:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.6 2005-01-27 13:44:04 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -145,7 +148,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         {
             return mcsFAILURE;
         }
-        // Copy the lst input in it
+        // Copy the list input in it
         if ((*_entryIterator).listInput != NULL)
         {
             tempList.Copy(*(*_entryIterator).listInput);

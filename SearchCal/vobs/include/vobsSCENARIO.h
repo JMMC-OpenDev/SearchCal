@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.4 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.5 2005-01-27 13:44:04 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    07-Sep-2004  Created
 *
 *
@@ -27,50 +30,14 @@
  * header files
  */
 #include <list>
+
+/*
+ * local Header
+ */
 #include "vobsSTAR_LIST.h"
 #include "vobsCATALOG.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
-/*
- * Enumeration type definition
- */
-/**
- * vobsACTION_ID is an enumeration which allow correspondance between an id and
- * an ACTION.
- */
-typedef enum
-{
-    NO_ACTION = -1,
-    COPY,
-    MERGE,
-    UPDATE_ONLY
-}vobsACTION;
-
-/*
- * Type definition
- */
-/*
- * Data structure containing description of ENTRY
- * INTERNAL USED ONLY
- */
-class vobsSCENARIO_ENTRY
-{
-public:
-    vobsSCENARIO_ENTRY() {};
-    vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
-    {
-        catalog=scenarioEntry.catalog;
-        listInput=scenarioEntry.listInput;
-        listOutput=scenarioEntry.listOutput;
-        action=scenarioEntry.action;
-        criteriaList=scenarioEntry.criteriaList;
-    };
-    vobsCATALOG                 *catalog;
-    vobsSTAR_LIST               *listInput;
-    vobsSTAR_LIST               *listOutput;
-    vobsACTION                  action;
-    vobsSTAR_COMP_CRITERIA_LIST criteriaList;
-};
-
+#include "vobsSCENARIO_ENTRY.h"
 
 /*
  * Class declaration
