@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.8 2005-02-22 08:08:59 gzins Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.9 2005-02-22 10:16:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/22 08:08:59  gzins
+ * Changed printf to logTest
+ *
  * Revision 1.7  2005/02/21 19:35:45  gzins
  * Updated alxComputeRealMagnitudes to have API compatible with alxComputeRealMagnitudes and handle blanking values.
  *
@@ -42,7 +45,7 @@
  * \sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.8 2005-02-22 08:08:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.9 2005-02-22 10:16:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -460,7 +463,7 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
                 - (av * extinctionRatioTable->rc[band] / 3.10);
         }
         
-        logTest("Corrected magnitude[%d] = %0.3f\n", band, magnitudes[band]); 
+        logTest("Corrected magnitude[%d] = %0.3f", band, magnitudes[band]); 
     }
 
     return mcsSUCCESS;
