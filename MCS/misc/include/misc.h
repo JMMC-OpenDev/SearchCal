@@ -3,7 +3,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: misc.h,v 1.9 2004-07-09 14:28:55 lafrasse Exp $"
+* "@(#) $Id: misc.h,v 1.10 2004-07-13 14:09:39 lafrasse Exp $"
 *
 * who       when		 what
 * --------  -----------	 -------------------------------------------------------
@@ -40,6 +40,7 @@ extern C {
 /*
  * Pubic functions declaration
  */
+ 
 char *miscGetFileName(char *fullPath);
 char *miscGetExtension(char *fileName);
 void miscYankExtension(char *fileName, char *extension);
@@ -54,8 +55,6 @@ void miscStrToUpper(char *string);
 }
 #endif
 
-
 #endif /*!misc_H*/
-
 
 /*___oOo___*/

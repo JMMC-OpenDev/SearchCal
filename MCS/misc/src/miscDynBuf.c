@@ -1,12 +1,13 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.3 2004-07-12 10:24:26 gluck Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.4 2004-07-13 14:09:39 lafrasse Exp $"
  *
  * who       when         what
  * --------  -----------  ------------------------------------------------------
  * lafrasse  05-Jul-2004  Created
  * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
+ * lafrasse  12-Jul-2004  Code factorization and error codes polishing
  *
  *
  ******************************************************************************/
@@ -22,7 +23,7 @@
  * \sa To see all the other 'misc' module functions declarations, see misc.h
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.3 2004-07-12 10:24:26 gluck Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.4 2004-07-13 14:09:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,7 +51,20 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /* 
  * Local functions declaration 
  */
-static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF  *dynBuf);
+static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF        *dynBuf);
+
+static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
+                                             miscDYN_BUF        *dynBuf,
+                                             const mcsUINT32    position);
+
+static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
+                                             miscDYN_BUF        *dynBuf,
+                                             const mcsUINT32    from,
+                                             const mcsUINT32    to);
+
+static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
+                                             char              *bytes,
+                                             const mcsUINT32   length);
 
 
 /* 
@@ -67,13 +81,14 @@ static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF  *dynBuf);
  *
  * \return an MCS completion status code (SUCCESS or FAILURE)
  */
-static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF  *dynBuf)
+static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF        *dynBuf)
 {
+    char *functionName = "miscDynBufInit\0";
+    
     /* Test the 'dynBuf' parameter validity... */
     if (dynBuf == NULL)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufInit",
-               "Received a Null Pointer instead of a Valid Pointer");
+        errAdd(miscERR_DYN_BUF_NULL_VALUE, functionName, "dynBuf");
         return FAILURE;
     }
 
@@ -86,7 +101,7 @@ static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF  *dynBuf)
         /* Try to initialize all the structure with '0' */
         if ((memset(dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
         {
-            errAdd(miscERR_ALLOC_MEM);
+            errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
             return FAILURE;
         }
 
@@ -98,6 +113,131 @@ static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF  *dynBuf)
 
     return SUCCESS;
 }
+
+/**
+ * Verify if a Dynamic Buffer has already been initialized, and if the given
+ * 'position' is correct (eg. inside the Dynamic Buffer range.
+ *
+ * This function is only used internally by funtions receiving 'position'
+ * parameter.
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param position a position inside the Dynamic Buffer
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+static        mcsCOMPL_STAT miscDynBufVerifyPositionParameterValidity(
+                                             miscDYN_BUF        *dynBuf,
+                                             const mcsUINT32    position)
+{
+    char *functionName = "miscDynBufVerifyPositionParameterValidity\0";
+
+    /* Try to initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufInit(dynBuf) == FAILURE)
+    {
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
+        return FAILURE;
+    }
+
+    /* Test the position parameter validity... */
+    if (position < miscDYN_BUF_BEGINNING_POSITION
+        || position > dynBuf->storedBytes)
+    {
+        errAdd(miscERR_DYN_BUF_BAD_POSITION, functionName, "position");
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+/**
+ * Verify if a Dynamic Buffer has already been initialized, and if the given
+ * 'from' and 'to' position are correct (eg. inside the Dynamic Buffer range,
+ * and "from lower than 'to').
+ *
+ * This function is only used internally by funtions receiving 'from' and 'to'
+ * parameters.
+ *
+ * \param dynBuf the address of a Dynamic Buffer structure
+ * \param from a position inside the Dynamic Buffer
+ * \param to a position inside the Dynamic Buffer
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+static        mcsCOMPL_STAT miscDynBufVerifyFromToParametersValidity(
+                                             miscDYN_BUF       *dynBuf,
+                                             const mcsUINT32   from,
+                                             const mcsUINT32   to)
+{
+    char *functionName = "miscDynBufVerifyFromToParametersValidity\0";
+
+    /* Try to initialize the received Dynamic Buffer if it is not */
+    if (miscDynBufInit(dynBuf) == FAILURE)
+    {
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
+        return FAILURE;
+    }
+
+    /* Test the 'from' parameter validity */
+    if (from < miscDYN_BUF_BEGINNING_POSITION || from > dynBuf->storedBytes)
+    {
+        errAdd(miscERR_DYN_BUF_BAD_POSITION, functionName, "from");
+        return FAILURE;
+    }
+
+    /* Test the 'to' parameter validity */
+    if (to < miscDYN_BUF_BEGINNING_POSITION || to > dynBuf->storedBytes)
+    {
+        errAdd(miscERR_DYN_BUF_BAD_POSITION, functionName, "to");
+        return FAILURE;
+    }
+
+    /* Test the 'from' and 'to' parameters validity against each other */
+    if (to <= from)
+    {
+        errAdd(miscERR_DYN_BUF_BAD_FROM_TO, functionName);
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
+/**
+ * Verify if a Dynamic Buffer has already been initialized, and if the given
+ * 'from' and 'to' position are correct (eg. inside the Dynamic Buffer range,
+ * and "from lower than 'to').
+ *
+ * This function is only used internally by funtions receiving 'from' and 'to'
+ * parameters.
+ *
+ * \param bytes the bytes buffer pointer to test
+ * \param length the number of bytes in the buffer to test
+ *
+ * \return an MCS completion status code (SUCCESS or FAILURE)
+ */
+static        mcsCOMPL_STAT miscDynBufVerifyBytesAndLengthParametersValidity(
+                                             char              *bytes,
+                                             const mcsUINT32   length)
+{
+    char *functionName = "miscDynBufVerifyBytesAndLengthParametersValidity\0";
+
+    /* Test the 'bytes' parameter validity */
+    if (bytes == NULL)
+    {
+        errAdd(miscERR_DYN_BUF_NULL_VALUE, functionName, "bytes");
+        return FAILURE;
+    }
+
+    /* Test the 'length' parameter validity */
+    if (length == 0)
+    {
+        errAdd(miscERR_DYN_BUF_NULL_VALUE, functionName, "length");
+        return FAILURE;
+    }
+
+    return SUCCESS;
+}
+
 
 
 /*
@@ -119,9 +259,8 @@ static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF  *dynBuf)
  * function call is only usefull when you know by advance the maximum bytes
  * length the Dynamic Buffer can reach accross its entire life, and thus want
  * to minimize the CPU time spent to expand the Dynamic Buffer allocated
- * memory on demand.
- * 
- * \n 
+ * memory on demand.\n\n
+ *  
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param length the number of bytes by which the Dynamic Buffer should be
  * expanded
@@ -131,12 +270,13 @@ static        mcsCOMPL_STAT miscDynBufInit  (miscDYN_BUF  *dynBuf)
 mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length)
 {
+    char *functionName = "miscDynBufAlloc\0";
     char *newBuf = NULL;
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufAlloc");
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
         return FAILURE;
     }
 
@@ -153,14 +293,14 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
         /* Try to allocate the desired length */
         if ((dynBuf->dynBuf = calloc(length, sizeof(char))) == NULL)
         {
-            errAdd(miscERR_ALLOC_MEM);
+            errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
             return FAILURE;
         }
 
         /* Try to Write '0' on all the newly allocated memory */
         if (memset(dynBuf->dynBuf, 0, length) == NULL)
         {
-            errAdd(miscERR_ALLOC_MEM);
+            errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
             return FAILURE;
         }
     }
@@ -170,7 +310,7 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
         if ((newBuf = realloc(dynBuf->dynBuf, (dynBuf->storedBytes + length)))
              == NULL)
         {
-            errAdd(miscERR_ALLOC_MEM);
+            errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
             return FAILURE;
         }
 
@@ -181,10 +321,9 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
         if (dynBuf->storedBytes == 0)
         {
             /* Try to write '0' on all the newly allocated memory */
-            if ((memset(dynBuf->dynBuf, 0, dynBuf->allocatedBytes))
-                 == NULL)
+            if ((memset(dynBuf->dynBuf, 0, dynBuf->allocatedBytes)) == NULL)
             {
-                errAdd(miscERR_ALLOC_MEM);
+                errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
                 return FAILURE;
             }
         }
@@ -206,19 +345,20 @@ mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
  */
 mcsCOMPL_STAT miscDynBufStrip(miscDYN_BUF *dynBuf)
 {
+    char *functionName = "miscDynBufStrip\0";
     char *newBuf = NULL;
 
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufStrip");
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
         return FAILURE;
     }
 
     /* Try to give back the unused memory */
     if ((newBuf = realloc(dynBuf->dynBuf, dynBuf->storedBytes)) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -244,10 +384,12 @@ mcsCOMPL_STAT miscDynBufStrip(miscDYN_BUF *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
 {
+    char *functionName = "miscDynBufReset\0";
+
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufReset");
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
         return FAILURE;
     }
 
@@ -272,10 +414,12 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
 {
+    char *functionName = "miscDynBufDestroy\0";
+
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "misctDynBufDestroy");
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
         return FAILURE;
     }
 
@@ -289,7 +433,7 @@ mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
     /* Try to initialize all the structure with '0' */
     if ((memset((char *)dynBuf, 0, sizeof(miscDYN_BUF))) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -306,10 +450,12 @@ mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf)
  */
 mcsUINT32     miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf)
 {
+    char *functionName = "miscDynBufGetStoredBytesNumber\0";
+
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufGetStoredBytesNumber");
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
         return 0;
     }
 
@@ -327,10 +473,12 @@ mcsUINT32     miscDynBufGetStoredBytesNumber(miscDYN_BUF       *dynBuf)
  */
 mcsUINT32     miscDynBufGetAllocatedBytesNumber(miscDYN_BUF       *dynBuf)
 {
+    char *functionName = "miscDynBufGetAllocatedBytesNumber\0";
+
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufGetAllocatedBytesNumber");
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
         return 0;
     }
 
@@ -348,10 +496,12 @@ mcsUINT32     miscDynBufGetAllocatedBytesNumber(miscDYN_BUF       *dynBuf)
  */
 char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf)
 {
+    char *functionName = "miscDynBufGetBufferPointer\0";
+
     /* Try to initialize the received Dynamic Buffer if it is not */
     if (miscDynBufInit(dynBuf) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufGetBufferPointer");
+        errAdd(miscERR_DYN_BUF_AUTO_INIT, functionName);
         return NULL;
     }
 
@@ -364,7 +514,7 @@ char*         miscDynBufGetBufferPointer    (miscDYN_BUF       *dynBuf)
  * Give back a Dynamic Buffer byte stored at a given position.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
  *
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param byte the address of to the byte that will hold the Dynamic Buffer
@@ -377,27 +527,19 @@ mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
                                              char              *byte,
                                              const mcsUINT32   position)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
-    {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufGetByteAt");
-        return FAILURE;
-    }
+    char *functionName = "miscDynBufGetByteAt\0";
 
-    /* Test the position parameter validity... */
-    if (position < miscDYN_BUF_BEGINNING_POSITION
-        || position > dynBuf->storedBytes)
+    /* Test the 'dynBuf' and 'position' parameters validity */
+    if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufGetByteAt",
-               "Received Position Outside the Buffer");
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
     /* Test the 'write to' byte buffer address parameter validity */
-    if(byte == NULL)
+    if (byte == NULL)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufGetByteAt",
-               "Received a Null Pointer instead of a Valid Pointer");
+        errAdd(miscERR_DYN_BUF_NULL_VALUE, functionName);
         return FAILURE;
     }
 
@@ -412,7 +554,7 @@ mcsCOMPL_STAT miscDynBufGetByteAt           (miscDYN_BUF       *dynBuf,
  * Give back a part of a Dynamic Buffer in an already allocated extern buffer.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
  *
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param bytes the address of the receiving, already allocated extern buffer
@@ -426,42 +568,19 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
-    {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufGetBytesFromTo");
-        return FAILURE;
-    }
+    char *functionName = "miscDynBufGetBytesFromTo\0";
 
-    /* Test the 'from' parameter validity */
-    if (from < miscDYN_BUF_BEGINNING_POSITION || from > dynBuf->storedBytes)
+    /* Test the 'dynBuf', 'from' and 'to' parameters validity */
+    if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufGetBytesFromTo",
-               "Received FROM Position Outside the Buffer");
-        return FAILURE;
-    }
-
-    /* Test the 'to' parameter validity */
-    if (to < miscDYN_BUF_BEGINNING_POSITION || to > dynBuf->storedBytes)
-    {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufGetBytesFromTo",
-               "Received TO Position Outside the Buffer");
-        return FAILURE;
-    }
-
-    /* Test the 'from' and 'to' parameters validity against each other */
-    if (to <= from)
-    {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufGetBytesFromTo",
-               "Received Wrong Positions (TO <= FROM)");
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
     /* Test the 'bytes' parameter validity */
     if (bytes == NULL)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufGetBytesFromTo",
-               "Received a Null Pointer instead of a Valid Pointer");
+        errAdd(miscERR_DYN_BUF_NULL_VALUE, functionName, "bytes");
         return FAILURE;
     }
 
@@ -475,7 +594,7 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
     /* Try to copy the Dynamic Buffer desired part in the extern buffer */
     if (memcpy(*bytes, positionToReadFrom, lengthToCopy) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -487,7 +606,7 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo      (miscDYN_BUF       *dynBuf,
  * Overwrite a Dynamic Buffer byte at a given position.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
  *
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param byte the byte to be written in the Dynamic Buffer
@@ -499,19 +618,12 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
                                              char              byte,
                                              const mcsUINT32   position)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
-    {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufReplaceByteAt");
-        return FAILURE;
-    }
+    char *functionName = "miscDynBufReplaceByteAt\0";
 
-    /* Test the position parameter validity... */
-    if (position < miscDYN_BUF_BEGINNING_POSITION
-        || position > dynBuf->storedBytes)
+    /* Test the 'dynBuf' and 'position' parameters validity */
+    if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufReplaceByteAt",
-               "Received Position Outside the Buffer");
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
@@ -529,7 +641,7 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
  * smaller or bigger than the extern buffer bytes number.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
  *
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param bytes the address of the extern buffer bytes to be written in
@@ -545,51 +657,29 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
+    char *functionName = "miscDynBufReplaceBytesFromTo\0";
+
+    /* Test the 'dynBuf', 'from' and 'to' parameters validity */
+    if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufReplaceBytesFromTo");
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
-    /* Test the 'from' parameter validity */
-    if (from < miscDYN_BUF_BEGINNING_POSITION || from > dynBuf->storedBytes)
+    /* Test the 'bytes' and 'length' parameters validity */
+    if (miscDynBufVerifyBytesAndLengthParametersValidity(bytes, length)
+        == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufReplaceBytesFromTo",
-               "Received FROM Position Outside the Buffer");
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
-
-    /* Test the 'to' parameter validity */
-    if (to < miscDYN_BUF_BEGINNING_POSITION || to > dynBuf->storedBytes)
-    {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufReplaceBytesFromTo",
-               "Received TO Position Outside the Buffer");
-        return FAILURE;
-    }
-
-    /* Test the 'from' and 'to' parameters validity against each other */
-    if (to <= from)
-    {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufReplaceBytesFromTo",
-               "Received Wrong Positions (TO <= FROM)");
-        return FAILURE;
-    }
-
-    /* Test the 'length' parameter validity */
-    if (length <= 0)
-    {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufReplaceBytesFromTo",
-               "Received a Null Length");
-        return FAILURE;
-    }
-
 
     /* Compute the number of bytes by which the Dynamic Buffer should be
      * expanded
      */
     mcsINT32 bytesToAlloc = length
-                            - (to - from + miscDYN_BUF_BEGINNING_POSITION);
+                            - (((to - miscDYN_BUF_BEGINNING_POSITION)
+                                - (from - miscDYN_BUF_BEGINNING_POSITION)) + 1);
 
     /* If the Dynamic Buffer needs to be expanded... */
     if (bytesToAlloc > 0)
@@ -597,18 +687,18 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
         /* Try to allocate the desired bytes number in the Dynamic Buffer */
         if (miscDynBufAlloc(dynBuf, bytesToAlloc) == FAILURE)
         {
-            errAdd(miscERR_DYN_BUF_ACTION,
-                   "miscDynBufReplaceBytesFromTo",
-                   "Could not Allocate the Received Dynamic Buffer");
+            errAdd(miscERR_DYN_BUF_AUTO_ALLOC, functionName);
             return FAILURE;
         }
     }
 
     /* Compute the number of Dynamic Buffer bytes to be backed up */
-    int lengthToBackup = dynBuf->storedBytes - to;
+    int lengthToBackup = dynBuf->storedBytes
+                         - ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be backep up' Dynamic Buffer byte position */
-    char *positionToBackup = dynBuf->dynBuf + to;
+    char *positionToBackup = dynBuf->dynBuf
+                             + ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be overwritten' Dynamic Buffer byte position */
     char *positionToWriteIn = dynBuf->dynBuf
@@ -620,7 +710,7 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
     char *tmpBuf = NULL;
     if ((tmpBuf = calloc(lengthToBackup, sizeof(char))) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -629,23 +719,23 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
      */
     if (memcpy(tmpBuf, positionToBackup, lengthToBackup) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
     /* Try to copy the extern buffer bytes in the Dynamic Buffer */
     if (memcpy(positionToWriteIn, bytes, length) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
     /* Try to copy the 'backep up' Dynamic Buffer bytes back inside the
-     * Dynamic Buffer
+     * Dynamic Buffer at the good position
      */
     if (memcpy(dynBuf->dynBuf + length, tmpBuf, lengthToBackup) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -671,26 +761,27 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              char              *bytes,
                                              const mcsUINT32   length)
 {
+    char *functionName = "miscDynBufAppendBytes\0";
+
     /* Try to expand the received Dynamic Buffer size */
     if (miscDynBufAlloc(dynBuf, length) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufAppendBytes",
-               "Could not Allocate the Received Dynamic Buffer");
+        errAdd(miscERR_DYN_BUF_AUTO_ALLOC, functionName);
         return FAILURE;
     }
 
-    /* Test the 'bytes' parameter validity */
-    if (bytes == NULL)
+    /* Test the 'bytes' and 'length' parameters validity */
+    if (miscDynBufVerifyBytesAndLengthParametersValidity(bytes, length)
+        == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufAppendBytes",
-               "Received a Null Pointer instead of a Valid Pointer");
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
     /* Try to copy the extern buffer bytes at the end of the Dynamic Buffer */
     if (memcpy(dynBuf->dynBuf + dynBuf->storedBytes, bytes, length) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -709,7 +800,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
  * The Dynamic Buffer bytes are not overwritten, but shiffted to the right.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
  *
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param bytes a pointer to the extern buffer bytes to be inserted
@@ -723,28 +814,27 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   length,
                                              const mcsUINT32   position)
 {
-    /* Test the position parameter validity... */
-    if (position < miscDYN_BUF_BEGINNING_POSITION
-        || position > dynBuf->storedBytes)
+    char *functionName = "miscDynBufInsertBytesAt\0";
+
+    /* Test the 'dynBuf' and 'position' parameters validity */
+    if (miscDynBufVerifyPositionParameterValidity(dynBuf, position) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufInsertBytesAt",
-               "Received Position Outside the Buffer");
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
+        return FAILURE;
+    }
+
+    /* Test the 'bytes' and 'length' parameters validity */
+    if (miscDynBufVerifyBytesAndLengthParametersValidity(bytes, length)
+        == FAILURE)
+    {
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
     /* Try to expand the received Dynamic Buffer size */
     if (miscDynBufAlloc(dynBuf, length) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufInsertBytesAt",
-               "Could not Allocate the Received Dynamic Buffer");
-        return FAILURE;
-    }
-
-    /* Test the 'bytes' parameter validity */
-    if(bytes == NULL)
-    {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufInsertBytesAt",
-               "Received a Null Pointer instead of a Valid Pointer");
+        errAdd(miscERR_DYN_BUF_AUTO_ALLOC, functionName);
         return FAILURE;
     }
 
@@ -762,7 +852,7 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
     char *tmpBuf = NULL;
     if ((tmpBuf = calloc(lengthToBackup, sizeof(char))) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -771,14 +861,14 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
      */
     if (memcpy(tmpBuf, positionToWriteIn, lengthToBackup) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
     /* Try to copy the extern buffer bytes in the Dynamic Buffer */
     if (memcpy(positionToWriteIn, bytes, length) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -789,7 +879,7 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
         miscDYN_BUF_BEGINNING_POSITION) + length,
         tmpBuf, lengthToBackup) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -806,7 +896,7 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
  * Delete a given range of Dynamic Buffer bytes.
  *
  * \warning The first Dynamic Buffer byte has the position value defined by the
- * miscDYN_BUF_BEGINNING_POSITION macro.
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
  *
  * \param dynBuf the address of a Dynamic Buffer structure
  * \param from the position of the first Dynamic Buffer byte to be deleted
@@ -818,42 +908,22 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to)
 {
-    /* Try to initialize the received Dynamic Buffer if it is not */
-    if (miscDynBufInit(dynBuf) == FAILURE)
-    {
-        errAdd(miscERR_DYN_BUF_AUTO_INIT, "miscDynBufDeleteBytesFromTo");
-        return FAILURE;
-    }
+    char *functionName = "miscDynBufDeleteBytesFromTo\0";
 
-    /* Test the 'from' parameter validity */
-    if (from < miscDYN_BUF_BEGINNING_POSITION || from > dynBuf->storedBytes)
+    /* Test the 'dynBuf', 'from' and 'to' parameters validity */
+    if (miscDynBufVerifyFromToParametersValidity(dynBuf, from, to) == FAILURE)
     {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufDeleteBytesFromTo",
-               "Received FROM Position Outside the Buffer");
-        return FAILURE;
-    }
-
-    /* Test the 'to' parameter validity */
-    if (to < miscDYN_BUF_BEGINNING_POSITION || to > dynBuf->storedBytes)
-    {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufDeleteBytesFromTo",
-               "Received TO Position Outside the Buffer");
-        return FAILURE;
-    }
-
-    /* Test the 'from' and 'to' parameters validity against each other */
-    if (to <= from)
-    {
-        errAdd(miscERR_DYN_BUF_ACTION, "miscDynBufDeleteBytesFromTo",
-               "Received Wrong Positions (TO <= FROM)");
+        errAdd(miscERR_DYN_BUF_BAD_PARAMETERS, functionName);
         return FAILURE;
     }
 
     /* Compute the number of Dynamic Buffer bytes to be backed up */
-    int lengthToBackup = dynBuf->storedBytes - to;
+    int lengthToBackup = dynBuf->storedBytes
+                         - ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be backep up' Dynamic Buffer byte position */
-    char *positionToBackup = dynBuf->dynBuf + to;
+    char *positionToBackup = dynBuf->dynBuf
+                             + ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be deleted' Dynamic Buffer byte position */
     char *positionToWriteIn = dynBuf->dynBuf
@@ -865,7 +935,7 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
     char *tmpBuf = NULL;
     if ((tmpBuf = calloc(lengthToBackup, sizeof(char))) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -874,7 +944,7 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
      */
     if (memcpy(tmpBuf, positionToBackup, lengthToBackup) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
@@ -883,14 +953,15 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
      */
     if (memcpy(positionToWriteIn, tmpBuf, lengthToBackup) == NULL)
     {
-        errAdd(miscERR_ALLOC_MEM);
+        errAdd(miscERR_DYN_BUF_MEM_FAILURE, functionName);
         return FAILURE;
     }
 
     /* Update the Dynamic Buffer stored length value using the deleted bytes
      * number
      */
-    dynBuf->storedBytes -= to - (from - miscDYN_BUF_BEGINNING_POSITION);
+    dynBuf->storedBytes -= ((to - miscDYN_BUF_BEGINNING_POSITION)
+                             - (from - miscDYN_BUF_BEGINNING_POSITION)) + 1;
 
     return SUCCESS;
 }
