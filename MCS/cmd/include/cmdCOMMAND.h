@@ -3,13 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: cmdCOMMAND.h,v 1.2 2004-12-06 10:08:20 scetre Exp $"
+* "@(#) $Id: cmdCOMMAND.h,v 1.3 2004-12-09 17:51:07 gzins Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
 * mella     15-Nov-2004  Created
 * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed
-*
+* gzins     09-Dec-2004  Added pure virtual Parse() method
+*                        Added cdfFilename argument to previous Parse() method
 *
 *******************************************************************************/
 
@@ -51,7 +52,7 @@ public:
     /** typedef for map of cmdPARAM */
     typedef map<string, cmdPARAM *> STRING2PARAM;
 
-    virtual mcsCOMPL_STAT Parse();
+    virtual mcsCOMPL_STAT Parse()=0;
      
     virtual string GetHelp();
     
@@ -71,7 +72,7 @@ public:
     virtual mcsCOMPL_STAT GetDefaultParamValue(string paramName, mcsLOGICAL *param);
 
 protected:
-
+    virtual mcsCOMPL_STAT Parse(string cdfFilename);
     
 private:
     // Declaration of copy constructor and assignment operator as private
