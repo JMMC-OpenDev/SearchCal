@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.3 2005-02-24 17:01:35 scetre Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.4 2005-03-04 11:08:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/24 17:01:35  scetre
+ * Set _loaded flag to true when catalog has been loaded
+ *
  * Revision 1.2  2005/02/13 15:58:08  gzins
  * Updated Load() method to use new vobsCDATA class methods
  *
@@ -19,7 +22,7 @@
  *  Definition of vobsLOCAL_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.3 2005-02-24 17:01:35 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.4 2005-03-04 11:08:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -149,8 +152,8 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Search(vobsREQUEST &request,
     diffDec = request.GetDeltaDec();
     
     // Convert minutes (arcmin) to decimal degrees
-    diffRa = diffRa / 60;
-    diffDec = diffDec / 60;
+    diffRa = diffRa / 60.0 / 2.0;
+    diffDec = diffDec / 60.0 / 2.0;
 
     // Create reference object constraint list
     vobsSTAR_COMP_CRITERIA_LIST constraintlist;
