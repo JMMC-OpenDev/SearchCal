@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.4 2004-07-20 13:13:15 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.C,v 1.4 2004-07-20 13:13:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -297,15 +297,11 @@ void vobsVIRTUAL_OBSERVATORY::UpdateCalibStar(vobsCALIBRATOR_STAR &calibStar1, v
     if ((strcmp(calibStar2.GetrotVel(),"99.99")!=0)&&((calibStar1.GetrotVel()==NULL)||(strcmp(calibStar1.GetrotVel(),"99.99")==0)))
     {
         calibStar1.SetrotVel(calibStar2.GetrotVel());
-                //printf("toto\n");
     }
     if ((strcmp(calibStar2.Gete_B_V(),"99.99")!=0)&&((calibStar1.Gete_B_V()==NULL)||(strcmp(calibStar1.Gete_B_V(),"99.99")==0)))
     {
         calibStar1.Sete_B_V(calibStar2.Gete_B_V());
     }
-
-
-
 }
 
 /**
@@ -346,7 +342,7 @@ void vobsVIRTUAL_OBSERVATORY::Merge(std::list<vobsCALIBRATOR_STAR>list2)
     logTest("taille de la list2 apres merge : %d\n",list2.size());
 }
 /**
- * Read a calibrator Star List end update and remove element
+ * Read a calibrator Star List and update and remove element
  */
 std::list<vobsCALIBRATOR_STAR> vobsVIRTUAL_OBSERVATORY::FillAndErase( std::list<vobsCALIBRATOR_STAR>SList)
 {
@@ -672,7 +668,12 @@ vobsCALIBRATOR_STAR_LIST vobsVIRTUAL_OBSERVATORY::Research(vobsREQUEST request)
     // at the end, we return the list
     return StarList;
 }
-
+/**
+ * Return a list of calibrator after a call to the cds according to the
+ * parameters of the users which are use in the request. The use of this
+ * function is for the research of only one star.
+ * \return calibrator star list
+ */
 vobsCALIBRATOR_STAR_LIST vobsVIRTUAL_OBSERVATORY::ResearchOne(vobsREQUEST request)
 {
     logExtDbg("vobsVIRTUAL_OBSERVATORY::ResearchOne()\n");

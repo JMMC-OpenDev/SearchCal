@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -186,6 +186,7 @@ char *vobsCATALOG::PrepareFirst(vobsREQUEST request)
 
 /**
  * Prepare a request
+ * \return char *request
  */
 char *vobsCATALOG::Prepare(vobsREQUEST request, char *listForKV)
 {
@@ -444,6 +445,7 @@ char *vobsCATALOG::Prepare(vobsREQUEST request, char *listForKV)
 
 /**
  * Search begin the research of information in the CDS
+ * \return STL list of vobsCALIBRATOR_STAR
  */
 std::list<vobsCALIBRATOR_STAR> vobsCATALOG::Search(vobsREQUEST request, char *catName, int kindOfReq, char *listForKV)
 {
@@ -487,6 +489,10 @@ std::list<vobsCALIBRATOR_STAR> vobsCATALOG::Search(vobsREQUEST request, char *ca
     //vobsCALIBRATOR_STAR_LIST L;
 	return listOfStar;
 }
+/**
+ * SearchOne begin the research of information in the CDS for only one star
+ * \return STL list of vobsCALIBRATOR_STAR
+ */
 std::list<vobsCALIBRATOR_STAR> vobsCATALOG::SearchOne(vobsREQUEST request, int requestNumber, char *listOne)
 {
     char requete[10000];

@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"
+* "@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.4 2004-07-20 13:13:15 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.3 2004-07-20 07:21:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCALIBRATOR_STAR.C,v 1.4 2004-07-20 13:13:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,439 +88,559 @@ vobsCALIBRATOR_STAR::vobsCALIBRATOR_STAR()
 // Class destructor 
 vobsCALIBRATOR_STAR::~vobsCALIBRATOR_STAR()
 {
-    /*
-     delete[] hip;        // hip number 
-     delete[] hd;         // hd number 
-     delete[] raj2000;    // right ascension J2000 
-     delete[] dej2000;    // declinaison J2000 
-     delete[] pmDE;       // proper motion in declinaison
-     delete[] pmRA;       // proper motion in right ascension
-     delete[] plx;        // trigonometric parallax
-     delete[] spType;     // spectral type and luminosity class if avaible
-     delete[] vFlag;      // variability flag
-     delete[] mFlag;      // multiplicity flag
-     delete[] gLat;       // galactic latitude
-     delete[] gLon;       // galatic longitude
-     delete[] radVel;     // heliocentric radial velocity
-     delete[] ld;         // limb darkened disc diameter
-     delete[] e_LD;       // error limb dark...
-     delete[] ud;         // uniform disc diameter
-     delete[] e_UD;       // error uniform disc ...
-     delete[] meth;       // method of measurement
-     delete[] lambda;     // wavelength
-     delete[] uddk;       // uniform disc diameter in K band
-     delete[] e_uddk;     // error uddk
-     delete[] U; // PHOT_JHN_U
-     delete[] B; // PHOT_JHN_B
-     delete[] V; // PHOT_JHN_V
-     delete[] R; // PHOT_JHN_R
-     delete[] I; // PHOT_JHN_I
-     delete[] J; // PHOT_JHN_J
-     delete[] H; // PHOT_JHN_H
-     delete[] K; // PHOT_JHN_K
-     delete[] L; // PHOT_JHN_L
-     delete[] M; // PHOT_JHN_M
-     delete[] N; // PHOT_JHN_N
-     delete[] rotVel;     // rotation velocity v sini
-     delete[] e_B_V;      // colour excess E(B-V)i
-
-*/
-
+    
 }
 
-//Methods to Set parameters
-
+/**
+ * Methods to Set hip
+ */
 void vobsCALIBRATOR_STAR::Sethip(char *x)
 {
     hip=new char[strlen(x)+1];
     strcpy(hip,x);
 }
-
+/**
+ * Methods to Set hd
+ */
 void vobsCALIBRATOR_STAR::Sethd(char *x)
 {
     hd=new char[strlen(x)+1];
     strcpy(hd,x);
 }
-
+/**
+ * Methods to Set raj2000
+ */
 void vobsCALIBRATOR_STAR::Setraj2000(char *x)
 {
     raj2000=new char[strlen(x)+1];
     strcpy(raj2000,x);
 }
-
+/**
+ * Methods to Set dej200
+ */
 void vobsCALIBRATOR_STAR::Setdej2000(char *x)
 {
     dej2000=new char[strlen(x)+1];
     strcpy(dej2000,x);
 }
-
+/**
+ * Methods to Set pmDE
+ */
 void vobsCALIBRATOR_STAR::SetpmDE(char *x)
 {
     pmDE=new char[strlen(x)+1];
     strcpy(pmDE,x);
 }
-
+/**
+ * Methods to Set pmRA
+ */
 void vobsCALIBRATOR_STAR::SetpmRA(char *x)
 {
     pmRA=new char[strlen(x)+1];
     strcpy(pmRA,x);
 }
-
+/**
+ * Methods to Set plx
+ */
 void vobsCALIBRATOR_STAR::Setplx(char *x)
 {
     plx=new char[strlen(x)+1];
     strcpy( plx,x);
 }
-
+/**
+ * Methods to Set SpType
+ */
 void vobsCALIBRATOR_STAR::SetSpType(char *x)
 {
     spType=new char[strlen(x)+1];
     strcpy(spType,x);
 }
-
+/**
+ * Methods to Set vFlag
+ */
 void vobsCALIBRATOR_STAR::SetvFlag(char *x)
 {
     vFlag=new char[strlen(x)+1];
     strcpy(vFlag,x);
 }
-
+/**
+ * Methods to Set mFlag
+ */
 void vobsCALIBRATOR_STAR::SetmFlag(char *x)
 {
     mFlag=new char[strlen(x)+1];
     strcpy(mFlag,x);
 }
-
+/**
+ * Methods to Set gLat
+ */
 void vobsCALIBRATOR_STAR::SetgLat(char *x)
 {
     gLat=new char[strlen(x)+1];
     strcpy(gLat,x);
 }
-
+/**
+ * Methods to Set gLon
+ */
 void vobsCALIBRATOR_STAR::SetgLon(char *x)
 {
     gLon=new char[strlen(x)+1];
     strcpy(gLon,x);
 }
-
+/**
+ * Methods to Set radVe
+ */
 void vobsCALIBRATOR_STAR::SetradVel(char *x)
 {
     radVel=new char[strlen(x)+1];
     strcpy(radVel,x);
 }
-
+/**
+ * Methods to Set ld
+ */
 void vobsCALIBRATOR_STAR::Setld(char *x)
 {
     ld=new char[strlen(x)+1];
     strcpy(ld,x);
 }
-
+/**
+ * Methods to Set e_ld
+ */
 void vobsCALIBRATOR_STAR::Sete_ld(char *x)
 {
     e_LD=new char[strlen(x)+1];
     strcpy(e_LD,x);
 }
-
+/**
+ * Methods to Set ud
+ */
 void vobsCALIBRATOR_STAR::Setud(char *x)
 {
     ud=new char[strlen(x)+1];
     strcpy(ud,x);
 }
-
+/**
+ * Methods to Set e_ud
+ */
 void vobsCALIBRATOR_STAR::Sete_ud(char *x)
 {
     e_UD=new char[strlen(x)+1];
     strcpy( e_UD,x);
 }
-
+/**
+ * Methods to Set meth
+ */
 void vobsCALIBRATOR_STAR::Setmeth(char *x)
 {
     meth=new char[strlen(x)+1];
     strcpy(meth,x);
 }
-
+/**
+ * Methods to Set lambda
+ */
 void vobsCALIBRATOR_STAR::Setlambda(char *x)
 {
     lambda=new char[strlen(x)+1];
     strcpy(lambda,x);
 }
-
+/**
+ * Methods to Set uddk
+ */
 void vobsCALIBRATOR_STAR::Setuddk(char *x)
 {
     uddk=new char[strlen(x)+1];
     strcpy(uddk,x);
 }
-
+/**
+ * Methods to Set e_uddk
+ */
 void vobsCALIBRATOR_STAR::Sete_uddk(char *x)
 {
     e_uddk=new char[strlen(x)+1];
     strcpy(e_uddk,x);
 }
-
+/**
+ * Methods to Set U
+ */
 void vobsCALIBRATOR_STAR::SetU(char *x)
 {
     U=new char[strlen(x)+1];
     strcpy(U,x);
 }
-
+/**
+ * Methods to Set B
+ */
 void vobsCALIBRATOR_STAR::SetB(char *x)
 {
     B=new char[strlen(x)+1];
      strcpy(B,x);
-
-
 }
-
+/**
+ * Methods to Set V
+ */
 void vobsCALIBRATOR_STAR::SetV(char *x)
 {
     V=new char[strlen(x)+1];
      strcpy(V,x);
 
 }
-
+/**
+ * Methods to Set R
+ */
 void vobsCALIBRATOR_STAR::SetR(char *x)
 {
     R=new char[strlen(x)+1];
      strcpy(R,x);
-
 }
-
+/**
+ * Methods to Set I
+ */
 void vobsCALIBRATOR_STAR::SetI(char *x)
 {
     I=new char[strlen(x)+1];
      strcpy(I,x);
-
 }
-
+/**
+ * Methods to Set J
+ */
 void vobsCALIBRATOR_STAR::SetJ(char *x)
 {
     J=new char[strlen(x)+1];
      strcpy(J,x);
-
 }
-
+/**
+ * Methods to Set H
+ */
 void vobsCALIBRATOR_STAR::SetH(char *x)
 {
     H=new char[strlen(x)+1];
      strcpy(H,x);
-
 }
-
+/**
+ * Methods to Set K
+ */
 void vobsCALIBRATOR_STAR::SetK(char *x)
 {
     K=new char[strlen(x)+1];
      strcpy(K,x);
-
 }
-
+/**
+ * Methods to Set L
+ */
 void vobsCALIBRATOR_STAR::SetL(char *x)
 {
     L=new char[strlen(x)+1];
      strcpy(L,x);
-
 }
-
+/**
+ * Methods to Set M
+ */
 void vobsCALIBRATOR_STAR::SetM(char *x)
 {
     M=new char[strlen(x)+1];
      strcpy(M,x);
-
 }
-
+/**
+ * Methods to Set N
+ */
 void vobsCALIBRATOR_STAR::SetN(char *x)
 {
     N=new char[strlen(x)+1];
     strcpy( N,x);
-
 }
-
+/**
+ * Methods to Set rotVe
+ */
 void vobsCALIBRATOR_STAR::SetrotVel(char *x)
 {
     rotVel=new char[strlen(x)+1];
      strcpy(rotVel,x);
-
 }
-
+/**
+ * Methods to Set e_B_V
+ */
 void vobsCALIBRATOR_STAR::Sete_B_V(char *x)
 {
     e_B_V=new char[strlen(x)+1];
      strcpy(e_B_V,x);
-
 }
 /*************************************************************/
+/**
+ * function to get hip 
+ * \return hip
+ */
 char * vobsCALIBRATOR_STAR::Gethip()
 {
     return hip;
 }
-
+/**
+ * function to get hd
+ * \return hd
+ */
 char * vobsCALIBRATOR_STAR::Gethd()
 {   
     return hd;   
 }
-
+/**
+ * function to get raj2000
+ * \return raj2000
+ */
 char * vobsCALIBRATOR_STAR::Getraj2000()
 {
     return raj2000;   
 }
-
+/**
+ * function to get dej2000
+ * \return dej2000
+ */
 char * vobsCALIBRATOR_STAR::Getdej2000()
 {
     return dej2000;   
 }
-
+/**
+ * function to get pmDE
+ * \return pmDE
+ */
 char * vobsCALIBRATOR_STAR::GetpmDE()
 {
     return pmDE;   
 }
-
+/**
+ * function to get pmRA
+ * \return pmRA
+ */
 char * vobsCALIBRATOR_STAR::GetpmRA()
 {
     return pmRA;   
 }
-
+/**
+ * function to get plx 
+ * \return plx
+ */
 char * vobsCALIBRATOR_STAR::Getplx()
 {
     return plx;   
 }
-
+/**
+ * function to get spType
+ * \return spType
+ */
 char * vobsCALIBRATOR_STAR::GetSpType()
 {
     return spType;   
 }
-
+/**
+ * function to get vFlag 
+ * \return vFlag
+ */
 char * vobsCALIBRATOR_STAR::GetvFlag()
 {
     return vFlag;   
 }
-
+/**
+ * function to get mFlag 
+ * \return mFlag
+ */
 char * vobsCALIBRATOR_STAR::GetmFlag()
 {
     return mFlag;   
 }
-
+/**
+ * function to get gLat 
+ * \return gLat
+ */
 char * vobsCALIBRATOR_STAR::GetgLat()
 {
     return gLat;   
 }
-
+/**
+ * function to get gLon
+ * \return gLon
+ */
 char * vobsCALIBRATOR_STAR::GetgLon()
 {
     return gLon;   
 }
-
+/**
+ * function to get radVel
+ * \return radVel
+ */
 char * vobsCALIBRATOR_STAR::GetradVel()
 {
     return radVel;   
 }
-
+/**
+ * function to get ld
+ * \return ld
+ */
 char * vobsCALIBRATOR_STAR::Getld()
 {
     return ld;   
 }
-
+/**
+ * function to get e_LD
+ * \return e_LD
+ */
 char * vobsCALIBRATOR_STAR::Gete_ld()
 {
     return e_LD;   
 }
-
+/**
+ * function to get ud
+ * \return ud
+ */
 char * vobsCALIBRATOR_STAR::Getud()
 {
     return ud;   
 }
-
-
+/**
+ * function to get e_UD 
+ * \return e_UD
+ */
 char * vobsCALIBRATOR_STAR::Gete_ud()
 {   
     return e_UD;   
 }
-
+/**
+ * function to get meth
+ * \return meth
+ */
 char * vobsCALIBRATOR_STAR::Getmeth()
 {
     return meth;   
 }
-
+/**
+ * function to get lambda
+ * \return lambda
+ */
 char * vobsCALIBRATOR_STAR::Getlambda()
 {
     return lambda;   
 }
-
+/**
+ * function to get uddk
+ * \return uddk
+ */
 char * vobsCALIBRATOR_STAR::Getuddk()
 {
     return uddk;   
 }
-
+/**
+ * function to get e_uddk
+ * \return e_uddk
+ */
 char * vobsCALIBRATOR_STAR::Gete_uddk()
 {
     return e_uddk;   
 }
-
+/**
+ * function to get U 
+ * \return U value
+ */
 char * vobsCALIBRATOR_STAR::GetU()
 {
     return U;   
 }
-
+/**
+ * function to get  B
+ * \return B value
+ */
 char * vobsCALIBRATOR_STAR::GetB()
 {
     return B;   
 }
-
+/**
+ * function to get V 
+ * \return V value
+ */
 char * vobsCALIBRATOR_STAR::GetV()
 {
     return V;   
 }
-
+/**
+ * function to get R
+ * \return R value
+ */
 char * vobsCALIBRATOR_STAR::GetR()
 {
     return R;   
 }
-
+/**
+ * function to get I 
+ * \return I value
+ */
 char * vobsCALIBRATOR_STAR::GetI()
 {
     return I;   
 }
-
+/**
+ * function to get J 
+ * \return J value
+ */
 char * vobsCALIBRATOR_STAR::GetJ()
 { 
     return J;   
 }
-
+/**
+ * function to get H 
+ * \return H value
+ */
 char * vobsCALIBRATOR_STAR::GetH()
 {
     return H;   
 }
-
+/**
+ * function to get K
+ * \return K value
+ */
 char * vobsCALIBRATOR_STAR::GetK()
 {
     return K;   
-
 }
-
+/**
+ * function to get L 
+ * \return L value
+ */
 char * vobsCALIBRATOR_STAR::GetL()
 {
     return L;    
 }
-
+/**
+ * function to get M 
+ * \return M value
+ */
 char * vobsCALIBRATOR_STAR::GetM()
 {
     return M;   
 }
-
+/**
+ * function to get N 
+ * \return N value
+ */
 char * vobsCALIBRATOR_STAR::GetN()
 {
     return N;   
 }
-
+/**
+ * function to get rotVel
+ * \return rotVel value
+ */
 char * vobsCALIBRATOR_STAR::GetrotVel()
 {
     return rotVel;   
 }
-
+/**
+ * function to get e_B_V
+ * \return e_B_V value
+ */
 char * vobsCALIBRATOR_STAR::Gete_B_V()
 {
     return e_B_V;   
 }
 
-/*************************************************************/
-// Method to add one parameters in the list
+/**
+ * Method to add one parameters in the list
+ */
 void vobsCALIBRATOR_STAR::AddElement(char *ucd, char *value)
 {
     if (strcmp(ucd,"DATA_LINK")==0)
@@ -585,7 +705,9 @@ void vobsCALIBRATOR_STAR::AddElement(char *ucd, char *value)
         Sete_B_V(value);
 }
 
-
+/**
+ * Method to view the content of a Calibrator Star
+ */
 void vobsCALIBRATOR_STAR::View()
 {
     cout << "-----------------------------------------" << endl;

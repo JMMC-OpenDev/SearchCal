@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,63 +61,81 @@ vobsREQUEST::vobsREQUEST()
 vobsREQUEST::~vobsREQUEST()
 {
 }
-
+/**
+ * Method to Set StarName
+ */
 void vobsREQUEST::SetStarName(char *x)
 {
   logExtDbg("vobsREQUEST::SetStarName()\n");
   starName=new char[strlen(x)+1];
   strcpy(starName,x);
 }
-
+/**
+ * Method to Set WaveLength
+ */
 void vobsREQUEST::SetWaveLength(char *x)
 {
   logExtDbg("vobsREQUEST::SetWaveLength()\n");
   wavelength=new char[strlen(x)+1];
   strcpy(wavelength,x);
 }
-
+/**
+ * Method to Set SoMagnitude
+ */
 void vobsREQUEST::SetSoMagnitude(char *x)
 {
   logExtDbg("vobsREQUEST::SetSoMagnitude()\n");
   soMagnitude=new char[strlen(x+1)];
   strcpy(soMagnitude,x);
 }
-
+/**
+ * Method to Set MagnitudeRang
+ */
 void vobsREQUEST::SetMagnitudeRange(char *x)
 {
   logExtDbg("vobsREQUEST::SetMagnitudeRange()\n");
   magnitudeRange=new char[strlen(x)+1];
   strcpy(magnitudeRange,x);
 }
-
+/**
+ * Method to Set SearchRA
+ */
 void vobsREQUEST::SetSearchRA(char *x)
 {
   logExtDbg("vobsREQUEST::SetSearchRA()\n");
   searchRA=new char[strlen(x)+1];
   strcpy(searchRA,x);
 }
-
+/**
+ * Method to Set SearchDEC
+ */
 void vobsREQUEST::SetSearchDEC(char *x)
 {
   logExtDbg("vobsREQUEST::SetSearchDEC()\n");
   searchDEC=new char[strlen(x)+1];
   strcpy(searchDEC,x);
 }
-
+/**
+ * Method to Set Visibility
+ */
 void vobsREQUEST::SetVisibility(char *x)
 {
   logExtDbg("vobsREQUEST::SetVisibility()\n");
   visibility=new char[strlen(x)+1];
   strcpy(visibility,x);
 }
-
+/**
+ * Method to Set ReqAbsErr
+ */
 void vobsREQUEST::SetReqAbsErr(char *f)
 {
   logExtDbg("vobsREQUEST::SetReqAbsErr()\n");
   reqAbsErr=new char[strlen(f)+1];
   strcpy(reqAbsErr,f);
 }
-
+/**
+ * Method to Set Band
+ */
 void vobsREQUEST::SetBand(char *c)
 {
   logExtDbg("vobsREQUEST::SetBand()\n");
@@ -125,13 +143,20 @@ void vobsREQUEST::SetBand(char *c)
   strcpy(band,c);
 }
 /************************************************************/
-
+/**
+ * function to Get starName
+ * \return char *starName
+ */
 char *vobsREQUEST::GetStarName()
 {
   logExtDbg("vobsREQUEST::GetStarName()\n");
 
   return starName;
 }
+/**
+ * function to Get wavelength
+ * \return char *wavelength
+ */
 
 char *vobsREQUEST::GetWaveLength()
 {
@@ -139,48 +164,86 @@ char *vobsREQUEST::GetWaveLength()
 
   return wavelength;
 }
+/**
+ * function to Get soMagnitude
+ * \return char *soMagnitude
+ */
+
 char *vobsREQUEST::GetSoMagnitude()
 {
   logExtDbg("vobsREQUEST::GetSoMagnitude()\n");
 
   return soMagnitude;
 }
+/**
+ * function to Get magnitudeRange
+ * \return char *magnitudeRange
+ */
+
 char *vobsREQUEST::GetMagnitudeRange()
 {
   logExtDbg("vobsREQUEST::GetGetMagnitudeRange()\n");
 
   return magnitudeRange;
 }
+/**
+ * function to Get searchRA
+ * \return char *searchRA
+ */
+
 char *vobsREQUEST::GetSearchRA()
 {
   logExtDbg("vobsREQUEST::GetSearchRA()\n");
 
   return searchRA;
 }
+/**
+ * function to Get searchDEC
+ * \return char *searchDEC
+ */
+
 char *vobsREQUEST::GetSearchDEC()
 {
   logExtDbg("vobsREQUEST::GetSearchDEC()\n");
 
   return searchDEC;
 }
+/**
+ * function to Get visibility
+ * \return char *visibility
+ */
+
 char *vobsREQUEST::GetVisibility()
 {
   logExtDbg("vobsREQUEST::GetVisibility()\n");
 
   return visibility;
 }
+/**
+ * function to Get reqAbsErr
+ * \return char *reqAbsErr
+ */
+
 char *vobsREQUEST::GetReqAbsErr()
 {
   logExtDbg("vobsREQUEST::GetReqAbsErr()\n");
 
   return reqAbsErr;
 }
+/**
+ * function to Get band
+ * \return char *band
+ */
+
 char *vobsREQUEST::GetBand()
 {
   logExtDbg("vobsREQUEST::GetBand()\n");
 
   return band;
 }
+/**
+ * Function which tell if the request is build or not : 1 if succes, else 0
+ */
 int vobsREQUEST::Build()
 {
     return build;

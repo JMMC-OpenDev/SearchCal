@@ -9,3 +9,4 @@
 #define vobsERR_BAD_PARAMETERS 1
 #define vobsERR_ACTION 2
 #define vobsERR_MEMORY 3
+#define vobsERR_ACTION_GDOME 4

@@ -14,5 +14,10 @@
       <errName>MEMORY</errName>
       <errSeverity>SEVERE</errSeverity>
       <errFormat>bad memory allocation %s</errFormat>
+  </error>
+  <error id="4">
+      <errName>ACTION_GDOME</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat>libGdome failed : %s</errFormat>
    </error>
 </errorList>

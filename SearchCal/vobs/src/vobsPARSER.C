@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"
+* "@(#) $Id: vobsPARSER.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"
 *
 * who       when         what
 * --------  -----------  -------------------------------------------------------
@@ -10,7 +10,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.2 2004-07-20 07:21:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.C,v 1.3 2004-07-20 13:13:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -71,7 +71,7 @@ int vobsPARSER::MainParser(char *request)
     doc = gdome_di_createDocFromURI(domimpl, request, GDOME_LOAD_PARSING, &exc);
     if (doc == NULL) {
         fprintf (stderr, "DOMImplementation.createDocFromURI: failed\n\tException #%d\n", exc);
-        errAdd(vobsERR_ACTION,"DOMImplementation.createDocFromURI: failed");
+        errAdd(vobsERR_ACTION_GDOME,"DOMImplementation.createDocFromURI: failed");
         return 1;
     }
 
@@ -79,6 +79,7 @@ int vobsPARSER::MainParser(char *request)
     root = gdome_doc_documentElement (doc, &exc);
     if (root == NULL) {
         fprintf (stderr, "Document.documentElement: NULL\n\tException #%d\n", exc);
+        errAdd(vobsERR_ACTION_GDOME,"Document.documentElement: NULL");
         return 1;
     }
 
@@ -86,6 +87,7 @@ int vobsPARSER::MainParser(char *request)
     childs = gdome_el_childNodes (root, &exc);
     if (childs == NULL) {
         fprintf (stderr, "Element.childNodes: NULL\n\tException #%d\n", exc);
+        errAdd(vobsERR_ACTION_GDOME,"Element.childNodes: NULL");
         return 1;
     }
 
@@ -155,6 +157,7 @@ int vobsPARSER::XMLParser(GdomeNodeList *childs, GdomeDocument *doc)
         el = gdome_nl_item (childs, i, &exc);
         if (el == NULL) {
             fprintf (stderr, "NodeList.item(%d): NULL\n\tException #%d\n", (int)i, exc);
+            errAdd(vobsERR_ACTION_GDOME,"NodeList.item : NULL");
             return 1;
         }
         // I make a test to know if i am in the CDATASection
@@ -162,6 +165,11 @@ int vobsPARSER::XMLParser(GdomeNodeList *childs, GdomeDocument *doc)
         {
             /* I get CDATA */
             CDATA=gdome_cds_data(GDOME_CDS(el),&exc)->str;
+            if (CDATA==NULL)
+            {
+                errAdd(vobsERR_ACTION_GDOME,"Cdata Section : NULL");
+                return 1;
+            }
             return 1;
         }
         // if I'm not in CDATAsection i try to get information
@@ -172,6 +180,7 @@ int vobsPARSER::XMLParser(GdomeNodeList *childs, GdomeDocument *doc)
             if (exc)
             {
                 fprintf (stderr, "Element.setAttribute: failed\n\tException #%d\n", exc);
+                errAdd(vobsERR_ACTION_GDOME,"Element.setAttribute: failed");
                 return 1;
             }
             else
@@ -181,6 +190,7 @@ int vobsPARSER::XMLParser(GdomeNodeList *childs, GdomeDocument *doc)
                 if (exc) 
                 {
                     fprintf (stderr, "gdome_el_attributes: failed\n\tException #%d\n", exc);
+                    errAdd(vobsERR_ACTION_GDOME,"gdome_el_attributes: failed");
                     return 1;
                 }
                 else
@@ -191,6 +201,7 @@ int vobsPARSER::XMLParser(GdomeNodeList *childs, GdomeDocument *doc)
                         if (exc) 
                         {
                             fprintf (stderr, "gdome_nnm_item: failed\n\tException #%d\n", exc);
+                            errAdd(vobsERR_ACTION_GDOME,"gdome_nnm_item: failed");
                             return 1;
                         }
                         else
@@ -215,6 +226,7 @@ int vobsPARSER::XMLParser(GdomeNodeList *childs, GdomeDocument *doc)
                 if (childs2 == NULL) 
                 {
                     fprintf (stderr, "Element.childNodes: NULL\n\tException #%d\n", exc);
+                    errAdd(vobsERR_ACTION_GDOME,"Element.childNodes: NULL");
                     return 1;
                 }
                 XMLParser(childs2,doc);
@@ -287,7 +299,10 @@ int vobsPARSER::CDATAParser()
     }
 }
 
-// Method to return a list
+/**
+ * Method to return the list of star build in vobsPARSER
+ * \return STL list of vobsCALIBRATOR_STAR
+ */
 std::list<vobsCALIBRATOR_STAR> vobsPARSER::GetList()
 {
     return listOfStar;
