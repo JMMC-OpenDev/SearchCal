@@ -1,7 +1,7 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.12 2005-02-03 15:52:56 gzins Exp $"
+* "@(#) $Id: sclsvrGetStarCB.cpp,v 1.13 2005-02-04 07:39:28 gzins Exp $"
 *
 * History
 * -------
@@ -15,7 +15,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.12 2005-02-03 15:52:56 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.13 2005-02-04 07:39:28 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -111,7 +111,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    if (request.SetConstraint(OBSERVED_BAND_ID, "V") == mcsFAILURE)
+    if (request.SetConstraint(OBSERVED_BAND_ID, "K") == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -142,41 +142,33 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     // If the star has been found in catalog
     if (starList.Size() != 0)
     {
-        // Build the list of calibrator
-        sclsvrCALIBRATOR_LIST calibratorList;
+        // Get first star of the list 
+        sclsvrCALIBRATOR calibrator(*starList.GetNextStar(mcsTRUE));
 
-        // Get the resulting star list and create a calibrator list
-        if (calibratorList.Copy(starList) == mcsFAILURE)
+        // Complete missing properties of the calibrator 
+        if (calibrator.Complete(request) == mcsFAILURE)
         {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
-        }
-        // Complete the calibrators list
-        if (calibratorList.Complete(request) == mcsFAILURE)
-        {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
+            // Ignore error
+            errCloseStack(); 
         }
 
-        // Get first element of the list, which is the given star
-        sclsvrCALIBRATOR *calibrator;
-        calibrator = (sclsvrCALIBRATOR*)calibratorList.GetNextStar(mcsTRUE);
-        
         // Prepare reply
         miscDYN_BUF reply;
         miscDynBufInit(&reply);
         int propIdx;
         vobsSTAR_PROPERTY *property;
         // Add property name
-        for (propIdx = 0; propIdx < calibrator->NbProperties(); propIdx++)
+        for (propIdx = 0; propIdx < calibrator.NbProperties(); propIdx++)
         {
-            property = calibrator->GetNextProperty((mcsLOGICAL)(propIdx==0));
+            property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
             miscDynBufAppendString(&reply, property->GetName());
             miscDynBufAppendString(&reply, "\t");
         }
         miscDynBufAppendString(&reply, "\n");
         // Add property value
-        for (propIdx = 0; propIdx < calibrator->NbProperties(); propIdx++)
+        for (propIdx = 0; propIdx < calibrator.NbProperties(); propIdx++)
         {
-            property = calibrator->GetNextProperty((mcsLOGICAL)(propIdx==0));
+            property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
             miscDynBufAppendString(&reply, property->GetValue());
             miscDynBufAppendString(&reply, "\t");
         }
