@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2004-09-10 16:48:13 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.6 2004-12-03 18:15:22 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
@@ -9,6 +9,7 @@
 # --------  -----------  -------------------------------------------------------
 # sccmgr    25-Jun-2004  Created
 # gzins     26-Aug-2004  Adapted from VLT
+# gzins     03-Dec-2004  Added mkfMakeInstallCmdDefFiles script
 #
 #
 #*******************************************************************************
@@ -74,6 +75,7 @@ SCRIPTS         = mkfBuildDocIndex \
                   mkfMakeJavaDependencies \
                   mkfMakeJarDependencies \
                   mkfMakeLibraryDependencies \
+                  mkfMakeInstallCmdDefFiles \
                   mkfMakeInstallDocFiles \
                   mkfMakeInstallErrorFiles \
                   mkfMakeInstallFiles \
