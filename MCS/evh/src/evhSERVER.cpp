@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.10 2005-02-15 13:39:03 gzins Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.11 2005-03-04 15:12:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/15 13:39:03  gzins
+ * Changed remaiming SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.9  2005/02/10 08:13:38  gzins
  * Removed logging message disabling
  *
@@ -40,7 +43,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.10 2005-02-15 13:39:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.11 2005-03-04 15:12:31 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -65,6 +68,7 @@ using namespace std;
 #include "evhDEBUG_CMD.h"
 #include "evhHELP_CMD.h"
 #include "evhSTATE_CMD.h"
+#include "evhEXIT_CMD.h"
 #include "evhErrors.h"
 #include "evhPrivate.h"
 
@@ -227,6 +231,12 @@ mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
     key.SetCommand(evhSTATE_CMD_NAME);
     key.SetCdf(evhSTATE_CDF_NAME);
     cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::StateCB);
+    AddCallback(key, cb);
+    
+    // Add callback to EXIT command
+    key.SetCommand(evhEXIT_CMD_NAME);
+    key.SetCdf(evhEXIT_CDF_NAME);
+    cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::ExitCB);
     AddCallback(key, cb);
     
     // If no command has been given in command-line arguments

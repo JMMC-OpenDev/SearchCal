@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.h,v 1.9 2005-01-29 20:14:52 gzins Exp $"
+ * "@(#) $Id: evhSERVER.h,v 1.10 2005-03-04 15:12:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/01/29 20:14:52  gzins
+ * Added unique parameter to Connect() method
+ *
  * Revision 1.8  2005/01/29 15:15:23  gzins
  * Attached callback for DEBUG command.
  *
@@ -76,6 +79,7 @@ public:
     virtual evhCB_COMPL_STAT HelpCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT StateCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT VersionCB(msgMESSAGE &msg, void*);
+    virtual evhCB_COMPL_STAT ExitCB(msgMESSAGE &msg, void*);
 
     // Connection to MCS message manager
     virtual mcsCOMPL_STAT Connect();

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2005-01-29 15:17:02 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.8 2005-03-04 15:12:31 lafrasse Exp $"
 #
 # Makefile of evh library
 #
 # History 
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/01/29 15:17:02  gzins
+# Added CVS log as modification history
+#
 # Revision 1.6  2005/01/26 18:25:00  gzins
 # Added files related to state/sub-state handling
 #
@@ -79,7 +82,7 @@ LIBRARIES       = evh
 LIBRARIES_L     =
 
 #
-# <brief description of lllll library>
+# <brief description of evh library>
 evh_OBJECTS   = evhHANDLER           \
 				evhCALLBACK          \
 				evhCMD_CALLBACK      \
@@ -92,14 +95,16 @@ evh_OBJECTS   = evhHANDLER           \
 				evhINTERFACE         \
 				evhSERVER            \
 				evhIOSTREAM_KEY      \
-				evhHELP_CMD          \
 				evhSTATE_CMD         \
-				evhVERSION_CMD       \
 				evhDEBUG_CMD         \
+				evhHELP_CMD          \
+				evhVERSION_CMD       \
+				evhEXIT_CMD          \
 				evhStateCB           \
 				evhDebugCB           \
 				evhHelpCB            \
-				evhVersionCB
+				evhVersionCB         \
+				evhExitCB
 #
 # Scripts (public and local)
 # --------------------------
@@ -159,7 +164,8 @@ jjjjjj_CLASS    =
 CDF_FILES       = evhDEBUG    \
 				  evhHELP     \
 				  evhSTATE    \
-				  evhVERSION
+				  evhVERSION  \
+				  evhEXIT
 
 #
 # man pages to be done
