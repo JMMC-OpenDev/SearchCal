@@ -1,7 +1,7 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-main.template,v 1.6 2004-08-09 16:08:17 gluck Exp $"
+#%# "@(#) $Id: c-main.template,v 1.7 2004-08-23 09:55:31 mella Exp $"
 #%# 
 #%# Template for C main file          
 #%# 
@@ -129,9 +129,9 @@ int main (int argc, char *argv[])
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == FAILURE)
     {
-        // Error handling if necessary
+        /* Error handling if necessary */
         
-        // Exit from the application with FAILURE
+        /* Exit from the application with FAILURE */
         exit (EXIT_FAILURE);
     }
 
@@ -143,10 +143,10 @@ int main (int argc, char *argv[])
 
 
 
-    // Close MCS services
+    /* Close MCS services */
     mcsExit();
     
-    // Exit from the application with SUCCESS
+    /* Exit from the application with SUCCESS */
     exit (EXIT_SUCCESS);
 }
 
