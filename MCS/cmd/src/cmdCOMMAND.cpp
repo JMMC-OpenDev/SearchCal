@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.22 2005-02-17 09:03:01 gzins Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.23 2005-02-22 12:43:53 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/02/17 09:03:01  gzins
+ * Added GetCmdParamLine method
+ * Updated to keep parameter order as defined in CDF
+ *
  * Revision 1.21  2005/02/15 11:02:48  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -50,7 +54,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.22 2005-02-17 09:03:01 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.23 2005-02-22 12:43:53 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -919,76 +923,84 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
     logExtDbg ("cmdCOMMAND::ParseCdfForParameters()");
     
     GdomeElement *el;
-    GdomeNodeList *nl;
+    GdomeNodeList *params_nl;
     GdomeException exc;
     GdomeDOMString *name;
     int nbChildren, i;
     
     name = gdome_str_mkref ("params");
-    /* Get the reference to the childrens NodeList of the root element */
-    nl = gdome_el_getElementsByTagName (root, name, &exc);
+    /* Get the reference to the params childrens of the root element */
+    params_nl = gdome_el_getElementsByTagName (root, name, &exc);
     gdome_str_unref(name);
-    if (nl == NULL)
+    if (params_nl == NULL)
     {
         logWarning ("Illegal format encountered for cdf file "
-                    ". Element.childNodes() failed "
+                    ". Element.getElementsByTagName() failed "
                     "with exception #%d", exc);
         return mcsFAILURE;
     }
  
-    nbChildren = gdome_nl_length (nl, &exc);
-    /* if params does exist */
-    if (nbChildren > 0)
+    nbChildren = gdome_nl_length (params_nl, &exc);
+
+    if (nbChildren == 1)    /* if params does exist */
     {
-        el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
+        GdomeNodeList *param_nl;
+        el = (GdomeElement *)gdome_nl_item (params_nl, 0, &exc);
         if (el == NULL)
         {
             logWarning ("Illegal format encountered for cdf file "
                         ". NodeList.item(%d) failed "
                         "with exception #%d", 0, exc);
+            gdome_nl_unref(params_nl, &exc);
             return mcsFAILURE;
         }
-        gdome_nl_unref(nl, &exc);
 
         /* Get the reference to the list of param elements */
         name = gdome_str_mkref ("param");
-        nl = gdome_el_getElementsByTagName (el, name, &exc);
+        param_nl = gdome_el_getElementsByTagName (el, name, &exc);
         gdome_el_unref(el, &exc);
         gdome_str_unref(name);
-        if (nl == NULL)
+        if (param_nl == NULL)
         {
             logWarning ("Illegal format encountered for cdf file "
                         ". Element.childNodes() failed "
                         "with exception #%d", exc);
+            gdome_nl_unref(params_nl, &exc);
             return mcsFAILURE;
         }
 
-        nbChildren = gdome_nl_length (nl, &exc);
-        /* if param does exist */
+        nbChildren = gdome_nl_length (param_nl, &exc);
+        /* if param has children */
         if (nbChildren > 0)
         {
             for (i=0;i<nbChildren;i++){
-                el = (GdomeElement *)gdome_nl_item (nl, i, &exc);
+                el = (GdomeElement *)gdome_nl_item (param_nl, i, &exc);
                 if (el == NULL)
                 {
                     logWarning ("Illegal format encountered for cdf file "
                                 ". NodeList.item(%d) failed "
                                 "with exception #%d", i, exc);
-                    gdome_nl_unref(nl, &exc);
+                    gdome_nl_unref(param_nl, &exc);
+                    gdome_nl_unref(params_nl, &exc);
                     return mcsFAILURE;
                 }
 
                 if (ParseCdfForParam(el)==mcsFAILURE)
                 {
                     gdome_el_unref(el, &exc);
-                    gdome_nl_unref(nl, &exc);
+                    gdome_nl_unref(param_nl, &exc);
+                    gdome_nl_unref(params_nl, &exc);
                     return mcsFAILURE;
                 }
                 gdome_el_unref(el, &exc);
             }
+            gdome_nl_unref(param_nl, &exc);
         }
+    }else{    /* else : if params does not exist */
+        // the command does not accept parameters
     }
-    gdome_nl_unref(nl, &exc);
+    
+    gdome_nl_unref(params_nl, &exc);
     return mcsSUCCESS;
 }
 
@@ -1052,7 +1064,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         {
             /* get defaultValue element */
             el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
-            gdome_nl_unref(nl, &exc);
             if (el == NULL)
             {
                 logWarning ("Illegal format encountered for cdf file "
@@ -1068,6 +1079,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
                 return mcsFAILURE;   
             }
             gdome_el_unref(el, &exc);
+            gdome_nl_unref(nl, &exc);
         }
         else
         {
@@ -1150,12 +1162,13 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     
     if (tagName.empty())
     {
+        /* Get the reference to the childrens of the parentNode element */
         nl = gdome_el_childNodes(parentNode, &exc);
     }
     else
     {
         name = gdome_str_mkref (tagName.data());
-        /* Get the reference to the childrens NodeList of the root element */
+        /* Get the reference to the named childrens of the parentNode element */
         nl = gdome_el_getElementsByTagName (parentNode, name, &exc);
         gdome_str_unref(name);
     }
@@ -1170,17 +1183,22 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     }
 
     nbChildren = gdome_nl_length (nl, &exc);
-    /* if a desc does exist */
+
+    /* inform that we are maybe missing some data */
+    if (nbChildren > 1){
+        logWarning("We use only the first children but %d are present",nbChildren);
+    }
+    /* if one or more children do exist work*/
     if (nbChildren > 0)
     {
         el = (GdomeElement *)gdome_nl_item (nl, 0, &exc);
-        gdome_nl_unref(nl, &exc);
         if (el == NULL)
         {
             logDebug("searching content for '%s' element failed ",tagName.data());
             logWarning ("Illegal format encountered for cdf file "
                         ". NodeList.item(%d) failed "
                         "with exception #%d", 0, exc);
+            gdome_nl_unref(nl, &exc);
             return mcsFAILURE;
         }
         el2=(GdomeElement *)gdome_el_firstChild(el, &exc);
@@ -1190,6 +1208,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
             logDebug("searching content for '%s' element failed ",tagName.data());
             // \todo errAdd
             gdome_el_unref(el, &exc);
+            gdome_nl_unref(nl, &exc);
             return mcsFAILURE;
         }
         
@@ -1209,7 +1228,6 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode, string tag
     
     gdome_nl_unref(nl, &exc);
     logDebug("content of '%s' element is '%s'",tagName.data(),content.data());
-   
     return mcsSUCCESS;
 }
 
