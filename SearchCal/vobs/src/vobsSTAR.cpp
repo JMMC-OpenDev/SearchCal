@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.32 2005-02-15 15:41:47 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.33 2005-02-16 17:01:37 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.32  2005/02/15 15:41:47  gzins
+* Fixed wrong mcsmcsSUCCESS and mcsmcsFAILURE
+*
 * Revision 1.31  2005/02/15 15:19:30  gzins
 * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 *
@@ -68,7 +71,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.32 2005-02-15 15:41:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.33 2005-02-16 17:01:37 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -917,9 +920,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     //logExtDbg("vobsSTAR::AddProperties()");
-    AddProperty(vobsSTAR_ID_HD, "hd", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_ID_HIP, "hip", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_ID_DM, "dm", vobsSTRING_PROPERTY);    
+    AddProperty(vobsSTAR_ID_HD, "hd", vobsFLOAT_PROPERTY, "%.0f");
+    AddProperty(vobsSTAR_ID_HIP, "hip", vobsFLOAT_PROPERTY, "%.0f");
+    AddProperty(vobsSTAR_ID_DM, "dm", vobsFLOAT_PROPERTY, "%.0f");    
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "ra", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "dec", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmdec", vobsSTRING_PROPERTY);
