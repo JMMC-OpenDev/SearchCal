@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.18 2005-03-04 15:35:02 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.19 2005-03-04 16:05:51 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/03/04 15:35:02  gzins
+* Removed printf
+*
 * Revision 1.17  2005/02/22 10:44:51  gzins
 * Fixed bug related to the saved files; environment variables was not resolved
 *
@@ -59,7 +62,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.18 2005-03-04 15:35:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.19 2005-03-04 16:05:51 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -225,8 +228,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             resolvedPath = miscResolvePath(logFileName);
             if (resolvedPath != NULL)
             {
+                vobsSTAR_PROPERTY_ID_LIST ucdList;
                 // Save resulting list
-                tempList.Save(resolvedPath);
+                tempList.Save(resolvedPath, ucdList);
             }
         }
         

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.17 2005-02-24 17:03:18 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.18 2005-03-04 16:05:51 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/02/24 17:03:18  scetre
+ * Computed MagN and diameter error only once; when catalog is loaded.
+ *
  * Revision 1.16  2005/02/23 07:51:29  gzins
  * Changed vobsSTAR_UD_DIAM/vobsSTAR_UD_DIAM_ERROR to vobsSTAR_DIAM12/vobsSTAR_DIAM12_ERROR
  *
@@ -60,7 +63,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.17 2005-02-24 17:03:18 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.18 2005-03-04 16:05:51 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -178,8 +181,10 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load()
         // If log level is DEBUG or EXTDBG
         if (logGetStdoutLogLevel() >= logDEBUG)
         {
+            vobsSTAR_PROPERTY_ID_LIST ucdList;
             //Save star list in a file
-            if (_starList.Save("$MCSDATA/tmp/catalogMIDI.dat") == mcsFAILURE)
+            if (_starList.Save("$MCSDATA/tmp/catalogMIDI.dat", ucdList) ==
+                mcsFAILURE)
             {
                 // Ignore error (for test only)
                 errCloseStack();

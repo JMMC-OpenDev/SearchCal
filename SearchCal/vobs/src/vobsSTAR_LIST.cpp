@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.14 2005-02-15 15:41:47 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.15 2005-03-04 16:05:51 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/02/15 15:41:47  gzins
+* Fixed wrong mcsmcsSUCCESS and mcsmcsFAILURE
+*
 * Revision 1.13  2005/02/15 15:19:30  gzins
 * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 *
@@ -34,7 +37,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.14 2005-02-15 15:41:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.15 2005-03-04 16:05:51 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -342,6 +345,7 @@ void vobsSTAR_LIST::Display(void)
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
+                                  vobsSTAR_PROPERTY_ID_LIST ucdList,
                                   mcsLOGICAL extendedFormat)
 {
     logExtDbg("vobsSTAR_LIST::Save()");
@@ -349,7 +353,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
     // Store list into the CDATA
     vobsCDATA cData;
     vobsSTAR  star;
-    if (cData.Store(star, *this, extendedFormat) == mcsFAILURE)
+    if (cData.Store(star, *this, ucdList, extendedFormat) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
