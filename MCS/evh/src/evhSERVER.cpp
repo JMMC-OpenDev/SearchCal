@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.6 2005-01-29 15:15:00 gzins Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.7 2005-01-29 20:14:52 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/01/29 15:15:00  gzins
+ * Attached callback for DEBUG command.
+ *
  * Revision 1.5  2005/01/26 18:19:25  gzins
  * Implement methods related to state/sub-state handling
  * Attached callback for STATE command
@@ -28,7 +31,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.6 2005-01-29 15:15:00 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.7 2005-01-29 20:14:52 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -56,10 +59,14 @@ using namespace std;
 #include "evhErrors.h"
 #include "evhPrivate.h"
 
-/*
+/**
  * Class constructor
+ *
+ * \param unique  if mcsTRUE, only one instance will be allowed to be
+ * connected to the message service. This is the default behaviour for server
+ * process. 
  */
-evhSERVER::evhSERVER()
+evhSERVER::evhSERVER(mcsLOGICAL unique)
 {
     // Add state definitions
     AddState(evhSTATE_UNKNOWN, evhSTATE_STR_UNKNOWN);
@@ -73,6 +80,9 @@ evhSERVER::evhSERVER()
     AddSubState(evhSUBSTATE_IDLE, evhSUBSTATE_STR_IDLE);
     AddSubState(evhSUBSTATE_WAITING, evhSUBSTATE_STR_WAITING);
     AddSubState(evhSUBSTATE_BUSY, evhSUBSTATE_STR_BUSY);
+
+    // Unicity flag
+    _unique = unique;
 }
 
 /*

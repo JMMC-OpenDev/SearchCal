@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.h,v 1.8 2005-01-29 15:15:23 gzins Exp $"
+ * "@(#) $Id: evhSERVER.h,v 1.9 2005-01-29 20:14:52 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/01/29 15:15:23  gzins
+ * Attached callback for DEBUG command.
+ *
  * Revision 1.7  2005/01/26 18:09:49  gzins
  * Added methods related to state and sub-state hanlding
  *
@@ -45,7 +48,7 @@
 class evhSERVER : public evhTASK, public evhHANDLER
 {
 public:
-    evhSERVER();
+    evhSERVER(mcsLOGICAL unique=mcsTRUE);
     virtual ~evhSERVER();
 
     // Usage of the application 
@@ -111,6 +114,9 @@ private:
     // List of defined states with the corresponding name
     map<mcsINT32, string> _stateList;
     map<mcsINT32, string> _subStateList;
+
+    // Unicity flag; i.e only one or more server instances allowed
+    mcsLOGICAL _unique;
 };
 
 #endif /*!evhSERVER_H*/
