@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.16 2005-03-04 16:53:16 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.17 2005-03-04 16:58:15 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/03/04 16:53:16  scetre
+ * Removed useless sign when reformatting RA
+ *
  * Revision 1.15  2005/03/04 08:07:58  gzins
  * Removed undesirated '\n' when re-formatting RA/DEC
  *
@@ -43,7 +46,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.16 2005-03-04 16:53:16 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.17 2005-03-04 16:58:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -163,6 +166,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
 
     sprintf(raHms, "%02d:%02d:%02.2f", 
             (int)fabs(hh), (int)fabs(hm), fabs(hs));
+    printf("raHms = %s\n", raHms); 
 
     // Set RA
     _objectRa = raHms;
@@ -210,7 +214,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
     hm = (int) ((dec - dd)*60.0);
     hs = (dec - dd - hm/60.0)*3600.0;
 
-    sprintf(decDms, "%c%02d:%02d:%02.2f", 
+    sprintf(decDms, "%c%02d:%02d:%02.1f", 
             (dec < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
 
     // Set DEC
