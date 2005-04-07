@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: misco.doc,v 1.2 2005-02-11 09:39:26 gzins Exp $"
+ * "@(#) $Id: misco.doc,v 1.3 2005-04-07 13:15:11 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/11 09:39:26  gzins
+ * Updated documentation
+ *
  * Revision 1.1  2005/02/10 13:34:06  sccmgr
  * Fix directory structure and add additional files
  *
@@ -15,9 +18,10 @@
 \mainpage 'misco' : Miscellaneous C++ classes
 
 \bdesc
-This module provides miscellaneous classes, forming a collection of usefull functions meant to be used by every sort of programs and libraries.
+This module provides miscellaneous classes, forming a collection of useful C++
+functions meant to be used by every sort of programs and libraries.
 
 \ddesc
 As of today, the 'misco' module contains classes to deal with :
-\li miscoDYN_BUF (auto-expanding, byte-based buffer).
+\li <b> dynamic buffer </b>: auto-expanding, byte-based buffer (miscDynBuf.c)
 */
