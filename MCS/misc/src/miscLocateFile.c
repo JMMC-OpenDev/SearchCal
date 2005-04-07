@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscLocateFile.c,v 1.6 2005-02-12 14:49:19 gzins Exp $"
+ * "@(#) $Id: miscLocateFile.c,v 1.7 2005-04-07 12:55:05 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/12 14:49:19  gzins
+ * No longer resolve file name path before printing out name of found file; done by miscLocateFile
+ *
  * Revision 1.5  2005/01/28 18:39:10  gzins
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
@@ -22,13 +25,13 @@
  * \synopsis
  * miscLocateFile \<fileName\> [\<pathList\>]
  *
- * \param fileName : name of the searched file  
- * \param pathList : list of path where the file has to be searched 
+ * \param fileName name of the searched file  
+ * \param pathList list of path where the file has to be searched 
  *
  * \n
  * \details
  * This program searches for the specified filename in the given path list. If
- * no path list is given, it serch in the standard MCS directories, according
+ * no path list is given, it search in the standard MCS directories, according
  * to the extension of the given file. The possible first occurrence of the
  * file is returned.
  * 
@@ -45,7 +48,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.6 2005-02-12 14:49:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.7 2005-04-07 12:55:05 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
