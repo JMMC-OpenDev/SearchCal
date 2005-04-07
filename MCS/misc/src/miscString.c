@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/02/25 17:51:40  gzins
+ * Simplified miscDeleteChr
+ *
  * Revision 1.19  2005/02/25 16:43:52  lafrasse
  * Added miscDeleteChr()
  *
@@ -37,7 +40,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.20 2005-02-25 17:51:40 gzins Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.21 2005-04-07 08:29:57 gluck Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -66,7 +69,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /**
  * Strip quotes enclosing a string.
  *
- * Strings are sometimes enclosed in quotes. This function strips these off
+ * Strings are sometimes enclosed in quotes. This function strips them off
  * using the same character buffer for storing the processed string. The
  * string must be NULL terminated.
  *
@@ -79,8 +82,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 mcsCOMPL_STAT miscStripQuotes(char *string)
 {
-    char  *srcPtr;
-    char  *dstPtr;
+    char *srcPtr;
+    char *dstPtr;
 
     if (string == NULL)
     {
@@ -115,7 +118,8 @@ mcsCOMPL_STAT miscStripQuotes(char *string)
             srcPtr++;
         }
 
-        /* If the string only contains blanks or is of length 0, dstPtr still
+        /* 
+         * If the string only contains blanks or is of length 0, dstPtr still
          * points to the beginning of the string
          */
 
@@ -204,7 +208,7 @@ mcsCOMPL_STAT miscTrimString(char *string, char *trimChars)
 /**
  * Convert a string to upper case.
  *
- * Strings are sometimes composed of mixed caracaters case. This function
+ * Strings are sometimes composed of mixed caracters case. This function
  * cleans this by upper-casing all the caracters, using the same character
  * buffer for storing the processed string. The string must be NULL terminated.
  *
@@ -368,8 +372,10 @@ mcsCOMPL_STAT miscDeleteChr      (      char         *string,
         /* Else */
         else
         {
-            /* Skipped character, and test whether next searched character has
-             * to be removed or not. */
+            /*
+             * Skipped character, and test whether next searched character has
+             * to be removed or not.
+             */
             if (allFlag == mcsFALSE)
             {
                 deleteChr = mcsFALSE;
@@ -393,8 +399,8 @@ mcsCOMPL_STAT miscDeleteChr      (      char         *string,
  *
  * \param string the null-terminated string to be duplicated.
  * 
- * \return a pointer to the duplicated string, or NULL if insufficient memory
- * was available
+ * \return a pointer to the duplicated string, or NULL if there is no sufficient
+ * memory available
  */
 char *miscDuplicateString (const char *string)
 {
@@ -474,7 +480,8 @@ mcsCOMPL_STAT miscSplitString    (const char         *string,
         /* If the sub-string array is not full yet... */
         if (i < maxSubStringNb)
         {
-            /* Compute the sub-string length between its real length, and its
+            /*
+             * Compute the sub-string length between its real length, and its
              * maximun possible length (defined by the sub-string array type)
              */
             length = mcsMIN((subString - floatingPtr), maxSubStringLength);
@@ -496,8 +503,8 @@ mcsCOMPL_STAT miscSplitString    (const char         *string,
 
     /* Return the number of sub-string found */
     *subStringNb = i;
+
     return mcsSUCCESS;
 }
-
 
 /*___oOo___*/
