@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: misco.h,v 1.2 2005-02-11 09:37:23 gzins Exp $"
+ * "@(#) $Id: misco.h,v 1.3 2005-04-08 12:41:19 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/11 09:37:23  gzins
+ * Added miscoDYN_BUF.h
+ *
  * Revision 1.1  2005/02/10 13:34:06  sccmgr
  * Fix directory structure and add additional files
  *
@@ -18,26 +21,15 @@
  * Main header file, grouping all the public headers of this module library.
  */
 
-/* The following piece of code alternates the linkage type to C for all 
-functions declared within the braces, which is necessary to use the 
-functions in C++-code.
-*/
-#ifdef __cplusplus
-extern "C" {
+#ifndef __cplusplus
+#error This is a C++ include file and cannot be used from plain C
 #endif
-
 
 /*
  * Local headers
  */
 #include "miscoDYN_BUF.h"
  
-
-#ifdef __cplusplus
-}
-#endif
-
-
 #endif /*!misco_H*/
 
 /*___oOo___*/
