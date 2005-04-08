@@ -1,0 +1,134 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: c++-class-interface-file.template,v 1.1 2005-04-08 13:45:52 gluck Exp $"
+#%# 
+#%# Template for C++ interface include file         
+#%# 
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
+#%# Revision 1.16  2005/02/21 15:50:22  gluck
+#%# Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
+#%#
+#%# Revision 1.15  2005/01/24 16:37:11  gluck
+#%# Comment correction for doxygen: move <className> at the sentence end to avoid that doxygen put an uppercase at the beginning of the class name.
+#%#
+#%# Revision 1.14  2005/01/24 11:17:40  gluck
+#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.16  2005/02/21 15:50:22  gluck
+#%# Correct bug when add log message automatic insertion (Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
+#%# Correct bug when add log message automatic insertion (
+#%# Correct bug when add log message automatic insertion (Revision 1.15  2005/01/24 16:37:11  gluck
+#%# Correct bug when add log message automatic insertion (Comment correction for doxygen: move <className> at the sentence end to avoid that doxygen put an uppercase at the beginning of the class name.
+#%# Correct bug when add log message automatic insertion ()
+#%#
+#%# Revision 1.13  2005/01/21 16:13:10  gluck
+#%# - Correct alignment for generated files header from templates
+#%# - Add log message automatic insertion ($Log)
+#%#
+#%# gluck      18-May-2004  Created
+#%# gzins      06-Dec-2004  Changed <CLASSNAME> to <className>
+#%#                         Minor documentation changes
+#%# gzins      04-Jan-2005  Removed <moduleName>
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+#ifndef _H
+#define _H
+/*******************************************************************************
+ * <INSTITUTE> project
+ *
+ * "@(#) $I>-<d$"
+ *
+ * History
+ * -------
+ * $>-Log-<$
+ ******************************************************************************/
+
+/**
+ * \file
+ * Declaration of <className> class.
+ */
+
+#ifndef __cplusplus
+#error This is a C++ include file and cannot be used from plain C
+#endif
+
+
+/*
+ * MCS header
+ */
+#include "mcs.h"
+
+
+/*
+ * Class declaration
+ */
+
+/**
+ * Brief description of the class, which ends at this dot.
+ * 
+ * OPTIONAL detailed description of the class follows here.
+ *
+ * \usedfiles
+ * OPTIONAL. If files are used, for each one, name, and usage description.
+ * \filename fileName1 :  usage description of fileName1
+ * \filename fileName2 :  usage description of fileName2
+ *
+ * \n
+ * \env
+ * OPTIONAL. If needed, environmental variables accessed by the class. For
+ * each variable, name, and usage description, as below.
+ * \envvar envVar1 :  usage description of envVar1
+ * \envvar envVar2 :  usage description of envVar2
+ * 
+ * \n
+ * \warning OPTIONAL. Warning if any (software requirements, ...)
+ *
+ * \n
+ * \ex
+ * OPTIONAL. Code example if needed
+ * \n Brief example description.
+ * \code
+ * Insert your code example here
+ * \endcode
+ *
+ * \sa OPTIONAL. See also section, in which you can refer other documented
+ * entities. Doxygen will create the link automatically.
+ * \sa modcppMain.C
+ * 
+ * \bug OPTIONAL. Bugs list if it exists.
+ * \bug For example, description of the first bug
+ * \bug For example, description of the second bug
+ * 
+ * \todo OPTIONAL. Things to forsee list, if needed. For example, 
+ * \todo add other methods, dealing with operations.
+ * 
+ */
+class <className>
+{
+
+public:
+    // Class constructor
+    <className>();
+
+    // Class destructor
+    virtual ~<className>();
+
+protected:
+    
+private:
+    // Declaration of copy constructor and assignment operator as private
+    // methods, in order to hide them from the users.
+    <className>(const <className>&);
+    <className>& operator=(const <className>&);
+};
+
+#endif /*!_H*/
+
+/*___oOo___*/
