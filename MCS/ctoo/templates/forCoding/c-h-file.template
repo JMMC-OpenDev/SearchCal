@@ -1,0 +1,111 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: c-h-file.template,v 1.1 2005-04-08 13:41:12 gluck Exp $"
+#%# 
+#%# Template for C .h include files         
+#%# 
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
+#%# Revision 1.10  2005/02/21 15:50:22  gluck
+#%# Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
+#%#
+#%# Revision 1.9  2005/01/24 11:17:40  gluck
+#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.10  2005/02/21 15:50:22  gluck
+#%# Correct bug when add log message automatic insertion (Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
+#%# Correct bug when add log message automatic insertion ()
+#%#
+#%# Revision 1.8  2005/01/21 16:13:10  gluck
+#%# - Correct alignment for generated files header from templates
+#%# - Add log message automatic insertion ($Log)
+#%#
+#%# gluck      16-Dec-2004  Add mcs.h header file
+#%# gluck      18-May-2004  Created
+#%# 
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+#ifndef _H
+#define _H
+/*******************************************************************************
+ * <INSTITUTE> project
+ *
+ * "@(#) $I>-<d$"
+ *
+ * History
+ * -------
+ * $>-Log-<$
+ ******************************************************************************/
+
+/**
+ * \file
+ * Brief description of the header file, which ends at this dot.
+ */
+
+/* The following piece of code alternates the linkage type to C for all 
+functions declared within the braces, which is necessary to use the 
+functions in C++-code.
+*/
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+/*
+ * MCS header
+ */
+#include "mcs.h"
+
+
+
+/* 
+ * Constants definition
+ */
+
+
+
+/* 
+ * Macro definition
+ */
+
+
+
+/*
+ * Enumeration type definition
+ */
+
+
+
+/*
+ * Structure type definition
+ */
+
+
+
+/*
+ * Unions type definition
+ */
+
+
+
+/*
+ * Public functions declaration
+ */
+
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif /*!_H*/
+
+/*___oOo___*/
