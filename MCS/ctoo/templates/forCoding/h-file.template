@@ -1,13 +1,16 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: h-file.template,v 1.12 2005-04-08 14:45:59 gluck Exp $"
+#%# "@(#) $Id: h-file.template,v 1.13 2005-04-08 14:47:08 gluck Exp $"
 #%# 
-#%# Template for C++ .h include files         
+#%# Template for C and C++ .h include files         
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.12  2005/04/08 14:45:59  gluck
+#%# Added
+#%#
 #%# Revision 1.17  2005/04/08 13:50:17  gluck
 #%# Updated from c-h-file.template
 #%#
@@ -16,6 +19,9 @@
 #%#
 #%# Revision 1.9  2005/01/24 11:17:40  gluck
 #%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.12  2005/04/08 14:45:59  gluck
+#%# Correct bug when add log message automatic insertion (Added
+#%# Correct bug when add log message automatic insertion (
 #%# Correct bug when add log message automatic insertion (Revision 1.17  2005/04/08 13:50:17  gluck
 #%# Correct bug when add log message automatic insertion (Updated from c-h-file.template
 #%# Correct bug when add log message automatic insertion (
