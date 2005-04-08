@@ -1,15 +1,21 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c++-small-main.template,v 1.14 2005-02-21 15:50:22 gluck Exp $"
+#%# "@(#) $Id: c++-small-main.template,v 1.15 2005-04-08 09:09:20 gluck Exp $"
 #%# 
 #%# Template for C++ small main program
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.14  2005/02/21 15:50:22  gluck
+#%# Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
+#%#
 #%# Revision 1.13  2005/01/24 11:17:40  gluck
-#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $)
+#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.14  2005/02/21 15:50:22  gluck
+#%# Correct bug when add log message automatic insertion (Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
+#%# Correct bug when add log message automatic insertion ()
 #%#
 #%# Revision 1.12  2005/01/21 16:13:10  gluck
 #%# - Correct alignment for generated files header from templates
@@ -140,7 +146,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
         
