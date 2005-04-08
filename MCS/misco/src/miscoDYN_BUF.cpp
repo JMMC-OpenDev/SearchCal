@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.cpp,v 1.6 2005-02-22 15:10:53 lafrasse Exp $"
+ * "@(#) $Id: miscoDYN_BUF.cpp,v 1.7 2005-04-08 06:54:32 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/22 15:10:53  lafrasse
+ * Removed documentation duplication between 'misc' and 'misco', changed miscoDYN_BUF::GetNextLine() API, added miscoDYN_BUF::GetNextCommentLine(), miscoDYN_BUF::AppendLine() and miscoDYN_BUF::AppendCommentLine()
+ *
  * Revision 1.5  2005/02/16 14:57:23  gzins
  * Updated prototype to GetNextLine
  *
@@ -26,7 +29,7 @@
  * byte-based buffers.
  */
 
-static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.6 2005-02-22 15:10:53 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.7 2005-04-08 06:54:32 gluck Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -63,6 +66,7 @@ miscoDYN_BUF::miscoDYN_BUF(const miscoDYN_BUF& dynBuf)
 {
     *this = dynBuf;
 }
+
 /**
  * Assignment operator
  */

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.9 2005-02-22 15:42:45 lafrasse Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.10 2005-04-08 06:54:32 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/02/22 15:42:45  lafrasse
+ * Added a default value to the miscoDYN_BUF::GetNextLine() 'skipCommentFlag' parameter (mcsTRUE)
+ *
  * Revision 1.8  2005/02/22 15:10:53  lafrasse
  * Removed documentation duplication between 'misc' and 'misco', changed miscoDYN_BUF::GetNextLine() API, added miscoDYN_BUF::GetNextCommentLine(), miscoDYN_BUF::AppendLine() and miscoDYN_BUF::AppendCommentLine()
  *
@@ -72,8 +75,8 @@ public:
     miscoDYN_BUF();
 
     // Assignment operator and copy constructor
-    miscoDYN_BUF(const miscoDYN_BUF &dynBuf);
     miscoDYN_BUF& operator=(const miscoDYN_BUF &dynBuf);
+    miscoDYN_BUF(const miscoDYN_BUF &dynBuf);
 
     // Class destructor
     virtual ~miscoDYN_BUF();
@@ -156,7 +159,7 @@ public:
 //                                        const miscoDYN_BUF&   buffer);
 
 protected:
-    miscDYN_BUF  _dynBuf;
+    miscDYN_BUF _dynBuf;
 
 private:
 };
