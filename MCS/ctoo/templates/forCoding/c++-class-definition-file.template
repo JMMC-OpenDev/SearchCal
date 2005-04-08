@@ -1,0 +1,106 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: c++-class-definition-file.template,v 1.1 2005-04-08 13:47:45 gluck Exp $"
+#%# 
+#%# Template for C++ class definition file         
+#%# 
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
+#%# Revision 1.18  2005/02/21 15:50:22  gluck
+#%# Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
+#%#
+#%# Revision 1.17  2005/01/24 16:37:11  gluck
+#%# Comment correction for doxygen: move <className> at the sentence end to avoid that doxygen put an uppercase at the beginning of the class name.
+#%#
+#%# Revision 1.16  2005/01/24 11:17:40  gluck
+#%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.18  2005/02/21 15:50:22  gluck
+#%# Correct bug when add log message automatic insertion (Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
+#%# Correct bug when add log message automatic insertion (
+#%# Correct bug when add log message automatic insertion (Revision 1.17  2005/01/24 16:37:11  gluck
+#%# Correct bug when add log message automatic insertion (Comment correction for doxygen: move <className> at the sentence end to avoid that doxygen put an uppercase at the beginning of the class name.
+#%# Correct bug when add log message automatic insertion ()
+#%#
+#%# Revision 1.15  2005/01/21 16:13:10  gluck
+#%# - Correct alignment for generated files header from templates
+#%# - Add log message automatic insertion ($Log)
+#%#
+#%# gluck      17-May-2004  Created
+#%# gzins      06-Dec-2004  Added class constructor and destructor
+#%# 
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+/*******************************************************************************
+ * <INSTITUTE> project
+ *
+ * "@(#) $I>-<d$"
+ *
+ * History
+ * -------
+ * $>-Log-<$
+ ******************************************************************************/
+
+/**
+ * \file
+ *  Definition of <className> class.
+ */
+
+static char *rcsId="@(#) $I>-<d$"; 
+static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
+/* 
+ * System Headers 
+ */
+#include <iostream>
+using namespace std;
+
+/*
+ * MCS Headers 
+ */
+#include "mcs.h"
+#include "log.h"
+#include "err.h"
+
+/*
+ * Local Headers 
+ */
+#include "<className>.h"
+#include "<moduleName>Private.h"
+
+/**
+ * Class constructor
+ */
+<className>::<className>()
+{
+}
+
+/**
+ * Class destructor
+ */
+<className>::~<className>()
+{
+}
+
+/*
+ * Public methods
+ */
+
+
+/*
+ * Protected methods
+ */
+
+
+/*
+ * Private methods
+ */
+
+
+/*___oOo___*/
