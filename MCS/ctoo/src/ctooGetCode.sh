@@ -3,11 +3,14 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetCode.sh,v 1.4 2005-01-24 15:47:51 gluck Exp $"
+# "@(#) $Id: ctooGetCode.sh,v 1.5 2005-04-11 07:52:50 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/01/24 15:47:51  gluck
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+#
 # lgluck    14/05/04    Created
 #
 #******************************************************************************
@@ -52,11 +55,11 @@ Templates are available for:
 
         1- c-main
         2- c-procedure
-        3- h-file
+        3- c-h-file
 
         4- c++-small-main
-        5- c++-class-file
-        6- c++-h-file
+        5- c++-class-definition-file
+        6- c++-class-interface-file
         
         7- script
         
@@ -87,7 +90,7 @@ then
             ;;
         
         3)  # h-file choice
-            ctooGetTemplateForCoding h-file
+            ctooGetTemplateForCoding c-h-file
             ;;
         
         4)  # c++-small-main choice
@@ -95,11 +98,11 @@ then
             ;;
         
         5)  # c++-class-file choice
-            ctooGetTemplateForCoding c++-class-file 
+            ctooGetTemplateForCoding c++-class-definition-file 
             ;;
         
         6)  # c++-h-file choice
-            ctooGetTemplateForCoding c++-h-file
+            ctooGetTemplateForCoding c++-class-interface-file
             ;;
         
         7)  # script file choice

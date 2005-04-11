@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.16 2005-02-25 15:11:43 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.17 2005-04-11 07:52:50 gluck Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2005/02/25 15:11:43  gluck
+# Deleted obsolete comment block
+#
 # Revision 1.15  2005/02/15 15:48:11  gluck
 # Correct bug due to missing space
 #
@@ -19,6 +22,9 @@
 #
 # Revision 1.12  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.16  2005/02/25 15:11:43  gluck
+# Bug correction for log message automatic insertion (Deleted obsolete comment block
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.15  2005/02/15 15:48:11  gluck
 # Bug correction for log message automatic insertion (Correct bug due to missing space
 # Bug correction for log message automatic insertion (
@@ -136,14 +142,14 @@ then
             MODE=644
             ;;
 
-        c++-small-main|c++-class-file)
+        c++-small-main|c++-class-definition-file)
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
             FILE_SUFFIX=".cpp"
             MODE=644
             ;;
 
-        h-file|c++-h-file)
+        h-file|c-h-file|c++-class-interface-file)
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
             FILE_SUFFIX=".h"
@@ -230,10 +236,11 @@ then
         fi
 
         # For .h
-        # -> For .h (h-file or c++-h-file) files insert file name in the
-        # pre-processing directives to avoid multiple inclusions
-        # -> For .h (c++-h-file) files insert class name in the doxygen header
-        # block
+        # -> For .h (h-file, c-h-file or c++-class-interface-file) files
+        # insert file name in the pre-processing directives to avoid multiple
+        # inclusions
+        # -> For .h (c++-class-interface-file) files insert class name in the
+        # doxygen header block
         if [ "$FILE_SUFFIX" = ".h" ]
         then
             sed -e "1,$ s/#ifndef _H/#ifndef ${BASE_NAME}_H/g" \
@@ -249,11 +256,11 @@ then
 
         # For .c and .cpp  and Makefile
         # -> For .c (c-main, c-procedure) and  .cpp (c++-small-main,
-        # c++-class-file) files insert module name in the pre-processing
-        # directives for header inclusion
-        # -> For .cpp (c++-class-file) insert class name in the pre-processing
-        # directives for header inclusion, in the doxygen header block, and for
-        # constructor and destructor replacement
+        # c++-class-definition-file) files insert module name in the
+        # pre-processing directives for header inclusion
+        # -> For .cpp (c++-class-definition-file) insert class name in the
+        # pre-processing directives for header inclusion, in the doxygen header
+        # block, and for constructor and destructor replacement
         # -> For Makefile insert module name in file comment header
         if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" -o \
             "$FILE_NAME" = "Makefile" ]
