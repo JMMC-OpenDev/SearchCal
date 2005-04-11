@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.13 2005-03-04 17:04:11 scetre Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.14 2005-04-11 12:20:08 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/03/04 17:04:11  scetre
+ * Defined errors related to parameter out of range as user error
+ *
  * Revision 1.12  2005/03/03 16:13:43  lafrasse
  * Removed a repetitove 'unit' cout in cmdParam::GetHelp()
  *
@@ -42,7 +45,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.13 2005-03-04 17:04:11 scetre Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.14 2005-04-11 12:20:08 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -76,16 +79,17 @@ using namespace std;
 /**
  *  Constructs a new named Parameter 
  *
- * \param name  the name of the parameter.
- * \param desc  
- * \param type  
- * \param unit  
- * \param optional  
+ * \param name the name of the parameter.
+ * \param desc description of the parameter 
+ * \param type type of the parrameter
+ * \param unit unit of the parameter
+ * \param optional logical to know if the parameter is optional or not
  */
 cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
                    mcsLOGICAL optional)
 {
     logExtDbg("cmdPARAM::cmdPARAM");
+    // copy each value in the appropriated object element
     _name = name;
     _desc = desc;
     _type = type;
@@ -97,8 +101,6 @@ cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
 /*
  * Class destructor
  */
-
-
 /**
  *  Destructs the parameter
  *
@@ -111,7 +113,6 @@ cmdPARAM::~cmdPARAM()
 /*
  * Public methods
  */
-
 /**
  *  Get the name of the parameter.
  *
@@ -183,6 +184,7 @@ string cmdPARAM::GetHelp()
     // If there is a given type
     if (! _type.empty())
     {
+        // add in the help
         help.append(" <");
         help.append(_type);
         help.append(">");
@@ -191,6 +193,7 @@ string cmdPARAM::GetHelp()
     // If there is a defaultValue
     if (HasDefaultValue())
     {
+        // add in the help
         help.append(" (default = '");
         help.append(_defaultValue);
         help.append("')");
@@ -199,6 +202,7 @@ string cmdPARAM::GetHelp()
     // If there is a given unit
     if (! _unit.empty())
     {
+        // add in the help
         help.append(" (unit = '");
         help.append(_unit);
         help.append("')");
@@ -207,6 +211,7 @@ string cmdPARAM::GetHelp()
     // If there is a given minimum and maximum value
     if ((! _minValue.empty()) && (! _maxValue.empty()))
     {
+        // add in the help
         help.append(" (range from '");
         help.append(_minValue);
         help.append("' to '");
@@ -215,12 +220,14 @@ string cmdPARAM::GetHelp()
     }
     else if (! _minValue.empty()) // If there is only a given minimum
     {
+        // add in the help
         help.append(" (minimum value of '");
         help.append(_minValue);
         help.append("')");
     }
     else if (! _maxValue.empty()) // If there is only a given maximum
     {
+        // add in the help
         help.append(" (maximum value of '");
         help.append(_maxValue);
         help.append("')");
@@ -229,11 +236,13 @@ string cmdPARAM::GetHelp()
     // If there is a given description
     if (! _desc.empty())
     {
+        // add in the help
         help.append("\n\t\t");
         help.append(_desc);
     }
     else
     {
+        // add no description in the help
         help.append("\n\t\tNo description");
     }
 
@@ -340,7 +349,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
  *
  * \param value the storage data pointer
  *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ *  \returns always mcsSUCCESS
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
 {
@@ -351,9 +360,9 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
 }
 
 /**
- * Set the user value of the parameter. This method must be called only by
- * cmdCOMMAND.
+ * Set the user value of the parameter. 
  *
+ * \warning This method must be called only by cmdCOMMAND.
  * The value is extracted from the parameter line.
  *
  * \param value  the new user value.
@@ -484,14 +493,16 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
-
+    // cast as a char pointer  the return of .data() method of _userValue
     *value = (char*)_userValue.data();
     return mcsSUCCESS;
 }
 
 /**
- * Set the default value of the parameter. This method must be called only
- * by cmdCOMMAND. The value is extracted from the cdf file.
+ * Set the default value of the parameter.
+ * \warning This method must be called only by cmdCOMMAND.
+ *
+ * The value is extracted from the cdf file.
  *
  * \param value  the new default value.
  *
@@ -547,8 +558,10 @@ mcsCOMPL_STAT cmdPARAM::SetMinValue(string value)
 }
 
 /**
- * Set the max value of the parameter. This method must be called only
- * by cmdCOMMAND. The value is extracted from the cdf file.
+ * Set the max value of the parameter. 
+ * \warning This method must be called only by cmdCOMMAND.
+ *
+ * The value is extracted from the cdf file.
  *
  * \param value  the new max value.
  *
@@ -587,13 +600,18 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
 {
     logExtDbg("cmdPARAM::Method()");
 
+    // if the type is string, no problem, return success
     if (_type == "string")
     {
         return mcsSUCCESS;
     }
+    // if the type is integer
     else if (_type == "integer")
     {
         mcsINT32 iValue;
+        // if it is possible to set to an integer value of the user
+        // that's mean that the value is correct. Else (sscanf != 1),
+        // return error
         if (sscanf (value.data(), "%d", &iValue) != 1)
         {
             errAdd(cmdERR_INTEGER_VALUE, value.data(), _name.data());
@@ -602,10 +620,14 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
         
         return mcsSUCCESS;
     }
+    // if the type is double
     else if (_type == "double")
     {
         mcsDOUBLE dValue;
-        if (sscanf (value.data(), "%lf", &dValue) != 1)
+        // if it is possible to set to a double the value of the user
+        // that's mean that the value is correct. Else (sscanf != 1),
+        // return error
+if (sscanf (value.data(), "%lf", &dValue) != 1)
         {
             errAdd(cmdERR_DOUBLE_VALUE, value.data(), _name.data());
             return mcsFAILURE;
@@ -613,8 +635,10 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
         
         return mcsSUCCESS;
     }
+    // if the type is a logical
     else if (_type == "logical")
     {
+        // Compare the user value to 1, 0, true or false
         if ((value.compare("1")     == 0) ||
             (value.compare("0")     == 0) ||
             (value.compare("true")  == 0) ||
