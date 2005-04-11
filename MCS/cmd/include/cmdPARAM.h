@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.h,v 1.10 2005-02-28 13:38:18 lafrasse Exp $"
+ * "@(#) $Id: cmdPARAM.h,v 1.11 2005-04-11 12:33:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/28 13:38:18  lafrasse
+ * Added minimum and maximum parameter values information output in 
+ * cmdPARAM:GetHelp()
+ *
  * Revision 1.9  2005/02/27 19:44:17  gzins
  * Implemented parameter value range check
  *
@@ -57,23 +61,23 @@ public:
     // Brief description of the destructor
     virtual ~cmdPARAM();
 
-    virtual string         GetName          ();
-    virtual string         GetDesc          ();
-    virtual string         GetType          ();
-    virtual string         GetUnit          ();
-    virtual mcsLOGICAL     IsOptional       ();
-    virtual string         GetHelp          ();
+    virtual string         GetName          (void);
+    virtual string         GetDesc          (void);
+    virtual string         GetType          (void);
+    virtual string         GetUnit          (void);
+    virtual mcsLOGICAL     IsOptional       (void);
+    virtual string         GetHelp          (void);
 
-    virtual mcsLOGICAL     IsDefined        ();
-    virtual string         GetUserValue     ();
+    virtual mcsLOGICAL     IsDefined        (void);
+    virtual string         GetUserValue     (void);
     virtual mcsCOMPL_STAT  GetUserValue     (mcsINT32     *value);
     virtual mcsCOMPL_STAT  GetUserValue     (mcsDOUBLE    *value);
     virtual mcsCOMPL_STAT  GetUserValue     (mcsLOGICAL   *value);
     virtual mcsCOMPL_STAT  GetUserValue     (char        **value);
     virtual mcsCOMPL_STAT  SetUserValue     (string        value);
 
-    virtual mcsLOGICAL     HasDefaultValue  ();
-    virtual string         GetDefaultValue  ();
+    virtual mcsLOGICAL     HasDefaultValue  (void);
+    virtual string         GetDefaultValue  (void);
     virtual mcsCOMPL_STAT  GetDefaultValue  (mcsINT32     *value);
     virtual mcsCOMPL_STAT  GetDefaultValue  (mcsDOUBLE    *value);
     virtual mcsCOMPL_STAT  GetDefaultValue  (mcsLOGICAL   *value);

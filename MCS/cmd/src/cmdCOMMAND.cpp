@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.29 2005-04-11 12:20:08 scetre Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.30 2005-04-11 12:33:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2005/04/11 12:20:08  scetre
+ * Revue : changed documentation
+ *
  * Revision 1.28  2005/03/08 09:46:48  gzins
  * Added missing xx_unref to free memory allocated by libgdome
  *
@@ -72,7 +75,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.29 2005-04-11 12:20:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.30 2005-04-11 12:33:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -100,12 +103,8 @@ using namespace std;
 #include "cmdPrivate.h"
 #include "cmdErrors.h"
 
-/*
+/**
  * Class constructor
- */
-
-/** 
- *  Constructs a new command.
  *
  * \param name  the name of the command (mnemonic).
  * \param params  the arguments of the command.
@@ -125,14 +124,8 @@ cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
 }
 
 
-/*
+/**
  * Class destructor
- *
- * The destructor delete each bject of the parameter list.
- */
-
-/** 
- *  Destructor.
  */
 cmdCOMMAND::~cmdCOMMAND()
 {
@@ -414,14 +407,16 @@ mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM *param)
 }
 
 /** 
- *  Get the parameter associated to paramName. This method must not be called
- *  during parsing steps because it begins to check if it has been parsed.
+ * Get the parameter associated to paramName.
+ *
+ * \warning This method must not be called during parsing steps because it
+ * begins to check if it has been parsed.
  *
  * \param paramName  the name of the requested parameter.
  * \param param  a pointer where to store the parameter pointer
  *
- *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- *  param should be considered valid only on mcsSUCCESS case.
+ * \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * param should be considered valid only on mcsSUCCESS case.
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
 {
@@ -520,13 +515,14 @@ mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
 }
 
 /** 
- *  Get the value of a parameter. Begin to return the user value. 
- *  If the parameter is not defined by the user, the default
- *  is returned if it exist. If the parameter has neither user value nor default
- *  value, then an error is returned.
+ *  Get the value of a parameter. 
+ *
+ *  Begin to return the user value. If the parameter is not defined by the 
+ *  user, the default is returned if it exist. If the parameter has neither
+ *  user value nor default value, then an error is returned.
  *
  * \param paramName  the name of the parameter.
- * \param param  the storage data pointer.
+ *  \param param  the storage data pointer.
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -912,7 +908,9 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     // Create a new Document from the CDF file
     const char *xmlFilename = miscResolvePath(fullCdfFilename);
     logDebug("Using CDF file %s",xmlFilename);
-    doc = gdome_di_createDocFromURI(domimpl, xmlFilename, GDOME_LOAD_PARSING,
+    doc = gdome_di_createDocFromURI(domimpl, 
+                                    xmlFilename,
+                                    GDOME_LOAD_PARSING,
                                     &exc);
     // if can't create the gdome document (i.e. = NULL)
     if (doc == NULL)

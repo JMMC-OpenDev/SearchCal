@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.14 2005-04-11 12:20:08 scetre Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.15 2005-04-11 12:33:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/04/11 12:20:08  scetre
+ * Revue : changed documentation
+ *
  * Revision 1.13  2005/03/04 17:04:11  scetre
  * Defined errors related to parameter out of range as user error
  *
@@ -45,7 +48,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.14 2005-04-11 12:20:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.15 2005-04-11 12:33:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -74,10 +77,6 @@ using namespace std;
 
 /*
  * Class constructor
- */
-
-/**
- *  Constructs a new named Parameter 
  *
  * \param name the name of the parameter.
  * \param desc description of the parameter 
@@ -118,7 +117,7 @@ cmdPARAM::~cmdPARAM()
  *
  *  \returns the string containing the name.
  */
-string cmdPARAM::GetName()
+string cmdPARAM::GetName(void)
 {
     logExtDbg("cmdPARAM::GetName()");
     return _name;
@@ -127,9 +126,9 @@ string cmdPARAM::GetName()
 /**
  *  Get the description of the parameter.
  *
- *  \returns the string containing the description or empty.
+ *  \returns the string containing the description or an empty string.
  */
-string cmdPARAM::GetDesc()
+string cmdPARAM::GetDesc(void)
 {
     logExtDbg("cmdPARAM::GetDesc()");
     return _desc;
@@ -138,9 +137,9 @@ string cmdPARAM::GetDesc()
 /**
  *  Get the type of the parameter.
  *
- *  \returns the string containing the type or empty.
+ *  \returns the string containing the type or an empty string.
  */
-string cmdPARAM::GetType()
+string cmdPARAM::GetType(void)
 {
     logExtDbg("cmdPARAM::GetType()");
     return _type;
@@ -149,9 +148,9 @@ string cmdPARAM::GetType()
 /**
  *  Get the unit of the parameter.
  *
- *  \returns the string containing the unit or empty.
+ *  \returns the string containing the unit or an empty string.
  */
-string cmdPARAM::GetUnit()
+string cmdPARAM::GetUnit(void)
 {
     logExtDbg("cmdPARAM::GetUnit()");
     return _unit;
@@ -162,7 +161,7 @@ string cmdPARAM::GetUnit()
  *
  *  \returns mcsTRUE or mcsFALSE
  */
-mcsLOGICAL cmdPARAM::IsOptional()
+mcsLOGICAL cmdPARAM::IsOptional(void)
 {
     logExtDbg("cmdPARAM::IsOptional()");
     return _optional;
@@ -173,7 +172,7 @@ mcsLOGICAL cmdPARAM::IsOptional()
  *
  *  \returns the help string
  */
-string cmdPARAM::GetHelp()
+string cmdPARAM::GetHelp(void)
 {
     logExtDbg("cmdPARAM::GetHelp()");
 
@@ -258,7 +257,7 @@ string cmdPARAM::GetHelp()
  *
  *  \returns mcsTRUE or mcsFALSE
  */
-mcsLOGICAL cmdPARAM::IsDefined()
+mcsLOGICAL cmdPARAM::IsDefined(void)
 {
     logExtDbg("cmdPARAM::IsDefined()");
     if (_userValue.empty())
@@ -276,7 +275,7 @@ mcsLOGICAL cmdPARAM::IsDefined()
  *
  *  \returns the string containing the user value.
  */
-string cmdPARAM::GetUserValue()
+string cmdPARAM::GetUserValue(void)
 {
     logExtDbg("cmdPARAM::GetUserValue()");
     return _userValue;
@@ -397,7 +396,7 @@ mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
  *
  *  \returns mcsTRUE or mcsFALSE
  */
-mcsLOGICAL cmdPARAM::HasDefaultValue()
+mcsLOGICAL cmdPARAM::HasDefaultValue(void)
 {
     logExtDbg("cmdPARAM::HasDefaultValue()");
     if (_defaultValue.empty())
@@ -415,7 +414,7 @@ mcsLOGICAL cmdPARAM::HasDefaultValue()
  *
  *  \returns the string containing the user value.
  */
-string cmdPARAM::GetDefaultValue()
+string cmdPARAM::GetDefaultValue(void)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
     return _defaultValue;
