@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.18 2005-03-06 10:41:33 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.19 2005-04-14 14:39:03 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/03/06 10:41:33  gzins
+ * Removed printf
+ *
  * Revision 1.17  2005/03/04 16:58:15  scetre
  * Changed format of DEC
  *
@@ -49,7 +52,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.18 2005-03-06 10:41:33 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.19 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -203,7 +206,11 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
     // Check format
     vobsSTAR star;
     mcsFLOAT dec;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, objectDec, "");
+    if (star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, objectDec, "") ==
+        mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     if (star.GetDec(dec) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -385,7 +392,6 @@ mcsFLOAT vobsREQUEST::GetMinMagRange(void) const
 
     return _minMagRange;
 }
-
 
 /**
  * Set maximum magnitude difference between the selected object maximum

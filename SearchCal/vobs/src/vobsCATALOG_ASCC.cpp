@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.9 2005-02-16 13:21:47 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.10 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/16 13:21:47  scetre
+* changed armin in arcsec in query
+*
 * Revision 1.8  2005/02/14 15:22:44  scetre
 * changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
 *
@@ -37,7 +40,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.9 2005-02-16 13:21:47 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.10 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -63,7 +66,6 @@ using namespace std;
 #include "vobsCATALOG_ASCC.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
-
 
 /*
  * Class constructor
@@ -100,12 +102,9 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
  * Build the specificatic part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  * 
- * \b Errors codes:\n
- * The possible errors are:
- *
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 {
@@ -131,11 +130,9 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
  *
  * \param request vobsREQUEST which help to restrict the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  * 
- * \b Errors codes:\n
- * The possible errors are:
- *
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
 {

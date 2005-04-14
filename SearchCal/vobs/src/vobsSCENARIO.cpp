@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.20 2005-03-04 16:28:28 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.21 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/03/04 16:28:28  scetre
+* Changed Call to Save method
+*
 * Revision 1.19  2005/03/04 16:05:51  scetre
 * Updated call to Save method
 *
@@ -65,7 +68,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.20 2005-03-04 16:28:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.21 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -190,6 +193,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         
         // Start research in entry's catalog
         logInfo("Consulting %s ...", ((*_entryIterator)._catalog)->GetName());
+        // if research failed, return mcsFAILURE
         if (((*_entryIterator)._catalog)->Search(request,
                                                  tempList) == mcsFAILURE )
         {
@@ -213,7 +217,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             // Get catalog name, and replace '/' by '_'
             mcsSTRING32 catalogName;
             strcpy (catalogName, ((*_entryIterator)._catalog)->GetName());
-            miscReplaceChrByChr(catalogName, '/', '_');
+            if (miscReplaceChrByChr(catalogName, '/', '_') == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             strcat(logFileName, "_");
             strcat(logFileName, catalogName);
 
@@ -232,7 +239,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             if (resolvedPath != NULL)
             {
                 // Save resulting list
-                tempList.Save(resolvedPath);
+                if (tempList.Save(resolvedPath) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
             }
         }
         

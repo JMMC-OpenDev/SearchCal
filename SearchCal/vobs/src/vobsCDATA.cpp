@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.19 2005-03-30 12:49:26 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.20 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/03/30 12:49:26  scetre
+* Updated documentation
+*
 * Revision 1.18  2005/02/22 15:59:43  gzins
 * Updated because of a miscoDYN_BUFF::GetNextLine() API change (again)
 *
@@ -61,7 +64,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.19 2005-03-30 12:49:26 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.20 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -268,6 +271,7 @@ mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
 
 /**
  * Returns the number of parameters.
+ *
  * \return 
  * The the number of parameters contained in CDATA
  */
@@ -338,6 +342,7 @@ mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
 
 /**
  * Returns the number of lines to be skipped in CDATA.
+ *
  * \return 
  * The number of lines to be skipped
  */
@@ -404,7 +409,8 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
         {
             logDebug("   > Skip line : %s", line);
         }
-    } while (from != NULL);
+    }
+    while (from != NULL);
  
     return mcsSUCCESS;
 }

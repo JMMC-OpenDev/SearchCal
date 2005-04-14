@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.11 2005-02-16 13:22:00 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.12 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/02/16 13:22:00  scetre
+* changed armin in arcsec in query
+*
 * Revision 1.10  2005/02/14 15:22:44  scetre
 * changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
 *
@@ -41,7 +44,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.11 2005-02-16 13:22:00 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.12 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -95,18 +98,13 @@ vobsCATALOG_PHOTO::~vobsCATALOG_PHOTO()
  * Protected methods
  */
 
-
 /**
  * Build the specificatic part of the asking.
  *
  * Build the specificatic part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n
- * The possible errors are:
+ * \return always mcsSUCCESS
  *
  */
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
@@ -132,11 +130,8 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
  *
  * \param request vobsREQUEST which help to restrict the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n
- * The possible errors are:
- * 
+ * \return always mcsSUCCESS 
+ *
  */
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
 {

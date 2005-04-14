@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.17 2005-03-30 12:49:26 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.18 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/03/30 12:49:26  scetre
+* Updated documentation
+*
 * Revision 1.16  2005/03/04 16:28:28  scetre
 * Changed Call to Save method
 *
@@ -43,7 +46,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.17 2005-03-30 12:49:26 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.18 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -73,22 +76,31 @@ vobsSTAR_LIST::vobsSTAR_LIST()
     _starIterator = _starList.begin();
 }
 
-//Copy constructor
+//Class destructor
+vobsSTAR_LIST::~vobsSTAR_LIST()
+{
+    Clear();
+}
+
+/**
+ * Copy from a list
+ *
+ * \param list the list to copy
+ *
+ * \return always mcsSUCCESS
+ */
 mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 {
      
     logExtDbg("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
     for (unsigned int el = 0; el < list.Size(); el++)
     {
-        AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
+        if (AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0)))) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
     return mcsSUCCESS;
-}
-
-//Class destructor
-vobsSTAR_LIST::~vobsSTAR_LIST()
-{
-    Clear();
 }
 
 /**
@@ -128,6 +140,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 
     // Clear list
     _starList.clear();
+
     return mcsSUCCESS;
 }
 
@@ -135,6 +148,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
  * Adds the element at the end of the list
  *
  * \param star element to be added to the list.
+ *
  * \return
  * Always mcsSUCCESS.
  */
@@ -422,13 +436,23 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char *filename,
     // Set origin (if needed)
     if (extendedFormat == mcsFALSE)
     {
+        // if origin is unknown, set catalog name as the file in which the data
+        // had been got
         if (origin == NULL)
         {
-            cData.SetCatalogName(filename);
+            if (cData.SetCatalogName(filename) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
         }
+        // if origin is kniwn, set catalog name as the catalog in which the data
+        // had been got
         else
         {
-            cData.SetCatalogName(origin);
+            if (cData.SetCatalogName(origin) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
         }
     }
         

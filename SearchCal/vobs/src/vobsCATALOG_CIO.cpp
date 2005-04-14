@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.9 2005-02-14 15:22:44 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.10 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/02/14 15:22:44  scetre
+* changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
+*
 * Revision 1.8  2005/02/13 15:29:04  gzins
 * Change Min/MaxDeltaMag to Min/MaxMagRange
 *
@@ -35,7 +38,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.9 2005-02-14 15:22:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.10 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -99,11 +102,9 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
  *
  * \param request vobsREQUEST which have all the contraints for the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  *
- * \b Errors codes:\n 
- * The possible errors are:
- *  \li vobsERR_QUERY_WRITE_FAILED
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
 {
@@ -128,10 +129,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
  * asking is the same.
  *
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n 
- * The possible errors are:
+ * \return always mcsSUCCESS.
  *
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
@@ -154,12 +152,8 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
  * Build the specificatic part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return always mcsSUCCESS.
  * 
- * \b Errors codes:\n
- * The possible errors are:
- *
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
 {
@@ -181,11 +175,8 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
  *
  * \param request vobsREQUEST which help to restrict the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return always mcsSUCCESS
  * 
- * \b Errors codes:\n
- * The possible errors are:
- * \li vobsERR_UNKNOWN_BAND
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
 {

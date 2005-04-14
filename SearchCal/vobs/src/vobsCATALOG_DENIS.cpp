@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.5 2005-02-11 14:22:10 gluck Exp $"
+* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.6 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/11 14:22:10  gluck
+* - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
+* - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
+* - Updated some comments
+*
 * Revision 1.4  2005/02/08 20:30:37  gzins
 * Changed _name type; mcsSTRING to string
 *
@@ -21,7 +26,7 @@
  * vobsCATALOG_DENIS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.5 2005-02-11 14:22:10 gluck Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.6 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -74,7 +79,6 @@ vobsCATALOG_DENIS::~vobsCATALOG_DENIS()
  * Protected methods
  */
 
-
 /**
  * Build the specificatic part of the asking.
  *
@@ -82,10 +86,7 @@ vobsCATALOG_DENIS::~vobsCATALOG_DENIS()
  * which is write specificaly for each catalog.
  *
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n
- * The possible errors are:
+ * \return always mcsSUCCESS 
  *
  */
 mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)

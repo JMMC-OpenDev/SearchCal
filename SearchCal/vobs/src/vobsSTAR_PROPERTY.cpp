@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.10 2005-03-04 06:34:37 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.11 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/03/04 06:34:37  gzins
+* Updated GetConfidenceIndex prototype
+*
 * Revision 1.9  2005/02/22 14:22:25  gzins
 * Fixed bug when testing convertion of float values to string
 *
@@ -36,7 +39,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.10 2005-03-04 06:34:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.11 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -81,7 +84,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name, 
                                      vobsPROPERTY_TYPE type, char *format)
 {
-    //logExtDbg("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(...)"); 
+    logExtDbg("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(...)"); 
     _id     = id;
     _name   = name;
     _type   = type;
@@ -111,7 +114,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name,
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
-    //logExtDbg("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(property)"); 
+    logExtDbg("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(property)"); 
     _id     = property._id;
     _name   = property._name;
     _type   = property._type;
@@ -126,7 +129,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
  */
 vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& property)
 {
-    //logExtDbg("vobsSTAR_PROPERTY::operator=()"); 
+    logExtDbg("vobsSTAR_PROPERTY::operator=()"); 
     _id     = property._id;
     _name   = property._name;
     _type   = property._type;
@@ -271,13 +274,9 @@ const char *vobsSTAR_PROPERTY::GetValue(void) const
  *
  * \param value pointer to store value.
  * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  *
- * \b Error codes:\n
- * The possible errors are :
- * \li vobsERR_PROPERTY_NOT_SET
- * \li vobsERR_PROPERTY_TYPE
- * \li vobsERR_INVALID_PROP_FORMAT
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
 {

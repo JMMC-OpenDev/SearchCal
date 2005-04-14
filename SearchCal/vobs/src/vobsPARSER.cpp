@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.19 2005-02-13 15:23:20 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.20 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/02/13 15:23:20  gzins
+* Fixed modification history
+*
 * Revision 1.18  2005/02/13 15:16:07  gzins
 * Removed ParseCDATA and GetPropertyId. Moved to vobsCDATA class
 *
@@ -55,7 +58,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.19 2005-02-13 15:23:20 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.20 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -108,22 +111,21 @@ vobsPARSER::~vobsPARSER()
  * \param starList list where star has to be put.
  * \param logFileName file to save the result of the asking
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned and
- * an error is added to the error stack. The possible errors are :
- * \li vobsERR_GDOME_CALL
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned
  */
 mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
                                 const char *catalogName,
                                 vobsSTAR_LIST &starList,
                                 const char *logFileName)
 {    
+    logExtDbg("vobsPARSER::MainParser()");	
     GdomeDOMImplementation *domimpl;
     GdomeDocument          *doc;
     GdomeElement           *root;
     GdomeException         exc;
     
     vobsCDATA cData;
-    logExtDbg("vobsPARSER::MainParser()");	
 
     // Set the catalog name
     cData.SetCatalogName(catalogName);
@@ -137,6 +139,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     if (doc == NULL) 
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromURI", exc);
+        // free gdome object
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
         xmlCleanupParser();
@@ -148,6 +151,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     if (root == NULL)
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_doc_documentElement", exc);
+        // free gdome object
         gdome_el_unref(root, &exc);            
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
@@ -158,6 +162,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     // Begin the recursif look of the tree
     if (ParseXmlSubTree((GdomeNode *)root, &cData) == mcsFAILURE)
     {
+        // free gdome object
         gdome_el_unref(root, &exc);            
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
@@ -222,6 +227,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         cData.SetNbLinesToSkip(0);
         if (cData.Extract(star, starList) == mcsFAILURE)
         {
+            // free gdome object
             gdome_el_unref(root, &exc);            
             gdome_doc_unref (doc, &exc);
             gdome_di_unref (domimpl, &exc);
@@ -283,6 +289,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     if (exc != GDOME_NOEXCEPTION_ERR)
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_n_childNodes", exc);
+        // free gdome object
         gdome_nl_unref(nodeList, &exc);
         return mcsFAILURE;
     }
@@ -292,6 +299,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     if (exc != GDOME_NOEXCEPTION_ERR)
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_nl_length", exc);
+        // free gdome object
         gdome_nl_unref(nodeList, &exc);
         return mcsFAILURE;
     }
@@ -299,6 +307,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     // If there is no child; return
     if (nbChildren == 0)
     {
+        // free gdome object
         gdome_nl_unref(nodeList, &exc);
         return mcsSUCCESS;
     }
@@ -311,6 +320,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
         if (child == NULL) 
         {
             errAdd(vobsERR_GDOME_CALL, "gdome_nl_item", exc);
+            // free gdome object
             gdome_n_unref(child, &exc);
             gdome_nl_unref(nodeList, &exc);
             return mcsFAILURE;
@@ -324,6 +334,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_cds_data", exc);
+                // free gdome object
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
                 gdome_nl_unref(nodeList, &exc);
@@ -334,6 +345,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 if (cData->AppendLines(nodeName->str,
                                        cData->GetNbLinesToSkip()) == mcsFAILURE)
                 {
+                    // free gdome object
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
                     gdome_nl_unref(nodeList, &exc);
@@ -350,6 +362,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                // free gdome object
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
                 gdome_nl_unref(nodeList, &exc);
@@ -362,6 +375,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_n_attributes", exc);
+                // free gdome object
                 gdome_nnm_unref(attrList, &exc);
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
@@ -374,6 +388,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             if (exc != GDOME_NOEXCEPTION_ERR)
             {
                 errAdd(vobsERR_GDOME_CALL, "gdome_nnm_length", exc);
+                // free gdome object
                 gdome_nnm_unref(attrList, &exc);
                 gdome_str_unref(nodeName);
                 gdome_n_unref(child, &exc);
@@ -389,6 +404,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 if (exc != GDOME_NOEXCEPTION_ERR)
                 {
                     errAdd(vobsERR_GDOME_CALL, "gdome_nnm_item", exc);
+                    // free gdome object
                     gdome_n_unref(attr, &exc);
                     gdome_nnm_unref(attrList, &exc);
                     gdome_str_unref(nodeName);
@@ -403,6 +419,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if (exc != GDOME_NOEXCEPTION_ERR)
                     {
                         errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                        // free gdome object
                         gdome_str_unref(attrName);
                         gdome_n_unref(attr, &exc);
                         gdome_nnm_unref(attrList, &exc);
@@ -417,6 +434,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     if (exc != GDOME_NOEXCEPTION_ERR)
                     {
                         errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeValue", exc);
+                        // free gdome object
                         gdome_str_unref(attrValue);
                         gdome_str_unref(attrName);
                         gdome_n_unref(attr, &exc);
@@ -452,9 +470,11 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     {
                         cData->SetNbLinesToSkip(atoi(attrValue->str) + 1); 
                     }
+                    // free gdome object
                     gdome_str_unref(attrValue);                    
                     gdome_str_unref(attrName);                    
                 }
+                // free gdome object
                 gdome_n_unref(attr, &exc);                
             }
             // If there are children nodes, parse corresponding XML sub-tree
@@ -462,12 +482,14 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
             {
                 if (ParseXmlSubTree(child, cData) == mcsFAILURE)
                 {
+                    // free gdome object
                     gdome_str_unref(nodeName);
                     gdome_n_unref(child, &exc);
                     gdome_nl_unref(nodeList, &exc);
                     return mcsFAILURE;
                 }
             }
+            // free gdome object
             gdome_str_unref(nodeName);
             gdome_nnm_unref(attrList, &exc);            
         }
@@ -475,13 +497,16 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
         if (exc != GDOME_NOEXCEPTION_ERR)
         {
             errAdd(vobsERR_GDOME_CALL, "gdome_n_unref", exc);
+            // free gdome object
             gdome_nl_unref(nodeList, &exc);
             gdome_n_unref (child, &exc);
             return mcsFAILURE;
         }
+        // free gdome object
         gdome_n_unref(child, &exc);        
     }
 
+    // free gdome object
     gdome_nl_unref(nodeList, &exc);
     
     return mcsSUCCESS;

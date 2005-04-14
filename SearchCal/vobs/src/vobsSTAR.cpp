@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.41 2005-03-30 12:49:26 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.42 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.41  2005/03/30 12:49:26  scetre
+* Updated documentation
+*
 * Revision 1.40  2005/03/06 10:44:03  gzins
 * Removed GetSpectralClass and GetLuminosityClass; not applicable due to the complexity of the spectral type format
 *
@@ -97,7 +100,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.41 2005-03-30 12:49:26 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.42 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -187,9 +190,6 @@ vobsSTAR::~vobsSTAR()
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  *
- * \b Error codes:\n
- * The possible errors are :
- * \li vobsERR_INVALID_PROPERTY_ID
  */
 mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
                                          const char *origin,
@@ -205,9 +205,12 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
     if (propertyIter != _propertyList.end())
     {
         // Set property
-        propertyIter->second.SetValue(value, origin,
-                                      confidenceIndex,
-                                      overwrite);
+        if (propertyIter->second.SetValue(value, origin,
+                                          confidenceIndex,
+                                          overwrite) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
         return mcsSUCCESS;
     }
     // Else
@@ -251,8 +254,11 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
     if (propertyIter != _propertyList.end())
     {
         // Set property
-        propertyIter->second.SetValue(value, origin, confidenceIndex, 
-                                      overwrite);
+        if (propertyIter->second.SetValue(value, origin, confidenceIndex, 
+                                          overwrite) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
         return mcsSUCCESS;
     }
     // Else
@@ -508,8 +514,14 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
     // Replace ':' by ' ', and remove trailing and leading pace
     strcpy(raHms, GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
-    miscReplaceChrByChr(raHms, ':', ' ');
-    miscTrimString(raHms, " ");
+    if (miscReplaceChrByChr(raHms, ':', ' ') == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (miscTrimString(raHms, " ") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     if (sscanf(raHms, "%f %f %f", &hh, &hm, &hs) != 3)
     {
         errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
@@ -558,8 +570,14 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
     // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
     // Replace ':' by ' ', and remove trailing and leading pace
     strcpy(decDms, GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
-    miscReplaceChrByChr(decDms, ':', ' ');
-    miscTrimString(decDms, " ");
+    if (miscReplaceChrByChr(decDms, ':', ' ') == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (miscTrimString(decDms, " ") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     if (sscanf(decDms, "%f %f %f", &dd, &dm, &ds) != 3)
     {
         errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
@@ -855,11 +873,9 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  * \param type   property type
  * \param format format used to set property
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  *
- * \b Error codes:\n
- * The possible error is :
- * \li vobsERR_DUPLICATED_PROPERTY
  */
 mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
                                     vobsPROPERTY_TYPE type, char *format)

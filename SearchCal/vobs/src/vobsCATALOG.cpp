@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.cpp,v 1.11 2005-03-30 12:49:26 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.cpp,v 1.12 2005-04-14 14:39:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/03/30 12:49:26  scetre
+* Updated documentation
+*
 * Revision 1.10  2005/02/11 14:22:10  gluck
 * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
 * - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
@@ -34,7 +37,7 @@
  * Definition vobsCATALOG class .
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.11 2005-03-30 12:49:26 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.12 2005-04-14 14:39:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,11 +64,6 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 #include "vobsSTAR.h"
-
-/*
- * Local Variables
- */
-
 
 /*
  * Class constructor
