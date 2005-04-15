@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.30 2005-04-11 12:33:25 scetre Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.31 2005-04-15 17:49:17 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2005/04/11 12:33:25  scetre
+ * Revue : changed documentation
+ *
  * Revision 1.29  2005/04/11 12:20:08  scetre
  * Revue : changed documentation
  *
@@ -71,11 +74,10 @@
 /**
  * \file
  * cmdCOMMAND class definition.
- * \todo get Default value from CDF
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.30 2005-04-11 12:33:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.31 2005-04-15 17:49:17 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -516,13 +518,15 @@ mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
 
 /** 
  *  Get the value of a parameter. 
- *
- *  Begin to return the user value. If the parameter is not defined by the 
- *  user, the default is returned if it exist. If the parameter has neither
- *  user value nor default value, then an error is returned.
+ *  
+ *  If the parameter has neither user value nor default value,
+ *  then an error is returned. \n
+ *  If one user value and/or default value does
+ *  exist, then this function try to return the user value before returning the
+ *  default one.
  *
  * \param paramName  the name of the parameter.
- *  \param param  the storage data pointer.
+ * \param param  the storage data pointer.
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
@@ -562,11 +566,13 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
 }
 
 /** 
- *  Get the value of a parameter. Begin to return the user value. 
- *  If the parameter is not defined by the user, the default
- *  is returned if it exist. If the parameter has neither user value nor default
- *  value, then an error is returned.
- *  Get the user value of a parameter.
+ *  Get the value of a parameter. 
+ *
+ *  If the parameter has neither user value nor default value,
+ *  then an error is returned. \n
+ *  If one user value and/or default value does
+ *  exist, then this function try to return the user value before returning the
+ *  default one.
  *
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
@@ -607,10 +613,13 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
 }
 
 /** 
- *  Get the value of a parameter. Begin to return the user value. 
- *  If the parameter is not defined by the user, the default
- *  is returned if it exist. If the parameter has neither user value nor default
- *  value, then an error is returned.
+ *  Get the value of a parameter. 
+ *
+ *  If the parameter has neither user value nor default value,
+ *  then an error is returned. \n
+ *  If one user value and/or default value does
+ *  exist, then this function try to return the user value before returning the
+ *  default one.
  *
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
@@ -651,11 +660,14 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
 }
 
 /** 
- *  Get the value of a parameter. Begin to return the user value. 
- *  If the parameter is not defined by the user, the default
- *  is returned if it exist. If the parameter has neither user value nor default
- *  value, then an error is returned.
+ *  Get the value of a parameter.
  *
+ *  If the parameter has neither user value nor default value,
+ *  then an error is returned. \n
+ *  If one user value and/or default value does
+ *  exist, then this function try to return the user value before returning the
+ *  default one.
+ * 
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
@@ -695,10 +707,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
 }
 
 /** 
- *  Get the value of a parameter. Begin to return the user value. 
- *  If the parameter is not defined by the user, the default
- *  is returned if it exist. If the parameter has neither user value nor default
- *  value, then an error is returned.
+ *  Get the default value of a parameter.
  *
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
@@ -712,6 +721,8 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
     
     // create a pointer of cmdPARAM
     cmdPARAM *p;
+    
+    // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -734,6 +745,8 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, char **param)
     
     // create a pointer of cmdPARAM
     cmdPARAM *p;
+    
+    // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -757,6 +770,8 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
     
     // create a pointer of cmdPARAM
     cmdPARAM *p;
+    
+    // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -780,6 +795,8 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
 
     // create a pointer of cmdPARAM
     cmdPARAM *p;
+    
+    // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
     {
         return mcsFAILURE;
@@ -1053,7 +1070,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
     GdomeException exc;
     // Create a libgdome string
     GdomeDOMString *name;
-    // integerwhich will gave the number of child of a node
+    // Number of child of a node
     int nbChildren;
 
     name = gdome_str_mkref ("params");
@@ -1361,7 +1378,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
  * Get the node element child of a node element.
  *
  * If the element is not affected and if it is not an optional element, return
- * an errro. If it is an optional element, it can be not affected. In this case,
+ * an error. If it is an optional element, it can be not affected. In this case,
  * success is return
  * 
  * \param parentNode the parent node. 
