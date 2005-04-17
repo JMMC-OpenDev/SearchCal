@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.h,v 1.11 2005-04-11 12:33:25 scetre Exp $"
+ * "@(#) $Id: cmdPARAM.h,v 1.12 2005-04-17 16:18:48 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/04/11 12:33:25  scetre
+ * Revue : changed documentation
+ *
  * Revision 1.10  2005/02/28 13:38:18  lafrasse
  * Added minimum and maximum parameter values information output in 
  * cmdPARAM:GetHelp()
@@ -47,7 +50,7 @@ using namespace std;
  */
 
 /**
- * 
+ * This class is used to get a model for any parameter of an MCS command.
  */
 class cmdPARAM
 {
