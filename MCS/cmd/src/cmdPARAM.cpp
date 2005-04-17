@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.15 2005-04-11 12:33:25 scetre Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.16 2005-04-17 16:18:59 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/04/11 12:33:25  scetre
+ * Revue : changed documentation
+ *
  * Revision 1.14  2005/04/11 12:20:08  scetre
  * Revue : changed documentation
  *
@@ -48,7 +51,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.15 2005-04-11 12:33:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.16 2005-04-17 16:18:59 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -75,7 +78,7 @@ using namespace std;
 #include "cmdPrivate.h"
 #include "cmdErrors.h"
 
-/*
+/**
  * Class constructor
  *
  * \param name the name of the parameter.
@@ -97,11 +100,8 @@ cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
 }
 
 
-/*
- * Class destructor
- */
 /**
- *  Destructs the parameter
+ * Class destructor
  *
  */
 cmdPARAM::~cmdPARAM()
@@ -112,6 +112,7 @@ cmdPARAM::~cmdPARAM()
 /*
  * Public methods
  */
+
 /**
  *  Get the name of the parameter.
  *
@@ -126,7 +127,8 @@ string cmdPARAM::GetName(void)
 /**
  *  Get the description of the parameter.
  *
- *  \returns the string containing the description or an empty string.
+ *  \returns the string containing the description or an empty string if it does
+ *  not exist.
  */
 string cmdPARAM::GetDesc(void)
 {
@@ -137,7 +139,8 @@ string cmdPARAM::GetDesc(void)
 /**
  *  Get the type of the parameter.
  *
- *  \returns the string containing the type or an empty string.
+ *  \returns the string containing the type or an empty string if it does not
+ *  exist.
  */
 string cmdPARAM::GetType(void)
 {
@@ -148,7 +151,8 @@ string cmdPARAM::GetType(void)
 /**
  *  Get the unit of the parameter.
  *
- *  \returns the string containing the unit or an empty string.
+ *  \returns the string containing the unit or an empty string if it does not
+ *  exist.
  */
 string cmdPARAM::GetUnit(void)
 {
