@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.2 2005-02-10 14:13:05 lafrasse Exp $"
+ * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.3 2005-04-22 09:25:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/10 14:13:05  lafrasse
+ * Added QueuedMessagesNb() and GetNextQueuedMessage() methods test
+ *
  * Revision 1.1  2005/02/09 16:42:26  lafrasse
  * Added msgMESSAGE_FILTER class to manage message queues
  *
@@ -19,7 +22,7 @@
  * \<msgTestManagerIFQueue\>
  */
 
-static char *rcsId="@(#) $Id: msgTestManagerIFQueue.cpp,v 1.2 2005-02-10 14:13:05 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgTestManagerIFQueue.cpp,v 1.3 2005-04-22 09:25:09 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -70,7 +73,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == FAILURE)
+    if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
         

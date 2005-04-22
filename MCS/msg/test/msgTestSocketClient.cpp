@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgTestSocketClient.cpp,v 1.4 2005-02-09 16:41:02 lafrasse Exp $"
+* "@(#) $Id: msgTestSocketClient.cpp,v 1.5 2005-04-22 09:25:09 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/02/09 16:41:02  lafrasse
+* Changed the way mesage are displayed (now use msgMESSAGE 'operator<<' instead of 'Display')
+*
 * Revision 1.3  2005/02/04 15:57:06  lafrasse
 * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
 *
@@ -22,7 +25,7 @@
  * \<msgTestSocketClient\>
  */
 
-static char *rcsId="@(#) $Id: msgTestSocketClient.cpp,v 1.4 2005-02-09 16:41:02 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgTestSocketClient.cpp,v 1.5 2005-04-22 09:25:09 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -122,7 +125,7 @@ int main(int argc, char *argv[])
     {
         goto errCond;
     }
-    if (msg.SetType(msgTYPE_COMMAND) == FAILURE)
+    if (msg.SetType(msgTYPE_COMMAND) == mcsFAILURE)
     {
         goto errCond;
     }
