@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.7 2005-02-11 09:45:11 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.8 2005-05-13 15:33:41 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/02/11 09:45:11  gzins
+# Added installation of misco
+#
 # Revision 1.6  2005/01/29 13:49:36  gzins
 # Added CVS log as modification history
 # Forbid MCS installation as root
@@ -27,7 +30,7 @@
 #   mcsinsInstall - Install/Update MCS modules 
 # 
 #   SYNOPSIS
-#   mcsinsInstall [-u]
+#   mcsinsInstall [-h] [-c] [-u] [-t tag]
 # 
 #   DESCRIPTION
 #   This command retreives all the modules belonging to MCS from the CVS
@@ -49,34 +52,48 @@
 #
 #-------------------------------------------------------------------------------
 #
+function printUsage () {
+        echo -e "Usage: mcsinsInstall [-h] [-c] [-u] [-t tag]" 
+        echo -e "\t-h\tprint this help."
+        echo -e "\t-c\tonly compile; i.e. do not retrieve modules from "
+        echo -e "\t\trepository."
+        echo -e "\t-u\tdo not delete modules to be installed from the "
+        echo -e "\t\tcurrent directory; they are just updated."
+        echo -e "\t-t tag\tuse revision 'tag' when retrieving modules.\n"
+        exit 1;
+}
 
-# Check number of argument 
-if [ $# != 0 -a $# != 1 ]
+# Parse command-line parameters
+update="no";
+retrieve="yes";
+tag="";
+while getopts "chut:" option
+# Initial declaration.
+# a, b, c, d, e, f, and g are the options (flags) expected.
+# The : after option 'e' shows it will have an argument passed with it.
+do
+  case $option in
+    h ) # Help option
+        printUsage ;;
+    u ) # Update option
+        update="yes";;
+    c ) # Update option
+        retrieve="no";;
+    t ) # Update option
+        tag="$OPTARG";;
+    * ) # Unknown option
+        printUsage ;;
+    esac
+done
+
+# Check that all options have been parsed 
+if [ $# -ge $OPTIND ]
 then 
-    echo -e "\nUsage: mcsinsInstall [-h] [-u]" 
+    echo -e "\nUsage: mcsinsInstall [-h] [-u] [-t tag]" 
     exit 1
 fi
 
-# Check -h option 
-update="no"
-if [ $# == 1 ]
-then  
-    if [ "$1" == "-h" ]
-    then
-        echo -e "Usage: mcsinsInstall [-h] [-u]" 
-        echo -e "\t-h\tprint this help."
-        echo -e "\t-u\tdo not delete modules to be installed from the "
-        echo -e "\t\tcurrent directory; they are just updated.\n"
-        exit 1;
-    elif [ "$1" == "-u" ]
-    then
-        update="yes"
-    else
-        echo -e "\nERROR : '$1' unknown option.\n" 
-        exit 1
-    fi
-fi
-
+#
 # Check that the script is not run by 'root'
 if [ `whoami` == "root" ]
 then
@@ -84,13 +101,23 @@ then
     echo -e "\n  ->  Please log in as swmgr, and start again.\n" 
     exit 1
 fi
+
+#
+# Check that the home directory differs form MCSROOT 
+if [ $HOME == $MCSROOT ]
+then
+    echo -e "\nWARNING : MCSROOT should differ from '`whoami`' home directory !!"
+    echo -e ""
+    exit 1
+fi
+
 # Get the current directory
 dir=$PWD
 
 # Propose the user to continue or abort
 echo -e "\n-> All the MCS modules will be installed from"
 echo -e "   '$dir' directory\n"
-if [ "$update" == "no" ]
+if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
     echo -e "    from the current directory. Use '-u' option to only "
@@ -102,29 +129,48 @@ read choice
 # List of MCS modules
 mcs_modules="mkf ctoo mcs log err misc timlog modc modcpp fnd misco env cmd msg evh gwt"
 
-# Delete modules first
-cd $dir
-if [ "$update" == "no" ]
-then
-    echo -e "Deleting modules..."
-    rm -rf $mcs_modules
-fi 
-
 # Log file
 mkdir -p INSTALL
 logfile="$dir/INSTALL/mcsinsInstall.log"
 rm -f $logfile
 
-# Retrieve modules from CVS repository
-echo -e "Retrieving modules from repository..."
-cd $dir
-cvs co $mcs_modules > $logfile 2>&1
-if [ $? != 0 ]
+# If modules have to be retrieved from repository
+if [ "$retrieve" == "yes" ]
 then
-    echo -e "\nERROR: 'cvs co $mcs_modules' failed ... \n"; 
-    tail $logfile
-    echo -e "See log file '$logfile' for details."
-    exit 1;
+    # Delete modules first
+    cd $dir
+    if [ "$update" == "no" ]
+    then
+        echo -e "Deleting modules..."
+        rm -rf $mcs_modules
+    fi 
+
+    # Retrieve modules from CVS repository
+    # When a revision tag is specified, we have first to retrieve module giving
+    # this tag, and then to retrieve again to create empty directories which are
+    # not created by cvs command when '-r' option is used.
+    echo -e "Retrieving modules from repository..."
+    cd $dir
+    if [ "$tag" != "" ]
+    then
+        cvs co -r $tag $mcs_modules > $logfile 2>&1
+        if [ $? != 0 ]
+        then
+            echo -e "\nERROR: 'cvs co -r $tag $mcs_modules' failed ... \n"; 
+            tail $logfile
+            echo -e "See log file '$logfile' for details."
+            exit 1;
+        fi
+    fi
+
+    cvs co $mcs_modules > $logfile 2>&1
+    if [ $? != 0 ]
+    then
+        echo -e "\nERROR: 'cvs co $mcs_modules' failed ... \n"; 
+        tail $logfile
+        echo -e "See log file '$logfile' for details."
+        exit 1;
+    fi
 fi
 
 # Compile and install them
