@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.20 2005-03-03 16:10:31 gluck Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.21 2005-05-17 15:34:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/03/03 16:10:31  gluck
+ * Code review corrections: code + documentation ...
+ *
  * Revision 1.19  2005/02/22 11:11:38  lafrasse
  * Added miscDynBufGetNextCommentLine(), miscDynBufAppendLine() and miscDynBufAppendComentLine()
  *
@@ -32,19 +35,9 @@
  * Revision 1.13  2005/01/28 17:54:41  gzins
  * Declared dynBuf parameter of miscDynBufGetBufferPointer as const
  *
- * lafrasse  06-Jul-2004  Created
- * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
- * lafrasse  23-Jul-2004  Moved miscDYN_BUF_MAGIC_STRUCTURE_ID to miscPrivate.h,
- *                        added error management to
- *                        miscDynBufGetStoredBytesNumber and
- *                        miscDynBufGetAllocatedBytesNumber, plus
- *                        miscDynBufGetBytesFromTo parameter refinments.
- * lafrasse  02-Aug-2004  Moved mcs.h include in from miscDynBuf.c
- *                        Moved in null-terminated string specific functions
- *                        from miscDynStr.h
- * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
- * lafrasse  30-Sep-2004  Changed miscDynBufAlloc second parameter type from
- *                        mcsUINT32 to mcsINT32
+ * gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
+ *                        miscDynBufGetNbStoredBytes and
+ *                        miscDynBufGetAllocatedBytesNumber to
  * lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer() and
  *                        miscDynBufLoadFile() function, plus a new field in
  *                        the Dynamic Buffer structure to store the comment
@@ -52,10 +45,19 @@
  *                        miscDynBufGetNextLinePointer() with
  *                        miscDynBufGetCommentPattern() and
  *                        miscDynBufSetCommentPattern() to deal with this field
- * gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
- *                        miscDynBufGetNbStoredBytes and
- *                        miscDynBufGetAllocatedBytesNumber to
- *
+ * lafrasse  30-Sep-2004  Changed miscDynBufAlloc second parameter type from
+ *                        mcsUINT32 to mcsINT32
+ * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
+ * lafrasse  02-Aug-2004  Moved mcs.h include in from miscDynBuf.c
+ *                        Moved in null-terminated string specific functions
+ *                        from miscDynStr.h
+ * lafrasse  23-Jul-2004  Moved miscDYN_BUF_MAGIC_STRUCTURE_ID to miscPrivate.h,
+ *                        added error management to
+ *                        miscDynBufGetStoredBytesNumber and
+ *                        miscDynBufGetAllocatedBytesNumber, plus
+ *                        miscDynBufGetBytesFromTo parameter refinments.
+ * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
+ * lafrasse  06-Jul-2004  Created
  *
  ******************************************************************************/
 
@@ -156,19 +158,6 @@ mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (const miscDYN_BUF *dynBuf,
 
 char*         miscDynBufGetBuffer           (const miscDYN_BUF *dynBuf);
 
-const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
-
-const char*   miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
-                                             const char        *currentPos,
-                                                   char        *nextLine,
-                                             const mcsUINT32   maxLineLength,
-                                             const mcsLOGICAL  skipCommentFlag);
-
-const char*   miscDynBufGetNextCommentLine  (const miscDYN_BUF *dynBuf,
-                                             const char        *currentPos,
-                                                   char        *nextLine,
-                                             const mcsUINT32   maxLineLength);
-
 mcsCOMPL_STAT miscDynBufGetByteAt           (const miscDYN_BUF *dynBuf,
                                              char              *byte,
                                              const mcsUINT32   position);
@@ -182,6 +171,19 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo     (const miscDYN_BUF *dynBuf,
                                              char              *str,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
+
+const char*   miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
+                                             const char        *currentPos,
+                                                   char        *nextLine,
+                                             const mcsUINT32   maxLineLength,
+                                             const mcsLOGICAL  skipCommentFlag);
+
+const char*   miscDynBufGetNextCommentLine  (const miscDYN_BUF *dynBuf,
+                                             const char        *currentPos,
+                                                   char        *nextCommentLine,
+                                             const mcsUINT32   maxCommentLineLength);
+
+const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
 
 mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
                                              const char        *commentPattern);
