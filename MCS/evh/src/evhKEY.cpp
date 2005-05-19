@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhKEY.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"
+ * "@(#) $Id: evhKEY.cpp,v 1.4 2005-05-19 15:18:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/29 15:17:02  gzins
+ * Added CVS log as modification history
+ *
  * gzins     24-Sep-2004  Created
  * gzins     07-Jan-2005  Implemented Match()
  *
@@ -16,7 +19,7 @@
  * Definition of the evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhKEY.cpp,v 1.3 2005-01-29 15:17:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhKEY.cpp,v 1.4 2005-05-19 15:18:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -125,8 +128,6 @@ evhKEY & evhKEY::SetType(const evhTYPE type)
  */
 evhTYPE evhKEY::GetType() const
 {
-    logExtDbg("evhKEY::GetType()");
-
     return _type;
 }
  
