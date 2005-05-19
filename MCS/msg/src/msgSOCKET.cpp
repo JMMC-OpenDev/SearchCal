@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.19 2005-04-04 15:09:02 gzins Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.20 2005-05-19 15:09:52 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/04/04 15:09:02  gzins
+ * Used SO_REUSEADDR to force socket binding even if the port is busy (in the TIME_WAIT state)
+ *
  * Revision 1.18  2005/02/10 08:08:33  gzins
  * Added logInfo to inform about sent and received message
  * Fixed bug in message reception when message size was big (> ~32k)
@@ -50,7 +53,7 @@
  * \sa msgSOCKET
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.19 2005-04-04 15:09:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.20 2005-05-19 15:09:52 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -423,7 +426,7 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
         }
         else
         {
-            logInfo("Sent '%s' to '%s'", 
+            logInfo("Sent reply '%s' to '%s'", 
                     msg.GetBody(), msg.GetSender());
         }    
     }
@@ -531,7 +534,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     // If the timeout expired...
     if (status == 0)
     {
-        errAdd(msgERR_TIMEOUT_EXPIRED, "No specific error message !!!");
+        errAdd(msgERR_TIMEOUT_EXPIRED);
         return mcsFAILURE;
     }
 
@@ -620,7 +623,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         }
         else
         {
-            logInfo("Received '%s' from '%s'", 
+            logInfo("Received reply '%s' from '%s'", 
                     msg.GetBody(), msg.GetRecipient());
         }    
     }
