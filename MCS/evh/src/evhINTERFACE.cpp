@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.cpp,v 1.5 2005-02-15 13:39:03 gzins Exp $"
+ * "@(#) $Id: evhINTERFACE.cpp,v 1.6 2005-05-19 15:17:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 13:39:03  gzins
+ * Changed remaiming SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.4  2005/01/29 06:47:26  gzins
  * Fixed wrong prototype of Forward method
  *
@@ -24,7 +27,7 @@
  * evhINTERFACE class definition.
  */
 
-static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.5 2005-02-15 13:39:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.6 2005-05-19 15:17:22 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -58,7 +61,6 @@ evhINTERFACE::evhINTERFACE(const char *name, const char *procName,
     _name = name;
     strncpy(_procName, procName, sizeof(mcsPROCNAME));
     _timeout = timeout;
-    _replyCb = NULL;
 }
 
 /**
@@ -66,10 +68,6 @@ evhINTERFACE::evhINTERFACE(const char *name, const char *procName,
  */
 evhINTERFACE::~evhINTERFACE()
 {
-    if (_replyCb != NULL)
-    {
-        delete (_replyCb);
-    }
 }
 
 /*
@@ -124,9 +122,13 @@ mcsCOMPL_STAT evhINTERFACE::Send(const char *command,
     // Do
     do
     {
-        // If timeout is expired
-        if (_msgManager.Receive(_msg, timeout) == mcsFAILURE)
+        // Create a filter to get only the command reply 
+        msgMESSAGE_FILTER filter(_msg.GetCommand(), _msg.GetCommandId());
+
+        // Wait for reply 
+        if (_msgManager.Receive(_msg, timeout, filter) == mcsFAILURE)
         {
+            // If timeout is expired
             return mcsFAILURE;
         }
         // End if
@@ -197,17 +199,14 @@ mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
             timeout = _timeout;
         }
 
-        // Save user reply callback
-        if (_replyCb != NULL)
-        {
-            delete (_replyCb);
-        }
-        _replyCb = new evhCMD_CALLBACK(callback);
+        // Create user reply callback
+        evhCMD_CALLBACK *replyCb; 
+        replyCb = new evhCMD_CALLBACK(callback);
 
         // Attach callback for reply
         evhCMD_REPLY_KEY key(command, cmdId, timeout);
         evhCMD_CALLBACK cmdReplyCB
-            (this, (evhCMD_CB_METHOD)&evhINTERFACE::ReplyCB);
+            (this, (evhCMD_CB_METHOD)&evhINTERFACE::ReplyCB, replyCb);
         if (evhMainHandler->AddCallback(key, cmdReplyCB) == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -229,7 +228,7 @@ mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
  *
  * \return return value of user callback. 
  */
-evhCB_COMPL_STAT evhINTERFACE::ReplyCB(msgMESSAGE &msg, void*)
+evhCB_COMPL_STAT evhINTERFACE::ReplyCB(msgMESSAGE &msg, void* replyCb)
 {
     logExtDbg("evhINTERFACE::ReplyCB");
 
@@ -239,9 +238,14 @@ evhCB_COMPL_STAT evhINTERFACE::ReplyCB(msgMESSAGE &msg, void*)
         // Unpack error stack
         errUnpackStack(msg.GetBody(), msg.GetBodySize());
     }
-    
-    // Then execute user callback 
-    return (_replyCb->Run(msg));
+    // Then execute user callback, and delete callback if no longer needed 
+    evhCB_COMPL_STAT status;
+    status = ((evhCMD_CALLBACK *)replyCb)->Run(msg);
+    if ((status & evhCB_DELETE) != 0)
+    {
+        delete ((evhCMD_CALLBACK *)replyCb);
+    }
+    return status;
 }
 
 /**
