@@ -68,7 +68,7 @@
    <error id="14">
       <errName>TIMEOUT_EXPIRED</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA[timeout expired - %s]]></errFormat>
+      <errFormat><![CDATA[timeout expired when waiting for message]]></errFormat>
    </error>
    <error id="15">
       <errName>SELECT</errName>
@@ -169,5 +169,10 @@
       <errName>PROC_ABNORMALLY_EXIT</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Process %s whose an answer was awaited, abnormally exit]]></errFormat>
+   </error>
+   <error id="37">
+      <errName>REPLY_TIMEOUT_EXPIRED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[timeout expired when waiting for %s command reply]]></errFormat>
    </error>
 </errorList>
