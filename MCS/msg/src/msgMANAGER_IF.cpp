@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.cpp,v 1.23 2005-02-09 16:42:26 lafrasse Exp $"
+ * "@(#) $Id: msgMANAGER_IF.cpp,v 1.24 2005-05-19 15:08:14 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/02/09 16:42:26  lafrasse
+ * Added msgMESSAGE_FILTER class to manage message queues
+ *
  * Revision 1.22  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -57,7 +60,7 @@
  * msgMANAGER_IF
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.23 2005-02-09 16:42:26 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.24 2005-05-19 15:08:14 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -69,6 +72,8 @@ using namespace std;
 #include <errno.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <time.h>
+#include <sys/time.h>
 
 
 /*
@@ -464,8 +469,8 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (      msgMESSAGE &msg,
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT msgMANAGER_IF::Receive     (      msgMESSAGE &msg,
-                                          const mcsINT32   timeoutInMs)
+mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE &msg,
+                                          mcsINT32   timeoutInMs)
 {
     logExtDbg("msgMANAGER_IF::Receive()");
 
@@ -504,6 +509,8 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (      msgMESSAGE        &msg,
 {
     logExtDbg("msgMANAGER_IF::Receive()");
 
+    mcsINT32          remainingTime = timeoutInMs;
+
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
@@ -511,14 +518,25 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (      msgMESSAGE        &msg,
         return mcsFAILURE;
     }
 
+    // Get the start time to compute remaining time after reception of a
+    // 'unwanted' message
+    struct timeval  startTime;
+    gettimeofday(&startTime, NULL);
+
     // Recieve and stack messages until the one specified by the filter is
     // received
     mcsLOGICAL filterMatchesMessage;
     do
     {
         // Wait until a message is received
-        if (Receive(msg, timeoutInMs) == mcsFAILURE)
+        if (Receive(msg, remainingTime) == mcsFAILURE)
         {
+            // If timeout expired
+            if (errIsInStack(MODULE_ID, msgERR_TIMEOUT_EXPIRED) == mcsTRUE)
+            {
+                // Add error
+                errAdd(msgERR_REPLY_TIMEOUT_EXPIRED, filter.GetCommand());
+            }
             return mcsFAILURE;
         }
 
@@ -529,6 +547,22 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (      msgMESSAGE        &msg,
             // Put the received message in the waiting stack
             _messageQueue.push(msg);
             logDebug("Put a message in the queue");
+
+            // Re-compute time-out
+            if (timeoutInMs != msgWAIT_FOREVER)
+            {
+                // Get the current time 
+                struct timeval  currTime;
+                gettimeofday(&currTime, NULL);
+                
+                // Compute the elapsed time in ms
+                mcsINT32 elapsedTime;
+                elapsedTime = ((currTime.tv_sec - startTime.tv_sec) * 1000 +
+                               (currTime.tv_usec - startTime.tv_usec) / 1000);
+
+                // Compute remaining time before timeout expiration
+                remainingTime = mcsMAX(timeoutInMs-elapsedTime, 0);
+            }
         }
     }
     while (filterMatchesMessage == mcsFALSE);
@@ -541,9 +575,9 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (      msgMESSAGE        &msg,
  *
  * \return the number of messages in the stack
  */
-mcsUINT32 msgMANAGER_IF::QueuedMessagesNb(void) const
+mcsUINT32 msgMANAGER_IF::GetNbQueuedMessages(void) const
 {
-    logExtDbg("msgMANAGER_IF::QueuedMessagesNb()");
+    logExtDbg("msgMANAGER_IF::GetNbQueuedMessages()");
 
     return(_messageQueue.size());
 }
@@ -560,7 +594,7 @@ mcsCOMPL_STAT msgMANAGER_IF::GetNextQueuedMessage(msgMESSAGE &msg)
     logExtDbg("msgMANAGER_IF::GetNextQueuedMessage()");
 
     // If the internal stack holds no waiting messages...
-    if (QueuedMessagesNb() < 1)
+    if (GetNbQueuedMessages() < 1)
     {
         errAdd(msgERR_EMPTY_STACK);
         return mcsFAILURE;
@@ -568,6 +602,16 @@ mcsCOMPL_STAT msgMANAGER_IF::GetNextQueuedMessage(msgMESSAGE &msg)
 
     // Give back the next waiting message
     msg = _messageQueue.front();
+    if (msg.GetBodySize() > 80)
+    {
+        logInfo("Get queued message '%s %.80s...' from '%s'", 
+                msg.GetCommand(), msg.GetBody(), msg.GetSender());
+    }
+    else
+    {
+        logInfo("Get queued message '%s %s' from '%s'", 
+                msg.GetCommand(), msg.GetBody(), msg.GetSender());
+    }     
 
     // Remove the message from the queue
     _messageQueue.pop();
