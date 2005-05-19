@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.h,v 1.5 2005-02-15 14:05:51 gzins Exp $"
+ * "@(#) $Id: evhINTERFACE.h,v 1.6 2005-05-19 15:14:15 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/15 14:05:51  gzins
+ * Changed returned value of GetLastReply fron char * to const char*
+ *
  * Revision 1.4  2005/01/29 15:16:35  gzins
  * Added CVS log as modification history
  *
@@ -89,7 +92,6 @@ private:
 
     msgMESSAGE    _msg;        /** Used to receive message */
 
-    evhCMD_CALLBACK *_replyCb;  /** Callback for reply */
 };
 
 #endif /*!evhINTERFACE_H*/
