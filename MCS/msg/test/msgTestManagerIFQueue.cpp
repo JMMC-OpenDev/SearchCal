@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.3 2005-04-22 09:25:09 mella Exp $"
+ * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.4 2005-05-19 15:11:14 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/04/22 09:25:09  mella
+ * Replace FAILURE by mcsFAILURE
+ *
  * Revision 1.2  2005/02/10 14:13:05  lafrasse
  * Added QueuedMessagesNb() and GetNextQueuedMessage() methods test
  *
@@ -22,7 +25,7 @@
  * \<msgTestManagerIFQueue\>
  */
 
-static char *rcsId="@(#) $Id: msgTestManagerIFQueue.cpp,v 1.3 2005-04-22 09:25:09 mella Exp $"; 
+static char *rcsId="@(#) $Id: msgTestManagerIFQueue.cpp,v 1.4 2005-05-19 15:11:14 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -129,8 +132,8 @@ int main(int argc, char *argv[])
     cout << "Expected Receive : " << message << endl;
 
     // Get all the queued messages
-    cout << manager.QueuedMessagesNb() << " Unexpected Receive(s) : " << endl;
-    while (manager.QueuedMessagesNb() > 0)
+    cout << manager.GetNbQueuedMessages() << " Unexpected Receive(s) : " << endl;
+    while (manager.GetNbQueuedMessages() > 0)
     {
         manager.GetNextQueuedMessage(message);
         cout << message << endl;
