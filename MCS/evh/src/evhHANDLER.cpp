@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhHANDLER.cpp,v 1.8 2005-02-09 16:28:28 lafrasse Exp $"
+ * "@(#) $Id: evhHANDLER.cpp,v 1.9 2005-05-19 15:15:20 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/09 16:28:28  lafrasse
+ * Reflected function renaming in 'msg' (GetMsgQueue became GetSocketDescriptor)
+ *
  * Revision 1.7  2005/02/03 06:57:01  gzins
  * Updated HandleHelpCmd to format returned reply when short description is requested
  *
@@ -34,7 +37,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.8 2005-02-09 16:28:28 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.9 2005-05-19 15:15:20 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -284,7 +287,17 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
             evhKEY *key;
 
             // Wait for event
-            key = Select();
+            // If message queue is not empty
+            if (_msgManager.GetNbQueuedMessages() != 0)
+            {
+                // Handle queued message 
+                key = &_msgEvent;
+            }
+            else
+            {
+                // Wait for new event
+                key = Select();
+            }
 
             // If an error occured
             if (key == NULL)
@@ -292,7 +305,8 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
                 // Stop loop
                 return mcsFAILURE;
             }
-            // Else if a timeout is expired
+            // Else if a timeout is expired. Select() returns a 'command reply'
+            // key when a timeout, associated to a command, expired.
             else if (key->GetType() == evhTYPE_COMMAND_REPLY)
             {
                 // Add error 
@@ -316,9 +330,21 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
             {
                 // Read message
                 msgMESSAGE msg;
-                if (_msgManager.Receive(msg, 0) == mcsFAILURE)
+                // From queue, if there are queued messages
+                if (_msgManager.GetNbQueuedMessages() != 0)
                 {
-                    return mcsFAILURE;
+                    if (_msgManager.GetNextQueuedMessage(msg) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
+                }
+                // or from network otherwise
+                else
+                {
+                    if (_msgManager.Receive(msg, 0) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
                 }
 
                 // If message is a command
@@ -545,7 +571,7 @@ evhKEY *evhHANDLER::Select()
         // Accuracy for timer events; i.e. frequency at which the event handler
         // look for timer events. 
         struct timeval timeout ;
-        timeout.tv_sec = 1;
+        timeout.tv_sec = 0;
         timeout.tv_usec = 100000; // 100 ms
         readMask = refReadMask;
         status = select(maxSd, &readMask, NULL, NULL, &timeout);
