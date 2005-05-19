@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.h,v 1.13 2005-02-14 07:59:01 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.h,v 1.14 2005-05-19 15:04:58 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/02/14 07:59:01  gzins
+ * Minor documentation changes
+ *
  * Revision 1.12  2005/02/09 16:42:26  lafrasse
  * Added msgMESSAGE_FILTER class to manage message queues
  *
@@ -85,27 +88,33 @@ public:
     msgMANAGER_IF();
     virtual ~msgMANAGER_IF();
 
-    virtual mcsCOMPL_STAT Connect               (const mcsPROCNAME,
-                                                 const mcsLOGICAL = mcsFALSE);
-    virtual mcsLOGICAL    IsConnected           (void) const;
-    virtual mcsCOMPL_STAT Disconnect            (void);
-                                                
-    virtual mcsINT32      SendCommand           (const char*,
-                                                 const mcsPROCNAME,
-                                                 const char* = NULL,  
-                                                 const mcsINT32 = 0);
-    virtual mcsCOMPL_STAT SendReply             (      msgMESSAGE&,
-                                                 const mcsLOGICAL);
-                                                
-    virtual mcsCOMPL_STAT Receive               (      msgMESSAGE&,
-                                                 const mcsINT32);
-    virtual mcsCOMPL_STAT Receive               (      msgMESSAGE&,
-                                                 const mcsINT32,
-                                                 const msgMESSAGE_FILTER&);
-                                                
-    virtual mcsUINT32     QueuedMessagesNb      (void) const;
-    virtual mcsCOMPL_STAT GetNextQueuedMessage  (msgMESSAGE&);
+    // Connection/disconnection
+    virtual mcsCOMPL_STAT Connect     (const mcsPROCNAME procName,
+                                       const mcsLOGICAL unique = mcsFALSE);
+    virtual mcsLOGICAL    IsConnected (void) const;
+    virtual mcsCOMPL_STAT Disconnect  (void);
+                       
+    // Message sending
+    virtual mcsINT32      SendCommand (const char*       command,
+                                       const mcsPROCNAME destProc,
+                                       const char*       paramList = NULL,  
+                                       const mcsINT32    paramLen = 0);
+    virtual mcsCOMPL_STAT SendReply   (msgMESSAGE&      msg,
+                                       const mcsLOGICAL lastReply);
 
+                       
+    // Message receiving
+    virtual mcsCOMPL_STAT Receive (msgMESSAGE& msg,
+                                   mcsINT32    timeoutInMs);
+    virtual mcsCOMPL_STAT Receive (msgMESSAGE&              msg,
+                                   mcsINT32                 timeoutInMs,
+                                   const msgMESSAGE_FILTER& filter);
+                                                
+    // Message queue
+    virtual mcsUINT32     GetNbQueuedMessages      (void) const;
+    virtual mcsCOMPL_STAT GetNextQueuedMessage  (msgMESSAGE& msg);
+
+    // Socket descriptor
     virtual mcsINT32      GetSocketDescriptor   (void) const;
 
 protected:
