@@ -3,22 +3,25 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscFile.h,v 1.11 2005-04-06 09:31:50 gluck Exp $"
+ * "@(#) $Id: miscFile.h,v 1.12 2005-05-20 16:22:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/04/06 09:31:50  gluck
+ * Code review: minor changes
+ *
  * Revision 1.10  2005/02/15 09:37:52  gzins
  * Added CVS log as file modification history
  *
+ * lafrasse  07-Oct-2004  Changed miscFileExists API
+ * lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
+ * lafrasse  30-Sep-2004  Added miscLocateFile
+ * lafrasse  27-Sep-2004  Added miscLocateFileInPath
+ * lafrasse  25-Sep-2004  Added miscFileExists
+ * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
  * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscFile headers
  *                        Moved mcs.h include in from miscFile.c
- * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
- * lafrasse  25-Sep-2004  Added miscFileExists
- * lafrasse  27-Sep-2004  Added miscLocateFileInPath
- * lafrasse  30-Sep-2004  Added miscLocateFile
- * lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
- * lafrasse  07-Oct-2004  Changed miscFileExists API
  *
  ******************************************************************************/
 
@@ -46,6 +49,10 @@ extern "C" {
  * Pubic functions declaration
  */
  
+mcsCOMPL_STAT miscGetEnvVarValue    (const char       *envVarName,
+                                     char             *envVarValueBuffer,
+                                     mcsUINT32         envVarValueBufferLength);
+
 char *        miscGetFileName       (const char       *fullPath);
 
 char *        miscGetExtension      (char             *fullPath);
@@ -53,13 +60,9 @@ char *        miscGetExtension      (char             *fullPath);
 mcsCOMPL_STAT miscYankExtension     (char             *fullPath,
                                      char             *extension);
 
-char*         miscResolvePath       (const char       *orginalPath);
-
-mcsCOMPL_STAT miscGetEnvVarValue    (const char       *envVarName,
-                                     char             *envVarValueBuffer,
-                                     mcsUINT32         envVarValueBufferLength);
-
 mcsCOMPL_STAT miscYankLastPath      (char             *path);
+
+char*         miscResolvePath       (const char       *orginalPath);
 
 mcsLOGICAL    miscFileExists        (const char       *fullPath,
                                      mcsLOGICAL        addError);

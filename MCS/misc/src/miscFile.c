@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2005/04/06 09:31:50  gluck
+ * Code review: minor changes
+ *
  * Revision 1.29  2005/03/08 07:17:04  gzins
  * Released dynamic buffer used in miscResolvePath()
  * Added input parameter check in miscResolvePath()
@@ -25,42 +28,47 @@
  * Revision 1.24  2005/01/28 18:39:10  gzins
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
- * gzins     16-Jun-2004  Created from VLT file 'slxUtils.c'
- * lafrasse  17-Jun-2004  Added miscGetExtension
- * lafrasse  18-Jun-2004  Debugged miscGetExtension
- *                        Added miscYankExtension
- * lafrasse  20-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
- *                        miscYankLastPath
- * lafrasse  23-Jul-2004  Added error management code optimisation
+ * gzins     10-Dec-2004  Fixed pathSearchList for .cdf files
+ * mella     10-Nov-2004  Added xsd and xsl into pathSearchList
+ * lafrasse  07-Oct-2004  Changed miscFileExists API
+ * lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
+ * lafrasse  30-Sep-2004  Added miscLocateFile
+ * lafrasse  27-Sep-2004  Added miscLocateFileInPath, corrected a bug in the
+ *                        miscResolvePath use of misFileExists, and refined the
+ *                        doxygen documentation
+ * lafrasse  25-Sep-2004  Added miscFileExists
+ * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
+ * lafrasse  03-Aug-2004  Corrected a bug in miscResolvePath that was causing an
+ *                        '\' append at the end of the computed path
  * lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
  *                        misc.h
  *                        Moved mcs.h include to miscFile.h
  *                        Changed includes due to null-terminated string
  *                        specific functions move from miscDynStr.h to
  *                        miscDynBuf.h
- * lafrasse  03-Aug-2004  Corrected a bug in miscResolvePath that was causing an
- *                        '\' append at the end of the computed path
- * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
- * lafrasse  25-Sep-2004  Added miscFileExists
- * lafrasse  27-Sep-2004  Added miscLocateFileInPath, corrected a bug in the
- *                        miscResolvePath use of misFileExists, and refined the
- *                        doxygen documentation
- * lafrasse  30-Sep-2004  Added miscLocateFile
- * lafrasse  01-Oct-2004  Changed miscResolvePath API for consistency
- * lafrasse  07-Oct-2004  Changed miscFileExists API
- * mella     10-Nov-2004  Added xsd and xsl into pathSearchList
- * gzins     10-Dec-2004  Fixed pathSearchList for .cdf files
+ * lafrasse  23-Jul-2004  Added error management code optimisation
+ * lafrasse  20-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
+ *                        miscYankLastPath
+ * lafrasse  18-Jun-2004  Debugged miscGetExtension
+ *                        Added miscYankExtension
+ * lafrasse  17-Jun-2004  Added miscGetExtension
+ * gzins     16-Jun-2004  Created from VLT file 'slxUtils.c'
  *
  *----------------------------------------------------------------------------*/
 
 /**
- * \file
- * Definition of miscFile functions.
- * 
- * Contains all Unix like file path related functionalities.
+ * @file
+ * Function collection related to file path and environment variable.
+ *
+ * In the following documentation, the expression 'simple path' describes a
+ * Unix-like unic path (e.g. "$HOME/Dev/misc/src/../doc/index.html").
+ *
+ * In the following documentation, the expression 'composed path' describes a
+ * list of Unix-like path each separated by a colon (':') (e.g.
+ * "$MCSROOT/lib:$INTROOT/bin:$HOME/Dev/misc/src/../doc/").
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.30 2005-04-06 09:31:50 gluck Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.31 2005-05-20 16:22:50 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -96,19 +104,19 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Constants definition
  */
 
-/** index defining extension position in path search list variable */
+/** Index defining the @em extension column in the @em pathSearchList array */
 #define miscEXT_IDX   0
 
-/** index defining path position in path search list variable */
+/** Index defining the @em path column in the @em pathSearchList array */
 #define miscPATH_IDX  1
+
 
 /* 
  * Local Variables
  */
 
 /**
- * Variable which allow to know possible search path depending on extension
- * type.
+ * Global array which associate a search path to a file extension.
  */
 static char *pathSearchList[][2] = {
    {"cfg", "../config:$INTROOT/config:$MCSROOT/config"},
@@ -120,36 +128,89 @@ static char *pathSearchList[][2] = {
 };
 
 
+/*
+ * Public functions definition
+ */
+
 /**
- * Return file name from full path.
+ * Give back the value of a specified shell environment variable (e.g. "$HOME").
+ *
+ * @param envVarName a null-terminated string containing the searched
+ * environment variable name (with or without the leading '$').
+ * @param envVarValueBuffer an already allocated buffer to receive the
+ * environment variable value.
+ * @param envVarValueBufferLength the length of the already allocated buffer.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscGetEnvVarValue (const char      *envVarName,
+                                        char      *envVarValueBuffer,
+                                        mcsUINT32  envVarValueBufferLength)
+{
+    char *envVarValue = NULL;
+
+    /* Return if the given env. var. name is null */
+    if (envVarName == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "envVarName");
+        return mcsFAILURE;
+    }
+
+    /* If the given env. var. begins with a '$'... */
+    if (*envVarName == '$')
+    {
+        /* Skip this leading '$' */
+        envVarName++;
+    }
+
+    /* Get the value associated with the given env. var. */
+    envVarValue = getenv(envVarName);
+    if (envVarValue == NULL)
+    {
+        errAdd(miscERR_FILE_ENV_VAR_NOT_DEF, envVarName);
+        return mcsFAILURE;
+    }
+
+    /* If the value is longuer that the available extern memory... */
+    if (strlen(envVarValue) >= envVarValueBufferLength)
+    {
+        /* Raise an error and exit */
+        errAdd(miscERR_FILE_ENV_VAR_TOO_LONG, envVarName);
+        return mcsFAILURE;
+    }
+
+    /* Give back the env. var. value */
+    strncpy(envVarValueBuffer, envVarValue, envVarValueBufferLength);
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Return the file name from a given simple path.
  * 
- * Strip directory from the given full path.
+ * @warning This function is @em NOT re-entrant. The returned allocated buffer
+ * will be @em DEALLOCATED on next call !\n\n
  *
- * \param fullPath null-terminated string containing the full path.
+ * @param fullPath null-terminated string containing the full path.
  *
- * \n
- * \return a null-terminated string containing the file name, or NULL in the
- * following cases: full path input parameter is a NULL pointer, string  length
- * stored in this path equals 0 or there is no more memory for allocation.
- *
- * \n
- * \warning This function is \em NOT re-entrant. The returned allocated buffer
- * will be deallocated on the next call !
+ * @return a null-terminated string containing the found file name, or NULL if 
+ * no file name was found in the given path or if an error occured.
  *
  * \n
- * \ex 
- * \code
+ * @ex 
+ * @code
  *  ...
  * miscGetFileName("../data/myFile.fits")
  * ...
  * > myFile.fits
- * \endcode
+ * @endcode
  */
 char *miscGetFileName(const char *fullPath)
 {
-    static char *buffer = NULL;
-    char *token;
-    char *fileName = NULL;
+    static char *buffer   = NULL;
+    char        *token    = NULL;
+    char        *fileName = NULL;
 
     /* If full file name is empty */
     if ((fullPath == NULL) || (strlen(fullPath) == 0))
@@ -164,7 +225,7 @@ char *miscGetFileName(const char *fullPath)
         free(buffer);
     }
 
-    /* Allocate memory for buffer */
+    /* Allocate memory for the static buffer */
     buffer = malloc(strlen(fullPath) + 1);
     if (buffer == NULL)
     {
@@ -172,10 +233,10 @@ char *miscGetFileName(const char *fullPath)
         return ((char *)NULL);
     }
 
-    /* Copy full file name into temporary buffer */
+    /* Copy full file name into the static buffer */
     strcpy(buffer, fullPath);
     
-    /* Establish string and get the first token: */
+    /* Establish string and get the first token */
     token = strtok(buffer, "/");
 
     /* While there are tokens in "string" */       
@@ -184,180 +245,208 @@ char *miscGetFileName(const char *fullPath)
         /* Set filename */
         fileName = token;
 
-        /* Get next token: */
+        /* Get next token */
         token = strtok(NULL, "/");
     }
 
+    /* Return the found file name */
     return fileName;
 }
 
 
 /**
- * Return the file extension from a full path.
+ * Return the file extension (without the dot) of a given simple path.
  * 
- * This function returns the extention of the given file name, i.e. the
- * characters after the last dot in the file name. For example,
- * miscGetExtension("../data/myFile.fits") will return "fits".
+ * Return a pointer on the character following the last dot of the file name.
  *
- * \warning This function is \em NOT re-entrant. The returned allocated buffer
- * will be deallocated on the next call !
- * NULL is returned when there is no dot in the file name or the last
- * dot is the first character of the file name, e.g.:
- *              "/data/.dt"
- *              "/data/.dt/cache"\n\n
+ * @param fullPath a null-terminated string containing the full path.
  *
- * \param fullPath a null-terminated string containing the full path.
+ * @return a pointer on the file extension, or NULL if no extension was found
+ * in the given path.
  *
- * \return a null-terminated string containing the file extension, or NULL.
+ * \n
+ * @ex 
+ * @code
+ *  ...
+ * miscGetExtension("../data/myFile.fits")
+ * ...
+ * > fits
+ * @endcode
  */
 char *miscGetExtension(char *fullPath)
 {
-    char *chrPtr, *chrPtr2;
+    char *lastDotPtr   = NULL;
+    char *lastSlashPtr = NULL;
 
-    /* Makes chrPtr points to the last occurence of '.' */
-    if ((chrPtr = strrchr(fullPath, '.')) == NULL)
+    /* Make lastDotPtr points to the last occurence of '.' in the path */
+    lastDotPtr = strrchr(fullPath, '.');
+    if (lastDotPtr == NULL)
     {
         /* Exits if no extension found */
         return ((char*)NULL);
     }
 
-    /* Check that the 'extension' found is not part of the filepath
-     * like e.g.: "/data/.dt/cache"
-     *
-     * Check also the following: "/data/.dt"
-     *
-     * In those cases there is no extension.
-     */
+    /* Make lastSlashPtr points to the last occurence of '/' in the path */
+    lastSlashPtr = strrchr(fullPath, '/');
 
-    /* Makes chrPtr2 points to the last occurence of '/' */
-    chrPtr2 = strrchr(fullPath, '/');
-
-    if (chrPtr2 > chrPtr) /* "/data/.dt/cache" */
+    /* if the extension found is a part of the path : "/dir/.dt/file" */
+    if (lastSlashPtr > lastDotPtr)
     {
         return ((char*)NULL);
     }
 
-    if (*(chrPtr - 1) == '/') /* "/data/.dt" */
+    /* If the extension found is an invisible file : "/dir/.dt" */
+    if (*(lastDotPtr - 1) == '/')
     {
         return ((char*)NULL);
     }
 
-    return (chrPtr + 1);
+    /* Return a pointer on the first character of the found extension */
+    return (lastDotPtr + 1);
 }
 
+
 /**
- * Give back a full path without its file extension.
+ * Give back a simple path without its file extension.
  * 
- * This function cats down the given file extension off from the file name
- * using the same original buffer.
- * Note that when filename does not end with the given extention the function
- * has no effect.
+ * Remove the file extension (if any) of the given file name, using the given
+ * buffer to store the result.
  *
- * The extention can be given with or without the dots, e.g.:  "fits", or
- * ".fits".
+ * The seeked extention can be given with or without the dot (e.g. : "fits" or
+ * ".fits"). If not found, nothing is done.
  *
- * If \em the extension is a null pointer, this function cats down the
- * extention, found using miscGetExtension(), of the given 'fileName' if it has
- * any extention.
+ * If the given extension is a NULL pointer, this function removes the extention
+ * found using miscGetExtension() (if any).
  *
- * For example, miscYankExtension("../data/myFile.fits") will give back 
- * "../data/myFile".
+ * @param fullPath a null-terminated string containing a full path.
+ * @param extension a null-terminated string containing the file extension to
+ * yank, or NULL to yank any extension found.
  *
- * \warning When an extension is specified, the function looks for the FIRST
- * occurance of the \em extention in the \em fileName ! Therefore if the given
- * file name is :'file.fitsname.fits' and the extention is 'fits' the
- * resulting file name is :'file'.\n\n
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  *
- * \param fullPath a null-terminated string containing a full path
- * \param extension a null-terminated string containing the file extension
- * to yank
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * \n
+ * @ex 
+ * @code
+ *  ...
+ * miscYankExtension("../data/myFile.fits", NULL)
+ * ...
+ * > ../data/myFile
+ * @endcode
+ * @code
+ * ...
+ * miscYankExtension("../data/myFile.fitsname.fits", "fits")
+ * ...
+ * > ../data/myFile.fitsname
+ * @endcode
  */
 mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
 {    
-    int      pos;
-    char     *extPtr;
+    char *extensionPtr;
 
-    /* return if the file name is null */
+    /* Return if the given file name does not exist */
     if (fullPath == NULL)
     {
         return mcsFAILURE;
     }
 
-    /* if extension is specified */
-    if (extension != NULL)
+    /* If an extension was found... */
+    extensionPtr = miscGetExtension(fullPath);
+    if (extensionPtr != NULL)
     {
-        mcsSTRING32 extLoc;
+        /* If an extension was provided... */
+        if (extension != NULL)
+        {
+            /* If the given extension includes a leading dot... */
+            if (*extension == '.')
+            {
+                /* Skip this dot */
+                extension++;
+            }
 
-        if (*extension != '.')
-        {
-            sprintf(extLoc, ".%s", extension);
-        }
-        else
-        {
-            sprintf(extLoc, "%s", extension);
+            /* If the provided extension does not match the found one */
+            if (strcmp(extension, extensionPtr) != 0)
+            {
+                /* Do nothing */
+                return mcsFAILURE;
+            }
         }
 
-        if ((extPtr = strstr(fullPath, extLoc)) != NULL)
-        {
-            *extPtr = '\0';
-        }
-    }
-    else
-    {
-        /* get the extention */
-        if ((extPtr = miscGetExtension(fullPath)) == NULL)
-        {
-            return mcsFAILURE;
-        }
-        else
-        {
-            /* find the position of the extension */
-            pos = strlen(fullPath) - strlen(extPtr) - 1;
-
-            /* cut the string there */
-            fullPath[pos] = '\0';
-        }
+        /* Cut the string on the last dot */
+        *(extensionPtr - 1) = '\0';
     }
 
     return mcsSUCCESS;
 }
 
+
 /**
- * Return a resolved path of entries that may be environment variables and in
- * direct reference to HOME.
+ * Remove the last path or file name (if any) in a given simple path.
  *
- * The function can resolve "~/$MY_VAR/MY_DIR/file", "~<user>/MY_DIR" or
- * "$HOME/$MY_VAR/MY_DIR/file". A colon separated list of variables will be
- * resolved as well. Note that it can resolve pathes that starts with or
- * includes patterns: ./ or ../
+ * @param path a null-terminated string containing the path to be yanked.
  *
- * \warning This function is \em NOT re-entrant. The returned allocated buffer
- * will be deallocated on the next call !
- * No space is allowed in the input path name.\n\n
+ * @return always mcsSUCCESS.
+ */
+mcsCOMPL_STAT miscYankLastPath(char *path)
+{
+    char *lastSlashPos = NULL;
+
+    /* Find the last '/' occurence in the given path */
+    lastSlashPos = strrchr(path, '/');
+    if (lastSlashPos != NULL)
+    {
+        /* Blank it and the following last path */
+        *lastSlashPos = '\0';
+    }
+
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Resolve any environment variables found in a given simple or composed path.
  *
- * \param unresolvedPath a null-terminated string pointer to the path to be
- * resolved
+ * The function can resolve pathes like "~/$MY_VAR/MY_DIR/file" or
+ * "$HOME/$MY_VAR/MY_DIR/file".
  *
- * \return a pointer to the resolved path, or NULL
+ * A composed path (i.e. a colon (':') separated list of pathes) will be
+ * resolved as well.
+ *
+ * Note that this function will not further simplify pathes that starts with or
+ * includes patterns like'./' or '../'.
+ *
+ * @warning
+ * - This function is @em NOT re-entrant. The returned allocated buffer
+ * will be @em DEALLOCATED on next call !
+ * - No space is allowed in the given path.
+ * - Each directory, file name or environment variable element must @em NOT be
+ * longer than 255 characters.\n\n
+ *
+ * @param unresolvedPath a null-terminated string pointer on the path to be
+ * resolved.
+ *
+ * @return a pointer to the resolved path, or NULL if an error occured.
  */
 char*         miscResolvePath    (const char *unresolvedPath)
 {
     static mcsLOGICAL   init = mcsFALSE;
     static miscDYN_BUF  builtPath;
-    miscDYN_BUF         pathToResolve;
-    mcsSTRING256        tmpPath, tmpEnvVar;
-    mcsINT32            length;
 
-    /* Check parameter */
+    mcsSTRING256        pathElement;
+    mcsSTRING256        envVarValue;
+    mcsINT32            pathElementLength;
+    mcsUINT32           builtPathLength = 0;
+    char               *endingChar   = NULL;
+    char               *nextSlashPtr = NULL;
+
+    /* Check parameter validity */
     if (unresolvedPath == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "unresolvedPath"); 
         return NULL;
     }
 
-    /* Initialize buffer (if not already done) */
+    /* Initialize the static Dynamic Buffer (if not already done) */
     if (init == mcsFALSE)
     {
         miscDynBufInit(&builtPath);
@@ -369,277 +458,218 @@ char*         miscResolvePath    (const char *unresolvedPath)
     {
         return NULL;
     }
-    if (miscDynBufInit(&pathToResolve) == mcsFAILURE)
-    {
-        return NULL;
-    }
-    miscDynBufAppendString(&pathToResolve, unresolvedPath);
 
-    char *leftToBeResolvedPathPtr  = (char*)miscDynBufGetBuffer(&pathToResolve);
-    char *nextSlashPtr             = strchr(leftToBeResolvedPathPtr, '/');
+    /* Resolve the full path element by element */
+    nextSlashPtr = strchr(unresolvedPath, '/');
     do
     {
-        if (*leftToBeResolvedPathPtr == '$')
+        /* If the current path element is an environment variable... */
+        if (*unresolvedPath == '$')
         {
+            /* If the current path element is not the last one... */
             if (nextSlashPtr != NULL)
             {
-                length = ((nextSlashPtr - leftToBeResolvedPathPtr) - 1);
+                /* Its length is equal to : */
+                pathElementLength = ((nextSlashPtr - unresolvedPath) - 1);
             }
             else
             {
-                length = strlen(leftToBeResolvedPathPtr);
+                /* Otherwise its length is equal to : */
+                pathElementLength = strlen(unresolvedPath);
             }
 
-            if (strncpy(tmpPath, (leftToBeResolvedPathPtr + 1), length) == NULL)
-            {
-                errAdd(miscERR_FUNC_CALL, "strncpy");
-                miscDynBufDestroy(&pathToResolve);
-                return NULL;
-            }
+            /* Copy only the current path element in the temporary buffer */
+            strncpy(pathElement, (unresolvedPath + 1), pathElementLength);
+            *(pathElement + pathElementLength) = '\0';
 
-            *(tmpPath + length) = '\0';
-
-            if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
+            /* Resolve the current path element as an env. var */
+            if (miscGetEnvVarValue(pathElement, envVarValue,sizeof(envVarValue))
                 == mcsFAILURE)
             {
-                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
 
-            if (miscDynBufAppendString(&builtPath, tmpEnvVar) == mcsFAILURE)
+            /* Append the env. var. value to the resolved path */
+            if (miscDynBufAppendString(&builtPath, envVarValue) == mcsFAILURE)
             {
-                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
         }
-        else if (*leftToBeResolvedPathPtr == '~')
+        /* Else if the current path element is '~' */
+        else if (*unresolvedPath == '~')
         {
-            /* Path of the format: "~/MY_DIR/" or "~<user>/" */
-            memcpy(tmpPath, "HOME", 5);
-
-            if (miscGetEnvVarValue(tmpPath, tmpEnvVar, sizeof(mcsSTRING256))
-                == mcsFAILURE)
+            /* Resolve the '~' (aka 'HOME') env. var  value */
+            if (miscGetEnvVarValue("HOME", envVarValue, sizeof(envVarValue)) ==
+                mcsFAILURE)
             {
-                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
 
-            if (miscDynBufAppendString(&builtPath, tmpEnvVar) == mcsFAILURE)
+            /* Append the 'HOME' env. var. value to the resolved path */
+            if (miscDynBufAppendString(&builtPath, envVarValue) == mcsFAILURE)
             {
-                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
         }
+        /* The current path element is a real directory of file name */
         else
         {
+            /* If the current path element is not the last one... */
             if (nextSlashPtr != NULL)
             {
-                length = (nextSlashPtr - leftToBeResolvedPathPtr);
+                /* Its length is equal to : */
+                pathElementLength = (nextSlashPtr - unresolvedPath);
             }
             else
             {
-                length = strlen(leftToBeResolvedPathPtr);
+                /* Otherwise its length is equal to : */
+                pathElementLength = strlen(unresolvedPath);
             }
 
-            if (strncpy(tmpPath, leftToBeResolvedPathPtr, length) == NULL)
-            {
-                errAdd(miscERR_FUNC_CALL, "strncpy");
-                miscDynBufDestroy(&pathToResolve);
-                return NULL;
-            }
+            /* Copy the current path element in a temporary buffer */
+            strncpy(pathElement, unresolvedPath, pathElementLength);
+            *(pathElement + pathElementLength) = '\0';
 
-            *(tmpPath + length) = '\0';
-
-            if (miscDynBufAppendString(&builtPath, tmpPath) == mcsFAILURE)
+            /* Append the path element to the resolved path */
+            if (miscDynBufAppendString(&builtPath, pathElement) == mcsFAILURE)
             {
-                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
         }
+
+        /* Add a '/' to the resolved path */
         if (miscDynBufAppendString(&builtPath, "/") == mcsFAILURE)
         {
-            miscDynBufDestroy(&pathToResolve);
             return NULL;
         }
 
-
+        /* If the current path element is NOT the last one... */
         if (nextSlashPtr != NULL)
         {
+            /* If the current path element is NOT the one before the last... */
             if (*nextSlashPtr != '\0')
             {
-                leftToBeResolvedPathPtr = (nextSlashPtr + 1);
+                /* Point to the next element path to be resolved */
+                unresolvedPath = (nextSlashPtr + 1);
             }
             else
             {
-                leftToBeResolvedPathPtr = nextSlashPtr;
+                unresolvedPath = nextSlashPtr;
             }
         }
         else
         {
-            leftToBeResolvedPathPtr = "\0";
+            /* End the resolved path string */
+            unresolvedPath = "\0";
         }
 
-        if (*leftToBeResolvedPathPtr == ':')
+        /* If there is one more path after the current one... */
+        if (*unresolvedPath == ':')
         {
+            /* Append a ':' separator in the resolved path */
             if (miscDynBufAppendString(&builtPath, ":") == mcsFAILURE)
             {
-                miscDynBufDestroy(&pathToResolve);
                 return NULL;
             }
 
-            leftToBeResolvedPathPtr++;
+            /* Point to the beginning of the next path */
+            unresolvedPath++;
         }
     }
-    while (((nextSlashPtr = strchr(leftToBeResolvedPathPtr, '/')) != NULL)
-           || (*leftToBeResolvedPathPtr != '\0'));
+    while (((nextSlashPtr = strchr(unresolvedPath, '/')) != NULL) ||
+           (*unresolvedPath != '\0'));
 
-    /* Since we cannot know if a filename is contained in the path, we should
-     * not allow slash in the end of the complete path
+    /*
+     * Since we cannot know if a filename is contained in the path, we should
+     * not allow slash at the end of the complete path
      */
+
     /* Get the Dynamic Buffer length */
-    mcsUINT32 builtPathLength = 0;
     if (miscDynBufGetNbStoredBytes(&builtPath, &builtPathLength) == mcsFAILURE)
     {
-        miscDynBufDestroy(&pathToResolve);
         return NULL;
     }
 
     /* Get Dynamic Buffer internal buffer pointer */
-    char *endingChar = NULL;
-    if ((endingChar = miscDynBufGetBuffer(&builtPath)) == NULL)
+    endingChar = miscDynBufGetBuffer(&builtPath);
+    if (endingChar == NULL)
     {
-        miscDynBufDestroy(&pathToResolve);
         return NULL;
     }
     
     /* Compute the last path character position */
     endingChar += (builtPathLength - 2);
 
-    /* If the last path charater is an '/' */
+    /* If the path last charater is a '/' */
     if (*endingChar == '/')
     {
-        /* Replace with a '\0' */
+        /* Replace the '/' with a '\0' */
         *endingChar = '\0';
 
-        /* Decrease its length */
+        /* Decrease the global path length */
         builtPath.storedBytes--;
     }
 
     /* Strip the Dynamic Buffer */
     if (miscDynBufStrip(&builtPath) == mcsFAILURE)
     {
-        miscDynBufDestroy(&pathToResolve);
         return NULL;
     }
     
-    miscDynBufDestroy(&pathToResolve);
     return miscDynBufGetBuffer(&builtPath);
 }
 
-/**
- * Give back the value of a specified Environment Variable.
- *
- * \param envVarName a null-terminated string containing the searched
- * Environment Variable name \em without the '$'
- * \param envVarValueBuffer an already allocated buffer to receive the
- * Environment Variable value
- * \param envVarValueBufferLength the length of the already allocated buffer
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT miscGetEnvVarValue (const char *envVarName,
-                                  char *envVarValueBuffer,
-                                  mcsUINT32 envVarValueBufferLength)
-{
-    char *chrPtr;
-
-    /* Return if the anv. var. name is null */
-    if (envVarName == NULL)
-    {
-        errAdd(miscERR_NULL_PARAM, "envVarName");
-        return mcsFAILURE;
-    }
-
-    if ((chrPtr = getenv(envVarName)) == NULL)
-    {
-        errAdd(miscERR_FILE_ENV_VAR_NOT_DEF, envVarName);
-        return mcsFAILURE;
-    }
-
-    if (strlen(chrPtr) >= envVarValueBufferLength)
-    {
-        errAdd(miscERR_FILE_ENV_VAR_TOO_LONG, envVarName);
-        return mcsFAILURE;
-    }
-
-    strncpy(envVarValueBuffer, chrPtr, envVarValueBufferLength);
-
-    return mcsSUCCESS;
-}
 
 /**
- * Remove the last path or filename in a given path.
+ * Test if a file exists at a given simple path.
  *
- * \param path a null-terminated string containing the path to be yanked
+ * @param fullPath a null-terminated string containing the path to be tested.
+ * @param addError an mcsLOGICAL to specify weither or not this function should
+ * raise an error that tries to explain the reason why the file was not found.
  *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT miscYankLastPath(char *path)
-{
-    char *chrPtr = NULL;
-
-    if ((chrPtr = strrchr(path, '/')) == NULL)
-    {
-        /* There is no '/' in the received path */
-        return mcsSUCCESS;
-    }
-
-    *chrPtr = '\0';
-
-    return mcsSUCCESS;
-}
-
-/**
- * Test if a file exists at a given path.
- *
- * \param fullPath a null-terminated string containing the path to be tested
- * \param addError an mcsLOGICAL to specify weither or not this function should
- * raise an error that tries to explain the reason why the file was not found
- *
- * \return TRUE if the file exists, FALSE otherwise
+ * @return mcsTRUE if the file exists, mcsFALSE otherwise.
  */
 mcsLOGICAL    miscFileExists        (const char       *fullPath,
                                      mcsLOGICAL        addError)
 {
+    char*       resolvedPath = NULL;
+    struct stat fileInformationBuffer;
+
     /* Test the fullPath parameter validity */
     if ((fullPath == NULL) || (strlen(fullPath) == 0))
-    {
-        if (addError == mcsTRUE)
-        {
-            errAdd(miscERR_NULL_PARAM, "fullPath");
-        }
-        return mcsFALSE;
-    }
-
-    /* Resolve any Env. Var contained in the given path */
-    char* resolvedPath =  miscResolvePath(fullPath);
-    if ( resolvedPath == NULL)
-    {
-        if (addError == mcsFALSE)
-        {
-            errResetStack();
-        }
-        return mcsFALSE;
-    }
-
-    /* Get file system informations of the file to be tested */
-    struct stat fileInformationBuffer;
-    if (stat(resolvedPath, &fileInformationBuffer) == -1)
     {
         /* If an explaining error should be raised */
         if (addError == mcsTRUE)
         {
-            /* Raise an error according to the problem detected by the 'stat'
+            /* Raise it */
+            errAdd(miscERR_NULL_PARAM, "fullPath");
+        }
+
+        return mcsFALSE;
+    }
+
+    /* Try to resolve any Env. Var contained in the given path */
+    resolvedPath = miscResolvePath(fullPath);
+    if (resolvedPath == NULL)
+    {
+        /* If an explaining error should NOT be raised... */
+        if (addError == mcsFALSE)
+        {
+            /* Erase the error stack */
+            errResetStack();
+        }
+
+        return mcsFALSE;
+    }
+
+    /* Try to get file system informations of the file to be tested */
+    if (stat(resolvedPath, &fileInformationBuffer) == -1)
+    {
+        /* If an explaining error should be raised... */
+        if (addError == mcsTRUE)
+        {
+            /*
+             * Raise an error according to the problem detected by the 'stat'
              * function call
              */
             switch (errno)
@@ -662,8 +692,7 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
                     break;
         
                 case ELOOP:
-                    /* Too many sym. links encountered while traversing the path
-                     */
+                    /* Too many sym. links encountered while traversing path */
                     errAdd(miscERR_FILE_TOO_MANY_SYM_LINKS, resolvedPath);
                     break;
         
@@ -678,23 +707,26 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
     return mcsTRUE;
 }
 
+
 /**
- * Search for a file in a list of path.
+ * Search for a file in a composed path.
  *
- * \warning This function is \em NOT re-entrant. The returned allocated buffer
- * will be deallocated on the next call !\n\n
+ * @warning This function is @em NOT re-entrant. The returned allocated buffer
+ * will be @em DEALLOCATED on next call !\n\n
  *
- * \param path the list of path to be searched, each separated by colons (':')
- * \param fileName the seeked file name
+ * @param path the list of path to be searched, each separated by colons (':').
+ * @param fileName the seeked file name.
  *
- * \return a pointer to the \em first path where the file is, or NULL if not
- * found
+ * @return a pointer to the @em FIRST path where the file is, or NULL if not
+ * found or an error occured.
  */
 char* miscLocateFileInPath(const char *path, const char *fileName)
 {
     static mcsLOGICAL  init = mcsFALSE;
     static miscDYN_BUF tmpPath;
     const char* originalPath = path;
+    int pathPartLength;
+    char *colonPtr;
 
     /* Initialize buffer (if not already done */
     if (init == mcsFALSE)
@@ -731,8 +763,8 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
     do
     {
         /* Compute the length of the current path part */
-        int pathPartLength = 0;
-        char *colonPtr = strchr(path, ':');
+        pathPartLength = 0;
+        colonPtr = strchr(path, ':');
         if (colonPtr == NULL)
         {
             pathPartLength = strlen(path);
@@ -786,20 +818,25 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
     return miscResolvePath(validPath);
 }
 
+
 /**
- * Search for a file according to its extension in the preconfigured
- * pathSearchList path list.
+ * Search for a file (according to its extension) in the preconfigured @em
+ * pathSearchList composed pathes list.
  *
- * \warning This function is \em NOT re-entrant. The returned allocated buffer
- * will be deallocated on the next call !\n\n
+ * @warning This function is @em NOT re-entrant. The returned allocated buffer
+ * will be @em DEALLOCATED on next call !\n\n
  *
- * \param fileName the name of the searched file with its extension
+ * @param fileName the name of the searched file with its extension.
  *
- * \return a pointer to the \em first path where the file is, or NULL if not
- * found
+ * @return a pointer to the @em FIRST path where the file is, or NULL if not
+ * found or an error occured.
  */
 char* miscLocateFile (const char *fileName)
 {
+    char       *fileExtension = NULL;
+    mcsUINT32   i             = 0;
+    mcsLOGICAL  found         = mcsFALSE;
+
     /* Test the fileName parameter validity */
     if ((fileName == NULL) || (strlen(fileName) == 0))
     {
@@ -817,7 +854,7 @@ char* miscLocateFile (const char *fileName)
     }
 
     /* Get the file extension */
-    char* fileExtension = miscGetExtension((char*)fileName);
+    fileExtension = miscGetExtension((char*)fileName);
     if (fileExtension == NULL)
     {
         errAdd(miscERR_FILE_EXTENSION_MISSING, fileName);
@@ -828,8 +865,6 @@ char* miscLocateFile (const char *fileName)
      * For each path of the list, until all of them were tested or a path
      * corresponding to fileExtension was found
      */
-    int i = 0;
-    mcsLOGICAL found = mcsFALSE;
     while (pathSearchList[i][miscEXT_IDX] != NULL)
     {
         /* Compare the file extension with the current one in the path list */
@@ -838,13 +873,14 @@ char* miscLocateFile (const char *fileName)
             found = mcsTRUE;
             break;
         }
+
         i++;
     }
+
     /* Return weither the file at the path or not */
     if (found == mcsTRUE)
     {
-        return miscLocateFileInPath(pathSearchList[i][miscPATH_IDX],
-                                    fileName);
+        return miscLocateFileInPath(pathSearchList[i][miscPATH_IDX], fileName);
     }
     else
     {
