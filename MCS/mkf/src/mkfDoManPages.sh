@@ -7,6 +7,9 @@
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/15 08:40:15  gzins
+# Added CVS log as file modification history
+#
 # gzins     09-Jun-2004  created from ALMA doxygenize program
 #
 #************************************************************************
@@ -94,7 +97,7 @@ fi
 #REVISION=`cmmLast $MODULE_NAME`
 #REVISION=${REVISION##*:}
 #REVISION=${REVISION%%modified*}
-REVISION=`grep Makefile,v Makefile | awk '{print $5}'`
+REVISION=`grep 'Id: Makefile,v' Makefile | awk '{print $5}'`
 #
 #
 
