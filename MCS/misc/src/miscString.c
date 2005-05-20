@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/04/07 08:29:57  gluck
+ * Code review: minor changes
+ *
  * Revision 1.20  2005/02/25 17:51:40  gzins
  * Simplified miscDeleteChr
  *
@@ -40,7 +43,7 @@
  * Contains all the 'misc' String related functions definitions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.21 2005-04-07 08:29:57 gluck Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.22 2005-05-20 12:55:01 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -180,7 +183,6 @@ mcsCOMPL_STAT miscTrimString(char *string, char *trimChars)
             /* Copy string form the first 'good' character */
             strcpy(string, chrPtr);
         }
-        /* End if */
 
         /* Remove trailing trim characters */
         if (*chrPtr != '\0')
@@ -197,7 +199,9 @@ mcsCOMPL_STAT miscTrimString(char *string, char *trimChars)
                     chrPtr--;
                 }
                 else
+                {
                     run = mcsFALSE;
+                }
             }
             while ((*chrPtr != '\0') && run);
         }
@@ -234,10 +238,10 @@ mcsCOMPL_STAT miscStrToUpper(char *string)
 }
 
 /**
- * Checks for string only containing white-space characters.
+ * Checks if string contains only white-space characters.
  * 
- * It returns true (i.e. mcsTRUE) if string only contains white-space (i.e.
- * blank), and false (i.e. mcsFALSE) otherwise.
+ * It returns true if string is empty or contains only white-space (i.e.
+ * blank), and false otherwise.
  *
  * \warning string must \em NOT be a null pointer.\n\n
  *
@@ -369,7 +373,6 @@ mcsCOMPL_STAT miscDeleteChr      (      char         *string,
             string[dest] = string[src];
             dest++;
         }
-        /* Else */
         else
         {
             /*
