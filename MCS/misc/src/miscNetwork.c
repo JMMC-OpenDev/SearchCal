@@ -4,16 +4,19 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/01/28 18:39:10  gzins
+ * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
+ *
  * lafrasse  03-Aug-2004  Created
  *
  *----------------------------------------------------------------------------*/
 
 /**
- * \file
- * Contains all the 'misc' Network related functions definitions.
+ * @file
+ * Declaration of miscNetwork functions.
  */
 
-static char *rcsId="@(#) $Id: miscNetwork.c,v 1.3 2005-01-28 18:39:10 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscNetwork.c,v 1.4 2005-05-23 11:57:40 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -38,21 +41,25 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
 /**
- * Give back the network host name.
+ * Give back the local machine network host name as a null-terminated string.
  *
- * In case the NULL-terminated hostname does not fit, no  error is returned, but
- * the hostname is truncated. It is unspecified whether the truncated hostname
- * will be NULL-terminated.
+ * In case the null-terminated host name string does not fit entirely in the
+ * given external buffer, no error is returned and the host name become
+ * truncated. It is then unspecified whether the truncated host name will be
+ * null-terminated or not.
  *
- * \warning As is, this function uses 'uname()' SysV call, so it is not portable
- * to BSD-style systems that require 'gethostname()' system call.\n\n
+ * @warning As is, this function uses the 'uname()' SysV call, so it is not
+ * directly portable to BSD-style systems that may require 'gethostname()'
+ * system call instead.\n\n
  *
- * \param hostName allocated character array where the resulting date is stored
- * \param length allocated character array length
+ * @param hostName address of the receiving, already allocated extern buffer in
+ * which the host name will be stored.
+ * @param length maximum extern buffer capacity.
  *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT miscGetHostName(char *hostName, mcsUINT32 length)
+mcsCOMPL_STAT miscGetHostName(char *hostName, const mcsUINT32 length)
 {
     struct utsname systemInfo;
 
@@ -77,11 +84,8 @@ mcsCOMPL_STAT miscGetHostName(char *hostName, mcsUINT32 length)
         return mcsFAILURE;
     }
 
-    if (strncpy((char *)hostName, systemInfo.nodename, length) == NULL)
-    {
-        errAdd(miscERR_FUNC_CALL, "strncpy");
-        return mcsFAILURE;
-    }
+    /* Give back the found hostname */
+    strncpy(hostName, systemInfo.nodename, length);
 
     return mcsSUCCESS;
 }

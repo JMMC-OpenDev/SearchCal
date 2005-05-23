@@ -3,18 +3,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscNetwork.h,v 1.3 2005-02-15 09:37:52 gzins Exp $"
+ * "@(#) $Id: miscNetwork.h,v 1.4 2005-05-23 11:57:40 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/15 09:37:52  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  03-Aug-2004  Created
  *
  ******************************************************************************/
 
 /**
  * \file
- * This header contains ONLY the miscNetwork functions declarations.
+ * Definition of miscNetwork functions.
  */
 
 /* The following piece of code alternates the linkage type to C for all 
@@ -36,7 +39,7 @@ extern "C" {
  * Pubic functions declaration
  */
  
-mcsCOMPL_STAT miscGetHostName(char *hostName, mcsUINT32 length);
+mcsCOMPL_STAT miscGetHostName(char *hostName, const mcsUINT32 length);
 
 
 #ifdef __cplusplus
