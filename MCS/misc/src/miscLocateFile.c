@@ -1,20 +1,23 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscLocateFile.c,v 1.7 2005-04-07 12:55:05 gluck Exp $"
+ * "@(#) $Id: miscLocateFile.c,v 1.8 2005-05-26 08:59:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/04/07 12:55:05  gluck
+ * Code review: minor changes
+ *
  * Revision 1.6  2005/02/12 14:49:19  gzins
  * No longer resolve file name path before printing out name of found file; done by miscLocateFile
  *
  * Revision 1.5  2005/01/28 18:39:10  gzins
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
- * gzins     09-Nov-2004  Created
  * gzins     23-Nov-2004  Returned a 'resolved' path; i.e. where environment
  *                        variables have substituated
+ * gzins     09-Nov-2004  Created
  *
  ******************************************************************************/
 
@@ -48,7 +51,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.7 2005-04-07 12:55:05 gluck Exp $"; 
+static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.8 2005-05-26 08:59:26 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -80,15 +83,15 @@ int main (int argc, char *argv[])
     {
         /* Exit from the application with mcsFAILURE */
         errCloseStack();
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     /* Test number of arguments */
     if ((argc != 2) && (argc != 3))
     {
-        printf ("Usage:\n");
-        printf ("   %s <fileName> [<pathList>]\n", mcsGetProcName());
-        exit (EXIT_FAILURE);
+        printf("Usage:\n");
+        printf("   %s <fileName> [<pathList>]\n", mcsGetProcName());
+        exit(EXIT_FAILURE);
     }
 
     /* Search for the specified file */
@@ -109,14 +112,14 @@ int main (int argc, char *argv[])
     else
     {
         errCloseStack();
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     /* Close MCS services */
     mcsExit();
     
     /* Exit from the application with mcsSUCCESS or mcsFAILURE */
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 /*___oOo___*/
