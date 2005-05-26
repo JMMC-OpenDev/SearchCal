@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/05/26 12:33:18  gzins
+ * Supressed warning related to assignment of read-only 'precision' parameter
+ *
  * Revision 1.15  2005/05/26 09:53:31  lafrasse
  * Code review : refined user documentation
  *
@@ -43,7 +46,7 @@
  * Definition of miscDate functions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.16 2005-05-26 12:33:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.17 2005-05-26 13:02:19 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -159,11 +162,8 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
         return mcsFAILURE;
     }
 
-    /* Add milli-seconds, if requested */
-    precision = mcsMIN(precision, 6u);
-
-    /* Get microseconds in 0.[xxxxxx] format */
-    sprintf(format, "%%.%uf", precision);
+    /* Get microseconds in 0.[xxxxxx] format if requested */
+    sprintf(format, "%%.%uf", mcsMIN(precision, 6u));
     sprintf(tmpBuf, format, time.tv_usec/1e6);
 
     /*
