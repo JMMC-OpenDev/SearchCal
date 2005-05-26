@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/05/26 09:53:31  lafrasse
+ * Code review : refined user documentation
+ *
  * Revision 1.14  2005/03/03 15:48:01  gluck
  * Code review corrections:
  *  - invert argument in prototypes to be compliant with I, I/O, O parameter order
@@ -40,7 +43,7 @@
  * Definition of miscDate functions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.15 2005-05-26 09:53:31 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDate.c,v 1.16 2005-05-26 12:33:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -83,7 +86,7 @@ typedef enum
  * Local functions declaration 
  */
 static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType, 
-                                    const mcsUINT32      precision,
+                                          mcsUINT32      precision,
                                           mcsSTRING32    computedTime);
 
 
@@ -114,7 +117,7 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
  * returned.
  */
 static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType, 
-                                    const mcsUINT32      precision,
+                                          mcsUINT32      precision,
                                           mcsSTRING32    computedTime)
 {
     struct timeval  time;
