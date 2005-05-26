@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDate.h,v 1.7 2005-03-03 15:45:28 gluck Exp $"
+ * "@(#) $Id: miscDate.h,v 1.8 2005-05-26 09:53:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/03/03 15:45:28  gluck
+ * Code review corrections: invert argument in prototypes to be compliant with I, I/O, O parameter order
+ *
  * Revision 1.6  2005/02/22 10:23:35  gluck
  * Code review corrections: doxygen file header
  *
@@ -23,7 +26,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Declaration of miscDate functions.
  */
 
@@ -45,9 +48,12 @@ extern "C" {
 /*
  * Pubic functions declaration
  */
- 
-mcsCOMPL_STAT miscGetUtcTimeStr  (mcsINT32 precision, mcsSTRING32 utcTime);
-mcsCOMPL_STAT miscGetLocalTimeStr(mcsINT32 precision, mcsSTRING32 localTime);
+
+mcsCOMPL_STAT miscGetUtcTimeStr  (const mcsUINT32    precision,
+                                        mcsSTRING32  utcTime);
+
+mcsCOMPL_STAT miscGetLocalTimeStr(const mcsUINT32    precision,
+                                        mcsSTRING32  localTime);
 
 
 #ifdef __cplusplus

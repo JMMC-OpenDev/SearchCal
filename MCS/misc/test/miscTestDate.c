@@ -1,22 +1,25 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestDate.c,v 1.7 2005-03-03 16:10:59 gluck Exp $"
+ * "@(#) $Id: miscTestDate.c,v 1.8 2005-05-26 09:53:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/03/03 16:10:59  gluck
+ * Update due to code review
+ *
  * Revision 1.6  2005/02/15 09:44:37  gzins
  * Added CVS log as file modification history
  *
- * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
+ * lafrasse  02-Aug-2004  Changed local includes to use miscDate headers
  * lafrasse  22-Jul-2004  Correted some typos, code factorization, and error
  *                        management
- * lafrasse  02-Aug-2004  Changed local includes to use miscDate headers
+ * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDate.c,v 1.7 2005-03-03 16:10:59 gluck Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDate.c,v 1.8 2005-05-26 09:53:31 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,46 +52,46 @@ int main (int argc, char *argv[])
     /* Give process name to mcs library */
     mcsInit(argv[0]);
     
-    mcsBYTES32  time;
-    int i;
+    mcsSTRING32 timeStr;
+    mcsUINT32   precision;
 
     /* Test of miscGetUtcTimeStr() */
     printf("miscGetUtcTimeStr() Function Test :\n\n");
-    for (i=0; i<7; ++i)
+    for (precision = 0; precision < 7; precision++)
     {
-        printf("   UTC Time     (precision s=%d)  = ", i);
+        printf("   UTC Time    (precision s=%u)  =  ", precision);
 
-        if (miscGetUtcTimeStr(i, time) == mcsFAILURE)
+        if (miscGetUtcTimeStr(precision, timeStr) == mcsFAILURE)
         {
             printf("mcsFAILURE.\n");
             errCloseStack();
         }
         else
         {
-            printf("%s\n", time);
+            printf("'%s'\n", timeStr);
         }
     }
     printf("\n\n");
 
     /* Test of miscGetLocalTimeStr() */
     printf("miscGetLocalTimeStr() Function Test :\n\n");
-    for (i=6; i>=0; --i)
+    for (precision = 0; precision < 7; precision++)
     {
-        printf("   Local Time   (precision s=%d)  = ", i);
+        printf("   Local Time  (precision s=%u)  =  ", precision);
 
-        if (miscGetLocalTimeStr(i, time) == mcsFAILURE)
+        if (miscGetLocalTimeStr(precision, timeStr) == mcsFAILURE)
         {
             printf("mcsFAILURE.\n");
             errCloseStack();
         }
         else
         {
-            printf("%s\n", time);
+            printf("'%s'\n", timeStr);
         }
     }
     printf("\n\n");
 
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 /*___oOo___*/
