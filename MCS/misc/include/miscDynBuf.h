@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.21 2005-05-17 15:34:41 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.22 2005-05-26 13:03:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/05/17 15:34:41  lafrasse
+ * Re-ordered functions
+ *
  * Revision 1.20  2005/03/03 16:10:31  gluck
  * Code review corrections: code + documentation ...
  *
@@ -62,7 +65,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Declaration of miscDynBuf functions.
  */
 
@@ -174,7 +177,7 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo     (const miscDYN_BUF *dynBuf,
 
 const char*   miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
                                              const char        *currentPos,
-                                                   char        *nextLine,
+                                             char              *nextLine,
                                              const mcsUINT32   maxLineLength,
                                              const mcsLOGICAL  skipCommentFlag);
 
@@ -196,17 +199,17 @@ mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
                                              const char        *fileName);
 
 mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
-                                             char              byte,
+                                             const char        byte,
                                              const mcsUINT32   position);
 
 mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
-                                             char              *bytes,
+                                             const char        *bytes,
                                              const mcsUINT32   length,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
 
 mcsCOMPL_STAT miscDynBufReplaceStringFromTo (miscDYN_BUF       *dynBuf,
-                                             char              *str,
+                                             const char        *str,
                                              const mcsUINT32   from,
                                              const mcsUINT32   to);
 
@@ -224,12 +227,12 @@ mcsCOMPL_STAT miscDynBufAppendCommentLine   (miscDYN_BUF       *dynBuf,
                                              const char        *str);
 
 mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
-                                             char              *bytes,
+                                             const char        *bytes,
                                              const mcsUINT32   length,
                                              const mcsUINT32   position);
 
 mcsCOMPL_STAT miscDynBufInsertStringAt      (miscDYN_BUF       *dynBuf,
-                                             char              *str,
+                                             const char        *str,
                                              const mcsUINT32   position);
 
 mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
