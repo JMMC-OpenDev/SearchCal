@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2005/05/20 16:22:50  lafrasse
+ * Code review : refined user and developper documentation, functions reordering, and rationnalized miscYankExtension()
+ *
  * Revision 1.30  2005/04/06 09:31:50  gluck
  * Code review: minor changes
  *
@@ -68,7 +71,7 @@
  * "$MCSROOT/lib:$INTROOT/bin:$HOME/Dev/misc/src/../doc/").
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.31 2005-05-20 16:22:50 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.32 2005-05-26 16:05:11 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -432,11 +435,13 @@ char*         miscResolvePath    (const char *unresolvedPath)
     static mcsLOGICAL   init = mcsFALSE;
     static miscDYN_BUF  builtPath;
 
+    miscDYN_BUF         unresolvedPathBuffer;
     mcsSTRING256        pathElement;
     mcsSTRING256        envVarValue;
     mcsINT32            pathElementLength;
     mcsUINT32           builtPathLength = 0;
-    char               *endingChar   = NULL;
+    char               *unresolvedPathCopy = NULL;
+    char               *endingChar = NULL;
     char               *nextSlashPtr = NULL;
 
     /* Check parameter validity */
@@ -449,65 +454,98 @@ char*         miscResolvePath    (const char *unresolvedPath)
     /* Initialize the static Dynamic Buffer (if not already done) */
     if (init == mcsFALSE)
     {
-        miscDynBufInit(&builtPath);
+        if (miscDynBufInit(&builtPath) == mcsFAILURE)
+        {
+            return NULL;
+        }
+
         init = mcsTRUE;
+    }
+
+    /*
+     * Make a local copy of the given unresolved path before freeing the
+     * static buffer, in order to avoid data loss in case the user called
+     * miscResolvePath() several times on its result.
+     *
+     * e.g miscResolvePath(miscResolvePath(path));
+     */
+    if (miscDynBufInit(&unresolvedPathBuffer) == mcsFAILURE)
+    {
+        return NULL;
+    }
+    if (miscDynBufAppendString(&unresolvedPathBuffer, unresolvedPath) ==
+        mcsFAILURE)
+    {
+        miscDynBufDestroy(&unresolvedPathBuffer);
+        return NULL;
+    }
+    unresolvedPathCopy = miscDynBufGetBuffer(&unresolvedPathBuffer);
+    if (unresolvedPathCopy == NULL)
+    {
+        miscDynBufDestroy(&unresolvedPathBuffer);
+        return NULL;
     }
 
     /* Reset the static Dynamic Buffer */
     if (miscDynBufReset(&builtPath) == mcsFAILURE)
     {
+        miscDynBufDestroy(&unresolvedPathBuffer);
         return NULL;
     }
 
     /* Resolve the full path element by element */
-    nextSlashPtr = strchr(unresolvedPath, '/');
+    nextSlashPtr = strchr(unresolvedPathCopy, '/');
     do
     {
         /* If the current path element is an environment variable... */
-        if (*unresolvedPath == '$')
+        if (*unresolvedPathCopy == '$')
         {
             /* If the current path element is not the last one... */
             if (nextSlashPtr != NULL)
             {
                 /* Its length is equal to : */
-                pathElementLength = ((nextSlashPtr - unresolvedPath) - 1);
+                pathElementLength = ((nextSlashPtr - unresolvedPathCopy) - 1);
             }
             else
             {
                 /* Otherwise its length is equal to : */
-                pathElementLength = strlen(unresolvedPath);
+                pathElementLength = strlen(unresolvedPathCopy);
             }
 
             /* Copy only the current path element in the temporary buffer */
-            strncpy(pathElement, (unresolvedPath + 1), pathElementLength);
+            strncpy(pathElement, (unresolvedPathCopy + 1), pathElementLength);
             *(pathElement + pathElementLength) = '\0';
 
             /* Resolve the current path element as an env. var */
             if (miscGetEnvVarValue(pathElement, envVarValue,sizeof(envVarValue))
                 == mcsFAILURE)
             {
+                miscDynBufDestroy(&unresolvedPathBuffer);
                 return NULL;
             }
 
             /* Append the env. var. value to the resolved path */
             if (miscDynBufAppendString(&builtPath, envVarValue) == mcsFAILURE)
             {
+                miscDynBufDestroy(&unresolvedPathBuffer);
                 return NULL;
             }
         }
         /* Else if the current path element is '~' */
-        else if (*unresolvedPath == '~')
+        else if (*unresolvedPathCopy == '~')
         {
             /* Resolve the '~' (aka 'HOME') env. var  value */
             if (miscGetEnvVarValue("HOME", envVarValue, sizeof(envVarValue)) ==
                 mcsFAILURE)
             {
+                miscDynBufDestroy(&unresolvedPathBuffer);
                 return NULL;
             }
 
             /* Append the 'HOME' env. var. value to the resolved path */
             if (miscDynBufAppendString(&builtPath, envVarValue) == mcsFAILURE)
             {
+                miscDynBufDestroy(&unresolvedPathBuffer);
                 return NULL;
             }
         }
@@ -518,21 +556,22 @@ char*         miscResolvePath    (const char *unresolvedPath)
             if (nextSlashPtr != NULL)
             {
                 /* Its length is equal to : */
-                pathElementLength = (nextSlashPtr - unresolvedPath);
+                pathElementLength = (nextSlashPtr - unresolvedPathCopy);
             }
             else
             {
                 /* Otherwise its length is equal to : */
-                pathElementLength = strlen(unresolvedPath);
+                pathElementLength = strlen(unresolvedPathCopy);
             }
 
             /* Copy the current path element in a temporary buffer */
-            strncpy(pathElement, unresolvedPath, pathElementLength);
+            strncpy(pathElement, unresolvedPathCopy, pathElementLength);
             *(pathElement + pathElementLength) = '\0';
 
             /* Append the path element to the resolved path */
             if (miscDynBufAppendString(&builtPath, pathElement) == mcsFAILURE)
             {
+                miscDynBufDestroy(&unresolvedPathBuffer);
                 return NULL;
             }
         }
@@ -540,6 +579,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
         /* Add a '/' to the resolved path */
         if (miscDynBufAppendString(&builtPath, "/") == mcsFAILURE)
         {
+            miscDynBufDestroy(&unresolvedPathBuffer);
             return NULL;
         }
 
@@ -550,34 +590,35 @@ char*         miscResolvePath    (const char *unresolvedPath)
             if (*nextSlashPtr != '\0')
             {
                 /* Point to the next element path to be resolved */
-                unresolvedPath = (nextSlashPtr + 1);
+                unresolvedPathCopy = (nextSlashPtr + 1);
             }
             else
             {
-                unresolvedPath = nextSlashPtr;
+                unresolvedPathCopy = nextSlashPtr;
             }
         }
         else
         {
             /* End the resolved path string */
-            unresolvedPath = "\0";
+            unresolvedPathCopy = "\0";
         }
 
         /* If there is one more path after the current one... */
-        if (*unresolvedPath == ':')
+        if (*unresolvedPathCopy == ':')
         {
             /* Append a ':' separator in the resolved path */
             if (miscDynBufAppendString(&builtPath, ":") == mcsFAILURE)
             {
+                miscDynBufDestroy(&unresolvedPathBuffer);
                 return NULL;
             }
 
             /* Point to the beginning of the next path */
-            unresolvedPath++;
+            unresolvedPathCopy++;
         }
     }
-    while (((nextSlashPtr = strchr(unresolvedPath, '/')) != NULL) ||
-           (*unresolvedPath != '\0'));
+    while (((nextSlashPtr = strchr(unresolvedPathCopy, '/')) != NULL) ||
+           (*unresolvedPathCopy != '\0'));
 
     /*
      * Since we cannot know if a filename is contained in the path, we should
@@ -587,6 +628,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
     /* Get the Dynamic Buffer length */
     if (miscDynBufGetNbStoredBytes(&builtPath, &builtPathLength) == mcsFAILURE)
     {
+        miscDynBufDestroy(&unresolvedPathBuffer);
         return NULL;
     }
 
@@ -594,6 +636,7 @@ char*         miscResolvePath    (const char *unresolvedPath)
     endingChar = miscDynBufGetBuffer(&builtPath);
     if (endingChar == NULL)
     {
+        miscDynBufDestroy(&unresolvedPathBuffer);
         return NULL;
     }
     
@@ -613,9 +656,11 @@ char*         miscResolvePath    (const char *unresolvedPath)
     /* Strip the Dynamic Buffer */
     if (miscDynBufStrip(&builtPath) == mcsFAILURE)
     {
+        miscDynBufDestroy(&unresolvedPathBuffer);
         return NULL;
     }
     
+    miscDynBufDestroy(&unresolvedPathBuffer);
     return miscDynBufGetBuffer(&builtPath);
 }
 

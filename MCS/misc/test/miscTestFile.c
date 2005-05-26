@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestFile.c,v 1.16 2005-05-20 16:22:50 lafrasse Exp $"
+ * "@(#) $Id: miscTestFile.c,v 1.17 2005-05-26 16:05:11 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/05/20 16:22:50  lafrasse
+ * Code review : refined user and developper documentation, functions reordering, and rationnalized miscYankExtension()
+ *
  * Revision 1.15  2005/02/15 09:44:37  gzins
  * Added CVS log as file modification history
  *
@@ -25,7 +28,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.16 2005-05-20 16:22:50 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.17 2005-05-26 16:05:11 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -761,6 +764,18 @@ int main (int argc, char *argv[])
     else
     {
         printf("Resolved Path   = \"%s\"\n\n", tmp);
+    }
+    strcpy (fullFileName, "~/data/$MCSROOT/$INTROOT/data/");
+    printf("Unresolved Path = \"%s\"\n", fullFileName);
+    tmp = miscResolvePath(miscResolvePath(fullFileName));
+    if (tmp == NULL)
+    {
+        printf("mcsFAILURE\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf("Resolved Path(Resolved Path())   = \"%s\"\n\n", tmp);
     }
     printf("\n\n");
 
