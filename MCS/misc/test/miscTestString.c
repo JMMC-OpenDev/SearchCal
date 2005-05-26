@@ -1,26 +1,29 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestString.c,v 1.12 2005-02-25 16:43:52 lafrasse Exp $"
+ * "@(#) $Id: miscTestString.c,v 1.13 2005-05-26 08:48:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/02/25 16:43:52  lafrasse
+ * Added miscDeleteChr()
+ *
  * Revision 1.11  2005/02/21 15:27:52  lafrasse
  * Added miscIsCommentLine()
  *
  * Revision 1.10  2005/02/15 09:44:37  gzins
  * Added CVS log as file modification history
  *
- * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
- * lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
- * lafrasse  02-Aug-2004  Changed local includes to use miscString headers
- * gzins     15-Dec-2004  Added test for miscTrimString function
  * lafrasse  17-Jan-2005  Added miscSplitString function
+ * gzins     15-Dec-2004  Added test for miscTrimString function
+ * lafrasse  02-Aug-2004  Changed local includes to use miscString headers
+ * lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
+ * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.12 2005-02-25 16:43:52 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestString.c,v 1.13 2005-05-26 08:48:20 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -338,7 +341,7 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("   Removed first '\\'\n");
+        printf("   Removed first '/'\n");
         printf("   New String       = |%s|\n\n", string);
     }
     strcpy ((char *)string, "Abc deF GhI jKl 012 .; Abc deF GhI jKl 012 .;/");
@@ -350,7 +353,7 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("   Removed first '\\'\n");
+        printf("   Removed first '/'\n");
         printf("   New String       = |%s|\n\n", string);
     }
     strcpy ((char *)string, "/Abc deF GhI jKl 012 .;/ Abc deF GhI jKl 012 .;/");
@@ -362,7 +365,7 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("   Removed first '\\'\n");
+        printf("   Removed first '/'\n");
         printf("   New String       = |%s|\n\n", string);
     }
 

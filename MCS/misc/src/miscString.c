@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/05/20 12:55:01  gzins
+ * Improved miscIsSpaceString documentation
+ *
  * Revision 1.21  2005/04/07 08:29:57  gluck
  * Code review: minor changes
  *
@@ -25,25 +28,25 @@
  * Revision 1.15  2005/01/28 18:39:10  gzins
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
- * gzins     16-Jun-2004  Created
- * lafrasse  17-Jun-2004  Added miscStrToUpper
- * gzins     23-Jul-2004  Added miscIsSpaceStr
- * lafrasse  23-Jul-2004  Added error management
+ * lafrasse  17-Jan-2005  Added miscSplitString function
+ * gzins     16-Dec-2004  Added miscDuplicateString function
+ * gzins     15-Dec-2004  Added miscTrimString function
  * lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
  *                        misc.h
  *                        Moved mcs.h include to miscString.h
- * gzins     15-Dec-2004  Added miscTrimString function
- * gzins     16-Dec-2004  Added miscDuplicateString function
- * lafrasse  17-Jan-2005  Added miscSplitString function
+ * lafrasse  23-Jul-2004  Added error management
+ * gzins     23-Jul-2004  Added miscIsSpaceStr
+ * lafrasse  17-Jun-2004  Added miscStrToUpper
+ * gzins     16-Jun-2004  Created
  *
  ******************************************************************************/
 
 /**
- * \file
- * Contains all the 'misc' String related functions definitions.
+ * @file
+ * Declaration of miscString functions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.22 2005-05-20 12:55:01 gzins Exp $";
+static char *rcsId="@(#) $Id: miscString.c,v 1.23 2005-05-26 08:48:20 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -69,216 +72,200 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "miscErrors.h"
 
 
-/**
- * Strip quotes enclosing a string.
- *
- * Strings are sometimes enclosed in quotes. This function strips them off
- * using the same character buffer for storing the processed string. The
- * string must be NULL terminated.
- *
- * If the string is not contained in quotes, the function simply returns
- * without changing the string.
- *
- * \param string the null-terminated string that shall be stripped
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+/*
+ * Public functions definition
  */
-mcsCOMPL_STAT miscStripQuotes(char *string)
-{
-    char *srcPtr;
-    char *dstPtr;
 
-    if (string == NULL)
+/**
+ * Strip quotes and spaces (if any) enclosing a given null-terminated string.
+ *
+ * Strings are sometimes enclosed in quotes. This function strips them off (if
+ * any) using the same given character buffer to give back the resulting string.
+ *
+ * @param str the null-terminated string that shall be stripped.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscStripQuotes(char *str)
+{
+    /* Verify paramater vaildity */
+    if (str == NULL)
     {
-        errAdd(miscERR_NULL_PARAM, "string");
+        errAdd(miscERR_NULL_PARAM, "str");
         return mcsFAILURE;
     }
 
-    /* Worst-case string which becomes:
-     *   |   "   kjkdjd kjkjk   kjkj  "  ;   |
-     *   |kjkdjd kjkjk   kjkj|
-     */
-
-    dstPtr = string;
-    /* Find first '"' */
-    srcPtr = strchr(string, '\"');
-
-    /* If a quote has been found '"' */
-    if (srcPtr != NULL)
-    {
-        /* Skip possible blanks after the quote */
-        srcPtr++;
-        while (*srcPtr == ' ')
-        {
-            srcPtr++;
-        }
-
-        /* Copy until quote or NULL terminator */
-        while ((*srcPtr != '\0') && (*srcPtr != '\"')) /* " */
-        {
-            *dstPtr = *srcPtr;
-            dstPtr++;
-            srcPtr++;
-        }
-
-        /* 
-         * If the string only contains blanks or is of length 0, dstPtr still
-         * points to the beginning of the string
-         */
-
-        /* Yank possible trailing blanks */
-        if (dstPtr != string)
-        {
-            dstPtr--;
-            while (*dstPtr == ' ')
-                dstPtr--;
-            dstPtr++;
-        }
-        *dstPtr = '\0';
-    }
-
-    return mcsSUCCESS;
+    /* Remove any leading or trailing spaces and quotes */
+    return miscTrimString(str, "\" ");
 }
 
+
 /**
- * Trim a string for leading and trailing characters
+ * Trim a null-terminated string for the given leading and trailing characters.
  *
- * Trim a string for leading and trailing characters according to the 
- * characters given in the  \em trimChars string. The \em trimChars could be
- * e.g. "{} ". In this case the string would be trimmed for all leading
- * "{"'s, "}"'s and spaces.
+ * For example, if @em trimChars contains "{} ", the given string would be given 
+ * back trimmed for all "{"'s, "}"'s and spaces, using the same given character
+ * buffer to give back the resulting string.
  *
- * \param string the null-terminated string that shall be trimmed
- * \param trimChars leading and trailing characters to be removed
+ * @param str the null-terminated string that shall be trimmed.
+ * @param trimChars leading and trailing characters to be removed.
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS.
  */
-mcsCOMPL_STAT miscTrimString(char *string, char *trimChars)
+mcsCOMPL_STAT miscTrimString(char *str, const char *trimChars)
 {
-    char        *chrPtr;
-    mcsLOGICAL  run;
+    char        *currentChrPtr;
+    mcsLOGICAL   run;
 
     /* If pointer is not null */ 
-    if (*string != '\0')
+    if (*str != '\0')
     {
-        /* Remove leading trim characters; i.e. look for the first character
-         * which is not a character to be trimmed */
+        /*
+         * Remove leading trim characters; i.e. look for the first character
+         * which is not a character to be trimmed.
+         */
         run = mcsTRUE;
-        chrPtr = string;
+        currentChrPtr = str;
         do
         {
-            if (strchr(trimChars, *chrPtr) != NULL)
+            /* If the current character must be trimed... */
+            if (strchr(trimChars, *currentChrPtr) != NULL)
             {
-                chrPtr++;
+                /* Skip it */
+                currentChrPtr++;
             }
             else
             {
+                /* Exit from the loop */
                 run = mcsFALSE;
             }
-        } while ((*chrPtr != '\0') && run);
+        }
+        while ((*currentChrPtr != '\0') && run);
 
-        /* If leading trim characters have been found */ 
-        if (string != chrPtr)
+        /* If any leading trim characters have been found */ 
+        if (str != currentChrPtr)
         {
-            /* Copy string form the first 'good' character */
-            strcpy(string, chrPtr);
+            /* Copy str from the first 'good' character */
+            strcpy(str, currentChrPtr);
         }
 
-        /* Remove trailing trim characters */
-        if (*chrPtr != '\0')
+        /* Remove any trailing trim characters */
+        if (*currentChrPtr != '\0')
         {
-            /* Got to the last characters and look for the first character
-             * which is not a character to be trimmed  */
-            chrPtr = (string + (strlen(string) - 1));
+            /*
+             * Got to the last characters and look for the first character
+             * which is not a character to be trimmed
+             */
+            currentChrPtr = str + (strlen(str) - 1);
             run = mcsTRUE;
             do
             {
-                if (strchr(trimChars, *chrPtr) != NULL)
+                /* If the current character must be trimed... */
+                if (strchr(trimChars, *currentChrPtr) != NULL)
                 {
-                    *chrPtr = '\0';
-                    chrPtr--;
+                    /* Blank the string at its position */
+                    *currentChrPtr = '\0';
+                    currentChrPtr--;
                 }
                 else
                 {
+                    /* Exit from the loop */
                     run = mcsFALSE;
                 }
             }
-            while ((*chrPtr != '\0') && run);
+            while ((*currentChrPtr != '\0') && run);
         }
     }
+
     return mcsSUCCESS;
 }
- 
+
+
 /**
- * Convert a string to upper case.
+ * Convert a null-terminated string to upper case.
  *
- * Strings are sometimes composed of mixed caracters case. This function
- * cleans this by upper-casing all the caracters, using the same character
- * buffer for storing the processed string. The string must be NULL terminated.
+ * Strings are sometimes composed of mixed characters case. This function
+ * cleans this by upper-casing all those characters, using the same given
+ * character buffer to give back the resulting string.
  *
- * \param string the null-terminated string that shall be upper-cased
+ * @param str the null-terminated string that shall be upper-cased.
  *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT miscStrToUpper(char *string)
+mcsCOMPL_STAT miscStrToUpper(char *str)
 {
-    if (string == NULL)
+    /* Verify parameter validity */
+    if (str == NULL)
     {
-        errAdd(miscERR_NULL_PARAM, "string");
+        errAdd(miscERR_NULL_PARAM, "str");
         return mcsFAILURE;
     }
 
-    while (*string != '\0')
+    /* For each character in str... */
+    while (*str != '\0')
     {
-        *string = toupper(*string);
-        string++;
+        /* Convert it to uppercase */
+        *str = toupper(*str);
+        str++;
     }
 
     return mcsSUCCESS;
 }
 
+
 /**
- * Checks if string contains only white-space characters.
+ * Return whether the given null-terminated string contains only white-space
+ * characters or not.
  * 
- * It returns true if string is empty or contains only white-space (i.e.
- * blank), and false otherwise.
+ * It returns true if the given null-terminated string is empty or contains only
+ * white-space (i.e. blank), false otherwise.
  *
- * \warning string must \em NOT be a null pointer.\n\n
+ * @warning str must @em NOT be a null pointer.\n\n
  *
- * \param string the null-terminated string that shall be checked.
+ * @param str the null-terminated string that shall be checked.
  *
- * \return mcsTRUE if it is a white-space string, mcsFALSE otherwise.
+ * @return mcsTRUE if it is a white-space string, mcsFALSE otherwise.
  */
-mcsLOGICAL miscIsSpaceStr (const char *string)
+mcsLOGICAL miscIsSpaceStr(const char *str)
 {
-    while (*string != '\0')
+    /* For each character in str... */
+    while (*str != '\0')
     {
-        if (!isspace(*string))
+        /* If the current character is not a blank... */
+        if (isspace(*str) == 0)
         {
+            /* Return false */
             return mcsFALSE;
         }
-        string++;
+
+        str++;
     }
+
     return mcsTRUE;
 }
 
+
 /**
- * Checks if the given line begins with any leading spaces or tabs and the
- * given comment pattern.
+ * Return whether the given line is a comment line or not.
  * 
- * It returns true (i.e. mcsTRUE) if the line  begins with the given comment
- * pattern, false (i.e. mcsFALSE) otherwise.
+ * It returns true if the line begins with the given comment pattern (with or
+ * without any leading spaces or tabs), false otherwise.
  *
- * \warning line must be \em '\\n' or 'null' terminated.\n\n
+ * @warning line @em MUST be '\\n' or 'null' terminated.\n\n
  *
- * \param line the line that shall be checked.
- * \param commentPattern the string characterizing a comment line.
+ * @param line the line that shall be checked.
+ * @param commentPatternStr the null-terminated string characterizing a comment
+ * line.
  *
- * \return mcsTRUE if it is a comment line, mcsFALSE otherwise.
+ * @return mcsTRUE if it is a comment line, mcsFALSE otherwise.
  */
-mcsLOGICAL    miscIsCommentLine  (const char         *line,
-                                  const mcsSTRING4    commentPattern)
+mcsLOGICAL miscIsCommentLine(const char       *line,
+                             const mcsSTRING4  commentPatternStr)
 {
+    mcsUINT32 commentPatternLength;
+
     /* Skip any leading spaces or tabs */
     while ((*line == ' ') || (*line == '\t'))
     {
@@ -286,98 +273,103 @@ mcsLOGICAL    miscIsCommentLine  (const char         *line,
     }
 
     /* If it is a comment line */
-    mcsUINT32 commentPatternLen = strlen(commentPattern);
-    if ((strlen(commentPattern) != 0) &&
-        (strncmp(line, commentPattern, commentPatternLen) == 0))
+    commentPatternLength = strlen(commentPatternStr);
+    if ((strlen(commentPatternStr) != 0) &&
+        (strncmp(line, commentPatternStr, commentPatternLength) == 0))
     {
+        /* Return true */
         return mcsTRUE;
     }
 
     return mcsFALSE;
 }
 
+
 /**
- * Replace a character occurence by another one in a string.
+ * Replace a character occurences by another one in a null-terminated string.
  * 
- * \warning string \em must be a NULL terminated char array pointer.\n\n
- *
- * \param string the null-terminated string that shall be modified.
- * \param originalChar the character to be replaced.
- * \param newChar the replacing character. 
+ * @param str the null-terminated string that shall be modified.
+ * @param originalChar the character to be replaced.
+ * @param newChar the replacing character. 
  * 
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT miscReplaceChrByChr (char *string,
-                                   char originalChar,
-                                   char newChar)
+mcsCOMPL_STAT miscReplaceChrByChr(      char *str,
+                                  const char  originalChar,
+                                  const char  newChar)
 {
-    int i = 0;
-   
-    /* Check string parameter validity */
-    if (string == NULL)
+    /* Check str parameter validity */
+    if (str == NULL)
     {
-        errAdd(miscERR_NULL_PARAM, "string");
+        errAdd(miscERR_NULL_PARAM, "str");
         return mcsFAILURE;
     }
 
-    /* For each character of the string */ 
-    while (string[i] !=  '\0')
+    /* For each character of str... */ 
+    while (*str !=  '\0')
     {
-        /* Check if the current character has to be replaced */
-        if (string[i] == originalChar)
+        /* If the current character has to be replaced... */
+        if (*str == originalChar)
         {
-            /* if ok, replace it */
-            string[i] = newChar;
+            /* Replace it */
+            *str = newChar;
         }
-        i++;        
+
+        str++;
     }
 
     return mcsSUCCESS;
 }
 
+
 /**
- * Remove the first or all occurences of a given character in a string.
+ * Remove the first or all occurences of a given character in a null-terminated
+ * string.
  * 
- * \warning string \em must be a NULL terminated char array pointer.\n\n
- *
- * \param string the null-terminated string that shall be modified.
- * \param searchedChar the character to be removed.
- * \param allFlag the flag specifying whether all the occurences of the given
+ * @param str the null-terminated string that shall be modified.
+ * @param searchedChar the character to be removed.
+ * @param allFlag the flag specifying whether all the occurences of the given
  * character (if set to mcsTRUE), or only the first found (if set to mcsFALSE),
  * should be removed. 
  * 
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT miscDeleteChr      (      char         *string,
-                                  const char          searchedChar,
-                                  const mcsLOGICAL    allFlag)
+mcsCOMPL_STAT miscDeleteChr(      char       *str,
+                            const char        searchedChar,
+                            const mcsLOGICAL  allFlag)
 {
-    /* Check string parameter validity */
-    if (string == NULL)
+    /* Check str parameter validity */
+    mcsINT32 src, dest;
+    mcsLOGICAL deleteChr;
+
+    if (str == NULL)
     {
-        errAdd(miscERR_NULL_PARAM, "string");
+        errAdd(miscERR_NULL_PARAM, "str");
         return mcsFAILURE;
     }
 
-    /* For each character of the string */
-    mcsINT32 src, dest;
-    mcsLOGICAL deleteChr = mcsTRUE;
-    for (src = 0, dest = 0; string[src] != '\0'; src++)
+    /* For each character of str... */
+    deleteChr = mcsTRUE;
+    for (src = 0, dest = 0; str[src] != '\0'; src++)
     {
-        /* If it is not the searched character, or if the first occurence of
+        /*
+         * If it is not the searched character, or if the first occurence of
          * the searched character has been already deleted and the other ones
-         * should not be removed. */
-        if ((string[src] != searchedChar) || (deleteChr == mcsFALSE))
+         * should not be removed...
+         */
+        if ((str[src] != searchedChar) || (deleteChr == mcsFALSE))
         {
-            /* Copy the character into the destination string */
-            string[dest] = string[src];
+            /* Copy back the character into str */
+            str[dest] = str[src];
             dest++;
         }
         else
         {
             /*
-             * Skipped character, and test whether next searched character has
-             * to be removed or not.
+             * Skip character, and test whether next searched character has to
+             * be removed or not.
              */
             if (allFlag == mcsFALSE)
             {
@@ -385,129 +377,143 @@ mcsCOMPL_STAT miscDeleteChr      (      char         *string,
             }
         }
     }
-    /* End ofr */
 
     /* Added end-of-string character */
-    string[dest] = '\0';
+    str[dest] = '\0';
 
     return mcsSUCCESS;
 }
 
+
 /**
- * Duplicate a string.
+ * Return a copy of a given null-terminated string.
  * 
- * The miscDuplicateString function returns a pointer to a new string which is a
- * duplicate of the given string. Memory for the new string is obtained with
- * malloc(3), and can be freed with free(3)
+ * The memory for the new string is obtained with malloc(3), and thus can be
+ * freed with free(3).
  *
- * \param string the null-terminated string to be duplicated.
+ * @param str the null-terminated string to be duplicated.
  * 
- * \return a pointer to the duplicated string, or NULL if there is no sufficient
- * memory available
+ * @return a pointer to the duplicated string, or NULL if there is no sufficient
+ * memory available.
  */
-char *miscDuplicateString (const char *string)
+char *miscDuplicateString(const char *str)
 {
-    char * newString;
+    char *newStr;
    
-    /* Create new string */
-    newString = malloc(strlen(string) + 1);
-    if (newString == NULL)
+    /* Create a new empty string */
+    newStr = malloc(strlen(str) + 1);
+    if (newStr == NULL)
     {
         errAdd(miscERR_ALLOC);
         return NULL;
     }
 
-    /* Duplicate string */
-    strcpy(newString, string);
+    /* Copy str content in the new string */
+    strcpy(newStr, str);
 
-    return newString;
+    return newStr;
 }
 
+
 /**
- * Split a string on a given delimiter.
+ * Split a null-terminated string on a given delimiter.
  *
  * Copy each sub-string in the already allocated string array passed in
- * parameter. The number of found sub-string is returned by the 'subStringNb'
+ * parameter. The number of found sub-string is given back by the 'subStringNb'
  * parameter.
+ *
+ * @warning If any sub-string is longer than the available length of each
+ * sub-string array cell (i.e 255 characters), its content will be truncated to
+ * fit inside.\n\n
  * 
- * \param string the null-terminated string to be parsed.
- * \param delimiter the character on which the sub-strings should be found.
- * \param subStrings the allocated array used to return the null-terminated
+ * @param str the null-terminated string to be parsed.
+ * @param delimiter the character by which the sub-strings should be delimited.
+ * @param subStrArray the allocated array used to return the null-terminated
  * sub-strings.
- * \param maxSubStringNb the maximum number of sub-strings the sub-string array
+ * @param maxSubStrNb the maximum number of sub-strings the sub-string array
  * can hold.
- * \param subStringNb the number of found sub-strings.
+ * @param subStrNb the number of found sub-strings.
  * 
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT miscSplitString    (const char         *string,
-                                  const char          delimiter,
-                                        mcsSTRING256  subStrings[],
-                                  const mcsUINT32     maxSubStringNb,
-                                        mcsUINT32    *subStringNb)
+mcsCOMPL_STAT miscSplitString(const char         *str,
+                              const char          delimiter,
+                                    mcsSTRING256  subStrArray[],
+                              const mcsUINT32     maxSubStrNb,
+                                    mcsUINT32    *subStrNb)
 {
-    /* If any of the received parameters is unvalid */
-    if (string == NULL)
+    char*     nextDelimPtr;
+    char*     subStrPtr;
+    mcsUINT32 subStrLength;
+    mcsUINT32 foundSubStrNb;
+    mcsUINT32 maxSubStrLength;
+   
+    /* Verify each parameter validity */
+    if (str == NULL)
     {
-        errAdd(miscERR_NULL_PARAM, "string");
+        errAdd(miscERR_NULL_PARAM, "str");
         return mcsFAILURE;
     }
-    if (subStrings == NULL)
+    if (subStrArray == NULL)
     {
-        errAdd(miscERR_NULL_PARAM, "subStrings");
+        errAdd(miscERR_NULL_PARAM, "subStrArray");
         return mcsFAILURE;
     }
-    if (maxSubStringNb <= 0)
+    if (maxSubStrNb <= 0)
     {
-        errAdd(miscERR_NULL_PARAM, "maxSubStringNb");
+        errAdd(miscERR_NULL_PARAM, "maxSubStrNb");
         return mcsFAILURE;
     }
-    if (subStringNb == NULL)
+    if (subStrNb == NULL)
     {
-        errAdd(miscERR_NULL_PARAM, "subStringNb");
+        errAdd(miscERR_NULL_PARAM, "subStrNb");
         return mcsFAILURE;
     }
 
-    char*     floatingPtr        = (char*)string;
-    char*     subString          = NULL;
-    mcsUINT32 length             = 0;
-    mcsUINT32 i                  = 0;
-    mcsUINT32 maxSubStringLength = sizeof(subStrings[i]) - 1;
+    nextDelimPtr    = NULL;
+    subStrPtr       = (char*)str;
+    subStrLength    = 0;
+    foundSubStrNb   = 0;
+    maxSubStrLength = sizeof(*subStrArray) - 1;
    
-    /* While some occurences of the delimiter are found inside the string ... */
-    while (((floatingPtr - string) < strlen(string)) && (floatingPtr != NULL))
+    /* While there are some delimiter occurences left in str... */
+    do
     {
-        /* Get the next deilmiter position */
-        subString = strchr(floatingPtr, delimiter);
+        /* Get the next delimiter position (if any) */
+        nextDelimPtr = strchr(subStrPtr, delimiter);
 
         /* If the sub-string array is not full yet... */
-        if (i < maxSubStringNb)
+        if (foundSubStrNb < maxSubStrNb)
         {
             /*
-             * Compute the sub-string length between its real length, and its
+             * Compute the sub-string length from its real length or its
              * maximun possible length (defined by the sub-string array type)
              */
-            length = mcsMIN((subString - floatingPtr), maxSubStringLength);
+            subStrLength = mcsMIN((nextDelimPtr - subStrPtr), maxSubStrLength);
 
             /* Copy the sub-string in the sub-string array */
-            strncpy(subStrings[i], floatingPtr, length);
-            /* Add end of string explicitly */
-            subStrings[i][length] = '\0';
+            strncpy(subStrArray[foundSubStrNb], subStrPtr, subStrLength);
+
+            /* Added end-of-string character */
+            subStrArray[foundSubStrNb][subStrLength] = '\0';
         }
         else
         {
-            errAdd(miscERR_STRING_MAX_SUBSTRING_NB_OVERFLOW, maxSubStringNb);
+            errAdd(miscERR_STRING_MAX_SUBSTRING_NB_OVERFLOW, maxSubStrNb);
             return mcsFAILURE;
         }
 
-        i++;
-        floatingPtr = subString + 1;
+        foundSubStrNb++;
+        subStrPtr = nextDelimPtr + 1;
     }
+    while (nextDelimPtr != NULL);
 
-    /* Return the number of sub-string found */
-    *subStringNb = i;
+    /* Return the number of sub-strings found */
+    *subStrNb = foundSubStrNb;
 
     return mcsSUCCESS;
 }
+
 
 /*___oOo___*/
