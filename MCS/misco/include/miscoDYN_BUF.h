@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.10 2005-04-08 06:54:32 gluck Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.11 2005-05-26 13:48:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/04/08 06:54:32  gluck
+ * Code review: minor changes
+ *
  * Revision 1.9  2005/02/22 15:42:45  lafrasse
  * Added a default value to the miscoDYN_BUF::GetNextLine() 'skipCommentFlag' parameter (mcsTRUE)
  *
@@ -58,14 +61,6 @@
 /**
  * miscoDYN_BUF is an interface class providing all the necessary API to manage
  * auto-expanding, byte-based buffers.
- * 
- * \n
- * \ex
- * TODO : Code example
- * \n Brief example description.
- * \code
- * Insert your code example here
- * \endcode
  */
 class miscoDYN_BUF
 {
@@ -83,17 +78,17 @@ public:
 
     mcsCOMPL_STAT Alloc              (const mcsINT32   length);
 
-    mcsCOMPL_STAT Strip              ();
+    mcsCOMPL_STAT Strip              (void);
 
-    mcsCOMPL_STAT Reset              ();
+    mcsCOMPL_STAT Reset              (void);
 
     mcsCOMPL_STAT GetNbStoredBytes   (mcsUINT32        *storedBytes) const;
 
     mcsCOMPL_STAT GetNbAllocatedBytes(mcsUINT32        *allocatedBytes) const;
 
-    char*         GetBuffer          () const;
+    char*         GetBuffer          (void) const;
 
-    const char*   GetCommentPattern  () const;
+    const char*   GetCommentPattern  (void) const;
 
     const char*   GetNextLine        (const char       *currentPos,
                                             char       *nextLine,
@@ -122,15 +117,15 @@ public:
 
     mcsCOMPL_STAT SaveInFile         (const char       *fileName);
 
-    mcsCOMPL_STAT ReplaceByteAt      (      char       byte,
+    mcsCOMPL_STAT ReplaceByteAt      (const char       byte,
                                       const mcsUINT32  position);
 
-    mcsCOMPL_STAT ReplaceBytesFromTo (      char       *bytes,
+    mcsCOMPL_STAT ReplaceBytesFromTo (const char       *bytes,
                                       const mcsUINT32  length,
                                       const mcsUINT32  from,
                                       const mcsUINT32  to);
 
-    mcsCOMPL_STAT ReplaceStringFromTo(      char       *str,
+    mcsCOMPL_STAT ReplaceStringFromTo(const char       *str,
                                       const mcsUINT32  from,
                                       const mcsUINT32  to);
 
@@ -143,20 +138,18 @@ public:
 
     mcsCOMPL_STAT AppendCommentLine  (const char       *line);
 
-    mcsCOMPL_STAT InsertBytesAt      (      char       *bytes,
+    mcsCOMPL_STAT InsertBytesAt      (const char       *bytes,
                                       const mcsUINT32  length,
                                       const mcsUINT32  position);
 
-    mcsCOMPL_STAT InsertStringAt     (      char       *str,
+    mcsCOMPL_STAT InsertStringAt     (const char       *str,
                                       const mcsUINT32  position);
 
     mcsCOMPL_STAT DeleteBytesFromTo  (const mcsUINT32  from,
                                       const mcsUINT32  to);
 
-    mcsCOMPL_STAT Display   () const;
-
-//    friend  std::ostream&    operator<<(      std::ostream&   stream,
-//                                        const miscoDYN_BUF&   buffer);
+    friend  std::ostream&    operator<<(      std::ostream&   stream,
+                                        const miscoDYN_BUF&   buffer);
 
 protected:
     miscDYN_BUF _dynBuf;
