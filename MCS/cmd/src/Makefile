@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2005-02-15 11:04:33 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2005-05-31 14:57:36 mella Exp $"
 #
 # Makefile of cmd
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/02/15 11:04:33  gzins
+# Removed unused target
+#
 # Revision 1.7  2005/02/15 10:58:58  gzins
 # Added CVS log as file modification history
 #
@@ -67,7 +70,9 @@ cmd_OBJECTS   = cmdCOMMAND cmdPARAM
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = cmdCdfToCppClass cmdIsCdfValid 
+SCRIPTS         = cmdCdfToCppClass \
+				  cmdIsCdfValid \
+				  cmdCdfToCppCB
 SCRIPTS_L       =
 
 #
