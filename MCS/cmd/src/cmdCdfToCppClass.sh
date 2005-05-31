@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdCdfToCppClass.sh,v 1.8 2005-02-15 10:58:58 gzins Exp $"
+# "@(#) $Id: cmdCdfToCppClass.sh,v 1.9 2005-05-31 13:18:52 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/02/15 10:58:58  gzins
+# Added CVS log as file modification history
+#
 # mella     21-Nov-2004  Created
 # gzins     09-Dec-2004  Removed module name argument
 # gzins     10-Dec-2004  Checked CDF name
@@ -18,10 +21,9 @@
 # Generates a dedicated command class.
 #
 # \synopsis
-# cmdCdfToCppClass commandDefinitionFile moduleName 
+# cmdCdfToCppClass commandDefinitionFile 
 #
 # \param commandDefinitionFile : your command definition file.
-# \param moduleName : the name of the module to prefix for code generation.
 #
 # \n
 # \details
@@ -33,10 +35,10 @@
 #
 # \n
 # \ex
-# \n Generate h and C file for a command class (dummyVALID_CMD.C and
+# \n Generate h and C file for a command class (dummyVALID_CMD.cpp and
 # dummyVALID_CMD.h). 
 # \code
-# cmdCdfToCppClass ../config/VALID.cdf dummy
+# cmdCdfToCppClass ../config/VALID.cdf
 # \endcode
 # 
 #
