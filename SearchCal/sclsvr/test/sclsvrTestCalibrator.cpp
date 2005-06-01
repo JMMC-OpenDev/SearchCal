@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.6 2005-03-03 16:49:05 scetre Exp $"
+ * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.7 2005-06-01 14:18:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/03/03 16:49:05  scetre
+ * updated test
+ *
  * Revision 1.5  2005/02/15 15:52:00  gzins
  * Added CVS log as file modification history
  *
@@ -13,7 +16,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.6 2005-03-03 16:49:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.7 2005-06-01 14:18:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -36,7 +39,10 @@ using namespace std;
  */
 #include "sclsvrCALIBRATOR.h"
 #include "sclsvrCALIBRATOR_LIST.h"
+#include "sclsvrDISTANCE_FILTER.h"
+#include "sclsvrFILTER_LIST.h"
 #include "sclsvrPrivate.h"
+#include "sclsvr.h"
 
 #include <iostream>
 #include <algorithm>
@@ -120,10 +126,30 @@ int main(int argc, char *argv[])
     list2.AddAtTail(calibrator2);
     list2.AddAtTail(calibrator);
     list2.AddAtTail(calibrator3);
+    printf("before filter\n");
     list2.Display();
     sclsvrCALIBRATOR_LIST listTest;
-    list2.FilterByDistanceSeparation( "03 47 29.08", "+24 06 18.5", 0.1, 0.1);
+
+    // create a list of filter
+    sclsvrFILTER_LIST filterList;
+    sclsvrDISTANCE_FILTER distanceFilter;
+    // add distance filter in the list
+    filterList.Add(distanceFilter);
+   
+    sclsvrDISTANCE_FILTER *distanceFilterbis;
+    // get distance filter of the list
+    distanceFilterbis = (sclsvrDISTANCE_FILTER*)filterList.GetFilter(sclsvrDistanceFilterName);
+    // Set as enable the filter
+    distanceFilterbis->Enable();
+    distanceFilterbis->SetDistanceValue("03 47 29.08", "+24 06 18.5", 0.1, 0.1);
+    cout << distanceFilterbis->GetName() << endl;
+  
+    // apply filter
+    filterList.Apply(&list2);
+    //distanceFilter.Apply(&list2);
+    //list2.FilterByDistanceSeparation( "03 47 29.08", "+24 06 18.5", 0.1, 0.1);
 /*    list2.GetMaximalMagnitudeSeparation("K", 2.5, 0.1);*/
+    printf("filter list\n");
     list2.Display();
 
     sclsvrCALIBRATOR scienceObject;
@@ -131,6 +157,7 @@ int main(int argc, char *argv[])
     scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "perso");
 
 
+    printf("other display\n");
     scienceObject.Display();    
     printf("science object of the list : \n");
     list2.GetScienceObject(scienceObject);

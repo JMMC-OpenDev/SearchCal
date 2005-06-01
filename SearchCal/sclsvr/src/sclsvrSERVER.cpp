@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.5 2005-03-06 20:29:40 gzins Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.6 2005-06-01 14:18:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/03/06 20:29:40  gzins
+ * Added GetSwVersion method
+ *
  * Revision 1.4  2005/01/26 13:13:04  gzins
  * Added CVS log as modification history.
  * Added CDF file when attaching command callbacks.
@@ -17,7 +20,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.5 2005-03-06 20:29:40 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.6 2005-06-01 14:18:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -64,7 +67,7 @@ sclsvrSERVER::~sclsvrSERVER()
  */
 mcsCOMPL_STAT sclsvrSERVER::AppInit()
 {
-    logExtDbg("sclsvrSERVER::AppInit()");
+    logTrace("sclsvrSERVER::AppInit()");
 
     evhCMD_KEY key(sclsvrGETCAL_CMD_NAME, sclsvrGETCAL_CDF_NAME);
     evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD)&sclsvrSERVER::GetCalCB);

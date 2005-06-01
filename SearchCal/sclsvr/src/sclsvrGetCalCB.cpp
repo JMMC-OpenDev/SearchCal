@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.17 2005-03-06 20:31:13 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.18 2005-06-01 14:18:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/03/06 20:31:13  gzins
+ * Updated sclsvrCALIBRATOR_LIST::Save() API
+ *
  * Revision 1.16  2005/03/04 15:38:10  gzins
  * Added timer log
  *
@@ -52,7 +55,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.17 2005-03-06 20:31:13 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.18 2005-06-01 14:18:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -86,7 +89,7 @@ using namespace std;
 evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 {
 
-    logExtDbg("sclsvrSERVER::GetCalCB()");
+    logTrace("sclsvrSERVER::GetCalCB()");
 
     // Build the request object from the parameters of the command
     sclsvrREQUEST request;

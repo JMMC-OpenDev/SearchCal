@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.19 2005-03-07 13:41:18 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.20 2005-06-01 14:18:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/03/07 13:41:18  gzins
+ * Remove min baseline length
+ *
  * Revision 1.18  2005/03/04 15:38:10  gzins
  * Added timer log
  *
@@ -27,7 +30,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.19 2005-03-07 13:41:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.20 2005-06-01 14:18:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -78,7 +81,7 @@ extern "C"{
 evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 {
 
-    logExtDbg("sclsvrSERVER::GetStarCB()");
+    logTrace("sclsvrSERVER::GetStarCB()");
 
     // Search command
     sclsvrGETSTAR_CMD getStarCmd(msg.GetCommand(), msg.GetBody());

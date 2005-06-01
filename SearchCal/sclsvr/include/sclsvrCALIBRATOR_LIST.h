@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.23 2005-03-07 16:06:06 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.24 2005-06-01 14:18:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/03/07 16:06:06  gzins
+ * Removed automatic sort on visibility
+ *
  * Revision 1.22  2005/03/06 20:34:23  gzins
  * Improved Save/Load methods; added file header, used REQUEST/FORMAT tags and added automatic format detection when loading file
  *
@@ -91,6 +94,7 @@ public:
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
     virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list,
                                mcsLOGICAL copyDiameterNok = mcsTRUE);
+    virtual mcsCOMPL_STAT Extract(sclsvrCALIBRATOR_LIST &list);
     virtual mcsCOMPL_STAT AddAtTail(sclsvrCALIBRATOR &calibrator);
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
  

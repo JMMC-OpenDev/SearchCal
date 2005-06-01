@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.8 2005-03-07 16:06:06 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.9 2005-06-01 14:18:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/03/07 16:06:06  gzins
+ * Removed automatic sort on visibility
+ *
  * Revision 1.7  2005/03/07 13:40:49  gzins
  * Remove min baseline length
  * Defined magnitude range option as optional (not used in N band)
@@ -36,7 +39,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.8 2005-03-07 16:06:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.9 2005-06-01 14:18:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -94,7 +97,7 @@ sclsvrREQUEST::~sclsvrREQUEST()
  */
 mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 {
-    logExtDbg("sclsvrREQUEST::Parse()");
+    logTrace("sclsvrREQUEST::Parse()");
 
     // GETCAL command
     if (_getCalCmd != NULL)
@@ -282,7 +285,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
  */
 mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine)
 {
-    logExtDbg("sclsvrREQUEST::GetCmdParamLine()");
+    logTrace("sclsvrREQUEST::GetCmdParamLine()");
 
     memset(cmdParamLine, '\0', sizeof(mcsSTRING256)); 
 
@@ -310,7 +313,7 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine)
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsFLOAT length)
 {
-    logExtDbg("sclsvrREQUEST::SetMaxBaselineLength()");
+    logTrace("sclsvrREQUEST::SetMaxBaselineLength()");
 
     _maxBaselineLength = length;
     
@@ -324,7 +327,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsFLOAT length)
  */
 mcsFLOAT sclsvrREQUEST::GetMaxBaselineLength(void)
 {
-    logExtDbg("sclsvrREQUEST::GetMaxBaselineLength()");
+    logTrace("sclsvrREQUEST::GetMaxBaselineLength()");
 
     return (_maxBaselineLength);
 }
@@ -336,7 +339,7 @@ mcsFLOAT sclsvrREQUEST::GetMaxBaselineLength(void)
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsFLOAT wlen)
 {
-    logExtDbg("sclsvrREQUEST::SetObservingWlen()");
+    logTrace("sclsvrREQUEST::SetObservingWlen()");
 
     _observingWlen = wlen;
     
@@ -350,7 +353,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsFLOAT wlen)
  */
 mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
 {
-    logExtDbg("sclsvrREQUEST::GetObservingWlen()");
+    logTrace("sclsvrREQUEST::GetObservingWlen()");
 
     return (_observingWlen);
 }
@@ -364,7 +367,7 @@ mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 {
-    logExtDbg("sclsvrREQUEST::SetFileName()");
+    logTrace("sclsvrREQUEST::SetFileName()");
     
     if (strcpy(_fileName, fileName) == NULL)
     {
@@ -380,7 +383,8 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
  */
 const char *sclsvrREQUEST::GetFileName(void)
 {
-    logExtDbg("sclsvrREQUEST::GetFileName()");
+    logTrace("sclsvrREQUEST::GetFileName()");
+
     return (_fileName);
 }
 

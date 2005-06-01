@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.44 2005-03-30 12:50:58 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.45 2005-06-01 14:18:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.44  2005/03/30 12:50:58  scetre
+ * Changed call to alx funtions.
+ * Updated documentation
+ *
  * Revision 1.43  2005/03/10 15:46:21  scetre
  * Simplified filter on visibility and variability
  *
@@ -113,7 +117,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.44 2005-03-30 12:50:58 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.45 2005-06-01 14:18:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -164,7 +168,7 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::Copy()");
+    logTrace("sclsvrCALIBRATOR_LIST::Copy()");
     // Put each star of the vobsSTAR_LIST in the list
     for (unsigned int el = 0; el < list.Size(); el++)
     {
@@ -188,7 +192,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
                                           mcsLOGICAL copyDiameterNok)
 {
      
-    logExtDbg("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
+    logTrace("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
     for (unsigned int el = 0; el < list.Size(); el++)
     {
         // Get next calibrator
@@ -206,9 +210,51 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
         // If yes, copy it
         if (copyIt == mcsTRUE)
         {
-            AddAtTail(*calibrator);
+            if (AddAtTail(*calibrator) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
         }
     }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Extract a list inside another one
+ *
+ * @param list the list to Extract in the current list
+ *
+ * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Extract(sclsvrCALIBRATOR_LIST &list)
+{
+    logTrace("sclsvrCALIBRATOR_LIST::Extract()");
+
+    for (unsigned int el = 0; el < list.Size(); el++)
+    {
+        // Get next calibrator
+        sclsvrCALIBRATOR *calibratorToDelete;
+        calibratorToDelete =
+            (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
+        
+        for (unsigned int elem = 0; elem < Size(); elem++)
+        {
+            // Get next calibrator
+            sclsvrCALIBRATOR *calibrator;
+            calibrator = 
+                (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(elem==0));
+
+            // if calibrtaor is in the list of deleting calibrator, remove it
+            if (calibratorToDelete->IsSame(*calibrator))
+            {
+                Remove(*calibrator);
+                break;
+            }
+        }
+    }
+
     return mcsSUCCESS;
 }
 
@@ -221,7 +267,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::AddAtTail()");
+    logTrace("sclsvrCALIBRATOR_LIST::AddAtTail()");
     // Put element in the list
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(calibrator);
     _starList.push_back(newCalibrator);
@@ -238,7 +284,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::AddAtTail()");
+    logTrace("sclsvrCALIBRATOR_LIST::AddAtTail()");
     
     // Put element in the list
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(star);
@@ -257,7 +303,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::Complete()");
+    logTrace("sclsvrCALIBRATOR_LIST::Complete()");
     // for each calibrator of the list 
     for (unsigned int el = 0; el < Size(); el++)
     {
@@ -286,7 +332,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::Pack()");
+    logTrace("sclsvrCALIBRATOR_LIST::Pack()");
     
     vobsCDATA cdata;
     sclsvrCALIBRATOR calibrator;
@@ -313,7 +359,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::UnPack()");
+    logTrace("sclsvrCALIBRATOR_LIST::UnPack()");
    
     // create a cdata object and put the content of the buffer in it
     vobsCDATA cdata;
@@ -349,7 +395,7 @@ sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation(const char *scienceRa,
                                                   mcsFLOAT raRange,
                                                   mcsFLOAT decRange)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation()");
+    logTrace("sclsvrCALIBRATOR_LIST::FilterByDistanceSeparation()");
     
     // create a star correponding to the science object
     sclsvrCALIBRATOR scienceStar;
@@ -415,7 +461,7 @@ sclsvrCALIBRATOR_LIST::FilterByMagnitude(const char *band,
                                          mcsFLOAT magValue,
                                          mcsFLOAT magRange)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByMagnitude()"); 
+    logTrace("sclsvrCALIBRATOR_LIST::FilterByMagnitude()"); 
 
     // Create the UCD corresponding to the band
     mcsSTRING256 magnitudeUcd;
@@ -445,7 +491,10 @@ sclsvrCALIBRATOR_LIST::FilterByMagnitude(const char *band,
         {
             // Remove it
             logTest("calibrator %d not magnitude in the range\n", el+1);
-            Remove(*calibrator);
+            if (Remove(*calibrator) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             el = el-1;            
         }
     }
@@ -488,7 +537,7 @@ sclsvrCALIBRATOR_LIST::FilterByMagnitude(const char *band,
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterBySpectralType(char *tempClassList[],
                                                           char *lumClassList[])
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::FilterBySpectralType()");;
+    logTrace("sclsvrCALIBRATOR_LIST::FilterBySpectralType()");;
 
     // For each calibrator in the list
     sclsvrCALIBRATOR *calibrator;
@@ -500,7 +549,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterBySpectralType(char *tempClassList[],
         if (calibrator->IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
         {
             // Remove it
-            Remove(*calibrator);
+            if (Remove(*calibrator) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             el = el - 1;
         }
         // Else
@@ -601,7 +653,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterBySpectralType(char *tempClassList[],
             if ((tempClassMatch == mcsFALSE) || (lumClassMatch == mcsFALSE))
             {            
                 // Remove it
-                Remove(*calibrator);
+                if (Remove(*calibrator) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
                 el = el-1;            
             }
         }
@@ -619,7 +674,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterBySpectralType(char *tempClassList[],
 mcsCOMPL_STAT
 sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByVisibility()");
+    logTrace("sclsvrCALIBRATOR_LIST::FilterByVisibility()");
 
     // for each calibrator of the list
     sclsvrCALIBRATOR *calibrator;
@@ -636,7 +691,10 @@ sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
         {
             // Remove it
             logTest("calibrator %d not visibility enough\n", el+1);
-            Remove(*calibrator);
+            if (Remove(*calibrator) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             el = el-1;            
         }
         // if it is possible to get the star
@@ -648,7 +706,10 @@ sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
             {
                 // Remove it
                 logTest("calibrator %d not visibility enough\n", el+1);
-                Remove(*calibrator);
+                if (Remove(*calibrator) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
                 el = el-1;
             }
         }
@@ -666,7 +727,7 @@ sclsvrCALIBRATOR_LIST::FilterByVisibility(mcsFLOAT visMax)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterByVariability(mcsLOGICAL authorized)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByVariability()");
+    logTrace("sclsvrCALIBRATOR_LIST::FilterByVariability()");
     // if varability are not authorized
     // Check in all star if they have a variability flag.
     // if a star have the flag N or G, remove it
@@ -683,7 +744,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterByVariability(mcsLOGICAL authorized)
                 logTest("calibrator %d had variability %s\n",
                         el+1, 
                         calibrator->GetPropertyValue(vobsSTAR_CODE_VARIAB));
-                Remove(*calibrator);
+                if (Remove(*calibrator) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
                 el = el-1;            
             }
         }
@@ -700,7 +764,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterByVariability(mcsLOGICAL authorized)
 mcsCOMPL_STAT 
 sclsvrCALIBRATOR_LIST::FilterByMultiplicity(mcsLOGICAL authorized)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::FilterByMultiplicity()");
+    logTrace("sclsvrCALIBRATOR_LIST::FilterByMultiplicity()");
     // if multiplicity are not authorized
     // Check in all star if they have a multiplicity flag.
     // if a star have the flag C, G, O, V or X remove it
@@ -718,7 +782,10 @@ sclsvrCALIBRATOR_LIST::FilterByMultiplicity(mcsLOGICAL authorized)
                         el+1, 
                         calibrator->
                         GetPropertyValue(vobsSTAR_CODE_MULT_FLAG));
-                Remove(*calibrator);
+                if (Remove(*calibrator) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
                 el = el-1;            
             }
         }
@@ -737,7 +804,7 @@ sclsvrCALIBRATOR_LIST::FilterByMultiplicity(mcsLOGICAL authorized)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::Delete(%d)", starNumber);
+    logTrace("sclsvrCALIBRATOR_LIST::Delete(%d)", starNumber);
 
     // if the number is negative or higher than the list size, return erro
     if ((starNumber < 1) || (starNumber > Size()))
@@ -778,13 +845,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           sclsvrREQUEST &request,
                                           mcsLOGICAL extendedFormat)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::Save()");
+    logTrace("sclsvrCALIBRATOR_LIST::Save()");
 
     vobsCDATA cData;
 
     // Add creation date and SW version
     mcsSTRING32 utcTime;
-    miscGetUtcTimeStr(0, utcTime);
+    if (miscGetUtcTimeStr(0, utcTime) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     mcsSTRING256 line;
     cData.AppendString("# JMMC - Calibrator group\n");
     cData.AppendString("#\n");
@@ -852,7 +922,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           sclsvrREQUEST &request,
                                           mcsLOGICAL extendedFormat)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::Save()");
+    logTrace("sclsvrCALIBRATOR_LIST::Save()");
 
     vobsSTAR_PROPERTY_ID_LIST ucdList;
     return Save(filename, ucdList, request, extendedFormat);
@@ -869,7 +939,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
                                           sclsvrREQUEST &request)
 {
-    logExtDbg("vobsSTAR_LIST::Load()");
+    logTrace("vobsSTAR_LIST::Load()");
 
     // File format; by default standard format is assumed
     mcsLOGICAL extendedFormat = mcsFALSE;
@@ -894,7 +964,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
                         sclsvrREQUEST_TAG, strlen(sclsvrREQUEST_TAG)) == 0)
             {
                 // Remove request tag
-                miscTrimString(cmdParamLine, sclsvrREQUEST_TAG);
+                if (miscTrimString(cmdParamLine, sclsvrREQUEST_TAG) ==
+                    mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
 
                 // Parse the found request
                 if (request.Parse(cmdParamLine) == mcsFAILURE)
@@ -908,7 +982,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
                              sclsvrFORMAT_TAG, strlen(sclsvrFORMAT_TAG)) == 0)
             {
                 // Remove request tag
-                miscTrimString(cmdParamLine, sclsvrFORMAT_TAG);
+                if (miscTrimString(cmdParamLine, sclsvrFORMAT_TAG) ==
+                    mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
 
                 // Parse the found request
                 if (strcmp(cmdParamLine, "EXTENDED") == 0)
@@ -945,7 +1023,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
 mcsCOMPL_STAT 
 sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
 {
-    logExtDbg("sclsvrCALIBRATOR_LIST::GetScienceObject()");
+    logTrace("sclsvrCALIBRATOR_LIST::GetScienceObject()");
    
     // Check if coordinates of the science star are present in order to be able
     // to compare
