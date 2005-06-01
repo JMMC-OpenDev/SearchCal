@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.1 2005-05-31 14:56:53 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.2 2005-06-01 05:38:12 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.1  2005/05/31 14:56:53  mella
+    First revision
+
     ********************************************************************************
 -->
     
@@ -87,8 +90,10 @@ using namespace std;
  * Public methods
  */
  
-/*
+/**
  * Callback for <xsl:value-of select="$CBName"/> command.
+ *
+ * \param msg originator message.
  *
  * \return an evhCB completion status code (evhCB_SUCCESS or evhCB_FAILURE)
  */
