@@ -1,12 +1,17 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.12 2005-01-26 17:28:22 lafrasse Exp $"
+* "@(#) $Id: logTest.c,v 1.13 2005-06-01 13:19:16 gzins Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/01/26 17:28:22  lafrasse
+* Added automatic CVS history, refined user documentation, removed all
+* ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
+* mcsFAILURE
+*
 * gzins     20-Dec-2004  Added tests for logAddToStdoutLogAllowedModList and
 *                        logClearStdoutLogAllowedModList functions
 *
@@ -61,7 +66,7 @@ mcsCOMPL_STAT doLogs(void)
     logInfo("logging info");
     logTest("logging test");
     logDebug("logging debug");
-    logExtDbg("logging extended debug");
+    logExtDbg("logging trace");
 
     return mcsSUCCESS;
 }
@@ -77,7 +82,7 @@ mcsCOMPL_STAT testAll(void)
     printf("###############################################################\n");
     printf("Testing File Logging\n");
     printf("###############################################################\n");
-    for( level = logQUIET; level <= logEXTDBG; level++ )
+    for( level = logQUIET; level <= logTRACE; level++ )
     {
         /* Change verbose level */
         logSetFileLogLevel(level);
@@ -93,7 +98,7 @@ mcsCOMPL_STAT testAll(void)
     printf("Testing Stdout Logging\n");
     printf("###############################################################\n");
     /* Repeat loop changing verbose level */
-    for( level = logQUIET; level <= logEXTDBG; level++ )
+    for( level = logQUIET; level <= logTRACE; level++ )
     {
         /* Change verbose level */
         logSetStdoutLogLevel(level);

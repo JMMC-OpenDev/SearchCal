@@ -3,11 +3,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.18 2005-01-26 17:27:47 lafrasse Exp $"
+* "@(#) $Id: log.h,v 1.19 2005-06-01 13:19:16 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/01/26 17:27:47  lafrasse
+* Added automatic CVS history, refined user documentation, removed all
+* ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
+* mcsFAILURE
+*
 * gzins     20-Dec-2004  Added functions to filter stdout log depending on
 *                        module name
 *
@@ -78,7 +83,7 @@ typedef enum
     logINFO,
     logTEST,
     logDEBUG,
-    logEXTDBG
+    logTRACE
 } logLEVEL;
 
 
@@ -170,18 +175,20 @@ void          logGetTimeStamp(mcsBYTES32);
         logPrint(MODULE_ID, logDEBUG, __FILE_LINE__, format, ##arg)
 
 /**
- * Log fully detailed debugging informations (to the most detailed log level).
+ * Log function/method trace.
  *
  * This level is dedicated to add the name of each called function to the
- * logDEBUG level log, in order to effectively trace each function call.
+ * logTRACE level log, in order to effectively trace each function call.
  *
  * This macro \em must be the first call (i.e. at the beginning) of each
  * function, in order to log their name.
  *
- * All informations given to this macro are logged on the logEXTDBG level.
+ * All informations given to this macro are logged on the logTRACE level.
  */
-#define logExtDbg(format, arg...) \
-    logPrint(MODULE_ID, logEXTDBG, __FILE_LINE__, format, ##arg)
+#define logTrace(format, arg...) \
+    logPrint(MODULE_ID, logTRACE, __FILE_LINE__, format, ##arg)
+/* OBSSOLETE - Keep for backward-compatibility */
+#define logExtDbg logTrace
 
 
 #ifdef __cplusplus

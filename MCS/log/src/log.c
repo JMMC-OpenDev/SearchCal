@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.26 2005-02-15 08:18:43 gzins Exp $"
+* "@(#) $Id: log.c,v 1.27 2005-06-01 13:19:16 gzins Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2005/02/15 08:18:43  gzins
+* Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+*
 * Revision 1.25  2005/01/26 17:28:13  lafrasse
 * Added automatic CVS history, refined user documentation, removed all
 * ActionLog-related code, and changed mcsSUCCESS in mcsSUCCESS and mcsFAILURE in
@@ -65,7 +68,7 @@
  *   \li \em Stdout logs are written on the standard output (e.g console).
  *
  * Each log output can have its own log verbosity level, ranging from
- * \p logQUIET (no output at all) to \p logEXTDBG (the most detailed log level,
+ * \p logQUIET (no output at all) to \p logTRACE (the most detailed log level,
  * containing all the available informations).\n
  * By default, each output log level is set to \p logINFO. The following values
  * are also available to specify any desired log level :
@@ -74,8 +77,7 @@
  *   \li \p logINFO    : same as above, plus major events logging;
  *   \li \p logTEST    : same as above, plus software test activities logging;
  *   \li \p logDEBUG   : same as above, plus debugging information logging;
- *   \li \p logEXTDBG  : same as above, plus more detailed debugging information
- * logging;
+ *   \li \p logTRACE   : same as above, plus function/method trace logging. 
  *
  * For each output, the desired level of information is set with :
  *   \li logSetFileLogLevel();
@@ -91,7 +93,7 @@
  *   \li logInfo();
  *   \li logTest();
  *   \li logDebug();
- *   \li logExtDbg().
+ *   \li logTrace().
  * \n\n
  *
  * \b Files:\n
@@ -112,8 +114,8 @@
  *  
  *  mcsCOMPL_STAT mymodPrint(char *param)
  *  {
- *      /# Logged only on outputs that use the logEXTDBG log level #/
- *      logExtDbg("mymodPrint()");
+ *      /# Logged only on outputs that use the logTRACE log level #/
+ *      logTrace("mymodPrint()");
  *
  *      if (param == NULL)
  *      {
@@ -130,8 +132,8 @@
  *  {
  *      mcsInit(argv[0]);
  *
- *      /# Set the file output log level to logEXTDBG (most detailed level) #/
- *      logSetFileLogLevel(logEXTDBG);
+ *      /# Set the file output log level to logTRACE (most detailed level) #/
+ *      logSetFileLogLevel(logTRACE);
  *
  *      /# Logged only on outputs that use the logINFO or greater log level #/
  *      logInfo("Main starting...");
@@ -157,7 +159,7 @@
  * this in file :
  * \code
  * default - logExample - mymod - Info - 2005-01-26T16:08:37.585898 - logExample.c:68 - Main starting...
- * default - logExample - mymod - Ext Dbg - 2005-01-26T16:08:37.586787 - logExample.c:40 - mymodPrint()
+ * default - logExample - mymod - Trace - 2005-01-26T16:08:37.586787 - logExample.c:40 - mymodPrint()
  * default - logExample - mymod - Info - 2005-01-26T16:08:37.586820 - logExample.c:73 - Main exiting ..
  * \endcode
  */
@@ -624,7 +626,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
         case logINFO:       priorityMsg = "Info" ;      break;
         case logTEST:       priorityMsg = "Test";       break;
         case logDEBUG:	    priorityMsg = "Debug";      break;
-        case logEXTDBG:     priorityMsg = "Ext Dbg";    break;
+        case logTRACE:      priorityMsg = "Trace";    break;
         default:            priorityMsg = "Info";       break;
     }
     
