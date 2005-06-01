@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/15 08:09:35  gzins
+* Added file description
+*
 * Revision 1.5  2005/02/04 10:43:44  gzins
 * Improved log for test
 *
@@ -23,7 +26,7 @@
  * Definition of errPushInLocalStack function.
  */
 
-static char *rcsId="@(#) $Id: errPushInLocalStack_L.c,v 1.6 2005-02-15 08:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPushInLocalStack_L.c,v 1.7 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -68,7 +71,7 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
 {
     mcsINT32 errNum;
 
-    logExtDbg("errPutInStack()"); 
+    logTrace("errPutInStack()"); 
 
     /* Check parameter */
     if (error  ==  NULL)

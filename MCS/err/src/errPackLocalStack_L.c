@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/15 08:09:35  gzins
+* Added file description
+*
 * Revision 1.5  2005/01/27 14:11:27  gzins
 * Changed errERROR to errERROR_STACK
 * Added isErrUser parameter
@@ -21,7 +24,7 @@
  * Definition of errPackLocalStack function.
  */
 
-static char *rcsId="@(#) $Id: errPackLocalStack_L.c,v 1.6 2005-02-15 08:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPackLocalStack_L.c,v 1.7 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -53,7 +56,7 @@ mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
     mcsINT32     i;
     mcsUINT32    bufLen;
 
-    logExtDbg("errPackLocalStack()");
+    logTrace("errPackLocalStack()");
 
     /* If error stack is not initialised, do it */
     if (error->thisPtr != error)

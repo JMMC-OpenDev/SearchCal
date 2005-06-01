@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.13 2005-06-01 13:19:16 gzins Exp $"
+* "@(#) $Id: logTest.c,v 1.14 2005-06-01 13:21:39 gzins Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/06/01 13:19:16  gzins
+* Changed 'extended debug' to 'trace'
+*
 * Revision 1.12  2005/01/26 17:28:22  lafrasse
 * Added automatic CVS history, refined user documentation, removed all
 * ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
@@ -66,7 +69,7 @@ mcsCOMPL_STAT doLogs(void)
     logInfo("logging info");
     logTest("logging test");
     logDebug("logging debug");
-    logExtDbg("logging trace");
+    logTrace("logging trace");
 
     return mcsSUCCESS;
 }
@@ -115,7 +118,7 @@ mcsCOMPL_STAT testAll(void)
 
 mcsCOMPL_STAT test1(mcsLOGICAL fileLogState, mcsLOGICAL stdoutLogState)
 {
-    logExtDbg("ENTER_FUNC test1");
+    logTrace("ENTER_FUNC test1");
 
     /* Switch file logging ON or OFF */
     if (fileLogState == mcsTRUE)
@@ -146,7 +149,7 @@ mcsCOMPL_STAT test1(mcsLOGICAL fileLogState, mcsLOGICAL stdoutLogState)
     testAll();
      /* \todo handle bad cases */
     
-    logExtDbg("EXIT_FUNC test1");
+    logTrace("EXIT_FUNC test1");
     return mcsSUCCESS;
 }
 

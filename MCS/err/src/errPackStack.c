@@ -3,7 +3,11 @@
 *
 * History
 * -------
-* $Log: not supported by cvs2svn $*
+* $Log: not supported by cvs2svn $
+* Revision 1.2  2005/01/24 14:45:09  gzins
+* Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+* Used CVS log as modification history
+**
 * gzins     17-Jun-2004  completed implementation
 * berezne   02-Jun-2004  created
 *
@@ -13,7 +17,7 @@
  * \file
  * Definition of errPackStack function.
  */
-static char *rcsId="@(#) $Id: errPackStack.c,v 1.2 2005-01-24 14:45:09 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errPackStack.c,v 1.3 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -47,7 +51,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 mcsCOMPL_STAT errPackStack(char       *buffer,
                            mcsUINT32  bufLen)
 {
-    logExtDbg("errPackStack()");
+    logTrace("errPackStack()");
 
     return (errPackLocalStack(&errGlobalStack, buffer, bufLen));
 }

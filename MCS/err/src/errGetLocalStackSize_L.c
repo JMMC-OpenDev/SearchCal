@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/02/15 08:09:35  gzins
+* Added file description
+*
 * Revision 1.3  2005/01/27 14:10:18  gzins
 * Changed errERROR to errERROR_STACK
 *
@@ -20,7 +23,7 @@
  * Definition of errGetLocalStackSize function.
  */
 
-static char *rcsId="@(#) $Id: errGetLocalStackSize_L.c,v 1.4 2005-02-15 08:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errGetLocalStackSize_L.c,v 1.5 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,7 +53,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 mcsINT8 errGetLocalStackSize (errERROR_STACK *error)
 {
-    logExtDbg("errGetLocalStackSize()");
+    logTrace("errGetLocalStackSize()");
 
     /* If error stack is not initialised, do it */
     if (error->thisPtr != error)

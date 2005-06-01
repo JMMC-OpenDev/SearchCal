@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/15 08:05:12  gzins
+* Completed documentation
+*
 * Revision 1.12  2005/02/04 10:43:44  gzins
 * Improved log for test
 *
@@ -28,7 +31,7 @@
  * Definition of errAddInLocalStack function.
  */
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.13 2005-02-15 08:05:12 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.14 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -167,7 +170,7 @@ static const char *errGetErrProp(const char *moduleId,
         return NULL;
     }
 
-    logExtDbg("Used error definition file '%s'", errFileName);
+    logTrace("Used error definition file '%s'", errFileName);
 
     /* Load a new document from a file */
     doc = gdome_di_createDocFromURI(domimpl, errFileName, GDOME_LOAD_PARSING,
@@ -407,7 +410,7 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     mcsSTRING256 runTimePar;
     const char   *propValue;
 
-    logExtDbg("errAddInLocalStack_v()");
+    logTrace("errAddInLocalStack_v()");
 
     /* If error stack is not initialised, do it */
     if (error->thisPtr != error)
@@ -474,7 +477,7 @@ mcsCOMPL_STAT errAddInLocalStack(errERROR_STACK    *error,
     va_list       argPtr;
     mcsCOMPL_STAT status;
 
-    logExtDbg("errAddInLocalStack()");
+    logTrace("errAddInLocalStack()");
 
     va_start(argPtr, isErrUser);
     status = errAddInLocalStack_v(error, moduleId, 

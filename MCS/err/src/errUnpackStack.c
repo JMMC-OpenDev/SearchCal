@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/02/09 14:26:03  lafrasse
+* Changed errUnpackStack() parameters to const
+*
 * Revision 1.2  2005/01/24 14:45:09  gzins
 * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 * Used CVS log as modification history
@@ -17,7 +20,7 @@
  * \file
  * Definition of errUnpackStack function.
  */
-static char *rcsId="@(#) $Id: errUnpackStack.c,v 1.3 2005-02-09 14:26:03 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: errUnpackStack.c,v 1.4 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,7 +55,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 mcsCOMPL_STAT errUnpackStack(const char *buffer,
                              mcsUINT32  bufLen)
 {
-    logExtDbg("errPackStack()");
+    logTrace("errPackStack()");
 
     return (errUnpackLocalStack(&errGlobalStack, buffer, bufLen));
 }

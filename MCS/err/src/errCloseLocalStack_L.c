@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/15 08:09:35  gzins
+* Added file description
+*
 * Revision 1.5  2005/01/27 14:09:48  gzins
 * Changed errERROR to errERROR_STACK
 *
@@ -21,7 +24,7 @@
  * Definition of errCloseLocalStack function.
  */
 
-static char *rcsId="@(#) $Id: errCloseLocalStack_L.c,v 1.6 2005-02-15 08:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errCloseLocalStack_L.c,v 1.7 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,7 +55,7 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
     mcsINT32     i;
     mcsSTRING128 tab;
 
-    logExtDbg("errCloseLocalStack()");
+    logTrace("errCloseLocalStack()");
  
     /* If error stack is initialised */
     if (error->thisPtr == error)

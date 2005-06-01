@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: errUserGet.c,v 1.2 2005-01-31 16:24:12 mella Exp $"
+ * "@(#) $Id: errUserGet.c,v 1.3 2005-06-01 13:23:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/31 16:24:12  mella
+ * Correct typo
+ *
  * Revision 1.1  2005/01/27 14:12:55  gzins
  * Created
  *
@@ -16,7 +19,7 @@
  * Definition of errUserGet function.
  */
 
-static char *rcsId="@(#) $Id: errUserGet.c,v 1.2 2005-01-31 16:24:12 mella Exp $"; 
+static char *rcsId="@(#) $Id: errUserGet.c,v 1.3 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -53,7 +56,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 char *errUserGet(void)
 {
-    logExtDbg("errUserGet()");
+    logTrace("errUserGet()");
 
     /* Return user message stored in the global stack */
     return (errUserGetInLocalStack(&errGlobalStack));

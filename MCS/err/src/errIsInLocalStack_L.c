@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/02/15 08:09:35  gzins
+* Added file description
+*
 * Revision 1.4  2005/01/31 15:51:18  mella
 * Correct typo error
 *
@@ -23,7 +26,7 @@
  * Definition of errIsInLocalStack function.
  */
 
-static char *rcsId="@(#) $Id: errIsInLocalStack_L.c,v 1.5 2005-02-15 08:09:35 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errIsInLocalStack_L.c,v 1.6 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -59,7 +62,7 @@ mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
 {
     mcsINT32 i;
 
-    logExtDbg("errIsInLocalStack()");
+    logTrace("errIsInLocalStack()");
 
     /* If error stack is not initialised, do it */
     if (error->thisPtr != error)

@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/02/15 08:05:47  gzins
+* Corrected documentation
+*
 * Revision 1.2  2005/01/24 14:45:09  gzins
 * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 * Used CVS log as modification history
@@ -17,7 +20,7 @@
  * \file
  * Definition of errResetStack function.
  */
-static char *rcsId="@(#) $Id: errResetStack.c,v 1.3 2005-02-15 08:05:47 gzins Exp $"; 
+static char *rcsId="@(#) $Id: errResetStack.c,v 1.4 2005-06-01 13:23:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -51,7 +54,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 mcsCOMPL_STAT errResetStack()
 {
-    logExtDbg("errResetStack()");
+    logTrace("errResetStack()");
 
     return (errResetLocalStack(&errGlobalStack));
 }
