@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.11 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.12 2005-06-01 14:16:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.10  2005/03/04 06:34:37  gzins
 * Updated GetConfidenceIndex prototype
 *
@@ -39,7 +43,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.11 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.12 2005-06-01 14:16:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -68,7 +72,7 @@ using namespace std;
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 {
-    //logExtDbg("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()");
+    //logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()");
     _origin = "-";
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
 }
@@ -84,7 +88,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name, 
                                      vobsPROPERTY_TYPE type, char *format)
 {
-    logExtDbg("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(...)"); 
+    logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(...)"); 
     _id     = id;
     _name   = name;
     _type   = type;
@@ -114,7 +118,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name,
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
-    logExtDbg("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(property)"); 
+    logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(property)"); 
     _id     = property._id;
     _name   = property._name;
     _type   = property._type;
@@ -129,7 +133,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
  */
 vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& property)
 {
-    logExtDbg("vobsSTAR_PROPERTY::operator=()"); 
+    logTrace("vobsSTAR_PROPERTY::operator=()"); 
     _id     = property._id;
     _name   = property._name;
     _type   = property._type;
@@ -167,7 +171,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                                           vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
 {
-    logExtDbg("vobsSTAR_PROPERTY::SetValue()");
+    logTrace("vobsSTAR_PROPERTY::SetValue()");
 
     // If value is empty, return
     if (strcmp(value, vobsSTAR_PROP_NOT_SET) == 0)
@@ -230,7 +234,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
                                           vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
 {
-    logExtDbg("vobsSTAR_PROPERTY::SetValue()");
+    logTrace("vobsSTAR_PROPERTY::SetValue()");
 
     // Check type
     if (_type != vobsFLOAT_PROPERTY)
@@ -263,7 +267,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
  */
 const char *vobsSTAR_PROPERTY::GetValue(void) const
 {
-    logExtDbg("vobsSTAR_PROPERTY::GetValue()");
+    logTrace("vobsSTAR_PROPERTY::GetValue()");
 
     // Return property value
     return _value;
@@ -280,7 +284,7 @@ const char *vobsSTAR_PROPERTY::GetValue(void) const
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
 {
-    logExtDbg("vobsSTAR_PROPERTY::GetValue()");
+    logTrace("vobsSTAR_PROPERTY::GetValue()");
 
     // If value not set, return error
     if (IsSet() == mcsFALSE)
@@ -336,7 +340,7 @@ vobsCONFIDENCE_INDEX vobsSTAR_PROPERTY::GetConfidenceIndex()
  */
 mcsLOGICAL vobsSTAR_PROPERTY::IsComputed() const
 {
-    logExtDbg("vobsSTAR_PROPERTY::IsComputed()");
+    logTrace("vobsSTAR_PROPERTY::IsComputed()");
 
     // Check whether property has been or not computed
     if (_origin == vobsSTAR_COMPUTED_PROP)
@@ -359,7 +363,7 @@ mcsLOGICAL vobsSTAR_PROPERTY::IsComputed() const
  */
 mcsLOGICAL vobsSTAR_PROPERTY::IsSet() const
 {
-    logExtDbg("vobsSTAR_PROPERTY::IsSet()");
+    logTrace("vobsSTAR_PROPERTY::IsSet()");
 
     // Check if property string value is set to vobsSTAR_PROP_NOT_SET
     if (strcmp(_value, vobsSTAR_PROP_NOT_SET) == 0)
@@ -379,7 +383,7 @@ mcsLOGICAL vobsSTAR_PROPERTY::IsSet() const
  */
 const char *vobsSTAR_PROPERTY::GetId(void) const
 {
-    logExtDbg("vobsSTAR_PROPERTY::GetId()");
+    logTrace("vobsSTAR_PROPERTY::GetId()");
 
     // Return property value
     return _id.c_str();
@@ -392,7 +396,7 @@ const char *vobsSTAR_PROPERTY::GetId(void) const
  */
 const char *vobsSTAR_PROPERTY::GetName(void) const
 {
-    logExtDbg("vobsSTAR_PROPERTY::GetName()");
+    logTrace("vobsSTAR_PROPERTY::GetName()");
 
     // Return property value
     return _name.c_str();

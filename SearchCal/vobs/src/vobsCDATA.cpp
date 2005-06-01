@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.20 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.21 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.19  2005/03/30 12:49:26  scetre
 * Updated documentation
 *
@@ -64,7 +68,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.20 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.21 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -139,7 +143,7 @@ vobsCDATA::~vobsCDATA()
  */
 mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char *name)
 {
-    logExtDbg("vobsCDATA::SetCatalogName()");
+    logTrace("vobsCDATA::SetCatalogName()");
 
     _catalogName = name;
 
@@ -153,7 +157,7 @@ mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char *name)
  */
 const char *vobsCDATA::GetCatalogName()
 {
-    logExtDbg("vobsCDATA::GetCatalogName()");
+    logTrace("vobsCDATA::GetCatalogName()");
 
     return _catalogName.c_str();
 }
@@ -175,7 +179,7 @@ const char *vobsCDATA::GetCatalogName()
  */
 mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
 {
-    logExtDbg("vobsCDATA::AddParamsDesc()");
+    logTrace("vobsCDATA::AddParamsDesc()");
 
     const mcsUINT32 nbMaxParams=256;
     mcsUINT32 nbOfUcdName;
@@ -242,7 +246,7 @@ mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
  */
 mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
 {
-    logExtDbg("vobsCDATA::AddParamName(%s)", paramName);
+    logTrace("vobsCDATA::AddParamName(%s)", paramName);
 
     _paramName.push_back(strdup(paramName)); 
 
@@ -262,7 +266,7 @@ mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
  */
 mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
 {
-    logExtDbg("vobsCDATA::AddUcdName(%s)", ucdName);
+    logTrace("vobsCDATA::AddUcdName(%s)", ucdName);
 
     _ucdName.push_back(strdup(ucdName)); 
 
@@ -297,7 +301,7 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
                                           char **ucdName,
                                           mcsLOGICAL init) 
 {
-    //logExtDbg("vobsCDATA::GetNextParamDesc()");
+    //logTrace("vobsCDATA::GetNextParamDesc()");
 
     if (init == mcsTRUE)
     {
@@ -333,7 +337,7 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
  */
 mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
 {
-    logExtDbg("vobsCDATA::SetNbLinesToSkip()");
+    logTrace("vobsCDATA::SetNbLinesToSkip()");
 
     _nbLinesToSkip = nbLines;
 
@@ -369,7 +373,7 @@ mcsUINT32 vobsCDATA::GetNbLinesToSkip(void)
  */
 mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
 {
-    logExtDbg("vobsCDATA::AppendLines()");
+    logTrace("vobsCDATA::AppendLines()");
 
     // Store buffer into a temporary buffer
     miscoDYN_BUF tmpBuffer;
@@ -436,7 +440,7 @@ mcsUINT32 vobsCDATA::GetNbLines(void)
  */
 mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
 {
-    logExtDbg("vobsCDATA::Load(file)");
+    logTrace("vobsCDATA::Load(file)");
     
     // Use miscoDYN_BUF method to load file into the dynBuf of the class
     if (miscoDYN_BUF::LoadFile(fileName, "#") == mcsFAILURE)
@@ -463,7 +467,7 @@ mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
  */
 mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
 {
-    logExtDbg("vobsCDATA::Load(dynBuf)");
+    logTrace("vobsCDATA::Load(dynBuf)");
 
     // Get the content of the buffer and copy it in the CDATA
     if (AppendString(buffer) == mcsFAILURE)
@@ -494,7 +498,7 @@ mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
  */
 mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
 {
-    logExtDbg("vobsCDATA::SetParamsDesc()");
+    logTrace("vobsCDATA::SetParamsDesc()");
 
     // Get pointer to the UCDs 
     const char    *from=NULL;

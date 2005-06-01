@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.cpp,v 1.12 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.cpp,v 1.13 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.11  2005/03/30 12:49:26  scetre
 * Updated documentation
 *
@@ -37,7 +41,7 @@
  * Definition vobsCATALOG class .
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.12 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.13 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -102,7 +106,7 @@ vobsCATALOG::~vobsCATALOG()
  */
 const char *vobsCATALOG::GetName()
 {
-    logExtDbg("vobsCATALOG::GetName()");
+    logTrace("vobsCATALOG::GetName()");
     
     return _name.c_str();
 }

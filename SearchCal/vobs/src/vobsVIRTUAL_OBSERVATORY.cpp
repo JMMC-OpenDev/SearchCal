@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.24 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.25 2005-06-01 14:16:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.23  2005/02/24 13:12:43  scetre
 * Added user error if the CDS doesn't answered
 *
@@ -70,7 +74,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.24 2005-04-14 14:39:03 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.25 2005-06-01 14:16:56 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -134,7 +138,7 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
 mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsREQUEST &request,
                                                 vobsSTAR_LIST &starList)
 {
-    logExtDbg("vobsVIRTUAL_OBSERVATORY::Research()");
+    logTrace("vobsVIRTUAL_OBSERVATORY::Research()");
 
     // Create a asking scenario in which will be stored catalog to query
     vobsSCENARIO scenario;
@@ -190,7 +194,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
                                                     vobsSTAR_LIST   &starList,
                                                     vobsSCENARIO    &scenario)
 {
-    logExtDbg("vobsVIRTUAL_OBSERVATORY::LoadScenario()");
+    logTrace("vobsVIRTUAL_OBSERVATORY::LoadScenario()");
    
 
     // Clear the list input and list output which will be used

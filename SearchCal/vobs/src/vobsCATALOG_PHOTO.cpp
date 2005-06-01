@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.12 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.13 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.11  2005/02/16 13:22:00  scetre
 * changed armin in arcsec in query
 *
@@ -44,7 +48,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.12 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.13 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -109,7 +113,7 @@ vobsCATALOG_PHOTO::~vobsCATALOG_PHOTO()
  */
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
+    logTrace("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
    
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_R&-out=*PHOT_JHN_I");
@@ -135,7 +139,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logExtDbg("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
+    logTrace("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
 
     miscDynBufAppendString(&_query, "&");
 

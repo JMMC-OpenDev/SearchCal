@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.20 2005-03-30 12:49:26 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.21 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/03/30 12:49:26  scetre
+* Updated documentation
+*
 * Revision 1.19  2005/03/06 20:25:50  gzins
 * Updated Store method to remove duplicated code
 *
@@ -158,7 +161,7 @@ public:
                                        vobsSTAR_PROPERTY_ID_LIST ucdList, 
                                        mcsLOGICAL extendedFormat=mcsFALSE)
         {
-            logPrint("vobs", logEXTDBG, __FILE_LINE__, "vobsCDATA::Store()");
+            logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Store()");
 
             vobsSTAR_PROPERTY_ID_LIST propIdList;
 
@@ -284,7 +287,7 @@ public:
         mcsCOMPL_STAT Extract(obj &object, list &objectList,
                               mcsLOGICAL extendedFormat=mcsFALSE)
         {
-            logPrint("vobs", logEXTDBG, __FILE_LINE__, "vobsCDATA::Extract()");
+            logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Extract()");
 
             // For each line in buffer, get the value for each defined UCD
             // (value are separated by '\t' character), store them in object

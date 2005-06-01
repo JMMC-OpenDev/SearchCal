@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.19 2005-04-14 14:39:03 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.20 2005-06-01 14:16:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/04/14 14:39:03  scetre
+ * Updated documentation.
+ * added test on method return.
+ *
  * Revision 1.18  2005/03/06 10:41:33  gzins
  * Removed printf
  *
@@ -52,7 +56,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.19 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.20 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -116,7 +120,7 @@ vobsREQUEST::~vobsREQUEST()
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char *objectName)
 {
-    logExtDbg("vobsREQUEST::SetObjectName()");
+    logTrace("vobsREQUEST::SetObjectName()");
 
     _objectName = objectName;
 
@@ -130,7 +134,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char *objectName)
  */
 const char * vobsREQUEST::GetObjectName(void) const
 {
-    logExtDbg("vobsREQUEST::GetObjectName()");
+    logTrace("vobsREQUEST::GetObjectName()");
 
     // Return and convert object name to regular C string
     return _objectName.c_str();
@@ -146,7 +150,7 @@ const char * vobsREQUEST::GetObjectName(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
 {
-    logExtDbg("vobsREQUEST::SetObjectRa()");
+    logTrace("vobsREQUEST::SetObjectRa()");
 
     // Check format
     vobsSTAR star;
@@ -186,7 +190,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
  */
 const char *vobsREQUEST::GetObjectRa(void) const
 {
-    logExtDbg("vobsREQUEST::GetObjectRa()");
+    logTrace("vobsREQUEST::GetObjectRa()");
 
     return _objectRa.c_str();
 }
@@ -201,7 +205,7 @@ const char *vobsREQUEST::GetObjectRa(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
 {
-    logExtDbg("vobsREQUEST::SetObjectDec()");
+    logTrace("vobsREQUEST::SetObjectDec()");
 
     // Check format
     vobsSTAR star;
@@ -239,7 +243,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
  */
 const char *vobsREQUEST::GetObjectDec(void) const
 {
-    logExtDbg("vobsREQUEST::GetObjectDec()");
+    logTrace("vobsREQUEST::GetObjectDec()");
 
     return _objectDec.c_str();
 }
@@ -254,7 +258,7 @@ const char *vobsREQUEST::GetObjectDec(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectMag(const mcsFLOAT objectMag)
 {
-    logExtDbg("vobsREQUEST::SetObjectMag()");
+    logTrace("vobsREQUEST::SetObjectMag()");
 
     _objectMag = objectMag;
 
@@ -268,7 +272,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectMag(const mcsFLOAT objectMag)
  */
 mcsFLOAT vobsREQUEST::GetObjectMag(void) const
 {
-    logExtDbg("vobsREQUEST::GetObjectMag()");
+    logTrace("vobsREQUEST::GetObjectMag()");
 
     return _objectMag;
 }
@@ -283,7 +287,7 @@ mcsFLOAT vobsREQUEST::GetObjectMag(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char *searchBand)
 {
-    logExtDbg("vobsREQUEST::SetSearchBand()");
+    logTrace("vobsREQUEST::SetSearchBand()");
 
     _searchBand = searchBand;
 
@@ -297,7 +301,7 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char *searchBand)
  */
 const char *vobsREQUEST::GetSearchBand(void) const
 {
-    logExtDbg("vobsREQUEST::GetSearchBand()");
+    logTrace("vobsREQUEST::GetSearchBand()");
 
     return _searchBand.c_str();
 }
@@ -312,7 +316,7 @@ const char *vobsREQUEST::GetSearchBand(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetDeltaRa(const mcsFLOAT deltaRa)
 {
-    logExtDbg("vobsREQUEST::SetDeltaRa()");
+    logTrace("vobsREQUEST::SetDeltaRa()");
 
     _deltaRa = deltaRa;
 
@@ -326,7 +330,7 @@ mcsCOMPL_STAT vobsREQUEST::SetDeltaRa(const mcsFLOAT deltaRa)
  */
 mcsFLOAT vobsREQUEST::GetDeltaRa(void) const
 {
-    logExtDbg("vobsREQUEST::GetDeltaRa()");
+    logTrace("vobsREQUEST::GetDeltaRa()");
 
     return _deltaRa;
 }
@@ -341,7 +345,7 @@ mcsFLOAT vobsREQUEST::GetDeltaRa(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetDeltaDec(const mcsFLOAT deltaDec)
 {
-    logExtDbg("vobsREQUEST::SetDeltaDec()");
+    logTrace("vobsREQUEST::SetDeltaDec()");
 
     _deltaDec = deltaDec;
 
@@ -355,7 +359,7 @@ mcsCOMPL_STAT vobsREQUEST::SetDeltaDec(const mcsFLOAT deltaDec)
  */
 mcsFLOAT vobsREQUEST::GetDeltaDec(void) const
 {
-    logExtDbg("vobsREQUEST::GetDeltaDec()");
+    logTrace("vobsREQUEST::GetDeltaDec()");
 
     return _deltaDec;
 }
@@ -372,7 +376,7 @@ mcsFLOAT vobsREQUEST::GetDeltaDec(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsFLOAT minMagRange)
 {
-    logExtDbg("vobsREQUEST::SetMinMagRange()");
+    logTrace("vobsREQUEST::SetMinMagRange()");
 
     _minMagRange = minMagRange;
 
@@ -388,7 +392,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsFLOAT minMagRange)
  */
 mcsFLOAT vobsREQUEST::GetMinMagRange(void) const
 {
-    logExtDbg("vobsREQUEST::GetMinMagRange()");
+    logTrace("vobsREQUEST::GetMinMagRange()");
 
     return _minMagRange;
 }
@@ -405,7 +409,7 @@ mcsFLOAT vobsREQUEST::GetMinMagRange(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsFLOAT maxMagRange)
 {
-    logExtDbg("vobsREQUEST::SetMaxMagRange()");
+    logTrace("vobsREQUEST::SetMaxMagRange()");
 
     _maxMagRange = maxMagRange;
 
@@ -421,7 +425,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsFLOAT maxMagRange)
  */
 mcsFLOAT vobsREQUEST::GetMaxMagRange(void) const
 {
-    logExtDbg("vobsREQUEST::GetMaxMagRange()");
+    logTrace("vobsREQUEST::GetMaxMagRange()");
 
     return _maxMagRange;
 }
@@ -437,7 +441,7 @@ mcsFLOAT vobsREQUEST::GetMaxMagRange(void) const
 mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsINT32 
                                                      maxNbOfSelectedObjects)
 {
-    logExtDbg("vobsREQUEST::SetMaxNbOfSelectedObjects()");
+    logTrace("vobsREQUEST::SetMaxNbOfSelectedObjects()");
 
     _maxNbOfSelectedObjects = maxNbOfSelectedObjects;
 
@@ -451,7 +455,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsINT32
  */
 mcsINT32 vobsREQUEST::GetMaxNbOfSelectedObjects(void) const
 {
-    logExtDbg("vobsREQUEST::GetMaxNbOfSelectedObjects()");
+    logTrace("vobsREQUEST::GetMaxNbOfSelectedObjects()");
 
     return _maxNbOfSelectedObjects;
 }
@@ -464,7 +468,7 @@ mcsINT32 vobsREQUEST::GetMaxNbOfSelectedObjects(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::Display(void)
 {
-    logExtDbg("vobsREQUEST::Display()");
+    logTrace("vobsREQUEST::Display()");
     
     logInfo("object name = %s", _objectName.c_str());
     logInfo("object ra = %s", _objectRa.c_str());

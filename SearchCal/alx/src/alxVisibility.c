@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.7 2005-04-04 07:22:11 scetre Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.8 2005-06-01 14:16:07 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/04/04 07:22:11  scetre
+ * Updated documentation
+ *
  * Revision 1.6  2005/03/30 12:48:21  scetre
  * *** empty log message ***
  *
@@ -40,7 +43,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: alxVisibility.c,v 1.7 2005-04-04 07:22:11 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxVisibility.c,v 1.8 2005-06-01 14:16:07 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -90,7 +93,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
                                    mcsFLOAT wlen,
                                    alxVISIBILITIES *visibilities)
 {
-    logExtDbg("alxComputeVisibility()");
+    logTrace("alxComputeVisibility()");
     
     mcsFLOAT x;
     x = 15.23 * baseMax * angDiam / (1000 * wlen);

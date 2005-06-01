@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.4 2005-03-04 15:35:02 gzins Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.5 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/03/04 15:35:02  gzins
+* Removed printf
+*
 * Revision 1.3  2005/02/22 10:44:51  gzins
 * Fixed bug related to the saved files; environment variables was not resolved
 *
@@ -23,7 +26,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.4 2005-03-04 15:35:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.5 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -106,7 +109,7 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
 {
-    logExtDbg("vobsREMOTE_CATALOG::Search()");
+    logTrace("vobsREMOTE_CATALOG::Search()");
     
     // Prepare file name to log result of the catalog request
     mcsSTRING512 logFileName;
@@ -203,7 +206,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
 {
-    logExtDbg("vobsREMOTE_CATALOG::PrepareQuery()");
+    logTrace("vobsREMOTE_CATALOG::PrepareQuery()");
     
     // Reset the dynamic buffer which contain the query    
     miscDynBufReset(&_query);
@@ -241,7 +244,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
 mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request, 
                                         vobsSTAR_LIST &tmpList)
 {
-    logExtDbg("vobsREMOTE_CATALOG::PrepareQuery()");
+    logTrace("vobsREMOTE_CATALOG::PrepareQuery()");
     
     miscDynBufReset(&_query);
     // in this case of request, there are four parts to write :
@@ -277,7 +280,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 {
-    logExtDbg("vobsREMOTE_CATALOG::WriteQueryURI()");
+    logTrace("vobsREMOTE_CATALOG::WriteQueryURI()");
 
     if ((miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")==mcsFAILURE) ||
         (miscDynBufAppendString(&_query, "asu-xml?-source=")==mcsFAILURE) ||
@@ -305,7 +308,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
 {
-    logExtDbg("vobsREMOTE_CATALOG::GetAskingConstant()");
+    logTrace("vobsREMOTE_CATALOG::GetAskingConstant()");
 
     if ( (miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&-c.r=5&-c.u=arcsec")==mcsFAILURE) ||
          (miscDynBufAppendString(&_query,"&-out.max=50")==mcsFAILURE) ||
@@ -331,7 +334,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsREMOTE_CATALOG::GetAskingSpecificParameters()");
+    logTrace("vobsREMOTE_CATALOG::GetAskingSpecificParameters()");
 
     
     return mcsSUCCESS;
@@ -354,7 +357,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logExtDbg("vobsREMOTE_CATALOG::GetAskingSpecificParameters()");
+    logTrace("vobsREMOTE_CATALOG::GetAskingSpecificParameters()");
 
 
     return mcsSUCCESS;
@@ -376,7 +379,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
 {
-    logExtDbg("vobsREMOTE_CATALOG::GetAskingPosition()");
+    logTrace("vobsREMOTE_CATALOG::GetAskingPosition()");
 
     const char *ra;
     ra = request.GetObjectRa();
@@ -410,7 +413,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 {
-    logExtDbg("vobsREMOTE_CATALOG::GetAskingEnd()");
+    logTrace("vobsREMOTE_CATALOG::GetAskingEnd()");
     // Build of the stringlist
     miscDYN_BUF strList;
     miscDynBufInit(&strList);
@@ -451,7 +454,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2Sring(miscDYN_BUF &strList,
                                           vobsSTAR_LIST &list)
 {
-    logExtDbg("vobsREMOTE_CATALOG::StarList2Sring()");
+    logTrace("vobsREMOTE_CATALOG::StarList2Sring()");
     
     // if the list is not empty
     if (list.Size()!=0)

@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.18 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.19 2005-06-01 14:16:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.17  2005/03/30 12:49:26  scetre
 * Updated documentation
 *
@@ -46,7 +50,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.18 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.19 2005-06-01 14:16:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -92,7 +96,7 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
 mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 {
      
-    logExtDbg("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
+    logTrace("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
     for (unsigned int el = 0; el < list.Size(); el++)
     {
         if (AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0)))) == mcsFAILURE)
@@ -112,7 +116,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
  */
 mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
 {
-    //logExtDbg("vobsSTAR_LIST::IsEmpty()");
+    //logTrace("vobsSTAR_LIST::IsEmpty()");
     if (_starList.empty() == true)
     {
         return mcsTRUE;
@@ -154,7 +158,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR_LIST::AddAtTail()");
+    logTrace("vobsSTAR_LIST::AddAtTail()");
     // Put element in the list
     vobsSTAR *newStar = new vobsSTAR(star);
     _starList.push_back(newStar);
@@ -181,7 +185,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR_LIST::Remove()");
+    logTrace("vobsSTAR_LIST::Remove()");
 
     // Search star in the list
     std::list<vobsSTAR *>::iterator iter;
@@ -230,7 +234,7 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  */
 vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init) 
 {
-    logExtDbg("vobsSTAR_LIST::GetNextStar()");
+    logTrace("vobsSTAR_LIST::GetNextStar()");
 
     if (init == mcsTRUE)
     {
@@ -269,7 +273,7 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
 vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
                                  vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    //logExtDbg("vobsSTAR_LIST::GetStar()");
+    //logTrace("vobsSTAR_LIST::GetStar()");
 
     // Search star in the list
     std::list<vobsSTAR *>::iterator iter;
@@ -299,7 +303,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                    mcsLOGICAL updateOnly)
 {
-    logExtDbg("vobsSTAR_LIST::Merge()");
+    logTrace("vobsSTAR_LIST::Merge()");
 
     // For each star of the given list
     unsigned int nbStars;
@@ -343,7 +347,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
  */
 void vobsSTAR_LIST::Display(void)
 {
-    logExtDbg("vobsSTAR_LIST::Display()");
+    logTrace("vobsSTAR_LIST::Display()");
 
     // Display all element of the list 
     std::list<vobsSTAR *>::iterator iter;
@@ -367,7 +371,7 @@ void vobsSTAR_LIST::Display(void)
 mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
                                   mcsLOGICAL extendedFormat)
 {
-    logExtDbg("vobsSTAR_LIST::Save()");
+    logTrace("vobsSTAR_LIST::Save()");
 
     vobsSTAR_PROPERTY_ID_LIST ucdList;
     
@@ -389,7 +393,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
                                   vobsSTAR_PROPERTY_ID_LIST ucdList,
                                   mcsLOGICAL extendedFormat)
 {
-    logExtDbg("vobsSTAR_LIST::Save()");
+    logTrace("vobsSTAR_LIST::Save()");
 
     // Store list into the CDATA
     vobsCDATA cData;
@@ -424,7 +428,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char *filename,
                                   mcsLOGICAL extendedFormat,
                                   const char *origin)
 {
-    logExtDbg("vobsSTAR_LIST::Load()");
+    logTrace("vobsSTAR_LIST::Load()");
 
     // Load file
     vobsCDATA cData;

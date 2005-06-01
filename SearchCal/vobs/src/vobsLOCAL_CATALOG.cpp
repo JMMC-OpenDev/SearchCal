@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.4 2005-03-04 11:08:18 gzins Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.5 2005-06-01 14:16:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/03/04 11:08:18  gzins
+ * Updated diffRa/diffDec as bos size for search
+ *
  * Revision 1.3  2005/02/24 17:01:35  scetre
  * Set _loaded flag to true when catalog has been loaded
  *
@@ -22,7 +25,7 @@
  *  Definition of vobsLOCAL_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.4 2005-03-04 11:08:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.5 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -87,7 +90,7 @@ vobsLOCAL_CATALOG::~vobsLOCAL_CATALOG()
 mcsCOMPL_STAT vobsLOCAL_CATALOG::Search(vobsREQUEST &request,
                                        vobsSTAR_LIST &list)
 {
-    logExtDbg("vobsLOCAL_CATALOG::Search()");
+    logTrace("vobsLOCAL_CATALOG::Search()");
 
     //
     // Load catalog in star list
@@ -249,7 +252,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Search(vobsREQUEST &request,
  */
 mcsCOMPL_STAT vobsLOCAL_CATALOG::Load()
 {
-    logExtDbg("vobsLOCAL_CATALOG::Load()");
+    logTrace("vobsLOCAL_CATALOG::Load()");
     
     //
     // Load catalog into a buffer

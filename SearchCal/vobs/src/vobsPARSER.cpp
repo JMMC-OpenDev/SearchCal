@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.20 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.21 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.19  2005/02/13 15:23:20  gzins
 * Fixed modification history
 *
@@ -58,7 +62,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.20 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.21 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -119,7 +123,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
                                 vobsSTAR_LIST &starList,
                                 const char *logFileName)
 {    
-    logExtDbg("vobsPARSER::MainParser()");	
+    logTrace("vobsPARSER::MainParser()");	
     GdomeDOMImplementation *domimpl;
     GdomeDocument          *doc;
     GdomeElement           *root;
@@ -282,7 +286,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     GdomeDOMString *attrValue;
     GdomeNode *attr;
 
-    logExtDbg("vobsPARSER:ParseXmlSubTree()");
+    logTrace("vobsPARSER:ParseXmlSubTree()");
 
     // Get the node list containing all children of this node
     nodeList = gdome_n_childNodes (node, &exc);

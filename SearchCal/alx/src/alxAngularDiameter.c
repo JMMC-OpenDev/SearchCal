@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.13 2005-04-06 12:15:22 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.14 2005-06-01 14:16:07 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/04/06 12:15:22  scetre
+ * Changed used of float for properties to computed in alxDATA
+ * removed alxNO_CONFIDENCE
+ *
  * Revision 1.12  2005/04/04 07:22:11  scetre
  * Updated documentation
  *
@@ -59,7 +63,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.13 2005-04-06 12:15:22 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.14 2005-06-01 14:16:07 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -108,7 +112,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void);
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
 {
-    logExtDbg("alxGetPolynamialForAngularDiameter()");
+    logTrace("alxGetPolynamialForAngularDiameter()");
 
     /*
      * Check if the polynomial structure, where will be stored polynomial
@@ -225,7 +229,7 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
                                         alxDATA mgK,
                                         alxDIAMETERS *diameters)
 {
-    logExtDbg("alxComputeAngularDiameter()");
+    logTrace("alxComputeAngularDiameter()");
 
     /* Get polynamial for diameter computation */
     alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial;
@@ -299,7 +303,6 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
     {
         /* Set Confidence index to CONFIDENCE_HIGH */
         diameters->areComputed = mcsTRUE;
-        diameters->confidenceIdx =  alxCONFIDENCE_HIGH;
     }
 
     /*
@@ -307,15 +310,21 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
      * confidence index of the computed diameter according to the ones of
      * magnitudes used to compute it. 
      */
-    if (diameters->confidenceIdx == alxCONFIDENCE_HIGH)
+    if (diameters->areComputed == mcsTRUE)
     {
-        if (mgK.confIndex == alxCONFIDENCE_LOW)
+        if ((mgK.confIndex == alxCONFIDENCE_LOW) ||
+            (mgR.confIndex == alxCONFIDENCE_LOW))
         {
             diameters->confidenceIdx = alxCONFIDENCE_LOW;
         }
-        if (mgR.confIndex == alxCONFIDENCE_LOW)
+        else if ((mgK.confIndex == alxCONFIDENCE_MEDIUM) ||
+                 (mgR.confIndex == alxCONFIDENCE_MEDIUM))
         {
-            diameters->confidenceIdx = alxCONFIDENCE_LOW;
+            diameters->confidenceIdx = alxCONFIDENCE_MEDIUM;
+        }
+        else 
+        {
+            diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
         }
     }
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.7 2005-04-06 12:12:56 scetre Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.8 2005-06-01 14:16:07 scetre Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/04/06 12:12:56  scetre
+ * Changed used of float for properties to computed in alxDATA
+ *
  * Revision 1.6  2005/04/04 07:22:51  scetre
  * alxDIFFERIANTIAL_MAGNITUDES become a private structure
  *
@@ -130,7 +133,7 @@ typedef struct
     char            *fileName;
     mcsINT32         nbLines;
     alxSPECTRAL_TYPE spectralType[alxNB_SPECTRAL_TYPES];
-    mcsFLOAT         index[alxNB_SPECTRAL_TYPES][alxNB_DIFF_MAG];
+    alxDATA         index[alxNB_SPECTRAL_TYPES][alxNB_DIFF_MAG];
 } alxCOLOR_TABLE;
 
 /*

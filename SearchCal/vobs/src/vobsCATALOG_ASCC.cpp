@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.10 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.11 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.9  2005/02/16 13:21:47  scetre
 * changed armin in arcsec in query
 *
@@ -40,7 +44,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.10 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.11 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -108,7 +112,7 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
+    logTrace("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
     
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
     miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
@@ -136,7 +140,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logExtDbg("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
+    logTrace("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
 
     miscDynBufAppendString(&_query, "&");
     

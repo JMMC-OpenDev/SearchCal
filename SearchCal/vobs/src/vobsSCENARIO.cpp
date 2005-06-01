@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.21 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.22 2005-06-01 14:16:56 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.20  2005/03/04 16:28:28  scetre
 * Changed Call to Save method
 *
@@ -68,7 +72,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.21 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.22 2005-06-01 14:16:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -135,7 +139,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsCATALOG *catalog,
                                      vobsACTION action,
                                      vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    logExtDbg("vobsSCENARIO::AddEntry()");
+    logTrace("vobsSCENARIO::AddEntry()");
     
     // Create a new entry
     // Affect in this entry the catalog, the list input, the list output, the
@@ -168,7 +172,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsCATALOG *catalog,
 mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request, 
                                     vobsSTAR_LIST &starList)
 {
-    logExtDbg("vobsSCENARIO::Execute()");
+    logTrace("vobsSCENARIO::Execute()");
     
     // Create a temporary list of star in xhich will be store the lst input
     vobsSTAR_LIST tempList;

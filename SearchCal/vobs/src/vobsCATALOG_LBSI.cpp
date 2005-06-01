@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.6 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.5  2005/02/11 14:22:10  gluck
 * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
 * - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
@@ -27,7 +31,7 @@
  * vobsCATALOG_LBSI class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.6 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -93,7 +97,7 @@ vobsCATALOG_LBSI::~vobsCATALOG_LBSI()
  */
 mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
+    logTrace("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
    
     miscDynBufAppendString(&_query, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag");
     miscDynBufAppendString(&_query, "&-out=UDDK,e_UDDK");

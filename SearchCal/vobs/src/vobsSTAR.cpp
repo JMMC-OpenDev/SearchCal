@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.42 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.43 2005-06-01 14:16:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.42  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.41  2005/03/30 12:49:26  scetre
 * Updated documentation
 *
@@ -100,7 +104,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.42 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.43 2005-06-01 14:16:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -152,7 +156,7 @@ vobsSTAR::vobsSTAR(vobsSTAR &star)
  */
 vobsSTAR&vobsSTAR::operator=(const vobsSTAR&star)
 {
-    logExtDbg("vobsSTAR::operator=()");
+    logTrace("vobsSTAR::operator=()");
    
     // clear the 2 map used in this class
     _propertyList.erase(_propertyList.begin(), _propertyList.end());
@@ -196,7 +200,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
-    logExtDbg("vobsSTAR::SetPropertyValue()");
+    logTrace("vobsSTAR::SetPropertyValue()");
 
     // Look for property
     map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
@@ -245,7 +249,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
-    logExtDbg("vobsSTAR::SetPropertyValue()");
+    logTrace("vobsSTAR::SetPropertyValue()");
 
     // Look for property
     map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
@@ -287,7 +291,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
  */
 vobsSTAR_PROPERTY *vobsSTAR::GetProperty(char *id)
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    logTrace("vobsSTAR::GetProperty()");
 
     // Look for property
     map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
@@ -327,7 +331,7 @@ vobsSTAR_PROPERTY *vobsSTAR::GetProperty(char *id)
  */
 vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
 {
-    logExtDbg("vobsSTAR::GetNextProperty()");
+    logTrace("vobsSTAR::GetNextProperty()");
 
     // if the logical value of the parameter, init is mcsTRUE, the wanted value
     // is the first
@@ -367,7 +371,7 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
  */
 const char *vobsSTAR::GetPropertyValue(char *id)
 {
-    logExtDbg("vobsSTAR::GetPropertyValue()");
+    logTrace("vobsSTAR::GetPropertyValue()");
 
     // Look for property
     vobsSTAR_PROPERTY *property;
@@ -400,7 +404,7 @@ const char *vobsSTAR::GetPropertyValue(char *id)
  */
 mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
 {
-    logExtDbg("vobsSTAR::GetProperty()");
+    logTrace("vobsSTAR::GetProperty()");
 
     // Look for property
     vobsSTAR_PROPERTY *property;
@@ -435,7 +439,7 @@ mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
  */
 mcsLOGICAL vobsSTAR::IsPropertySet(char *id)
 {
-    logExtDbg("vobsSTAR::IsPropertySet()");
+    logTrace("vobsSTAR::IsPropertySet()");
 
     // Look for property
     vobsSTAR_PROPERTY *property;
@@ -467,7 +471,7 @@ mcsLOGICAL vobsSTAR::IsPropertySet(char *id)
  */
 mcsLOGICAL vobsSTAR::IsProperty(char *id)
 {
-    logExtDbg("vobsSTAR::IsPropertySet()");
+    logTrace("vobsSTAR::IsPropertySet()");
 
     // Look for property
     map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
@@ -498,7 +502,7 @@ mcsLOGICAL vobsSTAR::IsProperty(char *id)
  */
 mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 {
-    logExtDbg("vobsSTAR::GetRa()");
+    logTrace("vobsSTAR::GetRa()");
 
     mcsSTRING64 raHms;
     mcsFLOAT    hh, hm, hs;
@@ -554,7 +558,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
  */
 mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
 {
-    logExtDbg("vobsSTAR::GetDec()");
+    logTrace("vobsSTAR::GetDec()");
 
     mcsSTRING64 decDms;
     float dd,dm,ds;
@@ -607,7 +611,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
 mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                             vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    logExtDbg("vobsSTAR::IsSame(0x%x)", criteriaList);
+    logTrace("vobsSTAR::IsSame(0x%x)", criteriaList);
 
     // Check if the criteria list is empty
     if (criteriaList == NULL)
@@ -800,7 +804,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
  */
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
 {
-    logExtDbg("vobsSTAR::Update()");
+    logTrace("vobsSTAR::Update()");
 
     // For each star property
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
@@ -836,7 +840,7 @@ mcsINT32 vobsSTAR::NbProperties()
  */
 void vobsSTAR::Display(mcsLOGICAL showPropId)
 {
-    logExtDbg("vobsSTAR::Display()");
+    logTrace("vobsSTAR::Display()");
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
 
     if (showPropId == mcsFALSE)
@@ -880,7 +884,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
 mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
                                     vobsPROPERTY_TYPE type, char *format)
 {
-    //logExtDbg("vobsSTAR::AddProperty()");
+    //logTrace("vobsSTAR::AddProperty()");
 
     // Check for duplicated property
     if (_propertyList.find(id) != _propertyList.end())
@@ -903,7 +907,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
  */
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
-    //logExtDbg("vobsSTAR::AddProperties()");
+    //logTrace("vobsSTAR::AddProperties()");
     AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "%.0f");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "%.0f");
     AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "%.0f");    

@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.10 2005-04-14 14:39:03 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.11 2005-06-01 14:16:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/04/14 14:39:03  scetre
+* Updated documentation.
+* added test on method return.
+*
 * Revision 1.9  2005/02/14 15:22:44  scetre
 * changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
 *
@@ -38,7 +42,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.10 2005-04-14 14:39:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.11 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -108,7 +112,7 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
 {
-    logExtDbg("vobsCATALOG::PrepareQuery()");
+    logTrace("vobsCATALOG::PrepareQuery()");
 
     miscDynBufReset(&_query);
 
@@ -134,7 +138,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
 {
-    logExtDbg("vobsCATALOG_CIO::GetAskingConstant()");
+    logTrace("vobsCATALOG_CIO::GetAskingConstant()");
 
     miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&&x_F(IR)=M");
     miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20");
@@ -157,7 +161,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
 {
-    logExtDbg("vobsCATALOG_CIO::GetAskingSpecificParameters()");
+    logTrace("vobsCATALOG_CIO::GetAskingSpecificParameters()");
    
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
     miscDynBufAppendString(&_query, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
@@ -180,7 +184,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logExtDbg("vobsCATALOG_CIO::GetAskingSpecificParameters()");
+    logTrace("vobsCATALOG_CIO::GetAskingSpecificParameters()");
 
     miscDynBufAppendString(&_query, "&x_F(IR)=M");
     miscDynBufAppendString(&_query, "&F(IR)=");

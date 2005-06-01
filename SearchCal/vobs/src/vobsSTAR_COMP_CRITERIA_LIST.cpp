@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.5 2005-01-26 08:14:09 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.6 2005-06-01 14:16:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/01/26 08:14:09  scetre
+* Update copy constructor, assignement operator, Add and GetNextCriteria Method.
+* Create Remove Method.
+*
 * scetre    14-Dec-2004  Created
 *
 *
@@ -16,7 +20,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.5 2005-01-26 08:14:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.6 2005-06-01 14:16:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,7 +76,7 @@ vobsSTAR_COMP_CRITERIA_LIST::~vobsSTAR_COMP_CRITERIA_LIST()
 vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
 (const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
 {
-    logExtDbg("vobsSTAR_COMP_CRITERIA_LIST::operator=()"); 
+    logTrace("vobsSTAR_COMP_CRITERIA_LIST::operator=()"); 
     // Copy it in the criteria list
     _criteriaList = criteriaList._criteriaList;
     return *this;
@@ -93,7 +97,7 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
                                                mcsFLOAT range)
 {
-    logExtDbg("vobsSTAR_COMP_CRITERIA_LIST::Add()");
+    logTrace("vobsSTAR_COMP_CRITERIA_LIST::Add()");
   
     // create a star
     vobsSTAR star;
@@ -165,7 +169,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
                                                            mcsFLOAT *range,
                                                            mcsLOGICAL init)
 {
-    logExtDbg("vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria()");
+    logTrace("vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria()");
     // if init == mcsTRUE the wanted criteria is the first of the list
     if (init == mcsTRUE)
     {

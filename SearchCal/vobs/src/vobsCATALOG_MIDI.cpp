@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.19 2005-03-04 16:28:28 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.20 2005-06-01 14:16:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/03/04 16:28:28  scetre
+ * Changed Call to Save method
+ *
  * Revision 1.18  2005/03/04 16:05:51  scetre
  * Updated call to Save method
  *
@@ -19,7 +22,7 @@
  * Used decimal logarithm instead of neperian logarithm when computing mag N
  *
  * Revision 1.14  2005/02/13 15:59:08  gzins
- * Fixed wrong class name in logExtDbg()
+ * Fixed wrong class name in logTrace()
  *
  * Revision 1.13  2005/02/11 14:22:10  gluck
  * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
@@ -66,7 +69,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.19 2005-03-04 16:28:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.20 2005-06-01 14:16:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -126,7 +129,7 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Load()
 {
-    logExtDbg("vobsCATALOG_MIDI::Load()");
+    logTrace("vobsCATALOG_MIDI::Load()");
     
     if (_loaded == mcsFALSE)
     {

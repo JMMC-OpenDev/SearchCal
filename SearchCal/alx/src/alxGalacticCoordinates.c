@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxGalacticCoordinates.c,v 1.3 2005-02-15 14:46:29 gzins Exp $"
+ * "@(#) $Id: alxGalacticCoordinates.c,v 1.4 2005-06-01 14:16:07 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/15 14:46:29  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.2  2005/02/12 15:14:54  gzins
  * Minor changes in documentation
  *
@@ -27,7 +30,7 @@
  * \sa file : JMMC-MEM-2600-0007
  */
 
-static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.3 2005-02-15 14:46:29 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.4 2005-06-01 14:16:07 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -77,7 +80,7 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
                                             mcsFLOAT *gLat,
                                             mcsFLOAT *gLon)
 {
-    logExtDbg("alxComputeGalacticCoordinates()");
+    logTrace("alxComputeGalacticCoordinates()");
 
     mcsFLOAT b;         /* galactic latitude */
     mcsFLOAT sinusB;    /* galactic latitude sinus */

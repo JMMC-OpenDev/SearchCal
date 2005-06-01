@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.12 2005-04-04 07:22:11 scetre Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.13 2005-06-01 14:16:07 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/04/04 07:22:11  scetre
+ * Updated documentation
+ *
  * Revision 1.11  2005/03/30 12:48:15  scetre
  * Added structure in order to simplify the code.
  * Changed API with this structure.
@@ -56,7 +59,7 @@
  * \sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.12 2005-04-04 07:22:11 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.13 2005-06-01 14:16:07 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -113,7 +116,7 @@ alxComputeExtinctionCoefficient(mcsFLOAT *av,
  */
 static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
 { 
-    logExtDbg("alxGetExtinctionRatioTable()");
+    logTrace("alxGetExtinctionRatioTable()");
 
     /*
      * Check if the structure extinctionRatioTable, where will be stored
@@ -275,7 +278,7 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION 
         *alxGetPolynamialForInterstellarAbsorption(void)
 {
-    logExtDbg("alxGetPolynamialForInterstellarAbsorption()");
+    logTrace("alxGetPolynamialForInterstellarAbsorption()");
 
     /*
      * Check if the structure polynomial, where will be stored polynomial
@@ -383,7 +386,7 @@ static mcsCOMPL_STAT
                                     alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
                                         *polynomial)
 {
-    logExtDbg("alxComputeExtinctionCoefficient()");
+    logTrace("alxComputeExtinctionCoefficient()");
 
     /* Compute distance */
     mcsFLOAT distance;
@@ -482,7 +485,7 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
                                        mcsFLOAT gLon,
                                        alxMAGNITUDES magnitudes)
 {
-    logExtDbg("alxComputeRealMagnitudes()");
+    logTrace("alxComputeRealMagnitudes()");
 
     /* Get extinction ratio table */
     alxEXTINCTION_RATIO_TABLE *extinctionRatioTable;

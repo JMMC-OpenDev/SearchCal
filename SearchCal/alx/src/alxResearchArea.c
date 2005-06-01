@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/02/22 16:18:21  gzins
+* *** empty log message ***
+*
 * Revision 1.2  2005/02/16 15:10:57  gzins
 * Updated call to miscDynBufGetNextLine()
 *
@@ -22,7 +25,7 @@
  * \sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.3 2005-02-22 16:18:21 gzins Exp $";
+static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.4 2005-06-01 14:16:07 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -74,7 +77,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
  */
 static alxSTAR_POPULATION *alxGetStarPopulation(void)
 {
-    logExtDbg("alxGetStarPopulation()");
+    logTrace("alxGetStarPopulation()");
     /*
      * Check if the structure, where will be stored star population information,
      * is loaded into memory. If not loaded it.
@@ -211,7 +214,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
                                      alxSTAR_POPULATION *starPopulation,
                                      mcsINT32           *nbOfStars)
 {
-    logExtDbg("alxGetNbOfStars()"); 
+    logTrace("alxGetNbOfStars()"); 
 
     /* Find indexes corresponding to magnitude range */ 
     mcsINT32 minMagIdx, maxMagIdx;
@@ -348,7 +351,7 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT ra,
     mcsFLOAT gLat;
     mcsFLOAT gLon;
 
-    logExtDbg("alxGetResearchAreaSize()");
+    logTrace("alxGetResearchAreaSize()");
 
     logTest("Sky coordinates (in degrees) : RA = %.1f - DEC = %.1f", ra, dec);
     logTest("Magnitude range = [%.1f..%.1f]", minMag, maxMag);
