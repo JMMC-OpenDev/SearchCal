@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2005-05-31 14:57:36 mella Exp $"
+# "@(#) $Id: Makefile,v 1.10 2005-06-01 05:50:22 mella Exp $"
 #
 # Makefile of cmd
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2005/05/31 14:57:36  mella
+# cmdCdfToCppCB.sh added
+#
 # Revision 1.8  2005/02/15 11:04:33  gzins
 # Removed unused target
 #
@@ -110,7 +113,9 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../config/cmdDefinitionFile.xsd ../config/cmdCdfToCppClass.xsl
+INSTALL_FILES = ../config/cmdDefinitionFile.xsd 	\
+				../config/cmdCdfToCppClass.xsl		\
+				../config/cmdCdfToCppCB.xsl
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
