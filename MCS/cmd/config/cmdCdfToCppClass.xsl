@@ -153,7 +153,7 @@ using namespace std;
  * Constructs a new class for an easier access for parameters of the
  * <xsl:value-of select="$className"/> COMMAND.
  */
- <xsl:value-of select="$className"/>::<xsl:value-of select="$className"/>(string name, string params):cmdCOMMAND(name, params,"<xsl:value-of select="$cdfFilename"/>")
+ <xsl:value-of select="$className"/>::<xsl:value-of select="$className"/>(string name, string params):cmdCOMMAND(name, params,<xsl:value-of select="$moduleName"/><xsl:value-of select="mnemonic"/>_CDF_NAME)
 {
     
 }
