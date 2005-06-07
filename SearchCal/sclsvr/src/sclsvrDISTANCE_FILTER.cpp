@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrDISTANCE_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrDISTANCE_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +17,7 @@
  *  Definition of sclsvrDISTANCE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrDISTANCE_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrDISTANCE_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,8 +76,10 @@ mcsCOMPL_STAT sclsvrDISTANCE_FILTER::SetDistanceValue(mcsSTRING32 raRef,
 {
     logTrace("sclsvrDISTANCE_FILTER::SetDistanceValue()");
 
+    // Copy right ascension and declinaison get in parameter
     strcpy(_raRef, raRef);
     strcpy(_decRef, decRef);
+    // Copy right ascension and declinaison range get as parameter
     _raRange  = raRange;
     _decRange = decRange;
     
@@ -96,9 +102,11 @@ mcsCOMPL_STAT sclsvrDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
                                                       mcsFLOAT *decRange)
 {
     logTrace("sclsvrDISTANCE_FILTER::SetDistanceValue()");
-
+    
+    // Copy right ascension and declinaison get in parameter
     strcpy(*raRef, _raRef);
     strcpy(*decRef, _decRef);
+    // Copy right ascension and declinaison range get as parameter
     *raRange  = _raRange;
     *decRange = _decRange;
 
@@ -106,7 +114,12 @@ mcsCOMPL_STAT sclsvrDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
 }
 
 /**
+ * Apply the filter on a list
  *
+ * @param list calibrator list on wich the filter is applied
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrDISTANCE_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
 {
@@ -114,11 +127,13 @@ mcsCOMPL_STAT sclsvrDISTANCE_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
 
     // create a star correponding to the science object
     sclsvrCALIBRATOR scienceStar;
+    // Set right ascension property (ref) to this star
     if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,
                                      _raRef, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+    // Set declinaison property (ref) to this star
     if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN,
                                      _decRef, "") == mcsFAILURE)
     {

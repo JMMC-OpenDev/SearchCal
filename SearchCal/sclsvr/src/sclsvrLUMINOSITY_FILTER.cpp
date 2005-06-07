@@ -1,19 +1,23 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrLUMINOSITY_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrLUMINOSITY_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of sclsvrLUMINOSITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrLUMINOSITY_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrLUMINOSITY_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,37 +60,32 @@ sclsvrLUMINOSITY_FILTER::~sclsvrLUMINOSITY_FILTER()
 /**
  * Set value to the filter
  *
- * \param lumClassList the temperature list
+ * @param lumClassList the temperature list
  *
- * \return always mcsSUCCESS 
+ * @return always mcsSUCCESS 
  */
 mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::
 SetLuminosity(std::list<char *> lumClassList)
 {
     logTrace("sclsvrLUMINOSITY_FILTER::SetLuminosity()");
-    
-    _luminosityClassList.erase(_luminosityClassList.begin(),
-                               _luminosityClassList.end());
+   
     _luminosityClassList = lumClassList;
-        
+
     return mcsSUCCESS;    
 }
 
 /**
  * Get value to the filter
  *
- * \param lumClassList the temperature list
+ * @param lumClassList the temperature list
  *
- * \return always mcsSUCCESS 
+ * @return always mcsSUCCESS 
  */
-mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::
-GetLuminosity(std::list<char *> lumClassList)
+std::list<char *> * sclsvrLUMINOSITY_FILTER::GetLuminosity()
 {
     logTrace("sclsvrLUMINOSITY_FILTER::GetLuminosity()");
 
-    lumClassList = _luminosityClassList;
-   
-    return mcsSUCCESS;    
+    return &_luminosityClassList;
 }
 
 /**
@@ -101,7 +100,6 @@ mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
 {
     logTrace("sclsvrLUMINOSITY_FILTER::Apply()");
 
-    printf("size of the list = %d\n", _luminosityClassList.size());
     char *lumClassList[_luminosityClassList.size()];
     std::list<char *>::iterator luminosityClassListIterator;
     luminosityClassListIterator = _luminosityClassList.begin();
@@ -114,7 +112,7 @@ mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
         cmp++;
         luminosityClassListIterator++;
     }
-
+    lumClassList[_luminosityClassList.size()] = NULL;
     
     if (IsEnable() == mcsTRUE)
     {
@@ -141,7 +139,6 @@ mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
                 // Get the star spectral type 
                 const char *spType;
                 spType = calibrator-> GetPropertyValue(vobsSTAR_SPECT_TYPE_MK);
-                printf("sptype = %s\n", spType);
                 
                 // Look for temperature class(es). Stop when end of string
                 // reached or first character of luminosity class found 
@@ -151,7 +148,6 @@ mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
                        (spType[spIdx] != 'I') && (spType[spIdx] != 'V'))
                 {
                     spIdx++;
-                    printf("toto\n");
                 }
                 
                 mcsLOGICAL lumClassMatch = mcsFALSE; 
@@ -159,7 +155,7 @@ mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
                 if (lumClassList != NULL)
                 {
                     // Look for luminosity class(es). Stop when end of string
-                    // recahed
+                    // reached
                     mcsSTRING8 lumClass;
                     memset(lumClass, '\0', sizeof(mcsSTRING8)); 
                     mcsLOGICAL endOfString = mcsFALSE;
@@ -171,7 +167,6 @@ mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
                         if ((spType[spIdx] == 'I') || (spType[spIdx] == 'V'))
                         {
                             lumClass[lumIdx] = spType[spIdx];
-                            printf("lumClass = %s", lumClass[lumIdx]);
                             lumIdx++;
                         }
                         else
@@ -179,7 +174,7 @@ mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
                             // If luminosity class has been found
                             if (lumIdx != 0)
                             {
-                                // For ecah given temperature class
+                                // For each given temperature class
                                 mcsINT32 classIdx = 0;
                                 while (lumClassList[classIdx] != NULL)
                                 {
@@ -223,6 +218,12 @@ mcsCOMPL_STAT sclsvrLUMINOSITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
         }
     }
 
+    // free memory
+    for (int i=0; i<cmp; i++)
+    {
+        free(lumClassList[i]);
+    }
+    
     return mcsSUCCESS;
 }
 /*

@@ -3,15 +3,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrLUMINOSITY_FILTER.h,v 1.1 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrLUMINOSITY_FILTER.h,v 1.2 2005-06-07 12:35:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Declaration of sclsvrLUMINOSITY_FILTER class.
  */
 
@@ -43,8 +47,8 @@
  * 
  * This class is a sclsvrFILTER object.
  *
- * \sa sclsvrFILTER.cpp
- * \sa sclsvrCALIBRATOR_LIST.cpp
+ * @sa sclsvrFILTER.cpp
+ * @sa sclsvrCALIBRATOR_LIST.cpp
  * 
  */
 class sclsvrLUMINOSITY_FILTER : public sclsvrFILTER
@@ -60,8 +64,7 @@ public:
     virtual mcsCOMPL_STAT
         SetLuminosity(std::list<char *> lumClassList);
 
-    virtual mcsCOMPL_STAT
-        GetLuminosity(std::list<char *> lumClassList);
+    virtual std::list<char *> * GetLuminosity();
 
     virtual mcsCOMPL_STAT Apply(sclsvrCALIBRATOR_LIST *list);
    

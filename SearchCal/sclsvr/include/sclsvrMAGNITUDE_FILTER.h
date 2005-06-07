@@ -3,15 +3,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrMAGNITUDE_FILTER.h,v 1.1 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrMAGNITUDE_FILTER.h,v 1.2 2005-06-07 12:35:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Declaration of sclsvrMAGNITUDE_FILTER class.
  */
 
@@ -43,8 +47,8 @@
  * 
  * This class is a sclsvrFILTER object.
  *
- * \sa sclsvrFILTER.cpp
- * \sa sclsvrCALIBRATOR_LIST.cpp
+ * @sa sclsvrFILTER.cpp
+ * @sa sclsvrCALIBRATOR_LIST.cpp
  * 
  */
 class sclsvrMAGNITUDE_FILTER : public sclsvrFILTER

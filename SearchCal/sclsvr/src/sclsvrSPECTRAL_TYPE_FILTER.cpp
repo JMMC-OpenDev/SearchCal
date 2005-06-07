@@ -1,19 +1,23 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSPECTRAL_TYPE_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrSPECTRAL_TYPE_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of sclsvrSPECTRAL_TYPE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSPECTRAL_TYPE_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSPECTRAL_TYPE_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,11 +60,12 @@ sclsvrSPECTRAL_TYPE_FILTER::~sclsvrSPECTRAL_TYPE_FILTER()
 /**
  * Set value to the filter
  *
- * \param tempClassList the temperature list
+ * @param tempClassList the temperature list
  *
- * \return always mcsSUCCESS 
+ * @return always mcsSUCCESS 
  */
-mcsCOMPL_STAT sclsvrSPECTRAL_TYPE_FILTER::SetSpectralType(char **tempClassList)
+mcsCOMPL_STAT 
+sclsvrSPECTRAL_TYPE_FILTER::SetSpectralType(std::list<char *> tempClassList)
 {
     logTrace("sclsvrSPECTRAL_TYPE_FILTER::SetSpectralType()");
 
@@ -72,17 +77,15 @@ mcsCOMPL_STAT sclsvrSPECTRAL_TYPE_FILTER::SetSpectralType(char **tempClassList)
 /**
  * Get value to the filter
  *
- * \param tempClassList the temperature list
+ * @param tempClassList the temperature list
  *
- * \return always mcsSUCCESS 
+ * @return always mcsSUCCESS 
  */
-mcsCOMPL_STAT sclsvrSPECTRAL_TYPE_FILTER::GetSpectralType(char **tempClassList)
+std::list<char *> * sclsvrSPECTRAL_TYPE_FILTER::GetSpectralType()
 {
     logTrace("sclsvrSPECTRAL_TYPE_FILTER::GetSpectralType()");
 
-    tempClassList = _tempClassList;
-    
-    return mcsSUCCESS;    
+    return &_tempClassList;
 }
 
 /**
@@ -97,6 +100,20 @@ mcsCOMPL_STAT sclsvrSPECTRAL_TYPE_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
 {
     logTrace("sclsvrSPECTRAL_TYPE_FILTER::Apply()");
 
+    char * tempClassList[_tempClassList.size()];
+    std::list<char *>::iterator tempClassListIterator;
+    tempClassListIterator = _tempClassList.begin();
+    int cmp = 0;
+    while (tempClassListIterator != _tempClassList.end())
+    {
+        tempClassList[cmp] =
+            (char *) malloc(strlen(*tempClassListIterator)*sizeof(char));
+        strcpy(tempClassList[cmp], *tempClassListIterator);
+        cmp++;
+        tempClassListIterator++;
+    }
+    tempClassList[_tempClassList.size()] = NULL;
+    
     if (IsEnable() == mcsTRUE)
     {
         // For each calibrator in the list
@@ -130,14 +147,14 @@ mcsCOMPL_STAT sclsvrSPECTRAL_TYPE_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
                        (spType[spIdx] != 'I') && (spType[spIdx] != 'V'))
                 {
                     // If the list of temperature classes has been given
-                    if (_tempClassList != NULL)
+                    if (tempClassList != NULL)
                     {
                         // For ecah given temperature class
                         mcsINT32 classIdx = 0;
-                        while (_tempClassList[classIdx] != NULL)
+                        while (tempClassList[classIdx] != NULL)
                         {
                             // Check if 
-                            if (spType[spIdx] == _tempClassList[classIdx][0])
+                            if (spType[spIdx] == tempClassList[classIdx][0])
                             {
                                 tempClassMatch = mcsTRUE;
                             }
@@ -164,6 +181,12 @@ mcsCOMPL_STAT sclsvrSPECTRAL_TYPE_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
                 }
             }
         }
+    }
+
+     // free memory
+    for (int i=0; i<cmp; i++)
+    {
+        free(tempClassList[i]);
     }
 
     return mcsSUCCESS;

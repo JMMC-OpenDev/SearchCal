@@ -1,19 +1,23 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrMULTIPLICITY_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrMULTIPLICITY_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of sclsvrMULTIPLICITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrMULTIPLICITY_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrMULTIPLICITY_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
