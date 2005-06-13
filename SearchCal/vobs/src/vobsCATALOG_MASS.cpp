@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.8 2005-06-13 10:20:32 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.6  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -30,7 +33,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.8 2005-06-13 10:20:32 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -97,6 +100,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     logTrace("vobsCATALOG_MASS::GetAskingSpecificParameters()");
    
     miscDynBufAppendString(&_query, "&-out=Jmag&-out=Hmag&-out=Kmag");
+    miscDynBufAppendString(&_query, "&-out=Qflg&Qflg=AAA");
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
             
     return mcsSUCCESS;
