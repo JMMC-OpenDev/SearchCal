@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.2 2005-06-13 10:22:47 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +17,7 @@
  *  Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.1 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.2 2005-06-13 10:22:47 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,7 +60,7 @@ sclsvrVISIBILITY_FILTER::~sclsvrVISIBILITY_FILTER()
 /**
  * Set value to the filter
  *
- * \param 
+ * \param visMax maximum accuracy 
  *
  * \return always mcsSUCCESS
  */
@@ -72,7 +76,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::SetVisibilityValue(mcsFLOAT visMax)
 /**
  * Get value to the filter
  *
- * \param 
+ * \param visMax maximum accuracy
  *
  * \return always mcsSUCCESS
  */

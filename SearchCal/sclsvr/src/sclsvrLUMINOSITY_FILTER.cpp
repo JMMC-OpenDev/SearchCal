@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrLUMINOSITY_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"
+ * "@(#) $Id: sclsvrLUMINOSITY_FILTER.cpp,v 1.3 2005-06-13 10:22:47 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/07 12:36:27  scetre
+ * Updated documentation
+ *
  * Revision 1.1  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -17,7 +20,7 @@
  *  Definition of sclsvrLUMINOSITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrLUMINOSITY_FILTER.cpp,v 1.2 2005-06-07 12:36:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrLUMINOSITY_FILTER.cpp,v 1.3 2005-06-13 10:22:47 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -75,11 +78,9 @@ SetLuminosity(std::list<char *> lumClassList)
 }
 
 /**
- * Get value to the filter
+ * Get value of the filter
  *
- * @param lumClassList the temperature list
- *
- * @return always mcsSUCCESS 
+ * @return value of the filter
  */
 std::list<char *> * sclsvrLUMINOSITY_FILTER::GetLuminosity()
 {
