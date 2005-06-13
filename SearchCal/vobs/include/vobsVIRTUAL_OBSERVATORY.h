@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.12 2005-02-07 19:32:52 gzins Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.13 2005-06-13 10:19:47 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/02/07 19:32:52  gzins
+* Updated vobsREQUEST API
+*
 * Revision 1.11  2005/02/04 13:32:04  gzins
 * Added MIDI catalog
 *
@@ -35,12 +38,16 @@
 #include "vobsSCENARIO.h"
 #include "vobsCATALOG.h"
 #include "vobsCATALOG_ASCC.h"
+#include "vobsCATALOG_TOTO.h"
 #include "vobsCATALOG_BSC.h"
 #include "vobsCATALOG_CHARM.h"
+#include "vobsCATALOG_CHARM2.h"
 #include "vobsCATALOG_CIO.h"
 #include "vobsCATALOG_DENIS.h"
+#include "vobsCATALOG_DENIS_JK.h"
 #include "vobsCATALOG_HIC.h"
 #include "vobsCATALOG_LBSI.h"
+#include "vobsCATALOG_MERAND.h"
 #include "vobsCATALOG_MASS.h"
 #include "vobsCATALOG_PHOTO.h"
 #include "vobsCATALOG_SBSC.h"
@@ -86,17 +93,20 @@ private:
     vobsVIRTUAL_OBSERVATORY (const vobsVIRTUAL_OBSERVATORY&);
 
     // List of available catalogs
-    vobsCATALOG_CIO   _cio;
-    vobsCATALOG_PHOTO _photo;
-    vobsCATALOG_ASCC  _ascc;
-    vobsCATALOG_HIC   _hic;
-    vobsCATALOG_MASS  _mass;
-    vobsCATALOG_LBSI  _lbsi;
-    vobsCATALOG_CHARM _charm;
-    vobsCATALOG_BSC   _bsc;
-    vobsCATALOG_SBSC  _sbsc;
-    vobsCATALOG_DENIS _denis;
-    vobsCATALOG_MIDI  _midi;
+    vobsCATALOG_CIO      _cio;
+    vobsCATALOG_PHOTO    _photo;
+    vobsCATALOG_ASCC     _ascc;
+    vobsCATALOG_HIC      _hic;
+    vobsCATALOG_MASS     _mass;
+    vobsCATALOG_LBSI     _lbsi;
+    vobsCATALOG_MERAND   _merand;
+    vobsCATALOG_CHARM    _charm;
+    vobsCATALOG_CHARM2   _charm2;
+    vobsCATALOG_BSC      _bsc;
+    vobsCATALOG_SBSC     _sbsc;
+    vobsCATALOG_DENIS    _denis;
+    vobsCATALOG_DENIS_JK _denisJK;
+    vobsCATALOG_MIDI     _midi;
 
     // Star lists used in scenarion
     vobsSTAR_LIST     _starListP;

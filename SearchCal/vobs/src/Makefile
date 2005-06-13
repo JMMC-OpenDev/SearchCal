@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.16 2005-02-15 15:20:21 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.17 2005-06-13 10:21:22 scetre Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2005/02/15 15:20:21  gzins
+# Removed unused target
+#
 # Revision 1.15  2005/02/11 14:10:43  gluck
 # Added vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes
 #
@@ -72,10 +75,13 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_ASCC.h 	   		\
 				  vobsCATALOG_BSC.h 	   		\
 				  vobsCATALOG_CHARM.h 	   		\
+				  vobsCATALOG_CHARM2.h 	   		\
 				  vobsCATALOG_CIO.h 	   		\
 				  vobsCATALOG_DENIS.h 	   		\
+				  vobsCATALOG_DENIS_JK.h   		\
 				  vobsCATALOG_HIC.h 	   		\
 				  vobsCATALOG_LBSI.h 	   		\
+				  vobsCATALOG_MERAND.h 	   		\
 				  vobsCATALOG_MASS.h 	   		\
 				  vobsCATALOG_PHOTO.h 	   		\
 				  vobsCATALOG_SBSC.h	   		\
@@ -104,10 +110,13 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_ASCC 			\
 				   vobsCATALOG_BSC 				\
 				   vobsCATALOG_CHARM 			\
+				   vobsCATALOG_CHARM2 			\
 				   vobsCATALOG_CIO 				\
 				   vobsCATALOG_DENIS 			\
+				   vobsCATALOG_DENIS_JK			\
 				   vobsCATALOG_HIC 				\
 				   vobsCATALOG_LBSI 			\
+				   vobsCATALOG_MERAND 			\
 				   vobsCATALOG_MASS 			\
 				   vobsCATALOG_PHOTO 			\
 				   vobsCATALOG_SBSC				\
