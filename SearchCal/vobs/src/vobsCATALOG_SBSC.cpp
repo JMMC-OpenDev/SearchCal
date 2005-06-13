@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.8 2005-06-13 10:20:14 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.6  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -30,7 +33,7 @@
  * vobsCATALOG_SBSC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.8 2005-06-13 10:20:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -96,7 +99,7 @@ mcsCOMPL_STAT vobsCATALOG_SBSC::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_SBSC::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT");
+    miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT&-out=HD");
             
     return mcsSUCCESS;
 }

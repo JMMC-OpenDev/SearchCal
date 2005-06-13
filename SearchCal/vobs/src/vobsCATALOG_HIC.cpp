@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.8 2005-06-13 10:20:46 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.6  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -30,7 +33,7 @@
  * vobsCATALOG_HIC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.8 2005-06-13 10:20:46 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -98,7 +101,7 @@ mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
    
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
-    miscDynBufAppendString(&_query, "&-out=*VELOC_HC");
+    miscDynBufAppendString(&_query, "&-out=*VELOC_HC&-out=HD");
             
     return mcsSUCCESS;
 }
