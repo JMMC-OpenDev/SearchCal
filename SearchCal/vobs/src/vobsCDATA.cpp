@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.21 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.22 2005-06-13 10:21:15 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.20  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -68,7 +71,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.21 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.22 2005-06-13 10:21:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -575,7 +578,8 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         {
             return vobsSTAR_UD_DIAM;
         }
-        else if (strcmp(paramName, "UDDK") == 0)
+        else if ((strcmp(paramName, "UDDK") == 0) ||
+                 (strcmp(paramName, "UDdiamKs") == 0))
         {
             return vobsSTAR_UDDK_DIAM;
         }
@@ -592,7 +596,8 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         {
             return vobsSTAR_UD_DIAM_ERROR;
         }
-        else if (strcmp(paramName, "e_UDDK") == 0)
+        else if ((strcmp(paramName, "e_UDDK") == 0) ||
+                 (strcmp(paramName, "e_UDdiam") == 0))
         {
             return vobsSTAR_UDDK_DIAM_ERROR;
         }
