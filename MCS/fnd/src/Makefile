@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-02-15 10:45:22 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-06-13 10:24:25 scetre Exp $"
 #
 # Makefile of fnd module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/15 10:45:22  gzins
+# Added CVS log as file modification history
+#
 # sccmgr    22-Sep-2004  Created
 #
 #*******************************************************************************
@@ -43,9 +46,9 @@ EXECUTABLES_L   =
 
 #
 # <brief description of xxxxx program>
-xxxxx_OBJECTS   = 
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+#xxxxx_OBJECTS   = 
+#xxxxx_LDFLAGS   =
+#xxxxx_LIBS      =
 
 #
 # special compilation flags for single c sources
@@ -54,8 +57,10 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = fnd.h 	  \
-				  fndOBJECT.h
+INCLUDES        = fnd.h 	 	\
+				  fndOBJECT.h	\
+				  fndMVC_VIEW.h	\
+				  fndMVC_MODEL.h
 
 #
 # Libraries (public and local)
@@ -65,7 +70,9 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-fnd_OBJECTS     = fndOBJECT
+fnd_OBJECTS     = fndOBJECT		\
+				  fndMVC_VIEW	\
+				  fndMVC_MODEL
 
 #
 # Scripts (public and local)
