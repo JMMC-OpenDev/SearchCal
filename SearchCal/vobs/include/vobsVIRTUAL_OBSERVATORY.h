@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.13 2005-06-13 10:19:47 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.14 2005-06-16 09:32:59 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/06/13 10:19:47  scetre
+* Added Charm2, Merand and new Denis catalogs
+*
 * Revision 1.12  2005/02/07 19:32:52  gzins
 * Updated vobsREQUEST API
 *
@@ -38,7 +41,6 @@
 #include "vobsSCENARIO.h"
 #include "vobsCATALOG.h"
 #include "vobsCATALOG_ASCC.h"
-#include "vobsCATALOG_TOTO.h"
 #include "vobsCATALOG_BSC.h"
 #include "vobsCATALOG_CHARM.h"
 #include "vobsCATALOG_CHARM2.h"
