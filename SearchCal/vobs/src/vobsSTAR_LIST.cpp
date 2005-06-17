@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.19 2005-06-01 14:16:56 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.20 2005-06-17 15:11:41 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/06/01 14:16:56  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.18  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -50,7 +53,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.19 2005-06-01 14:16:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.20 2005-06-17 15:11:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -77,7 +80,7 @@ using namespace std;
 //Class conctructor
 vobsSTAR_LIST::vobsSTAR_LIST()
 {
-    _starIterator = _starList.begin();
+    *(_starIterator) = NULL;
 }
 
 //Class destructor
@@ -176,9 +179,26 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
  * the specified one.
  *
  * \warning if list contains more than one instance, only first occurence is
- * removed. This method should be used with the GetNextStar() method because it
- * moves the _starIterator of the class according to GetNextStar();
+ * removed. 
+ * 
+ * @note This method does not conflict with GetNextStar(); i.e. it can be used
+ * to remove the star returned by GetNextStar() method, as shown below:
+ * \code
+ *     for (unsigned int el = 0; el < starList.Size(); el++)
+ *     {
+ *         vobsSTAR *star;
+ *         star = starList.GetNextStar((mcsLOGICAL)(el==0));
+ *         if ( <condition> )
+ *         {
+ *              // Remove star from list 
+ *              starList.Remove(*star);
  *
+ *              // and decrease 'el' to take into account the new list size
+ *              el--;
+ *         }
+ *     }
+ * \endcode
+
  * \param star element to be removed from the list.
  *
  * \return Always mcsSUCCESS.
@@ -194,11 +214,30 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
         // If found
         if ((*iter)->IsSame(star) == mcsTRUE)
         {
-            _starIterator--;
             // Delete element
             delete (*iter);
+
+            // If element to be deleted correspond to the one currently pointed
+            // by GetNextStar method
+            if (*_starIterator == *iter)
+            {
+                // If it is not the first element of the list
+                if (iter != _starList.begin())
+                {
+                    // Then go back to the previous star
+                    _starIterator--;
+                }
+                else
+                {
+                    // Else set current pointer to NULL in order to restart scan
+                    // from beginning of the list.
+                    *(_starIterator) = NULL;
+                }
+            }
+            
             // Clear element from list
             _starList.erase(iter);
+
             return mcsSUCCESS;
         }
     }
@@ -236,7 +275,8 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
 {
     logTrace("vobsSTAR_LIST::GetNextStar()");
 
-    if (init == mcsTRUE)
+    printf("_starIterator = %d\n", *(_starIterator)); 
+    if ((init == mcsTRUE) || *(_starIterator) == NULL)
     {
         _starIterator = _starList.begin();
     }
