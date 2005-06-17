@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: fndMVC_VIEW.h,v 1.1 2005-06-13 10:24:06 scetre Exp $"
+ * "@(#) $Id: fndMVC_VIEW.h,v 1.2 2005-06-17 08:29:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/13 10:24:06  scetre
+ * Implementation of MVC base class
+ *
  ******************************************************************************/
 
 /**
@@ -34,14 +37,14 @@
  */
 
 /**
- * Basic definition of the view class.
- * 
- * This class implement the Model-View-Controller concept.
+ * View class in the model-view paradigm.
  *
- * \n
- * \warning This class do nothing. In order to use it it is necessary to
- * re-implement the Update() method.
+ * It has to be subclassed to create an object which wants to be informed of
+ * a model object changes (see fndMVC_MODEL). The subclass has to implement the
+ * Update() method which is called whenever the model (observed object) is
+ * changed. 
  *
+ * @note This class has been strongly influenced by java.util.Observer
  */
 class fndMVC_VIEW
 {
@@ -53,6 +56,9 @@ public:
     // Class destructor
     virtual ~fndMVC_VIEW();
     
+    /** Method called whenever the model (observed object) is changed. It has to
+     * be implemented in subclass to update the view according to the associated
+     * model state. */
     virtual mcsCOMPL_STAT Update()=0;
 
 protected:

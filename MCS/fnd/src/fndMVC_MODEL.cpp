@@ -1,19 +1,22 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: fndMVC_MODEL.cpp,v 1.1 2005-06-13 10:24:06 scetre Exp $"
+ * "@(#) $Id: fndMVC_MODEL.cpp,v 1.2 2005-06-17 08:28:54 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/13 10:24:06  scetre
+ * Implementation of MVC base class
+ *
  ******************************************************************************/
 
 /**
- * \file
- *  Definition of fndMVC_MODEL class.
+ * @file
+ * Definition of fndMVC_MODEL class.
  */
 
-static char *rcsId="@(#) $Id: fndMVC_MODEL.cpp,v 1.1 2005-06-13 10:24:06 scetre Exp $"; 
+static char *rcsId="@(#) $Id: fndMVC_MODEL.cpp,v 1.2 2005-06-17 08:28:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,7 +58,9 @@ fndMVC_MODEL::~fndMVC_MODEL()
 /**
  * Add a view in the list of views associated to this model
  *
- * \param view the view to add in the list
+ * @param view the view to add in the list
+ *
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT fndMVC_MODEL::AddView(fndMVC_VIEW *view)
 {
@@ -69,9 +74,9 @@ mcsCOMPL_STAT fndMVC_MODEL::AddView(fndMVC_VIEW *view)
 /**
  * Delete a view from the list of views associated to this model
  *
- * \param view the view to delete from the list
+ * @param view the view to delete from the list
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT fndMVC_MODEL::DeleteView(fndMVC_VIEW *view)
 {
@@ -107,7 +112,7 @@ mcsCOMPL_STAT fndMVC_MODEL::DeleteView(fndMVC_VIEW *view)
 /**
  * Delete all views from the list of views associated to this model
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT fndMVC_MODEL::DeleteViews()
 {
@@ -120,9 +125,12 @@ mcsCOMPL_STAT fndMVC_MODEL::DeleteViews()
 }
 
 /**
- * Notify all views from the list of views associated to this model
- *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * Notify all views associated to this model
+ * 
+ * If this object has changed, then notify all of its associated views; i.e each
+ * view has its Update method called.
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
 mcsCOMPL_STAT fndMVC_MODEL::NotifyViews()
@@ -151,7 +159,7 @@ mcsCOMPL_STAT fndMVC_MODEL::NotifyViews()
 /**
  * Get the number of views associated to this model
  *
- * \return number of views associated to this model
+ * @return number of views associated to this model
  */
 mcsINT32 fndMVC_MODEL::GetNbViews()
 {
@@ -159,16 +167,5 @@ mcsINT32 fndMVC_MODEL::GetNbViews()
     
     return _viewList.size();
 }
-
-
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
-
 
 /*___oOo___*/

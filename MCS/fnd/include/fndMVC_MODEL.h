@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: fndMVC_MODEL.h,v 1.1 2005-06-13 10:24:06 scetre Exp $"
+ * "@(#) $Id: fndMVC_MODEL.h,v 1.2 2005-06-17 08:29:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/13 10:24:06  scetre
+ * Implementation of MVC base class
+ *
  ******************************************************************************/
 
 /**
@@ -39,14 +42,26 @@ typedef std::list<fndMVC_VIEW *> fndViewList;
  */
 
 /**
- * Basic definition of the model class.
- * 
- * This class implement the Model-View-Controller concept.
+ * Model object class, or "data" in the model-view paradigm.
+ * It has to be subclassed to represent an object that the application wants to
+ * have observed.  
  *
- * \n
- * \warning This class do nothing. In order to use it it is necessary to
- * implement the model variable and the Get and Set methods.
+ * A model object can have one or more views. A view may be any
+ * object that implements interface fndMVC_VIEW. After a model instance
+ * changes, an application calling the fndMVC_MODEL's NotifyViews method
+ * causes all of its views to be notified of the change by a call to their
+ * Update method.
  *
+ * The order in which notifications will be delivered is unspecified. The
+ * default implementation provided in the fndMVC_MODEL class will notify
+ * views in the order in which they registered interest, but subclasses may
+ * change this order, use no guaranteed order, deliver notifications on separate
+ * threads, or may guarantee that their subclass follows this order, as they
+ * choose.
+ *
+ * When a model object is newly created, its set of views is empty.
+ *
+ * @note This class has been strongly influenced by java.util.Observable
  */
 class fndMVC_MODEL
 {
