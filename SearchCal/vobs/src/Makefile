@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.18 2005-06-20 11:31:53 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.19 2005-06-20 11:44:25 scetre Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2005/06/20 11:31:53  scetre
+# Added filter class
+#
 # Revision 1.17  2005/06/13 10:21:22  scetre
 # Added Charm2, Merand and new Denis catalogs
 #
@@ -100,6 +103,7 @@ INCLUDES        = vobs.h						\
 				  vobsMULTIPLICITY_FILTER.h		\
 				  vobsVARIABILITY_FILTER.h		\
 				  vobsSPECTRAL_TYPE_FILTER.h	\
+				  vobsDISTANCE_FILTER.h			\
 #
 # Libraries (public and local)
 # ----------------------------
@@ -142,6 +146,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsMULTIPLICITY_FILTER		\
 				   vobsVARIABILITY_FILTER		\
 				   vobsSPECTRAL_TYPE_FILTER		\
+				   vobsDISTANCE_FILTER			\
 #
 # Scripts (public and local)
 # --------------------------
