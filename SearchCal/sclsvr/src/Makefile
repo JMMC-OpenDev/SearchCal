@@ -1,13 +1,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2005-06-01 14:18:54 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.13 2005-06-20 14:42:54 scetre Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2005/06/01 14:18:54  scetre
+# Added filters and filter list objects.
+# Changed logExtDbg to logTrace
+#
 # Revision 1.11  2005/03/06 20:28:50  gzins
 # Added sclsvrVersion.h
 #
@@ -61,20 +65,12 @@ sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr simcli
 INCLUDES        = sclsvr.h						\
 				  sclsvrCALIBRATOR.h			\
 				  sclsvrCALIBRATOR_LIST.h		\
-				  sclsvrFILTER.h				\
-				  sclsvrFILTER_LIST.h			\
-				  sclsvrDISTANCE_FILTER.h		\
-				  sclsvrMAGNITUDE_FILTER.h		\
-				  sclsvrVARIABILITY_FILTER.h	\
-				  sclsvrMULTIPLICITY_FILTER.h	\
-				  sclsvrVISIBILITY_FILTER.h		\
-				  sclsvrSPECTRAL_TYPE_FILTER.h	\
-				  sclsvrLUMINOSITY_FILTER.h		\
 				  sclsvrREQUEST.h        		\
 				  sclsvrGETCAL_CMD.h        	\
 				  sclsvrGETSTAR_CMD.h       	\
 				  sclsvrVersion.h           	\
-				  sclsvrSERVER.h
+				  sclsvrSERVER.h				\
+				  sclsvrVISIBILITY_FILTER.h		\
 
 
 #
@@ -87,21 +83,14 @@ LIBRARIES_L     =
 # <brief description of lllll library>
 sclsvr_OBJECTS   = sclsvrCALIBRATOR      		\
 				   sclsvrCALIBRATOR_LIST 		\
-				   sclsvrFILTER			 		\
-				   sclsvrFILTER_LIST	 		\
-				   sclsvrDISTANCE_FILTER 		\
-				   sclsvrMAGNITUDE_FILTER		\
-				   sclsvrVARIABILITY_FILTER		\
-				   sclsvrMULTIPLICITY_FILTER	\
-				   sclsvrVISIBILITY_FILTER		\
-				   sclsvrSPECTRAL_TYPE_FILTER	\
-				   sclsvrLUMINOSITY_FILTER		\
 				   sclsvrSERVER          		\
 				   sclsvrREQUEST         		\
 				   sclsvrGETCAL_CMD      		\
 				   sclsvrGETSTAR_CMD     		\
 				   sclsvrGetCalCB		 		\
-				   sclsvrGetStarCB
+				   sclsvrGetStarCB				\
+				   sclsvrVISIBILITY_FILTER		\
+
 
 #
 # Scripts (public and local)

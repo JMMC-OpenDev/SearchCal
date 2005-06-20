@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.24 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.25 2005-06-20 14:39:28 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.23  2005/03/07 16:06:06  gzins
  * Removed automatic sort on visibility
  *
@@ -103,19 +107,6 @@ public:
     virtual mcsCOMPL_STAT Pack(miscoDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(const char *buffer);
    
-    // Method
-    virtual mcsCOMPL_STAT FilterByDistanceSeparation(const char *scienceRa,
-                                                     const char *scienceDec,
-                                                     mcsFLOAT raRange,
-                                                     mcsFLOAT decRange);
-    virtual mcsCOMPL_STAT FilterByMagnitude(const char *band,
-                                            mcsFLOAT magValue,
-                                            mcsFLOAT magRange);
-    virtual mcsCOMPL_STAT FilterBySpectralType(char *tempClassList[],
-                                               char *lumClassList[]);
-    virtual mcsCOMPL_STAT FilterByVisibility(mcsFLOAT visMax);
-    virtual mcsCOMPL_STAT FilterByVariability(mcsLOGICAL authorized=mcsTRUE);
-    virtual mcsCOMPL_STAT FilterByMultiplicity(mcsLOGICAL authorized=mcsTRUE);
     virtual mcsCOMPL_STAT Delete(unsigned int starNumber);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
