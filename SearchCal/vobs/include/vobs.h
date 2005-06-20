@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.7 2005-02-04 09:57:15 gzins Exp $"
+* "@(#) $Id: vobs.h,v 1.8 2005-06-20 11:31:53 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/02/04 09:57:15  gzins
+* Added vobsCATALOG_MIDI header file
+*
 * Revision 1.6  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -41,6 +44,14 @@
 #include "vobsCATALOG_SBSC.h"
 #include "vobsCATALOG_MIDI.h"
 #include "vobsSCENARIO.h"
+#include "vobsFILTER.h"
+#include "vobsFILTER_LIST.h"
+#include "vobsMAGNITUDE_FILTER.h"
+#include "vobsDISTANCE_FILTER.h"
+#include "vobsVARIABILITY_FILTER.h"
+#include "vobsMULTIPLICITY_FILTER.h"
+#include "vobsLUMINOSITY_FILTER.h"
+#include "vobsSPECTRAL_TYPE_FILTER.h"
 
 #endif /*!vobs_H*/
 
