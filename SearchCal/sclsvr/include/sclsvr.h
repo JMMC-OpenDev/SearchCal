@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvr.h,v 1.7 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvr.h,v 1.8 2005-06-20 14:41:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.6  2005/03/06 20:27:33  gzins
  * Added sclsvrVersion.h
  *
@@ -36,14 +40,7 @@
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrSERVER.h"
 #include "sclsvrVersion.h"
-#include "sclsvrFILTER.h"
-#include "sclsvrMAGNITUDE_FILTER.h"
-#include "sclsvrDISTANCE_FILTER.h"
 #include "sclsvrVISIBILITY_FILTER.h"
-#include "sclsvrVARIABILITY_FILTER.h"
-#include "sclsvrMULTIPLICITY_FILTER.h"
-#include "sclsvrSPECTRAL_TYPE_FILTER.h"
-#include "sclsvrLUMINOSITY_FILTER.h"
 #endif /*!sclsvr_H*/
 
 /*___oOo___*/
