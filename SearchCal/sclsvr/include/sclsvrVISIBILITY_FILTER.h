@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.2 2005-06-07 12:35:59 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.3 2005-06-20 14:42:11 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/07 12:35:59  scetre
+ * Updated documentation
+ *
  * Revision 1.1  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -32,7 +35,7 @@
 /*
  * Local header
  */
-#include "sclsvrFILTER.h"
+#include "vobsFILTER.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 
 
@@ -47,11 +50,11 @@
  * 
  * This class is a sclsvrFILTER object.
  *
- * @sa sclsvrFILTER.cpp
+ * @sa vobsFILTER.cpp
  * @sa sclsvrCALIBRATOR_LIST.cpp
  * 
  */
-class sclsvrVISIBILITY_FILTER : public sclsvrFILTER
+class sclsvrVISIBILITY_FILTER : public vobsFILTER
 {
 
 public:
@@ -65,7 +68,7 @@ public:
 
     virtual mcsCOMPL_STAT GetVisibilityValue(mcsFLOAT *visMax);
 
-    virtual mcsCOMPL_STAT Apply(sclsvrCALIBRATOR_LIST *list);    
+    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);    
 
 protected:
     

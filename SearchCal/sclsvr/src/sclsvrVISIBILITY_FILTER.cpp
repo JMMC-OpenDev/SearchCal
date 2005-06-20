@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.2 2005-06-13 10:22:47 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.3 2005-06-20 14:42:11 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/13 10:22:47  scetre
+ * Updated documentation
+ *
  * Revision 1.1  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -17,7 +20,7 @@
  *  Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.2 2005-06-13 10:22:47 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.3 2005-06-20 14:42:11 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -97,31 +100,31 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::GetVisibilityValue(mcsFLOAT *visMax)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned. 
  */
-mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
+mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
 {
-    logTrace("sclsvrMAGNITUDE_FILTER::Apply()");
+    logTrace("sclsvrVISIBILITY_FILTER::Apply()");
 
     if (IsEnable() == mcsTRUE)
     {
-        // for each calibrator of the list
-        sclsvrCALIBRATOR *calibrator;
-        mcsFLOAT calibratorVis, calibratorVisError;
+        // for each star of the list
+        vobsSTAR *star;
+        mcsFLOAT starVis, starVisError;
         for (unsigned int el = 0; el < list->Size(); el++)
         {
-            calibrator=
-                (sclsvrCALIBRATOR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            star=
+                (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
             // if it is not possible to get the visibility or the visibility 
             // error, remove the star
-            if ((calibrator->GetPropertyValue(sclsvrCALIBRATOR_VIS2,
-                                              &calibratorVis) ==
+            if ((star->GetPropertyValue(sclsvrCALIBRATOR_VIS2,
+                                              &starVis) ==
                  mcsFAILURE)||
-                (calibrator->GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR,
-                                              &calibratorVisError) ==
+                (star->GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR,
+                                              &starVisError) ==
                  mcsFAILURE) )
             {
                 // Remove it
-                logTest("calibrator %d not visibility enough\n", el+1);
-                if (list->Remove(*calibrator) == mcsFAILURE)
+                logTest("star %d not visibility enough\n", el+1);
+                if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -130,13 +133,13 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(sclsvrCALIBRATOR_LIST *list)
             // if it is possible to get the star
             else
             {
-                // if the value of the calibrator visibility error / visibility
+                // if the value of the star visibility error / visibility
                 // is lower than this enter by the user, remove it
-                if (calibratorVisError/calibratorVis >= _visMax)   
+                if (starVisError/starVis >= _visMax)   
                 {
                     // Remove it
-                    logTest("calibrator %d not visibility enough\n", el+1);
-                    if (list->Remove(*calibrator) == mcsFAILURE)
+                    logTest("star %d not visibility enough\n", el+1);
+                    if (list->Remove(*star) == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
