@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarList.cpp,v 1.3 2005-02-13 16:01:56 gzins Exp $"
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.4 2005-06-20 13:38:17 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/13 16:01:56  gzins
+ * Added test for Load and Save methods
+ *
  * Revision 1.2  2005/02/13 08:54:00  gzins
  * Updated after vobs classes changes
  * Added CVS log as modifification history
@@ -14,7 +17,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.3 2005-02-13 16:01:56 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.4 2005-06-20 13:38:17 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -53,11 +56,13 @@ int main(int argc, char *argv[])
     for (int i = 1; i <= 5; i++)
     {
         mcsSTRING16 id;
-        mcsSTRING16 ra;
+        mcsSTRING16 ra, dec;
         sprintf(id, "%d", i);
         sprintf(ra, "12 30 %d.3", i*10);
+        sprintf(dec, "04 30 %d.3", i*10);
         stars[i].SetPropertyValue(vobsSTAR_ID_HD, id, "unknown");
         stars[i].SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, "unknown");
+        stars[i].SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, "unknown");
         starList.AddAtTail(stars[i]); 
     }
     
@@ -82,10 +87,12 @@ int main(int argc, char *argv[])
     printf("Size of the list = %d\n", starList.Size());
     printf("Display the list.\n");
     starList.Display();
-    printf("Display all elements, one by one,  of the list.\n");
+    printf("Display all elements, one by one, of the list\n");
+    printf("and delete first element of the list.\n");
     for (unsigned int el = 0; el < starList.Size(); el++)
     {
         starList.GetNextStar((mcsLOGICAL)(el==0))->Display();
+        starList.Remove(stars[1]); 
     }
     printf("Display first element of the list.\n");
     starList.GetNextStar(mcsTRUE)->Display();
