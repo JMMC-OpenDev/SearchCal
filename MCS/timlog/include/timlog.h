@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: timlog.h,v 1.4 2005-02-15 10:30:55 gzins Exp $"
+ * "@(#) $Id: timlog.h,v 1.5 2005-06-20 13:21:45 swmgr Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 10:30:55  gzins
+ * Fixed wrong history log
+ *
  * Revision 1.3  2005/02/15 10:27:46  gzins
  * Added CVS log as file modification history
  *
@@ -52,8 +55,8 @@ void timlogClear();
 #define timlogDebugStart(action) \
     timlogStart(MODULE_ID, logDEBUG, __FILE_LINE__, action)
 
-#define timlogExtDbgStart(action) \
-    timlogStart(MODULE_ID, logEXTDBG, __FILE_LINE__, action)
+#define timlogTraceStart(action) \
+    timlogStart(MODULE_ID, logTRACE, __FILE_LINE__, action)
 
 #ifdef __cplusplus
 }
