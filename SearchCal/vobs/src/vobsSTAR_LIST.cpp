@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.20 2005-06-17 15:11:41 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.21 2005-06-20 14:32:25 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/06/17 15:11:41  gzins
+* Fixed conflict between Remove() and GetNextStar() methods when element to be deleted is the current element pointed by GetNextStar()
+*
 * Revision 1.19  2005/06/01 14:16:56  scetre
 * Changed logExtDbg to logTrace
 *
@@ -53,7 +56,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.20 2005-06-17 15:11:41 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.21 2005-06-20 14:32:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -80,7 +83,7 @@ using namespace std;
 //Class conctructor
 vobsSTAR_LIST::vobsSTAR_LIST()
 {
-    *(_starIterator) = NULL;
+    _starIterator = NULL;
 }
 
 //Class destructor
@@ -231,7 +234,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
                 {
                     // Else set current pointer to NULL in order to restart scan
                     // from beginning of the list.
-                    *(_starIterator) = NULL;
+                    _starIterator = NULL;
                 }
             }
             
@@ -275,8 +278,7 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
 {
     logTrace("vobsSTAR_LIST::GetNextStar()");
 
-    printf("_starIterator = %d\n", *(_starIterator)); 
-    if ((init == mcsTRUE) || *(_starIterator) == NULL)
+    if ((init == mcsTRUE) || _starIterator == NULL)
     {
         _starIterator = _starList.begin();
     }
