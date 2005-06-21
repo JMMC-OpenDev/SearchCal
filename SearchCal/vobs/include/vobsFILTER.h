@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.h,v 1.1 2005-06-20 11:31:53 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.h,v 1.2 2005-06-21 06:20:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:31:53  scetre
+ * Added filter class
+ *
  * Revision 1.2  2005/06/07 12:35:59  scetre
  * Updated documentation
  *
@@ -54,9 +57,9 @@ public:
     virtual ~vobsFILTER();
 
     virtual char * GetName();
-    virtual mcsLOGICAL IsEnable();
-    virtual mcsCOMPL_STAT Enable();
-    virtual mcsCOMPL_STAT Disable();
+    virtual mcsLOGICAL IsEnabled();
+    virtual mcsCOMPL_STAT Enabled();
+    virtual mcsCOMPL_STAT Disabled();
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list) = 0;
 

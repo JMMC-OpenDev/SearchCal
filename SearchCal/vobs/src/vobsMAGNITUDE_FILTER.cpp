@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"
+ * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:31:53  scetre
+ * Added filter class
+ *
  * Revision 1.2  2005/06/07 12:36:27  scetre
  * Updated documentation
  *
@@ -20,7 +23,7 @@
  *  Definition of vobsMAGNITUDE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -116,7 +119,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsMAGNITUDE_FILTER::Apply()");
 
-    if (IsEnable() == mcsTRUE)
+    if (IsEnabled() == mcsTRUE)
     {
         // Create the UCD corresponding to the band
         mcsSTRING256 magnitudeUcd;

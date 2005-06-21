@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:31:53  scetre
+ * Added filter class
+ *
  * Revision 1.2  2005/06/07 12:36:28  scetre
  * Updated documentation
  *
@@ -20,7 +23,7 @@
  *  Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,7 +75,7 @@ mcsCOMPL_STAT vobsVARIABILITY_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsVARIABILITY_FILTER::Apply()");
 
-    if (IsEnable() == mcsTRUE)
+    if (IsEnabled() == mcsTRUE)
     {
         vobsSTAR *star;
         for (unsigned int el = 0; el < list->Size(); el++)

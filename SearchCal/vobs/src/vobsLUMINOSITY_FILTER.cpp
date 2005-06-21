@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"
+ * "@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:31:53  scetre
+ * Added filter class
+ *
  * Revision 1.3  2005/06/13 10:22:47  scetre
  * Updated documentation
  *
@@ -23,7 +26,7 @@
  *  Definition of vobsLUMINOSITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -118,7 +121,7 @@ mcsCOMPL_STAT vobsLUMINOSITY_FILTER::Apply(vobsSTAR_LIST *list)
     }
     lumClassList[_luminosityClassList.size()] = NULL;
     
-    if (IsEnable() == mcsTRUE)
+    if (IsEnabled() == mcsTRUE)
     {
         // For each STAR in the list
         vobsSTAR *star;

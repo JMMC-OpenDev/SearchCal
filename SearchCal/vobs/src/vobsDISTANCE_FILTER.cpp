@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.1 2005-06-20 11:44:25 scetre Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:44:25  scetre
+ * Added filter class
+ *
  * Revision 1.2  2005/06/07 12:36:27  scetre
  * Updated documentation
  *
@@ -16,11 +19,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.1 2005-06-20 11:44:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -65,12 +68,12 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
 /**
  * Set value to the filter
  *
- * \param raRef right ascension of the science star
- * \param decRef declinaison of the science star
- * \param raRange right ascension range
- * \param decRange declinaision range
+ * @param raRef right ascension of the science star
+ * @param decRef declinaison of the science star
+ * @param raRange right ascension range
+ * @param decRange declinaision range
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(mcsSTRING32 raRef,
                                                       mcsSTRING32 decRef,
@@ -92,12 +95,12 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(mcsSTRING32 raRef,
 /**
  * Get value of the filter 
  *
- * \param raRef right ascension of the science star
- * \param decRef declinaison of the science star
- * \param raRange right ascension range
- * \param decRange declinaision range
+ * @param raRef right ascension of the science star
+ * @param decRef declinaison of the science star
+ * @param raRange right ascension range
+ * @param decRange declinaision range
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
                                                       mcsSTRING32 *decRef,

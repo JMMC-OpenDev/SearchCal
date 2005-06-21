@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:31:53  scetre
+ * Added filter class
+ *
  * Revision 1.2  2005/06/07 12:36:27  scetre
  * Updated documentation
  *
@@ -20,7 +23,7 @@
  *  Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -48,7 +51,7 @@ using namespace std;
 vobsFILTER::vobsFILTER()
 {
     // by default, the filter is disabled
-    Disable();
+    Disabled();
 }
 
 /**
@@ -75,20 +78,24 @@ char * vobsFILTER::GetName()
 
 /**
  * Say if the filter is enable or not
+ *
+ * @return mcsTRUE is filter is enable, otherwise mcsFALSE is returned
  */
-mcsLOGICAL vobsFILTER::IsEnable()
+mcsLOGICAL vobsFILTER::IsEnabled()
 {
-    logTrace("vobsFILTER::IsEnable()");
+    logTrace("vobsFILTER::IsEnabled()");
 
     return _isEnable;
 }
 
 /**
- * Set as enable the filter 
+ * Enabled the filter
+ *
+ * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsFILTER::Enable()
+mcsCOMPL_STAT vobsFILTER::Enabled()
 {
-    logTrace("vobsFILTER::Enable()");
+    logTrace("vobsFILTER::Enabled()");
     
     _isEnable = mcsTRUE;
     
@@ -96,25 +103,18 @@ mcsCOMPL_STAT vobsFILTER::Enable()
 }
 
 /**
- * Set as disable the filter
+ * Disabled the filter
+ *
+ * @return always mcsSUCCESS 
  */
-mcsCOMPL_STAT vobsFILTER::Disable()
+mcsCOMPL_STAT vobsFILTER::Disabled()
 {
-    logTrace("vobsFILTER::Disable()");
+    logTrace("vobsFILTER::Disabled()");
 
     _isEnable = mcsFALSE;
     
     return mcsSUCCESS;
 }
-
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/

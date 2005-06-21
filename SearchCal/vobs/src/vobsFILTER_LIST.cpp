@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:31:53  scetre
+ * Added filter class
+ *
  * Revision 1.1  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -17,7 +20,7 @@
  *  Definition of vobsFILTER_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.1 2005-06-20 11:31:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -90,7 +93,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
     // list, i.e remove ALL element of the list
     for (unsigned int el = 0; el < Size(); el++)
     {
-        GetNextFilter((mcsLOGICAL)(el==0))->Disable();
+        GetNextFilter((mcsLOGICAL)(el==0))->Disabled();
     }
     
     return mcsSUCCESS;
@@ -185,7 +188,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST *list)
     for (unsigned int el = 0; el < Size(); el++)
     {
         filter = GetNextFilter((mcsLOGICAL)(el==0));
-        if (filter->IsEnable() == mcsTRUE)
+        if (filter->IsEnabled() == mcsTRUE)
         {
             if (filter->Apply(list) == mcsFAILURE)
             {

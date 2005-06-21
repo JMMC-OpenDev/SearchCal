@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.26 2005-06-13 10:19:47 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.27 2005-06-21 06:20:45 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2005/06/13 10:19:47  scetre
+* Added Charm2, Merand and new Denis catalogs
+*
 * Revision 1.25  2005/06/01 14:16:56  scetre
 * Changed logExtDbg to logTrace
 *
@@ -77,7 +80,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.26 2005-06-13 10:19:47 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.27 2005-06-21 06:20:45 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -302,7 +305,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         /*
          * Add mgK criteria
          */
-        if (criteriaList.Add(vobsSTAR_PHOT_JHN_K, 0.3) == mcsFAILURE)
+        if (criteriaList.Add(vobsSTAR_PHOT_JHN_K, 0.1) == mcsFAILURE)
         {
         return mcsFAILURE;
         }
