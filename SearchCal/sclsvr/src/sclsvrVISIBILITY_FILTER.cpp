@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.3 2005-06-20 14:42:11 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.4 2005-06-21 06:21:58 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/06/20 14:42:11  scetre
+ * Changed call to mother class from sclsvrFILTER to vobsFILTER after filter removed to vobs module
+ *
  * Revision 1.2  2005/06/13 10:22:47  scetre
  * Updated documentation
  *
@@ -20,7 +23,7 @@
  *  Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.3 2005-06-20 14:42:11 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.4 2005-06-21 06:21:58 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -104,7 +107,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("sclsvrVISIBILITY_FILTER::Apply()");
 
-    if (IsEnable() == mcsTRUE)
+    if (IsEnabled() == mcsTRUE)
     {
         // for each star of the list
         vobsSTAR *star;
