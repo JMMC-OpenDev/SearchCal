@@ -91,7 +91,7 @@
 
     <!-- Cette fonction ecrit la liste des parametre d'une fonction -->
     <!-- ex: int a, intb, char *c                                   -->
-    <xsl:template name="WritePrototypeParameters">
+    <xsl:template name="WriteParametersForPrototype">
 		<xsl:param name="Noeud"/>
         <xsl:if test="contains(.//attribute[@name='decl']/@value,'f(')">
 			<!-- Ecriture des parametres de la fonction -->
@@ -101,6 +101,23 @@
 				<xsl:call-template name="WriteFunctionParam">
 					<xsl:with-param name="noeud" select="current()"/>
 				</xsl:call-template>
+				<xsl:if test="not(position()=last())">
+					<xsl:text> ,</xsl:text>
+				</xsl:if>
+
+			</xsl:for-each>
+		</xsl:if>
+	</xsl:template>
+ 
+    <!-- Cette fonction ecrit la liste des parametre d'une fonction -->
+    <!-- ex: a, b, *c                                   -->
+    <xsl:template name="WriteParametersForFunctionCall">
+		<xsl:param name="Noeud"/>
+        <xsl:if test="contains(.//attribute[@name='decl']/@value,'f(')">
+			<!-- Ecriture des parametres de la fonction -->
+
+            <xsl:for-each select= ".//parmlist/parm/attributelist" >
+                <xsl:value-of select="./attribute[@name='name']/@value"/>
 				<xsl:if test="not(position()=last())">
 					<xsl:text> ,</xsl:text>
 				</xsl:if>
