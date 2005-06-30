@@ -20,11 +20,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: mkfSTKToCWrapperForCpp.xsl,v 1.2 2005-06-29 13:26:45 mella Exp $"
+ "@(#) $Id: mkfSTKToCWrapperForCpp.xsl,v 1.3 2005-06-30 13:28:35 mella Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.2  2005/06/29 13:26:45  mella
+ Improve code generation completion
+
  Revision 1.1  2005/06/29 09:22:58  mella
  First revision
 
@@ -41,14 +44,59 @@
 <xsl:include href="mkfSTK_WriteFunctionPrototype.xsl"/>
 
 <xsl:template match="/">
-    <xsl:call-template name="wrapForClasses"/>
-</xsl:template>
+#if SWIG
+#define mcsCOMPL_STAT      int    
 
-<xsl:template name="wrapForClasses">
+#define mcsINT8            char               
+#define mcsUINT8           unsigned char      
+#define mcsINT16           short              
+#define mcsUINT16          unsigned short     
+#define mcsINT32           int                
+#define mcsUINT32          unsigned int       
+#define mcsDOUBLE          double             
+#define mcsFLOAT           float              
+                    
+#define mcsBYTES4       unsigned char      
+#define mcsBYTES8       unsigned char      
+#define mcsBYTES12     unsigned char      
+#define mcsBYTES16     unsigned char      
+#define mcsBYTES20     unsigned char      
+#define mcsBYTES32     unsigned char      
+#define mcsBYTES48     unsigned char      
+#define mcsBYTES64     unsigned char      
+#define mcsBYTES80     unsigned char      
+#define mcsBYTES128   unsigned char      
+#define mcsBYTES256   unsigned char      
+#define mcsBYTES512   unsigned char      
+#define mcsBYTES1024 unsigned char      
+                    
+#define mcsSTRING4      char *              
+#define mcsSTRING8      char *              
+#define mcsSTRING12    char *              
+#define mcsSTRING16    char *              
+#define mcsSTRING20    char *              
+#define mcsSTRING32    char *              
+#define mcsSTRING48    char *              
+#define mcsSTRING64    char *              
+#define mcsSTRING80    char *              
+#define mcsSTRING128  char *              
+#define mcsSTRING256  char *              
+#define mcsSTRING512  char *              
+#define mcsSTRING1024 char *              
+
+#else
+
 #include "mcs.h"
 #include "<xsl:value-of select="top/attributelist/attribute[@name='module']/@value"/>.h"    
 <xsl:for-each select="//class">#include "<xsl:value-of select="./attributelist/attribute[@name='name']/@value"/>.h"
 </xsl:for-each>
+#endif
+extern "C"{ 
+    <xsl:call-template name="wrapForClasses"/>
+}
+</xsl:template>
+
+<xsl:template name="wrapForClasses">
   <xsl:for-each select="//class">
     <xsl:call-template name="wrapForClass"/>
   </xsl:for-each>
@@ -59,7 +107,7 @@
  * Wrapping '<xsl:value-of select="./attributelist/attribute[@name='name']/@value"/>' class 
  */
      
-/* Default constructor '<xsl:value-of select="./attributelist/attribute[@name='name']/@value"/>' method */
+/* constructor '<xsl:value-of select="./attributelist/attribute[@name='name']/@value"/>' method */
     <!-- Constructor using default constructor todo check for parameters-->
     <xsl:for-each select=".//constructor">
         <xsl:if test="not(.//attribute[@name='access'])">
@@ -77,7 +125,6 @@ void <xsl:value-of select=".//attribute[@name='sym_name']/@value"/>_new(void **o
 
     <!-- Methods -->
 <xsl:for-each select=".//cdecl">
-<xsl:sort order="ascending" data-type="text" case-order="upper-first" select="./attributelist/attribute[@name='name']/@value"/>
     <xsl:if test="not(.//attribute[@name='access'])">
         <xsl:call-template name="wrapForClassMethod"/>
     </xsl:if>
@@ -93,15 +140,14 @@ void <xsl:value-of select=".//attribute[@name='sym_name']/@value"/>_new(void **o
             <xsl:with-param name="method" select="."/>
         </xsl:call-template>
     </xsl:variable>
-    /* Wrapping '<xsl:value-of select="$methName"/>' method */   
+/* Wrapping '<xsl:value-of select="$methName"/>' method */   
 <xsl:call-template name="WriteType">
         <xsl:with-param name="Type" select="./attributelist/attribute[@name='type']/@value"/>
     </xsl:call-template>
     <xsl:text> </xsl:text>
 <xsl:value-of select="$className"/>
     <xsl:text>_</xsl:text>
-    <xsl:value-of select="$methName"/><xsl:value-of select="$methNameIndex"/>  ( void * obj <xsl:if test=".//parmlist">, 
-    <xsl:call-template name="WriteParametersForPrototype">
+    <xsl:value-of select="$methName"/><xsl:value-of select="$methNameIndex"/>  ( void * obj <xsl:if test=".//parmlist">, <xsl:call-template name="WriteParametersForPrototype">
         <xsl:with-param name="Noeud" select="./attributelist/attribute[@name='name']"/>
 </xsl:call-template></xsl:if>)
 {
