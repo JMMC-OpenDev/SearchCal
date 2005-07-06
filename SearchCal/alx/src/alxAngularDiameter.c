@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.14 2005-06-01 14:16:07 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.15 2005-07-06 05:06:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/06/01 14:16:07  scetre
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.13  2005/04/06 12:15:22  scetre
  * Changed used of float for properties to computed in alxDATA
  * removed alxNO_CONFIDENCE
@@ -63,7 +66,7 @@
  * \sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.14 2005-06-01 14:16:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.15 2005-07-06 05:06:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -334,8 +337,16 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
             diameters->bv.value, diameters->bvErr.value, diameters->vr.value,
             diameters->vrErr.value, diameters->vk.value,
             diameters->vkErr.value);
-    logTest("Confidence index       = %s", 
-            (diameters->areComputed == mcsFALSE) ? "NOT COMPUTED" : "HIGH");
+    if (diameters->areComputed == mcsTRUE)
+    {
+        logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
+                diameters->confidenceIdx, alxCONFIDENCE_LOW, 
+                alxCONFIDENCE_MEDIUM, alxCONFIDENCE_HIGH);
+    }
+    else
+    {
+        logTest("Diameters have not been computed");
+    }
 
     return mcsSUCCESS;
 }
