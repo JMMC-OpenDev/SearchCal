@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.9 2005-03-30 12:48:46 scetre Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.10 2005-07-06 05:07:15 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/03/30 12:48:46  scetre
+ * Changed API
+ *
  * Revision 1.8  2005/02/22 16:22:04  gzins
  * Updated test after test on B-V delta has been added
  *
@@ -41,7 +44,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.9 2005-03-30 12:48:46 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.10 2005-07-06 05:07:15 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -235,10 +238,10 @@ printf("*********************\n");
         errCloseStack();
     }
     alxDIAMETERS diameters;
-    if (alxComputeAngularDiameter(magnitudes[alxB_BAND].value,
-                                  magnitudes[alxV_BAND].value,
-                                  magnitudes[alxR_BAND].value,
-                                  magnitudes[alxK_BAND].value,
+    if (alxComputeAngularDiameter(magnitudes[alxB_BAND],
+                                  magnitudes[alxV_BAND],
+                                  magnitudes[alxR_BAND],
+                                  magnitudes[alxK_BAND],
                                   &diameters)== mcsFAILURE)
     {
         return mcsFAILURE;
