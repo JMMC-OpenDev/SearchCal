@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.8 2005-06-13 10:20:32 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.9 2005-08-03 13:58:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/06/13 10:20:32  scetre
+* Added Qflag in query
+*
 * Revision 1.7  2005/06/01 14:16:55  scetre
 * Changed logExtDbg to logTrace
 *
@@ -33,7 +36,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.8 2005-06-13 10:20:32 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.9 2005-08-03 13:58:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -103,6 +106,57 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=Qflg&Qflg=AAA");
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
             
+    return mcsSUCCESS;
+}
+
+/**
+ * Build the specificatic part of the asking.
+ *
+ * Build the specificatic part of the asking. This is the part of the asking
+ * which is write specificaly for each catalog. The constraints of the request
+ * which help to build an asking in order to restrict the research.
+ *
+ * \param request vobsREQUEST which help to restrict the search
+ *
+ * \return always mcsSUCCESS 
+ *
+ */
+mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
+{
+    logTrace("vobsCATALOG_MASS::GetAskingSpecificParameters()");
+
+    miscDynBufAppendString(&_query, "&");
+
+    // Add band constraint
+    const char *band;
+    band = request.GetSearchBand();
+    miscDynBufAppendString(&_query, band);
+    miscDynBufAppendString(&_query, "mag=");
+
+    // Add the magnitude range constraint
+    mcsSTRING32 rangeMag;
+    mcsFLOAT minMagRange;
+    mcsFLOAT maxMagRange;
+    minMagRange = request.GetMinMagRange();
+    maxMagRange = request.GetMaxMagRange();
+    sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
+    miscDynBufAppendString(&_query, rangeMag);
+    
+    miscDynBufAppendString(&_query, "&Qflg=AAA");
+    
+    // Add search box size
+    mcsSTRING32 separation;
+    mcsFLOAT deltaRa;
+    mcsFLOAT deltaDec;
+    deltaRa = request.GetDeltaRa();
+    deltaDec = request.GetDeltaDec();
+    sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
+    miscDynBufAppendString(&_query, "&-out.max=50&-c.bm=");
+    miscDynBufAppendString(&_query, separation);
+    miscDynBufAppendString(&_query, "&-c.u=arcsec");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_query, "&-sort=_r");
+    
     return mcsSUCCESS;
 }
 

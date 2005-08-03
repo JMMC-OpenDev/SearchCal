@@ -3,11 +3,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.h,v 1.6 2005-02-11 14:22:10 gluck Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.h,v 1.7 2005-08-03 13:58:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/11 14:22:10  gluck
+* - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
+* - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
+* - Updated some comments
+*
 * Revision 1.5  2005/01/26 08:10:32  scetre
 * change history
 *
@@ -59,6 +64,7 @@ public:
 protected:
     // Method to build specific asking part
    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
+   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
 
 private:
 };
