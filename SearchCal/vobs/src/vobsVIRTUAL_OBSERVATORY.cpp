@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.27 2005-06-21 06:20:45 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.28 2005-08-03 14:02:00 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2005/06/21 06:20:45  scetre
+* Changed method Disable() and Enable() to Disabled() and Enabled()
+* Changed '\' in doxygen documentatiuon to '@'
+*
 * Revision 1.26  2005/06/13 10:19:47  scetre
 * Added Charm2, Merand and new Denis catalogs
 *
@@ -80,7 +84,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.27 2005-06-21 06:20:45 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.28 2005-08-03 14:02:00 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -236,6 +240,8 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
             scenario.AddEntry(&_cio, NULL, &_starListP, vobsCOPY);
             // II/7A
             scenario.AddEntry(&_photo, NULL, &_starListP, vobsMERGE);
+            // 2MASS
+            scenario.AddEntry(&_mass, NULL, &_starListP, vobsMERGE);
             // I/280
             scenario.AddEntry(&_ascc, &_starListP, &_starListS, vobsCOPY);
         }
@@ -264,19 +270,63 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         {
             return mcsFAILURE;
         }
-        // Add Criteria on coordinates
-        if (criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.01) == mcsFAILURE)
+        
+        /*
+         * Add Criteria on coordinates
+         */
+        if (criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.000278) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.01) == mcsFAILURE)
+        if (criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.000278) == mcsFAILURE)
         {
             return mcsFAILURE;
         }        
-        
-        // II/225
-        if (scenario.AddEntry(&_cio, &_starListS, &_starListS, vobsUPDATE_ONLY,
+        // LBSI
+        if (scenario.AddEntry(&_lbsi, &_starListS, &_starListS, vobsUPDATE_ONLY,
                               &criteriaList) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+ 
+        // MERAND
+        if (scenario.AddEntry(&_merand, &_starListS,
+                              &_starListS, vobsUPDATE_ONLY,
+                              &criteriaList) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // CHARM2
+        if (scenario.AddEntry(&_charm2, &_starListS, &_starListS,
+                              vobsUPDATE_ONLY, &criteriaList) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // DENIS_JK
+        if (scenario.AddEntry(&_denisJK, &_starListS, &_starListS,
+                              vobsUPDATE_ONLY, &criteriaList) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        /*
+         * Add mgK criteria
+         */
+        if (criteriaList.Add(vobsSTAR_PHOT_JHN_K, 0.05) == mcsFAILURE)
+        {
+        return mcsFAILURE;
+        }
+
+        // 2MASS
+        if (scenario.AddEntry(&_mass, &_starListS, &_starListS, vobsUPDATE_ONLY,
+                              &criteriaList) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
+        /*
+         * Removed mgK criteria
+         */
+        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_K) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -285,9 +335,9 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
          * Add mgV criteria
          */
         if (criteriaList.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
-          {
-          return mcsFAILURE;
-          }
+        {
+            return mcsFAILURE;
+        }
         // II/7A
         if (scenario.AddEntry(&_photo, &_starListS, &_starListS,
                               vobsUPDATE_ONLY, &criteriaList) == mcsFAILURE)
@@ -302,65 +352,12 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
             return mcsFAILURE;
         }
         
-        /*
-         * Add mgK criteria
-         */
-        if (criteriaList.Add(vobsSTAR_PHOT_JHN_K, 0.1) == mcsFAILURE)
-        {
-        return mcsFAILURE;
-        }
-
-        // 2MASS
-        if (scenario.AddEntry(&_mass, &_starListS, &_starListS, vobsUPDATE_ONLY,
+        // II/225
+        if (scenario.AddEntry(&_cio, &_starListS, &_starListS, vobsUPDATE_ONLY,
                               &criteriaList) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
-        // LBSI
-        if (scenario.AddEntry(&_lbsi, &_starListS, &_starListS, vobsUPDATE_ONLY,
-                              &criteriaList) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        // MERAND
-        if (scenario.AddEntry(&_merand, &_starListS,
-                              &_starListS, vobsUPDATE_ONLY,
-                              &criteriaList) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-
-        // CHARM
-        /*if (scenario.AddEntry(&_charm, &_starListS, &_starListS,
-                              vobsUPDATE_ONLY, &criteriaList) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }*/
-        // CHARM2
-        if (scenario.AddEntry(&_charm2, &_starListS, &_starListS,
-                              vobsUPDATE_ONLY, &criteriaList) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-
-        /*// DENIS
-        if (scenario.AddEntry(&_denis, &_starListS, &_starListS,
-                              vobsUPDATE_ONLY, &criteriaList) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }*/
-        // DENIS_JK
-        if (scenario.AddEntry(&_denisJK, &_starListS, &_starListS,
-                              vobsUPDATE_ONLY, &criteriaList) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-
-        // Removed mgK criteria
-        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_K) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        }        
 
         // Add hd criteria
         if (criteriaList.Add(vobsSTAR_ID_HD, 0) == mcsFAILURE)
