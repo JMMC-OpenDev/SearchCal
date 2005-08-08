@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.9 2005-08-03 13:58:56 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.10 2005-08-08 11:48:44 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/08/03 13:58:56  scetre
+* Added method to call 2mass catalog as a primary catalog
+* Added method WriteQuerySpecificPart(vobsREQUEST &request)
+*
 * Revision 1.8  2005/06/13 10:20:32  scetre
 * Added Qflag in query
 *
@@ -36,7 +40,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.9 2005-08-03 13:58:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.10 2005-08-08 11:48:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -151,8 +155,9 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     deltaRa = request.GetDeltaRa();
     deltaDec = request.GetDeltaDec();
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-    miscDynBufAppendString(&_query, "&-out.max=50&-c.bm=");
-    miscDynBufAppendString(&_query, separation);
+    miscDynBufAppendString(&_query, "&-out.max=50");
+    //miscDynBufAppendString(&_query, "&-c.bm=");
+    //miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcsec");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
     miscDynBufAppendString(&_query, "&-sort=_r");
