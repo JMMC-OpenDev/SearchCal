@@ -3,11 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.3 2005-02-11 14:22:10 gluck Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.4 2005-08-08 11:27:28 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/02/11 14:22:10  gluck
+ * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
+ * - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
+ * - Updated some comments
+ *
  * Revision 1.2  2005/02/04 15:10:25  gluck
  * Update documentation
  *
@@ -67,6 +72,9 @@ public:
     // Class destructor
     virtual ~vobsCATALOG_MIDI();
 
+    // Search for star list in MIDI catalog
+    virtual mcsCOMPL_STAT Search (vobsREQUEST &request, vobsSTAR_LIST &list);
+    
 protected:
     
 private:

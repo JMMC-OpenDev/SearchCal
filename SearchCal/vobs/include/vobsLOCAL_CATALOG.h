@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.1 2005-02-11 14:14:31 gluck Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.2 2005-08-08 11:27:28 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/02/11 14:14:31  gluck
+ * Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
+ *
  ******************************************************************************/
 
 /**
@@ -52,9 +55,6 @@ public:
     // Class destructor
     virtual ~vobsLOCAL_CATALOG();
 
-    // Search for star list in MIDI catalog
-    virtual mcsCOMPL_STAT Search (vobsREQUEST &request, vobsSTAR_LIST &list);
-    
 protected:
     // Flag to know if catalog is loaded or not
     mcsLOGICAL _loaded;
