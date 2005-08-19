@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2005-02-15 10:09:35 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.13 2005-08-19 13:56:54 mella Exp $"
 #
 # Makefile for MCS customization of make
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2005/02/15 10:09:35  gzins
+# Removed unused target
+#
 # Revision 1.11  2005/02/15 08:40:15  gzins
 # Added CVS log as file modification history
 #
@@ -136,22 +139,25 @@ MANl =
 # other files to be installed
 #----------------------------
 INSTALL_FILES = ../include/mkfJavaMakefile                  \
-                ../include/mkfMakefile                      \
-                ../include/mkfMakefile.all                  \
-                ../include/mkfPythonMakefile                \
-                ../config/mkfBuildDocIndex2.xsl             \
-                ../config/mkfBuildDocIndex.xsl              \
-                ../config/mkfSTKToInterface.xsl             \
-                ../config/mkfSTKToPythonHelp.xsl            \
-                ../config/mkfSTKToPythonTestForCpp.xsl      \
-                ../config/mkfSTKToPythonTestForC.xsl        \
-                ../config/mkfSTK_WriteArrayName.xsl         \
-                ../config/mkfSTK_WriteFunctionParam.xsl     \
-                ../config/mkfSTK_WriteFunctionPrototype.xsl \
-                ../config/mkfSTK_WritePointerType.xsl       \
-                ../config/mkfSTK_WriteStruct.xsl            \
-                ../config/mkfSTK_WriteTypedef.xsl           \
-                ../config/mkfSTK_WriteType.xsl
+				../include/mkfMakefile                      \
+				../include/mkfMakefile.all                  \
+				../include/mkfPythonMakefile                \
+				../config/mkfBuildDocIndex2.xsl             \
+				../config/mkfBuildDocIndex.xsl              \
+				../config/mkfEXSLT_StrReplace.xsl			\
+				../config/mkfSTKToCWrapperForCpp.xsl		\
+				../config/mkfSTKToInterface.xsl             \
+				../config/mkfSTKToPythonHelp.xsl            \
+				../config/mkfSTKToPythonTestForCpp.xsl      \
+				../config/mkfSTKToPythonTestForC.xsl        \
+				../config/mkfSTKToYorickWrapperForC.xsli	\
+				../config/mkfSTK_WriteArrayName.xsl         \
+				../config/mkfSTK_WriteFunctionParam.xsl     \
+				../config/mkfSTK_WriteFunctionPrototype.xsl \
+				../config/mkfSTK_WritePointerType.xsl       \
+				../config/mkfSTK_WriteStruct.xsl            \
+				../config/mkfSTK_WriteTypedef.xsl           \
+				../config/mkfSTK_WriteType.xsl
 
 
 #
