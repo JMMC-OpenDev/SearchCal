@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2005-08-19 13:56:54 mella Exp $"
+# "@(#) $Id: Makefile,v 1.14 2005-08-19 14:01:20 mella Exp $"
 #
 # Makefile for MCS customization of make
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2005/08/19 13:56:54  mella
+# Add some Yorick files
+#
 # Revision 1.12  2005/02/15 10:09:35  gzins
 # Removed unused target
 #
@@ -150,7 +153,7 @@ INSTALL_FILES = ../include/mkfJavaMakefile                  \
 				../config/mkfSTKToPythonHelp.xsl            \
 				../config/mkfSTKToPythonTestForCpp.xsl      \
 				../config/mkfSTKToPythonTestForC.xsl        \
-				../config/mkfSTKToYorickWrapperForC.xsli	\
+				../config/mkfSTKToYorickWrapperForC.xsl		\
 				../config/mkfSTK_WriteArrayName.xsl         \
 				../config/mkfSTK_WriteFunctionParam.xsl     \
 				../config/mkfSTK_WriteFunctionPrototype.xsl \
