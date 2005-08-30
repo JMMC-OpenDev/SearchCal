@@ -20,11 +20,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: mkfSTKToCWrapperForCpp.xsl,v 1.3 2005-06-30 13:28:35 mella Exp $"
+ "@(#) $Id: mkfSTKToCWrapperForCpp.xsl,v 1.4 2005-08-30 07:38:50 mella Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.3  2005/06/30 13:28:35  mella
+ improve generation and place #define to change type if needed
+
  Revision 1.2  2005/06/29 13:26:45  mella
  Improve code generation completion
 
@@ -83,6 +86,13 @@
 #define mcsSTRING256  char *              
 #define mcsSTRING512  char *              
 #define mcsSTRING1024 char *              
+
+/*
+ *Enum redifinition
+ */
+ <xsl:for-each select="//enum">
+#define <xsl:value-of select="./attributelist/attribute[@name='name']/@value"/> int
+</xsl:for-each>
 
 #else
 
