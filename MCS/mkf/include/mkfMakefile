@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.18 2005-02-15 10:08:01 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.19 2005-09-02 09:49:57 gzins Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2005/02/15 10:08:01  gzins
+# Updated clean target
+#
 # Revision 1.17  2005/02/15 10:03:15  gzins
 # Removed clean_dist (included to clean)
 #
@@ -233,7 +236,7 @@ endif
 
 #
 # force Bourne shell as the shell used to interpret the commands
-SHELL = /bin/ksh 
+SHELL = /bin/bash 
 
 ##################################################################
 # machine-specific stuff, special options and syntax differences #
