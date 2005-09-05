@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.19 2005-06-01 13:19:16 gzins Exp $"
+* "@(#) $Id: log.h,v 1.20 2005-09-05 14:35:17 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/06/01 13:19:16  gzins
+* Changed 'extended debug' to 'trace'
+*
 * Revision 1.18  2005/01/26 17:27:47  lafrasse
 * Added automatic CVS history, refined user documentation, removed all
 * ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
@@ -187,8 +190,10 @@ void          logGetTimeStamp(mcsBYTES32);
  */
 #define logTrace(format, arg...) \
     logPrint(MODULE_ID, logTRACE, __FILE_LINE__, format, ##arg)
+
 /* OBSSOLETE - Keep for backward-compatibility */
 #define logExtDbg logTrace
+#define logEXTDBG logTRACE
 
 
 #ifdef __cplusplus
