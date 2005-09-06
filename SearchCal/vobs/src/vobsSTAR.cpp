@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.43 2005-06-01 14:16:56 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.44 2005-09-06 12:37:41 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.43  2005/06/01 14:16:56  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.42  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -104,7 +107,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.43 2005-06-01 14:16:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.44 2005-09-06 12:37:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -932,6 +935,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_DIAM12_ERROR, "e_dia12.", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_OBS_METHOD, "Meth", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "lambda", vobsFLOAT_PROPERTY);
+    AddProperty(vobsSTAR_INST_FILTER_CODE, "lambda", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_PHOT_JHN_U, "U", vobsFLOAT_PROPERTY, "%.3f");

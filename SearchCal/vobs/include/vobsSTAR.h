@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.33 2005-08-03 14:00:57 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.34 2005-09-06 12:37:41 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.33  2005/08/03 14:00:57  scetre
+* Changed ucd name of vobsSTAR_OBS_METHOD and vobsSTAR_INST_WAVELENGTH_VALUE
+*
 * Revision 1.32  2005/03/06 10:44:03  gzins
 * Removed GetSpectralClass and GetLuminosityClass; not applicable due to the complexity of the spectral type format
 *
@@ -111,7 +114,8 @@
 #define vobsSTAR_DIAM12                         "DIAM12"
 #define vobsSTAR_DIAM12_ERROR                   "DIAM12_ERROR"
 #define vobsSTAR_OBS_METHOD                     "REDUCT_METHOD"
-#define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_FILTER_CODE"
+#define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
+#define vobsSTAR_INST_FILTER_CODE               "INST_FILTER_CODE"
 #define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
 #define vobsSTAR_UNITS                          "UNITS"
 #define vobsSTAR_PHOT_JHN_U                     "PHOT_JHN_U"
