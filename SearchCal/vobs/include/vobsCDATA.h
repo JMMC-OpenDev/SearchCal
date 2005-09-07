@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.21 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.22 2005-09-07 12:12:46 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.20  2005/03/30 12:49:26  scetre
 * Updated documentation
 *
@@ -435,15 +438,18 @@ public:
                             {
                                 // Determnine to corresponding magnitude
                                 char *magId;
-                                if (lambdaValue == (mcsFLOAT)1.25)
+                                if ((lambdaValue >= (mcsFLOAT)1.24) ||
+                                    (lambdaValue <= (mcsFLOAT)1.26))
                                 {
                                     magId = vobsSTAR_PHOT_JHN_J;
                                 }
-                                else if (lambdaValue == (mcsFLOAT)1.65)
+                                else if ((lambdaValue >= (mcsFLOAT)1.64) ||
+                                         (lambdaValue <= (mcsFLOAT)1.66))
                                 {
                                     magId = vobsSTAR_PHOT_JHN_H;
                                 }
-                                else if (lambdaValue == (mcsFLOAT)2.20)
+                                else if ((lambdaValue >= (mcsFLOAT)2.19) ||
+                                         (lambdaValue <= (mcsFLOAT)2.21))
                                 {
                                     magId = vobsSTAR_PHOT_JHN_K;
                                 }
