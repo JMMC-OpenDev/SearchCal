@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.10 2005-08-08 11:48:44 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.11 2005-09-08 07:54:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/08/08 11:48:44  scetre
+* remuve -c.bm
+*
 * Revision 1.9  2005/08/03 13:58:56  scetre
 * Added method to call 2mass catalog as a primary catalog
 * Added method WriteQuerySpecificPart(vobsREQUEST &request)
@@ -40,7 +43,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.10 2005-08-08 11:48:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.11 2005-09-08 07:54:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -109,6 +112,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=Jmag&-out=Hmag&-out=Kmag");
     miscDynBufAppendString(&_query, "&-out=Qflg&Qflg=AAA");
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
+    miscDynBufAppendString(&_query, "&opt=T");
             
     return mcsSUCCESS;
 }
@@ -146,7 +150,8 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
     miscDynBufAppendString(&_query, rangeMag);
     
-    miscDynBufAppendString(&_query, "&Qflg=AAA");
+    //miscDynBufAppendString(&_query, "&Qflg=AAA");
+    miscDynBufAppendString(&_query, "&opt=T");
     
     // Add search box size
     mcsSTRING32 separation;
@@ -156,8 +161,8 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     deltaDec = request.GetDeltaDec();
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
     miscDynBufAppendString(&_query, "&-out.max=50");
-    //miscDynBufAppendString(&_query, "&-c.bm=");
-    //miscDynBufAppendString(&_query, separation);
+    miscDynBufAppendString(&_query, "&-c.bm=");
+    miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcsec");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
     miscDynBufAppendString(&_query, "&-sort=_r");
