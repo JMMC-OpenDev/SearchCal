@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.18 2005-06-01 14:16:07 scetre Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.19 2005-09-08 14:10:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/06/01 14:16:07  scetre
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.17  2005/04/06 12:14:49  scetre
  * Changed use of pointer when alxComputeDiffMag() methods
  *
@@ -75,7 +78,7 @@
  * \sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.18 2005-06-01 14:16:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.19 2005-09-08 14:10:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -509,7 +512,7 @@ static mcsCOMPL_STAT
          * Compare B-V star differential magnitude to the one of the color table
          * line; delta should be less than +/- 0.1 
          */
-        if (fabs((mgB-mgV) - colorTable->index[line][alxB_V].value) <= 0.1)
+        if (fabs((mgB-mgV) - colorTable->index[line][alxB_V].value) <= 0.11)
         {
             /* Get differential magnitudes */
             diffMagnitudes[alxB_V].value =
@@ -543,7 +546,7 @@ static mcsCOMPL_STAT
         }
         else
         {
-            logTest("mgB-mgV = %.3f / B-V %.3f; delta > 0.1",
+            logTest("mgB-mgV = %.8e / B-V %.8e; delta > 0.1",
                     (mgB-mgV), colorTable->index[line][alxB_V].value);
         }
     }
