@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.28 2005-08-03 14:02:00 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.29 2005-09-08 08:30:44 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2005/08/03 14:02:00  scetre
+* Reorder catalog for the K band research. Add in this research 2mass as a primary catalog
+*
 * Revision 1.27  2005/06/21 06:20:45  scetre
 * Changed method Disable() and Enable() to Disabled() and Enabled()
 * Changed '\' in doxygen documentatiuon to '@'
@@ -84,7 +87,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.28 2005-08-03 14:02:00 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.29 2005-09-08 08:30:44 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -274,11 +277,11 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         /*
          * Add Criteria on coordinates
          */
-        if (criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.000278) == mcsFAILURE)
+        if (criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.000278) == mcsFAILURE)
+        if (criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) == mcsFAILURE)
         {
             return mcsFAILURE;
         }        
@@ -311,10 +314,10 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         /*
          * Add mgK criteria
          */
-        if (criteriaList.Add(vobsSTAR_PHOT_JHN_K, 0.05) == mcsFAILURE)
+        /*if (criteriaList.Add(vobsSTAR_PHOT_JHN_K, 0.05) == mcsFAILURE)
         {
         return mcsFAILURE;
-        }
+        }*/
 
         // 2MASS
         if (scenario.AddEntry(&_mass, &_starListS, &_starListS, vobsUPDATE_ONLY,
@@ -326,10 +329,10 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::LoadScenario(const char      *band,
         /*
          * Removed mgK criteria
          */
-        if (criteriaList.Remove(vobsSTAR_PHOT_JHN_K) == mcsFAILURE)
+        /*if (criteriaList.Remove(vobsSTAR_PHOT_JHN_K) == mcsFAILURE)
         {
             return mcsFAILURE;
-        }
+        }*/
         
         /*
          * Add mgV criteria
