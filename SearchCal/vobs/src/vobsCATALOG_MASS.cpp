@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.11 2005-09-08 07:54:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.12 2005-09-08 08:25:15 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/09/08 07:54:55  scetre
+* Add -opt=T
+*
 * Revision 1.10  2005/08/08 11:48:44  scetre
 * remuve -c.bm
 *
@@ -43,7 +46,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.11 2005-09-08 07:54:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.12 2005-09-08 08:25:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -110,7 +113,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     logTrace("vobsCATALOG_MASS::GetAskingSpecificParameters()");
    
     miscDynBufAppendString(&_query, "&-out=Jmag&-out=Hmag&-out=Kmag");
-    miscDynBufAppendString(&_query, "&-out=Qflg&Qflg=AAA");
+    //miscDynBufAppendString(&_query, "&-out=Qflg&Qflg=AAA");
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
     miscDynBufAppendString(&_query, "&opt=T");
             
