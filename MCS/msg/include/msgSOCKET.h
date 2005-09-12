@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.h,v 1.15 2005-09-12 13:01:24 scetre Exp $"
+ * "@(#) $Id: msgSOCKET.h,v 1.16 2005-09-12 15:42:36 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/09/12 13:01:24  scetre
+ * Added Receive method in a string and with a timeout in miscSOCKET
+ *
  * Revision 1.14  2005/02/14 07:59:01  gzins
  * Minor documentation changes
  *
@@ -57,6 +60,15 @@ class msgMESSAGE;
  * Constant declaration
  */
 
+/**
+ * Message waiting constant, specifying to not wait on a recieve
+ */
+#define msgNO_WAIT               0   
+/**
+ * Message waiting constant, specifying to wait forever on a recieve
+ */
+#define msgWAIT_FOREVER         -1
+
 const int MAXCONNECTIONS = 5;
 const int MAXRECV        = 500;
 
@@ -102,13 +114,13 @@ public:
 
     // String-related Transmission
     virtual mcsCOMPL_STAT Send         (const std::string  string) const;
-    virtual mcsCOMPL_STAT Receive      (      std::string& string) const;
     virtual mcsCOMPL_STAT Receive      (std::string& string,
-                                        mcsINT32 timeoutInMs);
+                                        mcsINT32 timeoutInMs = msgNO_WAIT);
 
     // msgMESSAGE-related Transmission
     virtual mcsCOMPL_STAT Send         (msgMESSAGE &msg);
-    virtual mcsCOMPL_STAT Receive      (msgMESSAGE &msg, mcsINT32 timeoutInMs);
+    virtual mcsCOMPL_STAT Receive      (msgMESSAGE &msg,
+                                        mcsINT32 timeoutInMs = msgNO_WAIT);
 
     virtual mcsCOMPL_STAT Close        (void);
 

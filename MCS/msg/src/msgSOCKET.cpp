@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.21 2005-09-12 13:01:24 scetre Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.22 2005-09-12 15:42:36 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/09/12 13:01:24  scetre
+ * Added Receive method in a string and with a timeout in miscSOCKET
+ *
  * Revision 1.20  2005/05/19 15:09:52  gzins
  * Improved info logs
  * Updated after TIMEOUT_EXPIRED error format change
@@ -57,7 +60,7 @@
  * \sa msgSOCKET
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.21 2005-09-12 13:01:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.22 2005-09-12 15:42:36 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -353,47 +356,6 @@ mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
     }
 
     return mcsSUCCESS;
-}
-
-/**
- * Waits until the socket received some data, then give it back as a string.
- *
- * \param string a string object that will be overwritten with the received
- * data
- *
- * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
- */
-mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
-{
-    logExtDbg("msgSOCKET::Receive()");
-
-    char buf[MAXRECV+1];
-    memset(buf, 0, MAXRECV+1);
-
-    string = "";
-
-    // Wait untill some data are received
-    int status;
-    status = recv(_descriptor, buf, MAXRECV, 0 );
-    if (status == -1)
-    {
-        errAdd(msgERR_RECV, strerror(errno));
-        return mcsFAILURE;
-    }
-    else
-    {
-        // If nothing was received
-        if (status == 0)
-        {
-            errAdd(msgERR_RECV, strerror(errno));
-            return mcsFAILURE;
-        }
-        else
-        {
-            string = buf;
-            return mcsSUCCESS;
-        }
-    }
 }
 
 /**

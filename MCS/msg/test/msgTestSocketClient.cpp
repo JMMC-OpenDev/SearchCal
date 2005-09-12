@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgTestSocketClient.cpp,v 1.5 2005-04-22 09:25:09 mella Exp $"
+* "@(#) $Id: msgTestSocketClient.cpp,v 1.6 2005-09-12 15:42:48 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/04/22 09:25:09  mella
+* Replace FAILURE by mcsFAILURE
+*
 * Revision 1.4  2005/02/09 16:41:02  lafrasse
 * Changed the way mesage are displayed (now use msgMESSAGE 'operator<<' instead of 'Display')
 *
@@ -25,7 +28,7 @@
  * \<msgTestSocketClient\>
  */
 
-static char *rcsId="@(#) $Id: msgTestSocketClient.cpp,v 1.5 2005-04-22 09:25:09 mella Exp $"; 
+static char *rcsId="@(#) $Id: msgTestSocketClient.cpp,v 1.6 2005-09-12 15:42:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -63,7 +66,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     msgMESSAGE msg;
-    string buffer = "Hello server, client speaking !";
+    string buffer = "GET /\n";
 
     // Initialize MCS services
     if (mcsInit(argv[0]) == mcsFAILURE)
@@ -72,7 +75,7 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    int portNumber = 1980;
+    int portNumber = 80;
 
     cout << "Client creating a new msgSOCKET_CLIENT object ... ";
     msgSOCKET_CLIENT clientSocket;
@@ -94,7 +97,7 @@ int main(int argc, char *argv[])
     }
     cout << "OK" << endl;
     cout << "Client receiving '";
-    if (clientSocket.Receive(buffer) == mcsFAILURE)
+    if (clientSocket.Receive(buffer, 5000) == mcsFAILURE)
     {
         cout << "KO" << endl;
         goto errCond;
@@ -171,7 +174,6 @@ int main(int argc, char *argv[])
 errCond:
     if (errStackIsEmpty() == mcsFALSE)
     {
-        errDisplayStack();
         errCloseStack();
     }
 
