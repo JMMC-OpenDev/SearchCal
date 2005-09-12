@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.20 2005-05-19 15:09:52 gzins Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.21 2005-09-12 13:01:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/05/19 15:09:52  gzins
+ * Improved info logs
+ * Updated after TIMEOUT_EXPIRED error format change
+ *
  * Revision 1.19  2005/04/04 15:09:02  gzins
  * Used SO_REUSEADDR to force socket binding even if the port is busy (in the TIME_WAIT state)
  *
@@ -53,7 +57,7 @@
  * \sa msgSOCKET
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.20 2005-05-19 15:09:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.21 2005-09-12 13:01:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -390,6 +394,91 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string) const
             return mcsSUCCESS;
         }
     }
+}
+
+/**
+ * Waits until the socket received some data, then give it back as a string.
+ *
+ * \param string a string object that will be overwritten with the received
+ * data
+ * @param timeoutInMs the number of milliseconds before a timeout occurs
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ */
+mcsCOMPL_STAT msgSOCKET::Receive(std::string& string,
+                                 mcsINT32 timeoutInMs)
+{
+    logExtDbg("msgSOCKET::Receive()");
+
+    struct timeval timeout ;
+    fd_set         readMask ;
+    int status;
+    
+    char buf[MAXRECV+1];
+    memset(buf, 0, MAXRECV+1);
+
+    string = "";
+
+    // Compute the timeout value
+    if (timeoutInMs == msgNO_WAIT)
+    {
+        timeout.tv_sec  = 0 ;
+        timeout.tv_usec = 0 ;
+    }
+    else if (timeoutInMs != msgWAIT_FOREVER )
+    {
+        timeout.tv_sec  = (timeoutInMs / 1000);
+        timeout.tv_usec = (timeoutInMs % 1000);
+    }
+
+    FD_ZERO(&readMask);
+    FD_SET(_descriptor, &readMask);
+
+    // If a timeout is defined
+    if (timeoutInMs != msgWAIT_FOREVER)
+    {
+        status = select(_descriptor + 1, &readMask, NULL, NULL, &timeout);
+    }
+    else
+    {
+        status = select(_descriptor + 1, &readMask, NULL, NULL,
+                        (struct timeval *)NULL);
+    }
+
+    // If the timeout expired...
+    if (status == 0)
+    {
+        errAdd(msgERR_TIMEOUT_EXPIRED);
+        return mcsFAILURE;
+    }
+
+    // If an error occured during select()
+    if (status == -1)
+    {
+        errAdd(msgERR_SELECT, strerror(errno));
+        return mcsFAILURE;
+    }
+    
+    // if status non equal to 0
+    while(status != 0)
+    {
+        // reinit the reveive buffer
+        memset(buf, 0, MAXRECV+1);  
+        // reveive in it the data
+        status = recv(_descriptor, buf, MAXRECV, 0 );
+        // if an error occur return error
+        if (status == -1)
+        {
+            errAdd(msgERR_RECV, strerror(errno));
+            return mcsFAILURE;
+        }
+        // else put it on the complete resulting string
+        else
+        {
+            string += buf;
+        }
+    }
+    return mcsSUCCESS;
 }
 
 /**

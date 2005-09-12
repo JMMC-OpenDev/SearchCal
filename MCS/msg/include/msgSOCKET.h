@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.h,v 1.14 2005-02-14 07:59:01 gzins Exp $"
+ * "@(#) $Id: msgSOCKET.h,v 1.15 2005-09-12 13:01:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/02/14 07:59:01  gzins
+ * Minor documentation changes
+ *
  * Revision 1.13  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -100,6 +103,8 @@ public:
     // String-related Transmission
     virtual mcsCOMPL_STAT Send         (const std::string  string) const;
     virtual mcsCOMPL_STAT Receive      (      std::string& string) const;
+    virtual mcsCOMPL_STAT Receive      (std::string& string,
+                                        mcsINT32 timeoutInMs);
 
     // msgMESSAGE-related Transmission
     virtual mcsCOMPL_STAT Send         (msgMESSAGE &msg);
