@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsQuery.sh,v 1.5 2005-03-04 15:05:52 gzins Exp $"
+# "@(#) $Id: sclinsQuery.sh,v 1.6 2005-09-12 13:58:11 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/03/04 15:05:52  gzins
+# Updated to return correct execution status, display error when execution failed and suppress useless sleep
+#
 # Revision 1.4  2005/02/28 13:48:24  scetre
 # *** empty log message ***
 #
@@ -114,7 +117,7 @@ then
 fi
 
 # Send Command to sclguiPanel
-msgSendCommand sclguiPanel GETCAL "$*"
+msgSendCommand sclguiDisplay GETCAL "$*"
 if [ $? != 0 ]
 then
     echo -e "ERROR: Request failed." 2>&1
