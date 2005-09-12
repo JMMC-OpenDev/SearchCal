@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgTestSocketClientTimeOut.cpp,v 1.1 2005-09-12 13:06:49 scetre Exp $"
+* "@(#) $Id: msgTestSocketClientTimeOut.cpp,v 1.2 2005-09-12 13:08:05 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.1  2005/09/12 13:06:49  scetre
+* Added test on Socket client with time out when receiving CDS data
+*
 * Revision 1.5  2005/04/22 09:25:09  mella
 * Replace FAILURE by mcsFAILURE
 *
@@ -28,7 +31,7 @@
  * \<msgTestSocketClient\>
  */
 
-static char *rcsId="@(#) $Id: msgTestSocketClientTimeOut.cpp,v 1.1 2005-09-12 13:06:49 scetre Exp $"; 
+static char *rcsId="@(#) $Id: msgTestSocketClientTimeOut.cpp,v 1.2 2005-09-12 13:08:05 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -66,8 +69,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     msgMESSAGE msg;
-    //static char * buffer = "GET http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=II/225/catalog\n";
-    static char * buffer = "GET /\n";
+    static char * buffer = "GET http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=II/225/catalog\n";
     string buffer2;
 
     // Initialize MCS services
