@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsQuery.sh,v 1.6 2005-09-12 13:58:11 scetre Exp $"
+# "@(#) $Id: sclinsQuery.sh,v 1.7 2005-09-12 14:00:51 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/09/12 13:58:11  scetre
+# Changed sclguiPanel to sclguiDisplay process name
+#
 # Revision 1.5  2005/03/04 15:05:52  gzins
 # Updated to return correct execution status, display error when execution failed and suppress useless sleep
 #
@@ -102,10 +105,10 @@ then
 fi
 
 # Check if SW is IDLE, if not exit 
-state=`msgSendCommand sclguiPanel STATE ""` >> /dev/null
+state=`msgSendCommand sclguiDisplay STATE ""` >> /dev/null
 if [ $? != 0 ]
 then 
-    echo "ERROR: could not send command to 'sclguiPanel'"  >&2
+    echo "ERROR: could not send command to 'sclguiDisplay'"  >&2
     exit 1
 fi
 
@@ -116,7 +119,7 @@ then
     exit 1
 fi
 
-# Send Command to sclguiPanel
+# Send Command to sclguiDisplay
 msgSendCommand sclguiDisplay GETCAL "$*"
 if [ $? != 0 ]
 then

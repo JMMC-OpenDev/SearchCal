@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsStart.sh,v 1.5 2005-03-08 13:55:27 scetre Exp $"
+# "@(#) $Id: sclinsStart.sh,v 1.6 2005-09-12 13:58:11 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/03/08 13:55:27  scetre
+# Redirect stdout of servers on /dev/null
+#
 # Revision 1.4  2005/03/08 10:14:31  gzins
 # Started process in real background with nohup
 #
@@ -97,7 +100,7 @@ then
 fi
 
 # For each process of search calibrators software
-for process in sclsvrServer sclguiPanel
+for process in sclsvrServer sclguiDisplay
 do
     # Ping the process If it is not started, start it
     msgSendCommand $process PING "" >> /dev/null 2>&1

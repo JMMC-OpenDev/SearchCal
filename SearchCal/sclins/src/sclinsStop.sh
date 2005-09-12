@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsStop.sh,v 1.2 2005-03-04 15:05:52 gzins Exp $"
+# "@(#) $Id: sclinsStop.sh,v 1.3 2005-09-12 13:58:11 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/03/04 15:05:52  gzins
+# Updated to return correct execution status, display error when execution failed and suppress useless sleep
+#
 # Revision 1.1  2005/02/25 11:16:50  scetre
 # Added script to star, stop and run Search Calibrators
 #
@@ -70,7 +73,7 @@
 # */
 
 # For each process of search calibrators software
-for process in sclsvrServer sclguiPanel
+for process in sclsvrServer sclguiDisplay
 do
     # If proces is running 
     msgSendCommand $process PING "" >> /dev/null 2>&1
