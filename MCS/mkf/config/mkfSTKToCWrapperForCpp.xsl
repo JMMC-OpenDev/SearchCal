@@ -20,11 +20,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: mkfSTKToCWrapperForCpp.xsl,v 1.4 2005-08-30 07:38:50 mella Exp $"
+ "@(#) $Id: mkfSTKToCWrapperForCpp.xsl,v 1.5 2005-09-12 06:38:00 mella Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.4  2005/08/30 07:38:50  mella
+ Add swig defines for enum types
+
  Revision 1.3  2005/06/30 13:28:35  mella
  improve generation and place #define to change type if needed
 
@@ -132,6 +135,24 @@ void <xsl:value-of select=".//attribute[@name='sym_name']/@value"/>_new(void **o
     </xsl:if>
     <xsl:text> </xsl:text>
 </xsl:for-each>
+
+/* destructor '<xsl:value-of select="./attributelist/attribute[@name='name']/@value"/>' method */
+    <!-- Destructors -->
+    <xsl:for-each select=".//destructor">
+        <xsl:variable name="className" select="ancestor::class/attributelist/attribute[@name='name']/@value"/>
+        <xsl:if test="not(.//attribute[@name='access'])">
+        <!-- remove ~ using substring function -->
+void <xsl:value-of select="$className"/>_delete(void *obj<xsl:if test=".//parmlist">, <xsl:call-template name="WriteParametersForPrototype">
+        <xsl:with-param name="Noeud" select="./attributelist/attribute[@name='name']"/>
+</xsl:call-template></xsl:if>)
+{
+    <xsl:value-of select="$className"/> *o = (<xsl:value-of select="$className"/> *)obj;
+    delete o;
+}
+    </xsl:if>
+    <xsl:text> </xsl:text>
+    </xsl:for-each>
+
 
     <!-- Methods -->
 <xsl:for-each select=".//cdecl">
