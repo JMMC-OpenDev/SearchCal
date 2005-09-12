@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2005-02-15 11:55:05 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.11 2005-09-12 13:06:49 scetre Exp $"
 #
 # Makefile of msgTest
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2005/02/15 11:55:05  gzins
+# Removed unused target
+#
 # Revision 1.9  2005/02/09 16:42:26  lafrasse
 # Added msgMESSAGE_FILTER class to manage message queues
 #
@@ -46,8 +49,9 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   = msgTestSocketClient   \
-                  msgTestSocketServer   \
+EXECUTABLES_L   = msgTestSocketClient   		\
+				  msgTestSocketClientTimeOut    \
+                  msgTestSocketServer   		\
                   msgTestManagerIFQueue
 
 #
@@ -55,6 +59,11 @@ EXECUTABLES_L   = msgTestSocketClient   \
 msgTestSocketClient_OBJECTS   = msgTestSocketClient
 msgTestSocketClient_LDFLAGS   = -lgdome
 msgTestSocketClient_LIBS      = mcs err log env cmd misc msg C++
+
+# <brief description of msgTestSocketClientTimeOut program>
+msgTestSocketClientTimeOut_OBJECTS   = msgTestSocketClientTimeOut
+msgTestSocketClientTimeOut_LDFLAGS   = -lgdome
+msgTestSocketClientTimeOut_LIBS      = mcs err log env cmd misc msg C++
 
 #
 # <brief description of msgTestSocketServer program>
