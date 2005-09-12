@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.25 2005-02-14 07:59:01 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.26 2005-09-12 15:41:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/02/14 07:59:01  gzins
+ * Minor documentation changes
+ *
  * Revision 1.24  2005/02/09 16:34:12  lafrasse
  * Changed method prototypes to use as much 'const' parameters as possible
  *
@@ -85,14 +88,6 @@
  * Constants definition
  */
 
-/**
- * Message waiting constant, specifying to not wait on a recieve
- */
-#define msgNO_WAIT               0   
-/**
- * Message waiting constant, specifying to wait forever on a recieve
- */
-#define msgWAIT_FOREVER         -1
 
 /**
  * Standard command, used to test wether a remote process is available or not
