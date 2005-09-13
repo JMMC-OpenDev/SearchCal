@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.13 2005-02-13 15:22:11 gzins Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.14 2005-09-13 11:52:04 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/02/13 15:22:11  gzins
+* Removed ParseCDATA and GetPropertyId. Moved to vobsCDATA class
+*
 * Revision 1.12  2005/02/11 10:29:26  gzins
 * Added GetPropertyId() method
 *
@@ -37,6 +40,17 @@
  */
 #include <vector>
 #include <gdome.h>
+
+/**
+ * Time out to get the CDS XML file
+ * Vizier IP adress
+ * Vizier address
+ * Port
+ */
+#define vobsTIME_OUT 240000
+#define vobsVIZIER_IP_ADDRESS "130.79.128.13"
+#define vobsVIZIER_ADRESS "vizier.u-strasbg.fr"
+#define vobsQUERY_PORT 80
 
 /*
  * header files

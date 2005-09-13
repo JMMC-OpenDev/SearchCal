@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.21 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.22 2005-09-13 11:52:04 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.20  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -62,7 +65,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.21 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.22 2005-09-13 11:52:04 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -82,6 +85,7 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "misc.h"
+#include "msg.h"
 
 /*
  * Local Headers 
@@ -139,7 +143,51 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
 
     // Load a new document from the URI
     logTest("Get XML document from '%s'", uri);
-    doc = gdome_di_createDocFromURI(domimpl, uri, GDOME_LOAD_PARSING, &exc);
+
+    msgMESSAGE msg;
+    // Create a misco buffer where is put "GET http://..." (GET + uri)
+    miscoDYN_BUF address;
+    if (address.AppendString("GET ") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (address.AppendString(uri) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (address.AppendString("\n") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Create a misco buffer whe is put all the CDS return
+    miscoDYN_BUF completeReturnBuffer;
+
+    // return string
+    string returnString;
+    
+    // Create a socket client
+    msgSOCKET_CLIENT clientSocket;
+    // Set Time out of the socket
+    if (clientSocket.Open(vobsVIZIER_IP_ADDRESS, vobsQUERY_PORT) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Send Address
+    if (clientSocket.Send(address.GetBuffer()) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Receive XML file
+    if (clientSocket.Receive(returnString, vobsTIME_OUT) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    completeReturnBuffer.AppendString(returnString.c_str());
+    
+    doc = gdome_di_createDocFromMemory(domimpl,
+                                       completeReturnBuffer.GetBuffer(),
+                                       GDOME_LOAD_PARSING, &exc);
     if (doc == NULL) 
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromURI", exc);
