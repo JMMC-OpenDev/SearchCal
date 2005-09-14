@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.8 2005-05-13 15:33:41 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.9 2005-09-14 22:05:13 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/05/13 15:33:41  gzins
+# Added -c and -t options
+# Checked $HOME and $MCSROOT differs
+#
 # Revision 1.7  2005/02/11 09:45:11  gzins
 # Added installation of misco
 #
@@ -69,8 +73,8 @@ retrieve="yes";
 tag="";
 while getopts "chut:" option
 # Initial declaration.
-# a, b, c, d, e, f, and g are the options (flags) expected.
-# The : after option 'e' shows it will have an argument passed with it.
+# c, h, u and t are the options (flags) expected.
+# The : after option 't' shows it will have an argument passed with it.
 do
   case $option in
     h ) # Help option
@@ -89,7 +93,7 @@ done
 # Check that all options have been parsed 
 if [ $# -ge $OPTIND ]
 then 
-    echo -e "\nUsage: mcsinsInstall [-h] [-u] [-t tag]" 
+    echo -e "\nUsage: mcsinsInstall [-c] [-h] [-u] [-t tag]" 
     exit 1
 fi
 
@@ -102,11 +106,39 @@ then
     exit 1
 fi
 
-#
-# Check that the home directory differs form MCSROOT 
-if [ $HOME == $MCSROOT ]
+# Check that MCSROOT is defined
+if [ "$MCSROOT" == "" ]
 then
-    echo -e "\nWARNING : MCSROOT should differ from '`whoami`' home directory !!"
+    echo -e "\nWARNING : MCSROOT is not defined!!"
+    echo -e ""
+    exit 1
+fi
+
+# Check that MCS configuration file is installed
+if [ ! -f $MCSROOT/etc/mcs.sh ]
+then
+    echo -e "\nWARNING : MCS configuration files not installed!!"
+    echo -e "Install mcscfg module first, and restart MCS installation!!"
+    echo -e ""
+    exit 1
+fi
+
+
+# Get intallation directory
+if [ "$INTROOT" != "" ]
+then
+    insDirName="INTROOT"
+    insDir=$INTROOT
+else
+    insDirName="MCSROOT"
+    insDir=$MCSROOT
+fi
+
+#
+# Check that the home directory differs from installation directory 
+if [ $HOME == $insDir ]
+then
+    echo -e "\nWARNING : $insDirName (installation directory) should differ from '`whoami`' home directory !!"
     echo -e ""
     exit 1
 fi
@@ -114,25 +146,48 @@ fi
 # Get the current directory
 dir=$PWD
 
+# Get intallation directory
+if [ "$INTROOT" != "" ]
+then
+    insDir=$INTROOT
+else
+    insDir=$MCSROOT
+fi
+
 # Propose the user to continue or abort
-echo -e "\n-> All the MCS modules will be installed from"
-echo -e "   '$dir' directory\n"
+echo -e "\n-> All the MCS modules will be installed"
+echo -e "        from : $dir"
+echo -e "        into : $insDir\n"
 if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
     echo -e "    from the current directory. Use '-u' option to only "
-    echo -e "    update modules\n"
+    echo -e "    update modules and '-c' to only compile modules.\n"
+elif [ "$retrieve" == "yes" ]
+then
+    echo -e "    WARNING: modules to be installed will be updated in the"
+    echo -e "    current directory. Use '-c' to only compile modules.\n"
 fi
 echo -e "    Press enter to continue or ^C to abort "
 read choice
 
 # List of MCS modules
-mcs_modules="mkf ctoo mcs log err misc timlog modc modcpp fnd misco env cmd msg evh gwt"
+mcsModules="mkf ctoo mcs log err misc timlog modc modcpp fnd misco env cmd msg evh gwt"
 
 # Log file
 mkdir -p INSTALL
 logfile="$dir/INSTALL/mcsinsInstall.log"
 rm -f $logfile
+
+# If modules have to be retrieved from repository; check repository
+if [ "$retrieve" == "yes" ]
+then
+    if [ "$CVSROOT" == "" ]
+    then
+        echo -e "\nERROR: 'CVSROOT' must be set ...\n";
+        exit 1;
+    fi
+fi
 
 # If modules have to be retrieved from repository
 if [ "$retrieve" == "yes" ]
@@ -142,7 +197,7 @@ then
     if [ "$update" == "no" ]
     then
         echo -e "Deleting modules..."
-        rm -rf $mcs_modules
+        rm -rf $mcsModules
     fi 
 
     # Retrieve modules from CVS repository
@@ -153,29 +208,39 @@ then
     cd $dir
     if [ "$tag" != "" ]
     then
-        cvs co -r $tag $mcs_modules > $logfile 2>&1
+        cvs co -r $tag $mcsModules > $logfile 2>&1
         if [ $? != 0 ]
         then
-            echo -e "\nERROR: 'cvs co -r $tag $mcs_modules' failed ... \n"; 
+            echo -e "\nERROR: 'cvs co -r $tag $mcsModules' failed ... \n"; 
             tail $logfile
             echo -e "See log file '$logfile' for details."
             exit 1;
         fi
     fi
 
-    cvs co $mcs_modules > $logfile 2>&1
+    cvs co $mcsModules > $logfile 2>&1
     if [ $? != 0 ]
     then
-        echo -e "\nERROR: 'cvs co $mcs_modules' failed ... \n"; 
+        echo -e "\nERROR: 'cvs co $mcsModules' failed ... \n"; 
         tail $logfile
         echo -e "See log file '$logfile' for details."
         exit 1;
     fi
 fi
 
+# Check all modules are there
+for mod in $mcsModules; do
+    cd $dir
+    if [ ! -d $mod ]
+    then
+        echo -e "\nERROR: '$mod' must be retrieved from repository first ...\n";
+        exit 1
+    fi
+done
+
 # Compile and install them
 echo -e "Building modules..."
-for mod in $mcs_modules; do
+for mod in $mcsModules; do
     cd $dir
     echo -e "    $mod..."
     cd $mod/src 
