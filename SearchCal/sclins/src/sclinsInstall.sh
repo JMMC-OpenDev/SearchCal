@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsInstall.sh,v 1.6 2005-09-14 22:04:06 gzins Exp $"
+# "@(#) $Id: sclinsInstall.sh,v 1.7 2005-09-15 07:18:08 swmgr Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/09/14 22:04:06  gzins
+# Added -c and -t options + improved checks
+#
 # Revision 1.5  2005/02/17 14:05:39  gzins
 # Changed 'make all man install' to 'make clean all man install'
 #
@@ -130,8 +133,9 @@ fi
 dir=$PWD
 
 # Propose the user to continue or abort
-echo -e "\n-> All the SCALIB modules will be installed (or just updated) from"
-echo -e "   '$dir' directory\n"
+echo -e "\n-> All the SCALIB modules will be installed (or just updated)"
+echo -e "        from     : $dir"
+echo -e "        into     : $insDir"
 if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
