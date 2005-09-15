@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.9 2005-09-14 22:05:13 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.10 2005-09-15 07:07:08 swmgr Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2005/09/14 22:05:13  gzins
+# Improved checks
+#
 # Revision 1.8  2005/05/13 15:33:41  gzins
 # Added -c and -t options
 # Checked $HOME and $MCSROOT differs
@@ -154,10 +157,18 @@ else
     insDir=$MCSROOT
 fi
 
-# Propose the user to continue or abort
+# Display informations
 echo -e "\n-> All the MCS modules will be installed"
-echo -e "        from : $dir"
-echo -e "        into : $insDir\n"
+echo -e "        from     : $dir"
+echo -e "        into     : $insDir"
+if [ -z "$tag" ]
+then
+    echo -e "        revision : last version (DEVELOPMENT)\n"
+else
+    echo -e "        revision : $tag\n"
+fi
+	    
+# Propose the user to continue or abort
 if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
