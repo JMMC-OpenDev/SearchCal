@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsRoot.sh,v 1.2 2005-03-14 10:37:16 mella Exp $"
+# "@(#) $Id: mcsRoot.sh,v 1.3 2005-09-15 06:48:29 swmgr Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/03/14 10:37:16  mella
+# Check if MCSROOT is a directory
+#
 # Revision 1.1  2005/03/11 15:44:06  mella
 # First revision
 #
@@ -19,20 +22,16 @@
 # \synopsis
 # source mcsRoot
 #
-# \n
 # \details
 # Different versions can  be founded under the /home/MCS directory.
-# A common way to use this script is to do an alias. 
+# A common way to use this script is to do an alias.
+# alias setMcsRoot='source /home/MCS/DEVELOPMENT/bin/mcsRoot'
 #
 # \usedfiles
-# OPTIONAL. If files are used, for each one, name, and usage description.
-# \filename mcs.sh :  used for new MCS environment load
+# \filename /home/MCS/<dirs> : used as list of existing revision of MCSROOT.
 #
-# \n
 # \warning
 # If this script is not sourced, one new shell is open into the old one.
-#
-# \n
 # */
 
 
@@ -70,9 +69,10 @@ case $retval in
     export MCSROOT=$choice 
     echo "MCSROOT=$MCSROOT"
     unset PATH
+    unset JAVA_HOME
     unset LD_LIBRARY_PATH
     unset MAN_PATH
-    exec /bin/bash
+    exec /bin/bash --login
     ;;
   1)
     echo "Cancel pressed.";;
