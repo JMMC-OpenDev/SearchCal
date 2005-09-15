@@ -1,16 +1,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestNetwork.c,v 1.4 2005-02-15 09:44:37 gzins Exp $"
+ * "@(#) $Id: miscTestNetwork.c,v 1.5 2005-09-15 14:19:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 09:44:37  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  03-Aug-2004  Created
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.4 2005-02-15 09:44:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.5 2005-09-15 14:19:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -18,6 +21,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 /*
@@ -81,6 +85,17 @@ int main (int argc, char *argv[])
     }
     printf("\n\n");
 
+    mcsSTRING32 host;
+    mcsSTRING32 hostIp; 
+    strcpy(host, "vizier.u-strasbg.fr");
+    if (miscGetIpByName(hostIp, host) == mcsFAILURE)
+    {
+        printf("mcsFAILURE.\n");
+        errCloseStack();
+    }
+
+    printf("IP of '%s' = '%s'\n", host, hostIp);
+    
     mcsExit();
     exit (EXIT_SUCCESS);
 }

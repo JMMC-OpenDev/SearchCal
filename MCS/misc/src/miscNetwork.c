@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/05/23 11:57:40  lafrasse
+ * Code review : user documentation refinments
+ *
  * Revision 1.3  2005/01/28 18:39:10  gzins
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
@@ -16,15 +19,20 @@
  * Declaration of miscNetwork functions.
  */
 
-static char *rcsId="@(#) $Id: miscNetwork.c,v 1.4 2005-05-23 11:57:40 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscNetwork.c,v 1.5 2005-09-15 14:19:07 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
  * System Headers
  */
+#include <stdio.h>
+#include <arpa/inet.h>
 #include <sys/utsname.h>
 #include <string.h>
-
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <netdb.h>
+#include <netinet/in.h>
 
 /* 
  * MCS Headers
@@ -87,6 +95,58 @@ mcsCOMPL_STAT miscGetHostName(char *hostName, const mcsUINT32 length)
     /* Give back the found hostname */
     strncpy(hostName, systemInfo.nodename, length);
 
+    return mcsSUCCESS;
+}
+
+/**
+ * Give host ip address from the name
+ *
+ * @param ipAddress the IP address to find
+ * @param hostName the name of the host
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscGetHostByName(char *ipAddress, const char *hostName)
+{
+
+    /* Structure used to resolved host name to IP*/
+    struct hostent *hostStructure = gethostbyname(hostName);
+    struct in_addr a;
+
+    /* if an error occur */
+    if (hostStructure == NULL)
+    {
+        if (h_errno == HOST_NOT_FOUND)
+        {
+            errAdd(miscERR_HOST_NOT_FOUND, hostName);
+            return mcsFAILURE;
+        }
+        else if ((h_errno == NO_ADDRESS) || (h_errno == NO_ADDRESS))
+        {
+            errAdd(miscERR_NO_ADDRESS, hostName);
+            return mcsFAILURE;
+        }
+        else if (h_errno == NO_RECOVERY)
+        {
+            errAdd(miscERR_NO_RECOVERY);
+            return mcsFAILURE;
+        }
+        else if (h_errno == TRY_AGAIN)
+        {
+            errAdd(miscERR_TRY_AGAIN);
+            return mcsFAILURE;
+        }
+    }
+
+    /* Get IP address */
+    while (*hostStructure->h_addr_list != NULL)
+    {
+        memcpy((char *) &a, *hostStructure->h_addr_list++, sizeof(a));
+    }
+
+    /* copy ip in the resulting ip address */
+    strcpy(ipAddress, inet_ntoa(a));
     return mcsSUCCESS;
 }
 
