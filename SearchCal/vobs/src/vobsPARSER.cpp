@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.22 2005-09-13 11:52:04 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.23 2005-09-19 10:42:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2005/09/13 11:52:04  scetre
+* Load xml file from memory after using msgSOCKET instead of loading xml file directly with gdome methods
+*
 * Revision 1.21  2005/06/01 14:16:55  scetre
 * Changed logExtDbg to logTrace
 *
@@ -65,7 +68,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.22 2005-09-13 11:52:04 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.23 2005-09-19 10:42:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -222,9 +225,31 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         return mcsFAILURE;
     }
 
-    // Print out CDATA description
+    // Print out CDATA description and Save xml file
     if (logGetStdoutLogLevel() >= logDEBUG)
     {
+        mcsSTRING32 catalog;
+        strcpy(catalog, catalogName);
+        if (miscReplaceChrByChr(catalog, '/', '_') == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        mcsSTRING256 xmlFileName;
+        strcpy(xmlFileName, "$MCSDATA/tmp/");
+        strcat(xmlFileName, catalog);
+        strcat(xmlFileName, ".xml");
+
+        const char   *resolvedPath;
+        // Resolve path
+        resolvedPath = miscResolvePath(xmlFileName);
+        if (resolvedPath != NULL)
+        {
+            if (completeReturnBuffer.SaveInFile(resolvedPath) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+
         logDebug("CDATA description");
         logDebug("   Number of lines to be skipped : %d", 
                 cData.GetNbLinesToSkip());
