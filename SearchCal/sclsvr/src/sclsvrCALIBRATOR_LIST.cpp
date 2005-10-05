@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.46 2005-06-20 14:43:25 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.47 2005-10-05 12:34:44 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.46  2005/06/20 14:43:25  scetre
+ * Removed unused FilterBy... methods
+ *
  * Revision 1.45  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -121,7 +124,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.46 2005-06-20 14:43:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.47 2005-10-05 12:34:44 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -527,7 +530,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
                                           sclsvrREQUEST &request)
 {
-    logTrace("vobsSTAR_LIST::Load()");
+    logTrace("sclsvrCALIBRATOR_LIST::Load()");
 
     // File format; by default standard format is assumed
     mcsLOGICAL extendedFormat = mcsFALSE;
