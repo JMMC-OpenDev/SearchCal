@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.12 2005-03-07 16:06:38 gzins Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.13 2005-10-05 12:35:12 scetre Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.12  2005/03/07 16:06:38  gzins
+ Removed vis and visErr options
+
  Revision 1.11  2005/03/07 13:41:04  gzins
  Removed min baseline length
  Defined magnitude range option as optional (not used in N band)
@@ -44,7 +47,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:noNamespaceSchemaLocation="cmdDefinitionFile.xsd">
     <mnemonic>GETCAL</mnemonic>
-    <desc>Get a list of interferometric calibrators for a given science object. It returns all stars, found in CDS catalogs around the science object, which can be used as calibrator during the observation. It computes for each calibrator, its diameter and the expected visibility.</desc>
+    <desc>Get a list of interferometric calibrators for a given science object. It returns any stars found in CDS catalogs around the science object, which can be used as calibrator during an observation. It computes diameters and the expected visibility for each found calibrator.</desc>
     <params>
         <param>
             <name>objectName</name>
@@ -62,7 +65,7 @@
             <name>maxReturn</name>
             <type>integer</type>
             <defaultValue><integer>50</integer></defaultValue>
-            <desc>maximum number of calibrators</desc>
+            <desc>maximum number of calibrators to be returned</desc>
         </param>
         <param>
             <name>diffRa</name>
@@ -93,14 +96,14 @@
             <type>double</type>
             <minValue><double>-5.0</double></minValue>
             <maxValue><double>20</double></maxValue>
-            <desc>minimum of the range magnitude</desc>
+            <desc>minimum of the magnitude range</desc>
         </param>
         <param optional="true">
             <name>maxMagRange</name>
             <type>double</type>
             <minValue><double>-5.0</double></minValue>
             <maxValue><double>20</double></maxValue>
-            <desc>maximum of the range magnitude</desc>
+            <desc>maximum of the magnitude range</desc>
         </param>
         <param>
             <name>ra</name>
@@ -133,7 +136,7 @@
         <param optional="true">
             <name>file</name>
             <type>string</type>
-            <desc>name of file in which results will be saved</desc>
+            <desc>name of file in which results should be saved</desc>
         </param>
     </params>        
 </cmd>
