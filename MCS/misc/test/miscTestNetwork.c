@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestNetwork.c,v 1.6 2005-09-15 14:26:20 scetre Exp $"
+ * "@(#) $Id: miscTestNetwork.c,v 1.7 2005-10-06 15:11:23 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/09/15 14:26:20  scetre
+ * Added miscGetHostByName in the miscNetwork file and test
+ *
  * Revision 1.5  2005/09/15 14:19:27  scetre
  * Added miscGetHostByName in the miscNetwork file
  *
@@ -16,7 +19,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.6 2005-09-15 14:26:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.7 2005-10-06 15:11:23 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -91,7 +94,6 @@ int main (int argc, char *argv[])
     mcsSTRING32 host;
     mcsSTRING32 hostIp; 
     strcpy(host, "vizier.u-strasbg.fr");
-    //strcpy(host, "130.79.128.13");
     if (miscGetHostByName(hostIp, host) == mcsFAILURE)
     {
         printf("mcsFAILURE.\n");
