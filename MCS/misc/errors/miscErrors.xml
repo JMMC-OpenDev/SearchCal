@@ -105,4 +105,24 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[File extension '.%s' is not supported; file '%.80s' could not be located.]]></errFormat>
    </error>
+   <error id="26">
+      <errName>HOST_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[host '%s' not found]]></errFormat>
+   </error>
+   <error id="27">
+      <errName>NO_ADDRESS</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[the name '%s' is valid but have no IP address]]></errFormat>
+   </error>
+   <error id="28">
+      <errName>NO_RECOVERY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[a fatal error of the name server append]]></errFormat>
+   </error>
+   <error id="29">
+      <errName>TRY_AGAIN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[a temporary error of the name server append, try again later]]></errFormat>
+   </error>
 </errorList>
