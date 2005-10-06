@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2005/10/06 13:08:44  lafrasse
+ * Corrected some orthography mistakes in the documentation
+ *
  * Revision 1.32  2005/05/26 16:05:11  lafrasse
  * Corrected a bug re-introduced during code review in miscResolvePath(), that was causing data loss upon call of the function on the result of another call of the same function
  *
@@ -74,7 +77,7 @@
  * "$MCSROOT/lib:$INTROOT/bin:$HOME/Dev/misc/src/../doc/").
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.33 2005-10-06 13:08:44 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.34 2005-10-06 15:12:46 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -188,6 +191,42 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char      *envVarName,
 
     /* Give back the env. var. value */
     strncpy(envVarValueBuffer, envVarValue, envVarValueBufferLength);
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Give back the integer value of a specified shell environment variable.
+ *
+ * @param envVarName a null-terminated string containing the searched
+ * environment variable name (with or without the leading '$').
+ * @param envVarIntValue an already allocated integer to receive the
+ * environment variable integer value.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscGetEnvVarIntValue (const char       *envVarName,
+                                     mcsINT32         *envVarIntValue)
+{
+    mcsSTRING64 envVarValue;
+
+    /* Get the string value associated with the given env. var. */
+    if (miscGetEnvVarValue(envVarName, envVarValue, sizeof(envVarValue)) ==
+        mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Convert the string value in an integer value */
+    mcsINT32 nbReadValue = sscanf(envVarValue, "%d", envVarIntValue);
+    if (nbReadValue != 1)
+    {
+        /* Raise an error and exit */
+        errAdd(miscERR_FILE_ENV_VAR_NOT_INT, envVarName, envVarValue);
+        return mcsFAILURE;
+    }
+
     return mcsSUCCESS;
 }
 

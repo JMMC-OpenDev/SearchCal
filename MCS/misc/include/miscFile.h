@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscFile.h,v 1.12 2005-05-20 16:22:50 lafrasse Exp $"
+ * "@(#) $Id: miscFile.h,v 1.13 2005-10-06 15:12:46 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/05/20 16:22:50  lafrasse
+ * Code review : refined user and developper documentation, functions reordering, and rationnalized miscYankExtension()
+ *
  * Revision 1.11  2005/04/06 09:31:50  gluck
  * Code review: minor changes
  *
@@ -52,6 +55,9 @@ extern "C" {
 mcsCOMPL_STAT miscGetEnvVarValue    (const char       *envVarName,
                                      char             *envVarValueBuffer,
                                      mcsUINT32         envVarValueBufferLength);
+
+mcsCOMPL_STAT miscGetEnvVarIntValue (const char       *envVarName,
+                                     mcsINT32         *envVarIntValue);
 
 char *        miscGetFileName       (const char       *fullPath);
 
