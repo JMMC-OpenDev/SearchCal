@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscLocateFile.c,v 1.8 2005-05-26 08:59:26 lafrasse Exp $"
+ * "@(#) $Id: miscLocateFile.c,v 1.9 2005-10-06 12:52:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/05/26 08:59:26  lafrasse
+ * Code review : minor modifications
+ *
  * Revision 1.7  2005/04/07 12:55:05  gluck
  * Code review: minor changes
  *
@@ -16,7 +19,7 @@
  * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
  *
  * gzins     23-Nov-2004  Returned a 'resolved' path; i.e. where environment
- *                        variables have substituated
+ *                        variables have substituted
  * gzins     09-Nov-2004  Created
  *
  ******************************************************************************/
@@ -34,7 +37,7 @@
  * \n
  * \details
  * This program searches for the specified filename in the given path list. If
- * no path list is given, it search in the standard MCS directories, according
+ * no path list is given, it searches in the standard MCS directories, according
  * to the extension of the given file. The possible first occurrence of the
  * file is returned.
  * 
@@ -51,7 +54,7 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.8 2005-05-26 08:59:26 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.9 2005-10-06 12:52:41 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
