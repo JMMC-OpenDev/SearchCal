@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhTASK.cpp,v 1.6 2005-01-26 18:23:25 gzins Exp $"
+ * "@(#) $Id: evhTASK.cpp,v 1.7 2005-10-07 06:52:09 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/01/26 18:23:25  gzins
+ * Removed all references to action log
+ *
  * gzins     09-Jun-2004  created
  * gzins     18-Nov-2004  splitted parsing and usage methods to separate
  *                        options and arguments in command-line parameters
@@ -15,7 +18,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.6 2005-01-26 18:23:25 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.7 2005-10-07 06:52:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /**
@@ -183,8 +186,9 @@ evhTASK::~evhTASK()
 /**
  * Initialization of the application.
  *
- * This method just registers application to MCS services and parses the
- * command-line parameters.
+ * This method registers application to MCS services and parses the
+ * command-line parameters, and then calls AddionalInit() before callip
+ * AppInit() method.
  *
  * \return mcsSUCCESS, or mcsFAILURE if an error occurs.
  */
@@ -204,16 +208,40 @@ mcsCOMPL_STAT evhTASK::Init(mcsINT32 argc, char *argv[])
         return (mcsFAILURE);
     }
 
-    // Perform specific application snitialization
+    // Perform additional Initializations 
+    if (AddionalInit() == mcsFAILURE)
+    {
+        return (mcsFAILURE);
+    }
+
+    // Perform specific application initializations
     return (AppInit());
+}
+
+/**
+ * Additional initialization.
+ *
+ * This method should be overloaded by the classes which inherit from evhTASK,
+ * so as to perform additional initializations before calling the AppInit()
+ * method. For example, it is uses by evhSERVER class to initialize connection
+ * with message system and register standard commands. By default, this method
+ * does nothing. This method is called by Init() method.
+ *
+ * \return mcsSUCCESS 
+ */
+mcsCOMPL_STAT evhTASK::AddionalInit()
+{
+    logExtDbg("evhSERVER::Init()");
+
+    return mcsSUCCESS;
 }
 
 /**
  * Application initialization.
  *
- * This method should be overloaded by the application classes which inherit
- * from evhTASK, so as to perform initialization of the application. By
- * default, this method does nothing.
+ * This method should be overloaded by the top class application class which
+ * inherits from evhTASK or from evhTASK derived class, so as to perform
+ * initialization of the application. By default, this method does nothing.
  * This method is called by Init() method.
  *
  * \return mcsSUCCESS 

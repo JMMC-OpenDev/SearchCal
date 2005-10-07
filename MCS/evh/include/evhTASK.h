@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhTASK.h,v 1.5 2005-01-26 18:11:00 gzins Exp $"
+ * "@(#) $Id: evhTASK.h,v 1.6 2005-10-07 06:51:40 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/01/26 18:11:00  gzins
+ * Removed references to action log
+ *
  * gzins     09-Jun-2004  created
  * gzins     18-Nov-2004  splitted parsing and usage methods to separate
  *                        options and arguments in command-line parameters
@@ -33,6 +36,7 @@ public:
     virtual ~evhTASK();
 
     virtual mcsCOMPL_STAT Init(mcsINT32 argc, char *argv[]);
+    virtual mcsCOMPL_STAT AddionalInit();
     virtual mcsCOMPL_STAT AppInit();
 
     virtual const char *Name();
