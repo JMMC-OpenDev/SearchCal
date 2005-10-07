@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.22 2005-06-01 14:16:56 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.23 2005-10-07 12:18:48 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2005/06/01 14:16:56  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.21  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -72,7 +75,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.22 2005-06-01 14:16:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.23 2005-10-07 12:18:48 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -91,6 +94,7 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "misc.h"
+#include "timlog.h"
 
 /*
  * Local Headers 
@@ -197,12 +201,38 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         
         // Start research in entry's catalog
         logInfo("Consulting %s ...", ((*_entryIterator)._catalog)->GetName());
+        
+        // define action for timlog trace
+        mcsSTRING256 timLogActionName;
+        // Get catalog name, and replace '/' by '_'
+        mcsSTRING32 catalog;
+        strcpy (catalog, ((*_entryIterator)._catalog)->GetName());
+        if (miscReplaceChrByChr(catalog, '/', '_') == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        strcpy(timLogActionName, catalog);
+        // Add request type (primary or not)
+        if ((*_entryIterator)._listInput == NULL)
+        {
+            strcat(timLogActionName, "_1");
+        }
+        else
+        {
+            strcat(timLogActionName, "_2");
+        }
+        
+        // Start time counter
+        timlogInfoStart(timLogActionName);
         // if research failed, return mcsFAILURE
         if (((*_entryIterator)._catalog)->Search(request,
                                                  tempList) == mcsFAILURE )
         {
             return mcsFAILURE;
         }
+        // Stop time counter
+        timlogStop(timLogActionName);
         
         // If the verbose level is higher or equal to debug level, the back
         // result will be stored in file
