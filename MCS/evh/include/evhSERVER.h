@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.h,v 1.10 2005-03-04 15:12:31 lafrasse Exp $"
+ * "@(#) $Id: evhSERVER.h,v 1.11 2005-10-07 06:53:12 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/03/04 15:12:31  lafrasse
+ * Added the 'EXIT' command callback and management
+ *
  * Revision 1.9  2005/01/29 20:14:52  gzins
  * Added unique parameter to Connect() method
  *
@@ -64,7 +67,7 @@ public:
                                          mcsLOGICAL *optUsed);
 
     // Init method
-    virtual mcsCOMPL_STAT Init(mcsINT32 argc, char *argv[]);
+    virtual mcsCOMPL_STAT AddionalInit();
 
     // Server state and sub-state
     virtual mcsCOMPL_STAT SetState(mcsINT32 state);

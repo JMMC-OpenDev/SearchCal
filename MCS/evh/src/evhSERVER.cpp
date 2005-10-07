@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.11 2005-03-04 15:12:31 lafrasse Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.12 2005-10-07 06:53:20 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/03/04 15:12:31  lafrasse
+ * Added the 'EXIT' command callback and management
+ *
  * Revision 1.10  2005/02/15 13:39:03  gzins
  * Changed remaiming SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -43,7 +46,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.11 2005-03-04 15:12:31 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.12 2005-10-07 06:53:20 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -199,16 +202,9 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
  *
  * \return mcsSUCCESS on successful completion or mcsFAILURE otherwise. 
  */
-mcsCOMPL_STAT evhSERVER::Init(mcsINT32 argc, char *argv[])
+mcsCOMPL_STAT evhSERVER::AddionalInit()
 {
-    logExtDbg("evhSERVER::Init()");
-
-    // Registers application to MCS services and parses the command-line
-    // parameters
-    if (evhTASK::Init(argc, argv) == mcsFAILURE)
-    {
-        return (mcsFAILURE);
-    }
+    logExtDbg("evhSERVER::AddionalInit()");
 
     // Add callback to VERSION command
     evhCMD_KEY key(evhVERSION_CMD_NAME, evhVERSION_CDF_NAME);
