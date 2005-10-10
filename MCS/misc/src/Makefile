@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2005-02-15 10:26:22 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.15 2005-10-10 12:00:38 lafrasse Exp $"
 #
 # Makefile of misc Library
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2005/02/15 10:26:22  gzins
+# Removed unused target
+#
 # Revision 1.13  2005/02/15 09:40:34  gzins
 # Added CVS log as file modification history
 #
@@ -47,7 +50,7 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = miscLocateFile
+EXECUTABLES     = miscLocateFile miscLocateDir
 EXECUTABLES_L   = 
 
 #
@@ -55,6 +58,12 @@ EXECUTABLES_L   =
 miscLocateFile_OBJECTS   = miscLocateFile
 miscLocateFile_LDFLAGS   = -lgdome
 miscLocateFile_LIBS      = mcs log err misc
+
+#
+# 
+miscLocateDir_OBJECTS   = miscLocateDir
+miscLocateDir_LDFLAGS   = -lgdome
+miscLocateDir_LIBS      = mcs log err misc
 
 #
 # special compilation flags for single c sources
@@ -119,7 +128,7 @@ tttlll_OBJECTS  =
 # man pages to be done
 # --------------------
 MANSECTIONS = 1
-MAN1 = miscLocateFile.c
+MAN1 = miscLocateFile.c miscLocateDir.c
 MAN3 =
 MAN5 =
 MAN7 =
