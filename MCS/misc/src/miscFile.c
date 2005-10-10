@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2005/10/06 15:12:46  lafrasse
+ * Added miscGetEnvVarIntValue function
+ *
  * Revision 1.33  2005/10/06 13:08:44  lafrasse
  * Corrected some orthography mistakes in the documentation
  *
@@ -77,7 +80,7 @@
  * "$MCSROOT/lib:$INTROOT/bin:$HOME/Dev/misc/src/../doc/").
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.34 2005-10-06 15:12:46 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscFile.c,v 1.35 2005-10-10 12:00:11 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -708,13 +711,13 @@ char*         miscResolvePath    (const char *unresolvedPath)
 
 
 /**
- * Test if a file exists at a given simple path.
+ * Test if a file (or a directory) exists at a given simple path.
  *
  * @param fullPath a null-terminated string containing the path to be tested.
  * @param addError an mcsLOGICAL to specify wether or not this function should
  * raise an error that tries to explain the reason why the file was not found.
  *
- * @return mcsTRUE if the file exists, mcsFALSE otherwise.
+ * @return mcsTRUE if the file or directory exists, mcsFALSE otherwise.
  */
 mcsLOGICAL    miscFileExists        (const char       *fullPath,
                                      mcsLOGICAL        addError)
@@ -796,16 +799,16 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
 
 
 /**
- * Search for a file in a composed path.
+ * Search for a file (or a directory) in a composed path.
  *
  * @warning This function is @em NOT re-entrant. The returned allocated buffer
  * will be @em DEALLOCATED on next call !\n\n
  *
  * @param path the list of path to be searched, each separated by colons (':').
- * @param fileName the seeked file name.
+ * @param fileName the seeked file or directory name.
  *
- * @return a pointer to the @em FIRST path where the file is, or NULL if not
- * found or an error occurred.
+ * @return a pointer to the @em FIRST path where the file or directory is, or
+ * NULL if not found or an error occurred.
  */
 char* miscLocateFileInPath(const char *path, const char *fileName)
 {
@@ -964,7 +967,7 @@ char* miscLocateFile (const char *fileName)
         i++;
     }
 
-    /* Return wether the file at the path or not */
+    /* Return wether the file is at the path or not */
     if (found == mcsTRUE)
     {
         return miscLocateFileInPath(pathSearchList[i][miscPATH_IDX], fileName);
@@ -974,6 +977,24 @@ char* miscLocateFile (const char *fileName)
         errAdd(miscERR_FILE_EXTENSION_UNKNOWN, fileExtension, fileName);
         return NULL;
     }
+}
+
+
+/**
+ * Search for a directory in the standard "../:$INTROOT/:$MCSROOT/" MCS path.
+ *
+ * @warning This function is @em NOT re-entrant. The returned allocated buffer
+ * will be @em DEALLOCATED on next call !\n\n
+ *
+ * @param dirName the name of the searched directory.
+ *
+ * @return a pointer to the @em FIRST path where the directory is, or NULL if
+ * not found or an error occurred.
+ */
+char* miscLocateDir (const char *dirName)
+{
+    /* Return wether the directory is at the path or not */
+    return miscLocateFileInPath("../:$INTROOT/:$MCSROOT/", dirName);
 }
 
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestFile.c,v 1.18 2005-10-06 15:12:46 lafrasse Exp $"
+ * "@(#) $Id: miscTestFile.c,v 1.19 2005-10-10 12:00:11 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/10/06 15:12:46  lafrasse
+ * Added miscGetEnvVarIntValue function
+ *
  * Revision 1.17  2005/05/26 16:05:11  lafrasse
  * Corrected a bug re-introduced during code review in miscResolvePath(), that was causing data loss upon call of the function on the result of another call of the same function
  *
@@ -31,7 +34,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestFile.c,v 1.18 2005-10-06 15:12:46 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestFile.c,v 1.19 2005-10-10 12:00:11 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,7 +49,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include "mcs.h"
 #include "err.h"
-
 
 /*
  * Local Headers 
@@ -847,6 +849,50 @@ int main (int argc, char *argv[])
     {
         printf(" -> EXIST\n");
     }
+    strcpy (string, "errors");
+    printf("Tested File = \"%s\" ", string);
+    if (miscFileExists(string, mcsFALSE) == mcsFALSE)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST\n");
+    }
+    strcpy (string, "errors/");
+    printf("Tested File = \"%s\" ", string);
+    if (miscFileExists(string, mcsFALSE) == mcsFALSE)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST\n");
+    }
+    strcpy (string, "../errors");
+    printf("Tested File = \"%s\" ", string);
+    if (miscFileExists(string, mcsFALSE) == mcsFALSE)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST\n");
+    }
+    strcpy (string, "../errors/");
+    printf("Tested File = \"%s\" ", string);
+    if (miscFileExists(string, mcsFALSE) == mcsFALSE)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST\n");
+    }
     strcpy (string, "../errors/miscErrors.xml");
     printf("Tested File = \"%s\" ", string);
     if (miscFileExists(string, mcsFALSE) == mcsFALSE)
@@ -955,6 +1001,24 @@ int main (int argc, char *argv[])
     errCloseStack();
     tmp = NULL;
     strcpy(string, "../:$INTROOT/:$MCSROOT/");
+    printf("Tested Path = '%s' - '%s'\n", string, "err");
+    tmp = miscLocateFileInPath(string, "err");
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errCloseStack();
+    tmp = NULL;
+    strcpy(string, "../:$INTROOT/:$MCSROOT/");
+    printf("Tested Path = '%s' - '%s'\n", string, "errors");
+    tmp = miscLocateFileInPath(string, "errors");
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errCloseStack();
+    tmp = NULL;
+    strcpy(string, "../:$INTROOT/:$MCSROOT/");
+    printf("Tested Path = '%s' - '%s'\n", string, "errors/");
+    tmp = miscLocateFileInPath(string, "errors/");
+    printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
+    errCloseStack();
+    tmp = NULL;
+    strcpy(string, "../:$INTROOT/:$MCSROOT/");
     printf("Tested Path = '%s' - '%s'\n", string, "miscErrors.xml");
     tmp = miscLocateFileInPath(string, "miscErrors.xml");
     printf("Valid Path = '%s'\n", (tmp==NULL?"NONE":tmp));
@@ -1017,6 +1081,76 @@ int main (int argc, char *argv[])
     strcpy (string, "miscConfig.cfg");
     printf("Tested File = \"%s\" ", string);
     if ((tmp = miscLocateFile(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    printf("\n\n");
+
+    /* Test of miscLocateDir() */
+    printf("miscLocateDir() Function Test :\n\n");
+    printf("   ---------------------------------------------------------\n");
+    printf("Tested Dir = \"%s\" ", "NULL");
+    if ((tmp = miscLocateDir(NULL)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "miscErrors");
+    printf("Tested Dir = \"%s\" ", string);
+    if ((tmp = miscLocateDir(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "err");
+    printf("Tested Dir = \"%s\" ", string);
+    if ((tmp = miscLocateDir(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "errors");
+    printf("Tested Dir = \"%s\" ", string);
+    if ((tmp = miscLocateDir(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "templates");
+    printf("Tested Dir = \"%s\" ", string);
+    if ((tmp = miscLocateDir(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "etc");
+    printf("Tested Dir = \"%s\" ", string);
+    if ((tmp = miscLocateDir(string)) == NULL)
     {
         printf(" -> DOESN'T EXIST\n");
         errCloseStack();

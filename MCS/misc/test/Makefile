@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2005-02-15 10:26:22 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.12 2005-10-10 12:00:11 lafrasse Exp $"
 #
 # Makefile of misc Tests
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2005/02/15 10:26:22  gzins
+# Removed unused target
+#
 # Revision 1.10  2005/02/15 09:44:37  gzins
 # Added CVS log as file modification history
 #
@@ -31,7 +34,7 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+USER_CFLAGS = -D_BSD_SOURCE
 #MAKE_PURIFY = ON
 #
 # additional include and library search paths
