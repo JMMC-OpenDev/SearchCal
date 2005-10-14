@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.11 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.12 2005-10-14 08:44:24 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.10  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -42,7 +45,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.11 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.12 2005-10-14 08:44:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -141,7 +144,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
     logTrace("vobsCATALOG_CIO::GetAskingConstant()");
 
     miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&&x_F(IR)=M");
-    miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20");
+    miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
     miscDynBufAppendString(&_query,"&-out.max=50");
     miscDynBufAppendString(&_query,"-c.r=1&-c.u=arcmin");
     

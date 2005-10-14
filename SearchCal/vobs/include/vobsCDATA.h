@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.22 2005-09-07 12:12:46 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.23 2005-10-14 08:44:24 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2005/09/07 12:12:46  scetre
+* Changed range of flux 1.25 1.65 2.20 from 0 to 0.1
+*
 * Revision 1.21  2005/06/01 14:16:55  scetre
 * Changed logExtDbg to logTrace
 *
@@ -452,6 +455,21 @@ public:
                                          (lambdaValue <= (mcsFLOAT)2.21))
                                 {
                                     magId = vobsSTAR_PHOT_JHN_K;
+                                }
+                                else if ((lambdaValue >= (mcsFLOAT)3.49) ||
+                                         (lambdaValue <= (mcsFLOAT)3.51))
+                                {
+                                    magId = vobsSTAR_PHOT_JHN_L;
+                                }
+                                else if ((lambdaValue >= (mcsFLOAT)4.99) ||
+                                         (lambdaValue <= (mcsFLOAT)5.01))
+                                {
+                                    magId = vobsSTAR_PHOT_JHN_M;
+                                }
+                                else if ((lambdaValue >= (mcsFLOAT)9.99) ||
+                                         (lambdaValue <= (mcsFLOAT)10.01))
+                                {
+                                    magId = vobsSTAR_PHOT_JHN_N;
                                 }
                                 else
                                 {

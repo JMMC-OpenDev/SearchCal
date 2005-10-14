@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.11 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.12 2005-10-14 08:44:24 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.10  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -44,7 +47,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.11 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.12 2005-10-14 08:44:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -119,7 +122,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
     miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query, "&-out=v1&-out=d5&-out=HIP&-out=HD");
+    miscDynBufAppendString(&_query, "&-out=v3&-out=d5&-out=HIP&-out=HD");
     miscDynBufAppendString(&_query, "&-out=DM&-sort=_r");
     
     return mcsSUCCESS;
