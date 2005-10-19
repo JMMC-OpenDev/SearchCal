@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.13 2005-10-14 08:44:24 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.14 2005-10-19 08:44:08 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/10/14 08:44:24  scetre
+* Updated p77 according to JMMC-MEM-2600-0004
+*
 * Revision 1.12  2005/09/08 08:25:15  scetre
 * remove Qflag=AAA in secondary request
 *
@@ -49,7 +52,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.13 2005-10-14 08:44:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.14 2005-10-19 08:44:08 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -170,7 +173,6 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-out.max=50");
     miscDynBufAppendString(&_query, "&-c.bm=");
     miscDynBufAppendString(&_query, separation);
-    miscDynBufAppendString(&_query, "&-c.u=arcsec");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
     miscDynBufAppendString(&_query, "&-sort=_r");
     
