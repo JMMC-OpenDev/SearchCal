@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<errorList moduleName="thrd">
+   <error id="1">
+      <errName>NULL_PARAM</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Received a NULL value for parameter '%s'.]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>ASSERT_FAILED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Assertion failed.]]></errFormat>
+   </error>
+   <error id="3">
+      <errName>THREAD_NUMBER</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[There is no system resources left to create a new thread.]]></errFormat>
+   </error>
+   <error id="4">
+      <errName>THREAD_NOT_FOUND</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[The thread with id '%d' was not found.]]></errFormat>
+   </error>
+   <error id="5">
+      <errName>THREAD_DETACHED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[The thread with id '%d' has already been detached, or another thread is already waiting on its termination.]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>THREAD_DEADLOCK</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[The thread with id '%d' refers to itself, leadind to a dead lock.]]></errFormat>
+   </error>
+</errorList>

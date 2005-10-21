@@ -1,16 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2005-10-21 15:09:01 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.1 2005-10-21 15:09:01 lafrasse Exp $"
 #
 # Makefile of thrd module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
-# Revision 1.1  2005/10/20 15:01:20  sccmgr
-# Fix directory structure and add additional files
-#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -39,14 +36,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = thrdTestThread
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+# <brief description of thrdTestThread program>
+thrdTestThread_OBJECTS   = thrdTestThread
+thrdTestThread_LDFLAGS   = 
+thrdTestThread_LIBS      = MCS thrd
 
 #
 # special compilation flags for single c sources
@@ -55,21 +52,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = thrd.h          \
-				  thrdThread.h    \
-				  thrdMutex.h     \
-				  thrdSemaphore.h
+INCLUDES        =
+
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = thrd
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
-# <brief description of thrd library>
-thrd_OBJECTS   = thrdThread    \
-                 thrdMutex     \
-                 thrdSemaphore
+# <brief description of lllll library>
+lllll_OBJECTS   =
 
 #
 # Scripts (public and local)
