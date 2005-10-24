@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.48 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.49 2005-10-24 13:09:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.48  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.47  2005/04/06 12:16:45  scetre
  * Removed unused alxNO_CONFIDENCE.
  * All actions describe in the documentation are now in the alx library
@@ -88,11 +92,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.48 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.49 2005-10-24 13:09:41 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -189,7 +193,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
  *
  * Method to complete calibrator properties by using several methods
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
@@ -267,7 +271,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 /**
  * Compute Missing magnitude
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
@@ -375,7 +379,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 /**
  * Compute Galactic Coordonate
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
@@ -422,7 +426,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 /**
  * Compute Interstellar Absorption
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
@@ -547,7 +551,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
 /**
  * Compute Angular diameter
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
@@ -674,7 +678,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 /**
  * Compute Visibility
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
@@ -821,7 +825,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
 /**
  * Compute Multiplicity
  *
- * \return Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
 {
@@ -835,7 +839,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
 /**
  * Add all star properties 
  *
- * \return mcsSUCCESS 
+ * @return mcsSUCCESS 
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
