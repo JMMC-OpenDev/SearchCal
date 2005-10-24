@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.47 2005-10-05 12:34:44 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.48 2005-10-24 13:03:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.47  2005/10/05 12:34:44  scetre
+ * Update bad logTrace
+ *
  * Revision 1.46  2005/06/20 14:43:25  scetre
  * Removed unused FilterBy... methods
  *
@@ -114,17 +117,17 @@
  * Revision 1.13  2005/02/04 14:22:50  scetre
  * Sort method for GUI added
  *
- * scetre    15-Sep-2004  Created
  * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
+ * scetre    15-Sep-2004  Created
  *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * sclsvrCALIBRATOR_LIST class definition.
   */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.47 2005-10-05 12:34:44 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.48 2005-10-24 13:03:50 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -151,6 +154,7 @@ using namespace std;
 #include "sclsvrErrors.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 
+
 /*
  * Class constructor
  */
@@ -168,9 +172,9 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 /**
  * Import list of calibrators from a list of stars.
  *
- * \param list list containing calibrators to be imported
+ * @param list list containing calibrators to be imported
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned. 
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
@@ -181,6 +185,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
     }
+
     return mcsSUCCESS;
 }
 
@@ -188,25 +193,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
  * Copy Method from a sclsvrCALIBRATOR_LIST
  * Import list of calibrators from another list.
  *
- * \param list list containing calibrators to be imported
- * \param copyDiameterNok if mcsFALSE do not copy calibrator with a no coherent
+ * @param list list containing calibrators to be imported
+ * @param copyDiameterNok if mcsFALSE do not copy calibrator with a no coherent
  * diameter
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned. 
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
                                           mcsLOGICAL copyDiameterNok)
 {
-     
     logTrace("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
+
+    // For each element of the given list
     for (unsigned int el = 0; el < list.Size(); el++)
     {
         // Get next calibrator
         sclsvrCALIBRATOR *calibrator;
         calibrator = (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
         
-        // Check if this calibrator has to be copy in or not
+        // Check wether this calibrator has to be copyied in or not
         mcsLOGICAL copyIt = mcsTRUE;
         if ((copyDiameterNok == mcsFALSE) && 
             (calibrator->IsDiameterOk() == mcsFALSE))
@@ -232,13 +238,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
  *
  * @param list the list to Extract in the current list
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Extract(sclsvrCALIBRATOR_LIST &list)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Extract()");
 
+    // For each element of the given list
     for (unsigned int el = 0; el < list.Size(); el++)
     {
         // Get next calibrator
@@ -246,6 +253,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Extract(sclsvrCALIBRATOR_LIST &list)
         calibratorToDelete =
             (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
         
+        // For each element of the internal list
         for (unsigned int elem = 0; elem < Size(); elem++)
         {
             // Get next calibrator
@@ -253,7 +261,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Extract(sclsvrCALIBRATOR_LIST &list)
             calibrator = 
                 (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(elem==0));
 
-            // if calibrtaor is in the list of deleting calibrator, remove it
+            // if calibrator is in the list of deleting calibrator, remove it
             if (calibratorToDelete->IsSame(*calibrator))
             {
                 Remove(*calibrator);
@@ -266,15 +274,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Extract(sclsvrCALIBRATOR_LIST &list)
 }
 
 /**
- * Adds the element at the end of the list
+ * Adds the given calibrator at the end of the list
  *
- * \param calibrator element to be added to the list.
- * \return
- * Always mcsSUCCESS.
+ * @param calibrator element to be added to the list.
+ *
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
 {
     logTrace("sclsvrCALIBRATOR_LIST::AddAtTail()");
+
     // Put element in the list
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(calibrator);
     _starList.push_back(newCalibrator);
@@ -283,11 +292,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
 }
 
 /**
- * Adds the element star at the end of the calibrator list
+ * Adds the given star as a calibrator at the end of the list
  *
- * \param star element to be added to the list.
- * \return
- * Always mcsSUCCESS.
+ * @param star element to be added to the list.
+ *
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
 {
@@ -306,12 +315,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
  *
  * Method to complete all calibrator of the list
  * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Complete()");
-    // for each calibrator of the list 
+
+    // For each calibrator of the list 
     for (unsigned int el = 0; el < Size(); el++)
     {
         // Complete the calibrator
@@ -323,6 +334,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
             return mcsFAILURE;
         }
     }
+
     return mcsSUCCESS;
 }
 
@@ -333,9 +345,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
  * before, or if the request Pack method is not called, it is necessary to write
  * in the buffer before the call of this method to write an empty line. 
  *
- * \param buffer the dynamic buffer in which the calibrator will be pack
+ * @param buffer the dynamic buffer in which the calibrator will be pack
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 {
@@ -359,9 +372,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 /**
  * Unpack dynamic buffer and create a list.
  *
- * \param buffer the dynamic buffer where is stord the list
+ * @param buffer the dynamic buffer where is stord the list
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
@@ -386,50 +399,53 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
 }
 
 /**
- * Method to delete a star from his number in the list
+ * Delete a star identified by its number in the list
  *
- * \param starNumber the number of the star to removed
+ * @param starNumber the number of the star to removed
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Delete(%d)", starNumber);
 
-    // if the number is negative or higher than the list size, return erro
+    // If the number is negative or higher than the list size, return erro
     if ((starNumber < 1) || (starNumber > Size()))
     {
         // todo err
         return mcsFAILURE;
     }
+
     sclsvrCALIBRATOR *calibrator;    
-    // go to the star
+    // Go to the star
     for (unsigned int el = 0; el <= starNumber-1; el++)
     {
         calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
     }
-    // Once the star is touch, remove it from the list
+
+    // Once the star is found, remove it from the list
     if (Remove(*calibrator) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
     return mcsSUCCESS;
 }
 
 /**
- * Save the elements (calibrators) of the list in a file.
+ * Save the calibrators of the list in a file.
  *
  * If given, the request is placed in the file, as a comment line.
  *
- * \param filename the file where to save
- * \param ucdList list of UCD
- * \param request request used to get this list 
- * \param extendedFormat if true, each property is saved with its attributes
+ * @param filename the file where to save
+ * @param ucdList list of UCD
+ * @param request request used to get this list 
+ * @param extendedFormat if true, each property is saved with its attributes
  * (origin and confidence index), otherwise only property is saved.
-
  *
- * \return always mcsSUCCESS
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           vobsSTAR_PROPERTY_ID_LIST ucdList,
@@ -440,12 +456,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 
     vobsCDATA cData;
 
-    // Add creation date and SW version
+    // Get creation date and SW version
     mcsSTRING32 utcTime;
     if (miscGetUtcTimeStr(0, utcTime) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
     mcsSTRING256 line;
     cData.AppendString("# JMMC - Calibrator group\n");
     cData.AppendString("#\n");
@@ -498,16 +515,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 }
 
 /**
- * Save the elements (calibrators) of the list in a file.
+ * Save the calibrators of the list in a file.
  *
  * If given, the request is placed in the file, as a comment line.
  *
- * \param filename the file where to save
- * \param extendedFormat if true, each property is saved with its attributes
+ * @param filename the file where to save
+ * @param extendedFormat if true, each property is saved with its attributes
  * (origin and confidence index), otherwise only property is saved.
- * \param request request used to get this list 
+ * @param request request used to get this list 
  *
- * \return always mcsSUCCESS
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           sclsvrREQUEST &request,
@@ -520,12 +538,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 }
 
 /**
- * Load elements (calibrators) from a file.
+ * Load calibrators from a file.
  *
- * \param filename name of file containing star list
- * \param request request object
+ * @param filename name of file containing star list
+ * @param request request object
  *
- * \return always mcsSUCCESS
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
                                           sclsvrREQUEST &request)
@@ -606,10 +625,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char *filename,
  * and declinaison position. If one of this properties is not present in the
  * list, an error is returned.
  *
- * \param scienceObject the science object
+ * @param scienceObject the science object
  * 
- * \return mcsSUCCESS if the science star had been found and had been updated,
- * else return mcsFAILURE 
+ * @return mcsSUCCESS if the science star had been found and had been updated,
+ * mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT 
 sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
