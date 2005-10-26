@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.20 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.21 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.19  2005/03/07 13:41:18  gzins
  * Remove min baseline length
  *
@@ -26,11 +30,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.20 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.21 2005-10-26 11:27:24 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -49,7 +53,15 @@ using namespace std;
 #include "err.h"
 #include "timlog.h"
 
+
+/*
+ * SCALIB Headers 
+ */
 #include "vobs.h"
+extern "C"{
+#include "simcli.h"
+}
+
 
 /*
  * Local Headers 
@@ -60,27 +72,9 @@ using namespace std;
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 
-/*
- * Class constructor
- */
-
-extern "C"{
-#include "simcli.h"
-}
-
-/*
- * Class destructor
- */
-
-
-
-/*
- * Public methods
- */
 
 evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 {
-
     logTrace("sclsvrSERVER::GetStarCB()");
 
     // Search command
@@ -96,7 +90,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     timlogInfoStart(msg.GetCommand());
 
     // Get star name 
-    char *objectName;
+    char* objectName;
     if (getStarCmd.GetObjectName(&objectName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;

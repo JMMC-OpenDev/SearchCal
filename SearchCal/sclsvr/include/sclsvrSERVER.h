@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.7 2005-03-06 20:29:40 gzins Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.8 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/03/06 20:29:40  gzins
+ * Added GetSwVersion method
+ *
  * Revision 1.6  2005/02/07 15:00:23  gzins
  * Added CVS log as modification history
  *
@@ -16,69 +19,78 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * sclsvrSERVER class declaration.
  */
-
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+
+/*
+ * MCS Headers 
+ */
 #include "evh.h"
+
+
+/*
+ * SCALIB Headers 
+ */
 #include "vobs.h"
+
+
 /*
  * Class declaration
  */
-
 /**
  * Brief description of the class, which ends at this dot.
  * 
  * OPTIONAL detailed description of the class follows here.
  *
- * \usedfiles
+ * @usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
+ * @filename fileName1 :  usage description of fileName1
+ * @filename fileName2 :  usage description of fileName2
  *
- * \n
- * \env
+ * @n
+ * @env
  * OPTIONAL. If needed, environmental variables accessed by the class. For
  * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
+ * @envvar envVar1 :  usage description of envVar1
+ * @envvar envVar2 :  usage description of envVar2
  * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
+ * @n
+ * @warning OPTIONAL. Warning if any (software requirements, ...)
  *
- * \n
- * \ex
+ * @n
+ * @ex
  * OPTIONAL. Code example if needed
- * \n Brief example description.
- * \code
+ * @n Brief example description.
+ * @code
  * Insert your code example here
- * \endcode
+ * @endcode
  *
- * \sa OPTIONAL. See also section, in which you can refer other documented
+ * @sa OPTIONAL. See also section, in which you can refer other documented
  * entities. Doxygen will create the link automatically.
- * \sa modcppMain.C
+ * @sa modcppMain.C
  * 
- * \bug OPTIONAL. Bugs list if it exists.
- * \bug For example, description of the first bug
- * \bug For example, description of the second bug
+ * @bug OPTIONAL. Bugs list if it exists.
+ * @bug For example, description of the first bug
+ * @bug For example, description of the second bug
  * 
- * \todo OPTIONAL. Things to forsee list, if needed. For example, 
- * \todo add other methods, dealing with operations.
+ * @todo OPTIONAL. Things to forsee list, if needed. For example, 
+ * @todo add other methods, dealing with operations.
  * 
  */
 class sclsvrSERVER : public evhSERVER 
 {
 
 public:
-    // Brief description of the constructor
+    // Constructor
     sclsvrSERVER();
 
-    // Brief description of the destructor
+    // Destructor
     virtual ~sclsvrSERVER();
     
     // Application initialization 

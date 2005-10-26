@@ -1,28 +1,31 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.doc,v 1.2 2005-01-21 08:10:30 gluck Exp $"
+ * "@(#) $Id: alx.doc,v 1.3 2005-10-26 11:24:01 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/01/21 08:10:30  gluck
+ * - Updated
+ * - Insert automatic rcs log in header file
  *
  * scetre     11-Oct-2004  Created
  *
  ******************************************************************************/
 
 /**
-\mainpage alx : Astronomical Library eXtension 
+@mainpage alx : Astronomical Library eXtension
 
-<b>Brief description</b>\n
+@bdesc
 The alx module provides developper an astronomical function set.
 
-<b>Detailed decription</b>\n
+@ddesc
 The module contains :
-\li alxGalacticCoordinates.c - getting galactic coordinates.
-\li alxMagnitude.c - computing magnitudes in all bands.
-\li alxRealMagnitude.c - computing the corrected magnitude according
-to the interstellar absorption.
-\li alxAngularDiameter.c - computing the angular diameter of a star according
+@li alxGalacticCoordinates.c - getting galactic coordinates.
+@li alxMagnitude.c - computing magnitudes in all bands.
+@li alxRealMagnitude.c - computing the corrected magnitude according to the
+interstellar absorption.
+@li alxAngularDiameter.c - computing the angular diameter of a star according
 to its photometric properties.
 */

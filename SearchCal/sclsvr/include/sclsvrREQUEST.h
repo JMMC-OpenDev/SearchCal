@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.7 2005-03-07 16:06:06 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.8 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/03/07 16:06:06  gzins
+ * Removed automatic sort on visibility
+ *
  * Revision 1.6  2005/03/07 13:39:46  gzins
  * Remove min baseline length
  *
@@ -29,7 +32,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Declaration of sclsvrREQUEST class.
  */
 
@@ -43,13 +46,22 @@
  */
 #include "mcs.h"
 
+
+/*
+ * SCALIB header
+ */
 #include "vobsREQUEST.h"
+
+
+/*
+ * Local header
+ */
 #include "sclsvrGETCAL_CMD.h"
+
 
 /*
  * Class declaration
  */
-
 /**
  * Class containing user requirements for visibility estimation.
  * 
@@ -68,7 +80,7 @@ public:
     // Command parameters 
     virtual mcsCOMPL_STAT Parse(const char *cmdParamLine);
     virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine);
-    
+
     // Baseline
     virtual mcsCOMPL_STAT SetMaxBaselineLength(mcsFLOAT length);
     virtual mcsFLOAT GetMaxBaselineLength(void);
@@ -80,9 +92,11 @@ public:
     // File name where file should be saved 
     virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
     virtual const char *GetFileName(void);
-    
+
+
 protected:
-    
+
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

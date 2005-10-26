@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxRealMagnitude.c,v 1.13 2005-06-01 14:16:07 scetre Exp $"
+ * "@(#) $Id: alxRealMagnitude.c,v 1.14 2005-10-26 11:24:01 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/06/01 14:16:07  scetre
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.12  2005/04/04 07:22:11  scetre
  * Updated documentation
  *
@@ -52,14 +55,14 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Function definition for corrected magnitude computation (i.e taking into
  * account interstellar absorption).
  *
- * \sa JMMC-MEM-2600-0008 document.
+ * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.13 2005-06-01 14:16:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxRealMagnitude.c,v 1.14 2005-10-26 11:24:01 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -72,6 +75,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <math.h>
 #include <ctype.h>
 
+
 /*
  * MCS Headers 
  */
@@ -80,6 +84,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "err.h"
 #include "misc.h"
 
+
 /* 
  * Local Headers
  */
@@ -87,34 +92,35 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "alxPrivate.h"
 #include "alxErrors.h"
 
+
 /*
  * Local Functions declaration
  */
 static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void);
-static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION 
-        *alxGetPolynamialForInterstellarAbsorption(void);
-static mcsCOMPL_STAT
-alxComputeExtinctionCoefficient(mcsFLOAT *av,
-                                mcsFLOAT paralax,
-                                mcsFLOAT gLat,
-                                mcsFLOAT gLon,
-                                alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
-                                    *polynomial);
+
+static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION*
+                   alxGetPolynamialForInterstellarAbsorption(void);
+
+static mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT *av,
+                                                     mcsFLOAT  paralax,
+                                                     mcsFLOAT  gLat,
+                                                     mcsFLOAT  gLon,
+                        alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION *polynomial);
+
 
 /* 
  * Local functions definition
  */
-
 /**
- * Return the extinction ratio for interstellar absorption computation 
+ * Return the extinction ratio for interstellar absorption computation .
  *
- * \return pointer onto structure containing extinction ratio table or NULL if
+ * @return pointer onto structure containing extinction ratio table, or NULL if
  * an error occured.
  *
- * \usedfiles : alxExtinctionRatioTable.cfg : configuration file containing the
+ * @usedfiles : alxExtinctionRatioTable.cfg : configuration file containing the
  * extinction ratio according to the color (i.e. magnitude band)
  */
-static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
+static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
 { 
     logTrace("alxGetExtinctionRatioTable()");
 
@@ -142,7 +148,6 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
     /* 
      * Build the dynamic buffer which will contain the file of extinction ratio
      */
-    
     /* Find the location of the file */
     char *fileName;
     fileName = miscLocateFile(extinctionRatioTable.fileName);
@@ -153,16 +158,14 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
 
     /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
-    /* initialize the dynamic buffer */
     miscDynBufInit(&dynBuf);
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
-        /* If Load of the file failed, destroy dynamic buffer */
         miscDynBufDestroy(&dynBuf);
         return NULL;
     }
 
-    /* For each line */
+    /* For each line of the loaded file */
     mcsINT32  lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
@@ -171,9 +174,10 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
     {
         logDebug("miscDynBufGetNextLine() = '%s'", line);
 
-        /* If line is not empty */
         /* Trim line for leading and trailing characters */        
         miscTrimString (line, " ");
+
+        /* If line is not empty */
         if (strlen(line) != 0)
         {
             /* Check if there is to many lines in file */
@@ -202,30 +206,39 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
                     case 'M':
                         fitzId = alxM_BAND;
                         break;
+
                     case 'L':
                         fitzId = alxL_BAND;
                         break;
+
                     case 'K':
                         fitzId = alxK_BAND;
                         break;
+
                     case 'H':
                         fitzId = alxH_BAND;
                         break;
+
                     case 'J':
                         fitzId = alxJ_BAND;
                         break;
+
                     case 'I':
                         fitzId = alxI_BAND;
                         break;
+
                     case 'R':
                         fitzId = alxR_BAND;
                         break;
+
                     case 'V':
                         fitzId = alxV_BAND;
                         break;
+
                     case 'B':
                         fitzId = alxB_BAND;
                         break;
+
                     default:
                         errAdd(alxERR_INVALID_BAND, band, fileName);
                         miscDynBufDestroy(&dynBuf);
@@ -250,7 +263,7 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
         }
     }
 
-    /* Destroy the dynamic buffr where is stored the file information */
+    /* Destroy the dynamic buffer where is stored the file information */
     miscDynBufDestroy(&dynBuf);
 
     /* Check if there is missing line */
@@ -266,17 +279,17 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void)
 }
 
 /**
- * Return the polynomial coefficients for interstellar absorption computation 
+ * Return the polynomial coefficients for interstellar absorption computation. 
  *
- * \return pointer onto structure containing polynomial coefficients or NULL if
+ * @return pointer onto structure containing polynomial coefficients, or NULL if
  * an error occured.
  *
- * \usedfiles : alxAbsIntPolynomial.cfg : configuration file containing the
+ * @usedfiles : alxAbsIntPolynomial.cfg : configuration file containing the
  * polynomial coefficients to compute the interstellar absorption. 
  * The polynomial coefficients are given for each galactic longitude range
  */
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION 
-        *alxGetPolynamialForInterstellarAbsorption(void)
+                                *alxGetPolynamialForInterstellarAbsorption(void)
 {
     logTrace("alxGetPolynamialForInterstellarAbsorption()");
 
@@ -296,7 +309,6 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
      * Build the dynamic buffer which will contain the file of coefficient 
      * of angular diameter
      */
-    
     /* Find the location of the file */
     char *fileName;
     fileName = miscLocateFile(polynomial.fileName);
@@ -307,17 +319,15 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
 
     /* Load file. Comment lines started with '#' */
     miscDYN_BUF dynBuf;
-    /* initialize the dynamic buffer */
     miscDynBufInit(&dynBuf);
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
-        /* If Load of the file failed, destroy dynamic buffer */
         miscDynBufDestroy(&dynBuf);
         return NULL;
     }
 
     /* For each line */
-    mcsINT32  lineNum=0;
+    mcsINT32 lineNum=0;
     const char *pos = NULL;
     mcsSTRING1024 line;
     while ((pos = miscDynBufGetNextLine
@@ -345,17 +355,19 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
-                       &polynomial.coeff[lineNum][3]) !=
-                alxNB_POLYNOMIAL_COEFF_ABSORPTION + 2)
+                       &polynomial.coeff[lineNum][3])
+                != alxNB_POLYNOMIAL_COEFF_ABSORPTION + 2)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 return NULL;
             }
+
             /* Next line */
             lineNum++;
         }
     }
+
     /* Destroy the dynamic buffr where is stored the file information */
     miscDynBufDestroy(&dynBuf);
 
@@ -369,22 +381,20 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
  * Compute the extinction coefficient in V band according to the galatic
  * lattitude
  *
- * \param av extinction coefficient to compute
- * \param paralax paralax value
- * \param gLat galactic Lattitude value
- * \param gLon galactic Longitude value
- * \param polynomial polynomial interstellar absorption structure
+ * @param av extinction coefficient to compute
+ * @param paralax paralax value
+ * @param gLat galactic Lattitude value
+ * @param gLon galactic Longitude value
+ * @param polynomial polynomial interstellar absorption structure
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned. 
  */
-static mcsCOMPL_STAT
-    alxComputeExtinctionCoefficient(mcsFLOAT *av,
-                                    mcsFLOAT paralax,
-                                    mcsFLOAT gLat,
-                                    mcsFLOAT gLon,
-                                    alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
-                                        *polynomial)
+static mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT* av,
+                                                     mcsFLOAT  paralax,
+                                                     mcsFLOAT  gLat,
+                                                     mcsFLOAT  gLon,
+                        alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* polynomial)
 {
     logTrace("alxComputeExtinctionCoefficient()");
 
@@ -457,22 +467,22 @@ static mcsCOMPL_STAT
     return mcsSUCCESS;
 }
 
+
 /*
  * Public functions definition
  */
-
 /**
- * Compute corrected magnitudes according to the interstellar absorption
+ * Compute corrected magnitudes according to the interstellar absorption.
  *
  * The corrected magnitudes are computed using the galactic interstellar
  * extinction model based on galatic coordinates and distance of the star.
  *
- * \param paralax the paralax
- * \param gLat the galatic lattitude in degrees
- * \param gLon the galatic longitude in degrees
- * \param magnitudes computed magnitudes in B, V, R, I, J, H, K, L and M bands
+ * @param paralax the paralax
+ * @param gLat the galatic lattitude in degrees
+ * @param gLon the galatic longitude in degrees
+ * @param magnitudes computed magnitudes in B, V, R, I, J, H, K, L and M bands
  * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 /* WARNING: the computation of corrected magnitudes based on interstellar
@@ -480,9 +490,9 @@ static mcsCOMPL_STAT
  * been implemented because there is no catalog which provides this information
  * for a representative number of stars.
  */
-mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
-                                       mcsFLOAT gLat,
-                                       mcsFLOAT gLon,
+mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT      paralax,
+                                       mcsFLOAT      gLat,
+                                       mcsFLOAT      gLon,
                                        alxMAGNITUDES magnitudes)
 {
     logTrace("alxComputeRealMagnitudes()");
@@ -517,8 +527,6 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
      * Computed corrected magnitudes.
      * Co = C - Ac
      * where Ac = Av*Rc/Rv, with Rv=3.10
-     */
-    /* 
      * If the pointer of a magnitude is NULL its means that there is nothing
      * to compute. In this case, do nothing
      */
@@ -531,8 +539,8 @@ mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT paralax,
                 - (av * extinctionRatioTable->rc[band] / 3.10);
         }
         
-        logTest("Corrected magnitude[%d] = %0.3f",
-                band, magnitudes[band].value); 
+        logTest("Corrected magnitude[%d] = %0.3f", band,
+                magnitudes[band].value); 
     }
 
     return mcsSUCCESS;

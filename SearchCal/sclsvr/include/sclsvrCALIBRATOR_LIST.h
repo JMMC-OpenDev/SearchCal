@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.25 2005-06-20 14:39:28 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.26 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/06/20 14:39:28  scetre
+ * Removed filter to vobs unless visibility filter
+ *
  * Revision 1.24  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -71,7 +74,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Brief description of the header file, which ends at this dot.
  */
 
@@ -81,10 +84,15 @@
 #endif
 
 /*
- * header files
+ * System header
  */
-#include<list>
+#include <list>
+
+/*
+ * Local header
+ */
 #include "sclsvrCALIBRATOR.h"
+
 
 /*
  * Class declaration
@@ -92,8 +100,10 @@
 class sclsvrCALIBRATOR_LIST: public vobsSTAR_LIST
 { 
 public:
-    sclsvrCALIBRATOR_LIST();//constructor
-    virtual ~sclsvrCALIBRATOR_LIST();//destructor
+    // Constructor
+    sclsvrCALIBRATOR_LIST();
+    // Destructor
+    virtual ~sclsvrCALIBRATOR_LIST();
 
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
     virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list,
@@ -122,7 +132,10 @@ public:
                                sclsvrREQUEST &request);
     
     virtual mcsCOMPL_STAT GetScienceObject(sclsvrCALIBRATOR &scienceObject);
+
+
 protected:
+
 
 private:
     // Declaration assignment operator as private
@@ -130,8 +143,6 @@ private:
     sclsvrCALIBRATOR_LIST& operator=(const sclsvrCALIBRATOR_LIST&);
     sclsvrCALIBRATOR_LIST (const sclsvrCALIBRATOR_LIST& list);//copy constructor
 };
-
-
 
 
 #endif /*!sclsvrCALIBRATOR_LIST_H*/

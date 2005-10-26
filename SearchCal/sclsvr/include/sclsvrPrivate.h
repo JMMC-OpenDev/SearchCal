@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrPrivate.h,v 1.4 2005-03-06 20:28:24 gzins Exp $"
+ * "@(#) $Id: sclsvrPrivate.h,v 1.5 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/03/06 20:28:24  gzins
+ * Added sclsvrREQUEST_TAG and sclsvrFORMAT_TAG definition
+ *
  * Revision 1.3  2005/02/07 15:00:13  gzins
  * Added CVS log as modification history
  *
@@ -16,7 +19,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Brief description of the header file, which ends at this dot.
  */
 

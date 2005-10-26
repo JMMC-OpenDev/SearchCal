@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.18 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.19 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.17  2005/03/06 20:31:13  gzins
  * Updated sclsvrCALIBRATOR_LIST::Save() API
  *
@@ -51,11 +55,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.18 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.19 2005-10-26 11:27:24 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -74,7 +78,12 @@ using namespace std;
 #include "err.h"
 #include "timlog.h"
 
+
+/*
+ * SCALIB Headers 
+ */
 #include "vobs.h"
+
 
 /*
  * Local Headers 
@@ -82,13 +91,13 @@ using namespace std;
 #include "sclsvrSERVER.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrCALIBRATOR_LIST.h"
+
+
 /*
  * Public methods
  */
-
 evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 {
-
     logTrace("sclsvrSERVER::GetCalCB()");
 
     // Build the request object from the parameters of the command
@@ -104,7 +113,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
 
-    // start the research in the virtual observatory
+    // Start the research in the virtual observatory
     if (_virtualObservatory.Search(request, starList)==mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
@@ -113,12 +122,13 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     // Build the list of calibrator
     sclsvrCALIBRATOR_LIST calibratorList;
    
-    // get the resulting star list and create a calibrator list
+    // Get the returned star list and create a calibrator list from it
     if (calibratorList.Copy(starList) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    // complete the calibrators list
+
+    // Complete the calibrators list
     if (calibratorList.Complete(request) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
@@ -128,7 +138,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     if (calibratorList.Size() != 0)
     { 
         miscoDYN_BUF dynBuff;
-
         calibratorList.Pack(&dynBuff);
         
         msg.SetBody(dynBuff.GetBuffer());
@@ -159,10 +168,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     
     return evhCB_NO_DELETE;
 }
-
-
-
-
 
 
 /*___oOo___*/

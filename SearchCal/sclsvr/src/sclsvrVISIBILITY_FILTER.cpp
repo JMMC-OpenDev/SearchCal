@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.4 2005-06-21 06:21:58 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.5 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/06/21 06:21:58  scetre
+ * Changed IsEnable() method to IsEnabled()
+ *
  * Revision 1.3  2005/06/20 14:42:11  scetre
  * Changed call to mother class from sclsvrFILTER to vobsFILTER after filter removed to vobs module
  *
@@ -19,11 +22,11 @@
  ******************************************************************************/
 
 /**
- * \file
- *  Definition of sclsvrVISIBILITY_FILTER class.
+ * @file
+ * Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.4 2005-06-21 06:21:58 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.5 2005-10-26 11:27:24 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -32,6 +35,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <iostream>
 using namespace std;
 
+
 /*
  * MCS Headers 
  */
@@ -39,11 +43,13 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 
+
 /*
  * Local Headers 
  */
 #include "sclsvrVISIBILITY_FILTER.h"
 #include "sclsvrPrivate.h"
+
 
 /**
  * Class constructor
@@ -64,11 +70,11 @@ sclsvrVISIBILITY_FILTER::~sclsvrVISIBILITY_FILTER()
  * Public methods
  */
 /**
- * Set value to the filter
+ * Set value to the filter.
  *
- * \param visMax maximum accuracy 
+ * @param visMax maximum accuracy 
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::SetVisibilityValue(mcsFLOAT visMax)
 {
@@ -80,11 +86,11 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::SetVisibilityValue(mcsFLOAT visMax)
 }
  
 /**
- * Get value to the filter
+ * Get value from the filter
  *
- * \param visMax maximum accuracy
+ * @param visMax maximum accuracy
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::GetVisibilityValue(mcsFLOAT *visMax)
 {
@@ -96,7 +102,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::GetVisibilityValue(mcsFLOAT *visMax)
 }
 
 /**
- * Apply visibility filter on a list
+ * Apply visibility filtering on a given star list.
  *
  * @param list the list on which the filter is applied
  *
@@ -107,6 +113,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("sclsvrVISIBILITY_FILTER::Apply()");
 
+    // If the visibility is enabled
     if (IsEnabled() == mcsTRUE)
     {
         // for each star of the list
@@ -114,16 +121,14 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
         mcsFLOAT starVis, starVisError;
         for (unsigned int el = 0; el < list->Size(); el++)
         {
-            star=
-                (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+
             // if it is not possible to get the visibility or the visibility 
             // error, remove the star
-            if ((star->GetPropertyValue(sclsvrCALIBRATOR_VIS2,
-                                              &starVis) ==
-                 mcsFAILURE)||
-                (star->GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR,
-                                              &starVisError) ==
-                 mcsFAILURE) )
+            if ((star->GetPropertyValue(sclsvrCALIBRATOR_VIS2, &starVis)
+                == mcsFAILURE) ||
+                (star->GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, 
+                                        &starVisError) == mcsFAILURE))
             {
                 // Remove it
                 logTest("star %d not visibility enough\n", el+1);
@@ -131,7 +136,8 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
                 {
                     return mcsFAILURE;
                 }
-                el = el-1;            
+
+                el = el-1;
             }
             // if it is possible to get the star
             else

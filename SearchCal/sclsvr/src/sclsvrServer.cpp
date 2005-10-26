@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrServer.cpp,v 1.8 2005-03-08 16:33:51 gzins Exp $"
+ * "@(#) $Id: sclsvrServer.cpp,v 1.9 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/03/08 16:33:51  gzins
+ * Disconnected process from message service before exiting
+ *
  * Revision 1.7  2005/02/08 04:52:33  gzins
  * Printed ou error stack when connection to MCS services fails
  *
@@ -17,11 +20,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Search Calibrators SERVER
  */
 
-static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.8 2005-03-08 16:33:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.9 2005-10-26 11:27:24 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -31,8 +34,9 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <stdlib.h>
 #include <iostream>
 
+
 /**
- * \namespace std
+ * @namespace std
  * Export standard iostream objects (cin, cout,...).
  */
 using namespace std;
@@ -52,15 +56,14 @@ using namespace std;
 #include "sclsvrSERVER.h"
 #include "sclsvrPrivate.h"
 
+
 /* 
  * Main
  */
-
 int main(int argc, char *argv[])
 {
+    // Init MCS event server
     sclsvrSERVER scalibServer;
-
-    // Init server
     if (scalibServer.Init(argc, argv) == mcsFAILURE)
     {
         errCloseStack();

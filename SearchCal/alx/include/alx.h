@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.13 2005-04-06 12:12:56 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.14 2005-10-26 11:24:01 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/04/06 12:12:56  scetre
+ * Changed used of float for properties to computed in alxDATA
+ *
  * Revision 1.12  2005/04/04 07:22:51  scetre
  * alxDIFFERIANTIAL_MAGNITUDES become a private structure
  *
@@ -52,7 +55,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Brief description of the header file, which ends at this dot.
  */
 
@@ -64,29 +67,33 @@ functions in C++-code.
 extern "C" {
 #endif
 
+
 /*
  * MCS header
  */
 #include "mcs.h"
+
 
 /*
  * Blanking value.
  */
 #define alxBLANKING_VALUE (float)99.99
 
+
 /**
- * Confidence index.
+ * Computed value confidence index.
  */
 typedef enum
 {
-    alxNO_CONFIDENCE  = -1, /** No confidence in computed value     */
-    alxCONFIDENCE_LOW,      /** Low confidence in computed value    */
-    alxCONFIDENCE_MEDIUM,   /** Medium confidence in computed value */
-    alxCONFIDENCE_HIGH      /** High confidence in computed value   */
+    alxNO_CONFIDENCE  = -1, /** No confidence     */
+    alxCONFIDENCE_LOW,      /** Low confidence    */
+    alxCONFIDENCE_MEDIUM,   /** Medium confidence */
+    alxCONFIDENCE_HIGH      /** High confidence   */
 } alxCONFIDENCE_INDEX;
 
+
 /**
- * Band for magnitude.
+ * Bands for magnitude.
  */
 typedef enum
 {
@@ -102,21 +109,24 @@ typedef enum
     alxNB_BANDS
 } alxBAND;
 
+
 /**
- * Structure of a magnitude with his value, the confidence index associated and
- * a logical to know if the magnitude is set or not
+ * Structure of a magnitude with its value, the confidence index associated, and
+ * a boolean flag to store wether the magnitude is set or not
  */
 typedef struct
 {
-    mcsFLOAT value;
+    mcsFLOAT            value;
     alxCONFIDENCE_INDEX confIndex;
-    mcsLOGICAL isSet; 
+    mcsLOGICAL          isSet; 
 } alxDATA;
+
 
 /**
  * Stucture of alxNB_BANDS(9) magnitudes
  */
 typedef alxDATA alxMAGNITUDES[alxNB_BANDS];
+
 
 /**
  * Structure of visibilities :
@@ -155,6 +165,7 @@ typedef struct
     mcsLOGICAL areComputed;
 } alxDIAMETERS;
 
+
 /*
  * Pubic functions declaration
  */
@@ -188,6 +199,12 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT ra,
                                      mcsFLOAT minMag,
                                      mcsFLOAT maxMag,
                                      mcsFLOAT *areaSize);
+
+mcsCOMPL_STAT alxComputeDistance(mcsFLOAT ra1,
+                                 mcsFLOAT dec1,
+                                 mcsFLOAT ra2,
+                                 mcsFLOAT dec2,
+                                 mcsFLOAT *distance);
 
 #ifdef __cplusplus
 }

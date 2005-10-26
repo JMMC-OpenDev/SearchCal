@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.15 2005-07-06 05:06:04 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.16 2005-10-26 11:24:01 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/07/06 05:06:04  gzins
+ * Improved log used for test
+ *
  * Revision 1.14  2005/06/01 14:16:07  scetre
  * Changed logExtDbg to logTrace
  *
@@ -60,13 +63,13 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Function definition for angular diameter computation.
  *
- * \sa JMMC-MEM-2600-0009 document.
+ * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.15 2005-07-06 05:06:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.16 2005-10-26 11:24:01 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -78,6 +81,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <stdlib.h>
 #include <math.h>
 
+
 /*
  * MCS Headers 
  */
@@ -86,12 +90,14 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "err.h"
 #include "misc.h"
 
+
 /* 
  * Local Headers
  */
 #include "alx.h"
 #include "alxPrivate.h"
 #include "alxErrors.h"
+
 
 /*
  * Local Functions declaration
@@ -102,14 +108,13 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void);
 /* 
  * Local functions definition
  */
-
 /**
  * Return the polynomial coefficients for angular diameter computation 
  *
- * \return pointer onto structure containing polynomial coefficients or NULL if
- * an error occured.
+ * @return pointer onto the structure containing polynomial coefficients, or
+ * NULL if an error occured.
  *
- * \usedfiles alxAngDiamPolynomialForBrightStar.cfg : file containing the
+ * @usedfiles alxAngDiamPolynomialForBrightStar.cfg : file containing the
  * polynomial coefficients to compute the angular diameter for bright star. The
  * polynomial coefficients are given for B-V, V-R and V-K.
  */
@@ -118,15 +123,15 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     logTrace("alxGetPolynamialForAngularDiameter()");
 
     /*
-     * Check if the polynomial structure, where will be stored polynomial
-     * coefficients to compute angular diameter, is loaded into memory. If not
-     * load it.
+     * Check wether the polynomial structure in which polynomial coefficients
+     * will be stored to compute angular diameter is loaded into memory or not,
+     * and load it if necessary.
      */
     static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = 
-        {mcsFALSE, "alxAngDiamPolynomialForBrightStar.cfg"};
+                            {mcsFALSE, "alxAngDiamPolynomialForBrightStar.cfg"};
     if (polynomial.loaded == mcsTRUE)
     {
-        return (&polynomial);
+        return &polynomial;
     }
 
     /* 
@@ -134,8 +139,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
      * coefficient for angular diameter computation
      */
     /* Find the location of the file */
-    char *fileName;
-    fileName = miscLocateFile(polynomial.fileName);
+    char* fileName = miscLocateFile(polynomial.fileName);
     if (fileName == NULL)
     {
         return NULL;
@@ -150,16 +154,16 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
         return NULL;
     }
 
-    /* For each line */
+    /* For each line of the loaded file */
     mcsINT32 lineNum = 0;
-    const char *pos = NULL;
+    const char* pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine
-            (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line),
+                                        mcsTRUE)) != NULL)
     {
         logTest("miscDynBufGetNextLine() = '%s'", line);
 
-        /* If line is not empty */
+        /* If the current line is not empty */
         if (miscIsSpaceStr(line) == mcsFALSE)
         {
             /* Check if there is to many lines in file */
@@ -170,15 +174,15 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
                 return NULL;
             }
 
-            /* Get polynomial coefficients */
+            /* Read polynomial coefficients */
             if (sscanf(line, "%*s %f %f %f %f %f %f",   
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
                        &polynomial.coeff[lineNum][3],
                        &polynomial.coeff[lineNum][4],
-                       &polynomial.coeff[lineNum][5]) !=
-                alxNB_POLYNOMIAL_COEFF_DIAMETER)
+                       &polynomial.coeff[lineNum][5])
+                != alxNB_POLYNOMIAL_COEFF_DIAMETER)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -189,6 +193,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
             lineNum++;
         }
     }
+
     /* Destroy the dynamic buffer where is stored the file information */
     miscDynBufDestroy(&dynBuf);
 
@@ -200,31 +205,27 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
         return NULL;
     }
     
-    /* Set to "loaded" the polynomial logical */
+    /* Specify that the polynomial has been loaded */
     polynomial.loaded = mcsTRUE;
 
-    return (&polynomial);
+    return &polynomial;
 }
 
 
 /*
  * Public functions definition
  */
-
 /**
- * Compute the angular diameter.
+ * Compute a star angular diameters from its photometric properties.
  *
- * Compute the star angular diameter from its photometric properties.
- *
- * \param mgB magnitude in band B
- * \param mgV magnitude in band V
- * \param mgR magnitude in band R
- * \param mgK magnitude in band K
- * \param diameters diameters the structure of different diameter to compute
+ * @param mgB star magnitude in band B
+ * @param mgV star magnitude in band V
+ * @param mgR star magnitude in band R
+ * @param mgK star magnitude in band K
+ * @param diameters the structure to give back all the computed diameters
  *  
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
- *
  */
 mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
                                         alxDATA mgV,
@@ -259,37 +260,37 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
     mcsFLOAT meanDiamErr;
 
     /* Compute the polynomials P(B-V), P(V-R), P(V-K) */
-    p_b_v = polynomial->coeff[0][0]
-        + polynomial->coeff[0][1] * b_v
-        + polynomial->coeff[0][2] * pow(b_v, 2)
-        + polynomial->coeff[0][3] * pow(b_v, 3)
-        + polynomial->coeff[0][4] * pow(b_v, 4)
-        + polynomial->coeff[0][5] * pow(b_v, 5);
+    p_b_v =   polynomial->coeff[0][0]
+            + polynomial->coeff[0][1] * b_v
+            + polynomial->coeff[0][2] * pow(b_v, 2)
+            + polynomial->coeff[0][3] * pow(b_v, 3)
+            + polynomial->coeff[0][4] * pow(b_v, 4)
+            + polynomial->coeff[0][5] * pow(b_v, 5);
 
-    p_v_r = polynomial->coeff[1][0]
-        + polynomial->coeff[1][1] * v_r
-        + polynomial->coeff[1][2] * pow(v_r, 2)
-        + polynomial->coeff[1][3] * pow(v_r, 3)
-        + polynomial->coeff[1][4] * pow(v_r, 4)
-        + polynomial->coeff[1][5] * pow(v_r, 5);
+    p_v_r =   polynomial->coeff[1][0]
+            + polynomial->coeff[1][1] * v_r
+            + polynomial->coeff[1][2] * pow(v_r, 2)
+            + polynomial->coeff[1][3] * pow(v_r, 3)
+            + polynomial->coeff[1][4] * pow(v_r, 4)
+            + polynomial->coeff[1][5] * pow(v_r, 5);
 
-    p_v_k = polynomial->coeff[2][0]
-        + polynomial->coeff[2][1] * v_k
-        + polynomial->coeff[2][2] * pow(v_k, 2)
-        + polynomial->coeff[2][3] * pow(v_k, 3)
-        + polynomial->coeff[2][4] * pow(v_k, 4)
-        + polynomial->coeff[2][5] * pow(v_k, 5);
+    p_v_k =   polynomial->coeff[2][0]
+            + polynomial->coeff[2][1] * v_k
+            + polynomial->coeff[2][2] * pow(v_k, 2)
+            + polynomial->coeff[2][3] * pow(v_k, 3)
+            + polynomial->coeff[2][4] * pow(v_k, 4)
+            + polynomial->coeff[2][5] * pow(v_k, 5);
 
     /* Compute the diameters D(B-V), D(V-R), D(V-K) */
-    diameters->bv.value = 9.306 * pow(10, -0.2 * mgV.value) * p_b_v;
-    diameters->vr.value = 9.306 * pow(10, -0.2 * mgV.value) * p_v_r;
-    diameters->vk.value = 9.306 * pow(10, -0.2 * mgV.value) * p_v_k;
+    diameters->bv.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_b_v;
+    diameters->vr.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_v_r;
+    diameters->vk.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_v_k;
     diameters->bvErr.value = diameters->bv.value * 8.0/100.0;
     diameters->vrErr.value = diameters->vr.value * 9.7/100.0;;
     diameters->vkErr.value = diameters->vk.value * 6.9/100.0;;
 
     /* Compute mean diameter and its associated error (10%) */
-    meanDiam = (diameters->vk.value 
+    meanDiam = (  diameters->vk.value 
                 + diameters->vr.value
                 + diameters->bv.value) / 3;
     meanDiamErr = 0.1 * meanDiam;
@@ -330,7 +331,6 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
             diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
         }
     }
-
     
     /* Display results */
     logTest("Diameter BV = %.3f(%.4f), VR = %.3f(%.4f), VK = %.3f(%.4f)", 

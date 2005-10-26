@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.9 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.10 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.8  2005/03/07 16:06:06  gzins
  * Removed automatic sort on visibility
  *
@@ -35,18 +39,20 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.9 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.10 2005-10-26 11:27:24 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
  */
 #include <iostream>
 using namespace std;
+
 
 /*
  * MCS Headers 
@@ -55,11 +61,13 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 
+
 /*
  * Local Headers 
  */
 #include "sclsvrREQUEST.h"
 #include "sclsvrPrivate.h"
+
 
 /**
  * Class constructor
@@ -68,7 +76,6 @@ sclsvrREQUEST::sclsvrREQUEST()
 {
     _maxBaselineLength = 0.0;
     _observingWlen = 0.0;
-
     _getCalCmd = NULL;
 }
 
@@ -79,9 +86,10 @@ sclsvrREQUEST::~sclsvrREQUEST()
 {
     if (_getCalCmd != NULL)
     {
-        delete (_getCalCmd);
+        delete(_getCalCmd);
     }
 }
+
 
 /*
  * Public methods
@@ -92,8 +100,10 @@ sclsvrREQUEST::~sclsvrREQUEST()
  * It retrieves the GETCAL command parameter values and set its corresponding
  * members according.
  *
- * \param cmdParamLine GETCAL command parameters
- * \return Always mcsSUCCESS.
+ * @param cmdParamLine GETCAL command parameters
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
 mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 {
@@ -275,13 +285,14 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
+
     return mcsSUCCESS;
 }
 
 /**
  * Returns the GETCAL command parameter line.
  *
- * \return command parameter line or NULL if it is not initialized 
+ * @return command parameter line or NULL if it is not initialized 
  */
 mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine)
 {
@@ -306,10 +317,11 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine)
 
     return mcsSUCCESS;
 }
+
 /**
  * Set the minimum and maximum lengths (in meter) of baseline.
  *
- * \return Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsFLOAT length)
 {
@@ -323,19 +335,19 @@ mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsFLOAT length)
 /**
  * Get the maximum baseline length.
  *
- * \return maximum baseline length.
+ * @return maximum baseline length.
  */
 mcsFLOAT sclsvrREQUEST::GetMaxBaselineLength(void)
 {
     logTrace("sclsvrREQUEST::GetMaxBaselineLength()");
 
-    return (_maxBaselineLength);
+    return _maxBaselineLength;
 }
 
 /**
  * Set the observing wavelength (um).
  *
- * \return Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsFLOAT wlen)
 {
@@ -349,21 +361,22 @@ mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsFLOAT wlen)
 /**
  * Get the observing wavelength.
  *
- * \return observing wavelength.
+ * @return observing wavelength.
  */
 mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
 {
     logTrace("sclsvrREQUEST::GetObservingWlen()");
 
-    return (_observingWlen);
+    return _observingWlen;
 }
 
 /**
  * Set the file name in which the value will be saved
  *
- * \param fileName the name of the save file
+ * @param fileName the name of the save file
  *
- * \return mcsSUCCESS or mcsFAILURE
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 {
@@ -373,19 +386,20 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
     {
         return mcsFAILURE;
     }
+
     return mcsSUCCESS;
 }
 
 /**
  * Get the name of the save file
  *
- * \return name of the save file
+ * @return name of the save file
  */
 const char *sclsvrREQUEST::GetFileName(void)
 {
     logTrace("sclsvrREQUEST::GetFileName()");
 
-    return (_fileName);
+    return _fileName;
 }
 
 /*___oOo___*/

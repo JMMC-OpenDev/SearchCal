@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.8 2005-06-01 14:16:07 scetre Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.9 2005-10-26 11:24:01 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/06/01 14:16:07  scetre
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.7  2005/04/04 07:22:11  scetre
  * Updated documentation
  *
@@ -36,14 +39,13 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Function definition for visibility computation.
  *
- * \sa JMMC-MEM-2600-0005 document 
- * 
+ * @sa JMMC-MEM-2600-0005 document 
  */
 
-static char *rcsId="@(#) $Id: alxVisibility.c,v 1.8 2005-06-01 14:16:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxVisibility.c,v 1.9 2005-10-26 11:24:01 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -62,6 +64,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "log.h"
 #include "err.h"
 
+
 /* 
  * Local Headers
  */
@@ -72,20 +75,19 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Public functions definition
  */
-
 /**
  * Compute star visibility.
  *
  * This method computes the potential calibrator visibility according to the
  * angular diameter, the length of the maximal baseline and the wavelength
  *
- * \param angDiam angular diameter of the star (mas)
- * \param angDiamError relative error on the angular diameter
- * \param baseMax maximal baseline length(m)
- * \param wlen wavelength (nm)
- * \param visibilities the computed visibilities (vis, visErr, vis2, vis2Err)
+ * @param angDiam angular diameter of the star (mas)
+ * @param angDiamError relative error on the angular diameter
+ * @param baseMax maximal baseline length(m)
+ * @param wlen wavelength (nm)
+ * @param visibilities the computed visibilities (vis, visErr, vis2, vis2Err)
  *
- * \return Always mcsSUCCESS
+ * @return Always mcsSUCCESS
  */
 mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
                                    mcsFLOAT angDiamError,
@@ -95,8 +97,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
 {
     logTrace("alxComputeVisibility()");
     
-    mcsFLOAT x;
-    x = 15.23 * baseMax * angDiam / (1000 * wlen);
+    mcsFLOAT x = 15.23 * baseMax * angDiam / (1000 * wlen);
 
     /* Compute V */
     visibilities->vis = fabs(2 * j1f(x) / x);
@@ -112,8 +113,8 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
         8 * jnf(2, x) * fabs(j1f(x)/x) * angDiamError / angDiam;
     
     /* Print out result */
-    logTest("Diam= %.3f(%.3f) - base = %.1f - wlen= %.3f",
-            angDiam, angDiamError, baseMax, wlen);
+    logTest("Diam= %.3f(%.3f) - base = %.1f - wlen= %.3f", angDiam,
+            angDiamError, baseMax, wlen);
     logTest("V   = %.6f", visibilities->vis);
     logTest("dV  = %.6f", visibilities->visError);
     logTest("V²  = %.6f", visibilities->vis2);
@@ -121,8 +122,6 @@ mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
 
     return mcsSUCCESS;
 }
-
-
 
 
 /*___oOo___*/

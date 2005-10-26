@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.6 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.7 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.5  2005/03/06 20:29:40  gzins
  * Added GetSwVersion method
  *
@@ -16,11 +20,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.6 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.7 2005-10-26 11:27:24 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -48,6 +52,7 @@ using namespace std;
 #include "sclsvrPrivate.h"
 #include "sclsvrVersion.h"
 
+
 /*
  * Class constructor
  */
@@ -61,6 +66,7 @@ sclsvrSERVER::sclsvrSERVER()
 sclsvrSERVER::~sclsvrSERVER()
 {
 }
+
 
 /*
  * Public methods
@@ -80,7 +86,6 @@ mcsCOMPL_STAT sclsvrSERVER::AppInit()
     return mcsSUCCESS;
 }
  
-
 /**
  * Return the version number of the software.
  */
@@ -89,16 +94,15 @@ const char *sclsvrSERVER::GetSwVersion()
     return sclsvrVERSION;
 }
 
+
 /*
  * Protected methods
  */
 
 
-
 /*
  * Private methods
  */
-
 
 
 /*___oOo___*/

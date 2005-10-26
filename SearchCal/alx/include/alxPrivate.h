@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.8 2005-06-01 14:16:07 scetre Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.9 2005-10-26 11:24:01 lafrasse Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/06/01 14:16:07  scetre
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.7  2005/04/06 12:12:56  scetre
  * Changed used of float for properties to computed in alxDATA
  *
@@ -36,7 +39,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * alxPrivate header file 
  */
 
@@ -57,8 +60,10 @@ extern "C" {
 #endif
 
 /******** Macros and structure for angular diameter computation */
-/* Number of color indexes used to compute the angular diameter : (B-V), (V-R),
- * (V-K) */
+/*
+ * Number of color indexes used to compute the angular diameter : (B-V), (V-R),
+ * (V-K)
+ */
 #define alxNB_COLOR_INDEXES 3
     
 /*
@@ -66,6 +71,7 @@ extern "C" {
  * are stored in file.
  */
 #define alxNB_POLYNOMIAL_COEFF_DIAMETER 6
+
 /*
  * Structure of the an coefficient table for compute angular diameter
  */
@@ -90,6 +96,7 @@ typedef struct
  *  M0 to M8  ---->  line 53 to 61
  */
 #define alxNB_SPECTRAL_TYPES 61
+
 /*
  * spectral type structure.
  *

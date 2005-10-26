@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.3 2005-06-20 14:42:11 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.4 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/06/20 14:42:11  scetre
+ * Changed call to mother class from sclsvrFILTER to vobsFILTER after filter removed to vobs module
+ *
  * Revision 1.2  2005/06/07 12:35:59  scetre
  * Updated documentation
  *
@@ -32,19 +35,25 @@
  */
 #include "mcs.h"
 
+
+/*
+ * SCALIB header
+ */
+#include "vobsFILTER.h"
+
+
 /*
  * Local header
  */
-#include "vobsFILTER.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 
 
 #define sclsvrVISIBILITY_FILTER_NAME "Filter by Visibility"
 
+
 /*
  * Class declaration
  */
-
 /**
  * Visibility filter class.
  * 
@@ -52,11 +61,9 @@
  *
  * @sa vobsFILTER.cpp
  * @sa sclsvrCALIBRATOR_LIST.cpp
- * 
  */
 class sclsvrVISIBILITY_FILTER : public vobsFILTER
 {
-
 public:
     // Class constructor
     sclsvrVISIBILITY_FILTER();
@@ -70,7 +77,9 @@ public:
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);    
 
+
 protected:
+
     
 private:
     // Declaration of copy constructor and assignment operator as private

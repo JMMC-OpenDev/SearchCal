@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.25 2005-03-07 16:05:52 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.26 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/03/07 16:05:52  gzins
+ * Removed automatic sort on visibility
+ *
  * Revision 1.24  2005/02/23 17:04:15  scetre
  * Added vis and visErr 8mu and 13mu
  *
@@ -31,7 +34,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * sclsvrCALIBRATOR class declaration.
  */
 
@@ -39,16 +42,22 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+
+/*
+ * SCALIB header
+ */
+#include "vobs.h"
+
+
 /*
  * Local header
  */
-#include "vobs.h"
 #include "sclsvrREQUEST.h"
+
 
 /* 
  * Constants definition
  */
-
 /* Definition of the calibrators properties */
 #define sclsvrCALIBRATOR_MO                 "MO"
 #define sclsvrCALIBRATOR_LO                 "LO"
@@ -88,25 +97,26 @@ public:
     // Destructor
     virtual ~sclsvrCALIBRATOR();    
   
-    // method to complete calibrator properties
+    // Complete calibrator properties
     mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
  
-    // Say if the calibrator had coherent diameter
+    // Return wether the calibrator has a coherent diameter or not
     virtual mcsLOGICAL IsDiameterOk();
 
 protected:
     
 private:
-    // Method to define all star properties
+    // Define all star properties
     mcsCOMPL_STAT AddProperties(void);
 
-    // Method to compute specific property
+    // Compute specific property
     mcsCOMPL_STAT ComputeMissingMagnitude();
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeInterstellarAbsorption();
     mcsCOMPL_STAT ComputeAngularDiameter();
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeMultiplicity(); 
+    mcsCOMPL_STAT ComputeDistance(); 
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.49 2005-10-24 13:09:41 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.50 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.49  2005/10/24 13:09:41  lafrasse
+ * Refined code documentation
+ *
  * Revision 1.48  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -96,7 +99,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.49 2005-10-24 13:09:41 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.50 2005-10-26 11:27:24 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -104,9 +107,9 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * System Headers 
  */
 #include <iostream>
-
 using namespace std;
 #include "gdome.h"
+
 
 /*
  * MCS Headers 
@@ -114,21 +117,25 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+
+
+/*
+ * SCALIB Headers 
+ */
 #include "alx.h"
 #include "alxErrors.h"
+
 
 /*
  * Local Headers 
  */
-#include "sclsvrCALIBRATOR.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrErrors.h"
+#include "sclsvrCALIBRATOR.h"
 
 
 /**
  * Class constructor.
- *
- * Build a calibrator object.
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR()
 {
@@ -136,8 +143,8 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR()
     AddProperties();
 }
 
-/*
- * Copy Constructor
+/**
+ * Copy Constructor.
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR(vobsSTAR &star)
 {
@@ -147,51 +154,42 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(vobsSTAR &star)
     AddProperties(); 
 }
 
-
-
-/*
- * Class destructor
+/**
+ * Class destructor.
  */
 sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
 {
 }
 
+
 /*
  * Public methods
  */
 /**
- * Say if the calibrator had a coherent diameter
+ * Return wether the calibrator has a coherent diameter or not.
  */
 mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
 {
-    // If diameter has not been computed
+    // If diameter has not been computed yet
     if (IsPropertySet(sclsvrCALIBRATOR_DIAM_FLAG) == mcsFALSE)
     {
-        // Return false
         return mcsFALSE;
     }
-    // Else
-    else
+
+    // Get the flag, and test it
+    const char* flag = GetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG);
+    if (strcmp(flag, "OK") != 0)
     {
-        // Get the flag, and test it
-        const char *flag;
-        flag = GetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG);
-        if (strcmp(flag, "OK") == 0)
-        {
-            return mcsTRUE;
-        }
-        else
-        {
-            return mcsFALSE;
-        }
+        return mcsFALSE;
     }
-    // End if
+
+    return mcsTRUE;
 }
 
 /**
- * Complete the property of the calibrator
+ * Complete the property of the calibrator.
  *
- * Method to complete calibrator properties by using several methods
+ * Method to complete calibrator properties by using several methods.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -201,8 +199,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     logTrace("sclsvrCALIBRATOR::Complete()");
     
     // Get the observed band
-    const char *band;
-    band = request.GetSearchBand();
+    const char* band = request.GetSearchBand();
 
     // Compute Galactic coordinates
     if (ComputeGalacticCoordinates() == mcsFAILURE)
@@ -254,11 +251,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         return mcsFAILURE;
     }
 
-    // compute multiplicity
+    // Compute multiplicity
     if (ComputeMultiplicity() == mcsFAILURE)
     {
         return mcsFAILURE;
-    } // end multiplicity
+    }
+
+    // Compute distance
+    if (ComputeDistance() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     return mcsSUCCESS;
 }
@@ -267,9 +270,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 /*
  * Private methods
  */
-
 /**
- * Compute Missing magnitude
+ * Compute missing magnitude.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -280,10 +282,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 
     //mcsFLOAT magnitudes[alxNB_BANDS];
     alxMAGNITUDES magnitudes;
+
     // WARNING: Property Id lists should be defined in the same order than
     // alxBAND enumerate. In order to be able to use this enumerate as index of
     // this list.
-    char *mag0PropertyId[alxNB_BANDS] = 
+    char* mag0PropertyId[alxNB_BANDS] = 
     {
         sclsvrCALIBRATOR_BO,
         sclsvrCALIBRATOR_VO,
@@ -296,9 +299,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
         sclsvrCALIBRATOR_MO
     };
     
-    mcsSTRING32 spType;
     //Get the value of the Spectral Type
+    mcsSTRING32 spType;
     strcpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
+
     // Get the value of the magnitude in the different band
     // if B or V is not present, return mcsFAILURE
     if (IsPropertySet(mag0PropertyId[alxB_BAND]) == mcsTRUE)
@@ -311,17 +315,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
         }
         magnitudes[alxB_BAND].isSet=mcsTRUE;
     }
+
     // Get the value of magnitude V
     if (IsPropertySet(mag0PropertyId[alxV_BAND]) == mcsTRUE)
     {
         if (GetPropertyValue(mag0PropertyId[alxV_BAND], 
-                             &magnitudes[alxV_BAND].value) ==
-            mcsFAILURE)
+                             &magnitudes[alxV_BAND].value) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
+
         magnitudes[alxV_BAND].isSet=mcsTRUE;
     }
+
     // For other magnitudes
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
@@ -329,10 +335,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
         if (IsPropertySet(mag0PropertyId[band]) == mcsTRUE)
         {
             if (GetPropertyValue(mag0PropertyId[band],
-                             &magnitudes[band].value) == mcsFAILURE)
+                                 &magnitudes[band].value) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
+
             magnitudes[band].isSet=mcsTRUE;
         }
     }
@@ -356,17 +363,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
     // For each magnitude
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
-        // Set the computed magnitude. Note, if magnitude is altready set the
-        // SetPropertyValue() do nothing; i.e. existing magnitudes are not
-        // overwritten
+        /*
+         * Set the computed magnitude.
+         * Please note that if a magnitude is altready set, the
+         * SetPropertyValue() does nothing; i.e. existing magnitudes are not
+         * overwritten.
+         */
         if (magnitudes[band].isSet == mcsTRUE)
         {
-            if (SetPropertyValue(mag0PropertyId[band],
-                                 magnitudes[band].value,
-                                vobsSTAR_COMPUTED_PROP, 
-                                (vobsCONFIDENCE_INDEX)
-                                    magnitudes[band].confIndex,
-                                mcsFALSE) == mcsFAILURE)
+            if (SetPropertyValue(mag0PropertyId[band], magnitudes[band].value,
+                                 vobsSTAR_COMPUTED_PROP, 
+                                (vobsCONFIDENCE_INDEX)magnitudes[band].confIndex, mcsFALSE) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -377,7 +384,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 }
 
 /**
- * Compute Galactic Coordonate
+ * Compute galactic coordonates.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -385,9 +392,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 {
     logTrace("sclsvrCALIBRATOR::ComputeGalacticCoordinates()");
-    mcsFLOAT gLat, gLon;
-    mcsFLOAT ra; 
-    mcsFLOAT dec;
+
+    mcsFLOAT gLat, gLon, ra, dec;
 
     // Get right ascension position in degree
     if (GetRa(ra)==mcsFAILURE)
@@ -401,7 +407,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
         return mcsFAILURE;
     }
     
-    // Run alxComputeGalacticCoordinates() from alx library
+    // Compute galactic coordinates from the retrieved ra and dec values
     if (alxComputeGalacticCoordinates(ra, dec, &gLat, &gLon) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -423,8 +429,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 
     return mcsSUCCESS;
 }
+
 /**
- * Compute Interstellar Absorption
+ * Compute interstellar absorption.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -433,10 +440,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
 {
     logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorption()");
 
-    mcsFLOAT paralax;
-    mcsFLOAT gLat, gLon;
+    mcsFLOAT paralax, gLat, gLon;
 
-    alxMAGNITUDES magnitudes;
     // WARNING: Property Id lists should be defined in the same order than
     // alxBAND enumerate. In order to be able to use this enumerate as index of
     // this list.
@@ -466,16 +471,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
     };
 
     // For each magnitude
+    alxMAGNITUDES magnitudes;
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
         // Get the current value
         if (IsPropertySet(magPropertyId[band]) == mcsTRUE)
         {
             if (GetPropertyValue(magPropertyId[band],
-                             &magnitudes[band].value) == mcsFAILURE)
+                                 &magnitudes[band].value) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
+
             magnitudes[band].isSet=mcsTRUE;
         }
         else
@@ -484,7 +491,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
         }
     }
 
-    // Get the value of the paralax, the galactic coordinates if it exists.
+    // Get the value of the paralax
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
     {
         if (GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax) == mcsFAILURE)
@@ -498,6 +505,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
                "interstellar absorption");
         return mcsFAILURE;
     }
+
+    // Get the value of the galactic lattitude
     if (IsPropertySet(vobsSTAR_POS_GAL_LAT) == mcsTRUE)
     {
         if (GetPropertyValue(vobsSTAR_POS_GAL_LAT, &gLat) == mcsFAILURE)
@@ -511,6 +520,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
                "interstellar absorption");
         return mcsFAILURE;
     }
+
+    // Get the value of the galactic longitude
     if (IsPropertySet(vobsSTAR_POS_GAL_LON) == mcsTRUE)
     {
         if (GetPropertyValue(vobsSTAR_POS_GAL_LON, &gLon) == mcsFAILURE)
@@ -549,7 +560,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
 }
 
 /**
- * Compute Angular diameter
+ * Compute angular diameter
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -559,10 +570,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     logTrace("sclsvrCALIBRATOR::ComputeAngularDiameter()");
 
     alxDIAMETERS diameters;
-    alxDATA mgB, mgV, mgR, mgK;
-    alxDATA starProperty[4];
+    alxDATA mgB, mgV, mgR, mgK, starProperty[4];
    
-    // Declare the 4 properties namefor B0, V0, R0, K0
+    // Declare the 4 properties name for B0, V0, R0, K0
     char *starPropertyId[4] = 
     {
         sclsvrCALIBRATOR_BO,
@@ -571,24 +581,27 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
         sclsvrCALIBRATOR_KO
     };
 
-    // For each property needed to compute angular diameter, check if they are
-    // affected
+    // For each property needed to compute angular diameter
     for (int i=0; i<4; i++)
     { 
+        // if the current property is affected
         if (IsPropertySet(starPropertyId[i]) == mcsTRUE)
         {
-            // Get property
+            // Get the property
             vobsSTAR_PROPERTY *property=GetProperty(starPropertyId[i]);
-            // Get property value
+
+            // Get the property value
             if ((property->GetValue(&starProperty[i].value)) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
-            // Set affected property
+
+            // Falg the property as set
             starProperty[i].isSet = mcsTRUE;
-            // Get property confidence index
+
+            // Get the property confidence index
             starProperty[i].confIndex =
-                (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
+                            (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
         }
         else
         {
@@ -596,6 +609,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
             return mcsSUCCESS;
         }
     }
+
     mgB=starProperty[0];
     mgV=starProperty[1];
     mgR=starProperty[2];
@@ -610,8 +624,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     // Set flag according to the confidence index 
     if (diameters.areComputed == mcsFALSE)
     {
-         if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, 
-                          "NOK", vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+         if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
+                              vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
          {
              return mcsFAILURE;
          }
@@ -623,9 +637,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
         {
             return mcsFAILURE;
         }
-        // Set compute value of the angular diameter
-        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, 
-                             diameters.bv.value,
+
+        // Set the computed value of the angular diameter
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diameters.bv.value,
                              vobsSTAR_COMPUTED_PROP, 
                              (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
             mcsFAILURE)
@@ -676,7 +690,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 }
 
 /**
- * Compute Visibility
+ * Compute visibility.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -684,8 +698,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::ComputeVisibility()");
-    mcsFLOAT diam, diamError;
-    mcsFLOAT baseMax, wavelength;
+
+    mcsFLOAT diam, diamError, baseMax, wavelength;
     alxVISIBILITIES visibilities;
     vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH;
 
@@ -697,9 +711,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
         {vobsSTAR_UDDK_DIAM, vobsSTAR_UDDK_DIAM_ERROR},
         {vobsSTAR_DIAM12, vobsSTAR_DIAM12_ERROR}
     };
-    mcsLOGICAL found = mcsFALSE;
 
     // For each possible diameters
+    mcsLOGICAL found = mcsFALSE;
     for (int i = 0; (i < 4) && (found == mcsFALSE); i++)
     {
         // If diameter and its error are set 
@@ -823,7 +837,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
 }
 
 /**
- * Compute Multiplicity
+ * Compute multiplicity.
  *
  * @return Always mcsSUCCESS.
  */
@@ -837,9 +851,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
 }
 
 /**
+ * Compute distance.
+ *
+ * This method calculate the distance between the calibrator and the coordinate
+ * given in the user request.
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeDistance()");
+
+    return mcsSUCCESS;
+}
+
+/**
  * Add all star properties 
  *
- * @return mcsSUCCESS 
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {

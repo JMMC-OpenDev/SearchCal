@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvr.h,v 1.8 2005-06-20 14:41:25 scetre Exp $"
+ * "@(#) $Id: sclsvr.h,v 1.9 2005-10-26 11:27:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/06/20 14:41:25  scetre
+ * Removed include of removed filter
+ *
  * Revision 1.7  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -23,8 +26,8 @@
  ******************************************************************************/
 
 /**
- * \file
- * Header files of sclsvr module.
+ * @file
+ * Header file of the sclsvr module.
  */
 
 
@@ -33,6 +36,9 @@
 #endif
 
 
+/*
+ * Local header
+ */
 #include "sclsvrCALIBRATOR.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 #include "sclsvrErrors.h"
@@ -41,6 +47,8 @@
 #include "sclsvrSERVER.h"
 #include "sclsvrVersion.h"
 #include "sclsvrVISIBILITY_FILTER.h"
+
+
 #endif /*!sclsvr_H*/
 
 /*___oOo___*/

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.19 2005-09-08 14:10:19 scetre Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.20 2005-10-26 11:24:01 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/09/08 14:10:19  scetre
+ * Changed espilon for compare b-v and b-vin photometric table from 0.1 to 0.11
+ *
  * Revision 1.18  2005/06/01 14:16:07  scetre
  * Changed logExtDbg to logTrace
  *
@@ -72,13 +75,13 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Function definition for magnitude computation.
  *
- * \sa JMMC-MEM-2600-0006 document.
+ * @sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.19 2005-09-08 14:10:19 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.20 2005-10-26 11:24:01 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -89,6 +92,8 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+
+
 /*
  * MCS Headers 
  */
@@ -97,6 +102,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "err.h"
 #include "misc.h"
 
+
 /* 
  * Local Headers
  */
@@ -104,54 +110,61 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #include "alxPrivate.h"
 #include "alxErrors.h"
 
+
 /*
  * Local Functions declaration
  */
 static alxCOLOR_TABLE *
     alxGetColorTableForBrightStar(alxSPECTRAL_TYPE spectralType);
-static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
-                                          alxSPECTRAL_TYPE *spectralType);
-static mcsINT32 alxGetLine(alxCOLOR_TABLE *colorTable,
-                           alxSPECTRAL_TYPE *spectralType,
-                           mcsSTRING32 spType);
+
+static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
+                                            alxSPECTRAL_TYPE  *spectralType);
+
+static mcsINT32 alxGetLine(alxCOLOR_TABLE    *colorTable,
+                           alxSPECTRAL_TYPE  *spectralType,
+                           mcsSTRING32        spType);
+
 static mcsCOMPL_STAT 
-    alxComputeDiffMagnitude(mcsSTRING32 spType,
-                            mcsFLOAT mgB,
-                            mcsFLOAT mgV,
-                            alxDIFFERENTIAL_MAGNITUDES diffMagnitudes);
+    alxComputeDiffMagnitude(mcsSTRING32                 spType,
+                            mcsFLOAT                    mgB,
+                            mcsFLOAT                    mgV,
+                            alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
+
 static mcsCOMPL_STAT
-    alxComputeAllMagnitudes(alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
-                            alxMAGNITUDES magnitudes,
-                            mcsFLOAT mgV);
-static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
-                                         alxDATA diffMag,
-                                         alxDATA *magnitude,
-                                         alxCONFIDENCE_INDEX confIndex);
+    alxComputeAllMagnitudes(alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes,
+                            alxMAGNITUDES               magnitudes,
+                            mcsFLOAT                    mgV);
+
+static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT              firstMag,
+                                         alxDATA               diffMag,
+                                         alxDATA              *magnitude,
+                                         alxCONFIDENCE_INDEX   confIndex);
+
+
 /* 
  * Local functions definition
  */
-
 /**
  * Return the color table corresponding to a given spectral type.
  *
  * This method determines the color table associated to the given spectral
- * type of bright star, and reads (if not yet done) this table from
+ * type of a bright star, and reads (if not yet done) this table from
  * the configuration file.
  *
- * \param spectralType spectral type of the star 
+ * @param spectralType spectral type of the star 
  * 
- * \return pointer to structure containing color table or NULL if an error
+ * @return pointer to structure containing color table, or NULL if an error
  * occured.
  *
- * \usedfiles Files containing the color indexes, the absolute magnitude in V
+ * @usedfiles Files containing the color indexes, the absolute magnitude in V
  * and the stellar mass according to the temperature class for different star
- * types. This tables are used to compute missing magnitudes.
+ * types. These tables are used to compute missing magnitudes.
  *  - alxColorTableForBrightDwarfStar.cfg : bright dwarf star 
  *  - alxColorTableForBrightGiantStar.cfg : bright giant star
  *  - alxColorTableForBrightSuperGiantStar.cfg : bright super giant star
  */
 static alxCOLOR_TABLE *alxGetColorTableForBrightStar
-    (alxSPECTRAL_TYPE spectralType)
+                                                 (alxSPECTRAL_TYPE spectralType)
 {
     logTrace("alxGetColorTableForBrightStar()");
 
@@ -221,16 +234,18 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
         case alxDWARF:
             logTest("Type of star = DWARF"); 
             break;
+
         case alxGIANT:
             logTest("Type of star = GIANT");
             break;
+
         case alxSUPER_GIANT:
             logTest("Type of star = SUPER GIANT");
             break;
     }
 
     /*
-     * Check if the structure, where will be stored polynomial coefficients, is
+     * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
      */
     if (colorTables[starType].loaded == mcsTRUE)
@@ -238,40 +253,36 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
         return (&colorTables[starType]);
     }
 
-    /* 
-     * Build the dynamic buffer which will contain file
-     */
-
     /* Find the location of the file */
-    char *fileName;
-    fileName = miscLocateFile(colorTables[starType].fileName);
+    char* fileName = miscLocateFile(colorTables[starType].fileName);
     if (fileName == NULL)
     {
         return NULL;
     }
-    logDebug("Loading %s ...", fileName); 
     
-    /* Load file. Comment lines started with '#' */
+    /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);    
+    logDebug("Loading %s ...", fileName); 
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
         return NULL;
     }
 
-    /* For each line */
+    /* For each line of the loaded file*/
     mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine
-            (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line),
+                                        mcsTRUE)) != NULL)
     {
         logDebug("miscDynBufGetNextLine() = '%s'", line);
 
-        /* If line is not empty */
-        /* Trim line for leading and trailing characters */
+        /* Trim line for any leading and trailing blank characters */
         miscTrimString (line, " ");
+
+        /* If line is not empty */
         if (strlen(line) != 0)
         {
             /* Check if there are to many lines in file */
@@ -293,14 +304,15 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
                        &colorTables[starType].index[lineNum][4].value,
                        &colorTables[starType].index[lineNum][5].value,
                        &colorTables[starType].index[lineNum][6].value,
-                       &colorTables[starType].index[lineNum][7].value) != 
-                (alxNB_DIFF_MAG + 2))
+                       &colorTables[starType].index[lineNum][7].value)
+                != (alxNB_DIFF_MAG + 2))
             {
                 /* destroy dynamic buffer used and return an error */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 return NULL;
             }
+
             colorTables[starType].index[lineNum][0].isSet = mcsTRUE;
             colorTables[starType].index[lineNum][1].isSet = mcsTRUE;
             colorTables[starType].index[lineNum][2].isSet = mcsTRUE;
@@ -309,10 +321,12 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
             colorTables[starType].index[lineNum][5].isSet = mcsTRUE;
             colorTables[starType].index[lineNum][6].isSet = mcsTRUE;
             colorTables[starType].index[lineNum][7].isSet = mcsTRUE;
+
             /* Next line */
             lineNum++;
         }
     }
+
     /* Destroy dynamic buffer used */
     miscDynBufDestroy(&dynBuf);
 
@@ -325,31 +339,29 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
 }
 
 /**
- * Create a spectral type structure from a string
+ * Create a spectral type structure from a string.
  *
- * \param spType spectral type string
- * \param spectralType spectral type structure to create
+ * @param spType spectral type string
+ * @param spectralType spectral type structure to create
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
-                               alxSPECTRAL_TYPE *spectralType)
+static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
+                                            alxSPECTRAL_TYPE  *spectralType)
 {
     logTrace("alxString2SpectralType()");
+
     /* 
      * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
      * number between 0 and 9 and LLL is the light class
      */
-    mcsINT32 nbItems;
-    nbItems = sscanf(spType, "%c%f%s",
-                     &(spectralType->code), 
-                     &spectralType->quantity, 
-                     spectralType->lightClass);
+    mcsINT32 nbItems = sscanf(spType, "%c%f%s", &(spectralType->code), 
+                             &spectralType->quantity, spectralType->lightClass);
     if ((nbItems != 2) && (nbItems != 3))
     {
         /*
-         * if an error occurs during sscanf (i.e nbItems != 2 or 3), 
+         * if an error occured during sscanf (i.e nbItems != 2 or 3), 
          * return error
          */
         errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spType);
@@ -372,19 +384,19 @@ static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
 }
 
 /**
- * Get the line in the color table which matches with the star spectral
- * type or the line just after if interpolation is need
+ * Get the line in the color table which matches the star spectral type or the
+ * line just after if interpolation is need
  *
- * \param colorTable color table 
- * \param spectralType spectral type 
- * \param spType string of the spectral
+ * @param colorTable color table 
+ * @param spectralType spectral type 
+ * @param spType string of the spectral
  * 
- * \return a line number which matches with the star spectral type or the line
- * just after or -1 if no match is found or interpolation is impossible
+ * @return a line number that matches the star spectral type or the line just
+ * after or -1 if no match is found or interpolation is impossible
  */
-static mcsINT32 alxGetLine(alxCOLOR_TABLE *colorTable,
-                           alxSPECTRAL_TYPE *spectralType,
-                           mcsSTRING32 spType)
+static mcsINT32 alxGetLine(alxCOLOR_TABLE    *colorTable,
+                           alxSPECTRAL_TYPE  *spectralType,
+                           mcsSTRING32        spType)
 {
     logTrace("alxGetLine()");
 
@@ -405,16 +417,15 @@ static mcsINT32 alxGetLine(alxCOLOR_TABLE *colorTable,
                 /* Stop search */
                 found = mcsTRUE;
             }
-            /* Else go to the next line */
-            else
+            else /* Else go to the next line */
             {
                 line++;         
             }   
+
             /* the code of the spectral type had been found */
             codeFound = mcsTRUE;
         }
-        /* Else spectral type code doesn't match */
-        else
+        else /* Spectral type code doesn't match */
         {
             /*
              * If the lines corresponding to the star spectral type code have
@@ -425,13 +436,13 @@ static mcsINT32 alxGetLine(alxCOLOR_TABLE *colorTable,
                 /* Stop search */
                 found = mcsTRUE;
             }
-            /* Else go to the next line */
-            else
+            else /* Else go to the next line */
             {
                 line++;
             }
         }
     }
+
     /*
      * Check if spectral type is out of the table; i.e. before the first entry
      * in the color table. The quantity is strictly lower than the first entry
@@ -455,21 +466,21 @@ static mcsINT32 alxGetLine(alxCOLOR_TABLE *colorTable,
 }
 
 /**
- * Compute differential magnitudes
+ * Compute differential magnitudes.
  *
- * \param spType spectral type structure
- * \param mgB magnitude in B band
- * \param mgV magnitude in V band
- * \param diffMag differential magnitudes
+ * @param spType spectral type structure
+ * @param mgB magnitude in B band
+ * @param mgV magnitude in V band
+ * @param diffMag differential magnitudes
  *
- * \return mcsSUCCESS on successfull completion otherwise, mcsFAILURE is
+ * @return mcsSUCCESS on successfull completion otherwise, mcsFAILURE is
  * returned
  */
-static mcsCOMPL_STAT 
-    alxComputeDiffMagnitude(mcsSTRING32 spType,
-                            mcsFLOAT mgB,
-                            mcsFLOAT mgV,
-                            alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
+static mcsCOMPL_STAT alxComputeDiffMagnitude(
+                                      mcsSTRING32                spType,
+                                      mcsFLOAT                   mgB,
+                                      mcsFLOAT                   mgV,
+                                      alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitude()");
     /* 
@@ -664,13 +675,13 @@ static mcsCOMPL_STAT
 /**
  * Compute magnitude and set confidence index of a specific magnitude
  * 
- * \param magnitude magnitude to modify
- * \param firstMag first magnitude of the calcul (X-Y)
- * \param diffMag difference magnitude (ex : V-K)
- * \param confIndex the confidence index to set to the modify magnitude if
+ * @param magnitude magnitude to modify
+ * @param firstMag first magnitude of the calcul (X-Y)
+ * @param diffMag difference magnitude (ex : V-K)
+ * @param confIndex the confidence index to set to the modify magnitude if
  * necessary
  * 
- * \return always SUCCESS
+ * @return always SUCCESS
  */
 static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
                                          alxDATA diffMag,
@@ -698,11 +709,11 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
 /**
  * Compute missing magnitude according to the differential magnitudes
  *
- * \param diffMag diffrential magnitudes
- * \param magnitudes all magnitudes bands
- * \param mgV magnitude in V band
+ * @param diffMag diffrential magnitudes
+ * @param magnitudes all magnitudes bands
+ * @param mgV magnitude in V band
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 static mcsCOMPL_STAT 
     alxComputeAllMagnitudes(alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
@@ -770,11 +781,11 @@ static mcsCOMPL_STAT
  * If magnitude can not be computed, its associated confidence index is set to
  * NO CONFIDENCE.
  *
- * \param spType spectral type
- * \param magnitudes contains magnitudes in B and V bands, and the computed
+ * @param spType spectral type
+ * @param magnitudes contains magnitudes in B and V bands, and the computed
  * magnitudes in R, I, J, H, K, L and M bands
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT 

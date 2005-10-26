@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxGalacticCoordinates.c,v 1.4 2005-06-01 14:16:07 scetre Exp $"
+ * "@(#) $Id: alxGalacticCoordinates.c,v 1.5 2005-10-26 11:24:01 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/06/01 14:16:07  scetre
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.3  2005/02/15 14:46:29  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -24,13 +27,13 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Function definition for galactic coordinate computation.
  *
- * \sa file : JMMC-MEM-2600-0007
+ * @sa file : JMMC-MEM-2600-0007
  */
 
-static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.4 2005-06-01 14:16:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.5 2005-10-26 11:24:01 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -41,12 +44,14 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 #define __USE_MISC
 #include <math.h>
 
+
 /*
  * MCS Headers 
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+
 
 /* 
  * Local Headers
@@ -58,21 +63,20 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 /*
  * Public functions definition
  */
-
 /**
  * Compute galactic coordinates (longitude and latitude).
  *
  * Galactic coordinates (longitude and latitude) are necessary to calculate
  * interstellar absorption and to determine calibrators search field size. If
  * these ones are not obtained from catalogs, they can be calculated from
- * equatorial coordinates (right ascension and declinaison). \n
+ * equatorial coordinates (right ascension and declinaison).@n
  *
- * \param ra right acsension J2000 in degree
- * \param dec declinaison J2000 in degree
- * \param gLat galactic latitude in degree in range [0, 360]
- * \param gLon galactic longitude in degree in range [-90, 90]
+ * @param ra right acsension J2000 in degree
+ * @param dec declinaison J2000 in degree
+ * @param gLat galactic latitude in degree in range [0, 360]
+ * @param gLon galactic longitude in degree in range [-90, 90]
  *
- * \return mcsmcsSUCCESS on successful completion. Otherwise mcsmcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
@@ -95,13 +99,12 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
     dec = dec * M_PI / 180;
     logTest("dec = %f radians", dec);
 
-    /* Calculate galactic latitude sinus with radian parameters: sin(b) */
-    sinusB = sin(dec) * cos(1.097288) -
-             cos(dec) * sin(ra-4.936838) * sin(1.097288);
+    /* Calculate galactic latitude sinus with radian parameters */
+    sinusB =   (sin(dec) * cos(1.097288))
+             - (cos(dec) * sin(ra-4.936838) * sin(1.097288));
 
     /* 
      * Compute galactic latitude in degrees (gLat)
-     * -------------------------------------------
      */
     /* Calculate galactic latitude and convert it to degrees */
     *gLat = asin(sinusB) * 180 / M_PI;
@@ -112,38 +115,37 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
     /*
      * Be sure that galactic latitude is in the validity domain [-90, 90]
      */
-    /* Be sure to have galactic latitude in [0, 360]*/
+    /* Be sure to have galactic latitude in [0, 360] */
     *gLat = fmod(*gLat, 360.0);
-    /* gLat is in ]90 - 270] => put it in [-90, 90] */
+    /* if gLat is in ]90 - 270] => put it in [-90, 90] */
     if (*gLat > 90 && *gLat <= 270)
     {
         *gLat = 180 - *gLat;
     }
-    /* gLat is in ]270 - 360] => put it in negative value [0, -90] */
+    /* if gLat is in ]270 - 360] => put it in negative value [0, -90] */
     if (*gLat > 270 && *gLat <= 360)
     {
         *gLat = *gLat - 360;
     }
-
     logTest("gLat = %.3f degrees", *gLat);
 
     /* 
      * Compute galactic longitude in degrees (gLon)
-     * --------------------------------------------
      */
     /* Calculate cos(b) */
     b = asin(sinusB);
 
     /* Calculate longitude with radian parameters
      * gLon = atan(y / x) + 0.574737
+     *
      * where
      * x = cos(dec) cos(ra-4.936838) / cos(b)
      * y = (cos(dec) sin(ra-4.936838) cos(1.097288) +
      *      sin(dec) sin(1.097288)) / cos(b)
      */
     x = cos(dec) * cos(ra-4.936838) / cos(b);
-    y = (cos(dec) * sin(ra-4.936838) * cos(1.097288) + 
-        sin(dec) * sin(1.097288)) / cos(b);
+    y = (cos(dec) * sin(ra-4.936838) * cos(1.097288) + sin(dec) * sin(1.097288)) 
+        / cos(b);
 
     /* Calculate galactic longitude and convert it to degrees */
     *gLon = (atan2(y, x) + 0.574737) * 180 / M_PI;
@@ -154,16 +156,16 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
     /*
      * Be sure that galactic longitude is in the validity domain [0, 360[
      */
-    /* Be sure to have galactic latitude in [0, 360]*/
+    /* Be sure to have galactic latitude in [0, 360] */
     *gLon = fmod(*gLon, 360.0);
-    /* gLon has negative value => put it in positive value */
+    /* if gLon has negative value => put it in positive value */
     if (*gLon < 0)
     {
         *gLon += 360;
     }
-
     logTest("gLon = %.3f degrees", *gLon);
 
     return mcsSUCCESS;
 }
+
 /*___oOo___*/
