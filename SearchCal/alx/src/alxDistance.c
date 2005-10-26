@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxDistance.c,v 1.1 2005-10-26 11:30:41 lafrasse Exp $"
+ * "@(#) $Id: alxDistance.c,v 1.2 2005-10-26 12:29:37 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/10/26 11:30:41  lafrasse
+ * Created alxComputeDistance function stuff
+ *
  ******************************************************************************/
 
 /**
@@ -14,7 +17,7 @@
  * coordinates.
  */
 
-static char *rcsId="@(#) $Id: alxDistance.c,v 1.1 2005-10-26 11:30:41 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: alxDistance.c,v 1.2 2005-10-26 12:29:37 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -38,6 +41,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * Local Headers
  */
 #include "alx.h"
+#include "alxErrors.h"
 #include "alxPrivate.h"
 
 
@@ -53,15 +57,23 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  * @param dec2 second declinaison in degree
  * @param distance the already allocated distance result pointer, in arcseconds
  *
- * @return Always mcsSUCCESS
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT alxComputeDistance(mcsFLOAT ra1,
-                                 mcsFLOAT dec1,
-                                 mcsFLOAT ra2,
-                                 mcsFLOAT dec2,
-                                 mcsFLOAT *distance)
+mcsCOMPL_STAT alxComputeDistance(mcsFLOAT  ra1,
+                                 mcsFLOAT  dec1,
+                                 mcsFLOAT  ra2,
+                                 mcsFLOAT  dec2,
+                                 mcsFLOAT* distance)
 {
     logTrace("alxComputeDistance()");
+
+    /* Check parameter validity */
+    if (distance == NULL)
+    {
+        errAdd(alxERR_NULL_PARAMETER, "distance");
+        return mcsFAILURE;
+    }
 
     /* Compute the cosinus of the distance */
     mcsFLOAT cosTheta = 

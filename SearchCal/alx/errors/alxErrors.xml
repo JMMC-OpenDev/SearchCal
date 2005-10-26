@@ -55,4 +55,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Missing columns in file '%.120s' at line %d; %d foundsinstead of %d expected]]></errFormat>
    </error>
+   <error id="17">
+      <errName>NULL_PARAMETER</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[The given '%s' parameter is NULL.]]></errFormat>
+   </error>
 </errorList>
