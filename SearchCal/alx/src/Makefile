@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-02-15 14:47:55 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-10-26 11:30:41 lafrasse Exp $"
 #
 # Makefile of the alx module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/15 14:47:55  gzins
+# Removed unused target
+#
 # Revision 1.3  2005/02/12 15:11:51  gzins
 # Added rules for alxGetResearchAreaSize function
 #
@@ -62,7 +65,7 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = alx.h						\
+INCLUDES        = alx.h
 				  
 #
 # Libraries (public and local)
@@ -77,7 +80,8 @@ alx_OBJECTS   = alxAngularDiameter          \
 				alxMagnitude                \
 				alxRealMagnitude            \
 				alxVisibility               \
-				alxResearchArea
+				alxResearchArea             \
+				alxDistance
 
 #
 # Scripts (public and local)

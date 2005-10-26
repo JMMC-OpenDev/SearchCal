@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-02-15 14:47:55 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-10-26 11:30:41 lafrasse Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/15 14:47:55  gzins
+# Removed unused target
+#
 # Revision 1.3  2005/02/12 15:19:47  gzins
 # Added alxTestResearchArea program
 #
@@ -48,32 +51,50 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = alxTestAngularDiameter alxTestMagnitude \
-				  alxTestGalacticCoordinates alxTestVisibility \
-				  alxTestResearchArea
+EXECUTABLES     = alxTestAngularDiameter     \
+                  alxTestMagnitude           \
+				  alxTestGalacticCoordinates \
+				  alxTestVisibility          \
+				  alxTestResearchArea        \
+				  alxTestDistance
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
+# <brief description of alxTestMagnitude program>
 alxTestMagnitude_OBJECTS   = alxTestMagnitude
 alxTestMagnitude_LDFLAGS   =
 alxTestMagnitude_LIBS      = MCS alx 
 
+#
+# <brief description of alxTestGalacticCoordinates program>
 alxTestGalacticCoordinates_OBJECTS   = alxTestGalacticCoordinates
 alxTestGalacticCoordinates_LDFLAGS   =
 alxTestGalacticCoordinates_LIBS      = MCS alx
 
+#
+# <brief description of alxTestAngularDiameter program>
 alxTestAngularDiameter_OBJECTS   = alxTestAngularDiameter
 alxTestAngularDiameter_LDFLAGS   =
 alxTestAngularDiameter_LIBS      = MCS alx
 
+#
+# <brief description of alxTestVisibility program>
 alxTestVisibility_OBJECTS   = alxTestVisibility
 alxTestVisibility_LDFLAGS   =
 alxTestVisibility_LIBS      = MCS alx
 
+#
+# <brief description of alxTestResearchArea program>
 alxTestResearchArea_OBJECTS   = alxTestResearchArea
 alxTestResearchArea_LDFLAGS   =
 alxTestResearchArea_LIBS      = MCS alx
+
+#
+# <brief description of alxTestDistance program>
+alxTestDistance_OBJECTS   = alxTestDistance
+alxTestDistance_LDFLAGS   =
+alxTestDistance_LIBS      = MCS alx
+
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
