@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.24 2005-02-09 16:37:49 lafrasse Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.25 2005-11-03 08:43:51 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/02/09 16:37:49  lafrasse
+ * Changed method prototypes to use as much 'const' parameters as possible
+ *
  * Revision 1.23  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -67,7 +70,7 @@
  * \sa msgMESSAGE
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.24 2005-02-09 16:37:49 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.25 2005-11-03 08:43:51 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -368,7 +371,7 @@ mcsINT32 msgMESSAGE::GetCommandId(void) const
  */
 mcsCOMPL_STAT msgMESSAGE::SetCommandId(const mcsINT32 identifier)
 {
-    logExtDbg("msgMESSAGE::SetIdentifier()");
+    logExtDbg("msgMESSAGE::SetCommandId()");
 
     // Set the message identifier
     sprintf(_header.commandId, "%d", identifier);
