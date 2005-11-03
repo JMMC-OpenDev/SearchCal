@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.cpp,v 1.6 2005-05-19 15:17:22 gzins Exp $"
+ * "@(#) $Id: evhINTERFACE.cpp,v 1.7 2005-11-03 09:02:15 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/05/19 15:17:22  gzins
+ * Added reply filtering when sending asynchronous message
+ * Fixed bug related to callback associated to command reply
+ *
  * Revision 1.5  2005/02/15 13:39:03  gzins
  * Changed remaiming SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -27,7 +31,7 @@
  * evhINTERFACE class definition.
  */
 
-static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.6 2005-05-19 15:17:22 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.7 2005-11-03 09:02:15 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -112,6 +116,9 @@ mcsCOMPL_STAT evhINTERFACE::Send(const char *command,
     {
         return mcsFAILURE;
     }
+
+    //Store the command Id
+    _msg.SetCommandId(cmdId);
 
     // If timeout is not given, use default one 
     if (timeout == -2)
