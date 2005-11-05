@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.3 2005-11-05 15:52:36 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/21 06:20:45  scetre
+ * Changed method Disable() and Enable() to Disabled() and Enabled()
+ * Changed '\' in doxygen documentatiuon to '@'
+ *
  * Revision 1.1  2005/06/20 11:31:53  scetre
  * Added filter class
  *
@@ -20,7 +24,7 @@
  *  Definition of vobsFILTER_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.3 2005-11-05 15:52:36 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -93,7 +97,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
     // list, i.e remove ALL element of the list
     for (unsigned int el = 0; el < Size(); el++)
     {
-        GetNextFilter((mcsLOGICAL)(el==0))->Disabled();
+        GetNextFilter((mcsLOGICAL)(el==0))->Disable();
     }
     
     return mcsSUCCESS;

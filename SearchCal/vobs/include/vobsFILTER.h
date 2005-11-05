@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.h,v 1.2 2005-06-21 06:20:45 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.h,v 1.3 2005-11-05 15:52:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/21 06:20:45  scetre
+ * Changed method Disable() and Enable() to Disabled() and Enabled()
+ * Changed '\' in doxygen documentatiuon to '@'
+ *
  * Revision 1.1  2005/06/20 11:31:53  scetre
  * Added filter class
  *
@@ -58,8 +62,8 @@ public:
 
     virtual char * GetName();
     virtual mcsLOGICAL IsEnabled();
-    virtual mcsCOMPL_STAT Enabled();
-    virtual mcsCOMPL_STAT Disabled();
+    virtual mcsCOMPL_STAT Enable();
+    virtual mcsCOMPL_STAT Disable();
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list) = 0;
 
