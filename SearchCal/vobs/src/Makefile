@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.19 2005-06-20 11:44:25 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.20 2005-11-09 17:17:33 gzins Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2005/06/20 11:44:25  scetre
+# Added filter class
+#
 # Revision 1.18  2005/06/20 11:31:53  scetre
 # Added filter class
 #
@@ -52,14 +55,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =  
+EXECUTABLES     =  vobsStarSeparation
 EXECUTABLES_L   = 
 
 #
-# <brief description of vobsServer program>
-vobsServer_OBJECTS   = vobsSERVER 
-vobsServer_LDFLAGS   = 
-vobsServer_LIBS      = MCS C++ vobs
+# <brief description of vobsStarSeparation program>
+vobsStarSeparation_OBJECTS   = vobsStarSeparation 
+vobsStarSeparation_LDFLAGS   = 
+vobsStarSeparation_LIBS      = MCS C++ vobs
 
 #
 # special compilation flags for single c sources
