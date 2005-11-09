@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsStarSeparation.cpp,v 1.1 2005-11-09 17:17:08 gzins Exp $"
+ * "@(#) $Id: vobsStarSeparation.cpp,v 1.2 2005-11-09 17:28:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/09 17:17:08  gzins
+ * Added
+ *
  ******************************************************************************/
 
 /**
@@ -24,7 +27,7 @@
  * the star separation.
  */
 
-static char *rcsId="@(#) $Id: vobsStarSeparation.cpp,v 1.1 2005-11-09 17:17:08 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsStarSeparation.cpp,v 1.2 2005-11-09 17:28:30 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -77,8 +80,10 @@ using namespace std;
  */
 void vobsPrintUsage(void)
 {
-    printf("Usage: %s <raStar1> <decStar1> <raStar2> <decStar2>\n\n", 
+    printf("Usage: %s <raStar1> <decStar1> <raStar2> <decStar2>\n", 
            mcsGetProcName());
+    printf("\tRA  is given as HH:MM:SS.TT\n");
+    printf("\tDEC is given as DD:MM:SS.TT\n\n");
     exit (EXIT_SUCCESS);
 }
 
