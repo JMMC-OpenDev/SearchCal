@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestDistance.c,v 1.1 2005-10-26 11:30:41 lafrasse Exp $"
+ * "@(#) $Id: alxTestDistance.c,v 1.2 2005-11-10 16:18:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/10/26 11:30:41  lafrasse
+ * Created alxComputeDistance function stuff
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  * Test program of the function which computes distance.
  */
 
-static char *rcsId="@(#) $Id: alxTestDistance.c,v 1.1 2005-10-26 11:30:41 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: alxTestDistance.c,v 1.2 2005-11-10 16:18:22 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -44,67 +47,46 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 int main (int argc, char *argv[])
 {
-     /* Configure logging service */
-    logSetStdoutLogLevel(logTEST);
-    logSetPrintDate(mcsFALSE);
-    logSetPrintFileLine(mcsFALSE);
-
-    logInfo("Starting...");
-   
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        /* Error handling if necessary */
-        
         /* Exit from the application with FAILURE */
         exit (EXIT_FAILURE);
     }
+
     mcsFLOAT ra1;
     mcsFLOAT dec1;
     mcsFLOAT ra2;
     mcsFLOAT dec2;
     mcsFLOAT distance;
 
-    ra1      = 0.0;
-    dec1     = 0.0;
-    ra2      = 1.0;
-    dec2     = 1.0;
-    distance = 0.0;
+    ra1      = -176.95;
+    dec1     =   45.229;
+    ra2      = -177.0;
+    dec2     =   45.224;
+    distance =    0.0;
     alxComputeDistance(ra1, dec1, ra2, dec2, &distance);
-    printf("alxComputeDistance(ra1 = %4.1f, dec1 = %4.1f, ra2 = %4.1f, dec2 = %4.1f) = %f\n", ra1, dec1, ra2, dec2, distance);
-    
-    ra1      = -1.0;
-    dec1     = -1.0;
-    ra2      = 0.0;
-    dec2     = 0.0;
-    distance = 0.0;
+    printf("alxComputeDistance(ra1 = %4.3f, dec1 = %4.3f, ra2 = %4.3f, dec2 = %4.3f) = %f\n", ra1, dec1, ra2, dec2, distance);
+    printf("Result should be around 128.1 arcsec accordding to vobsStarSeparation.\n\n");
+
+    ra1      = -177.0;
+    dec1     =   45.224;
+    ra2      = -176.95;
+    dec2     =   45.229;
+    distance =    0.0;
     alxComputeDistance(ra1, dec1, ra2, dec2, &distance);
-    printf("alxComputeDistance(ra1 = %4.1f, dec1 = %4.1f, ra2 = %4.1f, dec2 = %4.1f) = %f\n", ra1, dec1, ra2, dec2, distance);
-    
-    ra1      = -3.0;
-    dec1     = -2.0;
-    ra2      = -2.0;
-    dec2     = -1.0;
-    distance = 0.0;
+    printf("alxComputeDistance(ra1 = %4.3f, dec1 = %4.3f, ra2 = %4.3f, dec2 = %4.3f) = %f\n", ra1, dec1, ra2, dec2, distance);
+    printf("Result should be around 128.1 arcsec accordding to vobsStarSeparation.\n\n");
+
+    ra1      =    0.0;
+    dec1     =    0.0;
+    ra2      = -176.95;
+    dec2     =   45.229;
+    distance =    0.0;
     alxComputeDistance(ra1, dec1, ra2, dec2, &distance);
-    printf("alxComputeDistance(ra1 = %4.1f, dec1 = %4.1f, ra2 = %4.1f, dec2 = %4.1f) = %f\n", ra1, dec1, ra2, dec2, distance);
-    
-    ra1      = 0.0;
-    dec1     = 0.0;
-    ra2      = 3.0;
-    dec2     = 4.0;
-    distance = 0.0;
-    alxComputeDistance(ra1, dec1, ra2, dec2, &distance);
-    printf("alxComputeDistance(ra1 = %4.1f, dec1 = %4.1f, ra2 = %4.1f, dec2 = %4.1f) = %f\n", ra1, dec1, ra2, dec2, distance);
-    
-    ra1      = 3.0;
-    dec1     = 4.0;
-    ra2      = 0.0;
-    dec2     = 0.0;
-    distance = 0.0;
-    alxComputeDistance(ra1, dec1, ra2, dec2, &distance);
-    printf("alxComputeDistance(ra1 = %4.1f, dec1 = %4.1f, ra2 = %4.1f, dec2 = %4.1f) = %f\n", ra1, dec1, ra2, dec2, distance);
-    
+    printf("alxComputeDistance(ra1 = %4.3f, dec1 = %4.3f, ra2 = %4.3f, dec2 = %4.3f) = %f\n", ra1, dec1, ra2, dec2, distance);
+    printf("Result should be around 484885.9 arcsec accordding to vobsStarSeparation.\n\n");
+
     /* Close MCS services */
     mcsExit();
     

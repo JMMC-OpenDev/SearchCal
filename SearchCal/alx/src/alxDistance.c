@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxDistance.c,v 1.2 2005-10-26 12:29:37 lafrasse Exp $"
+ * "@(#) $Id: alxDistance.c,v 1.3 2005-11-10 16:18:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/10/26 12:29:37  lafrasse
+ * Added error management to alxComputeDistance()
+ *
  * Revision 1.1  2005/10/26 11:30:41  lafrasse
  * Created alxComputeDistance function stuff
  *
@@ -17,7 +20,7 @@
  * coordinates.
  */
 
-static char *rcsId="@(#) $Id: alxDistance.c,v 1.2 2005-10-26 12:29:37 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: alxDistance.c,v 1.3 2005-11-10 16:18:22 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -75,26 +78,31 @@ mcsCOMPL_STAT alxComputeDistance(mcsFLOAT  ra1,
         return mcsFAILURE;
     }
 
+    /* Convert all the given angle from degrees to rad */
+    mcsDOUBLE _ra1  = ra1  / (180 / M_PI);
+    mcsDOUBLE _dec1 = dec1 / (180 / M_PI);
+    mcsDOUBLE _ra2  = ra2  / (180 / M_PI);
+    mcsDOUBLE _dec2 = dec2 / (180 / M_PI);
+
     /* Compute the cosinus of the distance */
-    mcsFLOAT cosTheta = 
-             (sin(dec1) * sin(dec2)) + (cos(dec1) * cos(dec2) * cos(ra1 - ra2));
+    mcsDOUBLE cosDistance = 
+       (sin(_dec1) * sin(_dec2)) + (cos(_dec1) * cos(_dec2) * cos(_ra1 - _ra2));
 
     /*
-     * Due to computation precision, it is possible than cosTheta is greater
-     * than 1.0.
-     * In this case, force it to 1.
+     * Due to computation precision, it is possible that cosTheta became greater
+     * than 1.0. In this case, normalize it to 1.
      */
-    if (cosTheta > 1.0)
+    if (cosDistance > 1.0)
     {
-        cosTheta = 1.0;
+        cosDistance = 1.0;
     }
-    if (cosTheta < -1.0)
+    if (cosDistance < -1.0)
     {
-        cosTheta = -1.0;
+        cosDistance = -1.0;
     }
     
     /* Compute the distance theta in arcseconds */
-    *distance = 3600 * acos(cosTheta) / (M_PI/180);
+    *distance = (3600 * acos(cosDistance)) / (M_PI / 180);
     
     return mcsSUCCESS;
 }
