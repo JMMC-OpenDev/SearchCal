@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsStarSeparation.cpp,v 1.2 2005-11-09 17:28:30 gzins Exp $"
+ * "@(#) $Id: vobsStarSeparation.cpp,v 1.3 2005-11-10 16:04:58 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/09 17:28:30  gzins
+ * Added RA and DEC format in help
+ *
  * Revision 1.1  2005/11/09 17:17:08  gzins
  * Added
  *
@@ -27,7 +30,7 @@
  * the star separation.
  */
 
-static char *rcsId="@(#) $Id: vobsStarSeparation.cpp,v 1.2 2005-11-09 17:28:30 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsStarSeparation.cpp,v 1.3 2005-11-10 16:04:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -130,8 +133,8 @@ int main(int argc, char *argv[])
 
     // Print out star 1 coordinates
     printf("Star 1 :\n");
-    printf("\tRA  : %6.3f deg\tDEC : %6.3f deg\n", raStar1InDeg, decStar1InDeg);
-    printf("\tRA  : %6.3f rad\tDEC : %6.3f rad\n", raStar1InRad, decStar1InRad);
+    printf("\tRA  : %6.4f deg\tDEC : %6.4f deg\n", raStar1InDeg, decStar1InDeg);
+    printf("\tRA  : %6.4f rad\tDEC : %6.4f rad\n", raStar1InRad, decStar1InRad);
 
     // Star 2
     vobsSTAR star2;
@@ -156,8 +159,8 @@ int main(int argc, char *argv[])
 
     // Print out star 2 coordinates
     printf("Star 2 :\n");
-    printf("\tRA  : %6.3f deg\tDEC : %6.3f deg\n", raStar2InDeg, decStar2InDeg);
-    printf("\tRA  : %6.3f rad\tDEC : %6.3f rad\n", raStar2InRad, decStar2InRad);
+    printf("\tRA  : %6.4f deg\tDEC : %6.4f deg\n", raStar2InDeg, decStar2InDeg);
+    printf("\tRA  : %6.4f rad\tDEC : %6.4f rad\n", raStar2InRad, decStar2InRad);
 
     // Compute separation
     double cosTheta = sin(decStar1InRad)*sin(decStar2InRad) +
