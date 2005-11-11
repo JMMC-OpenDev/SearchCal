@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.16 2005-03-06 20:24:30 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.17 2005-11-11 16:38:32 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/03/06 20:24:30  gzins
+* Updated vobsSTAR_PROPERTY_ID_LIST; used string instead of char *
+*
 * Revision 1.15  2005/03/04 16:28:28  scetre
 * Changed Call to Save method
 *
@@ -79,6 +82,9 @@ class vobsSTAR_LIST
     virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
                                 vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL, 
                                 mcsLOGICAL updateOnly=mcsFALSE);
+
+    virtual mcsCOMPL_STAT Sort(char *propertyId,
+                               mcsLOGICAL reverseOrder=mcsFALSE);
 
     virtual void          Display(void);
 

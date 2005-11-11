@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.21 2005-06-20 14:32:25 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.22 2005-11-11 16:39:04 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/06/20 14:32:25  scetre
+* Removed unused printf
+* changed iterator initialisation to NULL
+*
 * Revision 1.20  2005/06/17 15:11:41  gzins
 * Fixed conflict between Remove() and GetNextStar() methods when element to be deleted is the current element pointed by GetNextStar()
 *
@@ -56,7 +60,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.21 2005-06-20 14:32:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.22 2005-11-11 16:39:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -375,6 +379,180 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         }
     }
  
+    return mcsSUCCESS;
+}
+
+/**
+ * Sort the list.
+ *
+ * This method sorts the given list according to the given property Id. 
+ * 
+ * \param propertyId property id 
+ * \param reverseOrder indicates sorting order 
+ *
+ * \return mcsSUCCESS on successful completion, and mcsFAILURE otherwise. 
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::Sort(char *propertyId, mcsLOGICAL reverseOrder)
+{
+    logTrace("vobsSTAR_LIST::Sort()");
+ 
+    // If list is empty or contains only one element, return
+    if ((IsEmpty() == mcsTRUE) || (Size() == 1))
+    {
+        return mcsSUCCESS;
+    }
+
+    // Check that the given property Id exists
+    if (GetNextStar(mcsTRUE)->IsProperty(propertyId) == mcsFALSE)
+    {
+        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId); 
+        return mcsFAILURE;
+    }
+
+    // Get property type 
+    vobsPROPERTY_TYPE propertyType;
+    propertyType = GetNextStar(mcsTRUE)->GetProperty(propertyId)->GetType();
+    printf("propertyType = %d\n", propertyType); 
+    
+    // While the sorting is not achieved
+    mcsLOGICAL sortingDone;
+    do 
+    {
+        // Assumes the list is sorted
+        sortingDone = mcsTRUE;
+
+        // For all elements of the list
+        std::list<vobsSTAR *>::iterator iter;
+        std::list<vobsSTAR *>::iterator prevIter=_starList.begin();
+        for (iter=_starList.begin(); iter != _starList.end(); iter++)
+        {
+            // If iterator is not on the first element
+            if (iter != _starList.begin()) 
+            {
+                // Indicates if current elements are to swapped or not
+                mcsLOGICAL swap = mcsFALSE;
+
+                // Check properties are set
+                mcsLOGICAL isValue1Set;
+                mcsLOGICAL isValue2Set;
+                isValue1Set = (*prevIter)->IsPropertySet(propertyId);
+                isValue2Set = (*iter)->IsPropertySet(propertyId);
+
+                // If one of the properties is not set, move it at the begining
+                // or at the end, according to the sorting order
+                if ((isValue1Set == mcsFALSE) || (isValue2Set == mcsFALSE))
+                {
+                    // If it is normal sorting order
+                    if (reverseOrder == mcsFALSE) 
+                    {
+                        // If value of previous element is not set while next
+                        // one is, swap them
+                        if ((isValue1Set == mcsFALSE) && 
+                            (isValue2Set == mcsTRUE))
+                        {
+                            swap = mcsTRUE;
+                        }
+                    }
+                    // Else (reverse sorting order)
+                    else
+                    {
+                        // If value of next element is not set while previous
+                        // one is, swap them
+                        if ((isValue2Set == mcsFALSE) && 
+                            (isValue1Set == mcsTRUE))
+                        {
+                            swap = mcsTRUE;
+                        }
+                    }
+                }
+                // Else (properties are set)
+                else
+                {
+                    // Compare element values according to property  or property
+                    // type, and check if elements have to be swapped according
+                    // to the sorting order
+                    if ((strcmp (propertyId, vobsSTAR_POS_EQ_RA_MAIN)  == 0) ||
+                        (strcmp (propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0) ||
+                        (propertyType == vobsFLOAT_PROPERTY))
+                    {
+                        mcsFLOAT value1;
+                        mcsFLOAT value2;
+                        if (strcmp (propertyId, vobsSTAR_POS_EQ_RA_MAIN)  == 0)
+                        {
+                            (*prevIter)->GetRa(value1);
+                            (*iter)->GetRa(value2);
+                        }
+                        else if (strcmp (propertyId, 
+                                         vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+                        {
+                            (*prevIter)->GetDec(value1);
+                            (*iter)->GetDec(value2);
+                        }
+                        else
+                        {
+                            (*prevIter)->GetPropertyValue(propertyId, &value1);
+                            (*iter)->GetPropertyValue(propertyId, &value2);
+                        }
+
+                        if (reverseOrder == mcsFALSE) 
+                        {
+                            if (value1 > value2)
+                            {
+                                swap = mcsTRUE;
+                            }
+                        }
+                        else
+                        {
+                            if (value1 < value2)
+                            {
+                                swap = mcsTRUE;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        const char *value1;
+                        const char *value2;
+                        value1 = (*prevIter)->GetPropertyValue(propertyId);
+                        value2 = (*iter)->GetPropertyValue(propertyId);
+
+                        if (reverseOrder == mcsFALSE) 
+                        {
+                            if (strcmp (value1, value2) > 0)
+                            {
+                                swap = mcsTRUE;
+                            }
+                        }
+                        else
+                        {
+                            if (strcmp (value1, value2) < 0)
+                            {
+                                swap = mcsTRUE;
+                            }
+                        }
+                    }
+                }
+
+                // Swap elements if needed 
+                if (swap == mcsTRUE)
+                {
+                    iter++;
+                    iter = _starList.insert(iter, (*prevIter));
+                    _starList.erase(prevIter);
+                    sortingDone = mcsFALSE;
+                }
+                
+                // Update previous element iterator 
+                prevIter = iter;
+            }
+            else
+            {
+                prevIter = iter;
+            }
+        }
+    } while (sortingDone == mcsFALSE);
+
+    
     return mcsSUCCESS;
 }
 
