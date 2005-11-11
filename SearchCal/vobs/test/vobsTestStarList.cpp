@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarList.cpp,v 1.4 2005-06-20 13:38:17 scetre Exp $"
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.5 2005-11-11 16:39:54 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/06/20 13:38:17  scetre
+ * Update program for test of Remove() method
+ *
  * Revision 1.3  2005/02/13 16:01:56  gzins
  * Added test for Load and Save methods
  *
@@ -17,7 +20,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.4 2005-06-20 13:38:17 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.5 2005-11-11 16:39:54 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,17 +58,18 @@ int main(int argc, char *argv[])
     printf("Add 5 stars in the list.\n");
     for (int i = 1; i <= 5; i++)
     {
+
         mcsSTRING16 id;
         mcsSTRING16 ra, dec;
         sprintf(id, "%d", i);
-        sprintf(ra, "12 30 %d.3", i*10);
-        sprintf(dec, "04 30 %d.3", i*10);
+        sprintf(ra, "12 30 %d.3", (i*20) % 17);
+        sprintf(dec, "04 30 %d.3", (i*20) % 17);
         stars[i].SetPropertyValue(vobsSTAR_ID_HD, id, "unknown");
         stars[i].SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, "unknown");
         stars[i].SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, "unknown");
         starList.AddAtTail(stars[i]); 
     }
-    
+
     printf("Is star list empty? : %s\n", 
            (starList.IsEmpty() == mcsTRUE)?"YES":"NO");
     printf("Size of the list = %d\n", starList.Size());
@@ -85,6 +89,14 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     printf("Size of the list = %d\n", starList.Size());
+    printf("Display the list.\n");
+    starList.Display();
+    printf("Sort list by DEC\n");
+    if (starList.Sort(vobsSTAR_POS_EQ_RA_MAIN)== mcsFAILURE)
+    {
+        errCloseStack();
+        exit(EXIT_FAILURE);
+    }
     printf("Display the list.\n");
     starList.Display();
     printf("Display all elements, one by one, of the list\n");
