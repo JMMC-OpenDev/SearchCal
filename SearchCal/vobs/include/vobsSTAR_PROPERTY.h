@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.8 2005-03-04 06:34:37 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.9 2005-11-11 16:38:09 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/03/04 06:34:37  gzins
+* Updated GetConfidenceIndex prototype
+*
 * Revision 1.7  2005/02/11 10:43:35  gzins
 * Fixed bug related to vobsCONFIDENCE_INDEX type
 *
@@ -108,6 +111,9 @@ public:
     // Get id/name
     virtual const char *GetId() const;
     virtual const char *GetName() const;
+
+    // Get property type 
+    virtual vobsPROPERTY_TYPE GetType() const;
     
 protected:
     

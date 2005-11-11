@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.12 2005-06-01 14:16:56 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.13 2005-11-11 16:37:51 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/06/01 14:16:56  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.11  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -43,7 +46,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.12 2005-06-01 14:16:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.13 2005-11-11 16:37:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -400,6 +403,19 @@ const char *vobsSTAR_PROPERTY::GetName(void) const
 
     // Return property value
     return _name.c_str();
+}
+
+/**
+ * Get property type.
+ *
+ * \return property type
+ */
+vobsPROPERTY_TYPE vobsSTAR_PROPERTY::GetType(void) const
+{
+    logTrace("vobsSTAR_PROPERTY::GetType()");
+
+    // Return property value
+    return _type;
 }
 
 /*
