@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.50 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.51 2005-11-14 14:19:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.50  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.49  2005/10/24 13:09:41  lafrasse
  * Refined code documentation
  *
@@ -99,7 +102,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.50 2005-10-26 11:27:24 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.51 2005-11-14 14:19:41 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -258,7 +261,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     }
 
     // Compute distance
-    if (ComputeDistance() == mcsFAILURE)
+    if (ComputeDistance(request) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -853,14 +856,87 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
 /**
  * Compute distance.
  *
- * This method calculate the distance between the calibrator and the coordinate
- * given in the user request.
+ * This method calculate the distance between the calibrator and the science
+ * object.
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::ComputeDistance()");
+    
+    mcsFLOAT scienceObjectRa  = 0;
+    mcsFLOAT scienceObjectDec = 0;
+    mcsFLOAT calibratorRa     = 0;
+    mcsFLOAT calibratorDec    = 0;
+    mcsFLOAT distance         = 0;
+    const char* buffer        = NULL;
+    vobsSTAR scienceObject;
+
+    // Get the science object right ascension as a C string
+    buffer = request.GetObjectRa();
+    if (buffer == NULL)
+    {
+        return mcsFAILURE;
+    }
+    // Convert science object right ascension from hhmmss to arcsec
+    // using hidden converter embedded in vobsStar constructor
+    if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, buffer, "")
+        == mcsFAILURE)
+    {
+       return mcsFAILURE;
+    }
+    // Get the science object origin right acsension in arcsec
+    if (scienceObject.GetRa(scienceObjectRa) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Get the science object declinaison as a C string
+    buffer = request.GetObjectDec();
+    if (buffer == NULL)
+    {
+        return mcsFAILURE;
+    }
+    // Convert science object science object from hhmmss to arcsec
+    // using hidden converter embedded in vobsStar constructor
+    if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, buffer, "")
+        == mcsFAILURE)
+    {
+       return mcsFAILURE;
+    }
+    // Get the science object origin declinaison in arcsec
+    if (scienceObject.GetDec(scienceObjectDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Get the internal calibrator right acsension in arcsec
+    if (GetRa(calibratorRa) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Get the internal calibrator declinaison in arcsec
+    if (GetDec(calibratorDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Compute the distance in arcsec between the science object and the
+    // calibrator using an alx provided function
+    if( alxComputeDistance(scienceObjectRa, scienceObjectDec,
+                           calibratorRa,    calibratorDec,
+                           &distance) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Put the computed distance in the corresponding calibrator property
+    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance, "") == mcsFAILURE)
+    {
+       return mcsFAILURE;
+    }
 
     return mcsSUCCESS;
 }
@@ -873,6 +949,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance()
 mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
     //logTrace("vobsSTAR::AddProperties()");
+
     AddProperty(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, 
                 "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, 
@@ -906,6 +983,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13mu)", 
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2_FLAG, "vis2Flag", vobsSTRING_PROPERTY);
+    AddProperty(sclsvrCALIBRATOR_DIST, "dist", vobsFLOAT_PROPERTY, "%.3f");
 
     return mcsSUCCESS;
 }

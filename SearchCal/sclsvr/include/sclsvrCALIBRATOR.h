@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.26 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.27 2005-11-14 14:19:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.25  2005/03/07 16:05:52  gzins
  * Removed automatic sort on visibility
  *
@@ -82,6 +85,7 @@
 #define sclsvrCALIBRATOR_DIAM_VR_ERROR      "DIAM_VR_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
+#define sclsvrCALIBRATOR_DIST               "DIST"
 
 /*
  * Class declaration
@@ -116,7 +120,7 @@ private:
     mcsCOMPL_STAT ComputeAngularDiameter();
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeMultiplicity(); 
-    mcsCOMPL_STAT ComputeDistance(); 
+    mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/
