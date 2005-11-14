@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.50 2005-11-14 14:19:41 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.51 2005-11-14 14:48:13 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.50  2005/11/14 14:19:41  lafrasse
+ * Added "distance to science object" computation and sorting
+ *
  * Revision 1.49  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -133,7 +136,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.50 2005-11-14 14:19:41 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.51 2005-11-14 14:48:13 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -345,7 +348,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 
     // Sort calibrators according to their distance from the science object in
     // ascending order, i.e. the closest first.
-    Sort("DIST");
+    Sort(sclsvrCALIBRATOR_DIST);
 
     return mcsSUCCESS;
 }
