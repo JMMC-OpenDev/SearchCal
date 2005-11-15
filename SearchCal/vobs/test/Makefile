@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.17 2005-02-15 15:20:21 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.18 2005-11-15 15:02:07 scetre Exp $"
 #
 # Makefile for test of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.17  2005/02/15 15:20:21  gzins
+# Removed unused target
+#
 # Revision 1.16  2005/02/13 09:07:50  gzins
 # Renamed vobsTestVirtualObservtary... to vobsTestVOIn...
 #
@@ -49,7 +52,8 @@ EXECUTABLES     = vobsTestVOInKBand 	\
 				  vobsTestParser vobsTestRequest 	\
 				  vobsTestCriteria vobsTestStar 	\
 				  vobsTestStarList 					\
-				  vobsTestMidiCatalog
+				  vobsTestMidiCatalog				\
+				  vobsTestCatalogList
 EXECUTABLES_L   = 
 
 #
@@ -85,6 +89,10 @@ vobsTestStarList_LIBS       = MCS C++ vobs
 vobsTestMidiCatalog_OBJECTS = vobsTestMidiCatalog 
 vobsTestMidiCatalog_LDFLAGS = 
 vobsTestMidiCatalog_LIBS    = MCS C++ vobs
+
+vobsTestCatalogList_OBJECTS = vobsTestCatalogList 
+vobsTestCatalogList_LDFLAGS = 
+vobsTestCatalogList_LIBS    = MCS C++ vobs
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
