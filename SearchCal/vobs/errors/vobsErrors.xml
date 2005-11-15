@@ -195,4 +195,14 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Connexion to CDS failed]]></errFormat>
    </error>
+   <error id="48">
+      <errName>CATALOG_LIST_EMPTY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[The list of catalog is empty, it is impossible to retreive catalog]]></errFormat>
+   </error>
+   <error id="49">
+      <errName>SCENARIO_EMPTY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[The scenario is not loaded, nothing to execute]]></errFormat>
+   </error>
 </errorList>
