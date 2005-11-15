@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.8 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.9 2005-11-15 15:01:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.7  2005/03/06 20:29:40  gzins
  * Added GetSwVersion method
  *
@@ -38,7 +41,9 @@
  * SCALIB Headers 
  */
 #include "vobs.h"
-
+#include "sclsvrSCENARIO_BRIGHT_K.h"
+#include "sclsvrSCENARIO_BRIGHT_V.h"
+#include "sclsvrSCENARIO_BRIGHT_N.h"
 
 /*
  * Class declaration
@@ -113,6 +118,9 @@ private:
 
     // Virtual observatory
     vobsVIRTUAL_OBSERVATORY _virtualObservatory;
+    sclsvrSCENARIO_BRIGHT_K scenarioBrightK;
+    sclsvrSCENARIO_BRIGHT_V scenarioBrightV;
+    sclsvrSCENARIO_BRIGHT_N scenarioBrightN;
 };
 
 #endif /*!sclsvrSERVER_H*/

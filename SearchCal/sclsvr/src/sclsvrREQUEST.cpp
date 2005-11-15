@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.10 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.11 2005-11-15 15:01:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.9  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -43,7 +46,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.10 2005-10-26 11:27:24 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.11 2005-11-15 15:01:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -90,6 +93,25 @@ sclsvrREQUEST::~sclsvrREQUEST()
     }
 }
 
+/**
+ * Copy from another request
+ *
+ * @param request request to copy
+ *
+ * @return always mcsSUCCESS
+ */
+mcsCOMPL_STAT sclsvrREQUEST::Copy(sclsvrREQUEST& request)
+{
+    logTrace("sclsvrREQUEST::Copy()");
+   
+    vobsREQUEST::Copy(request);
+    
+    _maxBaselineLength = request._maxBaselineLength;
+    _observingWlen = request._observingWlen;
+    _getCalCmd = request._getCalCmd;
+
+    return mcsSUCCESS;
+}
 
 /*
  * Public methods

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2005-06-20 14:42:54 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.14 2005-11-15 15:01:19 scetre Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2005/06/20 14:42:54  scetre
+# Removed filter to vobs unless visibility filter
+#
 # Revision 1.12  2005/06/01 14:18:54  scetre
 # Added filters and filter list objects.
 # Changed logExtDbg to logTrace
@@ -71,6 +74,9 @@ INCLUDES        = sclsvr.h						\
 				  sclsvrVersion.h           	\
 				  sclsvrSERVER.h				\
 				  sclsvrVISIBILITY_FILTER.h		\
+				  sclsvrSCENARIO_BRIGHT_K.h		\
+				  sclsvrSCENARIO_BRIGHT_V.h		\
+				  sclsvrSCENARIO_BRIGHT_N.h		\
 
 
 #
@@ -90,6 +96,9 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		\
 				   sclsvrGetCalCB		 		\
 				   sclsvrGetStarCB				\
 				   sclsvrVISIBILITY_FILTER		\
+				   sclsvrSCENARIO_BRIGHT_K		\
+				   sclsvrSCENARIO_BRIGHT_V		\
+				   sclsvrSCENARIO_BRIGHT_N		\
 
 
 #

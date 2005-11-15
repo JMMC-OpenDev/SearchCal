@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.21 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.22 2005-11-15 15:01:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.20  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -34,7 +37,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.21 2005-10-26 11:27:24 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.22 2005-11-15 15:01:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -71,7 +74,7 @@ extern "C"{
 #include "sclsvrErrors.h"
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrCALIBRATOR_LIST.h"
-
+#include "sclsvrSCENARIO_BRIGHT_K.h"
 
 evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 {
@@ -143,7 +146,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, "");
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
-    if (_virtualObservatory.Search(request, starList) == mcsFAILURE)
+    // init the scenario
+    if (scenarioBrightK.Init(&request) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;        
+    }
+    
+    if (_virtualObservatory.Search(&scenarioBrightK, request, starList) ==
+        mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }

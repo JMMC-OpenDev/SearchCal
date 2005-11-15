@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.19 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.20 2005-11-15 15:01:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.18  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -59,7 +62,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.19 2005-10-26 11:27:24 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.20 2005-11-15 15:01:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -91,7 +94,9 @@ using namespace std;
 #include "sclsvrSERVER.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrCALIBRATOR_LIST.h"
-
+#include "sclsvrSCENARIO_BRIGHT_K.h"
+#include "sclsvrSCENARIO_BRIGHT_V.h"
+#include "sclsvrSCENARIO_BRIGHT_N.h"
 
 /*
  * Public methods
@@ -113,10 +118,61 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
 
-    // Start the research in the virtual observatory
-    if (_virtualObservatory.Search(request, starList)==mcsFAILURE)
+    // Get the observed band
+    const char *band;
+    band = request.GetSearchBand();
+    if ((strcmp(band, "I")==0)||
+        (strcmp(band, "J")==0)||
+        (strcmp(band, "H")==0)||
+        (strcmp(band, "K")==0) )
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        // Load Scenario K
+        if (scenarioBrightK.Init(&request) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+        // Start the research in the virtual observatory
+        if (_virtualObservatory.Search(&scenarioBrightK, request,
+                                       starList)==mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+
+    }
+    else if (strcmp(band, "V")==0)
+    {
+        // Load Scenario V
+        if (scenarioBrightV.Init(&request) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+        // Start the research in the virtual observatory
+        if (_virtualObservatory.Search(&scenarioBrightV, request,
+                                       starList)==mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+
+    }
+    else if ((strcmp(band, "N") == 0))
+    {
+        // Load Scenario N
+        if (scenarioBrightN.Init(&request) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+        // Start the research in the virtual observatory
+        if (_virtualObservatory.Search(&scenarioBrightN, request,
+                                       starList)==mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+
+    }
+    else 
+    {
+        errAdd(vobsERR_UNKNOWN_BAND, band);
+        return evhCB_NO_DELETE | evhCB_FAILURE; 
     }
 
     // Build the list of calibrator

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.8 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.9 2005-11-15 15:01:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.7  2005/03/07 16:06:06  gzins
  * Removed automatic sort on visibility
  *
@@ -77,6 +80,9 @@ public:
     // Class destructor
     virtual ~sclsvrREQUEST();
 
+    // Copy
+    virtual mcsCOMPL_STAT Copy(sclsvrREQUEST& request);
+    
     // Command parameters 
     virtual mcsCOMPL_STAT Parse(const char *cmdParamLine);
     virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine);
@@ -100,7 +106,6 @@ protected:
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-    sclsvrREQUEST(const sclsvrREQUEST&);
     sclsvrREQUEST& operator=(const sclsvrREQUEST&);
 
     // GETCAL command
