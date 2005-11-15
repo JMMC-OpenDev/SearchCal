@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.14 2005-06-16 09:32:59 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.15 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/06/16 09:32:59  scetre
+* Removed unused vobsCATALOG_TOTO
+*
 * Revision 1.13  2005/06/13 10:19:47  scetre
 * Added Charm2, Merand and new Denis catalogs
 *
@@ -79,36 +82,20 @@ public:
     virtual ~vobsVIRTUAL_OBSERVATORY();
  
     // Method to star the research in the different catalog
-    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
-                                   vobsSTAR_LIST &StarList);
+    virtual mcsCOMPL_STAT Search(vobsSCENARIO *scenario,
+                                 vobsREQUEST &request,
+                                 vobsSTAR_LIST &StarList);
     
 protected:
-    // Method to load scenario according to the request
-    virtual mcsCOMPL_STAT LoadScenario(const char       *band,
-                                       vobsSTAR_LIST    &StarList,
-                                       vobsSCENARIO     &scenario);
-    
+        
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
     vobsVIRTUAL_OBSERVATORY& operator=(const vobsVIRTUAL_OBSERVATORY&);
     vobsVIRTUAL_OBSERVATORY (const vobsVIRTUAL_OBSERVATORY&);
 
-    // List of available catalogs
-    vobsCATALOG_CIO      _cio;
-    vobsCATALOG_PHOTO    _photo;
-    vobsCATALOG_ASCC     _ascc;
-    vobsCATALOG_HIC      _hic;
-    vobsCATALOG_MASS     _mass;
-    vobsCATALOG_LBSI     _lbsi;
-    vobsCATALOG_MERAND   _merand;
-    vobsCATALOG_CHARM    _charm;
-    vobsCATALOG_CHARM2   _charm2;
-    vobsCATALOG_BSC      _bsc;
-    vobsCATALOG_SBSC     _sbsc;
-    vobsCATALOG_DENIS    _denis;
-    vobsCATALOG_DENIS_JK _denisJK;
-    vobsCATALOG_MIDI     _midi;
+    // catalog List
+    vobsCATALOG_LIST _catalogList;
 
     // Star lists used in scenarion
     vobsSTAR_LIST     _starListP;

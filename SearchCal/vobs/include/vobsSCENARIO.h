@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.7 2005-02-09 06:09:57 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.8 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/02/09 06:09:57  gzins
+* Changed vobsSTAR_COMP_CRITERIA_LIST& to vobsSTAR_COMP_CRITERIA_LIST* in vobsSCENARIO
+*
 * Revision 1.6  2005/01/27 15:55:54  scetre
 * scenario became a friend class of scenario entry to be able to access private members
 *
@@ -44,6 +47,8 @@
 #include "vobsCATALOG.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
 #include "vobsSCENARIO_ENTRY.h"
+#include "vobsCATALOG_LIST.h"
+#include "vobsREQUEST.h"
 
 /*
  * Class declaration
@@ -66,17 +71,21 @@ public :
     vobsSCENARIO();
     virtual ~vobsSCENARIO(); 
     
-    // Add an entry in the list of actions
-    virtual mcsCOMPL_STAT AddEntry(vobsCATALOG   *catalog,
-                                   vobsSTAR_LIST *listInput,
-                                   vobsSTAR_LIST *listOutput,
-                                   vobsACTION    action,
-                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
+    virtual mcsCOMPL_STAT AddEntry(mcsSTRING32      catalog,
+                                   vobsREQUEST      *request,
+                                   vobsSTAR_LIST    *listInput,
+                                   vobsSTAR_LIST    *listOutput,
+                                   vobsACTION       action,
+                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL,
+                                   vobsFILTER       *filter=NULL);
   
     // Execute the scenario
-    virtual mcsCOMPL_STAT Execute(vobsREQUEST &request,
-                                  vobsSTAR_LIST &starList);
+    virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
 
+    virtual mcsCOMPL_STAT SetCatalogList(vobsCATALOG_LIST * catalogList);
+
+    virtual mcsCOMPL_STAT Clear(void);
+    
 protected :
 
 private :
@@ -85,10 +94,13 @@ private :
     vobsSCENARIO& operator=(const vobsSCENARIO&);
     vobsSCENARIO (const vobsSCENARIO&);
 
-    
     // List of entries
     std::list<vobsSCENARIO_ENTRY>            _entryList;
     std::list<vobsSCENARIO_ENTRY>::iterator  _entryIterator;
+
+    // pointer of list of catalog
+    vobsCATALOG_LIST *_catalogList;
+
 };
 
 

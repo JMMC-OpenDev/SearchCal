@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.5 2005-02-09 06:09:57 gzins Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.6 2005-11-15 14:57:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/09 06:09:57  gzins
+ * Changed vobsSTAR_COMP_CRITERIA_LIST& to vobsSTAR_COMP_CRITERIA_LIST* in vobsSCENARIO
+ *
  * Revision 1.4  2005/02/08 11:10:04  scetre
  * changed action enumerate <NAME> in vobs<NAME>
  *
@@ -43,6 +46,7 @@
 #include "vobsCATALOG.h"
 #include "vobsSTAR_LIST.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
+#include "vobsFILTER.h"
 
 /*
  * Class declaration
@@ -75,11 +79,13 @@ class vobsSCENARIO_ENTRY
 {
 public:
     // Class constructor
-    vobsSCENARIO_ENTRY(vobsCATALOG                  *catalog,
+    vobsSCENARIO_ENTRY(mcsSTRING32                  catalogName,
+                       vobsREQUEST                  *request,
                        vobsSTAR_LIST                *listInput,
                        vobsSTAR_LIST                *listOutput,
                        vobsACTION                   action,
-                       vobsSTAR_COMP_CRITERIA_LIST  *criteriaList);
+                       vobsSTAR_COMP_CRITERIA_LIST  *criteriaList,
+                       vobsFILTER                   *filter);
     vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
     
     // Class destructor
@@ -93,11 +99,13 @@ private:
     // methods, in order to hide them from the users.
     vobsSCENARIO_ENTRY& operator=(const vobsSCENARIO_ENTRY&);
 
-    vobsCATALOG                 *_catalog;
+    mcsSTRING32                 _catalogName;
+    vobsREQUEST                 *_request;
     vobsSTAR_LIST               *_listInput;
     vobsSTAR_LIST               *_listOutput;
     vobsACTION                  _action;
     vobsSTAR_COMP_CRITERIA_LIST *_criteriaList;
+    vobsFILTER                  *_filter;
 };
 
 #endif /*!vobsSCENARIO_ENTRY_H*/

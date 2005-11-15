@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.12 2005-10-14 08:44:24 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.13 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/10/14 08:44:24  scetre
+* Updated p77 according to JMMC-MEM-2600-0004
+*
 * Revision 1.11  2005/06/01 14:16:55  scetre
 * Changed logExtDbg to logTrace
 *
@@ -47,7 +50,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.12 2005-10-14 08:44:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.13 2005-11-15 14:57:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -169,7 +172,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     deltaRa = request.GetDeltaRa();
     deltaDec = request.GetDeltaDec();
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=50&-c.bm=");
+    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
@@ -178,7 +181,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
     miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query, "&-out=v1&-out=d5");
+    miscDynBufAppendString(&_query, "&-out=v3&-out=d5");
     miscDynBufAppendString(&_query, "&-out=HIP&-out=HD&-out=DM&-sort=_r"); 
     
     return mcsSUCCESS;

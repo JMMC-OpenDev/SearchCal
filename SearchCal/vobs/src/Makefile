@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.20 2005-11-09 17:17:33 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.21 2005-11-15 14:57:56 scetre Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.20  2005/11/09 17:17:33  gzins
+# Added vobsStarSeparation program
+#
 # Revision 1.19  2005/06/20 11:44:25  scetre
 # Added filter class
 #
@@ -95,6 +98,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_PHOTO.h 	   		\
 				  vobsCATALOG_SBSC.h	   		\
 				  vobsCATALOG_MIDI.h			\
+				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
 				  vobsSCENARIO.h	       		\
@@ -107,6 +111,8 @@ INCLUDES        = vobs.h						\
 				  vobsVARIABILITY_FILTER.h		\
 				  vobsSPECTRAL_TYPE_FILTER.h	\
 				  vobsDISTANCE_FILTER.h			\
+				  vobsORIGIN_FILTER.h			\
+				  vobsBV_FILTER.h				\
 #
 # Libraries (public and local)
 # ----------------------------
@@ -138,6 +144,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_PHOTO 			\
 				   vobsCATALOG_SBSC				\
 				   vobsCATALOG_MIDI 			\
+				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\
 				   vobsSCENARIO             	\
@@ -150,6 +157,8 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsVARIABILITY_FILTER		\
 				   vobsSPECTRAL_TYPE_FILTER		\
 				   vobsDISTANCE_FILTER			\
+				   vobsORIGIN_FILTER			\
+				   vobsBV_FILTER				\
 #
 # Scripts (public and local)
 # --------------------------

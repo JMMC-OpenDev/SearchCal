@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.8 2005-06-20 11:31:53 scetre Exp $"
+* "@(#) $Id: vobs.h,v 1.9 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/06/20 11:31:53  scetre
+* Added filter class
+*
 * Revision 1.7  2005/02/04 09:57:15  gzins
 * Added vobsCATALOG_MIDI header file
 *
@@ -22,6 +25,7 @@
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
+
 
 #include "vobsErrors.h"
 #include "vobsSTAR.h"
@@ -43,6 +47,8 @@
 #include "vobsCATALOG_PHOTO.h"
 #include "vobsCATALOG_SBSC.h"
 #include "vobsCATALOG_MIDI.h"
+#include "vobsCATALOG_MIDI.h"
+#include "vobsCATALOG_LIST.h"
 #include "vobsSCENARIO.h"
 #include "vobsFILTER.h"
 #include "vobsFILTER_LIST.h"
@@ -52,6 +58,8 @@
 #include "vobsMULTIPLICITY_FILTER.h"
 #include "vobsLUMINOSITY_FILTER.h"
 #include "vobsSPECTRAL_TYPE_FILTER.h"
+#include "vobsORIGIN_FILTER.h"
+#include "vobsBV_FILTER.h"
 
 #endif /*!vobs_H*/
 

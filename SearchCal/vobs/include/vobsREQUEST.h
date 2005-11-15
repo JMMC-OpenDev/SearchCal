@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.19 2005-02-14 15:22:29 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.20 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/02/14 15:22:29  scetre
+* changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
+*
 * Revision 1.18  2005/02/14 15:09:12  scetre
 * changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
 *
@@ -65,9 +68,12 @@ class vobsREQUEST
 public:
     // Constructor
     vobsREQUEST();
-
+    
     // Destructor
     virtual ~vobsREQUEST();
+
+    // Copy 
+    virtual mcsCOMPL_STAT Copy(vobsREQUEST& request);
     
     // Set and get science object name
     virtual mcsCOMPL_STAT SetObjectName(const char *objectName);
@@ -122,7 +128,7 @@ protected:
 private:
     // Declaration of assignment operator as private methods, in order to hide
     // them from the users.
-    vobsREQUEST(const vobsREQUEST&);
+    vobsREQUEST(const vobsREQUEST& request);
     vobsREQUEST& operator=(const vobsREQUEST&);
 
     /** Science object name */

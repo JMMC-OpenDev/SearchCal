@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.4 2005-02-09 06:10:44 gzins Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.5 2005-11-15 14:57:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/09 06:10:44  gzins
+ * Changed vobsSTAR_COMP_CRITERIA_LIST& to vobsSTAR_COMP_CRITERIA_LIST* in vobsSCENARIO
+ *
  * Revision 1.3  2005/02/07 17:36:53  scetre
  * added printf to resolve bug problem in multiple query
  *
@@ -22,7 +25,7 @@
  *  Definition of vobsSCENARIO_ENTRY class.
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.4 2005-02-09 06:10:44 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.5 2005-11-15 14:57:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -47,13 +50,16 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(vobsCATALOG                 *catalog,
+vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(mcsSTRING32                 catalogName,
+                                       vobsREQUEST                 *request,
                                        vobsSTAR_LIST               *listInput,
                                        vobsSTAR_LIST               *listOutput,
                                        vobsACTION                  action,
-                                       vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
+                                       vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
+                                       vobsFILTER                  *filter)
 {
-    _catalog      = catalog;
+    strcpy(_catalogName, catalogName);
+    _request      = request;
     _listInput    = listInput;
     _listOutput   = listOutput;
     _action       = action;
@@ -65,6 +71,7 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(vobsCATALOG                 *catalog,
     {
         _criteriaList = NULL;
     }
+    _filter = filter;
 }
 
 /**
@@ -72,7 +79,8 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(vobsCATALOG                 *catalog,
  */
 vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
 {
-    _catalog      = scenarioEntry._catalog;
+    strcpy(_catalogName, scenarioEntry._catalogName);
+    _request      = scenarioEntry._request;
     _listInput    = scenarioEntry._listInput;
     _listOutput   = scenarioEntry._listOutput;
     _action       = scenarioEntry._action;
@@ -85,6 +93,7 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
     {
         _criteriaList = NULL;
     }
+    _filter       = scenarioEntry._filter;
 }
 
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.34 2005-09-06 12:37:41 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.35 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.34  2005/09/06 12:37:41  scetre
+* Added INST_WAVELENGTH_VALUE as UCD for the wavelength in order to get magnitude according to the flux in II/225 catalog
+*
 * Revision 1.33  2005/08/03 14:00:57  scetre
 * Changed ucd name of vobsSTAR_OBS_METHOD and vobsSTAR_INST_WAVELENGTH_VALUE
 *
@@ -100,7 +103,8 @@
 #define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
-#define vobsSTAR_CODE_VARIAB                    "CODE_VARIAB"
+//#define vobsSTAR_CODE_VARIAB                    "CODE_VARIAB"
+#define vobsSTAR_CODE_VARIAB                    "VAR_CLASS"
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
 #define vobsSTAR_POS_GAL_LAT                    "POS_GAL_LAT"
 #define vobsSTAR_POS_GAL_LON                    "POS_GAL_LON"

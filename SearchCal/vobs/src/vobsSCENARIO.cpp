@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.23 2005-10-07 12:18:48 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.24 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/10/07 12:18:48  scetre
+* add timlog for catalog query
+*
 * Revision 1.22  2005/06/01 14:16:56  scetre
 * Changed logExtDbg to logTrace
 *
@@ -75,7 +78,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.23 2005-10-07 12:18:48 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.24 2005-11-15 14:57:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -110,6 +113,8 @@ using namespace std;
 vobsSCENARIO::vobsSCENARIO()
 {
     _entryIterator = _entryList.begin();
+    // affect to NULL the catalog list
+    _catalogList = NULL;
 }
 
 /*
@@ -128,31 +133,37 @@ vobsSCENARIO::~vobsSCENARIO()
  * Adds the element at the end of the list.
  *
  * The method create a entry from the parameters and put it in the list.
- * \param catalog the catalog to ask corresponding to the entry
+ * \param catalogName the catalog name to ask corresponding to the entry
+ * @param request request associated with the scenario
  * \param listInput list of star in enter of the research
  * \param listOutput list of star resulting of the asking of the catalog
  * \param action enumerate representing the action to do
  * \param criteriaList list of comparaison criteria
+ * @param filter filter
  * 
  * \return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsCATALOG *catalog,
+mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
+                                     vobsREQUEST   *request,
                                      vobsSTAR_LIST *listInput,
                                      vobsSTAR_LIST *listOutput,
                                      vobsACTION action,
-                                     vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
+                                     vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
+                                     vobsFILTER    *filter)
 {
     logTrace("vobsSCENARIO::AddEntry()");
     
     // Create a new entry
-    // Affect in this entry the catalog, the list input, the list output, the
+    // Affect in this entry the catalogName, the list input, the list output, the
     // action to do, and the criteria list
-    vobsSCENARIO_ENTRY entry(catalog,
+    vobsSCENARIO_ENTRY entry(catalogName,
+                             request,
                              listInput,
                              listOutput,
                              action,
-                             criteriaList);
+                             criteriaList,
+                             filter);
     
     // Put element in the list    
     _entryList.push_back(entry);
@@ -173,8 +184,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsCATALOG *catalog,
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned 
  */
-mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request, 
-                                    vobsSTAR_LIST &starList)
+mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 {
     logTrace("vobsSCENARIO::Execute()");
     
@@ -200,13 +210,13 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         }
         
         // Start research in entry's catalog
-        logInfo("Consulting %s ...", ((*_entryIterator)._catalog)->GetName());
+        logInfo("Consulting %s ...", (*_entryIterator)._catalogName);
         
         // define action for timlog trace
         mcsSTRING256 timLogActionName;
         // Get catalog name, and replace '/' by '_'
         mcsSTRING32 catalog;
-        strcpy (catalog, ((*_entryIterator)._catalog)->GetName());
+        strcpy (catalog, (*_entryIterator)._catalogName);
         if (miscReplaceChrByChr(catalog, '/', '_') == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -225,9 +235,21 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
         
         // Start time counter
         timlogInfoStart(timLogActionName);
+
+        // Check if the list is not NULL, i.e the SetCatalogList has ever been
+        // executed one time
+        if (_catalogList == NULL)
+        {
+            errAdd(vobsERR_CATALOG_LIST_EMPTY);
+            return mcsFAILURE;
+        }
+        
+        vobsCATALOG *tempCatalog = 
+            _catalogList->Get((*_entryIterator)._catalogName);
+       
+        vobsREQUEST *request = (*_entryIterator)._request;
         // if research failed, return mcsFAILURE
-        if (((*_entryIterator)._catalog)->Search(request,
-                                                 tempList) == mcsFAILURE )
+        if ((tempCatalog)->Search(*request, tempList) == mcsFAILURE )
         {
             return mcsFAILURE;
         }
@@ -245,12 +267,12 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
 
             // Get band used for search
             const char *band;
-            band = request.GetSearchBand();
+            band = request->GetSearchBand();
             strcat(logFileName, band);
 
             // Get catalog name, and replace '/' by '_'
             mcsSTRING32 catalogName;
-            strcpy (catalogName, ((*_entryIterator)._catalog)->GetName());
+            strcpy (catalogName, ((*_entryIterator)._catalogName));
             if (miscReplaceChrByChr(catalogName, '/', '_') == mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -279,7 +301,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
                 }
             }
         }
-        
+      
         // There are 3 different action to do when the scenario is executed
         switch((*_entryIterator)._action)
         {
@@ -324,6 +346,15 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
             default:
                 break;
         }
+        // Apply filter if neccessary
+        if ((*_entryIterator)._filter != NULL)
+        {
+            ((*_entryIterator)._filter)->Apply((*_entryIterator)._listOutput);
+        }
+
+        printf("%d star(s) found in catalog.\n", tempList.Size());         
+        printf("%d star(s) after merging.\n", (*_entryIterator)._listOutput->Size());         
+        //(*_entryIterator)._listOutput->Display();
         _entryIterator++;
     }
    
@@ -337,4 +368,38 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsREQUEST &request,
     return mcsSUCCESS;
 }
 
+/**
+ * Set catalog List
+ *
+ * This method affect to the pointer of catalog list the value of the pointer
+ * gave as parmameter
+ *
+ * @param catalogList a catalog list
+ *
+ * @return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsSCENARIO::SetCatalogList(vobsCATALOG_LIST * catalogList)
+{
+    logTrace("vobsSCENARIO::SetCatalogList()");
+
+    // equal the two pointer
+    _catalogList = catalogList;
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Clear the scenario
+ *
+ * @return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsSCENARIO::Clear(void)
+{
+    logTrace("vobsSCENARIO::Clear()");
+
+    _catalogList = NULL;
+    _entryList.erase(_entryList.begin(), _entryList.end());
+
+    return mcsSUCCESS;
+}
 /*___oOo___*/

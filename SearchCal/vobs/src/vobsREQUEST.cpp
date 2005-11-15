@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.20 2005-06-01 14:16:55 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.21 2005-11-15 14:57:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/06/01 14:16:55  scetre
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.19  2005/04/14 14:39:03  scetre
  * Updated documentation.
  * added test on method return.
@@ -56,7 +59,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.20 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.21 2005-11-15 14:57:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -97,7 +100,6 @@ vobsREQUEST::vobsREQUEST()
     _maxNbOfSelectedObjects = 0;
 }
 
-
 /**
  * Class destructor
  */
@@ -105,6 +107,30 @@ vobsREQUEST::~vobsREQUEST()
 {
 }
 
+/**
+ * Copy from another request
+ *
+ * @param request request to copy
+ *
+ * @return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsREQUEST::Copy(vobsREQUEST& request)
+{
+    logTrace("vobsREQUEST::Copy()");
+    
+    _objectName = request._objectName;
+    _objectRa = request._objectRa;
+    _objectDec = request._objectDec;
+    _objectMag = request._objectMag;
+    _searchBand = request._searchBand;
+    _deltaRa = request._deltaRa;
+    _deltaDec = request._deltaDec;
+    _minMagRange = request._minMagRange;
+    _maxMagRange = request._maxMagRange;
+    _maxNbOfSelectedObjects = request._maxNbOfSelectedObjects;
+
+    return mcsSUCCESS;
+}
 
 /*
  * Public methods

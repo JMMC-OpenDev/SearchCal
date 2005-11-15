@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.44 2005-09-06 12:37:41 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.45 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.44  2005/09/06 12:37:41  scetre
+* Added INST_WAVELENGTH_VALUE as UCD for the wavelength in order to get magnitude according to the flux in II/225 catalog
+*
 * Revision 1.43  2005/06/01 14:16:56  scetre
 * Changed logExtDbg to logTrace
 *
@@ -107,7 +110,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.44 2005-09-06 12:37:41 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.45 2005-11-15 14:57:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -281,7 +284,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
 /**
  * Get a star property.
  *
- * Set property value corresponding to the UCD
+ * Get property value corresponding to the UCD
  *
  * \param id property id.
  *

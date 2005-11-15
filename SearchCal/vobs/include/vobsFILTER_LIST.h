@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.h,v 1.1 2005-06-20 11:31:53 scetre Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.h,v 1.2 2005-11-15 14:57:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:31:53  scetre
+ * Added filter class
+ *
  * Revision 1.1  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -41,7 +44,7 @@
 /**
  * Brief description of the class, which ends at this dot.
  */
-class vobsFILTER_LIST
+class vobsFILTER_LIST : public vobsFILTER
 {
 
 public:

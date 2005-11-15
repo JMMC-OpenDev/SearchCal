@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.14 2005-10-19 08:44:08 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.15 2005-11-15 14:57:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/10/19 08:44:08  scetre
+* remove false unit 'arsec' in URL
+*
 * Revision 1.13  2005/10/14 08:44:24  scetre
 * Updated p77 according to JMMC-MEM-2600-0004
 *
@@ -52,7 +55,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.14 2005-10-19 08:44:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.15 2005-11-15 14:57:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -170,7 +173,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     deltaRa = request.GetDeltaRa();
     deltaDec = request.GetDeltaDec();
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-    miscDynBufAppendString(&_query, "&-out.max=50");
+    miscDynBufAppendString(&_query, "&-out.max=150");
     miscDynBufAppendString(&_query, "&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
