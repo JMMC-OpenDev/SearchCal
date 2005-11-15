@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.24 2005-11-15 14:57:56 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.25 2005-11-15 15:21:02 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2005/11/15 14:57:56  scetre
+* Added new scenario structure
+* Added possibility to query merand and borde as primary catalog
+*
 * Revision 1.23  2005/10/07 12:18:48  scetre
 * add timlog for catalog query
 *
@@ -78,7 +82,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.24 2005-11-15 14:57:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.25 2005-11-15 15:21:02 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -352,8 +356,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             ((*_entryIterator)._filter)->Apply((*_entryIterator)._listOutput);
         }
 
-        printf("%d star(s) found in catalog.\n", tempList.Size());         
-        printf("%d star(s) after merging.\n", (*_entryIterator)._listOutput->Size());         
+        //printf("%d star(s) found in catalog.\n", tempList.Size());         
+        //printf("%d star(s) after merging.\n", (*_entryIterator)._listOutput->Size());         
         //(*_entryIterator)._listOutput->Display();
         _entryIterator++;
     }

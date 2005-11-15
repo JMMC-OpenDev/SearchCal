@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.1 2005-11-15 15:00:33 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.2 2005-11-15 15:21:31 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/15 15:00:33  scetre
+ * Added scenario K V and N
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.1 2005-11-15 15:00:33 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.2 2005-11-15 15:21:31 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -137,7 +140,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     mcsFLOAT kMaxi = _request.GetMaxMagRange();
     mcsFLOAT kMini = _request.GetMinMagRange();
     _magnitudeFilter.SetMagnitudeValue(band, (kMaxi+kMini)/2, (kMaxi-kMini)/2);
-    printf("%s - %f - %f\n", band, (kMaxi+kMini)/2.0, (kMaxi-kMini)/2.0);
     _originFilter.Enable();
     _magnitudeFilter.Enable();
     _filterList.Add(&_originFilter);
