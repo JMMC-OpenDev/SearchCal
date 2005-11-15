@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.22 2005-11-11 16:39:04 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.23 2005-11-15 16:39:55 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2005/11/11 16:39:04  gzins
+* Added Sort() method
+*
 * Revision 1.21  2005/06/20 14:32:25  scetre
 * Removed unused printf
 * changed iterator initialisation to NULL
@@ -60,7 +63,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.22 2005-11-11 16:39:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.23 2005-11-15 16:39:55 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -577,6 +580,156 @@ void vobsSTAR_LIST::Display(void)
     }
     printf("\n");
 
+}
+
+/**
+ * Save each star in a VOTable v1.0.
+ *
+ * @param filename the path to the file in which the VOTable should be saved
+ *
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename)
+{
+    logTrace("vobsSTAR_LIST::SaveToVOTable()");
+
+    miscoDYN_BUF buffer;
+
+    // Add VOTable standard header
+    buffer.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    buffer.AppendLine(" <VOTABLE version=\"1.1\"");
+    buffer.AppendLine("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+    buffer.AppendLine("          xsi:noNamespaceSchemaLocation=\"http://www.ivoa.net/xml/VOTable/VOTable/v1.1\">");
+
+    // Add SCALIB specific informations
+    buffer.AppendLine(" <DESCRIPTION>");
+    buffer.AppendLine("  SCALIB output");
+    buffer.AppendLine(" </DESCRIPTION>");
+
+    // Add context specific informations
+    buffer.AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>");
+
+    // Add SCALIB data header
+    buffer.AppendLine(" <RESOURCE name=\"SCALIB calibrators\">");
+    buffer.AppendLine("  <TABLE name=\"results\">");
+    buffer.AppendLine("   <DESCRIPTION>");
+    buffer.AppendLine("    Calibrators for the ");
+    //buffer.AppendString(science object name);
+    buffer.AppendString(" science objetc");
+    buffer.AppendLine("   </DESCRIPTION>");
+
+    // Add all stars list column informations
+    mcsSTRING16        tmp;
+    mcsUINT32          i         = 0;
+    vobsSTAR*          firstStar = GetNextStar(mcsTRUE);
+    vobsSTAR_PROPERTY* property  = firstStar->GetNextProperty(mcsTRUE);
+    while (property != NULL)
+    {
+        // Add standard field header
+        buffer.AppendLine("   <FIELD");
+
+        // Add field name
+        buffer.AppendString(" name=\"");
+        buffer.AppendString(property->GetName());
+        buffer.AppendString("\"");
+
+        // Add field ID
+        buffer.AppendString(" ID=\"");
+        sprintf(tmp, "col%d", i);
+        buffer.AppendString(tmp);
+        buffer.AppendString("\"");
+
+        // Add field ucd
+        buffer.AppendString(" ucd=\"");
+        buffer.AppendString(property->GetId());
+        buffer.AppendString("\"");
+/*
+        // Add field ref
+        buffer.AppendString(" ref=\"");
+        //buffer.AppendString(property->XXX);
+        buffer.AppendString("\"");
+*/
+        // Add field datatype
+        buffer.AppendString(" datatype=\"");
+        switch (property->GetType())
+        {
+            case vobsSTRING_PROPERTY:
+                buffer.AppendString("char\" arraysize=\"8*");
+                break;
+
+            case vobsFLOAT_PROPERTY:
+                buffer.AppendString("float");
+                break;
+
+            default:
+                // Assertion - unknow type
+                break;
+        }
+        buffer.AppendString("\"");
+/*
+        // Add field width
+        buffer.AppendString(" width=\"");
+        //buffer.AppendString(property->XXX);
+        buffer.AppendString("\"");
+
+        // Add field precision
+        buffer.AppendString(" precision=\"");
+        //buffer.AppendString(property->XXX);
+        buffer.AppendString("\"");
+
+        // Add field unit
+        buffer.AppendString(" unit=\"");
+        //buffer.AppendString(property->XXX);
+        buffer.AppendString("\"");
+*/
+        // Add standard row footer
+        buffer.AppendString("/>");
+
+        // Retrieve the next property
+        property = firstStar->GetNextProperty(mcsFALSE);
+        i++;
+    }
+
+    buffer.AppendLine("   <DATA>");
+    buffer.AppendLine("    <TABLEDATA>");
+
+    // Save each property value of all the stars of the list
+    std::list<vobsSTAR *>::iterator star;
+    for (star=_starList.begin(); star != _starList.end(); star++)
+    {
+        // Add standard row header
+        buffer.AppendLine("     <TR>");
+
+        mcsLOGICAL init = mcsTRUE;
+        vobsSTAR_PROPERTY* property = NULL;
+        while((property = (*star)->GetNextProperty(init)) != NULL)
+        {
+            init = mcsFALSE;
+
+            // Add standard column header
+            buffer.AppendLine("      <TD>");
+
+            buffer.AppendString(property->GetValue());
+
+            // Add standard column footer
+            buffer.AppendLine("      </TD>");
+        }
+
+        // Add standard row footer
+        buffer.AppendLine("     </TR>");
+    }
+
+    // Add SCALIB data footer
+    buffer.AppendLine("    </TABLEDATA>");
+    buffer.AppendLine("   </DATA>");
+    buffer.AppendLine("  </TABLE>");
+    buffer.AppendLine(" </RESOURCE>");
+
+    // Add VOTable standard footer
+    buffer.AppendLine("</VOTABLE>");
+
+    // Try to save the generated VOTable in the specified file
+    return(buffer.SaveInFile(filename));
 }
 
 /**

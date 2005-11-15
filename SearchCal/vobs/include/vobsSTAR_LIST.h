@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.17 2005-11-11 16:38:32 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.18 2005-11-15 16:39:55 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/11/11 16:38:32  gzins
+* Added Sort() method
+*
 * Revision 1.16  2005/03/06 20:24:30  gzins
 * Updated vobsSTAR_PROPERTY_ID_LIST; used string instead of char *
 *
@@ -87,6 +90,8 @@ class vobsSTAR_LIST
                                mcsLOGICAL reverseOrder=mcsFALSE);
 
     virtual void          Display(void);
+
+    virtual mcsCOMPL_STAT SaveToVOTable(const char *filename);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                mcsLOGICAL extendedFormat=mcsFALSE);
