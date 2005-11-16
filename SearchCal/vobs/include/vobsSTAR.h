@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.36 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.37 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.36  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.35  2005/11/15 14:57:56  scetre
 * Added new scenario structure
 * Added possibility to query merand and borde as primary catalog

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.4 2005-01-26 08:10:32 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.5 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/01/26 08:10:32  scetre
+* change history
+*
 * scetre    14-Dec-2004  Created
 *
 *
@@ -53,6 +56,9 @@ public:
     // operator =
     vobsSTAR_COMP_CRITERIA_LIST& operator=(const vobsSTAR_COMP_CRITERIA_LIST&);
     
+    // Method to clear the criteria list
+    //virtual mcsCOMPL_STAT Clear(void);
+    
     // Method to add a criteria in the list
     virtual mcsCOMPL_STAT Add(char *propertyId, mcsFLOAT range);
     // Method to remove a criteria of the list
@@ -63,7 +69,7 @@ public:
                                           mcsLOGICAL init = mcsFALSE);
 
     // Method to get the number of criteria
-    virtual int Size();
+    virtual int Size(void);
 
 protected:
     
