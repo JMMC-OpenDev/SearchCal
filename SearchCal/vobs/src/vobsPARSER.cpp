@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.23 2005-09-19 10:42:03 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.24 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/09/19 10:42:03  scetre
+* Add Save of the xml file
+*
 * Revision 1.22  2005/09/13 11:52:04  scetre
 * Load xml file from memory after using msgSOCKET instead of loading xml file directly with gdome methods
 *
@@ -68,7 +71,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.23 2005-09-19 10:42:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.24 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -117,12 +120,12 @@ vobsPARSER::~vobsPARSER()
  * and parses it to extract the list of stars contained in the CDATA section.
  * The extracted star are stored in the list \em starList given as parameter.
  *
- * \param uri URI from where XML document has to be loaded.
- * \param catalogName catalog name from where XML document has been got.
- * \param starList list where star has to be put.
- * \param logFileName file to save the result of the asking
+ * @param uri URI from where XML document has to be loaded.
+ * @param catalogName catalog name from where XML document has been got.
+ * @param starList list where star has to be put.
+ * @param logFileName file to save the result of the asking
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned
  */
 mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
@@ -335,10 +338,10 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
  * the parameter name and 'UCD' for UCD, and the number of line to skip is given
  * by 'CSV' node and 'headlines' attribute.
  *
- * \param node  XML document node to be parsed. 
- * \param cData data structure where CDATA description has to be stored.
+ * @param node  XML document node to be parsed. 
+ * @param cData data structure where CDATA description has to be stored.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  * and an error is added to the error stack. The possible error is :
  * \li vobsERR_GDOME_CALL
  *

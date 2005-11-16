@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.13 2005-11-15 14:57:56 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/11/15 14:57:56  scetre
+* Added new scenario structure
+* Added possibility to query merand and borde as primary catalog
+*
 * Revision 1.12  2005/10/14 08:44:24  scetre
 * Updated p77 according to JMMC-MEM-2600-0004
 *
@@ -45,12 +49,12 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * Definition vobsCATALOG_ASCC class.
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.13 2005-11-15 14:57:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -112,7 +116,7 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
  * Build the specificatic part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  * 
  */
@@ -138,9 +142,9 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
  * which is write specificaly for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
- * \param request vobsREQUEST which help to restrict the search
+ * @param request vobsREQUEST which help to restrict the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  * 
  */

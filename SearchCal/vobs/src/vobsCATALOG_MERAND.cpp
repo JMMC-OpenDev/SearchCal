@@ -1,22 +1,26 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.2 2005-11-15 14:57:56 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.3 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/15 14:57:56  scetre
+ * Added new scenario structure
+ * Added possibility to query merand and borde as primary catalog
+ *
  * Revision 1.1  2005/06/13 10:19:30  scetre
  * Added Charm2, Merand and new Denis catalogs
  *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsCATALOG_MERAND class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.2 2005-11-15 14:57:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.3 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -69,7 +73,7 @@ vobsCATALOG_MERAND::~vobsCATALOG_MERAND()
  * which is write specificaly for each catalog.
  *
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  *
  */
 mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(void)
@@ -89,9 +93,9 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(void)
  * which is write specificaly for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
- * \param request vobsREQUEST which help to restrict the search
+ * @param request vobsREQUEST which help to restrict the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  * 
  */

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.13 2005-11-11 16:37:51 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/11/11 16:37:51  gzins
+* Added GetType() method
+*
 * Revision 1.12  2005/06/01 14:16:56  scetre
 * Changed logExtDbg to logTrace
 *
@@ -42,11 +45,11 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.13 2005-11-11 16:37:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -83,10 +86,10 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 /**
  * Class constructor
  * 
- * \param id     property identifier
- * \param name   property name 
- * \param type   property type
- * \param format format used to set property
+ * @param id     property identifier
+ * @param name   property name 
+ * @param type   property type
+ * @param format format used to set property
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name, 
                                      vobsPROPERTY_TYPE type, char *format)
@@ -161,13 +164,13 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 /**
  * Set a property value
  *
- * \param value property value to set (given as string)
- * \param confidenceIndex confidence index
- * \param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
+ * @param value property value to set (given as string)
+ * @param confidenceIndex confidence index
+ * @param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
  * has been computed.
- * \param overwrite booleen to know if it is an overwrite property 
+ * @param overwrite booleen to know if it is an overwrite property 
  *
- * \return mcsSUCCESS
+ * @return mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                                           const char *origin,
@@ -220,13 +223,13 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
 /**
  * Set a property value
  *
- * \param value property value to set (given as float)
- * \param confidenceIndex confidence index
- * \param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
+ * @param value property value to set (given as float)
+ * @param confidenceIndex confidence index
+ * @param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
  * has been computed.
- * \param overwrite booleen to know if it is an overwrite property 
+ * @param overwrite booleen to know if it is an overwrite property 
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Error codes:\n
  * The possible error is :
@@ -266,7 +269,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
 /**
  * Get value as a string.
  *
- * \return mcsSUCCESS
+ * @return mcsSUCCESS
  */
 const char *vobsSTAR_PROPERTY::GetValue(void) const
 {
@@ -279,9 +282,9 @@ const char *vobsSTAR_PROPERTY::GetValue(void) const
 /**
  * Get value as a float.
  *
- * \param value pointer to store value.
+ * @param value pointer to store value.
  * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  *
  */
@@ -317,7 +320,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
 /**
  * Get property origin
  *
- * \return property origin
+ * @return property origin
  */
 const char   *vobsSTAR_PROPERTY::GetOrigin()
 {
@@ -327,7 +330,7 @@ const char   *vobsSTAR_PROPERTY::GetOrigin()
 /**
  * Get value of the confidence index
  *
- * \return value of confidence index
+ * @return value of confidence index
  */
 vobsCONFIDENCE_INDEX vobsSTAR_PROPERTY::GetConfidenceIndex()
 {
@@ -337,7 +340,7 @@ vobsCONFIDENCE_INDEX vobsSTAR_PROPERTY::GetConfidenceIndex()
 /**
  * Check whether the property is computed or not.  
  * 
- * \return
+ * @return
  * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
  * mcsFALSE) otherwise.
  */
@@ -360,11 +363,11 @@ mcsLOGICAL vobsSTAR_PROPERTY::IsComputed() const
 /**
  * Check whether the property is set or not.  
  * 
- * \return
+ * @return
  * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
  * mcsFALSE) otherwise.
  */
-mcsLOGICAL vobsSTAR_PROPERTY::IsSet() const
+mcsLOGICAL vobsSTAR_PROPERTY::IsSet(void) const
 {
     logTrace("vobsSTAR_PROPERTY::IsSet()");
 
@@ -382,7 +385,7 @@ mcsLOGICAL vobsSTAR_PROPERTY::IsSet() const
 /**
  * Get property id.
  *
- * \return mcsSUCCESS
+ * @return mcsSUCCESS
  */
 const char *vobsSTAR_PROPERTY::GetId(void) const
 {
@@ -395,7 +398,7 @@ const char *vobsSTAR_PROPERTY::GetId(void) const
 /**
  * Get property name.
  *
- * \return mcsSUCCESS
+ * @return mcsSUCCESS
  */
 const char *vobsSTAR_PROPERTY::GetName(void) const
 {
@@ -408,7 +411,7 @@ const char *vobsSTAR_PROPERTY::GetName(void) const
 /**
  * Get property type.
  *
- * \return property type
+ * @return property type
  */
 vobsPROPERTY_TYPE vobsSTAR_PROPERTY::GetType(void) const
 {

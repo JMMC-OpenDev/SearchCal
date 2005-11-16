@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.3 2005-11-05 15:52:36 gzins Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/05 15:52:36  gzins
+ * Change Enabled and Disabled to Enable and Disable
+ *
  * Revision 1.2  2005/06/21 06:20:45  scetre
  * Changed method Disable() and Enable() to Disabled() and Enabled()
  * Changed '\' in doxygen documentatiuon to '@'
@@ -27,7 +30,7 @@
  *  Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.3 2005-11-05 15:52:36 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -73,7 +76,7 @@ vobsFILTER::~vobsFILTER()
  *
  * @return filter name
  */
-char * vobsFILTER::GetName()
+char * vobsFILTER::GetName(void)
 {
     logTrace("vobsFILTER::GetName()");
 
@@ -85,7 +88,7 @@ char * vobsFILTER::GetName()
  *
  * @return mcsTRUE is filter is enable, otherwise mcsFALSE is returned
  */
-mcsLOGICAL vobsFILTER::IsEnabled()
+mcsLOGICAL vobsFILTER::IsEnabled(void)
 {
     logTrace("vobsFILTER::IsEnabled()");
 
@@ -97,7 +100,7 @@ mcsLOGICAL vobsFILTER::IsEnabled()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsFILTER::Enable()
+mcsCOMPL_STAT vobsFILTER::Enable(void)
 {
     logTrace("vobsFILTER::Enable()");
     
@@ -111,7 +114,7 @@ mcsCOMPL_STAT vobsFILTER::Enable()
  *
  * @return always mcsSUCCESS 
  */
-mcsCOMPL_STAT vobsFILTER::Disable()
+mcsCOMPL_STAT vobsFILTER::Disable(void)
 {
     logTrace("vobsFILTER::Disable()");
 

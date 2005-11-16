@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
+ * "@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.3 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/21 06:20:45  scetre
+ * Changed method Disable() and Enable() to Disabled() and Enabled()
+ * Changed '\' in doxygen documentatiuon to '@'
+ *
  * Revision 1.1  2005/06/20 11:31:53  scetre
  * Added filter class
  *
@@ -26,7 +30,7 @@
  *  Definition of vobsSPECTRAL_TYPE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.3 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,7 +92,7 @@ vobsSPECTRAL_TYPE_FILTER::SetSpectralType(std::list<char *> tempClassList)
  *
  * @return value of the filter
  */
-std::list<char *> * vobsSPECTRAL_TYPE_FILTER::GetSpectralType()
+std::list<char *> * vobsSPECTRAL_TYPE_FILTER::GetSpectralType(void)
 {
     logTrace("vobsSPECTRAL_TYPE_FILTER::GetSpectralType()");
 

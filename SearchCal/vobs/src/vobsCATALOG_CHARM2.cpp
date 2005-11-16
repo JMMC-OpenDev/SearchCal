@@ -1,19 +1,22 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.1 2005-06-13 10:19:30 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.2 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/13 10:19:30  scetre
+ * Added Charm2, Merand and new Denis catalogs
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsCATALOG_CHARM2 class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.1 2005-06-13 10:19:30 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.2 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -65,7 +68,7 @@ vobsCATALOG_CHARM2::~vobsCATALOG_CHARM2()
  * Build the specificatic part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  *
  */

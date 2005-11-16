@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.25 2005-11-15 15:21:02 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.26 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2005/11/15 15:21:02  scetre
+* Removed unused printf
+*
 * Revision 1.24  2005/11/15 14:57:56  scetre
 * Added new scenario structure
 * Added possibility to query merand and borde as primary catalog
@@ -77,12 +80,12 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * vobsSCENARIO class definition.
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.25 2005-11-15 15:21:02 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.26 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -137,15 +140,15 @@ vobsSCENARIO::~vobsSCENARIO()
  * Adds the element at the end of the list.
  *
  * The method create a entry from the parameters and put it in the list.
- * \param catalogName the catalog name to ask corresponding to the entry
+ * @param catalogName the catalog name to ask corresponding to the entry
  * @param request request associated with the scenario
- * \param listInput list of star in enter of the research
- * \param listOutput list of star resulting of the asking of the catalog
- * \param action enumerate representing the action to do
- * \param criteriaList list of comparaison criteria
+ * @param listInput list of star in enter of the research
+ * @param listOutput list of star resulting of the asking of the catalog
+ * @param action enumerate representing the action to do
+ * @param criteriaList list of comparaison criteria
  * @param filter filter
  * 
- * \return
+ * @return
  * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
@@ -181,11 +184,11 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
  *
  * The methods execute the scenario which had been loaded before. It will
  * read each entry and ask the specific catalog.
- * \param request vobsREQUEST representing the user constraints
- * \param starList vobsSTAR_LIST which is the result of the interrogation,
+ * @param request vobsREQUEST representing the user constraints
+ * @param starList vobsSTAR_LIST which is the result of the interrogation,
  * this is the last list return of the last interrogation.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned 
  */
 mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)

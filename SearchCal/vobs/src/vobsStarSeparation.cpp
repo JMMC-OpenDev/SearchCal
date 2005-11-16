@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsStarSeparation.cpp,v 1.3 2005-11-10 16:04:58 gzins Exp $"
+ * "@(#) $Id: vobsStarSeparation.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/10 16:04:58  gzins
+ * Changed print format to %6.4f
+ *
  * Revision 1.2  2005/11/09 17:28:30  gzins
  * Added RA and DEC format in help
  *
@@ -15,22 +18,22 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * This programs commpute the separation between 2 stars
  *
  * \synopsis
  * vobsStarSeparation raStar1 decStar1 raStar2 decStar2 
  *
- * \param raStar1 : right ascension in HH:MM:SS.TTT of star1
- * \param decStar1 : declinaison in HH:MM:SS.TTT of star1
- * \param raStar2 : right ascension in HH:MM:SS.TTT of star2
- * \param decStar2 : declinaison in HH:MM:SS.TTT of star2
+ * @param raStar1 : right ascension in HH:MM:SS.TTT of star1
+ * @param decStar1 : declinaison in HH:MM:SS.TTT of star1
+ * @param raStar2 : right ascension in HH:MM:SS.TTT of star2
+ * @param decStar2 : declinaison in HH:MM:SS.TTT of star2
  * 
  * This program prints out star coodinates in degrees and radian, and the gives
  * the star separation.
  */
 
-static char *rcsId="@(#) $Id: vobsStarSeparation.cpp,v 1.3 2005-11-10 16:04:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsStarSeparation.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

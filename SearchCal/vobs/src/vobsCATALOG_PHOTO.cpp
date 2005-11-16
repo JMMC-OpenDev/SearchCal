@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.13 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.12  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -44,11 +47,11 @@
 *
 *******************************************************************************/
 /**
- * \file
+ * @file
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.13 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -108,7 +111,7 @@ vobsCATALOG_PHOTO::~vobsCATALOG_PHOTO()
  * Build the specificatic part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  *
  */
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
@@ -132,9 +135,9 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
  * which is write specificaly for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
- * \param request vobsREQUEST which help to restrict the search
+ * @param request vobsREQUEST which help to restrict the search
  *
- * \return always mcsSUCCESS 
+ * @return always mcsSUCCESS 
  *
  */
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)

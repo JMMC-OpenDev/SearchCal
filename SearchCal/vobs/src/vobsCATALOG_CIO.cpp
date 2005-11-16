@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.12 2005-10-14 08:44:24 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.13 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/10/14 08:44:24  scetre
+* Updated p77 according to JMMC-MEM-2600-0004
+*
 * Revision 1.11  2005/06/01 14:16:55  scetre
 * Changed logExtDbg to logTrace
 *
@@ -41,11 +44,11 @@
 *
 *******************************************************************************/
 /**
- * \file
+ * @file
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.12 2005-10-14 08:44:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.13 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -107,9 +110,9 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
  * list of possible star. If the request is for a single research, this method
  * will write the spécific asking.
  *
- * \param request vobsREQUEST which have all the contraints for the search
+ * @param request vobsREQUEST which have all the contraints for the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  *
  */
@@ -136,7 +139,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
  * asking is the same.
  *
  *
- * \return always mcsSUCCESS.
+ * @return always mcsSUCCESS.
  *
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
@@ -159,7 +162,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
  * Build the specificatic part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- * \return always mcsSUCCESS.
+ * @return always mcsSUCCESS.
  * 
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
@@ -180,9 +183,9 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
  * which is write specificaly for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
- * \param request vobsREQUEST which help to restrict the search
+ * @param request vobsREQUEST which help to restrict the search
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  * 
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)

@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.45 2005-11-15 14:57:56 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.46 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.45  2005/11/15 14:57:56  scetre
+* Added new scenario structure
+* Added possibility to query merand and borde as primary catalog
+*
 * Revision 1.44  2005/09/06 12:37:41  scetre
 * Added INST_WAVELENGTH_VALUE as UCD for the wavelength in order to get magnitude according to the flux in II/225 catalog
 *
@@ -105,12 +109,12 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * vobsSTAR class definition.
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.45 2005-11-15 14:57:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.46 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -191,13 +195,13 @@ vobsSTAR::~vobsSTAR()
  *
  * Set value corresponding to the given property id
  *
- * \param id property id.
- * \param value property value to set
- * \param origin the origin of the property (catalog, computed, ...)
- * \param confidenceIndex confidence index
- * \param overwrite booleen to know if it is an overwrite property
+ * @param id property id.
+ * @param value property value to set
+ * @param origin the origin of the property (catalog, computed, ...)
+ * @param confidenceIndex confidence index
+ * @param overwrite booleen to know if it is an overwrite property
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  *
  */
@@ -238,13 +242,13 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
  *
  * Set value corresponding to the given property id
  *
- * \param id property id.
- * \param value property value to set
- * \param origin the origin of the property (catalog, computed, ...)
- * \param confidenceIndex confidence index
- * \param overwrite booleen to know if it is an overwrite property
+ * @param id property id.
+ * @param value property value to set
+ * @param origin the origin of the property (catalog, computed, ...)
+ * @param confidenceIndex confidence index
+ * @param overwrite booleen to know if it is an overwrite property
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Error codes:\n
  * The possible errors are :
@@ -286,9 +290,9 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
  *
  * Get property value corresponding to the UCD
  *
- * \param id property id.
+ * @param id property id.
  *
- * \return pointer to the found star property object on successful completion.
+ * @return pointer to the found star property object on successful completion.
  * Otherwise NULL is returned.
  *
  * \b Error codes:\n
@@ -332,7 +336,7 @@ vobsSTAR_PROPERTY *vobsSTAR::GetProperty(char *id)
  *     }
  * \endcode
  *
- * \return pointer to the next element of the list or NULL if the end of the
+ * @return pointer to the next element of the list or NULL if the end of the
  * list is reached.
  */
 vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
@@ -370,9 +374,9 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
  *
  * Get value as string corresponding to the given property id.
  *
- * \param id property id.
+ * @param id property id.
  *
- * \return pointer to the found star property value on successful completion.
+ * @return pointer to the found star property value on successful completion.
  * Otherwise NULL is returned.
  */
 const char *vobsSTAR::GetPropertyValue(char *id)
@@ -402,10 +406,10 @@ const char *vobsSTAR::GetPropertyValue(char *id)
  *
  * Get value as string corresponding to the given property id.
  *
- * \param id property id.
- * \param value pointer to store value.
+ * @param id property id.
+ * @param value pointer to store value.
  *
- * \return pointer to the found star property value on successful completion.
+ * @return pointer to the found star property value on successful completion.
  * Otherwise NULL is returned.
  */
 mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
@@ -433,13 +437,13 @@ mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
 /**
  * Check whether the property is set or not.
  *
- * \param id property id.
+ * @param id property id.
  *
  * \warning
  * If the given property id is unknown, this method returns false (i.e.
  * mcsFALSE)
  *
- * \return
+ * @return
  * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
  * mcsFALSE) otherwise.
  */
@@ -468,10 +472,10 @@ mcsLOGICAL vobsSTAR::IsPropertySet(char *id)
 /**
  * Check whether a property is a property.
  *
- * \param id property id.
+ * @param id property id.
  *
  *
- * \return
+ * @return
  * True value (i.e. mcsTRUE) if the the property is known, false (i.e.
  * mcsFALSE) otherwise.
  */
@@ -501,9 +505,9 @@ mcsLOGICAL vobsSTAR::IsProperty(char *id)
 /**
  * Get right ascension (ra) in arcseconds.
  *
- * \param ra pointer right ascension.
+ * @param ra pointer right ascension.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  */
 mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
@@ -557,9 +561,9 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 /**
  * Get declinaison (dec) in arcseconds.
  *
- * \param dec declinaison.
+ * @param dec declinaison.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  */
 mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
@@ -609,10 +613,10 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
  *
  * Check that the star coordinates are the same.
  *
- * \param star the other star.
- * \param criteriaList the list of comparaison criteria
+ * @param star the other star.
+ * @param criteriaList the list of comparaison criteria
  *
- * \return TRUE if star positions are the same. Otherwise FALSE is returned.
+ * @return TRUE if star positions are the same. Otherwise FALSE is returned.
  */
 mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                             vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
@@ -803,9 +807,9 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
 /**
  * Update a star from another one.
  *
- * \param star the other star.
+ * @param star the other star.
  *
- * \return always mcsSUCCESS.
+ * @return always mcsSUCCESS.
  *
  */
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
@@ -831,7 +835,7 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
 /**
  * method to get the number of properties
  *
- * \return the number of properties of the star
+ * @return the number of properties of the star
  */
 mcsINT32 vobsSTAR::NbProperties()
 {
@@ -841,7 +845,7 @@ mcsINT32 vobsSTAR::NbProperties()
 /**
  * Display all star properties on the console.
  *
- * \param showPropId if true display each star property in a form \<propId\> =
+ * @param showPropId if true display each star property in a form \<propId\> =
  * \<value\>, otherwise all properties are displayed on a single line.
  */
 void vobsSTAR::Display(mcsLOGICAL showPropId)
@@ -878,12 +882,12 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
 /**
  * Add a star property
  *
- * \param id     property identifier
- * \param name   property name
- * \param type   property type
- * \param format format used to set property
+ * @param id     property identifier
+ * @param name   property name
+ * @param type   property type
+ * @param format format used to set property
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  *
  */
@@ -909,7 +913,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
 /**
  * Add all star properties and fix an order
  *
- * \return mcsSUCCESS
+ * @return mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {

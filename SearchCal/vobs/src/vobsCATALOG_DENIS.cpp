@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.8 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.6  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -26,11 +29,11 @@
 *
 *******************************************************************************/
 /**
- * \file
+ * @file
  * vobsCATALOG_DENIS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.7 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.8 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -90,7 +93,7 @@ vobsCATALOG_DENIS::~vobsCATALOG_DENIS()
  * which is write specificaly for each catalog.
  *
  *
- * \return always mcsSUCCESS 
+ * @return always mcsSUCCESS 
  *
  */
 mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)

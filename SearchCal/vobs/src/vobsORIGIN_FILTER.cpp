@@ -1,19 +1,22 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.1 2005-11-15 14:54:33 scetre Exp $"
+ * "@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.2 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/15 14:54:33  scetre
+ * Added filter on origin and B-V
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsORIGIN_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.1 2005-11-15 14:54:33 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.2 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

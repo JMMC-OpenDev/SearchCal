@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.10 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.11 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.9  2005/11/11 16:38:09  gzins
 * Added GetType() method
 *

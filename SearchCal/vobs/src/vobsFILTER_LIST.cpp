@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.3 2005-11-05 15:52:36 gzins Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/05 15:52:36  gzins
+ * Change Enabled and Disabled to Enable and Disable
+ *
  * Revision 1.2  2005/06/21 06:20:45  scetre
  * Changed method Disable() and Enable() to Disabled() and Enabled()
  * Changed '\' in doxygen documentatiuon to '@'
@@ -20,11 +23,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsFILTER_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.3 2005-11-05 15:52:36 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -70,7 +73,7 @@ vobsFILTER_LIST::~vobsFILTER_LIST()
  *
  * @param filter the filter to add in the list
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER *filter)
 {
@@ -87,7 +90,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER *filter)
  *
  * this method remove all the filter of the list
  * 
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
 {
@@ -105,7 +108,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
 
 /**
  * Returns the number of elements (filters) currently stored in the list.
- * \return 
+ * @return 
  * The numbers of filters in the list.
  */
 mcsUINT32 vobsFILTER_LIST::Size(void) 
@@ -127,7 +130,7 @@ mcsUINT32 vobsFILTER_LIST::Size(void)
  *         filterList.GetNextFilter((mcsLOGICAL)(el==0))-><method>;
  *     }
  * \endcode
- * \return pointer to the next element of the list or NULL if the end of the
+ * @return pointer to the next element of the list or NULL if the end of the
  * list is reached.
  */
 vobsFILTER *vobsFILTER_LIST::GetNextFilter(mcsLOGICAL init)
@@ -154,7 +157,7 @@ vobsFILTER *vobsFILTER_LIST::GetNextFilter(mcsLOGICAL init)
  *
  * @param name the name of the wanted filter
  *
- * \return pointer to the element of the list or NULL if the element has not
+ * @return pointer to the element of the list or NULL if the element has not
  * been found.
  */
 vobsFILTER *vobsFILTER_LIST::GetFilter(mcsSTRING32 name)
@@ -180,9 +183,9 @@ vobsFILTER *vobsFILTER_LIST::GetFilter(mcsSTRING32 name)
 /**
  * Apply all filter on a list
  *
- * \param list the list on which the filter will be apply
+ * @param list the list on which the filter will be apply
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST *list)

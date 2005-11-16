@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.6 2005-08-08 11:27:28 scetre Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.7 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/08/08 11:27:28  scetre
+ * Moved specific treatment of midi catalog in the vobsCATALOG_MIDI class instead of vobsLOCAL_CATALOG class
+ *
  * Revision 1.5  2005/06/01 14:16:55  scetre
  * Changed logExtDbg to logTrace
  *
@@ -24,11 +27,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsLOCAL_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.6 2005-08-08 11:27:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.7 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,10 +91,10 @@ vobsLOCAL_CATALOG::~vobsLOCAL_CATALOG()
  *
  * Build star list from catalog stars.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsLOCAL_CATALOG::Load()
+mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(void)
 {
     logTrace("vobsLOCAL_CATALOG::Load()");
     

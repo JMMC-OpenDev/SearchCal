@@ -1,19 +1,22 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.1 2005-06-13 10:19:30 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.2 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/13 10:19:30  scetre
+ * Added Charm2, Merand and new Denis catalogs
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsCATALOG_DENIS_JK class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.1 2005-06-13 10:19:30 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.2 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -66,7 +69,7 @@ vobsCATALOG_DENIS_JK::~vobsCATALOG_DENIS_JK()
  * which is write specificaly for each catalog.
  *
  *
- * \return always mcsSUCCESS 
+ * @return always mcsSUCCESS 
  *
  */
 mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)

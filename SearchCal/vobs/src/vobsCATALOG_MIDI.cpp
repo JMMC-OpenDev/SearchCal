@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.21 2005-08-08 11:27:28 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.22 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/08/08 11:27:28  scetre
+ * Moved specific treatment of midi catalog in the vobsCATALOG_MIDI class instead of vobsLOCAL_CATALOG class
+ *
  * Revision 1.20  2005/06/01 14:16:55  scetre
  * Changed logExtDbg to logTrace
  *
@@ -68,11 +71,11 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.21 2005-08-08 11:27:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.22 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -120,10 +123,10 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  * Build star list from catalog, where each list star verifies constraints
  * specified by user request.
  *
- * \param request user request specifying search contraints
- * \param list star list provided by the search
+ * @param request user request specifying search contraints
+ * @param list star list provided by the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
@@ -287,10 +290,10 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
  *
  * Build star list from MIDI catalog stars.
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsCATALOG_MIDI::Load()
+mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
 {
     logTrace("vobsCATALOG_MIDI::Load()");
     

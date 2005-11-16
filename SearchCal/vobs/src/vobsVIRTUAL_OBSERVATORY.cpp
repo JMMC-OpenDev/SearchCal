@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.30 2005-11-15 14:57:56 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.31 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.30  2005/11/15 14:57:56  scetre
+* Added new scenario structure
+* Added possibility to query merand and borde as primary catalog
+*
 * Revision 1.29  2005/09/08 08:30:44  scetre
 * Changed position range from 1'' to 10''
 * Removed mgK criteria before 2MASS secondary request
@@ -87,11 +91,11 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.30 2005-11-15 14:57:56 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.31 2005-11-16 10:47:54 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -140,11 +144,11 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
 /**
  * Method to start the research according to the constarints of the request.
  *
- * \param request a vobsREQUEST build
- * \param starList list of Stars to build and to send as the result of the
+ * @param request a vobsREQUEST build
+ * @param starList list of Stars to build and to send as the result of the
  * research
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  *
  */

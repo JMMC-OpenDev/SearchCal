@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.5 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.6 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.4  2005/03/04 15:35:02  gzins
 * Removed printf
 *
@@ -22,11 +25,11 @@
 
 
 /**
- * \file
+ * @file
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.5 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.6 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -97,10 +100,10 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
  *
  * Search int the catalog a list of star according to a vobsREQUEST
  *
- * \param request a vobsREQUEST which have all the contraints for the search
- * \param list a vobsSTAR_LIST as the result of the search
+ * @param request a vobsREQUEST which have all the contraints for the search
+ * @param list a vobsSTAR_LIST as the result of the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \sa vobsREQUEST
  *
@@ -195,9 +198,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
  * to the CDS, that's mean that the use of this asking will help to have a
  * list of possible star
  *
- * \param request vobsREQUEST which have all the contraints for the search
+ * @param request vobsREQUEST which have all the contraints for the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
  * \b Errors codes:\n 
  * The possible errors are:
@@ -232,10 +235,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
  * Prepare the asking according to the request (constraints). The knowledge of
  * another list of star help to create the asking for a final ask to the CDS.
  *
- * \param request vobsREQUEST which have all the contraints for the search  
- * \param tmpList vobsSTAR_LIST which come from an older ask to the CDS. 
+ * @param request vobsREQUEST which have all the contraints for the search  
+ * @param tmpList vobsSTAR_LIST which come from an older ask to the CDS. 
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n 
  * The possible errors are:
@@ -271,7 +274,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
  * web server. It is possible to find them on the URL : 
  * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -300,7 +303,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  * asking is the same.
  *
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n 
  * The possible errors are:
@@ -328,7 +331,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
  * which is write specificaly for each catalog.
  *
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  *
  */
@@ -347,9 +350,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
  * which is write specificaly for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
- * \param request vobsREQUEST which help to restrict the search
+ * @param request vobsREQUEST which help to restrict the search
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -369,9 +372,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  * Build the position box part of the asking. This method is used in case of
  * restrictive search.
  *
- * \param request vobsREQUEST which help to restrict the search 
+ * @param request vobsREQUEST which help to restrict the search 
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -403,9 +406,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
  *
  * The end part of the asking for a search from a star list.
  *
- * \param list vobsSTAR_LIST which help to build the end part
+ * @param list vobsSTAR_LIST which help to build the end part
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:
@@ -442,10 +445,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
  * asking the list of coordonate as a string. This method convert the position
  * of all star present in a star list in a string.
  *
- * \param strList string list as a string
- * \param list star list to cnvert
+ * @param strList string list as a string
+ * @param list star list to cnvert
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  * 
  * \b Errors codes:\n
  * The possible errors are:

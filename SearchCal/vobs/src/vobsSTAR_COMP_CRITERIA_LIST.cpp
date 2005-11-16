@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.6 2005-06-01 14:16:56 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.7 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/06/01 14:16:56  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.5  2005/01/26 08:14:09  scetre
 * Update copy constructor, assignement operator, Add and GetNextCriteria Method.
 * Create Remove Method.
@@ -16,11 +19,11 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.6 2005-06-01 14:16:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.7 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,10 +91,10 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
 /**
  * Add a criteria in the list
  *
- * \param propertyId the identifier of property.
- * \param range the range value of the criteria.
+ * @param propertyId the identifier of property.
+ * @param range the range value of the criteria.
  * 
- * \return
+ * @return
  * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
@@ -118,9 +121,9 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
 /**
  * Method to remove a criteria from the list of criteria
  *
- * \param propertyId the id of the criteria to removed
+ * @param propertyId the id of the criteria to removed
  *
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(char *propertyId)
@@ -158,7 +161,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(char *propertyId)
  *     }
  * \endcode
  * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  *
  * \b Error codes:\n
@@ -198,9 +201,9 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
 /**
  * Get the size of the list
  *
- * \return the number of element in the list
+ * @return the number of element in the list
  **/
-int vobsSTAR_COMP_CRITERIA_LIST::Size()
+int vobsSTAR_COMP_CRITERIA_LIST::Size(void)
 {
     return _criteriaList.size();
 }

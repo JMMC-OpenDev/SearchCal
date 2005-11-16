@@ -1,19 +1,22 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.1 2005-11-15 14:56:43 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.2 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/15 14:56:43  scetre
+ * Create catalog list
+ *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.1 2005-11-15 14:56:43 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.2 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

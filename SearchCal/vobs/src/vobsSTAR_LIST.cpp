@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.23 2005-11-15 16:39:55 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.24 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/11/15 16:39:55  lafrasse
+* Added experimental VOTable export support
+*
 * Revision 1.22  2005/11/11 16:39:04  gzins
 * Added Sort() method
 *
@@ -63,7 +66,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.23 2005-11-15 16:39:55 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.24 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -102,9 +105,9 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
 /**
  * Copy from a list
  *
- * \param list the list to copy
+ * @param list the list to copy
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 {
@@ -123,7 +126,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 /**
  * Check whether the list is empty or not.  
  *
- * \return
+ * @return
  * True value (i.e. mcsTRUE) if the number of elements is zero, false (i.e.
  * mcsFALSE) otherwise.
  */
@@ -143,7 +146,7 @@ mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
 /**
  * Erase all elements from the list.
  *
- * \return
+ * @return
  * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
@@ -164,9 +167,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 /**
  * Adds the element at the end of the list
  *
- * \param star element to be added to the list.
+ * @param star element to be added to the list.
  *
- * \return
+ * @return
  * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
@@ -209,9 +212,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
  *     }
  * \endcode
 
- * \param star element to be removed from the list.
+ * @param star element to be removed from the list.
  *
- * \return Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
 {
@@ -257,7 +260,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
 
 /**
  * Returns the number of elements (stars) currently stored in the list.
- * \return 
+ * @return 
  * The numbers of stars in the list.
  */
 mcsUINT32 vobsSTAR_LIST::Size(void) 
@@ -278,7 +281,7 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  *         starList.GetNextStar((mcsLOGICAL)(el==0))->View();
  *     }
  * \endcode
- * \return pointer to the next element of the list or NULL if the end of the
+ * @return pointer to the next element of the list or NULL if the end of the
  * list is reached.
  */
 vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init) 
@@ -316,7 +319,7 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
  *         printf ("Star not found in list !!");
  *     }
  * \endcode
- * \return pointer to the found element of the list or NULL if element is not
+ * @return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
 vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
@@ -345,7 +348,7 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
  * one. If star is already stored in the list, it is just updated using
  * vobsSTAR::Update method, otherwise it is added to the list.
  * 
- * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned if updating or adding star fails.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
@@ -390,10 +393,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
  *
  * This method sorts the given list according to the given property Id. 
  * 
- * \param propertyId property id 
- * \param reverseOrder indicates sorting order 
+ * @param propertyId property id 
+ * @param reverseOrder indicates sorting order 
  *
- * \return mcsSUCCESS on successful completion, and mcsFAILURE otherwise. 
+ * @return mcsSUCCESS on successful completion, and mcsFAILURE otherwise. 
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Sort(char *propertyId, mcsLOGICAL reverseOrder)
 {
@@ -587,7 +590,7 @@ void vobsSTAR_LIST::Display(void)
  *
  * @param filename the path to the file in which the VOTable should be saved
  *
- * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */
 mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename)
 {
@@ -735,11 +738,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename)
 /**
  * Save the elements (stars) of the list in a file.
  *
- * \param filename the file where to save
- * \param extendedFormat if true, each property is saved with its attributes
+ * @param filename the file where to save
+ * @param extendedFormat if true, each property is saved with its attributes
  * (origin and confidence index), otherwise only only property is saved.
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
                                   mcsLOGICAL extendedFormat)
@@ -755,12 +758,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
 /**
  * Save the elements (stars) of the list in a file.
  *
- * \param filename the file where to save
- * \param ucdList list of ucd to save
- * \param extendedFormat if true, each property is saved with its attributes
+ * @param filename the file where to save
+ * @param ucdList list of ucd to save
+ * @param extendedFormat if true, each property is saved with its attributes
  * (origin and confidence index), otherwise only only property is saved.
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
                                   vobsSTAR_PROPERTY_ID_LIST ucdList,
@@ -788,14 +791,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
 /**
  * Load elements (stars) from a file.
  *
- * \param filename name of file containing star list
- * \param extendedFormat if true, each property is has been saved with its
+ * @param filename name of file containing star list
+ * @param extendedFormat if true, each property is has been saved with its
  * attributes (origin and confidence index), otherwise only only property has
  * been saved.
- * \param origin used if origin is not given in file (see above). If NULL, the
+ * @param origin used if origin is not given in file (see above). If NULL, the
  * name of file is used as origin.
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Load(const char *filename,
                                   mcsLOGICAL extendedFormat,

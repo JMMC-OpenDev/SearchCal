@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.cpp,v 1.13 2005-06-01 14:16:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/06/01 14:16:55  scetre
+* Changed logExtDbg to logTrace
+*
 * Revision 1.12  2005/04/14 14:39:03  scetre
 * Updated documentation.
 * added test on method return.
@@ -37,11 +40,11 @@
 
 
 /**
- * \file
+ * @file
  * Definition vobsCATALOG class .
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.13 2005-06-01 14:16:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -102,9 +105,9 @@ vobsCATALOG::~vobsCATALOG()
 /**
  * Get a catalog name in a string format
  *
- * \return catalog name or NULL if not set.
+ * @return catalog name or NULL if not set.
  */
-const char *vobsCATALOG::GetName()
+const char *vobsCATALOG::GetName(void)
 {
     logTrace("vobsCATALOG::GetName()");
     

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.8 2005-06-13 10:20:14 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.9 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/06/13 10:20:14  scetre
+* Added HD in query
+*
 * Revision 1.7  2005/06/01 14:16:55  scetre
 * Changed logExtDbg to logTrace
 *
@@ -29,11 +32,11 @@
 *
 *******************************************************************************/
 /**
- * \file
+ * @file
  * vobsCATALOG_SBSC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.8 2005-06-13 10:20:14 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.9 2005-11-16 10:47:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -92,7 +95,7 @@ vobsCATALOG_SBSC::~vobsCATALOG_SBSC()
  * Build the specificatic part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- * \return always mcsSUCCESS
+ * @return always mcsSUCCESS
  *
  */
 mcsCOMPL_STAT vobsCATALOG_SBSC::WriteQuerySpecificPart(void)
