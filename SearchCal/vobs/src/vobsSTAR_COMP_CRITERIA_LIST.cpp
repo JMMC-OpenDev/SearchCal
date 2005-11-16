@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.8 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.9 2005-11-16 14:26:19 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.7  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -26,7 +29,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.8 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.9 2005-11-16 14:26:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -91,6 +94,20 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
 /*
  * Public methods
  */
+/**
+ * Clear the criteria list
+ *
+ * @return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
+{
+    logTrace("vobsSTAR_COMP_CRITERIA_LIST::Clear()");
+
+    _criteriaList.erase(_criteriaList.begin(), _criteriaList.end());
+
+    return mcsSUCCESS;
+}
+
 /**
  * Add a criteria in the list
  *
