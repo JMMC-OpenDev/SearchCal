@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.2 2005-08-08 11:27:28 scetre Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.3 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/08/08 11:27:28  scetre
+ * Moved specific treatment of midi catalog in the vobsCATALOG_MIDI class instead of vobsLOCAL_CATALOG class
+ *
  * Revision 1.1  2005/02/11 14:14:31  gluck
  * Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
  *
@@ -63,7 +66,7 @@ protected:
     vobsSTAR_LIST _starList;
 
     // Load MIDI catalog
-    virtual mcsCOMPL_STAT Load();
+    virtual mcsCOMPL_STAT Load(void);
 
 private:
     // Declaration of copy constructor and assignment operator as private
