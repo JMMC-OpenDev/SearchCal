@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.7 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.8 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.6  2005/06/01 14:16:56  scetre
 * Changed logExtDbg to logTrace
 *
@@ -23,7 +26,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.7 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.8 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

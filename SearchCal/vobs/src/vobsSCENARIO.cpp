@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.26 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.27 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.25  2005/11/15 15:21:02  scetre
 * Removed unused printf
 *
@@ -85,7 +88,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.26 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.27 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

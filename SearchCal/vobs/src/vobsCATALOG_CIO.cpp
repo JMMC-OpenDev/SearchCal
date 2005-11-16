@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.13 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.14 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.12  2005/10/14 08:44:24  scetre
 * Updated p77 according to JMMC-MEM-2600-0004
 *
@@ -48,7 +51,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.13 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.14 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

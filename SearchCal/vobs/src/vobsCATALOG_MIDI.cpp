@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.22 2005-11-16 10:47:54 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.23 2005-11-16 10:47:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/11/16 10:47:54  scetre
+ * Updated documentation
+ *
  * Revision 1.21  2005/08/08 11:27:28  scetre
  * Moved specific treatment of midi catalog in the vobsCATALOG_MIDI class instead of vobsLOCAL_CATALOG class
  *
@@ -75,7 +78,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.22 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.23 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

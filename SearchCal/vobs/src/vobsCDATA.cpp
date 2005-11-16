@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.23 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.24 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.22  2005/06/13 10:21:15  scetre
 * Added UDDK test
 *
@@ -74,7 +77,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.23 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.24 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

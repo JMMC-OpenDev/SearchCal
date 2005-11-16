@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.5 2005-11-16 10:47:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/16 10:47:54  scetre
+ * Updated documentation
+ *
  * Revision 1.3  2005/11/05 15:52:36  gzins
  * Change Enabled and Disabled to Enable and Disable
  *
@@ -30,7 +33,7 @@
  *  Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.5 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

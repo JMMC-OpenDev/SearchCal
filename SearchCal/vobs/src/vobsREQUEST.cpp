@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.22 2005-11-16 10:47:54 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.23 2005-11-16 10:47:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/11/16 10:47:54  scetre
+ * Updated documentation
+ *
  * Revision 1.21  2005/11/15 14:57:56  scetre
  * Added new scenario structure
  * Added possibility to query merand and borde as primary catalog
@@ -63,7 +66,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.22 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.23 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

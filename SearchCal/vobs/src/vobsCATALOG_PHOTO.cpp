@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.13  2005/06/01 14:16:55  scetre
 * Changed logExtDbg to logTrace
 *
@@ -51,7 +54,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

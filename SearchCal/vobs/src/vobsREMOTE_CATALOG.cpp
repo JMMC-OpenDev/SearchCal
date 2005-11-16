@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.6 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.7 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.5  2005/06/01 14:16:55  scetre
 * Changed logExtDbg to logTrace
 *
@@ -29,7 +32,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.6 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.7 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

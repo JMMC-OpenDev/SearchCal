@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsStarSeparation.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"
+ * "@(#) $Id: vobsStarSeparation.cpp,v 1.5 2005-11-16 10:47:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/16 10:47:54  scetre
+ * Updated documentation
+ *
  * Revision 1.3  2005/11/10 16:04:58  gzins
  * Changed print format to %6.4f
  *
@@ -33,7 +36,7 @@
  * the star separation.
  */
 
-static char *rcsId="@(#) $Id: vobsStarSeparation.cpp,v 1.4 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsStarSeparation.cpp,v 1.5 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.13  2005/11/11 16:37:51  gzins
 * Added GetType() method
 *
@@ -49,7 +52,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.13  2005/11/15 14:57:56  scetre
 * Added new scenario structure
 * Added possibility to query merand and borde as primary catalog
@@ -54,7 +57,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.14 2005-11-16 10:47:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 

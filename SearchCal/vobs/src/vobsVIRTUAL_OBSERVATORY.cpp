@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.31 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.32 2005-11-16 10:47:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.31  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.30  2005/11/15 14:57:56  scetre
 * Added new scenario structure
 * Added possibility to query merand and borde as primary catalog
@@ -95,7 +98,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.31 2005-11-16 10:47:54 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.32 2005-11-16 10:47:55 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
