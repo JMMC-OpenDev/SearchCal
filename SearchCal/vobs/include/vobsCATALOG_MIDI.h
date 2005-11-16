@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.4 2005-08-08 11:27:28 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.5 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/08/08 11:27:28  scetre
+ * Moved specific treatment of midi catalog in the vobsCATALOG_MIDI class instead of vobsLOCAL_CATALOG class
+ *
  * Revision 1.3  2005/02/11 14:22:10  gluck
  * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
  * - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
@@ -84,7 +87,7 @@ private:
     vobsCATALOG_MIDI& operator=(const vobsCATALOG_MIDI&);
 
     // Load MIDI catalog
-    virtual mcsCOMPL_STAT Load();
+    virtual mcsCOMPL_STAT Load(void);
 };
 
 #endif /*!vobsCATALOG_MIDI_H*/
