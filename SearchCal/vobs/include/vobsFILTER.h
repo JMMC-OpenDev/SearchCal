@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.h,v 1.4 2005-11-16 10:47:54 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.h,v 1.5 2005-11-16 10:47:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/16 10:47:54  scetre
+ * Updated documentation
+ *
  * Revision 1.3  2005/11/05 15:52:41  gzins
  * Change Enabled and Disabled to Enable and Disable
  *
