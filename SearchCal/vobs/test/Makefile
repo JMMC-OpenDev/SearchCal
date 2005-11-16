@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.18 2005-11-15 15:02:07 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.19 2005-11-16 10:45:14 scetre Exp $"
 #
 # Makefile for test of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2005/11/15 15:02:07  scetre
+# Added catalog list test
+#
 # Revision 1.17  2005/02/15 15:20:21  gzins
 # Removed unused target
 #
@@ -47,9 +50,7 @@ USER_INC =
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestVOInKBand 	\
-				  vobsTestVOInVBand 	\
-				  vobsTestParser vobsTestRequest 	\
+EXECUTABLES     = vobsTestParser vobsTestRequest 	\
 				  vobsTestCriteria vobsTestStar 	\
 				  vobsTestStarList 					\
 				  vobsTestMidiCatalog				\
@@ -58,14 +59,6 @@ EXECUTABLES_L   =
 
 #
 # List of test programs 
-vobsTestVOInKBand_OBJECTS   = vobsTestVOInKBand
-vobsTestVOInKBand_LDFLAGS   = 
-vobsTestVOInKBand_LIBS      = MCS C++ vobs
-
-vobsTestVOInVBand_OBJECTS   = vobsTestVOInVBand
-vobsTestVOInVBand_LDFLAGS   = 
-vobsTestVOInVBand_LIBS      = MCS C++ vobs
-
 vobsTestParser_OBJECTS      = vobsTestParser 
 vobsTestParser_LDFLAGS      = 
 vobsTestParser_LIBS         = MCS C++ vobs

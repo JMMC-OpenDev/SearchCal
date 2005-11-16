@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.6 2005-02-16 15:30:32 gzins Exp $"
+ * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.7 2005-11-16 10:45:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/16 15:30:32  gzins
+ * Fixed wrong mcsmcs prefix
+ *
  * Revision 1.5  2005/02/15 15:27:41  gzins
  * Changed min/maxRangeMag to min/maxMagRange
  *
@@ -28,58 +31,9 @@
  * \file
  * Test program for vobsCATALOG_MIDI class.
  *
- * \synopsis
- * vobsTestMidiCatalog [\e \<param1\> ... \e \<paramN\>] 
- *                     [\e \<option1\> ... \e \<optionN\>] 
- *
- * \param param1 : description of parameter 1, if it exists
- * \param paramN : description of parameter N, if it exists
- *
- * \n
- * \opt
- * \optname option1 : description of option 1, if it exists
- * \optname optionN : description of option N, if it exists
- * 
- * \n
- * \details
- * OPTIONAL detailed description of the c main file follows here.
- * 
- * \usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
- *
- * \n
- * \env
- * OPTIONAL. If needed, environmental variables accessed by the program. For
- * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
- * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * \n
- * \ex
- * OPTIONAL. Command example if needed
- * \n Brief example description.
- * \code
- * Insert your command example here
- * \endcode
- *
- * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * \sa <entity to refer>
- * 
- * \bug OPTIONAL. Known bugs list if it exists.
- * \bug Bug 1 : bug 1 description
- *
- * \todo OPTIONAL. Things to forsee list, if needed. 
- * \todo Action 1 : action 1 description
- * 
  */
 
-static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.6 2005-02-16 15:30:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.7 2005-11-16 10:45:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -140,7 +94,7 @@ int main(int argc, char *argv[])
     }
 
     // Set stdout Log level
-    logSetStdoutLogLevel(logDEBUG);
+    logSetStdoutLogLevel(logTEST);
 
     logInfo("Starting...");
     

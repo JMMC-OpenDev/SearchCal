@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarList.cpp,v 1.5 2005-11-11 16:39:54 gzins Exp $"
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.6 2005-11-16 10:45:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/11 16:39:54  gzins
+ * Updated to test Sort() method
+ *
  * Revision 1.4  2005/06/20 13:38:17  scetre
  * Update program for test of Remove() method
  *
@@ -20,7 +23,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.5 2005-11-11 16:39:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.6 2005-11-16 10:45:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,10 +55,10 @@ int main(int argc, char *argv[])
     vobsSTAR_LIST starList;
     vobsSTAR      stars[6];
 
-    printf("Is star list empty? : %s\n", 
+    logTest("Is star list empty? : %s\n", 
            (starList.IsEmpty() == mcsTRUE)?"YES":"NO");
-    printf("Size of the list = %d\n", starList.Size());
-    printf("Add 5 stars in the list.\n");
+    logTest("Size of the list = %d\n", starList.Size());
+    logTest("Add 5 stars in the list.\n");
     for (int i = 1; i <= 5; i++)
     {
 
@@ -70,54 +73,54 @@ int main(int argc, char *argv[])
         starList.AddAtTail(stars[i]); 
     }
 
-    printf("Is star list empty? : %s\n", 
+    logTest("Is star list empty? : %s\n", 
            (starList.IsEmpty() == mcsTRUE)?"YES":"NO");
-    printf("Size of the list = %d\n", starList.Size());
-    printf("Save the list into starList.txt.\n");
+    logTest("Size of the list = %d\n", starList.Size());
+    logTest("Save the list into starList.txt.\n");
     if (starList.Save("starList.txt", mcsTRUE) == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
     }
-    printf("Clear the list.\n");
+    logTest("Clear the list.\n");
     starList.Clear();
-    printf("Size of the list = %d\n", starList.Size());
-    printf("Re-load the list from starList.txt.\n");
+    logTest("Size of the list = %d\n", starList.Size());
+    logTest("Re-load the list from starList.txt.\n");
     if (starList.Load("starList.txt", mcsTRUE) == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
     }
-    printf("Size of the list = %d\n", starList.Size());
-    printf("Display the list.\n");
+    logTest("Size of the list = %d\n", starList.Size());
+    logTest("Display the list.\n");
     starList.Display();
-    printf("Sort list by DEC\n");
+    logTest("Sort list by DEC\n");
     if (starList.Sort(vobsSTAR_POS_EQ_RA_MAIN)== mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
     }
-    printf("Display the list.\n");
+    logTest("Display the list.\n");
     starList.Display();
-    printf("Display all elements, one by one, of the list\n");
-    printf("and delete first element of the list.\n");
+    logTest("Display all elements, one by one, of the list\n");
+    logTest("and delete first element of the list.\n");
     for (unsigned int el = 0; el < starList.Size(); el++)
     {
         starList.GetNextStar((mcsLOGICAL)(el==0))->Display();
         starList.Remove(stars[1]); 
     }
-    printf("Display first element of the list.\n");
+    logTest("Display first element of the list.\n");
     starList.GetNextStar(mcsTRUE)->Display();
 
-    printf("Merge list.\n");
+    logTest("Merge list.\n");
     starList.Merge(starList);
-    printf("Remove star 2.\n");    
+    logTest("Remove star 2.\n");    
     starList.Remove(stars[2]); 
-    printf("Display the list.\n");
+    logTest("Display the list.\n");
     starList.Display();
-    printf("Clear the list.\n");
+    logTest("Clear the list.\n");
     starList.Clear(); 
-    printf("Is star list empty? : %s\n", 
+    logTest("Is star list empty? : %s\n", 
            (starList.IsEmpty() == mcsTRUE)?"YES":"NO");
     exit(EXIT_SUCCESS);
 

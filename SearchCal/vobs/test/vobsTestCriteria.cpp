@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestCriteria.cpp,v 1.6 2005-02-15 15:26:06 gzins Exp $"
+ * "@(#) $Id: vobsTestCriteria.cpp,v 1.7 2005-11-16 10:45:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 15:26:06  gzins
+ * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
+ *
  * Revision 1.5  2005/02/13 08:54:00  gzins
  * Updated after vobs classes changes
  * Added CVS log as modifification history
@@ -15,7 +18,7 @@
  ******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.6 2005-02-15 15:26:06 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.7 2005-11-16 10:45:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -75,28 +78,30 @@ int main(int argc, char *argv[])
     }
 
     logSetStdoutLogLevel(logTEST);
+    logInfo("Starting ...");
+    
     timlogStart(MODULE_ID, logINFO, "73", "testCriteria");
     vobsSTAR_COMP_CRITERIA_LIST *criteriaList = new vobsSTAR_COMP_CRITERIA_LIST;
 
     // Add criteria in the list
-    printf("we added a comparaison criteria 'ra' and a range of '0.1'\n");
+    logTest("we added a comparaison criteria 'ra' and a range of '0.1'");
     criteriaList->Add(vobsSTAR_POS_EQ_RA_MAIN, 0.1);
-    printf("we added a comparaison criteria 'dec' and a range of '0.2'\n");
+    logTest("we added a comparaison criteria 'dec' and a range of '0.2'");
     criteriaList->Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.1);
-    printf("we added a comparaison criteria 'mgK' and a range of '0.0'\n");
+    logTest("we added a comparaison criteria 'mgK' and a range of '0.0'");
     criteriaList->Add(vobsSTAR_PHOT_JHN_K, 0.0);
 
-    // printf all criteria
+    // logTest all criteria
     mcsSTRING32 propertyId;
     mcsFLOAT range;
-    int listSize=criteriaList->Size();
-    printf("size of the criteria list created = %d\n", listSize);    
+    mcsINT32 listSize=criteriaList->Size();
+    logTest("size of the criteria list created = %d", listSize);    
     for (int el = 0; el < listSize; el++)
     {
         criteriaList->GetNextCriteria(propertyId,
                                      &range,
                                      (mcsLOGICAL)(el==0));
-        printf("%s = %.1f\n", propertyId, range);
+        logTest("%s = %.1f", propertyId, range);
     }
 
     criteriaList->Remove(vobsSTAR_PHOT_JHN_K);
@@ -106,7 +111,7 @@ int main(int argc, char *argv[])
         criteriaList->GetNextCriteria(propertyId,
                                      &range,
                                      (mcsLOGICAL)(el==0));
-        printf("%s = %.1f\n", propertyId, range);
+        logTest("%s = %.1f", propertyId, range);
     }
 
     timlogStop("testCriteria");
@@ -121,14 +126,15 @@ int main(int argc, char *argv[])
 
     if (star1.IsSame(star2, criteriaList) == mcsFALSE)
     {
-        printf("star1 not equal star2\n");
+        logTest("star1 not equal star2");
     }
     else
     {
-        printf("star1 equal star2\n");        
+        logTest("star1 equal star2");        
     }
 
     delete criteriaList;
+    logInfo("Exiting ...");
 
     // Close MCS services
     mcsExit();

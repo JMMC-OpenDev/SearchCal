@@ -1,69 +1,23 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestCatalogList.cpp,v 1.1 2005-11-15 15:02:07 scetre Exp $"
+ * "@(#) $Id: vobsTestCatalogList.cpp,v 1.2 2005-11-16 10:45:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/15 15:02:07  scetre
+ * Added catalog list test
+ *
  ******************************************************************************/
 
 /**
  * \file
- * brief description of the program, which ends at this dot.
+ * Test of the catalog List object.
  *
- * \synopsis
- * \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
- *                     [\e \<option1\> ... \e \<optionN\>] 
- *
- * \param param1 : description of parameter 1, if it exists
- * \param paramN : description of parameter N, if it exists
- *
- * \n
- * \opt
- * \optname option1 : description of option 1, if it exists
- * \optname optionN : description of option N, if it exists
- * 
- * \n
- * \details
- * OPTIONAL detailed description of the c main file follows here.
- * 
- * \usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
- *
- * \n
- * \env
- * OPTIONAL. If needed, environmental variables accessed by the program. For
- * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
- * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * \n
- * \ex
- * OPTIONAL. Command example if needed
- * \n Brief example description.
- * \code
- * Insert your command example here
- * \endcode
- *
- * \sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * \sa <entity to refer>
- * 
- * \bug OPTIONAL. Known bugs list if it exists.
- * \bug Bug 1 : bug 1 description
- *
- * \todo OPTIONAL. Things to forsee list, if needed. 
- * \todo Action 1 : action 1 description
- * 
  */
 
-static char *rcsId="@(#) $Id: vobsTestCatalogList.cpp,v 1.1 2005-11-15 15:02:07 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestCatalogList.cpp,v 1.2 2005-11-16 10:45:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -122,13 +76,21 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
+    logSetStdoutLogLevel(logTEST);
+    logInfo("Starting ...");
+    
+    logTest("Creation of the catalog list...");
     vobsCATALOG_LIST catalogList;
+    logTest("\tDone.");
     vobsCATALOG *catalog;
+    logTest("The catalog list is a static class. At its creation, all existing catalog are put in it. Normally, it is possible to retreive a specific catalog");
+    logTest("Get catalog I/280...");
     catalog=catalogList.Get(vobsCATALOG_ASCC_ID);
-
-    printf("in the catalog list is present the catalog %s\n", 
+    logTest("\tDone.");
+    logTest("in the catalog list is present the catalog %s",
             catalog->GetName());
 
+    logInfo("Exiting ...");    
     // Close MCS services
     mcsExit();
     
