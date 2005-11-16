@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.9 2005-11-11 16:38:09 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.10 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/11/11 16:38:09  gzins
+* Added GetType() method
+*
 * Revision 1.8  2005/03/04 06:34:37  gzins
 * Updated GetConfidenceIndex prototype
 *
@@ -97,23 +100,23 @@ public:
     virtual mcsCOMPL_STAT GetValue(mcsFLOAT *value) const;
 
     // Get property origin 
-    virtual const char   *GetOrigin();
+    virtual const char   *GetOrigin(void);
 
     // Get Confidence Index
-    virtual vobsCONFIDENCE_INDEX GetConfidenceIndex();
+    virtual vobsCONFIDENCE_INDEX GetConfidenceIndex(void);
     
     // Is value computed?
-    virtual mcsLOGICAL    IsComputed() const;
+    virtual mcsLOGICAL    IsComputed(void) const;
     
     // Is value set?
-    virtual mcsLOGICAL    IsSet() const;
+    virtual mcsLOGICAL    IsSet(void) const;
 
     // Get id/name
-    virtual const char *GetId() const;
-    virtual const char *GetName() const;
+    virtual const char *GetId(void) const;
+    virtual const char *GetName(void) const;
 
     // Get property type 
-    virtual vobsPROPERTY_TYPE GetType() const;
+    virtual vobsPROPERTY_TYPE GetType(void) const;
     
 protected:
     

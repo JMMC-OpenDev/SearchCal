@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.5 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.6 2005-11-16 10:47:54 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.4  2005/01/26 08:10:32  scetre
 * change history
 *
