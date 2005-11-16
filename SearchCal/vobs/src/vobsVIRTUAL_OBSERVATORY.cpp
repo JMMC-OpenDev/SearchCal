@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.32 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.33 2005-11-16 12:53:18 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.32  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.31  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -98,7 +101,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.32 2005-11-16 10:47:55 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.33 2005-11-16 12:53:18 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -147,6 +150,7 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
 /**
  * Method to start the research according to the constarints of the request.
  *
+ * @param scenario query scenario
  * @param request a vobsREQUEST build
  * @param starList list of Stars to build and to send as the result of the
  * research

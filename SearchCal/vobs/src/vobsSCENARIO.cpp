@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.27 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.28 2005-11-16 12:53:18 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.26  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -88,7 +91,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.27 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.28 2005-11-16 12:53:18 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -187,7 +190,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
  *
  * The methods execute the scenario which had been loaded before. It will
  * read each entry and ask the specific catalog.
- * @param request vobsREQUEST representing the user constraints
+ *
  * @param starList vobsSTAR_LIST which is the result of the interrogation,
  * this is the last list return of the last interrogation.
  *
