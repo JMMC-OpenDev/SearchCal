@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobs.doc,v 1.8 2005-11-16 12:53:18 scetre Exp $"
+ * "@(#) $Id: vobs.doc,v 1.9 2005-11-16 13:35:58 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/11/16 12:53:18  scetre
+ * Updated documentation
+ *
  * Revision 1.5  2005/02/15 15:21:26  gzins
  * Added CVS log as file modification history
  *
@@ -63,5 +66,6 @@ data
 \li vobsSCEANRIO_ENTRY entries of a scenario composed of the catalog to
 query,...
 \li vobsVIRTUAL_OBSERVATORY virtual observatory interface
+\n
 
-
+*/
