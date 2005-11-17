@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.28 2005-11-16 12:53:18 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.29 2005-11-17 08:05:52 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2005/11/16 12:53:18  scetre
+* Updated documentation
+*
 * Revision 1.27  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -91,7 +94,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.28 2005-11-16 12:53:18 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.29 2005-11-17 08:05:52 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -200,7 +203,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
 mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 {
     logTrace("vobsSCENARIO::Execute()");
-    
+
     // Create a temporary list of star in xhich will be store the lst input
     vobsSTAR_LIST tempList;
     // Create an iterator for this temporary list
@@ -211,163 +214,191 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         vobsSTAR_COMP_CRITERIA_LIST *criteriaList;
         criteriaList = (*_entryIterator)._criteriaList;
 
-        // begin to clean the temporary list
-        if ( tempList.Clear() == mcsFAILURE )
+        // If the action is not a query to a catalog
+        if (strcmp((*_entryIterator)._catalogName, vobsNO_CATALOG_ID) == 0)
         {
-            return mcsFAILURE;
-        }
-        // Copy the list input in it
-        if ((*_entryIterator)._listInput != NULL)
-        {
-            tempList.Copy(*(*_entryIterator)._listInput);
-        }
-        
-        // Start research in entry's catalog
-        logInfo("Consulting %s ...", (*_entryIterator)._catalogName);
-        
-        // define action for timlog trace
-        mcsSTRING256 timLogActionName;
-        // Get catalog name, and replace '/' by '_'
-        mcsSTRING32 catalog;
-        strcpy (catalog, (*_entryIterator)._catalogName);
-        if (miscReplaceChrByChr(catalog, '/', '_') == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-
-        strcpy(timLogActionName, catalog);
-        // Add request type (primary or not)
-        if ((*_entryIterator)._listInput == NULL)
-        {
-            strcat(timLogActionName, "_1");
-        }
-        else
-        {
-            strcat(timLogActionName, "_2");
-        }
-        
-        // Start time counter
-        timlogInfoStart(timLogActionName);
-
-        // Check if the list is not NULL, i.e the SetCatalogList has ever been
-        // executed one time
-        if (_catalogList == NULL)
-        {
-            errAdd(vobsERR_CATALOG_LIST_EMPTY);
-            return mcsFAILURE;
-        }
-        
-        vobsCATALOG *tempCatalog = 
-            _catalogList->Get((*_entryIterator)._catalogName);
-       
-        vobsREQUEST *request = (*_entryIterator)._request;
-        // if research failed, return mcsFAILURE
-        if ((tempCatalog)->Search(*request, tempList) == mcsFAILURE )
-        {
-            return mcsFAILURE;
-        }
-        // Stop time counter
-        timlogStop(timLogActionName);
-        
-        // If the verbose level is higher or equal to debug level, the back
-        // result will be stored in file
-        if (logGetStdoutLogLevel() >= logDEBUG)
-        {
-            // This file will be stored in the $MCSDATA/tmp repository
-            mcsSTRING256 logFileName;
-            const char   *resolvedPath;
-            strcpy(logFileName, "$MCSDATA/tmp/");
-
-            // Get band used for search
-            const char *band;
-            band = request->GetSearchBand();
-            strcat(logFileName, band);
-
-            // Get catalog name, and replace '/' by '_'
-            mcsSTRING32 catalogName;
-            strcpy (catalogName, ((*_entryIterator)._catalogName));
-            if (miscReplaceChrByChr(catalogName, '/', '_') == mcsFAILURE)
+            // begin to clean the temporary list
+            if ( tempList.Clear() == mcsFAILURE )
             {
                 return mcsFAILURE;
             }
-            strcat(logFileName, "_");
-            strcat(logFileName, catalogName);
+            // Copy the list input in it
+            if ((*_entryIterator)._listInput != NULL)
+            {
+                tempList.Copy(*(*_entryIterator)._listInput);
+            }
+            ((*_entryIterator)._listOutput)->Clear();            
+            // Copy the list input in output
+            ((*_entryIterator)._listOutput)->
+                Copy(tempList);
+            // Apply filter if neccessary
+            if ((*_entryIterator)._filter != NULL)
+            {
+                ((*_entryIterator)._filter)->
+                    Apply((*_entryIterator)._listOutput);
+            }
+        }
+        else
+        {
 
+            // begin to clean the temporary list
+            if ( tempList.Clear() == mcsFAILURE )
+            {
+                return mcsFAILURE;
+            }
+            // Copy the list input in it
+            if ((*_entryIterator)._listInput != NULL)
+            {
+                tempList.Copy(*(*_entryIterator)._listInput);
+            }
+
+            // Start research in entry's catalog
+            logInfo("Consulting %s ...", (*_entryIterator)._catalogName);
+
+            // define action for timlog trace
+            mcsSTRING256 timLogActionName;
+            // Get catalog name, and replace '/' by '_'
+            mcsSTRING32 catalog;
+            strcpy (catalog, (*_entryIterator)._catalogName);
+            if (miscReplaceChrByChr(catalog, '/', '_') == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            strcpy(timLogActionName, catalog);
             // Add request type (primary or not)
             if ((*_entryIterator)._listInput == NULL)
             {
-                strcat(logFileName, "_1.log");
+                strcat(timLogActionName, "_1");
             }
             else
             {
-                strcat(logFileName, "_2.log");
+                strcat(timLogActionName, "_2");
             }
 
-            // Resolve path
-            resolvedPath = miscResolvePath(logFileName);
-            if (resolvedPath != NULL)
+            // Start time counter
+            timlogInfoStart(timLogActionName);
+
+            // Check if the list is not NULL, i.e the SetCatalogList has
+            // ever been executed one time
+            if (_catalogList == NULL)
             {
-                // Save resulting list
-                if (tempList.Save(resolvedPath) == mcsFAILURE)
+                errAdd(vobsERR_CATALOG_LIST_EMPTY);
+                return mcsFAILURE;
+            }
+
+            vobsCATALOG *tempCatalog = 
+                _catalogList->Get((*_entryIterator)._catalogName);
+
+            vobsREQUEST *request = (*_entryIterator)._request;
+            // if research failed, return mcsFAILURE
+            if ((tempCatalog)->Search(*request, tempList) == mcsFAILURE )
+            {
+                return mcsFAILURE;
+            }
+            // Stop time counter
+            timlogStop(timLogActionName);
+
+            // If the verbose level is higher or equal to debug level, the back
+            // result will be stored in file
+            if (logGetStdoutLogLevel() >= logDEBUG)
+            {
+                // This file will be stored in the $MCSDATA/tmp repository
+                mcsSTRING256 logFileName;
+                const char   *resolvedPath;
+                strcpy(logFileName, "$MCSDATA/tmp/");
+
+                // Get band used for search
+                const char *band;
+                band = request->GetSearchBand();
+                strcat(logFileName, band);
+
+                // Get catalog name, and replace '/' by '_'
+                mcsSTRING32 catalogName;
+                strcpy (catalogName, ((*_entryIterator)._catalogName));
+                if (miscReplaceChrByChr(catalogName, '/', '_') == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
+                strcat(logFileName, "_");
+                strcat(logFileName, catalogName);
+
+                // Add request type (primary or not)
+                if ((*_entryIterator)._listInput == NULL)
+                {
+                    strcat(logFileName, "_1.log");
+                }
+                else
+                {
+                    strcat(logFileName, "_2.log");
+                }
+
+                // Resolve path
+                resolvedPath = miscResolvePath(logFileName);
+                if (resolvedPath != NULL)
+                {
+                    // Save resulting list
+                    if (tempList.Save(resolvedPath) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
+                }
+            }
+
+            // There are 3 different action to do when the scenario is
+            // executed
+            switch((*_entryIterator)._action)
+            {
+                // First action is vobsCOPY. The list output will be clear and
+                // it will be merge from the temporary list which contain 
+                // the list input
+                case vobsCOPY:
+                    {
+                        if (((*_entryIterator)._listOutput)->Clear() ==
+                            mcsFAILURE)
+                        {
+                            return mcsFAILURE;
+                        }
+                        if (((*_entryIterator)._listOutput)->
+                            Merge(tempList, criteriaList) == mcsFAILURE)
+                        {
+                            return mcsFAILURE;
+                        }
+                    }
+                    // second action is vobsMERGE. The list output will be 
+                    // merge from the temporary list whitout being clear.
+                    // The information which is stored in the the list 
+                    // output is preserved and can be modified
+                case vobsMERGE:
+                    {
+                        if (((*_entryIterator)._listOutput)->
+                            Merge(tempList, criteriaList) == mcsFAILURE )
+                        {
+                            return mcsFAILURE;
+                        }
+                    }
+                    // third action is vobsUPDATE_ONLY. The list output will
+                    // be merge from thetemporary list, but this merge will
+                    // not modified the existant information of the list output
+                case vobsUPDATE_ONLY:
+                    {
+
+                        if ( ((*_entryIterator)._listOutput)->
+                             Merge(tempList, criteriaList, mcsTRUE) == mcsFAILURE )
+                        {
+                            return mcsFAILURE;
+                        }
+                    }
+                default:
+                    break;
+            }
+            // Apply filter if neccessary
+            if ((*_entryIterator)._filter != NULL)
+            {
+                ((*_entryIterator)._filter)->
+                    Apply((*_entryIterator)._listOutput);
             }
         }
-      
-        // There are 3 different action to do when the scenario is executed
-        switch((*_entryIterator)._action)
-        {
-            // First action is vobsCOPY. The list output will be clear and it
-            // will be merge from the temporary list which contain the list
-            // input
-            case vobsCOPY:
-                {
-                    if (((*_entryIterator)._listOutput)->Clear() == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
-                    if (((*_entryIterator)._listOutput)->
-                        Merge(tempList, criteriaList) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
-                }
-            // second action is vobsMERGE. The list output will be merge from
-            // the temporary list whitout being clear. The information which is
-            // stored in the the list output is preserved and can be modified
-            case vobsMERGE:
-                {
-                    if (((*_entryIterator)._listOutput)->
-                         Merge(tempList, criteriaList) == mcsFAILURE )
-                    {
-                        return mcsFAILURE;
-                    }
-                }
-            // third action is vobsUPDATE_ONLY. The list output will be merge
-            // from thetemporary list, but this merge will not modified the
-            // existant information of the list output
-            case vobsUPDATE_ONLY:
-                {
-
-                    if ( ((*_entryIterator)._listOutput)->
-                         Merge(tempList, criteriaList, mcsTRUE) == mcsFAILURE )
-                    {
-                        return mcsFAILURE;
-                    }
-                }
-            default:
-                break;
-        }
-        // Apply filter if neccessary
-        if ((*_entryIterator)._filter != NULL)
-        {
-            ((*_entryIterator)._filter)->Apply((*_entryIterator)._listOutput);
-        }
-
-        //printf("%d star(s) found in catalog.\n", tempList.Size());         
-        //printf("%d star(s) after merging.\n", (*_entryIterator)._listOutput->Size());         
-        //(*_entryIterator)._listOutput->Display();
         _entryIterator++;
     }
    

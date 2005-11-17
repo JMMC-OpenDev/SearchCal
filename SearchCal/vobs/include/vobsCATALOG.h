@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.12 2005-11-15 14:57:56 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.13 2005-11-17 08:05:52 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/11/15 14:57:56  scetre
+* Added new scenario structure
+* Added possibility to query merand and borde as primary catalog
+*
 * Revision 1.11  2005/02/11 14:22:10  gluck
 * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
 * - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
@@ -27,6 +31,7 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+#define vobsNO_CATALOG_ID           "NO CATALOG"
 #define vobsCATALOG_ASCC_ID         "I/280"
 #define vobsCATALOG_BSC_ID          "V/50/catalog"
 #define vobsCATALOG_CHARM2_ID       "J/A+A/386/492/charm"
