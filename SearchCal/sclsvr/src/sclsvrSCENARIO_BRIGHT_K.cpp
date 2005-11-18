@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.3 2005-11-16 14:28:02 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.4 2005-11-18 10:08:50 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/16 14:28:02  scetre
+ * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
+ *
  * Revision 1.2  2005/11/15 15:21:31  scetre
  * Removed unused printf
  *
@@ -19,7 +22,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.3 2005-11-16 14:28:02 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.4 2005-11-18 10:08:50 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -137,21 +140,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     ///////////////////////////////////////////////////////////////////////////
     // PRIMARY REQUEST
     ///////////////////////////////////////////////////////////////////////////
-   
-
-
-
-// Temporary test
-
-
-
-//            AddEntry(vobsCATALOG_MASS_ID,&_request, NULL, &_starListP, vobsCOPY);
-
-
-
-
-
-
     
     ///////////////////////////////////////////////////////////////////////////
     // I/280
