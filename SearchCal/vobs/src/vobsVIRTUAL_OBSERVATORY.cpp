@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.33 2005-11-16 12:53:18 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.34 2005-11-21 13:48:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.33  2005/11/16 12:53:18  scetre
+* Updated documentation
+*
 * Revision 1.32  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -101,7 +104,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.33 2005-11-16 12:53:18 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.34 2005-11-21 13:48:56 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -171,6 +174,11 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
 
     //Set the catalogList 
     scenario->SetCatalogList(&_catalogList);
+
+    if (starList.Clear() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     // Run the method to execute the scenario which had been loaded into memory
     if (scenario->Execute(starList) == mcsFAILURE)
