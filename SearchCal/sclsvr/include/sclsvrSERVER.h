@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.9 2005-11-15 15:01:19 scetre Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.10 2005-11-21 13:51:47 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/11/15 15:01:19  scetre
+ * Updated with new scenario structure
+ *
  * Revision 1.8  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -44,6 +47,7 @@
 #include "sclsvrSCENARIO_BRIGHT_K.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
+#include "sclsvrSCENARIO_SINGLE_STAR.h"
 
 /*
  * Class declaration
@@ -118,9 +122,10 @@ private:
 
     // Virtual observatory
     vobsVIRTUAL_OBSERVATORY _virtualObservatory;
-    sclsvrSCENARIO_BRIGHT_K scenarioBrightK;
-    sclsvrSCENARIO_BRIGHT_V scenarioBrightV;
-    sclsvrSCENARIO_BRIGHT_N scenarioBrightN;
+    sclsvrSCENARIO_BRIGHT_K _scenarioBrightK;
+    sclsvrSCENARIO_BRIGHT_V _scenarioBrightV;
+    sclsvrSCENARIO_BRIGHT_N _scenarioBrightN;
+    sclsvrSCENARIO_SINGLE_STAR _scenarioSingleStar;
 };
 
 #endif /*!sclsvrSERVER_H*/

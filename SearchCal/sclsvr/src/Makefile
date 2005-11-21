@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2005-11-15 15:01:19 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.15 2005-11-21 13:51:47 scetre Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2005/11/15 15:01:19  scetre
+# Updated with new scenario structure
+#
 # Revision 1.13  2005/06/20 14:42:54  scetre
 # Removed filter to vobs unless visibility filter
 #
@@ -77,6 +80,7 @@ INCLUDES        = sclsvr.h						\
 				  sclsvrSCENARIO_BRIGHT_K.h		\
 				  sclsvrSCENARIO_BRIGHT_V.h		\
 				  sclsvrSCENARIO_BRIGHT_N.h		\
+				  sclsvrSCENARIO_SINGLE_STAR.h 	\
 
 
 #
@@ -99,6 +103,7 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		\
 				   sclsvrSCENARIO_BRIGHT_K		\
 				   sclsvrSCENARIO_BRIGHT_V		\
 				   sclsvrSCENARIO_BRIGHT_N		\
+				   sclsvrSCENARIO_SINGLE_STAR	\
 
 
 #

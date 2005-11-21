@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.22 2005-11-15 15:01:19 scetre Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.23 2005-11-21 13:51:47 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/11/15 15:01:19  scetre
+ * Updated with new scenario structure
+ *
  * Revision 1.21  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -37,7 +40,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.22 2005-11-15 15:01:19 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.23 2005-11-21 13:51:47 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -147,12 +150,12 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
     // init the scenario
-    if (scenarioBrightK.Init(&request) == mcsFAILURE)
+    if (_scenarioSingleStar.Init(&request, starList) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;        
     }
     
-    if (_virtualObservatory.Search(&scenarioBrightK, request, starList) ==
+    if (_virtualObservatory.Search(&_scenarioSingleStar, request, starList) ==
         mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
