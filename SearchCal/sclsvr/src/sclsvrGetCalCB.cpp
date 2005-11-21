@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.20 2005-11-15 15:01:19 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.21 2005-11-21 13:50:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/11/15 15:01:19  scetre
+ * Updated with new scenario structure
+ *
  * Revision 1.19  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -62,7 +65,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.20 2005-11-15 15:01:19 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.21 2005-11-21 13:50:59 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -127,12 +130,12 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         (strcmp(band, "K")==0) )
     {
         // Load Scenario K
-        if (scenarioBrightK.Init(&request) == mcsFAILURE)
+        if (_scenarioBrightK.Init(&request) == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
         // Start the research in the virtual observatory
-        if (_virtualObservatory.Search(&scenarioBrightK, request,
+        if (_virtualObservatory.Search(&_scenarioBrightK, request,
                                        starList)==mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
@@ -142,12 +145,12 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     else if (strcmp(band, "V")==0)
     {
         // Load Scenario V
-        if (scenarioBrightV.Init(&request) == mcsFAILURE)
+        if (_scenarioBrightV.Init(&request) == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
         // Start the research in the virtual observatory
-        if (_virtualObservatory.Search(&scenarioBrightV, request,
+        if (_virtualObservatory.Search(&_scenarioBrightV, request,
                                        starList)==mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
@@ -157,12 +160,12 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     else if ((strcmp(band, "N") == 0))
     {
         // Load Scenario N
-        if (scenarioBrightN.Init(&request) == mcsFAILURE)
+        if (_scenarioBrightN.Init(&request) == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
         // Start the research in the virtual observatory
-        if (_virtualObservatory.Search(&scenarioBrightN, request,
+        if (_virtualObservatory.Search(&_scenarioBrightN, request,
                                        starList)==mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
