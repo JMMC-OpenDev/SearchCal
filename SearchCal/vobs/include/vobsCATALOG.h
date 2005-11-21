@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.13 2005-11-17 08:05:52 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.14 2005-11-21 13:49:40 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/11/17 08:05:52  scetre
+* Added possibility to add no catalog in an entry
+*
 * Revision 1.12  2005/11/15 14:57:56  scetre
 * Added new scenario structure
 * Added possibility to query merand and borde as primary catalog
@@ -46,6 +49,7 @@
 #define vobsCATALOG_MIDI_ID         "MIDI"
 #define vobsCATALOG_PHOTO_ID        "II/7A/catalog"
 #define vobsCATALOG_SBSC_ID         "V/36B/bsc4s"
+#define vobsCATALOG_UNSO_ID         "I/284"
 
 /*
  * MCS header
