@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.7 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.8 2005-11-21 13:47:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.6  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -32,7 +35,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.7 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.8 2005-11-21 13:47:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -429,7 +432,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
     
     
     if ( (miscDynBufAppendString(&_query,"&-out.form=List")==mcsFAILURE) ||
-         (miscDynBufAppendString(&_query, miscDynBufGetBuffer(&strList))==mcsFAILURE) )
+         (miscDynBufAppendString(&_query,
+                                 miscDynBufGetBuffer(&strList))==mcsFAILURE) )
     {
         errAdd(vobsERR_END_WRITE_FAILED);
         miscDynBufDestroy(&strList);
@@ -465,7 +469,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2Sring(miscDYN_BUF &strList,
     // if the list is not empty
     if (list.Size()!=0)
     {
-        miscDynBufAppendString(&strList,"&-c=%3C%3C%3D%3D%3D%3Dresult1%5F280%2Etxt&");
+        miscDynBufAppendString(&strList,
+                               "&-c=%3C%3C%3D%3D%3D%3Dresult1%5F280%2Etxt&");
         int compt=0;
         
         for (unsigned int el = 0; el < list.Size(); el++)

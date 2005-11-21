@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.3 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.4 2005-11-21 13:47:57 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.2  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -19,7 +22,7 @@
  *  Definition of vobsCATALOG_CHARM2 class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.3 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.4 2005-11-21 13:47:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -79,11 +82,19 @@ mcsCOMPL_STAT vobsCATALOG_CHARM2::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_CHARM2::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=LD&-out=e_LD&-out=UD&-out=e_UD");
-    miscDynBufAppendString(&_query, "&-out=Method&Method=,LBI,LO,SPE");
-    miscDynBufAppendString(&_query, "&-out=Lambda&-out=Kmag,Vmag");
+    // properties to retreive
+    miscDynBufAppendString(&_query, "&-out=LD");
+    miscDynBufAppendString(&_query, "&-out=e_LD");
+    miscDynBufAppendString(&_query, "&-out=UD");
+    miscDynBufAppendString(&_query, "&-out=e_UD");
+    miscDynBufAppendString(&_query, "&-out=Method");
+    miscDynBufAppendString(&_query, "&-out=Lambda");
+    miscDynBufAppendString(&_query, "&-out=Kmag");
+    miscDynBufAppendString(&_query, "&-out=Vmag");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
-            
+    // constraint        
+    miscDynBufAppendString(&_query, "&Method=,LBI,LO,SPE");
+    
     return mcsSUCCESS;
 }
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.16 2005-11-21 13:47:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.14  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -57,7 +60,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.16 2005-11-21 13:47:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -127,13 +130,22 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
     
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
+    // properties to retreive
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
     miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_query, "&-out=v3");
+    miscDynBufAppendString(&_query, "&-out=d5");
+    miscDynBufAppendString(&_query, "&-out=HIP");
+    miscDynBufAppendString(&_query, "&-out=HD");
+    miscDynBufAppendString(&_query, "&-out=DM");
+    // constraints
     miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query, "&-out=v3&-out=d5&-out=HIP&-out=HD");
-    miscDynBufAppendString(&_query, "&-out=DM&-sort=_r");
+    
+    miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;
 }
@@ -182,14 +194,22 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
+    // properties to retreive
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA");
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
     miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_query, "&-out=v3");
+    miscDynBufAppendString(&_query, "&-out=d5");
+    miscDynBufAppendString(&_query, "&-out=HIP");
+    miscDynBufAppendString(&_query, "&-out=HD");
+    miscDynBufAppendString(&_query, "&-out=DM");
+    // constraints
     miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query, "&-out=v3&-out=d5");
-    miscDynBufAppendString(&_query, "&-out=HIP&-out=HD&-out=DM&-sort=_r"); 
+    miscDynBufAppendString(&_query, "&-sort=_r"); 
     
     return mcsSUCCESS;
 }

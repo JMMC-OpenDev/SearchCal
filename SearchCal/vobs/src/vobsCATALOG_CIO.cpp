@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.14 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.15 2005-11-21 13:47:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.13  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -51,7 +54,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.14 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.15 2005-11-21 13:47:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -149,10 +152,13 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
 {
     logTrace("vobsCATALOG_CIO::GetAskingConstant()");
 
-    miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&&x_F(IR)=M");
+    miscDynBufAppendString(&_query,"&-file=-c");
+    miscDynBufAppendString(&_query, "&-c.eq=J2000");
+    miscDynBufAppendString(&_query, "&&x_F(IR)=M");
     miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
     miscDynBufAppendString(&_query,"&-out.max=50");
-    miscDynBufAppendString(&_query,"-c.r=1&-c.u=arcmin");
+    miscDynBufAppendString(&_query,"-c.r=1");
+    miscDynBufAppendString(&_query, "&-c.u=arcmin");
     
     return mcsSUCCESS;
 }
@@ -172,8 +178,12 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_CIO::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
+    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+    miscDynBufAppendString(&_query, "&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out=lambda");
+    miscDynBufAppendString(&_query, "&-out=F(IR)");
+    miscDynBufAppendString(&_query, "&-out=x_F(IR)");
     miscDynBufAppendString(&_query, "&-sort=_r");
             
     return mcsSUCCESS;
@@ -234,11 +244,16 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
     deltaRa = request.GetDeltaRa();
     deltaDec = request.GetDeltaDec();
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-    miscDynBufAppendString(&_query, "&-out.max=50&-c.bm=");
+    miscDynBufAppendString(&_query, "&-out.max=50");
+    miscDynBufAppendString(&_query, "&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out=lambda&-out=F(IR)&-out=x_F(IR)");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
+    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+    miscDynBufAppendString(&_query, "&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out=lambda");
+    miscDynBufAppendString(&_query, "&-out=F(IR)");
+    miscDynBufAppendString(&_query, "&-out=x_F(IR)");
     miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;

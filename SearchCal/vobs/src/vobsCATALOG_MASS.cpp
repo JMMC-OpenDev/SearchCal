@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.17 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.18 2005-11-21 13:47:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.16  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -62,7 +65,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.17 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.18 2005-11-21 13:47:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -128,10 +131,14 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_MASS::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=Jmag&-out=Hmag&-out=Kmag");
-    miscDynBufAppendString(&_query, "&-out=Qflg");
-    //miscDynBufAppendString("&Qflg=AAA");
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT&-out=*POS_GAL_LON");
+    // properties to retreive
+    miscDynBufAppendString(&_query, "&-out=Jmag");
+    miscDynBufAppendString(&_query, "&-out=Hmag");
+    miscDynBufAppendString(&_query, "&-out=Kmag");
+    miscDynBufAppendString(&_query, "&-out=*CODE_QUALITY");
+    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
+    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
+    // constraints
     miscDynBufAppendString(&_query, "&opt=T");
             
     return mcsSUCCESS;
@@ -153,14 +160,9 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     logTrace("vobsCATALOG_MASS::GetAskingSpecificParameters()");
 
-    miscDynBufAppendString(&_query, "&");
-
     // Add band constraint
     const char *band;
     band = request.GetSearchBand();
-    miscDynBufAppendString(&_query, band);
-    miscDynBufAppendString(&_query, "mag=");
-
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
     mcsFLOAT minMagRange;
@@ -168,11 +170,6 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     minMagRange = request.GetMinMagRange();
     maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
-    miscDynBufAppendString(&_query, rangeMag);
-    
-    //miscDynBufAppendString(&_query, "&Qflg=AAA");
-    miscDynBufAppendString(&_query, "&opt=T");
-    
     // Add search box size
     mcsSTRING32 separation;
     mcsFLOAT deltaRa;
@@ -180,10 +177,18 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     deltaRa = request.GetDeltaRa();
     deltaDec = request.GetDeltaDec();
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
+
+    miscDynBufAppendString(&_query, "&");
+    miscDynBufAppendString(&_query, band);
+    miscDynBufAppendString(&_query, "mag=");
+    miscDynBufAppendString(&_query, rangeMag);
+    miscDynBufAppendString(&_query, "&opt=T");
     miscDynBufAppendString(&_query, "&-out.max=150");
     miscDynBufAppendString(&_query, "&-c.bm=");
     miscDynBufAppendString(&_query, separation);
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
+    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+    miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;

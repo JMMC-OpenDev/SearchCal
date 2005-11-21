@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.3 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.4 2005-11-21 13:47:57 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.2  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -19,7 +22,7 @@
  *  Definition of vobsCATALOG_DENIS_JK class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.3 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.4 2005-11-21 13:47:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -79,8 +82,12 @@ mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_DENIS_JK::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=Jmag,Ksmag");
-    miscDynBufAppendString(&_query, "&-out=Var&Var=%3C4");
+    // properties to retreive
+    miscDynBufAppendString(&_query, "&-out=Jmag");
+    miscDynBufAppendString(&_query, "&-out=Ksmag");
+    miscDynBufAppendString(&_query, "&-out=Var");
+    // constraints
+    miscDynBufAppendString(&_query, "&Var=%3C4");
             
     return mcsSUCCESS;
 }

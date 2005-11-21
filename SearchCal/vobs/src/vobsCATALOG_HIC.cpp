@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.10 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.11 2005-11-21 13:47:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.9  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -39,7 +42,7 @@
  * vobsCATALOG_HIC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.10 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.11 2005-11-21 13:47:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -105,9 +108,11 @@ mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_HIC::GetAskingSpecificParameters()");
    
+    // properties to retreive
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
-    miscDynBufAppendString(&_query, "&-out=*VELOC_HC&-out=HD");
+    miscDynBufAppendString(&_query, "&-out=*VELOC_HC");
+    miscDynBufAppendString(&_query, "&-out=HD");
             
     return mcsSUCCESS;
 }

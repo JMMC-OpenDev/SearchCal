@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.11 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.12 2005-11-21 13:47:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.10  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -44,7 +47,7 @@
  * vobsCATALOG_LBSI class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.11 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.12 2005-11-21 13:47:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -112,9 +115,17 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag,");
-    miscDynBufAppendString(&_query, "Lmag,Mmag,Nmag");
-    miscDynBufAppendString(&_query, "&-out=UDDK,e_UDDK");
+    // properties to retreive
+    miscDynBufAppendString(&_query, "&-out=Bmag");
+    miscDynBufAppendString(&_query, "&-out=Vmag");
+    miscDynBufAppendString(&_query, "&-out=Jmag");
+    miscDynBufAppendString(&_query, "&-out=Hmag");
+    miscDynBufAppendString(&_query, "&-out=Kmag");
+    miscDynBufAppendString(&_query, "&-out=Lmag");
+    miscDynBufAppendString(&_query, "&-out=Mmag");
+    miscDynBufAppendString(&_query, "&-out=Nmag");
+    miscDynBufAppendString(&_query, "&-out=UDDK");
+    miscDynBufAppendString(&_query, "&-out=e_UDDK");
             
     return mcsSUCCESS;
 }
@@ -136,13 +147,9 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     logTrace("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
 
-    miscDynBufAppendString(&_query, "&");
-    
     // Add band constraint
     const char *band;
     band = request.GetSearchBand();
-    miscDynBufAppendString(&_query, band);
-    
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
     mcsFLOAT minMagRange;
@@ -150,9 +157,6 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
     minMagRange = request.GetMinMagRange();
     maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
-    miscDynBufAppendString(&_query, "mag=");
-    miscDynBufAppendString(&_query, rangeMag);
-
     // Add search box size
     mcsSTRING32 separation;
     mcsFLOAT deltaRa;
@@ -160,13 +164,29 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
     deltaRa = request.GetDeltaRa();
     deltaDec = request.GetDeltaDec();
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
+
+    miscDynBufAppendString(&_query, "&");
+    miscDynBufAppendString(&_query, band);
+    miscDynBufAppendString(&_query, "mag=");
+    miscDynBufAppendString(&_query, rangeMag);
+    miscDynBufAppendString(&_query, "&-c.eq=J2000");
+    miscDynBufAppendString(&_query, "&-out.max=100");
+    miscDynBufAppendString(&_query, "&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out=Bmag,Vmag,Jmag,Hmag,Kmag,");
-    miscDynBufAppendString(&_query, "Lmag,Mmag,Nmag");
-    miscDynBufAppendString(&_query, "&-out=UDDK,e_UDDK");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
+    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+    miscDynBufAppendString(&_query, "&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out=Bmag");
+    miscDynBufAppendString(&_query, "&-out=Vmag");
+    miscDynBufAppendString(&_query, "&-out=Jmag");
+    miscDynBufAppendString(&_query, "&-out=Hmag");
+    miscDynBufAppendString(&_query, "&-out=Kmag");
+    miscDynBufAppendString(&_query, "&-out=Lmag");
+    miscDynBufAppendString(&_query, "&-out=Mmag");
+    miscDynBufAppendString(&_query, "&-out=Nmag");
+    miscDynBufAppendString(&_query, "&-out=UDDK");
+    miscDynBufAppendString(&_query, "&-out=e_UDDK");
     
     return mcsSUCCESS;
 }
