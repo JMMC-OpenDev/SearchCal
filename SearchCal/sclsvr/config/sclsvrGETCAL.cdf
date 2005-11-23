@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.13 2005-10-05 12:35:12 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.14 2005-11-23 14:35:33 lafrasse Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.13  2005/10/05 12:35:12  scetre
+ Update parameter and command description
+
  Revision 1.12  2005/03/07 16:06:38  gzins
  Removed vis and visErr options
 
@@ -60,12 +63,6 @@
             <desc>science object magnitude</desc>
             <minValue><double>-5.0</double></minValue>
             <maxValue><double>20</double></maxValue>
-        </param>
-        <param>
-            <name>maxReturn</name>
-            <type>integer</type>
-            <defaultValue><integer>50</integer></defaultValue>
-            <desc>maximum number of calibrators to be returned</desc>
         </param>
         <param>
             <name>diffRa</name>
@@ -137,6 +134,12 @@
             <name>file</name>
             <type>string</type>
             <desc>name of file in which results should be saved</desc>
+        </param>
+        <param optional="true">
+            <name>bright</name>
+            <type>boolean</type>
+            <defaultValue><boolean>true</boolean></defaultValue>
+            <desc>specify wether the query should return bright (by default) or faint stars</desc>
         </param>
     </params>        
 </cmd>

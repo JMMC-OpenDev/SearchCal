@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.11 2005-11-15 15:01:19 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.12 2005-11-23 14:35:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/11/15 15:01:19  scetre
+ * Updated with new scenario structure
+ *
  * Revision 1.10  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -46,7 +49,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.11 2005-11-15 15:01:19 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.12 2005-11-23 14:35:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -78,8 +81,10 @@ using namespace std;
 sclsvrREQUEST::sclsvrREQUEST()
 {
     _maxBaselineLength = 0.0;
-    _observingWlen = 0.0;
-    _getCalCmd = NULL;
+    _observingWlen     = 0.0;
+    _getCalCmd         = NULL;
+    _brightFlag        = mcsTRUE;
+    memset(_fileName, '\0', sizeof(_fileName));
 }
 
 /**
@@ -107,8 +112,10 @@ mcsCOMPL_STAT sclsvrREQUEST::Copy(sclsvrREQUEST& request)
     vobsREQUEST::Copy(request);
     
     _maxBaselineLength = request._maxBaselineLength;
-    _observingWlen = request._observingWlen;
-    _getCalCmd = request._getCalCmd;
+    _observingWlen     = request._observingWlen;
+    _getCalCmd         = request._getCalCmd;
+    _brightFlag        = request._brightFlag;
+    strncpy(_fileName, request._fileName, sizeof(_fileName));
 
     return mcsSUCCESS;
 }
@@ -154,13 +161,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     // Observed magnitude
     mcsDOUBLE magnitude;
     if (_getCalCmd->GetMag(&magnitude) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Max calibrator return
-    mcsINT32 maxReturn;
-    if (_getCalCmd->GetMaxReturn(&maxReturn) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -232,6 +232,16 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         return mcsFAILURE;
     }
 
+    // Brightness
+    mcsLOGICAL brightFlag = mcsTRUE;
+    if (_getCalCmd->IsDefinedBright() == mcsTRUE)
+    {
+        if (_getCalCmd->GetBright(&brightFlag) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+
     // File name
     char *fileName = "";
     if (_getCalCmd->IsDefinedFile() == mcsTRUE)
@@ -299,6 +309,11 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
     // Affect the baseline length
     if (SetMaxBaselineLength(baseMax) ==  mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Affect the brightness flag
+    if (SetBrightFlag(brightFlag) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -393,7 +408,37 @@ mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
 }
 
 /**
- * Set the file name in which the value will be saved
+ * Specify wether the query should return bright (by default) or faint stars.
+ *
+ * @param brightFlag mcsTRUE if the query should return bright starts, otherwise
+ * mcsFALSE to get faint stars.
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetBrightFlag(mcsLOGICAL brightFlag)
+{
+    logTrace("sclsvrREQUEST::SetBrightFlag()");
+    
+    _brightFlag = brightFlag;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Return wether the query should return bright or faint stars.
+ *
+ * @return mcsTRUE if the query should return bright stars, otherwise mcsFALSE
+ * for faint stars.
+ */
+mcsLOGICAL sclsvrREQUEST::IsBright(void)
+{
+    logTrace("sclsvrREQUEST::IsBright()");
+
+    return _brightFlag;
+}
+
+/**
+ * Set the file name in which the value will be saved.
  *
  * @param fileName the name of the save file
  *
@@ -404,7 +449,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 {
     logTrace("sclsvrREQUEST::SetFileName()");
     
-    if (strcpy(_fileName, fileName) == NULL)
+    if (strncpy(_fileName, fileName, sizeof(_fileName)) == NULL)
     {
         return mcsFAILURE;
     }

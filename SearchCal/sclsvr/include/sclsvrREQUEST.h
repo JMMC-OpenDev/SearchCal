@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.9 2005-11-15 15:01:19 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.10 2005-11-23 14:35:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/11/15 15:01:19  scetre
+ * Updated with new scenario structure
+ *
  * Revision 1.8  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -83,22 +86,25 @@ public:
     // Copy
     virtual mcsCOMPL_STAT Copy(sclsvrREQUEST& request);
     
-    // Command parameters 
+    // Command parameters
     virtual mcsCOMPL_STAT Parse(const char *cmdParamLine);
     virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine);
 
     // Baseline
     virtual mcsCOMPL_STAT SetMaxBaselineLength(mcsFLOAT length);
-    virtual mcsFLOAT GetMaxBaselineLength(void);
+    virtual mcsFLOAT      GetMaxBaselineLength(void);
 
-    // Wavelengh 
+    // Wavelengh
     virtual mcsCOMPL_STAT SetObservingWlen(mcsFLOAT wlen);
-    virtual mcsFLOAT GetObservingWlen(void);
+    virtual mcsFLOAT      GetObservingWlen(void);
 
-    // File name where file should be saved 
+    // File name where file should be saved
     virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
-    virtual const char *GetFileName(void);
+    virtual const char*   GetFileName(void);
 
+    // Brightness
+    virtual mcsCOMPL_STAT SetBrightFlag(mcsLOGICAL brightFlag);
+    virtual mcsLOGICAL    IsBright(void);
 
 protected:
 
@@ -111,9 +117,11 @@ private:
     // GETCAL command
     sclsvrGETCAL_CMD *_getCalCmd;
 
-    mcsFLOAT        _maxBaselineLength;
-    mcsFLOAT        _observingWlen;
-    mcsSTRING256    _fileName;
+    // Request parameters
+    mcsFLOAT      _maxBaselineLength;
+    mcsFLOAT      _observingWlen;
+    mcsLOGICAL    _brightFlag;
+    mcsSTRING256  _fileName;
 };
 
 #endif /*!sclsvrREQUEST_H*/
