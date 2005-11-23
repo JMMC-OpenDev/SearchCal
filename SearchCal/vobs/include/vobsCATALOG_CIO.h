@@ -3,11 +3,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.h,v 1.8 2005-02-11 14:22:10 gluck Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.h,v 1.9 2005-11-23 08:33:32 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/02/11 14:22:10  gluck
+* - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
+* - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
+* - Updated some comments
+*
 * Revision 1.7  2005/02/07 19:32:52  gzins
 * Updated vobsREQUEST API
 *
@@ -58,9 +63,6 @@ public:
    virtual ~vobsCATALOG_CIO();
    
 protected:
-    // Method to prepare the request as a string
-    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
-       
     // Method to build parts of the request
     virtual mcsCOMPL_STAT WriteQueryConstantPart(void);
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);

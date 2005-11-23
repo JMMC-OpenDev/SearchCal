@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.15 2005-11-21 13:47:57 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.16 2005-11-23 08:33:32 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/11/21 13:47:57  scetre
+* arrange properties when the URL is written
+*
 * Revision 1.14  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -54,7 +57,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.15 2005-11-21 13:47:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.16 2005-11-23 08:33:32 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -108,35 +111,6 @@ vobsCATALOG_CIO::~vobsCATALOG_CIO()
 /*
  * Protected methods
  */
-/**
- * Prepare the asking for the CIO catalog.
- *
- * Prepare the asking according to the request (constraints) for a first ask
- * to the CDS, that's mean that the use of this asking will help to have a
- * list of possible star. If the request is for a single research, this method
- * will write the spécific asking.
- *
- * @param request vobsREQUEST which have all the contraints for the search
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- *
- */
-mcsCOMPL_STAT vobsCATALOG_CIO::PrepareQuery(vobsREQUEST &request)
-{
-    logTrace("vobsCATALOG::PrepareQuery()");
-
-    miscDynBufReset(&_query);
-
-    if ((WriteQueryURIPart()==mcsFAILURE) ||
-        (WriteReferenceStarPosition(request)==mcsFAILURE) ||
-        (WriteQuerySpecificPart(request)==mcsFAILURE) )
-    {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;
-}
 
 /**
  * Build the constant part of the asking for CIO catalog
@@ -154,12 +128,12 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
 
     miscDynBufAppendString(&_query,"&-file=-c");
     miscDynBufAppendString(&_query, "&-c.eq=J2000");
-    miscDynBufAppendString(&_query, "&&x_F(IR)=M");
-    miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
     miscDynBufAppendString(&_query,"&-out.max=50");
     miscDynBufAppendString(&_query,"-c.r=1");
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
-    
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
+    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+
     return mcsSUCCESS;
 }
 
@@ -178,12 +152,15 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_CIO::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
-    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+    // properties to retreive
     miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-out=lambda");
     miscDynBufAppendString(&_query, "&-out=F(IR)");
     miscDynBufAppendString(&_query, "&-out=x_F(IR)");
+    //constraints
+    miscDynBufAppendString(&_query, "&&x_F(IR)=M");
+    miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
+    
     miscDynBufAppendString(&_query, "&-sort=_r");
             
     return mcsSUCCESS;
