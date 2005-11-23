@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.5 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.6 2005-11-23 10:22:20 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.4  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -33,7 +36,7 @@
  *  Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.5 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.6 2005-11-23 10:22:20 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -122,6 +125,64 @@ mcsCOMPL_STAT vobsFILTER::Disable(void)
     logTrace("vobsFILTER::Disable()");
 
     _isEnable = mcsFALSE;
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Set value on a property
+ *
+ * @param ucd the property ucd on which the filter is applied
+ * @param value the value used to filter
+ * 
+ * @return always mcsSUCCESS 
+ */
+mcsCOMPL_STAT vobsFILTER::SetValueOnProperty(mcsSTRING32 ucd,
+                                             mcsSTRING32 value)
+{
+    logTrace("vobsFILTER::SetValueOnProperty()");
+
+    // copy ucd and value
+    strcpy(_ucd, ucd);
+    strcpy(_value, value);
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Apply filter on a list
+ *
+ * @param list the list on which the filter is applied
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT vobsFILTER::Apply(vobsSTAR_LIST *list)
+{
+    logTrace("vobsFILTER::Apply()");
+
+    if (IsEnabled() == mcsTRUE)
+    {
+        vobsSTAR *star;
+        for (unsigned int el = 0; el < list->Size(); el++)
+        {
+            star=
+                (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            // if it is not possible to get the visibility, remove the star
+            if ((star->IsPropertySet(_ucd) != mcsTRUE) ||
+                (strcmp(star->GetPropertyValue(_ucd), _value) !=0))
+            {
+                // Remove it
+                logTest("star %d had property %s = %s (!= %s)\n",
+                        el+1, _ucd, star->GetPropertyValue(_ucd), _value);
+                if (list->Remove(*star) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                el = el-1;            
+            }
+        }
+    }
     
     return mcsSUCCESS;
 }

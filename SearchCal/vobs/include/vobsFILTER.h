@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.h,v 1.5 2005-11-16 10:47:54 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.h,v 1.6 2005-11-23 10:22:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/16 10:47:54  scetre
+ * Updated documentation
+ *
  * Revision 1.4  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -71,7 +74,10 @@ public:
     virtual mcsCOMPL_STAT Enable(void);
     virtual mcsCOMPL_STAT Disable(void);
 
-    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list) = 0;
+    virtual mcsCOMPL_STAT SetValueOnProperty(mcsSTRING32 ucd,
+                                             mcsSTRING32 value);
+
+    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
 protected:
     mcsSTRING32 _name;
@@ -83,6 +89,10 @@ private:
     vobsFILTER& operator=(const vobsFILTER&);
 
     mcsLOGICAL _isEnable;
+
+    mcsSTRING32 _ucd;
+    mcsSTRING32 _value;
+    
 };
 
 #endif /*!vobsFILTER_H*/
