@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.24 2005-11-23 08:36:01 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.25 2005-11-23 08:37:05 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/11/23 08:36:01  scetre
+ * Added test on ucd and name to retreive properties
+ *
  * Revision 1.23  2005/11/16 10:47:55  scetre
  * Updated documentation
  *
@@ -69,7 +72,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.24 2005-11-23 08:36:01 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.25 2005-11-23 08:37:05 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -77,7 +80,6 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 #include <iostream>
 using namespace std;
-#include <math.h>
 
 /*
  * MCS Headers 
