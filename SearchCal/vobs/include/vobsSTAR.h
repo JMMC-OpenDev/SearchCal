@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.37 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.38 2005-11-23 08:32:48 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.37  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.36  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -104,15 +107,26 @@
 #define vobsSTAR_ID_HD                          "ID_HD"
 #define vobsSTAR_ID_HIP                         "ID_HIP"
 #define vobsSTAR_ID_DM                          "ID_DM"
+#define vobsSTAR_ID_TYC1                        "ID_TYC1"
+#define vobsSTAR_ID_CATALOG                     "ID_CATALOG"
+#define vobsSTAR_ID_2MASS                       "ID_2MASS"
+#define vobsSTAR_ID_DENIS                       "ID_DENIS"
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
+#define vobsSTAR_POS_EQ_RA_OTHER                "POS_EQ_RA_OTHER"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
+#define vobsSTAR_POS_EQ_DEC_OTHER               "POS_EQ_DEC_OTHER"
 #define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"
 #define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
-//#define vobsSTAR_CODE_VARIAB                    "CODE_VARIAB"
-#define vobsSTAR_CODE_VARIAB                    "VAR_CLASS"
+#define vobsSTAR_CODE_VARIAB_V1                 "CODE_VARIAB_V1"
+#define vobsSTAR_CODE_VARIAB_V2                 "CODE_VARIAB_V2"
+#define vobsSTAR_CODE_VARIAB_V3                 "VAR_CLASS"
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
+#define vobsSTAR_CODE_MISC_I                    "CODE_MISC_I"
+#define vobsSTAR_CODE_MISC_J                    "CODE_MISC_J"
+#define vobsSTAR_CODE_MISC_K                    "CODE_MISC_K"
+#define vobsSTAR_CODE_QUALITY                   "CODE_QUALITY"
 #define vobsSTAR_POS_GAL_LAT                    "POS_GAL_LAT"
 #define vobsSTAR_POS_GAL_LON                    "POS_GAL_LON"
 #define vobsSTAR_VELOC_HC                       "VELOC_HC"
@@ -126,14 +140,20 @@
 #define vobsSTAR_DIAM12_ERROR                   "DIAM12_ERROR"
 #define vobsSTAR_OBS_METHOD                     "REDUCT_METHOD"
 #define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
+#define vobsSTAR_SPECT_WAVELENGTH_MISC          "SPECT_WAVELENGTH_MISC"
 #define vobsSTAR_INST_FILTER_CODE               "INST_FILTER_CODE"
 #define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
 #define vobsSTAR_UNITS                          "UNITS"
 #define vobsSTAR_PHOT_JHN_U                     "PHOT_JHN_U"
 #define vobsSTAR_PHOT_JHN_B                     "PHOT_JHN_B"
+#define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
+#define vobsSTAR_PHOT_PHG_V                     "PHOT_PHG_V"
 #define vobsSTAR_PHOT_JHN_R                     "PHOT_JHN_R"
+#define vobsSTAR_PHOT_PHG_R                     "PHOT_PHG_R"
 #define vobsSTAR_PHOT_JHN_I                     "PHOT_JHN_I"
+#define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
+#define vobsSTAR_PHOT_PHG_I                     "PHOT_PHG_I"
 #define vobsSTAR_PHOT_JHN_J                     "PHOT_JHN_J"
 #define vobsSTAR_PHOT_JHN_H                     "PHOT_JHN_H"
 #define vobsSTAR_PHOT_JHN_K                     "PHOT_JHN_K"

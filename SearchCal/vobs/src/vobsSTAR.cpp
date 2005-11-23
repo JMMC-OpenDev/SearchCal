@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.47 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.48 2005-11-23 08:32:47 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.47  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.46  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -117,7 +120,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.47 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.48 2005-11-23 08:32:47 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -924,14 +927,25 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "%.0f");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "%.0f");
     AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "%.0f");    
+    //AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsFLOAT_PROPERTY, "%.0f");    
+    AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);    
+    AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY);    
+    AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY);    
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "%.2f");
     AddProperty(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_CODE_VARIAB, "Vflag", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_CODE_MULT_FLAG, "Mflag", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "%.2f");
     AddProperty(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "%.2f");
     AddProperty(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY);
@@ -942,7 +956,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "%.3f");
-    AddProperty(vobsSTAR_DIAM12_ERROR, "e_dia12.", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_OBS_METHOD, "Meth", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "lambda", vobsFLOAT_PROPERTY);
     AddProperty(vobsSTAR_INST_FILTER_CODE, "lambda", vobsSTRING_PROPERTY);
@@ -950,9 +964,14 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_PHOT_JHN_U, "U", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_PHG_V, "Vphg", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_PHG_R, "Rphg", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "%.3f");
