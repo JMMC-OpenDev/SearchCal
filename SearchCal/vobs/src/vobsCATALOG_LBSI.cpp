@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.12 2005-11-21 13:47:57 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.13 2005-11-23 17:30:20 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/11/21 13:47:57  scetre
+* arrange properties when the URL is written
+*
 * Revision 1.11  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -47,7 +50,7 @@
  * vobsCATALOG_LBSI class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.12 2005-11-21 13:47:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.13 2005-11-23 17:30:20 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -161,8 +164,10 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsFLOAT deltaRa;
     mcsFLOAT deltaDec;
-    deltaRa = request.GetDeltaRa();
-    deltaDec = request.GetDeltaDec();
+    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
 
     miscDynBufAppendString(&_query, "&");

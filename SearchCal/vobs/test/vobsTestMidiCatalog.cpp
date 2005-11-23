@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.7 2005-11-16 10:45:14 scetre Exp $"
+ * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.8 2005-11-23 17:30:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/11/16 10:45:14  scetre
+ * Updated vobs test
+ *
  * Revision 1.6  2005/02/16 15:30:32  gzins
  * Fixed wrong mcsmcs prefix
  *
@@ -33,7 +36,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.7 2005-11-16 10:45:14 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.8 2005-11-23 17:30:20 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -114,11 +117,9 @@ int main(int argc, char *argv[])
     request.SetObjectDec("-45 44 50.7");
     request.SetObjectMag(2.50);
     request.SetSearchBand("N");
-    request.SetDeltaRa(15.0);
-    request.SetDeltaDec(5.0);
+    request.SetSearchArea(15.0, 5.0);
     request.SetMinMagRange(0.05);
     request.SetMaxMagRange(0.2);
-    request.SetMaxNbOfSelectedObjects(6);
     request.Display();
 
     // Create a star list

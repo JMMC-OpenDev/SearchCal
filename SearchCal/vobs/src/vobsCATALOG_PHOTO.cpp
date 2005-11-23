@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.16 2005-11-21 13:47:57 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.17 2005-11-23 17:30:21 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/11/21 13:47:57  scetre
+* arrange properties when the URL is written
+*
 * Revision 1.15  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -57,7 +60,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.16 2005-11-21 13:47:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.17 2005-11-23 17:30:21 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -169,8 +172,10 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsFLOAT deltaRa;
     mcsFLOAT deltaDec;
-    deltaRa = request.GetDeltaRa();
-    deltaDec = request.GetDeltaDec();
+    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
     
     miscDynBufAppendString(&_query, "&");

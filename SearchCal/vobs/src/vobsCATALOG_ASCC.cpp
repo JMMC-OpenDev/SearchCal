@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.17 2005-11-23 08:34:31 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.18 2005-11-23 17:30:20 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/11/23 08:34:31  scetre
+* Added property for faint K scenario
+*
 * Revision 1.16  2005/11/21 13:47:57  scetre
 * arrange properties when the URL is written
 *
@@ -63,7 +66,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.17 2005-11-23 08:34:31 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.18 2005-11-23 17:30:20 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -194,9 +197,12 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsFLOAT deltaRa;
     mcsFLOAT deltaDec;
-    deltaRa = request.GetDeltaRa();
-    deltaDec = request.GetDeltaDec();
+    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
+
     miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");

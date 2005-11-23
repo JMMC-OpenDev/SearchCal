@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.27 2005-11-23 15:49:45 lafrasse Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.28 2005-11-23 17:30:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2005/11/23 15:49:45  lafrasse
+ * Removed _maxNbOfSelectedObjects member and associated code
+ *
  * Revision 1.26  2005/11/23 15:41:15  lafrasse
  * Removed GetMaxNbOfSelectedObjects() and SetMaxNbOfSelectedObjects() methods
  *
@@ -78,7 +81,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.27 2005-11-23 15:49:45 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.28 2005-11-23 17:30:21 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -107,15 +110,17 @@ using namespace std;
  */
 vobsREQUEST::vobsREQUEST()
 {
-    _objectName = "";
-    _objectRa = "";
-    _objectDec = "";
-    _objectMag = 0.0;
-    _searchBand = "";
-    _deltaRa = 0.0;
-    _deltaDec = 0.0;
-    _minMagRange = 0.0;
-    _maxMagRange = 0.0;
+    _objectName         = "";
+    _objectRa           = "";
+    _objectDec          = "";
+    _objectMag          = 0.0;
+    _searchBand         = "";
+    _minMagRange        = 0.0;
+    _maxMagRange        = 0.0;
+    _searchAreaGeometry = vobsUNKNOWN;
+    _deltaRa            = 0.0;
+    _deltaDec           = 0.0;
+    _radius             = 0.0;
 }
 
 /**
@@ -136,15 +141,17 @@ mcsCOMPL_STAT vobsREQUEST::Copy(vobsREQUEST& request)
 {
     logTrace("vobsREQUEST::Copy()");
     
-    _objectName = request._objectName;
-    _objectRa = request._objectRa;
-    _objectDec = request._objectDec;
-    _objectMag = request._objectMag;
-    _searchBand = request._searchBand;
-    _deltaRa = request._deltaRa;
-    _deltaDec = request._deltaDec;
-    _minMagRange = request._minMagRange;
-    _maxMagRange = request._maxMagRange;
+    _objectName         = request._objectName;
+    _objectRa           = request._objectRa;
+    _objectDec          = request._objectDec;
+    _objectMag          = request._objectMag;
+    _searchBand         = request._searchBand;
+    _minMagRange        = request._minMagRange;
+    _maxMagRange        = request._maxMagRange;
+    _searchAreaGeometry = request._searchAreaGeometry;
+    _deltaRa            = request._deltaRa;
+    _deltaDec           = request._deltaDec;
+    _radius             = request._radius;
 
     return mcsSUCCESS;
 }
@@ -350,61 +357,104 @@ const char *vobsREQUEST::GetSearchBand(void) const
 }
 
 /**
- * Set object ra difference in which catalog stars will be selected.
+ * Set rectangular search area size.
  *
- * @param deltaRa accepted object ra difference in hms units (hh mm ss).
+ * @param deltaRa ra range in which catalog stars will be selected in hms unit
+ * (hh mm ss).
+ * @param deltaDec dec range in which catalog stars will be selected in dms unit
+ * (dd mm ss).
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsREQUEST::SetDeltaRa(const mcsFLOAT deltaRa)
+mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsFLOAT deltaRa,
+                                         const mcsFLOAT deltaDec)
 {
-    logTrace("vobsREQUEST::SetDeltaRa()");
+    logTrace("vobsREQUEST::SetSearchArea(mcsFLOAT, mcsFLOAT)");
 
-    _deltaRa = deltaRa;
-
-    return mcsSUCCESS;
-}
-
-/**
- * Get object ra difference in which catalog stars will be selected.
- *
- * @return accepted object ra difference in hms units (hh mm ss).
- */
-mcsFLOAT vobsREQUEST::GetDeltaRa(void) const
-{
-    logTrace("vobsREQUEST::GetDeltaRa()");
-
-    return _deltaRa;
-}
-
-/**
- * Set object dec difference in which catalog stars will be selected.
- *
- * @param deltaDec accepted object dec difference in dms units (dd mm ss).
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT vobsREQUEST::SetDeltaDec(const mcsFLOAT deltaDec)
-{
-    logTrace("vobsREQUEST::SetDeltaDec()");
-
+    _deltaRa  = deltaRa;
     _deltaDec = deltaDec;
+    _searchAreaGeometry = vobsBOX;
 
     return mcsSUCCESS;
 }
 
 /**
- * Get object dec difference in which catalog stars will be selected.
+ * Get rectangular search area size.
  *
- * @return accepted object dec difference in dms units (dd mm ss).
+ * @param deltaRa ra range in which catalog stars will be selected in hms unit
+ * (hh mm ss).
+ * @param deltaDec dec range in which catalog stars will be selected in dms unit
+ * (dd mm ss).
+ *
+ * @return mcsSUCCESS if the search area geometry is rectangular. Otherwise
+ * mcsFAILURE is returned.
  */
-mcsFLOAT vobsREQUEST::GetDeltaDec(void) const
+mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsFLOAT &deltaRa,
+                                         mcsFLOAT &deltaDec) const
 {
-    logTrace("vobsREQUEST::GetDeltaDec()");
+    logTrace("vobsREQUEST::GetSearchArea(mcsFLOAT&, mcsFLOAT&)");
 
-    return _deltaDec;
+    if (_searchAreaGeometry != vobsBOX)
+    {
+        return mcsFAILURE;
+    }
+
+    deltaRa  = _deltaRa;
+    deltaDec = _deltaDec;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Set circular search area size.
+ *
+ * @param radius Circular area radius in which catalog stars will be selected in
+ * arcmin.
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsFLOAT radius)
+{
+    logTrace("vobsREQUEST::SetSearchArea(mcsFLOAT)");
+
+    _radius  = radius;
+    _searchAreaGeometry = vobsCIRCLE;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get circular search area size.
+ *
+ * @param radius Circular area radius in which catalog stars will be selected in
+ * arcmin.
+ *
+ * @return mcsSUCCESS if the search area geometry is rectangular. Otherwise
+ * mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsFLOAT &radius) const
+{
+    logTrace("vobsREQUEST::GSetSearchArea(mcsFLOAT&)");
+
+    if (_searchAreaGeometry != vobsCIRCLE)
+    {
+        return mcsFAILURE;
+    }
+
+    radius  = _radius;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Return the search area geometry, according to which methods were used to set
+ * the search area size.
+ *
+ * @return a vobsSEARCH_AREA_GEOM value.
+ */
+vobsSEARCH_AREA_GEOM vobsREQUEST::GetSearchAreaGeometry(void) const
+{
+    return _searchAreaGeometry;
 }
 
 /**

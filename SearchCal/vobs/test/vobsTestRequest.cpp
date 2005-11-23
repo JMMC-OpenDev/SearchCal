@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestRequest.cpp,v 1.9 2005-11-16 10:45:14 scetre Exp $"
+ * "@(#) $Id: vobsTestRequest.cpp,v 1.10 2005-11-23 17:30:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/11/16 10:45:14  scetre
+ * Updated vobs test
+ *
  * Revision 1.8  2005/02/16 15:30:32  gzins
  * Fixed wrong mcsmcs prefix
  *
@@ -36,7 +39,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.9 2005-11-16 10:45:14 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.10 2005-11-23 17:30:20 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -125,11 +128,9 @@ int main(int argc, char *argv[])
     request.SetObjectDec("-30 91 21.4");
     request.SetObjectMag(1.3);
     request.SetSearchBand("M");
-    request.SetDeltaRa(12);
-    request.SetDeltaDec(8);
+    request.SetSearchArea(12, 8);
     request.SetMinMagRange(0.4);
     request.SetMaxMagRange(0.2);
-    request.SetMaxNbOfSelectedObjects(14);
 
     // Display affected request
     logTest("-------------------------------------------------");
@@ -144,12 +145,41 @@ int main(int argc, char *argv[])
     logTest("Get dec = %f", request.GetObjectDec());
     logTest("Get Mag = %f", request.GetObjectMag());
     logTest("Get search band = %c", request.GetSearchBand());
-    logTest("Get delta ra = %f", request.GetDeltaRa());
-    logTest("Get delta dec = %f", request.GetDeltaDec());
+    char* type = NULL;
+    switch(request.GetSearchAreaGeometry())
+    {
+        case vobsBOX:
+            type = "RECTANGULAR";
+            break;
+
+        case vobsCIRCLE:
+            type = "CIRCULAR";
+            break;
+
+        default:
+            type = "UNKNOWN";
+            break;
+    }
+    logTest("Get search area geometry: %s", type);
+    mcsFLOAT deltaRa, deltaDec, radius;
+    switch(request.GetSearchAreaGeometry())
+    {
+        case vobsBOX:
+            request.GetSearchArea(deltaRa, deltaDec);
+            logTest("Get search area size: ra = %f; dec = %f", deltaRa, deltaDec);
+            break;
+
+        case vobsCIRCLE:
+            request.GetSearchArea(radius);
+            logTest("Get search area size: radius = %f", radius);
+            break;
+
+        default:
+            logTest("Get search area size: UNKNOWN");
+            break;
+    }
     logTest("Get min delta mag = %f", request.GetMinMagRange());
     logTest("Get max delta mag = %f", request.GetMaxMagRange());
-    logTest("Get max nb of selected object = %i", 
-             request.GetMaxNbOfSelectedObjects());
 
     // Logs errors and resets the global error structure
     errCloseStack();

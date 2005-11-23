@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.5 2005-11-21 13:47:57 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.6 2005-11-23 17:30:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/21 13:47:57  scetre
+ * arrange properties when the URL is written
+ *
  * Revision 1.4  2005/11/16 10:47:55  scetre
  * Updated documentation
  *
@@ -26,7 +29,7 @@
  *  Definition of vobsCATALOG_MERAND class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.5 2005-11-21 13:47:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.6 2005-11-23 17:30:21 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -128,8 +131,10 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsFLOAT deltaRa;
     mcsFLOAT deltaDec;
-    deltaRa = request.GetDeltaRa();
-    deltaDec = request.GetDeltaDec();
+    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
     
     miscDynBufAppendString(&_query, "&");

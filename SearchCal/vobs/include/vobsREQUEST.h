@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.22 2005-11-23 15:49:45 lafrasse Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.23 2005-11-23 17:30:21 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2005/11/23 15:49:45  lafrasse
+* Removed _maxNbOfSelectedObjects member and associated code
+*
 * Revision 1.21  2005/11/23 15:41:15  lafrasse
 * Removed GetMaxNbOfSelectedObjects() and SetMaxNbOfSelectedObjects() methods
 *
@@ -48,13 +51,27 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * Declaration of vobsREQUEST class.
  */
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
+
+
+/*
+ * Enum definition
+ */
+/**
+ * Define all the handled search area geometries
+ */
+enum vobsSEARCH_AREA_GEOM
+{
+   vobsUNKNOWN,  /**< unknown search area geometry */
+   vobsBOX,      /**< rectangular search area geometry*/
+   vobsCIRCLE    /**< circular search area geometry*/
+};
 
 
 /*
@@ -75,53 +92,57 @@ class vobsREQUEST
 public:
     // Constructor
     vobsREQUEST();
-    
+
     // Destructor
     virtual ~vobsREQUEST();
 
     // Copy 
     virtual mcsCOMPL_STAT Copy(vobsREQUEST& request);
-    
+
     // Set and get science object name
     virtual mcsCOMPL_STAT SetObjectName(const char *objectName);
-    virtual const char * GetObjectName(void) const;
-    
+    virtual const char*   GetObjectName(void) const;
+
     // Set and get science object right ascension */
     virtual mcsCOMPL_STAT SetObjectRa(const char *objectRa);
-    virtual const char *GetObjectRa(void) const;
-    
+    virtual const char*   GetObjectRa(void) const;
+
     // Set and get science object declinaison
     virtual mcsCOMPL_STAT SetObjectDec(const char *objectDec);
-    virtual const char *GetObjectDec(void) const;
+    virtual const char*   GetObjectDec(void) const;
 
     // Set and get science object magnitude
     virtual mcsCOMPL_STAT SetObjectMag(const mcsFLOAT objectMag);
-    virtual mcsFLOAT GetObjectMag(void) const;
+    virtual mcsFLOAT      GetObjectMag(void) const;
 
     // Set and get search band
     virtual mcsCOMPL_STAT SetSearchBand(const char *searchBand);
-    virtual const char *GetSearchBand(void) const;
-
-    // Set and get object ra difference in which catalog stars will be 
-    // selected
-    virtual mcsCOMPL_STAT SetDeltaRa(const mcsFLOAT deltaRa);
-    virtual mcsFLOAT GetDeltaRa(void) const;
-
-    // Set and get object dec difference in which catalog stars will be 
-    // selected
-    virtual mcsCOMPL_STAT SetDeltaDec(const mcsFLOAT deltaDec);
-    virtual mcsFLOAT GetDeltaDec(void) const;
+    virtual const char*   GetSearchBand(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  minimum magnitude and the science object magnitude
     virtual mcsCOMPL_STAT SetMinMagRange(const mcsFLOAT minMagRange);
-    virtual mcsFLOAT GetMinMagRange(void) const;
+    virtual mcsFLOAT      GetMinMagRange(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  maximum magnitude and the science object magnitude
     virtual mcsCOMPL_STAT SetMaxMagRange(const mcsFLOAT maxMagRange);
-    virtual mcsFLOAT GetMaxMagRange(void) const;
-    
+    virtual mcsFLOAT      GetMaxMagRange(void) const;
+
+    // Set and get rectangular search area size
+    virtual mcsCOMPL_STAT SetSearchArea(const mcsFLOAT deltaRa,
+                                        const mcsFLOAT deltaDec);
+    virtual mcsCOMPL_STAT GetSearchArea(mcsFLOAT &deltaRa,
+                                        mcsFLOAT &deltaDec) const;
+
+    // Set and get circular search area size
+    virtual mcsCOMPL_STAT SetSearchArea(const mcsFLOAT radius);
+    virtual mcsCOMPL_STAT GetSearchArea(mcsFLOAT &radius) const;
+
+    // Get the search area geometry, according to which methods were used to set
+    // the search area size
+    virtual vobsSEARCH_AREA_GEOM GetSearchAreaGeometry(void) const;
+
     // Display request containt (constraints)
     virtual mcsCOMPL_STAT Display(void);
 
@@ -135,10 +156,10 @@ private:
 
     /** Science object name */
     string _objectName;
-    
+
     /** Science object right ascension */
     string _objectRa;
-    
+
     /** Science object declinaison */
     string _objectDec;
 
@@ -151,25 +172,36 @@ private:
      */
     string _searchBand;
 
-    /** Object ra range in which catalog stars will be selected */
-    mcsFLOAT _deltaRa;
-
-    /** Object dec range in which catalog stars will be selected */
-    mcsFLOAT _deltaDec;
-
     /**
      * Maximum magnitude difference between the selected object minimum
      * magnitude and the science object magnitude
      */
     mcsFLOAT _minMagRange;
-    
+
     /**
      * Maximum magnitude difference between the selected object maximum
      * magnitude and the science object magnitude
      */
     mcsFLOAT _maxMagRange;
-};
-#endif /*!vobsREQUEST_H*/
 
+    /**
+     * Search area geometry, implicitly defined according to which methods were
+     * used to set the search area size.
+     */
+    vobsSEARCH_AREA_GEOM _searchAreaGeometry;
+
+    /** Rectangular area ra range in which catalog stars will be selected */
+    mcsFLOAT _deltaRa;
+
+    /** Rectangular area dec range in which catalog stars will be selected */
+    mcsFLOAT _deltaDec;
+
+    /** Circular area radius in which catalog stars will be selected */
+    mcsFLOAT _radius;
+
+};
+
+
+#endif /*!vobsREQUEST_H*/
 
 /*___oOo___*/

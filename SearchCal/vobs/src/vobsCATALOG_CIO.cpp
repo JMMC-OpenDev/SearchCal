@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.16 2005-11-23 08:33:32 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.17 2005-11-23 17:30:20 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/11/23 08:33:32  scetre
+* Removed obsolete PrepareQuery() method
+*
 * Revision 1.15  2005/11/21 13:47:57  scetre
 * arrange properties when the URL is written
 *
@@ -57,7 +60,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.16 2005-11-23 08:33:32 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.17 2005-11-23 17:30:20 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -218,8 +221,10 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsFLOAT deltaRa;
     mcsFLOAT deltaDec;
-    deltaRa = request.GetDeltaRa();
-    deltaDec = request.GetDeltaDec();
+    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
     miscDynBufAppendString(&_query, "&-out.max=50");
     miscDynBufAppendString(&_query, "&-c.bm=");

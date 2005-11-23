@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.23 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.24 2005-11-23 17:30:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.22  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -78,7 +81,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.23 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.24 2005-11-23 17:30:21 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -192,28 +195,30 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // Aim is to set search field
     
     // Get reference object constraints
-    mcsFLOAT diffRa;    // reference object ra constaint
-    mcsFLOAT diffDec;   // reference object dec constaint
-    // ra constraint
-    diffRa = request.GetDeltaRa();
-    // dec constraint
-    diffDec = request.GetDeltaDec();
+    mcsFLOAT deltaRa;    // reference object ra constaint
+    mcsFLOAT deltaDec;    // reference object dec constaint
+
+    // Get search area size
+    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     
     // Convert minutes (arcmin) to decimal degrees
-    diffRa = diffRa / 60.0 / 2.0;
-    diffDec = diffDec / 60.0 / 2.0;
+    deltaRa = deltaRa / 60.0 / 2.0;
+    deltaDec = deltaDec / 60.0 / 2.0;
 
     // Create reference object constraint list
     vobsSTAR_COMP_CRITERIA_LIST constraintlist;
     
     // Add reference star constraints to constaint list
     // Field on sky: ra constraint
-    if (constraintlist.Add("POS_EQ_RA_MAIN", diffRa) == mcsFAILURE)
+    if (constraintlist.Add("POS_EQ_RA_MAIN", deltaRa) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // Field on sky: dec constraint
-    if (constraintlist.Add("POS_EQ_DEC_MAIN", diffDec) == mcsFAILURE)
+    if (constraintlist.Add("POS_EQ_DEC_MAIN", deltaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
