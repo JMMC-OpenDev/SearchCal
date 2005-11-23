@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.26 2005-11-23 15:41:15 lafrasse Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.27 2005-11-23 15:49:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/11/23 15:41:15  lafrasse
+ * Removed GetMaxNbOfSelectedObjects() and SetMaxNbOfSelectedObjects() methods
+ *
  * Revision 1.25  2005/11/23 08:37:05  scetre
  * Cancel previous change
  *
@@ -75,7 +78,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.26 2005-11-23 15:41:15 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.27 2005-11-23 15:49:45 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -113,7 +116,6 @@ vobsREQUEST::vobsREQUEST()
     _deltaDec = 0.0;
     _minMagRange = 0.0;
     _maxMagRange = 0.0;
-    _maxNbOfSelectedObjects = 0;
 }
 
 /**
@@ -143,7 +145,6 @@ mcsCOMPL_STAT vobsREQUEST::Copy(vobsREQUEST& request)
     _deltaDec = request._deltaDec;
     _minMagRange = request._minMagRange;
     _maxMagRange = request._maxMagRange;
-    _maxNbOfSelectedObjects = request._maxNbOfSelectedObjects;
 
     return mcsSUCCESS;
 }
@@ -491,7 +492,6 @@ mcsCOMPL_STAT vobsREQUEST::Display(void)
     logInfo("delta dec = %f", _deltaDec);
     logInfo("min mag range = %f", _minMagRange);
     logInfo("max mag range = %f", _maxMagRange);
-    logInfo("max nb of selected object = %i", _maxNbOfSelectedObjects);
     
     return mcsSUCCESS;
 }
