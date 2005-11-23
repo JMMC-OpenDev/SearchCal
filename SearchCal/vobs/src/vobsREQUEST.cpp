@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.25 2005-11-23 08:37:05 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.26 2005-11-23 15:41:15 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/11/23 08:37:05  scetre
+ * Cancel previous change
+ *
  * Revision 1.24  2005/11/23 08:36:01  scetre
  * Added test on ucd and name to retreive properties
  *
@@ -72,7 +75,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.25 2005-11-23 08:37:05 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.26 2005-11-23 15:41:15 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -467,36 +470,6 @@ mcsFLOAT vobsREQUEST::GetMaxMagRange(void) const
     logTrace("vobsREQUEST::GetMaxMagRange()");
 
     return _maxMagRange;
-}
-
-/**
- * Set maximum number of selected objects.
- *
- * @param maxNbOfSelectedObjects maximum number of selected objects.
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT vobsREQUEST::SetMaxNbOfSelectedObjects(const mcsINT32 
-                                                     maxNbOfSelectedObjects)
-{
-    logTrace("vobsREQUEST::SetMaxNbOfSelectedObjects()");
-
-    _maxNbOfSelectedObjects = maxNbOfSelectedObjects;
-
-    return mcsSUCCESS;
-}
-
-/**
- * Get maximum number of selected objects.
- *
- * @return maximum number of selected objects.
- */
-mcsINT32 vobsREQUEST::GetMaxNbOfSelectedObjects(void) const
-{
-    logTrace("vobsREQUEST::GetMaxNbOfSelectedObjects()");
-
-    return _maxNbOfSelectedObjects;
 }
 
 /**

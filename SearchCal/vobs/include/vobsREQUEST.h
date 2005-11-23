@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.20 2005-11-15 14:57:56 scetre Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.21 2005-11-23 15:41:15 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/11/15 14:57:56  scetre
+* Added new scenario structure
+* Added possibility to query merand and borde as primary catalog
+*
 * Revision 1.19  2005/02/14 15:22:29  scetre
 * changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
 *
@@ -115,11 +119,6 @@ public:
     virtual mcsCOMPL_STAT SetMaxMagRange(const mcsFLOAT maxMagRange);
     virtual mcsFLOAT GetMaxMagRange(void) const;
     
-    // Set and get maximum number of selected objects
-    virtual mcsCOMPL_STAT SetMaxNbOfSelectedObjects(const mcsINT32 
-                                                    maxNbOfSelectedObjects);
-    virtual mcsINT32 GetMaxNbOfSelectedObjects(void) const;
-
     // Display request containt (constraints)
     virtual mcsCOMPL_STAT Display(void);
 
