@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.3 2005-11-23 08:35:10 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/21 06:20:45  scetre
+ * Changed method Disable() and Enable() to Disabled() and Enabled()
+ * Changed '\' in doxygen documentatiuon to '@'
+ *
  * Revision 1.1  2005/06/20 11:31:53  scetre
  * Added filter class
  *
@@ -23,7 +27,7 @@
  *  Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.3 2005-11-23 08:35:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -83,12 +87,12 @@ mcsCOMPL_STAT vobsVARIABILITY_FILTER::Apply(vobsSTAR_LIST *list)
             star=
                 (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
             // if it is not possible to get the visibility, remove the star
-            if (star->IsPropertySet(vobsSTAR_CODE_VARIAB) == mcsTRUE)
+            if (star->IsPropertySet(vobsSTAR_CODE_VARIAB_V3) == mcsTRUE)
             {
                 // Remove it
                 logTest("star %d had variability %s\n",
                         el+1, 
-                        star->GetPropertyValue(vobsSTAR_CODE_VARIAB));
+                        star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V3));
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
