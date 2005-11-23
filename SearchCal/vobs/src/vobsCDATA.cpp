@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.24 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.25 2005-11-23 08:36:12 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.23  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -77,7 +80,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.24 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.25 2005-11-23 08:36:12 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -220,7 +223,7 @@ mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
     {
         miscTrimString(paramNameArray[i], " ");
     }
-
+    
     // Check the numbers of parameters and of UCDs are the same
     if (nbOfUcdName != nbOfParamName)
     {
@@ -571,8 +574,57 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         {
             return vobsSTAR_ID_DM;
         }
+        /*else if (strcmp(paramName, "TYC1") == 0)
+        {
+            return vobsSTAR_ID_TYC1;
+        }*/
     }
 
+    // object identifier
+    if (strcmp(ucdName, "ID_MAIN") == 0)
+    {
+        if (strcmp(paramName, "DENIS") == 0)
+        {
+            return vobsSTAR_ID_DENIS;
+        }
+        else if (strcmp(paramName, "2MASS") == 0)
+        {
+            return vobsSTAR_ID_2MASS;
+        }
+    }
+
+    // Flag of variability
+    if (strcmp(ucdName, "CODE_VARIAB") == 0)
+    {
+        if (strcmp(paramName, "v1") == 0)
+        {
+            return vobsSTAR_CODE_VARIAB_V1;
+        }
+        else if (strcmp(paramName, "v2") == 0)
+        {
+            return vobsSTAR_CODE_VARIAB_V2;
+        }
+
+    }
+    
+    // Code misc
+    if (strcmp(ucdName, "CODE_MISC") == 0)
+    {
+        if (strcmp(paramName, "Iflag") == 0)
+        {
+            return vobsSTAR_CODE_MISC_I;
+        }
+        else if (strcmp(paramName, "Jflag") == 0)
+        {
+            return vobsSTAR_CODE_MISC_J;
+        }
+        else if (strcmp(paramName, "Kflag") == 0)
+        {
+            return vobsSTAR_CODE_MISC_K;
+        }
+
+    }
+    
     // Diameters
     if (strcmp(ucdName, "EXTENSION_DIAM") == 0)
     {
