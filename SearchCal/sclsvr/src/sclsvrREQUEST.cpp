@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.12 2005-11-23 14:35:33 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.13 2005-11-23 17:31:59 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/11/23 14:35:33  lafrasse
+ * Added fileName proper management (strncpy() calls instead of strcpy())
+ * Removed unused 'MaxReturn' command parmater
+ * Added 'bright' command parameter
+ *
  * Revision 1.11  2005/11/15 15:01:19  scetre
  * Updated with new scenario structure
  *
@@ -49,7 +54,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.12 2005-11-23 14:35:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.13 2005-11-23 17:31:59 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -292,13 +297,8 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
             return mcsFAILURE;
         }
     }
-    // Affect the search box ra
-    if (SetDeltaRa(diffRa) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Affect the serach box dec
-    if (SetDeltaDec(diffDec) == mcsFAILURE)
+    // Get the search area size
+    if (SetSearchArea(diffRa, diffDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
