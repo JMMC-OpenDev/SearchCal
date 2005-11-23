@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.2 2005-11-16 14:28:02 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.3 2005-11-23 08:38:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/16 14:28:02  scetre
+ * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
+ *
  * Revision 1.1  2005/11/15 15:00:33  scetre
  * Added scenario K V and N
  *
@@ -16,7 +19,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_V class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.2 2005-11-16 14:28:02 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.3 2005-11-23 08:38:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -81,15 +84,35 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     //////////////////////////////////////////////////////////////////////////
     _criteriaList.Clear();
     // Add criteria on right ascension
-    if (_criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.1) == mcsFAILURE)
+    if (_criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // Add criteria on declinaison
-    if (_criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.1) == mcsFAILURE)
+    if (_criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
+    //////////////////////////////////////////////////////////////////////////
+    _criteriaListHd.Clear();
+    // Add criteria on right ascension
+    if (_criteriaListHd.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Add criteria on declinaison
+    if (_criteriaListHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Add crietria on HD
+    if (_criteriaListHd.Add(vobsSTAR_ID_HD, 0) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    
 
     if (AddEntry(vobsCATALOG_ASCC_ID, &_request, NULL, &_starListS,
                           vobsCOPY) == mcsFAILURE)
@@ -101,7 +124,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // MASS, II/225, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
     // I/196
     if (AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                          vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -111,6 +134,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+    // !!! filter opt=T
+    
     // II/225
     if (AddEntry(vobsCATALOG_CIO_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
@@ -149,13 +174,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     }
     // BSC
     if (AddEntry(vobsCATALOG_BSC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                          vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // SBSC
     if (AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                          vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
