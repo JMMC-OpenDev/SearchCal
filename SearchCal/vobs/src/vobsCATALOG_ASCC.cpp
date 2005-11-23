@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.16 2005-11-21 13:47:57 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.17 2005-11-23 08:34:31 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/11/21 13:47:57  scetre
+* arrange properties when the URL is written
+*
 * Revision 1.15  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -60,7 +63,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.16 2005-11-21 13:47:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.17 2005-11-23 08:34:31 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -137,11 +140,14 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_query, "&-out=v1");
+    miscDynBufAppendString(&_query, "&-out=v2");
     miscDynBufAppendString(&_query, "&-out=v3");
     miscDynBufAppendString(&_query, "&-out=d5");
     miscDynBufAppendString(&_query, "&-out=HIP");
     miscDynBufAppendString(&_query, "&-out=HD");
     miscDynBufAppendString(&_query, "&-out=DM");
+    miscDynBufAppendString(&_query, "&-out=TYC1");
     // constraints
     miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
     
@@ -202,11 +208,14 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
+    miscDynBufAppendString(&_query, "&-out=v1");
+    miscDynBufAppendString(&_query, "&-out=v2");
     miscDynBufAppendString(&_query, "&-out=v3");
     miscDynBufAppendString(&_query, "&-out=d5");
     miscDynBufAppendString(&_query, "&-out=HIP");
     miscDynBufAppendString(&_query, "&-out=HD");
     miscDynBufAppendString(&_query, "&-out=DM");
+    miscDynBufAppendString(&_query, "&-out=TYC1");
     // constraints
     miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
     miscDynBufAppendString(&_query, "&-sort=_r"); 

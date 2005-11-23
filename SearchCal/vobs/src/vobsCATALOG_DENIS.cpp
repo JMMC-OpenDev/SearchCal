@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.9 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.10 2005-11-23 08:34:31 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.8  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -36,7 +39,7 @@
  * vobsCATALOG_DENIS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.9 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.10 2005-11-23 08:34:31 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -103,7 +106,18 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_DENIS::GetAskingSpecificParameters()");
    
-    miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT");
+    // properties to retreive
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_RA_OTHER");
+    miscDynBufAppendString(&_query, "&-out=*POS_EQ_DEC_OTHER");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_K");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_J");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_COUS_I");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
+    miscDynBufAppendString(&_query, "&-out=Iflg");
+    miscDynBufAppendString(&_query, "&-out=Jflg");
+    miscDynBufAppendString(&_query, "&-out=Kflg");
+    miscDynBufAppendString(&_query, "&-out=DENIS");
             
     return mcsSUCCESS;
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.1 2005-11-21 13:49:26 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.2 2005-11-23 08:34:15 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/21 13:49:26  scetre
+ * UNSO catalog added
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of vobsCATALOG_UNSO class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.1 2005-11-21 13:49:26 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.2 2005-11-23 08:34:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -73,6 +76,9 @@ mcsCOMPL_STAT vobsCATALOG_UNSO::WriteQuerySpecificPart(void)
     
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_I");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
+    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
     miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;
