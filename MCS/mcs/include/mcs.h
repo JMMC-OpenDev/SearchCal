@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mcs.h,v 1.20 2005-02-16 09:22:42 gzins Exp $"
+ * "@(#) $Id: mcs.h,v 1.21 2005-11-24 12:41:58 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/02/16 09:22:42  gzins
+ * Added mcsBYTES512, mcsBYTES1024, mcsSTRING512 and mcsSTRING1024 definitions
+ *
  * Revision 1.19  2005/02/15 12:36:53  gzins
  * Removed SUCCESS and FAILURE definitions
  *
@@ -99,6 +102,7 @@ typedef char               mcsSTRING128[128];
 typedef char               mcsSTRING256[256];
 typedef char               mcsSTRING512[512];
 typedef char               mcsSTRING1024[1024];
+typedef char               mcsSTRING2048[2048];
 
 typedef char mcsPROCNAME[mcsPROCNAME_LEN+1];   /* Process name          */
 typedef char mcsENVNAME[mcsENVNAME_LEN+1];     /* Environnement name    */
