@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.23 2005-11-24 09:00:10 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.24 2005-11-24 15:14:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/11/24 09:00:10  lafrasse
+ * Added 'radius' parameter to the GETCAL command
+ *
  * Revision 1.22  2005/11/23 14:35:33  lafrasse
  * Added fileName proper management (strncpy() calls instead of strcpy())
  * Removed unused 'MaxReturn' command parmater
@@ -73,7 +76,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.23 2005-11-24 09:00:10 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.24 2005-11-24 15:14:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -197,8 +200,30 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     else if ((request.IsBright() == mcsFALSE) &&
              (request.GetSearchAreaGeometry() == vobsCIRCLE))
     {
-        logError("Faint objects search is not yet implemented.");
-        return evhCB_NO_DELETE;
+        // According to the desired band
+        const char* band = request.GetSearchBand();
+        switch(band[0])
+        {
+            case 'K':
+                // Load Faint K Scenario
+                if (_scenarioFaintK.Init(&request) == mcsFAILURE)
+                {
+                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                }
+
+                // Start the research in the virtual observatory
+                if (_virtualObservatory.Search(&_scenarioFaintK, request,
+                                               starList) == mcsFAILURE)
+                {
+                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                }
+
+                break;
+            default:
+                errAdd(vobsERR_UNKNOWN_BAND, band);
+                return evhCB_NO_DELETE | evhCB_FAILURE;
+                break;
+        }
     }
     else
     {
