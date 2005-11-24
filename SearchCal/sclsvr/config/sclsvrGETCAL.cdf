@@ -3,11 +3,16 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.14 2005-11-23 14:35:33 lafrasse Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.15 2005-11-24 09:00:10 lafrasse Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.14  2005/11/23 14:35:33  lafrasse
+ Added fileName proper management (strncpy() calls instead of strcpy())
+ Removed unused 'MaxReturn' command parmater
+ Added 'bright' command parameter
+
  Revision 1.13  2005/10/05 12:35:12  scetre
  Update parameter and command description
 
@@ -68,7 +73,7 @@
             <name>diffRa</name>
             <type>integer</type>
             <defaultValue><integer>1800</integer></defaultValue>
-            <desc>right ascension value of the search box size</desc>
+            <desc>right ascension value of the rectangular search box size</desc>
             <minValue><integer>0</integer></minValue>
             <maxValue><integer>3600</integer></maxValue>
             <unit>arcmin</unit>                
@@ -77,10 +82,18 @@
             <name>diffDec</name>
             <type>integer</type>
             <defaultValue><integer>600</integer></defaultValue>
-            <desc>declinaison value of the search box size</desc>
+            <desc>declinaison value of the rectangular search box size</desc>
             <minValue><integer>0</integer></minValue>
             <maxValue><integer>1800</integer></maxValue>
             <unit>arcmin</unit>
+        </param>
+        <param optional="true">
+            <name>radius</name>
+            <type>integer</type>
+            <desc>radius value of the circular search box size</desc>
+            <minValue><integer>0</integer></minValue>
+            <maxValue><integer>3600</integer></maxValue>
+            <unit>arcmin</unit>                
         </param>
         <param>
             <name>band</name>

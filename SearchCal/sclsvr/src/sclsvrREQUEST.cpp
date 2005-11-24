@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.13 2005-11-23 17:31:59 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.14 2005-11-24 09:00:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/11/23 17:31:59  lafrasse
+ * Updated to handled the new methods to get search area size
+ *
  * Revision 1.12  2005/11/23 14:35:33  lafrasse
  * Added fileName proper management (strncpy() calls instead of strcpy())
  * Removed unused 'MaxReturn' command parmater
@@ -54,7 +57,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.13 2005-11-23 17:31:59 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.14 2005-11-24 09:00:10 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -170,18 +173,30 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         return mcsFAILURE;
     }
 
-    // Diff ra
-    mcsINT32 diffRa;
-    if (_getCalCmd->GetDiffRa(&diffRa) == mcsFAILURE)
+    // Search area size
+    mcsINT32 radius, deltaRa, deltaDec;
+    mcsLOGICAL circularQueryFlag = _getCalCmd->IsDefinedRadius();
+    // If a radius is specified
+    if (circularQueryFlag == mcsTRUE)
     {
-        return mcsFAILURE;
+        if (_getCalCmd->GetRadius(&radius) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
-    
-    // Diff dec
-    mcsINT32 diffDec;
-    if (_getCalCmd->GetDiffDec(&diffDec) == mcsFAILURE)
+    else
     {
-        return mcsFAILURE;
+        // delta ra
+        if (_getCalCmd->GetDiffRa(&deltaRa) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
+        // delta dec
+        if (_getCalCmd->GetDiffDec(&deltaDec) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
     // Band
@@ -297,10 +312,21 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
             return mcsFAILURE;
         }
     }
-    // Get the search area size
-    if (SetSearchArea(diffRa, diffDec) == mcsFAILURE)
+    // Set the search area size
+    if (circularQueryFlag == mcsTRUE)
     {
-        return mcsFAILURE;
+        if (SetSearchArea(radius) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+    else
+    {
+        // Set the search area size
+        if (SetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
     // Affect the observed band
     if (SetSearchBand(band) ==  mcsFAILURE)

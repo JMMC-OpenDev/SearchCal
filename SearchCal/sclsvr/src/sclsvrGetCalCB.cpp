@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.22 2005-11-23 14:35:33 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.23 2005-11-24 09:00:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/11/23 14:35:33  lafrasse
+ * Added fileName proper management (strncpy() calls instead of strcpy())
+ * Removed unused 'MaxReturn' command parmater
+ * Added 'bright' command parameter
+ *
  * Revision 1.21  2005/11/21 13:50:59  scetre
  * Changed bad scenario name
  *
@@ -68,7 +73,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.22 2005-11-23 14:35:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.23 2005-11-24 09:00:10 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -125,7 +130,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     vobsSTAR_LIST starList;
 
     // If the request should return bright starts
-    if (request.IsBright() == mcsTRUE)
+    if ((request.IsBright() == mcsTRUE) &&
+        (request.GetSearchAreaGeometry() == vobsBOX))
     {
         // According to the desired band
         const char* band = request.GetSearchBand();
@@ -188,9 +194,34 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 break;
         }
     }
-    else
+    else if ((request.IsBright() == mcsFALSE) &&
+             (request.GetSearchAreaGeometry() == vobsCIRCLE))
     {
         logError("Faint objects search is not yet implemented.");
+        return evhCB_NO_DELETE;
+    }
+    else
+    {
+        logError("Invalid query.");
+
+        if (request.IsBright() == mcsTRUE)
+        {
+            logError("Bright query.");
+        }
+        else
+        {
+            logError("Faint query.");
+        }
+
+        if (request.GetSearchAreaGeometry() == vobsBOX)
+        {
+            logError("Rectangular query.");
+        }
+        else
+        {
+            logError("Circular query.");
+        }
+
         return evhCB_NO_DELETE;
     }
 
