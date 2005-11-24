@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.h,v 1.1 2005-11-15 14:56:43 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.h,v 1.2 2005-11-24 14:54:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/15 14:56:43  scetre
+ * Create catalog list
+ *
  ******************************************************************************/
 
 /**
@@ -44,6 +47,7 @@
 #include "vobsCATALOG_PHOTO.h"
 #include "vobsCATALOG_SBSC.h"
 #include "vobsCATALOG_MIDI.h"
+#include "vobsCATALOG_UNSO.h"
 /*
  * Class declaration
  */
@@ -90,6 +94,7 @@ private:
     vobsCATALOG_DENIS    _denis;
     vobsCATALOG_DENIS_JK _denisJK;
     vobsCATALOG_MIDI     _midi;
+    vobsCATALOG_UNSO     _unso;
 };
 
 

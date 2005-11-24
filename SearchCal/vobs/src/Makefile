@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.22 2005-11-24 08:13:50 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.23 2005-11-24 14:54:25 scetre Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2005/11/24 08:13:50  scetre
+# Changed mother class of filter from vobsFILTER to vobsBASE_FILTER
+#
 # Revision 1.21  2005/11/15 14:57:56  scetre
 # Added new scenario structure
 # Added possibility to query merand and borde as primary catalog
@@ -102,6 +105,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_PHOTO.h 	   		\
 				  vobsCATALOG_SBSC.h	   		\
 				  vobsCATALOG_MIDI.h			\
+				  vobsCATALOG_UNSO.h			\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
@@ -149,6 +153,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_PHOTO 			\
 				   vobsCATALOG_SBSC				\
 				   vobsCATALOG_MIDI 			\
+				   vobsCATALOG_UNSO 			\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\

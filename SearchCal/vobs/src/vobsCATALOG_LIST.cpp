@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.3 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.4 2005-11-24 14:54:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.2  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -19,7 +22,7 @@
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.3 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.4 2005-11-24 14:54:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -61,6 +64,7 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
     _catalogList[vobsCATALOG_MERAND_ID]=&_merand;
     _catalogList[vobsCATALOG_MIDI_ID]=&_midi;
     _catalogList[vobsCATALOG_SBSC_ID]=&_sbsc;
+    _catalogList[vobsCATALOG_UNSO_ID]=&_unso;
 }
 
 /**

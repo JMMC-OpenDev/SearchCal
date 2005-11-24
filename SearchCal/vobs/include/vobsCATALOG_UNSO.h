@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_UNSO.h,v 1.1 2005-11-21 13:49:26 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_UNSO.h,v 1.2 2005-11-24 14:54:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/21 13:49:26  scetre
+ * UNSO catalog added
+ *
  ******************************************************************************/
 
 /**
@@ -53,7 +56,7 @@ public:
     virtual ~vobsCATALOG_UNSO();
 
 protected:
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
+   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 
 private:
     // Declaration of copy constructor and assignment operator as private

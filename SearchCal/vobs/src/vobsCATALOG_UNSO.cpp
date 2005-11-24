@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.2 2005-11-23 08:34:15 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.3 2005-11-24 14:54:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/23 08:34:15  scetre
+ * Added property for faint K scenario
+ *
  * Revision 1.1  2005/11/21 13:49:26  scetre
  * UNSO catalog added
  *
@@ -16,7 +19,7 @@
  *  Definition of vobsCATALOG_UNSO class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.2 2005-11-23 08:34:15 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.3 2005-11-24 14:54:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,6 +53,7 @@ vobsCATALOG_UNSO::vobsCATALOG_UNSO()  : vobsREMOTE_CATALOG("I/284")
  */
 vobsCATALOG_UNSO::~vobsCATALOG_UNSO()
 {
+    miscDynBufDestroy(&_query);    
 }
 
 /*

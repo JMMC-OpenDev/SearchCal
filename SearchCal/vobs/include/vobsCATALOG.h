@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.14 2005-11-21 13:49:40 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.15 2005-11-24 14:54:25 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/11/21 13:49:40  scetre
+* Added UNSO id
+*
 * Revision 1.13  2005/11/17 08:05:52  scetre
 * Added possibility to add no catalog in an entry
 *
@@ -36,6 +39,7 @@
 
 #define vobsNO_CATALOG_ID           "NO CATALOG"
 #define vobsCATALOG_ASCC_ID         "I/280"
+#define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_BSC_ID          "V/50/catalog"
 #define vobsCATALOG_CHARM2_ID       "J/A+A/386/492/charm"
 #define vobsCATALOG_CHARM_ID        "J/A+A/431/773/charm2"
