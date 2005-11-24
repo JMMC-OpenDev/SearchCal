@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.20 2005-11-23 17:30:21 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.21 2005-11-24 14:54:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/11/23 17:30:21  lafrasse
+* Added circular search box geometry support and normalized area size methods
+*
 * Revision 1.19  2005/11/23 08:34:31  scetre
 * Added property for faint K scenario
 *
@@ -71,7 +74,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.20 2005-11-23 17:30:21 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.21 2005-11-24 14:54:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -163,8 +166,8 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
  *
  * @param request vobsREQUEST which help to restrict the search
  *
- * @return always mcsSUCCESS 
- *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
 {
@@ -180,24 +183,37 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     minMagRange = request.GetMinMagRange();
     maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
-    // Add search box size
-    mcsSTRING32 separation;
-    mcsFLOAT deltaRa;
-    mcsFLOAT deltaDec;
-    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-
     miscDynBufAppendString(&_query, "&");
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, "mag=");
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&opt=,T,U");
+    miscDynBufAppendString(&_query, "&opt=%5bTU%5d");
     miscDynBufAppendString(&_query, "&-out.max=150");
-    miscDynBufAppendString(&_query, "&-c.bm=");
-    miscDynBufAppendString(&_query, separation);
+    // Add search box size
+    mcsSTRING32 separation;
+    if (request.GetSearchAreaGeometry() == vobsBOX)
+    {
+        mcsFLOAT deltaRa;
+        mcsFLOAT deltaDec;
+        if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
+        miscDynBufAppendString(&_query, "&-c.bm=");
+        miscDynBufAppendString(&_query, separation);        
+    }
+    else
+    {
+        mcsFLOAT radius;
+        if (request.GetSearchArea(radius) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        sprintf(separation, "%.0f", radius);
+        miscDynBufAppendString(&_query, "&-c.rm=");
+        miscDynBufAppendString(&_query, separation);
+    }
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
     miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
     miscDynBufAppendString(&_query, "&-oc=hms");
