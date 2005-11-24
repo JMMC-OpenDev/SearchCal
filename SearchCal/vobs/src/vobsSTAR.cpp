@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.51 2005-11-24 13:17:23 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.52 2005-11-24 15:13:01 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.51  2005/11/24 13:17:23  scetre
+* Added new properties for faint research
+*
 * Revision 1.50  2005/11/24 08:14:14  scetre
 * Added GetPropertyType() method
 *
@@ -129,7 +132,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.51 2005-11-24 13:17:23 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.52 2005-11-24 15:13:01 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -974,7 +977,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY);
-    //AddProperty(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "%.2f");
     AddProperty(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "%.2f");
