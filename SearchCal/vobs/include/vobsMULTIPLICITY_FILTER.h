@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMULTIPLICITY_FILTER.h,v 1.1 2005-06-20 11:31:53 scetre Exp $"
+ * "@(#) $Id: vobsMULTIPLICITY_FILTER.h,v 1.2 2005-11-24 08:13:50 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/20 11:31:53  scetre
+ * Added filter class
+ *
  * Revision 1.2  2005/06/07 12:35:59  scetre
  * Updated documentation
  *
@@ -35,7 +38,7 @@
 /*
  * Local header
  */
-#include "vobsFILTER.h"
+#include "vobsBASE_FILTER.h"
 #include "vobsSTAR_LIST.h"
 
 #define vobsMULTIPLICITY_FILTER_NAME "Filter by Multiplicity"
@@ -47,13 +50,13 @@
 /**
  * Multiplicity filter class.
  * 
- * This class is a vobsFILTER object.
+ * This class is a vobsBASE_FILTER object.
  *
- * @sa vobsFILTER.cpp
+ * @sa vobsBASE_FILTER.cpp
  * @sa vobsSTAR_LIST.cpp
  * 
  */
-class vobsMULTIPLICITY_FILTER : public vobsFILTER
+class vobsMULTIPLICITY_FILTER : public vobsBASE_FILTER
 {
 
 public:

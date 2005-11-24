@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.6 2005-11-15 14:57:56 scetre Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.7 2005-11-24 08:13:50 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/15 14:57:56  scetre
+ * Added new scenario structure
+ * Added possibility to query merand and borde as primary catalog
+ *
  * Revision 1.5  2005/02/09 06:09:57  gzins
  * Changed vobsSTAR_COMP_CRITERIA_LIST& to vobsSTAR_COMP_CRITERIA_LIST* in vobsSCENARIO
  *
@@ -46,7 +50,7 @@
 #include "vobsCATALOG.h"
 #include "vobsSTAR_LIST.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
-#include "vobsFILTER.h"
+#include "vobsBASE_FILTER.h"
 
 /*
  * Class declaration
@@ -85,7 +89,7 @@ public:
                        vobsSTAR_LIST                *listOutput,
                        vobsACTION                   action,
                        vobsSTAR_COMP_CRITERIA_LIST  *criteriaList,
-                       vobsFILTER                   *filter);
+                       vobsBASE_FILTER                   *filter);
     vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
     
     // Class destructor
@@ -105,7 +109,7 @@ private:
     vobsSTAR_LIST               *_listOutput;
     vobsACTION                  _action;
     vobsSTAR_COMP_CRITERIA_LIST *_criteriaList;
-    vobsFILTER                  *_filter;
+    vobsBASE_FILTER             *_filter;
 };
 
 #endif /*!vobsSCENARIO_ENTRY_H*/

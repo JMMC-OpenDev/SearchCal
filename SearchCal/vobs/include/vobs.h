@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.9 2005-11-15 14:57:56 scetre Exp $"
+* "@(#) $Id: vobs.h,v 1.10 2005-11-24 08:14:37 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/11/15 14:57:56  scetre
+* Added new scenario structure
+* Added possibility to query merand and borde as primary catalog
+*
 * Revision 1.8  2005/06/20 11:31:53  scetre
 * Added filter class
 *
@@ -51,6 +55,7 @@
 #include "vobsCATALOG_LIST.h"
 #include "vobsSCENARIO.h"
 #include "vobsFILTER.h"
+#include "vobsBASE_FILTER.h"
 #include "vobsFILTER_LIST.h"
 #include "vobsMAGNITUDE_FILTER.h"
 #include "vobsDISTANCE_FILTER.h"

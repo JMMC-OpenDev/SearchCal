@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.38 2005-11-23 08:32:48 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.39 2005-11-24 08:13:50 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.38  2005/11/23 08:32:48  scetre
+* Added properties for faint K
+*
 * Revision 1.37  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -224,7 +227,8 @@ public:
     virtual vobsSTAR_PROPERTY *GetNextProperty(mcsLOGICAL init = mcsFALSE);
     virtual const char *GetPropertyValue(char *id);
     virtual mcsCOMPL_STAT GetPropertyValue(char *id, mcsFLOAT *value);
-
+    virtual vobsPROPERTY_TYPE GetPropertyType(char *id) ;
+    
     // Is property set?
     virtual mcsLOGICAL    IsPropertySet(char *propertyId);
 

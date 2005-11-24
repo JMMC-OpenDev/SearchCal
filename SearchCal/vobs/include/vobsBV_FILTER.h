@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsBV_FILTER.h,v 1.1 2005-11-15 14:54:33 scetre Exp $"
+ * "@(#) $Id: vobsBV_FILTER.h,v 1.2 2005-11-24 08:13:50 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/15 14:54:33  scetre
+ * Added filter on origin and B-V
+ *
  ******************************************************************************/
 
 /**
@@ -28,7 +31,7 @@
 /*
  * Local header
  */
-#include "vobsFILTER.h"
+#include "vobsBASE_FILTER.h"
 #include "vobsSTAR_LIST.h"
 
 
@@ -41,13 +44,13 @@
 /**
  * Magnitude B-V filter class.
  * 
- * This class is a vobsFILTER object.
+ * This class is a vobsBASE_FILTER object.
  *
- * @sa vobsFILTER.cpp
+ * @sa vobsBASE_FILTER.cpp
  * @sa vobsSTAR_LIST.cpp
  * 
  */
-class vobsBV_FILTER : public vobsFILTER
+class vobsBV_FILTER : public vobsBASE_FILTER
 {
 
 public:

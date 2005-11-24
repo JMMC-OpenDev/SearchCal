@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.5 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.6 2005-11-24 08:14:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.4  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -30,7 +33,7 @@
  *  Definition of vobsFILTER_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.5 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.6 2005-11-24 08:14:23 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -78,7 +81,7 @@ vobsFILTER_LIST::~vobsFILTER_LIST()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER *filter)
+mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsBASE_FILTER *filter)
 {
     logTrace("vobsFILTER_LIST::Add()");
 
@@ -136,7 +139,7 @@ mcsUINT32 vobsFILTER_LIST::Size(void)
  * @return pointer to the next element of the list or NULL if the end of the
  * list is reached.
  */
-vobsFILTER *vobsFILTER_LIST::GetNextFilter(mcsLOGICAL init)
+vobsBASE_FILTER *vobsFILTER_LIST::GetNextFilter(mcsLOGICAL init)
 {
     logTrace("vobsFILTER_LIST::GetNextFilter()");
     
@@ -163,10 +166,10 @@ vobsFILTER *vobsFILTER_LIST::GetNextFilter(mcsLOGICAL init)
  * @return pointer to the element of the list or NULL if the element has not
  * been found.
  */
-vobsFILTER *vobsFILTER_LIST::GetFilter(mcsSTRING32 name)
+vobsBASE_FILTER *vobsFILTER_LIST::GetFilter(mcsSTRING32 name)
 {
     logTrace("vobsFILTER_LIST::GetFilter()");
-    vobsFILTER * filter = NULL;
+    vobsBASE_FILTER * filter = NULL;
     // Look in the list if the filter is in the list
     for (unsigned int el = 0; el < Size(); el++)
     {
@@ -194,7 +197,7 @@ vobsFILTER *vobsFILTER_LIST::GetFilter(mcsSTRING32 name)
 mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsFILTER_LIST::Apply()");
-    vobsFILTER * filter;
+    vobsBASE_FILTER * filter;
     for (unsigned int el = 0; el < Size(); el++)
     {
         filter = GetNextFilter((mcsLOGICAL)(el==0));

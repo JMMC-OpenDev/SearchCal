@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.29 2005-11-17 08:05:52 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.30 2005-11-24 08:13:50 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.29  2005/11/17 08:05:52  scetre
+* Added possibility to add no catalog in an entry
+*
 * Revision 1.28  2005/11/16 12:53:18  scetre
 * Updated documentation
 *
@@ -94,7 +97,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.29 2005-11-17 08:05:52 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.30 2005-11-24 08:13:50 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -166,7 +169,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
                                      vobsSTAR_LIST *listOutput,
                                      vobsACTION action,
                                      vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
-                                     vobsFILTER    *filter)
+                                     vobsBASE_FILTER    *filter)
 {
     logTrace("vobsSCENARIO::AddEntry()");
     
