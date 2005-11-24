@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.49 2005-11-23 10:22:20 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.50 2005-11-24 08:14:14 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.49  2005/11/23 10:22:20  scetre
+* Generalized filter
+*
 * Revision 1.48  2005/11/23 08:32:47  scetre
 * Added properties for faint K
 *
@@ -123,7 +126,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.49 2005-11-23 10:22:20 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.50 2005-11-24 08:14:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -441,6 +444,26 @@ mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
         return mcsFAILURE;
     }
     // End if
+}
+
+/**
+ * Get a star property type.
+ *
+ * Get value as property type corresponding to the given property id.
+ *
+ * @param id property id.
+ *
+ * @return property type.
+ */
+vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(char *id)
+{
+    logTrace("vobsSTAR::GetPropertyType()");
+
+    // Look for property
+    vobsSTAR_PROPERTY *property;
+    property = GetProperty(id);
+    // Return property
+    return (property->GetType());
 }
 
 /**
