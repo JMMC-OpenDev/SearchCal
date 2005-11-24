@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.25 2005-11-23 08:36:12 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.26 2005-11-24 13:16:43 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2005/11/23 08:36:12  scetre
+* Added test on ucd and name to retreive properties
+*
 * Revision 1.24  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -80,7 +83,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.25 2005-11-23 08:36:12 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.26 2005-11-24 13:16:43 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -514,7 +517,7 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
 
     // Get pointer to the UCDs 
     const char    *from=NULL;
-    mcsSTRING1024 ucdNameLine;
+    mcsSTRING2048 ucdNameLine;
     mcsUINT32     ucdNameLineMaxLength = sizeof(ucdNameLine);
     from = GetNextLine(from, ucdNameLine, ucdNameLineMaxLength);
     if (ucdNameLine == NULL)
@@ -524,7 +527,7 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
     }
 
     // Get pointer to the parameter names 
-    mcsSTRING1024 paramNameLine;
+    mcsSTRING2048 paramNameLine;
     from = GetNextLine(from, paramNameLine, ucdNameLineMaxLength);
     if (paramNameLine == NULL)
     {
@@ -574,10 +577,10 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         {
             return vobsSTAR_ID_DM;
         }
-        /*else if (strcmp(paramName, "TYC1") == 0)
+        else if (strcmp(paramName, "TYC1") == 0)
         {
             return vobsSTAR_ID_TYC1;
-        }*/
+        }
     }
 
     // object identifier
@@ -610,15 +613,15 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
     // Code misc
     if (strcmp(ucdName, "CODE_MISC") == 0)
     {
-        if (strcmp(paramName, "Iflag") == 0)
+        if (strcmp(paramName, "Iflg") == 0)
         {
             return vobsSTAR_CODE_MISC_I;
         }
-        else if (strcmp(paramName, "Jflag") == 0)
+        else if (strcmp(paramName, "Jflg") == 0)
         {
             return vobsSTAR_CODE_MISC_J;
         }
-        else if (strcmp(paramName, "Kflag") == 0)
+        else if (strcmp(paramName, "Kflg") == 0)
         {
             return vobsSTAR_CODE_MISC_K;
         }

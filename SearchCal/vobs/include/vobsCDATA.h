@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.23 2005-10-14 08:44:24 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.24 2005-11-24 13:16:51 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/10/14 08:44:24  scetre
+* Updated p77 according to JMMC-MEM-2600-0004
+*
 * Revision 1.22  2005/09/07 12:12:46  scetre
 * Changed range of flux 1.25 1.65 2.20 from 0 to 0.1
 *
@@ -299,7 +302,7 @@ public:
             // (value are separated by '\t' character), store them in object
             // object and add this new object in the list.
             const char*   from=NULL;
-            mcsSTRING1024 line;
+            mcsSTRING2048 line;
             mcsUINT32     maxLineLength = sizeof(line);
             mcsINT32      lineNum = 0;
             do
