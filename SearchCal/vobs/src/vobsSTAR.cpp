@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.50 2005-11-24 08:14:14 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.51 2005-11-24 13:17:23 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.50  2005/11/24 08:14:14  scetre
+* Added GetPropertyType() method
+*
 * Revision 1.49  2005/11/23 10:22:20  scetre
 * Generalized filter
 *
@@ -126,7 +129,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.50 2005-11-24 08:14:14 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.51 2005-11-24 13:17:23 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -953,7 +956,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "%.0f");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "%.0f");
     AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "%.0f");    
-    //AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsFLOAT_PROPERTY, "%.0f");    
+    AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsFLOAT_PROPERTY, "%.0f");    
     AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);    
     AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY);    
     AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY);    
