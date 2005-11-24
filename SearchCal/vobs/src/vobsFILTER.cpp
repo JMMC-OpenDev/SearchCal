@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.7 2005-11-24 08:15:01 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.8 2005-11-24 13:17:34 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/11/24 08:15:01  scetre
+ * Changed to generic filter class
+ *
  * Revision 1.6  2005/11/23 10:22:20  scetre
  * Generalized filter
  *
@@ -39,7 +42,7 @@
  *  Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.7 2005-11-24 08:15:01 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.8 2005-11-24 13:17:34 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -100,10 +103,11 @@ mcsCOMPL_STAT vobsFILTER::SetPropertyId(mcsSTRING32 ucd)
 /**
  * Add float condition
  *
- * @param
- * @param
+ * @param condition <, >, <=, >=, ==
+ * @param value the value to compare with
  *
- * @return
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT vobsFILTER::AddCondition(vobsCONDITION condition,
                                        mcsFLOAT value)
@@ -129,10 +133,10 @@ mcsCOMPL_STAT vobsFILTER::AddCondition(vobsCONDITION condition,
 /**
  * Add String condition
  * 
- * @param
- * @param
+ * @param the string to compare with
  *
- * @return
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
  */
 mcsCOMPL_STAT vobsFILTER::AddCondition(string value)
 {
