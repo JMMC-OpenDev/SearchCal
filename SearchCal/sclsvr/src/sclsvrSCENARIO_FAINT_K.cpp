@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.2 2005-11-24 13:21:38 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.3 2005-11-24 15:14:02 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/24 13:21:38  scetre
+ * Clean the presentation of the add entry
+ *
  * Revision 1.1  2005/11/23 08:39:03  scetre
  * Added scenario for faint K
  *
@@ -16,7 +19,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.2 2005-11-24 13:21:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.3 2005-11-24 15:14:02 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -92,13 +95,14 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+    _filterOptT.Enable();
     // Build Filter used opt=T
     _filterOptU.SetPropertyId(vobsSTAR_ID_CATALOG);
     if (_filterOptU.AddCondition("U") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-
+    _filterOptU.Enable();
     
     ///////////////////////////////////////////////////////////////////////////
     // PRIMARY REQUEST
