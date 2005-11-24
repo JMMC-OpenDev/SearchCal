@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.10 2005-11-21 13:51:47 scetre Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.11 2005-11-24 13:21:26 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/11/21 13:51:47  scetre
+ * Changed bad scenario name
+ * Added scenario for single star research -> updated getStar
+ *
  * Revision 1.9  2005/11/15 15:01:19  scetre
  * Updated with new scenario structure
  *
@@ -47,6 +51,7 @@
 #include "sclsvrSCENARIO_BRIGHT_K.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
+#include "sclsvrSCENARIO_FAINT_K.h"
 #include "sclsvrSCENARIO_SINGLE_STAR.h"
 
 /*
@@ -125,6 +130,7 @@ private:
     sclsvrSCENARIO_BRIGHT_K _scenarioBrightK;
     sclsvrSCENARIO_BRIGHT_V _scenarioBrightV;
     sclsvrSCENARIO_BRIGHT_N _scenarioBrightN;
+    sclsvrSCENARIO_FAINT_K _scenarioFaintK;
     sclsvrSCENARIO_SINGLE_STAR _scenarioSingleStar;
 };
 
