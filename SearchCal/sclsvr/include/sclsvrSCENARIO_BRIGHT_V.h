@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.h,v 1.3 2005-11-23 08:38:14 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.h,v 1.4 2005-11-24 13:21:38 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/23 08:38:14  scetre
+ * ReAdd criteria on HD number for cross matching for I/196 and BSC/SBSC
+ *
  * Revision 1.2  2005/11/16 14:28:02  scetre
  * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
  *
@@ -60,13 +63,15 @@ private:
     sclsvrSCENARIO_BRIGHT_V& operator=(const sclsvrSCENARIO_BRIGHT_V&);
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starListP;
     vobsSTAR_LIST     _starListS;
 
     vobsREQUEST _request;
     
     vobsSTAR_COMP_CRITERIA_LIST _criteriaList;    
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListHd;    
+
+    // filter on opt=T
+    vobsFILTER _filterOptT;
 };
 
 #endif /*!sclsvrSCENARIO_BRIGHT_V_H*/

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.1 2005-11-23 08:39:03 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.2 2005-11-24 13:21:38 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/23 08:39:03  scetre
+ * Added scenario for faint K
+ *
  ******************************************************************************/
 
 /**
@@ -55,13 +58,18 @@ private:
 
     // Star lists used in scenarion
     vobsSTAR_LIST     _starListP;
-    vobsSTAR_LIST     _starListS;
     vobsSTAR_LIST     _starListS1;
     vobsSTAR_LIST     _starListS2;
 
     vobsREQUEST _request;
     
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;    
+
+    // filter on opt=T
+    vobsFILTER _filterOptT;
+
+    // filter on opt=U
+    vobsFILTER _filterOptU;
 };
 
 #endif /*!sclsvrSCENARIO_FAINT_K_H*/
