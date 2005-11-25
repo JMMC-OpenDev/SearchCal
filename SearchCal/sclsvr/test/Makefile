@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2005-02-15 15:52:00 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2005-11-25 13:14:45 scetre Exp $"
 #
 # Makefile of sclsvr test module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/02/15 15:52:00  gzins
+# Added CVS log as file modification history
+#
 # scetre    15-Sep-2004  Created
 #
 #*******************************************************************************
@@ -37,38 +40,11 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = sclsvrTestCalibratorPack sclsvrTestCalibrator
+EXECUTABLES     = sclsvrTestCalibrator 
 EXECUTABLES_L   = 
 
 #
 # <brief description of xxxxx program>
-#sclsvrTest_OBJECTS   = sclsvrTest
-#sclsvrTest_LDFLAGS   = 
-#sclsvrTest_LIBS      = MCS C++ sclsvr vobs
-
-#sclsvrTestCommand_OBJECTS   = sclsvrTestCommand
-#sclsvrTestCommand_LDFLAGS   = 
-#sclsvrTestCommand_LIBS      = MCS C++ sclsvr vobs scitoo msg simcli
-
-#sclsvrTestSearchCalibrators_OBJECTS   = sclsvrTestSearchCalibrators
-#sclsvrTestSearchCalibrators_LDFLAGS   = 
-#sclsvrTestSearchCalibrators_LIBS      = MCS C++ sclsvr vobs scitoo msg cmd simcli
-
-#sclsvrSearchCalibrators_OBJECTS   = sclsvrSearchCalibrators
-#sclsvrSearchCalibrators_LDFLAGS   =
-#sclsvrSearchCalibrators_LIBS      = MCS C++ sclsvr vobs alx msg simcli
-
-#sclsvrTestSearchCalibratorsClient_OBJECTS   = sclsvrTestSearchCalibratorsClient
-#sclsvrTestSearchCalibratorsClient_LDFLAGS   = 
-#sclsvrTestSearchCalibratorsClient_LIBS      = MCS C++ sclsvr vobs scitoo msg gui simcli
-
-#sclsvrTestCalibratorMethod_OBJECTS   = sclsvrTestCalibratorMethod
-#sclsvrTestCalibratorMethod_LDFLAGS   =
-#sclsvrTestCalibratorMethod_LIBS      = MCS C++ sclsvr vobs alx msg simcli 
-
-#sclsvrTestCalibratorPack_OBJECTS   = sclsvrTestCalibratorPack
-#sclsvrTestCalibratorPack_LDFLAGS   = 
-#sclsvrTestCalibratorPack_LIBS      = MCS C++ sclsvr vobs alx msg simcli
 
 sclsvrTestCalibrator_OBJECTS   = sclsvrTestCalibrator
 sclsvrTestCalibrator_LDFLAGS   = 

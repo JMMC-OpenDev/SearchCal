@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.7 2005-06-01 14:18:54 scetre Exp $"
+ * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.8 2005-11-25 13:14:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/06/01 14:18:54  scetre
+ * Added filters and filter list objects.
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.6  2005/03/03 16:49:05  scetre
  * updated test
  *
@@ -16,7 +20,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.7 2005-06-01 14:18:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.8 2005-11-25 13:14:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -39,10 +43,9 @@ using namespace std;
  */
 #include "sclsvrCALIBRATOR.h"
 #include "sclsvrCALIBRATOR_LIST.h"
-#include "sclsvrDISTANCE_FILTER.h"
-#include "sclsvrFILTER_LIST.h"
 #include "sclsvrPrivate.h"
 #include "sclsvr.h"
+#include "vobs.h"
 
 #include <iostream>
 #include <algorithm>
@@ -131,14 +134,14 @@ int main(int argc, char *argv[])
     sclsvrCALIBRATOR_LIST listTest;
 
     // create a list of filter
-    sclsvrFILTER_LIST filterList;
-    sclsvrDISTANCE_FILTER distanceFilter;
+    vobsFILTER_LIST filterList;
+    vobsDISTANCE_FILTER distanceFilter;
     // add distance filter in the list
-    filterList.Add(distanceFilter);
+    filterList.Add(&distanceFilter);
    
-    sclsvrDISTANCE_FILTER *distanceFilterbis;
+    vobsDISTANCE_FILTER *distanceFilterbis;
     // get distance filter of the list
-    distanceFilterbis = (sclsvrDISTANCE_FILTER*)filterList.GetFilter(sclsvrDistanceFilterName);
+    distanceFilterbis = (vobsDISTANCE_FILTER*)filterList.GetFilter(vobsDISTANCE_FILTER_NAME);
     // Set as enable the filter
     distanceFilterbis->Enable();
     distanceFilterbis->SetDistanceValue("03 47 29.08", "+24 06 18.5", 0.1, 0.1);
