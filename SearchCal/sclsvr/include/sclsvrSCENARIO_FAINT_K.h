@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.2 2005-11-24 13:21:38 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.3 2005-11-25 08:45:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/24 13:21:38  scetre
+ * Clean the presentation of the add entry
+ *
  * Revision 1.1  2005/11/23 08:39:03  scetre
  * Added scenario for faint K
  *
@@ -70,6 +73,9 @@ private:
 
     // filter on opt=U
     vobsFILTER _filterOptU;
+    
+    // filter on Qflg=AAA
+    vobsFILTER _filterOnQflag;
 };
 
 #endif /*!sclsvrSCENARIO_FAINT_K_H*/

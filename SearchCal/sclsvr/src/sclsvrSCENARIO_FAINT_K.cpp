@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.3 2005-11-24 15:14:02 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.4 2005-11-25 08:45:55 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/24 15:14:02  scetre
+ * Enabled the filters used
+ *
  * Revision 1.2  2005/11/24 13:21:38  scetre
  * Clean the presentation of the add entry
  *
@@ -19,7 +22,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.3 2005-11-24 15:14:02 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.4 2005-11-25 08:45:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -103,7 +106,14 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
     _filterOptU.Enable();
-    
+    // Build Filter used Qflg=AAA
+    _filterOnQflag.SetPropertyId(vobsSTAR_CODE_QUALITY);
+    if (_filterOnQflag.AddCondition("AAA") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    _filterOnQflag.Enable();    
+
     ///////////////////////////////////////////////////////////////////////////
     // PRIMARY REQUEST
     ///////////////////////////////////////////////////////////////////////////
