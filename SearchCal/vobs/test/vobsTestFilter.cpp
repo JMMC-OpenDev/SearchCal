@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestFilter.cpp,v 1.2 2005-11-24 08:15:27 scetre Exp $"
+ * "@(#) $Id: vobsTestFilter.cpp,v 1.3 2005-11-28 10:11:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/24 08:15:27  scetre
+ * Updated filter test
+ *
  * Revision 1.1  2005/11/23 10:22:20  scetre
  * Generalized filter
  *
@@ -16,7 +19,7 @@
  * Test file on filter 
  */
 
-static char *rcsId="@(#) $Id: vobsTestFilter.cpp,v 1.2 2005-11-24 08:15:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestFilter.cpp,v 1.3 2005-11-28 10:11:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -141,6 +144,7 @@ int main(int argc, char *argv[])
     vobsFILTER filteronKmagLessEqual;
     filteronKmagLessEqual.SetPropertyId(vobsSTAR_PHOT_JHN_K);
     filteronKmagLessEqual.AddCondition(vobsLESS_EQUAL, 4);
+    filteronKmagLessEqual.AddCondition(vobsMORE_EQUAL, 2);
     filteronKmagLessEqual.Enable();
 
     vobsFILTER filteronKmagMoreEqual;
@@ -155,10 +159,7 @@ int main(int argc, char *argv[])
         
     vobsFILTER filteronKmagPlusPlus;
     filteronKmagPlusPlus.SetPropertyId(vobsSTAR_PHOT_JHN_K);
-    filteronKmagPlusPlus.AddCondition(vobsEQUAL, 0);
     filteronKmagPlusPlus.AddCondition(vobsEQUAL, 2);
-    filteronKmagPlusPlus.AddCondition(vobsEQUAL, 4);
-    filteronKmagPlusPlus.AddCondition(vobsEQUAL, 5);
     filteronKmagPlusPlus.Enable();
     
     logTest("A filter on Qflag = AAA  and OOO is applied on the list");
@@ -176,7 +177,7 @@ int main(int argc, char *argv[])
     logTest("The filtering list has a size = %d", starList3.Size());
     starList3.Display();
 
-    logTest("A filter on Kmag <= 4 is applied on the list");
+    logTest("A filter on 2 <= Kmag <= 4 is applied on the list");
     filteronKmagLessEqual.Apply(&starList4);
     logTest("The filtering list has a size = %d", starList4.Size());
     starList4.Display();
@@ -191,7 +192,7 @@ int main(int argc, char *argv[])
     logTest("The filtering list has a size = %d", starList6.Size());
     starList6.Display();
 
-    logTest("A filter on Kmag =0 =2 =4 =5 is applied on the list");
+    logTest("A filter on Kmag = 2 is applied on the list");
     filteronKmagPlusPlus.Apply(&starList7);
     logTest("The filtering list has a size = %d", starList7.Size());
     starList7.Display();

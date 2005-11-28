@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.8 2005-11-24 13:17:34 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.9 2005-11-28 10:11:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/11/24 13:17:34  scetre
+ * Updated documentation
+ *
  * Revision 1.7  2005/11/24 08:15:01  scetre
  * Changed to generic filter class
  *
@@ -42,7 +45,7 @@
  *  Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.8 2005-11-24 13:17:34 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.9 2005-11-28 10:11:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -200,7 +203,7 @@ mcsCOMPL_STAT vobsFILTER::Apply(vobsSTAR_LIST *list)
                     // in the case of float property the star respect the
                     // confition and it is changed to false if one property
                     // doesn't
-                    isRespectedCondition = mcsFALSE;
+                    isRespectedCondition = mcsTRUE;
                     // get float value of the property
                     mcsFLOAT value;
                     if (star->GetPropertyValue(_ucd, &value) == mcsFAILURE)
@@ -221,18 +224,18 @@ mcsCOMPL_STAT vobsFILTER::Apply(vobsSTAR_LIST *list)
                             case vobsLESS:
                                 // If value is less or equal than to the wanted
                                 // value condition
-                                if (value  < (*_floatConditionsIterator).value)
+                                if (value  >= (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsTRUE;
+                                    isRespectedCondition = mcsFALSE;
                                 }
                                 break;
 
                             case vobsLESS_EQUAL:
                                 // If value is less than to the wanted
                                 // value condition
-                                if (value  <= (*_floatConditionsIterator).value)
+                                if (value  > (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsTRUE;
+                                    isRespectedCondition = mcsFALSE;
                                 }
 
                                 break;
@@ -240,27 +243,27 @@ mcsCOMPL_STAT vobsFILTER::Apply(vobsSTAR_LIST *list)
                             case vobsMORE:
                                 // If value is more or equal than to the wanted
                                 // value condition
-                                if (value  > (*_floatConditionsIterator).value)
+                                if (value  < (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsTRUE;
+                                    isRespectedCondition = mcsFALSE;
                                 }
                                 break;
 
                             case vobsMORE_EQUAL:
                                 // If value is more than to the wanted
                                 // value condition
-                                if (value >= (*_floatConditionsIterator).value)
+                                if (value < (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsTRUE;
+                                    isRespectedCondition = mcsFALSE;
                                 }
                                 break;
 
                             case vobsEQUAL:
                                 // If value is not equal to the wanted value 
                                 // condition
-                                if (value == (*_floatConditionsIterator).value)
+                                if (value != (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsTRUE;
+                                    isRespectedCondition = mcsFALSE;
                                 }
                                 break;
 
