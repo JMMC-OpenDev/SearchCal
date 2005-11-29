@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.7 2005-11-29 10:33:40 gzins Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.8 2005-11-29 14:05:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/11/29 10:33:40  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.6  2005/11/24 08:14:23  scetre
  * Changed mother class of filter from vobsFILTER to vobsFILTER
  *
@@ -36,7 +39,7 @@
  *  Definition of vobsFILTER_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.7 2005-11-29 10:33:40 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.8 2005-11-29 14:05:18 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -63,7 +66,6 @@ using namespace std;
  */
 vobsFILTER_LIST::vobsFILTER_LIST()
 {
-    _filterlistIterator = _filterList.begin();
 }
 
 /**
@@ -84,12 +86,12 @@ vobsFILTER_LIST::~vobsFILTER_LIST()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER *filter)
+mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER *filter, string name)
 {
     logTrace("vobsFILTER_LIST::Add()");
 
-    // add the filter at the end of the list
-    _filterList.push_back(filter);
+    // Add the filter into the list
+    _filterList[name] = filter;
 
     return mcsSUCCESS;
 }
@@ -105,13 +107,13 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
 {
     logTrace(" vobsFILTER_LIST::Reset()");
 
-    // Remove all element of the list between the begining and the end of the
-    // list, i.e remove ALL element of the list
-    for (unsigned int el = 0; el < Size(); el++)
+    // Disable all filters  
+    map<string, vobsFILTER *>::const_iterator iter;
+
+    for (iter=_filterList.begin(); iter != _filterList.end(); ++iter) 
     {
-        GetNextFilter((mcsLOGICAL)(el==0))->Disable();
+        (iter->second)->Disable(); 
     }
-    
     return mcsSUCCESS;
 }
 
@@ -125,42 +127,6 @@ mcsUINT32 vobsFILTER_LIST::Size(void)
     return _filterList.size();
 }
 
-
-/**
- * Returns the next element (filter) in the list.
- *
- * This method returns the pointer to the next element of the list. If \em
- * init is mcsTRUE, it returns the first element of the list.
- * 
- * This method can be used to move forward in the list, as shown below:
- * \code
- *     for (unsigned int el = 0; el < filterList.Size(); el++)
- *     {
- *         filterList.GetNextFilter((mcsLOGICAL)(el==0))-><method>;
- *     }
- * \endcode
- * @return pointer to the next element of the list or NULL if the end of the
- * list is reached.
- */
-vobsFILTER *vobsFILTER_LIST::GetNextFilter(mcsLOGICAL init)
-{
-    logTrace("vobsFILTER_LIST::GetNextFilter()");
-    
-    if (init == mcsTRUE)
-    {
-        _filterlistIterator = _filterList.begin();
-    }
-    else
-    {
-        _filterlistIterator++;
-        if (_filterlistIterator == _filterList.end())
-        {
-            return NULL;
-        }
-    }
-    return (*_filterlistIterator);
-}
-
 /**
  * Get the filter which have corresponding name
  *
@@ -169,24 +135,24 @@ vobsFILTER *vobsFILTER_LIST::GetNextFilter(mcsLOGICAL init)
  * @return pointer to the element of the list or NULL if the element has not
  * been found.
  */
-vobsFILTER *vobsFILTER_LIST::GetFilter(mcsSTRING32 name)
+vobsFILTER *vobsFILTER_LIST::GetFilter(string name)
 {
     logTrace("vobsFILTER_LIST::GetFilter()");
-    vobsFILTER * filter = NULL;
-    // Look in the list if the filter is in the list
-    for (unsigned int el = 0; el < Size(); el++)
+    map<string, vobsFILTER *>::const_iterator iter;
+
+    // Look for filter
+    iter = _filterList.find(name);
+
+    // If not found 
+    if (iter == _filterList.end())
     {
-        filter = GetNextFilter((mcsLOGICAL)(el==0));
-        // if name have been found, break
-        if (strcmp(filter->GetName(), name) == 0)
-        {
-            break;
-        }
+        // Return NULL
+        return NULL;
     }
 
     // return filter
     // If it has not been found, NULL will be return
-    return filter;
+    return (iter->second);
 }
 
 /**
@@ -201,11 +167,16 @@ mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsFILTER_LIST::Apply()");
     vobsFILTER * filter;
-    for (unsigned int el = 0; el < Size(); el++)
+    map<string, vobsFILTER *>::const_iterator iter;
+
+    // For each filter in list 
+    for (iter=_filterList.begin(); iter != _filterList.end(); ++iter) 
     {
-        filter = GetNextFilter((mcsLOGICAL)(el==0));
+        filter = iter->second; 
+        // If it is enabled
         if (filter->IsEnabled() == mcsTRUE)
         {
+            // Apply it
             if (filter->Apply(list) == mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -215,14 +186,5 @@ mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST *list)
 
     return mcsSUCCESS;
 }
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
-
 
 /*___oOo___*/
