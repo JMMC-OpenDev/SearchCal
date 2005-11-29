@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.51 2005-11-14 14:19:41 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.52 2005-11-29 13:06:15 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.51  2005/11/14 14:19:41  lafrasse
+ * Added "distance to science object" computation and sorting
+ *
  * Revision 1.50  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -102,7 +105,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.51 2005-11-14 14:19:41 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.52 2005-11-29 13:06:15 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -201,71 +204,82 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::Complete()");
     
-    // Get the observed band
-    const char* band = request.GetSearchBand();
+    // If the request should return bright starts
+    if ((request.IsBright() == mcsTRUE) &&
+        (request.GetSearchAreaGeometry() == vobsBOX))
+    {
 
-    // Compute Galactic coordinates
-    if (ComputeGalacticCoordinates() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
-    // If it is not the scenario for N band
-    if (strcmp(band, "N") != 0)
-    {
-        // If paralax of the star if known
-        if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
+        // Get the observed band
+        const char* band = request.GetSearchBand();
+
+        // Compute Galactic coordinates
+        if (ComputeGalacticCoordinates() == mcsFAILURE)
         {
-            // If paralax is greater than 1 mas, compute real magnitudes,
-            // missing magnitudes and the angular diameter 
-            mcsFLOAT paralax;
-            GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax);
-            if (paralax >= 1)
+            return mcsFAILURE;
+        }
+
+        // If it is not the scenario for N band
+        if (strcmp(band, "N") != 0)
+        {
+            // If paralax of the star if known
+            if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
             {
-                // Compute Interstellar extinction
-                if (ComputeInterstellarAbsorption() == mcsFAILURE)
+                // If paralax is greater than 1 mas, compute real magnitudes,
+                // missing magnitudes and the angular diameter 
+                mcsFLOAT paralax;
+                GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax);
+                if (paralax >= 1)
                 {
-                    return mcsFAILURE;
-                }
+                    // Compute Interstellar extinction
+                    if (ComputeInterstellarAbsorption() == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
 
-                // Compute Missing Magnitude
-                if (ComputeMissingMagnitude() == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                    // Compute Missing Magnitude
+                    if (ComputeMissingMagnitude() == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
 
-                // Compute Angular Diameter
-                if (ComputeAngularDiameter() == mcsFAILURE)
-                {
-                    return mcsFAILURE;
+                    // Compute Angular Diameter
+                    if (ComputeAngularDiameter() == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
                 }
             }
         }
+        else
+        {
+            SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
+                             vobsSTAR_COMPUTED_PROP);
+        }
+
+        // Compute visibility and visibility error
+        if (ComputeVisibility(request) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Compute multiplicity
+        if (ComputeMultiplicity() == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Compute distance
+        if (ComputeDistance(request) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
+    // if the researh is faint
     else
     {
-         SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
-                          vobsSTAR_COMPUTED_PROP);
+        SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
+                             vobsSTAR_COMPUTED_PROP);
     }
-
-    // Compute visibility and visibility error
-    if (ComputeVisibility(request) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Compute multiplicity
-    if (ComputeMultiplicity() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Compute distance
-    if (ComputeDistance(request) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
     return mcsSUCCESS;
 }
 
