@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.1 2005-11-29 10:34:12 gzins Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.2 2005-11-29 13:51:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/29 10:34:12  gzins
+ * Moved vobsFILTER to vobsGENERIC_FILTER
+ *
  * Revision 1.9  2005/11/28 10:11:24  scetre
  * Changed OR test to AND test
  *
@@ -48,7 +51,7 @@
  *  Definition of vobsGENERIC_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.1 2005-11-29 10:34:12 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.2 2005-11-29 13:51:43 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -92,16 +95,16 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
 /**
  * Set property id
  *
- * @param ucd property id
+ * @param propId property id
  * 
  * @return always mcsSUCCESS 
  */
-mcsCOMPL_STAT vobsGENERIC_FILTER::SetPropertyId(mcsSTRING32 ucd)
+mcsCOMPL_STAT vobsGENERIC_FILTER::SetPropertyId(mcsSTRING32 propId)
 {
     logTrace("vobsGENERIC_FILTER::SetPropertyId()");
 
-    // copy ucd id
-    strcpy(_ucd, ucd);
+    // Copy property id
+    strcpy(_propId, propId);
     
     return mcsSUCCESS;
 }
@@ -121,7 +124,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsCONDITION condition,
     logTrace("vobsGENERIC_FILTER::AddCondition(float)");
 
     vobsSTAR star;
-    if (star.GetPropertyType(_ucd) == vobsSTRING_PROPERTY)
+    if (star.GetPropertyType(_propId) == vobsSTRING_PROPERTY)
     {
         // errAdd
         return mcsFAILURE;
@@ -149,7 +152,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(string value)
     logTrace("vobsGENERIC_FILTER::AddCondition(string)");
 
     vobsSTAR star;
-    if (star.GetPropertyType(_ucd) == vobsFLOAT_PROPERTY)
+    if (star.GetPropertyType(_propId) == vobsFLOAT_PROPERTY)
     {
         // errAdd
         return mcsFAILURE;
@@ -173,24 +176,24 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsGENERIC_FILTER::Apply()");
 
-    mcsLOGICAL isRespectedCondition;
+    mcsLOGICAL isTrue;
     
     if (IsEnabled() == mcsTRUE)
     {
         vobsSTAR *star;
         for (unsigned int el = 0; el < list->Size(); el++)
         {
-            // by default star doesn't respected condition
-            isRespectedCondition = mcsFALSE;
+            // by default star doesn't match conditions
+            isTrue = mcsFALSE;
 
-            star=
-                (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+
             // If property not set remove the star
-            if (star->IsPropertySet(_ucd) != mcsTRUE)
+            if (star->IsPropertySet(_propId) != mcsTRUE)
             {
                 // Remove it
                 logTest("star %d had no property %s",
-                        el+1, _ucd);
+                        el+1, _propId);
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
@@ -206,10 +209,10 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                     // in the case of float property the star respect the
                     // confition and it is changed to false if one property
                     // doesn't
-                    isRespectedCondition = mcsTRUE;
+                    isTrue = mcsTRUE;
                     // get float value of the property
                     mcsFLOAT value;
-                    if (star->GetPropertyValue(_ucd, &value) == mcsFAILURE)
+                    if (star->GetPropertyValue(_propId, &value) == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
@@ -229,7 +232,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                                 // value condition
                                 if (value  >= (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsFALSE;
+                                    isTrue = mcsFALSE;
                                 }
                                 break;
 
@@ -238,7 +241,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                                 // value condition
                                 if (value  > (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsFALSE;
+                                    isTrue = mcsFALSE;
                                 }
 
                                 break;
@@ -248,7 +251,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                                 // value condition
                                 if (value  <= (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsFALSE;
+                                    isTrue = mcsFALSE;
                                 }
                                 break;
 
@@ -257,7 +260,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                                 // value condition
                                 if (value < (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsFALSE;
+                                    isTrue = mcsFALSE;
                                 }
                                 break;
 
@@ -266,7 +269,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                                 // condition
                                 if (value != (*_floatConditionsIterator).value)
                                 {
-                                    isRespectedCondition = mcsFALSE;
+                                    isTrue = mcsFALSE;
                                 }
                                 break;
 
@@ -278,10 +281,10 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 } 
                 else if (_stringConditions.size() != 0)
                 {
-                    isRespectedCondition = mcsFALSE;
+                    isTrue = mcsFALSE;
                     // retreive the string property of the testing star
                     mcsSTRING32 value;
-                    strcpy(value, star->GetPropertyValue(_ucd));
+                    strcpy(value, star->GetPropertyValue(_propId));
                     // if property is set, Apply sequentially all the condition
                     // check all string condition
                     _stringConditionsIterator = _stringConditions.begin();
@@ -291,13 +294,13 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                         if (strcmp(value,
                                    (*_stringConditionsIterator).c_str()) == 0)
                         {
-                            isRespectedCondition = mcsTRUE;
+                            isTrue = mcsTRUE;
                         }
                         _stringConditionsIterator++;
                     }
                 }
 
-                if (isRespectedCondition == mcsFALSE)
+                if (isTrue == mcsFALSE)
                 {
                     // Remove it
                     if (list->Remove(*star) == mcsFAILURE)
