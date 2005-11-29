@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.10 2005-11-29 10:33:22 gzins Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.11 2005-11-29 13:53:40 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/11/29 10:33:22  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.1  2005/11/24 08:13:50  scetre
  * Changed mother class of filter from vobsFILTER to vobsFILTER
  *
@@ -16,7 +19,7 @@
  *  Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.10 2005-11-29 10:33:22 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.11 2005-11-29 13:53:40 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -57,18 +60,6 @@ vobsFILTER::~vobsFILTER()
 /*
  * Public methods
  */
-/**
- * Get the filter name
- *
- * @return filter name
- */
-char * vobsFILTER::GetName(void)
-{
-    logTrace("vobsFILTER::GetName()");
-
-    return _name;
-}
-
 /**
  * Say if the filter is enable or not
  *
