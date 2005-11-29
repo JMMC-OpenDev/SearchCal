@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.h,v 1.2 2005-11-24 14:54:25 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.h,v 1.3 2005-11-29 10:27:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/24 14:54:25  scetre
+ * UNSO catalog added
+ *
  * Revision 1.1  2005/11/15 14:56:43  scetre
  * Create catalog list
  *
@@ -32,6 +35,9 @@
  */
 #include "mcs.h"
 
+/*
+ * Local Headers 
+ */
 #include "vobsCATALOG.h"
 #include "vobsCATALOG_ASCC.h"
 #include "vobsCATALOG_BSC.h"
@@ -53,8 +59,7 @@
  */
 
 /**
- * 
- * 
+ * vobsCATALOG_LIST handles the list of available catalogs.
  */
 class vobsCATALOG_LIST
 {

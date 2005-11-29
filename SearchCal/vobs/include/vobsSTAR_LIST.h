@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.18 2005-11-15 16:39:55 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.19 2005-11-29 10:31:14 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/11/15 16:39:55  lafrasse
+* Added experimental VOTable export support
+*
 * Revision 1.17  2005/11/11 16:38:32  gzins
 * Added Sort() method
 *
@@ -51,19 +54,7 @@
 typedef std::list<string> vobsSTAR_PROPERTY_ID_LIST;
 
 /**
- * vobsSTAR_LIST is a class which caracterises a list of star.
- *
- * methods of this class allows to :
- * \li known if the list is empty
- * \li clear the list
- * \li add at tail a star in the the list
- * \li remove a star from the list
- * \li get the list size
- * \li create a star from another one
- * \li get a star
- * \li merge two list
- * \li display the list o the console
- * \li save the list in a file
+ * vobsSTAR_LIST handles a list of stars.
  */
 class vobsSTAR_LIST
 { 
