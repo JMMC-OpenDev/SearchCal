@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.7 2005-11-29 13:04:42 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.8 2005-11-29 13:49:30 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/11/29 13:04:42  scetre
+ * Used vobsSCENARIO instead of obsolete sclsvrSCEANRIO_CHECK
+ *
  * Revision 1.6  2005/11/29 10:39:03  gzins
  * Changed vobsBASE_FILTER to vobsFILTER
  *
@@ -31,7 +34,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.7 2005-11-29 13:04:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.8 2005-11-29 13:49:30 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -223,25 +226,44 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     ///////////////////////////////////////////////////////////////////////////
     // I/280 with 
     ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListP,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1,
+                          vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // query on I/284 with L2
+    // query on I/284 with S2
     ///////////////////////////////////////////////////////////////////////////
     // I/284-UNSO
     ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsCATALOG_UNSO_ID, &_request, &_starListS2, &_starListP,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_UNSO_ID, &_request, &_starListS2, &_starListS2,
+                          vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Merge S2 and S1
+    ///////////////////////////////////////////////////////////////////////////
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1,
+                 vobsMERGE) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////
+    // Update this new list S1 with P, S1 = reference list
+    ///////////////////////////////////////////////////////////////////////////
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1,
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     ///////////////////////////////////////////////////////////////////////////
     // B/denis
     ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListP, &_starListP,
+    if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -249,7 +271,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     ///////////////////////////////////////////////////////////////////////////
     // charm2
     ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListP, &_starListP,
+    if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS1, &_starListS1,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
