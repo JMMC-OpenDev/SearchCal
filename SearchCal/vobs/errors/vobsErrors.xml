@@ -60,35 +60,10 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Invalid CONSTRAINT format '%.80s'; should be %.20s]]></errFormat>
    </error>
-   <error id="18">
-      <errName>INVALID_KIND_OF_REQUEST</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Invalid Kind of request '%d'; should be 0 or 1]]></errFormat>
-   </error>
-   <error id="19">
-      <errName>KIND_OF_REQUEST_NOT_SET</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Kind of request not set]]></errFormat>
-   </error>
-   <error id="20">
-      <errName>CHECK_OF_KIND_OF_REQUEST_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Kind of request not set]]></errFormat>
-   </error>
-   <error id="21">
-      <errName>CHECK_FOR_SIMPLE_STAR_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[constraint for simple star search not ok]]></errFormat>
-   </error>
-   <error id="22">
-      <errName>CHECK_FOR_STAR_LIST_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[constraints for star list search not ok]]></errFormat>
-   </error>
    <error id="23">
-      <errName>BAD_CATALOG_NAME</errName>
+      <errName>UNKNOWN_CATALOG_NAME</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[bad catalog name]]></errFormat>
+      <errFormat><![CDATA[Unknown catalog name '%.80s']]></errFormat>
    </error>
    <error id="24">
       <errName>QUERY_WRITE_FAILED</errName>
@@ -143,12 +118,12 @@
    <error id="35">
       <errName>NO_MORE_CRITERIA</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[no more criteria in the list]]></errFormat>
+      <errFormat><![CDATA[No more criteria in the list]]></errFormat>
    </error>
    <error id="36">
       <errName>UNKNOWN_BAND</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[the virtual observatory can't find star in band %s]]></errFormat>
+      <errFormat><![CDATA[Invalid band %s; should be J, H, K, V or N]]></errFormat>
    </error>
    <error id="38">
       <errName>CATALOG_LOAD</errName>
