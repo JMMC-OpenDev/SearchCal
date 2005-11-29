@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.5 2005-03-14 08:32:04 mella Exp $
+# Version: $Id: mcs.sh,v 1.6 2005-11-29 08:21:04 mella Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/03/14 08:32:04  mella
+# Add setMcsRoot alias
+#
 # Revision 1.4  2005/03/07 10:52:53  mella
 # Append path to environment variables with individual tests
 #
@@ -96,7 +99,7 @@ export MCSDATA=${MCSROOT}/data
 # Aliases
 alias psg='ps -aef | grep $*'
 alias m=more
-alias Pu='rm -f *~ .*~ core'
+alias Pu='rm -f *~ .*~ core | echo -en'
 alias gvim='gvim -geometry 80x45'
 alias macam='make clean all man'
 alias macami='make clean all man install'
