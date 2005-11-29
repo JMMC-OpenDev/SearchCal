@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.28 2005-11-23 17:30:21 lafrasse Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.29 2005-11-29 08:22:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2005/11/23 17:30:21  lafrasse
+ * Added circular search box geometry support and normalized area size methods
+ *
  * Revision 1.27  2005/11/23 15:49:45  lafrasse
  * Removed _maxNbOfSelectedObjects member and associated code
  *
@@ -81,7 +84,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.28 2005-11-23 17:30:21 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.29 2005-11-29 08:22:23 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -429,12 +432,12 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsFLOAT radius)
  * @param radius Circular area radius in which catalog stars will be selected in
  * arcmin.
  *
- * @return mcsSUCCESS if the search area geometry is rectangular. Otherwise
+ * @return mcsSUCCESS if the search area geometry is circle. Otherwise
  * mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsFLOAT &radius) const
 {
-    logTrace("vobsREQUEST::GSetSearchArea(mcsFLOAT&)");
+    logTrace("vobsREQUEST::GetSearchArea(mcsFLOAT&)");
 
     if (_searchAreaGeometry != vobsCIRCLE)
     {

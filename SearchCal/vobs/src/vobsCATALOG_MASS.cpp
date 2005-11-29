@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.21 2005-11-24 14:54:55 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.22 2005-11-29 08:22:23 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2005/11/24 14:54:55  scetre
+* 2MASS can choose the research geometry
+*
 * Revision 1.20  2005/11/23 17:30:21  lafrasse
 * Added circular search box geometry support and normalized area size methods
 *
@@ -74,7 +77,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.21 2005-11-24 14:54:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.22 2005-11-29 08:22:23 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -208,6 +211,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
         mcsFLOAT radius;
         if (request.GetSearchArea(radius) == mcsFAILURE)
         {
+            printf("radius = %d\n", radius);
             return mcsFAILURE;
         }
         sprintf(separation, "%.0f", radius);

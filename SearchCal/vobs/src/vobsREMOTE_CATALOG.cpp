@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.8 2005-11-21 13:47:57 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.9 2005-11-29 08:22:23 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/11/21 13:47:57  scetre
+* arrange properties when the URL is written
+*
 * Revision 1.7  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -35,7 +38,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.8 2005-11-21 13:47:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.9 2005-11-29 08:22:23 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -165,7 +168,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     // if ok, the asking is writing according to only the request
     if (list.IsEmpty()==mcsTRUE)
     {
-        if (PrepareQuery(request)==mcsFAILURE)
+        if (PrepareQuery(request) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -224,9 +227,17 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
     // the location
     // the position of the reference star
     // the specific part of the query
-    if ((WriteQueryURIPart()==mcsFAILURE) ||
-        (WriteReferenceStarPosition(request)==mcsFAILURE) ||
-        (WriteQuerySpecificPart(request)==mcsFAILURE) )
+    if (WriteQueryURIPart()==mcsFAILURE)
+    {
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
+        return mcsFAILURE;
+    }
+    if (WriteReferenceStarPosition(request) == mcsFAILURE)
+    {
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
+        return mcsFAILURE;
+    }
+    if (WriteQuerySpecificPart(request) == mcsFAILURE)
     {
         errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
@@ -261,10 +272,22 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
     // the constant part of the query
     // the specific part of the query
     // the list to complete
-    if ( (WriteQueryURIPart()==mcsFAILURE) ||
-         (WriteQueryConstantPart()==mcsFAILURE) ||
-         (WriteQuerySpecificPart()==mcsFAILURE) ||
-         (WriteQueryStarListPart(tmpList)==mcsFAILURE) )
+    if (WriteQueryURIPart()==mcsFAILURE)
+    {
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
+        return mcsFAILURE;
+    }
+    if (WriteQueryConstantPart() == mcsFAILURE)
+    {
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
+        return mcsFAILURE;
+    }
+    if (WriteQuerySpecificPart() == mcsFAILURE)
+    {
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
+        return mcsFAILURE;
+    }
+    if (WriteQueryStarListPart(tmpList) == mcsFAILURE)
     {
         errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
@@ -291,9 +314,18 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 {
     logTrace("vobsREMOTE_CATALOG::WriteQueryURI()");
 
-    if ((miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")==mcsFAILURE) ||
-        (miscDynBufAppendString(&_query, "asu-xml?-source=")==mcsFAILURE) ||
-        (miscDynBufAppendString(&_query, _name.c_str())==mcsFAILURE) )
+    if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")
+        == mcsFAILURE)
+    {
+        errAdd(vobsERR_URI_WRITE_FAILED);
+        return mcsFAILURE;
+    }
+    if (miscDynBufAppendString(&_query, "asu-xml?-source=") == mcsFAILURE)
+    {
+        errAdd(vobsERR_URI_WRITE_FAILED);
+        return mcsFAILURE;
+    }
+    if (miscDynBufAppendString(&_query, _name.c_str()) == mcsFAILURE)
     {
         errAdd(vobsERR_URI_WRITE_FAILED);
         return mcsFAILURE;
@@ -319,9 +351,20 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
 {
     logTrace("vobsREMOTE_CATALOG::GetAskingConstant()");
 
-    if ( (miscDynBufAppendString(&_query,"&-file=-c&-c.eq=J2000&-c.r=5&-c.u=arcsec")==mcsFAILURE) ||
-         (miscDynBufAppendString(&_query,"&-out.max=50")==mcsFAILURE) ||
-         (miscDynBufAppendString(&_query,"&-out.add=_RAJ2000,_DEJ2000&-oc=hms")==mcsFAILURE) )
+    if (miscDynBufAppendString(&_query,
+                               "&-file=-c&-c.eq=J2000&-c.r=5&-c.u=arcsec")
+        == mcsFAILURE)
+    {
+        errAdd(vobsERR_CONSTANT_WRITE_FAILED);
+        return mcsFAILURE;
+    }
+    if (miscDynBufAppendString(&_query, "&-out.max=50") == mcsFAILURE)
+    {
+        errAdd(vobsERR_CONSTANT_WRITE_FAILED);
+        return mcsFAILURE;
+    }
+    if (miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms")
+        == mcsFAILURE)
     {
         errAdd(vobsERR_CONSTANT_WRITE_FAILED);
         return mcsFAILURE;
@@ -395,10 +438,22 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
     const char *dec;
     dec = request.GetObjectDec();
     
-    if ( (miscDynBufAppendString(&_query,"&-c.ra=")==mcsFAILURE) ||
-         (miscDynBufAppendString(&_query,ra)==mcsFAILURE) ||
-         (miscDynBufAppendString(&_query,"&-c.dec=")==mcsFAILURE) ||
-         (miscDynBufAppendString(&_query,dec)==mcsFAILURE) )
+    if (miscDynBufAppendString(&_query, "&-c.ra=") == mcsFAILURE)
+    {
+        errAdd(vobsERR_POSITION_WRITE_FAILED);
+        return mcsFAILURE;
+    }
+    if (miscDynBufAppendString(&_query, ra) == mcsFAILURE)
+    {
+        errAdd(vobsERR_POSITION_WRITE_FAILED);
+        return mcsFAILURE;
+    }
+    if (miscDynBufAppendString(&_query, "&-c.dec=") == mcsFAILURE)
+    {
+        errAdd(vobsERR_POSITION_WRITE_FAILED);
+        return mcsFAILURE;
+    }
+    if (miscDynBufAppendString(&_query, dec) == mcsFAILURE)
     {
         errAdd(vobsERR_POSITION_WRITE_FAILED);
         return mcsFAILURE;
