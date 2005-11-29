@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMAGNITUDE_FILTER.h,v 1.3 2005-11-29 10:28:46 gzins Exp $"
+ * "@(#) $Id: vobsMAGNITUDE_FILTER.h,v 1.4 2005-11-29 13:45:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/29 10:28:46  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.2  2005/11/24 08:13:50  scetre
  * Changed mother class of filter from vobsFILTER to vobsFILTER
  *
@@ -43,9 +46,6 @@
  */
 #include "vobsFILTER.h"
 #include "vobsSTAR_LIST.h"
-
-
-#define vobsMAGNITUDE_FILTER_NAME "Filter by Magnitude"
 
 /*
  * Class declaration

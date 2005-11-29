@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSPECTRAL_TYPE_FILTER.h,v 1.3 2005-11-29 10:30:38 gzins Exp $"
+ * "@(#) $Id: vobsSPECTRAL_TYPE_FILTER.h,v 1.4 2005-11-29 13:45:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/29 10:30:38  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.2  2005/11/24 08:13:50  scetre
  * Changed mother class of filter from vobsFILTER to vobsFILTER
  *
@@ -42,9 +45,6 @@
  */
 #include "vobsFILTER.h"
 #include "vobsSTAR_LIST.h"
-
-
-#define vobsSPECTRAL_TYPE_FILTER_NAME "Filter by Spectral type"
 
 /*
  * Class declaration

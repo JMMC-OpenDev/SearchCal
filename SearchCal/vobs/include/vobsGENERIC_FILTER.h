@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.h,v 1.1 2005-11-29 10:29:41 gzins Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.h,v 1.2 2005-11-29 13:45:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/29 10:29:41  gzins
+ * Moved vobsFILTER to vobsGENERIC_FILTER
+ *
  * Revision 1.7  2005/11/24 08:15:01  scetre
  * Changed to generic filter class
  *
@@ -88,8 +91,8 @@ typedef struct
 /**
  * Filter class
  *
- * A filter is define by a status (enable or disable) and a filter property
- * which can be a numeric value, a string, a boolean
+ * Generic class to filter a list of star on a given property, using conditions
+ * such as equal to, less than, greater than and so on.
  */
 class vobsGENERIC_FILTER : public vobsFILTER
 {
@@ -101,7 +104,7 @@ public:
     // Class destructor
     virtual ~vobsGENERIC_FILTER();
 
-    virtual mcsCOMPL_STAT SetPropertyId(mcsSTRING32 ucd);
+    virtual mcsCOMPL_STAT SetPropertyId(mcsSTRING32 propId);
     virtual mcsCOMPL_STAT AddCondition(vobsCONDITION condition,
                                        mcsFLOAT value);
     virtual mcsCOMPL_STAT AddCondition(string value);
@@ -117,7 +120,7 @@ private:
     vobsGENERIC_FILTER(const vobsGENERIC_FILTER&);
     vobsGENERIC_FILTER& operator=(const vobsGENERIC_FILTER&);
 
-    mcsSTRING32 _ucd;
+    mcsSTRING32 _propId;
 
     std::list<vobsFLOAT_CONDITION> _floatConditions;
     std::list<vobsFLOAT_CONDITION>::iterator _floatConditionsIterator;

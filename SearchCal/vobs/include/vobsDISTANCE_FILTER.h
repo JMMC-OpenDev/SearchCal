@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.3 2005-11-29 10:27:23 gzins Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.4 2005-11-29 13:45:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/29 10:27:23  gzins
+ * Changed parent class to vobsFILTER
+ *
  * Revision 1.2  2005/11/24 08:13:50  scetre
  * Changed mother class of filter from vobsFILTER to vobsFILTER
  *
@@ -43,8 +46,6 @@
  */
 #include "vobsFILTER.h"
 #include "vobsSTAR_LIST.h"
-
-#define vobsDISTANCE_FILTER_NAME "Filter by Distance"
 
 /*
  * Class declaration
