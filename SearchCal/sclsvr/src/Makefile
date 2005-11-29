@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.16 2005-11-23 08:39:29 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.17 2005-11-29 08:23:19 scetre Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2005/11/23 08:39:29  scetre
+# Added scenario for faint K
+#
 # Revision 1.15  2005/11/21 13:51:47  scetre
 # Changed bad scenario name
 # Added scenario for single star research -> updated getStar
@@ -85,6 +88,7 @@ INCLUDES        = sclsvr.h						\
 				  sclsvrSCENARIO_BRIGHT_V.h		\
 				  sclsvrSCENARIO_BRIGHT_N.h		\
 				  sclsvrSCENARIO_FAINT_K.h		\
+				  sclsvrSCENARIO_CHECK.h		\
 				  sclsvrSCENARIO_SINGLE_STAR.h 	\
 
 
@@ -109,6 +113,7 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		\
 				   sclsvrSCENARIO_BRIGHT_V		\
 				   sclsvrSCENARIO_BRIGHT_N		\
 				   sclsvrSCENARIO_FAINT_K		\
+				   sclsvrSCENARIO_CHECK			\
 				   sclsvrSCENARIO_SINGLE_STAR	\
 
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.4 2005-11-25 08:45:55 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.5 2005-11-29 08:23:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/25 08:45:55  scetre
+ * Added filter Qflag=AAA
+ *
  * Revision 1.3  2005/11/24 15:14:02  scetre
  * Enabled the filters used
  *
@@ -22,7 +25,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.4 2005-11-25 08:45:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.5 2005-11-29 08:23:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -42,6 +45,7 @@ using namespace std;
  * Local Headers 
  */
 #include "sclsvrSCENARIO_FAINT_K.h"
+#include "sclsvrSCENARIO_CHECK.h"
 #include "sclsvrPrivate.h"
 
 /**
@@ -61,6 +65,14 @@ sclsvrSCENARIO_FAINT_K::~sclsvrSCENARIO_FAINT_K()
 /*
  * Public methods
  */
+/**
+ * Initialize the faint K scenario
+ *
+ * @param request user request
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned
+ */
 mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
 {
     logTrace("sclsvrSCENARIO_FAINT_K::Init()");
@@ -69,7 +81,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     Clear();
     // Clear the list input and list output which will be used
     _starListP.Clear();
-    
+    _starListS1.Clear();
+    _starListS2.Clear();
+
     //////////////////////////////////////////////////////////////////////////
     // BUILD REQUEST USED
     //////////////////////////////////////////////////////////////////////////
@@ -117,14 +131,67 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     ///////////////////////////////////////////////////////////////////////////
     // PRIMARY REQUEST
     ///////////////////////////////////////////////////////////////////////////
-    
-    ///////////////////////////////////////////////////////////////////////////
-    // II/246
-    ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
-                 vobsCOPY) == mcsFAILURE)
+
+    // Get Radius entering by the user
+    mcsFLOAT radius;
+    if (request->GetSearchArea(radius) == mcsFAILURE)
     {
         return mcsFAILURE;
+    }
+    // if radius is not set (i.e equal zero)
+    // compute radius from alx
+    if (radius == 0)
+    {
+        //
+        //  COMPUTE RADIUS with alx
+        //
+        radius = 5;
+        // Decisionnal scenario
+        sclsvrSCENARIO_CHECK scenarioCheck;
+        // Initialize it
+        if (scenarioCheck.Init(request) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // Set catalog list
+        vobsCATALOG_LIST catalogList;
+        scenarioCheck.SetCatalogList(&catalogList);
+        // Run the method to execute the scenario which had been
+        // loaded into memory
+        if (scenarioCheck.Execute(_starListP) == mcsFAILURE)
+        {
+            errUserAdd(vobsERR_NO_CDS_RETURN);
+            return mcsFAILURE;
+        }
+        // If the return is lower than 25 star, twice the radius and recall
+        // 2mass
+        if (_starListP.Size() < 25)
+        {
+            if (_request.SetSearchArea(2*radius) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            ///////////////////////////////////////////////////////////////////
+            // II/246
+            ///////////////////////////////////////////////////////////////////
+            if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
+                         vobsCOPY) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+    }
+    // else if radius is defined, simply query 2mass
+    else
+    {
+        ///////////////////////////////////////////////////////////////////////
+        // II/246
+        ///////////////////////////////////////////////////////////////////////
+        if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
+                     vobsCOPY) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

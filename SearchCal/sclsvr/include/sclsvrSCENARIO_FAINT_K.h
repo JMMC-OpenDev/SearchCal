@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.3 2005-11-25 08:45:55 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.4 2005-11-29 08:23:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/25 08:45:55  scetre
+ * Added filter Qflag=AAA
+ *
  * Revision 1.2  2005/11/24 13:21:38  scetre
  * Clean the presentation of the add entry
  *
@@ -24,7 +27,6 @@
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
-
 
 /*
  * MCS header
@@ -76,6 +78,7 @@ private:
     
     // filter on Qflg=AAA
     vobsFILTER _filterOnQflag;
+
 };
 
 #endif /*!sclsvrSCENARIO_FAINT_K_H*/
