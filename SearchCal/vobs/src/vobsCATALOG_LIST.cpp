@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.5 2005-11-29 10:32:32 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.6 2005-11-29 13:52:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/29 10:32:32  gzins
+ * Added error handling
+ *
  * Revision 1.4  2005/11/24 14:54:25  scetre
  * UNSO catalog added
  *
@@ -25,7 +28,7 @@
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.5 2005-11-29 10:32:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.6 2005-11-29 13:52:41 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -93,17 +96,18 @@ vobsCATALOG *vobsCATALOG_LIST::Get(string catalogName)
 {
     logTrace("vobsCATALOG_LIST::Get()");
     
-    _catalogListIterator = _catalogList.find(catalogName);
+    map<string, vobsCATALOG *>::iterator iter;
+    iter = _catalogList.find(catalogName);
     
     // Check if catalog is present in the list
-    if (_catalogList.find(catalogName) == _catalogList.end())
+    if (iter == _catalogList.end())
     {
         // Hanlde error
         errAdd (vobsERR_UNKNOWN_CATALOG_NAME, catalogName.c_str());
         return NULL;
     }
     
-    return (_catalogListIterator->second);
+    return (iter->second);
 }
 
 /*___oOo___*/
