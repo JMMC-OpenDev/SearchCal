@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: mcs.h,v 1.21 2005-11-24 12:41:58 scetre Exp $"
+ * "@(#) $Id: mcs.h,v 1.22 2005-11-29 08:15:23 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/11/24 12:41:58  scetre
+ * Added mcsSTRING2048
+ *
  * Revision 1.20  2005/02/16 09:22:42  gzins
  * Added mcsBYTES512, mcsBYTES1024, mcsSTRING512 and mcsSTRING1024 definitions
  *
@@ -129,6 +132,15 @@ typedef enum
     mcsFAILURE = -1,
     mcsSUCCESS 
 } mcsCOMPL_STAT;       /* Completion status returned by subroutines */
+
+/**
+ * Definition of complex type
+ */
+typedef struct
+{
+    mcsDOUBLE re; /**<< real part */
+    mcsDOUBLE im; /**<< imaginary part */
+} mcsCOMPLEX;
 
 /*
  * Public functions
