@@ -1,15 +1,18 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.23 2005-11-24 14:54:25 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.24 2005-11-29 10:32:10 gzins Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.23  2005/11/24 14:54:25  scetre
+# UNSO catalog added
+#
 # Revision 1.22  2005/11/24 08:13:50  scetre
-# Changed mother class of filter from vobsFILTER to vobsBASE_FILTER
+# Changed mother class of filter from vobsFILTER to vobsFILTER
 #
 # Revision 1.21  2005/11/15 14:57:56  scetre
 # Added new scenario structure
@@ -111,7 +114,7 @@ INCLUDES        = vobs.h						\
 				  vobsSCENARIO_ENTRY.h			\
 				  vobsSCENARIO.h	       		\
 				  vobsSTAR_COMP_CRITERIA_LIST.h	\
-				  vobsBASE_FILTER.h				\
+				  vobsGENERIC_FILTER.h			\
 				  vobsFILTER.h					\
 				  vobsFILTER_LIST.h				\
 				  vobsLUMINOSITY_FILTER.h		\
@@ -160,7 +163,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsSCENARIO             	\
 				   vobsSTAR_COMP_CRITERIA_LIST	\
 				   vobsFILTER					\
-				   vobsBASE_FILTER				\
+				   vobsGENERIC_FILTER			\
 				   vobsFILTER_LIST				\
 				   vobsLUMINOSITY_FILTER		\
 				   vobsMAGNITUDE_FILTER			\
