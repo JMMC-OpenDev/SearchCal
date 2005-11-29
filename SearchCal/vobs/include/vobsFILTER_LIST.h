@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.h,v 1.6 2005-11-29 10:28:18 gzins Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.h,v 1.7 2005-11-29 13:48:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/29 10:28:18  gzins
+ * Moved vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.5  2005/11/24 08:13:50  scetre
  * Changed mother class of filter from vobsFILTER to vobsFILTER
  *
@@ -67,11 +70,10 @@ public:
     // Class destructor
     virtual ~vobsFILTER_LIST();
 
-    virtual mcsCOMPL_STAT Add(vobsFILTER *filter);
+    virtual mcsCOMPL_STAT Add(vobsFILTER *filter, string name);
     virtual mcsCOMPL_STAT Reset(void);
     virtual mcsUINT32 Size(void);
-    virtual vobsFILTER *GetNextFilter(mcsLOGICAL init = mcsFALSE);
-    virtual vobsFILTER *GetFilter(mcsSTRING32 name);
+    virtual vobsFILTER *GetFilter(string name);
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 protected:
     
@@ -81,8 +83,7 @@ private:
     vobsFILTER_LIST(const vobsFILTER_LIST&);
     vobsFILTER_LIST& operator=(const vobsFILTER_LIST&);
 
-    std::list<vobsFILTER *> _filterList;
-    std::list<vobsFILTER *>::iterator _filterlistIterator;
+    map<string, vobsFILTER *> _filterList;
 };
 
 #endif /*!vobsFILTER_LIST_H*/
