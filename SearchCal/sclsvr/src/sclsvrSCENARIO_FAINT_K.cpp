@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.6 2005-11-29 10:39:03 gzins Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.7 2005-11-29 13:04:42 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/29 10:39:03  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.5  2005/11/29 08:23:19  scetre
  * Added check scenario for scenario faint K
  *
@@ -28,7 +31,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.6 2005-11-29 10:39:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.7 2005-11-29 13:04:42 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -150,9 +153,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         //
         radius = 5;
         // Decisionnal scenario
-        sclsvrSCENARIO_CHECK scenarioCheck;
+        vobsSCENARIO scenarioCheck;
+        vobsSTAR_LIST starList;
         // Initialize it
-        if (scenarioCheck.Init(request) == mcsFAILURE)
+        if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL,
+                                   &starList, vobsCOPY) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
