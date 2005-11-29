@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.h,v 1.3 2005-11-29 10:27:06 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.h,v 1.4 2005-11-29 13:47:12 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/29 10:27:06  gzins
+ * Minor change in documentation
+ *
  * Revision 1.2  2005/11/24 14:54:25  scetre
  * UNSO catalog added
  *
@@ -82,7 +85,6 @@ private:
     vobsCATALOG_LIST& operator=(const vobsCATALOG_LIST&);
 
     map<string, vobsCATALOG *> _catalogList;
-    map<string, vobsCATALOG *>::iterator _catalogListIterator;
 
     // List of available catalogs
     vobsCATALOG_CIO      _cio;
