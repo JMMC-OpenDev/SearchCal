@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.9 2005-11-24 08:13:50 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.10 2005-11-29 10:30:20 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/11/24 08:13:50  scetre
+* Changed mother class of filter from vobsFILTER to vobsFILTER
+*
 * Revision 1.8  2005/11/15 14:57:56  scetre
 * Added new scenario structure
 * Added possibility to query merand and borde as primary catalog
@@ -81,7 +84,7 @@ public :
                                    vobsSTAR_LIST    *listOutput,
                                    vobsACTION       action,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL,
-                                   vobsBASE_FILTER       *filter=NULL);
+                                   vobsFILTER       *filter=NULL);
   
     // Execute the scenario
     virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
