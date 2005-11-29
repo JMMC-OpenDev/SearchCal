@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.3 2005-11-29 10:33:02 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/21 06:20:45  scetre
+ * Changed method Disable() and Enable() to Disabled() and Enabled()
+ * Changed '\' in doxygen documentatiuon to '@'
+ *
  * Revision 1.1  2005/06/20 11:44:25  scetre
  * Added filter class
  *
@@ -23,7 +27,7 @@
  *  Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.3 2005-11-29 10:33:02 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -76,9 +80,9 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(mcsSTRING32 raRef,
-                                                      mcsSTRING32 decRef,
-                                                      mcsFLOAT raRange,
-                                                      mcsFLOAT decRange)
+                                                    mcsSTRING32 decRef,
+                                                    mcsFLOAT raRange,
+                                                    mcsFLOAT decRange)
 {
     logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
 
@@ -103,15 +107,16 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(mcsSTRING32 raRef,
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
-                                                      mcsSTRING32 *decRef,
-                                                      mcsFLOAT *raRange,
-                                                      mcsFLOAT *decRange)
+                                                    mcsSTRING32 *decRef,
+                                                    mcsFLOAT *raRange,
+                                                    mcsFLOAT *decRange)
 {
     logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
     
     // Copy right ascension and declinaison get in parameter
     strcpy(*raRef, _raRef);
     strcpy(*decRef, _decRef);
+
     // Copy right ascension and declinaison range get as parameter
     *raRange  = _raRange;
     *decRange = _decRange;
@@ -182,17 +187,6 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
     
     return mcsSUCCESS;    
 }
-
-
-
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/
