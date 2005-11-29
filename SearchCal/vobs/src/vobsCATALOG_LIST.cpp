@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.4 2005-11-24 14:54:25 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.5 2005-11-29 10:32:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/24 14:54:25  scetre
+ * UNSO catalog added
+ *
  * Revision 1.3  2005/11/16 10:47:55  scetre
  * Updated documentation
  *
@@ -22,7 +25,7 @@
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.4 2005-11-24 14:54:25 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.5 2005-11-29 10:32:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -43,28 +46,29 @@ using namespace std;
  */
 #include "vobsCATALOG_LIST.h"
 #include "vobsPrivate.h"
+#include "vobsErrors.h"
 
 /**
  * Class constructor
  */
 vobsCATALOG_LIST::vobsCATALOG_LIST()
 {
-    // The constructor add all catalog in the map
-    _catalogList[vobsCATALOG_ASCC_ID]=&_ascc;
-    _catalogList[vobsCATALOG_BSC_ID]=&_bsc;
-    _catalogList[vobsCATALOG_CHARM2_ID]=&_charm2;
-    _catalogList[vobsCATALOG_CHARM_ID]=&_charm;
-    _catalogList[vobsCATALOG_CIO_ID]=&_cio;
-    _catalogList[vobsCATALOG_PHOTO_ID]=&_photo;
-    _catalogList[vobsCATALOG_DENIS_ID]=&_denis;
-    _catalogList[vobsCATALOG_DENIS_JK_ID]=&_denisJK;
-    _catalogList[vobsCATALOG_HIC_ID]=&_hic;
-    _catalogList[vobsCATALOG_LBSI_ID]=&_lbsi;
-    _catalogList[vobsCATALOG_MASS_ID]=&_mass;
-    _catalogList[vobsCATALOG_MERAND_ID]=&_merand;
-    _catalogList[vobsCATALOG_MIDI_ID]=&_midi;
-    _catalogList[vobsCATALOG_SBSC_ID]=&_sbsc;
-    _catalogList[vobsCATALOG_UNSO_ID]=&_unso;
+    // The constructor add all catalogs in the map
+    _catalogList[vobsCATALOG_ASCC_ID]     = &_ascc;
+    _catalogList[vobsCATALOG_BSC_ID]      = &_bsc;
+    _catalogList[vobsCATALOG_CHARM2_ID]   = &_charm2;
+    _catalogList[vobsCATALOG_CHARM_ID]    = &_charm;
+    _catalogList[vobsCATALOG_CIO_ID]      = &_cio;
+    _catalogList[vobsCATALOG_PHOTO_ID]    = &_photo;
+    _catalogList[vobsCATALOG_DENIS_ID]    = &_denis;
+    _catalogList[vobsCATALOG_DENIS_JK_ID] = &_denisJK;
+    _catalogList[vobsCATALOG_HIC_ID]      = &_hic;
+    _catalogList[vobsCATALOG_LBSI_ID]     = &_lbsi;
+    _catalogList[vobsCATALOG_MASS_ID]     = &_mass;
+    _catalogList[vobsCATALOG_MERAND_ID]   = &_merand;
+    _catalogList[vobsCATALOG_MIDI_ID]     = &_midi;
+    _catalogList[vobsCATALOG_SBSC_ID]     = &_sbsc;
+    _catalogList[vobsCATALOG_UNSO_ID]     = &_unso;
 }
 
 /**
@@ -94,21 +98,12 @@ vobsCATALOG *vobsCATALOG_LIST::Get(string catalogName)
     // Check if catalog is present in the list
     if (_catalogList.find(catalogName) == _catalogList.end())
     {
-        // errAdd
+        // Hanlde error
+        errAdd (vobsERR_UNKNOWN_CATALOG_NAME, catalogName.c_str());
         return NULL;
     }
     
     return (_catalogListIterator->second);
 }
-
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
-
 
 /*___oOo___*/
