@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.3 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.4 2005-11-29 13:49:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.2  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -19,7 +22,7 @@
  *  Definition of vobsORIGIN_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.3 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.4 2005-11-29 13:49:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -46,7 +49,6 @@ using namespace std;
  */
 vobsORIGIN_FILTER::vobsORIGIN_FILTER()
 {
-    strcpy(_name, vobsORIGIN_FILTER_NAME);
 }
 
 /**

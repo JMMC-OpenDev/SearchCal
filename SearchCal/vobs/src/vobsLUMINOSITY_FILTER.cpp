@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"
+ * "@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.3 2005-11-29 13:49:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/06/21 06:20:45  scetre
+ * Changed method Disable() and Enable() to Disabled() and Enabled()
+ * Changed '\' in doxygen documentatiuon to '@'
+ *
  * Revision 1.1  2005/06/20 11:31:53  scetre
  * Added filter class
  *
@@ -26,7 +30,7 @@
  *  Definition of vobsLUMINOSITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.2 2005-06-21 06:20:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.3 2005-11-29 13:49:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -53,7 +57,6 @@ using namespace std;
  */
 vobsLUMINOSITY_FILTER::vobsLUMINOSITY_FILTER()
 {
-    strcpy(_name, vobsLUMINOSITY_FILTER_NAME);            
 }
 
 /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.3 2005-11-29 10:33:02 gzins Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.4 2005-11-29 13:49:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/29 10:33:02  gzins
+ * Minor changes
+ *
  * Revision 1.2  2005/06/21 06:20:45  scetre
  * Changed method Disable() and Enable() to Disabled() and Enabled()
  * Changed '\' in doxygen documentatiuon to '@'
@@ -27,7 +30,7 @@
  *  Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.3 2005-11-29 10:33:02 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.4 2005-11-29 13:49:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -49,14 +52,11 @@ using namespace std;
 #include "vobsDISTANCE_FILTER.h"
 #include "vobsPrivate.h"
 
-#define vobsDISTANCE_FILTER_NAME "Filter by Distance"
-
 /**
  * Class constructor
  */
 vobsDISTANCE_FILTER::vobsDISTANCE_FILTER()
 {
-    strcpy(_name, vobsDISTANCE_FILTER_NAME);
 }
 
 /**

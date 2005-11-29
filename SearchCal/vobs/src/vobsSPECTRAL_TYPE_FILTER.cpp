@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.4 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.5 2005-11-29 13:49:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.3  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -33,7 +36,7 @@
  *  Definition of vobsSPECTRAL_TYPE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.4 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.5 2005-11-29 13:49:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -60,7 +63,6 @@ using namespace std;
  */
 vobsSPECTRAL_TYPE_FILTER::vobsSPECTRAL_TYPE_FILTER()
 {
-    strcpy(_name, vobsSPECTRAL_TYPE_FILTER_NAME);        
 }
 
 /**

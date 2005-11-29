@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.3 2005-11-23 08:35:10 scetre Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.4 2005-11-29 13:49:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/23 08:35:10  scetre
+ * changed vobsCODE_VARIAB to vobsCODE_VARIAB_V3
+ *
  * Revision 1.2  2005/06/21 06:20:45  scetre
  * Changed method Disable() and Enable() to Disabled() and Enabled()
  * Changed '\' in doxygen documentatiuon to '@'
@@ -27,7 +30,7 @@
  *  Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.3 2005-11-23 08:35:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.4 2005-11-29 13:49:19 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -54,7 +57,6 @@ using namespace std;
  */
 vobsVARIABILITY_FILTER::vobsVARIABILITY_FILTER()
 {
-    strcpy(_name, vobsVARIABILITY_FILTER_NAME);        
 }
 
 /**
