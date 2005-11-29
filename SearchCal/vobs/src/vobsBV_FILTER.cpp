@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsBV_FILTER.cpp,v 1.4 2005-11-16 12:53:18 scetre Exp $"
+ * "@(#) $Id: vobsBV_FILTER.cpp,v 1.5 2005-11-29 10:25:58 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/16 12:53:18  scetre
+ * Updated documentation
+ *
  * Revision 1.3  2005/11/16 10:47:55  scetre
  * Updated documentation
  *
@@ -22,7 +25,7 @@
  *  Definition of vobsBV_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsBV_FILTER.cpp,v 1.4 2005-11-16 12:53:18 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsBV_FILTER.cpp,v 1.5 2005-11-29 10:25:58 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -143,7 +146,7 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
                     el = el-1;
                 }
             }
-            // if B or V magnitude are not defined, remove star
+            // If B or V magnitude are not defined, remove star
             else 
             {
                 if (list->Remove(*star) == mcsFAILURE)
