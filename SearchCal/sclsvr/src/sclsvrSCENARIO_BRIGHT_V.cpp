@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.4 2005-11-24 13:21:38 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.5 2005-11-29 10:39:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/24 13:21:38  scetre
+ * Clean the presentation of the add entry
+ *
  * Revision 1.3  2005/11/23 08:38:14  scetre
  * ReAdd criteria on HD number for cross matching for I/196 and BSC/SBSC
  *
@@ -22,7 +25,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_V class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.4 2005-11-24 13:21:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.5 2005-11-29 10:39:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -162,7 +165,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // filter opt=T
     /////////////////////////////////////////////////////////////////////////// 
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS, &_starListS,
-                 vobsNO_ACTION, NULL, &_filterOptT) 
+                 vobsCOPY, NULL, &_filterOptT) 
         == mcsFAILURE)
     {
         return mcsFAILURE;

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.5 2005-11-29 08:23:19 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.6 2005-11-29 10:39:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/29 08:23:19  scetre
+ * Added check scenario for scenario faint K
+ *
  * Revision 1.4  2005/11/25 08:45:55  scetre
  * Added filter Qflag=AAA
  *
@@ -25,7 +28,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.5 2005-11-29 08:23:19 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.6 2005-11-29 10:39:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -198,7 +201,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // Filter on opt=U
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, 
-                vobsNO_ACTION, NULL, &_filterOptT) == mcsFAILURE)
+                vobsCOPY, NULL, &_filterOptT) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -207,7 +210,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // Filter on opt=U
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS2, 
-                vobsNO_ACTION, NULL, &_filterOptU) == mcsFAILURE)
+                vobsCOPY, NULL, &_filterOptU) == mcsFAILURE)
     {
         return mcsFAILURE;
     }

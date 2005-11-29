@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.h,v 1.4 2005-11-24 13:21:38 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.h,v 1.5 2005-11-29 10:38:38 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/24 13:21:38  scetre
+ * Clean the presentation of the add entry
+ *
  * Revision 1.3  2005/11/23 08:38:14  scetre
  * ReAdd criteria on HD number for cross matching for I/196 and BSC/SBSC
  *
@@ -71,7 +74,7 @@ private:
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListHd;    
 
     // filter on opt=T
-    vobsFILTER _filterOptT;
+    vobsGENERIC_FILTER _filterOptT;
 };
 
 #endif /*!sclsvrSCENARIO_BRIGHT_V_H*/

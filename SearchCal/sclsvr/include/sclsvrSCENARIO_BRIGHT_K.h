@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.3 2005-11-24 13:19:37 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.4 2005-11-29 10:38:29 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/24 13:19:37  scetre
+ * Clean the presentation of the add entry
+ *
  * Revision 1.2  2005/11/16 14:28:02  scetre
  * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
  *
@@ -75,7 +78,7 @@ private:
     // filter on B-V for I/280
     vobsBV_FILTER _bvFilter;
     // filter on opt=T
-    vobsFILTER _filterOptT;
+    vobsGENERIC_FILTER _filterOptT;
     
     // criteria list for LBSI, Merand, charm2, denis JK, 2MASS, II/225
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;

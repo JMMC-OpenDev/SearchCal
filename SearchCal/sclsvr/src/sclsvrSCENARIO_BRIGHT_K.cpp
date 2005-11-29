@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.5 2005-11-24 13:19:37 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.6 2005-11-29 10:39:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/24 13:19:37  scetre
+ * Clean the presentation of the add entry
+ *
  * Revision 1.4  2005/11/18 10:08:50  scetre
  * Removed old scenario
  *
@@ -25,7 +28,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.5 2005-11-24 13:19:37 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.6 2005-11-29 10:39:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -199,7 +202,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // filter on opt=T
     /////////////////////////////////////////////////////////////////////////// 
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP,
-                 vobsNO_ACTION, NULL, &_filterOptT) 
+                 vobsCOPY, NULL, &_filterOptT) 
         == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -298,7 +301,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // filter on opt=T
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP,
-                 vobsNO_ACTION, NULL, &_filterOptT) 
+                 vobsCOPY, NULL, &_filterOptT) 
         == mcsFAILURE)
     {
         return mcsFAILURE;

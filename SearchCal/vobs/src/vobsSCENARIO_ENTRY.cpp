@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.8 2005-11-24 08:13:50 scetre Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.9 2005-11-29 10:36:09 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/11/24 08:13:50  scetre
+ * Changed mother class of filter from vobsFILTER to vobsFILTER
+ *
  * Revision 1.7  2005/11/16 10:47:55  scetre
  * Updated documentation
  *
@@ -35,7 +38,7 @@
  *  Definition of vobsSCENARIO_ENTRY class.
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.8 2005-11-24 08:13:50 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.9 2005-11-29 10:36:09 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -66,7 +69,7 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(mcsSTRING32                 catalogName,
                                        vobsSTAR_LIST               *listOutput,
                                        vobsACTION                  action,
                                        vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
-                                       vobsBASE_FILTER                  *filter)
+                                       vobsFILTER                  *filter)
 {
     strcpy(_catalogName, catalogName);
     _request      = request;
