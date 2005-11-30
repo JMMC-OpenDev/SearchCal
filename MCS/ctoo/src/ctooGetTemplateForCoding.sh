@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.17 2005-04-11 07:52:50 gluck Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.18 2005-11-30 13:41:55 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.17  2005/04/11 07:52:50  gluck
+# Fix problem report 3: directories creation with correct header file for C++ and template names update
+#
 # Revision 1.16  2005/02/25 15:11:43  gluck
 # Deleted obsolete comment block
 #
@@ -22,6 +25,9 @@
 #
 # Revision 1.12  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.17  2005/04/11 07:52:50  gluck
+# Bug correction for log message automatic insertion (Fix problem report 3: directories creation with correct header file for C++ and template names update
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.16  2005/02/25 15:11:43  gluck
 # Bug correction for log message automatic insertion (Deleted obsolete comment block
 # Bug correction for log message automatic insertion (
@@ -121,7 +127,7 @@ fi
 if [ $# != 1 ]
 then 
     echo -e "\n\tUsage: ctooGetTemplateForCoding c-main|c-procedure|h-file|" 
-    echo -e "c++-small-main|c++-class-file|c++-h-file|script|Makefile"
+    echo -e "c++-small-main|c++-class-definition-file|c++-class-interface-file|script|Makefile"
     exit 1
 fi 
 
@@ -290,7 +296,7 @@ then
         # invalid choice
         echo -e "\nInvalid choice."
         echo -e "\n\tUsage: getTemplateForCoding c-main|c-procedure|h-file| \ 
-                c++-small-main|c++-class-file|c++-h-file|script| \
+                c++-small-main|c++-class-definition-file|c++-class-interface-file|script| \
                 Makefile"
         exit
     fi
