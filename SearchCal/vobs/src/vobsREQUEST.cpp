@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.29 2005-11-29 08:22:23 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.30 2005-11-30 15:27:59 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2005/11/29 08:22:23  scetre
+ * Minor changes
+ *
  * Revision 1.28  2005/11/23 17:30:21  lafrasse
  * Added circular search box geometry support and normalized area size methods
  *
@@ -84,7 +87,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.29 2005-11-29 08:22:23 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.30 2005-11-30 15:27:59 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -116,6 +119,7 @@ vobsREQUEST::vobsREQUEST()
     _objectName         = "";
     _objectRa           = "";
     _objectDec          = "";
+    _objectDecInDeg     = 0.0;
     _objectMag          = 0.0;
     _searchBand         = "";
     _minMagRange        = 0.0;
@@ -147,6 +151,7 @@ mcsCOMPL_STAT vobsREQUEST::Copy(vobsREQUEST& request)
     _objectName         = request._objectName;
     _objectRa           = request._objectRa;
     _objectDec          = request._objectDec;
+    _objectDecInDeg     = request._objectDecInDeg;
     _objectMag          = request._objectMag;
     _searchBand         = request._searchBand;
     _minMagRange        = request._minMagRange;
@@ -205,10 +210,15 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
 {
     logTrace("vobsREQUEST::SetObjectRa()");
 
-    // Check format
+    // Check format and get RA in deg
     vobsSTAR star;
+    if (star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, 
+                              objectRa, "") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     mcsFLOAT ra;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, objectRa, "");
     if (star.GetRa(ra) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -262,13 +272,12 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
 
     // Check format
     vobsSTAR star;
-    mcsFLOAT dec;
-    if (star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, objectDec, "") ==
-        mcsFAILURE)
+    if (star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, 
+                              objectDec, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (star.GetDec(dec) == mcsFAILURE)
+    if (star.GetDec(_objectDecInDeg) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -276,12 +285,12 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
     // Reformat string as +/-DD:MM:SS.TT
     mcsSTRING64 decDms;
     mcsFLOAT    dd, hm, hs;
-    dd = (int) (dec);
-    hm = (int) ((dec - dd)*60.0);
-    hs = (dec - dd - hm/60.0)*3600.0;
+    dd = (int) (_objectDecInDeg);
+    hm = (int) ((_objectDecInDeg - dd)*60.0);
+    hs = (_objectDecInDeg - dd - hm/60.0)*3600.0;
 
     sprintf(decDms, "%c%02d:%02d:%02.1f", 
-            (dec < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
+            (_objectDecInDeg < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
 
     // Set DEC
     _objectDec = decDms;
@@ -402,7 +411,26 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsFLOAT &deltaRa,
         return mcsFAILURE;
     }
 
-    deltaRa  = _deltaRa;
+    // Compute delta RA taking into account object declinaison.
+    // deltaRa = _deltaRa * cos(dec - _deltaDec)
+    // Note :
+    //   - _deltaDec is given in arcmin and must be convert in degree
+    //   - declinaison is clipped to +/- 85 deg to avoid to have too small box
+    //     when observing star very close to a pole.
+    mcsFLOAT dec;
+    dec =fabs(_objectDecInDeg) - _deltaDec/2.0/60.0;
+    dec = mcsMIN (dec, 85.0);
+
+    deltaRa  = _deltaRa * cos(dec * M_PI / 180.0);
+
+    printf("_deltaRa = %f\n", _deltaRa); 
+    printf("_objectDecInDeg = %f\n", _objectDecInDeg); 
+    printf("_deltaDec = %f\n", _deltaDec); 
+    printf("dec = %f\n", dec); 
+
+    printf("deltaRa = %f\n", deltaRa); 
+    
+    
     deltaDec = _deltaDec;
 
     return mcsSUCCESS;
@@ -536,15 +564,15 @@ mcsCOMPL_STAT vobsREQUEST::Display(void)
 {
     logTrace("vobsREQUEST::Display()");
     
-    logInfo("object name = %s", _objectName.c_str());
-    logInfo("object ra = %s", _objectRa.c_str());
-    logInfo("object dec = %s", _objectDec.c_str());
+    logInfo("object name      = %s", _objectName.c_str());
+    logInfo("object ra        = %s", _objectRa.c_str());
+    logInfo("object dec       = %s", _objectDec.c_str());
     logInfo("object magnitude = %f", _objectMag);
-    logInfo("search band = %s", _searchBand.c_str());
-    logInfo("delta ra = %f", _deltaRa);
-    logInfo("delta dec = %f", _deltaDec);
-    logInfo("min mag range = %f", _minMagRange);
-    logInfo("max mag range = %f", _maxMagRange);
+    logInfo("search band      = %s", _searchBand.c_str());
+    logInfo("delta ra         = %f", _deltaRa);
+    logInfo("delta dec        = %f", _deltaDec);
+    logInfo("min mag range    = %f", _minMagRange);
+    logInfo("max mag range    = %f", _maxMagRange);
     
     return mcsSUCCESS;
 }
