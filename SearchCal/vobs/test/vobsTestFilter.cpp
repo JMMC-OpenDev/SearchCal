@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestFilter.cpp,v 1.3 2005-11-28 10:11:24 scetre Exp $"
+ * "@(#) $Id: vobsTestFilter.cpp,v 1.4 2005-11-30 15:22:50 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/28 10:11:24  scetre
+ * Changed OR test to AND test
+ *
  * Revision 1.2  2005/11/24 08:15:27  scetre
  * Updated filter test
  *
@@ -19,7 +22,7 @@
  * Test file on filter 
  */
 
-static char *rcsId="@(#) $Id: vobsTestFilter.cpp,v 1.3 2005-11-28 10:11:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestFilter.cpp,v 1.4 2005-11-30 15:22:50 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -125,39 +128,39 @@ int main(int argc, char *argv[])
     logTest("size of the list to filter = %d", starList.Size());
     starList.Display();
 
-    vobsFILTER filterOnQflag;
+    vobsGENERIC_FILTER filterOnQflag;
     filterOnQflag.SetPropertyId(vobsSTAR_CODE_QUALITY);
     filterOnQflag.AddCondition("AAA");
     filterOnQflag.AddCondition("OOO");
     filterOnQflag.Enable();
 
-    vobsFILTER filteronKmagLess;
+    vobsGENERIC_FILTER filteronKmagLess;
     filteronKmagLess.SetPropertyId(vobsSTAR_PHOT_JHN_K);
     filteronKmagLess.AddCondition(vobsLESS, 4);
     filteronKmagLess.Enable();
     
-    vobsFILTER filteronKmagMore;
+    vobsGENERIC_FILTER filteronKmagMore;
     filteronKmagMore.SetPropertyId(vobsSTAR_PHOT_JHN_K);
-    filteronKmagMore.AddCondition(vobsMORE, 2);
+    filteronKmagMore.AddCondition(vobsGREATER, 2);
     filteronKmagMore.Enable();
 
-    vobsFILTER filteronKmagLessEqual;
+    vobsGENERIC_FILTER filteronKmagLessEqual;
     filteronKmagLessEqual.SetPropertyId(vobsSTAR_PHOT_JHN_K);
-    filteronKmagLessEqual.AddCondition(vobsLESS_EQUAL, 4);
-    filteronKmagLessEqual.AddCondition(vobsMORE_EQUAL, 2);
+    filteronKmagLessEqual.AddCondition(vobsLESS_OR_EQUAL, 4);
+    filteronKmagLessEqual.AddCondition(vobsGREATER_OR_EQUAL, 2);
     filteronKmagLessEqual.Enable();
 
-    vobsFILTER filteronKmagMoreEqual;
+    vobsGENERIC_FILTER filteronKmagMoreEqual;
     filteronKmagMoreEqual.SetPropertyId(vobsSTAR_PHOT_JHN_K);
-    filteronKmagMoreEqual.AddCondition(vobsMORE_EQUAL, 2);
+    filteronKmagMoreEqual.AddCondition(vobsGREATER_OR_EQUAL, 2);
     filteronKmagMoreEqual.Enable();
     
-    vobsFILTER filteronKmagEqual;
+    vobsGENERIC_FILTER filteronKmagEqual;
     filteronKmagEqual.SetPropertyId(vobsSTAR_PHOT_JHN_K);
     filteronKmagEqual.AddCondition(vobsEQUAL, 2);
     filteronKmagEqual.Enable();
         
-    vobsFILTER filteronKmagPlusPlus;
+    vobsGENERIC_FILTER filteronKmagPlusPlus;
     filteronKmagPlusPlus.SetPropertyId(vobsSTAR_PHOT_JHN_K);
     filteronKmagPlusPlus.AddCondition(vobsEQUAL, 2);
     filteronKmagPlusPlus.Enable();
