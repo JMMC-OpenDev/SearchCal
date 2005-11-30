@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.9 2005-11-30 10:35:21 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.10 2005-11-30 10:45:30 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/11/30 10:35:21  scetre
+ * Updated Filter without name
+ * Updated scenario
+ *
  * Revision 1.8  2005/11/29 13:49:30  scetre
  * Order the scenario to get coordinates from I/280 or I/284
  *
@@ -37,7 +41,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.9 2005-11-30 10:35:21 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.10 2005-11-30 10:45:30 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -58,7 +62,6 @@ using namespace std;
  * Local Headers 
  */
 #include "sclsvrSCENARIO_FAINT_K.h"
-#include "sclsvrSCENARIO_CHECK.h"
 #include "sclsvrPrivate.h"
 
 /**
