@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.14 2005-10-26 11:24:01 lafrasse Exp $"
+ * "@(#) $Id: alx.h,v 1.15 2005-11-30 10:47:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/10/26 11:24:01  lafrasse
+ * Code review
+ *
  * Revision 1.13  2005/04/06 12:12:56  scetre
  * Changed used of float for properties to computed in alxDATA
  *
@@ -158,9 +161,17 @@ typedef struct
     alxDATA bv;
     alxDATA vr;
     alxDATA vk;
+    alxDATA ij;
+    alxDATA ik;
+    alxDATA jk;
+    alxDATA jh;
     alxDATA bvErr;
     alxDATA vrErr;
     alxDATA vkErr;
+    alxDATA ijErr;
+    alxDATA ikErr;
+    alxDATA jkErr;
+    alxDATA jhErr;
     alxCONFIDENCE_INDEX confidenceIdx;
     mcsLOGICAL areComputed;
 } alxDIAMETERS;
@@ -183,6 +194,12 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
                                         alxDATA mgK,
                                         alxDIAMETERS *diameters);
 
+mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
+                                             alxDATA mgJ,
+                                             alxDATA mgK,
+                                             alxDATA mgH,
+                                             alxDIAMETERS *diameters);
+
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
                                             mcsFLOAT dec,
                                             mcsFLOAT *gLat,
@@ -198,7 +215,7 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT ra,
                                      mcsFLOAT dec,
                                      mcsFLOAT minMag,
                                      mcsFLOAT maxMag,
-                                     mcsFLOAT *areaSize);
+                                     mcsFLOAT *radius);
 
 mcsCOMPL_STAT alxComputeDistance(mcsFLOAT ra1,
                                  mcsFLOAT dec1,

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.9 2005-10-26 11:24:01 lafrasse Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.10 2005-11-30 10:47:59 scetre Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/10/26 11:24:01  lafrasse
+ * Code review
+ *
  * Revision 1.8  2005/06/01 14:16:07  scetre
  * Changed logExtDbg to logTrace
  *
@@ -64,7 +67,7 @@ extern "C" {
  * Number of color indexes used to compute the angular diameter : (B-V), (V-R),
  * (V-K)
  */
-#define alxNB_COLOR_INDEXES 3
+#define alxNB_COLOR_INDEXES 7
     
 /*
  * Polynomial to compute the angular diameter is made by 6 coefficients which
