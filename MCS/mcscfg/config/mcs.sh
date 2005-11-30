@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.6 2005-11-29 08:21:04 mella Exp $
+# Version: $Id: mcs.sh,v 1.7 2005-11-30 13:44:26 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/11/29 08:21:04  mella
+# Protect Pu aliases from human error as Pu *
+#
 # Revision 1.5  2005/03/14 08:32:04  mella
 # Add setMcsRoot alias
 #
@@ -115,8 +118,8 @@ ctooGetTemplateForCppClass ()
     if [ "$class" != "" ]
     then
         echo "Creating source files for $class C++ class ..."
-        echo ../include/$class | ctooGetTemplateForCoding c++-h-file | grep CREATED
-        echo ../src/$class | ctooGetTemplateForCoding c++-class-file | grep CREATED
+        echo ../include/$class | ctooGetTemplateForCoding c++-class-interface-file | grep CREATED
+        echo ../src/$class | ctooGetTemplateForCoding c++-class-definition-file | grep CREATED
         echo "Done."
         echo ""
     else
