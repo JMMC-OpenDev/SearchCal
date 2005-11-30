@@ -1,18 +1,24 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-main.template,v 1.16 2005-04-08 09:09:20 gluck Exp $"
+#%# "@(#) $Id: c-main.template,v 1.17 2005-11-30 13:38:08 gzins Exp $"
 #%# 
 #%# Template for C main file          
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.16  2005/04/08 09:09:20  gluck
+#%# Fix problem report 2: FAILURE -> mcsFAILURE
+#%#
 #%# Revision 1.15  2005/02/21 15:50:22  gluck
 #%# Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
 #%#
 #%# Revision 1.14  2005/01/24 11:17:40  gluck
 #%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.16  2005/04/08 09:09:20  gluck
+#%# Correct bug when add log message automatic insertion (Fix problem report 2: FAILURE -> mcsFAILURE
+#%# Correct bug when add log message automatic insertion (
 #%# Correct bug when add log message automatic insertion (Revision 1.15  2005/02/21 15:50:22  gluck
 #%# Correct bug when add log message automatic insertion (Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
 #%# Correct bug when add log message automatic insertion ()
@@ -41,57 +47,52 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * brief description of the program, which ends at this dot.
  *
- * \synopsis
+ * @synopsis
  * \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
  *                     [\e \<option1\> ... \e \<optionN\>] 
  *
- * \param param1 : description of parameter 1, if it exists
- * \param paramN : description of parameter N, if it exists
+ * @param param1 : description of parameter 1, if it exists
+ * @param paramN : description of parameter N, if it exists
  *
- * \n
- * \opt
- * \optname option1 : description of option 1, if it exists
- * \optname optionN : description of option N, if it exists
+ * @opt
+ * @optname option1 : description of option 1, if it exists
+ * @optname optionN : description of option N, if it exists
  * 
- * \n
- * \details
+ * @details
  * OPTIONAL detailed description of the c main file follows here.
  * 
- * \usedfiles
+ * @usedfiles
  * OPTIONAL. If files are used, for each one, name, and usage description.
- * \filename fileName1 :  usage description of fileName1
- * \filename fileName2 :  usage description of fileName2
+ * @filename fileName1 :  usage description of fileName1
+ * @filename fileName2 :  usage description of fileName2
  *
- * \n
- * \env
+ * @env
  * OPTIONAL. If needed, environmental variables accessed by the program. For
  * each variable, name, and usage description, as below.
- * \envvar envVar1 :  usage description of envVar1
- * \envvar envVar2 :  usage description of envVar2
+ * @envvar envVar1 :  usage description of envVar1
+ * @envvar envVar2 :  usage description of envVar2
  * 
- * \n
- * \warning OPTIONAL. Warning if any (software requirements, ...)
+ * @warning OPTIONAL. Warning if any (software requirements, ...)
  *
- * \n
- * \ex
+ * @ex
  * OPTIONAL. Command example if needed
  * \n Brief example description.
- * \code
+ * @code
  * Insert your command example here
- * \endcode
+ * @endcode
  *
- * \sa OPTIONAL. See also section, in which you can refer other documented
+ * @sa OPTIONAL. See also section, in which you can refer other documented
  * entities. Doxygen will create the link automatically.
- * \sa <entity to refer>
+ * @sa <entity to refer>
  * 
- * \bug OPTIONAL. Known bugs list if it exists.
- * \bug Bug 1 : bug 1 description
+ * @bug OPTIONAL. Known bugs list if it exists.
+ * @bug Bug 1 : bug 1 description
  *
- * \todo OPTIONAL. Things to forsee list, if needed. 
- * \todo Action 1 : action 1 description
+ * @todo OPTIONAL. Things to forsee list, if needed. 
+ * @todo Action 1 : action 1 description
  * 
  */
 

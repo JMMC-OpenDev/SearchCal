@@ -1,18 +1,24 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-h-file.template,v 1.1 2005-04-08 13:41:12 gluck Exp $"
+#%# "@(#) $Id: c-h-file.template,v 1.2 2005-11-30 13:38:08 gzins Exp $"
 #%# 
 #%# Template for C .h include files         
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.1  2005/04/08 13:41:12  gluck
+#%# Added: renamed from h-file template
+#%#
 #%# Revision 1.10  2005/02/21 15:50:22  gluck
 #%# Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
 #%#
 #%# Revision 1.9  2005/01/24 11:17:40  gluck
 #%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.1  2005/04/08 13:41:12  gluck
+#%# Correct bug when add log message automatic insertion (Added: renamed from h-file template
+#%# Correct bug when add log message automatic insertion (
 #%# Correct bug when add log message automatic insertion (Revision 1.10  2005/02/21 15:50:22  gluck
 #%# Correct bug when add log message automatic insertion (Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
 #%# Correct bug when add log message automatic insertion ()
@@ -44,7 +50,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Brief description of the header file, which ends at this dot.
  */
 

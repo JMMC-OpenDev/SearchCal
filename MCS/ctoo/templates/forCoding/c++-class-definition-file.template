@@ -1,13 +1,16 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c++-class-definition-file.template,v 1.1 2005-04-08 13:47:45 gluck Exp $"
+#%# "@(#) $Id: c++-class-definition-file.template,v 1.2 2005-11-30 13:38:08 gzins Exp $"
 #%# 
 #%# Template for C++ class definition file         
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.1  2005/04/08 13:47:45  gluck
+#%# Added: renamed from c++-class-file.template
+#%#
 #%# Revision 1.18  2005/02/21 15:50:22  gluck
 #%# Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
 #%#
@@ -16,6 +19,9 @@
 #%#
 #%# Revision 1.16  2005/01/24 11:17:40  gluck
 #%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.1  2005/04/08 13:47:45  gluck
+#%# Correct bug when add log message automatic insertion (Added: renamed from c++-class-file.template
+#%# Correct bug when add log message automatic insertion (
 #%# Correct bug when add log message automatic insertion (Revision 1.18  2005/02/21 15:50:22  gluck
 #%# Correct bug when add log message automatic insertion (Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
 #%# Correct bug when add log message automatic insertion (
@@ -48,7 +54,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  *  Definition of <className> class.
  */
 
