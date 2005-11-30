@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.27 2005-11-14 14:19:41 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.28 2005-11-30 10:54:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2005/11/14 14:19:41  lafrasse
+ * Added "distance to science object" computation and sorting
+ *
  * Revision 1.26  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -81,9 +84,17 @@
 #define sclsvrCALIBRATOR_DIAM_BV            "DIAM_BV"
 #define sclsvrCALIBRATOR_DIAM_VR            "DIAM_VR"
 #define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
+#define sclsvrCALIBRATOR_DIAM_IJ            "DIAM_IJ"
+#define sclsvrCALIBRATOR_DIAM_IK            "DIAM_IK"
+#define sclsvrCALIBRATOR_DIAM_JK            "DIAM_JK"
+#define sclsvrCALIBRATOR_DIAM_JH            "DIAM_JH"
 #define sclsvrCALIBRATOR_DIAM_BV_ERROR      "DIAM_BV_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VR_ERROR      "DIAM_VR_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
+#define sclsvrCALIBRATOR_DIAM_IJ_ERROR      "DIAM_IJ_ERROR"
+#define sclsvrCALIBRATOR_DIAM_IK_ERROR      "DIAM_IK_ERROR"
+#define sclsvrCALIBRATOR_DIAM_JK_ERROR      "DIAM_JK_ERROR"
+#define sclsvrCALIBRATOR_DIAM_JH_ERROR      "DIAM_JH_ERROR"
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 #define sclsvrCALIBRATOR_DIST               "DIST"
 
@@ -118,6 +129,7 @@ private:
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeInterstellarAbsorption();
     mcsCOMPL_STAT ComputeAngularDiameter();
+    mcsCOMPL_STAT ComputeAngularDiameterFaint();
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeMultiplicity(); 
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
