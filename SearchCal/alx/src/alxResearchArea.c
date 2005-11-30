@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2005/10/26 11:24:01  lafrasse
+* Code review
+*
 * Revision 1.4  2005/06/01 14:16:07  scetre
 * Changed logExtDbg to logTrace
 *
@@ -28,7 +31,7 @@
  * @sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.5 2005-10-26 11:24:01 lafrasse Exp $";
+static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.6 2005-11-30 10:47:15 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -352,7 +355,7 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT  ra,
                                      mcsFLOAT  dec,
                                      mcsFLOAT  minMag,
                                      mcsFLOAT  maxMag,
-                                     mcsFLOAT* areaSize)
+                                     mcsFLOAT* radius)
 {
     mcsFLOAT gLat;
     mcsFLOAT gLon;
@@ -387,11 +390,12 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT  ra,
     /* Compute the area size according to estimated number of stars at this sky
      * position to only have 50 stars in this area.
      * NOTE: the area of the 1 degree solid angle circle is: PI/4 */
-    *areaSize = sqrt (50.0 * M_PI/4 / (mcsDOUBLE) nbOfStars);
-    logTest("Sky research area size = %.2f (deg)", *areaSize);
+    mcsFLOAT areaSize;
+    areaSize = 50.0 * M_PI/4 / (mcsDOUBLE) nbOfStars;
+    logTest("Sky research area size = %.2f (deg)", areaSize);
     /* Convert degree to arcmin */
-    *areaSize = *areaSize * 60.0;
-    logTest("Sky research area size = %.2f (arcmin)", *areaSize);
+    *radius = 60.0 * sqrt (areaSize/M_PI);
+    logTest("Sky research radius = %.2f (arcmin)", *radius);
 
     return mcsSUCCESS;
 }
