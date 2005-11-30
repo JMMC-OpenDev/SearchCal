@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.5 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.6 2005-11-30 10:35:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.4  2005/06/21 06:21:58  scetre
  * Changed IsEnable() method to IsEnabled()
  *
@@ -26,7 +29,7 @@
  * Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.5 2005-10-26 11:27:24 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.6 2005-11-30 10:35:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -56,7 +59,6 @@ using namespace std;
  */
 sclsvrVISIBILITY_FILTER::sclsvrVISIBILITY_FILTER()
 {
-    strcpy(_name, sclsvrVISIBILITY_FILTER_NAME);    
 }
 
 /**

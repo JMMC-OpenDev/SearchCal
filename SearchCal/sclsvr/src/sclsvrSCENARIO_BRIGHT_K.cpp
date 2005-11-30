@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.6 2005-11-29 10:39:03 gzins Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.7 2005-11-30 10:35:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/29 10:39:03  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.5  2005/11/24 13:19:37  scetre
  * Clean the presentation of the add entry
  *
@@ -28,7 +31,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.6 2005-11-29 10:39:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.7 2005-11-30 10:35:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -175,8 +178,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     _magnitudeFilter.SetMagnitudeValue(band, (kMaxi+kMini)/2, (kMaxi-kMini)/2);
     _magnitudeFilter.Enable();
     // Build filter list
-    _filterList.Add(&_originFilter);
-    _filterList.Add(&_magnitudeFilter);
+    _filterList.Add(&_originFilter, "Origin Filter");
+    _filterList.Add(&_magnitudeFilter, "Magnitude Filter");
     
     ///////////////////////////////////////////////////////////////////////////
     // PRIMARY REQUEST

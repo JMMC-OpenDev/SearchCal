@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.52 2005-11-29 13:06:15 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.53 2005-11-30 10:35:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.52  2005/11/29 13:06:15  scetre
+ * Added conditions to compute specific properties of faint and bright star
+ *
  * Revision 1.51  2005/11/14 14:19:41  lafrasse
  * Added "distance to science object" computation and sorting
  *
@@ -105,7 +108,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.52 2005-11-29 13:06:15 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.53 2005-11-30 10:35:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -707,6 +710,152 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
 }
 
 /**
+ * Compute angular diameter faint
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameterFaint()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeAngularDiameterFaint()");
+
+    alxDIAMETERS diameters;
+    alxDATA mgI, mgJ, mgK, mgH, starProperty[4];
+   
+    // Declare the 4 properties name for B0, V0, R0, K0
+    char *starPropertyId[4] = 
+    {
+        sclsvrCALIBRATOR_IO,
+        sclsvrCALIBRATOR_JO,
+        sclsvrCALIBRATOR_KO,
+        sclsvrCALIBRATOR_HO
+    };
+
+    // For each property needed to compute angular diameter
+    for (int i=0; i<4; i++)
+    { 
+        // if the current property is affected
+        if (IsPropertySet(starPropertyId[i]) == mcsTRUE)
+        {
+            // Get the property
+            vobsSTAR_PROPERTY *property=GetProperty(starPropertyId[i]);
+
+            // Get the property value
+            if ((property->GetValue(&starProperty[i].value)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // Falg the property as set
+            starProperty[i].isSet = mcsTRUE;
+
+            // Get the property confidence index
+            starProperty[i].confIndex =
+                            (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
+        }
+        else
+        {
+            // Do nothing
+            return mcsSUCCESS;
+        }
+    }
+
+    mgI=starProperty[0];
+    mgJ=starProperty[1];
+    mgK=starProperty[2];
+    mgH=starProperty[3];
+    
+    // Compute angular diameters
+    if (alxComputeAngularDiameterFaint(mgI, mgJ, mgK, mgH, &diameters) ==
+        mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    // Set flag according to the confidence index 
+    if (diameters.areComputed == mcsFALSE)
+    {
+         if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
+                              vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+         {
+             return mcsFAILURE;
+         }
+    }
+    else
+    {
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG,
+                             "OK", vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Set the computed value of the angular diameter
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ, diameters.ij.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IK, diameters.ik.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) == 
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JK, diameters.jk.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH, diameters.jh.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ_ERROR, 
+                             diameters.ijErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IK_ERROR,
+                             diameters.ikErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JK_ERROR,
+                             diameters.jkErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH_ERROR,
+                             diameters.jhErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+   
+    return mcsSUCCESS;
+}
+
+/**
  * Compute visibility.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -970,11 +1119,27 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                 "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, 
                 "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_IJ, "diam_ij", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_IK, "diam_ik", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_JK, "diam_jk", vobsFLOAT_PROPERTY, 
+                "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_JH, "diam_jh", vobsFLOAT_PROPERTY, 
+                "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_BV_ERROR, "e_diam_bv", 
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_VR_ERROR, "e_diam_vr", 
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_IJ_ERROR, "e_diam_ij", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_IK_ERROR, "e_diam_ik", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_JK_ERROR, "e_diam_jk", 
+                vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_JH_ERROR, "e_diam_jh", 
                 vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", 
                 vobsSTRING_PROPERTY);

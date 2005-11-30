@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.8 2005-11-29 13:49:30 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.9 2005-11-30 10:35:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/11/29 13:49:30  scetre
+ * Order the scenario to get coordinates from I/280 or I/284
+ *
  * Revision 1.7  2005/11/29 13:04:42  scetre
  * Used vobsSCENARIO instead of obsolete sclsvrSCEANRIO_CHECK
  *
@@ -34,7 +37,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.8 2005-11-29 13:49:30 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.9 2005-11-30 10:35:21 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,6 +53,7 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 
+#include "alx.h"
 /*
  * Local Headers 
  */
@@ -151,10 +155,34 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // compute radius from alx
     if (radius == 0)
     {
+        mcsSTRING32 raString;
+        strcpy(raString, request->GetObjectRa());
+        mcsSTRING32 decString;
+        strcpy(decString, request->GetObjectDec());
+        vobsSTAR star;
+        star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, raString, "no origin");
+        star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, decString, "no origin");
+
+        mcsFLOAT ra;
+        mcsFLOAT dec;
+        star.GetRa(ra);
+        star.GetDec(dec);
+        
+        mcsFLOAT magMin;
+        mcsFLOAT magMax;
+        magMin = request->GetMinMagRange();
+        magMax = request->GetMaxMagRange();
+        
+        if (alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
         //
         //  COMPUTE RADIUS with alx
         //
-        radius = 5;
+        printf("radius = %f\n", radius);
+
         // Decisionnal scenario
         vobsSCENARIO scenarioCheck;
         vobsSTAR_LIST starList;

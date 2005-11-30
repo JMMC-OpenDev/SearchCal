@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.6 2005-11-29 10:38:43 gzins Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.7 2005-11-30 10:35:21 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/29 10:38:43  gzins
+ * *** empty log message ***
+ *
  * Revision 1.5  2005/11/24 13:21:02  scetre
  * Inherite from vobsBASE_FILTER instead of vobsFILTER
  *
@@ -54,7 +57,6 @@
 #include "sclsvrCALIBRATOR_LIST.h"
 
 
-#define sclsvrVISIBILITY_FILTER_NAME "Filter by Visibility"
 
 
 /*
