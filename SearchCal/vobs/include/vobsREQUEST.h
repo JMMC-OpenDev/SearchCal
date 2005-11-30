@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.23 2005-11-23 17:30:21 lafrasse Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.24 2005-11-30 15:26:50 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/11/23 17:30:21  lafrasse
+* Added circular search box geometry support and normalized area size methods
+*
 * Revision 1.22  2005/11/23 15:49:45  lafrasse
 * Removed _maxNbOfSelectedObjects member and associated code
 *
@@ -158,10 +161,11 @@ private:
     string _objectName;
 
     /** Science object right ascension */
-    string _objectRa;
+    string   _objectRa;
 
     /** Science object declinaison */
-    string _objectDec;
+    string   _objectDec;
+    mcsFLOAT _objectDecInDeg;
 
     /** Science object magnitude */
     mcsFLOAT _objectMag;
