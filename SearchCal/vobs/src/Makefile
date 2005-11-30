@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.24 2005-11-29 10:32:10 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.25 2005-11-30 15:24:37 lafrasse Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.24  2005/11/29 10:32:10  gzins
+# Changed vobsBASE_FILTER to vobsGENERIC_FILTER
+#
 # Revision 1.23  2005/11/24 14:54:25  scetre
 # UNSO catalog added
 #
@@ -125,6 +128,7 @@ INCLUDES        = vobs.h						\
 				  vobsDISTANCE_FILTER.h			\
 				  vobsORIGIN_FILTER.h			\
 				  vobsBV_FILTER.h				\
+				  vobsVOTABLE.h		     		\
 #
 # Libraries (public and local)
 # ----------------------------
@@ -173,6 +177,8 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsDISTANCE_FILTER			\
 				   vobsORIGIN_FILTER			\
 				   vobsBV_FILTER				\
+				   vobsVOTABLE		     		\
+
 #
 # Scripts (public and local)
 # --------------------------
