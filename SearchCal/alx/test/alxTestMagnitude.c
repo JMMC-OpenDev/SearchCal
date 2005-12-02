@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.10 2005-07-06 05:07:15 gzins Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.11 2005-12-02 12:05:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/07/06 05:07:15  gzins
+ * Fixed API to alxComputeAngularDiameter
+ *
  * Revision 1.9  2005/03/30 12:48:46  scetre
  * Changed API
  *
@@ -44,7 +47,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.10 2005-07-06 05:07:15 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.11 2005-12-02 12:05:59 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -89,7 +92,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 int main (int argc, char *argv[])
 {
     /* Configure logging service */
-    logSetStdoutLogLevel(logTEST);
+    logSetStdoutLogLevel(logTRACE);
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
 
@@ -243,6 +246,33 @@ printf("*********************\n");
                                   magnitudes[alxR_BAND],
                                   magnitudes[alxK_BAND],
                                   &diameters)== mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    printf("*********** FAINT TEST **********\n");
+    for (band = 0; band < alxNB_BANDS; band++)
+    { 
+        magnitudes[band].value = alxBLANKING_VALUE;
+        magnitudes[band].isSet = mcsFALSE;
+        magnitudes[band].confIndex = alxCONFIDENCE_LOW;
+    }
+    magnitudes[alxJ_BAND].value = 8.275;
+    magnitudes[alxJ_BAND].isSet = mcsTRUE;
+    magnitudes[alxK_BAND].value = 7.498;
+    magnitudes[alxK_BAND].isSet = mcsTRUE;
+     /* complete */
+    printf("complete\n");
+    if (alxComputeMagnitudesForFaintStar(magnitudes) == mcsFAILURE)
+    {
+        errCloseStack();
+    }
+    alxDIAMETERS diameters2;
+    if (alxComputeAngularDiameterFaint(magnitudes[alxI_BAND],
+                                  magnitudes[alxJ_BAND],
+                                  magnitudes[alxK_BAND],
+                                  magnitudes[alxH_BAND],
+                                  &diameters2)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
