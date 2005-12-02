@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsRelease.sh,v 1.1 2005-12-02 14:19:42 swmgr Exp $"
+# "@(#) $Id: mcsRelease.sh,v 1.2 2005-12-02 14:55:57 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/12/02 14:19:42  swmgr
+# Replace old mcsRoot
+#
 # Revision 1.3  2005/09/15 06:48:29  swmgr
 # Make change retrieve JAVA into the Path and retrieve good setup as real login
 #
@@ -69,7 +72,7 @@ rm -f /tmp/menu.tmp.$$
 
 case $retval in
   0)
-    export MCSRELEASE=$choice 
+    export MCSRELEASE=${choice##*/} 
     echo "MCSRELEASE=$MCSRELEASE"
     unset PATH
     unset JAVA_HOME
