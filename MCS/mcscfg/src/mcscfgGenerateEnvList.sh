@@ -1,0 +1,69 @@
+#!/bin/bash
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.1 2005-12-02 12:17:28 mella Exp $"
+#
+# History
+# -------
+# $Log: not supported by cvs2svn $
+#*******************************************************************************
+
+#/**
+# @file
+# Generate a mcs env list from the given general xml description file.
+#
+# @synopsis
+# mcscfgGenerateEnvList <mcsEnvList.xml> <mcsEnvList> 
+#
+# @usedfiles
+# @filename mcscfgGenerateEnvList :  transformation rules
+#
+# 
+# */
+
+
+
+if [ $# -ne 2 ]
+then
+    echo "Usage: $0 <mcsEnvList.xml> <mcsEnvList>"
+    exit 1
+fi
+
+GIVENHOSTNAME=$(hostname)
+XMLMCSENVLIST=$1
+MCSENVLIST=$2
+
+# Search xslt file
+if [ -e ../config/mcscfgGenerateEnvList.xsl ]
+then
+    XSLTFILE="../config/mcscfgGenerateEnvList.xsl"
+#elif [ -e "$INTROOT/config/mcscfgGenerateEnvList.xsl" ]
+#then
+#    XSLTFILE="$INTROOT/config/mcscfgGenerateEnvList.xsl" ]
+#elif [ -e "$MCSROOT/config/mcscfgGenerateEnvList.xsl" ]
+#then
+#    XSLTFILE="$MCSROOT/config/mcscfgGenerateEnvList.xsl" ]
+else
+    echo "Can't find file 'mcscfgGenerateEnvList.xsl'"
+    exit 1
+fi
+
+echo "Generating $MCSENVLIST"
+echo "#  This file has been automatically generated on $(date)" >> $MCSENVLIST
+echo "#  for hostname '$GIVENHOSTNAME' by $0" >> $MCSENVLIST
+echo "#  to change some entry in this file , please:"  >> $MCSENVLIST
+echo "#   - go into the mcscfg module"  >> $MCSENVLIST
+echo "#   - edit $XMLMCSENVLIST"  >> $MCSENVLIST
+echo "#   - execute make all install"  >> $MCSENVLIST
+echo "#" >> $MCSENVLIST
+echo "# !!!!!!!!!!!  DO NOT MANUALLY EDIT THIS FILE  !!!!!!!!!!!" >> $MCSENVLIST
+echo "#" >> $MCSENVLIST
+echo "# Please use ${0##*/} with your modified configuration file " >> $MCSENVLIST
+echo "#" >> $MCSENVLIST
+echo "#" >> $MCSENVLIST
+echo "#" >> $MCSENVLIST
+
+xsltproc $XSLTFILE $1 >> $MCSENVLIST
+
+#___oOo___
