@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.15 2005-11-30 10:47:59 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.16 2005-12-02 12:03:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/11/30 10:47:59  scetre
+ * Added computing diameter method for faint
+ *
  * Revision 1.14  2005/10/26 11:24:01  lafrasse
  * Code review
  *
@@ -182,6 +185,8 @@ typedef struct
  */
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType, 
                                                 alxMAGNITUDES magnitudes);
+
+mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxMAGNITUDES magnitudes); 
 
 mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT plx,
                                        mcsFLOAT gLat,
