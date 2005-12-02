@@ -4,11 +4,14 @@
 ********************************************************************************
 JMMC project
 
-"@(#) $Id: mcscfgGenerateEnvList.xsl,v 1.3 2005-12-02 12:57:53 mella Exp $"
+"@(#) $Id: mcscfgGenerateEnvList.xsl,v 1.4 2005-12-02 13:49:06 mella Exp $"
 
 History
 ~~~~~~~
 $Log: not supported by cvs2svn $
+Revision 1.3  2005/12/02 12:57:53  mella
+Add Common Header
+
 
 ********************************************************************************
 NAME
@@ -37,7 +40,6 @@ generate on simple envlist file from a given xml decription
 <xsl:param name="hostname"></xsl:param>
 <xsl:template match="/">
   <xsl:call-template name="t1"/>
-  <xsl:call-template name="t2"/>
 </xsl:template>
 <xsl:template name="t1">
     <xsl:for-each select="//env[parent::host/@name=$hostname]">
@@ -45,15 +47,7 @@ generate on simple envlist file from a given xml decription
     <xsl:value-of select="' '"/>
     <xsl:value-of select="parent::host/@name"/>
     <xsl:value-of select="' '"/>
-    <xsl:value-of select="."/>
-    <xsl:value-of select="'&#10;'"/>
-  </xsl:for-each>
-</xsl:template>
-<xsl:template name="t2">
-    <xsl:for-each select="//env[parent::host/@name=$hostname]">
-    <xsl:value-of select="@name"/>
-    <xsl:value-of select="' localhost '"/>
-    <xsl:value-of select="."/>
+    <xsl:value-of select="./port"/>
     <xsl:value-of select="'&#10;'"/>
   </xsl:for-each>
 </xsl:template>
