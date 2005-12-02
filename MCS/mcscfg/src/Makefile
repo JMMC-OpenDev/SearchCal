@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.13 2005-12-02 12:19:15 mella Exp $"
+# "@(#) $Id: Makefile,v 1.14 2005-12-02 12:21:28 mella Exp $"
 #
 # Makefile of mcscfg module, which contains configuration files for MCS
 # environment.
@@ -9,6 +9,9 @@
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2005/12/02 12:19:15  mella
+# Add mcscfgGenerateEnvList script
+#
 # Revision 1.12  2005/12/02 10:25:36  gzins
 # Updated for new MCS directory structure; installed files in $MCSTOP/etc
 #
@@ -37,11 +40,12 @@ SCRIPTS         = mcscfgGenerateEnvList.sh
 CFG_FILES = ../config/mcs.sh      \
 			../config/emacs       \
 			../config/vimrc       \
-			../config/gvimrc
+			../config/gvimrc	\
+			../config/mcsEnvList
 #
 # Configuration files to be installed but not over-written
 #----------------------------
-OPT_CFG_FILES = ../config/mcsEnvList
+OPT_CFG_FILES = 
 
 #
 # TARGETS
