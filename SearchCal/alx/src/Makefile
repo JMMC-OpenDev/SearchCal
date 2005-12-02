@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2005-10-26 11:30:41 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.6 2005-12-02 12:05:42 scetre Exp $"
 #
 # Makefile of the alx module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/10/26 11:30:41  lafrasse
+# Created alxComputeDistance function stuff
+#
 # Revision 1.4  2005/02/15 14:47:55  gzins
 # Removed unused target
 #
@@ -151,8 +154,11 @@ MAN8 =
 INSTALL_FILES = ../config/alxAbsIntPolynomial.cfg					\
 				../config/alxAngDiamPolynomialForBrightStar.cfg		\
 				../config/alxColorTableForBrightDwarfStar.cfg		\
+				../config/alxColorTableForFaintDwarfStar.cfg		\
 				../config/alxColorTableForBrightGiantStar.cfg		\
+				../config/alxColorTableForFaintGiantStar.cfg		\
 				../config/alxColorTableForBrightSuperGiantStar.cfg	\
+				../config/alxColorTableForFaintSuperGiantStar.cfg	\
 				../config/alxExtinctionRatioTable.cfg	\
 				../config/alxStarPopulationInKBand.cfg
 

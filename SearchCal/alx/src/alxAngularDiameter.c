@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.17 2005-11-30 10:47:59 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.18 2005-12-02 12:05:42 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/11/30 10:47:59  scetre
+ * Added computing diameter method for faint
+ *
  * Revision 1.16  2005/10/26 11:24:01  lafrasse
  * Code review
  *
@@ -72,7 +75,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.17 2005-11-30 10:47:59 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.18 2005-12-02 12:05:42 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -446,10 +449,10 @@ mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
     meanDiamErr = 0.1 * meanDiam;
 
     /* Check whether the diameter is coherent or not */
-    if ((fabs(diameters->ij.value - meanDiam) > 2.0 * meanDiamErr) ||
-        (fabs(diameters->ik.value - meanDiam) > 2.0 * meanDiamErr) ||
-        (fabs(diameters->jk.value - meanDiam) > 2.0 * meanDiamErr) ||
-        (fabs(diameters->jh.value - meanDiam) > 2.0 * meanDiamErr) )
+    if ((fabs(diameters->ij.value - meanDiam) > meanDiamErr) ||
+        (fabs(diameters->ik.value - meanDiam) > meanDiamErr) ||
+        (fabs(diameters->jk.value - meanDiam) > meanDiamErr) ||
+        (fabs(diameters->jh.value - meanDiam) > meanDiamErr) )
     {
         /* Reject star (i.e the diameter should not appear as computed) */
         diameters->areComputed = mcsFALSE;
