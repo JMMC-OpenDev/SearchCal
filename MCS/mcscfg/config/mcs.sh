@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.9 2005-12-02 14:25:51 gzins Exp $
+# Version: $Id: mcs.sh,v 1.10 2005-12-02 14:27:06 swmgr Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2005/12/02 14:25:51  gzins
+# Changed mcscfgShow to mcsShow
+#
 # Revision 1.8  2005/12/02 09:59:36  gzins
 # Updated for new MCS directory structure; added MCSTOP and MCSRELEASE
 #
@@ -127,7 +130,7 @@ alias Pu='rm -f *~ .*~ core | echo -en'
 alias gvim='gvim -geometry 80x45'
 alias macam='make clean all man'
 alias macami='make clean all man install'
-alias setMcsRoot='source /home/MCS/DEVELOPMENT/bin/mcsRoot'
+alias setMcsRelease='source /home/MCS/DEVELOPMENT/bin/mcsRelease'
 # Functions
 # Function to create .h and .cpp files for a C++ class in the right
 # directories
