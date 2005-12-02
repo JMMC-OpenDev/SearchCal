@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsRelease.sh,v 1.2 2005-12-02 14:55:57 mella Exp $"
+# "@(#) $Id: mcsRelease.sh,v 1.3 2005-12-02 15:04:37 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/12/02 14:55:57  mella
+# Just use last meber of path for mcsRelease
+#
 # Revision 1.1  2005/12/02 14:19:42  swmgr
 # Replace old mcsRoot
 #
@@ -72,8 +75,9 @@ rm -f /tmp/menu.tmp.$$
 
 case $retval in
   0)
-    export MCSRELEASE=${choice##*/} 
-    echo "MCSRELEASE=$MCSRELEASE"
+    tmp="${choice%*/}"
+    export MCSRELEASE=${tmp##*/} 
+    echo "MCSRELEASE=$MCSRELEASE" 
     unset PATH
     unset JAVA_HOME
     unset LD_LIBRARY_PATH
