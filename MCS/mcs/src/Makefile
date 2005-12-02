@@ -1,13 +1,16 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center 
 #
-# "@(#) $Id: Makefile,v 1.5 2005-03-11 14:16:22 mella Exp $" 
+# "@(#) $Id: Makefile,v 1.6 2005-12-02 14:18:08 swmgr Exp $" 
 #
 # Makefile for MCS module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/03/11 14:16:22  mella
+# Add mcsRoot.sh that should be sourced
+#
 # Revision 1.4  2005/01/28 18:50:52  gzins
 # Added CVS log as modification history
 #
@@ -54,7 +57,7 @@ mcs_OBJECTS     = mcs
 
 #
 # Scripts (public and local)
-SCRIPTS         = mcsRoot
+SCRIPTS         = mcsRelease
 
 #
 # man pages to be done
