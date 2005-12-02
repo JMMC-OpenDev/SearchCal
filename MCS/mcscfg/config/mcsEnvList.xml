@@ -1,0 +1,114 @@
+<!--
+********************************************************************************
+JMMC project
+
+"@(#) $Id: mcsEnvList.xml,v 1.1 2005-12-02 13:18:40 mella Exp $"
+
+History
+~~~~~~~
+$Log: not supported by cvs2svn $
+
+********************************************************************************
+NAME
+mcsEnvList.xml - Describe MCS Environment List
+
+DESCRIPTION
+mcsEnvList.xml gives informations about:
+- the environment list active on several hosts
+
+EXAMPLES
+<env name="value"><port>value</port></env>
+-->
+<envList>
+    <!-- admin can replace manually hostname content to allow any xpath
+    computation without need to know the hostname externally 
+    eg: //env[parent::host/@name=//hostname and @name='mella']/port
+    -->  
+    <hostname>mariotti</hostname>
+
+    <host name="mariotti">
+        <!-- MCS default environment definition (do not delete) -->
+        <env name="default"> <host>localhost</host><port>1991</port></env>
+        <!-- MCS User environment definitions (customized as you need) -->
+        <env name="gzins"> 	    <port>1992</port></env> 
+        <env name="scetre">     <port>1993</port></env>   
+        <env name="mella">      <port>1994</port></env>
+        <env name="gluck">      <port>1995</port></env>
+        <env name="lafrasse">   <port>1996</port></env>
+        <env name="guest">      <port>1997</port></env>
+
+        <!-- env defined for gildas users -->
+        <env name="gildas0">  <port>2010</port></env>
+        <env name="gildas1">  <port>2011</port></env>
+        <env name="gildas2">  <port>2012</port></env>
+        <env name="gildas3">  <port>2013</port></env>
+        <env name="gildas4">  <port>2014</port></env>
+        <env name="gildas5">  <port>2015</port></env>
+
+        <!-- env defined for aspro users -->
+        <env name="aspro0">   <port>2020</port></env>
+        <env name="aspro1">   <port>2021</port></env>
+        <env name="aspro2">   <port>2022</port></env>
+        <env name="aspro3">   <port>2023</port></env>
+        <env name="aspro4">   <port>2024</port></env>
+        <env name="aspro5">   <port>2025</port></env>
+        <env name="aspro6">   <port>2026</port></env>
+        <env name="aspro7">   <port>2027</port></env>
+        <env name="aspro8">   <port>2028</port></env>
+        <env name="aspro9">   <port>2029</port></env>
+        <env name="aspro10">  <port>2030</port></env>
+        <env name="aspro11">  <port>2031</port></env>
+        <env name="aspro12">  <port>2032</port></env>
+        <env name="aspro13">  <port>2033</port></env>
+        <env name="aspro14">  <port>2034</port></env>
+        <env name="aspro15">  <port>2035</port></env>
+    </host>
+
+    <host name="pleione">
+        <!-- MCS default environment definition (do not delete) -->
+        <env name="default"> <host>localhost</host><port>1991</port></env>
+        <!-- MCS User environment definitions (customized as you need) -->
+        <env name="gzins"> 	<port>1992</port></env> 
+        <env name="scetre">  	<port>1993</port></env>   
+        <env name="mella">    <port>1994</port></env>
+        <env name="gluck">    <port>1995</port></env>
+        <env name="lafrasse"> <port>1996</port></env>
+        <env name="guest">    <port>1997</port></env>
+
+        <env name="jmc">    <port>2500</port></env>
+        <env name="dma">    <port>2510</port></env>
+        <env name="aspro">  <port>2520</port></env>
+        <env name="yav">    <port>2530</port></env>
+
+
+        <!-- env defined for gildas users -->
+        <env name="gildas0">  <port>2010</port></env>
+        <env name="gildas1">  <port>2011</port></env>
+        <env name="gildas2">  <port>2012</port></env>
+        <env name="gildas3">  <port>2013</port></env>
+        <env name="gildas4">  <port>2014</port></env>
+        <env name="gildas5">  <port>2015</port></env>
+
+        <!-- env defined for aspro users -->
+        <env name="aspro0">   <port>2020</port></env>
+        <env name="aspro1">   <port>2021</port></env>
+        <env name="aspro2">   <port>2022</port></env>
+        <env name="aspro3">   <port>2023</port></env>
+        <env name="aspro4">   <port>2024</port></env>
+        <env name="aspro5">   <port>2025</port></env>
+        <env name="aspro6">   <port>2026</port></env>
+        <env name="aspro7">   <port>2027</port></env>
+        <env name="aspro8">   <port>2028</port></env>
+        <env name="aspro9">   <port>2029</port></env>
+        <env name="aspro10">  <port>2030</port></env>
+        <env name="aspro11">  <port>2031</port></env>
+        <env name="aspro12">  <port>2032</port></env>
+        <env name="aspro13">  <port>2033</port></env>
+        <env name="aspro14">  <port>2034</port></env>
+        <env name="aspro15">  <port>2035</port></env>
+    </host>
+
+
+
+
+</envList>
