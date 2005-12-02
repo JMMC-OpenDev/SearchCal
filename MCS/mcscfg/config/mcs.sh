@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.7 2005-11-30 13:44:26 gzins Exp $
+# Version: $Id: mcs.sh,v 1.8 2005-12-02 09:59:36 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/11/30 13:44:26  gzins
+# Updated ctooGetTemplateForCppClass function according to new ctooGetTemplateForCoding interface
+#
 # Revision 1.6  2005/11/29 08:21:04  mella
 # Protect Pu aliases from human error as Pu *
 #
@@ -40,6 +43,24 @@
 #   fi
 #
 #------------------------------------------------------------------------------
+
+# MCSRELEASE
+if [ -z "$MCSRELEASE" ]
+then
+    export MCSRELEASE=DEVELOPMENT
+fi
+
+# MCSDATA
+export MCSDATA=${MCSTOP}/data
+
+# MCSROOT
+export MCSROOT=${MCSTOP}/${MCSRELEASE}
+
+# MCSROOT
+if [ -z "$MCSENV" ]
+then
+    export MCSENV=default
+fi
 
 # Set LD_LIBRARY_PATH (path for dynamic linked libraries)
 if [ "$LD_LIBRARY_PATH" != "" ]
@@ -96,9 +117,6 @@ then
     export MANPATH="$MANPATH:$MCSROOT/man"
 fi
 
-# MCSDATA
-export MCSDATA=${MCSROOT}/data
-
 # Aliases
 alias psg='ps -aef | grep $*'
 alias m=more
@@ -126,5 +144,15 @@ ctooGetTemplateForCppClass ()
         echo "ctooGetTemplateForCppClass <className>"
         echo ""
     fi
+}
+# Function to create .h and .cpp files for a C++ class in the right
+# directories
+mcscfgShow()
+{
+    echo "MCSTOP     = $MCSTOP"
+    echo "MCSDATA    = $MCSDATA"
+    echo "MCSRELEASE = $MCSRELEASE"
+    echo "MCSROOT    = $MCSROOT"
+    echo "MCSENV     = $MCSENV"
 }
 
