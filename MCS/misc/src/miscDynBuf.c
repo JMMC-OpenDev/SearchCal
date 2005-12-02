@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.39 2005-05-26 13:03:44 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.40 2005-12-02 13:04:32 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2005/05/26 13:03:44  lafrasse
+ * Code review : added const attribute to necessary parameters, and change doxygen attributes from '\' to '@'
+ *
  * Revision 1.38  2005/05/17 15:36:21  lafrasse
  * Code review : refined user documentation and re-ordered functions
  *
@@ -175,7 +178,7 @@
  * @endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.39 2005-05-26 13:03:44 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.40 2005-12-02 13:04:32 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1196,8 +1199,70 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
 
 
 /**
- * Save the Dynamic Buffer content in a specified text file.
+ * Save the first n bytes of a Dynamic Buffer content in a specified file.
  * 
+ * @warning
+ * - The given file will be over-written on each call.
+ * - The given file path must have been @em resolved before this function call.
+ * See miscResolvePath() documentation for more information.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param length the number of leading bytes to be saved in file
+ * @param fileName path specifying the file to be over-written with the Dynamic
+ * Buffer content
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
+                                       const mcsUINT32   length,
+                                       const char        *fileName)
+{
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Get the number of bytes stored in the Dynamic Buffer */
+    mcsUINT32 dynBufSize = 0;
+    if (miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Cap the given length value to the number of stored bytes  */
+    dynBufSize = mcsMIN(length, dynBufSize);
+
+    /* Open (or create)  the specified text file in 'write' mode */
+    FILE *file = fopen(fileName, "w");
+    if (file == NULL)
+    {
+        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, strerror(errno));
+        return mcsFAILURE;
+    }
+
+    /* Put all the content of the Dynamic Buffer in the text file */
+    size_t savedSize = fwrite((void*)miscDynBufGetBuffer(dynBuf), sizeof(char),
+                              dynBufSize, file);
+
+    /* Test if the Dynamic Buffer has been saved correctly */
+    if (savedSize != dynBufSize)
+    {
+        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, strerror(errno));
+        return mcsFAILURE;
+    }
+
+    /* Close the text file */
+    fclose(file);
+    
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Save the whole Dynamic Buffer content in a specified text file.
+ *
  * @warning
  * - The given file will be over-written on each call.
  * - The given file path must have been @em resolved before this function call.
@@ -1219,11 +1284,47 @@ mcsCOMPL_STAT miscDynBufSaveInFile(const miscDYN_BUF *dynBuf,
         return mcsFAILURE;
     }
 
-    /* Open (or create)  the specified text file in 'write' mode */
-    FILE *file = fopen(fileName, "w");
-    if (file == NULL)
+    /* Get the Dynamic Buffer size to be saved */
+    mcsUINT32 dynBufSize;
+    if (miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize) == mcsFAILURE)
     {
-        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, strerror(errno));
+        return mcsFAILURE;
+    }
+    
+    /* Save the Dynamic Buffer */
+    if (miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Save the Dynamic Buffer content as an ASCII string in a specified text file.
+ *
+ * If the given Dynamic Buffer holds a C-string ending with an '\\0' character,
+ * all the characters but this '\\0' will be saved in file.
+ * 
+ * @warning
+ * - The given file will be over-written on each call.
+ * - The given file path must have been @em resolved before this function call.
+ * See miscResolvePath() documentation for more information.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param fileName path specifying the file to be over-written with the Dynamic
+ * Buffer content
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscDynBufSaveInASCIIFile(const miscDYN_BUF *dynBuf,
+                                        const char        *fileName)
+{
+    /* Verify the Dynamic Buffer initialisation state */
+    if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
+    {
         return mcsFAILURE;
     }
 
@@ -1233,21 +1334,27 @@ mcsCOMPL_STAT miscDynBufSaveInFile(const miscDYN_BUF *dynBuf,
     {
         return mcsFAILURE;
     }
-    
-    /* Put all the content of the Dynamic Buffer in the text file */
-    size_t savedSize = fwrite((void*)miscDynBufGetBuffer(dynBuf), sizeof(char),
-                              dynBufSize, file);
 
-    /* Test if the Dynamic Buffer has been saved correctly */
-    if (savedSize != dynBufSize)
+    /* Retrieve the last character of the Dynamic Buffer */
+    char lastCharacter;
+    if (miscDynBufGetByteAt(dynBuf, &lastCharacter, dynBufSize) == mcsFAILURE)
     {
-        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, strerror(errno));
         return mcsFAILURE;
     }
 
-    /* Close the text file */
-    fclose(file);
-    
+    /* If the last character is an '\0' */
+    if (lastCharacter == '\0')
+    {
+        /* Skip it of the file save */
+        dynBufSize--;
+    }
+
+    /* Save the Dynamic Buffer with or without its last character */
+    if (miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     return mcsSUCCESS;
 }
 

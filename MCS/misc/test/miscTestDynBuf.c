@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestDynBuf.c,v 1.19 2005-02-22 11:11:38 lafrasse Exp $"
+ * "@(#) $Id: miscTestDynBuf.c,v 1.20 2005-12-02 13:04:32 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/02/22 11:11:38  lafrasse
+ * Added miscDynBufGetNextCommentLine(), miscDynBufAppendLine() and miscDynBufAppendComentLine()
+ *
  * Revision 1.18  2005/02/16 14:40:30  gzins
  * Updated after miscDynBufGetNextLine() API change.
  *
@@ -15,30 +18,30 @@
  * Revision 1.16  2005/02/15 09:44:37  gzins
  * Added CVS log as file modification history
  *
- * lafrasse  23-Jun-2004  Created
- * lafrasse  09-Jul-2004  Passed some polish
- * lafrasse  20-Jul-2004  Removed all '\0' from char arrays
- * lafrasse  23-Jul-2004  Added error management to
- *                        miscDynBufGetStoredBytesNumber and
- *                        miscDynBufGetAllocatedBytesNumber, plus
- *                        miscDynBufGetBytesFromTo parameter refinments
- * lafrasse  02-Aug-2004  Added miscTesDynStr code, due to null-terminated
- *                        string specific functions move from miscDynStr.h to
- *                        miscDynBuf.h
- * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
- * lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer(),
- *                        miscDynBufGetCommentPattern(),
- *                        miscDynBufSetCommentPattern() and miscDynBufLoadFile()
- *                        functions test
  * gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
  *                        miscDynBufGetNbStoredBytes and
  *                        miscDynBufGetAllocatedBytesNumber to
  *                        miscDynBufGetNbAllocatedBytes
+ * lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer(),
+ *                        miscDynBufGetCommentPattern(),
+ *                        miscDynBufSetCommentPattern() and miscDynBufLoadFile()
+ *                        functions test
+ * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
+ * lafrasse  02-Aug-2004  Added miscTesDynStr code, due to null-terminated
+ *                        string specific functions move from miscDynStr.h to
+ *                        miscDynBuf.h
+ * lafrasse  23-Jul-2004  Added error management to
+ *                        miscDynBufGetStoredBytesNumber and
+ *                        miscDynBufGetAllocatedBytesNumber, plus
+ *                        miscDynBufGetBytesFromTo parameter refinments
+ * lafrasse  20-Jul-2004  Removed all '\0' from char arrays
+ * lafrasse  09-Jul-2004  Passed some polish
  * lafrasse  23-Jun-2004  Added miscDynBufSaveInFile() test
+ * lafrasse  23-Jun-2004  Created
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.19 2005-02-22 11:11:38 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.20 2005-12-02 13:04:32 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -931,6 +934,27 @@ int main (int argc, char *argv[])
 
 
 
+    /* miscDynBufSavePartInFile */
+    printf("---------------------------------------------------------------\n");
+    bytes = "../tmp/0.txt";
+    printf("miscDynBufSavePartInFile(%d, %s) ", 0, bytes);
+    executionStatusCode = miscDynBufSavePartInFile(&dynBuf, 0, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    bytes = "../tmp/10.txt";
+    printf("miscDynBufSavePartInFile(%d, %s) ", 10, bytes);
+    executionStatusCode = miscDynBufSavePartInFile(&dynBuf, 10, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    printf("\n");
+
+
+    /*
+     * Add an '\0' at the end of the buffer in order to test
+     * miscDynBufSaveInASCIIFile() against miscDynBufSaveInFile().
+     */
+    miscDynBufAppendString(&dynBuf, "\n");
+
     /* miscDynBufSaveInFile */
     printf("---------------------------------------------------------------\n");
     bytes = "../tmp/";
@@ -941,6 +965,22 @@ int main (int argc, char *argv[])
     bytes = "../tmp/test.txt";
     printf("miscDynBufSaveInFile(%s) ", bytes);
     executionStatusCode = miscDynBufSaveInFile(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    printf("\n");
+
+
+
+    /* miscDynBufSaveInASCIIFile */
+    printf("---------------------------------------------------------------\n");
+    bytes = "../tmp/";
+    printf("miscDynBufSaveInASCIIFile(%s) ", bytes);
+    executionStatusCode = miscDynBufSaveInASCIIFile(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    bytes = "../tmp/testASCII.txt";
+    printf("miscDynBufSaveInASCIIFile(%s) ", bytes);
+    executionStatusCode = miscDynBufSaveInASCIIFile(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
     displayDynBuf(&dynBuf);
     printf("\n");

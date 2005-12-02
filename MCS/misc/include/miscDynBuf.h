@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscDynBuf.h,v 1.22 2005-05-26 13:03:44 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.h,v 1.23 2005-12-02 13:04:32 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/05/26 13:03:44  lafrasse
+ * Code review : added const attribute to necessary parameters, and change doxygen attributes from '\' to '@'
+ *
  * Revision 1.21  2005/05/17 15:34:41  lafrasse
  * Re-ordered functions
  *
@@ -195,7 +198,14 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
                                              const char        *fileName,
                                              const char        *commentPattern);
 
+mcsCOMPL_STAT miscDynBufSavePartInFile      (const miscDYN_BUF *dynBuf,
+                                             const mcsUINT32   length,
+                                             const char        *fileName);
+
 mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
+                                             const char        *fileName);
+
+mcsCOMPL_STAT miscDynBufSaveInASCIIFile     (const miscDYN_BUF *dynBuf,
                                              const char        *fileName);
 
 mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
