@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.1 2005-11-30 15:24:37 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.2 2005-12-02 17:43:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/30 15:24:37  lafrasse
+ * Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.1 2005-11-30 15:24:37 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.2 2005-12-02 17:43:42 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -70,10 +73,10 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
     miscoDYN_BUF buffer;
 
     // Add VOTable standard header
-    buffer.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    buffer.AppendLine("<?xml version=\"1.0\"?>");
     buffer.AppendLine(" <VOTABLE version=\"1.1\"");
     buffer.AppendLine("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-    buffer.AppendLine("          xsi:noNamespaceSchemaLocation=\"http://www.ivoa.net/xml/VOTable/VOTable/v1.1\">");
+    buffer.AppendLine("          xsi:noNamespaceSchemaLocation=\"http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd\">");
 
     // Add SCALIB specific informations
     buffer.AppendLine(" <DESCRIPTION>");
@@ -127,7 +130,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
 /*
         // Add field ref
         buffer.AppendString(" ref=\"");
-        //buffer.AppendString(starProperty->XXX);
+        //buffer.AppendString(starProperty->GetRef());
         buffer.AppendString("\"");
 */
         // Add field datatype
@@ -147,22 +150,12 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
                 break;
         }
         buffer.AppendString("\"");
-/*
-        // Add field width
-        buffer.AppendString(" width=\"");
-        //buffer.AppendString(starProperty->XXX);
-        buffer.AppendString("\"");
-
-        // Add field precision
-        buffer.AppendString(" precision=\"");
-        //buffer.AppendString(starProperty->XXX);
-        buffer.AppendString("\"");
 
         // Add field unit
         buffer.AppendString(" unit=\"");
-        //buffer.AppendString(starProperty->XXX);
+        buffer.AppendString(starProperty->GetUnit());
         buffer.AppendString("\"");
-*/
+
         // Add standard row footer
         buffer.AppendString("/>");
 
@@ -178,6 +171,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
     {
         // Add standard row header
         buffer.AppendLine("     <TR>");
+        buffer.AppendLine("      ");
 
         mcsLOGICAL init = mcsTRUE;
         while((starProperty = star->GetNextProperty(init)) != NULL)
@@ -185,7 +179,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
             init = mcsFALSE;
 
             // Add standard column header
-            buffer.AppendLine("      <TD>");
+            buffer.AppendString("<TD>");
 
             buffer.AppendString(starProperty->GetValue());
 
@@ -209,8 +203,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
     // Add VOTable standard footer
     buffer.AppendLine("</VOTABLE>");
 
-    // Try to save the generated VOTable in the specified file
-    return(buffer.SaveInFile(fileName));
+    // Try to save the generated VOTable in the specified file as ASCII
+    return(buffer.SaveInASCIIFile(fileName));
 }
 
 
