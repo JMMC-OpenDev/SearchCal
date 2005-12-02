@@ -15,13 +15,13 @@
  extension-element-prefixes="exslt math date func set str dyn saxon xalanredirect xt libxslt test"
  exclude-result-prefixes="math str">
 <xsl:output omit-xml-declaration="yes" indent="no"/>
-<xsl:param name="inputFile">-</xsl:param>
+<xsl:param name="hostname"></xsl:param>
 <xsl:template match="/">
   <xsl:call-template name="t1"/>
   <xsl:call-template name="t2"/>
 </xsl:template>
 <xsl:template name="t1">
-  <xsl:for-each select="//env[parent::host/@name='mariotti']">
+    <xsl:for-each select="//env[parent::host/@name=$hostname]">
     <xsl:value-of select="@name"/>
     <xsl:value-of select="' '"/>
     <xsl:value-of select="parent::host/@name"/>
@@ -31,7 +31,7 @@
   </xsl:for-each>
 </xsl:template>
 <xsl:template name="t2">
-  <xsl:for-each select="//env[parent::host/@name='mariotti']">
+    <xsl:for-each select="//env[parent::host/@name=$hostname]">
     <xsl:value-of select="@name"/>
     <xsl:value-of select="' localhost '"/>
     <xsl:value-of select="."/>

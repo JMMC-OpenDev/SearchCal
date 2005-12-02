@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.1 2005-12-02 12:17:28 mella Exp $"
+# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.2 2005-12-02 12:54:09 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/12/02 12:17:28  mella
+# First revision
+#
 #*******************************************************************************
 
 #/**
@@ -64,6 +67,6 @@ echo "#" >> $MCSENVLIST
 echo "#" >> $MCSENVLIST
 echo "#" >> $MCSENVLIST
 
-xsltproc $XSLTFILE $1 >> $MCSENVLIST
+xsltproc --stringparam hostname "$GIVENHOSTNAME" $XSLTFILE "$1" >> $MCSENVLIST
 
 #___oOo___
