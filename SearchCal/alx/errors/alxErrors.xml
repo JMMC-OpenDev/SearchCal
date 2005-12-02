@@ -60,4 +60,9 @@
       <errSeverity>FATAL</errSeverity>
       <errFormat><![CDATA[The given '%s' parameter is NULL.]]></errFormat>
    </error>
+   <error id="18">
+      <errName>DIFFJK_NOT_IN_TABLE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[J-K not found in color table]]></errFormat>
+   </error>
 </errorList>
