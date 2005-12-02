@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsInstall.sh,v 1.7 2005-09-15 07:18:08 swmgr Exp $"
+# "@(#) $Id: sclinsInstall.sh,v 1.8 2005-12-02 13:54:25 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/09/15 07:18:08  swmgr
+# Display information of installation directory
+#
 # Revision 1.6  2005/09/14 22:04:06  gzins
 # Added -c and -t options + improved checks
 #
@@ -100,6 +103,7 @@ then
     exit 1
 fi
 
+
 # Check that MCSROOT is defined
 if [ "$MCSROOT" == "" ]
 then
@@ -107,16 +111,6 @@ then
     echo -e ""
     exit 1
 fi
-
-# Check that MCS configuration file is installed
-if [ ! -f $MCSROOT/etc/mcs.sh ]
-then
-    echo -e "\nWARNING : MCS configuration files not installed!!"
-    echo -e "Install mcscfg module first, and restart MCS installation!!"
-    echo -e ""
-    exit 1
-fi
-
 
 # Get intallation directory
 if [ "$INTROOT" != "" ]
