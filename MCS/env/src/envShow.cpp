@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envShow.cpp,v 1.6 2005-02-28 14:25:00 lafrasse Exp $"
+ * "@(#) $Id: envShow.cpp,v 1.7 2005-12-02 13:44:05 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/28 14:25:00  lafrasse
+ * Reversed changelog order
+ *
  * Revision 1.5  2005/02/13 17:26:51  gzins
  * Minor changes in documentation
  *
@@ -28,10 +31,10 @@
  *
  * \usedfiles
  * \filename mcsEnvList :  MCS environment definition file, located in
- * $MCSROOT/etc
+ * $MCSTOP/etc
  */
 
-static char *rcsId="@(#) $Id: envShow.cpp,v 1.6 2005-02-28 14:25:00 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: envShow.cpp,v 1.7 2005-12-02 13:44:05 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 

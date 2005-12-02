@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.h,v 1.5 2005-02-28 14:25:00 lafrasse Exp $"
+ * "@(#) $Id: envLIST.h,v 1.6 2005-12-02 13:44:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/28 14:25:00  lafrasse
+ * Reversed changelog order
+ *
  * Revision 1.4  2005/02/13 17:26:51  gzins
  * Minor changes in documentation
  *
@@ -45,7 +48,7 @@
  * \usedfiles
  * In MCS all the environments are listed in the mcsEnvList file.
  * \filename mcsEnvList :  MCS environment list definition file, located in
- * $MCSROOT/ect/mcsEnvList
+ * $MCSTOP/etc/mcsEnvList
  *
  * \n
  * \env
