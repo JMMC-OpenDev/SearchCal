@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarList.cpp,v 1.6 2005-11-16 10:45:14 scetre Exp $"
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.7 2005-12-02 17:44:00 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/16 10:45:14  scetre
+ * Updated vobs test
+ *
  * Revision 1.5  2005/11/11 16:39:54  gzins
  * Updated to test Sort() method
  *
@@ -23,7 +26,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.6 2005-11-16 10:45:14 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.7 2005-12-02 17:44:00 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -78,6 +81,12 @@ int main(int argc, char *argv[])
     logTest("Size of the list = %d\n", starList.Size());
     logTest("Save the list into starList.txt.\n");
     if (starList.Save("starList.txt", mcsTRUE) == mcsFAILURE)
+    {
+        errCloseStack();
+        exit(EXIT_FAILURE);
+    }
+    logTest("Save the list as VOTable into starList.xml.\n");
+    if (starList.SaveToVOTable("starList.xml") == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
