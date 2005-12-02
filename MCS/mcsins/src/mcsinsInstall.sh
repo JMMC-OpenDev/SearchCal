@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.10 2005-09-15 07:07:08 swmgr Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.11 2005-12-02 09:51:56 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2005/09/15 07:07:08  swmgr
+# Add revision to given informations
+#
 # Revision 1.9  2005/09/14 22:05:13  gzins
 # Improved checks
 #
@@ -109,16 +112,24 @@ then
     exit 1
 fi
 
-# Check that MCSROOT is defined
-if [ "$MCSROOT" == "" ]
+# Check that MCSTOP is defined
+if [ "$MCSTOP" == "" ]
 then
-    echo -e "\nWARNING : MCSROOT is not defined!!"
+    echo -e "\nWARNING : MCSTOP must be not defined!!"
+    echo -e ""
+    exit 1
+fi
+
+# Check that MCSDATA is defined
+if [ "$MCSDATA" == "" ]
+then
+    echo -e "\nWARNING : MCSDATA must be not defined!!"
     echo -e ""
     exit 1
 fi
 
 # Check that MCS configuration file is installed
-if [ ! -f $MCSROOT/etc/mcs.sh ]
+if [ ! -f $MCSTOP/etc/mcs.sh ]
 then
     echo -e "\nWARNING : MCS configuration files not installed!!"
     echo -e "Install mcscfg module first, and restart MCS installation!!"
@@ -126,6 +137,13 @@ then
     exit 1
 fi
 
+# Determine the MCS release
+if [ "$tag" != "" ]
+then
+    export MCSRELEASE=$tag
+else
+    export MCSRELEASE=DEVELOPMENT
+fi
 
 # Get intallation directory
 if [ "$INTROOT" != "" ]
@@ -133,8 +151,11 @@ then
     insDirName="INTROOT"
     insDir=$INTROOT
 else
-    insDirName="MCSROOT"
-    insDir=$MCSROOT
+    insDirName="MCSTOP"
+    insDir=$MCSTOP/$MCSRELEASE
+    # Force MCSROOT
+    export MCSROOT=$insDir
+
 fi
 
 #
@@ -146,20 +167,13 @@ then
     exit 1
 fi
 
-# Get the current directory
-dir=$PWD
-
-# Get intallation directory
-if [ "$INTROOT" != "" ]
-then
-    insDir=$INTROOT
-else
-    insDir=$MCSROOT
-fi
+# Create directory from where MCS will be installed 
+fromdir=$PWD/$MCSRELEASE
+mkdir -p $fromdir
 
 # Display informations
 echo -e "\n-> All the MCS modules will be installed"
-echo -e "        from     : $dir"
+echo -e "        from     : $fromdir"
 echo -e "        into     : $insDir"
 if [ -z "$tag" ]
 then
@@ -172,12 +186,12 @@ fi
 if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
-    echo -e "    from the current directory. Use '-u' option to only "
-    echo -e "    update modules and '-c' to only compile modules.\n"
+    echo -e "    from the $MCSRELEASE directory. Use '-u' option to only "
+    echo -e "    update modules or '-c' to only compile modules.\n"
 elif [ "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be updated in the"
-    echo -e "    current directory. Use '-c' to only compile modules.\n"
+    echo -e "    $MCSRELEASE directory. Use '-c' to only compile modules.\n"
 fi
 echo -e "    Press enter to continue or ^C to abort "
 read choice
@@ -186,8 +200,8 @@ read choice
 mcsModules="mkf ctoo mcs log err misc timlog modc modcpp fnd misco env cmd msg evh gwt"
 
 # Log file
-mkdir -p INSTALL
-logfile="$dir/INSTALL/mcsinsInstall.log"
+mkdir -p $fromdir/INSTALL
+logfile="$fromdir/INSTALL/mcsinsInstall.log"
 rm -f $logfile
 
 # If modules have to be retrieved from repository; check repository
@@ -204,7 +218,7 @@ fi
 if [ "$retrieve" == "yes" ]
 then
     # Delete modules first
-    cd $dir
+    cd $fromdir
     if [ "$update" == "no" ]
     then
         echo -e "Deleting modules..."
@@ -216,7 +230,7 @@ then
     # this tag, and then to retrieve again to create empty directories which are
     # not created by cvs command when '-r' option is used.
     echo -e "Retrieving modules from repository..."
-    cd $dir
+    cd $fromdir
     if [ "$tag" != "" ]
     then
         cvs co -r $tag $mcsModules > $logfile 2>&1
@@ -241,7 +255,7 @@ fi
 
 # Check all modules are there
 for mod in $mcsModules; do
-    cd $dir
+    cd $fromdir
     if [ ! -d $mod ]
     then
         echo -e "\nERROR: '$mod' must be retrieved from repository first ...\n";
@@ -252,7 +266,7 @@ done
 # Compile and install them
 echo -e "Building modules..."
 for mod in $mcsModules; do
-    cd $dir
+    cd $fromdir
     echo -e "    $mod..."
     cd $mod/src 
     if [ $? != 0 ]
