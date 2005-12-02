@@ -1,4 +1,23 @@
 <?xml version="1.0"?>
+
+<!--
+********************************************************************************
+JMMC project
+
+"@(#) $Id: mcscfgGenerateEnvList.xsl,v 1.3 2005-12-02 12:57:53 mella Exp $"
+
+History
+~~~~~~~
+$Log: not supported by cvs2svn $
+
+********************************************************************************
+NAME
+mcscfgGenerateEnvList.xsl
+
+DESCRIPTION
+generate on simple envlist file from a given xml decription
+-->
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
  xmlns:exslt="http://exslt.org/common"
  xmlns:math="http://exslt.org/math"
