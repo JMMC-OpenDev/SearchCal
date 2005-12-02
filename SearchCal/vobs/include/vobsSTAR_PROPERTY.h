@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.11 2005-11-16 10:47:54 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.12 2005-12-02 17:42:26 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/11/16 10:47:54  scetre
+* Updated documentation
+*
 * Revision 1.10  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -80,9 +83,15 @@ class vobsSTAR_PROPERTY
 public:
     // Class constructors
     vobsSTAR_PROPERTY(); 
-    vobsSTAR_PROPERTY(char *id, char *name, 
-                      vobsPROPERTY_TYPE type, char *format=NULL);
+
+    vobsSTAR_PROPERTY(const char*        id,
+                      const char*        name,
+                      vobsPROPERTY_TYPE  type,
+                      const char*        unit,
+                      const char*        format=NULL);
+
     vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY&);
+
     vobsSTAR_PROPERTY& operator=(const vobsSTAR_PROPERTY&);
 
     // Class destructor
@@ -121,12 +130,16 @@ public:
     // Get property type 
     virtual vobsPROPERTY_TYPE GetType(void) const;
     
+    // Get property unit
+    virtual const char *GetUnit(void) const;
+
 protected:
     
 private:
     string               _id;              // Identifier
     string               _name;            // Name
     vobsPROPERTY_TYPE    _type;            // Type of the value
+    string               _unit;            // Unit of the value
     string               _format;          // Format to print value 
     mcsSTRING64          _value;           // Value
     vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.16 2005-12-02 17:42:26 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.14  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -52,7 +55,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.15 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.16 2005-12-02 17:42:26 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -94,16 +97,25 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
  * @param type   property type
  * @param format format used to set property
  */
-vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name, 
-                                     vobsPROPERTY_TYPE type, char *format)
+vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
+                                     const char*              name, 
+                                     const vobsPROPERTY_TYPE  type,
+                                     const char*              unit,
+                                     const char*              format)
 {
     logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(...)"); 
+
     _id     = id;
+
     _name   = name;
+
     _type   = type;
+
+    _unit   = unit;
+
     if (format != NULL)
     {
-    _format = format;
+        _format = format;
     }
     else
     {
@@ -112,13 +124,17 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name,
             case vobsSTRING_PROPERTY:
                 _format = "%s";
                 break;
+
             case vobsFLOAT_PROPERTY:
                 _format = "%f";
                 break;
         }
     }
+
     _confidenceIndex = vobsCONFIDENCE_LOW;
+
     _origin = "-";
+
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
 }
 
@@ -128,12 +144,21 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(char *id, char *name,
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
     logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(property)"); 
+
     _id     = property._id;
+
     _name   = property._name;
+
     _type   = property._type;
+
+    _unit   = property._unit;
+
     _format = property._format;
+
     _confidenceIndex = property._confidenceIndex;
+
     _origin = property._origin;
+
     strcpy(_value, property._value);
 }
 
@@ -143,13 +168,23 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& property)
 {
     logTrace("vobsSTAR_PROPERTY::operator=()"); 
+
     _id     = property._id;
+
     _name   = property._name;
+
     _type   = property._type;
+
+    _unit   = property._unit;
+
     _format = property._format;
+
     _confidenceIndex = property._confidenceIndex;
+
     _origin = property._origin;
+
     strcpy(_value, property._value);
+
     return *this;
 }
 
@@ -159,6 +194,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
 vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 {
 }
+
 
 /*
  * Public methods
@@ -208,13 +244,11 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                 return (mcsFAILURE);
             }
         }
-        // Else
         else
         {
             // Just copy given value
             strcpy(_value, value);
         }
-        // End if
 
         _confidenceIndex = confidenceIndex;
         _origin = origin;
@@ -394,7 +428,7 @@ const char *vobsSTAR_PROPERTY::GetId(void) const
 {
     logTrace("vobsSTAR_PROPERTY::GetId()");
 
-    // Return property value
+    // Return property id
     return _id.c_str();
 }
 
@@ -407,7 +441,7 @@ const char *vobsSTAR_PROPERTY::GetName(void) const
 {
     logTrace("vobsSTAR_PROPERTY::GetName()");
 
-    // Return property value
+    // Return property name
     return _name.c_str();
 }
 
@@ -420,8 +454,23 @@ vobsPROPERTY_TYPE vobsSTAR_PROPERTY::GetType(void) const
 {
     logTrace("vobsSTAR_PROPERTY::GetType()");
 
-    // Return property value
+    // Return property type
     return _type;
+}
+
+/**
+ * Get property unit.
+ *
+ * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
+ *
+ * @return property unit
+ */
+const char *vobsSTAR_PROPERTY::GetUnit(void) const
+{
+    logTrace("vobsSTAR_PROPERTY::GetUnit()");
+
+    // Return property unit
+    return _unit.c_str();
 }
 
 /*

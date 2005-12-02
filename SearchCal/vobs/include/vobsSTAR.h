@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.40 2005-12-02 12:02:23 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.41 2005-12-02 17:43:30 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.40  2005/12/02 12:02:23  scetre
+* Added J H K cous
+*
 * Revision 1.39  2005/11/24 08:13:50  scetre
 * Changed mother class of filter from vobsFILTER to vobsBASE_FILTER
 *
@@ -261,7 +264,8 @@ public:
 protected:
     // Method to add a property. Should be only called by constructors.
     mcsCOMPL_STAT AddProperty(char *id, char *name,
-                              vobsPROPERTY_TYPE type, char *format=NULL);
+                              vobsPROPERTY_TYPE type, char *unit,
+                              char *format=NULL);
     map<string, vobsSTAR_PROPERTY> _propertyList;
     map<string, vobsSTAR_PROPERTY>::iterator _propertyListIterator;
     map<int, string> _propertyOrder;
