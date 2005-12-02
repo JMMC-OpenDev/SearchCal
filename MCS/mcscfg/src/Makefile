@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.11 2005-03-03 10:07:26 gildas Exp $"
+# "@(#) $Id: Makefile,v 1.12 2005-12-02 10:25:36 gzins Exp $"
 #
 # Makefile of mcscfg module, which contains configuration files for MCS
 # environment.
@@ -9,6 +9,9 @@
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2005/03/03 10:07:26  gildas
+# Fixed bug in install target
+#
 # Revision 1.10  2005/02/28 16:09:12  lafrasse
 # Added 'mcsEnvFile'
 #
@@ -46,20 +49,26 @@ man   :
 install :
 	@if [ "$(INTROOT)" = "" ]; \
 	then \
-		echo "Installing configuration files: ";\
-		if [ ! -d $(MCSROOT)/etc ]; \
+		echo "Checking MCS environment: ";\
+		if [ "$(MCSTOP)" = "" ]; \
 		then \
-			mkdir $(MCSROOT)/etc; \
+			echo "MCSTOP is not set properly; exit"; \
+			exit 1; \
+		fi; \
+		echo "Installing configuration files: ";\
+		if [ ! -d $(MCSTOP)/etc ]; \
+		then \
+			mkdir $(MCSTOP)/etc; \
 		fi; \
 		$(foreach file, $(CFG_FILES), echo "        `basename $(file)`" ;\
 			chmod 755 $(file) ; \
-			cp -p -f $(file) $(MCSROOT)/etc;) \
+			cp -p -f $(file) $(MCSTOP)/etc;) \
 		$(foreach file, $(OPT_CFG_FILES), \
-			if [ ! -f $(MCSROOT)/etc/`basename $(file)` ]; \
+			if [ ! -f $(MCSTOP)/etc/`basename $(file)` ]; \
 			then \
 				echo "        `basename $(file)`" ; \
 				chmod 755 $(file) ; \
-				cp -p -f $(file) $(MCSROOT)/etc; \
+				cp -p -f $(file) $(MCSTOP)/etc; \
 			fi;) \
 	fi
 	@echo " . . . installation done"
