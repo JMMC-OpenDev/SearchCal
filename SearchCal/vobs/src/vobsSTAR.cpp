@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.52 2005-11-24 15:13:01 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.53 2005-12-02 12:02:46 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.52  2005/11/24 15:13:01  scetre
+* Added CODE_MISC Kflg
+*
 * Revision 1.51  2005/11/24 13:17:23  scetre
 * Added new properties for faint research
 *
@@ -132,7 +135,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.52 2005-11-24 15:13:01 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.53 2005-12-02 12:02:46 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -1006,8 +1009,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "%.3f");
+    AddProperty(vobsSTAR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "%.3f");

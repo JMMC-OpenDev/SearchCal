@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.39 2005-11-24 08:13:50 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.40 2005-12-02 12:02:23 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.39  2005/11/24 08:13:50  scetre
+* Changed mother class of filter from vobsFILTER to vobsBASE_FILTER
+*
 * Revision 1.38  2005/11/23 08:32:48  scetre
 * Added properties for faint K
 *
@@ -158,8 +161,11 @@
 #define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
 #define vobsSTAR_PHOT_PHG_I                     "PHOT_PHG_I"
 #define vobsSTAR_PHOT_JHN_J                     "PHOT_JHN_J"
+#define vobsSTAR_PHOT_COUS_J                    "PHOT_COUS_J"
 #define vobsSTAR_PHOT_JHN_H                     "PHOT_JHN_H"
+#define vobsSTAR_PHOT_COUS_H                    "PHOT_COUS_H"
 #define vobsSTAR_PHOT_JHN_K                     "PHOT_JHN_K"
+#define vobsSTAR_PHOT_COUS_K                    "PHOT_COUS_K"
 #define vobsSTAR_PHOT_JHN_L                     "PHOT_JHN_L"
 #define vobsSTAR_PHOT_JHN_M                     "PHOT_JHN_M"
 #define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
