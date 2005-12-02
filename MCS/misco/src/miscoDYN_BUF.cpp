@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.cpp,v 1.8 2005-05-26 13:48:45 lafrasse Exp $"
+ * "@(#) $Id: miscoDYN_BUF.cpp,v 1.9 2005-12-02 13:10:36 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/05/26 13:48:45  lafrasse
+ * Code review : added const attribute to parameters that should have it, replaced the Display() method by operator<<(), and changed doxygen tag from '\' to '@'
+ *
  * Revision 1.7  2005/04/08 06:54:32  gluck
  * Code review: minor changes
  *
@@ -32,7 +35,7 @@
  * byte-based buffers.
  */
 
-static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.8 2005-05-26 13:48:45 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscoDYN_BUF.cpp,v 1.9 2005-12-02 13:10:36 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -249,6 +252,17 @@ mcsCOMPL_STAT miscoDYN_BUF::LoadFile(const char  *fileName,
 }
 
 /**
+ * @sa miscDynBufSavePartInFile() documentation in the 'misc' module
+ */
+mcsCOMPL_STAT miscoDYN_BUF::SavePartInFile(const mcsUINT32   length,
+                                           const char       *fileName)
+{
+    logExtDbg("miscoDYN_BUF::SavePartInFile()");
+
+    return miscDynBufSavePartInFile(&_dynBuf, length, fileName);
+}
+
+/**
  * @sa miscDynBufSaveInFile() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::SaveInFile(const char *fileName)
@@ -256,6 +270,16 @@ mcsCOMPL_STAT miscoDYN_BUF::SaveInFile(const char *fileName)
     logExtDbg("miscoDYN_BUF::SaveInFile()");
 
     return miscDynBufSaveInFile(&_dynBuf, fileName);
+}
+
+/**
+ * @sa miscDynBufSaveInASCIIFile() documentation in the 'misc' module
+ */
+mcsCOMPL_STAT miscoDYN_BUF::SaveInASCIIFile(const char *fileName)
+{
+    logExtDbg("miscoDYN_BUF::SaveInASCIIFile()");
+
+    return miscDynBufSaveInASCIIFile(&_dynBuf, fileName);
 }
 
 /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoTestDynBuf.cpp,v 1.4 2005-05-26 13:48:45 lafrasse Exp $"
+ * "@(#) $Id: miscoTestDynBuf.cpp,v 1.5 2005-12-02 13:10:36 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/05/26 13:48:45  lafrasse
+ * Code review : added const attribute to parameters that should have it, replaced the Display() method by operator<<(), and changed doxygen tag from '\' to '@'
+ *
  * Revision 1.3  2005/02/22 15:10:53  lafrasse
  * Removed documentation duplication between 'misc' and 'misco', changed miscoDYN_BUF::GetNextLine() API, added miscoDYN_BUF::GetNextCommentLine(), miscoDYN_BUF::AppendLine() and miscoDYN_BUF::AppendCommentLine()
  *
@@ -25,7 +28,7 @@
  * @<miscOTestDynBuf@>
  */
 
-static char *rcsId="@(#) $Id: miscoTestDynBuf.cpp,v 1.4 2005-05-26 13:48:45 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: miscoTestDynBuf.cpp,v 1.5 2005-12-02 13:10:36 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -890,6 +893,21 @@ int main(int argc, char *argv[])
 
 
 
+    // buffer.SavePartInFile
+    cout << "---------------------------------------------------------" << endl;
+    bytes = "../tmp/0.txt";
+    cout << "buffer.SavePartInFile(0, '" << bytes << "') ";
+    executionStatusCode = buffer.SavePartInFile(0, bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+    bytes = "../tmp/10.txt";
+    cout << "buffer.SavePartInFile(10, '" << bytes << "') ";
+    executionStatusCode = buffer.SavePartInFile(10, bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+
+
+
     // buffer.SaveInFile
     cout << "---------------------------------------------------------" << endl;
     bytes = "../tmp/";
@@ -900,6 +918,21 @@ int main(int argc, char *argv[])
     bytes = "../tmp/test.txt";
     cout << "buffer.SaveInFile('" << bytes << "') ";
     executionStatusCode = buffer.SaveInFile(bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+
+
+
+    // buffer.SaveInASCIIFile
+    cout << "---------------------------------------------------------" << endl;
+    bytes = "../tmp/";
+    cout << "buffer.SaveInASCIIFile('" << bytes << "') ";
+    executionStatusCode = buffer.SaveInASCIIFile(bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+    bytes = "../tmp/testASCII.txt";
+    cout << "buffer.SaveInASCIIFile('" << bytes << "') ";
+    executionStatusCode = buffer.SaveInASCIIFile(bytes);
     displayExecStatus(executionStatusCode);
     cout << buffer << endl;
 

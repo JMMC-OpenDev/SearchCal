@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.11 2005-05-26 13:48:45 lafrasse Exp $"
+ * "@(#) $Id: miscoDYN_BUF.h,v 1.12 2005-12-02 13:10:36 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/05/26 13:48:45  lafrasse
+ * Code review : added const attribute to parameters that should have it, replaced the Display() method by operator<<(), and changed doxygen tag from '\' to '@'
+ *
  * Revision 1.10  2005/04/08 06:54:32  gluck
  * Code review: minor changes
  *
@@ -115,7 +118,12 @@ public:
     mcsCOMPL_STAT LoadFile           (const char       *fileName,
                                       const char       *commentPattern=NULL);
 
+    mcsCOMPL_STAT SavePartInFile     (const mcsUINT32   length,
+                                      const char       *fileName);
+
     mcsCOMPL_STAT SaveInFile         (const char       *fileName);
+
+    mcsCOMPL_STAT SaveInASCIIFile    (const char       *fileName);
 
     mcsCOMPL_STAT ReplaceByteAt      (const char       byte,
                                       const mcsUINT32  position);
