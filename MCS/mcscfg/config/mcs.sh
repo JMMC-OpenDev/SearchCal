@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.8 2005-12-02 09:59:36 gzins Exp $
+# Version: $Id: mcs.sh,v 1.9 2005-12-02 14:25:51 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/12/02 09:59:36  gzins
+# Updated for new MCS directory structure; added MCSTOP and MCSRELEASE
+#
 # Revision 1.7  2005/11/30 13:44:26  gzins
 # Updated ctooGetTemplateForCppClass function according to new ctooGetTemplateForCoding interface
 #
@@ -147,12 +150,13 @@ ctooGetTemplateForCppClass ()
 }
 # Function to create .h and .cpp files for a C++ class in the right
 # directories
-mcscfgShow()
+mcsShow()
 {
     echo "MCSTOP     = $MCSTOP"
     echo "MCSDATA    = $MCSDATA"
     echo "MCSRELEASE = $MCSRELEASE"
     echo "MCSROOT    = $MCSROOT"
     echo "MCSENV     = $MCSENV"
+    echo "INTROOT    = $INTROOT"
 }
 
