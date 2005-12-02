@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.3 2005-02-15 08:40:15 gzins Exp $"
+# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.4 2005-12-02 08:28:06 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/02/15 08:40:15  gzins
+# Added CVS log as file modification history
+#
 # gzins     10-09-2004  Created
 # gzins     10-11-2004  Added creation of MCSDATA in MCSROOT
 #
@@ -76,14 +79,12 @@ BASE_DIR_LIST="config      \
                man/man8    \
                templates   \
                "
-# Additional directories for MCSROOT
-MCSROOT_ADD_DIR_LIST="etc"
 
 # Additional directories for MCSDATA
-MCSDATA_ADD_DIR_LIST="data        \
-                      data/log    \
-                      data/tmp    \
-                      "
+MCSDATA_DIR_LIST="data        \
+                  data/log    \
+                  data/tmp    \
+                 "
 
 # If no root directory is given
 if [ $# = 0 ]
@@ -154,26 +155,35 @@ then
     done
 # MCSROOT case
 else
-    # Create MCSROOT additional directories
-    for dir in $MCSROOT_ADD_DIR_LIST
-    do
-        if [ ! -d $ROOT_NAME/$dir ]
+    # Test existence of a MCSDATA directory
+    if [ ! -d $MCSDATA ]
+    then
+        echo -e "\nCheck $MCSDATA directory structure"
+        # there is no MCSDATA directory
+        # Create MCSDATA directory
+        if mkdir $MCSDATA
         then
-            mkdir $ROOT_NAME/$dir
-            echo "   CREATED >>>     |---$dir "
+            # Creation succeeds
+            echo -e "   CREATED >>> |---$MCSDATA "
+        else
+            # Creation failed 
+            echo -e "\n ERROR: I cannot create the MCSDATA directory"
+            echo -e "          >>$MCSDATA<<"
+            echo "             Please fix the problem and try again."
+            echo ""
+            exit 1
         fi
-    done
-
+    fi
     # Create MCSDATA additional directories
-    for dir in $MCSDATA_ADD_DIR_LIST
+    for dir in $MCSDATA_DIR_LIST
     do
-        if [ ! -d $ROOT_NAME/$dir ]
+        if [ ! -d $MCSDATA/$dir ]
         then
-            mkdir $ROOT_NAME/$dir
+            mkdir $MCSDATA/$dir
             echo "   CREATED >>>     |---$dir "
         fi
         # directories must be writable by all
-        chmod 777 $ROOT_NAME/$dir
+        chmod 777 $MCSDATA/$dir
     done
 fi
 
