@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.41 2005-12-02 17:43:30 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.42 2005-12-05 15:58:39 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.41  2005/12/02 17:43:30  lafrasse
+* Added property unit handling
+*
 * Revision 1.40  2005/12/02 12:02:23  scetre
 * Added J H K cous
 *
@@ -127,6 +130,7 @@
 #define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"
 #define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
+#define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
 #define vobsSTAR_CODE_VARIAB_V1                 "CODE_VARIAB_V1"
 #define vobsSTAR_CODE_VARIAB_V2                 "CODE_VARIAB_V2"
