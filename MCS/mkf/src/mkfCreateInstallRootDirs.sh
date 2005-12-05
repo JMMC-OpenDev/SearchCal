@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.4 2005-12-02 08:28:06 gzins Exp $"
+# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.5 2005-12-05 14:32:45 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/12/02 08:28:06  gzins
+# Updated to create directories according to the new MCS directory structure
+#
 # Revision 1.3  2005/02/15 08:40:15  gzins
 # Added CVS log as file modification history
 #
@@ -81,9 +84,8 @@ BASE_DIR_LIST="config      \
                "
 
 # Additional directories for MCSDATA
-MCSDATA_DIR_LIST="data        \
-                  data/log    \
-                  data/tmp    \
+MCSDATA_DIR_LIST="log    \
+                  tmp    \
                  "
 
 # If no root directory is given
