@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.26 2005-11-24 13:16:43 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.27 2005-12-05 13:07:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2005/11/24 13:16:43  scetre
+* Added test on CODE_VARIB ucd and TYC1 for ID_ALTERNATIVE
+*
 * Revision 1.25  2005/11/23 08:36:12  scetre
 * Added test on ucd and name to retreive properties
 *
@@ -83,7 +86,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.26 2005-11-24 13:16:43 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.27 2005-12-05 13:07:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -661,6 +664,10 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
                  (strcmp(paramName, "e_UDdiam") == 0))
         {
             return vobsSTAR_UDDK_DIAM_ERROR;
+        }
+        else if ((strcmp(paramName, "e_Plx") == 0))
+        {
+            return vobsSTAR_POS_PARLX_TRIG_ERROR;
         }
     }
 

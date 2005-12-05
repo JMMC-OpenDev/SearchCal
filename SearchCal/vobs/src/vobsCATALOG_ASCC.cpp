@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.18 2005-11-23 17:30:20 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.19 2005-12-05 13:07:50 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/11/23 17:30:20  lafrasse
+* Added circular search box geometry support and normalized area size methods
+*
 * Revision 1.17  2005/11/23 08:34:31  scetre
 * Added property for faint K scenario
 *
@@ -66,7 +69,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.18 2005-11-23 17:30:20 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.19 2005-12-05 13:07:50 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -140,6 +143,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
     miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
+    miscDynBufAppendString(&_query, "&-out=e_Plx");
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
@@ -211,6 +215,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
     miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
+    miscDynBufAppendString(&_query, "&-out=e_Plx");
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
