@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.22 2005-11-29 08:22:23 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.23 2005-12-05 15:58:57 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2005/11/29 08:22:23  scetre
+* Minor changes
+*
 * Revision 1.21  2005/11/24 14:54:55  scetre
 * 2MASS can choose the research geometry
 *
@@ -77,7 +80,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.22 2005-11-29 08:22:23 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.23 2005-12-05 15:58:57 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -144,6 +147,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     logTrace("vobsCATALOG_MASS::GetAskingSpecificParameters()");
    
     // properties to retreive
+    miscDynBufAppendString(&_query, "&-out=2MASS");    
     miscDynBufAppendString(&_query, "&-out=Jmag");
     miscDynBufAppendString(&_query, "&-out=Hmag");
     miscDynBufAppendString(&_query, "&-out=Kmag");
@@ -221,6 +225,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
     miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
     miscDynBufAppendString(&_query, "&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out=2MASS");    
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
     miscDynBufAppendString(&_query, "&-out=*CODE_QUALITY");
