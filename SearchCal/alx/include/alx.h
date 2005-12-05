@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.16 2005-12-02 12:03:14 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.17 2005-12-05 16:00:22 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/12/02 12:03:14  scetre
+ * Added compute missing magnitude in faint
+ *
  * Revision 1.15  2005/11/30 10:47:59  scetre
  * Added computing diameter method for faint
  *
@@ -168,13 +171,15 @@ typedef struct
     alxDATA ik;
     alxDATA jk;
     alxDATA jh;
+    alxDATA mean;
     alxDATA bvErr;
     alxDATA vrErr;
     alxDATA vkErr;
     alxDATA ijErr;
     alxDATA ikErr;
-    alxDATA jkErr;
     alxDATA jhErr;
+    alxDATA jkErr;
+    alxDATA meanErr;
     alxCONFIDENCE_INDEX confidenceIdx;
     mcsLOGICAL areComputed;
 } alxDIAMETERS;

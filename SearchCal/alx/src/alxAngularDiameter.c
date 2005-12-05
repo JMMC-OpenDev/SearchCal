@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.18 2005-12-02 12:05:42 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.19 2005-12-05 16:00:22 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/12/02 12:05:42  scetre
+ * Added computation of diameter and missing magnitude in faint
+ *
  * Revision 1.17  2005/11/30 10:47:59  scetre
  * Added computing diameter method for faint
  *
@@ -75,7 +78,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.18 2005-12-02 12:05:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.19 2005-12-05 16:00:22 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -399,8 +402,6 @@ mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
      * the mean diameter
      * and the mean delta
      */
-    mcsFLOAT meanDiam;
-    mcsFLOAT meanDiamErr;
 
     /* Compute the polynomials P(I-J), P(I-K), P(J-K), P(J-H) */
     p_i_j =   polynomial->coeff[3][0]
@@ -442,17 +443,21 @@ mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
     diameters->jhErr.value = diameters->jh.value * 10.7/100.0;;
 
     /* Compute mean diameter and its associated error (10%) */
-    meanDiam = (  diameters->ij.value 
+    diameters->mean.value = (  diameters->ij.value 
                 + diameters->ik.value
                 + diameters->jk.value
                 + diameters->jh.value) / 4;
-    meanDiamErr = 0.1 * meanDiam;
+    diameters->meanErr.value = 0.1 * diameters->mean.value;
 
     /* Check whether the diameter is coherent or not */
-    if ((fabs(diameters->ij.value - meanDiam) > meanDiamErr) ||
-        (fabs(diameters->ik.value - meanDiam) > meanDiamErr) ||
-        (fabs(diameters->jk.value - meanDiam) > meanDiamErr) ||
-        (fabs(diameters->jh.value - meanDiam) > meanDiamErr) )
+    if ((fabs(diameters->ij.value - diameters->mean.value) >
+         diameters->meanErr.value) ||
+        (fabs(diameters->ik.value - diameters->mean.value) >
+         diameters->meanErr.value) ||
+        (fabs(diameters->jk.value - diameters->mean.value) >
+         diameters->meanErr.value) ||
+        (fabs(diameters->jh.value - diameters->mean.value) >
+         diameters->meanErr.value) )
     {
         /* Reject star (i.e the diameter should not appear as computed) */
         diameters->areComputed = mcsFALSE;
@@ -487,10 +492,12 @@ mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
     }*/
     
     /* Display results */
-    logTest("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f), JK = %.3f(%.4f), JH = %.3f(%.4f) ", diameters->ij.value, diameters->ijErr.value, diameters->ik.value,
+    logTest("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f), JK = %.3f(%.4f), JH = %.3f(%.4f), mean = %3f(%4f) ",
+            diameters->ij.value, diameters->ijErr.value, diameters->ik.value,
             diameters->ikErr.value, diameters->jk.value,
             diameters->jkErr.value, diameters->jh.value,
-            diameters->jhErr.value);
+            diameters->jhErr.value, diameters->mean.value,
+            diameters->meanErr.value);
     if (diameters->areComputed == mcsTRUE)
     {
         logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
