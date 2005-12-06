@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.6 2005-12-06 12:03:23 gzins Exp $"
+# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.7 2005-12-06 12:08:53 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/12/06 12:03:23  gzins
+# Minor change in help
+#
 # Revision 1.5  2005/12/06 07:45:13  mella
 # Print information during process
 #
@@ -56,12 +59,6 @@ rm -f $MCSENVLIST
 if [ -e ../config/mcscfgGenerateEnvList.xsl ]
 then
     XSLTFILE="../config/mcscfgGenerateEnvList.xsl"
-#elif [ -e "$INTROOT/config/mcscfgGenerateEnvList.xsl" ]
-#then
-#    XSLTFILE="$INTROOT/config/mcscfgGenerateEnvList.xsl" ]
-#elif [ -e "$MCSROOT/config/mcscfgGenerateEnvList.xsl" ]
-#then
-#    XSLTFILE="$MCSROOT/config/mcscfgGenerateEnvList.xsl" ]
 else
     echo "Can't find file 'mcscfgGenerateEnvList.xsl'"
     exit 1
