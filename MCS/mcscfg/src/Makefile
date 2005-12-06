@@ -1,7 +1,7 @@
 #*******************************************************************************
 # Jean-Marie Mariotti Center
 #
-# "@(#) $Id: Makefile,v 1.16 2005-12-06 07:38:35 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.17 2005-12-06 09:08:46 gzins Exp $"
 #
 # Makefile of mcscfg module, which contains configuration files for MCS
 # environment.
@@ -9,6 +9,9 @@
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2005/12/06 07:38:35  gzins
+# Added mcscfgSetRelease and mcscfgShow scripts
+#
 # Revision 1.15  2005/12/06 07:08:33  gzins
 # Minor changes in documentation
 #
@@ -193,7 +196,7 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
-	@echo -e "\nInstalling into: $(MCSDATA)ma";
+	@echo -e "\nInstalling into: $(MCSDATA)";
 	@$(foreach file, $(MCSENVLIST), echo "        `basename $(file)`" ;\
 		chmod 644 $(file) ; \
 		cp -p -f $(file) $(MCSDATA);)
