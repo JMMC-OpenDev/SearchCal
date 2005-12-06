@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.1 2005-12-06 06:38:51 gzins Exp $
+# Version: $Id: mcs.sh,v 1.2 2005-12-06 07:47:33 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/12/06 06:38:51  gzins
+# Moved from mcscfg
+#
 # Revision 1.10  2005/12/02 14:27:06  swmgr
 # replace setMcsRoot by setMcsRelease
 #
@@ -154,15 +157,3 @@ ctooGetTemplateForCppClass ()
         echo ""
     fi
 }
-# Function to create .h and .cpp files for a C++ class in the right
-# directories
-mcsShow()
-{
-    echo "MCSTOP     = $MCSTOP"
-    echo "MCSDATA    = $MCSDATA"
-    echo "MCSRELEASE = $MCSRELEASE"
-    echo "MCSROOT    = $MCSROOT"
-    echo "MCSENV     = $MCSENV"
-    echo "INTROOT    = $INTROOT"
-}
-
