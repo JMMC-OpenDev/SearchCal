@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envStart.sh,v 1.6 2005-03-08 10:11:09 mella Exp $"
+# "@(#) $Id: envStart.sh,v 1.7 2005-12-06 11:44:17 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/03/08 10:11:09  mella
+# place into real background msgManger with nohup
+#
 # Revision 1.5  2005/02/28 14:25:00  lafrasse
 # Reversed changelog order
 #
@@ -61,15 +64,30 @@ else
     LABEL="default"
 fi
 
-# Check weither the msgManager is already running or not
-TMP=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
+# Check whether the msgManager is already running or not
+answer=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
 
 # If the environment is not running
 if [ "$?" != 0 ]
 then
-    # Try to start the msgManager
-    nohup msgManager 2>&1 > /dev/null &
-    echo "'$LABEL' environment started."
+    echo "Starting '$LABEL' environment ..."
+    procList="msgManager"
+    # Start processes
+    for proc in ${procList}
+    do
+    	nohup $proc 2>&1 > /dev/null &
+	sleep 1
+	stat=`ps -f -u $USER | grep $proc | grep -v grep | wc -l`
+    	if [ $stat == 0 ]
+    	then
+           echo "   '$proc' failed" >&2
+           echo ""
+	   exit 1
+        else
+           echo "   '$proc' started" 
+    	fi
+    done
+    echo "done."
 else
     echo "'$LABEL' environment ALREADY started !"
 fi

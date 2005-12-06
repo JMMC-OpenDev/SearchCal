@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envStop.sh,v 1.5 2005-02-28 14:25:00 lafrasse Exp $"
+# "@(#) $Id: envStop.sh,v 1.6 2005-12-06 11:44:17 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/02/28 14:25:00  lafrasse
+# Reversed changelog order
+#
 # Revision 1.4  2005/02/13 17:26:51  gzins
 # Minor changes in documentation
 #
@@ -58,15 +61,29 @@ else
     LABEL="default"
 fi
 
-# Try to stop the msgManager
-TMP=`msgSendCommand msgManager EXIT "" 2>&1 > /dev/null`
+# Check whether the msgManager is already running or not
+answer=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
 
-# If the environment could not be reached
-if [ "$?" != 0 ]
+# If the environment is running
+if [ "$?" == 0 ]
 then
-    echo "'$LABEL' environment ALREADY terminated !"
+    echo "Stopping '$LABEL' environment ..."
+    procList="msgManager"
+    for proc in ${procList}
+    do
+        answer=`msgSendCommand msgManager EXIT "" 2>&1 > /dev/null`
+	sleep 1
+	stat=`ps -f -u $USER | grep $proc | grep -v grep | wc -l`
+    	if [ $stat == 0 ]
+    	then
+           echo "   '$proc' stopped" 
+        else
+           echo "   '$proc' failed" >&2
+    	fi
+    done
+    echo "done."
 else
-    echo "'$LABEL' environment terminated."
+    echo "'$LABEL' environment is not running"
 fi
 
 exit 0;
