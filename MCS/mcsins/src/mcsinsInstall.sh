@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.12 2005-12-06 07:15:56 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.13 2005-12-06 08:52:38 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2005/12/06 07:15:56  gzins
+# Added mcscfg module
+#
 # Revision 1.11  2005/12/02 09:51:56  gzins
 # Updated for new MCS directory structure
 #
@@ -156,9 +159,8 @@ then
 else
     insDirName="MCSTOP"
     insDir=$MCSTOP/$MCSRELEASE
-    # Force MCSROOT
-    export MCSROOT=$insDir
-
+    # Source bash profile to set path 
+    source ~/.bash_profile
 fi
 
 #
