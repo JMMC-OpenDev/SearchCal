@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.11 2005-12-02 09:51:56 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.12 2005-12-06 07:15:56 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2005/12/02 09:51:56  gzins
+# Updated for new MCS directory structure
+#
 # Revision 1.10  2005/09/15 07:07:08  swmgr
 # Add revision to given informations
 #
@@ -197,7 +200,7 @@ echo -e "    Press enter to continue or ^C to abort "
 read choice
 
 # List of MCS modules
-mcsModules="mkf ctoo mcs log err misc timlog modc modcpp fnd misco env cmd msg evh gwt"
+mcsModules="mkf mcscfg ctoo mcs log err misc timlog modc modcpp fnd misco env cmd msg evh gwt"
 
 # Log file
 mkdir -p $fromdir/INSTALL
