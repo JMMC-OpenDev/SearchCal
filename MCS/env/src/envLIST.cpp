@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.cpp,v 1.14 2005-12-02 13:44:05 gzins Exp $"
+ * "@(#) $Id: envLIST.cpp,v 1.15 2005-12-06 07:13:55 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/12/02 13:44:05  gzins
+ * Changed location of mcsEnvList file; located in MCSTOP/etc
+ *
  * Revision 1.13  2005/03/24 15:32:05  lafrasse
  * Added code in envLIST:LoadEnvFile to replace any 'localhost' hostname value by the real host name
  *
@@ -45,7 +48,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.14 2005-12-02 13:44:05 gzins Exp $"; 
+static char *rcsId="@(#) $Id: envLIST.cpp,v 1.15 2005-12-06 07:13:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -126,7 +129,7 @@ const char* envLIST::GetHostName(const char *envName)
     map<string,pair<string,int> > ::iterator i;
     if (_map.find(searchedEnvName) == _map.end())
     {
-        errAdd(envERR_UNKNOWN_ENV, searchedEnvName, "$MCSTOP/etc/mcsEnvList");
+        errAdd(envERR_UNKNOWN_ENV, searchedEnvName, "$MCSDATA/mcscfgEnvList");
         return ((char*)NULL);
     }
 
@@ -169,7 +172,7 @@ const mcsINT32 envLIST::GetPortNumber(const char *envName)
     map<string,pair<string,int> > ::iterator i;
     if (_map.find(searchedEnvName) == _map.end())
     {
-        errAdd(envERR_UNKNOWN_ENV, searchedEnvName, "$MCSTOP/etc/mcsEnvList");
+        errAdd(envERR_UNKNOWN_ENV, searchedEnvName, "$MCSDATA/mcscfgEnvList");
         return -1;
     }
 
@@ -186,7 +189,7 @@ void envLIST::Show(void)
     // Load the MCS Env. List file
     if (LoadEnvListFile() == mcsFAILURE)
     {
-        cout << "Could not load '$MCSTOP/etc/mcsEnvList' file" << endl;
+        cout << "Could not load '$MCSDATA/mcscfgEnvList' file" << endl;
         return;
     }
 
@@ -216,8 +219,8 @@ void envLIST::Show(void)
 /**
  * Load the MCS file containing the environment list definition.
  *
- * This method loads in an internal map the file, named mcsEnvList and
- * located in $MCSTOP/etc directory, containing informations about the
+ * This method loads in an internal map the file, named mcscfgEnvList and
+ * located in $MCSDATA directory, containing informations about the
  * defined MCS environments. A environment is defined by the host name on
  * which it is running, and the connection port number to its own message
  * manager. This file has one entry (line) for each defined environment. The
@@ -242,7 +245,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
 
     // Resolve path of MCS environment list file
     char *fullPath;
-    fullPath = miscResolvePath("$MCSTOP/etc/mcsEnvList");
+    fullPath = miscResolvePath("$MCSDATA/mcscfgEnvList");
     if (fullPath == NULL)
     {
         return mcsFAILURE;
@@ -258,7 +261,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     }
 
     /* Jump all the headers and empty lines, and feed the map with the
-     * environments data found in the mcsEnvList file read line by line */
+     * environments data found in the mcscfgEnvList file read line by line */
     mcsINT32     nbReadValue = 0;
     mcsINT32     portNumber  = 0;
     mcsENVNAME   parsedEnvName;
@@ -282,7 +285,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
             if (nbReadValue != 3)
             {
                 errAdd(envERR_FORMAT_ENVLIST, currentLine,
-                       "$MCSTOP/etc/mcsEnvList");
+                       "$MCSDATA/mcscfgEnvList");
                 return mcsFAILURE;
             }
 
@@ -301,7 +304,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
             if (_map.find(parsedEnvName) != _map.end())
             {
                 errAdd(envERR_DUPLICATE_ENV, parsedEnvName,
-                       "$MCSTOP/etc/mcsEnvList");
+                       "$MCSDATA/mcscfgEnvList");
                 return mcsFAILURE;
             }
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envShow.cpp,v 1.7 2005-12-02 13:44:05 gzins Exp $"
+ * "@(#) $Id: envShow.cpp,v 1.8 2005-12-06 07:13:55 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/12/02 13:44:05  gzins
+ * Changed location of mcsEnvList file; located in MCSTOP/etc
+ *
  * Revision 1.6  2005/02/28 14:25:00  lafrasse
  * Reversed changelog order
  *
@@ -22,19 +25,19 @@
 
 /**
  * \file
- * Utility showing the lis of environments defined in the mcsEnvList file, and
- * to verify that there is no duplicated environment, or several environments
- * using same port on the same workstation. 
+ * Utility showing the list of environments defined in the mcscfgEnvList file,
+ * and to verify that there is no duplicated environment, or several
+ * environments using same port on the same workstation. 
  *
  * \synopsis
  * \<envEnvShow\>
  *
  * \usedfiles
- * \filename mcsEnvList :  MCS environment definition file, located in
- * $MCSTOP/etc
+ * \filename mcscfgEnvList :  MCS environment definition file, located in
+ * $MCSDATA
  */
 
-static char *rcsId="@(#) $Id: envShow.cpp,v 1.7 2005-12-02 13:44:05 gzins Exp $"; 
+static char *rcsId="@(#) $Id: envShow.cpp,v 1.8 2005-12-06 07:13:55 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
