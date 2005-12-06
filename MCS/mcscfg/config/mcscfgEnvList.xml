@@ -2,11 +2,14 @@
 ********************************************************************************
 JMMC project
 
-"@(#) $Id: mcsEnvList.xml,v 1.1 2005-12-02 13:18:40 mella Exp $"
+"@(#) $Id: mcscfgEnvList.xml,v 1.1 2005-12-06 07:00:09 gzins Exp $"
 
 History
 ~~~~~~~
 $Log: not supported by cvs2svn $
+Revision 1.1  2005/12/02 13:18:40  mella
+First revision
+
 
 ********************************************************************************
 NAME
