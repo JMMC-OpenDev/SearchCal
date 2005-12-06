@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.3 2005-12-02 14:02:26 mella Exp $"
+# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.4 2005-12-06 07:08:33 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/12/02 14:02:26  mella
+# Force to remove previous envList file
+#
 # Revision 1.2  2005/12/02 12:54:09  mella
 # Take into account the hostname
 #
@@ -17,10 +20,10 @@
 
 #/**
 # @file
-# Generate a mcs env list from the given general xml description file.
+# Generate a MCS env list from the given general xml description file.
 #
 # @synopsis
-# mcscfgGenerateEnvList <mcsEnvList.xml> <mcsEnvList> 
+# mcscfgGenerateEnvList <mcscfgEnvList.xml> <mcscfgEnvList> 
 #
 # @usedfiles
 # @filename mcscfgGenerateEnvList :  transformation rules
@@ -58,7 +61,6 @@ else
     exit 1
 fi
 
-echo "Generating $MCSENVLIST"
 echo "#  This file has been automatically generated on $(date)" >> $MCSENVLIST
 echo "#  for hostname '$GIVENHOSTNAME' by $0" >> $MCSENVLIST
 echo "#  to change some entry in this file , please:"  >> $MCSENVLIST
