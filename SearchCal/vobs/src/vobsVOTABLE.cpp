@@ -1,22 +1,25 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.2 2005-12-02 17:43:42 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.3 2005-12-06 08:30:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/12/02 17:43:42  lafrasse
+ * *** empty log message ***
+ *
  * Revision 1.1  2005/11/30 15:24:37  lafrasse
  * Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
  *
  ******************************************************************************/
 
 /**
- * \file
- *  Definition of vobsVOTABLE class.
+ * @file
+ * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.2 2005-12-02 17:43:42 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.3 2005-12-06 08:30:21 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -75,24 +78,27 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
     // Add VOTable standard header
     buffer.AppendLine("<?xml version=\"1.0\"?>");
     buffer.AppendLine(" <VOTABLE version=\"1.1\"");
+    buffer.AppendLine("          xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\"");
     buffer.AppendLine("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-    buffer.AppendLine("          xsi:noNamespaceSchemaLocation=\"http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd\">");
+    buffer.AppendLine("          xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable-1.1.xsd\">");
 
     // Add SCALIB specific informations
     buffer.AppendLine(" <DESCRIPTION>");
-    buffer.AppendLine("  SCALIB output");
+    buffer.AppendLine("  ???");
     buffer.AppendLine(" </DESCRIPTION>");
 
     // Add context specific informations
     buffer.AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>");
 
     // Add SCALIB data header
-    buffer.AppendLine(" <RESOURCE name=\"SCALIB calibrators\">");
-    buffer.AppendLine("  <TABLE name=\"results\">");
+    buffer.AppendLine(" <RESOURCE name=\"");
+    buffer.AppendString("???");
+    buffer.AppendString("\">");
+    buffer.AppendLine("  <TABLE name=\"");
+    buffer.AppendString("???");
+    buffer.AppendString("\">");
     buffer.AppendLine("   <DESCRIPTION>");
-    buffer.AppendLine("    Calibrators for the ");
-    //buffer.AppendString(science object name);
-    buffer.AppendString(" science objetc");
+    buffer.AppendLine("    ???");
     buffer.AppendLine("   </DESCRIPTION>");
 
     // Get the first start of the list
@@ -114,7 +120,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
 
         // Add field name
         buffer.AppendString(" name=\"");
-        buffer.AppendString(starProperty->GetName());
+        const char* starName = starProperty->GetName();
+        buffer.AppendString(starName);
         buffer.AppendString("\"");
 
         // Add field ID
@@ -127,12 +134,14 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
         buffer.AppendString(" ucd=\"");
         buffer.AppendString(starProperty->GetId());
         buffer.AppendString("\"");
-/*
+
         // Add field ref
-        buffer.AppendString(" ref=\"");
-        //buffer.AppendString(starProperty->GetRef());
-        buffer.AppendString("\"");
-*/
+        if ((strcmp(starName, "RAJ2000") == 0) ||
+            (strcmp(starName, "DEJ2000") == 0))
+        {
+            buffer.AppendString(" ref=\"J2000\"");
+        }
+
         // Add field datatype
         buffer.AppendString(" datatype=\"");
         switch (starProperty->GetType())
