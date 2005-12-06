@@ -1,12 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: logManager.c,v 1.8 2005-03-06 18:05:41 gzins Exp $"
+ * "@(#) $Id: logManager.c,v 1.9 2005-12-06 10:03:25 gzins Exp $"
  *
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/03/06 18:05:41  gzins
+ * Removed message about number of logged messages
+ *
  * Revision 1.7  2005/02/15 08:25:13  gzins
  * Minor change in header indentation
  *
@@ -104,7 +107,7 @@
 int main(int argc, char** argv)
 {
     /* Character buffers */
-    mcsBYTES256        hostName, logFilePath, oldLogFilePath, logMsg;
+    mcsBYTES256        logFilePath, oldLogFilePath, logMsg;
 
     /* Files stuff */
     char*              mcsDataPath = NULL;
@@ -116,7 +119,6 @@ int main(int argc, char** argv)
     mcsUINT32          portNumber = logMANAGER_DEFAULT_PORT_NUMBER;
     mcsINT32           newPortNumber;
     int                sock = 0;
-    struct hostent     *hp = NULL;
     struct sockaddr_in from;
     int                fromLen = 0;
 
@@ -252,27 +254,9 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    /* Get local host name */
-    if (logGetHostName((char *)hostName, (sizeof(hostName) -1)) == mcsFAILURE)
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    /* Get the corresponding 'hostent' structure */
-    hp = gethostbyname((char *)hostName);
-    if (hp == NULL ) 
-    {
-        logPrintErrMessage("gethostbyname() failed - %s", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-
-    /* Initialize the sockaddr_in structure */
+    /* Initialize the sockaddr_in structure to use localhost */
     memset(&from, '\0', sizeof(from));
-
-    /* Copy host information inside the sockaddr_in structure */
-    memcpy(&(from.sin_addr), hp->h_addr, hp->h_length);
-    
-    from.sin_family = hp->h_addrtype;
+    from.sin_family = AF_INET;
 
     /* Converts the port number from host byte order to network byte order */
     from.sin_port = htons(portNumber); 
