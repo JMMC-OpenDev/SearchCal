@@ -2,11 +2,14 @@
 ********************************************************************************
 JMMC project
 
-"@(#) $Id: mcscfgEnvList.xml,v 1.1 2005-12-06 07:00:09 gzins Exp $"
+"@(#) $Id: mcscfgEnvList.xml,v 1.2 2005-12-06 12:07:23 gzins Exp $"
 
 History
 ~~~~~~~
 $Log: not supported by cvs2svn $
+Revision 1.1  2005/12/06 07:00:09  gzins
+Renamed mcsEnvList.xml to mcscfgEnvList.xml
+
 Revision 1.1  2005/12/02 13:18:40  mella
 First revision
 
@@ -67,7 +70,7 @@ EXAMPLES
         <env name="aspro15">  <port>2035</port></env>
     </host>
 
-    <host name="pleione">
+    <host name="pleione.obs-azur.fr">
         <!-- MCS default environment definition (do not delete) -->
         <env name="default"> <host>localhost</host><port>1991</port></env>
         <!-- MCS User environment definitions (customized as you need) -->
