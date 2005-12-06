@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.10 2005-11-30 10:45:30 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.11 2005-12-06 08:37:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/11/30 10:45:30  scetre
+ * Removed unused sclsvrSCENARIO_CHECK
+ *
  * Revision 1.9  2005/11/30 10:35:21  scetre
  * Updated Filter without name
  * Updated scenario
@@ -41,7 +44,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.10 2005-11-30 10:45:30 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.11 2005-12-06 08:37:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -209,7 +212,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         // 2mass
         if (_starListP.Size() < 25)
         {
-            if (_request.SetSearchArea(2*radius) == mcsFAILURE)
+            if (_request.SetSearchArea(sqrt(2.0)*radius) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -234,6 +237,15 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         {
             return mcsFAILURE;
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Filter on opt=AAA
+    ///////////////////////////////////////////////////////////////////////////
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP, 
+                vobsCOPY, NULL, &_filterOnQflag) == mcsFAILURE)
+    {
+        return mcsFAILURE;
     }
 
     ///////////////////////////////////////////////////////////////////////////

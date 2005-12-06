@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.54 2005-12-02 17:45:29 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.55 2005-12-06 08:37:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.54  2005/12/02 17:45:29  lafrasse
+ * Added a default "-" star property unit
+ *
  * Revision 1.53  2005/11/30 10:35:21  scetre
  * Updated Filter without name
  * Updated scenario
@@ -112,7 +115,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.54 2005-12-02 17:45:29 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.55 2005-12-06 08:37:54 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -210,7 +213,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
 mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::Complete()");
-    
+
     // If the request should return bright starts
     if ((request.IsBright() == mcsTRUE) &&
         (request.GetSearchAreaGeometry() == vobsBOX))
@@ -284,8 +287,303 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     // if the researh is faint
     else
     {
-        SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
-                             vobsSTAR_COMPUTED_PROP);
+        /*
+        // Compute Galactic coordinates
+        if (ComputeGalacticCoordinates() == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // convert J H K mag Jcous hcous Kcous
+        mcsFLOAT magK;
+        mcsFLOAT magJ;
+        mcsFLOAT magH;
+        mcsFLOAT magKcous;
+        mcsFLOAT magJcous;
+        mcsFLOAT magHcous;
+
+        // if Kmag property is set
+        if (IsPropertySet(vobsSTAR_PHOT_JHN_K) == mcsTRUE)
+        {
+            // retreive it
+            if (GetPropertyValue(vobsSTAR_PHOT_JHN_K, &magK) == mcsFAILURE)
+            {       
+                return mcsFAILURE;
+            }
+        }
+        // if Jmag property is set        
+        if (IsPropertySet(vobsSTAR_PHOT_JHN_J) == mcsTRUE)
+        {
+            // retreive it
+            if (GetPropertyValue(vobsSTAR_PHOT_JHN_J, &magJ) == mcsFAILURE)
+            {       
+                return mcsFAILURE;
+            }
+        }
+        // if Hmag property is set
+        if (IsPropertySet(vobsSTAR_PHOT_JHN_H) == mcsTRUE)
+        {
+            // retreive it
+            if (GetPropertyValue(vobsSTAR_PHOT_JHN_H, &magH) == mcsFAILURE)
+            {       
+                return mcsFAILURE;
+            }
+        }
+
+        // Convert magnitude
+        magKcous = magK + 0.024;
+        magJcous = 0.947 * magJ + 0.053 * magK + 0.036;
+        magHcous = 0.929 * magH + 0.053 * magK + 0.018 * magJ - 0.004;
+
+        // Set Kcous
+        if (SetPropertyValue(vobsSTAR_PHOT_COUS_K, magKcous, 
+                             vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // Set Jcous
+        if (SetPropertyValue(vobsSTAR_PHOT_COUS_J, magJcous, 
+                             vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // Set Hcous
+        if (SetPropertyValue(vobsSTAR_PHOT_COUS_H, magHcous, 
+                             vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // If paralax of the star if known
+        if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
+        {
+            // If paralax is greater than 1 mas, compute real magnitudes,
+            // missing magnitudes and the angular diameter 
+            mcsFLOAT paralax;
+            GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax);
+            if (paralax >= 1) // && errplx/plx < 0.25
+            {
+                // Compute Interstellar extinction
+                if (ComputeInterstellarAbsorptionFaint() == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+
+                // Compute Missing Magnitude
+                if (ComputeMissingMagnitudeFaint() == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+
+                // Compute Angular Diameter
+                if (ComputeAngularDiameterFaint() == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                
+                // Compute visibility and visibility error
+                if (ComputeVisibility(request) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+        }
+        // Paralax unknown
+        else
+        {
+            // Compute visibility without the step of intesrstellar absorption
+            // In this case, Io=I, Jo=J, Ho=H, Ko=K
+            mcsFLOAT Io;
+            mcsFLOAT Jo;
+            mcsFLOAT Ho;
+            mcsFLOAT Ko;
+            // if Imag property is set
+            if (IsPropertySet(vobsSTAR_PHOT_JHN_I) == mcsTRUE)
+            {
+                // retreive it
+                if (GetPropertyValue(vobsSTAR_PHOT_JHN_I, &Io) == mcsFAILURE)
+                {       
+                    return mcsFAILURE;
+                }
+                // Set Io
+                if (SetPropertyValue(sclsvrCALIBRATOR_IO, Io, 
+                                     vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // if Jmag property is set
+            if (IsPropertySet(vobsSTAR_PHOT_COUS_J) == mcsTRUE)
+            {
+                // retreive it
+                if (GetPropertyValue(vobsSTAR_PHOT_COUS_J, &Jo) == mcsFAILURE)
+                {       
+                    return mcsFAILURE;
+                }
+                // Set Jo
+                if (SetPropertyValue(sclsvrCALIBRATOR_JO, Jo, 
+                                     vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // if Hmag property is set
+            if (IsPropertySet(vobsSTAR_PHOT_COUS_H) == mcsTRUE)
+            {
+                // retreive it
+                if (GetPropertyValue(vobsSTAR_PHOT_COUS_H, &Ho) == mcsFAILURE)
+                {       
+                    return mcsFAILURE;
+                }
+                // Set Ho
+                if (SetPropertyValue(sclsvrCALIBRATOR_HO, Ho, 
+                                     vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // if Kmag property is set
+            if (IsPropertySet(vobsSTAR_PHOT_COUS_K) == mcsTRUE)
+            {
+                // retreive it
+                if (GetPropertyValue(vobsSTAR_PHOT_COUS_K, &Ko) == mcsFAILURE)
+                {       
+                    return mcsFAILURE;
+                }
+                // Set Ko
+                if (SetPropertyValue(sclsvrCALIBRATOR_KO, Ko, 
+                                     vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+
+            // Compute Missing Magnitude
+            if (ComputeMissingMagnitudeFaint() == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // Compute Angular Diameter
+            if (ComputeAngularDiameterFaint() == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            // Compute visibility and visibility error
+            if (ComputeVisibility(request) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // Compute visibility with the step of intesrstellar absorption
+            sclsvrCALIBRATOR testCalibratorWithAbsorption;
+            testCalibratorWithAbsorption.Update(* this);
+
+            mcsFLOAT av = 3.0;
+            // if Imag property is set
+            if (testCalibratorWithAbsorption.IsPropertySet(vobsSTAR_PHOT_JHN_I)
+                == mcsTRUE)
+            {
+                // retreive it
+                if (testCalibratorWithAbsorption.
+                    GetPropertyValue(vobsSTAR_PHOT_JHN_I, &Io) == mcsFAILURE)
+                {       
+                    return mcsFAILURE;
+                }
+                // Set Io
+                if (testCalibratorWithAbsorption.
+                    SetPropertyValue(sclsvrCALIBRATOR_IO, Io - 0.506 * av, 
+                                     vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // if Jmag property is set
+            if (testCalibratorWithAbsorption.IsPropertySet(vobsSTAR_PHOT_JHN_J)
+                == mcsTRUE)
+            {
+                // retreive it
+                if (testCalibratorWithAbsorption.
+                    GetPropertyValue(vobsSTAR_PHOT_COUS_J, &Jo) == mcsFAILURE)
+                {       
+                    return mcsFAILURE;
+                }
+                // Set Jo
+                if (testCalibratorWithAbsorption.
+                    SetPropertyValue(sclsvrCALIBRATOR_JO, Jo - 0.277 * av, 
+                                     vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // if Hmag property is set
+            if (testCalibratorWithAbsorption.IsPropertySet(vobsSTAR_PHOT_JHN_H)
+                == mcsTRUE)
+            {
+                // retreive it
+                if (testCalibratorWithAbsorption.
+                    GetPropertyValue(vobsSTAR_PHOT_COUS_H, &Ho) == mcsFAILURE)
+                {       
+                    return mcsFAILURE;
+                }
+                // Set Ho
+                if (testCalibratorWithAbsorption.
+                    SetPropertyValue(sclsvrCALIBRATOR_HO, Ho - 0.171 * av, 
+                                     vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // if Kmag property is set
+            if (testCalibratorWithAbsorption.IsPropertySet(vobsSTAR_PHOT_JHN_K)
+                == mcsTRUE)
+            {
+                // retreive it
+                if (testCalibratorWithAbsorption.
+                    GetPropertyValue(vobsSTAR_PHOT_COUS_K, &Ko) == mcsFAILURE)
+                {       
+                    return mcsFAILURE;
+                }
+                // Set Ko
+                if (testCalibratorWithAbsorption.
+                    SetPropertyValue(sclsvrCALIBRATOR_KO, Ko - 0.116 * av, 
+                                     vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+
+            // Compute Missing Magnitude
+            if (testCalibratorWithAbsorption.ComputeMissingMagnitudeFaint() ==
+                mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // Compute Angular Diameter
+            if (testCalibratorWithAbsorption.ComputeAngularDiameterFaint() ==
+                mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            // Compute visibility and visibility error
+            if (testCalibratorWithAbsorption.ComputeVisibility(request) ==
+                mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // Test of validity of the visibility
+        }
+    */
+
+        // temporary all diameter are ok....
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
+                             vobsSTAR_COMPUTED_PROP,vobsCONFIDENCE_HIGH,
+                             mcsTRUE) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
     return mcsSUCCESS;
 }
@@ -408,6 +706,119 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 }
 
 /**
+ * Compute missing magnitude.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitudeFaint()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeMissingMagnitudeFaint()");
+
+    //mcsFLOAT magnitudes[alxNB_BANDS];
+    alxMAGNITUDES magnitudes;
+
+    // WARNING: Property Id lists should be defined in the same order than
+    // alxBAND enumerate. In order to be able to use this enumerate as index of
+    // this list.
+    char* mag0PropertyId[alxNB_BANDS] = 
+    {
+        sclsvrCALIBRATOR_BO,
+        sclsvrCALIBRATOR_VO,
+        sclsvrCALIBRATOR_RO,
+        sclsvrCALIBRATOR_IO,
+        sclsvrCALIBRATOR_JO,
+        sclsvrCALIBRATOR_HO,
+        sclsvrCALIBRATOR_KO,
+        sclsvrCALIBRATOR_LO,
+        sclsvrCALIBRATOR_MO
+    };
+    
+
+    // Get the value of the magnitude in the different band
+    // if J or K is not present, return mcsFAILURE
+    if (IsPropertySet(mag0PropertyId[alxJ_BAND]) == mcsTRUE)
+    {
+        if (GetPropertyValue(mag0PropertyId[alxJ_BAND], 
+                             &magnitudes[alxJ_BAND].value) ==
+            mcsFAILURE)
+        {       
+            return mcsFAILURE;
+        }
+        magnitudes[alxJ_BAND].isSet=mcsTRUE;
+    }
+
+    // Get the value of magnitude K
+    if (IsPropertySet(mag0PropertyId[alxK_BAND]) == mcsTRUE)
+    {
+        if (GetPropertyValue(mag0PropertyId[alxK_BAND], 
+                             &magnitudes[alxK_BAND].value) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        magnitudes[alxK_BAND].isSet=mcsTRUE;
+    }
+
+    // For other magnitudes
+    for (int band = 0; band < alxNB_BANDS; band++)
+    { 
+        // Get the current value
+        if (IsPropertySet(mag0PropertyId[band]) == mcsTRUE)
+        {
+            if (GetPropertyValue(mag0PropertyId[band],
+                                 &magnitudes[band].value) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            magnitudes[band].isSet=mcsTRUE;
+        }
+        else
+        {
+            magnitudes[band].isSet=mcsFALSE;
+        }
+    }
+
+    // Compute missing magnitudes
+    if (alxComputeMagnitudesForFaintStar(magnitudes) == mcsFAILURE)
+    {
+        if (errIsInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE) 
+        {
+            errResetStack();
+            return mcsSUCCESS;
+        }
+        else
+        {
+            return mcsFAILURE;
+        }
+    }
+  
+    // For each magnitude
+    for (int band = 0; band < alxNB_BANDS; band++)
+    { 
+        /*
+         * Set the computed magnitude.
+         * Please note that if a magnitude is altready set, the
+         * SetPropertyValue() does nothing; i.e. existing magnitudes are not
+         * overwritten.
+         */
+        if (magnitudes[band].isSet == mcsTRUE)
+        {
+            if (SetPropertyValue(mag0PropertyId[band], magnitudes[band].value,
+                                 vobsSTAR_COMPUTED_PROP, 
+                            (vobsCONFIDENCE_INDEX)magnitudes[band].confIndex,
+                                mcsFALSE) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+    }
+    
+    return mcsSUCCESS;
+}
+
+/**
  * Compute galactic coordonates.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -478,6 +889,135 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
         vobsSTAR_PHOT_JHN_J,
         vobsSTAR_PHOT_JHN_H,
         vobsSTAR_PHOT_JHN_K,
+        vobsSTAR_PHOT_JHN_L,
+        vobsSTAR_PHOT_JHN_M
+    };
+    char *mag0PropertyId[alxNB_BANDS] = 
+    {
+        sclsvrCALIBRATOR_BO,
+        sclsvrCALIBRATOR_VO,
+        sclsvrCALIBRATOR_RO,
+        sclsvrCALIBRATOR_IO,
+        sclsvrCALIBRATOR_JO,
+        sclsvrCALIBRATOR_HO,
+        sclsvrCALIBRATOR_KO,
+        sclsvrCALIBRATOR_LO,
+        sclsvrCALIBRATOR_MO
+    };
+
+    // For each magnitude
+    alxMAGNITUDES magnitudes;
+    for (int band = 0; band < alxNB_BANDS; band++)
+    { 
+        // Get the current value
+        if (IsPropertySet(magPropertyId[band]) == mcsTRUE)
+        {
+            if (GetPropertyValue(magPropertyId[band],
+                                 &magnitudes[band].value) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            magnitudes[band].isSet=mcsTRUE;
+        }
+        else
+        {
+            magnitudes[band].isSet=mcsFALSE;
+        }
+    }
+
+    // Get the value of the paralax
+    if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
+    {
+        if (GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+    else 
+    {
+        errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_PARLX_TRIG,
+               "interstellar absorption");
+        return mcsFAILURE;
+    }
+
+    // Get the value of the galactic lattitude
+    if (IsPropertySet(vobsSTAR_POS_GAL_LAT) == mcsTRUE)
+    {
+        if (GetPropertyValue(vobsSTAR_POS_GAL_LAT, &gLat) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+    else
+    {
+        errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_GAL_LAT,
+               "interstellar absorption");
+        return mcsFAILURE;
+    }
+
+    // Get the value of the galactic longitude
+    if (IsPropertySet(vobsSTAR_POS_GAL_LON) == mcsTRUE)
+    {
+        if (GetPropertyValue(vobsSTAR_POS_GAL_LON, &gLon) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+    else 
+    {
+        errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_GAL_LON,
+               "interstellar absorption");
+        return mcsFAILURE;
+    }
+
+    // Compute corrected magnitude
+    if (alxComputeRealMagnitudes(paralax, gLat, gLon, magnitudes) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // For each magnitude
+    for (int band = 0; band < alxNB_BANDS; band++)
+    { 
+        // Set the corrected magnitude
+        if (magnitudes[band].isSet == mcsTRUE)
+        {
+            if (SetPropertyValue(mag0PropertyId[band], magnitudes[band].value,
+                             vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Compute interstellar absorption.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorptionFaint()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorptionFaint()");
+
+    mcsFLOAT paralax, gLat, gLon;
+
+    // WARNING: Property Id lists should be defined in the same order than
+    // alxBAND enumerate. In order to be able to use this enumerate as index of
+    // this list.
+    char *magPropertyId[alxNB_BANDS] = 
+    {
+        vobsSTAR_PHOT_PHG_B,
+        vobsSTAR_PHOT_JHN_V,
+        vobsSTAR_PHOT_PHG_R,
+        vobsSTAR_PHOT_PHG_I,
+        vobsSTAR_PHOT_COUS_J,
+        vobsSTAR_PHOT_COUS_H,
+        vobsSTAR_PHOT_COUS_K,
         vobsSTAR_PHOT_JHN_L,
         vobsSTAR_PHOT_JHN_M
     };
@@ -822,6 +1362,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameterFaint()
         {
             return mcsFAILURE;
         }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN, diameters.mean.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
         if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ_ERROR, 
                              diameters.ijErr.value,
                              vobsSTAR_COMPUTED_PROP, 
@@ -848,6 +1395,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameterFaint()
         }
         if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH_ERROR,
                              diameters.jhErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
+            mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN_ERROR,
+                             diameters.meanErr.value,
                              vobsSTAR_COMPUTED_PROP, 
                              (vobsCONFIDENCE_INDEX)diameters.confidenceIdx) ==
             mcsFAILURE)
@@ -909,29 +1464,63 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     // If not found in catalog, use the computed one (if exist)
     if (found == mcsFALSE)
     {
-        // If computed diameter is OK
-        if (IsDiameterOk() == mcsTRUE)
+        if (request.IsBright() == mcsTRUE)
         {
-            // Get V-K diameter and associated error value
-            if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &diam) == mcsFAILURE)
+            // If computed diameter is OK
+            if (IsDiameterOk() == mcsTRUE)
             {
-                return mcsFAILURE;
-            }
-            if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR, &diamError) ==
-                mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+                // Get V-K diameter and associated error value
+                if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &diam) ==
+                    mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR,
+                                     &diamError) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
 
-            // Get confidence index of computed diameter
-            vobsSTAR_PROPERTY *property;
-            property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
-            confidenceIndex = property->GetConfidenceIndex();
+                // Get confidence index of computed diameter
+                vobsSTAR_PROPERTY *property;
+                property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
+                confidenceIndex = property->GetConfidenceIndex();
+            }
+            // Else do not compute visibility
+            else
+            {
+                return mcsSUCCESS;
+            }
         }
         // Else do not compute visibility
         else
         {
-            return mcsSUCCESS;
+            // If computed diameter is OK
+            if (IsDiameterOk() == mcsTRUE)
+            {
+                // Get V-K diameter and associated error value
+                if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_JK, &diam) ==
+                    mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_JK_ERROR,
+                                     &diamError) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+
+                // Get confidence index of computed diameter
+                vobsSTAR_PROPERTY *property;
+                property = GetProperty(sclsvrCALIBRATOR_DIAM_JK);
+                confidenceIndex = property->GetConfidenceIndex();
+            }
+            // Else do not compute visibility
+            else
+            {
+                return mcsSUCCESS;
+            }
+
         }
     }
 
@@ -1131,6 +1720,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                 "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_JH, "diam_jh", vobsFLOAT_PROPERTY, "-", 
                 "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_MEAN, "diam_mean", vobsFLOAT_PROPERTY, 
+                "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_BV_ERROR, "e_diam_bv", 
                 vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_VR_ERROR, "e_diam_vr", 
@@ -1144,6 +1735,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_DIAM_JK_ERROR, "e_diam_jk", 
                 vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_JH_ERROR, "e_diam_jh", 
+                vobsFLOAT_PROPERTY, "-", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", 
                 vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", 
                 vobsSTRING_PROPERTY, "-");
