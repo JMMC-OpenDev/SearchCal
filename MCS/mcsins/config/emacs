@@ -1,0 +1,109 @@
+;; ************  TEXT MODE **************************************
+
+;; Set a better behaviour for the TAB key
+;; Not used with EMACS > 19
+(if (<  emacs-major-version 20)
+    (progn
+      (define-key indented-text-mode-map [S-tab] 'indent-relative-next) ; key is
+ shift-TAB
+      (define-key indented-text-mode-map [S-backtab] 'indent-relative-next) ; ke
+y is shift-BACKTAB
+      (define-key indented-text-mode-map [S-key-116] 'indent-relative-next) ; ke
+y is shift-TAB
+))
+
+;; Not To have also auto-fill-mode in text modes
+(setq text-mode-hook '(lambda () (auto-fill-mode nil)))
+; Determine mode according to filename: overload .text and .txt values
+(setq auto-mode-alist
+  (append '(("\\.text$"    . indented-text-mode)
+            ("\\.txt$"     . indented-text-mode)
+            ("[Rr]eadme.*" . indented-text-mode)
+            ("README.*"    . indented-text-mode)
+           ) auto-mode-alist))
+
+
+(defun indent-relative-next ()
+  "Align start of line under next indent point in previous nonblank line.
+   An indent point is a non-whitespace character following whitespace.
+   If the previous nonblank line has no indent points beyond the
+   column point starts at, `tab-to-tab-stop' is done instead."
+  (interactive)
+  (beginning-of-line)
+  (forward-word 1)
+  (backward-word 1)
+  (indent-relative)
+  (end-of-line)
+)
+
+;; (c-add-style "vlt"
+;;              '(
+;;                (c-basic-offset  . 4)
+;;                (c-offsets-alist . ((statement-block-intro . 0)
+;;                                   (substatement-open . 0)
+;;                                    (access-label . -2)
+;;                                    )
+;;                                 )
+;;                )
+;;              )
+
+;; jmmc style
+
+;; from http://www.delorie.com/gnu/docs/emacs/cc-mode_39.html
+;; the following lisp code
+;;      replaces tabs by spaces
+;;      modifies the offset indentation to 4 spaces
+;; you can't invent that !!!
+
+(defconst jmmc-c-style
+ '(
+   (c-tab-always-indent        . t)
+   (c-comment-only-line-offset . 0)
+   (c-hanging-braces-alist     . ((substatement-open after)
+                                  (brace-list-open)))
+   (c-hanging-colons-alist     . ((member-init-intro before)
+                                  (inher-intro)
+                                  (case-label after)
+                                  (label after)
+                                  (access-label after)))
+   (c-cleanup-list             . (scope-operator
+                                  empty-defun-braces
+                                  defun-close-semi))
+   (c-offsets-alist            . ((arglist-close . c-lineup-arglist-intro-after-paren)
+
+                                  (arglist-intro . c-lineup-arglist-intro-after-paren)
+;;                                  (defun-open . 1)
+;;                                  (defun-close . 1)
+                                  (substatement-open . 0)
+                                  (case-label        . 4)
+                                  (block-open        . 0)
+                                  (statement-cont    . 0)
+;;                                  (knr-argdecl-intro . -)
+                                  (comment-intro . 0)
+                                  (cpp-macro-cont . 4)
+                                  (inextern-lang  . 0)
+;;                                  (topmost-intro . 1)
+                                  ))
+   (c-echo-syntactic-information-p . t)
+ )
+ "This is the comment for the JMMC C PROGRAMMING STYLE")
+
+;; offset customizations not in jmmc-c-style
+(setq c-offsets-alist '((member-init-intro . ++)))
+
+;; Customizations for all modes in CC Mode.
+(defun jmmc-c-mode-common-hook ()
+  "This is the comment for JMMC-C-MODE-COMMON-HOOK"
+  ;; add jmmc personal style and set it for the current buffer
+  (c-add-style "JMMC" jmmc-c-style t)
+  ;; other customizations
+  (setq tab-width 8  
+        ;; this will make sure spaces are used instead of tabs
+        indent-tabs-mode nil
+   )
+  ;; we like auto-newline and hungry-delete
+  (c-toggle-auto-hungry-state 1)
+  ;; key bindings for all supported languages.  We can put these in
+  ;; c-mode-base-map because c-mode-map, c++-mode-map, objc-mode-map,
+)
+(add-hook 'c-mode-common-hook 'jmmc-c-mode-common-hook)
