@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.5 2005-12-06 07:45:13 mella Exp $"
+# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.6 2005-12-06 12:03:23 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/12/06 07:45:13  mella
+# Print information during process
+#
 # Revision 1.4  2005/12/06 07:08:33  gzins
 # Minor changes in documentation
 #
@@ -38,7 +41,7 @@
 
 if [ $# -ne 2 ]
 then
-    echo "Usage: $0 <mcsEnvList.xml> <mcsEnvList>"
+    echo "Usage: $0 <mcscfgEnvList.xml> <mcscfgEnvList>"
     exit 1
 fi
 
