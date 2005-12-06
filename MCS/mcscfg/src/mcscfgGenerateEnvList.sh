@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.4 2005-12-06 07:08:33 gzins Exp $"
+# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.5 2005-12-06 07:45:13 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/12/06 07:08:33  gzins
+# Minor changes in documentation
+#
 # Revision 1.3  2005/12/02 14:02:26  mella
 # Force to remove previous envList file
 #
@@ -60,6 +63,8 @@ else
     echo "Can't find file 'mcscfgGenerateEnvList.xsl'"
     exit 1
 fi
+
+echo "Generating $MCSENVLIST for $GIVENHOSTNAME"
 
 echo "#  This file has been automatically generated on $(date)" >> $MCSENVLIST
 echo "#  for hostname '$GIVENHOSTNAME' by $0" >> $MCSENVLIST
