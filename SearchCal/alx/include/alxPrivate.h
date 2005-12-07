@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.10 2005-11-30 10:47:59 scetre Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.11 2005-12-07 14:48:33 scetre Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/11/30 10:47:59  scetre
+ * Added computing diameter method for faint
+ *
  * Revision 1.9  2005/10/26 11:24:01  lafrasse
  * Code review
  *
@@ -65,7 +68,7 @@ extern "C" {
 /******** Macros and structure for angular diameter computation */
 /*
  * Number of color indexes used to compute the angular diameter : (B-V), (V-R),
- * (V-K)
+ * (V-K), (I-J), (I-K), (J-H), (J-K)
  */
 #define alxNB_COLOR_INDEXES 7
     

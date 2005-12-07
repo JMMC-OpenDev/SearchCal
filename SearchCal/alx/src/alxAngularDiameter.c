@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.19 2005-12-05 16:00:22 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.20 2005-12-07 14:48:33 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/12/05 16:00:22  scetre
+ * Added computing of mean diameter and associated error
+ *
  * Revision 1.18  2005/12/02 12:05:42  scetre
  * Added computation of diameter and missing magnitude in faint
  *
@@ -78,7 +81,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.19 2005-12-05 16:00:22 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.20 2005-12-07 14:48:33 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -236,11 +239,11 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
-                                        alxDATA mgV,
-                                        alxDATA mgR,
-                                        alxDATA mgK,
-                                        alxDIAMETERS *diameters)
+mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
+                                                     alxDATA mgV,
+                                                     alxDATA mgR,
+                                                     alxDATA mgK,
+                                                     alxDIAMETERS *diameters)
 {
     logTrace("alxComputeAngularDiameter()");
 
@@ -270,25 +273,25 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
 
     /* Compute the polynomials P(B-V), P(V-R), P(V-K) */
     p_b_v =   polynomial->coeff[0][0]
-            + polynomial->coeff[0][1] * b_v
-            + polynomial->coeff[0][2] * pow(b_v, 2)
-            + polynomial->coeff[0][3] * pow(b_v, 3)
-            + polynomial->coeff[0][4] * pow(b_v, 4)
-            + polynomial->coeff[0][5] * pow(b_v, 5);
+        + polynomial->coeff[0][1] * b_v
+        + polynomial->coeff[0][2] * pow(b_v, 2)
+        + polynomial->coeff[0][3] * pow(b_v, 3)
+        + polynomial->coeff[0][4] * pow(b_v, 4)
+        + polynomial->coeff[0][5] * pow(b_v, 5);
 
     p_v_r =   polynomial->coeff[1][0]
-            + polynomial->coeff[1][1] * v_r
-            + polynomial->coeff[1][2] * pow(v_r, 2)
-            + polynomial->coeff[1][3] * pow(v_r, 3)
-            + polynomial->coeff[1][4] * pow(v_r, 4)
-            + polynomial->coeff[1][5] * pow(v_r, 5);
+        + polynomial->coeff[1][1] * v_r
+        + polynomial->coeff[1][2] * pow(v_r, 2)
+        + polynomial->coeff[1][3] * pow(v_r, 3)
+        + polynomial->coeff[1][4] * pow(v_r, 4)
+        + polynomial->coeff[1][5] * pow(v_r, 5);
 
     p_v_k =   polynomial->coeff[2][0]
-            + polynomial->coeff[2][1] * v_k
-            + polynomial->coeff[2][2] * pow(v_k, 2)
-            + polynomial->coeff[2][3] * pow(v_k, 3)
-            + polynomial->coeff[2][4] * pow(v_k, 4)
-            + polynomial->coeff[2][5] * pow(v_k, 5);
+        + polynomial->coeff[2][1] * v_k
+        + polynomial->coeff[2][2] * pow(v_k, 2)
+        + polynomial->coeff[2][3] * pow(v_k, 3)
+        + polynomial->coeff[2][4] * pow(v_k, 4)
+        + polynomial->coeff[2][5] * pow(v_k, 5);
 
     /* Compute the diameters D(B-V), D(V-R), D(V-K) */
     diameters->bv.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_b_v;
@@ -300,8 +303,8 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
 
     /* Compute mean diameter and its associated error (10%) */
     meanDiam = (  diameters->vk.value 
-                + diameters->vr.value
-                + diameters->bv.value) / 3;
+                  + diameters->vr.value
+                  + diameters->bv.value) / 3;
     meanDiamErr = 0.1 * meanDiam;
 
     /* Check whether the diameter is coherent or not */
@@ -340,7 +343,7 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
             diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
         }
     }
-    
+
     /* Display results */
     logTest("Diameter BV = %.3f(%.4f), VR = %.3f(%.4f), VK = %.3f(%.4f)", 
             diameters->bv.value, diameters->bvErr.value, diameters->vr.value,
@@ -372,11 +375,11 @@ mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
-                                             alxDATA mgJ,
-                                             alxDATA mgK,
-                                             alxDATA mgH,
-                                             alxDIAMETERS *diameters)
+mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
+                                                    alxDATA mgJ,
+                                                    alxDATA mgK,
+                                                    alxDATA mgH,
+                                                    alxDIAMETERS *diameters)
 {
     logTrace("alxComputeAngularDiameterFaint()");
 
@@ -396,7 +399,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
 
     /* Declare polynomials P(I-J), P(I-K), P(J-K), P(J-H) */
     mcsFLOAT p_i_j, p_i_k, p_j_k, p_j_h;
-    
+
     /* 
      * Declare the 4 diameters D(I-J), D(I-K), D(J-K), D(J-H)
      * the mean diameter
@@ -405,9 +408,9 @@ mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
 
     /* Compute the polynomials P(I-J), P(I-K), P(J-K), P(J-H) */
     p_i_j =   polynomial->coeff[3][0]
-            + polynomial->coeff[3][1] * i_j
-            + polynomial->coeff[3][2] * pow(i_j, 2)
-            + polynomial->coeff[3][3] * pow(i_j, 3)
+        + polynomial->coeff[3][1] * i_j
+        + polynomial->coeff[3][2] * pow(i_j, 2)
+        + polynomial->coeff[3][3] * pow(i_j, 3)
             + polynomial->coeff[3][4] * pow(i_j, 4)
             + polynomial->coeff[3][5] * pow(i_j, 5);
 
@@ -473,23 +476,27 @@ mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
      * confidence index of the computed diameter according to the ones of
      * magnitudes used to compute it. 
      */
-    /*if (diameters->areComputed == mcsTRUE)
+    if (diameters->areComputed == mcsTRUE)
     {
-        if ((mgK.confIndex == alxCONFIDENCE_LOW) ||
-            (mgR.confIndex == alxCONFIDENCE_LOW))
+        if ((mgI.confIndex == alxCONFIDENCE_LOW) ||
+            (mgJ.confIndex == alxCONFIDENCE_LOW) ||
+            (mgK.confIndex == alxCONFIDENCE_LOW) ||
+            (mgH.confIndex == alxCONFIDENCE_LOW))
         {
             diameters->confidenceIdx = alxCONFIDENCE_LOW;
         }
-        else if ((mgK.confIndex == alxCONFIDENCE_MEDIUM) ||
-                 (mgR.confIndex == alxCONFIDENCE_MEDIUM))
+        else if ((mgI.confIndex == alxCONFIDENCE_MEDIUM) ||
+                 (mgJ.confIndex == alxCONFIDENCE_MEDIUM) ||
+                 (mgK.confIndex == alxCONFIDENCE_MEDIUM) ||
+                 (mgH.confIndex == alxCONFIDENCE_MEDIUM))
         {
             diameters->confidenceIdx = alxCONFIDENCE_MEDIUM;
         }
         else 
-        {*/
+        {
             diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
-    /*    }
-    }*/
+        }
+    }
     
     /* Display results */
     logTest("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f), JK = %.3f(%.4f), JH = %.3f(%.4f), mean = %3f(%4f) ",

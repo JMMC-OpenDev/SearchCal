@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.17 2005-12-05 16:00:22 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.18 2005-12-07 14:48:33 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/12/05 16:00:22  scetre
+ * Added computing of mean diameter and associated error
+ *
  * Revision 1.16  2005/12/02 12:03:14  scetre
  * Added compute missing magnitude in faint
  *
@@ -191,20 +194,21 @@ typedef struct
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType, 
                                                 alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxMAGNITUDES magnitudes); 
+mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(mcsSTRING32 spType, 
+                                               alxMAGNITUDES magnitudes); 
 
 mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT plx,
                                        mcsFLOAT gLat,
                                        mcsFLOAT gLon,
                                        alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeAngularDiameter(alxDATA mgB,
+mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
                                         alxDATA mgV,
                                         alxDATA mgR,
                                         alxDATA mgK,
                                         alxDIAMETERS *diameters);
 
-mcsCOMPL_STAT alxComputeAngularDiameterFaint(alxDATA mgI,
+mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                                              alxDATA mgJ,
                                              alxDATA mgK,
                                              alxDATA mgH,
