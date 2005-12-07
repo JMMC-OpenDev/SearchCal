@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.58 2005-12-07 15:26:00 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.59 2005-12-07 16:51:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.58  2005/12/07 15:26:00  scetre
+ * Added known unit on properties
+ *
  * Revision 1.57  2005/12/07 15:11:03  scetre
  * Removed unused printf
  *
@@ -125,7 +128,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.58 2005-12-07 15:26:00 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.59 2005-12-07 16:51:07 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1745,7 +1748,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     //logTrace("vobsSTAR::AddProperties()");
 
     AddProperty(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, "-", 
-                "%.3f");
+                "%.3f", "diameter b-v");
     AddProperty(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, "-", 
                 "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, "-", 
