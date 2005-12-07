@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.19 2005-11-29 10:31:14 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.20 2005-12-07 15:28:20 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/11/29 10:31:14  gzins
+* Minor change in documentation
+*
 * Revision 1.18  2005/11/15 16:39:55  lafrasse
 * Added experimental VOTable export support
 *
@@ -82,7 +85,10 @@ class vobsSTAR_LIST
 
     virtual void          Display(void);
 
-    virtual mcsCOMPL_STAT SaveToVOTable(const char *filename);
+    virtual mcsCOMPL_STAT SaveToVOTable(const char *filename,
+                                        const char *header,
+                                        const char *softwareVersion,
+                                        const char *request);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                mcsLOGICAL extendedFormat=mcsFALSE);

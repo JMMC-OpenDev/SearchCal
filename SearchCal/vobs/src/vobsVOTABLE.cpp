@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.3 2005-12-06 08:30:21 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.4 2005-12-07 15:28:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/12/06 08:30:21  lafrasse
+ * Added support for 'ref' attribute in VOTable column descriptors FIELD.
+ * Now generate validated VOTable 1.1.
+ *
  * Revision 1.2  2005/12/02 17:43:42  lafrasse
  * *** empty log message ***
  *
@@ -19,7 +23,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.3 2005-12-06 08:30:21 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.4 2005-12-07 15:28:20 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -68,8 +72,11 @@ vobsVOTABLE::~vobsVOTABLE()
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */
-mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
-                                const char*           fileName)
+mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
+                                const char *fileName,
+                                const char *header,
+                                const char *softwareVersion,
+                                const char *request)
 {
     logTrace("vobsVOTABLE::Save()");
 
@@ -77,29 +84,47 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
 
     // Add VOTable standard header
     buffer.AppendLine("<?xml version=\"1.0\"?>");
-    buffer.AppendLine(" <VOTABLE version=\"1.1\"");
-    buffer.AppendLine("          xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\"");
-    buffer.AppendLine("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-    buffer.AppendLine("          xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable-1.1.xsd\">");
+    buffer.AppendLine("");
 
-    // Add SCALIB specific informations
+    buffer.AppendLine("<VOTABLE version=\"1.1\"");
+    buffer.AppendLine("         xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\"");
+    buffer.AppendLine("         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+    buffer.AppendLine("         xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable-1.1.xsd\">");
+    buffer.AppendLine("");
+
+    // Add header informations
     buffer.AppendLine(" <DESCRIPTION>");
-    buffer.AppendLine("  ???");
+    buffer.AppendLine("  ");
+    buffer.AppendString(header);
+
+    // Add request informations
+    buffer.AppendLine("  Request parameters: ");
+    buffer.AppendString(request);
+
+    // Add current date
+    mcsSTRING32 utcTime;
+    if (miscGetUtcTimeStr(0, utcTime) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    } 
+    buffer.AppendLine("  Generated on (UTC): ");
+    buffer.AppendString(utcTime);
+
     buffer.AppendLine(" </DESCRIPTION>");
+    buffer.AppendLine("");
 
     // Add context specific informations
     buffer.AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>");
+    buffer.AppendLine("");
 
-    // Add SCALIB data header
+    // Add software informations
     buffer.AppendLine(" <RESOURCE name=\"");
-    buffer.AppendString("???");
+    buffer.AppendString(softwareVersion);
     buffer.AppendString("\">");
+
     buffer.AppendLine("  <TABLE name=\"");
-    buffer.AppendString("???");
+    buffer.AppendString(fileName);
     buffer.AppendString("\">");
-    buffer.AppendLine("   <DESCRIPTION>");
-    buffer.AppendLine("    ???");
-    buffer.AppendLine("   </DESCRIPTION>");
 
     // Get the first start of the list
     vobsSTAR* star = starList.GetNextStar(mcsTRUE);

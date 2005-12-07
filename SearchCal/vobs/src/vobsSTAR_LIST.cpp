@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.27 2005-12-07 15:10:09 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.28 2005-12-07 15:28:20 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2005/12/07 15:10:09  scetre
+* Removed unused printf
+*
 * Revision 1.26  2005/11/30 15:24:37  lafrasse
 * Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
 *
@@ -75,7 +78,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.27 2005-12-07 15:10:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.28 2005-12-07 15:28:20 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -601,12 +604,15 @@ void vobsSTAR_LIST::Display(void)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */
-mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename)
+mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
+                                           const char *header,
+                                           const char *softwareVersion,
+                                           const char *request)
 {
     logTrace("vobsSTAR_LIST::SaveToVOTable()");
 
     vobsVOTABLE serializer;
-    return(serializer.Save(*this, filename));
+    return(serializer.Save(*this, filename, header, softwareVersion, request));
 }
 
 /**

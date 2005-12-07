@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.h,v 1.1 2005-11-30 15:24:37 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.h,v 1.2 2005-12-07 15:28:20 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/30 15:24:37  lafrasse
+ * Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
+ *
  ******************************************************************************/
 
 /**
@@ -53,7 +56,11 @@ public:
     virtual ~vobsVOTABLE();
 
     // Serialize a star list in a VOTable 1.1 XML file
-    mcsCOMPL_STAT Save(vobsSTAR_LIST& starList, const char* fileName);
+    mcsCOMPL_STAT Save(vobsSTAR_LIST& starList,
+                       const char *fileName,
+                       const char *header,
+                       const char *softwareVersion,
+                       const char *request);
 
 protected:
     
