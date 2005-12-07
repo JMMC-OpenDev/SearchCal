@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.42 2005-12-05 15:58:39 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.43 2005-12-07 16:49:18 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.42  2005/12/05 15:58:39  scetre
+* *** empty log message ***
+*
 * Revision 1.41  2005/12/02 17:43:30  lafrasse
 * Added property unit handling
 *
@@ -269,7 +272,7 @@ protected:
     // Method to add a property. Should be only called by constructors.
     mcsCOMPL_STAT AddProperty(char *id, char *name,
                               vobsPROPERTY_TYPE type, char *unit,
-                              char *format=NULL);
+                              char *format=NULL, char *description=NULL);
     map<string, vobsSTAR_PROPERTY> _propertyList;
     map<string, vobsSTAR_PROPERTY>::iterator _propertyListIterator;
     map<int, string> _propertyOrder;

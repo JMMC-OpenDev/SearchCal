@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.12 2005-12-02 17:42:26 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.13 2005-12-07 16:49:18 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2005/12/02 17:42:26  lafrasse
+* Added property unit handling
+*
 * Revision 1.11  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -88,7 +91,8 @@ public:
                       const char*        name,
                       vobsPROPERTY_TYPE  type,
                       const char*        unit,
-                      const char*        format=NULL);
+                      const char*        format=NULL,
+                      const char*        description=NULL);
 
     vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY&);
 
@@ -133,6 +137,9 @@ public:
     // Get property unit
     virtual const char *GetUnit(void) const;
 
+    // Get property unit
+    virtual const char *GetDescription(void) const;
+
 protected:
     
 private:
@@ -141,6 +148,7 @@ private:
     vobsPROPERTY_TYPE    _type;            // Type of the value
     string               _unit;            // Unit of the value
     string               _format;          // Format to print value 
+    string               _description;     // Description of the value
     mcsSTRING64          _value;           // Value
     vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index
     string               _origin;          // Either the catalog name where the

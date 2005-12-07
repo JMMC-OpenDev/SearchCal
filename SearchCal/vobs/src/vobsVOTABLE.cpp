@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.4 2005-12-07 15:28:20 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.5 2005-12-07 16:49:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/12/07 15:28:20  lafrasse
+ * Updated VOTable generation to include information about software version, request and date
+ *
  * Revision 1.3  2005/12/06 08:30:21  lafrasse
  * Added support for 'ref' attribute in VOTable column descriptors FIELD.
  * Now generate validated VOTable 1.1.
@@ -23,7 +26,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.4 2005-12-07 15:28:20 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.5 2005-12-07 16:49:18 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -71,6 +74,8 @@ vobsVOTABLE::~vobsVOTABLE()
  * @param fileName the path to the file in which the VOTable should be saved
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
+ *
+ * @todo Automatically generate links to simbad
  */
 mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char *fileName,
@@ -190,8 +195,20 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         buffer.AppendString(starProperty->GetUnit());
         buffer.AppendString("\"");
 
-        // Add standard row footer
-        buffer.AppendString("/>");
+        // Close FIELD opened markup
+        buffer.AppendString(">");
+        
+        // Add field description if present
+        const char* description = starProperty->GetDescription();
+        if (description != NULL)
+        {
+            buffer.AppendLine("    <DESCRIPTION>");
+            buffer.AppendString(description);
+            buffer.AppendString("</DESCRIPTION>");
+        }
+        
+        // Add standard field footer
+        buffer.AppendLine("   </FIELD>");
 
         // Retrieve the next property
         starProperty = star->GetNextProperty(mcsFALSE);

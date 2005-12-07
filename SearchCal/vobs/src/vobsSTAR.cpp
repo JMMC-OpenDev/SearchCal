@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.55 2005-12-07 15:25:28 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.56 2005-12-07 16:49:18 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.55  2005/12/07 15:25:28  scetre
+* Added known unit of properties
+*
 * Revision 1.54  2005/12/02 17:43:29  lafrasse
 * Added property unit handling
 *
@@ -141,7 +144,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.55 2005-12-07 15:25:28 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.56 2005-12-07 16:49:18 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -940,7 +943,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  */
 mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
                                     vobsPROPERTY_TYPE type, char *unit,
-                                    char *format)
+                                    char *format, char *description)
 {
     //logTrace("vobsSTAR::AddProperty()");
 
@@ -951,7 +954,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
         return mcsFAILURE;
     }
 
-    vobsSTAR_PROPERTY property(id, name, type, unit, format);
+    vobsSTAR_PROPERTY property(id, name, type, unit, format, description);
     _propertyList[id] = property;
     _propertyOrder[_propertyList.size()-1] = id;
 
@@ -966,7 +969,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     //logTrace("vobsSTAR::AddProperties()");
-    AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "-", "%.0f");
+    AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "-", "%.0f",
+                "HD identifier");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "-", "%.0f");
     AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "-", "%.0f");    
     AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsFLOAT_PROPERTY, "-", "%.0f");    

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.16 2005-12-02 17:42:26 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.17 2005-12-07 16:49:18 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2005/12/02 17:42:26  lafrasse
+* Added property unit handling
+*
 * Revision 1.15  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -55,7 +58,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.16 2005-12-02 17:42:26 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.17 2005-12-07 16:49:18 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -101,7 +104,8 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
                                      const char*              name, 
                                      const vobsPROPERTY_TYPE  type,
                                      const char*              unit,
-                                     const char*              format)
+                                     const char*              format,
+                                     const char*              description)
 {
     logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(...)"); 
 
@@ -131,6 +135,11 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
         }
     }
 
+    if (description != NULL)
+    {
+        _description = description;
+    }
+
     _confidenceIndex = vobsCONFIDENCE_LOW;
 
     _origin = "-";
@@ -152,6 +161,8 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
     _type   = property._type;
 
     _unit   = property._unit;
+
+    _description = property._description;
 
     _format = property._format;
 
@@ -176,6 +187,8 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _type   = property._type;
 
     _unit   = property._unit;
+
+    _description = property._description;
 
     _format = property._format;
 
@@ -469,8 +482,35 @@ const char *vobsSTAR_PROPERTY::GetUnit(void) const
 {
     logTrace("vobsSTAR_PROPERTY::GetUnit()");
 
+    if (_unit.length() == 0)
+    {
+        return "-";
+    }
+
     // Return property unit
     return _unit.c_str();
+}
+
+/**
+ * Get property description.
+ *
+ * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
+ *
+ * @return property unit
+ */
+const char *vobsSTAR_PROPERTY::GetDescription(void) const
+{
+    logTrace("vobsSTAR_PROPERTY::GetDescription()");
+    
+    if (_description.length() == 0)
+    {
+        return NULL;
+    }
+
+    cout << endl << endl << _description << endl << endl;
+
+    // Return property description
+    return _description.c_str();
 }
 
 /*

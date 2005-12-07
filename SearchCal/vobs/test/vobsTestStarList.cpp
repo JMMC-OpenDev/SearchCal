@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarList.cpp,v 1.7 2005-12-02 17:44:00 lafrasse Exp $"
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.8 2005-12-07 16:49:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/12/02 17:44:00  lafrasse
+ * Added VOTable save test
+ *
  * Revision 1.6  2005/11/16 10:45:14  scetre
  * Updated vobs test
  *
@@ -26,7 +29,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.7 2005-12-02 17:44:00 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.8 2005-12-07 16:49:18 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -86,7 +89,10 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     logTest("Save the list as VOTable into starList.xml.\n");
-    if (starList.SaveToVOTable("starList.xml") == mcsFAILURE)
+    if (starList.SaveToVOTable("starList.xml",
+                               "JMMC_team@Grenoble.france",
+                               "vobsTestStarList v?? :)",
+                               "No request for this one...") == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
