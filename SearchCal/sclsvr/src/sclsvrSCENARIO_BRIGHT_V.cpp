@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.5 2005-11-29 10:39:03 gzins Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.6 2005-12-07 14:51:42 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/29 10:39:03  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.4  2005/11/24 13:21:38  scetre
  * Clean the presentation of the add entry
  *
@@ -25,7 +28,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_V class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.5 2005-11-29 10:39:03 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.6 2005-12-07 14:51:42 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -50,7 +53,8 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_BRIGHT_V::sclsvrSCENARIO_BRIGHT_V()
+sclsvrSCENARIO_BRIGHT_V::sclsvrSCENARIO_BRIGHT_V():
+_filterOptT(vobsSTAR_ID_CATALOG)
 {
 }
 
@@ -124,12 +128,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // BUILD FILTER USED
     //////////////////////////////////////////////////////////////////////////
     // Build Filter used opt=T    
-    _filterOptT.SetPropertyId(vobsSTAR_ID_CATALOG);
-    if (_filterOptT.AddCondition("T") == mcsFAILURE)
+    if (_filterOptT.AddCondition(vobsEQUAL, "T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-   
+    _filterOptT.Enable();
     ///////////////////////////////////////////////////////////////////////////
     // REQUEST
     ///////////////////////////////////////////////////////////////////////////

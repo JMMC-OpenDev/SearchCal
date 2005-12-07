@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.11 2005-12-06 08:37:54 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.12 2005-12-07 14:51:42 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/12/06 08:37:54  scetre
+ * Prepared computing for faint calibrator
+ * Added Qflag filter on faint scenario
+ *
  * Revision 1.10  2005/11/30 10:45:30  scetre
  * Removed unused sclsvrSCENARIO_CHECK
  *
@@ -44,7 +48,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.11 2005-12-06 08:37:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.12 2005-12-07 14:51:42 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -70,7 +74,10 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K()
+sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K():
+_filterOptT(vobsSTAR_ID_CATALOG), 
+    _filterOptU(vobsSTAR_ID_CATALOG),
+    _filterOnQflag(vobsSTAR_CODE_QUALITY)
 {
 }
 
@@ -126,22 +133,19 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // BUILD FILTER USED
     //////////////////////////////////////////////////////////////////////////
     // Build Filter used opt=T
-    _filterOptT.SetPropertyId(vobsSTAR_ID_CATALOG);
-    if (_filterOptT.AddCondition("T") == mcsFAILURE)
+    if (_filterOptT.AddCondition(vobsEQUAL, "T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     _filterOptT.Enable();
     // Build Filter used opt=T
-    _filterOptU.SetPropertyId(vobsSTAR_ID_CATALOG);
-    if (_filterOptU.AddCondition("U") == mcsFAILURE)
+    if (_filterOptU.AddCondition(vobsEQUAL, "U") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     _filterOptU.Enable();
     // Build Filter used Qflg=AAA
-    _filterOnQflag.SetPropertyId(vobsSTAR_CODE_QUALITY);
-    if (_filterOnQflag.AddCondition("AAA") == mcsFAILURE)
+    if (_filterOnQflag.AddCondition(vobsEQUAL, "AAA") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
