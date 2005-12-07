@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.7 2005-12-06 12:08:53 gzins Exp $"
+# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.8 2005-12-07 09:07:01 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/12/06 12:08:53  gzins
+# Removed useless code
+#
 # Revision 1.6  2005/12/06 12:03:23  gzins
 # Minor change in help
 #
@@ -48,7 +51,7 @@ then
     exit 1
 fi
 
-GIVENHOSTNAME=$(hostname)
+GIVENHOSTNAME=$(hostname -s)
 XMLMCSENVLIST=$1
 MCSENVLIST=$2
 
