@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.31 2005-11-29 10:35:52 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.32 2005-12-07 11:47:45 gzins Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.31  2005/11/29 10:35:52  gzins
+* Updated to split treatment (catalog querying, list merging and list filtering) performed for each scenario step
+*
 * Revision 1.30  2005/11/24 08:13:50  scetre
 * Changed mother class of filter from vobsFILTER to vobsFILTER
 *
@@ -100,7 +103,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.31 2005-11-29 10:35:52 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.32 2005-12-07 11:47:45 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -270,8 +273,14 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 return mcsFAILURE;
             }
 
+            // Get catalog from list
             vobsCATALOG *tempCatalog = 
                 _catalogList->Get((*_entryIterator)._catalogName);
+            if (tempCatalog == NULL)
+            {
+                errAdd(vobsERR_UNKNOWN_CATALOG);
+                return mcsFAILURE;
+            }
 
             vobsREQUEST *request = (*_entryIterator)._request;
             // if research failed, return mcsFAILURE
@@ -279,6 +288,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 return mcsFAILURE;
             }
+
             // Stop time counter
             timlogStop(timLogActionName);
 
