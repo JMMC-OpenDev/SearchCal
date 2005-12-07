@@ -2,11 +2,14 @@
 ********************************************************************************
 JMMC project
 
-"@(#) $Id: mcscfgEnvList.xml,v 1.3 2005-12-07 09:06:52 mella Exp $"
+"@(#) $Id: mcscfgEnvList.xml,v 1.4 2005-12-07 09:12:41 mella Exp $"
 
 History
 ~~~~~~~
 $Log: not supported by cvs2svn $
+Revision 1.3  2005/12/07 09:06:52  mella
+Use short hostnames
+
 Revision 1.2  2005/12/06 12:07:23  gzins
 Changed pleione to pleione.obs-azur.fr
 
@@ -35,9 +38,15 @@ EXAMPLES
     -->  
     <hostname>mariotti</hostname>
 
+    <!-- MCS default environment definition if the machine is not listed below -->
+    <host name="localhost">
+        <!-- MCS default environment definition (do not delete) -->
+        <env name="default"> <port>1991</port></env>
+    </host>
+        
     <host name="mariotti">
         <!-- MCS default environment definition (do not delete) -->
-        <env name="default"> <host>localhost</host><port>1991</port></env>
+        <env name="default"> <port>1991</port></env>
         <!-- MCS User environment definitions (customized as you need) -->
         <env name="gzins"> 	    <port>1992</port></env> 
         <env name="scetre">     <port>1993</port></env>   
@@ -75,7 +84,7 @@ EXAMPLES
 
     <host name="pleione">
         <!-- MCS default environment definition (do not delete) -->
-        <env name="default"> <host>localhost</host><port>1991</port></env>
+        <env name="default"> <port>1991</port></env>
         <!-- MCS User environment definitions (customized as you need) -->
         <env name="gzins"> 	<port>1992</port></env> 
         <env name="scetre">  	<port>1993</port></env>   
