@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.2 2005-11-29 13:51:43 gzins Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.3 2005-12-07 12:22:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/29 13:51:43  gzins
+ * Minor change related to variable name
+ *
  * Revision 1.1  2005/11/29 10:34:12  gzins
  * Moved vobsFILTER to vobsGENERIC_FILTER
  *
@@ -51,7 +54,7 @@
  *  Definition of vobsGENERIC_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.2 2005-11-29 13:51:43 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.3 2005-12-07 12:22:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,13 +75,30 @@ using namespace std;
  */
 #include "vobsGENERIC_FILTER.h"
 #include "vobsPrivate.h"
+#include "vobsErrors.h"
+
 
 /**
  * Class constructor
+ *
+ * The exprType parameter indicates whether all conditions of this filter have
+ * to be verified by star or only one is enough; i.e. if it is set to vobsAND
+ * the expression is evaluated as 'cond1 && cond2 && ...', and if it is set to
+ * vobsOR it is evaluated as 'cond1 || cond2 || ...'
+ *
+ * @param propId property id on which filter has to be applied
+ * @param exprType type of expression; vobsAND or vobsOR
  */
-vobsGENERIC_FILTER::vobsGENERIC_FILTER()
+vobsGENERIC_FILTER::vobsGENERIC_FILTER(char *propId, 
+                                       vobsEXPRESSION_TYPE exprType)
 {
-    // by default, the filter is disabled
+    // Copy the name of property
+    strncpy(_propId, propId, (sizeof(_propId) - 1));
+    
+    // and expression type
+    _exprType = exprType;
+
+    // By default, the filter is disabled
     Disable();
 }
 
@@ -93,24 +113,7 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
  * Public methods
  */
 /**
- * Set property id
- *
- * @param propId property id
- * 
- * @return always mcsSUCCESS 
- */
-mcsCOMPL_STAT vobsGENERIC_FILTER::SetPropertyId(mcsSTRING32 propId)
-{
-    logTrace("vobsGENERIC_FILTER::SetPropertyId()");
-
-    // Copy property id
-    strcpy(_propId, propId);
-    
-    return mcsSUCCESS;
-}
-
-/**
- * Add float condition
+ * Add condition on numerical value
  *
  * @param condition <, >, <=, >=, ==
  * @param value the value to compare with
@@ -118,48 +121,66 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::SetPropertyId(mcsSTRING32 propId)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsCONDITION condition,
+mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
                                                mcsFLOAT value)
 {
     logTrace("vobsGENERIC_FILTER::AddCondition(float)");
 
-    vobsSTAR star;
-    if (star.GetPropertyType(_propId) == vobsSTRING_PROPERTY)
+    // If condition list is not empty, check that new condition has same type
+    // (float or string) than the other conditions
+    if (_conditions.empty() == false)
     {
-        // errAdd
-        return mcsFAILURE;
+        if (_propType != vobsFLOAT_PROPERTY)
+        {
+            errAdd(vobsERR_CONDITION_TYPE, "float", "string");
+            return mcsFAILURE;
+        }
+    }
+    else
+    {
+        _propType = vobsFLOAT_PROPERTY;
     }
 
-    vobsFLOAT_CONDITION floatCondition;
-    floatCondition.condition = condition;
-    floatCondition.value = value;
-
-    _floatConditions.push_back(floatCondition);
+    // Add new condition to the list
+    vobsCONDITION condition(op, value);;
+    _conditions.push_back(condition);
 
     return mcsSUCCESS;
 }
 
 /**
- * Add String condition
+ * Add condition on string value
  * 
- * @param the string to compare with
+ * @param condition <, >, <=, >=, ==
+ * @param value the string to compare with
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(string value)
+mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
+                                               char *value)
 {
     logTrace("vobsGENERIC_FILTER::AddCondition(string)");
 
-    vobsSTAR star;
-    if (star.GetPropertyType(_propId) == vobsFLOAT_PROPERTY)
+    // If condition list is not empty, check that new condition has same type
+    // (float or string) than the other conditions
+    if (_conditions.empty() == false)
     {
-        // errAdd
-        return mcsFAILURE;
+        if (_propType != vobsSTRING_PROPERTY)
+        {
+            errAdd(vobsERR_CONDITION_TYPE, "string", "float");
+            return mcsFAILURE;
+        }
+    }
+    else
+    {
+        _propType = vobsSTRING_PROPERTY;
     }
 
-    _stringConditions.push_back(value);
-    
+    // Add new condition to the list
+    vobsCONDITION condition(op, value);;
+    _conditions.push_back(condition);
+
     return mcsSUCCESS;
 }
 
@@ -176,15 +197,59 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsGENERIC_FILTER::Apply()");
 
-    mcsLOGICAL isTrue;
-    
+    // If list is empty, return
+    if (list->IsEmpty() == mcsTRUE)
+    {
+        return mcsSUCCESS;
+    }
+
+    // If condition list is empty, return
+    if (_conditions.size() == 0)
+    {
+        return mcsSUCCESS;
+    }
+
+    // Check property Id
+    vobsSTAR *star;
+    star = (vobsSTAR *)list->GetNextStar(mcsTRUE);
+    vobsSTAR_PROPERTY *property;
+    property = star->GetProperty(_propId);
+    if (property == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    // Check compatibility between property type and filter
+    if (star->GetPropertyType(_propId) != _propType)
+    {
+        if (_propType == vobsFLOAT_PROPERTY)
+        {
+            errAdd(vobsERR_INCOMPATIBLE_TYPES, "string", "float");
+        }
+        else
+        {
+            errAdd(vobsERR_INCOMPATIBLE_TYPES, "float", "string");
+        }
+        return mcsFAILURE;
+    }
+
+    // If filter is enabled 
     if (IsEnabled() == mcsTRUE)
     {
-        vobsSTAR *star;
+        // For each star of the list
         for (unsigned int el = 0; el < list->Size(); el++)
         {
-            // by default star doesn't match conditions
-            isTrue = mcsFALSE;
+            bool expr;
+            
+            // Init expresion eveluation status 
+            if (_exprType == vobsOR)
+            {
+                expr = false;
+            }
+            else
+            {
+                expr = true;
+            }
 
             star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
 
@@ -192,8 +257,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             if (star->IsPropertySet(_propId) != mcsTRUE)
             {
                 // Remove it
-                logTest("star %d had no property %s",
-                        el+1, _propId);
+                logTest("star %d - property %s is not set", el + 1, _propId);
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
@@ -202,105 +266,50 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             }
             else
             {
-                // if list of float condition is not empty, it is a float
-                // property, the test will be on numerical value
-                if (_floatConditions.size() != 0)
+                mcsFLOAT numValue;
+                string   strValue;
+                if (_propType == vobsFLOAT_PROPERTY)
                 {
-                    // in the case of float property the star respect the
-                    // confition and it is changed to false if one property
-                    // doesn't
-                    isTrue = mcsTRUE;
-                    // get float value of the property
-                    mcsFLOAT value;
-                    if (star->GetPropertyValue(_propId, &value) == mcsFAILURE)
+                    if (star->GetPropertyValue(_propId, 
+                                               &numValue) == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
-                    // if property is set, Apply sequentially all the condition
-                    // check all float condition
-                    _floatConditionsIterator = _floatConditions.begin();
-                    while (_floatConditionsIterator != _floatConditions.end())
-                    {
-                        // According to the desire condition 
-                        vobsCONDITION condition = 
-                            (*_floatConditionsIterator).condition;
-                        // switch case
-                        switch(condition)
-                        {
-                            case vobsLESS:
-                                // If value is less or equal than to the wanted
-                                // value condition
-                                if (value  >= (*_floatConditionsIterator).value)
-                                {
-                                    isTrue = mcsFALSE;
-                                }
-                                break;
-
-                            case vobsLESS_OR_EQUAL:
-                                // If value is less than to the wanted
-                                // value condition
-                                if (value  > (*_floatConditionsIterator).value)
-                                {
-                                    isTrue = mcsFALSE;
-                                }
-
-                                break;
-
-                            case vobsGREATER:
-                                // If value is more or equal than to the wanted
-                                // value condition
-                                if (value  <= (*_floatConditionsIterator).value)
-                                {
-                                    isTrue = mcsFALSE;
-                                }
-                                break;
-
-                            case vobsGREATER_OR_EQUAL:
-                                // If value is more than to the wanted
-                                // value condition
-                                if (value < (*_floatConditionsIterator).value)
-                                {
-                                    isTrue = mcsFALSE;
-                                }
-                                break;
-
-                            case vobsEQUAL:
-                                // If value is not equal to the wanted value 
-                                // condition
-                                if (value != (*_floatConditionsIterator).value)
-                                {
-                                    isTrue = mcsFALSE;
-                                }
-                                break;
-
-                            default:
-                                break;
-                        }
-                        _floatConditionsIterator++;
-                    }
-                } 
-                else if (_stringConditions.size() != 0)
+                }
+                else
                 {
-                    isTrue = mcsFALSE;
-                    // retreive the string property of the testing star
-                    mcsSTRING32 value;
-                    strcpy(value, star->GetPropertyValue(_propId));
-                    // if property is set, Apply sequentially all the condition
-                    // check all string condition
-                    _stringConditionsIterator = _stringConditions.begin();
-                    while (_stringConditionsIterator != _stringConditions.end())
+                    strValue = star->GetPropertyValue(_propId);
+                }
+
+                // Evaluate all conditions
+                std::list<vobsCONDITION>::iterator iter;
+                for (iter = _conditions.begin(); 
+                     iter != _conditions.end(); iter++)
+                {
+                    bool condition;
+
+                    if (_propType == vobsFLOAT_PROPERTY)
                     {
-                        // in string case, the value should be the same
-                        if (strcmp(value,
-                                   (*_stringConditionsIterator).c_str()) == 0)
-                        {
-                            isTrue = mcsTRUE;
-                        }
-                        _stringConditionsIterator++;
+                        condition = (*iter).Evaluate(numValue);
+                    }
+                    else
+                    {
+                        condition = (*iter).Evaluate(strValue);
+                    }
+
+
+                    if (_exprType == vobsOR)
+                    {
+                        expr = (expr || condition);
+                    }
+                    else
+                    {
+                        expr = expr && condition;
                     }
                 }
 
-                if (isTrue == mcsFALSE)
+                // If exression is false, remove star
+                if (expr == false)
                 {
                     // Remove it
                     if (list->Remove(*star) == mcsFAILURE)
@@ -312,9 +321,128 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             }
         }
     }
-    
+
     return mcsSUCCESS;
 }
 
+// Private class
+/**
+ * Class constructor
+ */
+vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(vobsOPERATOR op, 
+                                                 mcsFLOAT operand)
+{
+    _operator = op;
+    _numOperand = operand;
+}
+
+vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(vobsOPERATOR op,
+                                                 char *operand)
+{
+    _operator = op;
+    _strOperand = operand;
+}
+
+/**
+ * Class destructor
+ */
+vobsGENERIC_FILTER::vobsCONDITION::~vobsCONDITION()
+{
+}
+
+/**
+ * Condition evaluators.
+ */
+bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(mcsFLOAT value)
+{
+    switch (_operator)
+    {
+        case vobsLESS:
+            if (value < _numOperand)
+            {
+                return true;
+            }
+            break;
+        case vobsLESS_OR_EQUAL:
+            if (value <= _numOperand)
+            {
+                return true;
+            }
+            break;
+        case vobsGREATER:
+            if (value > _numOperand)
+            {
+                return true;
+            }
+            break; 
+        case vobsGREATER_OR_EQUAL:
+            if (value >= _numOperand)
+            {
+                return true;
+            }
+            break; 
+        case vobsEQUAL:
+            if (value == _numOperand)
+            {
+                return true;
+            }
+            break; 
+        case vobsNOT_EQUAL:
+            if (value != _numOperand)
+            {
+                return true;
+            }
+            break; 
+        default:
+            break;
+    }
+    return false;
+}
+
+bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(string value)
+{
+    switch (_operator)
+    {
+        case vobsLESS:
+            if (value < _strOperand)
+            {
+                return true;
+            }
+            break;
+        case vobsLESS_OR_EQUAL:
+            if (value <= _strOperand)
+            {
+                return true;
+            }
+            break;
+        case vobsGREATER:
+            if (value > _strOperand)
+            {
+                return true;
+            }
+            break; 
+        case vobsGREATER_OR_EQUAL:
+            if (value >= _strOperand)
+            {
+                return true;
+            }
+            break; 
+        case vobsEQUAL:
+            if (value == _strOperand)
+            {
+                return true;
+            }
+            break; 
+        case vobsNOT_EQUAL:
+            if (value != _strOperand)
+            {
+                return true;
+            }
+            break; 
+        default:
+            break;
+    }
+    return false;
+}
 
 /*___oOo___*/

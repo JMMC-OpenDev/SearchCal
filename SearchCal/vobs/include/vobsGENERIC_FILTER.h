@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.h,v 1.2 2005-11-29 13:45:57 gzins Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.h,v 1.3 2005-12-07 12:22:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/29 13:45:57  gzins
+ * Removed filter name definition
+ *
  * Revision 1.1  2005/11/29 10:29:41  gzins
  * Moved vobsFILTER to vobsGENERIC_FILTER
  *
@@ -60,15 +63,11 @@
 #include "vobsFILTER.h"
 
 /*
- * Class declaration
- */
-
-/*
  * Enumeration type definition
  */
 /**
- * vobsCONDITION is an enumeration which allow correspondance between an id and
- * a condition.
+ * vobsOPERATOR defines the list of logical operators supported by
+ * vobsCONDITION.
  */
 typedef enum
 {
@@ -76,17 +75,23 @@ typedef enum
     vobsLESS_OR_EQUAL,
     vobsGREATER,
     vobsGREATER_OR_EQUAL,
-    vobsEQUAL
-} vobsCONDITION;
+    vobsEQUAL,
+    vobsNOT_EQUAL
+} vobsOPERATOR;
 
 /**
- * structure of float condition
+ * vobsEXPRESSION_TYPE defines the two possible expression types: OR and AND.
  */
-typedef struct
+typedef enum
 {
-    vobsCONDITION condition;
-    mcsFLOAT value;
-} vobsFLOAT_CONDITION;
+    vobsAND,
+    vobsOR
+} vobsEXPRESSION_TYPE;
+
+/*
+ * Class declaration
+ */
+
 
 /**
  * Filter class
@@ -99,33 +104,52 @@ class vobsGENERIC_FILTER : public vobsFILTER
 
 public:
     // Class constructor
-    vobsGENERIC_FILTER();
+    vobsGENERIC_FILTER(char *propId, vobsEXPRESSION_TYPE exprType=vobsAND);
 
     // Class destructor
     virtual ~vobsGENERIC_FILTER();
 
-    virtual mcsCOMPL_STAT SetPropertyId(mcsSTRING32 propId);
-    virtual mcsCOMPL_STAT AddCondition(vobsCONDITION condition,
-                                       mcsFLOAT value);
-    virtual mcsCOMPL_STAT AddCondition(string value);
+    virtual mcsCOMPL_STAT AddCondition(vobsOPERATOR op, mcsFLOAT value);
+    virtual mcsCOMPL_STAT AddCondition(vobsOPERATOR op, char *value);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
 protected:
-    mcsSTRING32 _name;
     
 private:
+    class vobsCONDITION
+    {
+
+    public:
+
+        // Class constructor
+        vobsCONDITION(vobsOPERATOR op, mcsFLOAT operand=0.0);
+        vobsCONDITION(vobsOPERATOR op, char *operand);
+
+        // Class destructor
+        virtual ~vobsCONDITION();
+
+        // Condition evaluation
+        bool Evaluate(mcsFLOAT value);
+        bool Evaluate(string   value);
+
+    protected:
+        vobsOPERATOR _operator;
+        mcsFLOAT     _numOperand;
+        string       _strOperand;
+    private:
+    };
+
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsGENERIC_FILTER(const vobsGENERIC_FILTER&);
     vobsGENERIC_FILTER& operator=(const vobsGENERIC_FILTER&);
 
-    mcsSTRING32 _propId;
+    mcsSTRING32         _propId;
+    vobsEXPRESSION_TYPE _exprType;
+    vobsPROPERTY_TYPE   _propType;
 
-    std::list<vobsFLOAT_CONDITION> _floatConditions;
-    std::list<vobsFLOAT_CONDITION>::iterator _floatConditionsIterator;
-    std::list<string> _stringConditions;
-    std::list<string>::iterator _stringConditionsIterator;
+    std::list<vobsCONDITION> _conditions;
 };
 
 #endif /*!vobsGENERIC_FILTER_H*/
