@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.57 2005-12-07 15:11:03 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.58 2005-12-07 15:26:00 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.57  2005/12/07 15:11:03  scetre
+ * Removed unused printf
+ *
  * Revision 1.56  2005/12/07 14:52:27  scetre
  * Updated method name to compute diameter and magnitude
  *
@@ -122,7 +125,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.57 2005-12-07 15:11:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.58 2005-12-07 15:26:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1775,15 +1778,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                 vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", 
                 vobsSTRING_PROPERTY, "-");
-    AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "-", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY, "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY, "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY, "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", 
                 vobsFLOAT_PROPERTY, "-", "%.3f");
