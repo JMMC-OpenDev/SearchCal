@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.12 2005-12-07 14:51:42 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.13 2005-12-07 15:11:03 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/12/07 14:51:42  scetre
+ * Used new generic filter
+ *
  * Revision 1.11  2005/12/06 08:37:54  scetre
  * Prepared computing for faint calibrator
  * Added Qflag filter on faint scenario
@@ -48,7 +51,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.12 2005-12-07 14:51:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.13 2005-12-07 15:11:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -183,15 +186,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         magMin = request->GetMinMagRange();
         magMax = request->GetMaxMagRange();
         
+        // compute radius with alx
         if (alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius) ==
             mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        //
-        //  COMPUTE RADIUS with alx
-        //
-        printf("radius = %f\n", radius);
 
         // Decisionnal scenario
         vobsSCENARIO scenarioCheck;

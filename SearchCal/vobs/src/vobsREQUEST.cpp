@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.30 2005-11-30 15:27:59 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.31 2005-12-07 15:10:09 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2005/11/30 15:27:59  gzins
+ * Took into account object declinaison when computing box size along X direction
+ *
  * Revision 1.29  2005/11/29 08:22:23  scetre
  * Minor changes
  *
@@ -87,7 +90,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.30 2005-11-30 15:27:59 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.31 2005-12-07 15:10:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -423,12 +426,12 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsFLOAT &deltaRa,
 
     deltaRa  = _deltaRa * cos(dec * M_PI / 180.0);
 
-    printf("_deltaRa = %f\n", _deltaRa); 
-    printf("_objectDecInDeg = %f\n", _objectDecInDeg); 
-    printf("_deltaDec = %f\n", _deltaDec); 
-    printf("dec = %f\n", dec); 
+    logTest("_deltaRa = %f", _deltaRa); 
+    logTest("_objectDecInDeg = %f", _objectDecInDeg); 
+    logTest("_deltaDec = %f", _deltaDec); 
+    logTest("dec = %f", dec); 
 
-    printf("deltaRa = %f\n", deltaRa); 
+    logTest("deltaRa = %f", deltaRa); 
     
     
     deltaDec = _deltaDec;

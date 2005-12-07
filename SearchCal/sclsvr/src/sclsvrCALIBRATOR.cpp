@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.56 2005-12-07 14:52:27 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.57 2005-12-07 15:11:03 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.56  2005/12/07 14:52:27  scetre
+ * Updated method name to compute diameter and magnitude
+ *
  * Revision 1.55  2005/12/06 08:37:54  scetre
  * Prepared computing for faint calibrator
  * Added Qflag filter on faint scenario
@@ -119,7 +122,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.56 2005-12-07 14:52:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.57 2005-12-07 15:11:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -788,7 +791,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitudeForFaintStar()
     {
         strcpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
 
-        printf("spType = %s\n", spType);
         // Compute missing magnitudes
         if (alxComputeMagnitudesForFaintStar(spType, magnitudes) == mcsFAILURE)
         {
@@ -810,7 +812,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitudeForFaintStar()
     }
     else
     {
-        printf("spType = NULL\n");        
         // Compute missing magnitudes
         if (alxComputeMagnitudesForFaintStar(NULL, magnitudes) == mcsFAILURE)
         {

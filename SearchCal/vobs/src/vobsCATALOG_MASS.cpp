@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.23 2005-12-05 15:58:57 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.24 2005-12-07 15:10:09 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2005/12/05 15:58:57  scetre
+* Retreive 2MASS id
+*
 * Revision 1.22  2005/11/29 08:22:23  scetre
 * Minor changes
 *
@@ -80,7 +83,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.23 2005-12-05 15:58:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.24 2005-12-07 15:10:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -215,7 +218,6 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
         mcsFLOAT radius;
         if (request.GetSearchArea(radius) == mcsFAILURE)
         {
-            printf("radius = %d\n", radius);
             return mcsFAILURE;
         }
         sprintf(separation, "%.0f", radius);

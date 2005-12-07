@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.26 2005-11-30 15:24:37 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.27 2005-12-07 15:10:09 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2005/11/30 15:24:37  lafrasse
+* Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
+*
 * Revision 1.25  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -72,7 +75,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.26 2005-11-30 15:24:37 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.27 2005-12-07 15:10:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -425,7 +428,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(char *propertyId, mcsLOGICAL reverseOrder)
     // Get property type 
     vobsPROPERTY_TYPE propertyType;
     propertyType = GetNextStar(mcsTRUE)->GetProperty(propertyId)->GetType();
-    printf("propertyType = %d\n", propertyType); 
     
     // While the sorting is not achieved
     mcsLOGICAL sortingDone;
