@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.55 2005-12-06 08:37:54 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.56 2005-12-07 14:52:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.55  2005/12/06 08:37:54  scetre
+ * Prepared computing for faint calibrator
+ * Added Qflag filter on faint scenario
+ *
  * Revision 1.54  2005/12/02 17:45:29  lafrasse
  * Added a default "-" star property unit
  *
@@ -115,7 +119,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.55 2005-12-06 08:37:54 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.56 2005-12-07 14:52:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -241,19 +245,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 if (paralax >= 1)
                 {
                     // Compute Interstellar extinction
-                    if (ComputeInterstellarAbsorption() == mcsFAILURE)
+                    if (ComputeInterstellarAbsorptionForBrightStar() == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
 
                     // Compute Missing Magnitude
-                    if (ComputeMissingMagnitude() == mcsFAILURE)
+                    if (ComputeMissingMagnitudeForBrightStar() == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
 
                     // Compute Angular Diameter
-                    if (ComputeAngularDiameter() == mcsFAILURE)
+                    if (ComputeAngularDiameterForBrightStar() == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
@@ -287,7 +291,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     // if the researh is faint
     else
     {
-        /*
         // Compute Galactic coordinates
         if (ComputeGalacticCoordinates() == mcsFAILURE)
         {
@@ -364,19 +367,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             if (paralax >= 1) // && errplx/plx < 0.25
             {
                 // Compute Interstellar extinction
-                if (ComputeInterstellarAbsorptionFaint() == mcsFAILURE)
+                if (ComputeInterstellarAbsorptionForFaintStar() == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
 
                 // Compute Missing Magnitude
-                if (ComputeMissingMagnitudeFaint() == mcsFAILURE)
+                if (ComputeMissingMagnitudeForFaintStar() == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
 
                 // Compute Angular Diameter
-                if (ComputeAngularDiameterFaint() == mcsFAILURE)
+                if (ComputeAngularDiameterForFaintStar() == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -459,13 +462,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             }
 
             // Compute Missing Magnitude
-            if (ComputeMissingMagnitudeFaint() == mcsFAILURE)
+            if (ComputeMissingMagnitudeForFaintStar() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
 
             // Compute Angular Diameter
-            if (ComputeAngularDiameterFaint() == mcsFAILURE)
+            if (ComputeAngularDiameterForFaintStar() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -554,15 +557,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             }
 
             // Compute Missing Magnitude
-            if (testCalibratorWithAbsorption.ComputeMissingMagnitudeFaint() ==
-                mcsFAILURE)
+            if (testCalibratorWithAbsorption.
+                ComputeMissingMagnitudeForFaintStar() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
 
             // Compute Angular Diameter
-            if (testCalibratorWithAbsorption.ComputeAngularDiameterFaint() ==
-                mcsFAILURE)
+            if (testCalibratorWithAbsorption.
+                ComputeAngularDiameterForFaintStar() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -575,7 +578,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 
             // Test of validity of the visibility
         }
-    */
 
         // temporary all diameter are ok....
         if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
@@ -598,9 +600,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitudeForBrightStar()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeMissingMagnitude()");
+    logTrace("sclsvrCALIBRATOR::ComputeMissingMagnitudeForBrightStar()");
 
     //mcsFLOAT magnitudes[alxNB_BANDS];
     alxMAGNITUDES magnitudes;
@@ -706,14 +708,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 }
 
 /**
- * Compute missing magnitude.
+ * Compute missing magnitude for faint calibrator.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitudeFaint()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitudeForFaintStar()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeMissingMagnitudeFaint()");
+    logTrace("sclsvrCALIBRATOR::ComputeMissingMagnitudeForFaintStar()");
 
     //mcsFLOAT magnitudes[alxNB_BANDS];
     alxMAGNITUDES magnitudes;
@@ -780,20 +782,51 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitudeFaint()
         }
     }
 
-    // Compute missing magnitudes
-    if (alxComputeMagnitudesForFaintStar(magnitudes) == mcsFAILURE)
+    //Get the value of the Spectral Type
+    mcsSTRING32 spType;
+    if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsTRUE)
     {
-        if (errIsInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE) 
+        strcpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
+
+        printf("spType = %s\n", spType);
+        // Compute missing magnitudes
+        if (alxComputeMagnitudesForFaintStar(spType, magnitudes) == mcsFAILURE)
         {
-            errResetStack();
-            return mcsSUCCESS;
-        }
-        else
-        {
-            return mcsFAILURE;
+            // if error found on spectral type, reset stack and return SUCCESS
+            if ((errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) ==
+                 mcsTRUE) ||
+                (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) ==
+                 mcsTRUE) ||
+                (errIsInStack("alx", alxERR_CANNOT_COMPUTE_RATIO) == mcsTRUE))
+            {
+                errResetStack();
+                return mcsSUCCESS;
+            }
+            else
+            {
+                return mcsFAILURE;
+            }
         }
     }
-  
+    else
+    {
+        printf("spType = NULL\n");        
+        // Compute missing magnitudes
+        if (alxComputeMagnitudesForFaintStar(NULL, magnitudes) == mcsFAILURE)
+        {
+            if ((errIsInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE) ||
+                (errIsInStack("alx", alxERR_CANNOT_COMPUTE_RATIO) == mcsTRUE))
+            {
+                errResetStack();
+                return mcsSUCCESS;
+            }
+            else
+            {
+                return mcsFAILURE;
+            }
+        }
+ 
+    }
     // For each magnitude
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
@@ -871,9 +904,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorptionForBrightStar()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorption()");
+    logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorptionForBrightStar()");
 
     mcsFLOAT paralax, gLat, gLon;
 
@@ -1000,9 +1033,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorptionFaint()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorptionForFaintStar()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorptionFaint()");
+    logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorptionForFaintStar()");
 
     mcsFLOAT paralax, gLat, gLon;
 
@@ -1129,9 +1162,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorptionFaint()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameterForBrightStar()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeAngularDiameter()");
+    logTrace("sclsvrCALIBRATOR::ComputeAngularDiameterForBrightStar()");
 
     alxDIAMETERS diameters;
     alxDATA mgB, mgV, mgR, mgK, starProperty[4];
@@ -1180,7 +1213,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
     mgK=starProperty[3];
     
     // Compute angular diameters
-    if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK, &diameters) == mcsFAILURE)
+    if (alxComputeAngularDiameterForBrightStar(mgB, mgV, mgR, mgK,
+                                               &diameters) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1259,9 +1293,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameterFaint()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameterForFaintStar()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeAngularDiameterFaint()");
+    logTrace("sclsvrCALIBRATOR::ComputeAngularDiameterForFaintStar()");
 
     alxDIAMETERS diameters;
     alxDATA mgI, mgJ, mgK, mgH, starProperty[4];
@@ -1310,7 +1344,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameterFaint()
     mgH=starProperty[3];
     
     // Compute angular diameters
-    if (alxComputeAngularDiameterFaint(mgI, mgJ, mgK, mgH, &diameters) ==
+    if (alxComputeAngularDiameterForFaintStar(mgI, mgJ, mgK, mgH, &diameters) ==
         mcsFAILURE)
     {
         return mcsFAILURE;

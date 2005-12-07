@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.29 2005-12-05 16:01:36 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.30 2005-12-07 14:52:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2005/12/05 16:01:36  scetre
+ * Added magnitude faint and diameter faint computing
+ * Added mean diam and mean diam error as calibrator properties
+ *
  * Revision 1.28  2005/11/30 10:54:45  scetre
  * Added compute faint diameter
  *
@@ -130,13 +134,13 @@ private:
     mcsCOMPL_STAT AddProperties(void);
 
     // Compute specific property
-    mcsCOMPL_STAT ComputeMissingMagnitude();
-    mcsCOMPL_STAT ComputeMissingMagnitudeFaint();
+    mcsCOMPL_STAT ComputeMissingMagnitudeForBrightStar();
+    mcsCOMPL_STAT ComputeMissingMagnitudeForFaintStar();
     mcsCOMPL_STAT ComputeGalacticCoordinates();
-    mcsCOMPL_STAT ComputeInterstellarAbsorption();
-    mcsCOMPL_STAT ComputeInterstellarAbsorptionFaint();
-    mcsCOMPL_STAT ComputeAngularDiameter();
-    mcsCOMPL_STAT ComputeAngularDiameterFaint();
+    mcsCOMPL_STAT ComputeInterstellarAbsorptionForBrightStar();
+    mcsCOMPL_STAT ComputeInterstellarAbsorptionForFaintStar();
+    mcsCOMPL_STAT ComputeAngularDiameterForBrightStar();
+    mcsCOMPL_STAT ComputeAngularDiameterForFaintStar();
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeMultiplicity(); 
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
