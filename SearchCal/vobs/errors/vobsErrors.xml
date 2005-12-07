@@ -175,9 +175,19 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[The list of catalog is empty, it is impossible to retreive catalog]]></errFormat>
    </error>
-   <error id="49">
-      <errName>SCENARIO_EMPTY</errName>
+   <error id="50">
+      <errName>UNKNOWN_CATALOG</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[The scenario is not loaded, nothing to execute]]></errFormat>
+      <errFormat><![CDATA[Catalog '%.80s' is unknown]]></errFormat>
+   </error>
+   <error id="51">
+      <errName>CONDITION_TYPE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[new condition type (%s) differs from the other ones (%s)]]></errFormat>
+   </error>
+   <error id="53">
+      <errName>INCOMPATIBLE_TYPES</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[condition type (%s) and property type (%s) are not compatible]]></errFormat>
    </error>
 </errorList>
