@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestFilter.cpp,v 1.4 2005-11-30 15:22:50 gzins Exp $"
+ * "@(#) $Id: vobsTestFilter.cpp,v 1.5 2005-12-07 12:23:38 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/30 15:22:50  gzins
+ * Changed vobsFILTER to vobsGENERIC_FILTER
+ *
  * Revision 1.3  2005/11/28 10:11:24  scetre
  * Changed OR test to AND test
  *
@@ -22,7 +25,7 @@
  * Test file on filter 
  */
 
-static char *rcsId="@(#) $Id: vobsTestFilter.cpp,v 1.4 2005-11-30 15:22:50 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsTestFilter.cpp,v 1.5 2005-12-07 12:23:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -128,41 +131,35 @@ int main(int argc, char *argv[])
     logTest("size of the list to filter = %d", starList.Size());
     starList.Display();
 
-    vobsGENERIC_FILTER filterOnQflag;
-    filterOnQflag.SetPropertyId(vobsSTAR_CODE_QUALITY);
-    filterOnQflag.AddCondition("AAA");
-    filterOnQflag.AddCondition("OOO");
+    vobsGENERIC_FILTER filterOnQflag(vobsSTAR_CODE_QUALITY, vobsOR);
+    filterOnQflag.AddCondition(vobsEQUAL, "AAA");
+    filterOnQflag.AddCondition(vobsEQUAL, "OOO");
     filterOnQflag.Enable();
 
-    vobsGENERIC_FILTER filteronKmagLess;
-    filteronKmagLess.SetPropertyId(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagLess(vobsSTAR_PHOT_JHN_K);
     filteronKmagLess.AddCondition(vobsLESS, 4);
     filteronKmagLess.Enable();
     
-    vobsGENERIC_FILTER filteronKmagMore;
-    filteronKmagMore.SetPropertyId(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagMore(vobsSTAR_PHOT_JHN_K);
     filteronKmagMore.AddCondition(vobsGREATER, 2);
     filteronKmagMore.Enable();
 
-    vobsGENERIC_FILTER filteronKmagLessEqual;
-    filteronKmagLessEqual.SetPropertyId(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagLessEqual(vobsSTAR_PHOT_JHN_K);
     filteronKmagLessEqual.AddCondition(vobsLESS_OR_EQUAL, 4);
     filteronKmagLessEqual.AddCondition(vobsGREATER_OR_EQUAL, 2);
     filteronKmagLessEqual.Enable();
 
-    vobsGENERIC_FILTER filteronKmagMoreEqual;
-    filteronKmagMoreEqual.SetPropertyId(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagMoreEqual(vobsSTAR_PHOT_JHN_K);
     filteronKmagMoreEqual.AddCondition(vobsGREATER_OR_EQUAL, 2);
     filteronKmagMoreEqual.Enable();
     
-    vobsGENERIC_FILTER filteronKmagEqual;
-    filteronKmagEqual.SetPropertyId(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagEqual(vobsSTAR_PHOT_JHN_K);
     filteronKmagEqual.AddCondition(vobsEQUAL, 2);
     filteronKmagEqual.Enable();
         
-    vobsGENERIC_FILTER filteronKmagPlusPlus;
-    filteronKmagPlusPlus.SetPropertyId(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagPlusPlus(vobsSTAR_PHOT_JHN_K, vobsOR);
     filteronKmagPlusPlus.AddCondition(vobsEQUAL, 2);
+    filteronKmagPlusPlus.AddCondition(vobsEQUAL, 5);
     filteronKmagPlusPlus.Enable();
     
     logTest("A filter on Qflag = AAA  and OOO is applied on the list");
@@ -195,16 +192,11 @@ int main(int argc, char *argv[])
     logTest("The filtering list has a size = %d", starList6.Size());
     starList6.Display();
 
-    logTest("A filter on Kmag = 2 is applied on the list");
+    logTest("A filter on Kmag = 2  or Kmag = 5 is applied on the list");
     filteronKmagPlusPlus.Apply(&starList7);
     logTest("The filtering list has a size = %d", starList7.Size());
     starList7.Display();
-    //
-    // Insert your code here
-    // 
-
-
-
+  
     // Close MCS services
     mcsExit();
     
