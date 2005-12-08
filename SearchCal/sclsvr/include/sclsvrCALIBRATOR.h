@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.30 2005-12-07 14:52:27 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.31 2005-12-08 12:52:08 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2005/12/07 14:52:27  scetre
+ * Updated method name to compute diameter and magnitude
+ *
  * Revision 1.29  2005/12/05 16:01:36  scetre
  * Added magnitude faint and diameter faint computing
  * Added mean diam and mean diam error as calibrator properties
@@ -60,7 +63,7 @@
  * SCALIB header
  */
 #include "vobs.h"
-
+#include "alx.h"
 
 /*
  * Local header
@@ -134,13 +137,19 @@ private:
     mcsCOMPL_STAT AddProperties(void);
 
     // Compute specific property
-    mcsCOMPL_STAT ComputeMissingMagnitudeForBrightStar();
+    mcsCOMPL_STAT ComputeMissingMagnitude(alxBAND firstBand,
+                                          alxBAND secondBand,
+                                          mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeMissingMagnitudeForFaintStar();
     mcsCOMPL_STAT ComputeGalacticCoordinates();
-    mcsCOMPL_STAT ComputeInterstellarAbsorptionForBrightStar();
-    mcsCOMPL_STAT ComputeInterstellarAbsorptionForFaintStar();
-    mcsCOMPL_STAT ComputeAngularDiameterForBrightStar();
-    mcsCOMPL_STAT ComputeAngularDiameterForFaintStar();
+    mcsCOMPL_STAT 
+        ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS]);
+    mcsCOMPL_STAT ComputeAngularDiameter(alxDATA mg1,
+                                         alxDATA mg2,
+                                         alxDATA mg3,
+                                         alxDATA mg4,
+                                         char *starPropertyId[4],
+                                         mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeMultiplicity(); 
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
