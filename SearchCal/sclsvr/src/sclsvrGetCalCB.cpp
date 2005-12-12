@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.24 2005-11-24 15:14:27 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.25 2005-12-12 14:10:30 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/11/24 15:14:27  scetre
+ * Scenario faint K is enable
+ *
  * Revision 1.23  2005/11/24 09:00:10  lafrasse
  * Added 'radius' parameter to the GETCAL command
  *
@@ -76,7 +79,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.24 2005-11-24 15:14:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.25 2005-12-12 14:10:30 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -144,17 +147,36 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
             case 'J':
             case 'H':
             case 'K':
-                // Load Bright K Scenario
-                if (_scenarioBrightK.Init(&request) == mcsFAILURE)
+                if (request.IsOldScenario() == mcsTRUE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
-                }
+                    // Load old Bright K Scenario
+                    if (_scenarioBrightKOld.Init(&request) == mcsFAILURE)
+                    {
+                        return evhCB_NO_DELETE | evhCB_FAILURE;
+                    }
+                    // Start the research in the virtual observatory
+                    if (_virtualObservatory.Search(&_scenarioBrightKOld,
+                                                   request,
+                                                   starList) == mcsFAILURE)
+                    {
+                        return evhCB_NO_DELETE | evhCB_FAILURE;
+                    }
 
-                // Start the research in the virtual observatory
-                if (_virtualObservatory.Search(&_scenarioBrightK, request,
-                                               starList) == mcsFAILURE)
+                }
+                else
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    // Load Bright K Scenario
+                    if (_scenarioBrightK.Init(&request) == mcsFAILURE)
+                    {
+                        return evhCB_NO_DELETE | evhCB_FAILURE;
+                    }
+                    // Start the research in the virtual observatory
+                    if (_virtualObservatory.Search(&_scenarioBrightK, request,
+                                                   starList) == mcsFAILURE)
+                    {
+                        return evhCB_NO_DELETE | evhCB_FAILURE;
+                    }
+
                 }
 
                 break;
