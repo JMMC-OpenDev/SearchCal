@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.32 2005-12-07 11:47:45 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.33 2005-12-12 14:06:51 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.32  2005/12/07 11:47:45  gzins
+* Improved error handling
+*
 * Revision 1.31  2005/11/29 10:35:52  gzins
 * Updated to split treatment (catalog querying, list merging and list filtering) performed for each scenario step
 *
@@ -103,7 +106,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.32 2005-12-07 11:47:45 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.33 2005-12-12 14:06:51 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -234,9 +237,13 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             tempList.Copy(*(*_entryIterator)._listInput);
         }
 
+
         // **** CATALOG QUERYING ****
         // If there is a catalog to query 
-        if (strcmp((*_entryIterator)._catalogName, vobsNO_CATALOG_ID) != 0)
+        if ((strcmp((*_entryIterator)._catalogName, vobsNO_CATALOG_ID) != 0) &&
+            ((((*_entryIterator)._listInput == NULL) ||
+              (((*_entryIterator)._listInput !=NULL) &&
+               (((*_entryIterator)._listInput)->Size()!=0)))))
         {
             // Start research in entry's catalog
             logInfo("Consulting %s ...", (*_entryIterator)._catalogName);
@@ -288,6 +295,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 return mcsFAILURE;
             }
+            logInfo("...number of stars return = %d", tempList.Size());
 
             // Stop time counter
             timlogStop(timLogActionName);
@@ -387,7 +395,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             default:
                 break;
         }
-        
+        logInfo("after merging, star list size = %d",
+                ((*_entryIterator)._listOutput)->Size());
 
         // **** LIST FILTERING ****
         // Apply filter if defined
