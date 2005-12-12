@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.18 2005-11-29 13:04:42 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.19 2005-12-12 14:09:41 scetre Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2005/11/29 13:04:42  scetre
+# Used vobsSCENARIO instead of obsolete sclsvrSCEANRIO_CHECK
+#
 # Revision 1.17  2005/11/29 08:23:19  scetre
 # Added check scenario for scenario faint K
 #
@@ -88,6 +91,7 @@ INCLUDES        = sclsvr.h						\
 				  sclsvrSERVER.h				\
 				  sclsvrVISIBILITY_FILTER.h		\
 				  sclsvrSCENARIO_BRIGHT_K.h		\
+				  sclsvrSCENARIO_BRIGHT_K_OLD.h	\
 				  sclsvrSCENARIO_BRIGHT_V.h		\
 				  sclsvrSCENARIO_BRIGHT_N.h		\
 				  sclsvrSCENARIO_FAINT_K.h		\
@@ -112,6 +116,7 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		\
 				   sclsvrGetStarCB				\
 				   sclsvrVISIBILITY_FILTER		\
 				   sclsvrSCENARIO_BRIGHT_K		\
+				   sclsvrSCENARIO_BRIGHT_K_OLD	\
 				   sclsvrSCENARIO_BRIGHT_V		\
 				   sclsvrSCENARIO_BRIGHT_N		\
 				   sclsvrSCENARIO_FAINT_K		\

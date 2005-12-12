@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.11 2005-11-24 13:21:26 scetre Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.12 2005-12-12 14:10:00 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/11/24 13:21:26  scetre
+ * Added an element scenario faint K
+ *
  * Revision 1.10  2005/11/21 13:51:47  scetre
  * Changed bad scenario name
  * Added scenario for single star research -> updated getStar
@@ -49,6 +52,7 @@
  */
 #include "vobs.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
+#include "sclsvrSCENARIO_BRIGHT_K_OLD.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
 #include "sclsvrSCENARIO_FAINT_K.h"
@@ -128,6 +132,7 @@ private:
     // Virtual observatory
     vobsVIRTUAL_OBSERVATORY _virtualObservatory;
     sclsvrSCENARIO_BRIGHT_K _scenarioBrightK;
+    sclsvrSCENARIO_BRIGHT_K_OLD _scenarioBrightKOld;
     sclsvrSCENARIO_BRIGHT_V _scenarioBrightV;
     sclsvrSCENARIO_BRIGHT_N _scenarioBrightN;
     sclsvrSCENARIO_FAINT_K _scenarioFaintK;
