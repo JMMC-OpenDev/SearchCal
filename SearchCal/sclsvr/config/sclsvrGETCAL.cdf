@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.15 2005-11-24 09:00:10 lafrasse Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.16 2005-12-12 14:08:41 scetre Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.15  2005/11/24 09:00:10  lafrasse
+ Added 'radius' parameter to the GETCAL command
+
  Revision 1.14  2005/11/23 14:35:33  lafrasse
  Added fileName proper management (strncpy() calls instead of strcpy())
  Removed unused 'MaxReturn' command parmater
@@ -153,6 +156,28 @@
             <type>boolean</type>
             <defaultValue><boolean>true</boolean></defaultValue>
             <desc>specify wether the query should return bright (by default) or faint stars</desc>
+        </param>
+        <param optional="true">
+            <name>vis</name>
+            <type>double</type>
+            <defaultValue><double>1.0</double></defaultValue>
+            <minValue><double>0.0</double></minValue>
+            <maxValue><double>1.0</double></maxValue>
+            <desc>expected visibility</desc>
+        </param>
+        <param optional="true">
+            <name>visErr</name>
+            <type>double</type>
+            <defaultValue><double>0.5</double></defaultValue>
+            <minValue><double>0.0</double></minValue>
+            <maxValue><double>1.0</double></maxValue>
+            <desc>expected visibility error</desc>
+        </param>
+        <param optional="true">
+            <name>oldScenario</name>
+            <type>boolean</type>
+            <defaultValue><boolean>false</boolean></defaultValue>
+            <desc>specify wether an old scenario should be used</desc>
         </param>
     </params>        
 </cmd>
