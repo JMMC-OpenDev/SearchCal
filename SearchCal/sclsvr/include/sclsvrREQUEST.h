@@ -3,11 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.10 2005-11-23 14:35:33 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.11 2005-12-12 14:11:01 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/11/23 14:35:33  lafrasse
+ * Added fileName proper management (strncpy() calls instead of strcpy())
+ * Removed unused 'MaxReturn' command parmater
+ * Added 'bright' command parameter
+ *
  * Revision 1.9  2005/11/15 15:01:19  scetre
  * Updated with new scenario structure
  *
@@ -106,6 +111,9 @@ public:
     virtual mcsCOMPL_STAT SetBrightFlag(mcsLOGICAL brightFlag);
     virtual mcsLOGICAL    IsBright(void);
 
+    // scenario
+    virtual mcsCOMPL_STAT SetOldScenario(mcsLOGICAL oldScenario);
+    virtual mcsLOGICAL    IsOldScenario();
 protected:
 
 
@@ -121,6 +129,7 @@ private:
     mcsFLOAT      _maxBaselineLength;
     mcsFLOAT      _observingWlen;
     mcsLOGICAL    _brightFlag;
+    mcsLOGICAL    _oldScenario;
     mcsSTRING256  _fileName;
 };
 
