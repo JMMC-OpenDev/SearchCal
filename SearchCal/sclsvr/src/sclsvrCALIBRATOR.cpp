@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.60 2005-12-08 12:52:08 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.61 2005-12-12 14:09:26 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.60  2005/12/08 12:52:08  scetre
+ * Merged Compute diameter and magnitude for faint and bright method
+ *
  * Revision 1.59  2005/12/07 16:51:07  lafrasse
  * Added one property description for VOTable generation test
  *
@@ -131,7 +134,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.60 2005-12-08 12:52:08 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.61 2005-12-12 14:09:26 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -376,19 +379,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         magHcous = 0.929 * magH + 0.053 * magK + 0.018 * magJ - 0.004;
 
         // Set Kcous
-        if (SetPropertyValue(vobsSTAR_PHOT_COUS_K, magKcous, 
+        if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_K, magKcous, 
                              vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
         // Set Jcous
-        if (SetPropertyValue(vobsSTAR_PHOT_COUS_J, magJcous, 
+        if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_J, magJcous, 
                              vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
         // Set Hcous
-        if (SetPropertyValue(vobsSTAR_PHOT_COUS_H, magHcous, 
+        if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_H, magHcous, 
                              vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -409,9 +412,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                     vobsSTAR_PHOT_JHN_V,
                     vobsSTAR_PHOT_PHG_R,
                     vobsSTAR_PHOT_PHG_I,
-                    vobsSTAR_PHOT_COUS_J,
-                    vobsSTAR_PHOT_COUS_H,
-                    vobsSTAR_PHOT_COUS_K,
+                    sclsvrCALIBRATOR_PHOT_COUS_J,
+                    sclsvrCALIBRATOR_PHOT_COUS_H,
+                    sclsvrCALIBRATOR_PHOT_COUS_K,
                     vobsSTAR_PHOT_JHN_L,
                     vobsSTAR_PHOT_JHN_M
                 };
@@ -479,10 +482,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 }
             }
             // if Jmag property is set
-            if (IsPropertySet(vobsSTAR_PHOT_COUS_J) == mcsTRUE)
+            if (IsPropertySet(sclsvrCALIBRATOR_PHOT_COUS_J) == mcsTRUE)
             {
                 // retreive it
-                if (GetPropertyValue(vobsSTAR_PHOT_COUS_J, &Jo) == mcsFAILURE)
+                if (GetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_J, &Jo) ==
+                    mcsFAILURE)
                 {       
                     return mcsFAILURE;
                 }
@@ -494,10 +498,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 }
             }
             // if Hmag property is set
-            if (IsPropertySet(vobsSTAR_PHOT_COUS_H) == mcsTRUE)
+            if (IsPropertySet(sclsvrCALIBRATOR_PHOT_COUS_H) == mcsTRUE)
             {
                 // retreive it
-                if (GetPropertyValue(vobsSTAR_PHOT_COUS_H, &Ho) == mcsFAILURE)
+                if (GetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_H, &Ho) ==
+                    mcsFAILURE)
                 {       
                     return mcsFAILURE;
                 }
@@ -509,10 +514,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 }
             }
             // if Kmag property is set
-            if (IsPropertySet(vobsSTAR_PHOT_COUS_K) == mcsTRUE)
+            if (IsPropertySet(sclsvrCALIBRATOR_PHOT_COUS_K) == mcsTRUE)
             {
                 // retreive it
-                if (GetPropertyValue(vobsSTAR_PHOT_COUS_K, &Ko) == mcsFAILURE)
+                if (GetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_K, &Ko) ==
+                    mcsFAILURE)
                 {       
                     return mcsFAILURE;
                 }
@@ -582,7 +588,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 // retreive it
                 if (testCalibratorWithAbsorption.
-                    GetPropertyValue(vobsSTAR_PHOT_COUS_J, &Jo) == mcsFAILURE)
+                    GetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_J, &Jo) ==
+                    mcsFAILURE)
                 {       
                     return mcsFAILURE;
                 }
@@ -600,7 +607,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 // retreive it
                 if (testCalibratorWithAbsorption.
-                    GetPropertyValue(vobsSTAR_PHOT_COUS_H, &Ho) == mcsFAILURE)
+                    GetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_H, &Ho) ==
+                    mcsFAILURE)
                 {       
                     return mcsFAILURE;
                 }
@@ -618,7 +626,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 // retreive it
                 if (testCalibratorWithAbsorption.
-                    GetPropertyValue(vobsSTAR_PHOT_COUS_K, &Ko) == mcsFAILURE)
+                    GetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_K, &Ko) ==
+                    mcsFAILURE)
                 {       
                     return mcsFAILURE;
                 }
@@ -1555,6 +1564,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
     //logTrace("vobsSTAR::AddProperties()");
 
+    AddProperty(sclsvrCALIBRATOR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY,
+                "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY,
+                "mag", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY,
+                "mag", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, "-", 
                 "%.3f", "diameter b-v");
     AddProperty(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, "-", 

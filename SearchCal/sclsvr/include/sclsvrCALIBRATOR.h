@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.31 2005-12-08 12:52:08 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.32 2005-12-12 14:09:26 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2005/12/08 12:52:08  scetre
+ * Merged Compute diameter and magnitude for faint and bright method
+ *
  * Revision 1.30  2005/12/07 14:52:27  scetre
  * Updated method name to compute diameter and magnitude
  *
@@ -75,6 +78,9 @@
  * Constants definition
  */
 /* Definition of the calibrators properties */
+#define sclsvrCALIBRATOR_PHOT_COUS_J        "PHOT_COUS_J"
+#define sclsvrCALIBRATOR_PHOT_COUS_H        "PHOT_COUS_H"
+#define sclsvrCALIBRATOR_PHOT_COUS_K        "PHOT_COUS_K"
 #define sclsvrCALIBRATOR_MO                 "MO"
 #define sclsvrCALIBRATOR_LO                 "LO"
 #define sclsvrCALIBRATOR_KO                 "KO"
