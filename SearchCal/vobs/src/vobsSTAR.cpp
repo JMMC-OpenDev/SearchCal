@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.56 2005-12-07 16:49:18 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.57 2005-12-12 14:05:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.56  2005/12/07 16:49:18  lafrasse
+* Added support for 'description' attribute in VOTable column descriptors FIELD.
+*
 * Revision 1.55  2005/12/07 15:25:28  scetre
 * Added known unit of properties
 *
@@ -144,7 +147,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.56 2005-12-07 16:49:18 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.57 2005-12-12 14:05:55 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -1034,14 +1037,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "mag",
                 "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "mag", "%.3f");
-    AddProperty(vobsSTAR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag",
-                "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "mag", "%.3f");
-    AddProperty(vobsSTAR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag",
-                "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "mag", "%.3f");
-    AddProperty(vobsSTAR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag",
-                "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "mag", "%.3f");

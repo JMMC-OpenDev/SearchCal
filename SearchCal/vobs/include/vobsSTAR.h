@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.43 2005-12-07 16:49:18 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.44 2005-12-12 14:05:55 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.43  2005/12/07 16:49:18  lafrasse
+* Added support for 'description' attribute in VOTable column descriptors FIELD.
+*
 * Revision 1.42  2005/12/05 15:58:39  scetre
 * *** empty log message ***
 *
@@ -171,11 +174,8 @@
 #define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
 #define vobsSTAR_PHOT_PHG_I                     "PHOT_PHG_I"
 #define vobsSTAR_PHOT_JHN_J                     "PHOT_JHN_J"
-#define vobsSTAR_PHOT_COUS_J                    "PHOT_COUS_J"
 #define vobsSTAR_PHOT_JHN_H                     "PHOT_JHN_H"
-#define vobsSTAR_PHOT_COUS_H                    "PHOT_COUS_H"
 #define vobsSTAR_PHOT_JHN_K                     "PHOT_JHN_K"
-#define vobsSTAR_PHOT_COUS_K                    "PHOT_COUS_K"
 #define vobsSTAR_PHOT_JHN_L                     "PHOT_JHN_L"
 #define vobsSTAR_PHOT_JHN_M                     "PHOT_JHN_M"
 #define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
