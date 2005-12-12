@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.13 2005-12-07 15:11:03 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.14 2005-12-12 14:08:17 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/12/07 15:11:03  scetre
+ * Removed unused printf
+ *
  * Revision 1.12  2005/12/07 14:51:42  scetre
  * Used new generic filter
  *
@@ -51,7 +54,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.13 2005-12-07 15:11:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.14 2005-12-12 14:08:17 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -189,6 +192,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         // compute radius with alx
         if (alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius) ==
             mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        if (_request.SetSearchArea(radius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
