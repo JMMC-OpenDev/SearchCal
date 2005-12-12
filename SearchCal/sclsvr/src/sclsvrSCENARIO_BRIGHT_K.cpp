@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.8 2005-12-07 14:51:42 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.9 2005-12-12 14:11:26 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/12/07 14:51:42  scetre
+ * Used new generic filter
+ *
  * Revision 1.7  2005/11/30 10:35:21  scetre
  * Updated Filter without name
  * Updated scenario
@@ -35,7 +38,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.8 2005-12-07 14:51:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.9 2005-12-12 14:11:26 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -307,7 +310,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     ///////////////////////////////////////////////////////////////////////////
     // filter on opt=T
     ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP,
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS, &_starListS,
                  vobsCOPY, NULL, &_filterOptT) 
         == mcsFAILURE)
     {
