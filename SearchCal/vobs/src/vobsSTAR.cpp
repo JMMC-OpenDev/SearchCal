@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.57 2005-12-12 14:05:55 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.58 2005-12-13 15:37:24 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.57  2005/12/12 14:05:55  scetre
+* Moved computed cousin magnitude to other module
+*
 * Revision 1.56  2005/12/07 16:49:18  lafrasse
 * Added support for 'description' attribute in VOTable column descriptors FIELD.
 *
@@ -143,11 +146,11 @@
 
 /**
  * @file
- * vobsSTAR class definition.
+ * Definition of vobsSTAR class.
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.57 2005-12-12 14:05:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.58 2005-12-13 15:37:24 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -281,7 +284,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
  * @param confidenceIndex confidence index
  * @param overwrite booleen to know if it is an overwrite property
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  *
  * \b Error codes:\n
  * The possible errors are :
@@ -560,7 +563,7 @@ mcsLOGICAL vobsSTAR::IsProperty(char *id)
  *
  * @param ra pointer right ascension.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  *
  */
 mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
@@ -616,7 +619,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
  *
  * @param dec declinaison.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  *
  */
 mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
@@ -659,6 +662,85 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
     dec  = dd + sign*dm/60.0 + sign*ds/3600.0;
 
     return mcsSUCCESS;
+}
+
+/**
+ * Get star Id, based on the catalog it comes from.
+ *
+ * @param starId a pointer on an already allocated character buffer.
+ * @param maxLength the size of the external character buffer.
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
+{
+    logTrace("vobsSTAR::GetId()");
+
+    // Verify parameter validity
+    if (starId == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    const char* propertyValue = NULL;
+
+    propertyValue = GetPropertyValue(vobsSTAR_ID_HD);
+    if (propertyValue != NULL)
+    {
+        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_HD,
+                 propertyValue);
+        return mcsSUCCESS;
+    }
+
+    propertyValue = GetPropertyValue(vobsSTAR_ID_HIP);
+    if (propertyValue != NULL)
+    {
+        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_HIP,
+                 propertyValue);
+        return mcsSUCCESS;
+    }
+
+    propertyValue = GetPropertyValue(vobsSTAR_ID_DM);
+    if (propertyValue != NULL)
+    {
+        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_DM,
+                 propertyValue);
+        return mcsSUCCESS;
+    }
+
+    propertyValue = GetPropertyValue(vobsSTAR_ID_TYC1);
+    if (propertyValue != NULL)
+    {
+        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_TYC1,
+                 propertyValue);
+        return mcsSUCCESS;
+    }
+
+    propertyValue = GetPropertyValue(vobsSTAR_ID_CATALOG);
+    if (propertyValue != NULL)
+    {
+        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_CATALOG,
+                 propertyValue);
+        return mcsSUCCESS;
+    }
+
+    propertyValue = GetPropertyValue(vobsSTAR_ID_2MASS);
+    if (propertyValue != NULL)
+    {
+        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_2MASS,
+                 propertyValue);
+        return mcsSUCCESS;
+    }
+
+    propertyValue = GetPropertyValue(vobsSTAR_ID_DENIS);
+    if (propertyValue != NULL)
+    {
+        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_DENIS,
+                 propertyValue);
+        return mcsSUCCESS;
+    }
+
+    return mcsFAILURE;
 }
 
 /**
@@ -904,7 +986,16 @@ mcsINT32 vobsSTAR::NbProperties()
 void vobsSTAR::Display(mcsLOGICAL showPropId)
 {
     logTrace("vobsSTAR::Display()");
+
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
+    mcsSTRING64 starId;
+    mcsFLOAT    starRa  = 0.0;
+    mcsFLOAT    starDec = 0.0;
+
+    GetId(starId, sizeof(starId));
+    GetRa(starRa);
+    GetDec(starDec);
+    printf("%s(%f,%f): ", starId, starRa, starDec);
 
     if (showPropId == mcsFALSE)
     {

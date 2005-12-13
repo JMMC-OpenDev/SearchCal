@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.44 2005-12-12 14:05:55 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.45 2005-12-13 15:37:24 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.44  2005/12/12 14:05:55  scetre
+* Moved computed cousin magnitude to other module
+*
 * Revision 1.43  2005/12/07 16:49:18  lafrasse
 * Added support for 'description' attribute in VOTable column descriptors FIELD.
 *
@@ -87,7 +90,7 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * vobsSTAR class declaration.
  */
 
@@ -255,6 +258,9 @@ public:
     virtual mcsCOMPL_STAT GetRa(float &ra);
     virtual mcsCOMPL_STAT GetDec(float &dec);
 
+    // Method to get the star ID
+    virtual mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength);
+
     // Method to know if another star is the same than this one
     virtual mcsLOGICAL IsSame (vobsSTAR &star,
                                vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
@@ -281,8 +287,6 @@ protected:
 private:
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);
-
-    
 };
 
 
