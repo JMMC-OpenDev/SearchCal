@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.h,v 1.9 2005-11-29 13:46:38 gzins Exp $"
+ * "@(#) $Id: vobsFILTER.h,v 1.10 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/11/29 13:46:38  gzins
+ * Removed filter name notion
+ *
  * Revision 1.8  2005/11/29 10:28:00  gzins
  * Moved vobsBASE_FILTER to vobsFILTER
  *
@@ -17,7 +20,7 @@
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Declaration of vobsFILTER class.
  */
 
@@ -43,10 +46,9 @@
  */
 class vobsFILTER
 {
-
 public:
     // Class constructor
-    vobsFILTER();
+    vobsFILTER(const char* filterId);
 
     // Class destructor
     virtual ~vobsFILTER();
@@ -55,16 +57,20 @@ public:
     virtual mcsCOMPL_STAT Enable(void);
     virtual mcsCOMPL_STAT Disable(void);
 
+    virtual mcsCOMPL_STAT GetId(char* filterId, const mcsUINT32 maxLength);
+
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list) = 0;
     
 protected:
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsFILTER(const vobsFILTER&);
     vobsFILTER& operator=(const vobsFILTER&);
 
-    mcsLOGICAL _isEnable;    
+    mcsSTRING64 _id;
+    mcsLOGICAL  _isEnable;
 };
 
 #endif /*!vobsFILTER_H*/

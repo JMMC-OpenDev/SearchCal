@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.3 2005-12-07 12:22:51 gzins Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/12/07 12:22:51  gzins
+ * Added vobsCONDITION class for easier expression evaluation
+ *
  * Revision 1.2  2005/11/29 13:51:43  gzins
  * Minor change related to variable name
  *
@@ -51,10 +54,10 @@
 
 /**
  * @file
- *  Definition of vobsGENERIC_FILTER class.
+ * Definition of vobsGENERIC_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.3 2005-12-07 12:22:51 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -89,17 +92,16 @@ using namespace std;
  * @param propId property id on which filter has to be applied
  * @param exprType type of expression; vobsAND or vobsOR
  */
-vobsGENERIC_FILTER::vobsGENERIC_FILTER(char *propId, 
+vobsGENERIC_FILTER::vobsGENERIC_FILTER(const char*         filterId,
+                                             char*         propId, 
                                        vobsEXPRESSION_TYPE exprType)
+                   :vobsFILTER(filterId)
 {
     // Copy the name of property
     strncpy(_propId, propId, (sizeof(_propId) - 1));
     
     // and expression type
     _exprType = exprType;
-
-    // By default, the filter is disabled
-    Disable();
 }
 
 /**

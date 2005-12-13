@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.h,v 1.3 2005-12-07 12:22:43 gzins Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.h,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/12/07 12:22:43  gzins
+ * Added vobsCONDITION class for easier expression evaluation
+ *
  * Revision 1.2  2005/11/29 13:45:57  gzins
  * Removed filter name definition
  *
@@ -101,10 +104,11 @@ typedef enum
  */
 class vobsGENERIC_FILTER : public vobsFILTER
 {
-
 public:
     // Class constructor
-    vobsGENERIC_FILTER(char *propId, vobsEXPRESSION_TYPE exprType=vobsAND);
+    vobsGENERIC_FILTER(const char*         filterId,
+                             char*         propId,
+                       vobsEXPRESSION_TYPE exprType=vobsAND);
 
     // Class destructor
     virtual ~vobsGENERIC_FILTER();
@@ -119,7 +123,6 @@ protected:
 private:
     class vobsCONDITION
     {
-
     public:
 
         // Class constructor
@@ -137,6 +140,7 @@ private:
         vobsOPERATOR _operator;
         mcsFLOAT     _numOperand;
         string       _strOperand;
+
     private:
     };
 

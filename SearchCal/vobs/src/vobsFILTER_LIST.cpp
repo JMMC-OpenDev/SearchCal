@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.8 2005-11-29 14:05:18 gzins Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.9 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/11/29 14:05:18  gzins
+ * Removed GetNextFilter() method.
+ * Associated name to the filters added into the list
+ *
  * Revision 1.7  2005/11/29 10:33:40  gzins
  * Changed vobsBASE_FILTER to vobsFILTER
  *
@@ -39,7 +43,7 @@
  *  Definition of vobsFILTER_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.8 2005-11-29 14:05:18 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.9 2005-12-13 16:30:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -64,7 +68,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsFILTER_LIST::vobsFILTER_LIST()
+vobsFILTER_LIST::vobsFILTER_LIST(const char* filterId):vobsFILTER(filterId)
 {
 }
 

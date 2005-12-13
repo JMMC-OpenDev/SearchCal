@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.3 2005-11-29 13:49:19 gzins Exp $"
+ * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/29 13:49:19  gzins
+ * Removed filter name setting
+ *
  * Revision 1.2  2005/06/21 06:20:45  scetre
  * Changed method Disable() and Enable() to Disabled() and Enabled()
  * Changed '\' in doxygen documentatiuon to '@'
@@ -24,10 +27,10 @@
 
 /**
  * @file
- *  Definition of vobsMAGNITUDE_FILTER class.
+ * Definition of vobsMAGNITUDE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.3 2005-11-29 13:49:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,7 +55,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsMAGNITUDE_FILTER::vobsMAGNITUDE_FILTER()
+vobsMAGNITUDE_FILTER::vobsMAGNITUDE_FILTER(const char* filterId):vobsFILTER(filterId)
 {
 }
 

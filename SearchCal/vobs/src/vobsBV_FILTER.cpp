@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsBV_FILTER.cpp,v 1.6 2005-11-29 13:49:19 gzins Exp $"
+ * "@(#) $Id: vobsBV_FILTER.cpp,v 1.7 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/29 13:49:19  gzins
+ * Removed filter name setting
+ *
  * Revision 1.5  2005/11/29 10:25:58  gzins
  * Minor change
  *
@@ -25,10 +28,10 @@
 
 /**
  * @file
- *  Definition of vobsBV_FILTER class.
+ * Definition of vobsBV_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsBV_FILTER.cpp,v 1.6 2005-11-29 13:49:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsBV_FILTER.cpp,v 1.7 2005-12-13 16:30:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -53,7 +56,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsBV_FILTER::vobsBV_FILTER()
+vobsBV_FILTER::vobsBV_FILTER(const char* filterId):vobsFILTER(filterId)
 {
 }
 

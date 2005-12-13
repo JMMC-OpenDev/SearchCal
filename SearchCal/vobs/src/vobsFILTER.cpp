@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.11 2005-11-29 13:53:40 gzins Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.12 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/11/29 13:53:40  gzins
+ * Removed GetName method
+ *
  * Revision 1.10  2005/11/29 10:33:22  gzins
  * Changed vobsBASE_FILTER to vobsFILTER
  *
@@ -15,11 +18,11 @@
  ******************************************************************************/
 
 /**
- * \file
- *  Definition of vobsFILTER class.
+ * @file
+ * Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.11 2005-11-29 13:53:40 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.12 2005-12-13 16:30:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -43,10 +46,15 @@ using namespace std;
 
 /**
  * Class constructor
+ * 
+ * @param filterId a pointer on an already allocated character buffer.
  */
-vobsFILTER::vobsFILTER()
+vobsFILTER::vobsFILTER(const char* filterId)
 {
-    // by default, the filter is disabled
+    // Store the filter Id
+    strncpy(_id, filterId, (sizeof(filterId) - 1));
+
+    // Disable the filter by default
     Disable();
 }
 
@@ -61,9 +69,9 @@ vobsFILTER::~vobsFILTER()
  * Public methods
  */
 /**
- * Say if the filter is enable or not
+ * Return whether the filter is enable or not
  *
- * @return mcsTRUE is filter is enable, otherwise mcsFALSE is returned
+ * @return mcsTRUE if the filter is enable, mcsFALSE otherwise.
  */
 mcsLOGICAL vobsFILTER::IsEnabled(void)
 {
@@ -97,6 +105,29 @@ mcsCOMPL_STAT vobsFILTER::Disable(void)
 
     _isEnable = mcsFALSE;
     
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Get the filter Id.
+ *
+ * @param filterId a pointer on an already allocated character buffer.
+ * @param maxLength the size of the external character buffer.
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT vobsFILTER::GetId(char* filterId, const mcsUINT32 maxLength)
+{
+    logTrace("vobsFILTER::GetId()");
+
+    // Verify parameter validity
+    if (filterId == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    strncpy(filterId, _id, (maxLength - 1));
     return mcsSUCCESS;
 }
 

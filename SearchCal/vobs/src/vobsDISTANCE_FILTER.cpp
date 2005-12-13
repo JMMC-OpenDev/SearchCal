@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.4 2005-11-29 13:49:19 gzins Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/29 13:49:19  gzins
+ * Removed filter name setting
+ *
  * Revision 1.3  2005/11/29 10:33:02  gzins
  * Minor changes
  *
@@ -27,10 +30,10 @@
 
 /**
  * @file
- *  Definition of vobsDISTANCE_FILTER class.
+ * Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.4 2005-11-29 13:49:19 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -55,7 +58,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsDISTANCE_FILTER::vobsDISTANCE_FILTER()
+vobsDISTANCE_FILTER::vobsDISTANCE_FILTER(const char* filterId):vobsFILTER(filterId)
 {
 }
 

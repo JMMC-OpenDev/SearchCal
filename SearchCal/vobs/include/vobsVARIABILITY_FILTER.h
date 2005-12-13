@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.h,v 1.4 2005-11-29 13:45:57 gzins Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.h,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/29 13:45:57  gzins
+ * Removed filter name definition
+ *
  * Revision 1.3  2005/11/29 10:31:38  gzins
  * Changed vobsBASE_FILTER to vobsFILTER
  *
@@ -65,7 +68,7 @@ class vobsVARIABILITY_FILTER : public vobsFILTER
 
 public:
     // Class constructor
-    vobsVARIABILITY_FILTER();
+    vobsVARIABILITY_FILTER(const char* filterId);
 
     // Class destructor
     virtual ~vobsVARIABILITY_FILTER();
