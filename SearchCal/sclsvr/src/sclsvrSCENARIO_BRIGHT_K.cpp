@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.9 2005-12-12 14:11:26 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.10 2005-12-14 09:02:35 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/12/12 14:11:26  scetre
+ * Fiwed bug with filter entry
+ *
  * Revision 1.8  2005/12/07 14:51:42  scetre
  * Used new generic filter
  *
@@ -38,7 +41,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.9 2005-12-12 14:11:26 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.10 2005-12-14 09:02:35 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -64,7 +67,11 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_BRIGHT_K::sclsvrSCENARIO_BRIGHT_K():
-_filterOptT(vobsSTAR_ID_CATALOG)
+_originFilter("K origin = 2mass filter"),
+    _magnitudeFilter("K mag filter"),
+    _filterList("filter List"),
+    _bvFilter("B-V filter"),
+    _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG)
 {
 }
 
@@ -310,12 +317,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     ///////////////////////////////////////////////////////////////////////////
     // filter on opt=T
     ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS, &_starListS,
+    /*if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS, &_starListS,
                  vobsCOPY, NULL, &_filterOptT) 
         == mcsFAILURE)
     {
         return mcsFAILURE;
-    }
+    }*/
     ///////////////////////////////////////////////////////////////////////////
     // II/7A
     ///////////////////////////////////////////////////////////////////////////

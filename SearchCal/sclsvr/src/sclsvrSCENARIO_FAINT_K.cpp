@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.14 2005-12-12 14:08:17 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.15 2005-12-14 09:02:35 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/12/12 14:08:17  scetre
+ * Added radius computing
+ *
  * Revision 1.13  2005/12/07 15:11:03  scetre
  * Removed unused printf
  *
@@ -54,7 +57,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.14 2005-12-12 14:08:17 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.15 2005-12-14 09:02:35 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -81,9 +84,9 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K():
-_filterOptT(vobsSTAR_ID_CATALOG), 
-    _filterOptU(vobsSTAR_ID_CATALOG),
-    _filterOnQflag(vobsSTAR_CODE_QUALITY)
+_filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
+    _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG),
+_filterOnQflag("Qflag = AAA filter", vobsSTAR_CODE_QUALITY)
 {
 }
 

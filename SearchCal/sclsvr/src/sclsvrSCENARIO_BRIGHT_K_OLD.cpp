@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.1 2005-12-12 14:07:57 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.2 2005-12-14 09:02:35 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/12 14:07:57  scetre
+ * Added old scenario with 2mass in primary request
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_OLD class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.1 2005-12-12 14:07:57 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.2 2005-12-14 09:02:35 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -39,7 +42,11 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_BRIGHT_K_OLD::sclsvrSCENARIO_BRIGHT_K_OLD():
-_filterOptT(vobsSTAR_ID_CATALOG)
+_originFilter("K origin = 2mass filter"),
+    _magnitudeFilter("K mag filter"),
+    _filterList("filter List"),
+    _bvFilter("B-V filter"),
+    _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG)
 {
 }
 
@@ -168,9 +175,18 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_OLD::Init(vobsREQUEST * request)
     ///////////////////////////////////////////////////////////////////////////
     
     ///////////////////////////////////////////////////////////////////////////
+    // 2MASS
+    /////////////////////////////////////////////////////////////////////////// 
+    if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
+                 vobsCOPY, NULL, &_filterOptT) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////
     // II/225
     ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsCOPY) ==
+    if (AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
@@ -184,14 +200,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_OLD::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     } 
-    ///////////////////////////////////////////////////////////////////////////
-    // 2MASS
-    /////////////////////////////////////////////////////////////////////////// 
-    if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
-                 vobsMERGE) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    
     ///////////////////////////////////////////////////////////////////////////
     // I/280 bis
     ///////////////////////////////////////////////////////////////////////////
@@ -249,12 +258,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_OLD::Init(vobsREQUEST * request)
     ///////////////////////////////////////////////////////////////////////////
     // filter on opt=T
     ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS, &_starListS,
+    /*if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS, &_starListS,
                  vobsCOPY, NULL, &_filterOptT) 
         == mcsFAILURE)
     {
         return mcsFAILURE;
-    }
+    }*/
     ///////////////////////////////////////////////////////////////////////////
     // II/7A
     ///////////////////////////////////////////////////////////////////////////

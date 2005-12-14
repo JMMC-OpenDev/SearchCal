@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.6 2005-12-07 14:51:42 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.7 2005-12-14 09:02:35 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/12/07 14:51:42  scetre
+ * Used new generic filter
+ *
  * Revision 1.5  2005/11/29 10:39:03  gzins
  * Changed vobsBASE_FILTER to vobsFILTER
  *
@@ -28,7 +31,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_V class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.6 2005-12-07 14:51:42 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.7 2005-12-14 09:02:35 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -54,7 +57,7 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_BRIGHT_V::sclsvrSCENARIO_BRIGHT_V():
-_filterOptT(vobsSTAR_ID_CATALOG)
+_filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG)
 {
 }
 
