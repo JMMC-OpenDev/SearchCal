@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhHANDLER.cpp,v 1.9 2005-05-19 15:15:20 gzins Exp $"
+ * "@(#) $Id: evhHANDLER.cpp,v 1.10 2005-12-14 23:09:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/05/19 15:15:20  gzins
+ * Added handling of message queue when looking for messages
+ *
  * Revision 1.8  2005/02/09 16:28:28  lafrasse
  * Reflected function renaming in 'msg' (GetMsgQueue became GetSocketDescriptor)
  *
@@ -37,7 +40,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.9 2005-05-19 15:15:20 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.10 2005-12-14 23:09:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -273,7 +276,8 @@ mcsCOMPL_STAT evhHANDLER::MainLoop(msgMESSAGE *msg)
         // Run attached callback
         if (Run(key, *msg) == mcsFAILURE)
         {
-            return mcsFAILURE;
+            errCloseStack();
+            exit(EXIT_FAILURE);
         }
 
         return mcsSUCCESS;

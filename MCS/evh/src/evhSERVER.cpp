@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.12 2005-10-07 06:53:20 gzins Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.13 2005-12-14 23:09:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/10/07 06:53:20  gzins
+ * Renamed Init() to AdditionalInit()
+ *
  * Revision 1.11  2005/03/04 15:12:31  lafrasse
  * Added the 'EXIT' command callback and management
  *
@@ -46,7 +49,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.12 2005-10-07 06:53:20 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.13 2005-12-14 23:09:51 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -82,7 +85,7 @@ using namespace std;
  * connected to the message service. This is the default behaviour for server
  * process. 
  */
-evhSERVER::evhSERVER(mcsLOGICAL unique)
+evhSERVER::evhSERVER(mcsLOGICAL unique) : _msg(mcsTRUE)
 {
     // Add state definitions
     AddState(evhSTATE_UNKNOWN, evhSTATE_STR_UNKNOWN);
@@ -393,7 +396,6 @@ mcsCOMPL_STAT evhSERVER::Disconnect()
     return mcsSUCCESS;
 }
 
-
 mcsCOMPL_STAT evhSERVER::MainLoop(msgMESSAGE *msg)
 {
     // If a message is given or no command given as argument 
@@ -426,7 +428,7 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
 
     // If it is the command provided by user on command-line, just print out
     // the result
-    if (&msg == &_msg)
+    if (msg.IsInternal() == mcsTRUE)
     {
         if (errStackIsEmpty() == mcsTRUE)
         {
@@ -435,12 +437,11 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
         }
         else
         {
-            errDisplayStack();
             errCloseStack();
             return mcsFAILURE;
         }
     }
-    // Esle
+    // Else
     else
     {
         // Send reply to the sended
