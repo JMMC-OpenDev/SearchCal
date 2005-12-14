@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.7 2005-11-30 10:35:21 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.8 2005-12-14 09:02:00 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/11/30 10:35:21  scetre
+ * Updated Filter without name
+ * Updated scenario
+ *
  * Revision 1.6  2005/11/29 10:38:43  gzins
  * *** empty log message ***
  *
@@ -74,7 +78,7 @@ class sclsvrVISIBILITY_FILTER : public vobsFILTER
 {
 public:
     // Class constructor
-    sclsvrVISIBILITY_FILTER();
+    sclsvrVISIBILITY_FILTER(const char *filterId);
 
     // Class destructor
     virtual ~sclsvrVISIBILITY_FILTER();

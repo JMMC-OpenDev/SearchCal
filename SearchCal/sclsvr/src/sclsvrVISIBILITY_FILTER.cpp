@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.6 2005-11-30 10:35:21 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.7 2005-12-14 09:02:00 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/30 10:35:21  scetre
+ * Updated Filter without name
+ * Updated scenario
+ *
  * Revision 1.5  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -29,7 +33,7 @@
  * Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.6 2005-11-30 10:35:21 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.7 2005-12-14 09:02:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -57,7 +61,8 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrVISIBILITY_FILTER::sclsvrVISIBILITY_FILTER()
+sclsvrVISIBILITY_FILTER::sclsvrVISIBILITY_FILTER(const char *filterId):
+vobsFILTER(filterId)
 {
 }
 
