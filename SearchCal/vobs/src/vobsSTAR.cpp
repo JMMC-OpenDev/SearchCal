@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.58 2005-12-13 15:37:24 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.59 2005-12-14 15:09:56 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.58  2005/12/13 15:37:24  lafrasse
+* Added star Id management with the new GetId() method
+*
 * Revision 1.57  2005/12/12 14:05:55  scetre
 * Moved computed cousin magnitude to other module
 *
@@ -150,7 +153,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.58 2005-12-13 15:37:24 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.59 2005-12-14 15:09:56 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -684,62 +687,78 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
 
     const char* propertyValue = NULL;
 
-    propertyValue = GetPropertyValue(vobsSTAR_ID_HD);
-    if (propertyValue != NULL)
+    if (IsPropertySet(vobsSTAR_ID_HD) == mcsTRUE)
     {
-        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_HD,
-                 propertyValue);
-        return mcsSUCCESS;
+        propertyValue = GetPropertyValue(vobsSTAR_ID_HD);
+        if (propertyValue != NULL)
+        {
+            snprintf(starId, (maxLength - 1), "HD %s", propertyValue);
+            return mcsSUCCESS;
+        }
     }
 
-    propertyValue = GetPropertyValue(vobsSTAR_ID_HIP);
-    if (propertyValue != NULL)
+    if (IsPropertySet(vobsSTAR_ID_HIP) == mcsTRUE)
     {
-        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_HIP,
-                 propertyValue);
-        return mcsSUCCESS;
+        propertyValue = GetPropertyValue(vobsSTAR_ID_HIP);
+        if (propertyValue != NULL)
+        {
+            snprintf(starId, (maxLength - 1), "HIP %s", propertyValue);
+            return mcsSUCCESS;
+        }
     }
 
-    propertyValue = GetPropertyValue(vobsSTAR_ID_DM);
-    if (propertyValue != NULL)
+    if (IsPropertySet(vobsSTAR_ID_DM) == mcsTRUE)
     {
-        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_DM,
-                 propertyValue);
-        return mcsSUCCESS;
+        propertyValue = GetPropertyValue(vobsSTAR_ID_DM);
+        if (propertyValue != NULL)
+        {
+            snprintf(starId, (maxLength - 1), "DM %s", propertyValue);
+            return mcsSUCCESS;
+        }
     }
 
-    propertyValue = GetPropertyValue(vobsSTAR_ID_TYC1);
-    if (propertyValue != NULL)
+    if (IsPropertySet(vobsSTAR_ID_TYC1) == mcsTRUE)
     {
-        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_TYC1,
-                 propertyValue);
-        return mcsSUCCESS;
+        propertyValue = GetPropertyValue(vobsSTAR_ID_TYC1);
+        if (propertyValue != NULL)
+        {
+            snprintf(starId, (maxLength - 1), "TYC1 %s", propertyValue);
+            return mcsSUCCESS;
+        }
     }
 
-    propertyValue = GetPropertyValue(vobsSTAR_ID_CATALOG);
-    if (propertyValue != NULL)
+    if (IsPropertySet(vobsSTAR_ID_2MASS) == mcsTRUE)
     {
-        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_CATALOG,
-                 propertyValue);
-        return mcsSUCCESS;
+        propertyValue = GetPropertyValue(vobsSTAR_ID_2MASS);
+        if (propertyValue != NULL)
+        {
+            snprintf(starId, (maxLength - 1), "2MASS %s", propertyValue);
+            return mcsSUCCESS;
+        }
     }
 
-    propertyValue = GetPropertyValue(vobsSTAR_ID_2MASS);
-    if (propertyValue != NULL)
+    if (IsPropertySet(vobsSTAR_ID_DENIS) == mcsTRUE)
     {
-        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_2MASS,
-                 propertyValue);
-        return mcsSUCCESS;
+        propertyValue = GetPropertyValue(vobsSTAR_ID_DENIS);
+        if (propertyValue != NULL)
+        {
+            snprintf(starId, (maxLength - 1), "DENIS %s", propertyValue);
+            return mcsSUCCESS;
+        }
     }
 
-    propertyValue = GetPropertyValue(vobsSTAR_ID_DENIS);
-    if (propertyValue != NULL)
+    const char* raValue = NULL;
+    const char* decValue = NULL;
+    if ((IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE) && 
+        (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE))
     {
-        snprintf(starId, (maxLength - 1), "%s-%s", vobsSTAR_ID_DENIS,
-                 propertyValue);
-        return mcsSUCCESS;
+        raValue =GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN);
+        decValue =GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN);
+        snprintf(starId, (maxLength - 1), "Coordinates-ra=%s/dec=%s",
+                     raValue, decValue);
+        return mcsSUCCESS;        
     }
-
+    
     return mcsFAILURE;
 }
 
