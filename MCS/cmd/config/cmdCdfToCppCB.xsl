@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.4 2005-06-01 08:12:58 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.5 2005-12-14 14:56:56 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.4  2005/06/01 08:12:58  mella
+    Add more code
+
     Revision 1.3  2005/06/01 05:56:13  mella
     Change case for filename
 
@@ -77,6 +80,10 @@
                     <xsl:with-param name="toconvert" select="./mnemonic"/>
                     <xsl:with-param name="conversion">proper</xsl:with-param>
                 </xsl:call-template>Cmd</xsl:variable>    
+                <xsl:variable name="lowerMnemo"><xsl:call-template name="convertcase">
+                    <xsl:with-param name="toconvert" select="./mnemonic"/>
+                    <xsl:with-param name="conversion">lower</xsl:with-param>
+            </xsl:call-template></xsl:variable>               
 /**
  * \file
  * Generated for <xsl:value-of select="$CBName"/> callback definition.
@@ -118,6 +125,14 @@ using namespace std;
  evhCB_COMPL_STAT <xsl:value-of select="$moduleName"/>ReplaceByClassName::<xsl:value-of select="$CBName"/>(msgMESSAGE &amp;msg, void *)
  {
     logExtDbg("replaceByClassName::<xsl:value-of select="$CBName"/>()");
+
+    /////// Cut &amp; Paste the next lines to attach this callback into your server
+    // Attach <xsl:value-of select="./mnemonic"/> command callback
+    evhCMD_KEY <xsl:value-of select="$lowerMnemo"/>CmdKey(<xsl:value-of select="$cmdClassName"/>, <xsl:value-of select="$moduleName"/><xsl:value-of select="./mnemonic"/>_CDF_NAME);
+    evhCMD_CALLBACK <xsl:value-of select="$lowerMnemo"/>CB(this, (evhCMD_CB_METHOD)&amp;<xsl:value-of select="$moduleName"/>ReplaceByClassName::<xsl:value-of select="$CBName"/>);
+    AddCallback(<xsl:value-of select="$lowerMnemo"/>CmdKey, <xsl:value-of select="$CBName"/>);
+    /////// End of Cut &amp; Paste
+
     
     //  <xsl:value-of select="./mnemonic"/> command
     <xsl:value-of select="$cmdClassName"/><xsl:text> </xsl:text> <xsl:value-of select="$cmdName"/> (msg.GetCommand(), msg.GetBody());

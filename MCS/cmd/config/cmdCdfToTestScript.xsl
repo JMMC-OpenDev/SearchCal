@@ -41,6 +41,7 @@ command=<xsl:value-of select="mnemonic"/>
 
 <xsl:for-each select="./params/param">
 # parameter: <xsl:value-of select="./name"/>
+# <xsl:value-of select="./desc"/>
 <xsl:value-of select="'&#10;'"/>
     <xsl:if test="./@optional"># is optional<xsl:value-of select="'&#10;'"/></xsl:if>
     <xsl:if test="boolean(./defaultValue)"># has a default value:<xsl:value-of select="./defaultValue"/> <xsl:value-of select="'&#10;'"/> </xsl:if>
