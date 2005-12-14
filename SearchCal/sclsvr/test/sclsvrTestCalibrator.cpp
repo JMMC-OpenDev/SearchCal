@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.9 2005-12-13 14:36:43 scetre Exp $"
+ * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.10 2005-12-14 09:04:00 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/12/13 14:36:43  scetre
+ * Updated use of new filters
+ *
  * Revision 1.8  2005/11/25 13:14:45  scetre
  * *** empty log message ***
  *
@@ -23,7 +26,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.9 2005-12-13 14:36:43 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.10 2005-12-14 09:04:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -137,8 +140,8 @@ int main(int argc, char *argv[])
     sclsvrCALIBRATOR_LIST listTest;
 
     // create a list of filter
-    vobsFILTER_LIST filterList;
-    vobsDISTANCE_FILTER distanceFilter;
+    vobsFILTER_LIST filterList("Filter List");
+    vobsDISTANCE_FILTER distanceFilter("Distance Filter");
     // add distance filter in the list
     filterList.Add(&distanceFilter, "Distance Filter");
    
