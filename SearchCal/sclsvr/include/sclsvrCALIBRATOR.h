@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.32 2005-12-12 14:09:26 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.33 2005-12-14 09:01:39 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2005/12/12 14:09:26  scetre
+ * Added computing cousin magnitude as propertie of the calibrator
+ *
  * Revision 1.31  2005/12/08 12:52:08  scetre
  * Merged Compute diameter and magnitude for faint and bright method
  *
@@ -146,7 +149,6 @@ private:
     mcsCOMPL_STAT ComputeMissingMagnitude(alxBAND firstBand,
                                           alxBAND secondBand,
                                           mcsLOGICAL isBright=mcsTRUE);
-    mcsCOMPL_STAT ComputeMissingMagnitudeForFaintStar();
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT 
         ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS]);
