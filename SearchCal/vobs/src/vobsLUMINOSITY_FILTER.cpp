@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.5 2005-12-14 15:07:53 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.3  2005/11/29 13:49:19  gzins
  * Removed filter name setting
  *
@@ -33,7 +36,7 @@
  *  Definition of vobsLUMINOSITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.5 2005-12-14 15:07:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -136,9 +139,17 @@ mcsCOMPL_STAT vobsLUMINOSITY_FILTER::Apply(vobsSTAR_LIST *list)
             star = 
                 (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
 
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
             // If spectral type is unknown
             if (star->IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
             {
+                logInfo("star %s has been removed by the filter '%s' : property %s is not set", starId, GetId(), vobsSTAR_SPECT_TYPE_MK);
                 // Remove it
                 if (list->Remove(*star) == mcsFAILURE)
                 {
@@ -220,6 +231,7 @@ mcsCOMPL_STAT vobsLUMINOSITY_FILTER::Apply(vobsSTAR_LIST *list)
                 // If the spectral of the list is not one of the list
                 if (lumClassMatch == mcsFALSE)
                 {            
+                    logInfo("star %s has been removed by the filter '%s'", starId, GetId());
                     // Remove it
                     if (list->Remove(*star) == mcsFAILURE)
                     {

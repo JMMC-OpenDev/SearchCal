@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.5 2005-12-14 15:07:53 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.3  2005/11/29 13:49:19  gzins
  * Removed filter name setting
  *
@@ -30,7 +33,7 @@
  * Definition of vobsMAGNITUDE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.5 2005-12-14 15:07:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -154,10 +157,16 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
             // the criteria list
             star=
                 (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             if (star->IsSame(scienceStar, &criteriaList) != mcsTRUE )
             {
                 // Remove it
-                logTest("star %d not magnitude in the range\n", el+1);
+                logInfo("star %s has been removed by the filter '%s'", starId, GetId());
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;

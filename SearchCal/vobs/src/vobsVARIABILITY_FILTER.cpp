@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.6 2005-12-14 15:10:03 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.4  2005/11/29 13:49:19  gzins
  * Removed filter name setting
  *
@@ -33,7 +36,7 @@
  *  Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.6 2005-12-14 15:10:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -91,9 +94,16 @@ mcsCOMPL_STAT vobsVARIABILITY_FILTER::Apply(vobsSTAR_LIST *list)
         {
             star=
                 (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             // if it is not possible to get the visibility, remove the star
             if (star->IsPropertySet(vobsSTAR_CODE_VARIAB_V3) == mcsTRUE)
             {
+                logInfo("star %s has been removed by the filter '%s'", starId, GetId());
                 // Remove it
                 logTest("star %d had variability %s\n",
                         el+1, 

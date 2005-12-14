@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.6 2005-12-14 15:07:53 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.4  2005/11/29 13:49:19  gzins
  * Removed filter name setting
  *
@@ -25,7 +28,7 @@
  * Definition of vobsORIGIN_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.6 2005-12-14 15:07:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -103,6 +106,12 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
         for (unsigned int el = 0; el < list->Size(); el++)
         {
             star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             // Retreive property corresponding to the UCD
             vobsSTAR_PROPERTY *property = star->GetProperty(_ucd);
             // If property doen't exist and have different origin that the
@@ -111,7 +120,7 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
                 (strcmp(property->GetOrigin(), _origin)!=0))
             {
                 // Remove it
-                logTest("star %d not magnitude in the range\n", el+1);
+                logInfo("star %s has been removed by the filter '%s'", starId, GetId());
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;

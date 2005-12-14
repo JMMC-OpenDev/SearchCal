@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsBV_FILTER.cpp,v 1.7 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsBV_FILTER.cpp,v 1.8 2005-12-14 15:07:53 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.6  2005/11/29 13:49:19  gzins
  * Removed filter name setting
  *
@@ -31,7 +34,7 @@
  * Definition of vobsBV_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsBV_FILTER.cpp,v 1.7 2005-12-13 16:30:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsBV_FILTER.cpp,v 1.8 2005-12-14 15:07:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -122,6 +125,12 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
         {
             star=
                 (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
             // Check if B and V magnitude are defined
             if ((star->IsPropertySet(vobsSTAR_PHOT_JHN_B) == mcsTRUE) ||
                 (star->IsPropertySet(vobsSTAR_PHOT_JHN_V) == mcsTRUE))
@@ -144,6 +153,7 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
                 // If B-V > magValue remove star
                 if (magB - magV > _magValue)
                 {
+                    logInfo("star %s has been removed by the filter '%s'", starId, GetId());
                     if (list->Remove(*star) == mcsFAILURE)
                     {
                         return mcsFAILURE;
@@ -154,6 +164,8 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
             // If B or V magnitude are not defined, remove star
             else 
             {
+                // Remove it
+                logInfo("star %s has been removed by the filter '%s' : property %s is not set", starId, GetId(), "B or V");
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;

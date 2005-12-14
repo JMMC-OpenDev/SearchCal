@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.12 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.13 2005-12-14 15:07:53 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.11  2005/11/29 13:53:40  gzins
  * Removed GetName method
  *
@@ -22,7 +25,7 @@
  * Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.12 2005-12-13 16:30:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.13 2005-12-14 15:07:53 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -52,7 +55,7 @@ using namespace std;
 vobsFILTER::vobsFILTER(const char* filterId)
 {
     // Store the filter Id
-    strncpy(_id, filterId, (sizeof(filterId) - 1));
+    strcpy(_id, filterId);
 
     // Disable the filter by default
     Disable();
@@ -117,18 +120,11 @@ mcsCOMPL_STAT vobsFILTER::Disable(void)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsFILTER::GetId(char* filterId, const mcsUINT32 maxLength)
+const char * vobsFILTER::GetId(void)
 {
     logTrace("vobsFILTER::GetId()");
 
-    // Verify parameter validity
-    if (filterId == NULL)
-    {
-        return mcsFAILURE;
-    }
-
-    strncpy(filterId, _id, (maxLength - 1));
-    return mcsSUCCESS;
+    return _id;
 }
 
 
