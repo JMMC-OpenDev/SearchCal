@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.13 2005-12-06 08:52:38 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.14 2005-12-14 22:17:55 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2005/12/06 08:52:38  gzins
+# Source .bash_profile when specifying tag
+#
 # Revision 1.12  2005/12/06 07:15:56  gzins
 # Added mcscfg module
 #
@@ -202,7 +205,7 @@ echo -e "    Press enter to continue or ^C to abort "
 read choice
 
 # List of MCS modules
-mcsModules="mkf mcscfg ctoo mcs log err misc timlog modc modcpp fnd misco env cmd msg evh gwt"
+mcsModules="mkf mcscfg ctoo mcs log err misc thrd timlog modc modcpp fnd misco env cmd msg sdb evh gwt"
 
 # Log file
 mkdir -p $fromdir/INSTALL
