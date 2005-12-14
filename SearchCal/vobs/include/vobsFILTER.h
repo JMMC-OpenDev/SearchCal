@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.h,v 1.10 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsFILTER.h,v 1.11 2005-12-14 15:16:57 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.9  2005/11/29 13:46:38  gzins
  * Removed filter name notion
  *
@@ -57,7 +60,7 @@ public:
     virtual mcsCOMPL_STAT Enable(void);
     virtual mcsCOMPL_STAT Disable(void);
 
-    virtual mcsCOMPL_STAT GetId(char* filterId, const mcsUINT32 maxLength);
+    virtual const char * GetId(void);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list) = 0;
     
