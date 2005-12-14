@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.33 2005-12-12 14:06:51 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.34 2005-12-14 15:08:10 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.33  2005/12/12 14:06:51  scetre
+* Added test in empty or null list to when scenario is executing
+*
 * Revision 1.32  2005/12/07 11:47:45  gzins
 * Improved error handling
 *
@@ -106,7 +109,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.33 2005-12-12 14:06:51 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.34 2005-12-14 15:08:10 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -367,6 +370,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     {
                         return mcsFAILURE;
                     }
+                    logInfo("after COPY, star list size = %d",
+                            ((*_entryIterator)._listOutput)->Size());
                 }
                 // second action is vobsMERGE. The list output will be 
                 // merge from the temporary list whitout being clear.
@@ -379,6 +384,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     {
                         return mcsFAILURE;
                     }
+                    logInfo("after MERGE, star list size = %d",
+                            ((*_entryIterator)._listOutput)->Size());
                 }
                 // third action is vobsUPDATE_ONLY. The list output will
                 // be merge from thetemporary list, but this merge will
@@ -391,12 +398,12 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     {
                         return mcsFAILURE;
                     }
+                    logInfo("after UPDATE_ONLY, star list size = %d",
+                            ((*_entryIterator)._listOutput)->Size());
                 }
             default:
                 break;
         }
-        logInfo("after merging, star list size = %d",
-                ((*_entryIterator)._listOutput)->Size());
 
         // **** LIST FILTERING ****
         // Apply filter if defined
@@ -404,8 +411,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         {
             ((*_entryIterator)._filter)->
                 Apply((*_entryIterator)._listOutput);
+            logInfo("after FILTER, star list size = %d",
+                            ((*_entryIterator)._listOutput)->Size());
         }
-    
+        
         // Next entry
         _entryIterator++;
     }
