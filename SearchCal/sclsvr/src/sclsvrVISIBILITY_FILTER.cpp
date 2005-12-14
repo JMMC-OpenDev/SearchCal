@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.7 2005-12-14 09:02:00 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.8 2005-12-14 15:13:41 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/12/14 09:02:00  scetre
+ * Updated constructor with filter name
+ *
  * Revision 1.6  2005/11/30 10:35:21  scetre
  * Updated Filter without name
  * Updated scenario
@@ -33,7 +36,7 @@
  * Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.7 2005-12-14 09:02:00 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.8 2005-12-14 15:13:41 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -129,6 +132,12 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
         for (unsigned int el = 0; el < list->Size(); el++)
         {
             star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
 
             // if it is not possible to get the visibility or the visibility 
             // error, remove the star
@@ -138,7 +147,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
                                         &starVisError) == mcsFAILURE))
             {
                 // Remove it
-                logTest("star %d not visibility enough\n", el+1);
+                logInfo("star %s has been removed by the filter '%s' : property %s is not set", starId, GetId(), "VIS2 or VIS2err");
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
@@ -154,7 +163,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
                 if (starVisError/starVis >= _visMax)   
                 {
                     // Remove it
-                    logTest("star %d not visibility enough\n", el+1);
+                    logInfo("star %s has been removed by the filter '%s'", starId, GetId());
                     if (list->Remove(*star) == mcsFAILURE)
                     {
                         return mcsFAILURE;
