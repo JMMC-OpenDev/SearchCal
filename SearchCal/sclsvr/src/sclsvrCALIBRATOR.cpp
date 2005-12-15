@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.61 2005-12-12 14:09:26 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.62 2005-12-15 12:30:17 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.61  2005/12/12 14:09:26  scetre
+ * Added computing cousin magnitude as propertie of the calibrator
+ *
  * Revision 1.60  2005/12/08 12:52:08  scetre
  * Merged Compute diameter and magnitude for faint and bright method
  *
@@ -134,7 +137,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.61 2005-12-12 14:09:26 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.62 2005-12-15 12:30:17 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -397,65 +400,72 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             return mcsFAILURE;
         }
 
+        mcsFLOAT paralax;
+        mcsFLOAT paralaxError;
+
         // If paralax of the star if known
         if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
         {
-            // If paralax is greater than 1 mas, compute real magnitudes,
-            // missing magnitudes and the angular diameter 
-            mcsFLOAT paralax;
             GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax);
-            if (paralax >= 1) // && errplx/plx < 0.25
+            GetPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR, &paralaxError);
+        }
+
+        // If paralax of the star if known
+        // If paralax is greater than 1 mas, compute real magnitudes,
+        // missing magnitudes and the angular diameter
+        if ((IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE) &&
+            (paralax >= 1) && (paralaxError/paralaxError < 0.25))
+        {
+            char *magPropertyId[alxNB_BANDS] = 
             {
-                char *magPropertyId[alxNB_BANDS] = 
-                {
-                    vobsSTAR_PHOT_PHG_B,
-                    vobsSTAR_PHOT_JHN_V,
-                    vobsSTAR_PHOT_PHG_R,
-                    vobsSTAR_PHOT_PHG_I,
-                    sclsvrCALIBRATOR_PHOT_COUS_J,
-                    sclsvrCALIBRATOR_PHOT_COUS_H,
-                    sclsvrCALIBRATOR_PHOT_COUS_K,
-                    vobsSTAR_PHOT_JHN_L,
-                    vobsSTAR_PHOT_JHN_M
-                };
-                // Compute Interstellar extinction
-                if (ComputeInterstellarAbsorption(magPropertyId) ==
-                    mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
-                // Compute Missing Magnitude
-                if (ComputeMissingMagnitude(alxJ_BAND, alxK_BAND, mcsFALSE) ==
-                    mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
-                alxDATA mgI, mgJ, mgK, mgH;
-
-                // Declare the 4 properties name for I0, J0, K0, H0
-                char *starPropertyId[4] = 
-                {
-                    sclsvrCALIBRATOR_IO,
-                    sclsvrCALIBRATOR_JO,
-                    sclsvrCALIBRATOR_KO,
-                    sclsvrCALIBRATOR_HO
-                };
-                // Compute Angular Diameter
-                if (ComputeAngularDiameter(mgI, mgJ, mgK, mgH,
-                                           starPropertyId, mcsFALSE) ==
-                    mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-                
-                // Compute visibility and visibility error
-                if (ComputeVisibility(request) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                vobsSTAR_PHOT_PHG_B,
+                vobsSTAR_PHOT_JHN_V,
+                vobsSTAR_PHOT_PHG_R,
+                vobsSTAR_PHOT_PHG_I,
+                sclsvrCALIBRATOR_PHOT_COUS_J,
+                sclsvrCALIBRATOR_PHOT_COUS_H,
+                sclsvrCALIBRATOR_PHOT_COUS_K,
+                vobsSTAR_PHOT_JHN_L,
+                vobsSTAR_PHOT_JHN_M
+            };
+            // Compute Interstellar extinction
+            if (ComputeInterstellarAbsorption(magPropertyId) ==
+                mcsFAILURE)
+            {
+                return mcsFAILURE;
             }
+
+            // Compute Missing Magnitude
+            if (ComputeMissingMagnitude(alxJ_BAND, alxK_BAND, mcsFALSE) ==
+                mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            alxDATA mgI, mgJ, mgK, mgH;
+
+            // Declare the 4 properties name for I0, J0, K0, H0
+            char *starPropertyId[4] = 
+            {
+                sclsvrCALIBRATOR_IO,
+                sclsvrCALIBRATOR_JO,
+                sclsvrCALIBRATOR_KO,
+                sclsvrCALIBRATOR_HO
+            };
+            // Compute Angular Diameter
+            if (ComputeAngularDiameter(mgI, mgJ, mgK, mgH,
+                                       starPropertyId, mcsFALSE) ==
+                mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // Compute visibility and visibility error
+            if (ComputeVisibility(request) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
         }
         // Paralax unknown
         else
@@ -785,6 +795,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
                 (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT)
                  == mcsTRUE))
             {
+                mcsSTRING32 starId;
+                // Get Star ID
+                if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                
+                logInfo("star %s removed, spType = %s can't help to compute magnitude", starId, spType);
+
                 errResetStack();
                 return mcsSUCCESS;
             }
@@ -809,10 +828,30 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
                 if ((errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) ==
                      mcsTRUE) ||
                     (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) ==
-                     mcsTRUE) ||
-                    (errIsInStack("alx", alxERR_CANNOT_COMPUTE_RATIO) ==
                      mcsTRUE))
                 {
+                    mcsSTRING32 starId;
+                    // Get Star ID
+                    if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
+
+                    logInfo("star %s removed, spType = %s can't help to compute magnitude", starId, spType);
+                    errResetStack();
+                    return mcsSUCCESS;
+                }
+                if (errIsInStack("alx", alxERR_CANNOT_COMPUTE_RATIO) ==
+                     mcsTRUE)
+                {
+                    mcsSTRING32 starId;
+                    // Get Star ID
+                    if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
+
+                    logInfo("star %s removed, the ratio in magnitude completion is not ok", starId, spType);
                     errResetStack();
                     return mcsSUCCESS;
                 }
@@ -828,11 +867,32 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
             if (alxComputeMagnitudesForFaintStar(NULL, magnitudes) ==
                 mcsFAILURE)
             {
-                if ((errIsInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE) ==
-                     mcsTRUE) ||
-                    (errIsInStack("alx", alxERR_CANNOT_COMPUTE_RATIO) ==
-                     mcsTRUE))
+                if (errIsInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE) ==
+                     mcsTRUE)
                 {
+                    mcsSTRING32 starId;
+                    // Get Star ID
+                    if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
+
+                    logInfo("star %s removed, J-K is not in the table and/or can't be interpolate", starId, spType);
+                    
+                    errResetStack();
+                    return mcsSUCCESS;
+                }
+                if (errIsInStack("alx", alxERR_CANNOT_COMPUTE_RATIO) ==
+                     mcsTRUE)
+                {
+                    mcsSTRING32 starId;
+                    // Get Star ID
+                    if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
+
+                    logInfo("star %s removed, the ratio in magnitude completion is not ok", starId, spType);
                     errResetStack();
                     return mcsSUCCESS;
                 }
@@ -1077,6 +1137,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
         }
         else
         {
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            logInfo("Diameter of star %s can't be computed because magnitudes are missing", starId);
             // Do nothing
             return mcsSUCCESS;
         }
@@ -1099,6 +1167,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
         // Set flag according to the confidence index 
         if (diameters.areComputed == mcsFALSE)
         {
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            logInfo("star %s had not a coherant diameter because |diam - meanDiam > 2*meanDiamErr|", starId);
+            
             if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
                                  vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
             {
@@ -1173,6 +1250,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
         // Set flag according to the confidence index 
         if (diameters.areComputed == mcsFALSE)
         {
+            mcsSTRING32 starId;
+            // Get Star ID
+            if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            logInfo("star %s had not a coherant diameter because |diam - meanDiam| > meanDiamErr", starId);
             if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
                                  vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
             {
