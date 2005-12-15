@@ -7,6 +7,9 @@
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/05/20 09:59:59  gzins
+# Fixed bug related to revision retrieving
+#
 # Revision 1.4  2005/02/15 08:40:15  gzins
 # Added CVS log as file modification history
 #
@@ -71,7 +74,7 @@ fi
 BASELINE=${T_DIR}/doxyfile
 HEADER=${T_DIR}/doxygen-header.html
 FOOTER=${T_DIR}/doxygen-footer.html
-IMAGE=${T_DIR}/eii.jpg
+IMAGE=${T_DIR}/jmmc.jpg
 #
 BASECAMP=`\pwd`
 #
