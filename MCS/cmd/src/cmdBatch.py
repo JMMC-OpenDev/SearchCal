@@ -2,17 +2,19 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdBatch.py,v 1.2 2005-12-16 15:36:43 mella Exp $"
+# "@(#) $Id: cmdBatch.py,v 1.3 2005-12-16 16:04:16 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/12/16 15:36:43  mella
+# Remove unused Sesame import
+#
 # Revision 1.1  2005/12/16 15:35:52  mella
 # First revision
 #
 #
 #************************************************************************
-#
 """ This script aims to launch multiple request based onto an input file that must be 
 given as first parameter.
 The config file must contain the minimum line:
@@ -29,7 +31,7 @@ import os.path
 import os
 from optparse import OptionParser
 
-Id="@(#) $Id: cmdBatch.py,v 1.2 2005-12-16 15:36:43 mella Exp $"
+Id="@(#) $Id: cmdBatch.py,v 1.3 2005-12-16 16:04:16 mella Exp $"
 
 # default output will 
 resultDir="results"
@@ -48,9 +50,10 @@ def main(filename):
         return
 
     # Store new config summary
-    newCfg=open(filename+".tmp","w")
+    tmpfilename=resultDir+os.path.sep+os.path.basename(filename)+".tmp"
+    print "A summary of the batch configuration is written into "+tmpfilename
+    newCfg=open(tmpfilename,"w")
     config.write(newCfg)
-    print "A summary "+filename+".tmp"
 
     # Start to build batch list for every section
     batchList=[]
@@ -110,9 +113,12 @@ if __name__ == '__main__':
     try:
         print "This batch will loop over objects defined into '%s'." % (args[0],)
         print "Output directory for results '%s'"%(resultDir,)
-        print "Press Control-C to stop process now or something else to \
-continue"
-        raw_input()
+        
+        # uncomment next line if you want to allow user to control-c the
+        # execution
+        # print "Press Control-C to stop process now or something else to \
+        # continue"
+        # raw_input()
         
         if not os.path.isdir(resultDir) :
             try:
@@ -120,8 +126,8 @@ continue"
                 print "'%s' directory has been created." %(resultDir,) 
             except:
                 sys.stderr.write( "Failed to create '%s' directory." %(resultDir,))
-       
    
         main(args[0])     
+        
     except:
         print "Usage: %s <inputscript.cfg>"%(sys.argv[0],)
