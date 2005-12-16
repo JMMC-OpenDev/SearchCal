@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.62 2005-12-15 12:30:17 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.63 2005-12-16 10:42:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.62  2005/12/15 12:30:17  scetre
+ * Added log
+ *
  * Revision 1.61  2005/12/12 14:09:26  scetre
  * Added computing cousin magnitude as propertie of the calibrator
  *
@@ -137,7 +140,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.62 2005-12-15 12:30:17 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.63 2005-12-16 10:42:27 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -470,6 +473,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         // Paralax unknown
         else
         {
+            // Copy the current star in a temporary star in order to compute
+            // with iterstellar absorption
+            sclsvrCALIBRATOR testCalibratorWithAbsorption;
+            testCalibratorWithAbsorption.Update(* this);
+            
             // Compute visibility without the step of intesrstellar absorption
             // In this case, Io=I, Jo=J, Ho=H, Ko=K
             mcsFLOAT Io;
@@ -568,10 +576,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 return mcsFAILURE;
             }
-
-            // Compute visibility with the step of intesrstellar absorption
-            sclsvrCALIBRATOR testCalibratorWithAbsorption;
-            testCalibratorWithAbsorption.Update(* this);
 
             mcsFLOAT av = 3.0;
             // if Imag property is set
@@ -683,6 +687,67 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 return mcsFAILURE;
             }
 
+            // Get Visibility of the star
+            mcsFLOAT vis2;
+            mcsFLOAT vis2Err;
+            if (IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE)
+            {
+                if (GetPropertyValue(sclsvrCALIBRATOR_VIS2, &vis2) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            if (IsPropertySet(sclsvrCALIBRATOR_VIS2_ERROR) == mcsTRUE)
+            {
+                if (GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, &vis2Err) ==
+                    mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // Get Visibility of the temp star            
+            mcsFLOAT vis2A;
+            mcsFLOAT vis2ErrA;
+            if (testCalibratorWithAbsorption.IsPropertySet(sclsvrCALIBRATOR_VIS2)
+                == mcsTRUE)
+            {
+                if (testCalibratorWithAbsorption.
+                    GetPropertyValue(sclsvrCALIBRATOR_VIS2, &vis2A) ==
+                    mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            if (testCalibratorWithAbsorption.
+                IsPropertySet(sclsvrCALIBRATOR_VIS2_ERROR) == mcsTRUE)
+            {
+                if (testCalibratorWithAbsorption.
+                    GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, &vis2ErrA) ==
+                    mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            
+            // compute MAX(|vis2A - vis2|; vis2Err)
+            logTest("vis2 = %f", vis2);
+            logTest("vis2A = %f", vis2A);
+            logTest("|vis2A - vis2| = %f", fabs(vis2A - vis2));
+            logTest("vis2Err = %f", vis2Err);
+            mcsFLOAT visibilityErr;
+            if (fabs(vis2A - vis2) < vis2Err)
+            {
+                visibilityErr = vis2Err;
+            }
+            else
+            {
+                visibilityErr = fabs(vis2A - vis2);
+            }
+            logTest("visibilityErr = %f", visibilityErr); 
+            // Test of validity of the visibility
+            
+
+            
             // Test of validity of the visibility
         }
 
@@ -896,6 +961,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
                     errResetStack();
                     return mcsSUCCESS;
                 }
+                if (errIsInStack("alx", alxERR_NO_LINE_FOUND) ==
+                     mcsTRUE)
+                {
+                    mcsSTRING32 starId;
+                    // Get Star ID
+                    if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
+
+                    logInfo("star %s removed, no line found in color table", starId);
+                    errResetStack();
+                    return mcsSUCCESS;
+                }
+
                 else
                 {
                     return mcsFAILURE;
@@ -1144,7 +1224,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
                 return mcsFAILURE;
             }
 
-            logInfo("Diameter of star %s can't be computed because magnitudes are missing", starId);
+            logTest("Diameter of star %s can't be computed because magnitudes are missing", starId);
             // Do nothing
             return mcsSUCCESS;
         }
