@@ -36,9 +36,10 @@
 # desc:  <xsl:value-of select="desc"/>
 command=<xsl:value-of select="mnemonic"/>
 
+<xsl:value-of select="'&#10;'"/>
+<xsl:value-of select="'&#10;'"/>
 
-<xsl:for-each select="./params/param">
-    <xsl:choose>    
+<xsl:for-each select="./params/param[not(./name='objectName' or ./name='ra' or ./name='dec') ]">
 # parameter: <xsl:value-of select="./name"/>
 # desc: <xsl:value-of select="./desc"/>
 # type: <xsl:value-of select="./name"/>
@@ -60,10 +61,10 @@ command=<xsl:value-of select="mnemonic"/>
     <xsl:value-of select="'&#10;'"/>
 </xsl:for-each>
 
-# You fullfill the tail according your request.
-# There must be one section per object
+# You should fullfill the tail part according your request.
+# There must be one section per object.
 # If the section name does not correspond to an objectName then the objectName
-# option must be specified
+# option must be specified.
 # ra and dec options must also be specified.
 #
 [test_1_ETA_TAU]
