@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2005-10-24 12:42:00 swmgr Exp $"
+# "@(#) $Id: Makefile,v 1.4 2005-12-16 15:03:57 lafrasse Exp $"
 #
 # Makefile of thrd module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/10/24 12:42:00  swmgr
+# Removed thrdMutex and thrdSemaphore
+#
 # Revision 1.2  2005/10/21 15:09:01  lafrasse
 # thrdThread creation
 #
@@ -58,8 +61,9 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = thrd.h          \
-				  thrdThread.h
+INCLUDES        = thrd.h        \
+				  thrdThread.h  \
+				  thrdMutex.h
 #
 # Libraries (public and local)
 # ----------------------------
@@ -68,7 +72,7 @@ LIBRARIES_L     =
 
 #
 # <brief description of thrd library>
-thrd_OBJECTS   = thrdThread
+thrd_OBJECTS   = thrdThread thrdMutex
 
 #
 # Scripts (public and local)

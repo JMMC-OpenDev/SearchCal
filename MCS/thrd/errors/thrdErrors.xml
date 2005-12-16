@@ -30,4 +30,19 @@
       <errSeverity>FATAL</errSeverity>
       <errFormat><![CDATA[The thread with id '%d' refers to itself, leadind to a dead lock.]]></errFormat>
    </error>
+   <error id="7">
+      <errName>MUTEX_INIT</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[The mutex could not be created.]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>MUTEX_NOT_INIT</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[The mutex has not been properly initialized.]]></errFormat>
+   </error>
+   <error id="8">
+      <errName>MUTEX_LOCKED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[The mutex is locked.]]></errFormat>
+   </error>
 </errorList>

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2005-10-21 15:09:01 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.2 2005-12-16 15:03:57 lafrasse Exp $"
 #
 # Makefile of thrd module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/10/21 15:09:01  lafrasse
+# thrdThread creation
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -36,7 +39,7 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = thrdTestThread
+EXECUTABLES     = thrdTestThread thrdTestMutex
 EXECUTABLES_L   = 
 
 #
@@ -44,6 +47,12 @@ EXECUTABLES_L   =
 thrdTestThread_OBJECTS   = thrdTestThread
 thrdTestThread_LDFLAGS   = 
 thrdTestThread_LIBS      = MCS thrd
+
+#
+# <brief description of thrdTestMutex program>
+thrdTestMutex_OBJECTS   = thrdTestMutex
+thrdTestMutex_LDFLAGS   = 
+thrdTestMutex_LIBS      = MCS thrd
 
 #
 # special compilation flags for single c sources
