@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.15 2005-12-12 14:11:01 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.16 2005-12-16 13:26:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/12/12 14:11:01  scetre
+ * Added -oldScenario option to the GETCAL command -> request can managed it
+ *
  * Revision 1.14  2005/11/24 09:00:10  lafrasse
  * Added 'radius' parameter to the GETCAL command
  *
@@ -60,7 +63,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.15 2005-12-12 14:11:01 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.16 2005-12-16 13:26:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -93,6 +96,7 @@ sclsvrREQUEST::sclsvrREQUEST()
 {
     _maxBaselineLength = 0.0;
     _observingWlen     = 0.0;
+    _expectedVisibilityError     = 0.0;
     _getCalCmd         = NULL;
     _brightFlag        = mcsTRUE;
     _oldScenario       = mcsFALSE;
@@ -125,6 +129,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Copy(sclsvrREQUEST& request)
     
     _maxBaselineLength = request._maxBaselineLength;
     _observingWlen     = request._observingWlen;
+    _expectedVisibilityError = request._expectedVisibilityError;
     _getCalCmd         = request._getCalCmd;
     _brightFlag        = request._brightFlag;
     _oldScenario       = request._oldScenario;
@@ -256,6 +261,14 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
+    
+    // VisErr
+    mcsDOUBLE visErr;
+    if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
 
     // Brightness
     mcsLOGICAL brightFlag = mcsTRUE;
@@ -306,6 +319,11 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
     // Affect the wavelength
     if (SetObservingWlen(wlen) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Affect the wavelength
+    if (SetExpectingVisErr(visErr) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -453,6 +471,33 @@ mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
 
     return _observingWlen;
 }
+
+/**
+ * Set the expected visibility error.
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetExpectingVisErr(mcsFLOAT expectedVisErr)
+{
+    logTrace("sclsvrREQUEST::SetExpectingVisErr()");
+
+    _expectedVisibilityError = expectedVisErr;
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Get the expected visibility error.
+ *
+ * @return expected visibility error.
+ */
+mcsFLOAT sclsvrREQUEST::GetExpectedVisErr(void)
+{
+    logTrace("sclsvrREQUEST::GetExpectedVisErr()");
+
+    return _expectedVisibilityError;
+}
+
 
 /**
  * Specify wether the query should return bright (by default) or faint stars.

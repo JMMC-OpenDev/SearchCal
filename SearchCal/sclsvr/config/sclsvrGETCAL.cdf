@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.16 2005-12-12 14:08:41 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.17 2005-12-16 13:26:24 scetre Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.16  2005/12/12 14:08:41  scetre
+ Added -oldScenario option to the GETCAL command
+
  Revision 1.15  2005/11/24 09:00:10  lafrasse
  Added 'radius' parameter to the GETCAL command
 
@@ -156,14 +159,6 @@
             <type>boolean</type>
             <defaultValue><boolean>true</boolean></defaultValue>
             <desc>specify wether the query should return bright (by default) or faint stars</desc>
-        </param>
-        <param optional="true">
-            <name>vis</name>
-            <type>double</type>
-            <defaultValue><double>1.0</double></defaultValue>
-            <minValue><double>0.0</double></minValue>
-            <maxValue><double>1.0</double></maxValue>
-            <desc>expected visibility</desc>
         </param>
         <param optional="true">
             <name>visErr</name>

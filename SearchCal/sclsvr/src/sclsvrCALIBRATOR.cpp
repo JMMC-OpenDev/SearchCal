@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.63 2005-12-16 10:42:27 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.64 2005-12-16 13:26:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.63  2005/12/16 10:42:27  scetre
+ * Added test when computing visibility
+ *
  * Revision 1.62  2005/12/15 12:30:17  scetre
  * Added log
  *
@@ -140,7 +143,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.63 2005-12-16 10:42:27 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.64 2005-12-16 13:26:24 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -745,10 +748,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             }
             logTest("visibilityErr = %f", visibilityErr); 
             // Test of validity of the visibility
-            
-
-            
-            // Test of validity of the visibility
+            // Get the expected visibility
+            mcsFLOAT expectedVisErr = request.GetExpectedVisErr();
+            if (visibilityErr > expectedVisErr)
+            {
+                mcsSTRING32 starId;
+                // Get Star ID
+                if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                logInfo("The star %s will be removed because the computing visibility error (%f) is higher than the expected one (%f)",
+                        starId, visibilityErr, expectedVisErr);
+            }
         }
 
         // temporary all diameter are ok....
