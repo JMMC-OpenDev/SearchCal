@@ -3,17 +3,29 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: thrdThread.h,v 1.1 2005-10-21 15:09:01 lafrasse Exp $"
+ * "@(#) $Id: thrdThread.h,v 1.2 2005-12-16 17:18:32 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/10/21 15:09:01  lafrasse
+ * thrdThread creation
+ *
  ******************************************************************************/
 
 /**
  * @file
  * Declaration of thrdThread functions.
  */
+
+
+/* The following piece of code alternates the linkage type to C for all
+functions declared within the braces, which is necessary to use the
+functions in C++-code.
+*/
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 /*
@@ -26,7 +38,6 @@
  * MCS header
  */
 #include "mcs.h"
-
 
 
 /*
@@ -57,7 +68,6 @@ typedef struct
 } thrdTHREAD;
 
 
-
 /*
  * Public functions declaration
  */
@@ -65,6 +75,10 @@ mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD  *thread);
 
 mcsCOMPL_STAT thrdThreadWait   (thrdTHREAD  *thread);
 
+
+#ifdef __cplusplus
+};
+#endif
 
 
 #endif /*!thrdTHREAD_H*/
