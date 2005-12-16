@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxMagnitude.c,v 1.22 2005-12-07 14:48:33 scetre Exp $"
+ * "@(#) $Id: alxMagnitude.c,v 1.23 2005-12-16 10:40:13 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/12/07 14:48:33  scetre
+ * Renamed function for bright and faint case
+ *
  * Revision 1.21  2005/12/02 12:05:42  scetre
  * Added computation of diameter and missing magnitude in faint
  *
@@ -87,7 +90,7 @@
  * @sa JMMC-MEM-2600-0006 document.
  */
 
-static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.22 2005-12-07 14:48:33 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxMagnitude.c,v 1.23 2005-12-16 10:40:13 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -726,6 +729,7 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
             {
                 if (line == 0)
                 {
+                    errAdd(alxERR_NO_LINE_FOUND);
                     return -1;
                 }
                 else
