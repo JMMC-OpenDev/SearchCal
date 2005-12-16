@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2005-12-14 12:41:32 mella Exp $"
+# "@(#) $Id: Makefile,v 1.12 2005-12-16 15:35:52 mella Exp $"
 #
 # Makefile of cmd
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2005/12/14 12:41:32  mella
+# Add CdfToTestScript
+#
 # Revision 1.10  2005/06/01 05:50:22  mella
 # Add cmdCdfToCB.xsl for install
 #
@@ -103,6 +106,13 @@ TCL_LIBRARIES_L =
 #
 # <brief description of tttlll library>
 tttlll_OBJECTS  = 
+
+#
+# Python scripts (public and local)
+# ---------------------------------
+PY_SCRIPTS     = cmdBatch
+PY_SCRIPTS_L   =
+
 
 #
 # man pages to be done
