@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.16 2005-12-16 13:26:24 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.17 2005-12-16 19:33:22 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/12/16 13:26:24  scetre
+ * Added test when computing visibility Added visibility error as parameter
+ *
  * Revision 1.15  2005/12/12 14:11:01  scetre
  * Added -oldScenario option to the GETCAL command -> request can managed it
  *
@@ -63,7 +66,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.16 2005-12-16 13:26:24 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.17 2005-12-16 19:33:22 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -261,12 +264,15 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
-    
+
     // VisErr
     mcsDOUBLE visErr;
-    if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
+    if (_getCalCmd->IsDefinedVisErr() == mcsTRUE)
     {
-        return mcsFAILURE;
+        if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
 
