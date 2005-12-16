@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.11 2005-12-12 14:11:01 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.12 2005-12-16 14:17:11 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/12/12 14:11:01  scetre
+ * Added -oldScenario option to the GETCAL command -> request can managed it
+ *
  * Revision 1.10  2005/11/23 14:35:33  lafrasse
  * Added fileName proper management (strncpy() calls instead of strcpy())
  * Removed unused 'MaxReturn' command parmater
@@ -103,6 +106,10 @@ public:
     virtual mcsCOMPL_STAT SetObservingWlen(mcsFLOAT wlen);
     virtual mcsFLOAT      GetObservingWlen(void);
 
+    // Wavelengh
+    virtual mcsCOMPL_STAT SetExpectingVisErr(mcsFLOAT expectedVisErr);
+    virtual mcsFLOAT      GetExpectedVisErr(void);
+    
     // File name where file should be saved
     virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
     virtual const char*   GetFileName(void);
@@ -128,6 +135,7 @@ private:
     // Request parameters
     mcsFLOAT      _maxBaselineLength;
     mcsFLOAT      _observingWlen;
+    mcsFLOAT      _expectedVisibilityError;
     mcsLOGICAL    _brightFlag;
     mcsLOGICAL    _oldScenario;
     mcsSTRING256  _fileName;
