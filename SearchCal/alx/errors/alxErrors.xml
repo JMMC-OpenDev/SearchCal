@@ -70,4 +70,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[The ratio can't be computed because its divider equal 0]]></errFormat>
    </error>
+   <error id="20">
+      <errName>NO_LINE_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[no line found, can't interpolate]]></errFormat>
+   </error>
 </errorList>
