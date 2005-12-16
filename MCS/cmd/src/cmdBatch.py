@@ -2,11 +2,14 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdBatch.py,v 1.1 2005-12-16 15:35:52 mella Exp $"
+# "@(#) $Id: cmdBatch.py,v 1.2 2005-12-16 15:36:43 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/12/16 15:35:52  mella
+# First revision
+#
 #
 #************************************************************************
 #
@@ -19,7 +22,6 @@ command=msgSendCommand sclsvrServer GETCAL
 Then following section will 
 """
 
-import Sesame
 import ConfigParser
 import os
 import sys
@@ -27,7 +29,7 @@ import os.path
 import os
 from optparse import OptionParser
 
-Id="@(#) $Id: cmdBatch.py,v 1.1 2005-12-16 15:35:52 mella Exp $"
+Id="@(#) $Id: cmdBatch.py,v 1.2 2005-12-16 15:36:43 mella Exp $"
 
 # default output will 
 resultDir="results"
