@@ -45,4 +45,9 @@
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[The mutex is locked.]]></errFormat>
    </error>
+   <error id="10">
+      <errName>ERRNO</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[System call '%100s' error : errno='%100s'.]]></errFormat>
+   </error>
 </errorList>

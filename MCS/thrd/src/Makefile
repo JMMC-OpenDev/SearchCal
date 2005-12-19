@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-12-16 15:03:57 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.5 2005-12-19 16:48:30 lafrasse Exp $"
 #
 # Makefile of thrd module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/12/16 15:03:57  lafrasse
+# Added mutex support
+#
 # Revision 1.3  2005/10/24 12:42:00  swmgr
 # Removed thrdMutex and thrdSemaphore
 #
@@ -25,7 +28,7 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+USER_CFLAGS = -D_XOPEN_SOURCE
 
 #
 # user definable javac compilation flags
@@ -63,7 +66,8 @@ xxxxx_LIBS      =
 # ---------------------------------
 INCLUDES        = thrd.h        \
 				  thrdThread.h  \
-				  thrdMutex.h
+				  thrdMutex.h   \
+				  thrdSemaphore.h
 #
 # Libraries (public and local)
 # ----------------------------
@@ -72,7 +76,8 @@ LIBRARIES_L     =
 
 #
 # <brief description of thrd library>
-thrd_OBJECTS   = thrdThread thrdMutex
+thrd_OBJECTS   = thrdThread thrdMutex thrdSemaphore
+thrd_LDFLAGS   = 
 
 #
 # Scripts (public and local)
