@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/11/30 10:47:15  scetre
+* Added new formula to compute radius
+*
 * Revision 1.5  2005/10/26 11:24:01  lafrasse
 * Code review
 *
@@ -31,7 +34,7 @@
  * @sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.6 2005-11-30 10:47:15 scetre Exp $";
+static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.7 2005-12-19 21:13:07 gzins Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -95,7 +98,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     static alxSTAR_POPULATION starPopulation = 
                    {mcsFALSE,
                     "alxStarPopulationInKBand.cfg",
-                    {0, 10, 90, 180, 270, 350},
+                    {0, 10, 90, 180, 270, 360},
                     {-90, -60, -30, -10, 0, 10, 30, 60, 90},
                    };
     if (starPopulation.loaded == mcsTRUE)
