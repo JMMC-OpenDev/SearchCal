@@ -1,12 +1,20 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdTestMutex.c,v 1.1 2005-12-16 15:03:57 lafrasse Exp $"
+ * "@(#) $Id: thrdTestMutex.c,v 1.2 2005-12-19 16:46:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/16 15:03:57  lafrasse
+ * Added mutex support
+ *
  ******************************************************************************/
+
+
+static char *rcsId="@(#) $Id: thrdTestMutex.c,v 1.2 2005-12-19 16:46:30 lafrasse Exp $"; 
+static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
@@ -76,6 +84,8 @@ int main (int argc, char *argv[])
         /* Exit from the application with FAILURE */
         exit (EXIT_FAILURE);
     }
+
+    logSetStdoutLogLevel(logTRACE);
 
     /* Mutex initialisation */
     if (thrdMutexInit(&myMutex) == mcsFAILURE)

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdMutex.c,v 1.1 2005-12-16 15:03:57 lafrasse Exp $"
+ * "@(#) $Id: thrdMutex.c,v 1.2 2005-12-19 16:46:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/16 15:03:57  lafrasse
+ * Added mutex support
+ *
  ******************************************************************************/
 
 /**
@@ -45,14 +48,13 @@
  * @sa pthread
  */
 
-static char *rcsId="@(#) $Id: thrdMutex.c,v 1.1 2005-12-16 15:03:57 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: thrdMutex.c,v 1.2 2005-12-19 16:46:30 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
 /* 
  * System Headers
  */
-#include <malloc.h>
 #include <errno.h>
 
 
@@ -133,17 +135,15 @@ mcsCOMPL_STAT thrdMutexDestroy(thrdMUTEX *mutex)
             case EBUSY:
                 /* the mutex is currently locked */
                 errAdd(thrdERR_MUTEX_LOCKED);
-                return mcsFAILURE;
                 break;
     
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
-                return mcsFAILURE;
+                break;
         }
-    }
 
-    /* Deallocate the mutex */
-    free(mutex);
+        return mcsFAILURE;
+    }
 
     return mcsSUCCESS;
 }
@@ -154,7 +154,7 @@ mcsCOMPL_STAT thrdMutexDestroy(thrdMUTEX *mutex)
  * If the mutex is already locked, then the caller is blocked until the mutex is
  * unlocked.
  *
- * @param mutex the mutex to be destroyed
+ * @param mutex the mutex to lock
  *
  * @sa pthread_mutex_lock
  *
@@ -172,6 +172,8 @@ mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
         return mcsFAILURE;
     }
 
+    logDebug("thrdMutexLock() - waiting for the resource to be released.");
+
     /* Lock the mutex */
     if (pthread_mutex_lock(mutex) != 0)
     {
@@ -181,14 +183,17 @@ mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
             case EINVAL:
                 /* The mutex has not been properly initialized */
                 errAdd(thrdERR_MUTEX_NOT_INIT);
-                return mcsFAILURE;
                 break;
     
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
-                return mcsFAILURE;
+                break;
         }
+
+        return mcsFAILURE;
     }
+
+    logDebug("thrdMutexLock() - resource acquired.");
 
     return mcsSUCCESS;
 }
@@ -196,7 +201,7 @@ mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
 /**
  * Unlock a mutex.
  *
- * @param mutex the mutex to be destroyed
+ * @param mutex the mutex to unlock
  *
  * @sa pthread_mutex_unlock
  *
@@ -223,14 +228,17 @@ mcsCOMPL_STAT thrdMutexUnlock(thrdMUTEX *mutex)
             case EINVAL:
                 /* The mutex has not been properly initialized */
                 errAdd(thrdERR_MUTEX_NOT_INIT);
-                return mcsFAILURE;
                 break;
     
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
-                return mcsFAILURE;
+                break;
         }
+
+        return mcsFAILURE;
     }
+
+    logDebug("thrdMutexUnlock() - resource released.");
 
     return mcsSUCCESS;
 }
