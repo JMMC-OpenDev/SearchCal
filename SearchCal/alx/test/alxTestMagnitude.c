@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.11 2005-12-02 12:05:59 scetre Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.12 2005-12-19 20:46:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/12/02 12:05:59  scetre
+ * Added test of faint missing magnitude
+ *
  * Revision 1.10  2005/07/06 05:07:15  gzins
  * Fixed API to alxComputeAngularDiameter
  *
@@ -47,7 +50,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.11 2005-12-02 12:05:59 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.12 2005-12-19 20:46:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -241,11 +244,11 @@ printf("*********************\n");
         errCloseStack();
     }
     alxDIAMETERS diameters;
-    if (alxComputeAngularDiameter(magnitudes[alxB_BAND],
-                                  magnitudes[alxV_BAND],
-                                  magnitudes[alxR_BAND],
-                                  magnitudes[alxK_BAND],
-                                  &diameters)== mcsFAILURE)
+    if (alxComputeAngularDiameterForBrightStar(magnitudes[alxB_BAND],
+                                               magnitudes[alxV_BAND],
+                                               magnitudes[alxR_BAND],
+                                               magnitudes[alxK_BAND],
+                                               &diameters)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -263,16 +266,16 @@ printf("*********************\n");
     magnitudes[alxK_BAND].isSet = mcsTRUE;
      /* complete */
     printf("complete\n");
-    if (alxComputeMagnitudesForFaintStar(magnitudes) == mcsFAILURE)
+    if (alxComputeMagnitudesForFaintStar("A0", magnitudes) == mcsFAILURE)
     {
         errCloseStack();
     }
     alxDIAMETERS diameters2;
-    if (alxComputeAngularDiameterFaint(magnitudes[alxI_BAND],
-                                  magnitudes[alxJ_BAND],
-                                  magnitudes[alxK_BAND],
-                                  magnitudes[alxH_BAND],
-                                  &diameters2)== mcsFAILURE)
+    if (alxComputeAngularDiameterForFaintStar(magnitudes[alxI_BAND],
+                                              magnitudes[alxJ_BAND],
+                                              magnitudes[alxK_BAND],
+                                              magnitudes[alxH_BAND],
+                                              &diameters2)== mcsFAILURE)
     {
         return mcsFAILURE;
     }

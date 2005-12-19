@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.7 2005-07-06 05:07:05 gzins Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.8 2005-12-19 20:46:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/07/06 05:07:05  gzins
+ * Fixed API to alxComputeAngularDiameter
+ * Added test case
+ *
  * Revision 1.6  2005/03/30 12:48:46  scetre
  * Changed API
  *
@@ -34,7 +38,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.7 2005-07-06 05:07:05 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.8 2005-12-19 20:46:49 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -88,7 +92,8 @@ int main (int argc, char *argv[])
     mgR.value = 7.530;  mgR.confIndex = alxCONFIDENCE_HIGH; mgR.isSet = mcsTRUE;
     mgK.value = 3.092;  mgK.confIndex = alxCONFIDENCE_HIGH; mgK.isSet = mcsTRUE;
     alxDIAMETERS diameters;
-    if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK, &diameters)== mcsFAILURE)
+    if (alxComputeAngularDiameterForBrightStar
+        (mgB, mgV, mgR, mgK, &diameters)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -97,7 +102,8 @@ int main (int argc, char *argv[])
     mgV.value = 2.870;
     mgR.value = 2.840;  
     mgK.value = 2.636;  
-    if (alxComputeAngularDiameter(mgB, mgV, mgR, mgK, &diameters)== mcsFAILURE)
+    if (alxComputeAngularDiameterForBrightStar
+        (mgB, mgV, mgR, mgK, &diameters)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
