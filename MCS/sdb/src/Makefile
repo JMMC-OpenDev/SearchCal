@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2005-12-20 13:52:34 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.3 2005-12-20 14:43:11 lafrasse Exp $"
 #
 # Makefile of sdb module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/12/20 13:52:34  lafrasse
+# Added preliminary support for INTRA-process action log
+#
 # Revision 1.1  2005/06/02 13:09:28  sccmgr
 # Fix directory structure and add additional files
 #
@@ -55,7 +58,8 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = sdb.h
+INCLUDES        = sdb.h       \
+                  sdbENTRY.h
 
 #
 # Libraries (public and local)
