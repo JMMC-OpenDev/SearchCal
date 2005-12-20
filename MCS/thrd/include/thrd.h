@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: thrd.h,v 1.3 2005-12-16 15:03:57 lafrasse Exp $"
+ * "@(#) $Id: thrd.h,v 1.4 2005-12-20 13:14:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/12/16 15:03:57  lafrasse
+ * Added mutex support
+ *
  * Revision 1.2  2005/10/21 15:09:01  lafrasse
  * thrdThread creation
  *
@@ -27,6 +30,7 @@
  */
 #include "thrdThread.h"
 #include "thrdMutex.h"
+#include "thrdSemaphore.h"
  
 
 #endif /*!thrd_H*/
