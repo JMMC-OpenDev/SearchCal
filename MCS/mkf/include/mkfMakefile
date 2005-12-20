@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.19 2005-09-02 09:49:57 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.20 2005-12-20 16:28:52 gzins Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2005/09/02 09:49:57  gzins
+# Used bash instead of ksh
+#
 # Revision 1.18  2005/02/15 10:08:01  gzins
 # Updated clean target
 #
@@ -393,7 +396,7 @@ ifeq ($(platform),Linux)
     XINC_DEFAULT  = -I/usr/X11R6/include/X11 
     XLIB_DEFAULT  = -L/usr/X11R6/lib     
     MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -ltimlog
-    MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lmisco -lenv -lcmd -lmsg -levh -lgwt
+    MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lmisco -lenv -lcmd -lthrd -lmsg -lsdb -levh -lgwt
     MCSSTD_LIBLIST       := -lgdome -lm
     MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)  
     MCSCPP_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(MCSCPP_LIBLIST) $(NOSHARED_OFF) $(MCSSTD_LIBLIST)
