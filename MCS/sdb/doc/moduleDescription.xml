@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2005-06-02 13:09:28 sccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2005-12-20 13:52:34 lafrasse Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.1  2005/06/02 13:09:28  sccmgr
+ Fix directory structure and add additional files
+
 ********************************************************************************
  NAME
  moduleDescription.xml - Give module informations
@@ -28,7 +31,7 @@
 -->
 
 <module name="sdb">
-    <desc>description</desc>
-    <resp>responsible</resp>
-    <package>package</package>
+    <desc>Inter-process communication</desc>
+    <resp>Sylvain LAFRASSE</resp>
+    <package>MCS</package>
 </module>

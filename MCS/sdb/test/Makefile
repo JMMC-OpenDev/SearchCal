@@ -1,16 +1,13 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2005-12-20 13:52:34 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.1 2005-12-20 13:52:34 lafrasse Exp $"
 #
 # Makefile of sdb module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
-# Revision 1.1  2005/06/02 13:09:28  sccmgr
-# Fix directory structure and add additional files
-#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -39,14 +36,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = sdbTestEntry
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+# <brief description of sdbTestEntry program>
+sdbTestEntry_OBJECTS   = sdbTestEntry
+sdbTestEntry_LDFLAGS   = 
+sdbTestEntry_LIBS      = C++ thrd MCS  sdb
 
 #
 # special compilation flags for single c sources
@@ -55,18 +52,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = sdb.h
+INCLUDES        =
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = sdb
+LIBRARIES       =
 LIBRARIES_L     =
 
 #
-# <brief description of sdb library>
-sdb_OBJECTS   = sdbENTRY
-sdb_LIBS      = MCS
+# <brief description of lllll library>
+lllll_OBJECTS   =
 
 #
 # Scripts (public and local)
