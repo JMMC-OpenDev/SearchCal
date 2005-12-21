@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.25 2005-12-12 14:10:30 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.26 2005-12-21 10:32:56 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/12/12 14:10:30  scetre
+ * Added old scenario with 2mass in primary request if precised in the GETCAL command
+ *
  * Revision 1.24  2005/11/24 15:14:27  scetre
  * Scenario faint K is enable
  *
@@ -60,7 +63,7 @@
  * Revision 1.8  2005/02/07 15:01:11  gzins
  * Reformated file header
  *
- * Revision 1.7  2005/02/07 14:44:03  gzins
+ * Revision 1.7  2005/02/0sclsvrSERVER.cpp7 14:44:03  gzins
  * Renamed lambda to wlen.
  * Renamed minMagRange to minRangeMag, and maxMagRange to maxRangeMag.
  *
@@ -79,7 +82,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.25 2005-12-12 14:10:30 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.26 2005-12-21 10:32:56 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -97,6 +100,8 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "timlog.h"
+#include "thrd.h"
+#include "sdb.h"
 
 
 /*
@@ -115,6 +120,70 @@ using namespace std;
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
 
+
+/*
+ * Local structure
+ */
+/**
+ * Structure used to pass two values as one paramter to a thrdTHREAD function.
+ */
+typedef struct
+{
+    sclsvrSERVER*  server;   /**< pointer on a sclsvrSERVER instance. */
+
+    msgMESSAGE*    message;  /**< pointer on a msgMESSAGE instance. */
+
+} sclsvrMonitorActionParams;
+
+/*
+ * Local functions
+ */
+/**
+ * Monitor any action and forward it to the GUI as status.
+ *
+ * @param param a pointer on any data needed by the fuction.
+ *
+ * @return always NULL.
+ */
+thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
+{   
+    logTrace("sclsvrMonitorAction()");
+
+    mcsSTRING256  buffer;
+    mcsLOGICAL    lastMessage = mcsFALSE;
+
+    // Get the server and message pointer back from the function parameter
+    sclsvrMonitorActionParams* paramsPtr = (sclsvrMonitorActionParams*)param;
+    sclsvrSERVER*                 server = (sclsvrSERVER*)paramsPtr->server;
+    msgMESSAGE*                  message = (msgMESSAGE*) paramsPtr->message;
+
+    // Get any new action and forward it to the GUI ...
+    do
+    {
+        // Wait for a new action
+        if (sdbWaitAction(buffer, &lastMessage) == mcsFAILURE)
+        {
+            return NULL;
+        }
+
+        // Define the new message body from the newly received action message
+        if (message->SetBody(buffer) == mcsFAILURE)
+        {
+            return NULL;
+        }
+
+        // Send the new message to the GUI for status display
+        if (server->SendReply(*message, mcsFALSE) == mcsFAILURE)
+        {
+            return NULL;
+        }
+    }
+    while (lastMessage == mcsFALSE); // ... until the last action occured
+
+    return NULL;
+}
+
+
 /*
  * Public methods
  */
@@ -131,6 +200,20 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
  
     // Start timer log
     timlogInfoStart(msg.GetCommand());
+
+    // sdbAction initialization
+    sdbInitAction();
+
+    // actionMonitor thread parameters creation
+    sclsvrMonitorActionParams      actionMonitorParams;
+    actionMonitorParams.server   = this;
+    actionMonitorParams.message  = &msg;
+
+    // actionMonitor thread creation and launch
+    thrdTHREAD                     actionMonitor;
+    actionMonitor.function       = sclsvrMonitorAction;
+    actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
+    thrdThreadCreate(&actionMonitor);
 
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
@@ -176,7 +259,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                     {
                         return evhCB_NO_DELETE | evhCB_FAILURE;
                     }
-
                 }
 
                 break;
@@ -241,6 +323,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 }
 
                 break;
+
             default:
                 errAdd(vobsERR_UNKNOWN_BAND, band);
                 return evhCB_NO_DELETE | evhCB_FAILURE;
@@ -281,12 +364,16 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
+    sdbWriteAction("Completing results...", mcsFALSE);
+
     // Complete the calibrators list
     if (calibratorList.Complete(request) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     
+    sdbWriteAction("Done", mcsTRUE);
+
     // Pack the list result in a buffer in order to send it
     if (calibratorList.Size() != 0)
     { 
@@ -309,6 +396,9 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     {
         msg.ClearBody();
     }
+
+    // Wait for the actionForwarder thread end
+    thrdThreadWait(&actionMonitor);
 
     // Send reply
     if (SendReply(msg) == mcsFAILURE)
