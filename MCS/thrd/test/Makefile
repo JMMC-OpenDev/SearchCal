@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2005-12-19 16:48:30 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.4 2005-12-21 10:43:47 lafrasse Exp $"
 #
 # Makefile of thrd module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/12/19 16:48:30  lafrasse
+# Added semaphore support
+#
 # Revision 1.2  2005/12/16 15:03:57  lafrasse
 # Added mutex support
 #
@@ -49,19 +52,19 @@ EXECUTABLES_L   =
 # <brief description of thrdTestThread program>
 thrdTestThread_OBJECTS   = thrdTestThread
 thrdTestThread_LDFLAGS   = 
-thrdTestThread_LIBS      = MCS thrd
+thrdTestThread_LIBS      = MCS
 
 #
 # <brief description of thrdTestMutex program>
 thrdTestMutex_OBJECTS   = thrdTestMutex
 thrdTestMutex_LDFLAGS   = 
-thrdTestMutex_LIBS      = MCS thrd
+thrdTestMutex_LIBS      = MCS
 
 #
 # <brief description of thrdTestSemaphore program>
 thrdTestSemaphore_OBJECTS   = thrdTestSemaphore
 thrdTestSemaphore_LDFLAGS   = 
-thrdTestSemaphore_LIBS      = MCS thrd
+thrdTestSemaphore_LIBS      = MCS
 
 #
 # special compilation flags for single c sources
