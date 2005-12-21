@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.8  2005/12/21 15:11:26  scetre
+* Added log
+*
 * Revision 1.7  2005/12/19 21:13:07  gzins
 * Changed longitude limit from 350 to 360
 *
@@ -37,7 +40,7 @@
  * @sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.8 2005-12-21 15:11:26 scetre Exp $";
+static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.9 2005-12-21 15:14:08 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -393,6 +396,7 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT  ra,
     {
         return mcsFAILURE;
     }
+    logInfo("Nb of star for this sky area = %d", nbOfStars);
 
     /* Compute the area size according to estimated number of stars at this sky
      * position to only have 50 stars in this area.
