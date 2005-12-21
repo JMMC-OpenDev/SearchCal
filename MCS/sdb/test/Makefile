@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2005-12-20 13:52:34 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.2 2005-12-21 10:42:26 lafrasse Exp $"
 #
 # Makefile of sdb module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/12/20 13:52:34  lafrasse
+# Added preliminary support for INTRA-process action log
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -43,7 +46,7 @@ EXECUTABLES_L   =
 # <brief description of sdbTestEntry program>
 sdbTestEntry_OBJECTS   = sdbTestEntry
 sdbTestEntry_LDFLAGS   = 
-sdbTestEntry_LIBS      = C++ thrd MCS  sdb
+sdbTestEntry_LIBS      = MCS C++
 
 #
 # special compilation flags for single c sources
