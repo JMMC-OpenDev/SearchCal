@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.20 2005-12-07 14:48:33 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.21 2005-12-21 15:00:47 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/12/07 14:48:33  scetre
+ * Renamed function for bright and faint case
+ *
  * Revision 1.19  2005/12/05 16:00:22  scetre
  * Added computing of mean diameter and associated error
  *
@@ -81,7 +84,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.20 2005-12-07 14:48:33 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.21 2005-12-21 15:00:47 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -499,7 +502,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }
     
     /* Display results */
-    logTest("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f), JK = %.3f(%.4f), JH = %.3f(%.4f), mean = %3f(%4f) ",
+    logInfo("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f), JK = %.3f(%.4f), JH = %.3f(%.4f), mean = %3f(%4f) ",
             diameters->ij.value, diameters->ijErr.value, diameters->ik.value,
             diameters->ikErr.value, diameters->jk.value,
             diameters->jkErr.value, diameters->jh.value,
