@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.34 2005-12-14 15:08:10 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.35 2005-12-21 10:35:15 lafrasse Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.34  2005/12/14 15:08:10  scetre
+* Added log Information
+*
 * Revision 1.33  2005/12/12 14:06:51  scetre
 * Added test in empty or null list to when scenario is executing
 *
@@ -109,7 +112,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.34 2005-12-14 15:08:10 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.35 2005-12-21 10:35:15 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -129,6 +132,7 @@ using namespace std;
 #include "err.h"
 #include "misc.h"
 #include "timlog.h"
+#include "sdb.h"
 
 /*
  * Local Headers 
@@ -255,7 +259,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             mcsSTRING256 timLogActionName;
             // Get catalog name, and replace '/' by '_'
             mcsSTRING32 catalog;
-            strcpy (catalog, (*_entryIterator)._catalogName);
+            strcpy(catalog, (*_entryIterator)._catalogName);
             if (miscReplaceChrByChr(catalog, '/', '_') == mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -274,6 +278,15 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
             // Start time counter
             timlogInfoStart(timLogActionName);
+
+            // Write the current action in the shared database
+            mcsSTRING256 message;
+            snprintf(message, sizeof(message), "Looking in '%s' catalog...",
+                     catalog);
+            if (sdbWriteAction(message, mcsFALSE) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
 
             // Check if the list is not NULL, i.e the SetCatalogList has
             // ever been executed one time
