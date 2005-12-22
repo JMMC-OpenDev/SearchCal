@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2005-12-02 12:05:42 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.7 2005-12-22 10:08:58 scetre Exp $"
 #
 # Makefile of the alx module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/12/02 12:05:42  scetre
+# Added computation of diameter and missing magnitude in faint
+#
 # Revision 1.5  2005/10/26 11:30:41  lafrasse
 # Created alxComputeDistance function stuff
 #
@@ -80,8 +83,9 @@ LIBRARIES_L     =
 # <brief description of lllll library>
 alx_OBJECTS   = alxAngularDiameter          \
 				alxGalacticCoordinates      \
-				alxMagnitude                \
-				alxRealMagnitude            \
+				alxCorrectedMagnitude       \
+				alxApparentMagnitude		\
+				alxInterstellarAbsorption   \
 				alxVisibility               \
 				alxResearchArea             \
 				alxDistance
@@ -151,7 +155,7 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../config/alxAbsIntPolynomial.cfg					\
+INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg					\
 				../config/alxAngDiamPolynomialForBrightStar.cfg		\
 				../config/alxColorTableForBrightDwarfStar.cfg		\
 				../config/alxColorTableForFaintDwarfStar.cfg		\

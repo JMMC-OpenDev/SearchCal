@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.21 2005-12-21 15:00:47 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.22 2005-12-22 10:08:58 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2005/12/21 15:00:47  scetre
+ * Changed log level
+ *
  * Revision 1.20  2005/12/07 14:48:33  scetre
  * Renamed function for bright and faint case
  *
@@ -84,7 +87,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.21 2005-12-21 15:00:47 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxAngularDiameter.c,v 1.22 2005-12-22 10:08:58 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -466,7 +469,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
          diameters->meanErr.value) )
     {
         /* Reject star (i.e the diameter should not appear as computed) */
-        diameters->areComputed = mcsFALSE;
+        diameters->areComputed = mcsTRUE;
     }
     else
     {

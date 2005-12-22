@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.18 2005-12-07 14:48:33 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.19 2005-12-22 10:07:53 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/12/07 14:48:33  scetre
+ * Renamed function for bright and faint case
+ *
  * Revision 1.17  2005/12/05 16:00:22  scetre
  * Added computing of mean diameter and associated error
  *
@@ -197,10 +200,11 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
 mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(mcsSTRING32 spType, 
                                                alxMAGNITUDES magnitudes); 
 
-mcsCOMPL_STAT alxComputeRealMagnitudes(mcsFLOAT plx,
-                                       mcsFLOAT gLat,
-                                       mcsFLOAT gLon,
-                                       alxMAGNITUDES magnitudes);
+mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsFLOAT av,
+                                            alxMAGNITUDES magnitudes);
+
+mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsFLOAT av,
+                                           alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
                                         alxDATA mgV,
@@ -236,6 +240,11 @@ mcsCOMPL_STAT alxComputeDistance(mcsFLOAT ra1,
                                  mcsFLOAT ra2,
                                  mcsFLOAT dec2,
                                  mcsFLOAT *distance);
+
+mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT *av,
+                                              mcsFLOAT plx,
+                                              mcsFLOAT gLat,
+                                              mcsFLOAT gLon);
 
 #ifdef __cplusplus
 }
