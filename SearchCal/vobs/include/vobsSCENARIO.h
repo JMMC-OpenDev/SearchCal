@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.10 2005-11-29 10:30:20 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.11 2005-12-22 14:14:17 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/11/29 10:30:20  gzins
+* Moved vobsFILTER to vobsGENERIC_FILTER
+*
 * Revision 1.9  2005/11/24 08:13:50  scetre
 * Changed mother class of filter from vobsFILTER to vobsFILTER
 *
@@ -107,7 +110,8 @@ private :
 
     // pointer of list of catalog
     vobsCATALOG_LIST *_catalogList;
-
+    mcsUINT32 _nbOfCatalogs;
+    mcsUINT32 _catalogIndex;
 };
 
 

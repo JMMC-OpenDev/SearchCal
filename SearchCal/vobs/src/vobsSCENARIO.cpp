@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.35 2005-12-21 10:35:15 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.36 2005-12-22 14:14:17 lafrasse Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.35  2005/12/21 10:35:15  lafrasse
+* Added queried catalog name logging as action status
+*
 * Revision 1.34  2005/12/14 15:08:10  scetre
 * Added log Information
 *
@@ -112,7 +115,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.35 2005-12-21 10:35:15 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.36 2005-12-22 14:14:17 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -150,6 +153,8 @@ vobsSCENARIO::vobsSCENARIO()
     _entryIterator = _entryList.begin();
     // affect to NULL the catalog list
     _catalogList = NULL;
+    _nbOfCatalogs = 0;
+    _catalogIndex = 0;
 }
 
 /*
@@ -199,7 +204,13 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
                              action,
                              criteriaList,
                              filter);
-    
+
+    // Increment true catalog counter (if not a filter)
+    if (strcmp(catalogName, vobsNO_CATALOG_ID) != 0)
+    {
+        _nbOfCatalogs++;
+    }
+
     // Put element in the list    
     _entryList.push_back(entry);
 
@@ -281,12 +292,14 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
             // Write the current action in the shared database
             mcsSTRING256 message;
-            snprintf(message, sizeof(message), "Looking in '%s' catalog...",
-                     catalog);
+            snprintf(message, sizeof(message),
+                     "Looking in '%s' catalog (%d/%d)...",
+                     catalog, (_catalogIndex + 1), _nbOfCatalogs);
             if (sdbWriteAction(message, mcsFALSE) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
+            printf("%s\n", message);
 
             // Check if the list is not NULL, i.e the SetCatalogList has
             // ever been executed one time
@@ -312,6 +325,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 return mcsFAILURE;
             }
             logInfo("...number of stars return = %d", tempList.Size());
+            _catalogIndex++;
 
             // Stop time counter
             timlogStop(timLogActionName);
@@ -439,6 +453,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     }
     logInfo("%d star(s) found.", starList.Size()); 
     
+    _catalogIndex = 0;
     return mcsSUCCESS;
 }
 
@@ -458,7 +473,7 @@ mcsCOMPL_STAT vobsSCENARIO::SetCatalogList(vobsCATALOG_LIST *catalogList)
 
     // equal the two pointer
     _catalogList = catalogList;
-    
+
     return mcsSUCCESS;
 }
 
@@ -473,6 +488,8 @@ mcsCOMPL_STAT vobsSCENARIO::Clear(void)
 
     _catalogList = NULL;
     _entryList.erase(_entryList.begin(), _entryList.end());
+    _nbOfCatalogs = 0;
+    _catalogIndex = 0;
 
     return mcsSUCCESS;
 }
