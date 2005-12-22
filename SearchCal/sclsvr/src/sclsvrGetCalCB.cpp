@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.27 2005-12-22 14:12:14 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.28 2005-12-22 14:39:38 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2005/12/22 14:12:14  lafrasse
+ * Added error managment code and sdbDestroyAction() call to ensure that any created semaphores are released properly
+ *
  * Revision 1.26  2005/12/21 10:32:56  lafrasse
  * Added a querying actions monitoring thread to forward them to the GUI as status
  *
@@ -85,7 +88,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.27 2005-12-22 14:12:14 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.28 2005-12-22 14:39:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -148,7 +151,7 @@ typedef struct
  *
  * @return always NULL.
  */
-thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
+static thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
 {   
     logTrace("sclsvrMonitorAction()");
 
