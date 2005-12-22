@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.33 2005-12-14 09:01:39 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.34 2005-12-22 10:11:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2005/12/14 09:01:39  scetre
+ * Removed unused method
+ *
  * Revision 1.32  2005/12/12 14:09:26  scetre
  * Added computing cousin magnitude as propertie of the calibrator
  *
@@ -150,8 +153,12 @@ private:
                                           alxBAND secondBand,
                                           mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
+    mcsCOMPL_STAT ComputeExtinctionCoefficient(mcsFLOAT *av);
     mcsCOMPL_STAT 
-        ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS]);
+        ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS],
+                                      mcsFLOAT av);
+    mcsCOMPL_STAT ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS],
+                                           mcsFLOAT av);     
     mcsCOMPL_STAT ComputeAngularDiameter(alxDATA mg1,
                                          alxDATA mg2,
                                          alxDATA mg3,
@@ -161,6 +168,7 @@ private:
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeMultiplicity(); 
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
+    mcsCOMPL_STAT ComputeCousinMagnitude(); 
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/
