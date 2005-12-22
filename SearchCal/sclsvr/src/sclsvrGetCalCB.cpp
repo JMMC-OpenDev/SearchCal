@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.26 2005-12-21 10:32:56 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.27 2005-12-22 14:12:14 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/12/21 10:32:56  lafrasse
+ * Added a querying actions monitoring thread to forward them to the GUI as status
+ *
  * Revision 1.25  2005/12/12 14:10:30  scetre
  * Added old scenario with 2mass in primary request if precised in the GETCAL command
  *
@@ -82,7 +85,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.26 2005-12-21 10:32:56 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.27 2005-12-22 14:12:14 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -202,7 +205,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     timlogInfoStart(msg.GetCommand());
 
     // sdbAction initialization
-    sdbInitAction();
+    if (sdbInitAction() == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
 
     // actionMonitor thread parameters creation
     sclsvrMonitorActionParams      actionMonitorParams;
@@ -213,7 +219,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     thrdTHREAD                     actionMonitor;
     actionMonitor.function       = sclsvrMonitorAction;
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
-    thrdThreadCreate(&actionMonitor);
+    if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
 
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
@@ -364,7 +373,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    sdbWriteAction("Completing results...", mcsFALSE);
+    if (sdbWriteAction("Completing results...", mcsFALSE) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
 
     // Complete the calibrators list
     if (calibratorList.Complete(request) == mcsFAILURE)
@@ -372,7 +384,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
     
-    sdbWriteAction("Done", mcsTRUE);
+    if (sdbWriteAction("Done", mcsTRUE) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
 
     // Pack the list result in a buffer in order to send it
     if (calibratorList.Size() != 0)
@@ -398,7 +413,16 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     }
 
     // Wait for the actionForwarder thread end
-    thrdThreadWait(&actionMonitor);
+    if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+
+    // sdbAction deletion
+    if (sdbDestroyAction() == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
 
     // Send reply
     if (SendReply(msg) == mcsFAILURE)
