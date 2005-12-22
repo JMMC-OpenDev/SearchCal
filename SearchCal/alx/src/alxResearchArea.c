@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/12/21 15:14:08  scetre
+* Added log
+*
 * Revision 1.8  2005/12/21 15:11:26  scetre
 * Added log
 *
@@ -40,7 +43,7 @@
  * @sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.9 2005-12-21 15:14:08 scetre Exp $";
+static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.10 2005-12-22 10:28:31 scetre Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -355,7 +358,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
  * @param dec declinaison J2000 in degree
  * @param minMag minimum of the magnitude range
  * @param maxMag maximum of the magnitude range
- * @param areaSize estimated size of the research area 
+ * @param radius estimated size of the radius 
  *
  * @return 
  * mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
