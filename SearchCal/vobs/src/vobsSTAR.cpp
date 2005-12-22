@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.59 2005-12-14 15:09:56 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.60 2005-12-22 10:38:45 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.59  2005/12/14 15:09:56  scetre
+* Added return of coordinates when getting star id
+*
 * Revision 1.58  2005/12/13 15:37:24  lafrasse
 * Added star Id management with the new GetId() method
 *
@@ -153,7 +156,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.59 2005-12-14 15:09:56 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.60 2005-12-22 10:38:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -1048,7 +1051,9 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  * @param id     property identifier
  * @param name   property name
  * @param type   property type
+ * @param unit   property unit
  * @param format format used to set property
+ * @param description property description
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.

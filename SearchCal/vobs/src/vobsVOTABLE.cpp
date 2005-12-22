@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.5 2005-12-07 16:49:18 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.6 2005-12-22 10:38:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/07 16:49:18  lafrasse
+ * Added support for 'description' attribute in VOTable column descriptors FIELD.
+ *
  * Revision 1.4  2005/12/07 15:28:20  lafrasse
  * Updated VOTable generation to include information about software version, request and date
  *
@@ -26,7 +29,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.5 2005-12-07 16:49:18 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.6 2005-12-22 10:38:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -72,6 +75,9 @@ vobsVOTABLE::~vobsVOTABLE()
  *
  * @param starList the the list of stars to serialize
  * @param fileName the path to the file in which the VOTable should be saved
+ * @param header header of the VO Table
+ * @param softwareVersion software version
+ * @param request user request
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  *

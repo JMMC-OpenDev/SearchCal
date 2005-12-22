@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.17 2005-12-07 16:49:18 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.18 2005-12-22 10:38:45 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/12/07 16:49:18  lafrasse
+* Added support for 'description' attribute in VOTable column descriptors FIELD.
+*
 * Revision 1.16  2005/12/02 17:42:26  lafrasse
 * Added property unit handling
 *
@@ -58,7 +61,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.17 2005-12-07 16:49:18 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.18 2005-12-22 10:38:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -98,7 +101,9 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
  * @param id     property identifier
  * @param name   property name 
  * @param type   property type
+ * @param unit   property unit
  * @param format format used to set property
+ * @param description property description
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
                                      const char*              name, 

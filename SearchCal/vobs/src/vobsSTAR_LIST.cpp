@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.28 2005-12-07 15:28:20 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.29 2005-12-22 10:38:45 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2005/12/07 15:28:20  lafrasse
+* Updated VOTable generation to include information about software version, request and date
+*
 * Revision 1.27  2005/12/07 15:10:09  scetre
 * Removed unused printf
 *
@@ -78,7 +81,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.28 2005-12-07 15:28:20 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.29 2005-12-22 10:38:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -601,6 +604,9 @@ void vobsSTAR_LIST::Display(void)
  * Save each star in a VOTable v1.1.
  *
  * @param filename the path to the file in which the VOTable should be saved
+ * @param header header of the VO Table
+ * @param softwareVersion software version
+ * @param request user request
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */

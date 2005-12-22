@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER.cpp,v 1.13 2005-12-14 15:07:53 scetre Exp $"
+ * "@(#) $Id: vobsFILTER.cpp,v 1.14 2005-12-22 10:38:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/12/14 15:07:53  scetre
+ * Added log information about deleted star in filters
+ *
  * Revision 1.12  2005/12/13 16:30:33  lafrasse
  * Added filter Id management through additional constructor parameter
  *
@@ -25,7 +28,7 @@
  * Definition of vobsFILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.13 2005-12-14 15:07:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsFILTER.cpp,v 1.14 2005-12-22 10:38:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -114,9 +117,6 @@ mcsCOMPL_STAT vobsFILTER::Disable(void)
 
 /**
  * Get the filter Id.
- *
- * @param filterId a pointer on an already allocated character buffer.
- * @param maxLength the size of the external character buffer.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */

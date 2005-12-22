@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.5 2005-12-14 15:07:53 scetre Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.6 2005-12-22 10:38:45 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/14 15:07:53  scetre
+ * Added log information about deleted star in filters
+ *
  * Revision 1.4  2005/12/13 16:30:33  lafrasse
  * Added filter Id management through additional constructor parameter
  *
@@ -60,7 +63,7 @@
  * Definition of vobsGENERIC_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.5 2005-12-14 15:07:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.6 2005-12-22 10:38:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -92,6 +95,7 @@ using namespace std;
  * the expression is evaluated as 'cond1 && cond2 && ...', and if it is set to
  * vobsOR it is evaluated as 'cond1 || cond2 || ...'
  *
+ * @param filterId filter identifier
  * @param propId property id on which filter has to be applied
  * @param exprType type of expression; vobsAND or vobsOR
  */
@@ -120,7 +124,7 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
 /**
  * Add condition on numerical value
  *
- * @param condition <, >, <=, >=, ==
+ * @param op <, >, <=, >=, ==
  * @param value the value to compare with
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
@@ -156,7 +160,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
 /**
  * Add condition on string value
  * 
- * @param condition <, >, <=, >=, ==
+ * @param op <, >, <=, >=, ==
  * @param value the string to compare with
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
