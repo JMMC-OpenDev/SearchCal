@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.15 2005-12-14 09:02:35 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.16 2005-12-22 10:12:16 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/12/14 09:02:35  scetre
+ * Changed constructor in order to handle the filter of the scenario classes
+ *
  * Revision 1.14  2005/12/12 14:08:17  scetre
  * Added radius computing
  *
@@ -57,7 +60,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.15 2005-12-14 09:02:35 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.16 2005-12-22 10:12:16 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -198,7 +201,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         {
             return mcsFAILURE;
         }
-
+        logInfo("Sky research radius = %.2f(arcmin)", radius);
+        
         if (_request.SetSearchArea(radius) == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -213,6 +217,16 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         {
             return mcsFAILURE;
         }
+        ////////////////////////////////////////////////////////////////////////
+        // Filter on opt=AAA
+        ////////////////////////////////////////////////////////////////////////
+        if (scenarioCheck.AddEntry(vobsNO_CATALOG_ID, &_request, &starList,
+                                  &starList, vobsCOPY, NULL, &_filterOnQflag)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
         // Set catalog list
         vobsCATALOG_LIST catalogList;
         scenarioCheck.SetCatalogList(&catalogList);
@@ -231,11 +245,21 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
             {
                 return mcsFAILURE;
             }
+            logInfo("New Sky research radius = %.2f(arcmin)", sqrt(2.0)*radius);
+
             ///////////////////////////////////////////////////////////////////
             // II/246
             ///////////////////////////////////////////////////////////////////
             if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
                          vobsCOPY) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            ////////////////////////////////////////////////////////////////////
+            // Filter on opt=AAA
+            ////////////////////////////////////////////////////////////////////
+            if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP,
+                         vobsCOPY, NULL, &_filterOnQflag) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -252,15 +276,14 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         {
             return mcsFAILURE;
         }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Filter on opt=AAA
-    ///////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP, 
-                vobsCOPY, NULL, &_filterOnQflag) == mcsFAILURE)
-    {
-        return mcsFAILURE;
+        ////////////////////////////////////////////////////////////////////////
+        // Filter on opt=AAA
+        ////////////////////////////////////////////////////////////////////////
+        if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP, 
+                     vobsCOPY, NULL, &_filterOnQflag) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
