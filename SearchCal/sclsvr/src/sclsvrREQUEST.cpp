@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.17 2005-12-16 19:33:22 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.18 2005-12-22 12:59:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/12/16 19:33:22  scetre
+ * Managed optional visErr
+ *
  * Revision 1.16  2005/12/16 13:26:24  scetre
  * Added test when computing visibility Added visibility error as parameter
  *
@@ -66,7 +69,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.17 2005-12-16 19:33:22 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.18 2005-12-22 12:59:19 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -536,10 +539,10 @@ mcsLOGICAL sclsvrREQUEST::IsBright(void)
 }
 
 /**
- * Specify wether the query should return bright (by default) or faint stars.
+ * Specify wether the query should used old Scenario or new (default).
  *
- * @param brightFlag mcsTRUE if the query should return bright starts, otherwise
- * mcsFALSE to get faint stars.
+ * @param oldScenario mcsTRUE if the query should used the old scenario,
+ * otherwise mcsFALSE to use new scenario.
  *
  * @return Always mcsSUCCESS.
  */
