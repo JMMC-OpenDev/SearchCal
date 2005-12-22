@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdSemaphore.c,v 1.1 2005-12-19 16:48:30 lafrasse Exp $"
+ * "@(#) $Id: thrdSemaphore.c,v 1.2 2005-12-22 14:08:00 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/19 16:48:30  lafrasse
+ * Added semaphore support
+ *
  ******************************************************************************/
 
 /**
@@ -16,9 +19,8 @@
  * @li create and destroy a semaphore,
  * @li wait and signal it.
  *
- * @n
  * @ex
- * A C program using a Dynamic Buffer.
+ * A C program using a semaphore.
  * @code
  * #include "thrdSemaphore.h"
  *
@@ -41,9 +43,22 @@
  *  exit();
  * }
  * @endcode
+ *
+ * @warning if you get some 'ENOSPC' errors while trying to create new
+ * semaphores, it is probably because you reached the maximun amount of
+ * semaphores your OS can manage at once (maybe did you forget to call
+ * thrdSemahoreDestroy() for each of your semaphore). @n
+ * To remove previously unreleased semaphores, you can use the following command
+ * in a Unix shell to remove any created semaphores (special thanx to Frederic
+ * ROUSSEL) :
+ * @code
+ * for i in `ipcs -a|awk '{print $2}'`;do ipcrm -s$i;done
+ * @endcode
+ *
+ * @sa ipcs ipcrm
  */
 
-static char *rcsId="@(#) $Id: thrdSemaphore.c,v 1.1 2005-12-19 16:48:30 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: thrdSemaphore.c,v 1.2 2005-12-22 14:08:00 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
