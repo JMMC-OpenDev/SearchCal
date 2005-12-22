@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.12 2005-12-19 20:46:49 gzins Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.13 2005-12-22 10:09:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/12/19 20:46:49  gzins
+ * Updated test programs according new function names
+ *
  * Revision 1.11  2005/12/02 12:05:59  scetre
  * Added test of faint missing magnitude
  *
@@ -50,7 +53,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.12 2005-12-19 20:46:49 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.13 2005-12-22 10:09:14 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -154,8 +157,10 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
 
-    if (alxComputeRealMagnitudes
-        (10, 5, 165, magnitudes) == mcsFAILURE)
+    mcsFLOAT av;
+    alxComputeExtinctionCoefficient(&av, 10, 5, 165);        
+    if (alxComputeCorrectedMagnitudes
+        (av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
@@ -201,8 +206,9 @@ printf("*********************\n");
    
     /* extinction */
     printf("extinction\n");
-    if (alxComputeRealMagnitudes
-        (9.10, -23.45, 166.61, magnitudes) == mcsFAILURE)
+    alxComputeExtinctionCoefficient(&av, 9.10, -23.45, 166.61);
+    if (alxComputeCorrectedMagnitudes
+        (av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
@@ -230,8 +236,9 @@ printf("*********************\n");
    
     /* extinction */
     printf("extinction\n");
-    if (alxComputeRealMagnitudes
-        (1.20, -23.58, 166.37, magnitudes) == mcsFAILURE)
+    alxComputeExtinctionCoefficient(&av, 1.20, -23.58, 166.37);    
+    if (alxComputeCorrectedMagnitudes
+        (av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
@@ -249,6 +256,10 @@ printf("*********************\n");
                                                magnitudes[alxR_BAND],
                                                magnitudes[alxK_BAND],
                                                &diameters)== mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (alxComputeApparentMagnitudes(av, magnitudes) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
