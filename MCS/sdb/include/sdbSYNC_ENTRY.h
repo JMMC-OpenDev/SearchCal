@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.1 2005-12-20 13:52:34 lafrasse Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.2 2005-12-22 14:10:35 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/20 13:52:34  lafrasse
+ * Added preliminary support for INTRA-process action log
+ *
  ******************************************************************************/
 
 /**
@@ -79,11 +82,12 @@ public:
     // Class destructor
     virtual ~sdbENTRY();
 
-    static mcsCOMPL_STAT  Init  (void);
-    static mcsCOMPL_STAT  Write (const char*       message,
-                                 const mcsLOGICAL  lastMessage);
-    static mcsCOMPL_STAT  Wait  (      char*       message,
-                                       mcsLOGICAL* lastMessage);
+    static mcsCOMPL_STAT  Init    (void);
+    static mcsCOMPL_STAT  Destroy (void);
+    static mcsCOMPL_STAT  Write   (const char*       message,
+                                   const mcsLOGICAL  lastMessage);
+    static mcsCOMPL_STAT  Wait    (      char*       message,
+                                         mcsLOGICAL* lastMessage);
 
 protected:
     
