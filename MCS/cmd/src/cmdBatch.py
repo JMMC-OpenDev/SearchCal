@@ -2,11 +2,14 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdBatch.py,v 1.3 2005-12-16 16:04:16 mella Exp $"
+# "@(#) $Id: cmdBatch.py,v 1.4 2006-01-03 10:12:24 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/12/16 16:04:16  mella
+# Do not require user action
+#
 # Revision 1.2  2005/12/16 15:36:43  mella
 # Remove unused Sesame import
 #
@@ -31,7 +34,7 @@ import os.path
 import os
 from optparse import OptionParser
 
-Id="@(#) $Id: cmdBatch.py,v 1.3 2005-12-16 16:04:16 mella Exp $"
+Id="@(#) $Id: cmdBatch.py,v 1.4 2006-01-03 10:12:24 mella Exp $"
 
 # default output will 
 resultDir="results"
@@ -48,12 +51,6 @@ def main(filename):
     except:
         print "Problem reading " + filename
         return
-
-    # Store new config summary
-    tmpfilename=resultDir+os.path.sep+os.path.basename(filename)+".tmp"
-    print "A summary of the batch configuration is written into "+tmpfilename
-    newCfg=open(tmpfilename,"w")
-    config.write(newCfg)
 
     # Start to build batch list for every section
     batchList=[]
@@ -76,15 +73,18 @@ def main(filename):
         # And append to cmd every option  -optionName Value ...
         for n,v in config.items(s):
             if n and v:
-                cmd += "-"+n+" "+v+" "
+                cmd += "-"+n+" \\\""+v+"\\\" "
             else: 
                 sys.stderr.write("ERROR: Missing value for '%s' item into '%s' section"%(n,s))
                 sys.exit(1)
         cmd += ' "'
 
-        # Store new batch into file " are placed for case were section includes
-        # spaces
-        batchList.append( cmd + ' > "' + resultDir + os.path.sep + s + '.out"' ) 
+        # Store new batch results into file.out and file.err
+        # " are placed for case were section includes spaces
+        batchList.append( cmd + ' > "' + resultDir + os.path.sep + s + '.out"' \
+                              + ' 2> "' + resultDir + os.path.sep + s + '.err"' )  
+        t=open(resultDir+os.path.sep+s+".cmd", "w")
+        t.write(cmd)
 
     # Execute batch line by line
     for cmd in batchList:
@@ -125,9 +125,9 @@ if __name__ == '__main__':
                 os.mkdir(resultDir)
                 print "'%s' directory has been created." %(resultDir,) 
             except:
-                sys.stderr.write( "Failed to create '%s' directory." %(resultDir,))
-   
-        main(args[0])     
-        
+                sys.stderr.write( "Failed to create '%s' directory.%s" %(resultDir,os.linesep))
     except:
-        print "Usage: %s <inputscript.cfg>"%(sys.argv[0],)
+        sys.stderr.write("Usage: %s <inputscript.cfg>%s"%(sys.argv[0],os.linesep))
+        sys.exit(1)
+    
+    main(args[0])     
