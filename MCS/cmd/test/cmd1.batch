@@ -1,0 +1,32 @@
+# JMMC project
+#
+# "@(#) $Id: cmd1.batch,v 1.1 2006-01-03 10:16:14 mella Exp $"
+#
+# History
+# -------
+#  $Log: not supported by cvs2svn $
+#
+# # #
+
+#
+# This is a sample test file for the command : echo
+# You can use it as model modifying right parts.
+# in general command is equal to 'msgSendCommand <taskName> <commandName>'
+# Use it with cmdBatch command
+# 
+# This batch will run
+# echo "-p1 \"12\" -mag \"3\""
+# echo "-p1 \"12\" -mag \"2\""
+# and store there outputs into result directory by default
+#
+
+
+[DEFAULT]
+command=echo
+p1=12
+
+[HD 39091 cas 1]
+mag=3
+
+[HD 39091 cas 2]
+mag=2
