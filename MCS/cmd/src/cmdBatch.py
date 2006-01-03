@@ -2,11 +2,14 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdBatch.py,v 1.4 2006-01-03 10:12:24 mella Exp $"
+# "@(#) $Id: cmdBatch.py,v 1.5 2006-01-03 11:39:10 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2006/01/03 10:12:24  mella
+# Remove unused part and protect parameters value with double quotes
+#
 # Revision 1.3  2005/12/16 16:04:16  mella
 # Do not require user action
 #
@@ -34,7 +37,7 @@ import os.path
 import os
 from optparse import OptionParser
 
-Id="@(#) $Id: cmdBatch.py,v 1.4 2006-01-03 10:12:24 mella Exp $"
+Id="@(#) $Id: cmdBatch.py,v 1.5 2006-01-03 11:39:10 mella Exp $"
 
 # default output will 
 resultDir="results"
@@ -73,7 +76,7 @@ def main(filename):
         # And append to cmd every option  -optionName Value ...
         for n,v in config.items(s):
             if n and v:
-                cmd += "-"+n+" \\\""+v+"\\\" "
+                cmd += "-"+n+" "+v+" "
             else: 
                 sys.stderr.write("ERROR: Missing value for '%s' item into '%s' section"%(n,s))
                 sys.exit(1)

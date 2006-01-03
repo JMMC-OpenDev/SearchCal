@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.31 2005-04-15 17:49:17 mella Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.32 2006-01-03 11:39:10 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2005/04/15 17:49:17  mella
+ * Make modification according coding remarks
+ *
  * Revision 1.30  2005/04/11 12:33:25  scetre
  * Revue : changed documentation
  *
@@ -77,7 +80,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.31 2005-04-15 17:49:17 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.32 2006-01-03 11:39:10 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1580,14 +1583,19 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
     {
         if (*i == '-')
         {
-            // If the dash is not included into a string value
+            // If the dash is not included into a string value 
             if (! valueZone)
             {
                 if( ( *(i+1) >= '0' ) &&  ( *(i+1) <= '9' ))
                 {
                     // Do nothing because all the tuple string must be catched
                 }
-                else if (posEnd>0)
+                else if(  *(i-1) != ' ' )
+                {
+                    // Do nothing because all the tuple string must be catched
+                    // the paramvalue should be xxx-xxx
+                }
+                else if ( posEnd > 0 )
                 {
                     if (ParseTupleParam(_params.substr(posStart,
                                                        posEnd-posStart)) == 
