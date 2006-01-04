@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.10 2005-02-27 09:28:37 gzins Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.11 2006-01-04 12:33:01 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/02/27 09:28:37  gzins
+ * Updated to test error handling
+ *
  * Revision 1.9  2005/02/22 12:39:11  mella
  * Place main code into a new lock {} to perform a better c++ housekeeping
  *
@@ -27,7 +30,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.10 2005-02-27 09:28:37 gzins Exp $"; 
+static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.11 2006-01-04 12:33:01 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -187,17 +190,57 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Print get dstring value
+        // test to get string value of a parameter with default value
         char *dstringValue;
-        if (myCmd.GetParamValue("string", &dstringValue) == mcsFAILURE) 
+        if (myCmd.GetParamValue("dstring", &dstringValue) == mcsFAILURE) 
         {
             errCloseStack();
             exit (EXIT_FAILURE);
         }
         else
         {
-            cout << "dstring parameter from myCmd gets the next user value: " << dstringValue << endl;
+            cout << "dstring parameter from myCmd gets the next value: " << dstringValue << endl;
         }
+
+        // test to get a double value of a parameter with default value
+        mcsDOUBLE ddoubleValue;
+        if (myCmd.GetParamValue("ddouble", &ddoubleValue) == mcsFAILURE) 
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        }
+        else
+        {
+            cout << "ddouble parameter from myCmd gets the next value: " << ddoubleValue << endl;
+        }
+
+        // test to get a double value of a parameter with default value
+        mcsINT32 dintegerValue;
+        if (myCmd.GetParamValue("dinteger", &dintegerValue) == mcsFAILURE) 
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        }
+        else
+        {
+            cout << "dinteger parameter from myCmd gets the next value: " << dintegerValue << endl;
+        }
+
+         // test to get a double value of a parameter with default value
+        mcsLOGICAL dbooleanValue;
+        if (myCmd.GetParamValue("dboolean", &dbooleanValue) == mcsFAILURE) 
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        }
+        else
+        {
+            cout << "dboolean parameter from myCmd gets the next value: " << dbooleanValue << endl;
+        }
+
+ 
+        
+        
 
         string cmdParamline;
         if (myCmd.GetCmdParamLine(cmdParamline) == mcsFAILURE) 
