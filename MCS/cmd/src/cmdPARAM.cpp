@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.16 2005-04-17 16:18:59 mella Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.17 2006-01-04 12:36:19 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/04/17 16:18:59  mella
+ * Improve documentation
+ *
  * Revision 1.15  2005/04/11 12:33:25  scetre
  * Revue : changed documentation
  *
@@ -51,7 +54,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.16 2005-04-17 16:18:59 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.17 2006-01-04 12:36:19 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -452,9 +455,9 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
-    if (sscanf (_userValue.data(), "%lf", value) != 1)
+    if (sscanf (_defaultValue.data(), "%lf", value) != 1)
     {
-        errAdd(cmdERR_DOUBLE_VALUE, _userValue.data(), _name.data());
+        errAdd(cmdERR_DOUBLE_VALUE, _defaultValue.data(), _name.data());
         return mcsFAILURE;
     }
     return mcsSUCCESS;
@@ -470,11 +473,11 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
-    if ((_userValue.compare("1") == 0) || (_userValue.compare("true") == 0))
+    if ((_defaultValue.compare("1") == 0) || (_defaultValue.compare("true") == 0))
     {
         *value = mcsTRUE;
     }
-    else if ((_userValue.compare("0") == 0) || (_userValue.compare("false")==0))
+    else if ((_defaultValue.compare("0") == 0) || (_defaultValue.compare("false")==0))
     {
         *value = mcsFALSE;
     }
@@ -496,8 +499,8 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
 {
     logExtDbg("cmdPARAM::GetDefaultValue()");
-    // cast as a char pointer  the return of .data() method of _userValue
-    *value = (char*)_userValue.data();
+    // cast as a char pointer  the return of .data() method of _defaultValue
+    *value = (char*)_defaultValue.data();
     return mcsSUCCESS;
 }
 
