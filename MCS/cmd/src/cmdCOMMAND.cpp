@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.32 2006-01-03 11:39:10 mella Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.33 2006-01-04 12:35:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2006/01/03 11:39:10  mella
+ * Improve parameters parsing
+ *
  * Revision 1.31  2005/04/15 17:49:17  mella
  * Make modification according coding remarks
  *
@@ -80,7 +83,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.32 2006-01-03 11:39:10 mella Exp $"; 
+static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.33 2006-01-04 12:35:57 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -161,7 +164,7 @@ cmdCOMMAND::~cmdCOMMAND()
  * This method loads the command definition file (CDF) given as argument,
  * parses the command parameters and then check the parameters against the
  * CDF.
- * It calls  parseCdf() and  parseParams().
+ * It calls  parseCdf() parseParams() and  checkParams().
  *
  * \param cdfName  the CDF file name.
  * 
