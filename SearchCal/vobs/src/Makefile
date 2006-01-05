@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.25 2005-11-30 15:24:37 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.26 2006-01-05 14:26:33 mella Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.25  2005/11/30 15:24:37  lafrasse
+# Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
+#
 # Revision 1.24  2005/11/29 10:32:10  gzins
 # Changed vobsBASE_FILTER to vobsGENERIC_FILTER
 #
@@ -182,7 +185,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = vobsCheckVOTable
 SCRIPTS_L       =
 
 #
