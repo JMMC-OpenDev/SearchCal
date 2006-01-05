@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.15 2005-11-15 14:57:56 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.16 2006-01-05 09:07:39 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/11/15 14:57:56  scetre
+* Added new scenario structure
+* Added possibility to query merand and borde as primary catalog
+*
 * Revision 1.14  2005/06/16 09:32:59  scetre
 * Removed unused vobsCATALOG_TOTO
 *
@@ -28,7 +32,7 @@
 *
 *******************************************************************************/
 /**
- * \file
+ * @file
  * vobsVIRTUAL_OBSERVATORY class declaration.
  */
 
@@ -63,13 +67,11 @@
  */
 
 /**
- * vobsVIRTUAL_OBSERVATORY is a class which represent the virtual observatory.
- * 
- * vobsVIRTUAL_OBSERVATORY methods allow to
- * \li Load the scenario of research : the order of interrogation of the
- * catalogs
- * \li search in all the catalogs
- * 
+ * vobsVIRTUAL_OBSERVATORY is the netry point of the 'vodbs' module.
+ *
+ * It allows to:
+ * @li Load the scenario of research (i.e. the order of star catalogs queries);
+ * @li launch the search in all the catalogs.
  */
 
 class vobsVIRTUAL_OBSERVATORY
@@ -82,9 +84,9 @@ public:
     virtual ~vobsVIRTUAL_OBSERVATORY();
  
     // Method to star the research in the different catalog
-    virtual mcsCOMPL_STAT Search(vobsSCENARIO *scenario,
-                                 vobsREQUEST &request,
-                                 vobsSTAR_LIST &StarList);
+    virtual mcsCOMPL_STAT Search(vobsSCENARIO   *scenario,
+                                 vobsREQUEST    &request,
+                                 vobsSTAR_LIST  &StarList);
     
 protected:
         
@@ -94,17 +96,15 @@ private:
     vobsVIRTUAL_OBSERVATORY& operator=(const vobsVIRTUAL_OBSERVATORY&);
     vobsVIRTUAL_OBSERVATORY (const vobsVIRTUAL_OBSERVATORY&);
 
-    // catalog List
-    vobsCATALOG_LIST _catalogList;
+    // Catalog list
+    vobsCATALOG_LIST  _catalogList;
 
     // Star lists used in scenarion
     vobsSTAR_LIST     _starListP;
     vobsSTAR_LIST     _starListS;
-
 };
 
 
 #endif /*!vobsVIRTUAL_OBSERVATORY_H*/
-
 
 /*___oOo___*/

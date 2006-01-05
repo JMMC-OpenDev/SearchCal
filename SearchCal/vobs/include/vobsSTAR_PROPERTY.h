@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.13 2005-12-07 16:49:18 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.14 2006-01-05 09:07:39 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2005/12/07 16:49:18  lafrasse
+* Added support for 'description' attribute in VOTable column descriptors FIELD.
+*
 * Revision 1.12  2005/12/02 17:42:26  lafrasse
 * Added property unit handling
 *
@@ -44,7 +47,7 @@
 *******************************************************************************/
 
 /**
- * \file
+ * @file
  * vobsSTAR_PROPERTY class declaration.
  */
 
@@ -52,13 +55,17 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
-#define vobsSTAR_PROP_NOT_SET  "-"  /**< Default value of the empty
-                                      properties */
-#define vobsSTAR_COMPUTED_PROP "computed"  /**< Tag for computed properties */
-/*
- * Class declaration
- */
 
+/*
+ * Constant declaration
+ */
+#define vobsSTAR_PROP_NOT_SET  "-"   /**< Default value of empty properties */
+#define vobsSTAR_COMPUTED_PROP "computed"  /**< Tag for computed properties */
+
+
+/*
+ * Type declaration
+ */
 /**
  * Confidence index.
  */
@@ -74,6 +81,11 @@ typedef enum
     vobsSTRING_PROPERTY = 0,
     vobsFLOAT_PROPERTY
 } vobsPROPERTY_TYPE;
+
+
+/*
+ * Class declaration
+ */
 /**
  * Star property. 
  * 
@@ -101,7 +113,7 @@ public:
     // Class destructor
     virtual ~vobsSTAR_PROPERTY();
     
-    // Set value
+    // Property value setting
     virtual mcsCOMPL_STAT SetValue(const char *value,
                                    const char *origin,
                                    vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
@@ -137,7 +149,7 @@ public:
     // Get property unit
     virtual const char *GetUnit(void) const;
 
-    // Get property unit
+    // Get property description
     virtual const char *GetDescription(void) const;
 
 protected:
@@ -151,10 +163,11 @@ private:
     string               _description;     // Description of the value
     mcsSTRING64          _value;           // Value
     vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index
-    string               _origin;          // Either the catalog name where the
-                                           // value has been found or
-                                           // vobsSTAR_COMPUTED_PROP if the
-                                           // value has been calculated.
+    string               _origin;          /* Either the catalog name where the
+                                            * value has been found or
+                                            * vobsSTAR_COMPUTED_PROP if the
+                                            * value has been calculated.
+                                            */
 };
 
 #endif /*!vobsSTAR_PROPERTY_H*/

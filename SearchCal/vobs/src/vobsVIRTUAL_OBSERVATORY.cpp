@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.34 2005-11-21 13:48:56 scetre Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.35 2006-01-05 09:07:39 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.34  2005/11/21 13:48:56  scetre
+* Clear the entering list
+*
 * Revision 1.33  2005/11/16 12:53:18  scetre
 * Updated documentation
 *
@@ -104,14 +107,16 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.34 2005-11-21 13:48:56 scetre Exp $";
+static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.35 2006-01-05 09:07:39 lafrasse Exp $";
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /*
  * System Headers
  */
 #include <iostream>
 using namespace std;
+
 
 /*
  * MCS Headers
@@ -120,6 +125,7 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 
+
 /*
  * Local Headers
  */
@@ -127,22 +133,21 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+
 /*
  * Class constructor
  */
-
 /**
  * Build a virtual observatory object.
  */
-
 vobsVIRTUAL_OBSERVATORY::vobsVIRTUAL_OBSERVATORY()
 {
 }
 
+
 /*
  * Class destructor
  */
-
 /**
  * Delete a virtual observatory object.
  */
@@ -150,37 +155,36 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
 {
 }
 
-/**
- * Method to start the research according to the constarints of the request.
- *
- * @param scenario query scenario
- * @param request a vobsREQUEST build
- * @param starList list of Stars to build and to send as the result of the
- * research
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- *
- */
 
 /*
  * Public methods
  */
-mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
-                                              vobsREQUEST &request,
-                                              vobsSTAR_LIST &starList)
+/**
+ * Start the research according to the constraints found in the given request.
+ *
+ * @param scenario the desired querying scenario
+ * @param request the user constarint the foun d stars should conform to
+ * @param starList the resulting list of stars
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ * */
+mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO   *scenario,
+                                              vobsREQUEST    &request,
+                                              vobsSTAR_LIST  &starList)
 {
-    logTrace("vobsVIRTUAL_OBSERVATORY::Research()");
+    logTrace("vobsVIRTUAL_OBSERVATORY::Search()");
 
-    //Set the catalogList 
+    // Set the catalogList 
     scenario->SetCatalogList(&_catalogList);
 
+    // Empty the list
     if (starList.Clear() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // Run the method to execute the scenario which had been loaded into memory
+    // Launch the stars search
     if (scenario->Execute(starList) == mcsFAILURE)
     {
         errUserAdd(vobsERR_NO_CDS_RETURN);
@@ -192,11 +196,6 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
 
     return mcsSUCCESS;
 }
-
-
-/*
- * Protected methods
- */
 
 
 /*___oOo___*/

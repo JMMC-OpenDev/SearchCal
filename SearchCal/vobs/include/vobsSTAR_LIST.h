@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.20 2005-12-07 15:28:20 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.21 2006-01-05 09:07:39 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/12/07 15:28:20  lafrasse
+* Updated VOTable generation to include information about software version, request and date
+*
 * Revision 1.19  2005/11/29 10:31:14  gzins
 * Minor change in documentation
 *
@@ -47,23 +50,40 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
-/*
- * header files
+
+/* 
+ * System Headers 
  */
 #include<list>
+
+/*
+ * Local Headers 
+ */
 #include"vobsSTAR.h"
 
-/** typedef of UCD order list*/
+/*
+ * Type declaration
+ */
+/**
+ * typedef of UCD order list
+ */
 typedef std::list<string> vobsSTAR_PROPERTY_ID_LIST;
 
+
+/*
+ * Class declaration
+ */
 /**
  * vobsSTAR_LIST handles a list of stars.
  */
 class vobsSTAR_LIST
 { 
  public:
-    vobsSTAR_LIST();//constructor
-    virtual ~vobsSTAR_LIST();//destructor
+    // Class constructors
+    vobsSTAR_LIST();
+
+    // Class destructor
+    virtual ~vobsSTAR_LIST();
    
     virtual mcsLOGICAL    IsEmpty(void);
     virtual mcsCOMPL_STAT Clear(void);
@@ -72,9 +92,9 @@ class vobsSTAR_LIST
     virtual mcsUINT32     Size(void);
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
 
-    virtual vobsSTAR      *GetNextStar(mcsLOGICAL init = mcsFALSE);
-    virtual vobsSTAR      *GetStar(vobsSTAR &star,
-                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
+    virtual vobsSTAR*     GetNextStar(mcsLOGICAL init = mcsFALSE);
+    virtual vobsSTAR*     GetStar(vobsSTAR &star,
+                                  vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
     
     virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
                                 vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL, 
@@ -100,12 +120,12 @@ class vobsSTAR_LIST
                                mcsLOGICAL extendedFormat=mcsFALSE,
                                const char *origin=NULL); 
 
- protected:
+protected:
     // List of stars
     std::list<vobsSTAR *>           _starList;
     std::list<vobsSTAR *>::iterator _starIterator;
 
- private:
+private:
     // Declaration assignment operator as private
     // methods, in order to hide them from the users.
     vobsSTAR_LIST& operator=(const vobsSTAR_LIST&);

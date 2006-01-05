@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.45 2005-12-13 15:37:24 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.46 2006-01-05 09:07:39 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.45  2005/12/13 15:37:24  lafrasse
+* Added star Id management with the new GetId() method
+*
 * Revision 1.44  2005/12/12 14:05:55  scetre
 * Moved computed cousin magnitude to other module
 *
@@ -99,28 +102,24 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+
 /*
  * System headers
  */
 #include <map>
+
 
 /*
  * Laocal headers
  */
 #include "vobsSTAR_PROPERTY.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
+
 /*
  * Constants definition
  */
-
 #define vobsSTAR_PROP_NOT_SET  "-"  /**< Default value of the empty
                                           properties */
-
-
-/*
- * Type definition
- */
-
 
 /*
  * Definition of the star properties
@@ -199,21 +198,17 @@
 /*
  * Class declaration
  */
-
 /**
- * vobsSTAR is a class which caracterises a star.
+ * Store all the propreties caracterising a star.
  *
- * vobsSTAR methods allow to
- * \li modify
- * \li read
- * \li update
- * \li compare
- * stars properties.
+ * It allows among oher things the following actions on star properies:
+ * @li read;
+ * @li update;
+ * @li compare.
  *
- * \sa vobsSTAR_LIST
+ * @sa vobsSTAR_PROPERTY
  *
- * \todo Finish to implement Update and Display methods.
- *
+ * @todo Finish to implement Update and Display methods.
  */
 class vobsSTAR
 {
@@ -228,61 +223,70 @@ public:
     // Destructor
     virtual ~vobsSTAR();
 
-    // Method to set the star properties
+    // Set the star property values
     virtual mcsCOMPL_STAT SetPropertyValue
-               (const char *id, const char *value,
-                const char *origin,
-                vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH, 
-                mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetPropertyValue
-                (const char *propertyId, 
-                 mcsFLOAT value,
-                 const char *origin,
-                 vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH, 
-                 mcsLOGICAL overwrite=mcsFALSE);
+                   (const char*           id,
+                    const char*           value,
+                    const char*           origin,
+                    vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
+                    mcsLOGICAL            overwrite       = mcsFALSE);
 
-    // Methods to retreive the star property
-    virtual vobsSTAR_PROPERTY *GetProperty(char *id) ;
-    virtual vobsSTAR_PROPERTY *GetNextProperty(mcsLOGICAL init = mcsFALSE);
-    virtual const char *GetPropertyValue(char *id);
-    virtual mcsCOMPL_STAT GetPropertyValue(char *id, mcsFLOAT *value);
-    virtual vobsPROPERTY_TYPE GetPropertyType(char *id) ;
+    virtual mcsCOMPL_STAT SetPropertyValue
+                   (const char*           propertyId, 
+                    mcsFLOAT              value,
+                    const char*           origin,
+                    vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
+                    mcsLOGICAL            overwrite       = mcsFALSE);
+
+    // Get the star properties
+    virtual vobsSTAR_PROPERTY* GetProperty      (char*      id);
+    virtual vobsSTAR_PROPERTY* GetNextProperty  (mcsLOGICAL init = mcsFALSE);
+    virtual const char*        GetPropertyValue (char*      id);
+    virtual mcsCOMPL_STAT      GetPropertyValue (char*      id,
+                                                 mcsFLOAT*  value);
+    virtual vobsPROPERTY_TYPE  GetPropertyType  (char*      id) ;
     
-    // Is property set?
-    virtual mcsLOGICAL    IsPropertySet(char *propertyId);
+    // Is a property set?
+    virtual mcsLOGICAL         IsPropertySet    (char*      propertyId);
 
     // Is a name a property?
-    virtual mcsLOGICAL    IsProperty(char *propertyId);
+    virtual mcsLOGICAL         IsProperty       (char*      propertyId);
 
-    // Method to get RA and DEC (in arcsecond)
-    virtual mcsCOMPL_STAT GetRa(float &ra);
+    // Return the star RA and DEC coordinates (in arcsecond)
+    virtual mcsCOMPL_STAT GetRa (float &ra);
     virtual mcsCOMPL_STAT GetDec(float &dec);
 
-    // Method to get the star ID
-    virtual mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength);
+    // Return the star ID
+    virtual mcsCOMPL_STAT GetId (      char*     starId,
+                                 const mcsUINT32 maxLength);
 
-    // Method to know if another star is the same than this one
-    virtual mcsLOGICAL IsSame (vobsSTAR &star,
-                               vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
+    // Return whether the star is the same as another given one
+    virtual mcsLOGICAL IsSame(vobsSTAR                    &star,
+                              vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL);
 
-    // Method to update star properties from the given star
-    virtual mcsCOMPL_STAT Update (vobsSTAR &star);
+    // Update the star properties with the given star ones
+    virtual mcsCOMPL_STAT Update(vobsSTAR &star);
 
-    // Method to get the number of properties
+    // Return the number of star properties
     virtual mcsINT32 NbProperties(void);
     
-    // Method to print out all star properties
+    // Print out all star properties
     virtual void Display(mcsLOGICAL showPropId=mcsFALSE);
     
 protected:
-    // Method to add a property. Should be only called by constructors.
-    mcsCOMPL_STAT AddProperty(char *id, char *name,
-                              vobsPROPERTY_TYPE type, char *unit,
-                              char *format=NULL, char *description=NULL);
-    map<string, vobsSTAR_PROPERTY> _propertyList;
-    map<string, vobsSTAR_PROPERTY>::iterator _propertyListIterator;
-    map<int, string> _propertyOrder;
-    map<int, string>::iterator _propertyOrderIterator;
+    // Add a property. Should be only called by constructors.
+    mcsCOMPL_STAT AddProperty(char*              id,
+                              char*              name,
+                              vobsPROPERTY_TYPE  type,
+                              char*              unit,
+                              char*              format      = NULL,
+                              char*              description = NULL);
+
+    map<string, vobsSTAR_PROPERTY>            _propertyList;
+    map<string, vobsSTAR_PROPERTY>::iterator  _propertyListIterator;
+
+    map<int, string>                          _propertyOrder;
+    map<int, string>::iterator                _propertyOrderIterator;
 
 private:
     // Method to define all star properties

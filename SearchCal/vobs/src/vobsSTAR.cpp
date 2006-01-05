@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.60 2005-12-22 10:38:45 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.61 2006-01-05 09:07:39 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.60  2005/12/22 10:38:45  scetre
+* Updated doxygen documentation
+*
 * Revision 1.59  2005/12/14 15:09:56  scetre
 * Added return of coordinates when getting star id
 *
@@ -156,7 +159,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.60 2005-12-22 10:38:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.61 2006-01-05 09:07:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -191,8 +194,9 @@ vobsSTAR::vobsSTAR()
 {
     // Add all star properties
     AddProperties();
-    _propertyListIterator=_propertyList.begin();
-    _propertyOrderIterator=_propertyOrder.begin();
+
+    _propertyListIterator  = _propertyList.begin();
+    _propertyOrderIterator = _propertyOrder.begin();
 }
 
 /**
@@ -200,185 +204,183 @@ vobsSTAR::vobsSTAR()
  */
 vobsSTAR::vobsSTAR(vobsSTAR &star)
 {
+    // Uses the operator=() method to copy
     *this = star;
 }
 
-/*
+/**
  * Assignement operator
  */
 vobsSTAR&vobsSTAR::operator=(const vobsSTAR&star)
 {
     logTrace("vobsSTAR::operator=()");
    
-    // clear the 2 map used in this class
+    // Clear the 2 internal maps
     _propertyList.erase(_propertyList.begin(), _propertyList.end());
     _propertyOrder.erase(_propertyOrder.begin(), _propertyOrder.end());
     
-    _propertyList = star._propertyList;
+    // Copy in the 2 maps from the given star
+    _propertyList  = star._propertyList;
     _propertyOrder = star._propertyOrder;
+
     return *this;
 }
+
 
 /*
  * Class destructor
  */
-
-/** Delete a star object. */
+/**
+ * Delete a star object.
+ */
 vobsSTAR::~vobsSTAR()
 {
 }
 
+
 /*
  * Public methods
  */
-
 /**
- * Set a star property value.
+ * Set the charater value of a given property.
  *
- * Set value corresponding to the given property id
- *
- * @param id property id.
- * @param value property value to set
- * @param origin the origin of the property (catalog, computed, ...)
- * @param confidenceIndex confidence index
- * @param overwrite booleen to know if it is an overwrite property
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- *
- */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, const char *value,
-                                         const char *origin,
-                                         vobsCONFIDENCE_INDEX confidenceIndex,
-                                         mcsLOGICAL overwrite)
-{
-    logTrace("vobsSTAR::SetPropertyValue()");
-
-    // Look for property
-    map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
-    propertyIter = _propertyList.find(id);
-    // If found
-    if (propertyIter != _propertyList.end())
-    {
-        // Set property
-        if (propertyIter->second.SetValue(value, origin,
-                                          confidenceIndex,
-                                          overwrite) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        return mcsSUCCESS;
-    }
-    // Else
-    else
-    {
-        // Return error
-        errAdd(vobsERR_INVALID_PROPERTY_ID, id);
-        return mcsFAILURE;
-    }
-    // End if
-}
-
-/**
- * Set a star property.
- *
- * Set value corresponding to the given property id
- *
- * @param id property id.
- * @param value property value to set
- * @param origin the origin of the property (catalog, computed, ...)
- * @param confidenceIndex confidence index
+ * @param id property id
+ * @param value property value
+ * @param origin the origin of the value (catalog, computed, ...)
+ * @param confidenceIndex value confidence index
  * @param overwrite booleen to know if it is an overwrite property
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  *
- * \b Error codes:\n
+ * @b Error codes:@n
  * The possible errors are :
- * \li vobsERR_INVALID_PROPERTY_ID
+ * @li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id, mcsFLOAT value,
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
+                                         const char *value,
                                          const char *origin,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
-    logTrace("vobsSTAR::SetPropertyValue()");
+    logTrace("vobsSTAR::SetPropertyValue(char*)");
 
-    // Look for property
-    map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
+    // Look for the given property
+    map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
     propertyIter = _propertyList.find(id);
-    // If found
-    if (propertyIter != _propertyList.end())
+
+    // If no property with the given Id was found
+    if (propertyIter == _propertyList.end())
     {
-        // Set property
-        if (propertyIter->second.SetValue(value, origin, confidenceIndex, 
-                                          overwrite) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        return mcsSUCCESS;
-    }
-    // Else
-    else
-    {
-        // Return error
+        // Raise an error
         errAdd(vobsERR_INVALID_PROPERTY_ID, id);
         return mcsFAILURE;
     }
-    // End if
+
+    // Set this property value
+    if (propertyIter->second.SetValue(value, origin, confidenceIndex, overwrite)
+        == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
 }
 
 /**
- * Get a star property.
+ * Set the charater value of a given property.
  *
- * Get property value corresponding to the UCD
+ * @param id property id
+ * @param value property value
+ * @param origin the origin of the value (catalog, computed, ...)
+ * @param confidenceIndex value confidence index
+ * @param overwrite booleen to know if it is an overwrite property
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ *
+ * @b Error codes:@n
+ * The possible errors are :
+ * @li vobsERR_INVALID_PROPERTY_ID
+ */
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
+                                         mcsFLOAT value,
+                                         const char *origin,
+                                         vobsCONFIDENCE_INDEX confidenceIndex,
+                                         mcsLOGICAL overwrite)
+{
+    logTrace("vobsSTAR::SetPropertyValue(float)");
+
+    // Look for the given property
+    map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
+    propertyIter = _propertyList.find(id);
+
+    // If no property with the given Id was found
+    if (propertyIter == _propertyList.end())
+    {
+        // Raise an error
+        errAdd(vobsERR_INVALID_PROPERTY_ID, id);
+        return mcsFAILURE;
+    }
+
+    // Set this property value
+    if (propertyIter->second.SetValue(value, origin, confidenceIndex, overwrite) 
+        == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get the star property corresponding to the given UCD.
  *
  * @param id property id.
  *
- * @return pointer to the found star property object on successful completion.
+ * @return pointer on the found star property object on successful completion.
  * Otherwise NULL is returned.
  *
- * \b Error codes:\n
+ * @b Error codes:@n
  * The possible errors are :
- * \li vobsERR_INVALID_PROPERTY_ID
+ * @li vobsERR_INVALID_PROPERTY_ID
  */
-vobsSTAR_PROPERTY *vobsSTAR::GetProperty(char *id)
+vobsSTAR_PROPERTY* vobsSTAR::GetProperty(char *id)
 {
     logTrace("vobsSTAR::GetProperty()");
 
     // Look for property
     map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
     propertyIter = _propertyList.find(id);
-    // If found
-    if (propertyIter != _propertyList.end())
+
+    // If no property with the given Id was found
+    if (propertyIter == _propertyList.end())
     {
-        // Return property
-        return &propertyIter->second;
-    }
-    // Else
-    else
-    {
-        // Return error
+        // Raise an error
         errAdd(vobsERR_INVALID_PROPERTY_ID, id);
         return NULL;
     }
-    // End if
+
+    // Return a pointer on the found property
+    return &propertyIter->second;
 }
 
 /**
- * Return the next property in the list
+ * Return the next property in the list.
  *
- * This method returns the pointer to the next element of the list. If \em
- * init is mcsTRUE, it returns the first element of the list.
+ * This method returns a pointer on the next element of the list.
+ *
+ * @param init if mcsTRUE, returns the first element of the list.
  *
  * This method can be used to move forward in the list, as shown below:
- * \code
- *     for (unsigned int el = 0; el < star.NbProperties(); el++)
- *     {
- *         printf("%s",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
- *     }
- * \endcode
+ * @code
+ * ...
+ * for (unsigned int el = 0; el < star.NbProperties(); el++)
+ * {
+ *     printf("%s",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
+ * }
+ * ...
+ * @endcode
  *
- * @return pointer to the next element of the list or NULL if the end of the
+ * @return pointer to the next element of the list, or NULL if the end of the
  * list is reached.
  */
 vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
@@ -391,30 +393,28 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
     {
         _propertyOrderIterator=_propertyOrder.begin();
     }
-    // else increase the iterator. It is checking if the iterator stay in the
-    // list and don't go further than the end of the list. If it is the case,
-    // the pointer which is gave is NULL
     else
     {
+        // Increase the iterator to the following position
         _propertyOrderIterator++;
+
+        // If this reached the end of the list
         if ( _propertyOrderIterator == _propertyOrder.end())
         {
             return NULL;
         }
     }
 
-    // Once the iterator is put on the correct property, the value of the
-    // property is returned
+    // Once the iterator is put on the desired property
     _propertyListIterator = _propertyList.find(_propertyOrderIterator->second);
 
-    return (&(_propertyListIterator->second));
+    // Return the value of the property
+    return &(_propertyListIterator->second);
 }
 
 
 /**
- * Get a star property.
- *
- * Get value as string corresponding to the given property id.
+ * Get a property character value.
  *
  * @param id property id.
  *
@@ -423,63 +423,48 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
  */
 const char *vobsSTAR::GetPropertyValue(char *id)
 {
-    logTrace("vobsSTAR::GetPropertyValue()");
+    logTrace("(char*)vobsSTAR::GetPropertyValue()");
 
     // Look for property
-    vobsSTAR_PROPERTY *property;
-    property = GetProperty(id);
-    // If found
-    if (property != NULL)
-    {
-        // Return property
-        return (property->GetValue());
-    }
-    // Else
-    else
+    vobsSTAR_PROPERTY* property = GetProperty(id);
+    if (property == NULL)
     {
         // Return error
         return NULL;
     }
-    // End if
+
+    // Return the property value
+    return (property->GetValue());
 }
 
 /**
- * Get a star property.
- *
- * Get value as string corresponding to the given property id.
+ * Get a star property float value.
  *
  * @param id property id.
  * @param value pointer to store value.
  *
- * @return pointer to the found star property value on successful completion.
- * Otherwise NULL is returned.
+ * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
 {
-    logTrace("vobsSTAR::GetProperty()");
+    logTrace("vobsSTAR::GetPropertyValue(float*)");
 
     // Look for property
-    vobsSTAR_PROPERTY *property;
-    property = GetProperty(id);
-    // If found
-    if (property != NULL)
-    {
-        // Return property
-        return (property->GetValue(value));
-    }
-    // Else
-    else
+    vobsSTAR_PROPERTY* property = GetProperty(id);
+    if (property == NULL)
     {
         // Return error
         return mcsFAILURE;
     }
-    // End if
+
+    // Return the property value
+    return (property->GetValue(value));
 }
 
 /**
  * Get a star property type.
  *
- * Get value as property type corresponding to the given property id.
+ * @sa vobsSTAR_PROPERTY
  *
  * @param id property id.
  *
@@ -492,6 +477,7 @@ vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(char *id)
     // Look for property
     vobsSTAR_PROPERTY *property;
     property = GetProperty(id);
+
     // Return property
     return (property->GetType());
 }
@@ -501,76 +487,53 @@ vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(char *id)
  *
  * @param id property id.
  *
- * \warning
- * If the given property id is unknown, this method returns false (i.e.
- * mcsFALSE)
+ * @warning If the given property id is unknown, this method returns mcsFALSE.
  *
- * @return
- * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
- * mcsFALSE) otherwise.
+ * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
  */
 mcsLOGICAL vobsSTAR::IsPropertySet(char *id)
 {
     logTrace("vobsSTAR::IsPropertySet()");
 
-    // Look for property
-    vobsSTAR_PROPERTY *property;
-    property = GetProperty(id);
-    // If found
-    if (property != NULL)
+    // Look for the property
+    vobsSTAR_PROPERTY *property = GetProperty(id);
+    if (property == NULL)
     {
-        // Return property
-        return (property->IsSet());
-    }
-    // Else
-    else
-    {
-        // Return error
         return mcsFALSE;
     }
-    // End if
+
+    return (property->IsSet());
 }
 
 /**
- * Check whether a property is a property.
+ * Return whether a name correspond to a property.
  *
  * @param id property id.
  *
- *
- * @return
- * True value (i.e. mcsTRUE) if the the property is known, false (i.e.
- * mcsFALSE) otherwise.
+ * @return mcsTRUE) if the the property is known, mcsFALSE otherwise.
  */
 mcsLOGICAL vobsSTAR::IsProperty(char *id)
 {
-    logTrace("vobsSTAR::IsPropertySet()");
+    logTrace("vobsSTAR::IsProperty()");
 
     // Look for property
-    map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
+    map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
     propertyIter = _propertyList.find(id);
-    // If found
-    if (propertyIter != _propertyList.end())
+    if (propertyIter == _propertyList.end())
     {
-        // Return mcsTRUE
-        return mcsTRUE;
-    }
-    // Else
-    else
-    {
-        // Return error
         return mcsFALSE;
     }
-    // End if
+
+    return mcsTRUE;
 }
 
 
 /**
- * Get right ascension (ra) in arcseconds.
+ * Get right ascension (RA) coordinate in arcseconds.
  *
- * @param ra pointer right ascension.
+ * @param ra pointer on an already allocated float value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- *
  */
 mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 {
@@ -621,12 +584,11 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 }
 
 /**
- * Get declinaison (dec) in arcseconds.
+ * Get declinaison (DEC) coordinate in arcseconds.
  *
- * @param dec declinaison.
+ * @param dec pointer on an already allocated float value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- *
  */
 mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
 {
@@ -750,15 +712,15 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    const char* raValue = NULL;
+    const char* raValue  = NULL;
     const char* decValue = NULL;
-    if ((IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE) && 
+    if ((IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN)  == mcsTRUE) && 
         (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE))
     {
-        raValue =GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN);
-        decValue =GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN);
+        raValue  = GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN);
+        decValue = GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN);
         snprintf(starId, (maxLength - 1), "Coordinates-ra=%s/dec=%s",
-                     raValue, decValue);
+                 raValue, decValue);
         return mcsSUCCESS;        
     }
     
@@ -766,14 +728,13 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
 }
 
 /**
- * Test if this star is the same than another one.
- *
- * Check that the star coordinates are the same.
+ * Return whether the star is the same as another given one.
  *
  * @param star the other star.
- * @param criteriaList the list of comparaison criteria
+ * @param criteriaList the list of comparison criterias to be used (the
+ * comparison will be based on the stars coordinates if NULL is given as value).
  *
- * @return TRUE if star positions are the same. Otherwise FALSE is returned.
+ * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
  */
 mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                             vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
@@ -784,6 +745,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     if (criteriaList == NULL)
     {
         mcsFLOAT ra1, ra2, dec1, dec2;
+
         // Get right ascension of the star. If not set return FALSE
         if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
         {
@@ -797,6 +759,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         {
             return mcsFALSE;
         }
+
         if (star.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
         {
             if (star.GetRa(ra2) == mcsFAILURE)
@@ -823,6 +786,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         {
             return mcsFALSE;
         }
+
         if (star.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
         {
             if (star.GetDec(dec2) == mcsFAILURE)
@@ -962,7 +926,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
 }
 
 /**
- * Update a star from another one.
+ * Update a star with the properies of another given one.
  *
  * @param star the other star.
  *
@@ -976,11 +940,16 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
     // For each star property
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
     for (propertyIter  = _propertyList.begin();
-         propertyIter != _propertyList.end() ; propertyIter++)
+         propertyIter != _propertyList.end();
+         propertyIter++)
     {
+        /*
+         * If the current property can be filled with the one coming from the
+         * given star
+         */
         if (IsPropertySet((char *)(*propertyIter).first.c_str()) == mcsFALSE)
         {
-            // Copy property form the given star
+            // Copy the property form the given star inside
             _propertyList[(*propertyIter).first] =
                 star._propertyList[(*propertyIter).first];
         }
@@ -990,7 +959,7 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
 }
 
 /**
- * method to get the number of properties
+ * Return the number of properties
  *
  * @return the number of properties of the star
  */
@@ -1002,8 +971,8 @@ mcsINT32 vobsSTAR::NbProperties()
 /**
  * Display all star properties on the console.
  *
- * @param showPropId if true display each star property in a form \<propId\> =
- * \<value\>, otherwise all properties are displayed on a single line.
+ * @param showPropId displays each star property in a form \<propId\> =
+ * \<value\> if mcsTRUE, otherwise all properties on a single line if mcsFALSE.
  */
 void vobsSTAR::Display(mcsLOGICAL showPropId)
 {
@@ -1041,10 +1010,10 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
     }
 }
 
+
 /*
  * Protected methods
  */
-
 /**
  * Add a star property
  *
@@ -1057,22 +1026,24 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
- *
  */
 mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
                                     vobsPROPERTY_TYPE type, char *unit,
                                     char *format, char *description)
 {
-    //logTrace("vobsSTAR::AddProperty()");
+    logTrace("vobsSTAR::AddProperty()");
 
-    // Check for duplicated property
+    // Verify that hte desired property does not already exist
     if (_propertyList.find(id) != _propertyList.end())
     {
         errAdd(vobsERR_DUPLICATED_PROPERTY, id);
         return mcsFAILURE;
     }
 
+    // Create a new property from the given parameters
     vobsSTAR_PROPERTY property(id, name, type, unit, format, description);
+
+    // Add the new property to the internal list
     _propertyList[id] = property;
     _propertyOrder[_propertyList.size()-1] = id;
 
@@ -1086,7 +1057,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
  */
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
-    //logTrace("vobsSTAR::AddProperties()");
+    logTrace("vobsSTAR::AddProperties()");
+
     AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "-", "%.0f",
                 "HD identifier");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "-", "%.0f");

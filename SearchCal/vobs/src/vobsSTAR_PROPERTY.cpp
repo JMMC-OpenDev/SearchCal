@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.18 2005-12-22 10:38:45 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.19 2006-01-05 09:07:39 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2005/12/22 10:38:45  scetre
+* Updated doxygen documentation
+*
 * Revision 1.17  2005/12/07 16:49:18  lafrasse
 * Added support for 'description' attribute in VOTable column descriptors FIELD.
 *
@@ -61,8 +64,9 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.18 2005-12-22 10:38:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.19 2006-01-05 09:07:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
@@ -84,13 +88,14 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+
 /**
- * Class constructor
- * 
+ * Default constructor
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 {
-    //logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()");
+    logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()");
+
     _origin = "-";
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
 }
@@ -114,13 +119,10 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
 {
     logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(...)"); 
 
-    _id     = id;
-
-    _name   = name;
-
-    _type   = type;
-
-    _unit   = unit;
+    _id   = id;
+    _name = name;
+    _type = type;
+    _unit = unit;
 
     if (format != NULL)
     {
@@ -159,21 +161,14 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
     logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(property)"); 
 
-    _id     = property._id;
-
-    _name   = property._name;
-
-    _type   = property._type;
-
-    _unit   = property._unit;
-
-    _description = property._description;
-
-    _format = property._format;
-
+    _id              = property._id;
+    _name            = property._name;
+    _type            = property._type;
+    _unit            = property._unit;
+    _description     = property._description;
+    _format          = property._format;
     _confidenceIndex = property._confidenceIndex;
-
-    _origin = property._origin;
+    _origin          = property._origin;
 
     strcpy(_value, property._value);
 }
@@ -185,29 +180,23 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
 {
     logTrace("vobsSTAR_PROPERTY::operator=()"); 
 
-    _id     = property._id;
-
-    _name   = property._name;
-
-    _type   = property._type;
-
-    _unit   = property._unit;
-
-    _description = property._description;
-
-    _format = property._format;
-
+    _id              = property._id;
+    _name            = property._name;
+    _type            = property._type;
+    _unit            = property._unit;
+    _description     = property._description;
+    _format          = property._format;
     _confidenceIndex = property._confidenceIndex;
-
-    _origin = property._origin;
+    _origin          = property._origin;
 
     strcpy(_value, property._value);
 
     return *this;
 }
 
+
 /**
- * Class destructor
+ * Destructor
  */
 vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 {
@@ -217,7 +206,6 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 /*
  * Public methods
  */
-
 /**
  * Set a property value
  *
@@ -252,12 +240,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
             float fValue;
             if (sscanf(value, "%f", &fValue) != 1)
             {
-                errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value, "%f");
+                errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value, "%f");
                 return (mcsFAILURE);
             }
             if (sprintf(_value, _format.c_str(), fValue) == 0)
             {
-                errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value,
+                errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value,
                         _format.c_str());
                 return (mcsFAILURE);
             }
@@ -300,7 +288,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
     // Check type
     if (_type != vobsFLOAT_PROPERTY)
     {
-        errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), "float", _format.c_str());
+        errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), "float", _format.c_str());
         return (mcsFAILURE);
     }
 
@@ -309,7 +297,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
     {
         if (sprintf(_value, _format.c_str(), value) == 0)
         {
-            errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), value,
+            errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value,
                     _format.c_str());
             return (mcsFAILURE);
         }
@@ -350,14 +338,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
     // If value not set, return error
     if (IsSet() == mcsFALSE)
     {
-        errAdd (vobsERR_PROPERTY_NOT_SET, _id.c_str());
+        errAdd(vobsERR_PROPERTY_NOT_SET, _id.c_str());
         return (mcsFAILURE);
     }
     
     // Check type
     if (_type != vobsFLOAT_PROPERTY)
     {
-        errAdd (vobsERR_PROPERTY_TYPE, _id.c_str(), "float", _format.c_str());
+        errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), "float", _format.c_str());
         return (mcsFAILURE);
     }
 
@@ -365,7 +353,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
     // Convert property string value to integer value
     if (sscanf(_value, "%f", value) != 1)
     {
-        errAdd (vobsERR_INVALID_PROP_FORMAT, _name.c_str(), _value, "float");
+        errAdd(vobsERR_INVALID_PROP_FORMAT, _name.c_str(), _value, "float");
         return mcsFAILURE;
     }
 
@@ -395,32 +383,26 @@ vobsCONFIDENCE_INDEX vobsSTAR_PROPERTY::GetConfidenceIndex()
 /**
  * Check whether the property is computed or not.  
  * 
- * @return
- * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
- * mcsFALSE) otherwise.
+ * @return mcsTRUE) if the the property has been set, mcsFALSE otherwise.
  */
-mcsLOGICAL vobsSTAR_PROPERTY::IsComputed() const
+mcsLOGICAL vobsSTAR_PROPERTY::IsComputed(void) const
 {
     logTrace("vobsSTAR_PROPERTY::IsComputed()");
 
     // Check whether property has been or not computed
-    if (_origin == vobsSTAR_COMPUTED_PROP)
-    {
-        return mcsTRUE;
-    }
-    else
+    if (_origin != vobsSTAR_COMPUTED_PROP)
     {
         return mcsFALSE;
     }
+
+    return mcsTRUE;
 }
 
 
 /**
  * Check whether the property is set or not.  
  * 
- * @return
- * True value (i.e. mcsTRUE) if the the property has been set, false (i.e.
- * mcsFALSE) otherwise.
+ * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
  */
 mcsLOGICAL vobsSTAR_PROPERTY::IsSet(void) const
 {
@@ -431,10 +413,8 @@ mcsLOGICAL vobsSTAR_PROPERTY::IsSet(void) const
     {
         return mcsFALSE;
     }
-    else
-    {
-        return mcsTRUE;
-    }
+
+    return mcsTRUE;
 }
 
 /**
@@ -517,15 +497,6 @@ const char *vobsSTAR_PROPERTY::GetDescription(void) const
     // Return property description
     return _description.c_str();
 }
-
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/

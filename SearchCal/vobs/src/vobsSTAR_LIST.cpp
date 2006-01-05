@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.29 2005-12-22 10:38:45 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.30 2006-01-05 09:07:39 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.29  2005/12/22 10:38:45  scetre
+* Updated doxygen documentation
+*
 * Revision 1.28  2005/12/07 15:28:20  lafrasse
 * Updated VOTable generation to include information about software version, request and date
 *
@@ -81,8 +84,9 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.29 2005-12-22 10:38:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.30 2006-01-05 09:07:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+
 
 /* 
  * System Headers 
@@ -97,6 +101,7 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "misc.h"
+
 /*
  * Local Headers 
  */
@@ -106,18 +111,28 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
-//Class conctructor
+
+/**
+ * Class constructor
+ */
 vobsSTAR_LIST::vobsSTAR_LIST()
 {
     _starIterator = NULL;
 }
 
-//Class destructor
+
+/**
+ * Destructor
+ */
 vobsSTAR_LIST::~vobsSTAR_LIST()
 {
     Clear();
 }
 
+
+/*
+ * Public methods
+ */
 /**
  * Copy from a list
  *
@@ -127,8 +142,8 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 {
-     
     logTrace("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
+
     for (unsigned int el = 0; el < list.Size(); el++)
     {
         if (AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0)))) == mcsFAILURE)
@@ -136,38 +151,35 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
             return mcsFAILURE;
         }
     }
+
     return mcsSUCCESS;
 }
 
 /**
- * Check whether the list is empty or not.  
+ * Return whether the list is empty or not.  
  *
- * @return
- * True value (i.e. mcsTRUE) if the number of elements is zero, false (i.e.
- * mcsFALSE) otherwise.
+ * @return mcsTRUE if the number of elements is zero, mcsFALSE otherwise.
  */
 mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
 {
-    //logTrace("vobsSTAR_LIST::IsEmpty()");
-    if (_starList.empty() == true)
-    {
-        return mcsTRUE;
-    }
-    else
+    logTrace("vobsSTAR_LIST::IsEmpty()");
+
+    if (_starList.empty() == false)
     {
         return mcsFALSE;
     }
+
+    return mcsTRUE;
 }
 
 /**
- * Erase all elements from the list.
+ * Erase (i.e de-allocate) all elements from the list.
  *
- * @return
- * Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 {
-    // Delete all objects in list 
+    // Deallocate all objects of the list 
     std::list<vobsSTAR *>::iterator iter;
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
     {
@@ -181,17 +193,17 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 }
 
 /**
- * Adds the element at the end of the list
+ * Add the given element at the end of the list.
  *
  * @param star element to be added to the list.
  *
- * @return
- * Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 {
     logTrace("vobsSTAR_LIST::AddAtTail()");
-    // Put element in the list
+
+    // Put the element in the list
     vobsSTAR *newStar = new vobsSTAR(star);
     _starList.push_back(newStar);
 
@@ -199,36 +211,36 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 }
 
 /**
- * Remove the element from the list
+ * Remove the given element from the list
  *
- * This method looks for the specified \em star in the list. If found, it
- * remove it, and do nothing otherwise.
+ * This method looks for the specified @em star in the list. If found, it
+ * remove it. Otherwise, nothing is done.
  *
- * The method vobsSTAR::IsSame() is used to compare element of the list with
+ * The method vobsSTAR::IsSame() is used to compare the list elements with
  * the specified one.
  *
- * \warning if list contains more than one instance, only first occurence is
- * removed. 
+ * @warning if the list contains more than one instance of the given element,
+ * only first occurence isremoved.
  * 
  * @note This method does not conflict with GetNextStar(); i.e. it can be used
  * to remove the star returned by GetNextStar() method, as shown below:
- * \code
- *     for (unsigned int el = 0; el < starList.Size(); el++)
+ * @code
+ * for (unsigned int el = 0; el < starList.Size(); el++)
+ * {
+ *     vobsSTAR *star;
+ *     star = starList.GetNextStar((mcsLOGICAL)(el==0));
+ *     if ( <condition> )
  *     {
- *         vobsSTAR *star;
- *         star = starList.GetNextStar((mcsLOGICAL)(el==0));
- *         if ( <condition> )
- *         {
- *              // Remove star from list 
- *              starList.Remove(*star);
+ *          // Remove star from list 
+ *          starList.Remove(*star);
  *
- *              // and decrease 'el' to take into account the new list size
- *              el--;
- *         }
+ *          // and decrease 'el' to take into account the new list size
+ *          el--;
  *     }
- * \endcode
+ * }
+ * @endcode
 
- * @param star element to be removed from the list.
+ * @param star to be removed from the list.
  *
  * @return Always mcsSUCCESS.
  */
@@ -243,14 +255,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
         // If found
         if ((*iter)->IsSame(star) == mcsTRUE)
         {
-            // Delete element
+            // Delete star
             delete (*iter);
 
-            // If element to be deleted correspond to the one currently pointed
+            // If star to be deleted correspond to the one currently pointed
             // by GetNextStar method
             if (*_starIterator == *iter)
             {
-                // If it is not the first element of the list
+                // If it is not the first star of the list
                 if (iter != _starList.begin())
                 {
                     // Then go back to the previous star
@@ -264,7 +276,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
                 }
             }
             
-            // Clear element from list
+            // Clear star from list
             _starList.erase(iter);
 
             return mcsSUCCESS;
@@ -275,9 +287,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
 }
 
 /**
- * Returns the number of elements (stars) currently stored in the list.
- * @return 
- * The numbers of stars in the list.
+ * Returns the number of stars currently stored in the list.
+ *
+ * @return The numbers of stars in the list.
  */
 mcsUINT32 vobsSTAR_LIST::Size(void) 
 {
@@ -285,18 +297,19 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
 }
 
 /**
- * Returns the next element (star) in the list.
+ * Return the next star in the list.
  *
- * This method returns the pointer to the next element of the list. If \em
- * init is mcsTRUE, it returns the first element of the list.
+ * This method returns the pointer to the next star of the list. If @em
+ * init is mcsTRUE, it returns the first star of the list.
  * 
  * This method can be used to move forward in the list, as shown below:
- * \code
- *     for (unsigned int el = 0; el < starList.Size(); el++)
- *     {
- *         starList.GetNextStar((mcsLOGICAL)(el==0))->View();
- *     }
- * \endcode
+ * @code
+ * for (unsigned int el = 0; el < starList.Size(); el++)
+ * {
+ *     starList.GetNextStar((mcsLOGICAL)(el==0))->View();
+ * }
+ * @endcode
+ *
  * @return pointer to the next element of the list or NULL if the end of the
  * list is reached.
  */
@@ -320,28 +333,30 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
 }
 
 /**
- * Returns the element (star) of the list corresponding to the star.
+ * Return the star of the list corresponding to the given star.
  *
- * This method looks for the specified \em star in the list. If found, it
- * returns the pointer to this element, and NULL otherwise.
+ * This method looks for the specified @em star in the list. If found, it
+ * returns the pointer to this element. Otherwise, NULL is returned.
+ *
  * The method vobsSTAR::IsSame() is used to compare element of the list with
  * the specified one.
  * 
- * This method can be used to know whether a star is in list or not, as shown
- * below:
- * \code
- *     if (starList.GetStar(star)->View() == NULL)
- *     {
- *         printf ("Star not found in list !!");
- *     }
- * \endcode
+ * This method can be used to discover whether a star is in list or not, as
+ * shown below:
+ * @code
+ * if (starList.GetStar(star)->View() == NULL)
+ * {
+ *     printf ("Star not found in list !!");
+ * }
+ * @endcode
+ *
  * @return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
 vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
                                  vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    //logTrace("vobsSTAR_LIST::GetStar()");
+    logTrace("vobsSTAR_LIST::GetStar()");
 
     // Search star in the list
     std::list<vobsSTAR *>::iterator iter;
@@ -353,19 +368,19 @@ vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
         }
     }
 
-    // If not found return NULL pointer
+    // If nothing found, return NULL pointer
     return NULL;
 }
 
 /**
  * Merge the specified list.
  *
- * This method merges all elements (stars) of the given list with the current
- * one. If star is already stored in the list, it is just updated using
+ * This method merges all stars of the given list with the current one. If a
+ * star is already stored in the list, it is just updated using
  * vobsSTAR::Update method, otherwise it is added to the list.
  * 
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned if updating or adding star fails.
+ * returned if updating or adding star failed.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
@@ -578,13 +593,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(char *propertyId, mcsLOGICAL reverseOrder)
 }
 
 /**
- * Method to print the list on the console
- */
-/**
- * Display the elements (stars) of the list.
- *
- * This method display all elements of the list on the console, using the
- * vobsSTAR::Display method.
+ * Display the list contnent on the console.
  */
 void vobsSTAR_LIST::Display(void)
 {
@@ -596,8 +605,8 @@ void vobsSTAR_LIST::Display(void)
     {
         (*iter)->Display();
     }
-    printf("\n");
 
+    printf("\n");
 }
 
 /**
@@ -622,7 +631,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
 }
 
 /**
- * Save the elements (stars) of the list in a file.
+ * Save the stars of the list in a file.
  *
  * @param filename the file where to save
  * @param extendedFormat if true, each property is saved with its attributes
@@ -642,7 +651,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
 
 
 /**
- * Save the elements (stars) of the list in a file.
+ * Save the stars of the list in a file.
  *
  * @param filename the file where to save
  * @param ucdList list of ucd to save
@@ -675,7 +684,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
 }
 
 /**
- * Load elements (stars) from a file.
+ * Load stars from a file.
  *
  * @param filename name of file containing star list
  * @param extendedFormat if true, each property is has been saved with its

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobs.doc,v 1.9 2005-11-16 13:35:58 scetre Exp $"
+ * "@(#) $Id: vobs.doc,v 1.10 2006-01-05 09:07:39 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/11/16 13:35:58  scetre
+ * Updated Documentation
+ *
  * Revision 1.8  2005/11/16 12:53:18  scetre
  * Updated documentation
  *
@@ -27,11 +30,11 @@ According to the user request, this module will built an asking and used it
 with a XML parser in order to sent a list of stars. It is defined several
 objects :
 \li vobsREQUEST contains all user's constraints
-\li vobsSTAR represents the star object with several properties as the
-coordinates or the magnitude...
+\li vobsSTAR represents the star object with several properties as its
+coordinates or its magnitude...
 \li vobsSTAR_PROPERTY a star property
 \li vobsSTAR_COMP_CRITERIA_LIST a list of comparaison criteria for star list
-\li vobsSTAR_LIST the star list object where is defined methods to use the
+\li vobsSTAR_LIST the star list object in which is defined methods to use the
 list
 \li vobsCATALOG generic catalog of star 
 \li vobsREMOTE_CATALOG remote catalog (i.e at the CDS):
@@ -50,13 +53,13 @@ list
   - vobsCATALOG_MERAND : MERAND catalog
 \li vobsLOCAL_CATALOG local catalog:
   - vobsCATALOG_MIDI : MIDI catalog
-\li vobsPARSER Analyser of XML file in order to extract from this format the
-data
-\li vobsCDATA Extractor and builder of CDATA bloc section
-\li vobsFILTER filter on star list
-  - vobsBV_FILTER filter on B-V 
+\li vobsPARSER Analyser of XML file in order to extract data from this format
+\li vobsCDATA Extractor and builder of CDATA block section
+\li vobsVOTABLE Write star lists to file in VOTable v1.1 format
+\li vobsFILTER filters stars from list based on comparison criterias
+  - vobsBV_FILTER filter on the 'B-V' value
   - vobsDISTANCE_FILTER filter on distance
-  - vobsLUMINOSITY_FILTER filter  on luminosity class
+  - vobsLUMINOSITY_FILTER filter on luminosity class
   - vobsSPECTRAL_TYPE_FILTER filter on temperature class
   - vobsMAGNITUDE_FILTER filter on magnitude
   - vobsMULTIPLICITY_FILTER filter on multiplicity flag
