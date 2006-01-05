@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.61 2006-01-05 09:07:39 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.62 2006-01-05 09:10:04 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.61  2006/01/05 09:07:39  lafrasse
+* Code review
+*
 * Revision 1.60  2005/12/22 10:38:45  scetre
 * Updated doxygen documentation
 *
@@ -159,7 +162,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.61 2006-01-05 09:07:39 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.62 2006-01-05 09:10:04 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -1059,6 +1062,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     logTrace("vobsSTAR::AddProperties()");
 
+    AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
+                "h:m:s");
+    AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
+                "d:m:s");
     AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "-", "%.0f",
                 "HD identifier");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "-", "%.0f");
@@ -1067,12 +1074,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY, "-");    
     AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, "-");    
     AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, "-");    
-    AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
-                "h:m:s");
     AddProperty(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, 
                 "h:m:s");
-    AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
-                "d:m:s");
     AddProperty(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY,
                 "d:m:s");
     AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsSTRING_PROPERTY, "mas/yr");
