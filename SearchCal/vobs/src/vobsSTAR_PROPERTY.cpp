@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.19 2006-01-05 09:07:39 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.20 2006-01-06 15:59:55 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2006/01/05 09:07:39  lafrasse
+* Code review
+*
 * Revision 1.18  2005/12/22 10:38:45  scetre
 * Updated doxygen documentation
 *
@@ -64,7 +67,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.19 2006-01-05 09:07:39 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.20 2006-01-06 15:59:55 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -115,6 +118,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
                                      const vobsPROPERTY_TYPE  type,
                                      const char*              unit,
                                      const char*              format,
+                                     const char*              link,
                                      const char*              description)
 {
     logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(...)"); 
@@ -145,6 +149,11 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
     if (description != NULL)
     {
         _description = description;
+    }
+
+    if (link != NULL)
+    {
+        _link = link;
     }
 
     _confidenceIndex = vobsCONFIDENCE_LOW;
@@ -461,7 +470,7 @@ vobsPROPERTY_TYPE vobsSTAR_PROPERTY::GetType(void) const
  *
  * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
  *
- * @return property unit
+ * @return property unit if present, "-" otherwise.
  */
 const char *vobsSTAR_PROPERTY::GetUnit(void) const
 {
@@ -481,7 +490,7 @@ const char *vobsSTAR_PROPERTY::GetUnit(void) const
  *
  * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
  *
- * @return property unit
+ * @return property description if present, NULL otherwise.
  */
 const char *vobsSTAR_PROPERTY::GetDescription(void) const
 {
@@ -492,10 +501,26 @@ const char *vobsSTAR_PROPERTY::GetDescription(void) const
         return NULL;
     }
 
-    cout << endl << endl << _description << endl << endl;
-
     // Return property description
     return _description.c_str();
+}
+
+/**
+ * Get property CDS link.
+ *
+ * @return property CDS link if present, NULL otherwise.
+ */
+const char *vobsSTAR_PROPERTY::GetLink(void) const
+{
+    logTrace("vobsSTAR_PROPERTY::GetLink()");
+    
+    if (_link.length() == 0)
+    {
+        return NULL;
+    }
+
+    // Return property CDS link
+    return _link.c_str();
 }
 
 

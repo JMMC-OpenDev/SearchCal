@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.14 2006-01-05 09:07:39 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.15 2006-01-06 15:59:55 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2006/01/05 09:07:39  lafrasse
+* Code review
+*
 * Revision 1.13  2005/12/07 16:49:18  lafrasse
 * Added support for 'description' attribute in VOTable column descriptors FIELD.
 *
@@ -103,8 +106,9 @@ public:
                       const char*        name,
                       vobsPROPERTY_TYPE  type,
                       const char*        unit,
-                      const char*        format=NULL,
-                      const char*        description=NULL);
+                      const char*        format      = NULL,
+                      const char*        link        = NULL,
+                      const char*        description = NULL);
 
     vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY&);
 
@@ -152,6 +156,9 @@ public:
     // Get property description
     virtual const char *GetDescription(void) const;
 
+    // Get property CDS lnik
+    virtual const char *GetLink(void) const;
+
 protected:
     
 private:
@@ -160,6 +167,7 @@ private:
     vobsPROPERTY_TYPE    _type;            // Type of the value
     string               _unit;            // Unit of the value
     string               _format;          // Format to print value 
+    string               _link;            // CDS link of the value
     string               _description;     // Description of the value
     mcsSTRING64          _value;           // Value
     vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index

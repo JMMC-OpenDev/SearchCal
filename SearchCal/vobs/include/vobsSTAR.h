@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.46 2006-01-05 09:07:39 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.47 2006-01-06 15:59:55 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.46  2006/01/05 09:07:39  lafrasse
+* Code review
+*
 * Revision 1.45  2005/12/13 15:37:24  lafrasse
 * Added star Id management with the new GetId() method
 *
@@ -280,6 +283,7 @@ protected:
                               vobsPROPERTY_TYPE  type,
                               char*              unit,
                               char*              format      = NULL,
+                              char*              link        = NULL,
                               char*              description = NULL);
 
     map<string, vobsSTAR_PROPERTY>            _propertyList;

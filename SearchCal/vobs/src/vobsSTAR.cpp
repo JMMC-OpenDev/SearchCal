@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.62 2006-01-05 09:10:04 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.63 2006-01-06 15:59:55 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.62  2006/01/05 09:10:04  gzins
+* Moved star coordinates in front of property list; workaround for Aladin bug
+*
 * Revision 1.61  2006/01/05 09:07:39  lafrasse
 * Code review
 *
@@ -162,7 +165,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.62 2006-01-05 09:10:04 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.63 2006-01-06 15:59:55 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -1032,7 +1035,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  */
 mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
                                     vobsPROPERTY_TYPE type, char *unit,
-                                    char *format, char *description)
+                                    char *format, char *link, char *description)
 {
     logTrace("vobsSTAR::AddProperty()");
 
@@ -1044,7 +1047,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
     }
 
     // Create a new property from the given parameters
-    vobsSTAR_PROPERTY property(id, name, type, unit, format, description);
+    vobsSTAR_PROPERTY property(id, name, type, unit, format, link, description);
 
     // Add the new property to the internal list
     _propertyList[id] = property;
@@ -1067,12 +1070,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
                 "d:m:s");
     AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "-", "%.0f",
-                "HD identifier");
+                "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=HD${HD}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec", "HD identifier");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "-", "%.0f");
     AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "-", "%.0f");    
     AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsFLOAT_PROPERTY, "-", "%.0f");    
     AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY, "-");    
-    AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, "-");    
+    AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, "-", "http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0");    
     AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, "-");    
     AddProperty(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, 
                 "h:m:s");
