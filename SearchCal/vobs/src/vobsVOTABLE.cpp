@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.6 2005-12-22 10:38:45 scetre Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.7 2006-01-06 16:00:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/12/22 10:38:45  scetre
+ * Updated doxygen documentation
+ *
  * Revision 1.5  2005/12/07 16:49:18  lafrasse
  * Added support for 'description' attribute in VOTable column descriptors FIELD.
  *
@@ -29,7 +32,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.6 2005-12-22 10:38:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.7 2006-01-06 16:00:29 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -53,6 +56,7 @@ using namespace std;
 #include "vobsSTAR.h"
 #include "vobsPrivate.h"
 
+
 /**
  * Class constructor
  */
@@ -60,12 +64,14 @@ vobsVOTABLE::vobsVOTABLE()
 {
 }
 
+
 /**
  * Class destructor
  */
 vobsVOTABLE::~vobsVOTABLE()
 {
 }
+
 
 /*
  * Public methods
@@ -100,7 +106,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     buffer.AppendLine("<VOTABLE version=\"1.1\"");
     buffer.AppendLine("         xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\"");
     buffer.AppendLine("         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-    buffer.AppendLine("         xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable-1.1.xsd\">");
+    buffer.AppendLine("         xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd\">");
     buffer.AppendLine("");
 
     // Add header informations
@@ -156,8 +162,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
 
         // Add field name
         buffer.AppendString(" name=\"");
-        const char* starName = starProperty->GetName();
-        buffer.AppendString(starName);
+        const char* propertyName = starProperty->GetName();
+        buffer.AppendString(propertyName);
         buffer.AppendString("\"");
 
         // Add field ID
@@ -172,8 +178,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         buffer.AppendString("\"");
 
         // Add field ref
-        if ((strcmp(starName, "RAJ2000") == 0) ||
-            (strcmp(starName, "DEJ2000") == 0))
+        if ((strcmp(propertyName, "RAJ2000") == 0) ||
+            (strcmp(propertyName, "DEJ2000") == 0))
         {
             buffer.AppendString(" ref=\"J2000\"");
         }
@@ -183,7 +189,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         switch (starProperty->GetType())
         {
             case vobsSTRING_PROPERTY:
-                buffer.AppendString("char\" arraysize=\"8*");
+                buffer.AppendString("char\" arraysize=\"*");
                 break;
 
             case vobsFLOAT_PROPERTY:
@@ -196,13 +202,31 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         }
         buffer.AppendString("\"");
 
-        // Add field unit
-        buffer.AppendString(" unit=\"");
-        buffer.AppendString(starProperty->GetUnit());
-        buffer.AppendString("\"");
+        // Add field unit if it is not "-"
+        const char* unit = starProperty->GetUnit();
+        if (unit != NULL)
+        {
+            // If the unit exists (not the default "-")
+            if (strcmp(unit, "-") != 0)
+            {
+                // Add field unit
+                buffer.AppendString(" unit=\"");
+                buffer.AppendString(unit);
+                buffer.AppendString("\"");
+            }
+        }
 
         // Close FIELD opened markup
         buffer.AppendString(">");
+        
+        // Add field link if present
+        const char* link = starProperty->GetLink();
+        if (link != NULL)
+        {
+            buffer.AppendLine("    <LINK href=\"");
+            buffer.AppendString(link);
+            buffer.AppendString("\"/>");
+        }
         
         // Add field description if present
         const char* description = starProperty->GetDescription();
@@ -238,7 +262,17 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
             // Add standard column header
             buffer.AppendString("<TD>");
 
-            buffer.AppendString(starProperty->GetValue());
+            // Add value if it is not "-"
+            const char* value = starProperty->GetValue();
+            if (value != NULL)
+            {
+                // If the value exists (not the default "-")
+                if (strcmp(value, "-") != 0)
+                {
+                    // Add value
+                    buffer.AppendString(value);
+                }
+            }
 
             // Add standard column footer
             buffer.AppendString("</TD>");
