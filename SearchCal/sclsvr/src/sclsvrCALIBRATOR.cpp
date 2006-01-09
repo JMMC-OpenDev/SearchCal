@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.65 2005-12-22 10:14:35 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.66 2006-01-09 16:11:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.65  2005/12/22 10:14:35  scetre
+ * Create block to simplify the Complete() method
+ * changed call to new method of alx
+ *
  * Revision 1.64  2005/12/16 13:26:24  scetre
  * Added test when computing visibility Added visibility error as parameter
  *
@@ -146,7 +150,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.65 2005-12-22 10:14:35 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.66 2006-01-09 16:11:26 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1763,7 +1767,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY,
                 "mag", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, "-", 
-                "%.3f", "diameter b-v");
+                "%.3f", NULL, "diameter b-v");
     AddProperty(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, "-", 
                 "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, "-", 
