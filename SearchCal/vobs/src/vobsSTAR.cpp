@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.63 2006-01-06 15:59:55 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.64 2006-01-09 16:09:49 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.63  2006/01/06 15:59:55  lafrasse
+* Added CDS link in star property
+*
 * Revision 1.62  2006/01/05 09:10:04  gzins
 * Moved star coordinates in front of property list; workaround for Aladin bug
 *
@@ -165,7 +168,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.63 2006-01-06 15:59:55 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.64 2006-01-09 16:09:49 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -1065,17 +1068,22 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     logTrace("vobsSTAR::AddProperties()");
 
-    AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
-                "h:m:s");
-    AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
-                "d:m:s");
     AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "-", "%.0f",
-                "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=HD${HD}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec", "HD identifier");
+                "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=HD${HD}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
+                "HD identifier, click to call Simbad on this object");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "-", "%.0f");
     AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "-", "%.0f");    
     AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsFLOAT_PROPERTY, "-", "%.0f");    
     AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY, "-");    
-    AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, "-", "http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0");    
+    AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, "-", NULL,
+                "http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0",
+                "2MASS identifier, click to call Vizier on this object");
+    AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
+                "h:m:s", NULL, "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
+                "Click to call Simbad based on those coordinates");
+    AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
+                "d:m:s", NULL, "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
+                "Click to call Simbad based on those coordinates");
     AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, "-");    
     AddProperty(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, 
                 "h:m:s");
