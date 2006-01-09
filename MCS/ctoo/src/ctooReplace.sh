@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooReplace.sh,v 1.4 2005-01-24 15:47:51 gluck Exp $"
+# "@(#) $Id: ctooReplace.sh,v 1.5 2006-01-09 13:00:46 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/01/24 15:47:51  gluck
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+#
 # lafrasse  29/07/04    Forked form VLT Software
 # lafrasse  11/12/04    Changed documentation from VLT Software style to Doxygen
 #
@@ -33,6 +36,9 @@
 # \warning
 #	For security make a backup of all given files before!
 #	Do not give regular expressions for \<old-prefix\> or \<new-prefix\>.
+#   If your expression does not make any changes, you may have to unescape some
+#   special characters. 
+#   We succeeded to replaced some strings that contains * using \*.
 #
 # \n
 # \ex
