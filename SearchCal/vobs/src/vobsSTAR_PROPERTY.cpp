@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.20 2006-01-06 15:59:55 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.21 2006-01-09 16:08:46 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2006/01/06 15:59:55  lafrasse
+* Added CDS link in star property
+*
 * Revision 1.19  2006/01/05 09:07:39  lafrasse
 * Code review
 *
@@ -67,7 +70,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.20 2006-01-06 15:59:55 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.21 2006-01-09 16:08:46 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -146,14 +149,14 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
         }
     }
 
-    if (description != NULL)
-    {
-        _description = description;
-    }
-
     if (link != NULL)
     {
         _link = link;
+    }
+
+    if (description != NULL)
+    {
+        _description = description;
     }
 
     _confidenceIndex = vobsCONFIDENCE_LOW;
@@ -170,16 +173,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
     logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(property)"); 
 
-    _id              = property._id;
-    _name            = property._name;
-    _type            = property._type;
-    _unit            = property._unit;
-    _description     = property._description;
-    _format          = property._format;
-    _confidenceIndex = property._confidenceIndex;
-    _origin          = property._origin;
-
-    strcpy(_value, property._value);
+    *this = property;
 }
 
 /**
@@ -193,6 +187,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _name            = property._name;
     _type            = property._type;
     _unit            = property._unit;
+    _link            = property._link;
     _description     = property._description;
     _format          = property._format;
     _confidenceIndex = property._confidenceIndex;
