@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.7 2006-01-06 16:00:29 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.8 2006-01-09 16:09:25 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/01/06 16:00:29  lafrasse
+ * Added CDS link to make star clickable in Aladin
+ *
  * Revision 1.6  2005/12/22 10:38:45  scetre
  * Updated doxygen documentation
  *
@@ -32,7 +35,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.7 2006-01-06 16:00:29 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.8 2006-01-09 16:09:25 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -219,15 +222,6 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         // Close FIELD opened markup
         buffer.AppendString(">");
         
-        // Add field link if present
-        const char* link = starProperty->GetLink();
-        if (link != NULL)
-        {
-            buffer.AppendLine("    <LINK href=\"");
-            buffer.AppendString(link);
-            buffer.AppendString("\"/>");
-        }
-        
         // Add field description if present
         const char* description = starProperty->GetDescription();
         if (description != NULL)
@@ -235,6 +229,16 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
             buffer.AppendLine("    <DESCRIPTION>");
             buffer.AppendString(description);
             buffer.AppendString("</DESCRIPTION>");
+        }
+        
+        // Add field link if present
+        const char* link = starProperty->GetLink();
+        if (link != NULL)
+        {
+            buffer.AppendLine("    <VALUES/>");
+            buffer.AppendLine("    <LINK href=\"");
+            buffer.AppendString(link);
+            buffer.AppendString("\"/>");
         }
         
         // Add standard field footer
