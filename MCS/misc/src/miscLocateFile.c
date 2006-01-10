@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscLocateFile.c,v 1.9 2005-10-06 12:52:41 lafrasse Exp $"
+ * "@(#) $Id: miscLocateFile.c,v 1.10 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/10/06 12:52:41  lafrasse
+ * Corrected some grammar mistakes in the documentation
+ *
  * Revision 1.8  2005/05/26 08:59:26  lafrasse
  * Code review : minor modifications
  *
@@ -54,8 +57,8 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscLocateFile.c,v 1.9 2005-10-06 12:52:41 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscLocateFile.c,v 1.10 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers 

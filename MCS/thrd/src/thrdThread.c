@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdThread.c,v 1.1 2005-10-21 15:09:01 lafrasse Exp $"
+ * "@(#) $Id: thrdThread.c,v 1.2 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/10/21 15:09:01  lafrasse
+ * thrdThread creation
+ *
  ******************************************************************************/
 
 /**
@@ -54,8 +57,8 @@
  * @sa pthread
  */
 
-static char *rcsId="@(#) $Id: thrdThread.c,v 1.1 2005-10-21 15:09:01 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdThread.c,v 1.2 2006-01-10 14:40:39 mella Exp $"; 
+
 
 
 /* 

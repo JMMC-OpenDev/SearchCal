@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2005/05/26 08:48:20  lafrasse
+ * Code review : user and developper documentation refinments and code simplifications
+ *
  * Revision 1.22  2005/05/20 12:55:01  gzins
  * Improved miscIsSpaceString documentation
  *
@@ -46,8 +49,8 @@
  * Declaration of miscString functions.
  */
 
-static char *rcsId="@(#) $Id: miscString.c,v 1.23 2005-05-26 08:48:20 lafrasse Exp $";
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscString.c,v 1.24 2006-01-10 14:40:39 mella Exp $";
+
 
 /*
  * System Headers

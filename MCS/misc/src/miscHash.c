@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscHash.c,v 1.4 2005-05-20 12:55:42 gzins Exp $"
+ * "@(#) $Id: miscHash.c,v 1.5 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/05/20 12:55:42  gzins
+ * Updated after code review
+ *
  * Revision 1.3  2005/04/06 12:59:33  gluck
  * Code review: minor changes
  *
@@ -117,8 +120,8 @@
  * \endcode
  */
 
-static char *rcsId="@(#) $Id: miscHash.c,v 1.4 2005-05-20 12:55:42 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscHash.c,v 1.5 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers

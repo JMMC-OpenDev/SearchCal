@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.40 2005-12-02 13:04:32 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.41 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2005/12/02 13:04:32  lafrasse
+ * Added miscDynBufSavePartInFile() and miscDynBufSaveInASCIIFile().
+ * Changed miscDynBufSaveInFile() to rely on miscDynBufSavePartInFile().
+ *
  * Revision 1.39  2005/05/26 13:03:44  lafrasse
  * Code review : added const attribute to necessary parameters, and change doxygen attributes from '\' to '@'
  *
@@ -178,8 +182,8 @@
  * @endcode
  */
 
-static char *rcsId="@(#) $Id: miscDynBuf.c,v 1.40 2005-12-02 13:04:32 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.41 2006-01-10 14:40:39 mella Exp $"; 
+
 
 
 /* 

@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/09/15 14:19:07  scetre
+ * Added miscGetHostByName in the miscNetwork file
+ *
  * Revision 1.4  2005/05/23 11:57:40  lafrasse
  * Code review : user documentation refinments
  *
@@ -19,8 +22,8 @@
  * Declaration of miscNetwork functions.
  */
 
-static char *rcsId="@(#) $Id: miscNetwork.c,v 1.5 2005-09-15 14:19:07 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.6 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers

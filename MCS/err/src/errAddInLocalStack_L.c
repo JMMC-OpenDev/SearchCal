@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/06/01 13:23:49  gzins
+* Changed logExtDbg to logTrace
+*
 * Revision 1.13  2005/02/15 08:05:12  gzins
 * Completed documentation
 *
@@ -31,8 +34,8 @@
  * Definition of errAddInLocalStack function.
  */
 
-static char *rcsId="@(#) $Id: errAddInLocalStack_L.c,v 1.14 2005-06-01 13:23:49 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errAddInLocalStack_L.c,v 1.15 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers

@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2005/10/10 12:00:11  lafrasse
+ * Added miscLocateDir()
+ *
  * Revision 1.34  2005/10/06 15:12:46  lafrasse
  * Added miscGetEnvVarIntValue function
  *
@@ -80,8 +83,8 @@
  * "$MCSROOT/lib:$INTROOT/bin:$HOME/Dev/misc/src/../doc/").
  */
 
-static char *rcsId="@(#) $Id: miscFile.c,v 1.35 2005-10-10 12:00:11 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscFile.c,v 1.36 2006-01-10 14:40:39 mella Exp $"; 
+
 
 
 /* 

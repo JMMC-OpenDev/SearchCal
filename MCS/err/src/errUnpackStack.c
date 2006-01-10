@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2005/06/01 13:23:49  gzins
+* Changed logExtDbg to logTrace
+*
 * Revision 1.3  2005/02/09 14:26:03  lafrasse
 * Changed errUnpackStack() parameters to const
 *
@@ -20,8 +23,8 @@
  * \file
  * Definition of errUnpackStack function.
  */
-static char *rcsId="@(#) $Id: errUnpackStack.c,v 1.4 2005-06-01 13:23:49 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errUnpackStack.c,v 1.5 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers

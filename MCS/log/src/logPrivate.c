@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: logPrivate.c,v 1.6 2005-02-15 08:27:12 gzins Exp $"
+ * "@(#) $Id: logPrivate.c,v 1.7 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/15 08:27:12  gzins
+ * Added CVS log as file modification history
+ *
  * lafrasse  05-Aug-2004  Created
  * lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.c
  * gzins     10-Nov-2004  Renamed logDisplayMessage to logPrintErrMessage
@@ -13,8 +16,8 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: logPrivate.c,v 1.6 2005-02-15 08:27:12 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: logPrivate.c,v 1.7 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers

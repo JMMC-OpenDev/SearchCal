@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdSemaphore.c,v 1.2 2005-12-22 14:08:00 lafrasse Exp $"
+ * "@(#) $Id: thrdSemaphore.c,v 1.3 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/12/22 14:08:00  lafrasse
+ * Updated documentation to include the usefull UNIX command (special thanx to Fred. ROUSSEL) that remove any created semaphores when the OS can not create new semaphores anymore
+ *
  * Revision 1.1  2005/12/19 16:48:30  lafrasse
  * Added semaphore support
  *
@@ -58,8 +61,8 @@
  * @sa ipcs ipcrm
  */
 
-static char *rcsId="@(#) $Id: thrdSemaphore.c,v 1.2 2005-12-22 14:08:00 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdSemaphore.c,v 1.3 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers

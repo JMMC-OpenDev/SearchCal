@@ -4,6 +4,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/02/04 10:43:44  gzins
+* Improved log for test
+*
 * Revision 1.5  2005/02/01 07:38:51  mella
 * Correct typo
 *
@@ -23,8 +26,8 @@
  * \file
  * Definition of errAddInStack function.
  */
-static char *rcsId="@(#) $Id: errAddInStack.c,v 1.6 2005-02-04 10:43:44 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errAddInStack.c,v 1.7 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers

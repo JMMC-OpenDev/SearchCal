@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2005/05/26 13:02:19  lafrasse
+ * Corrected a compilation warning
+ *
  * Revision 1.16  2005/05/26 12:33:18  gzins
  * Supressed warning related to assignment of read-only 'precision' parameter
  *
@@ -46,8 +49,8 @@
  * Definition of miscDate functions.
  */
 
-static char *rcsId="@(#) $Id: miscDate.c,v 1.17 2005-05-26 13:02:19 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDate.c,v 1.18 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers

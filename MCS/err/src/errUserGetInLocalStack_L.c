@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: errUserGetInLocalStack_L.c,v 1.3 2005-06-01 13:23:49 gzins Exp $"
+ * "@(#) $Id: errUserGetInLocalStack_L.c,v 1.4 2006-01-10 14:40:39 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/06/01 13:23:49  gzins
+ * Changed logExtDbg to logTrace
+ *
  * Revision 1.2  2005/01/31 16:26:04  mella
  * Correct typo
  *
@@ -19,8 +22,8 @@
  * Definition of errUserGetInLocalStack function.
  */
 
-static char *rcsId="@(#) $Id: errUserGetInLocalStack_L.c,v 1.3 2005-06-01 13:23:49 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errUserGetInLocalStack_L.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
+
 
 /* 
  * System Headers
