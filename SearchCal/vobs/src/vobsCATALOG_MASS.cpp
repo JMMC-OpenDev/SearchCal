@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.24 2005-12-07 15:10:09 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.25 2006-01-18 08:46:18 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2005/12/07 15:10:09  scetre
+* Removed unused printf
+*
 * Revision 1.23  2005/12/05 15:58:57  scetre
 * Retreive 2MASS id
 *
@@ -83,7 +86,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.24 2005-12-07 15:10:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.25 2006-01-18 08:46:18 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -161,9 +164,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
     miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_V");
-    // constraints
-    miscDynBufAppendString(&_query, "&opt=,T,U");
-            
+    
     return mcsSUCCESS;
 }
 
@@ -197,7 +198,6 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, "mag=");
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&opt=%5bTU%5d");
     miscDynBufAppendString(&_query, "&-out.max=150");
     // Add search box size
     mcsSTRING32 separation;
