@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.47 2006-01-06 15:59:55 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.48 2006-01-18 15:59:45 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.47  2006/01/06 15:59:55  lafrasse
+* Added CDS link in star property
+*
 * Revision 1.46  2006/01/05 09:07:39  lafrasse
 * Code review
 *
@@ -248,7 +251,7 @@ public:
     virtual mcsCOMPL_STAT      GetPropertyValue (char*      id,
                                                  mcsFLOAT*  value);
     virtual vobsPROPERTY_TYPE  GetPropertyType  (char*      id) ;
-    
+    virtual vobsCONFIDENCE_INDEX GetPropertyConfIndex( char *id); 
     // Is a property set?
     virtual mcsLOGICAL         IsPropertySet    (char*      propertyId);
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.65 2006-01-18 09:07:03 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.66 2006-01-18 15:59:45 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.65  2006/01/18 09:07:03  scetre
+* Removed unused U magnitude
+*
 * Revision 1.64  2006/01/09 16:09:49  lafrasse
 * Updated property links
 *
@@ -171,7 +174,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.65 2006-01-18 09:07:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.66 2006-01-18 15:59:45 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -492,6 +495,27 @@ vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(char *id)
 
     // Return property
     return (property->GetType());
+}
+
+/**
+ * Get a star property confidence index.
+ *
+ * @sa vobsSTAR_PROPERTY
+ *
+ * @param id property id.
+ *
+ * @return property confidence index.
+ */
+vobsCONFIDENCE_INDEX vobsSTAR::GetPropertyConfIndex(char *id)
+{
+    logTrace("vobsSTAR::GetPropertyConfIndex()");
+
+    // Look for property
+    vobsSTAR_PROPERTY *property;
+    property = GetProperty(id);
+
+    // Return property confidence index
+    return (property->GetConfidenceIndex());
 }
 
 /**
