@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.10 2005-12-14 09:02:35 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.11 2006-01-18 08:49:40 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/12/14 09:02:35  scetre
+ * Changed constructor in order to handle the filter of the scenario classes
+ *
  * Revision 1.9  2005/12/12 14:11:26  scetre
  * Fiwed bug with filter entry
  *
@@ -41,7 +44,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.10 2005-12-14 09:02:35 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.11 2006-01-18 08:49:40 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -70,8 +73,7 @@ sclsvrSCENARIO_BRIGHT_K::sclsvrSCENARIO_BRIGHT_K():
 _originFilter("K origin = 2mass filter"),
     _magnitudeFilter("K mag filter"),
     _filterList("filter List"),
-    _bvFilter("B-V filter"),
-    _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG)
+    _bvFilter("B-V filter")
 {
 }
 
@@ -171,12 +173,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     //////////////////////////////////////////////////////////////////////////
     // BUILD FILTER USED
     //////////////////////////////////////////////////////////////////////////
-    // Filter on opt=T
-    if (_filterOptT.AddCondition(vobsEQUAL, "T") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    _filterOptT.Enable();
     // Build B-V < 1 filter
     _bvFilter.SetMagnitudeValue(1);
     _bvFilter.Enable();
@@ -211,16 +207,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // 2MASS
     /////////////////////////////////////////////////////////////////////////// 
     if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP,
-                 vobsCOPY, NULL, &_filterList) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    ///////////////////////////////////////////////////////////////////////////
-    // filter on opt=T
-    /////////////////////////////////////////////////////////////////////////// 
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP,
-                 vobsCOPY, NULL, &_filterOptT) 
-        == mcsFAILURE)
+                 vobsCOPY, NULL, &_filterList, "&opt=T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -310,19 +297,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // 2MASS
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+                          vobsUPDATE_ONLY, &_criteriaListRaDec, NULL,
+                          "&opt=T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
-    // filter on opt=T
-    ///////////////////////////////////////////////////////////////////////////
-    /*if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS, &_starListS,
-                 vobsCOPY, NULL, &_filterOptT) 
-        == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }*/
     ///////////////////////////////////////////////////////////////////////////
     // II/7A
     ///////////////////////////////////////////////////////////////////////////

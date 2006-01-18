@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.4 2005-11-29 10:38:29 gzins Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.5 2006-01-18 08:49:40 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/29 10:38:29  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.3  2005/11/24 13:19:37  scetre
  * Clean the presentation of the add entry
  *
@@ -77,8 +80,6 @@ private:
     vobsFILTER_LIST _filterList;
     // filter on B-V for I/280
     vobsBV_FILTER _bvFilter;
-    // filter on opt=T
-    vobsGENERIC_FILTER _filterOptT;
     
     // criteria list for LBSI, Merand, charm2, denis JK, 2MASS, II/225
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;

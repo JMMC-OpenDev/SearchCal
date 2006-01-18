@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.5 2005-11-29 13:06:50 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.6 2006-01-18 08:49:40 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/29 13:06:50  scetre
+ * changed vobsFILTER to vobsGENERIC_FILTER
+ *
  * Revision 1.4  2005/11/29 08:23:19  scetre
  * Added check scenario for scenario faint K
  *
@@ -78,10 +81,6 @@ private:
 
     // filter on opt=U
     vobsGENERIC_FILTER _filterOptU;
-    
-    // filter on Qflg=AAA
-    vobsGENERIC_FILTER _filterOnQflag;
-
 };
 
 #endif /*!sclsvrSCENARIO_FAINT_K_H*/

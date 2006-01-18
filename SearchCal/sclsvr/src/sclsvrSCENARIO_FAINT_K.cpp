@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.16 2005-12-22 10:12:16 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.17 2006-01-18 08:49:40 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2005/12/22 10:12:16  scetre
+ * Added log
+ *
  * Revision 1.15  2005/12/14 09:02:35  scetre
  * Changed constructor in order to handle the filter of the scenario classes
  *
@@ -60,7 +63,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.16 2005-12-22 10:12:16 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.17 2006-01-18 08:49:40 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -88,8 +91,7 @@ using namespace std;
  */
 sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K():
 _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
-    _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG),
-_filterOnQflag("Qflag = AAA filter", vobsSTAR_CODE_QUALITY)
+    _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
 {
 }
 
@@ -156,12 +158,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
     _filterOptU.Enable();
-    // Build Filter used Qflg=AAA
-    if (_filterOnQflag.AddCondition(vobsEQUAL, "AAA") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    _filterOnQflag.Enable();    
 
     ///////////////////////////////////////////////////////////////////////////
     // PRIMARY REQUEST
@@ -213,20 +209,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         vobsSTAR_LIST starList;
         // Initialize it
         if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL,
-                                   &starList, vobsCOPY) == mcsFAILURE)
+                                   &starList, vobsCOPY, NULL, NULL,
+                                   "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        ////////////////////////////////////////////////////////////////////////
-        // Filter on opt=AAA
-        ////////////////////////////////////////////////////////////////////////
-        if (scenarioCheck.AddEntry(vobsNO_CATALOG_ID, &_request, &starList,
-                                  &starList, vobsCOPY, NULL, &_filterOnQflag)
-            == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        
+                
         // Set catalog list
         vobsCATALOG_LIST catalogList;
         scenarioCheck.SetCatalogList(&catalogList);
@@ -255,14 +243,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
             {
                 return mcsFAILURE;
             }
-            ////////////////////////////////////////////////////////////////////
-            // Filter on opt=AAA
-            ////////////////////////////////////////////////////////////////////
-            if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP,
-                         vobsCOPY, NULL, &_filterOnQflag) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
         }
     }
     // else if radius is defined, simply query 2mass
@@ -273,14 +253,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         ///////////////////////////////////////////////////////////////////////
         if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
                      vobsCOPY) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        ////////////////////////////////////////////////////////////////////////
-        // Filter on opt=AAA
-        ////////////////////////////////////////////////////////////////////////
-        if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListP, 
-                     vobsCOPY, NULL, &_filterOnQflag) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
