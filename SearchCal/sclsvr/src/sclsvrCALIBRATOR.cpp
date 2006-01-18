@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.67 2006-01-18 08:53:03 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.68 2006-01-18 16:01:09 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.67  2006/01/18 08:53:03  scetre
+ * Convert distance from arcsec to degree
+ *
  * Revision 1.66  2006/01/09 16:11:26  lafrasse
  * Updated property description to reflect vobsSTAR API change
  *
@@ -153,7 +156,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.67 2006-01-18 08:53:03 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.68 2006-01-18 16:01:09 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1109,7 +1112,7 @@ sclsvrCALIBRATOR::ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS],
     alxMAGNITUDES magnitudes;
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
-        // Get the current value
+        // Get the current value and the confidence index
         if (IsPropertySet(mag0PropertyId[band]) == mcsTRUE)
         {
             if (GetPropertyValue(mag0PropertyId[band],
@@ -1119,6 +1122,8 @@ sclsvrCALIBRATOR::ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS],
             }
 
             magnitudes[band].isSet=mcsTRUE;
+            magnitudes[band].confIndex=
+                (alxCONFIDENCE_INDEX)GetPropertyConfIndex(mag0PropertyId[band]);
         }
         else
         {
@@ -1135,11 +1140,12 @@ sclsvrCALIBRATOR::ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS],
     // For each magnitude
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
-        // Set the corrected magnitude
+        // Set the magnitude magnitude
         if (magnitudes[band].isSet == mcsTRUE)
         {
             if (SetPropertyValue(magPropertyId[band], magnitudes[band].value,
-                                 vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                                 vobsSTAR_COMPUTED_PROP,
+                                 (vobsCONFIDENCE_INDEX)magnitudes[band].confIndex) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
