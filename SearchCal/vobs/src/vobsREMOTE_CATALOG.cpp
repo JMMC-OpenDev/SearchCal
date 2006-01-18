@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.9 2005-11-29 08:22:23 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.10 2006-01-18 08:45:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/11/29 08:22:23  scetre
+* Minor changes
+*
 * Revision 1.8  2005/11/21 13:47:57  scetre
 * arrange properties when the URL is written
 *
@@ -38,7 +41,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.9 2005-11-29 08:22:23 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.10 2006-01-18 08:45:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -195,7 +198,21 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     return mcsSUCCESS;
 }
 
+/**
+ * Set catalog option
+ *
+ * @param option the option to add in the query
+ *
+ * @return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsREMOTE_CATALOG::SetOption(string option)
+{
+    logTrace("vobsREMOTE_CATALOG::SetOption()");
 
+    _option = option;
+
+    return mcsSUCCESS;
+}
 /*
  * Protected methods
  */
@@ -242,6 +259,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
         errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
+    if (WriteOption() == mcsFAILURE)
+    {
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
+        return mcsFAILURE;
+    }
     
     return mcsSUCCESS;
 }
@@ -283,6 +305,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
         return mcsFAILURE;
     }
     if (WriteQuerySpecificPart() == mcsFAILURE)
+    {
+        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
+        return mcsFAILURE;
+    }
+    if (WriteOption() == mcsFAILURE)
     {
         errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
@@ -411,7 +438,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     logTrace("vobsREMOTE_CATALOG::GetAskingSpecificParameters()");
 
-
     return mcsSUCCESS;
 }
 
@@ -497,6 +523,20 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 
     miscDynBufDestroy(&strList);
     
+    return mcsSUCCESS;
+}
+
+/**
+ * Write option
+ *
+ * @return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
+{
+    logTrace("vobsREMOTE_CATALOG::WriteOption()");
+
+    miscDynBufAppendString(&_query, _option.c_str());            
+
     return mcsSUCCESS;
 }
 

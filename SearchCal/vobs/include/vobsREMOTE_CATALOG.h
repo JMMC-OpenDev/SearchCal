@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.h,v 1.1 2005-02-11 14:14:31 gluck Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.h,v 1.2 2006-01-18 08:45:38 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.1  2005/02/11 14:14:31  gluck
+* Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
+*
 * scetre    27-Jul-2004  Created
 *
 *
@@ -60,6 +63,7 @@ public:
    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
                                 vobsSTAR_LIST &list);
    
+   virtual mcsCOMPL_STAT SetOption(string option);
 protected:
     // Method to prepare the request in a string format
    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
@@ -74,6 +78,9 @@ protected:
    virtual mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST &request);
    virtual mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
   
+   // Write option
+   virtual mcsCOMPL_STAT WriteOption(void); 
+   
    // Method to get a star list in a string format from a normal star list
    // format
    virtual mcsCOMPL_STAT StarList2Sring(miscDYN_BUF &strList,

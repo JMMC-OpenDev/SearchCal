@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.4 2005-11-16 10:47:54 scetre Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.5 2006-01-18 08:45:38 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/16 10:47:54  scetre
+ * Updated documentation
+ *
  * Revision 1.3  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -70,6 +73,8 @@ protected:
 
     // Load MIDI catalog
     virtual mcsCOMPL_STAT Load(void);
+
+   virtual mcsCOMPL_STAT SetOption(string option);    
 
 private:
     // Declaration of copy constructor and assignment operator as private

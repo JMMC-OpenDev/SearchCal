@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.8 2005-11-16 10:47:55 scetre Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.9 2006-01-18 08:45:38 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/11/16 10:47:55  scetre
+ * Updated documentation
+ *
  * Revision 1.7  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -34,7 +37,7 @@
  *  Definition of vobsLOCAL_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.8 2005-11-16 10:47:55 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.9 2006-01-18 08:45:38 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -134,4 +137,22 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(void)
     return mcsSUCCESS;
 }
 
+/**
+ * Set catalog option.
+ *
+ * This method should return an error to say that no option can be use with a
+ * local catalog
+ *
+ * @param option the option to add in the query
+ *
+ * @return always mcsFAILURE
+ */
+mcsCOMPL_STAT vobsLOCAL_CATALOG::SetOption(string option)
+{
+    logTrace("vobsLOCAL_CATALOG::SetOption()");
+
+    errAdd(vobsERR_NO_OPTION_IN_LOCAL_CATALOG, option.c_str()); 
+
+    return mcsFAILURE;
+}
 /*___oOo___*/
