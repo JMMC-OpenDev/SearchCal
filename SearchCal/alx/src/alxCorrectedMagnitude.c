@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.1 2005-12-22 10:08:58 scetre Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.2 2006-01-18 15:59:06 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/22 10:08:58  scetre
+ * Added extinction coefficient computation
+ * changed realMag to CorrectedMag
+ *
  * Revision 1.14  2005/10/26 11:24:01  lafrasse
  * Code review
  *
@@ -65,7 +69,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxCorrectedMagnitude.c,v 1.1 2005-12-22 10:08:58 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxCorrectedMagnitude.c,v 1.2 2006-01-18 15:59:06 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1491,8 +1495,10 @@ alxComputeAllMagnitudesForFaintStar(alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
  *
  * It computes magnitudes in R, I, J, H, K, L and M bands according to the
  * spectral type and the magnitudes in B and V bands for a bright star.
- * If magnitude in K-band is unkwown, the confidence index of computed values is
- * set to LOW, otherwise (B, V and K known) it is set to HIGH.
+ * If magnitude in B or V are unknown, no magnitude will be computed.
+ * otherwise, if K band is unkwown, the confidence index of
+ * computed values is set to LOW, otherwise (K known) it is set to 
+ * HIGH.
  * If magnitude can not be computed, its associated confidence index is set to
  * NO CONFIDENCE.
  *
@@ -1531,6 +1537,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
         }
         return mcsSUCCESS;
     }
+
     /* If B and V are affected, get magnitudes in B and V bands */
     mcsFLOAT mgB, mgV;
     mgB = magnitudes[alxB_BAND].value;
@@ -1579,8 +1586,8 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
  *
  * It computes magnitudes in R, I, J, H, K, L and M bands according to the
  * magnitudes in J and K bands for a faint star.
- * If magnitude in K-band is unkwown, the confidence index of computed values is
- * set to LOW, otherwise (B, V and K known) it is set to HIGH.
+ * If magnitude in J and K band is unkwown, the confidence index of computed
+ * values is set to LOW, otherwise (J and K known) it is set to HIGH.
  * If magnitude can not be computed, its associated confidence index is set to
  * NO CONFIDENCE.
  *
@@ -1664,7 +1671,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
 }
 
 /**
- * Compute apparent magnitudes according to the interstellar absorption and the
+ * Compute corrected magnitudes according to the interstellar absorption and the
  * corrected ones.
  *
  * The corrected magnitudes are computed using the galactic interstellar
