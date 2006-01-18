@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.15 2005-11-24 14:54:25 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.16 2006-01-18 09:06:43 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2005/11/24 14:54:25  scetre
+* UNSO catalog added
+*
 * Revision 1.14  2005/11/21 13:49:40  scetre
 * Added UNSO id
 *
@@ -92,10 +95,13 @@ public:
    // Method to get a  star list from the catalog
    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
                                 vobsSTAR_LIST &list) = 0;
+
+   virtual mcsCOMPL_STAT SetOption(string option) = 0;
    
 protected:
    // Name of the catalog
    string _name;
+   string _option;
 
 private:
    // Declaration of assignment operator as private
