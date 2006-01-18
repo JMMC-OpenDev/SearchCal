@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.66 2006-01-09 16:11:26 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.67 2006-01-18 08:53:03 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.66  2006/01/09 16:11:26  lafrasse
+ * Updated property description to reflect vobsSTAR API change
+ *
  * Revision 1.65  2005/12/22 10:14:35  scetre
  * Create block to simplify the Complete() method
  * changed call to new method of alx
@@ -150,7 +153,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.66 2006-01-09 16:11:26 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.67 2006-01-18 08:53:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -1593,8 +1596,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMultiplicity()
 /**
  * Compute distance.
  *
- * This method calculate the distance between the calibrator and the science
- * object.
+ * This method calculate the distance in degree between the calibrator and the
+ * science object.
  *
  * @return Always mcsSUCCESS.
  */
@@ -1670,7 +1673,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
     }
 
     // Put the computed distance in the corresponding calibrator property
-    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance, "") == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance/3600, "") ==
+        mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1819,7 +1823,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13mu)", 
                 vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_VIS2_FLAG, "vis2Flag", vobsSTRING_PROPERTY, "-");
-    AddProperty(sclsvrCALIBRATOR_DIST, "dist", vobsFLOAT_PROPERTY, "-", "%.3f");
+    AddProperty(sclsvrCALIBRATOR_DIST, "dist", vobsFLOAT_PROPERTY, "deg", "%.3f");
 
     return mcsSUCCESS;
 }
