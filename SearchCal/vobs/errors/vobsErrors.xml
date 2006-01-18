@@ -190,4 +190,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[condition type (%s) and property type (%s) are not compatible]]></errFormat>
    </error>
+   <error id="54">
+      <errName>NO_OPTION_IN_LOCAL_CATALOG</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[can't had option %s in a local catalog]]></errFormat>
+   </error>
 </errorList>
