@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.8 2005-11-29 10:30:04 gzins Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.h,v 1.9 2006-01-18 08:46:49 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/11/29 10:30:04  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.7  2005/11/24 08:13:50  scetre
  * Changed mother class of filter from vobsFILTER to vobsFILTER
  *
@@ -94,6 +97,9 @@ public:
                        vobsFILTER                   *filter);
     vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
     
+    mcsCOMPL_STAT SetQueryOption(string queryOption);
+    string GetQueryOption(void);
+    
     // Class destructor
     virtual ~vobsSCENARIO_ENTRY();
     friend class vobsSCENARIO;
@@ -111,7 +117,8 @@ private:
     vobsSTAR_LIST               *_listOutput;
     vobsACTION                  _action;
     vobsSTAR_COMP_CRITERIA_LIST *_criteriaList;
-    vobsFILTER             *_filter;
+    vobsFILTER                  *_filter;
+    string                      _queryOption;
 };
 
 #endif /*!vobsSCENARIO_ENTRY_H*/

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.36 2005-12-22 14:14:17 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.37 2006-01-18 08:46:49 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.36  2005/12/22 14:14:17  lafrasse
+* Added a catalog counter and index to further report progression in the GUI status message
+*
 * Revision 1.35  2005/12/21 10:35:15  lafrasse
 * Added queried catalog name logging as action status
 *
@@ -115,7 +118,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.36 2005-12-22 14:14:17 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.37 2006-01-18 08:46:49 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -190,7 +193,8 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
                                      vobsSTAR_LIST *listOutput,
                                      vobsACTION action,
                                      vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
-                                     vobsFILTER    *filter)
+                                     vobsFILTER    *filter,
+                                     string queryOption)
 {
     logTrace("vobsSCENARIO::AddEntry()");
     
@@ -204,7 +208,9 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
                              action,
                              criteriaList,
                              filter);
-
+    // Set query option
+    entry.SetQueryOption(queryOption);
+    
     // Increment true catalog counter (if not a filter)
     if (strcmp(catalogName, vobsNO_CATALOG_ID) != 0)
     {
@@ -318,6 +324,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 return mcsFAILURE;
             }
 
+            // Get query option from scenario entry
+            string queryOption = (*_entryIterator).GetQueryOption();
+            tempCatalog->SetOption(queryOption);
+            
             vobsREQUEST *request = (*_entryIterator)._request;
             // if research failed, return mcsFAILURE
             if ((tempCatalog)->Search(*request, tempList) == mcsFAILURE )
@@ -326,6 +336,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
             logInfo("...number of stars return = %d", tempList.Size());
             _catalogIndex++;
+
+            // Clean the catalog option
+            tempCatalog->SetOption("");
 
             // Stop time counter
             timlogStop(timLogActionName);

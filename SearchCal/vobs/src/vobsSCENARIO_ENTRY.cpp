@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.9 2005-11-29 10:36:09 gzins Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.10 2006-01-18 08:46:49 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/11/29 10:36:09  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.8  2005/11/24 08:13:50  scetre
  * Changed mother class of filter from vobsFILTER to vobsFILTER
  *
@@ -38,7 +41,7 @@
  *  Definition of vobsSCENARIO_ENTRY class.
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.9 2005-11-29 10:36:09 gzins Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.10 2006-01-18 08:46:49 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -71,6 +74,8 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(mcsSTRING32                 catalogName,
                                        vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                        vobsFILTER                  *filter)
 {
+    _queryOption = "";
+
     strcpy(_catalogName, catalogName);
     _request      = request;
     _listInput    = listInput;
@@ -92,6 +97,8 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(mcsSTRING32                 catalogName,
  */
 vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
 {
+    _queryOption = scenarioEntry._queryOption;
+
     strcpy(_catalogName, scenarioEntry._catalogName);
     _request      = scenarioEntry._request;
     _listInput    = scenarioEntry._listInput;
@@ -122,6 +129,34 @@ vobsSCENARIO_ENTRY::~vobsSCENARIO_ENTRY()
         delete (_criteriaList);
         _criteriaList = NULL;
     }
+}
+
+/**
+ * Set query option
+ *
+ * @param option query option
+ *
+ * return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsSCENARIO_ENTRY::SetQueryOption(string queryOption)
+{
+    logTrace("vobsSCENARIO_ENTRY::SetQueryOption()");
+
+    _queryOption = queryOption;
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Get query option
+ *
+ * @return the query option
+ */
+string vobsSCENARIO_ENTRY::GetQueryOption(void)
+{
+    logTrace("vobsSCENARIO_ENTRY::GetQueryOption()");
+
+    return _queryOption;
 }
 
 /*

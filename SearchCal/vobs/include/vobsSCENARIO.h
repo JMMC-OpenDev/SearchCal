@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.11 2005-12-22 14:14:17 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.12 2006-01-18 08:46:49 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/12/22 14:14:17  lafrasse
+* Added a catalog counter and index to further report progression in the GUI status message
+*
 * Revision 1.10  2005/11/29 10:30:20  gzins
 * Moved vobsFILTER to vobsGENERIC_FILTER
 *
@@ -87,7 +90,8 @@ public :
                                    vobsSTAR_LIST    *listOutput,
                                    vobsACTION       action,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL,
-                                   vobsFILTER       *filter=NULL);
+                                   vobsFILTER       *filter=NULL,
+                                   string queryOption="");
   
     // Execute the scenario
     virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
