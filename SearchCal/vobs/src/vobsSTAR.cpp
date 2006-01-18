@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.64 2006-01-09 16:09:49 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.65 2006-01-18 09:07:03 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.64  2006/01/09 16:09:49  lafrasse
+* Updated property links
+*
 * Revision 1.63  2006/01/06 15:59:55  lafrasse
 * Added CDS link in star property
 *
@@ -168,7 +171,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.64 2006-01-09 16:09:49 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.65 2006-01-18 09:07:03 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -1126,7 +1129,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY,
                 "-");
     AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_PHOT_JHN_U, "U", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag", "%.3f");
