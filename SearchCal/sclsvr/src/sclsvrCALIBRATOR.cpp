@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.68 2006-01-18 16:01:09 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.69 2006-01-23 14:12:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.68  2006/01/18 16:01:09  scetre
+ * Use the confidence index of corrected magnitude in the computed apparent magnitudes
+ *
  * Revision 1.67  2006/01/18 08:53:03  scetre
  * Convert distance from arcsec to degree
  *
@@ -156,7 +159,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.68 2006-01-18 16:01:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.69 2006-01-23 14:12:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -300,13 +303,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                         vobsSTAR_PHOT_JHN_L,
                         vobsSTAR_PHOT_JHN_M
                     };
-                    mcsFLOAT av;
-                    if (ComputeExtinctionCoefficient(&av) == mcsFAILURE)
+                    if (ComputeExtinctionCoefficient() == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
                     // Compute Interstellar extinction
-                    if (ComputeInterstellarAbsorption(magPropertyId, av) ==
+                    if (ComputeInterstellarAbsorption(magPropertyId) ==
                         mcsFAILURE)
                     {
                         return mcsFAILURE;
@@ -320,7 +322,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                     }
                     
                     // Compute missing apparent magnitude
-                    if (ComputeApparentMagnitude(magPropertyId, av) ==
+                    if (ComputeApparentMagnitude(magPropertyId) ==
                         mcsFAILURE)
                     {
                         return mcsFAILURE;
@@ -414,13 +416,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 vobsSTAR_PHOT_JHN_M
             };
             // Get the extinction ratio
-            mcsFLOAT av;
-            if (ComputeExtinctionCoefficient(&av) == mcsFAILURE)
+            if (ComputeExtinctionCoefficient() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
             // Compute Interstellar extinction
-            if (ComputeInterstellarAbsorption(magPropertyId, av) ==
+            if (ComputeInterstellarAbsorption(magPropertyId) ==
                 mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -434,7 +435,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             }
 
             // Compute missing apparent magnitude
-            if (ComputeApparentMagnitude(magPropertyId, av) ==
+            if (ComputeApparentMagnitude(magPropertyId) ==
                 mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -475,9 +476,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             // with iterstellar absorption
             sclsvrCALIBRATOR testCalibratorWithAbsorption;
             testCalibratorWithAbsorption.Update(* this);
-            
+
             // Set no interstellar absorption (i.e av=0)
-            mcsFLOAT av = 0;
+            // Set extinction ratio property
+            if (SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, 0.0,
+                                 vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
             char *magPropertyId[alxNB_BANDS] = 
             {
                 vobsSTAR_PHOT_PHG_B,
@@ -491,7 +498,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 vobsSTAR_PHOT_JHN_M
             };
             // Compute Interstellar extinction
-            if (ComputeInterstellarAbsorption(magPropertyId, av) ==
+            if (ComputeInterstellarAbsorption(magPropertyId) ==
                 mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -505,7 +512,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             }
 
             // Compute missing apparent magnitude
-            if (ComputeApparentMagnitude(magPropertyId, av) ==
+            if (ComputeApparentMagnitude(magPropertyId) ==
                 mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -549,9 +556,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             };
             
             // Do the same with the extinction ratio fixed to 3.0
-            av = 3.0;
             if (testCalibratorWithAbsorption.
-                ComputeInterstellarAbsorption(magPropertyIdTemp, av) ==
+                SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, 3.0,
+                                 vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            if (testCalibratorWithAbsorption.
+                ComputeInterstellarAbsorption(magPropertyIdTemp) ==
                 mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -567,7 +580,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 
             // Compute missing apparent magnitude
             if (testCalibratorWithAbsorption.
-                ComputeApparentMagnitude(magPropertyIdTemp, av) ==
+                ComputeApparentMagnitude(magPropertyIdTemp) ==
                 mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -940,17 +953,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 /**
  * Compute extinction coefficient
  *
- * @param av the extinction coefficeint
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsFLOAT *av)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
     logTrace("sclsvrCALIBRATOR::ComputeExtinctionCoefficient()");
 
     mcsFLOAT paralax, gLat, gLon;
-    
+    mcsFLOAT av;
+
     // Get the value of the paralax
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
     {
@@ -997,11 +1010,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsFLOAT *av)
     }
 
     // Compute Extinction ratio
-    if (alxComputeExtinctionCoefficient(av, paralax, gLat, gLon) == mcsFAILURE)
+    if (alxComputeExtinctionCoefficient(&av, paralax, gLat, gLon) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
+    // Set extinction ratio property
+    if (SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, 
+                         av,
+                         vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     return mcsSUCCESS;
 }
 
@@ -1013,8 +1034,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsFLOAT *av)
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::
-ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS],
-                              mcsFLOAT av)
+ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS])
 {
     logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorption()");
 
@@ -1033,6 +1053,13 @@ ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS],
         sclsvrCALIBRATOR_LO,
         sclsvrCALIBRATOR_MO
     };
+
+    // Get the extinction ratio
+    mcsFLOAT av;
+    if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     // For each magnitude
     alxMAGNITUDES magnitudes;
@@ -1087,8 +1114,7 @@ ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS],
  * returned.
  */
 mcsCOMPL_STAT 
-sclsvrCALIBRATOR::ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS], 
-                                           mcsFLOAT av)
+sclsvrCALIBRATOR::ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS])
 {
     logTrace("sclsvrCALIBRATOR::ComputeApparentMagnitude()");
     
@@ -1108,6 +1134,13 @@ sclsvrCALIBRATOR::ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS],
         sclsvrCALIBRATOR_MO
     };
 
+    // Get the extinction ratio
+    mcsFLOAT av;
+    if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     // For each corrected magnitude
     alxMAGNITUDES magnitudes;
     for (int band = 0; band < alxNB_BANDS; band++)
@@ -1810,6 +1843,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                 vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", 
                 vobsSTRING_PROPERTY, "-");
+    AddProperty(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av",
+                vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "mag", "%.3f");

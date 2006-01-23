@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.34 2005-12-22 10:11:56 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.35 2006-01-23 14:12:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2005/12/22 10:11:56  scetre
+ * Added method to compute extinction coefficient
+ * added method to compute cousin mag
+ *
  * Revision 1.33  2005/12/14 09:01:39  scetre
  * Removed unused method
  *
@@ -87,6 +91,7 @@
 #define sclsvrCALIBRATOR_PHOT_COUS_J        "PHOT_COUS_J"
 #define sclsvrCALIBRATOR_PHOT_COUS_H        "PHOT_COUS_H"
 #define sclsvrCALIBRATOR_PHOT_COUS_K        "PHOT_COUS_K"
+#define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
 #define sclsvrCALIBRATOR_MO                 "MO"
 #define sclsvrCALIBRATOR_LO                 "LO"
 #define sclsvrCALIBRATOR_KO                 "KO"
@@ -153,12 +158,10 @@ private:
                                           alxBAND secondBand,
                                           mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
-    mcsCOMPL_STAT ComputeExtinctionCoefficient(mcsFLOAT *av);
+    mcsCOMPL_STAT ComputeExtinctionCoefficient();
     mcsCOMPL_STAT 
-        ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS],
-                                      mcsFLOAT av);
-    mcsCOMPL_STAT ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS],
-                                           mcsFLOAT av);     
+        ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS]);
+    mcsCOMPL_STAT ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS]);     
     mcsCOMPL_STAT ComputeAngularDiameter(alxDATA mg1,
                                          alxDATA mg2,
                                          alxDATA mg3,
