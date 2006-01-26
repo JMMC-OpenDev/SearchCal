@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.11 2005-12-07 14:48:33 scetre Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.12 2006-01-26 12:48:25 scetre Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2005/12/07 14:48:33  scetre
+ * Renamed function for bright and faint case
+ *
  * Revision 1.10  2005/11/30 10:47:59  scetre
  * Added computing diameter method for faint
  *
@@ -128,7 +131,8 @@ typedef enum
     alxJ_H,                 /* value of MagJ - MagH */
     alxJ_K,                 /* value of MagJ - MagK */
     alxK_L,                 /* value of MagK - MagL */
-    alxK_M,                 /* value of MagL - MagM */
+    alxL_M,                 /* value of MagL - MagM */
+    alxK_M,                 /* value of MagK - MagM */    
     alxNB_DIFF_MAG          /* number of differential magnitude */
 } alxDIFF_MAG;
 

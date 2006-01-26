@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.2 2006-01-18 15:59:06 scetre Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.3 2006-01-26 12:48:25 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/01/18 15:59:06  scetre
+ * Updated Documentation
+ *
  * Revision 1.1  2005/12/22 10:08:58  scetre
  * Added extinction coefficient computation
  * changed realMag to CorrectedMag
@@ -69,7 +72,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxCorrectedMagnitude.c,v 1.2 2006-01-18 15:59:06 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxCorrectedMagnitude.c,v 1.3 2006-01-26 12:48:25 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -108,6 +111,8 @@ static alxCOLOR_TABLE *
 
 static alxCOLOR_TABLE *
     alxGetColorTableForFaintStar(alxSPECTRAL_TYPE *spectralType);
+    
+static mcsLOGICAL alxIsBlankingValue(mcsFLOAT cellValue);
     
 static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
                                             alxSPECTRAL_TYPE  *spectralType);
@@ -481,7 +486,7 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
                        &colorTables[starType].index[lineNum][5].value,
                        &colorTables[starType].index[lineNum][6].value,
                        &colorTables[starType].index[lineNum][7].value)
-                != (alxNB_DIFF_MAG + 2))
+                != (alxNB_DIFF_MAG + 1))
             {
                 /* destroy dynamic buffer used and return an error */
                 miscDynBufDestroy(&dynBuf);
@@ -489,14 +494,30 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
                 return NULL;
             }
 
-            colorTables[starType].index[lineNum][0].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][1].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][2].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][3].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][4].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][5].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][6].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][7].isSet = mcsTRUE;
+            colorTables[starType].index[lineNum][0].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][0].value);
+            colorTables[starType].index[lineNum][1].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][1].value);
+            colorTables[starType].index[lineNum][2].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][2].value);
+            colorTables[starType].index[lineNum][3].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][3].value);
+            colorTables[starType].index[lineNum][4].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][4].value);
+            colorTables[starType].index[lineNum][5].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][5].value);
+            colorTables[starType].index[lineNum][6].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][6].value);
+            colorTables[starType].index[lineNum][7].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][7].value);
 
             /* Next line */
             lineNum++;
@@ -512,6 +533,28 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
     colorTables[starType].loaded = mcsTRUE;
 
     return &(colorTables[starType]);
+}
+
+/**
+ * Say if a cell value is defined or not.
+ *
+ * If the cell value = '99.99'(alxBLANKING_VALUE), return false.
+ *
+ * @param cellValue the value of the cell
+ *
+ * @return mcsTRUE if cell value != alxBLANKING_VALUE, otherwise mcsFALSE is 
+ * returned.
+ */
+static mcsLOGICAL alxIsBlankingValue(mcsFLOAT cellValue)
+{
+    logTrace("alxIsBlankingValue()");
+    
+    if (cellValue == (mcsFLOAT)alxBLANKING_VALUE)
+    {
+        return mcsFALSE;
+    }
+
+    return mcsTRUE;
 }
 
 /**
@@ -680,23 +723,38 @@ alxGetColorTableForFaintStar(alxSPECTRAL_TYPE *spectralType)
                        &colorTables[starType].index[lineNum][5].value,
                        &colorTables[starType].index[lineNum][6].value,
                        &colorTables[starType].index[lineNum][7].value)
-                != (alxNB_DIFF_MAG + 2))
+                != (alxNB_DIFF_MAG + 1))
             {
                 /* destroy dynamic buffer used and return an error */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 return NULL;
             }
-
-            colorTables[starType].index[lineNum][0].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][1].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][2].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][3].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][4].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][5].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][6].isSet = mcsTRUE;
-            colorTables[starType].index[lineNum][7].isSet = mcsTRUE;
-
+            
+            colorTables[starType].index[lineNum][0].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][0].value);
+            colorTables[starType].index[lineNum][1].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][1].value);
+            colorTables[starType].index[lineNum][2].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][2].value);
+            colorTables[starType].index[lineNum][3].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][3].value);
+            colorTables[starType].index[lineNum][4].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][4].value);
+            colorTables[starType].index[lineNum][5].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][5].value);
+            colorTables[starType].index[lineNum][6].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][6].value);
+            colorTables[starType].index[lineNum][7].isSet = 
+                alxIsBlankingValue(colorTables[starType].
+                                           index[lineNum][7].value);
             /* Next line */
             lineNum++;
         }
@@ -1048,11 +1106,11 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
                 colorTable->index[line][alxK_L].value;
             diffMagnitudes[alxK_L].isSet = mcsTRUE;
             if ((colorTable->index[line][alxK_L].isSet != mcsFALSE) &&
-                (colorTable->index[line][alxK_M].isSet != mcsFALSE))
+                (colorTable->index[line][alxL_M].isSet != mcsFALSE))
             {
                 diffMagnitudes[alxK_M].value = 
                       colorTable->index[line][alxK_L].value 
-                    + colorTable->index[line][alxK_M].value;
+                    + colorTable->index[line][alxL_M].value;
             }
         }
         else
@@ -1147,16 +1205,16 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
 
             if ((colorTable->index[lineSup][alxK_L].isSet != mcsFALSE) &&
                 (colorTable->index[lineInf][alxK_L].isSet != mcsFALSE) &&
-                (colorTable->index[lineSup][alxK_M].isSet != mcsFALSE) &&
-                (colorTable->index[lineInf][alxK_M].isSet != mcsFALSE))
+                (colorTable->index[lineSup][alxL_M].isSet != mcsFALSE) &&
+                (colorTable->index[lineInf][alxL_M].isSet != mcsFALSE))
             {
                 diffMagnitudes[alxK_M].value =
                     colorTable->index[lineInf][alxK_L].value 
-                    + colorTable->index[lineInf][alxK_M].value 
+                    + colorTable->index[lineInf][alxL_M].value 
                     + ratio *(colorTable->index[lineSup][alxK_L].value 
-                              + colorTable->index[lineSup][alxK_M].value 
+                              + colorTable->index[lineSup][alxL_M].value 
                               - colorTable->index[lineInf][alxK_L].value 
-                              - colorTable->index[lineInf][alxK_M].value);
+                              - colorTable->index[lineInf][alxL_M].value);
             diffMagnitudes[alxK_M].isSet = mcsTRUE;
             }
         }
