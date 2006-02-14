@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.14 2005-09-13 11:52:04 scetre Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.15 2006-02-14 13:00:02 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/09/13 11:52:04  scetre
+* Load xml file from memory after using msgSOCKET instead of loading xml file directly with gdome methods
+*
 * Revision 1.13  2005/02/13 15:22:11  gzins
 * Removed ParseCDATA and GetPropertyId. Moved to vobsCDATA class
 *
@@ -47,7 +50,7 @@
  * Vizier address
  * Port
  */
-#define vobsTIME_OUT 240000
+#define vobsTIME_OUT 600000
 #define vobsVIZIER_IP_ADDRESS "130.79.128.13"
 #define vobsVIZIER_ADRESS "vizier.u-strasbg.fr"
 #define vobsQUERY_PORT 80
