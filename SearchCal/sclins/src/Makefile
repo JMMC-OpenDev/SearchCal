@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-02-25 11:17:35 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.5 2006-02-20 13:20:26 swmgr Exp $"
 #
 # Makefile of mcsins module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/25 11:17:35  scetre
+# added sclinsStart, sclinsStop, sclinsQuery
+#
 # Revision 1.3  2005/02/15 16:02:02  gzins
 # Added CVS log as file modification history
 #
@@ -166,6 +169,10 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
-	@echo " . . . installation done"
+	@echo "";
+	@echo "To start SCALIB intallation, just do the following:";
+	@echo "   % cd ../..";
+	@echo "   % mcsinsInstall";
+	@echo "";
 
 #___oOo___
