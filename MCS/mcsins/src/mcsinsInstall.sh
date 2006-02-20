@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.14 2005-12-14 22:17:55 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.15 2006-02-20 12:54:34 swmgr Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2005/12/14 22:17:55  gzins
+# Added thrd and sdb modules
+#
 # Revision 1.13  2005/12/06 08:52:38  gzins
 # Source .bash_profile when specifying tag
 #
@@ -146,12 +149,15 @@ then
     exit 1
 fi
 
+# Determine the SW package
+export SW_PACKAGE=MCS
+
 # Determine the MCS release
 if [ "$tag" != "" ]
 then
-    export MCSRELEASE=$tag
+    export SW_RELEASE=$tag
 else
-    export MCSRELEASE=DEVELOPMENT
+    export SW_RELEASE=DEVELOPMENT
 fi
 
 # Get intallation directory
@@ -161,7 +167,7 @@ then
     insDir=$INTROOT
 else
     insDirName="MCSTOP"
-    insDir=$MCSTOP/$MCSRELEASE
+    insDir=$MCSTOP/$SW_RELEASE
     # Source bash profile to set path 
     source ~/.bash_profile
 fi
@@ -175,9 +181,8 @@ then
     exit 1
 fi
 
-# Create directory from where MCS will be installed 
-fromdir=$PWD/$MCSRELEASE
-mkdir -p $fromdir
+# Set directory from where SCALIB will be installed 
+fromdir=$PWD/$SW_PACKAGE/$SW_RELEASE
 
 # Display informations
 echo -e "\n-> All the MCS modules will be installed"
@@ -194,18 +199,26 @@ fi
 if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
-    echo -e "    from the $MCSRELEASE directory. Use '-u' option to only "
-    echo -e "    update modules or '-c' to only compile modules.\n"
+    echo -e "    from the $SW_PACKAGE/$SW_RELEASE directory. Use '-u' option "
+    echo -e "    to only update modules or '-c' to only compile modules.\n"
 elif [ "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be updated in the"
-    echo -e "    $MCSRELEASE directory. Use '-c' to only compile modules.\n"
+    echo -e "    $SW_PACKAGE/$SW_RELEASE directory. Use '-c' to only compile\n"
+    echo -e "    modules.\n"
 fi
 echo -e "    Press enter to continue or ^C to abort "
 read choice
 
+# Create directory from where MCS will be installed 
+mkdir -p $fromdir
+if [ $? != 0 ]
+then
+    exit 1
+fi
+
 # List of MCS modules
-mcsModules="mkf mcscfg ctoo mcs log err misc thrd timlog modc modcpp fnd misco env cmd msg sdb evh gwt"
+mcsModules="mkf mcscfg ctoo mcs log err misc thrd timlog mth modc modcpp fnd misco env cmd msg sdb evh gwt"
 
 # Log file
 mkdir -p $fromdir/INSTALL
