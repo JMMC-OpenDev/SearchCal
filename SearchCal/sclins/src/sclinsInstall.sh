@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsInstall.sh,v 1.8 2005-12-02 13:54:25 gzins Exp $"
+# "@(#) $Id: sclinsInstall.sh,v 1.9 2006-02-20 13:21:25 swmgr Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/12/02 13:54:25  gzins
+# Remove MCS installation check
+#
 # Revision 1.7  2005/09/15 07:18:08  swmgr
 # Display information of installation directory
 #
@@ -98,11 +101,21 @@ fi
 # Check that the script is not run by 'root'
 if [ `whoami` == "root" ]
 then
-    echo -e "\nERROR : MCS installation MUST NOT BE done as root !!" 
+    echo -e "\nERROR : SCALIB installation MUST NOT BE done as root !!" 
     echo -e "\n  ->  Please log in as swmgr, and start again.\n" 
     exit 1
 fi
 
+# Determine the SW package
+export SW_PACKAGE=SCALIB
+
+# Determine the SW release
+if [ "$tag" != "" ]
+then
+    export SW_RELEASE=$tag
+else
+    export SW_RELEASE=DEVELOPMENT
+fi
 
 # Check that MCSROOT is defined
 if [ "$MCSROOT" == "" ]
@@ -111,6 +124,9 @@ then
     echo -e ""
     exit 1
 fi
+
+# Set directory from where SCALIB will be installed 
+fromdir=$PWD/$SW_PACKAGE/$SW_RELEASE
 
 # Get intallation directory
 if [ "$INTROOT" != "" ]
@@ -122,36 +138,54 @@ else
     insDir=$MCSROOT
 fi
 
-#
-# Get the current directory
-dir=$PWD
-
 # Propose the user to continue or abort
 echo -e "\n-> All the SCALIB modules will be installed (or just updated)"
-echo -e "        from     : $dir"
+echo -e "        from     : $fromdir"
 echo -e "        into     : $insDir"
 if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
-    echo -e "    from the current directory. Use '-u' option to only "
-    echo -e "    update modules\n"
+    echo -e "    from the $SW_PACKAGE/$SW_RELEASE directory. Use '-u' option "
+    echo -e "    to only update modules\n"
+elif [ "$retrieve" == "yes" ]
+then
+    echo -e "    WARNING: modules to be installed will be updated in the"
+    echo -e "    $SW_PACKAGE/$SW_RELEASE directory. Use '-c' to only compile\n"
+    echo -e "    modules.\n"
 fi
 echo -e "    Press enter to continue or ^C to abort "
 read choice
+
+# Create directory from where SCALIB will be installed 
+mkdir -p $fromdir
+if [ $? != 0 ]
+then
+    exit 1
+fi
 
 # List of SCALIB modules
 scalibModules="simcli alx vobs sclsvr sclgui"
 
 # Log file
-mkdir -p INSTALL
-logfile="$dir/INSTALL/sclinsInstall.log"
+mkdir -p $fromdir/INSTALL
+logfile="$fromdir/INSTALL/sclinsInstall.log"
 rm -f $logfile
+
+# If modules have to be retrieved from repository; check repository
+if [ "$retrieve" == "yes" ]
+then
+    if [ "$CVSROOT" == "" ]
+    then
+        echo -e "\nERROR: 'CVSROOT' must be set ...\n";
+        exit 1;
+    fi
+fi
 
 # If modules have to be retrieved from repository
 if [ "$retrieve" == "yes" ]
 then
     # Delete modules first
-    cd $dir
+    cd $fromdir
     if [ "$update" == "no" ]
     then
         echo -e "Deleting modules..."
@@ -163,7 +197,7 @@ then
     # this tag, and then to retrieve again to create empty directories which are
     # not created by cvs command when '-r' option is used.
     echo -e "Retrieving modules from repository..."
-    cd $dir
+    cd $fromdir
     if [ "$tag" != "" ]
     then
         cvs co -r $tag $scalibModules > $logfile 2>&1
@@ -188,7 +222,7 @@ fi
 
 # Check all modules are there
 for mod in $scalibModules; do
-    cd $dir
+    cd $fromdir
     if [ ! -d $mod ]
     then
         echo -e "\nERROR: '$mod' must be retrieved from repository first ...\n";
@@ -199,7 +233,7 @@ done
 # Compile and install them
 echo -e "Building modules..."
 for mod in $scalibModules; do
-    cd $dir
+    cd $fromdir
     echo -e "    $mod..."
     cd $mod/src 
     if [ $? != 0 ]
