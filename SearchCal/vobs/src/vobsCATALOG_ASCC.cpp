@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.19 2005-12-05 13:07:50 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.20 2006-02-20 16:30:49 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2005/12/05 13:07:50  scetre
+* Added error on paralax
+*
 * Revision 1.18  2005/11/23 17:30:20  lafrasse
 * Added circular search box geometry support and normalized area size methods
 *
@@ -69,7 +72,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.19 2005-12-05 13:07:50 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.20 2006-02-20 16:30:49 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -207,7 +210,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
 
-    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.bm=");
+    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
     // properties to retreive

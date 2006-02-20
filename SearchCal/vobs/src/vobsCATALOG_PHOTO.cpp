@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.17 2005-11-23 17:30:21 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.18 2006-02-20 16:30:49 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2005/11/23 17:30:21  lafrasse
+* Added circular search box geometry support and normalized area size methods
+*
 * Revision 1.16  2005/11/21 13:47:57  scetre
 * arrange properties when the URL is written
 *
@@ -60,7 +63,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.17 2005-11-23 17:30:21 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.18 2006-02-20 16:30:49 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -183,7 +186,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "=");
     miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, "&-out.max=50");
-    miscDynBufAppendString(&_query, "&-c.bm=");
+    miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcsec");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");

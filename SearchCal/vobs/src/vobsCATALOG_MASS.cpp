@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.25 2006-01-18 08:46:18 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.26 2006-02-20 16:30:49 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2006/01/18 08:46:18  scetre
+* Added option in the query
+*
 * Revision 1.24  2005/12/07 15:10:09  scetre
 * Removed unused printf
 *
@@ -86,7 +89,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.25 2006-01-18 08:46:18 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.26 2006-02-20 16:30:49 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -210,7 +213,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
             return mcsFAILURE;
         }
         sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-        miscDynBufAppendString(&_query, "&-c.bm=");
+        miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
         miscDynBufAppendString(&_query, separation);        
     }
     else
