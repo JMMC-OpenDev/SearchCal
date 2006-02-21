@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.24 2005-12-22 14:39:38 scetre Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.25 2006-02-21 16:52:39 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/12/22 14:39:38  scetre
+ * Added sdb and thrd in GetStar
+ *
  * Revision 1.23  2005/11/21 13:51:47  scetre
  * Changed bad scenario name
  * Added scenario for single star research -> updated getStar
@@ -44,7 +47,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.24 2005-12-22 14:39:38 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.25 2006-02-21 16:52:39 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -87,64 +90,6 @@ extern "C"{
 /*
  * Local structure
  */
-/**
- * Structure used to pass two values as one paramter to a thrdTHREAD function.
- */
-typedef struct
-{
-    sclsvrSERVER*  server;   /**< pointer on a sclsvrSERVER instance. */
-
-    msgMESSAGE*    message;  /**< pointer on a msgMESSAGE instance. */
-
-} sclsvrMonitorActionParams;
-
-/*
- * Local functions
- */
-/**
- * Monitor any action and forward it to the shell.
- *
- * @param param a pointer on any data needed by the fuction.
- *
- * @return always NULL.
- */
-static thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
-{   
-    logTrace("sclsvrMonitorAction()");
-
-    mcsSTRING256  buffer;
-    mcsLOGICAL    lastMessage = mcsFALSE;
-
-    // Get the server and message pointer back from the function parameter
-    sclsvrMonitorActionParams* paramsPtr = (sclsvrMonitorActionParams*)param;
-    sclsvrSERVER*                 server = (sclsvrSERVER*)paramsPtr->server;
-    msgMESSAGE*                  message = (msgMESSAGE*) paramsPtr->message;
-
-    // Get any new action and forward it to the GUI ...
-    do
-    {
-        // Wait for a new action
-        if (sdbWaitAction(buffer, &lastMessage) == mcsFAILURE)
-        {
-            return NULL;
-        }
-
-        // Define the new message body from the newly received action message
-        if (message->SetBody(buffer) == mcsFAILURE)
-        {
-            return NULL;
-        }
-
-        // Send the new message to the GUI for status display
-        if (server->SendReply(*message, mcsFALSE) == mcsFAILURE)
-        {
-            return NULL;
-        }
-    }
-    while (lastMessage == mcsFALSE); // ... until the last action occured
-
-    return NULL;
-}
 
 /*
  * Public methods

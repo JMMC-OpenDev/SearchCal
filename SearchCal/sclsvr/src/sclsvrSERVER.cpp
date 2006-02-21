@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.7 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.8 2006-02-21 16:52:39 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.6  2005/06/01 14:18:54  scetre
  * Added filters and filter list objects.
  * Changed logExtDbg to logTrace
@@ -24,7 +27,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.7 2005-10-26 11:27:24 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.8 2006-02-21 16:52:39 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -51,6 +54,52 @@ using namespace std;
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrVersion.h"
+
+
+/**
+ * Monitor any action and forward it to the shell.
+ *
+ * @param param a pointer on any data needed by the fuction.
+ *
+ * @return always NULL.
+ */
+thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
+{   
+    logTrace("sclsvrMonitorAction()");
+
+    mcsSTRING256  buffer;
+    mcsLOGICAL    lastMessage = mcsFALSE;
+
+    // Get the server and message pointer back from the function parameter
+    sclsvrMonitorActionParams* paramsPtr = (sclsvrMonitorActionParams*)param;
+    sclsvrSERVER*                 server = (sclsvrSERVER*)paramsPtr->server;
+    msgMESSAGE*                  message = (msgMESSAGE*) paramsPtr->message;
+
+    // Get any new action and forward it to the GUI ...
+    do
+    {
+        // Wait for a new action
+        if (sdbWaitAction(buffer, &lastMessage) == mcsFAILURE)
+        {
+            return NULL;
+        }
+
+        // Define the new message body from the newly received action message
+        if (message->SetBody(buffer) == mcsFAILURE)
+        {
+            return NULL;
+        }
+
+        // Send the new message to the GUI for status display
+        if (server->SendReply(*message, mcsFALSE) == mcsFAILURE)
+        {
+            return NULL;
+        }
+    }
+    while (lastMessage == mcsFALSE); // ... until the last action occured
+
+    return NULL;
+}
 
 
 /*
