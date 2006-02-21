@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.10 2006-01-18 08:46:49 scetre Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.11 2006-02-21 16:32:00 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/01/18 08:46:49  scetre
+ * Managed the new option which could be gave to a catalog
+ *
  * Revision 1.9  2005/11/29 10:36:09  gzins
  * Changed vobsBASE_FILTER to vobsFILTER
  *
@@ -41,7 +44,7 @@
  *  Definition of vobsSCENARIO_ENTRY class.
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.10 2006-01-18 08:46:49 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.11 2006-02-21 16:32:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -134,7 +137,7 @@ vobsSCENARIO_ENTRY::~vobsSCENARIO_ENTRY()
 /**
  * Set query option
  *
- * @param option query option
+ * @param queryOption query option
  *
  * return always mcsSUCCESS
  */

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.66 2006-01-18 15:59:45 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.67 2006-02-21 16:32:00 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.66  2006/01/18 15:59:45  scetre
+* Added GetPropertyConfIndex() method
+*
 * Revision 1.65  2006/01/18 09:07:03  scetre
 * Removed unused U magnitude
 *
@@ -174,7 +177,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.66 2006-01-18 15:59:45 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.67 2006-02-21 16:32:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /*
@@ -1058,6 +1061,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  * @param type   property type
  * @param unit   property unit
  * @param format format used to set property
+ * @param link link for the VOTable
  * @param description property description
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 

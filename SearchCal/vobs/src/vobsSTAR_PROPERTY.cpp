@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.21 2006-01-09 16:08:46 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.22 2006-02-21 16:32:00 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2006/01/09 16:08:46  lafrasse
+* Added proper _link member support in operator=() method
+* Updated copy constructor to use operator=() method instead of code duplication
+*
 * Revision 1.20  2006/01/06 15:59:55  lafrasse
 * Added CDS link in star property
 *
@@ -70,7 +74,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.21 2006-01-09 16:08:46 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.22 2006-02-21 16:32:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -114,6 +118,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
  * @param type   property type
  * @param unit   property unit
  * @param format format used to set property
+ * @param link link for This property
  * @param description property description
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.37 2006-01-18 08:46:49 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.38 2006-02-21 16:32:00 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.37  2006/01/18 08:46:49  scetre
+* Managed the new option which could be gave to a catalog
+*
 * Revision 1.36  2005/12/22 14:14:17  lafrasse
 * Added a catalog counter and index to further report progression in the GUI status message
 *
@@ -118,7 +121,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.37 2006-01-18 08:46:49 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.38 2006-02-21 16:32:00 scetre Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -183,6 +186,7 @@ vobsSCENARIO::~vobsSCENARIO()
  * @param action enumerate representing the action to do
  * @param criteriaList list of comparaison criteria
  * @param filter filter
+ * @param queryOption query option
  * 
  * @return
  * Always mcsSUCCESS.
