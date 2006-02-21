@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.8 2005-12-14 15:13:41 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.9 2006-02-21 12:16:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/12/14 15:13:41  scetre
+ * Added log info of deleted stars in visibility filter
+ *
  * Revision 1.7  2005/12/14 09:02:00  scetre
  * Updated constructor with filter name
  *
@@ -36,7 +39,7 @@
  * Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.8 2005-12-14 15:13:41 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.9 2006-02-21 12:16:33 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -160,7 +163,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
             {
                 // if the value of the star visibility error / visibility
                 // is lower than this enter by the user, remove it
-                if (starVisError/starVis >= _visMax)   
+                if (fabs(starVisError/starVis) >= (_visMax/100.))   
                 {
                     // Remove it
                     logInfo("star %s has been removed by the filter '%s'", starId, GetId());
