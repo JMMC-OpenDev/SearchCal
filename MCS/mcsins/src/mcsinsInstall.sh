@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.15 2006-02-20 12:54:34 swmgr Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.16 2006-02-22 10:46:20 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2006/02/20 12:54:34  swmgr
+# Added mth module
+# Install SW from MCS sub-directory
+#
 # Revision 1.14  2005/12/14 22:17:55  gzins
 # Added thrd and sdb modules
 #
@@ -159,6 +163,7 @@ then
 else
     export SW_RELEASE=DEVELOPMENT
 fi
+export MCSRELEASE=$SW_RELEASE
 
 # Get intallation directory
 if [ "$INTROOT" != "" ]
@@ -168,7 +173,7 @@ then
 else
     insDirName="MCSTOP"
     insDir=$MCSTOP/$SW_RELEASE
-    # Source bash profile to set path 
+    # Source bash profile to set path according to MCSRELEASE
     source ~/.bash_profile
 fi
 
