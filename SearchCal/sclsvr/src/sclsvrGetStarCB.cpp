@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.25 2006-02-21 16:52:39 scetre Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.26 2006-02-22 17:08:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2006/02/21 16:52:39  scetre
+ * Moved the 2 same method in one in sclsvrSERVER.cpp
+ * move the 2 same struct in sclsvrPrivate.h
+ *
  * Revision 1.24  2005/12/22 14:39:38  scetre
  * Added sdb and thrd in GetStar
  *
@@ -47,7 +51,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.25 2006-02-21 16:52:39 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.26 2006-02-22 17:08:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -111,9 +115,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     timlogInfoStart(msg.GetCommand());
 
     // sdbAction initialization
-    if (sdbInitAction() == mcsFAILURE)
+    mcsLOGICAL sdbInitSucceed = mcsFALSE;
+    if (sdbInitAction() == mcsSUCCESS)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        sdbInitSucceed = mcsTRUE;
     }
 
     // actionMonitor thread parameters creation
@@ -125,9 +130,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     thrdTHREAD                     actionMonitor;
     actionMonitor.function       = sclsvrMonitorAction;
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
-    if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
+
+    // Launch the thread only if SDB had been succesfully started
+    if (sdbInitSucceed == mcsTRUE)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
     }
 
     
@@ -260,18 +270,24 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     else
     {
         errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "CDS catalogs");
+    }
+
+    // Wait for the thread only if it had been started
+    if (sdbInitSucceed == mcsTRUE)
+    {
         // Wait for the actionForwarder thread end
         if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
-        // sdbAction deletion
-        if (sdbDestroyAction() == mcsFAILURE)
-        {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
-        }
+    }
+
+    // sdbAction deletion
+    if (sdbDestroyAction() == mcsFAILURE)
+    {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
+    return evhCB_NO_DELETE | evhCB_FAILURE;
 
     // Stop timer log
     timlogStop(msg.GetCommand());

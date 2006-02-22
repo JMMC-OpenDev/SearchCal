@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.29 2006-02-21 16:52:39 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.30 2006-02-22 17:08:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2006/02/21 16:52:39  scetre
+ * Moved the 2 same method in one in sclsvrSERVER.cpp
+ * move the 2 same struct in sclsvrPrivate.h
+ *
  * Revision 1.28  2005/12/22 14:39:38  scetre
  * Added sdb and thrd in GetStar
  *
@@ -91,7 +95,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.29 2006-02-21 16:52:39 scetre Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.30 2006-02-22 17:08:33 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -146,11 +150,12 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
  
     // Start timer log
     timlogInfoStart(msg.GetCommand());
-
+    
     // sdbAction initialization
-    if (sdbInitAction() == mcsFAILURE)
+    mcsLOGICAL sdbInitSucceed = mcsFALSE;
+    if (sdbInitAction() == mcsSUCCESS)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        sdbInitSucceed = mcsTRUE;
     }
 
     // actionMonitor thread parameters creation
@@ -162,9 +167,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     thrdTHREAD                     actionMonitor;
     actionMonitor.function       = sclsvrMonitorAction;
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
-    if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
+
+    // Launch the thread only if SDB had been succesfully started
+    if (sdbInitSucceed == mcsTRUE)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
     }
 
     // Build the list of star which will come from the virtual observatory
@@ -355,10 +365,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         msg.ClearBody();
     }
 
-    // Wait for the actionForwarder thread end
-    if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
+    // Wait for the thread only if it had been started
+    if (sdbInitSucceed == mcsTRUE)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        // Wait for the actionForwarder thread end
+        if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
     }
 
     // sdbAction deletion
