@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.31 2005-12-07 15:10:09 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.32 2006-02-22 11:21:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2005/12/07 15:10:09  scetre
+ * Removed unused printf
+ *
  * Revision 1.30  2005/11/30 15:27:59  gzins
  * Took into account object declinaison when computing box size along X direction
  *
@@ -90,7 +93,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.31 2005-12-07 15:10:09 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.32 2006-02-22 11:21:03 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -240,7 +243,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
     hm = (int) ((ra - hh)*60.0);
     hs = (ra - hh - hm/60.0)*3600.0;
 
-    sprintf(raHms, "%02d:%02d:%02.2f", 
+    sprintf(raHms, "%02d:%02d:%05.2f", 
             (int)fabs(hh), (int)fabs(hm), fabs(hs));
 
     // Set RA
@@ -292,7 +295,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
     hm = (int) ((_objectDecInDeg - dd)*60.0);
     hs = (_objectDecInDeg - dd - hm/60.0)*3600.0;
 
-    sprintf(decDms, "%c%02d:%02d:%02.1f", 
+    sprintf(decDms, "%c%02d:%02d:%04.1f", 
             (_objectDecInDeg < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
 
     // Set DEC
