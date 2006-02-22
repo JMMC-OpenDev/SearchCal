@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.2 2005-12-22 14:10:35 lafrasse Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.3 2006-02-22 17:05:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/12/22 14:10:35  lafrasse
+ * Added a way to release all the created semaphores used by sdbENTRY
+ *
  * Revision 1.1  2005/12/20 13:52:34  lafrasse
  * Added preliminary support for INTRA-process action log
  *
@@ -99,7 +102,10 @@ private:
 
     static thrdSEMAPHORE  _emptyBufferSemaphore;
     static thrdSEMAPHORE  _fullBufferSemaphore;
+
     static mcsSTRING256   _buffer;
+
+    static mcsLOGICAL     _initSucceed;
     static mcsLOGICAL     _lastMessage;
 };
 
