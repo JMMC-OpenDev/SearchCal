@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.30 2006-02-22 17:08:33 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.31 2006-02-23 16:08:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2006/02/22 17:08:33  lafrasse
+ * Made it works even if there is no more semaphores left on the running system (no GUI progression in this case)
+ *
  * Revision 1.29  2006/02/21 16:52:39  scetre
  * Moved the 2 same method in one in sclsvrSERVER.cpp
  * move the 2 same struct in sclsvrPrivate.h
@@ -95,7 +98,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.30 2006-02-22 17:08:33 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.31 2006-02-23 16:08:21 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -156,6 +159,11 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     if (sdbInitAction() == mcsSUCCESS)
     {
         sdbInitSucceed = mcsTRUE;
+    }
+    else
+    {
+        sdbInitSucceed = mcsFALSE;
+        errCloseStack();
     }
 
     // actionMonitor thread parameters creation
