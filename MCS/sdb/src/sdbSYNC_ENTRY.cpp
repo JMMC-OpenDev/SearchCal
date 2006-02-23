@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.3 2006-02-22 17:05:43 lafrasse Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.4 2006-02-23 16:09:46 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/02/22 17:05:43  lafrasse
+ * Added security check to disable semaphores use in case of  bad initialization
+ *
  * Revision 1.2  2005/12/22 14:10:35  lafrasse
  * Added a way to release all the created semaphores used by sdbENTRY
  *
@@ -19,7 +22,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.3 2006-02-22 17:05:43 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.4 2006-02-23 16:09:46 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -84,9 +87,6 @@ mcsCOMPL_STAT sdbENTRY::Init(void)
     // Static member initialization
     memset(_buffer, '\0', sizeof(_buffer));
     _lastMessage = mcsFALSE;
-
-        _initSucceed = mcsFALSE;
-        return mcsFAILURE;
 
     /* Semaphores initialisation */
     if (thrdSemaphoreInit(&_emptyBufferSemaphore, 1) == mcsFAILURE)
