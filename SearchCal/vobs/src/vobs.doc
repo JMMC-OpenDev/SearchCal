@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobs.doc,v 1.10 2006-01-05 09:07:39 lafrasse Exp $"
+ * "@(#) $Id: vobs.doc,v 1.11 2006-02-24 14:59:40 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/01/05 09:07:39  lafrasse
+ * Code review
+ *
  * Revision 1.9  2005/11/16 13:35:58  scetre
  * Updated Documentation
  *
@@ -66,7 +69,7 @@ list
   - vobsVARIABILITY_FILTER filter on variability flag
 \li vobsFILTER_LIST lit of filter(s)
 \li vobsSCENARIO this object execute specific entries
-\li vobsSCEANRIO_ENTRY entries of a scenario composed of the catalog to
+\li vobsSCENARIO_ENTRY entries of a scenario composed of the catalog to
 query,...
 \li vobsVIRTUAL_OBSERVATORY virtual observatory interface
 \n
