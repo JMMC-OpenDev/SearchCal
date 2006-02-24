@@ -175,6 +175,11 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[The list of catalog is empty, it is impossible to retreive catalog]]></errFormat>
    </error>
+   <error id="55">
+      <errName>EMPTY_STAR_LIST</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[The given star list is empty]]></errFormat>
+   </error>
    <error id="50">
       <errName>UNKNOWN_CATALOG</errName>
       <errSeverity>WARNING</errSeverity>

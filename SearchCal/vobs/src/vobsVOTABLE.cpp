@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.8 2006-01-09 16:09:25 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.9 2006-02-24 15:03:39 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/01/09 16:09:25  lafrasse
+ * Updated <LINK...> generation code
+ *
  * Revision 1.7  2006/01/06 16:00:29  lafrasse
  * Added CDS link to make star clickable in Aladin
  *
@@ -35,7 +38,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.8 2006-01-09 16:09:25 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.9 2006-02-24 15:03:39 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -58,6 +61,7 @@ using namespace std;
 #include "vobsVOTABLE.h"
 #include "vobsSTAR.h"
 #include "vobsPrivate.h"
+#include "vobsErrors.h"
 
 
 /**
@@ -89,8 +93,6 @@ vobsVOTABLE::~vobsVOTABLE()
  * @param request user request
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
- *
- * @todo Automatically generate links to simbad
  */
 mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char *fileName,
@@ -150,7 +152,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     vobsSTAR* star = starList.GetNextStar(mcsTRUE);
     if (star == NULL)
     {
-        // @todo add error message for empty star lists
+        errAdd(vobsERR_EMPTY_STAR_LIST);
         return mcsFAILURE;
     }
 
@@ -263,8 +265,50 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         {
             init = mcsFALSE;
 
-            // Add standard column header
-            buffer.AppendString("<TD>");
+            // Add standard column header beginning
+            buffer.AppendString("<TD");
+
+/** @todo Re-enable origin and confidence index attributes serialization */
+/*
+            // Serialize star property origin if any
+            const char* origin = starProperty->GetOrigin();
+            if (origin != NULL)
+            {
+                mcsSTRING256 originTag;
+                snprintf(originTag, sizeof(originTag)," origin=\"%s\"", origin);
+                buffer.AppendString(originTag);
+            }
+
+            // Serialize star property confidence index if any
+            if (starProperty->IsComputed() == mcsTRUE)
+            {
+                vobsCONFIDENCE_INDEX confidence =
+                                             starProperty->GetConfidenceIndex();
+                mcsSTRING256 confidenceTag;
+                switch(confidence)
+                {
+                    case vobsCONFIDENCE_LOW:
+                        snprintf(confidenceTag, sizeof(confidenceTag),
+                                 " confidence=\"LOW\"");
+                        buffer.AppendString(confidenceTag);
+                        break;
+
+                    case vobsCONFIDENCE_MEDIUM:
+                        snprintf(confidenceTag, sizeof(confidenceTag),
+                                 " confidence=\"MEDIUM\"");
+                        buffer.AppendString(confidenceTag);
+                        break;
+
+                    case vobsCONFIDENCE_HIGH:
+                        snprintf(confidenceTag, sizeof(confidenceTag),
+                                 " confidence=\"HIGH\"");
+                        buffer.AppendString(confidenceTag);
+                        break;
+                }
+            }
+*/
+            // Add standard column header end
+            buffer.AppendString(">");
 
             // Add value if it is not "-"
             const char* value = starProperty->GetValue();
