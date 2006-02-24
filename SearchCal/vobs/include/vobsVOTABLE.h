@@ -3,18 +3,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.h,v 1.2 2005-12-07 15:28:20 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.h,v 1.3 2006-02-24 15:01:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/12/07 15:28:20  lafrasse
+ * Updated VOTable generation to include information about software version, request and date
+ *
  * Revision 1.1  2005/11/30 15:24:37  lafrasse
  * Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
  *
  ******************************************************************************/
 
 /**
- * \file
+ * @file
  * Declaration of vobsVOTABLE class.
  */
 
@@ -39,11 +42,9 @@
 
 /**
  * Serialize a vobsSTAR_LIST object in a VOTable 1.1 XML file.
- * 
- * \sa vobsSTAR_LIST
- * \sa http://www.ivoa.net/Documents/latest/VOT.html
- * 
- * \todo VOTable parsing.
+ *
+ * @sa vobsSTAR_LIST
+ * @sa http://www.ivoa.net/Documents/latest/VOT.html
  */
 class vobsVOTABLE
 {
