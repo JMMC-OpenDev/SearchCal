@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.9 2006-02-24 15:03:39 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.10 2006-03-01 12:40:29 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2006/02/24 15:03:39  lafrasse
+ * Added error management (and disabled code to generate origin and confidence
+ * index as VOTable cell attributes)
+ *
  * Revision 1.8  2006/01/09 16:09:25  lafrasse
  * Updated <LINK...> generation code
  *
@@ -16,10 +20,12 @@
  * Updated doxygen documentation
  *
  * Revision 1.5  2005/12/07 16:49:18  lafrasse
- * Added support for 'description' attribute in VOTable column descriptors FIELD.
+ * Added support for 'description' attribute in VOTable column descriptors 
+ * FIELD.
  *
  * Revision 1.4  2005/12/07 15:28:20  lafrasse
- * Updated VOTable generation to include information about software version, request and date
+ * Updated VOTable generation to include information about software version, 
+ * request and date
  *
  * Revision 1.3  2005/12/06 08:30:21  lafrasse
  * Added support for 'ref' attribute in VOTable column descriptors FIELD.
@@ -38,7 +44,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.9 2006-02-24 15:03:39 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.10 2006-03-01 12:40:29 mella Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -156,7 +162,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         return mcsFAILURE;
     }
 
-    // Serialize each of its properties as VOTable column description
+    // Serialize each of its properties with origin and confidence index
+    // as VOTable column description (i.e FIELDS)
     mcsUINT32   i = 0;
     mcsSTRING16 tmp;
     vobsSTAR_PROPERTY* starProperty = star->GetNextProperty(mcsTRUE);
@@ -246,11 +253,126 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         // Add standard field footer
         buffer.AppendLine("   </FIELD>");
 
+        // Add ORIGIN field
+        i++;
+        buffer.AppendLine("   <FIELD type=\"hidden\"");
+
+        // Add field name
+        buffer.AppendString(" name=\"");
+        buffer.AppendString(propertyName);
+        buffer.AppendString(".origin\"");
+
+        // Add field ID
+        buffer.AppendString(" ID=\"");
+        sprintf(tmp, "col%d", i);
+        buffer.AppendString(tmp);
+        buffer.AppendString("\"");
+
+        // Add field ucd
+        buffer.AppendString(" ucd=\"");
+        buffer.AppendString(starProperty->GetId());
+        buffer.AppendString(".origin\"");
+
+        // Add field datatype
+        buffer.AppendString(" datatype=\"char\" arraysize=\"*\"");
+
+        // Close FIELD opened markup
+        buffer.AppendString(">");
+
+        // Add field description
+        buffer.AppendLine("    <DESCRIPTION>Origin of property ");
+        buffer.AppendString(propertyName);
+        buffer.AppendString("</DESCRIPTION>");
+
+        // Add standard field footer
+        buffer.AppendLine("   </FIELD>");
+
+
+        // Add CONFIDENCE field
+        i++;
+        buffer.AppendLine("   <FIELD type=\"hidden\"");
+
+        // Add field name
+        buffer.AppendString(" name=\"");
+        buffer.AppendString(propertyName);
+        buffer.AppendString(".confidence\"");
+
+        // Add field ID
+        buffer.AppendString(" ID=\"");
+        sprintf(tmp, "col%d", i);
+        buffer.AppendString(tmp);
+        buffer.AppendString("\"");
+
+        // Add field ucd
+        buffer.AppendString(" ucd=\"");
+        buffer.AppendString(starProperty->GetId());
+        buffer.AppendString(".confidence\"");
+
+        // Add field datatype
+        buffer.AppendString(" datatype=\"char\" arraysize=\"*\"");
+
+        // Close FIELD opened markup
+        buffer.AppendString(">");
+
+        // Add field description
+        buffer.AppendLine("    <DESCRIPTION>Confidence index of property ");
+        buffer.AppendString(propertyName);
+        buffer.AppendString("</DESCRIPTION>");
+
+        // Add standard field footer
+        buffer.AppendLine("   </FIELD>");
+
         // Retrieve the next property
         starProperty = star->GetNextProperty(mcsFALSE);
         i++;
     }
 
+    // Serialize each of its properties as group description
+    i = 0;
+    starProperty = star->GetNextProperty(mcsTRUE);
+    while (starProperty != NULL)
+    {
+        // Add standard group header
+        buffer.AppendLine("   <GROUP");
+
+        // Add group name
+        buffer.AppendString(" name=\"");
+        const char* propertyName = starProperty->GetName();
+        buffer.AppendString(propertyName);
+        buffer.AppendString("\"");
+
+        // Add group ucd
+        buffer.AppendString(" ucd=\"");
+        buffer.AppendString(starProperty->GetId());
+        buffer.AppendString("\"");
+
+        // Close GROUP opened markup
+        buffer.AppendString(">");
+        
+        // Add field description
+        buffer.AppendLine("    <DESCRIPTION>");
+        buffer.AppendString(propertyName);
+        buffer.AppendString(" with its origin and confidence index</DESCRIPTION>");
+ 
+        // Bind ORIGIN field ref
+        sprintf(tmp, "col%d", i+1);
+        buffer.AppendLine("   <FIELDref ref=\"");
+        buffer.AppendString(tmp);
+        buffer.AppendString("\" />");
+
+        // Bind CONFIDENCE field ref
+        sprintf(tmp, "col%d", i+2);
+        buffer.AppendLine("   <FIELDref ref=\"");
+        buffer.AppendString(tmp);
+        buffer.AppendString("\" />");
+
+        // Add standard group footer
+        buffer.AppendLine("   </GROUP>");
+        
+        // Retrieve the next property
+        starProperty = star->GetNextProperty(mcsFALSE);
+        i+=3;
+    }
     // Serialize each star property value
     buffer.AppendLine("   <DATA>");
     buffer.AppendLine("    <TABLEDATA>");
@@ -266,49 +388,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
             init = mcsFALSE;
 
             // Add standard column header beginning
-            buffer.AppendString("<TD");
-
-/** @todo Re-enable origin and confidence index attributes serialization */
-/*
-            // Serialize star property origin if any
-            const char* origin = starProperty->GetOrigin();
-            if (origin != NULL)
-            {
-                mcsSTRING256 originTag;
-                snprintf(originTag, sizeof(originTag)," origin=\"%s\"", origin);
-                buffer.AppendString(originTag);
-            }
-
-            // Serialize star property confidence index if any
-            if (starProperty->IsComputed() == mcsTRUE)
-            {
-                vobsCONFIDENCE_INDEX confidence =
-                                             starProperty->GetConfidenceIndex();
-                mcsSTRING256 confidenceTag;
-                switch(confidence)
-                {
-                    case vobsCONFIDENCE_LOW:
-                        snprintf(confidenceTag, sizeof(confidenceTag),
-                                 " confidence=\"LOW\"");
-                        buffer.AppendString(confidenceTag);
-                        break;
-
-                    case vobsCONFIDENCE_MEDIUM:
-                        snprintf(confidenceTag, sizeof(confidenceTag),
-                                 " confidence=\"MEDIUM\"");
-                        buffer.AppendString(confidenceTag);
-                        break;
-
-                    case vobsCONFIDENCE_HIGH:
-                        snprintf(confidenceTag, sizeof(confidenceTag),
-                                 " confidence=\"HIGH\"");
-                        buffer.AppendString(confidenceTag);
-                        break;
-                }
-            }
-*/
-            // Add standard column header end
-            buffer.AppendString(">");
+            buffer.AppendString("<TD>");
 
             // Add value if it is not "-"
             const char* value = starProperty->GetValue();
@@ -324,6 +404,43 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
 
             // Add standard column footer
             buffer.AppendString("</TD>");
+
+            // Add ORIGIN value
+            buffer.AppendString("<TD>");
+            const char* origin = starProperty->GetOrigin();
+            if (origin != NULL)
+            {
+                buffer.AppendString(origin);
+            }
+
+            // Add standard column footer
+            buffer.AppendString("</TD>");
+            
+            // Add CONFIDENCE value
+            buffer.AppendString("<TD>");
+            if (starProperty->IsComputed() == mcsTRUE)
+            {
+                vobsCONFIDENCE_INDEX confidence =
+                                             starProperty->GetConfidenceIndex();
+                switch(confidence)
+                {
+                    case vobsCONFIDENCE_LOW:
+                        buffer.AppendString("LOW");
+                        break;
+
+                    case vobsCONFIDENCE_MEDIUM:
+                        buffer.AppendString("MEDIUM");
+                        break;
+
+                    case vobsCONFIDENCE_HIGH:
+                        buffer.AppendString("HIGH");
+                        break;
+                }
+            }
+
+            // Add standard column footer
+            buffer.AppendString("</TD>");
+            
         }
 
         // Add standard row footer
