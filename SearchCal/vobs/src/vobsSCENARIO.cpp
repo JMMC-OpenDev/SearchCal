@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.38 2006-02-21 16:32:00 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.39 2006-03-01 12:38:44 lafrasse Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.38  2006/02/21 16:32:00  scetre
+* Updated documentation
+*
 * Revision 1.37  2006/01/18 08:46:49  scetre
 * Managed the new option which could be gave to a catalog
 *
@@ -121,7 +124,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.38 2006-02-21 16:32:00 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.39 2006-03-01 12:38:44 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -146,6 +149,7 @@ using namespace std;
 /*
  * Local Headers 
  */
+#include "vobsDISTANCE_FILTER.h"
 #include "vobsSCENARIO.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
@@ -191,20 +195,20 @@ vobsSCENARIO::~vobsSCENARIO()
  * @return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32   catalogName,
-                                     vobsREQUEST   *request,
-                                     vobsSTAR_LIST *listInput,
-                                     vobsSTAR_LIST *listOutput,
-                                     vobsACTION action,
-                                     vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
-                                     vobsFILTER    *filter,
-                                     string queryOption)
+mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32                   catalogName,
+                                     vobsREQUEST*                  request,
+                                     vobsSTAR_LIST*                listInput,
+                                     vobsSTAR_LIST*                listOutput,
+                                     vobsACTION                    action,
+                                     vobsSTAR_COMP_CRITERIA_LIST*  criteriaList,
+                                     vobsFILTER*                   filter,
+                                     string                        queryOption)
 {
     logTrace("vobsSCENARIO::AddEntry()");
     
     // Create a new entry
-    // Affect in this entry the catalogName, the list input, the list output, the
-    // action to do, and the criteria list
+    // Affect in this entry the catalogName, the list input, the list output,
+    // the action to do, and the criteria list
     vobsSCENARIO_ENTRY entry(catalogName,
                              request,
                              listInput,
@@ -246,12 +250,12 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     // Create a temporary list of star in xhich will be store the lst input
     vobsSTAR_LIST tempList;
     // Create an iterator for this temporary list
-    _entryIterator=_entryList.begin();
+    _entryIterator = _entryList.begin();
     // For each entry
     while (_entryIterator != _entryList.end())
     {
         vobsSTAR_COMP_CRITERIA_LIST *criteriaList;
-        criteriaList = (*_entryIterator)._criteriaList;
+        criteriaList = _entryIterator->_criteriaList;
 
         // Begin to clean the temporary list
         if (tempList.Clear() == mcsFAILURE)
@@ -260,27 +264,28 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         }
 
         // Copy the list input into it
-        if ((*_entryIterator)._listInput != NULL)
+        vobsSTAR_LIST* inputList = _entryIterator->_listInput;
+        if (inputList != NULL)
         {
-            tempList.Copy(*(*_entryIterator)._listInput);
+            tempList.Copy(*inputList);
         }
 
 
         // **** CATALOG QUERYING ****
-        // If there is a catalog to query 
-        if ((strcmp((*_entryIterator)._catalogName, vobsNO_CATALOG_ID) != 0) &&
-            ((((*_entryIterator)._listInput == NULL) ||
-              (((*_entryIterator)._listInput !=NULL) &&
-               (((*_entryIterator)._listInput)->Size()!=0)))))
+        // If there is a catalog to query
+        char* catalogName = _entryIterator->_catalogName;
+        if ((strcmp(catalogName, vobsNO_CATALOG_ID) != 0) &&
+            ((inputList == NULL) ||
+             ((inputList != NULL) && (inputList->Size() != 0))))
         {
             // Start research in entry's catalog
-            logInfo("Consulting %s ...", (*_entryIterator)._catalogName);
+            logInfo("Consulting %s ...", catalogName);
 
             // define action for timlog trace
             mcsSTRING256 timLogActionName;
             // Get catalog name, and replace '/' by '_'
             mcsSTRING32 catalog;
-            strcpy(catalog, (*_entryIterator)._catalogName);
+            strcpy(catalog, catalogName);
             if (miscReplaceChrByChr(catalog, '/', '_') == mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -288,7 +293,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
             strcpy(timLogActionName, catalog);
             // Add request type (primary or not)
-            if ((*_entryIterator)._listInput == NULL)
+            if (inputList == NULL)
             {
                 strcat(timLogActionName, "_1");
             }
@@ -320,8 +325,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
 
             // Get catalog from list
-            vobsCATALOG *tempCatalog = 
-                _catalogList->Get((*_entryIterator)._catalogName);
+            vobsCATALOG *tempCatalog = _catalogList->Get(catalogName);
             if (tempCatalog == NULL)
             {
                 errAdd(vobsERR_UNKNOWN_CATALOG);
@@ -329,10 +333,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
 
             // Get query option from scenario entry
-            string queryOption = (*_entryIterator).GetQueryOption();
+            string queryOption = _entryIterator->GetQueryOption();
             tempCatalog->SetOption(queryOption);
             
-            vobsREQUEST *request = (*_entryIterator)._request;
+            vobsREQUEST* request = _entryIterator->_request;
             // if research failed, return mcsFAILURE
             if ((tempCatalog)->Search(*request, tempList) == mcsFAILURE )
             {
@@ -353,7 +357,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 // This file will be stored in the $MCSDATA/tmp repository
                 mcsSTRING256 logFileName;
-                const char   *resolvedPath;
+                const char*  resolvedPath;
                 strcpy(logFileName, "$MCSDATA/tmp/");
 
                 // Get band used for search
@@ -363,7 +367,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
                 // Get catalog name, and replace '/' by '_'
                 mcsSTRING32 catalogName;
-                strcpy (catalogName, ((*_entryIterator)._catalogName));
+                strcpy(catalogName, catalogName);
                 if (miscReplaceChrByChr(catalogName, '/', '_') == mcsFAILURE)
                 {
                     return mcsFAILURE;
@@ -372,7 +376,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 strcat(logFileName, catalogName);
 
                 // Add request type (primary or not)
-                if ((*_entryIterator)._listInput == NULL)
+                if (inputList == NULL)
                 {
                     strcat(logFileName, "_1.log");
                 }
@@ -397,79 +401,80 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // **** LIST COPYING/MERGING ****
         // There are 3 different action to do when the scenario is
         // executed
-        switch((*_entryIterator)._action)
+        vobsSTAR_LIST* outputList = _entryIterator->_listOutput;
+        switch(_entryIterator->_action)
         {
             // First action is vobsCOPY. The list output will be clear and
             // it will be merge from the temporary list which contain 
             // the list input
             case vobsCOPY:
+            {
+                if (outputList->Clear() == mcsFAILURE)
                 {
-                    if (((*_entryIterator)._listOutput)->Clear() ==
-                        mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
-                    if (((*_entryIterator)._listOutput)->
-                        Merge(tempList, criteriaList) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
-                    logInfo("after COPY, star list size = %d",
-                            ((*_entryIterator)._listOutput)->Size());
+                    return mcsFAILURE;
                 }
-                // second action is vobsMERGE. The list output will be 
-                // merge from the temporary list whitout being clear.
-                // The information which is stored in the the list 
-                // output is preserved and can be modified
-            case vobsMERGE:
-                {
-                    if (((*_entryIterator)._listOutput)->
-                        Merge(tempList, criteriaList) == mcsFAILURE )
-                    {
-                        return mcsFAILURE;
-                    }
-                    logInfo("after MERGE, star list size = %d",
-                            ((*_entryIterator)._listOutput)->Size());
-                }
-                // third action is vobsUPDATE_ONLY. The list output will
-                // be merge from thetemporary list, but this merge will
-                // not modified the existant information of the list output
-            case vobsUPDATE_ONLY:
-                {
 
-                    if ( ((*_entryIterator)._listOutput)->
-                         Merge(tempList, criteriaList, mcsTRUE) == mcsFAILURE )
-                    {
-                        return mcsFAILURE;
-                    }
-                    logInfo("after UPDATE_ONLY, star list size = %d",
-                            ((*_entryIterator)._listOutput)->Size());
+                if (outputList->Merge(tempList, criteriaList) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
                 }
+
+                logInfo("after COPY, star list size = %d", outputList->Size());
+            }
+
+            // Second action is vobsMERGE. The list output will be 
+            // merge from the temporary list whitout being clear.
+            // The information which is stored in the the list 
+            // output is preserved and can be modified
+            case vobsMERGE:
+            {
+                if (outputList->Merge(tempList, criteriaList) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+
+                logInfo("after MERGE, star list size = %d", outputList->Size());
+            }
+
+            // Third action is vobsUPDATE_ONLY. The list output will
+            // be merge from thetemporary list, but this merge will
+            // not modified the existant information of the list output
+            case vobsUPDATE_ONLY:
+            {
+                if (outputList->Merge(tempList, criteriaList, mcsTRUE)
+                    == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+
+                logInfo("after UPDATE_ONLY, star list size = %d",
+                        outputList->Size());
+            }
+
             default:
                 break;
         }
 
         // **** LIST FILTERING ****
         // Apply filter if defined
-        if ((*_entryIterator)._filter != NULL)
+        vobsFILTER* filter = _entryIterator->_filter;
+        if (filter != NULL)
         {
-            ((*_entryIterator)._filter)->
-                Apply((*_entryIterator)._listOutput);
-            logInfo("after FILTER, star list size = %d",
-                            ((*_entryIterator)._listOutput)->Size());
+            filter->Apply(outputList);
+            logInfo("after FILTER, star list size = %d", outputList->Size());
         }
         
         // Next entry
         _entryIterator++;
     }
-   
+
     // Copy resulting list
-    if (starList.Copy(*(_entryList.back())._listOutput) == mcsFAILURE)
+    if (starList.Copy(*_entryList.back()._listOutput) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     logInfo("%d star(s) found.", starList.Size()); 
-    
+
     _catalogIndex = 0;
     return mcsSUCCESS;
 }
