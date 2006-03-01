@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.6 2005-12-14 15:07:53 scetre Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.7 2006-03-01 16:41:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/12/14 15:07:53  scetre
+ * Added log information about deleted star in filters
+ *
  * Revision 1.5  2005/12/13 16:30:33  lafrasse
  * Added filter Id management through additional constructor parameter
  *
@@ -36,7 +39,7 @@
  * Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.6 2005-12-14 15:07:53 scetre Exp $"; 
+static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.7 2006-03-01 16:41:38 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -85,16 +88,17 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(mcsSTRING32 raRef,
-                                                    mcsSTRING32 decRef,
-                                                    mcsFLOAT raRange,
-                                                    mcsFLOAT decRange)
+mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32  raRef,
+                                                    const mcsSTRING32  decRef,
+                                                    const mcsFLOAT     raRange,
+                                                    const mcsFLOAT     decRange)
 {
     logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
 
     // Copy right ascension and declinaison get in parameter
-    strcpy(_raRef, raRef);
-    strcpy(_decRef, decRef);
+    strncpy(_raRef,  raRef,  sizeof(_raRef));
+    strncpy(_decRef, decRef, sizeof(_decRef));
+
     // Copy right ascension and declinaison range get as parameter
     _raRange  = raRange;
     _decRange = decRange;
@@ -120,8 +124,8 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
     logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
     
     // Copy right ascension and declinaison get in parameter
-    strcpy(*raRef, _raRef);
-    strcpy(*decRef, _decRef);
+    strncpy(*raRef,  _raRef,  sizeof(*raRef));
+    strncpy(*decRef, _decRef, sizeof(*decRef));
 
     // Copy right ascension and declinaison range get as parameter
     *raRange  = _raRange;
@@ -142,48 +146,54 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsDISTANCE_FILTER::Apply()");
 
-    // create a star correponding to the science object
+    // Create a star correponding to the science object
     vobsSTAR scienceStar;
+
     // Set right ascension property (ref) to this star
-    if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,
-                                     _raRef, "") == mcsFAILURE)
+    if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, _raRef, "") ==
+        mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
     // Set declinaison property (ref) to this star
-    if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN,
-                                     _decRef, "") == mcsFAILURE)
+    if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, _decRef, "") ==
+        mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Create a criterialist
     vobsSTAR_COMP_CRITERIA_LIST criteriaList;
+
     // Add criteria on right ascension
     if (criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, _raRange) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
     // Add criteria on declinaison
     if (criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, _decRange) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // for each star of the list
-    vobsSTAR *star;
+    // For each star of the list
+    vobsSTAR* star;
     for (unsigned int el = 0; el < list->Size(); el++)
     {
-        (star=(vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0)));
-        mcsSTRING32 starId;
+        star = list->GetNextStar((mcsLOGICAL)(el == 0));
+
         // Get Star ID
+        mcsSTRING32 starId;
         if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        // if the star is different of the science star according to the
+
+        // If the star is different of the science star according to the
         // criteria list
-        if (star->IsSame(scienceStar, &criteriaList) != mcsTRUE)
+        if (star->IsSame(scienceStar, &criteriaList) == mcsFALSE)
         {
             // Remove it
             logTest("star %s not in the box\n", starId);
@@ -193,7 +203,6 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
         else
         {
             logTest("star %s in the box\n", starId);
-            
         }
     }
     

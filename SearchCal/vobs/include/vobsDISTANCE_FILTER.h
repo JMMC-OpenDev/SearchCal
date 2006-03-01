@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.6 2006-03-01 16:41:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.4  2005/11/29 13:45:57  gzins
  * Removed filter name definition
  *
@@ -73,14 +76,16 @@ public:
     // Class destructor
     virtual ~vobsDISTANCE_FILTER();
 
-    virtual mcsCOMPL_STAT SetDistanceValue(mcsSTRING32 raRef,
-                                           mcsSTRING32 decRef,
-                                           mcsFLOAT raRange,
-                                           mcsFLOAT decRange);
-    virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32 *raRef,
-                                           mcsSTRING32 *decRef,
-                                           mcsFLOAT *raRange,
-                                           mcsFLOAT *decRange);
+    virtual mcsCOMPL_STAT SetDistanceValue(const mcsSTRING32  raRef,
+                                           const mcsSTRING32  decRef,
+                                           const mcsFLOAT     raRange,
+                                           const mcsFLOAT     decRange);
+
+    virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32*  raRef,
+                                           mcsSTRING32*  decRef,
+                                           mcsFLOAT*     raRange,
+                                           mcsFLOAT*     decRange);
+
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
 protected:
@@ -91,10 +96,10 @@ private:
     vobsDISTANCE_FILTER(const vobsDISTANCE_FILTER&);
     vobsDISTANCE_FILTER& operator=(const vobsDISTANCE_FILTER&);
 
-    mcsSTRING32 _raRef;
-    mcsSTRING32 _decRef;
-    mcsFLOAT _raRange;
-    mcsFLOAT _decRange;
+    mcsSTRING32  _raRef;
+    mcsSTRING32  _decRef;
+    mcsFLOAT     _raRange;
+    mcsFLOAT     _decRange;
 };
 
 #endif /*!vobsDISTANCE_FILTER_H*/
