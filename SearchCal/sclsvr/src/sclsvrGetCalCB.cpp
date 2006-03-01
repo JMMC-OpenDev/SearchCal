@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.31 2006-02-23 16:08:21 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.32 2006-03-01 16:52:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2006/02/23 16:08:21  lafrasse
+ * Added error stack purge in case of bad 'sdb' initialization
+ *
  * Revision 1.30  2006/02/22 17:08:33  lafrasse
  * Made it works even if there is no more semaphores left on the running system (no GUI progression in this case)
  *
@@ -98,7 +101,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.31 2006-02-23 16:08:21 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.32 2006-03-01 16:52:44 lafrasse Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -344,7 +347,31 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Remove the science object if it belongs to the calibrator list.
+    ////////////////////////////////////////////////////////////////////////////
+    // 1) Make a copy of the calibrator list in order to create a temp list
+    // containing all calibrators within 0.01 ra and dec of the user coordinates
+    vobsSTAR_LIST scienceObjects;
+    scienceObjects.Copy(calibratorList);
+    // 2) Create a filter to only get stars near the original science object
+    vobsDISTANCE_FILTER distanceFilter("");
+    distanceFilter.SetDistanceValue(request.GetObjectRa(),
+                                    request.GetObjectDec(),
+                                    0.01, 0.01);
+    // 3) Apply the filter to the copied calibrator list
+    distanceFilter.Apply(&scienceObjects);
+    // 4) Remove from the original calibrator list any star left by the filter
+    // in the temporary list
+    vobsSTAR* currentStar = scienceObjects.GetNextStar(mcsTRUE);
+    while (currentStar != NULL)
+    {
+        calibratorList.Remove(*currentStar);
+        currentStar = scienceObjects.GetNextStar();
+    }
+    ////////////////////////////////////////////////////////////////////////////
+
     if (sdbWriteAction("Done", mcsTRUE) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
