@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.10 2006-03-01 12:40:29 mella Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.11 2006-03-03 15:03:28 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/03/01 12:40:29  mella
+ * Add group to include origin and confidence indexes, ucd still needs to be
+ * updated
+ *
  * Revision 1.9  2006/02/24 15:03:39  lafrasse
  * Added error management (and disabled code to generate origin and confidence
  * index as VOTable cell attributes)
@@ -44,8 +48,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId="@(#) $Id: vobsVOTABLE.cpp,v 1.10 2006-03-01 12:40:29 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.11 2006-03-03 15:03:28 scetre Exp $"; 
 
 /* 
  * System Headers 

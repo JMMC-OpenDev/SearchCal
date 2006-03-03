@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.11 2006-02-21 16:32:00 scetre Exp $"
+ * "@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.12 2006-03-03 15:03:28 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2006/02/21 16:32:00  scetre
+ * Updated documentation
+ *
  * Revision 1.10  2006/01/18 08:46:49  scetre
  * Managed the new option which could be gave to a catalog
  *
@@ -44,8 +47,7 @@
  *  Definition of vobsSCENARIO_ENTRY class.
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.11 2006-02-21 16:32:00 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.12 2006-03-03 15:03:28 scetre Exp $"; 
 
 /* 
  * System Headers 

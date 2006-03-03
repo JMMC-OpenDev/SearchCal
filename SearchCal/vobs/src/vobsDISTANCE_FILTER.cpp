@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.7 2006-03-01 16:41:38 lafrasse Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.8 2006-03-03 15:03:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/03/01 16:41:38  lafrasse
+ * Added const attributes for SetDistanceValue() method parameters.
+ * Replaced all the 'strcpy' calls with 'strncpy'.
+ * Code review
+ *
  * Revision 1.6  2005/12/14 15:07:53  scetre
  * Added log information about deleted star in filters
  *
@@ -39,8 +44,7 @@
  * Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.7 2006-03-01 16:41:38 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.8 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

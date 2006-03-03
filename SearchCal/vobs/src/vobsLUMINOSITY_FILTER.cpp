@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.5 2005-12-14 15:07:53 scetre Exp $"
+ * "@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.6 2006-03-03 15:03:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/14 15:07:53  scetre
+ * Added log information about deleted star in filters
+ *
  * Revision 1.4  2005/12/13 16:30:33  lafrasse
  * Added filter Id management through additional constructor parameter
  *
@@ -36,8 +39,7 @@
  *  Definition of vobsLUMINOSITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.5 2005-12-14 15:07:53 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.6 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

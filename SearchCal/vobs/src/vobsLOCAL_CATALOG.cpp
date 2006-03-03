@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.10 2006-02-28 13:18:48 scetre Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/02/28 13:18:48  scetre
+ * Added error in SetOption method only if a non null string is gave as parameters
+ *
  * Revision 1.9  2006/01/18 08:45:38  scetre
  * Added option in generic local and remote catalog
  *
@@ -40,8 +43,7 @@
  *  Definition of vobsLOCAL_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.10 2006-02-28 13:18:48 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.27 2005-12-05 13:07:57 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.28 2006-03-03 15:03:27 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2005/12/05 13:07:57  scetre
+* Added error on paralax
+*
 * Revision 1.26  2005/11/24 13:16:43  scetre
 * Added test on CODE_VARIB ucd and TYC1 for ID_ALTERNATIVE
 *
@@ -86,8 +89,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCDATA.cpp,v 1.27 2005-12-05 13:07:57 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.28 2006-03-03 15:03:27 scetre Exp $"; 
 
 
 /* 

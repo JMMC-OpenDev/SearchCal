@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.32 2006-02-22 11:21:03 gzins Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.33 2006-03-03 15:03:28 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2006/02/22 11:21:03  gzins
+ * Fixed bug related to RA/DEC format
+ *
  * Revision 1.31  2005/12/07 15:10:09  scetre
  * Removed unused printf
  *
@@ -93,8 +96,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: vobsREQUEST.cpp,v 1.32 2006-02-22 11:21:03 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREQUEST.cpp,v 1.33 2006-03-03 15:03:28 scetre Exp $"; 
 
 /* 
  * System Headers 

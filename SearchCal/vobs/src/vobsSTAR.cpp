@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.67 2006-02-21 16:32:00 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.68 2006-03-03 15:03:28 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.67  2006/02/21 16:32:00  scetre
+* Updated documentation
+*
 * Revision 1.66  2006/01/18 15:59:45  scetre
 * Added GetPropertyConfIndex() method
 *
@@ -177,8 +180,7 @@
  */
 
 
-static char *rcsId="@(#) $Id: vobsSTAR.cpp,v 1.67 2006-02-21 16:32:00 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.68 2006-03-03 15:03:28 scetre Exp $"; 
 
 /*
  * System Headers

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.10 2005-12-22 10:38:45 scetre Exp $"
+ * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/12/22 10:38:45  scetre
+ * Updated doxygen documentation
+ *
  * Revision 1.9  2005/12/13 16:30:33  lafrasse
  * Added filter Id management through additional constructor parameter
  *
@@ -46,8 +49,7 @@
  *  Definition of vobsFILTER_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsFILTER_LIST.cpp,v 1.10 2005-12-22 10:38:45 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsFILTER_LIST.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

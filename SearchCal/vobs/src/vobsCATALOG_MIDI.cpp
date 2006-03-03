@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.24 2005-11-23 17:30:21 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.25 2006-03-03 15:03:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/11/23 17:30:21  lafrasse
+ * Added circular search box geometry support and normalized area size methods
+ *
  * Revision 1.23  2005/11/16 10:47:55  scetre
  * Updated documentation
  *
@@ -81,8 +84,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.24 2005-11-23 17:30:21 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.25 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

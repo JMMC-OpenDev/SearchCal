@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.7 2005-12-14 15:07:53 scetre Exp $"
+ * "@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.8 2006-03-03 15:03:28 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/12/14 15:07:53  scetre
+ * Added log information about deleted star in filters
+ *
  * Revision 1.6  2005/12/13 16:30:33  lafrasse
  * Added filter Id management through additional constructor parameter
  *
@@ -42,8 +45,7 @@
  *  Definition of vobsSPECTRAL_TYPE_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.7 2005-12-14 15:07:53 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.8 2006-03-03 15:03:28 scetre Exp $"; 
 
 /* 
  * System Headers 

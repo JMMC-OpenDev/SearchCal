@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.30 2006-01-05 09:07:39 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.31 2006-03-03 15:03:28 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.30  2006/01/05 09:07:39  lafrasse
+* Code review
+*
 * Revision 1.29  2005/12/22 10:38:45  scetre
 * Updated doxygen documentation
 *
@@ -84,8 +87,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsSTAR_LIST.cpp,v 1.30 2006-01-05 09:07:39 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.31 2006-03-03 15:03:28 scetre Exp $"; 
 
 
 /* 

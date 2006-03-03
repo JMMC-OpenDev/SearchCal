@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.18 2006-02-20 16:30:49 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.19 2006-03-03 15:03:27 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2006/02/20 16:30:49  scetre
+* Patched with option -c.geom=b in request
+*
 * Revision 1.17  2005/11/23 17:30:21  lafrasse
 * Added circular search box geometry support and normalized area size methods
 *
@@ -63,8 +66,7 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.18 2006-02-20 16:30:49 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.19 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

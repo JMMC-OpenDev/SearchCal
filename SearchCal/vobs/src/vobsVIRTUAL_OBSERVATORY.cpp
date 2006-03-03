@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.35 2006-01-05 09:07:39 lafrasse Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.36 2006-03-03 15:03:28 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.35  2006/01/05 09:07:39  lafrasse
+* Code review
+*
 * Revision 1.34  2005/11/21 13:48:56  scetre
 * Clear the entering list
 *
@@ -107,8 +110,7 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.35 2006-01-05 09:07:39 lafrasse Exp $";
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.36 2006-03-03 15:03:28 scetre Exp $";
 
 
 /*

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.6 2005-11-29 13:52:41 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/11/29 13:52:41  gzins
+ * Use local iterator instead of class member which has been removed
+ *
  * Revision 1.5  2005/11/29 10:32:32  gzins
  * Added error handling
  *
@@ -28,8 +31,7 @@
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.6 2005-11-29 13:52:41 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

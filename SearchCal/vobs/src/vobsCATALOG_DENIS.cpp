@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.10 2005-11-23 08:34:31 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/11/23 08:34:31  scetre
+* Added property for faint K scenario
+*
 * Revision 1.9  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -39,8 +42,7 @@
  * vobsCATALOG_DENIS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.10 2005-11-23 08:34:31 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

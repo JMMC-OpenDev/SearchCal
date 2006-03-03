@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.26 2006-02-20 16:30:49 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.27 2006-03-03 15:03:27 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2006/02/20 16:30:49  scetre
+* Patched with option -c.geom=b in request
+*
 * Revision 1.25  2006/01/18 08:46:18  scetre
 * Added option in the query
 *
@@ -89,8 +92,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.26 2006-02-20 16:30:49 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.27 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

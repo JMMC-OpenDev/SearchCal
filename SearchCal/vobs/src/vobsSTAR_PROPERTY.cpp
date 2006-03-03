@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.22 2006-02-21 16:32:00 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.23 2006-03-03 15:03:28 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2006/02/21 16:32:00  scetre
+* Updated documentation
+*
 * Revision 1.21  2006/01/09 16:08:46  lafrasse
 * Added proper _link member support in operator=() method
 * Updated copy constructor to use operator=() method instead of code duplication
@@ -74,8 +77,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.22 2006-02-21 16:32:00 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.23 2006-03-03 15:03:28 scetre Exp $"; 
 
 
 /* 

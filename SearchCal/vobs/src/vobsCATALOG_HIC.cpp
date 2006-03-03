@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.11 2005-11-21 13:47:57 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_HIC.cpp,v 1.12 2006-03-03 15:03:27 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2005/11/21 13:47:57  scetre
+* arrange properties when the URL is written
+*
 * Revision 1.10  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -42,8 +45,7 @@
  * vobsCATALOG_HIC class definition.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.11 2005-11-21 13:47:57 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_HIC.cpp,v 1.12 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

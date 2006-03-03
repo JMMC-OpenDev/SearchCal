@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.25 2005-11-16 10:47:55 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.26 2006-03-03 15:03:27 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2005/11/16 10:47:55  scetre
+* Updated documentation
+*
 * Revision 1.24  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -74,8 +77,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsPARSER.cpp,v 1.25 2005-11-16 10:47:55 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.26 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

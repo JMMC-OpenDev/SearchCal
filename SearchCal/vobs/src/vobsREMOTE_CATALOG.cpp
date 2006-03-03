@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.10 2006-01-18 08:45:38 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.11 2006-03-03 15:03:28 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2006/01/18 08:45:38  scetre
+* Added option in generic local and remote catalog
+*
 * Revision 1.9  2005/11/29 08:22:23  scetre
 * Minor changes
 *
@@ -41,8 +44,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.10 2006-01-18 08:45:38 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.11 2006-03-03 15:03:28 scetre Exp $"; 
 
 /* 
  * System Headers 

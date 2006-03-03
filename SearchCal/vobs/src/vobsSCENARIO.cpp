@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.39 2006-03-01 12:38:44 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.40 2006-03-03 15:03:28 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.39  2006/03/01 12:38:44  lafrasse
+* Streamlined code with systematic use of temporary variables
+*
 * Revision 1.38  2006/02/21 16:32:00  scetre
 * Updated documentation
 *
@@ -124,8 +127,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: vobsSCENARIO.cpp,v 1.39 2006-03-01 12:38:44 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.40 2006-03-03 15:03:28 scetre Exp $"; 
 
 
 /* 

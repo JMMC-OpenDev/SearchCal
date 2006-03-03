@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.6 2005-12-22 10:38:45 scetre Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/12/22 10:38:45  scetre
+ * Updated doxygen documentation
+ *
  * Revision 1.5  2005/12/14 15:07:53  scetre
  * Added log information about deleted star in filters
  *
@@ -63,8 +66,7 @@
  * Definition of vobsGENERIC_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.6 2005-12-22 10:38:45 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

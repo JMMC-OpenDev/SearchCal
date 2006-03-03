@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.7 2006-02-20 16:30:49 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.8 2006-03-03 15:03:27 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/02/20 16:30:49  scetre
+ * Patched with option -c.geom=b in request
+ *
  * Revision 1.6  2005/11/23 17:30:21  lafrasse
  * Added circular search box geometry support and normalized area size methods
  *
@@ -32,8 +35,7 @@
  *  Definition of vobsCATALOG_MERAND class.
  */
 
-static char *rcsId="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.7 2006-02-20 16:30:49 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.8 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 
