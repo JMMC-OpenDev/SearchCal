@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrServer.cpp,v 1.9 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrServer.cpp,v 1.10 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.8  2005/03/08 16:33:51  gzins
  * Disconnected process from message service before exiting
  *
@@ -24,8 +27,7 @@
  * Search Calibrators SERVER
  */
 
-static char *rcsId="@(#) $Id: sclsvrServer.cpp,v 1.9 2005-10-26 11:27:24 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.10 2006-03-03 15:25:23 scetre Exp $"; 
 
 
 /* 

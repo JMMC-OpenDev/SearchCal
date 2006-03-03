@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_N.cpp,v 1.2 2005-11-16 14:28:02 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_N.cpp,v 1.3 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/16 14:28:02  scetre
+ * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
+ *
  * Revision 1.1  2005/11/15 15:00:33  scetre
  * Added scenario K V and N
  *
@@ -16,8 +19,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_N class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_N.cpp,v 1.2 2005-11-16 14:28:02 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_N.cpp,v 1.3 2006-03-03 15:25:23 scetre Exp $"; 
 
 /* 
  * System Headers 

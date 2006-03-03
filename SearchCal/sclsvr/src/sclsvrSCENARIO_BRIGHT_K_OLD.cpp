@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.2 2005-12-14 09:02:35 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.3 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/12/14 09:02:35  scetre
+ * Changed constructor in order to handle the filter of the scenario classes
+ *
  * Revision 1.1  2005/12/12 14:07:57  scetre
  * Added old scenario with 2mass in primary request
  *
@@ -16,8 +19,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_OLD class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.2 2005-12-14 09:02:35 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.3 2006-03-03 15:25:23 scetre Exp $"; 
 
 /* 
  * System Headers 

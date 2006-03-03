@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.51 2005-11-14 14:48:13 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.52 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.51  2005/11/14 14:48:13  lafrasse
+ * Changed hard coded property id used to sort calibrator according their disctance to the science object to a definied constant
+ *
  * Revision 1.50  2005/11/14 14:19:41  lafrasse
  * Added "distance to science object" computation and sorting
  *
@@ -136,8 +139,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.51 2005-11-14 14:48:13 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.52 2006-03-03 15:25:23 scetre Exp $"; 
 
 
 /* 

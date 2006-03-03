@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.69 2006-01-23 14:12:25 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.70 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.69  2006/01/23 14:12:25  scetre
+ * Added Av parameter as a property of a calibrator
+ *
  * Revision 1.68  2006/01/18 16:01:09  scetre
  * Use the confidence index of corrected magnitude in the computed apparent magnitudes
  *
@@ -159,8 +162,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.69 2006-01-23 14:12:25 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.70 2006-03-03 15:25:23 scetre Exp $"; 
 
 
 /* 

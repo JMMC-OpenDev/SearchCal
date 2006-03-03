@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.10 2005-12-14 09:04:00 scetre Exp $"
+ * "@(#) $Id: sclsvrTestCalibrator.cpp,v 1.11 2006-03-03 15:25:35 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/12/14 09:04:00  scetre
+ * Used new filter constructor
+ *
  * Revision 1.9  2005/12/13 14:36:43  scetre
  * Updated use of new filters
  *
@@ -26,8 +29,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.10 2005-12-14 09:04:00 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrTestCalibrator.cpp,v 1.11 2006-03-03 15:25:35 scetre Exp $"; 
 
 /* 
  * System Headers 

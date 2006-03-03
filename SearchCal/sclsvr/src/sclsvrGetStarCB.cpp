@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.27 2006-02-23 16:08:21 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.28 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2006/02/23 16:08:21  lafrasse
+ * Added error stack purge in case of bad 'sdb' initialization
+ *
  * Revision 1.26  2006/02/22 17:08:33  lafrasse
  * Made it works even if there is no more semaphores left on the running system (no GUI progression in this case)
  *
@@ -54,8 +57,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetStarCB.cpp,v 1.27 2006-02-23 16:08:21 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.28 2006-03-03 15:25:23 scetre Exp $"; 
 
 
 /* 

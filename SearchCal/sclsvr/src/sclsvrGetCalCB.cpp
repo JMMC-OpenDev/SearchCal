@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.32 2006-03-01 16:52:44 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.33 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2006/03/01 16:52:44  lafrasse
+ * Added code to remove the science object if it belongs to the calibrator list.
+ *
  * Revision 1.31  2006/02/23 16:08:21  lafrasse
  * Added error stack purge in case of bad 'sdb' initialization
  *
@@ -101,8 +104,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId="@(#) $Id: sclsvrGetCalCB.cpp,v 1.32 2006-03-01 16:52:44 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.33 2006-03-03 15:25:23 scetre Exp $"; 
 
 
 /* 

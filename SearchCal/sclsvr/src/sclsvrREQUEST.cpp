@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.18 2005-12-22 12:59:19 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.19 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2005/12/22 12:59:19  scetre
+ * Updated doxygen documentation
+ *
  * Revision 1.17  2005/12/16 19:33:22  scetre
  * Managed optional visErr
  *
@@ -69,8 +72,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrREQUEST.cpp,v 1.18 2005-12-22 12:59:19 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.19 2006-03-03 15:25:23 scetre Exp $"; 
 
 
 /* 

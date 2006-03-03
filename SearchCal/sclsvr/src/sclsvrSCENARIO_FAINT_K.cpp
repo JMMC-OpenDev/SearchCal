@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.17 2006-01-18 08:49:40 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.18 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2006/01/18 08:49:40  scetre
+ * Removed unused filter on Qflg and opt because they are now managed by the catalog option
+ *
  * Revision 1.16  2005/12/22 10:12:16  scetre
  * Added log
  *
@@ -63,8 +66,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.17 2006-01-18 08:49:40 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.18 2006-03-03 15:25:23 scetre Exp $"; 
 
 /* 
  * System Headers 

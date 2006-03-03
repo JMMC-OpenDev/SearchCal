@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.8 2006-02-21 16:52:39 scetre Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.9 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/02/21 16:52:39  scetre
+ * Moved the 2 same method in one in sclsvrSERVER.cpp
+ * move the 2 same struct in sclsvrPrivate.h
+ *
  * Revision 1.7  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -27,8 +31,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSERVER.cpp,v 1.8 2006-02-21 16:52:39 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.9 2006-03-03 15:25:23 scetre Exp $"; 
 
 
 /* 

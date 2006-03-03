@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.11 2006-01-18 08:49:40 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.12 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2006/01/18 08:49:40  scetre
+ * Removed unused filter on Qflg and opt because they are now managed by the catalog option
+ *
  * Revision 1.10  2005/12/14 09:02:35  scetre
  * Changed constructor in order to handle the filter of the scenario classes
  *
@@ -44,8 +47,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.11 2006-01-18 08:49:40 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.12 2006-03-03 15:25:23 scetre Exp $"; 
 
 /* 
  * System Headers 

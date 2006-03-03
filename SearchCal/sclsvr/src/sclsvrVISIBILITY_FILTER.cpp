@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.9 2006-02-21 12:16:33 gzins Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.10 2006-03-03 15:25:23 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2006/02/21 12:16:33  gzins
+ * Fixed wrong test on visibility; i.e. relative visibility is expressed in %
+ *
  * Revision 1.8  2005/12/14 15:13:41  scetre
  * Added log info of deleted stars in visibility filter
  *
@@ -39,8 +42,7 @@
  * Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.9 2006-02-21 12:16:33 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.10 2006-03-03 15:25:23 scetre Exp $"; 
 
 /* 
  * System Headers 
