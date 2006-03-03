@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestFilter.cpp,v 1.5 2005-12-07 12:23:38 gzins Exp $"
+ * "@(#) $Id: vobsTestFilter.cpp,v 1.6 2006-03-03 15:18:35 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/07 12:23:38  gzins
+ * Updated according to the new vobsGENERIC_FILTER API
+ *
  * Revision 1.4  2005/11/30 15:22:50  gzins
  * Changed vobsFILTER to vobsGENERIC_FILTER
  *
@@ -25,8 +28,7 @@
  * Test file on filter 
  */
 
-static char *rcsId="@(#) $Id: vobsTestFilter.cpp,v 1.5 2005-12-07 12:23:38 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestFilter.cpp,v 1.6 2006-03-03 15:18:35 scetre Exp $"; 
 
 
 /* 
@@ -131,33 +133,33 @@ int main(int argc, char *argv[])
     logTest("size of the list to filter = %d", starList.Size());
     starList.Display();
 
-    vobsGENERIC_FILTER filterOnQflag(vobsSTAR_CODE_QUALITY, vobsOR);
+    vobsGENERIC_FILTER filterOnQflag("Qflg", vobsSTAR_CODE_QUALITY, vobsOR);
     filterOnQflag.AddCondition(vobsEQUAL, "AAA");
     filterOnQflag.AddCondition(vobsEQUAL, "OOO");
     filterOnQflag.Enable();
 
-    vobsGENERIC_FILTER filteronKmagLess(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagLess("KLess", vobsSTAR_PHOT_JHN_K);
     filteronKmagLess.AddCondition(vobsLESS, 4);
     filteronKmagLess.Enable();
     
-    vobsGENERIC_FILTER filteronKmagMore(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagMore("KMore", vobsSTAR_PHOT_JHN_K);
     filteronKmagMore.AddCondition(vobsGREATER, 2);
     filteronKmagMore.Enable();
 
-    vobsGENERIC_FILTER filteronKmagLessEqual(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagLessEqual("KLessEqual", vobsSTAR_PHOT_JHN_K);
     filteronKmagLessEqual.AddCondition(vobsLESS_OR_EQUAL, 4);
     filteronKmagLessEqual.AddCondition(vobsGREATER_OR_EQUAL, 2);
     filteronKmagLessEqual.Enable();
 
-    vobsGENERIC_FILTER filteronKmagMoreEqual(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagMoreEqual("KMoreEquel", vobsSTAR_PHOT_JHN_K);
     filteronKmagMoreEqual.AddCondition(vobsGREATER_OR_EQUAL, 2);
     filteronKmagMoreEqual.Enable();
     
-    vobsGENERIC_FILTER filteronKmagEqual(vobsSTAR_PHOT_JHN_K);
+    vobsGENERIC_FILTER filteronKmagEqual("KEqual", vobsSTAR_PHOT_JHN_K);
     filteronKmagEqual.AddCondition(vobsEQUAL, 2);
     filteronKmagEqual.Enable();
         
-    vobsGENERIC_FILTER filteronKmagPlusPlus(vobsSTAR_PHOT_JHN_K, vobsOR);
+    vobsGENERIC_FILTER filteronKmagPlusPlus("K++", vobsSTAR_PHOT_JHN_K, vobsOR);
     filteronKmagPlusPlus.AddCondition(vobsEQUAL, 2);
     filteronKmagPlusPlus.AddCondition(vobsEQUAL, 5);
     filteronKmagPlusPlus.Enable();
