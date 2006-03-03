@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestCriteria.cpp,v 1.7 2005-11-16 10:45:14 scetre Exp $"
+ * "@(#) $Id: vobsTestCriteria.cpp,v 1.8 2006-03-03 15:17:43 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/11/16 10:45:14  scetre
+ * Updated vobs test
+ *
  * Revision 1.6  2005/02/15 15:26:06  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -18,8 +21,7 @@
  ******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: vobsTestCriteria.cpp,v 1.7 2005-11-16 10:45:14 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestCriteria.cpp,v 1.8 2006-03-03 15:17:43 scetre Exp $"; 
 
 
 /* 

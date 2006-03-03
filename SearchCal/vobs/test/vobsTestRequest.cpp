@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestRequest.cpp,v 1.10 2005-11-23 17:30:20 lafrasse Exp $"
+ * "@(#) $Id: vobsTestRequest.cpp,v 1.11 2006-03-03 15:17:43 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/11/23 17:30:20  lafrasse
+ * Added circular search box geometry support and normalized area size methods
+ *
  * Revision 1.9  2005/11/16 10:45:14  scetre
  * Updated vobs test
  *
@@ -39,8 +42,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: vobsTestRequest.cpp,v 1.10 2005-11-23 17:30:20 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestRequest.cpp,v 1.11 2006-03-03 15:17:43 scetre Exp $"; 
 
 
 /* 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStar.cpp,v 1.10 2005-11-16 10:45:14 scetre Exp $"
+ * "@(#) $Id: vobsTestStar.cpp,v 1.11 2006-03-03 15:17:43 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/11/16 10:45:14  scetre
+ * Updated vobs test
+ *
  * Revision 1.9  2005/02/13 08:54:00  gzins
  * Updated after vobs classes changes
  * Added CVS log as modifification history
@@ -15,8 +18,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStar.cpp,v 1.10 2005-11-16 10:45:14 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStar.cpp,v 1.11 2006-03-03 15:17:43 scetre Exp $"; 
 
 /* 
  * System Headers 

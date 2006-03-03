@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarList.cpp,v 1.8 2005-12-07 16:49:18 lafrasse Exp $"
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.9 2006-03-03 15:17:43 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/12/07 16:49:18  lafrasse
+ * Added support for 'description' attribute in VOTable column descriptors FIELD.
+ *
  * Revision 1.7  2005/12/02 17:44:00  lafrasse
  * Added VOTable save test
  *
@@ -29,8 +32,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: vobsTestStarList.cpp,v 1.8 2005-12-07 16:49:18 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarList.cpp,v 1.9 2006-03-03 15:17:43 scetre Exp $"; 
 
 /* 
  * System Headers 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestCatalogList.cpp,v 1.2 2005-11-16 10:45:14 scetre Exp $"
+ * "@(#) $Id: vobsTestCatalogList.cpp,v 1.3 2006-03-03 15:17:43 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/16 10:45:14  scetre
+ * Updated vobs test
+ *
  * Revision 1.1  2005/11/15 15:02:07  scetre
  * Added catalog list test
  *
@@ -17,8 +20,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: vobsTestCatalogList.cpp,v 1.2 2005-11-16 10:45:14 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestCatalogList.cpp,v 1.3 2006-03-03 15:17:43 scetre Exp $"; 
 
 
 /* 
