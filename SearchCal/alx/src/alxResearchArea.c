@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2005/12/22 10:28:31  scetre
+* Updated documentation
+*
 * Revision 1.9  2005/12/21 15:14:08  scetre
 * Added log
 *
@@ -43,8 +46,7 @@
  * @sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId="@(#) $Id: alxResearchArea.c,v 1.10 2005-12-22 10:28:31 scetre Exp $";
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxResearchArea.c,v 1.11 2006-03-03 14:48:24 scetre Exp $";
 
 
 /*

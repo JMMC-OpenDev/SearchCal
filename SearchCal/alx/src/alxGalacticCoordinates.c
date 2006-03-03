@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxGalacticCoordinates.c,v 1.5 2005-10-26 11:24:01 lafrasse Exp $"
+ * "@(#) $Id: alxGalacticCoordinates.c,v 1.6 2006-03-03 14:48:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/10/26 11:24:01  lafrasse
+ * Code review
+ *
  * Revision 1.4  2005/06/01 14:16:07  scetre
  * Changed logExtDbg to logTrace
  *
@@ -33,8 +36,7 @@
  * @sa file : JMMC-MEM-2600-0007
  */
 
-static char *rcsId="@(#) $Id: alxGalacticCoordinates.c,v 1.5 2005-10-26 11:24:01 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxGalacticCoordinates.c,v 1.6 2006-03-03 14:48:24 scetre Exp $"; 
 
 
 /* 

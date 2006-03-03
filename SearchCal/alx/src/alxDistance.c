@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxDistance.c,v 1.3 2005-11-10 16:18:22 lafrasse Exp $"
+ * "@(#) $Id: alxDistance.c,v 1.4 2006-03-03 14:48:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2005/11/10 16:18:22  lafrasse
+ * Corrected unit consistency in alxComputeDistance()
+ *
  * Revision 1.2  2005/10/26 12:29:37  lafrasse
  * Added error management to alxComputeDistance()
  *
@@ -20,8 +23,7 @@
  * coordinates.
  */
 
-static char *rcsId="@(#) $Id: alxDistance.c,v 1.3 2005-11-10 16:18:22 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxDistance.c,v 1.4 2006-03-03 14:48:24 scetre Exp $"; 
 
 
 /* 

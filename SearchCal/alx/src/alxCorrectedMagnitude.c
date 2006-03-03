@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.3 2006-01-26 12:48:25 scetre Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.4 2006-03-03 14:48:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/01/26 12:48:25  scetre
+ * Added test on blanking value in the color table
+ *
  * Revision 1.2  2006/01/18 15:59:06  scetre
  * Updated Documentation
  *
@@ -72,8 +75,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId="@(#) $Id: alxCorrectedMagnitude.c,v 1.3 2006-01-26 12:48:25 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.4 2006-03-03 14:48:24 scetre Exp $"; 
 
 
 /* 

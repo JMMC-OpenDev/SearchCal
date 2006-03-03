@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxInterstellarAbsorption.c,v 1.1 2005-12-22 10:08:58 scetre Exp $"
+ * "@(#) $Id: alxInterstellarAbsorption.c,v 1.2 2006-03-03 14:48:24 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/22 10:08:58  scetre
+ * Added extinction coefficient computation
+ * changed realMag to CorrectedMag
+ *
  ******************************************************************************/
 
 /**
@@ -15,8 +19,7 @@
  * @sa JMMC-MEM-2600-0008 document. 
  */
 
-static char *rcsId="@(#) $Id: alxInterstellarAbsorption.c,v 1.1 2005-12-22 10:08:58 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxInterstellarAbsorption.c,v 1.2 2006-03-03 14:48:24 scetre Exp $"; 
 
 
 /* 
