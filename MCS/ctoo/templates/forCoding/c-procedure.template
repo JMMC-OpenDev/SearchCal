@@ -1,18 +1,24 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-procedure.template,v 1.15 2005-11-30 13:38:08 gzins Exp $"
+#%# "@(#) $Id: c-procedure.template,v 1.16 2006-03-03 13:05:44 mella Exp $"
 #%# 
 #%# Template for C procedures file          
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.15  2005/11/30 13:38:08  gzins
+#%# Used @ to refer documenation tags
+#%#
 #%# Revision 1.14  2005/02/21 15:50:22  gluck
 #%# Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
 #%#
 #%# Revision 1.13  2005/01/24 11:17:40  gluck
 #%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.15  2005/11/30 13:38:08  gzins
+#%# Correct bug when add log message automatic insertion (Used @ to refer documenation tags
+#%# Correct bug when add log message automatic insertion (
 #%# Correct bug when add log message automatic insertion (Revision 1.14  2005/02/21 15:50:22  gluck
 #%# Correct bug when add log message automatic insertion (Added automatic INSTITUTE replacement (from environment variable, by default JMMC if not set) instead of always JMMC, for project origin in file header
 #%# Correct bug when add log message automatic insertion ()
@@ -79,8 +85,7 @@
  * 
  */
 
-static char *rcsId="@(#) $I>-<d$"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
+static char *rcsId __attribute__ ((unused)) = "@(#) $I>-<d$"; 
 
 
 /* 
