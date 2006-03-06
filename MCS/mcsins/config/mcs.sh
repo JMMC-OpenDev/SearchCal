@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.4 2006-03-06 10:47:12 lafrasse Exp $
+# Version: $Id: mcs.sh,v 1.5 2006-03-06 12:55:53 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2006/03/06 10:47:12  lafrasse
+# Added 'ipcClean' function
+#
 # Revision 1.3  2005/12/14 23:25:37  swmgr
 # Fixed wrong setMcsRelease alias
 #
@@ -164,8 +167,11 @@ ctooGetTemplateForCppClass ()
         echo ""
     fi
 }
+
 # Function to clean shared memories, semaphores, ...
 ipcClean ()
 {
-    ipcs | grep $USER | grep 0x00000000 | awk '{ type = substr($0,1,1); id = substr($0,2,8); cmd = sprintf("ipcrm -%s %s",type,id); system(cmd) }'
+    ipcs -m | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,8); cmd = sprintf("ipcrm -m %s",id); system(cmd)}'
+    ipcs -s | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,8); cmd = sprintf("ipcrm -s %s",id); system(cmd)}'
+    ipcs -q | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,8); cmd = sprintf("ipcrm -q %s",id); system(cmd)}'
 }
