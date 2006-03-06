@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.12 2005-12-16 14:17:11 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.13 2006-03-06 17:09:47 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2005/12/16 14:17:11  scetre
+ * Added test when computing visibility Added visibility error as parameter
+ *
  * Revision 1.11  2005/12/12 14:11:01  scetre
  * Added -oldScenario option to the GETCAL command -> request can managed it
  *
@@ -106,7 +109,12 @@ public:
     virtual mcsCOMPL_STAT SetObservingWlen(mcsFLOAT wlen);
     virtual mcsFLOAT      GetObservingWlen(void);
 
-    // Wavelengh
+    // DiamVK
+    virtual mcsCOMPL_STAT SetDiamVK(mcsFLOAT diamVK);
+    virtual mcsLOGICAL    IsDiamVKDefined(void);
+    virtual mcsFLOAT      GetDiamVK(void);
+
+    // Expected visibility error
     virtual mcsCOMPL_STAT SetExpectingVisErr(mcsFLOAT expectedVisErr);
     virtual mcsFLOAT      GetExpectedVisErr(void);
     
@@ -121,8 +129,6 @@ public:
     // scenario
     virtual mcsCOMPL_STAT SetOldScenario(mcsLOGICAL oldScenario);
     virtual mcsLOGICAL    IsOldScenario();
-protected:
-
 
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -135,6 +141,8 @@ private:
     // Request parameters
     mcsFLOAT      _maxBaselineLength;
     mcsFLOAT      _observingWlen;
+    mcsFLOAT      _diamVK;
+    mcsLOGICAL    _diamVKDefined;
     mcsFLOAT      _expectedVisibilityError;
     mcsLOGICAL    _brightFlag;
     mcsLOGICAL    _oldScenario;

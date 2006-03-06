@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.19 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.20 2006-03-06 17:09:47 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.18  2005/12/22 12:59:19  scetre
  * Updated doxygen documentation
  *
@@ -72,7 +75,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.19 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.20 2006-03-06 17:09:47 lafrasse Exp $"; 
 
 
 /* 
@@ -102,12 +105,14 @@ using namespace std;
  */
 sclsvrREQUEST::sclsvrREQUEST()
 {
-    _maxBaselineLength = 0.0;
-    _observingWlen     = 0.0;
-    _expectedVisibilityError     = 0.0;
-    _getCalCmd         = NULL;
-    _brightFlag        = mcsTRUE;
-    _oldScenario       = mcsFALSE;
+    _maxBaselineLength        = 0.0;
+    _observingWlen            = 0.0;
+    _diamVK                   = 0.0;
+    _diamVKDefined            = mcsFALSE;
+    _expectedVisibilityError  = 0.0;
+    _getCalCmd                = NULL;
+    _brightFlag               = mcsTRUE;
+    _oldScenario              = mcsFALSE;
     memset(_fileName, '\0', sizeof(_fileName));
 }
 
@@ -135,12 +140,14 @@ mcsCOMPL_STAT sclsvrREQUEST::Copy(sclsvrREQUEST& request)
    
     vobsREQUEST::Copy(request);
     
-    _maxBaselineLength = request._maxBaselineLength;
-    _observingWlen     = request._observingWlen;
-    _expectedVisibilityError = request._expectedVisibilityError;
-    _getCalCmd         = request._getCalCmd;
-    _brightFlag        = request._brightFlag;
-    _oldScenario       = request._oldScenario;
+    _maxBaselineLength        = request._maxBaselineLength;
+    _observingWlen            = request._observingWlen;
+    _diamVK                   = request._diamVK;
+    _diamVKDefined            = request._diamVKDefined;
+    _expectedVisibilityError  = request._expectedVisibilityError;
+    _getCalCmd                = request._getCalCmd;
+    _brightFlag               = request._brightFlag;
+    _oldScenario              = request._oldScenario;
     strncpy(_fileName, request._fileName, sizeof(_fileName));
 
     return mcsSUCCESS;
@@ -178,7 +185,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
 
     // Object name
-    char *objectName;
+    char* objectName = NULL;
     if (_getCalCmd->GetObjectName(&objectName) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -243,14 +250,14 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
 
     // Ra
-    char *ra;
+    char* ra = NULL;
     if (_getCalCmd->GetRa(&ra) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Dec
-    char *dec;
+    char* dec = NULL;
     if (_getCalCmd->GetDec(&dec) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -270,6 +277,16 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         return mcsFAILURE;
     }
 
+    // DiamVK
+    mcsDOUBLE diamVK;
+    if (_getCalCmd->IsDefinedDiamVK() == mcsTRUE)
+    {
+        if (_getCalCmd->GetDiamVK(&diamVK) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+
     // VisErr
     mcsDOUBLE visErr;
     if (_getCalCmd->IsDefinedVisErr() == mcsTRUE)
@@ -279,7 +296,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
             return mcsFAILURE;
         }
     }
-
 
     // Brightness
     mcsLOGICAL brightFlag = mcsTRUE;
@@ -300,10 +316,9 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
             return mcsFAILURE;
         }
     }
-
     
     // File name
-    char *fileName = "";
+    char* fileName = NULL;
     if (_getCalCmd->IsDefinedFile() == mcsTRUE)
     {
         if (_getCalCmd->GetFile(&fileName) == mcsFAILURE)
@@ -383,6 +398,14 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
+    // Affect the VK diameter
+    if (_getCalCmd->IsDefinedDiamVK() == mcsTRUE)
+    {
+        if (SetDiamVK(diamVK) ==  mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
     // Affect the brightness flag
     if (SetBrightFlag(brightFlag) == mcsFAILURE)
     {
@@ -393,10 +416,14 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
+    
     // Affect the file name
-    if (SetFileName(fileName) == mcsFAILURE)
+    if (fileName != NULL)
     {
-        return mcsFAILURE;
+        if (SetFileName(fileName) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
     return mcsSUCCESS;
@@ -481,6 +508,45 @@ mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
     logTrace("sclsvrREQUEST::GetObservingWlen()");
 
     return _observingWlen;
+}
+
+/**
+ * Set the VK diameter.
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetDiamVK(mcsFLOAT diamVK)
+{
+    logTrace("sclsvrREQUEST::SetDiamVK()");
+
+    _diamVK        = diamVK;
+    _diamVKDefined = mcsTRUE;
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Return wether VK diameter is defined or not.
+ *
+ * @return mcsTRUE if VK diameter is defined, mcsFALSE otherwise.
+ */
+mcsLOGICAL sclsvrREQUEST::IsDiamVKDefined(void)
+{
+    logTrace("sclsvrREQUEST::IsDiamVKDefined()");
+
+    return _diamVKDefined;
+}
+
+/**
+ * Get the VK diameter.
+ *
+ * @return VK diameter.
+ */
+mcsFLOAT sclsvrREQUEST::GetDiamVK(void)
+{
+    logTrace("sclsvrREQUEST::GetDiamVK()");
+
+    return _diamVK;
 }
 
 /**

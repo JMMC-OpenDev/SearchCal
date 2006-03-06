@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.17 2005-12-16 13:26:24 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.18 2006-03-06 17:09:47 lafrasse Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.17  2005/12/16 13:26:24  scetre
+ Added test when computing visibility Added visibility error as parameter
+
  Revision 1.16  2005/12/12 14:08:41  scetre
  Added -oldScenario option to the GETCAL command
 
@@ -153,6 +156,13 @@
             <name>file</name>
             <type>string</type>
             <desc>name of file in which results should be saved</desc>
+        </param>
+        <param optional="true">
+            <name>diamVK</name>
+            <type>double</type>
+            <desc>VK diameter</desc>
+            <minValue><double>0.0</double></minValue>
+            <unit>mas</unit>
         </param>
         <param optional="true">
             <name>bright</name>
