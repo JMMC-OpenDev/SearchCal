@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.13 2006-03-06 17:09:47 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.14 2006-03-06 21:23:28 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2006/03/06 17:09:47  lafrasse
+ * Added diamVK parameter
+ *
  * Revision 1.12  2005/12/16 14:17:11  scetre
  * Added test when computing visibility Added visibility error as parameter
  *
@@ -111,6 +114,7 @@ public:
 
     // DiamVK
     virtual mcsCOMPL_STAT SetDiamVK(mcsFLOAT diamVK);
+    virtual mcsCOMPL_STAT ResetDiamVK();
     virtual mcsLOGICAL    IsDiamVKDefined(void);
     virtual mcsFLOAT      GetDiamVK(void);
 

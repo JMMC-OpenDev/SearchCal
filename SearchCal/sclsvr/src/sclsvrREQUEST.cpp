@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.20 2006-03-06 17:09:47 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.21 2006-03-06 21:23:28 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2006/03/06 17:09:47  lafrasse
+ * Added diamVK parameter
+ *
  * Revision 1.19  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -75,7 +78,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.20 2006-03-06 17:09:47 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.21 2006-03-06 21:23:28 lafrasse Exp $"; 
 
 
 /* 
@@ -406,6 +409,13 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
             return mcsFAILURE;
         }
     }
+    else
+    {
+        if (ResetDiamVK() == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
     // Affect the brightness flag
     if (SetBrightFlag(brightFlag) == mcsFAILURE)
     {
@@ -521,6 +531,21 @@ mcsCOMPL_STAT sclsvrREQUEST::SetDiamVK(mcsFLOAT diamVK)
 
     _diamVK        = diamVK;
     _diamVKDefined = mcsTRUE;
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Reset the VK diameter.
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::ResetDiamVK()
+{
+    logTrace("sclsvrREQUEST::ResetDiamVK()");
+
+    _diamVK        = 0.0;
+    _diamVKDefined = mcsFALSE;
     
     return mcsSUCCESS;
 }
