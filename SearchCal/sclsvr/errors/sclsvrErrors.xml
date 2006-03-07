@@ -30,4 +30,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Invalid file format '%.40s'; the first line '%.80s' does not correspond to the user request.]]></errFormat>
    </error>
+   <error id="10">
+      <errName>INVALID_SEARCH_AREA</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[A %s query need a %s search area]]></errFormat>
+   </error>
 </errorList>
