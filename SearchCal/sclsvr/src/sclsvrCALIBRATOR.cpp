@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.70 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.71 2006-03-07 07:53:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.70  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.69  2006/01/23 14:12:25  scetre
  * Added Av parameter as a property of a calibrator
  *
@@ -162,7 +165,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.70 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.71 2006-03-07 07:53:14 scetre Exp $"; 
 
 
 /* 
@@ -684,12 +687,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         }
 
         // temporary all diameter are ok....
-        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
+        /*if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
                              vobsSTAR_COMPUTED_PROP,vobsCONFIDENCE_HIGH,
                              mcsTRUE) == mcsFAILURE)
         {
             return mcsFAILURE;
+        }*/
+        // Compute distance
+        if (ComputeDistance(request) == mcsFAILURE)
+        {
+            return mcsFAILURE;
         }
+
     }
     return mcsSUCCESS;
 }
@@ -1543,6 +1552,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
             // Else do not compute visibility
             else
             {
+                logInfo("Visibility had not been computed because diameter is nok");
                 return mcsSUCCESS;
             }
 
