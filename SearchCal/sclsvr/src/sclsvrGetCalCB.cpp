@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.33 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.34 2006-03-07 07:52:57 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.32  2006/03/01 16:52:44  lafrasse
  * Added code to remove the science object if it belongs to the calibrator list.
  *
@@ -104,7 +107,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.33 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.34 2006-03-07 07:52:57 scetre Exp $"; 
 
 
 /* 
@@ -134,6 +137,7 @@ using namespace std;
 /*
  * Local Headers 
  */
+#include "sclsvrErrors.h"
 #include "sclsvrSERVER.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrCALIBRATOR_LIST.h"
@@ -306,28 +310,28 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         }
     }
     else
-    {
-        logError("Invalid query.");
-
+    {        
         if (request.IsBright() == mcsTRUE)
         {
-            logError("Bright query.");
+            if (request.GetSearchAreaGeometry() == vobsCIRCLE)
+            {
+                errAdd(sclsvrERR_INVALID_SEARCH_AREA,
+                       "Bright",
+                       "Rectangular");
+            }
         }
-        else
+        else if (request.IsBright() == mcsFALSE)
         {
-            logError("Faint query.");
+             if (request.GetSearchAreaGeometry() == vobsBOX)
+             {
+                 errAdd(sclsvrERR_INVALID_SEARCH_AREA,
+                       "Faint",
+                       "Circle");
+
+             }
         }
 
-        if (request.GetSearchAreaGeometry() == vobsBOX)
-        {
-            logError("Rectangular query.");
-        }
-        else
-        {
-            logError("Circular query.");
-        }
-
-        return evhCB_NO_DELETE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // Build the list of calibrator
