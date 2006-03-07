@@ -1,13 +1,16 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: java-interface.template,v 1.1 2006-03-07 14:11:30 mella Exp $"
+#%# "@(#) $Id: java-interface.template,v 1.2 2006-03-07 14:13:18 mella Exp $"
 #%# 
-#%# Template for C++ class definition file         
+#%# Template for java interface file         
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.1  2006/03/07 14:11:30  mella
+#%# First revision
+#%#
 #%# 
 #%# 
 #%# This file has been prepared to be pre-processed by "getTemplate".
