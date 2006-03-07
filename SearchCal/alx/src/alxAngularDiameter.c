@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.23 2006-03-03 14:48:24 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.24 2006-03-07 07:51:54 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2006/03/03 14:48:24  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.22  2005/12/22 10:08:58  scetre
  * Added extinction coefficient computation
  * changed realMag to CorrectedMag
@@ -91,7 +94,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.23 2006-03-03 14:48:24 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.24 2006-03-07 07:51:54 scetre Exp $"; 
 
 
 /* 
@@ -459,7 +462,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                 + diameters->ik.value
                 + diameters->jk.value
                 + diameters->jh.value) / 4;
-    diameters->meanErr.value = 0.1 * diameters->mean.value;
+    diameters->meanErr.value = 0.3 * diameters->mean.value;
 
     /* Check whether the diameter is coherent or not */
     if ((fabs(diameters->ij.value - diameters->mean.value) >
@@ -472,7 +475,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
          diameters->meanErr.value) )
     {
         /* Reject star (i.e the diameter should not appear as computed) */
-        diameters->areComputed = mcsTRUE;
+        diameters->areComputed = mcsFALSE;
     }
     else
     {
@@ -522,7 +525,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }
     else
     {
-        logTest("Diameters have not been computed");
+        logTest("Diameters have not been computed because condition about diamIC-diamMoy > deltaDiamMoy");
     }
 
     return mcsSUCCESS;
