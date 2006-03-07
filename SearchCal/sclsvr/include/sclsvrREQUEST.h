@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.14 2006-03-06 21:23:28 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.15 2006-03-07 15:33:39 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2006/03/06 21:23:28  lafrasse
+ * Added diamVK resetabilty
+ *
  * Revision 1.13  2006/03/06 17:09:47  lafrasse
  * Added diamVK parameter
  *
@@ -130,10 +133,6 @@ public:
     virtual mcsCOMPL_STAT SetBrightFlag(mcsLOGICAL brightFlag);
     virtual mcsLOGICAL    IsBright(void);
 
-    // scenario
-    virtual mcsCOMPL_STAT SetOldScenario(mcsLOGICAL oldScenario);
-    virtual mcsLOGICAL    IsOldScenario();
-
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -149,7 +148,6 @@ private:
     mcsLOGICAL    _diamVKDefined;
     mcsFLOAT      _expectedVisibilityError;
     mcsLOGICAL    _brightFlag;
-    mcsLOGICAL    _oldScenario;
     mcsSTRING256  _fileName;
 };
 

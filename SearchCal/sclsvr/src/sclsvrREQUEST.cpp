@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.21 2006-03-06 21:23:28 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.22 2006-03-07 15:33:39 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2006/03/06 21:23:28  lafrasse
+ * Added diamVK resetabilty
+ *
  * Revision 1.20  2006/03/06 17:09:47  lafrasse
  * Added diamVK parameter
  *
@@ -78,7 +81,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.21 2006-03-06 21:23:28 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.22 2006-03-07 15:33:39 scetre Exp $"; 
 
 
 /* 
@@ -115,7 +118,6 @@ sclsvrREQUEST::sclsvrREQUEST()
     _expectedVisibilityError  = 0.0;
     _getCalCmd                = NULL;
     _brightFlag               = mcsTRUE;
-    _oldScenario              = mcsFALSE;
     memset(_fileName, '\0', sizeof(_fileName));
 }
 
@@ -150,7 +152,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Copy(sclsvrREQUEST& request)
     _expectedVisibilityError  = request._expectedVisibilityError;
     _getCalCmd                = request._getCalCmd;
     _brightFlag               = request._brightFlag;
-    _oldScenario              = request._oldScenario;
     strncpy(_fileName, request._fileName, sizeof(_fileName));
 
     return mcsSUCCESS;
@@ -310,16 +311,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         }
     }
 
-    // old scenario
-    mcsLOGICAL oldScenario = mcsFALSE;
-    if (_getCalCmd->IsDefinedOldScenario() == mcsTRUE)
-    {
-        if (_getCalCmd->GetOldScenario(&oldScenario) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-    }
-    
     // File name
     char* fileName = NULL;
     if (_getCalCmd->IsDefinedFile() == mcsTRUE)
@@ -418,11 +409,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
     // Affect the brightness flag
     if (SetBrightFlag(brightFlag) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Affect the old scenario flag
-    if (SetOldScenario(oldScenario) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -629,36 +615,6 @@ mcsLOGICAL sclsvrREQUEST::IsBright(void)
     logTrace("sclsvrREQUEST::IsBright()");
 
     return _brightFlag;
-}
-
-/**
- * Specify wether the query should used old Scenario or new (default).
- *
- * @param oldScenario mcsTRUE if the query should used the old scenario,
- * otherwise mcsFALSE to use new scenario.
- *
- * @return Always mcsSUCCESS.
- */
-mcsCOMPL_STAT sclsvrREQUEST::SetOldScenario(mcsLOGICAL oldScenario)
-{
-    logTrace("sclsvrREQUEST::SetOldScenario()");
-    
-    _oldScenario = oldScenario;
-
-    return mcsSUCCESS;
-}
-
-/**
- * Return wether the query should return bright or faint stars.
- *
- * @return mcsTRUE if the query should return bright stars, otherwise mcsFALSE
- * for faint stars.
- */
-mcsLOGICAL sclsvrREQUEST::IsOldScenario(void)
-{
-    logTrace("sclsvrREQUEST::IsOldScenario()");
-
-    return _oldScenario;
 }
 
 /**

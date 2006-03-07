@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.34 2006-03-07 07:52:57 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.35 2006-03-07 15:33:39 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2006/03/07 07:52:57  scetre
+ * Added error instead of logError
+ *
  * Revision 1.33  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -107,7 +110,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.34 2006-03-07 07:52:57 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.35 2006-03-07 15:33:39 scetre Exp $"; 
 
 
 /* 
@@ -209,24 +212,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
             case 'J':
             case 'H':
             case 'K':
-                if (request.IsOldScenario() == mcsTRUE)
-                {
-                    // Load old Bright K Scenario
-                    if (_scenarioBrightKOld.Init(&request) == mcsFAILURE)
-                    {
-                        return evhCB_NO_DELETE | evhCB_FAILURE;
-                    }
-                    // Start the research in the virtual observatory
-                    if (_virtualObservatory.Search(&_scenarioBrightKOld,
-                                                   request,
-                                                   starList) == mcsFAILURE)
-                    {
-                        return evhCB_NO_DELETE | evhCB_FAILURE;
-                    }
-
-                }
-                else
-                {
                     // Load Bright K Scenario
                     if (_scenarioBrightK.Init(&request) == mcsFAILURE)
                     {
@@ -238,7 +223,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                     {
                         return evhCB_NO_DELETE | evhCB_FAILURE;
                     }
-                }
 
                 break;
 

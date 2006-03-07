@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.18 2006-03-06 17:09:47 lafrasse Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.19 2006-03-07 15:33:39 scetre Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.18  2006/03/06 17:09:47  lafrasse
+ Added diamVK parameter
+
  Revision 1.17  2005/12/16 13:26:24  scetre
  Added test when computing visibility Added visibility error as parameter
 
@@ -177,12 +180,6 @@
             <minValue><double>0.0</double></minValue>
             <maxValue><double>1.0</double></maxValue>
             <desc>expected visibility error</desc>
-        </param>
-        <param optional="true">
-            <name>oldScenario</name>
-            <type>boolean</type>
-            <defaultValue><boolean>false</boolean></defaultValue>
-            <desc>specify wether an old scenario should be used</desc>
         </param>
     </params>        
 </cmd>
