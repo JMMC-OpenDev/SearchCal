@@ -3,13 +3,19 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetCode.sh,v 1.5 2005-04-11 07:52:50 gluck Exp $"
+# "@(#) $Id: ctooGetCode.sh,v 1.6 2006-03-07 14:22:22 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/04/11 07:52:50  gluck
+# Fix problem report 3: directories creation with correct header file for C++ and template names update
+#
 # Revision 1.4  2005/01/24 15:47:51  gluck
-# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.5  2005/04/11 07:52:50  gluck
+# Bug correction for log message automatic insertion (Fix problem report 3: directories creation with correct header file for C++ and template names update
+# Bug correction for log message automatic insertion ()
 #
 # lgluck    14/05/04    Created
 #
@@ -33,6 +39,7 @@
 #   -# c++-h-file
 #   -# script
 #   -# Makefile
+#   -# java-class
 # 
 # \sa ctooGetTemplateForCoding.sh, ctooGetTemplateFile.sh, ctooGetTemplate.sh
 #  
@@ -50,20 +57,15 @@ cat <<xyz
 This menu allows you to copy one of the available templates with a filename of
 your choice in the current directory (the output file must not already exist).
 
-
 Templates are available for:
 
-        1- c-main
-        2- c-procedure
-        3- c-h-file
-
-        4- c++-small-main
-        5- c++-class-definition-file
-        6- c++-class-interface-file
-        
-        7- script
-        
-        8- Makefile
+        1- c-main                         7- script                
+        2- c-procedure                    
+        3- c-h-file                       8- Makefile
+                                          
+        4- c++-small-main                 9- java-main
+        5- c++-class-definition-file     10- java-class
+        6- c++-class-interface-file      11- java-interface
 xyz
 
 # Propose the user to enter his choice
@@ -111,6 +113,18 @@ then
         
         8)  # Makefile choice
             ctooGetTemplateForCoding Makefile
+            ;;
+ 
+        9)  # java-main choice
+            ctooGetTemplateForCoding java-main
+            ;;
+        
+        10)  # java-class choice
+            ctooGetTemplateForCoding java-class
+            ;;
+        
+        11)  # java-interface choice
+            ctooGetTemplateForCoding java-interface
             ;;
         
         *) echo "ERROR : invalid choice";;

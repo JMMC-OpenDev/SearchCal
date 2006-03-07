@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.18 2005-11-30 13:41:55 gzins Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.19 2006-03-07 14:22:22 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2005/11/30 13:41:55  gzins
+# Fixed documentation concerning options to be used for C++ files
+#
 # Revision 1.17  2005/04/11 07:52:50  gluck
 # Fix problem report 3: directories creation with correct header file for C++ and template names update
 #
@@ -25,6 +28,9 @@
 #
 # Revision 1.12  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.18  2005/11/30 13:41:55  gzins
+# Bug correction for log message automatic insertion (Fixed documentation concerning options to be used for C++ files
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.17  2005/04/11 07:52:50  gluck
 # Bug correction for log message automatic insertion (Fix problem report 3: directories creation with correct header file for C++ and template names update
 # Bug correction for log message automatic insertion (
@@ -68,6 +74,7 @@
 #   - c++-small-main
 #   - c++-class-file
 #   - c++-h-file
+#   - java-class
 #   - script
 #   - Makefile
 # 
@@ -85,6 +92,13 @@
 
 
 # signal trap (if any)
+
+usage()
+{
+    echo -e "\n\tUsage: ctooGetTemplateForCoding c-main|c-procedure|h-file|" 
+    echo -e "\tc++-small-main|c++-class-definition-file|c++-class-interface-file|"
+    echo -e "\tjava-main|java-class|java-interface|script|Makefile"
+}
 
 
 # Set templates directories
@@ -126,8 +140,7 @@ fi
 # Input parameters given should be 1 and in the correct format:
 if [ $# != 1 ]
 then 
-    echo -e "\n\tUsage: ctooGetTemplateForCoding c-main|c-procedure|h-file|" 
-    echo -e "c++-small-main|c++-class-definition-file|c++-class-interface-file|script|Makefile"
+    usage
     exit 1
 fi 
 
@@ -162,6 +175,13 @@ then
             MODE=644
             ;;
 
+        java-main|java-class|java-interface)
+            TEMPLATE=$CODE_DIR/$choice.template
+            FILE_NAME=""
+            FILE_SUFFIX=".java"
+            MODE=644
+            ;;
+ 
         script)
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
@@ -260,16 +280,17 @@ then
             mv ${FILE}.BAK $FILE 
         fi
 
-        # For .c and .cpp  and Makefile
+        # For .c .cpp .java and Makefile
         # -> For .c (c-main, c-procedure) and  .cpp (c++-small-main,
         # c++-class-definition-file) files insert module name in the
         # pre-processing directives for header inclusion
         # -> For .cpp (c++-class-definition-file) insert class name in the
         # pre-processing directives for header inclusion, in the doxygen header
         # block, and for constructor and destructor replacement
+        # -> For .java replace <moduleName> and <className> 
         # -> For Makefile insert module name in file comment header
         if [ "$FILE_SUFFIX" = ".c" -o  "$FILE_SUFFIX" = ".cpp" -o \
-            "$FILE_NAME" = "Makefile" ]
+             "$FILE_SUFFIX" = ".java" -o "$FILE_NAME" = "Makefile" ]
         then
             sed -e "1,$ s/<moduleName>/${MOD_NAME}/g" \
                 -e "1,$ s/<className>/${BASE_NAME}/g" \
@@ -295,9 +316,7 @@ then
     else
         # invalid choice
         echo -e "\nInvalid choice."
-        echo -e "\n\tUsage: getTemplateForCoding c-main|c-procedure|h-file| \ 
-                c++-small-main|c++-class-definition-file|c++-class-interface-file|script| \
-                Makefile"
+        usage
         exit
     fi
 else

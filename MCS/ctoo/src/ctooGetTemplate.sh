@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplate.sh,v 1.5 2005-01-24 15:47:51 gluck Exp $"
+# "@(#) $Id: ctooGetTemplate.sh,v 1.6 2006-03-07 14:22:22 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/01/24 15:47:51  gluck
+# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
+#
 # lgluck    23-Apr-2004 Created
 # gzins     04-Dec-2004 Removed test related to directory structure 
 #
@@ -26,6 +29,7 @@
 # -# templates for code : following standard templates are available
 #                         - shell scripts
 #                         - C
+#                         - java
 #                         - C++
 #                         - Makefile
 # 
