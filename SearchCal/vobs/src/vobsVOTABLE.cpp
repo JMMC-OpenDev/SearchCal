@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.11 2006-03-03 15:03:28 scetre Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.12 2006-03-16 09:40:20 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2006/03/03 15:03:28  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.10  2006/03/01 12:40:29  mella
  * Add group to include origin and confidence indexes, ucd still needs to be
  * updated
@@ -48,7 +51,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.11 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.12 2006-03-16 09:40:20 mella Exp $"; 
 
 /* 
  * System Headers 
@@ -357,6 +360,12 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         buffer.AppendString(propertyName);
         buffer.AppendString(" with its origin and confidence index</DESCRIPTION>");
  
+        // Bind main field ref
+        sprintf(tmp, "col%d", i);
+        buffer.AppendLine("   <FIELDref ref=\"");
+        buffer.AppendString(tmp);
+        buffer.AppendString("\" />");
+
         // Bind ORIGIN field ref
         sprintf(tmp, "col%d", i+1);
         buffer.AppendLine("   <FIELDref ref=\"");
