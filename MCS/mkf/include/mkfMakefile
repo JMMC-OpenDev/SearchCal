@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.21 2005-12-21 10:39:30 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.22 2006-03-20 14:45:45 gzins Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.21  2005/12/21 10:39:30  gzins
+# Moved thrd into C library list (instead of C++)
+#
 # Revision 1.20  2005/12/20 16:28:52  gzins
 # Added thrd and sdb libraries
 #
@@ -319,6 +322,9 @@ endif
 # default flags are all warning enabled and Position Independent Code
 # for shared libraries
 CC_FLAGS   = -Wall
+
+# set flag for MCS
+CC_FLAGS   := $(CC_FLAGS) -DMCS
 
 # all warnings left out for the default (see above) must be added here
 ifdef MAKE_ALL_WARNINGS
