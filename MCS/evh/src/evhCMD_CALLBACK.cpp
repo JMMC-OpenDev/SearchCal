@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.6 2005-02-03 06:53:21 gzins Exp $"
+ * "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.7 2006-03-21 13:16:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/03 06:53:21  gzins
+ * Send reply to send process when callback execution failed.
+ *
  * Revision 1.5  2005/01/29 15:17:02  gzins
  * Added CVS log as modification history
  *
@@ -21,7 +24,7 @@
  * Definition of the evhCMD_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.6 2005-02-03 06:53:21 gzins Exp $"; 
+static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.7 2006-03-21 13:16:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -142,9 +145,10 @@ mcsLOGICAL evhCMD_CALLBACK::IsSame(evhCALLBACK &callback)
  */
 evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
 {
+    logExtDbg(">>>>evhCMD_CALLBACK::Run()"); 
     evhCB_COMPL_STAT stat = evhCB_SUCCESS;
 
-    /* If callback is detcahed */
+    /* If callback is detached */
     if (_detached == mcsTRUE)
     {
         return stat;
@@ -175,6 +179,9 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
     /* If callback failed */
     if ((stat & evhCB_FAILURE) != 0)
     {
+        /* Return mcsFAILURE */
+        errAdd(evhERR_RUN_CB);
+
         // If it is not an internal message
         if (msg.IsInternal() == mcsFALSE)
         {
@@ -183,8 +190,6 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
             msgMANAGER_IF    msgManager;
             msgManager.SendReply(newMsg, mcsTRUE);
         }
-        /* Return mcsFAILURE */
-        errAdd(evhERR_RUN_CB);
         return stat;
     }
     /* End if */
