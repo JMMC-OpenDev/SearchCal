@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.cpp,v 1.24 2005-05-19 15:08:14 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.cpp,v 1.25 2006-03-21 13:04:38 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2005/05/19 15:08:14  gzins
+ * Changed QueuedMessagesNb() to GetNbQueuedMessages()
+ * Fixed bug related to timeout handling when waiting for a specific message
+ * Added info log when getting a queued message
+ *
  * Revision 1.23  2005/02/09 16:42:26  lafrasse
  * Added msgMESSAGE_FILTER class to manage message queues
  *
@@ -60,7 +65,7 @@
  * msgMANAGER_IF
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.24 2005-05-19 15:08:14 gzins Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.25 2006-03-21 13:04:38 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -308,8 +313,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
-        errAdd(msgERR_PROC_NOT_CONNECTED);
-        return mcsFAILURE;
+        return mcsSUCCESS;
     }
 
     // Send a 'close command' message to msgManager
