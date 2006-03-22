@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: moduleDescription.xml,v 1.1 2006-03-22 06:58:28 sccmgr Exp $"
+ "@(#) $Id: moduleDescription.xml,v 1.2 2006-03-22 07:01:07 sccmgr Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.1  2006/03/22 06:58:28  sccmgr
+ Fix directory structure and add additional files
+
 ********************************************************************************
  NAME
  moduleDescription.xml - Give module informations
@@ -28,7 +31,7 @@
 -->
 
 <module name="tat">
-    <desc>description</desc>
-    <resp>responsible</resp>
-    <package>package</package>
+    <desc>Tools for automated testing</desc>
+    <resp>Gerard Zins</resp>
+    <package>MCS</package>
 </module>
