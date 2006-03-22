@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.4 2005-02-22 13:56:50 gluck Exp $"
+# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.5 2006-03-22 07:45:18 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/22 13:56:50  gluck
+# Updated documentation
+#
 # Revision 1.3  2005/02/15 08:40:15  gzins
 # Added CVS log as file modification history
 #
@@ -54,7 +57,7 @@ FILE=$1
 fileExtension=${FILE##*.}
 
 case $fileExtension in
-    sh)
+    sh | tcl)
         awk -v file=$FILENAME '
         BEGIN {
             # Initialise the flag to print the line

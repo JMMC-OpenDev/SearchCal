@@ -3,11 +3,14 @@
 #
 # Doxyfile for Doxygen 1.3.3
 #
-# "@(#) $Id: doxyfile,v 1.8 2005-11-29 09:32:21 swmgr Exp $" 
+# "@(#) $Id: doxyfile,v 1.9 2006-03-22 07:45:38 gzins Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/11/29 09:32:21  swmgr
+# Do not ouptut latex format anylonger
+#
 # Revision 1.7  2005/02/21 16:32:49  gluck
 # Minor correction in header file comment
 #
@@ -398,7 +401,7 @@ INPUT                  = ../src ../include
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp 
 # *.h++ *.idl *.odl *.cs
 
-FILE_PATTERNS          = *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp *.h++ *.idl *.odl *.cs *.C *.doc *.sh
+FILE_PATTERNS          = *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp *.h++ *.idl *.odl *.cs *.C *.doc *.sh *.tcl
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
 # should be searched for input files as well. Possible values are YES and NO. 
