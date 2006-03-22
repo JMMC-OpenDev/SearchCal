@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2006-03-22 06:58:28 sccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2006-03-22 19:39:40 gzins Exp $"
 #
 # Makefile of tat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2006/03/22 06:58:28  sccmgr
+# Fix directory structure and add additional files
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -73,14 +76,20 @@ SCRIPTS_L       =
 #
 # TCL scripts (public and local)
 # ------------------------------
-TCL_SCRIPTS     =
+TCL_SCRIPTS     = tatTestDriver tatTestSpawner
 TCL_SCRIPTS_L   =
 
 #
-# <brief description of tttttt tcl-script>
-tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
+# Test driver 
+tatTestDriver_OBJECTS  = tatTestDriver
+tatTestDriver_TCLSH    = tclsh
+tatTestDriver_LIBS     = 
+
+# Task spawner 
+tatTestSpawner_OBJECTS  = tatTestSpawner
+tatTestSpawner_TCLSH    = tclsh
+tatTestSpawner_LIBS     = 
+
 
 #
 # TCL libraries (public and local)
