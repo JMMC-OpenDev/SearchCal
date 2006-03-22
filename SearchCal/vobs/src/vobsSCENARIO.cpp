@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.40 2006-03-03 15:03:28 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.41 2006-03-22 10:42:57 scetre Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.40  2006/03/03 15:03:28  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.39  2006/03/01 12:38:44  lafrasse
 * Streamlined code with systematic use of temporary variables
 *
@@ -127,7 +130,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.40 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.41 2006-03-22 10:42:57 scetre Exp $"; 
 
 
 /* 
@@ -368,14 +371,14 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 strcat(logFileName, band);
 
                 // Get catalog name, and replace '/' by '_'
-                mcsSTRING32 catalogName;
-                strcpy(catalogName, catalogName);
-                if (miscReplaceChrByChr(catalogName, '/', '_') == mcsFAILURE)
+                mcsSTRING32 catName;
+                strcpy(catName, catalogName);
+                if (miscReplaceChrByChr(catName, '/', '_') == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
                 strcat(logFileName, "_");
-                strcat(logFileName, catalogName);
+                strcat(logFileName, catName);
 
                 // Add request type (primary or not)
                 if (inputList == NULL)
