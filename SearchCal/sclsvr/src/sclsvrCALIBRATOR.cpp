@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.71 2006-03-07 07:53:14 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.72 2006-03-22 10:45:00 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.71  2006/03/07 07:53:14  scetre
+ * Added distance computing for faint stars
+ *
  * Revision 1.70  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -165,7 +168,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.71 2006-03-07 07:53:14 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.72 2006-03-22 10:45:00 scetre Exp $"; 
 
 
 /* 
@@ -406,7 +409,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         // If paralax is greater than 1 mas, compute real magnitudes,
         // missing magnitudes and the angular diameter
         if ((IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE) &&
-            (paralax >= 1) && (paralaxError/paralaxError < 0.25))
+            (paralax >= 1) && (paralaxError/paralax < 0.25))
         {
             char *magPropertyId[alxNB_BANDS] = 
             {
@@ -686,13 +689,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             }
         }
 
-        // temporary all diameter are ok....
-        /*if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", 
-                             vobsSTAR_COMPUTED_PROP,vobsCONFIDENCE_HIGH,
-                             mcsTRUE) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }*/
         // Compute distance
         if (ComputeDistance(request) == mcsFAILURE)
         {
