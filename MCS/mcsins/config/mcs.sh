@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.5 2006-03-06 12:55:53 gzins Exp $
+# Version: $Id: mcs.sh,v 1.6 2006-03-22 19:47:41 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2006/03/06 12:55:53  gzins
+# Fixed ipcClean bug
+#
 # Revision 1.4  2006/03/06 10:47:12  lafrasse
 # Added 'ipcClean' function
 #
@@ -146,6 +149,7 @@ alias gvim='gvim -geometry 80x45'
 alias macam='make clean all man'
 alias macami='make clean all man install'
 alias setMcsRelease='source $MCSTOP/DEVELOPMENT/bin/mcscfgSetRelease'
+alias tat tatTestDriver
 
 # Functions
 # Function to create .h and .cpp files for a C++ class in the right
