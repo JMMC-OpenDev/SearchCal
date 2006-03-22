@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.48 2006-01-18 15:59:45 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.49 2006-03-22 10:41:49 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.48  2006/01/18 15:59:45  scetre
+* Added GetPropertyConfIndex() method
+*
 * Revision 1.47  2006/01/06 15:59:55  lafrasse
 * Added CDS link in star property
 *
@@ -134,6 +137,8 @@
 #define vobsSTAR_ID_HIP                         "ID_HIP"
 #define vobsSTAR_ID_DM                          "ID_DM"
 #define vobsSTAR_ID_TYC1                        "ID_TYC1"
+#define vobsSTAR_ID_TYC2                        "ID_TYC2"
+#define vobsSTAR_ID_TYC3                        "ID_TYC3"
 #define vobsSTAR_ID_CATALOG                     "ID_CATALOG"
 #define vobsSTAR_ID_2MASS                       "ID_2MASS"
 #define vobsSTAR_ID_DENIS                       "ID_DENIS"

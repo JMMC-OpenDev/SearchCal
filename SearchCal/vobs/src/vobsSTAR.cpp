@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.68 2006-03-03 15:03:28 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.69 2006-03-22 10:42:18 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.68  2006/03/03 15:03:28  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.67  2006/02/21 16:32:00  scetre
 * Updated documentation
 *
@@ -180,7 +183,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.68 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.69 2006-03-22 10:42:18 scetre Exp $"; 
 
 /*
  * System Headers
@@ -732,7 +735,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
             return mcsSUCCESS;
         }
     }
-
+    
     if (IsPropertySet(vobsSTAR_ID_2MASS) == mcsTRUE)
     {
         propertyValue = GetPropertyValue(vobsSTAR_ID_2MASS);
@@ -749,6 +752,26 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "DENIS %s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
+
+    if (IsPropertySet(vobsSTAR_ID_TYC2) == mcsTRUE)
+    {
+        propertyValue = GetPropertyValue(vobsSTAR_ID_TYC2);
+        if (propertyValue != NULL)
+        {
+            snprintf(starId, (maxLength - 1), "TYC2 %s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
+
+    if (IsPropertySet(vobsSTAR_ID_TYC3) == mcsTRUE)
+    {
+        propertyValue = GetPropertyValue(vobsSTAR_ID_TYC3);
+        if (propertyValue != NULL)
+        {
+            snprintf(starId, (maxLength - 1), "TYC3 %s", propertyValue);
             return mcsSUCCESS;
         }
     }
@@ -1107,6 +1130,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "-", "%.0f");
     AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "-", "%.0f");    
     AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsFLOAT_PROPERTY, "-", "%.0f");    
+    AddProperty(vobsSTAR_ID_TYC2, "TYC2", vobsFLOAT_PROPERTY, "-", "%.0f");    
+    AddProperty(vobsSTAR_ID_TYC3, "TYC3", vobsFLOAT_PROPERTY, "-", "%.0f");    
     AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY, "-");    
     AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, "-", NULL,
                 "http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0",
