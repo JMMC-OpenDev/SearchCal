@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.28 2006-03-03 15:03:27 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.29 2006-03-22 10:43:24 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2006/03/03 15:03:27  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.27  2005/12/05 13:07:57  scetre
 * Added error on paralax
 *
@@ -89,7 +92,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.28 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.29 2006-03-22 10:43:24 scetre Exp $"; 
 
 
 /* 
@@ -585,6 +588,14 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         else if (strcmp(paramName, "TYC1") == 0)
         {
             return vobsSTAR_ID_TYC1;
+        }
+        else if (strcmp(paramName, "TYC2") == 0)
+        {
+            return vobsSTAR_ID_TYC2;
+        }
+        else if (strcmp(paramName, "TYC3") == 0)
+        {
+            return vobsSTAR_ID_TYC3;
         }
     }
 
