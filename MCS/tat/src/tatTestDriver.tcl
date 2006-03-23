@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: tatTestDriver.tcl,v 1.3 2006-03-23 07:14:40 gzins Exp $"
+# "@(#) $Id: tatTestDriver.tcl,v 1.4 2006-03-23 07:31:46 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2006/03/23 07:14:40  gzins
+# Fixed history comment
+#
 # Revision 1.2  2006/03/23 07:13:41  gzins
 # Renamed TestDriver cfg files to TestList
 #
@@ -23,11 +26,10 @@
 # Script to run a sequence of tests and compare result
 #
 # @synopsis
-#   tatTestDriver [-v] [-g] [-log] [-order] [-r num] [-w secs] [testNum...]
+#   tatTestDriver [-v] [-g] [-order] [-r num] [-w secs] [testNum...]
 #
 # @opt
 #   @optname -g : generates reference files
-#   @optname -log : takes into account also output of the log system
 #   @optname -order : takes into account the order in the sequence of
 #               output lines
 #   @optname -v : verbose, print on standard output progress messages
@@ -220,9 +222,6 @@ set sedFile      "TestList.sed"
 
 # Used for verbose mode
 set verbose      0
-
-# Used to log also output to logManager
-set log          0
 
 # Used to define if message order must be taken into account or ignored
 set noorder      1
@@ -658,7 +657,7 @@ proc getRefFile {process} {
 
 proc usage {} {
     global argv0
-    printLog "argv0 \[-v\] \[-g\] \[-log\] \[-order\] \[-r num\] \[-w secs\] \[testNum...\]"
+    printLog "argv0 \[-v\] \[-g\] \[-order\] \[-r num\] \[-w secs\] \[testNum...\]"
     exit 1
 }
 
@@ -679,7 +678,6 @@ while {![lempty $argv]} {
         switch -regexp -- $arg {
         -v          { set verbose 1 }
         -g          { set mode generate }
-        -log        { set log 1 }
         -order      { set noorder 0 }
         -r[0-9]+    { set repeat [string range $arg 2 end]}
         -r                { set repeat [lvarpop argv]}
