@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: tatTestDriver.tcl,v 1.2 2006-03-23 07:13:41 gzins Exp $"
+# "@(#) $Id: tatTestDriver.tcl,v 1.3 2006-03-23 07:14:40 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2006/03/23 07:13:41  gzins
+# Renamed TestDriver cfg files to TestList
+#
 # Revision 1.1  2006/03/22 19:38:37  gzins
 # Added
 #
