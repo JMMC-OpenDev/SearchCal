@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: tatTestDriver.tcl,v 1.1 2006-03-22 19:38:37 gzins Exp $"
+# "@(#) $Id: tatTestDriver.tcl,v 1.2 2006-03-23 07:13:41 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2006/03/22 19:38:37  gzins
+# Added
+#
 #*******************************************************************************
 # REMARKS
 #    Adapted from the VLT/ALMA program
@@ -58,10 +61,10 @@
 # @endcode 
 #
 # The output files are filtered to strip out the lines that can change from run
-# to run. This is done by using the reference file (if exist) "TestDriver.grep".
+# to run. This is done by using the reference file (if exist) "TestList.grep".
 # This file contains a list of matching strings. Egrep is run on the output
 # files so that any line matching one of these strings is discarded. The file
-# "TestDriver.sed" contains instead sed lines used to clean part of a line,
+# "TestList.sed" contains instead sed lines used to clean part of a line,
 # using sed.
 #
 # After that, all the time stamps are deleted, where a time stamp is any string
@@ -154,7 +157,7 @@
 #   the the output files in order to strip lines that change from run to run.
 #   This applies only to the specific test.
 #
-# @filename TestDriver.grep 
+# @filename TestList.grep 
 #   This file contains a list of regular expressions to be used while filtering
 #   the the output files in order to strip lines that change from run to run.
 #   This file applies to all tests
@@ -164,7 +167,7 @@
 #   output files in order to cleanup lines that change from run to run. This
 #   applies only to the specific test.
 #
-# @filename TestDriver.sed 
+# @filename TestList.sed 
 #   This file contains a list of sed expressions to be used while filtering the
 #   the output files in order to cleanup lines that change from run to run. This
 #   file applies to all tests
@@ -209,8 +212,8 @@ set toTest       {}
 set testFiles    "TestList"
 
 # Files with grep and sed patterns
-set grepFile     "TestDriver.grep"
-set sedFile      "TestDriver.sed"
+set grepFile     "TestList.grep"
+set sedFile      "TestList.sed"
 
 # Used for verbose mode
 set verbose      0
