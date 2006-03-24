@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: tatTestDriver.tcl,v 1.4 2006-03-23 07:31:46 gzins Exp $"
+# "@(#) $Id: tatTestDriver.tcl,v 1.5 2006-03-24 07:23:58 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2006/03/23 07:31:46  gzins
+# Supressed -log option (not used)
+#
 # Revision 1.3  2006/03/23 07:14:40  gzins
 # Fixed history comment
 #
@@ -563,12 +566,13 @@ proc addTimeStamp {fileName pnum} {
     set count 0
 
     printLogVerbose "Adding time stamps to lines of file: $fileName"
+    printLogVerbose "Adding time stamps to lines of file: $fileName"
     
     set fd [open $fileName r]
     set rfd [open $fileName.tmp w]
     while { [gets $fd line] >= 0} {
-        if {[regexp {^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]} $line] != 0} {
-            regexp {^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]} $line stamp
+        if {[regexp {[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]} $line] != 0} {
+            regexp {[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]} $line stamp
             regexp {[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9]* *} $line fulltime
             set  time  [string range $fulltime 0 8]
             set  msec  [string range $fulltime 9 end]
@@ -576,7 +580,8 @@ proc addTimeStamp {fileName pnum} {
             scan $msec "%d" msec
             if {$msec < 0 || $msec > 999999} { set msec 0 }
             set  nmsec [format "%6.6d" $msec]
-            regsub {^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] *[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9][0-9][0-9][0-9] *} $line "" newLine
+            regsub {[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9][0-9][0-9][0-9] *} $line "" newLine
+
             puts $rfd "$stamp  $time$nmsec $pnum $newLine"
         } else {
             incr count
