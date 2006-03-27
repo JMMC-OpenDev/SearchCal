@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.24 2006-03-07 07:51:54 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.25 2006-03-27 08:48:58 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2006/03/07 07:51:54  scetre
+ * Changed criteria for diameter to 0.3
+ *
  * Revision 1.23  2006/03/03 14:48:24  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -94,7 +97,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.24 2006-03-07 07:51:54 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.25 2006-03-27 08:48:58 scetre Exp $"; 
 
 
 /* 
@@ -462,7 +465,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                 + diameters->ik.value
                 + diameters->jk.value
                 + diameters->jh.value) / 4;
-    diameters->meanErr.value = 0.3 * diameters->mean.value;
+    diameters->meanErr.value = 0.5 * diameters->mean.value;
 
     /* Check whether the diameter is coherent or not */
     if ((fabs(diameters->ij.value - diameters->mean.value) >
