@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.72 2006-03-22 10:45:00 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.73 2006-03-27 08:49:57 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.72  2006/03/22 10:45:00  scetre
+ * Fixed bug with paralax test in faint case
+ *
  * Revision 1.71  2006/03/07 07:53:14  scetre
  * Added distance computing for faint stars
  *
@@ -168,7 +171,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.72 2006-03-22 10:45:00 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.73 2006-03-27 08:49:57 scetre Exp $"; 
 
 
 /* 
@@ -416,7 +419,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 vobsSTAR_PHOT_PHG_B,
                 vobsSTAR_PHOT_JHN_V,
                 vobsSTAR_PHOT_PHG_R,
-                vobsSTAR_PHOT_PHG_I,
+                vobsSTAR_PHOT_COUS_I,
                 sclsvrCALIBRATOR_PHOT_COUS_J,
                 sclsvrCALIBRATOR_PHOT_COUS_H,
                 sclsvrCALIBRATOR_PHOT_COUS_K,
@@ -498,7 +501,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 vobsSTAR_PHOT_PHG_B,
                 vobsSTAR_PHOT_JHN_V,
                 vobsSTAR_PHOT_PHG_R,
-                vobsSTAR_PHOT_PHG_I,
+                vobsSTAR_PHOT_COUS_I,
                 sclsvrCALIBRATOR_PHOT_COUS_J,
                 sclsvrCALIBRATOR_PHOT_COUS_H,
                 sclsvrCALIBRATOR_PHOT_COUS_K,
@@ -555,7 +558,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 vobsSTAR_PHOT_PHG_B,
                 vobsSTAR_PHOT_JHN_V,
                 vobsSTAR_PHOT_PHG_R,
-                vobsSTAR_PHOT_PHG_I,
+                vobsSTAR_PHOT_COUS_I,
                 sclsvrCALIBRATOR_PHOT_COUS_J,
                 sclsvrCALIBRATOR_PHOT_COUS_H,
                 sclsvrCALIBRATOR_PHOT_COUS_K,
