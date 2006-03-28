@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.25 2006-03-27 08:48:58 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.26 2006-03-28 07:17:25 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2006/03/27 08:48:58  scetre
+ * Changed coefficient from 0.3 to 0.5
+ *
  * Revision 1.24  2006/03/07 07:51:54  scetre
  * Changed criteria for diameter to 0.3
  *
@@ -97,7 +100,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.25 2006-03-27 08:48:58 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.26 2006-03-28 07:17:25 gzins Exp $"; 
 
 
 /* 
@@ -141,9 +144,9 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void);
  * @return pointer onto the structure containing polynomial coefficients, or
  * NULL if an error occured.
  *
- * @usedfiles alxAngDiamPolynomialForBrightStar.cfg : file containing the
- * polynomial coefficients to compute the angular diameter for bright star. The
- * polynomial coefficients are given for B-V, V-R and V-K.
+ * @usedfiles alxAngDiamPolynomial.cfg : file containing the polynomial
+ * coefficients to compute the angular diameter for bright star. The polynomial
+ * coefficients are given for B-V, V-R, V-K, I-J, I-K, J-H and J-K.n
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
 {
@@ -155,7 +158,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
      * and load it if necessary.
      */
     static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = 
-                            {mcsFALSE, "alxAngDiamPolynomialForBrightStar.cfg"};
+                            {mcsFALSE, "alxAngDiamPolynomial.cfg"};
     if (polynomial.loaded == mcsTRUE)
     {
         return &polynomial;

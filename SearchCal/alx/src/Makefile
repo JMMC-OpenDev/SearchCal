@@ -1,13 +1,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2005-12-22 10:08:58 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.8 2006-03-28 07:17:25 gzins Exp $"
 #
 # Makefile of the alx module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/12/22 10:08:58  scetre
+# Added extinction coefficient computation
+# changed realMag to CorrectedMag
+#
 # Revision 1.6  2005/12/02 12:05:42  scetre
 # Added computation of diameter and missing magnitude in faint
 #
@@ -156,7 +160,7 @@ MAN8 =
 # other files to be installed
 #----------------------------
 INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg					\
-				../config/alxAngDiamPolynomialForBrightStar.cfg		\
+				../config/alxAngDiamPolynomial.cfg		            \
 				../config/alxColorTableForBrightDwarfStar.cfg		\
 				../config/alxColorTableForFaintDwarfStar.cfg		\
 				../config/alxColorTableForBrightGiantStar.cfg		\
