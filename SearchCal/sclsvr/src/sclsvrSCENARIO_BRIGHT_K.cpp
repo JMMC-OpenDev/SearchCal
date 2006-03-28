@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.12 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.13 2006-03-28 12:58:13 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.11  2006/01/18 08:49:40  scetre
  * Removed unused filter on Qflg and opt because they are now managed by the catalog option
  *
@@ -47,7 +50,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.12 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.13 2006-03-28 12:58:13 scetre Exp $"; 
 
 /* 
  * System Headers 
@@ -201,7 +204,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // I/280
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP,
-                 vobsCOPY, NULL, &_bvFilter) == mcsFAILURE)
+                 vobsCOPY, NULL, &_bvFilter, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -253,7 +256,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // I/280 bis
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS,
-                 vobsCOPY) == mcsFAILURE)
+                 vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
