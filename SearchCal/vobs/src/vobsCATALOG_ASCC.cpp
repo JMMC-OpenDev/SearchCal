@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.21 2006-03-03 15:03:27 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.22 2006-03-28 12:57:21 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2006/03/03 15:03:27  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.20  2006/02/20 16:30:49  scetre
 * Patched with option -c.geom=b in request
 *
@@ -75,7 +78,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.21 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.22 2006-03-28 12:57:21 scetre Exp $"; 
 
 /* 
  * System Headers 
@@ -161,7 +164,6 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=DM");
     miscDynBufAppendString(&_query, "&-out=TYC1");
     // constraints
-    miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
     
     miscDynBufAppendString(&_query, "&-sort=_r");
     
@@ -233,7 +235,6 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-out=DM");
     miscDynBufAppendString(&_query, "&-out=TYC1");
     // constraints
-    miscDynBufAppendString(&_query, "&SpType=%5bOBAFGKM%5d*");
     miscDynBufAppendString(&_query, "&-sort=_r"); 
     
     return mcsSUCCESS;
