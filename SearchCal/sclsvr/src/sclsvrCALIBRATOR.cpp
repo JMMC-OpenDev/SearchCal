@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.73 2006-03-27 08:49:57 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.74 2006-03-28 10:04:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.73  2006/03/27 08:49:57  scetre
+ * Changed phg to cous for I mag
+ *
  * Revision 1.72  2006/03/22 10:45:00  scetre
  * Fixed bug with paralax test in faint case
  *
@@ -171,7 +174,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.73 2006-03-27 08:49:57 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.74 2006-03-28 10:04:33 gzins Exp $"; 
 
 
 /* 
@@ -1781,7 +1784,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitude()
     // Convert magnitude
     magKcous = magK + 0.024;
     magJcous = 0.947 * magJ + 0.053 * magK + 0.036;
-    magHcous = 0.975 * magH + 0.025 * magK - 0.04;
+    magHcous = 0.975 * magH + 0.025 * magK - 0.004;
 
     // Set Kcous
     if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_K, magKcous, 
