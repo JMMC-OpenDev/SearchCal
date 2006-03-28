@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.18 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.19 2006-03-28 12:42:12 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.17  2006/01/18 08:49:40  scetre
  * Removed unused filter on Qflg and opt because they are now managed by the catalog option
  *
@@ -66,7 +69,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.18 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.19 2006-03-28 12:42:12 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -241,7 +244,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
             // II/246
             ///////////////////////////////////////////////////////////////////
             if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
-                         vobsCOPY) == mcsFAILURE)
+                         vobsCOPY, NULL, NULL, 
+                         "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -254,14 +258,15 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         // II/246
         ///////////////////////////////////////////////////////////////////////
         if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
-                     vobsCOPY) == mcsFAILURE)
+                     vobsCOPY, NULL, NULL, 
+                     "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
             return mcsFAILURE;
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Filter on opt=U
+    // Filter on opt=T
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, 
                 vobsCOPY, NULL, &_filterOptT) == mcsFAILURE)
