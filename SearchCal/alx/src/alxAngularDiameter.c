@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.26 2006-03-28 07:17:25 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.27 2006-03-28 10:00:53 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2006/03/28 07:17:25  gzins
+ * Changed alxAngDiamPolynomialForBrightStar to alxAngDiamPolynomial
+ *
  * Revision 1.25  2006/03/27 08:48:58  scetre
  * Changed coefficient from 0.3 to 0.5
  *
@@ -100,7 +103,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.26 2006-03-28 07:17:25 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.27 2006-03-28 10:00:53 gzins Exp $"; 
 
 
 /* 
@@ -426,9 +429,9 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
 
     /* Compute the polynomials P(I-J), P(I-K), P(J-K), P(J-H) */
     p_i_j =   polynomial->coeff[3][0]
-        + polynomial->coeff[3][1] * i_j
-        + polynomial->coeff[3][2] * pow(i_j, 2)
-        + polynomial->coeff[3][3] * pow(i_j, 3)
+            + polynomial->coeff[3][1] * i_j
+            + polynomial->coeff[3][2] * pow(i_j, 2)
+            + polynomial->coeff[3][3] * pow(i_j, 3)
             + polynomial->coeff[3][4] * pow(i_j, 4)
             + polynomial->coeff[3][5] * pow(i_j, 5);
 
@@ -456,8 +459,8 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     /* Compute the diameters D(B-V), D(V-R), D(V-K) */
     diameters->ij.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_j;
     diameters->ik.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_k;
-    diameters->jk.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_j_k;
-    diameters->jh.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_j_h;
+    diameters->jk.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_k;
+    diameters->jh.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_h;
     diameters->ijErr.value = diameters->ij.value * 10.4/100.0;
     diameters->ikErr.value = diameters->ik.value * 8.5/100.0;;
     diameters->jkErr.value = diameters->jk.value * 9.1/100.0;;
