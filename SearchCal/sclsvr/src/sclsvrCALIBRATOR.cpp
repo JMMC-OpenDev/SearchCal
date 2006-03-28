@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.74 2006-03-28 10:04:33 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.75 2006-03-28 13:49:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.74  2006/03/28 10:04:33  gzins
+ * Fixed Hcous magnitude computation
+ *
  * Revision 1.73  2006/03/27 08:49:57  scetre
  * Changed phg to cous for I mag
  *
@@ -174,7 +177,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.74 2006-03-28 10:04:33 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.75 2006-03-28 13:49:18 gzins Exp $"; 
 
 
 /* 
@@ -215,6 +218,8 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR()
 {
     // Add all star properties 
     AddProperties();
+
+    _isSuitable = mcsTRUE;
 }
 
 /**
@@ -226,6 +231,8 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(vobsSTAR &star)
 
     // Add all star properties 
     AddProperties(); 
+
+    _isSuitable = star._isSuitable;
 }
 
 /**
@@ -240,7 +247,7 @@ sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
  * Public methods
  */
 /**
- * Return wether the calibrator has a coherent diameter or not.
+ * Return whether the calibrator has a coherent diameter or not.
  */
 mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
 {
@@ -258,6 +265,14 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
     }
 
     return mcsTRUE;
+}
+
+/**
+ * Return wether the star is or not a suitable calibrator
+ */
+mcsLOGICAL sclsvrCALIBRATOR::IsSuitable()
+{
+    return _isSuitable;
 }
 
 /**

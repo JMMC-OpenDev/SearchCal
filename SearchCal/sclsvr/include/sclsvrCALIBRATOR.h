@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.35 2006-01-23 14:12:25 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.36 2006-03-28 13:49:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2006/01/23 14:12:25  scetre
+ * Added Av parameter as a property of a calibrator
+ *
  * Revision 1.34  2005/12/22 10:11:56  scetre
  * Added method to compute extinction coefficient
  * added method to compute cousin mag
@@ -144,8 +147,11 @@ public:
     // Complete calibrator properties
     mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
  
-    // Return wether the calibrator has a coherent diameter or not
+    // Return whether the calibrator has a coherent diameter or not
     virtual mcsLOGICAL IsDiameterOk();
+
+    // Return whether the star is or not a suitable calibrator
+    virtual mcsLOGICAL IsSuitable();
 
 protected:
     
@@ -172,6 +178,8 @@ private:
     mcsCOMPL_STAT ComputeMultiplicity(); 
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
     mcsCOMPL_STAT ComputeCousinMagnitude(); 
+
+    mcsLOGICAL    _isSuitable;
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/
