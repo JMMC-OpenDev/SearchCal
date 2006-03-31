@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: envStop.sh,v 1.6 2005-12-06 11:44:17 gzins Exp $"
+# "@(#) $Id: envStop.sh,v 1.7 2006-03-31 14:33:27 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/12/06 11:44:17  gzins
+# Improved error handling
+#
 # Revision 1.5  2005/02/28 14:25:00  lafrasse
 # Reversed changelog order
 #
@@ -54,11 +57,19 @@ fi
 # If MCSENV is defined
 if [ "$MCSENV" != "" ]
 then
-    # Set LABEL accordinaly
-    LABEL="$MCSENV"
+    # Set envName accordinaly
+    envName="$MCSENV"
 else
-    # Set LABEL to "default"
-    LABEL="default"
+    # Set envName to "default"
+    envName="default"
+fi
+
+# Check environment exist 
+answer=`envGet $envName 2>&1 > /dev/null`
+if [ "$?" == 1 ]
+then
+    echo "'$envName' environment does not exist!" 
+    exit 1;
 fi
 
 # Check whether the msgManager is already running or not
@@ -67,23 +78,22 @@ answer=`msgSendCommand msgManager PING "" 2>&1 > /dev/null`
 # If the environment is running
 if [ "$?" == 0 ]
 then
-    echo "Stopping '$LABEL' environment ..."
+    echo "Stopping '$envName' environment ..."
     procList="msgManager"
     for proc in ${procList}
     do
-        answer=`msgSendCommand msgManager EXIT "" 2>&1 > /dev/null`
-	sleep 1
-	stat=`ps -f -u $USER | grep $proc | grep -v grep | wc -l`
-    	if [ $stat == 0 ]
-    	then
-           echo "   '$proc' stopped" 
+        answer=`msgSendCommand msgManager EXIT "" 2>&1`
+        sleep 1
+        if [ "$answer" == "OK" ]
+        then
+            echo "   '$proc' stopped" 
         else
-           echo "   '$proc' failed" >&2
-    	fi
+            echo "   '$proc' failed" >&2
+        fi
     done
     echo "done."
 else
-    echo "'$LABEL' environment is not running"
+    echo "'$envName' environment is not running"
 fi
 
 exit 0;
