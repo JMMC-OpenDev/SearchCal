@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-02-13 16:53:13 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.5 2006-03-31 13:19:55 gzins Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/13 16:53:13  gzins
+# Added CVS log as modification history
+#
 # lafrasse  07-Dec-2004  Created
 #
 #*******************************************************************************
@@ -38,14 +41,21 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = envShow
+EXECUTABLES     = envShow    \
+				  envGet
 EXECUTABLES_L   = 
 
 #
-# <brief description of envShow program>
+# envShow displays the list of environments 
 envShow_OBJECTS   = envShow
 envShow_LDFLAGS   = -lgdome
 envShow_LIBS      = mcs log err misc env C++
+
+#
+# envGet displays information related to the given environment
+envGet_OBJECTS   = envGet
+envGet_LDFLAGS   = -lgdome
+envGet_LIBS      = mcs log err misc env C++
 
 #
 # special compilation flags for single c sources
