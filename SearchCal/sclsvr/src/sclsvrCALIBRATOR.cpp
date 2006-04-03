@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.75 2006-03-28 13:49:18 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.76 2006-04-03 08:58:24 swmgr Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.75  2006/03/28 13:49:18  gzins
+ * Added IsSuitable method
+ *
  * Revision 1.74  2006/03/28 10:04:33  gzins
  * Fixed Hcous magnitude computation
  *
@@ -177,7 +180,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.75 2006-03-28 13:49:18 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.76 2006-04-03 08:58:24 swmgr Exp $"; 
 
 
 /* 
@@ -232,7 +235,7 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(vobsSTAR &star)
     // Add all star properties 
     AddProperties(); 
 
-    _isSuitable = star._isSuitable;
+    _isSuitable = mcsTRUE;
 }
 
 /**
