@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.10 2006-03-03 15:03:28 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.11 2006-04-03 11:49:49 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.10  2006/03/03 15:03:28  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.9  2005/11/16 14:26:19  scetre
 * Added Clear method
 *
@@ -32,7 +35,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.10 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.11 2006-04-03 11:49:49 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -204,13 +207,14 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
     else
     {
         _criteriaIterator++;
-        // If the the criteria iterator is at the end of the list, there are no
-        // more criteria in the list and return a failure
-        if (_criteriaIterator == _criteriaList.end())
-        {
-            errAdd(vobsERR_NO_MORE_CRITERIA);
-            return mcsFAILURE;
-        }
+    }
+
+    // If the the criteria iterator is at the end of the list, there are no
+    // more criteria in the list and return a failure
+    if (_criteriaIterator == _criteriaList.end())
+    {
+        errAdd(vobsERR_NO_MORE_CRITERIA);
+        return mcsFAILURE;
     }
 
     // copy the criteria name found and get the value of the range

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.32 2006-04-03 11:44:18 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.33 2006-04-03 11:49:49 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.32  2006/04/03 11:44:18  gzins
+* Fixed bug in GetNextStar() method; handled case where list is empty
+*
 * Revision 1.31  2006/03/03 15:03:28  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -90,7 +93,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.32 2006-04-03 11:44:18 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.33 2006-04-03 11:49:49 gzins Exp $"; 
 
 
 /* 
@@ -324,21 +327,18 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
 
     if ((init == mcsTRUE) || _starIterator == NULL)
     {
-        // If list is empty
-        if (Size() == 0)
-        {
-            return NULL;
-        }
         _starIterator = _starList.begin();
     }
     else
     {
         _starIterator++;
-        if (_starIterator == _starList.end())
-        {
-            return NULL;
-        }
     }
+
+    if (_starIterator == _starList.end())
+    {
+        return NULL;
+    }
+
     return (*_starIterator);
 }
 
