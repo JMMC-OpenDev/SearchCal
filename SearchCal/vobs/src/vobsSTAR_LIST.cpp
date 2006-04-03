@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.31 2006-03-03 15:03:28 scetre Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.32 2006-04-03 11:44:18 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.31  2006/03/03 15:03:28  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.30  2006/01/05 09:07:39  lafrasse
 * Code review
 *
@@ -87,7 +90,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.31 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.32 2006-04-03 11:44:18 gzins Exp $"; 
 
 
 /* 
@@ -321,6 +324,11 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
 
     if ((init == mcsTRUE) || _starIterator == NULL)
     {
+        // If list is empty
+        if (Size() == 0)
+        {
+            return NULL;
+        }
         _starIterator = _starList.begin();
     }
     else
