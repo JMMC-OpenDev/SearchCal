@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfDoxygen.sh,v 1.6 2005-12-15 10:04:21 gzins Exp $"
+# "@(#) $Id: mkfDoxygen.sh,v 1.7 2006-04-04 09:01:18 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/12/15 10:04:21  gzins
+# Changed logo in docmentation header.
+#
 # Revision 1.5  2005/05/20 09:59:59  gzins
 # Fixed bug related to revision retrieving
 #
@@ -152,6 +155,7 @@ then
 
     # Creation of a copy of doxyfile called doxyfile_clean
     cp $BASECAMP/../config/doxyfile /tmp/doxyfile_clean
+    chmod 644 /tmp/doxyfile_clean
 
     # Remotion of comments in the customer customized file
     egrep -v '^#|^$'  /tmp/doxyfile_clean > /tmp/doxyfile.old
