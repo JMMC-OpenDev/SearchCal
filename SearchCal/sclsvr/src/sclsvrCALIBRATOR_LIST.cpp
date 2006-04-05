@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.52 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.53 2006-04-05 15:12:39 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.52  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.51  2005/11/14 14:48:13  lafrasse
  * Changed hard coded property id used to sort calibrator according their disctance to the science object to a definied constant
  *
@@ -139,7 +142,7 @@
  * sclsvrCALIBRATOR_LIST class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.52 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.53 2006-04-05 15:12:39 gzins Exp $"; 
 
 
 /* 
@@ -238,46 +241,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
             if (AddAtTail(*calibrator) == mcsFAILURE)
             {
                 return mcsFAILURE;
-            }
-        }
-    }
-
-    return mcsSUCCESS;
-}
-
-/**
- * Extract a list inside another one.
- *
- * @param list the list to Extract in the current list
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Extract(sclsvrCALIBRATOR_LIST &list)
-{
-    logTrace("sclsvrCALIBRATOR_LIST::Extract()");
-
-    // For each element of the given list
-    for (unsigned int el = 0; el < list.Size(); el++)
-    {
-        // Get next calibrator
-        sclsvrCALIBRATOR* calibratorToDelete;
-        calibratorToDelete =
-            (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
-        
-        // For each element of the internal list
-        for (unsigned int elem = 0; elem < Size(); elem++)
-        {
-            // Get next calibrator
-            sclsvrCALIBRATOR* calibrator;
-            calibrator = 
-                (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(elem==0));
-
-            // if calibrator is in the list of deleting calibrator, remove it
-            if (calibratorToDelete->IsSame(*calibrator))
-            {
-                Remove(*calibrator);
-                break;
             }
         }
     }
@@ -445,6 +408,46 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
     if (Remove(*calibrator) == mcsFAILURE)
     {
         return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Delete a list of calibrators
+ *
+ * @param list the list of calibrators to be deleted in the current list
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(sclsvrCALIBRATOR_LIST &list)
+{
+    logTrace("sclsvrCALIBRATOR_LIST::Delete()");
+
+    // For each element of the given list
+    for (unsigned int el = 0; el < list.Size(); el++)
+    {
+        // Get next calibrator
+        sclsvrCALIBRATOR* calibratorToDelete;
+        calibratorToDelete =
+            (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
+        
+        // For each element of the internal list
+        for (unsigned int elem = 0; elem < Size(); elem++)
+        {
+            // Get next calibrator
+            sclsvrCALIBRATOR* calibrator;
+            calibrator = 
+                (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(elem==0));
+
+            // if calibrator is in the list of deleting calibrator, remove it
+            if (calibratorToDelete->IsSame(*calibrator))
+            {
+                Remove(*calibrator);
+                break;
+            }
+        }
     }
 
     return mcsSUCCESS;

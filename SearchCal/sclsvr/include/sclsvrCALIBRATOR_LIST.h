@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.26 2005-10-26 11:27:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR_LIST.h,v 1.27 2006-04-05 15:12:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/10/26 11:27:24  lafrasse
+ * Code review
+ *
  * Revision 1.25  2005/06/20 14:39:28  scetre
  * Removed filter to vobs unless visibility filter
  *
@@ -108,7 +111,6 @@ public:
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
     virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list,
                                mcsLOGICAL copyDiameterNok = mcsTRUE);
-    virtual mcsCOMPL_STAT Extract(sclsvrCALIBRATOR_LIST &list);
     virtual mcsCOMPL_STAT AddAtTail(sclsvrCALIBRATOR &calibrator);
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
  
@@ -118,6 +120,7 @@ public:
     virtual mcsCOMPL_STAT UnPack(const char *buffer);
    
     virtual mcsCOMPL_STAT Delete(unsigned int starNumber);
+    virtual mcsCOMPL_STAT Delete(sclsvrCALIBRATOR_LIST &list);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                vobsSTAR_PROPERTY_ID_LIST ucdList,
