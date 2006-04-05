@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.35 2006-03-07 15:33:39 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.36 2006-04-05 15:17:26 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2006/03/07 15:33:39  scetre
+ * Removed old scenario in band K
+ *
  * Revision 1.34  2006/03/07 07:52:57  scetre
  * Added error instead of logError
  *
@@ -110,7 +113,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.35 2006-03-07 15:33:39 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.36 2006-04-05 15:17:26 gzins Exp $"; 
 
 
 /* 
@@ -352,15 +355,25 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                                     0.01, 0.01);
     // 3) Apply the filter to the copied calibrator list
     distanceFilter.Apply(&scienceObjects);
+
     // 4) Remove from the original calibrator list any star left by the filter
     // in the temporary list
     vobsSTAR* currentStar = scienceObjects.GetNextStar(mcsTRUE);
     while (currentStar != NULL)
     {
+        mcsSTRING32 starId;
+        // Get Star ID
+        if (currentStar->GetId(starId, sizeof(starId)) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
+        logInfo("science star %s has been removed", starId);
         calibratorList.Remove(*currentStar);
         currentStar = scienceObjects.GetNextStar();
+        
     }
     ////////////////////////////////////////////////////////////////////////////
+
 
     if (sdbWriteAction("Done", mcsTRUE) == mcsFAILURE)
     {
