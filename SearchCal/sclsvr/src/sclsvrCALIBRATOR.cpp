@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.76 2006-04-03 08:58:24 swmgr Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.77 2006-04-05 15:18:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.76  2006/04/03 08:58:24  swmgr
+ * Fixed bug in copy constructor
+ *
  * Revision 1.75  2006/03/28 13:49:18  gzins
  * Added IsSuitable method
  *
@@ -180,7 +183,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.76 2006-04-03 08:58:24 swmgr Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.77 2006-04-05 15:18:03 gzins Exp $"; 
 
 
 /* 
@@ -1744,7 +1747,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
     }
 
     // Put the computed distance in the corresponding calibrator property
-    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance/3600, "") ==
+    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, 
+                         distance/3600, vobsSTAR_COMPUTED_PROP) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
