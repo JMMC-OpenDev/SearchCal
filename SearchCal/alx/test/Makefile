@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2005-10-26 11:30:41 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.6 2006-04-06 11:49:08 gzins Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/10/26 11:30:41  lafrasse
+# Created alxComputeDistance function stuff
+#
 # Revision 1.4  2005/02/15 14:47:55  gzins
 # Removed unused target
 #
@@ -53,10 +56,10 @@
 # -----------------------------
 EXECUTABLES     = alxTestAngularDiameter     \
                   alxTestMagnitude           \
-				  alxTestGalacticCoordinates \
-				  alxTestVisibility          \
-				  alxTestResearchArea        \
-				  alxTestDistance
+                  alxTestGalacticCoordinates \
+                  alxTestVisibility          \
+                  alxTestResearchArea        \
+                  alxTestDistance
 EXECUTABLES_L   = 
 
 #
@@ -201,7 +204,7 @@ include $(MAKEDIR)/mkfMakefile
 #
 # TARGETS
 # -------
-all:	do_all
+all   : do_all
 	@echo " . . . 'all' done" 
 
 clean : clean_all 
