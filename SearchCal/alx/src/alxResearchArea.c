@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2006/03/03 14:48:24  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.10  2005/12/22 10:28:31  scetre
 * Updated documentation
 *
@@ -46,7 +49,7 @@
  * @sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxResearchArea.c,v 1.11 2006-03-03 14:48:24 scetre Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxResearchArea.c,v 1.12 2006-04-06 09:32:31 gzins Exp $";
 
 
 /*
@@ -262,7 +265,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
             maxMagIdx = idx;
         }
     }
-    logDebug("Magnitude [%.1f - %.1f], range used => [%.1f - %.1f]",
+    logTest("Magnitude [%.1f - %.1f], range used => [%.1f - %.1f]",
              minMag, maxMag, starPopulation->mag[minMagIdx],
              starPopulation->mag[maxMagIdx]);
 
@@ -362,6 +365,8 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
  * @param maxMag maximum of the magnitude range
  * @param radius estimated size of the radius 
  *
+ * @warning
+ * If there is no star 
  * @return 
  * mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -401,8 +406,17 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT  ra,
     {
         return mcsFAILURE;
     }
+
     logInfo("Nb of star for this sky area = %d", nbOfStars);
 
+    /* Test if there is no star found; consider that ther is at least one */
+    if (nbOfStars == 0)
+    {
+        nbOfStars = 1;
+        logInfo("Consider there is at least 1 star.");
+    }
+    
+    
     /* Compute the area size according to estimated number of stars at this sky
      * position to only have 50 stars in this area.
      * NOTE: the area of the 1 degree solid angle circle is: PI/4 */
