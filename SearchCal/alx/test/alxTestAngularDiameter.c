@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.10 2006-03-28 09:58:54 gzins Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.11 2006-04-06 14:08:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/03/28 09:58:54  gzins
+ * Added
+ *
  * Revision 1.9  2005/12/21 14:59:57  scetre
  * Added test with faint object
  *
@@ -44,7 +47,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.10 2006-03-28 09:58:54 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.11 2006-04-06 14:08:32 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -120,8 +123,8 @@ int main (int argc, char *argv[])
     alxDATA mgH;
     mgI.value = 11.094; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsTRUE;
     mgJ.value = 10.418; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
-    mgKf.value = 9.871;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
-    mgH.value = 9.856;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
+    mgH.value = 9.907;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
+    mgKf.value = 9.856;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
     
     alxDIAMETERS diametersFaint;
     if (alxComputeAngularDiameterForFaintStar
