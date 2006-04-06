@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.13 2005-12-22 10:09:14 scetre Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.14 2006-04-06 11:52:21 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/12/22 10:09:14  scetre
+ * Updated test
+ *
  * Revision 1.12  2005/12/19 20:46:49  gzins
  * Updated test programs according new function names
  *
@@ -53,7 +56,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.13 2005-12-22 10:09:14 scetre Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.14 2006-04-06 11:52:21 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -117,6 +120,7 @@ int main (int argc, char *argv[])
     { 
         magnitudes[band].value = alxBLANKING_VALUE;
         magnitudes[band].isSet = mcsFALSE;        
+        magnitudes[band].confIndex = alxCONFIDENCE_LOW;
     }
     magnitudes[alxB_BAND].value = 6.6;
     magnitudes[alxB_BAND].isSet = mcsTRUE;
@@ -131,6 +135,7 @@ int main (int argc, char *argv[])
     { 
         magnitudes[band].value = alxBLANKING_VALUE;
         magnitudes[band].isSet = mcsFALSE;        
+        magnitudes[band].confIndex = alxCONFIDENCE_LOW;
     }
     magnitudes[alxB_BAND].value = 6.6;
     magnitudes[alxB_BAND].isSet = mcsTRUE;
@@ -146,6 +151,7 @@ int main (int argc, char *argv[])
     { 
         magnitudes[band].value = alxBLANKING_VALUE;
         magnitudes[band].isSet = mcsFALSE;        
+        magnitudes[band].confIndex = alxCONFIDENCE_LOW;
     }
     magnitudes[alxB_BAND].isSet = mcsTRUE;
     magnitudes[alxB_BAND].value = 6.6;
@@ -170,6 +176,7 @@ int main (int argc, char *argv[])
     { 
         magnitudes[band].value = alxBLANKING_VALUE;
         magnitudes[band].isSet = mcsFALSE;        
+        magnitudes[band].confIndex = alxCONFIDENCE_LOW;
     }
     magnitudes[alxB_BAND].value = 6.6;
     magnitudes[alxB_BAND].isSet = mcsTRUE;
