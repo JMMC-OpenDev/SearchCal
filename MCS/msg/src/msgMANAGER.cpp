@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.19 2005-02-09 16:36:13 lafrasse Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.20 2006-04-06 08:20:06 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/02/09 16:36:13  lafrasse
+ * minor indentation refinments
+ *
  * Revision 1.18  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -53,7 +56,7 @@
  * \sa msgMANAGER
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.19 2005-02-09 16:36:13 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.20 2006-04-06 08:20:06 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 /* 
@@ -299,7 +302,10 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                             SendReply(msg);
                             
                             // Removed reply from the awaited commamd reply list
-                            RemoveProcessWaitingFor(msg.GetCommandId());
+                            if (msg.IsLastReply() == mcsTRUE)
+                            {
+                                RemoveProcessWaitingFor(msg.GetCommandId());
+                            }
                         }
                     }
                 }
