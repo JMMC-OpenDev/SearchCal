@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.27 2006-03-28 10:00:53 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.28 2006-04-06 14:06:46 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2006/03/28 10:00:53  gzins
+ * Fixed JK and JH diameter computation
+ *
  * Revision 1.26  2006/03/28 07:17:25  gzins
  * Changed alxAngDiamPolynomialForBrightStar to alxAngDiamPolynomial
  *
@@ -103,7 +106,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.27 2006-03-28 10:00:53 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.28 2006-04-06 14:06:46 gzins Exp $"; 
 
 
 /* 
@@ -442,19 +445,19 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
             + polynomial->coeff[4][4] * pow(i_k, 4)
             + polynomial->coeff[4][5] * pow(i_k, 5);
 
-    p_j_k =   polynomial->coeff[5][0]
-            + polynomial->coeff[5][1] * j_k
-            + polynomial->coeff[5][2] * pow(j_k, 2)
-            + polynomial->coeff[5][3] * pow(j_k, 3)
-            + polynomial->coeff[5][4] * pow(j_k, 4)
-            + polynomial->coeff[5][5] * pow(j_k, 5);
+    p_j_h =   polynomial->coeff[5][0]
+            + polynomial->coeff[5][1] * j_h
+            + polynomial->coeff[5][2] * pow(j_h, 2)
+            + polynomial->coeff[5][3] * pow(j_h, 3)
+            + polynomial->coeff[5][4] * pow(j_h, 4)
+            + polynomial->coeff[5][5] * pow(j_h, 5);
 
-    p_j_h =   polynomial->coeff[6][0]
-            + polynomial->coeff[6][1] * j_h
-            + polynomial->coeff[6][2] * pow(j_h, 2)
-            + polynomial->coeff[6][3] * pow(j_h, 3)
-            + polynomial->coeff[6][4] * pow(j_h, 4)
-            + polynomial->coeff[6][5] * pow(j_h, 5);
+    p_j_k =   polynomial->coeff[6][0]
+            + polynomial->coeff[6][1] * j_k
+            + polynomial->coeff[6][2] * pow(j_k, 2)
+            + polynomial->coeff[6][3] * pow(j_k, 3)
+            + polynomial->coeff[6][4] * pow(j_k, 4)
+            + polynomial->coeff[6][5] * pow(j_k, 5);
 
     /* Compute the diameters D(B-V), D(V-R), D(V-K) */
     diameters->ij.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_j;
