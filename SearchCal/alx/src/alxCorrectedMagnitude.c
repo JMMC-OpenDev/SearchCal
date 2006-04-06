@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.4 2006-03-03 14:48:24 scetre Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.5 2006-04-06 14:49:39 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/03/03 14:48:24  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.3  2006/01/26 12:48:25  scetre
  * Added test on blanking value in the color table
  *
@@ -75,7 +78,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.4 2006-03-03 14:48:24 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.5 2006-04-06 14:49:39 gzins Exp $"; 
 
 
 /* 
@@ -1276,7 +1279,7 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
     }
     /* Line corresponding to the spectral type */
     mcsINT32 line = alxGetLineForFaintStar(colorTable, spectralType, spType,
-                                       mgJ-mgK);
+                                           mgJ-mgK);
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
@@ -1292,20 +1295,15 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
     if (colorTable->index[line][alxJ_K].value == (mgJ - mgK))
     {
         /* Get differential magnitudes */
-        diffMagnitudes[alxB_V].value =
-            colorTable->index[line][alxB_V].value;
+        diffMagnitudes[alxB_V].value = colorTable->index[line][alxB_V].value;
         diffMagnitudes[alxB_V].isSet = mcsTRUE;
-        diffMagnitudes[alxV_I].value =
-            colorTable->index[line][alxV_I].value;
+        diffMagnitudes[alxV_I].value = colorTable->index[line][alxV_I].value;
         diffMagnitudes[alxV_I].isSet = mcsTRUE;
-        diffMagnitudes[alxV_R].value =
-            colorTable->index[line][alxV_R].value;
+        diffMagnitudes[alxV_R].value = colorTable->index[line][alxV_R].value;
         diffMagnitudes[alxV_R].isSet = mcsTRUE;
-        diffMagnitudes[alxI_J].value =
-            colorTable->index[line][alxI_J].value;
+        diffMagnitudes[alxI_J].value = colorTable->index[line][alxI_J].value;
         diffMagnitudes[alxI_J].isSet = mcsTRUE;
-        diffMagnitudes[alxJ_H].value =
-            colorTable->index[line][alxJ_H].value;
+        diffMagnitudes[alxJ_H].value = colorTable->index[line][alxJ_H].value;
         diffMagnitudes[alxJ_H].isSet = mcsTRUE;
 
     }
@@ -1323,20 +1321,19 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
                 mgJ-mgK,
                 colorTable->index[lineSup][alxJ_K].value);
         /* Compute ratio for interpolation */
-        if ((colorTable->index[lineSup][alxJ_K].value 
-             - colorTable->index[lineInf][alxJ_K].value) != 0.0)
+        if (colorTable->index[lineSup][alxJ_K].value != 
+            colorTable->index[lineInf][alxJ_K].value)
         {
             ratio = fabs(((mgJ-mgK) - colorTable->index[lineInf][alxJ_K].value) 
                          / (colorTable->index[lineSup][alxJ_K].value 
                             - colorTable->index[lineInf][alxJ_K].value));
-            logTest("Ratio = %f", ratio);
         }
         /* If ratio can be computed, return failure */
         else
         {
-            errAdd(alxERR_CANNOT_COMPUTE_RATIO);
-            return mcsFAILURE;
+            ratio = 0.5;
         }
+        logTest("Ratio = %f", ratio);
 
         /* Compute differential magnitudes */
 
