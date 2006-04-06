@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: alxTestResearchArea.c,v 1.3 2005-12-19 21:12:14 gzins Exp $"
+* "@(#) $Id: alxTestResearchArea.c,v 1.4 2006-04-06 11:52:57 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.3  2005/12/19 21:12:14  gzins
+* Added new tests
+*
 * Revision 1.2  2005/02/17 19:05:23  gzins
 * Changed remaining FAILURE to mcsFAILURE
 *
@@ -14,7 +17,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: alxTestResearchArea.c,v 1.3 2005-12-19 21:12:14 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestResearchArea.c,v 1.4 2006-04-06 11:52:57 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -123,6 +126,17 @@ int main (int argc, char *argv[])
     logTest ("Result 5 : ra = %.2f dec = %.2f -> size = %.2f should be 2.10",
              ra, dec, areaSize);
 
+   /* Test 6 */
+    magMin = 2.0;
+    magMax = 4.0;
+    ra     = 245.75;
+    dec    = -24.39;
+    if (alxGetResearchAreaSize(ra, dec, magMin, magMax, &areaSize)==mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    logTest ("Result 6 : ra = %.2f dec = %.2f -> size = %.2f should be 2.10",
+             ra, dec, areaSize);
     logInfo("Exiting...");
 
     /* Close MCS services */
