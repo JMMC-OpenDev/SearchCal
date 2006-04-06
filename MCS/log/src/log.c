@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.27 2005-06-01 13:19:16 gzins Exp $"
+* "@(#) $Id: log.c,v 1.28 2006-04-06 18:01:08 gzins Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2005/06/01 13:19:16  gzins
+* Changed 'extended debug' to 'trace'
+*
 * Revision 1.26  2005/02/15 08:18:43  gzins
 * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
 *
@@ -557,7 +560,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
         if (allowed == mcsTRUE)
         {
             /* Print the log message header */
-            fprintf(stdout, "%s - %s - %s - ", mcsGetEnvName(),
+            fprintf(stdout, "%s - %s - ",
                     mcsGetProcName(), modName);
 
             /* If the log message should contain the date */ 
