@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.6 2006-04-07 06:04:30 gzins Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.7 2006-04-07 06:15:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/04/07 06:04:30  gzins
+ * Added NO_CONFIDENCE when can not compute corrected magnitude
+ *
  * Revision 1.5  2006/04/06 14:49:39  gzins
  * Fixed when computing ratio for interpolation.
  *
@@ -81,7 +84,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.6 2006-04-07 06:04:30 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.7 2006-04-07 06:15:03 gzins Exp $"; 
 
 
 /* 
@@ -1429,7 +1432,6 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
         }
         else
         {
-            magnitude->value = 0.0;
             magnitude->confIndex = alxNO_CONFIDENCE;
         }
     }
