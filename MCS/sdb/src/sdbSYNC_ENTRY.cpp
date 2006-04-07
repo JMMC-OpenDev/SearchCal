@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.5 2006-03-28 11:08:58 gzins Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.6 2006-04-07 07:51:38 swmgr Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/03/28 11:08:58  gzins
+ * Adjusted log message level
+ *
  * Revision 1.4  2006/02/23 16:09:46  lafrasse
  * Removed temporary test code
  *
@@ -25,7 +28,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.5 2006-03-28 11:08:58 gzins Exp $"; 
+static char *rcsId="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.6 2006-04-07 07:51:38 swmgr Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -153,7 +156,7 @@ mcsCOMPL_STAT sdbENTRY::Write(const char* message, const mcsLOGICAL lastMessage)
         logDebug("The buffer has been emptied.");
     }
         
-    logTest("Storing the new message in the buffer.");
+    logDebug("Storing the new message in the buffer.");
     _lastMessage = lastMessage;
     strncpy(_buffer, message, sizeof(_buffer));
     
@@ -200,7 +203,7 @@ mcsCOMPL_STAT sdbENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
         logDebug("A new message has been received in the buffer.");
     }
     
-    logTest("Giving back the new message.");
+    logDebug("Giving back the new message.");
     *lastMessage = _lastMessage;
     strncpy(message, _buffer, sizeof(_buffer));
 
