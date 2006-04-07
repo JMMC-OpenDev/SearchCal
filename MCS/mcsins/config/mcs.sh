@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.7 2006-03-22 19:48:09 gzins Exp $
+# Version: $Id: mcs.sh,v 1.8 2006-04-07 07:01:34 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2006/03/22 19:48:09  gzins
+# Fixed 'tat' alias
+#
 # Revision 1.6  2006/03/22 19:47:41  gzins
 # Added 'tat' alias
 #
@@ -178,7 +181,7 @@ ctooGetTemplateForCppClass ()
 # Function to clean shared memories, semaphores, ...
 ipcClean ()
 {
-    ipcs -m | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,8); cmd = sprintf("ipcrm -m %s",id); system(cmd)}'
-    ipcs -s | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,8); cmd = sprintf("ipcrm -s %s",id); system(cmd)}'
-    ipcs -q | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,8); cmd = sprintf("ipcrm -q %s",id); system(cmd)}'
+    ipcs -m | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,9); cmd = sprintf("ipcrm -m %s",id); system(cmd)}'
+    ipcs -s | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,9); cmd = sprintf("ipcrm -s %s",id); system(cmd)}'
+    ipcs -q | grep $USER | grep 0x00000000 | awk '{ id = substr($0,11,9); cmd = sprintf("ipcrm -q %s",id); system(cmd)}'
 }
