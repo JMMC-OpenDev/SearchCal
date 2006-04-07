@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.78 2006-04-07 06:44:34 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.79 2006-04-07 08:36:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.78  2006/04/07 06:44:34  gzins
+ * Set confidence index to the magnitudes used for computation
+ *
  * Revision 1.77  2006/04/05 15:18:03  gzins
  * Added 'computed' when storing distance to science object
  *
@@ -186,7 +189,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.78 2006-04-07 06:44:34 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.79 2006-04-07 08:36:33 gzins Exp $"; 
 
 
 /* 
@@ -776,7 +779,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
     };
     
     // Get the value of the magnitude in the different band
-    // if B or V is not present, return mcsFAILURE
     if (IsPropertySet(mag0PropertyId[firstBandId]) == mcsTRUE)
     {
         if (GetPropertyValue(mag0PropertyId[firstBandId], 
@@ -873,13 +875,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
                     errResetStack();
                     return mcsSUCCESS;
                 }
-                if (errIsInStack("alx", alxERR_CANNOT_COMPUTE_RATIO) ==
-                     mcsTRUE)
-                {
-                    logInfo("star %s removed, the ratio in magnitude completion is not ok", starId, spType);
-                    errResetStack();
-                    return mcsSUCCESS;
-                }
                 else
                 {
                     return mcsFAILURE;
@@ -897,13 +892,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
                 {
                     logInfo("star %s removed, J-K is not in the table and/or can't be interpolate", starId, spType);
                     
-                    errResetStack();
-                    return mcsSUCCESS;
-                }
-                if (errIsInStack("alx", alxERR_CANNOT_COMPUTE_RATIO) ==
-                     mcsTRUE)
-                {
-                    logInfo("star %s removed, the ratio in magnitude completion is not ok", starId, spType);
                     errResetStack();
                     return mcsSUCCESS;
                 }
