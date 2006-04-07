@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.28 2006-04-06 18:01:08 gzins Exp $"
+* "@(#) $Id: log.c,v 1.29 2006-04-07 12:06:59 gzins Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2006/04/06 18:01:08  gzins
+* No longer printed out environment name on stdout
+*
 * Revision 1.27  2005/06/01 13:19:16  gzins
 * Changed 'extended debug' to 'trace'
 *
@@ -562,12 +565,14 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             /* Print the log message header */
             fprintf(stdout, "%s - %s - ",
                     mcsGetProcName(), modName);
+            fflush(stdout);
 
             /* If the log message should contain the date */ 
             if (logRulePtr->printDate == mcsTRUE)
             {
                 /* Print it */
                 fprintf(stdout, "%s - ", infoTime);
+                fflush(stdout);
             }
 
             /* If the fileline exists and should be contained in the log
@@ -576,6 +581,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             {
                 /* Print it */
                 fprintf(stdout, "%s - ", fileLine);
+                fflush(stdout);
             }
 
             /* Compute the variable parameters and print them */
