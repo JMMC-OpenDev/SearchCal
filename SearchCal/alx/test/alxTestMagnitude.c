@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.14 2006-04-06 11:52:21 gzins Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.15 2006-04-07 06:13:24 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2006/04/06 11:52:21  gzins
+ * Set confidence index
+ *
  * Revision 1.13  2005/12/22 10:09:14  scetre
  * Updated test
  *
@@ -56,7 +59,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.14 2006-04-06 11:52:21 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.15 2006-04-07 06:13:24 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -101,7 +104,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 int main (int argc, char *argv[])
 {
     /* Configure logging service */
-    logSetStdoutLogLevel(logTRACE);
+    logSetStdoutLogLevel(logTEST);
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
 

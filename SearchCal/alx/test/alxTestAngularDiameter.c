@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.11 2006-04-06 14:08:32 gzins Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.12 2006-04-07 06:13:24 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2006/04/06 14:08:32  gzins
+ * Updated magnitude values for faint test
+ *
  * Revision 1.10  2006/03/28 09:58:54  gzins
  * Added
  *
@@ -47,7 +50,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.11 2006-04-06 14:08:32 gzins Exp $"; 
+static char *rcsId="@(#) $Id: alxTestAngularDiameter.c,v 1.12 2006-04-07 06:13:24 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -79,7 +82,7 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 int main (int argc, char *argv[])
 {
     /* Configure logging service */
-    logSetStdoutLogLevel(logDEBUG);
+    logSetStdoutLogLevel(logTEST);
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
 

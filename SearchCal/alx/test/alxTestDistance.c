@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestDistance.c,v 1.2 2005-11-10 16:18:22 lafrasse Exp $"
+ * "@(#) $Id: alxTestDistance.c,v 1.3 2006-04-07 06:13:24 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/11/10 16:18:22  lafrasse
+ * Corrected unit consistency in alxComputeDistance()
+ *
  * Revision 1.1  2005/10/26 11:30:41  lafrasse
  * Created alxComputeDistance function stuff
  *
@@ -16,7 +19,7 @@
  * Test program of the function which computes distance.
  */
 
-static char *rcsId="@(#) $Id: alxTestDistance.c,v 1.2 2005-11-10 16:18:22 lafrasse Exp $"; 
+static char *rcsId="@(#) $Id: alxTestDistance.c,v 1.3 2006-04-07 06:13:24 gzins Exp $"; 
 static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
 
 
@@ -47,6 +50,11 @@ static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
  */
 int main (int argc, char *argv[])
 {
+    /* Configure logging service */
+    logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
