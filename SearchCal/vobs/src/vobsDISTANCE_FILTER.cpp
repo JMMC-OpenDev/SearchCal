@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.8 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.9 2006-04-07 08:23:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.7  2006/03/01 16:41:38  lafrasse
  * Added const attributes for SetDistanceValue() method parameters.
  * Replaced all the 'strcpy' calls with 'strncpy'.
@@ -44,7 +47,7 @@
  * Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.8 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.9 2006-04-07 08:23:00 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -200,13 +203,13 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
         if (star->IsSame(scienceStar, &criteriaList) == mcsFALSE)
         {
             // Remove it
-            logTest("star %s not in the box\n", starId);
+            logTest("star %s not in the box", starId);
             list->Remove(*star);
             el = el-1;
         }
         else
         {
-            logTest("star %s in the box\n", starId);
+            logTest("star %s in the box", starId);
         }
     }
     

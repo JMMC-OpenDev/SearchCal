@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.41 2006-03-22 10:42:57 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.42 2006-04-07 08:23:00 gzins Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.41  2006/03/22 10:42:57  scetre
+* Changed Ambiguous catalog name variable for debug
+*
 * Revision 1.40  2006/03/03 15:03:28  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -130,7 +133,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.41 2006-03-22 10:42:57 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.42 2006-04-07 08:23:00 gzins Exp $"; 
 
 
 /* 
@@ -319,7 +322,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 return mcsFAILURE;
             }
-            printf("%s\n", message);
 
             // Check if the list is not NULL, i.e the SetCatalogList has
             // ever been executed one time

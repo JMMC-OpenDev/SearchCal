@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMULTIPLICITY_FILTER.cpp,v 1.6 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsMULTIPLICITY_FILTER.cpp,v 1.7 2006-04-07 08:23:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.5  2005/12/14 15:07:53  scetre
  * Added log information about deleted star in filters
  *
@@ -36,7 +39,7 @@
  *  Definition of vobsMULTIPLICITY_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMULTIPLICITY_FILTER.cpp,v 1.6 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMULTIPLICITY_FILTER.cpp,v 1.7 2006-04-07 08:23:00 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -104,10 +107,8 @@ mcsCOMPL_STAT vobsMULTIPLICITY_FILTER::Apply(vobsSTAR_LIST *list)
             if (star->IsPropertySet(vobsSTAR_CODE_MULT_FLAG) == mcsTRUE)
             {
                 // Remove it
-                logTest("star %d had multiplicity %s\n",
-                        el+1, 
-                        star->
-                        GetPropertyValue(vobsSTAR_CODE_MULT_FLAG));
+                logTest("star %d had multiplicity %s", el+1, 
+                        star->GetPropertyValue(vobsSTAR_CODE_MULT_FLAG));
                 logInfo("star %s has been removed by the filter '%s'", starId, GetId());
                 
                 if (list->Remove(*star) == mcsFAILURE)

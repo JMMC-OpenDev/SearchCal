@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.7 2006-03-03 15:03:28 scetre Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.8 2006-04-07 08:23:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/03/03 15:03:28  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.6  2005/12/14 15:10:03  scetre
  * Added log information about deleted star in filters
  *
@@ -39,7 +42,7 @@
  *  Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.7 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.8 2006-04-07 08:23:00 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -107,7 +110,7 @@ mcsCOMPL_STAT vobsVARIABILITY_FILTER::Apply(vobsSTAR_LIST *list)
             {
                 logInfo("star %s has been removed by the filter '%s'", starId, GetId());
                 // Remove it
-                logTest("star %d had variability %s\n",
+                logTest("star %d had variability %s",
                         el+1, 
                         star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V3));
                 if (list->Remove(*star) == mcsFAILURE)
