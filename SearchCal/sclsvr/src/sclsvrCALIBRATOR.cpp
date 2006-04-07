@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.77 2006-04-05 15:18:03 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.78 2006-04-07 06:44:34 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.77  2006/04/05 15:18:03  gzins
+ * Added 'computed' when storing distance to science object
+ *
  * Revision 1.76  2006/04/03 08:58:24  swmgr
  * Fixed bug in copy constructor
  *
@@ -183,7 +186,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.77 2006-04-05 15:18:03 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.78 2006-04-07 06:44:34 gzins Exp $"; 
 
 
 /* 
@@ -747,11 +750,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
     logTrace("sclsvrCALIBRATOR::ComputeMissingMagnitude()");
 
     mcsSTRING32 starId;
-                // Get Star ID
-                if (GetId(starId, sizeof(starId)) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+    
+    // Get Star ID
+    if (GetId(starId, sizeof(starId)) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     alxMAGNITUDES magnitudes;
 
@@ -781,7 +785,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
         {       
             return mcsFAILURE;
         }
-        magnitudes[firstBandId].isSet=mcsTRUE;
+        magnitudes[firstBandId].isSet = mcsTRUE;
+        magnitudes[firstBandId].confIndex =
+            (alxCONFIDENCE_INDEX)GetPropertyConfIndex(mag0PropertyId[firstBandId]);
     }
 
     // Get the value of magnitude V
@@ -794,6 +800,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
         }
 
         magnitudes[secondBandId].isSet=mcsTRUE;
+        magnitudes[secondBandId].confIndex =
+            (alxCONFIDENCE_INDEX)GetPropertyConfIndex(mag0PropertyId[secondBandId]);
     }
 
     // For other magnitudes
@@ -809,6 +817,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
             }
 
             magnitudes[band].isSet=mcsTRUE;
+            magnitudes[band].confIndex =
+                (alxCONFIDENCE_INDEX)GetPropertyConfIndex(mag0PropertyId[band]);
         }
         else
         {
@@ -926,8 +936,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
         {
             if (SetPropertyValue(mag0PropertyId[band], magnitudes[band].value,
                                  vobsSTAR_COMPUTED_PROP, 
-                            (vobsCONFIDENCE_INDEX)magnitudes[band].confIndex,
-                            mcsFALSE) == mcsFAILURE)
+                                 (vobsCONFIDENCE_INDEX)magnitudes[band].confIndex,
+                                 mcsFALSE) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -1108,11 +1118,13 @@ ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS])
                 return mcsFAILURE;
             }
 
-            magnitudes[band].isSet=mcsTRUE;
+            magnitudes[band].isSet     = mcsTRUE;
+            magnitudes[band].confIndex = 
+                (alxCONFIDENCE_INDEX)GetPropertyConfIndex(magPropertyId[band]);
         }
         else
         {
-            magnitudes[band].isSet=mcsFALSE;
+            magnitudes[band].isSet     = mcsFALSE;
         }
     }
 
