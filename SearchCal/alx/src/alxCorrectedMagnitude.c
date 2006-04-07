@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.5 2006-04-06 14:49:39 gzins Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.6 2006-04-07 06:04:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/04/06 14:49:39  gzins
+ * Fixed when computing ratio for interpolation.
+ *
  * Revision 1.4  2006/03/03 14:48:24  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -78,7 +81,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.5 2006-04-06 14:49:39 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.6 2006-04-07 06:04:30 gzins Exp $"; 
 
 
 /* 
@@ -1424,6 +1427,11 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
             magnitude->confIndex = confIndex;
             magnitude->isSet = mcsTRUE;
         }
+        else
+        {
+            magnitude->value = 0.0;
+            magnitude->confIndex = alxNO_CONFIDENCE;
+        }
     }
     
     return mcsSUCCESS;
@@ -1608,6 +1616,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
     {
         return mcsFAILURE;
     }
+
     /* Compute all new magnitude */
     alxComputeAllMagnitudesForBrightStar(diffMag, magnitudes, mgV);
     /* Print out results */
@@ -1772,10 +1781,10 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsFLOAT      av,
         {
             magnitudes[band].value = magnitudes[band].value 
                 - (av * extinctionRatioTable->rc[band] / 3.10);
-        }
         
-        logTest("Corrected magnitude[%d] = %0.3f", band,
-                magnitudes[band].value); 
+            logTest("Corrected magnitude[%d] = %0.3f", band,
+                    magnitudes[band].value); 
+        }
     }
 
     return mcsSUCCESS;
