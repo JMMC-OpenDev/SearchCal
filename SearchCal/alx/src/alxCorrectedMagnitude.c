@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.7 2006-04-07 06:15:03 gzins Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.8 2006-04-10 12:36:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/04/07 06:15:03  gzins
+ * Do not set magnitude value to 0.0 when can not compute it.
+ *
  * Revision 1.6  2006/04/07 06:04:30  gzins
  * Added NO_CONFIDENCE when can not compute corrected magnitude
  *
@@ -84,7 +87,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.7 2006-04-07 06:15:03 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.8 2006-04-10 12:36:41 gzins Exp $"; 
 
 
 /* 
@@ -1126,7 +1129,8 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
         }
         else
         {
-            logTest("mgB-mgV = %.8e / B-V %.8e; delta > 0.1",
+            logTest("Could not compute differential magnitudes; "
+                    "mgB-mgV = %.3e / B-V %.3e; delta > 0.1",
                     (mgB-mgV), colorTable->index[line][alxB_V].value);
         }
     }
@@ -1342,7 +1346,6 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
         logTest("Ratio = %f", ratio);
 
         /* Compute differential magnitudes */
-
         if ((colorTable->index[lineSup][alxV_R].isSet != mcsFALSE) &&
             (colorTable->index[lineInf][alxV_R].isSet != mcsFALSE))
         {
