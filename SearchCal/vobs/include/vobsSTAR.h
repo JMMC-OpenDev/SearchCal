@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.49 2006-03-22 10:41:49 scetre Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.50 2006-04-10 14:51:57 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.49  2006/03/22 10:41:49  scetre
+* Added TYC2 and TYC3 properties
+*
 * Revision 1.48  2006/01/18 15:59:45  scetre
 * Added GetPropertyConfIndex() method
 *
@@ -248,6 +251,7 @@ public:
                     const char*           origin,
                     vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
                     mcsLOGICAL            overwrite       = mcsFALSE);
+    virtual mcsCOMPL_STAT ClearPropertyValue (const char* id);
 
     // Get the star properties
     virtual vobsSTAR_PROPERTY* GetProperty      (char*      id);

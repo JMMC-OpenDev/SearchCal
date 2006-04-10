@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.69 2006-03-22 10:42:18 scetre Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.70 2006-04-10 14:51:57 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.69  2006/03/22 10:42:18  scetre
+* Added TYC2 and TYC3 properties
+*
 * Revision 1.68  2006/03/03 15:03:28  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -183,7 +186,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.69 2006-03-22 10:42:18 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.70 2006-04-10 14:51:57 gzins Exp $"; 
 
 /*
  * System Headers
@@ -332,6 +335,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
 {
     logTrace("vobsSTAR::SetPropertyValue(float)");
 
+    
     // Look for the given property
     map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
     propertyIter = _propertyList.find(id);
@@ -353,6 +357,44 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
 
     return mcsSUCCESS;
 }
+
+/**
+ * Clear the charater value of a given property.
+ *
+ * @param id property id
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ *
+ * @b Error codes:@n
+ * The possible errors are :
+ * @li vobsERR_INVALID_PROPERTY_ID
+ */
+mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char *id)
+{
+    logTrace("vobsSTAR::ClearPropertyValue()");
+
+    
+    // Look for the given property
+    map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
+    propertyIter = _propertyList.find(id);
+
+    // If no property with the given Id was found
+    if (propertyIter == _propertyList.end())
+    {
+        // Raise an error
+        errAdd(vobsERR_INVALID_PROPERTY_ID, id);
+        return mcsFAILURE;
+    }
+
+    // Set this property value
+    if (propertyIter->second.ClearValue() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
 
 /**
  * Get the star property corresponding to the given UCD.
