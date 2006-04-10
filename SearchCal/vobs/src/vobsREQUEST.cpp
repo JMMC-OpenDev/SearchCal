@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.33 2006-03-03 15:03:28 scetre Exp $"
+ * "@(#) $Id: vobsREQUEST.cpp,v 1.34 2006-04-10 11:48:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2006/03/03 15:03:28  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.32  2006/02/22 11:21:03  gzins
  * Fixed bug related to RA/DEC format
  *
@@ -96,7 +99,7 @@
  *  Definition of vobsREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREQUEST.cpp,v 1.33 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREQUEST.cpp,v 1.34 2006-04-10 11:48:10 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -431,15 +434,14 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsFLOAT &deltaRa,
 
     deltaRa  = _deltaRa * cos(dec * M_PI / 180.0);
 
-    logTest("_deltaRa = %f", _deltaRa); 
-    logTest("_objectDecInDeg = %f", _objectDecInDeg); 
-    logTest("_deltaDec = %f", _deltaDec); 
-    logTest("dec = %f", dec); 
+    logDebug("_deltaRa = %f", _deltaRa); 
+    logDebug("_objectDecInDeg = %f", _objectDecInDeg); 
+    logDebug("_deltaDec = %f", _deltaDec); 
+    logDebug("dec = %f", dec); 
 
-    logTest("deltaRa = %f", deltaRa); 
-    
-    
     deltaDec = _deltaDec;
+
+    logTest("Search area [%.3f - %.3f]", deltaRa, deltaDec); 
 
     return mcsSUCCESS;
 }
