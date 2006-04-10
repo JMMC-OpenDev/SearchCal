@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.23 2006-03-03 15:03:28 scetre Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.24 2006-04-10 14:51:29 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2006/03/03 15:03:28  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.22  2006/02/21 16:32:00  scetre
 * Updated documentation
 *
@@ -77,7 +80,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.23 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.24 2006-04-10 14:51:29 gzins Exp $"; 
 
 
 /* 
@@ -120,7 +123,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
  * @param type   property type
  * @param unit   property unit
  * @param format format used to set property
- * @param link link for This property
+ * @param link link for this property
  * @param description property description
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
@@ -242,7 +245,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
     }
 
     // Affect value
-    if ((IsSet() == mcsFALSE) || (overwrite==mcsTRUE))
+    if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
     {
         // If type of property is float
         if (_type == vobsFLOAT_PROPERTY)
@@ -316,6 +319,24 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
         _confidenceIndex = confidenceIndex;
         _origin = origin;
     }
+
+    return mcsSUCCESS;    
+}
+
+/**
+ * Clear property value; i.e. set to '-'
+ *
+ * @return mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
+{
+    logTrace("vobsSTAR_PROPERTY::ClearValue()");
+
+    _confidenceIndex = vobsCONFIDENCE_LOW;
+
+    _origin = "-";
+
+    strcpy(_value, vobsSTAR_PROP_NOT_SET);
 
     return mcsSUCCESS;    
 }

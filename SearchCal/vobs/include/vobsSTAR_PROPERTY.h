@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.15 2006-01-06 15:59:55 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.16 2006-04-10 14:51:29 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.15  2006/01/06 15:59:55  lafrasse
+* Added CDS link in star property
+*
 * Revision 1.14  2006/01/05 09:07:39  lafrasse
 * Code review
 *
@@ -126,6 +129,7 @@ public:
                                    const char *origin,
                                    vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite=mcsFALSE);
+    virtual mcsCOMPL_STAT ClearValue(void);
     
     // Get value
     virtual const char   *GetValue(void) const;
@@ -156,7 +160,7 @@ public:
     // Get property description
     virtual const char *GetDescription(void) const;
 
-    // Get property CDS lnik
+    // Get property CDS link
     virtual const char *GetLink(void) const;
 
 protected:
