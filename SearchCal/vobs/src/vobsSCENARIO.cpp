@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.42 2006-04-07 08:23:00 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.43 2006-04-10 11:49:12 gzins Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.42  2006/04/07 08:23:00  gzins
+* Removed useless \n in log messages
+*
 * Revision 1.41  2006/03/22 10:42:57  scetre
 * Changed Ambiguous catalog name variable for debug
 *
@@ -133,7 +136,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.42 2006-04-07 08:23:00 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.43 2006-04-10 11:49:12 gzins Exp $"; 
 
 
 /* 
@@ -427,6 +430,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 }
 
                 logInfo("after COPY, star list size = %d", outputList->Size());
+                
+                break;
             }
 
             // Second action is vobsMERGE. The list output will be 
@@ -441,6 +446,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 }
 
                 logInfo("after MERGE, star list size = %d", outputList->Size());
+            
+                break;
             }
 
             // Third action is vobsUPDATE_ONLY. The list output will
@@ -456,6 +463,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
                 logInfo("after UPDATE_ONLY, star list size = %d",
                         outputList->Size());
+                
+                break;
             }
 
             default:
