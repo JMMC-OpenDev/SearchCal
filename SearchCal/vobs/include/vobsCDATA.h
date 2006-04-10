@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.24 2005-11-24 13:16:51 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.25 2006-04-10 11:55:09 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2005/11/24 13:16:51  scetre
+* Added test on CODE_VARIB ucd and TYC1 for ID_ALTERNATIVE
+*
 * Revision 1.23  2005/10/14 08:44:24  scetre
 * Updated p77 according to JMMC-MEM-2600-0004
 *
@@ -201,6 +204,10 @@ public:
                 property = star.GetProperty((char *)(*propIdIterateur).data());
                 AppendString(property->GetId());
                 AppendString("\t");
+                if (extendedFormat == mcsTRUE)
+                {
+                    AppendString("\t\t");
+                }
                 AddUcdName(property->GetId());
                 propIdIterateur++;
             }
@@ -215,6 +222,10 @@ public:
                 property = star.GetProperty((char *)(*propIdIterateur).data());
                 AppendString(property->GetName());
                 AppendString("\t");
+                if (extendedFormat == mcsTRUE)
+                {
+                    AppendString("\t\t");
+                }
                 AddParamName(property->GetName());
                 propIdIterateur++;
             }
@@ -342,7 +353,16 @@ public:
 
                     // Determine the number of attributes per property
                     mcsUINT32 nbAttrs;
-                    nbAttrs = (extendedFormat == mcsFALSE)? 1: 3;
+                    // If extended format then nb attributes per properties is
+                    // 3 (value, origin, confidence index) else 1 (value only)
+                    if (extendedFormat == mcsFALSE)
+                    {
+                        nbAttrs = 1;
+                    }
+                    else
+                    {
+                        nbAttrs = 3;
+                    }
                         
                     // Number of UCDs per line
                     nbUcd = (mcsUINT32)GetNbParams();
@@ -375,6 +395,8 @@ public:
                             }
                             else
                             {
+                                // In local catalog case, load the properties
+                                // with the global catalog name as origin
                                 origin = GetCatalogName();
                                 confidenceIndex = vobsCONFIDENCE_HIGH;
                             }

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.29 2006-03-22 10:43:24 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.30 2006-04-10 11:55:09 scetre Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.29  2006/03/22 10:43:24  scetre
+* Added test on ID_ALTERNATIVE ucd to retreive TYC2 and TYC3
+*
 * Revision 1.28  2006/03/03 15:03:27  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -92,7 +95,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.29 2006-03-22 10:43:24 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.30 2006-04-10 11:55:09 scetre Exp $"; 
 
 
 /* 
@@ -204,7 +207,7 @@ mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
 {
     logTrace("vobsCDATA::AddParamsDesc()");
 
-    const mcsUINT32 nbMaxParams=256;
+    const mcsUINT32 nbMaxParams=512;
     mcsUINT32 nbOfUcdName;
     mcsSTRING256 ucdNameArray[nbMaxParams];
     mcsUINT32 nbOfParamName;
@@ -247,9 +250,14 @@ mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
              nbOfUcdName);
     for (mcsUINT32 i=0; i<nbOfUcdName; i++)
     {
-        // Add parameter name and UCD to CDATA structure
-        AddUcdName(ucdNameArray[i]);
-        AddParamName(paramNameArray[i]);
+        // Check if the value f the ucd and the param is not ""
+        if ((strcmp(ucdNameArray[i], "") != 0) &&
+            (strcmp(paramNameArray[i], "") != 0))
+        {
+            // Add parameter name and UCD to CDATA structure
+            AddUcdName(ucdNameArray[i]);
+            AddParamName(paramNameArray[i]);
+        }
     }
 
     return mcsSUCCESS;
@@ -311,7 +319,7 @@ mcsUINT32 vobsCDATA::GetNbParams(void)
  * Returns the next parameter description in the CDATA section.
  *
  * This method returns the pointers to the name and teh UCD of the next
- * parameter of the CDATA. If \em init is mcsTRUE, it returns the escription of
+ * parameter of the CDATA. If \em init is mcsTRUE, it returns the description of
  * the first parameter.
  * 
  * @param paramName pointer to the name of the next parameter
@@ -324,7 +332,7 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
                                           char **ucdName,
                                           mcsLOGICAL init) 
 {
-    //logTrace("vobsCDATA::GetNextParamDesc()");
+    logTrace("vobsCDATA::GetNextParamDesc()");
 
     if (init == mcsTRUE)
     {
