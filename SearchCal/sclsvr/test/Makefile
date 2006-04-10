@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2005-11-25 13:14:45 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.8 2006-04-10 14:56:58 gzins Exp $"
 #
 # Makefile of sclsvr test module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/11/25 13:14:45  scetre
+# *** empty log message ***
+#
 # Revision 1.6  2005/02/15 15:52:00  gzins
 # Added CVS log as file modification history
 #
@@ -73,7 +76,18 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         =
-SCRIPTS_L       =
+SCRIPTS_L       = sclsvrTestAlfPsa   \
+                  sclsvrTestBetCap   \
+                  sclsvrTestBetDor   \
+                  sclsvrTestDelOph   \
+                  sclsvrTestEpsSgr   \
+                  sclsvrTestEtaTau   \
+                  sclsvrTestFuOri    \
+                  sclsvrTestPi01Gru  \
+                  sclsvrTestTau04Eri \
+                  sclsvrTestWaql     \
+                  sclsvrTestZetGem   \
+                  sclsvrTestHD_33793
 
 #
 # TCL scripts (public and local)
