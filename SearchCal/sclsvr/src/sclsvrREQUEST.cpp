@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.22 2006-03-07 15:33:39 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.23 2006-04-10 12:06:49 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2006/03/07 15:33:39  scetre
+ * Removed old scenario in band K
+ *
  * Revision 1.21  2006/03/06 21:23:28  lafrasse
  * Added diamVK resetabilty
  *
@@ -81,7 +84,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.22 2006-03-07 15:33:39 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.23 2006-04-10 12:06:49 gzins Exp $"; 
 
 
 /* 
@@ -293,12 +296,9 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 
     // VisErr
     mcsDOUBLE visErr;
-    if (_getCalCmd->IsDefinedVisErr() == mcsTRUE)
+    if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
     {
-        if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        return mcsFAILURE;
     }
 
     // Brightness
@@ -342,8 +342,8 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
-    // Affect the wavelength
-    if (SetExpectingVisErr(visErr) == mcsFAILURE)
+    // Affect the expected visibility error
+    if (SetExpectedVisErr(visErr) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -565,9 +565,9 @@ mcsFLOAT sclsvrREQUEST::GetDiamVK(void)
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrREQUEST::SetExpectingVisErr(mcsFLOAT expectedVisErr)
+mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsFLOAT expectedVisErr)
 {
-    logTrace("sclsvrREQUEST::SetExpectingVisErr()");
+    logTrace("sclsvrREQUEST::SetExpectedVisErr()");
 
     _expectedVisibilityError = expectedVisErr;
     
