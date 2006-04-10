@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.80 2006-04-10 12:05:41 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.81 2006-04-10 14:50:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.80  2006/04/10 12:05:41  gzins
+ * Removed IsSuitable() and ComputeMultiplicity() (not needed)
+ * Added some log message when completing star properties
+ * Stopped computation sequence for faint star when computation step fails
+ *
  * Revision 1.79  2006/04/07 08:36:33  gzins
  * Removed specific handling of 'alxERR_CANNOT_COMPUTE_RATIO' error
  *
@@ -192,7 +197,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.80 2006-04-10 12:05:41 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.81 2006-04-10 14:50:42 gzins Exp $"; 
 
 
 /* 
@@ -436,7 +441,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         // If paralax is greater than 1 mas, compute real magnitudes,
         // missing magnitudes and the angular diameter
         if ((IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE) &&
-            (paralax >= 1) && (paralaxError/paralax < 0.25))
+            (fabs(paralax) >= 1) && (fabs(paralaxError/paralax) < 0.25))
         {
             char *magPropertyId[alxNB_BANDS] = 
             {
@@ -510,7 +515,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         {
             if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
             {
-                logInfo("star %s - paralax '%.2f is not valid", starId);
+                logInfo("star %s - paralax %.2f is not valid", starId, paralax);
+                // Clear paralax values; invalid paralax is not shown to user
+                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
+                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
             else
             {
