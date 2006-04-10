@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.28 2006-04-06 14:06:46 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.29 2006-04-10 11:50:14 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2006/04/06 14:06:46  gzins
+ * Fixed bug wehen computing J-H and J-K diameters for faint object; inverted coefficients
+ *
  * Revision 1.27  2006/03/28 10:00:53  gzins
  * Fixed JK and JH diameter computation
  *
@@ -106,7 +109,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.28 2006-04-06 14:06:46 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.29 2006-04-10 11:50:14 gzins Exp $"; 
 
 
 /* 
@@ -381,7 +384,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
     }
     else
     {
-        logTest("Diameters have not been computed");
+        logTest("Computed diameters are not coherent between them; they are not kept");
     }
 
     return mcsSUCCESS;
@@ -537,7 +540,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }
     else
     {
-        logTest("Diameters have not been computed because condition about diamIC-diamMoy > deltaDiamMoy");
+        logTest("Computed diameters are not coherent between them; they are not kept");
     }
 
     return mcsSUCCESS;
