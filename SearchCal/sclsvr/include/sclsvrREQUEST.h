@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.15 2006-03-07 15:33:39 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.16 2006-04-10 12:07:31 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2006/03/07 15:33:39  scetre
+ * Removed old scenario in band K
+ *
  * Revision 1.14  2006/03/06 21:23:28  lafrasse
  * Added diamVK resetabilty
  *
@@ -122,7 +125,7 @@ public:
     virtual mcsFLOAT      GetDiamVK(void);
 
     // Expected visibility error
-    virtual mcsCOMPL_STAT SetExpectingVisErr(mcsFLOAT expectedVisErr);
+    virtual mcsCOMPL_STAT SetExpectedVisErr(mcsFLOAT expectedVisErr);
     virtual mcsFLOAT      GetExpectedVisErr(void);
     
     // File name where file should be saved
