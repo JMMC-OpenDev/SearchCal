@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.36 2006-03-28 13:49:22 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.37 2006-04-10 12:07:11 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2006/03/28 13:49:22  gzins
+ * Added IsSuitable method
+ *
  * Revision 1.35  2006/01/23 14:12:25  scetre
  * Added Av parameter as a property of a calibrator
  *
@@ -150,9 +153,6 @@ public:
     // Return whether the calibrator has a coherent diameter or not
     virtual mcsLOGICAL IsDiameterOk();
 
-    // Return whether the star is or not a suitable calibrator
-    virtual mcsLOGICAL IsSuitable();
-
 protected:
     
 private:
@@ -175,11 +175,8 @@ private:
                                          char *starPropertyId[4],
                                          mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
-    mcsCOMPL_STAT ComputeMultiplicity(); 
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
     mcsCOMPL_STAT ComputeCousinMagnitude(); 
-
-    mcsLOGICAL    _isSuitable;
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/
