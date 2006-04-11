@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: tatTestDriver.tcl,v 1.5 2006-03-24 07:23:58 gzins Exp $"
+# "@(#) $Id: tatTestDriver.tcl,v 1.6 2006-04-11 06:39:53 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2006/03/24 07:23:58  gzins
+# Fixed bug related to date substitution
+#
 # Revision 1.4  2006/03/23 07:31:46  gzins
 # Supressed -log option (not used)
 #
@@ -456,7 +459,7 @@ proc runTest { testFiles mode } {
       
         # if the option was "generate"
         if {$mode == "generate"} {
-            printLogVerbose "Reference file $testProc.ref generated"
+            printLog "Reference file $testProc.ref generated"
             file rename -force -- $testProc.rep $testProc.ref
         }
         
