@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.81 2006-04-10 14:50:42 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.82 2006-04-11 07:42:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.81  2006/04/10 14:50:42  gzins
+ * Clear paralax and its associated error when is invalid
+ *
  * Revision 1.80  2006/04/10 12:05:41  gzins
  * Removed IsSuitable() and ComputeMultiplicity() (not needed)
  * Added some log message when completing star properties
@@ -197,7 +200,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.81 2006-04-10 14:50:42 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.82 2006-04-11 07:42:51 gzins Exp $"; 
 
 
 /* 
@@ -428,20 +431,32 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         }
         
         mcsFLOAT paralax;
-        mcsFLOAT paralaxError;
-
+        mcsFLOAT paralaxError  = -1.0;
+        mcsLOGICAL paralaxIsOK = mcsFALSE;
         // If paralax of the star if known
         if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
         {
+            // Check paralax
+            // If paralax is greater than 1 mas and its error is not too high,
+            // it is assumed as valid
             GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax);
-            GetPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR, &paralaxError);
+            if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG_ERROR) == mcsTRUE)
+            {
+                GetPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR, &paralaxError);
+                if ((fabs(paralax) >= 1) &&
+                    ((paralaxError == 0.0) || 
+                     (fabs(paralaxError/paralax) < 0.25)))
+                {
+                    paralaxIsOK = mcsTRUE;
+                }
+            }
         }
 
+        // Check paralax
         // If paralax of the star if known
         // If paralax is greater than 1 mas, compute real magnitudes,
         // missing magnitudes and the angular diameter
-        if ((IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE) &&
-            (fabs(paralax) >= 1) && (fabs(paralaxError/paralax) < 0.25))
+        if (paralaxIsOK == mcsTRUE)
         {
             char *magPropertyId[alxNB_BANDS] = 
             {
@@ -456,7 +471,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 vobsSTAR_PHOT_JHN_M
             };
            
-            logTest("star %s - paralax '%.2f is Ok...", starId, paralax);
+            logTest("star %s - paralax %.2f(%.2f) is OK...", starId, 
+                    paralax, paralaxError);
             // Get the extinction ratio
             if (ComputeExtinctionCoefficient() == mcsFAILURE)
             {
@@ -515,7 +531,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         {
             if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
             {
-                logInfo("star %s - paralax %.2f is not valid", starId, paralax);
+                logTest("star %s - paralax %.2f(%.2f) is not valid...", starId, 
+                        paralax, paralaxError);
                 // Clear paralax values; invalid paralax is not shown to user
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
