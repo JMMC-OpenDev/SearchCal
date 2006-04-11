@@ -1,0 +1,16 @@
+# Test for bright scenario
+1   TestAlfPsa    sclsvrTestAlfPsa
+2   TestBetCap    sclsvrTestBetCap
+3   TestBetDor    sclsvrTestBetDor
+4   TestDelOph    sclsvrTestDelOph
+5   TestEpsSgr    sclsvrTestEpsSgr
+6   TestEtaTau    sclsvrTestEtaTau
+7   TestFuOri     sclsvrTestFuOri
+8   TestPi01Gru   sclsvrTestPi01Gru
+9   TestTau04Eri  sclsvrTestTau04Eri
+10  TestWaql      sclsvrTestWaql
+11  TestZetGem    sclsvrTestZetGem
+
+# Test for faint scenario
+12  TestHD_33793  sclsvrTestHD_33793
+
