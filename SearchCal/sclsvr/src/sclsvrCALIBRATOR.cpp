@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.82 2006-04-11 07:42:51 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.83 2006-04-11 08:39:41 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.82  2006/04/11 07:42:51  gzins
+ * Added paralax error in log messages
+ *
  * Revision 1.81  2006/04/10 14:50:42  gzins
  * Clear paralax and its associated error when is invalid
  *
@@ -200,7 +203,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.82 2006-04-11 07:42:51 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.83 2006-04-11 08:39:41 gzins Exp $"; 
 
 
 /* 
@@ -452,10 +455,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             }
         }
 
-        // Check paralax
-        // If paralax of the star if known
-        // If paralax is greater than 1 mas, compute real magnitudes,
-        // missing magnitudes and the angular diameter
+        // If paralax is OK, compute real magnitudes, missing magnitudes and the
+        // angular diameter
         if (paralaxIsOK == mcsTRUE)
         {
             char *magPropertyId[alxNB_BANDS] = 
