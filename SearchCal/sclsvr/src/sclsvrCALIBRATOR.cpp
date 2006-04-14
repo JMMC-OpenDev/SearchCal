@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.83 2006-04-11 08:39:41 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.84 2006-04-14 06:46:38 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.83  2006/04/11 08:39:41  gzins
+ * Minor change in comment
+ *
  * Revision 1.82  2006/04/11 07:42:51  gzins
  * Added paralax error in log messages
  *
@@ -203,7 +206,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.83 2006-04-11 08:39:41 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.84 2006-04-14 06:46:38 gzins Exp $"; 
 
 
 /* 
@@ -532,7 +535,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         {
             if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
             {
-                logTest("star %s - paralax %.2f(%.2f) is not valid...", starId, 
+                logInfo("star %s - paralax %.2f(%.2f) is not valid...", starId, 
                         paralax, paralaxError);
                 // Clear paralax values; invalid paralax is not shown to user
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
@@ -912,8 +915,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(alxBAND firstBandId,
                 if ((errIsInStack("alx",alxERR_NO_LINE_FOUND) ==mcsTRUE) ||
                     (errIsInStack("alx",alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE))
                 {
-                    logInfo("star %s - J-K diferential magnitude not found "
-                            "in color; could not compute missing magnitudes",
+                    logInfo("star %s - J-K differential magnitude not found "
+                            "in color table; could not compute missing magnitudes",
                             starId);
                     errResetStack();
                     return mcsSUCCESS;
