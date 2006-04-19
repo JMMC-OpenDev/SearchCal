@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.84 2006-04-14 06:46:38 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.85 2006-04-19 12:06:02 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.84  2006/04/14 06:46:38  gzins
+ * Minor changes related to log messages
+ *
  * Revision 1.83  2006/04/11 08:39:41  gzins
  * Minor change in comment
  *
@@ -206,7 +209,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.84 2006-04-14 06:46:38 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.85 2006-04-19 12:06:02 gzins Exp $"; 
 
 
 /* 
@@ -620,6 +623,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 return mcsFAILURE;
             }
+            
+            // Update star with the new computed magnitudes
+            Update(starWithout);
 
             // If visibility has been computed, then compute now diameters and
             // visibility with an arbitrary interstellar absorption
@@ -668,9 +674,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 {
                     return mcsFAILURE;
                 }
-                // Update star with the new computed magnitudes
-                Update(starWithout);
-
+             
                 // Declare the 4 properties name for I0, J0, K0, H0
                 alxDATA magI, magJ, magK, magH;
                 char *starPropertyId2[4] = 
@@ -1314,7 +1318,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
         }
 
         // Set flag according to the confidence index 
-        if (diameters.areComputed == mcsFALSE)
+        if (diameters.areCoherent == mcsFALSE)
         {
             logInfo("star %s - error on diameter to hight; "
                     "computed diameters are not coherent", starId);
@@ -1332,53 +1336,53 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
             {
                 return mcsFAILURE;
             }
+        }
 
-            // Set the computed value of the angular diameter
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diameters.bv.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, diameters.vr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diameters.vk.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV_ERROR, 
-                                 diameters.bvErr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR_ERROR,
-                                 diameters.vrErr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR,
-                                 diameters.vkErr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+        // Set the computed value of the angular diameter
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diameters.bv.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, diameters.vr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diameters.vk.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV_ERROR, 
+                             diameters.bvErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR_ERROR,
+                             diameters.vrErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR,
+                             diameters.vkErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
         }
     }
     else
@@ -1391,7 +1395,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
         }
 
         // Set flag according to the confidence index 
-        if (diameters.areComputed == mcsFALSE)
+        if (diameters.areCoherent == mcsFALSE)
         {
             logInfo("star %s - error on diameter to hight; "
                     "computed diameters are not coherent", starId);
@@ -1408,84 +1412,84 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
             {
                 return mcsFAILURE;
             }
+        }
 
-            // Set the computed value of the angular diameter
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ, diameters.ij.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IK, diameters.ik.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JK, diameters.jk.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH, diameters.jh.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN,
-                                 diameters.mean.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ_ERROR, 
-                                 diameters.ijErr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IK_ERROR,
-                                 diameters.ikErr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JK_ERROR,
-                                 diameters.jkErr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH_ERROR,
-                                 diameters.jhErr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN_ERROR,
-                                 diameters.meanErr.value,
-                                 vobsSTAR_COMPUTED_PROP, 
-                                 (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
-                == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+        // Set the computed value of the angular diameter
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ, diameters.ij.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IK, diameters.ik.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JK, diameters.jk.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH, diameters.jh.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN,
+                             diameters.mean.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ_ERROR, 
+                             diameters.ijErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_IK_ERROR,
+                             diameters.ikErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JK_ERROR,
+                             diameters.jkErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH_ERROR,
+                             diameters.jhErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN_ERROR,
+                             diameters.meanErr.value,
+                             vobsSTAR_COMPUTED_PROP, 
+                             (vobsCONFIDENCE_INDEX)diameters.confidenceIdx)
+            == mcsFAILURE)
+        {
+            return mcsFAILURE;
         }
 
     }
