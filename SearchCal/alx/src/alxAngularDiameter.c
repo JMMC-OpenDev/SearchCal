@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.29 2006-04-10 11:50:14 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.30 2006-04-19 12:08:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2006/04/10 11:50:14  gzins
+ * Minor change in logged messages
+ *
  * Revision 1.28  2006/04/06 14:06:46  gzins
  * Fixed bug wehen computing J-H and J-K diameters for faint object; inverted coefficients
  *
@@ -109,7 +112,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.29 2006-04-10 11:50:14 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.30 2006-04-19 12:08:04 gzins Exp $"; 
 
 
 /* 
@@ -340,12 +343,12 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
         (fabs(diameters->vk.value - meanDiam) > 2.0 * meanDiamErr) )
     {
         /* Reject star (i.e the diameter should not appear as computed) */
-        diameters->areComputed = mcsFALSE;
+        diameters->areCoherent = mcsFALSE;
     }
     else
     {
         /* Set Confidence index to CONFIDENCE_HIGH */
-        diameters->areComputed = mcsTRUE;
+        diameters->areCoherent = mcsTRUE;
     }
 
     /*
@@ -353,7 +356,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
      * confidence index of the computed diameter according to the ones of
      * magnitudes used to compute it. 
      */
-    if (diameters->areComputed == mcsTRUE)
+    if (diameters->areCoherent == mcsTRUE)
     {
         if ((mgK.confIndex == alxCONFIDENCE_LOW) ||
             (mgR.confIndex == alxCONFIDENCE_LOW))
@@ -370,13 +373,17 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
             diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
         }
     }
+    else
+    {
+        diameters->confidenceIdx = alxCONFIDENCE_LOW;            
+    }     
 
     /* Display results */
     logTest("Diameter BV = %.3f(%.4f), VR = %.3f(%.4f), VK = %.3f(%.4f)", 
             diameters->bv.value, diameters->bvErr.value, diameters->vr.value,
             diameters->vrErr.value, diameters->vk.value,
             diameters->vkErr.value);
-    if (diameters->areComputed == mcsTRUE)
+    if (diameters->areCoherent == mcsTRUE)
     {
         logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
                 diameters->confidenceIdx, alxCONFIDENCE_LOW, 
@@ -490,12 +497,12 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
          diameters->meanErr.value) )
     {
         /* Reject star (i.e the diameter should not appear as computed) */
-        diameters->areComputed = mcsFALSE;
+        diameters->areCoherent = mcsFALSE;
     }
     else
     {
         /* Set Confidence index to CONFIDENCE_HIGH */
-        diameters->areComputed = mcsTRUE;
+        diameters->areCoherent = mcsTRUE;
     }
 
     /*
@@ -503,7 +510,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
      * confidence index of the computed diameter according to the ones of
      * magnitudes used to compute it. 
      */
-    if (diameters->areComputed == mcsTRUE)
+    if (diameters->areCoherent == mcsTRUE)
     {
         if ((mgI.confIndex == alxCONFIDENCE_LOW) ||
             (mgJ.confIndex == alxCONFIDENCE_LOW) ||
@@ -524,6 +531,10 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
             diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
         }
     }
+    else
+    {
+        diameters->confidenceIdx = alxCONFIDENCE_LOW;            
+    }        
     
     /* Display results */
     logInfo("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f), JK = %.3f(%.4f), JH = %.3f(%.4f), mean = %3f(%4f) ",
@@ -532,7 +543,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
             diameters->jkErr.value, diameters->jh.value,
             diameters->jhErr.value, diameters->mean.value,
             diameters->meanErr.value);
-    if (diameters->areComputed == mcsTRUE)
+    if (diameters->areCoherent == mcsTRUE)
     {
         logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
                 diameters->confidenceIdx, alxCONFIDENCE_LOW, 
