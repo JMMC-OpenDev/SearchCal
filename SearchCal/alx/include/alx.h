@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.19 2005-12-22 10:07:53 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.20 2006-04-19 12:07:16 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2005/12/22 10:07:53  scetre
+ * Added extinction coefficient computation
+ * changed realMag to CorrectedMag
+ *
  * Revision 1.18  2005/12/07 14:48:33  scetre
  * Renamed function for bright and faint case
  *
@@ -187,7 +191,7 @@ typedef struct
     alxDATA jkErr;
     alxDATA meanErr;
     alxCONFIDENCE_INDEX confidenceIdx;
-    mcsLOGICAL areComputed;
+    mcsLOGICAL areCoherent;
 } alxDIAMETERS;
 
 
