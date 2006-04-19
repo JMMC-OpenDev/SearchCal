@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2006-04-10 14:56:58 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2006-04-19 12:09:31 gzins Exp $"
 #
 # Makefile of sclsvr test module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2006/04/10 14:56:58  gzins
+# Added test scripts
+#
 # Revision 1.7  2005/11/25 13:14:45  scetre
 # *** empty log message ***
 #
@@ -87,7 +90,8 @@ SCRIPTS_L       = sclsvrTestAlfPsa   \
                   sclsvrTestTau04Eri \
                   sclsvrTestWaql     \
                   sclsvrTestZetGem   \
-                  sclsvrTestHD_33793
+                  sclsvrTestHD_33793 \
+                  sclsvrTestL_Car
 
 #
 # TCL scripts (public and local)
