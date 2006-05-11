@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.8 2005-02-09 16:38:29 lafrasse Exp $"
+ * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.9 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/02/09 16:38:29  lafrasse
+ * Changed method prototypes to use as much 'const' parameters as possible
+ *
  * Revision 1.7  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -29,9 +32,7 @@
  * \sa msgPROCESS_LIST
  */
 
-static char *rcsId="@(#) $Id: msgPROCESS_LIST.cpp,v 1.8 2005-02-09 16:38:29 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgPROCESS_LIST.cpp,v 1.9 2006-05-11 13:04:56 mella Exp $";
 /* 
  * System Headers 
  */

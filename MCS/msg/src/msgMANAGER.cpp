@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.20 2006-04-06 08:20:06 gzins Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.21 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2006/04/06 08:20:06  gzins
+ * Updated client notify when server exits abnormally; only remove client when last reply is received
+ *
  * Revision 1.19  2005/02/09 16:36:13  lafrasse
  * minor indentation refinments
  *
@@ -56,9 +59,7 @@
  * \sa msgMANAGER
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER.cpp,v 1.20 2006-04-06 08:20:06 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMANAGER.cpp,v 1.21 2006-05-11 13:04:56 mella Exp $";
 /* 
  * System Headers 
  */

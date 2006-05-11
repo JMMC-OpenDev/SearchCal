@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdPARAM.cpp,v 1.17 2006-01-04 12:36:19 mella Exp $"
+ * "@(#) $Id: cmdPARAM.cpp,v 1.18 2006-05-11 13:04:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2006/01/04 12:36:19  mella
+ * Corrected bug with default values
+ *
  * Revision 1.16  2005/04/17 16:18:59  mella
  * Improve documentation
  *
@@ -54,9 +57,7 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId="@(#) $Id: cmdPARAM.cpp,v 1.17 2006-01-04 12:36:19 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdPARAM.cpp,v 1.18 2006-05-11 13:04:09 mella Exp $";
 
 /*
  * System Headers 

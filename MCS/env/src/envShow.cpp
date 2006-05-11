@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envShow.cpp,v 1.8 2005-12-06 07:13:55 gzins Exp $"
+ * "@(#) $Id: envShow.cpp,v 1.9 2006-05-11 13:04:13 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/12/06 07:13:55  gzins
+ * Changed /home/MCS/etc/mcsEnvList to /home/MCS/data/mcscfgEnvList
+ *
  * Revision 1.7  2005/12/02 13:44:05  gzins
  * Changed location of mcsEnvList file; located in MCSTOP/etc
  *
@@ -37,9 +40,7 @@
  * $MCSDATA
  */
 
-static char *rcsId="@(#) $Id: envShow.cpp,v 1.8 2005-12-06 07:13:55 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: envShow.cpp,v 1.9 2006-05-11 13:04:13 mella Exp $";
 
 /* 
  * System Headers 

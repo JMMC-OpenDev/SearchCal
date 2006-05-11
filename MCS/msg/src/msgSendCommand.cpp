@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.20 2005-03-08 16:24:00 gzins Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.21 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/03/08 16:24:00  gzins
+ * Fixed bug related to disconnection with msgManager
+ *
  * Revision 1.19  2005/03/08 10:32:43  gzins
  * Fixed problem when sending EXIT command to msgManager; exit directly when reply is received, and do not try to disconnect process from message service.
  *
@@ -84,9 +87,7 @@
  * 
  */
 
-static char *rcsId="@(#) $Id: msgSendCommand.cpp,v 1.20 2005-03-08 16:24:00 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgSendCommand.cpp,v 1.21 2006-05-11 13:04:56 mella Exp $";
 /*
  * System Headers
  */

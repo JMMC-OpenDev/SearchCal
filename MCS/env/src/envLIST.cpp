@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: envLIST.cpp,v 1.15 2005-12-06 07:13:55 gzins Exp $"
+ * "@(#) $Id: envLIST.cpp,v 1.16 2006-05-11 13:04:13 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2005/12/06 07:13:55  gzins
+ * Changed /home/MCS/etc/mcsEnvList to /home/MCS/data/mcscfgEnvList
+ *
  * Revision 1.14  2005/12/02 13:44:05  gzins
  * Changed location of mcsEnvList file; located in MCSTOP/etc
  *
@@ -48,9 +51,7 @@
  * envLIST class definition.
  */
 
-static char *rcsId="@(#) $Id: envLIST.cpp,v 1.15 2005-12-06 07:13:55 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: envLIST.cpp,v 1.16 2006-05-11 13:04:13 mella Exp $";
 /* 
  * System Headers 
  */

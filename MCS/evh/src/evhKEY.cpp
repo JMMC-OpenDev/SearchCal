@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhKEY.cpp,v 1.4 2005-05-19 15:18:04 gzins Exp $"
+ * "@(#) $Id: evhKEY.cpp,v 1.5 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/05/19 15:18:04  gzins
+ * Removed trace log for GetType method
+ *
  * Revision 1.3  2005/01/29 15:17:02  gzins
  * Added CVS log as modification history
  *
@@ -19,9 +22,7 @@
  * Definition of the evhKEY class.
  */
 
-static char *rcsId="@(#) $Id: evhKEY.cpp,v 1.4 2005-05-19 15:18:04 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhKEY.cpp,v 1.5 2006-05-11 13:04:18 mella Exp $";
 
 /* 
  * System Headers 

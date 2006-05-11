@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhHANDLER.cpp,v 1.10 2005-12-14 23:09:51 gzins Exp $"
+ * "@(#) $Id: evhHANDLER.cpp,v 1.11 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2005/12/14 23:09:51  gzins
+ * Fixed infinite loop bug when execution of command given in command line failed
+ *
  * Revision 1.9  2005/05/19 15:15:20  gzins
  * Added handling of message queue when looking for messages
  *
@@ -40,9 +43,7 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId="@(#) $Id: evhHANDLER.cpp,v 1.10 2005-12-14 23:09:51 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhHANDLER.cpp,v 1.11 2006-05-11 13:04:18 mella Exp $";
 /* 
  * System Headers 
  */

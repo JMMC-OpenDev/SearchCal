@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoTestDynBuf.cpp,v 1.5 2005-12-02 13:10:36 lafrasse Exp $"
+ * "@(#) $Id: miscoTestDynBuf.cpp,v 1.6 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/02 13:10:36  lafrasse
+ * Added SavePartInFile() and SaveInASCIIFile().
+ *
  * Revision 1.4  2005/05/26 13:48:45  lafrasse
  * Code review : added const attribute to parameters that should have it, replaced the Display() method by operator<<(), and changed doxygen tag from '\' to '@'
  *
@@ -28,9 +31,7 @@
  * @<miscOTestDynBuf@>
  */
 
-static char *rcsId="@(#) $Id: miscoTestDynBuf.cpp,v 1.5 2005-12-02 13:10:36 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestDynBuf.cpp,v 1.6 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

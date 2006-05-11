@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER_IF.cpp,v 1.25 2006-03-21 13:04:38 gzins Exp $"
+ * "@(#) $Id: msgMANAGER_IF.cpp,v 1.26 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2006/03/21 13:04:38  gzins
+ * Updated Disconnect method; no longer return error when not connected
+ *
  * Revision 1.24  2005/05/19 15:08:14  gzins
  * Changed QueuedMessagesNb() to GetNbQueuedMessages()
  * Fixed bug related to timeout handling when waiting for a specific message
@@ -65,9 +68,7 @@
  * msgMANAGER_IF
  */
 
-static char *rcsId="@(#) $Id: msgMANAGER_IF.cpp,v 1.25 2006-03-21 13:04:38 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMANAGER_IF.cpp,v 1.26 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

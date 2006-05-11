@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestString.c,v 1.13 2005-05-26 08:48:20 lafrasse Exp $"
+ * "@(#) $Id: miscTestString.c,v 1.14 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/05/26 08:48:20  lafrasse
+ * Code review : user and developper documentation refinments and code simplifications
+ *
  * Revision 1.12  2005/02/25 16:43:52  lafrasse
  * Added miscDeleteChr()
  *
@@ -23,9 +26,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestString.c,v 1.13 2005-05-26 08:48:20 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestString.c,v 1.14 2006-05-11 13:04:56 mella Exp $";
 /* 
  * System Headers 
  */

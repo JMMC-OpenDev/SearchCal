@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.11 2006-01-04 12:33:01 mella Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.12 2006-05-11 13:04:11 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2006/01/04 12:33:01  mella
+ * Improve test for default values
+ *
  * Revision 1.10  2005/02/27 09:28:37  gzins
  * Updated to test error handling
  *
@@ -30,9 +33,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId="@(#) $Id: cmdTEST.cpp,v 1.11 2006-01-04 12:33:01 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdTEST.cpp,v 1.12 2006-05-11 13:04:11 mella Exp $";
 
 /* 
  * System Headers 

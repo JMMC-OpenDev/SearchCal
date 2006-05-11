@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhExitCB.cpp,v 1.1 2005-03-04 15:12:31 lafrasse Exp $"
+ * "@(#) $Id: evhExitCB.cpp,v 1.2 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/03/04 15:12:31  lafrasse
+ * Added the 'EXIT' command callback and management
+ *
  *
  ******************************************************************************/
 
@@ -14,9 +17,7 @@
  * Definition of the EXIT callback.
  */
 
-static char *rcsId="@(#) $Id: evhExitCB.cpp,v 1.1 2005-03-04 15:12:31 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhExitCB.cpp,v 1.2 2006-05-11 13:04:18 mella Exp $";
 /* 
  * System Headers 
  */

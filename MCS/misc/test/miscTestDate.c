@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestDate.c,v 1.8 2005-05-26 09:53:31 lafrasse Exp $"
+ * "@(#) $Id: miscTestDate.c,v 1.9 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/05/26 09:53:31  lafrasse
+ * Code review : refined user documentation
+ *
  * Revision 1.7  2005/03/03 16:10:59  gluck
  * Update due to code review
  *
@@ -19,9 +22,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDate.c,v 1.8 2005-05-26 09:53:31 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestDate.c,v 1.9 2006-05-11 13:04:56 mella Exp $";
 /* 
  * System Headers 
  */

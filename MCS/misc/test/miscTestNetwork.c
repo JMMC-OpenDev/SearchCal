@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestNetwork.c,v 1.7 2005-10-06 15:11:23 lafrasse Exp $"
+ * "@(#) $Id: miscTestNetwork.c,v 1.8 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/10/06 15:11:23  lafrasse
+ * Corrections in order to ensure compilation of src and test again
+ *
  * Revision 1.6  2005/09/15 14:26:20  scetre
  * Added miscGetHostByName in the miscNetwork file and test
  *
@@ -19,9 +22,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestNetwork.c,v 1.7 2005-10-06 15:11:23 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestNetwork.c,v 1.8 2006-05-11 13:04:56 mella Exp $";
 /* 
  * System Headers 
  */

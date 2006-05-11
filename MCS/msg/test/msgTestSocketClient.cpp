@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: msgTestSocketClient.cpp,v 1.6 2005-09-12 15:42:48 scetre Exp $"
+* "@(#) $Id: msgTestSocketClient.cpp,v 1.7 2006-05-11 13:04:56 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.6  2005/09/12 15:42:48  scetre
+* Removed Receive method with only string parameter
+* Defined default timeout in Receive function definition
+*
 * Revision 1.5  2005/04/22 09:25:09  mella
 * Replace FAILURE by mcsFAILURE
 *
@@ -28,9 +32,7 @@
  * \<msgTestSocketClient\>
  */
 
-static char *rcsId="@(#) $Id: msgTestSocketClient.cpp,v 1.6 2005-09-12 15:42:48 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgTestSocketClient.cpp,v 1.7 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

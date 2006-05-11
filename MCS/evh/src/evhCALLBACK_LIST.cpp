@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.7 2005-01-29 15:17:02 gzins Exp $"
+ * "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/01/29 15:17:02  gzins
+ * Added CVS log as modification history
+ *
  * gzins     23-Sep-2004  Created
  * gzins     08-Dec-2004  Handled evhCB_DELETE callback return value
  *                        Added some method documentation
@@ -20,9 +23,7 @@
  * Definition of the evhCALLBACK_LIST class.
  */
 
-static char *rcsId="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.7 2005-01-29 15:17:02 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $";
 
 /* 
  * System Headers 

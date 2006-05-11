@@ -1,17 +1,18 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: thrdTestSemaphore.c,v 1.1 2005-12-19 16:48:30 lafrasse Exp $"
+ * "@(#) $Id: thrdTestSemaphore.c,v 1.2 2006-05-11 13:04:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/19 16:48:30  lafrasse
+ * Added semaphore support
+ *
  ******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: thrdTestSemaphore.c,v 1.1 2005-12-19 16:48:30 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: thrdTestSemaphore.c,v 1.2 2006-05-11 13:04:57 mella Exp $";
 
 /* 
  * System Headers 

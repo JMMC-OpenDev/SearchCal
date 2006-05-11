@@ -1,20 +1,21 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdTestMutex.c,v 1.2 2005-12-19 16:46:30 lafrasse Exp $"
+ * "@(#) $Id: thrdTestMutex.c,v 1.3 2006-05-11 13:04:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/12/19 16:46:30  lafrasse
+ * Added log and corrected some typos
+ *
  * Revision 1.1  2005/12/16 15:03:57  lafrasse
  * Added mutex support
  *
  ******************************************************************************/
 
 
-static char *rcsId="@(#) $Id: thrdTestMutex.c,v 1.2 2005-12-19 16:46:30 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: thrdTestMutex.c,v 1.3 2006-05-11 13:04:57 mella Exp $";
 
 /* 
  * System Headers 

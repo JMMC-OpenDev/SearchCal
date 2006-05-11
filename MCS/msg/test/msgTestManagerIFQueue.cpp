@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.4 2005-05-19 15:11:14 gzins Exp $"
+ * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.5 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/05/19 15:11:14  gzins
+ * Changed QueuedMessagesNb() to GetNbQueuedMessages()
+ *
  * Revision 1.3  2005/04/22 09:25:09  mella
  * Replace FAILURE by mcsFAILURE
  *
@@ -25,9 +28,7 @@
  * \<msgTestManagerIFQueue\>
  */
 
-static char *rcsId="@(#) $Id: msgTestManagerIFQueue.cpp,v 1.4 2005-05-19 15:11:14 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgTestManagerIFQueue.cpp,v 1.5 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

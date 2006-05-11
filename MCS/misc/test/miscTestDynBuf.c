@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestDynBuf.c,v 1.20 2005-12-02 13:04:32 lafrasse Exp $"
+ * "@(#) $Id: miscTestDynBuf.c,v 1.21 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2005/12/02 13:04:32  lafrasse
+ * Added miscDynBufSavePartInFile() and miscDynBufSaveInASCIIFile().
+ * Changed miscDynBufSaveInFile() to rely on miscDynBufSavePartInFile().
+ *
  * Revision 1.19  2005/02/22 11:11:38  lafrasse
  * Added miscDynBufGetNextCommentLine(), miscDynBufAppendLine() and miscDynBufAppendComentLine()
  *
@@ -41,9 +45,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: miscTestDynBuf.c,v 1.20 2005-12-02 13:04:32 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestDynBuf.c,v 1.21 2006-05-11 13:04:56 mella Exp $";
 /* 
  * System Headers 
  */

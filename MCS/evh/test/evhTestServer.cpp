@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhTestServer.cpp,v 1.9 2005-05-19 15:22:14 gzins Exp $"
+ * "@(#) $Id: evhTestServer.cpp,v 1.10 2006-05-11 13:04:25 mella Exp $"
  *
  * History:
  * --------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/05/19 15:22:14  gzins
+ * Updated to test message queue features
+ *
  * Revision 1.8  2005/02/03 12:44:39  gzins
  * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
  *
@@ -25,9 +28,7 @@
  * Test program for evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhTestServer.cpp,v 1.9 2005-05-19 15:22:14 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhTestServer.cpp,v 1.10 2006-05-11 13:04:25 mella Exp $";
 
 /* 
  * System Headers 

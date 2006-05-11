@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbTestSynckedEntry.cpp,v 1.1 2005-12-20 13:52:34 lafrasse Exp $"
+ * "@(#) $Id: sdbTestSynckedEntry.cpp,v 1.2 2006-05-11 13:04:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/12/20 13:52:34  lafrasse
+ * Added preliminary support for INTRA-process action log
+ *
  ******************************************************************************/
 
 /**
@@ -13,9 +16,7 @@
  * sdbEntry class test program.
  */
 
-static char *rcsId="@(#) $Id: sdbTestSynckedEntry.cpp,v 1.1 2005-12-20 13:52:34 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbTestSynckedEntry.cpp,v 1.2 2006-05-11 13:04:57 mella Exp $";
 
 /* 
  * System Headers 

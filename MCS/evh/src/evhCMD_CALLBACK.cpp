@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.7 2006-03-21 13:16:32 gzins Exp $"
+ * "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/03/21 13:16:32  gzins
+ * Fixed bug related to CB failure; ERR_RUN_CB was put in stack after command reply
+ *
  * Revision 1.6  2005/02/03 06:53:21  gzins
  * Send reply to send process when callback execution failed.
  *
@@ -24,9 +27,7 @@
  * Definition of the evhCMD_CALLBACK class
  */
 
-static char *rcsId="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.7 2006-03-21 13:16:32 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhCMD_CALLBACK.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $";
 
 /* 
  * System Headers 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgManager.cpp,v 1.5 2005-02-04 15:57:06 lafrasse Exp $"
+ * "@(#) $Id: msgManager.cpp,v 1.6 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/02/04 15:57:06  lafrasse
+ * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
+ *
  * Revision 1.4  2005/01/24 15:02:47  gzins
  * Added CVS logs as modification history
  *
@@ -29,9 +32,7 @@
  * (and receive messages from) the other connected processes.
  */
 
-static char *rcsId="@(#) $Id: msgManager.cpp,v 1.5 2005-02-04 15:57:06 lafrasse Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgManager.cpp,v 1.6 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

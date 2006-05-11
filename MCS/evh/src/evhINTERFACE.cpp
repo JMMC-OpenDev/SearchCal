@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.cpp,v 1.7 2005-11-03 09:02:15 mella Exp $"
+ * "@(#) $Id: evhINTERFACE.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/11/03 09:02:15  mella
+ * Correct bug with message filtering onto Send method
+ *
  * Revision 1.6  2005/05/19 15:17:22  gzins
  * Added reply filtering when sending asynchronous message
  * Fixed bug related to callback associated to command reply
@@ -31,9 +34,7 @@
  * evhINTERFACE class definition.
  */
 
-static char *rcsId="@(#) $Id: evhINTERFACE.cpp,v 1.7 2005-11-03 09:02:15 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhINTERFACE.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $";
 /* 
  * System Headers 
  */

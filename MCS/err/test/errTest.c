@@ -1,18 +1,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: errTest.c,v 1.4 2005-02-15 08:29:59 gzins Exp $"
+ * "@(#) $Id: errTest.c,v 1.5 2006-05-11 13:04:16 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/02/15 08:29:59  gzins
+ * Added CVS log as file modification history
+ *
  * gzins     17-Jun-2004  created
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: errTest.c,v 1.4 2005-02-15 08:29:59 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: errTest.c,v 1.5 2006-05-11 13:04:16 mella Exp $";
 /* 
  * System Headers 
  */

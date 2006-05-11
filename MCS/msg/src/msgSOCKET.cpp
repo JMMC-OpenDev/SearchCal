@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET.cpp,v 1.22 2005-09-12 15:42:36 scetre Exp $"
+ * "@(#) $Id: msgSOCKET.cpp,v 1.23 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2005/09/12 15:42:36  scetre
+ * Removed Receive method with only string parameter
+ * Defined default timeout in Receive function definition
+ *
  * Revision 1.21  2005/09/12 13:01:24  scetre
  * Added Receive method in a string and with a timeout in miscSOCKET
  *
@@ -60,9 +64,7 @@
  * \sa msgSOCKET
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET.cpp,v 1.22 2005-09-12 15:42:36 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgSOCKET.cpp,v 1.23 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

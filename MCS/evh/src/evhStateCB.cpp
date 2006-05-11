@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhStateCB.cpp,v 1.2 2005-02-03 06:54:42 gzins Exp $"
+ * "@(#) $Id: evhStateCB.cpp,v 1.3 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2005/02/03 06:54:42  gzins
+ * Removed useless SendReply when error occurs (now done automatically by the evhHandler).
+ *
  * Revision 1.1  2005/01/26 18:19:54  gzins
  * Created
  *
@@ -16,9 +19,7 @@
  *  Definition of StateCB callback.
  */
 
-static char *rcsId="@(#) $Id: evhStateCB.cpp,v 1.2 2005-02-03 06:54:42 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhStateCB.cpp,v 1.3 2006-05-11 13:04:18 mella Exp $";
 /* 
  * System Headers 
  */

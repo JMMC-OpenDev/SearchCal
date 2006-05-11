@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: fndTestMvc.cpp,v 1.1 2005-06-17 08:37:19 gzins Exp $"
+ * "@(#) $Id: fndTestMvc.cpp,v 1.2 2006-05-11 13:04:55 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/06/17 08:37:19  gzins
+ * Added
+ *
  ******************************************************************************/
 
 /**
@@ -13,9 +16,7 @@
  * brief description of the program, which ends at this dot.
  */
 
-static char *rcsId="@(#) $Id: fndTestMvc.cpp,v 1.1 2005-06-17 08:37:19 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: fndTestMvc.cpp,v 1.2 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

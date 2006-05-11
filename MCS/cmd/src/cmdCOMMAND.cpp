@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.33 2006-01-04 12:35:57 mella Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.34 2006-05-11 13:04:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2006/01/04 12:35:57  mella
+ * Modifiy documentation
+ *
  * Revision 1.32  2006/01/03 11:39:10  mella
  * Improve parameters parsing
  *
@@ -83,9 +86,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId="@(#) $Id: cmdCOMMAND.cpp,v 1.33 2006-01-04 12:35:57 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.34 2006-05-11 13:04:09 mella Exp $";
 
 /* 
  * System Headers 

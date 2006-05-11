@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhTASK.cpp,v 1.7 2005-10-07 06:52:09 gzins Exp $"
+ * "@(#) $Id: evhTASK.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2005/10/07 06:52:09  gzins
+ * Added AdditionalInit() method
+ *
  * Revision 1.6  2005/01/26 18:23:25  gzins
  * Removed all references to action log
  *
@@ -18,9 +21,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId="@(#) $Id: evhTASK.cpp,v 1.7 2005-10-07 06:52:09 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhTASK.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $";
 /**
  * \file
  * class for handling of standard command-line options and of basic commands

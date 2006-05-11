@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.6 2006-04-07 07:51:38 swmgr Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.7 2006-05-11 13:04:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/04/07 07:51:38  swmgr
+ * Changed logTest to logDebug
+ *
  * Revision 1.5  2006/03/28 11:08:58  gzins
  * Adjusted log message level
  *
@@ -28,9 +31,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.6 2006-04-07 07:51:38 swmgr Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.7 2006-05-11 13:04:57 mella Exp $";
 
 /* 
  * System Headers 

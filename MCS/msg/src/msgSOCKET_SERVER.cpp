@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.8 2005-04-04 15:09:36 gzins Exp $"
+ * "@(#) $Id: msgSOCKET_SERVER.cpp,v 1.9 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/04/04 15:09:36  gzins
+ * Small changes in documentation
+ *
  * Revision 1.7  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -26,9 +29,7 @@
  * \sa msgSOCKET_SERVER
  */
 
-static char *rcsId="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.8 2005-04-04 15:09:36 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgSOCKET_SERVER.cpp,v 1.9 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

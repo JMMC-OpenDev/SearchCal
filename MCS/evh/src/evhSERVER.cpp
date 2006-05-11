@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.13 2005-12-14 23:09:51 gzins Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.14 2006-05-11 13:04:18 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2005/12/14 23:09:51  gzins
+ * Fixed infinite loop bug when execution of command given in command line failed
+ *
  * Revision 1.12  2005/10/07 06:53:20  gzins
  * Renamed Init() to AdditionalInit()
  *
@@ -49,9 +52,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId="@(#) $Id: evhSERVER.cpp,v 1.13 2005-12-14 23:09:51 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhSERVER.cpp,v 1.14 2006-05-11 13:04:18 mella Exp $";
 
 /* 
  * System Headers 

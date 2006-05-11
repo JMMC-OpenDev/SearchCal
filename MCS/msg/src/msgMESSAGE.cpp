@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.25 2005-11-03 08:43:51 mella Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.26 2006-05-11 13:04:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2005/11/03 08:43:51  mella
+ * Replace bad method name for trace
+ *
  * Revision 1.24  2005/02/09 16:37:49  lafrasse
  * Changed method prototypes to use as much 'const' parameters as possible
  *
@@ -70,9 +73,7 @@
  * \sa msgMESSAGE
  */
 
-static char *rcsId="@(#) $Id: msgMESSAGE.cpp,v 1.25 2005-11-03 08:43:51 mella Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMESSAGE.cpp,v 1.26 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 
