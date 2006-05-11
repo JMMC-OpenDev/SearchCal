@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: alxTestResearchArea.c,v 1.4 2006-04-06 11:52:57 gzins Exp $"
+* "@(#) $Id: alxTestResearchArea.c,v 1.5 2006-05-11 13:03:29 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.4  2006/04/06 11:52:57  gzins
+* Added test 6
+*
 * Revision 1.3  2005/12/19 21:12:14  gzins
 * Added new tests
 *
@@ -17,9 +20,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId="@(#) $Id: alxTestResearchArea.c,v 1.4 2006-04-06 11:52:57 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestResearchArea.c,v 1.5 2006-05-11 13:03:29 mella Exp $";
 
 /* 
  * System Headers 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.15 2006-04-07 06:13:24 gzins Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.16 2006-05-11 13:03:29 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2006/04/07 06:13:24  gzins
+ * Adjust logging service for test
+ *
  * Revision 1.14  2006/04/06 11:52:21  gzins
  * Set confidence index
  *
@@ -59,9 +62,7 @@
  *
  */
 
-static char *rcsId="@(#) $Id: alxTestMagnitude.c,v 1.15 2006-04-07 06:13:24 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.16 2006-05-11 13:03:29 mella Exp $";
 
 /* 
  * System Headers 

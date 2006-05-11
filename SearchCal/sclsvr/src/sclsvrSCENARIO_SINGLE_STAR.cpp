@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.2 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.3 2006-05-11 13:04:57 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.1  2005/11/21 13:51:47  scetre
  * Changed bad scenario name
  * Added scenario for single star research -> updated getStar
@@ -17,9 +20,7 @@
  *  Definition of sclsvrSCENARIO_SINGLE_STAR class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.2 2006-03-03 15:25:23 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.3 2006-05-11 13:04:57 mella Exp $";
 /* 
  * System Headers 
  */

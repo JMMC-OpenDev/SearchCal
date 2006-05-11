@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestVisibility.c,v 1.4 2005-03-30 12:48:46 scetre Exp $"
+ * "@(#) $Id: alxTestVisibility.c,v 1.5 2006-05-11 13:03:29 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/03/30 12:48:46  scetre
+ * Changed API
+ *
  * Revision 1.3  2005/02/17 19:05:54  gzins
  * Added test for 10.0 um
  *
@@ -25,9 +28,7 @@
  * Test program of the function which computes visibilities.
  */ 
 
-static char *rcsId="@(#) $Id: alxTestVisibility.c,v 1.4 2005-03-30 12:48:46 scetre Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestVisibility.c,v 1.5 2006-05-11 13:03:29 mella Exp $";
 
 /* 
  * System Headers 

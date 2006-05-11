@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestDistance.c,v 1.3 2006-04-07 06:13:24 gzins Exp $"
+ * "@(#) $Id: alxTestDistance.c,v 1.4 2006-05-11 13:03:29 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/04/07 06:13:24  gzins
+ * Adjust logging service for test
+ *
  * Revision 1.2  2005/11/10 16:18:22  lafrasse
  * Corrected unit consistency in alxComputeDistance()
  *
@@ -19,9 +22,7 @@
  * Test program of the function which computes distance.
  */
 
-static char *rcsId="@(#) $Id: alxTestDistance.c,v 1.3 2006-04-07 06:13:24 gzins Exp $"; 
-static void *use_rcsId = ((void)&use_rcsId,(void *) &rcsId);
-
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestDistance.c,v 1.4 2006-05-11 13:03:29 mella Exp $";
 
 /* 
  * System Headers 
