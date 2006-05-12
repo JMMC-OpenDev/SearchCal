@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrPrivate.h,v 1.6 2006-02-21 16:52:39 scetre Exp $"
+ * "@(#) $Id: sclsvrPrivate.h,v 1.7 2006-05-12 08:27:45 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/02/21 16:52:39  scetre
+ * Moved the 2 same method in one in sclsvrSERVER.cpp
+ * move the 2 same struct in sclsvrPrivate.h
+ *
  * Revision 1.5  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -30,6 +34,8 @@
 #include "sdb.h"
 #include "msg.h"
 #include "sclsvrSERVER.h"
+
+#include "math.h"
 
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 

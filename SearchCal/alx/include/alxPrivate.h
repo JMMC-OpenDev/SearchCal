@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.12 2006-01-26 12:48:25 scetre Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.13 2006-05-12 08:27:39 mella Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2006/01/26 12:48:25  scetre
+ * Added test on blanking value in the color table
+ *
  * Revision 1.11  2005/12/07 14:48:33  scetre
  * Renamed function for bright and faint case
  *
@@ -51,6 +54,11 @@
  * @file
  * alxPrivate header file 
  */
+
+/*
+ * General common includes
+ */
+#include "math.h"
 
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
