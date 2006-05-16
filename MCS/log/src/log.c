@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.29 2006-04-07 12:06:59 gzins Exp $"
+* "@(#) $Id: log.c,v 1.30 2006-05-16 15:31:47 gzins Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.29  2006/04/07 12:06:59  gzins
+* Added fflush to force stdout
+*
 * Revision 1.28  2006/04/06 18:01:08  gzins
 * No longer printed out environment name on stdout
 *
@@ -734,8 +737,7 @@ void logGetTimeStamp(mcsBYTES32 timeStamp)
  
     /* Add milli-second and micro-second */
     sprintf(tmpBuf, "%.6f", time.tv_usec/1e6);
-    strcpy(tmpBuf, (tmpBuf + 1));
-    strcat(timeStamp, tmpBuf);
+    strcat(timeStamp, &tmpBuf[1]);
 }
 
 
