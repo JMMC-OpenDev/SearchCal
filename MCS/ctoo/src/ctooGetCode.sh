@@ -3,16 +3,22 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetCode.sh,v 1.6 2006-03-07 14:22:22 mella Exp $"
+# "@(#) $Id: ctooGetCode.sh,v 1.7 2006-06-05 14:30:30 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2006/03/07 14:22:22  mella
+# Add templates for java
+#
 # Revision 1.5  2005/04/11 07:52:50  gluck
 # Fix problem report 3: directories creation with correct header file for C++ and template names update
 #
 # Revision 1.4  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.6  2006/03/07 14:22:22  mella
+# Bug correction for log message automatic insertion (Add templates for java
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.5  2005/04/11 07:52:50  gluck
 # Bug correction for log message automatic insertion (Fix problem report 3: directories creation with correct header file for C++ and template names update
 # Bug correction for log message automatic insertion ()
@@ -59,13 +65,15 @@ your choice in the current directory (the output file must not already exist).
 
 Templates are available for:
 
-        1- c-main                         7- script                
+        1- c-main                         8- script                
         2- c-procedure                    
-        3- c-h-file                       8- Makefile
+        3- c-h-file                       9- Makefile
                                           
-        4- c++-small-main                 9- java-main
-        5- c++-class-definition-file     10- java-class
-        6- c++-class-interface-file      11- java-interface
+        4- c++-small-main                10- java-main
+        5- c++-class-definition-file     11- java-class
+        6- c++-class-interface-file      12- java-interface
+
+        7- command-definition-file
 xyz
 
 # Propose the user to enter his choice
@@ -106,24 +114,28 @@ then
         6)  # c++-h-file choice
             ctooGetTemplateForCoding c++-class-interface-file
             ;;
-        
-        7)  # script file choice
+            
+        7)  # command-definition-file 
+            ctooGetTemplateForCoding cdf-xml
+          ;;
+
+        8)  # script file choice
             ctooGetTemplateForCoding script
             ;;
         
-        8)  # Makefile choice
+        9)  # Makefile choice
             ctooGetTemplateForCoding Makefile
             ;;
  
-        9)  # java-main choice
+        10)  # java-main choice
             ctooGetTemplateForCoding java-main
             ;;
         
-        10)  # java-class choice
+        11)  # java-class choice
             ctooGetTemplateForCoding java-class
             ;;
         
-        11)  # java-interface choice
+        12)  # java-interface choice
             ctooGetTemplateForCoding java-interface
             ;;
         
