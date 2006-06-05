@@ -1,13 +1,16 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: cdf-xml.template,v 1.1 2006-06-05 13:44:17 lsauge Exp $"
+#%# "@(#) $Id: cdf-xml.template,v 1.2 2006-06-05 14:25:08 gzins Exp $"
 #%# 
-#%# Template for cdf-cml files (Command Description File)          
+#%# Template for cdf-xml files (Command Description File)          
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.1  2006/06/05 13:44:17  lsauge
+#%# Created (xml Command Description File)
+#%#
 #%#
 #%# This file has been prepared to be pre-processed by "getTemplate".
 #%# If you are using it by hand, please:
@@ -25,6 +28,8 @@
  History
  ~~~~~~~
  $>-Log-<$
+
+paramType is the parameter type, and can be : boolean integer double or string
 -->
 <cmd
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
@@ -34,10 +39,10 @@
     <params optional="false">
         <param >
             <name> </name>
-            <type> </type>
-            <minValue> </minValue>
-            <maxValue> </maxValue>
-            <defaultValue> </defaultValue>
+            <type>paramType</type>
+            <minValue><paramType> </paramType></minValue>
+            <maxValue><paramType> </paramType></maxValue>
+            <defaultValue><paramType> </paramType></defaultValue>
             <desc> </desc>
             <unit> </unit>
         </param>
