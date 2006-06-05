@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.20 2006-06-05 13:44:54 lsauge Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.21 2006-06-05 13:57:37 lsauge Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.20  2006/06/05 13:44:54  lsauge
+# Integrate xml-cdf template (Command Description File)
+#
 # Revision 1.19  2006/03/07 14:22:22  mella
 # Add templates for java
 #
@@ -31,6 +34,9 @@
 #
 # Revision 1.12  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.20  2006/06/05 13:44:54  lsauge
+# Bug correction for log message automatic insertion (Integrate xml-cdf template (Command Description File)
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.19  2006/03/07 14:22:22  mella
 # Bug correction for log message automatic insertion (Add templates for java
 # Bug correction for log message automatic insertion (
@@ -200,7 +206,7 @@ then
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
             FILE_SUFFIX=".cdf"
-            MODE=755
+            MODE=644
             ;;
 
         Makefile)
