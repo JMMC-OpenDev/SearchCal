@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.19 2006-03-07 14:22:22 mella Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.20 2006-06-05 13:44:54 lsauge Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2006/03/07 14:22:22  mella
+# Add templates for java
+#
 # Revision 1.18  2005/11/30 13:41:55  gzins
 # Fixed documentation concerning options to be used for C++ files
 #
@@ -28,6 +31,9 @@
 #
 # Revision 1.12  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.19  2006/03/07 14:22:22  mella
+# Bug correction for log message automatic insertion (Add templates for java
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.18  2005/11/30 13:41:55  gzins
 # Bug correction for log message automatic insertion (Fixed documentation concerning options to be used for C++ files
 # Bug correction for log message automatic insertion (
@@ -76,6 +82,7 @@
 #   - c++-h-file
 #   - java-class
 #   - script
+#   - cdf-xml
 #   - Makefile
 # 
 # \n
@@ -97,7 +104,7 @@ usage()
 {
     echo -e "\n\tUsage: ctooGetTemplateForCoding c-main|c-procedure|h-file|" 
     echo -e "\tc++-small-main|c++-class-definition-file|c++-class-interface-file|"
-    echo -e "\tjava-main|java-class|java-interface|script|Makefile"
+    echo -e "\tjava-main|java-class|java-interface|script|cdf-xml|Makefile"
 }
 
 
@@ -186,6 +193,13 @@ then
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
             FILE_SUFFIX=".sh"
+            MODE=755
+            ;;
+        
+        cdf-xml)
+            TEMPLATE=$CODE_DIR/$choice.template
+            FILE_NAME=""
+            FILE_SUFFIX=".cdf"
             MODE=755
             ;;
 
