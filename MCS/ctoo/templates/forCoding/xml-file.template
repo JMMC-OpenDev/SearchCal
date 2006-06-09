@@ -1,0 +1,41 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: xml-file.template,v 1.1 2006-06-09 11:56:38 mella Exp $" 
+#%# 
+#%#       REMARK: This file belongs to the "ctoo" module.
+#%# 
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
+#%# 
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+ <INSTITUTE> project
+
+ "@(#) $I>-<d$"
+
+ History
+ ~~~~~~~
+ $>-Log-<$
+********************************************************************************
+ NAME
+ <filename>.xml - <short description>
+ 
+ DESCRIPTION
+
+ EXAMPLES
+    <example>
+    </example>
+-->
+
+<example>
+</example>
