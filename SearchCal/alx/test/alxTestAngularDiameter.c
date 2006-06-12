@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.13 2006-05-11 13:03:29 mella Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.14 2006-06-12 14:46:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2006/05/11 13:03:29  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.12  2006/04/07 06:13:24  gzins
  * Adjust logging service for test
  *
@@ -53,7 +56,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestAngularDiameter.c,v 1.13 2006-05-11 13:03:29 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestAngularDiameter.c,v 1.14 2006-06-12 14:46:57 gzins Exp $";
 
 /* 
  * System Headers 
@@ -136,7 +139,18 @@ int main (int argc, char *argv[])
     {
         return mcsFAILURE;
     }
-    /* Close MCS services */
+
+    mgI.value = 0.0; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsTRUE;
+    mgJ.value = 0.25; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
+    mgH.value = 0.32;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
+    mgKf.value = 0.36;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
+    
+    if (alxComputeAngularDiameterForFaintStar
+        (mgI, mgJ, mgKf, mgH, &diametersFaint)== mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   /* Close MCS services */
     mcsExit();
     
     /* Exit from the application with SUCCESS */
