@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.13 2006-05-12 08:27:39 mella Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.14 2006-06-12 15:32:55 gzins Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2006/05/12 08:27:39  mella
+ * Add general math.h inclusion
+ *
  * Revision 1.12  2006/01/26 12:48:25  scetre
  * Added test on blanking value in the color table
  *
@@ -97,6 +100,7 @@ typedef struct
     mcsLOGICAL loaded;
     char      *fileName;
     mcsFLOAT   coeff[alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsFLOAT   error[alxNB_COLOR_INDEXES];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
 
 /******** Macros and structure for missing magnitudes computation */
