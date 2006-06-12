@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.30 2006-04-19 12:08:04 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.31 2006-06-12 14:46:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2006/04/19 12:08:04  gzins
+ * Changed areComputed to areCoherent (for diameters)
+ * Set confidence index to 'low' when computed diameters are not coherent
+ *
  * Revision 1.29  2006/04/10 11:50:14  gzins
  * Minor change in logged messages
  *
@@ -112,7 +116,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.30 2006-04-19 12:08:04 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.31 2006-06-12 14:46:22 gzins Exp $"; 
 
 
 /* 
@@ -217,14 +221,15 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
             }
 
             /* Read polynomial coefficients */
-            if (sscanf(line, "%*s %f %f %f %f %f %f",   
+            if (sscanf(line, "%*s %f %f %f %f %f %f %f",   
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
                        &polynomial.coeff[lineNum][3],
                        &polynomial.coeff[lineNum][4],
-                       &polynomial.coeff[lineNum][5])
-                != alxNB_POLYNOMIAL_COEFF_DIAMETER)
+                       &polynomial.coeff[lineNum][5],
+                       &polynomial.error[lineNum])
+                != (alxNB_POLYNOMIAL_COEFF_DIAMETER + 1))
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -327,9 +332,9 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
     diameters->bv.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_b_v;
     diameters->vr.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_v_r;
     diameters->vk.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_v_k;
-    diameters->bvErr.value = diameters->bv.value * 8.0/100.0;
-    diameters->vrErr.value = diameters->vr.value * 9.7/100.0;;
-    diameters->vkErr.value = diameters->vk.value * 6.9/100.0;;
+    diameters->bvErr.value = diameters->bv.value * polynomial->error[0]/100.0;
+    diameters->vrErr.value = diameters->vr.value * polynomial->error[1]/100.0;;
+    diameters->vkErr.value = diameters->vk.value * polynomial->error[2]/100.0;;
 
     /* Compute mean diameter and its associated error (10%) */
     meanDiam = (  diameters->vk.value 
@@ -474,10 +479,10 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     diameters->ik.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_k;
     diameters->jk.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_k;
     diameters->jh.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_h;
-    diameters->ijErr.value = diameters->ij.value * 10.4/100.0;
-    diameters->ikErr.value = diameters->ik.value * 8.5/100.0;;
-    diameters->jkErr.value = diameters->jk.value * 9.1/100.0;;
-    diameters->jhErr.value = diameters->jh.value * 10.7/100.0;;
+    diameters->ijErr.value = diameters->ij.value * polynomial->error[3]/100.0;
+    diameters->ikErr.value = diameters->ik.value * polynomial->error[4]/100.0;;
+    diameters->jhErr.value = diameters->jh.value * polynomial->error[5]/100.0;;
+    diameters->jkErr.value = diameters->jk.value * polynomial->error[6]/100.0;;
 
     /* Compute mean diameter and its associated error (10%) */
     diameters->mean.value = (  diameters->ij.value 
