@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.31 2006-06-12 14:46:22 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.32 2006-06-19 16:16:51 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2006/06/12 14:46:22  gzins
+ * Estimated diameter error using error % coming form config file
+ *
  * Revision 1.30  2006/04/19 12:08:04  gzins
  * Changed areComputed to areCoherent (for diameters)
  * Set confidence index to 'low' when computed diameters are not coherent
@@ -116,7 +119,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.31 2006-06-12 14:46:22 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.32 2006-06-19 16:16:51 gzins Exp $"; 
 
 
 /* 
@@ -489,7 +492,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                 + diameters->ik.value
                 + diameters->jk.value
                 + diameters->jh.value) / 4;
-    diameters->meanErr.value = 0.5 * diameters->mean.value;
+    diameters->meanErr.value = 0.2 * diameters->mean.value;
 
     /* Check whether the diameter is coherent or not */
     if ((fabs(diameters->ij.value - diameters->mean.value) >
