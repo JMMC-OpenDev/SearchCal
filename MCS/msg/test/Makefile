@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2005-09-12 13:06:49 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.12 2006-06-20 13:32:09 gzins Exp $"
 #
 # Makefile of msgTest
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2005/09/12 13:06:49  scetre
+# Added test on Socket client with time out when receiving CDS data
+#
 # Revision 1.10  2005/02/15 11:55:05  gzins
 # Removed unused target
 #
@@ -52,7 +55,8 @@ EXECUTABLES     =
 EXECUTABLES_L   = msgTestSocketClient   		\
 				  msgTestSocketClientTimeOut    \
                   msgTestSocketServer   		\
-                  msgTestManagerIFQueue
+                  msgTestManagerIFQueue 		\
+                  msgTestMessage
 
 #
 # <brief description of msgTestSocketClient program>
@@ -76,6 +80,12 @@ msgTestSocketServer_LIBS      = mcs err log env cmd misc msg C++
 msgTestManagerIFQueue_OBJECTS   = msgTestManagerIFQueue
 msgTestManagerIFQueue_LDFLAGS   = -lgdome
 msgTestManagerIFQueue_LIBS      = mcs err log cmd misc env msg C++
+
+#
+# Test program for msgMESSAGE class 
+msgTestMessage_OBJECTS   = msgTestMessage
+msgTestMessage_LDFLAGS   = -lgdome
+msgTestMessage_LIBS      = mcs err log cmd misc env msg C++
 
 #
 # special compilation flags for single c sources
