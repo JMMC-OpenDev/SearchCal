@@ -1,13 +1,16 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: cdf-xml.template,v 1.3 2006-06-19 09:49:21 lsauge Exp $"
+#%# "@(#) $Id: cdf-xml.template,v 1.4 2006-06-20 09:16:40 lsauge Exp $"
 #%# 
 #%# Template for cdf-xml files (Command Description File)          
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.3  2006/06/19 09:49:21  lsauge
+#%# suppressed all extra spaces
+#%#
 #%# Revision 1.2  2006/06/05 14:25:08  gzins
 #%# Minor related to parameter type
 #%#
@@ -32,7 +35,7 @@
  ~~~~~~~
  $>-Log-<$
 
-paramType is the parameter type, and can be : boolean integer double or string
+ paramType is the parameter type, and can be : boolean integer double or string
 -->
 <cmd
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
