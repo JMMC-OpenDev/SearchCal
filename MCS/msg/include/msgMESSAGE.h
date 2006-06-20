@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.h,v 1.26 2005-09-12 15:41:25 scetre Exp $"
+ * "@(#) $Id: msgMESSAGE.h,v 1.27 2006-06-20 13:30:31 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2005/09/12 15:41:25  scetre
+ * Move msgNO_WAIT and msgWAIT_FOREVER to msgSOCKET.h
+ *
  * Revision 1.25  2005/02/14 07:59:01  gzins
  * Minor documentation changes
  *
@@ -247,6 +250,7 @@ public:
     virtual mcsCOMPL_STAT    ClearBody       (void);
     virtual mcsCOMPL_STAT    SetBody         (const char *buffer,
                                               mcsUINT32  bufLen=0);
+    virtual mcsCOMPL_STAT    SetBodyArgs(const char *format, ...);
     virtual mcsCOMPL_STAT    AppendToBody    (const char *buffer,
                                               mcsUINT32  bufLen=0);
     virtual mcsCOMPL_STAT    AppendStringToBody(const char *str); 
