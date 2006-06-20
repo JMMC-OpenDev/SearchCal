@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.26 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.27 2006-06-20 13:31:39 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.25  2005/11/03 08:43:51  mella
  * Replace bad method name for trace
  *
@@ -73,13 +76,15 @@
  * \sa msgMESSAGE
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMESSAGE.cpp,v 1.26 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMESSAGE.cpp,v 1.27 2006-06-20 13:31:39 gzins Exp $";
 
 /* 
  * System Headers 
  */
 #include <iostream>
 using namespace std;
+#include <stdlib.h>
+#include <stdarg.h>
 
 /*
  * MCS Headers 
@@ -576,6 +581,53 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
     }
 
     // Store the new body size in the header
+    sprintf(_header.msgBodySize, "%d", bufLen);
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Set the message body using formatted output conversion.
+ *
+ * This method set the message body according to the given \em print format
+ * string and the list of variable arguments.
+ *
+ * \param format printf-like format string
+ *
+ * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
+ *
+ * \warning the allocated buffer size to format body is limited to 2048. If the
+ * resulting string resulting from output conversion exceeds this size, the
+ * behaviour will be unpredictable
+ */
+mcsCOMPL_STAT msgMESSAGE::SetBodyArgs(const char *format, ...)
+{
+    va_list argPtr;
+    int bufLen;
+
+    logExtDbg("msgMESSAGE::SetBodyArgs()");
+    
+    // If received a NULL pointer
+    if (format == NULL)
+    {
+        errAdd(msgERR_NULL_PARAM, "format");
+        return mcsFAILURE;
+    }
+    
+    // Retrieve variable arguments
+    va_start(argPtr, format);
+
+    // Reset the body buffer and allocate sufficient memory
+    if (AllocateBody(2048) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Format message body
+    vsprintf(_body.dynBuf, format, argPtr);
+    
+    // Store the new body size in the header
+    bufLen = strlen(_body.dynBuf) + 1;
     sprintf(_header.msgBodySize, "%d", bufLen);
     
     return mcsSUCCESS;
