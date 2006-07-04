@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.36 2006-04-05 15:17:26 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.37 2006-07-04 10:18:00 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2006/04/05 15:17:26  gzins
+ * Added message when science star is removed form list
+ *
  * Revision 1.35  2006/03/07 15:33:39  scetre
  * Removed old scenario in band K
  *
@@ -113,7 +116,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.36 2006-04-05 15:17:26 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.37 2006-07-04 10:18:00 scetre Exp $"; 
 
 
 /* 
@@ -143,6 +146,7 @@ using namespace std;
 /*
  * Local Headers 
  */
+#include "sclsvrVersion.h"
 #include "sclsvrErrors.h"
 #include "sclsvrSERVER.h"
 #include "sclsvrPrivate.h"
@@ -165,6 +169,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
+
+    // Get the request as a string for the case of Save in VOTable
+    mcsSTRING256 requestString;
+    strcpy(requestString, msg.GetBody());
  
     // Start timer log
     timlogInfoStart(msg.GetCommand());
@@ -391,11 +399,31 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         // If a file has been given, store result in this file
         if (strcmp(request.GetFileName(), "") != 0)
         {
-            if (calibratorList.Save(request.GetFileName(), 
-                                    request) == mcsFAILURE)
+            mcsSTRING32 fileName;
+            strcpy(fileName, request.GetFileName());
+            // If the extension is .vot, save as VO table
+            if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
-                return evhCB_NO_DELETE | evhCB_FAILURE;
-            };
+                // define the header
+                char * header = "SearchCal software: http://www.mariotti.fr/aspro_page.htm (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+                // Get the software name and version
+                mcsSTRING32 software;
+                snprintf(software, sizeof(software), "%s v%s", "SearchCal",
+                         sclsvrVERSION);
+                // Save the list as a VOTable v1.1
+                if (calibratorList.SaveToVOTable(request.GetFileName(), header, software, requestString) == mcsFAILURE)
+                {
+                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                }
+            }
+            else
+            {
+                if (calibratorList.Save(request.GetFileName(), 
+                                    request) == mcsFAILURE)
+                {
+                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                };
+            }
         }
     }
     else
