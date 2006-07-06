@@ -2,7 +2,10 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 	<xsl:output method="text" omit-xml-declaration="yes" indent="yes"/>
 
-        <xsl:include href="mkfSTK_WriteArrayName.xsl"/>
+    <!-- xslt that incoludes this file must also check that nfollowiong file as
+    been included
+    <xsl:include href="mkfSTK_WriteArrayName.xsl"/>
+    -->
 
 	<!--            Fonction WriteFunctionParam                -->
 	<!-- Cette fonction sert a ecrire le parametre d'une -->
