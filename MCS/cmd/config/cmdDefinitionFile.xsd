@@ -5,7 +5,7 @@ elementFormDefault="qualified">
 
     <!-- TYPE DEFINITION : cmd  -->
 	<xs:element name="cmd">
-    <xs:complexType name="cmd">
+    <xs:complexType>
     <xs:sequence>
     <xs:element name="mnemonic" minOccurs="1" maxOccurs="1">
     <xs:simpleType>
