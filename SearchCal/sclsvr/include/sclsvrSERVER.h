@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.13 2006-03-07 15:33:39 scetre Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.14 2006-07-17 09:10:36 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2006/03/07 15:33:39  scetre
+ * Removed old scenario in band K
+ *
  * Revision 1.12  2005/12/12 14:10:00  scetre
  * Added old scenario with 2mass in primary request
  *
@@ -55,6 +58,7 @@
  */
 #include "vobs.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
+#include "sclsvrSCENARIO_BRIGHT_K_OLD.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
 #include "sclsvrSCENARIO_FAINT_K.h"
@@ -134,6 +138,7 @@ private:
     // Virtual observatory
     vobsVIRTUAL_OBSERVATORY _virtualObservatory;
     sclsvrSCENARIO_BRIGHT_K _scenarioBrightK;
+    sclsvrSCENARIO_BRIGHT_K_OLD _scenarioBrightKOld;
     sclsvrSCENARIO_BRIGHT_V _scenarioBrightV;
     sclsvrSCENARIO_BRIGHT_N _scenarioBrightN;
     sclsvrSCENARIO_FAINT_K _scenarioFaintK;

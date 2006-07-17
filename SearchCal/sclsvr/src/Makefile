@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.20 2006-03-07 15:33:39 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.21 2006-07-17 09:10:36 scetre Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.20  2006/03/07 15:33:39  scetre
+# Removed old scenario in band K
+#
 # Revision 1.19  2005/12/12 14:09:41  scetre
 # Added old scenario with 2mass in primary request
 #
@@ -94,6 +97,7 @@ INCLUDES        = sclsvr.h						\
 				  sclsvrSERVER.h				\
 				  sclsvrVISIBILITY_FILTER.h		\
 				  sclsvrSCENARIO_BRIGHT_K.h		\
+				  sclsvrSCENARIO_BRIGHT_K_OLD.h	\
 				  sclsvrSCENARIO_BRIGHT_V.h		\
 				  sclsvrSCENARIO_BRIGHT_N.h		\
 				  sclsvrSCENARIO_FAINT_K.h		\
@@ -118,6 +122,7 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		\
 				   sclsvrGetStarCB				\
 				   sclsvrVISIBILITY_FILTER		\
 				   sclsvrSCENARIO_BRIGHT_K		\
+				   sclsvrSCENARIO_BRIGHT_K_OLD	\
 				   sclsvrSCENARIO_BRIGHT_V		\
 				   sclsvrSCENARIO_BRIGHT_N		\
 				   sclsvrSCENARIO_FAINT_K		\

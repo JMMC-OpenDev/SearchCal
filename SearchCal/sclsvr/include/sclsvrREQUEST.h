@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.16 2006-04-10 12:07:31 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.17 2006-07-17 09:10:36 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2006/04/10 12:07:31  gzins
+ * Renamed SetExpectingVisErr to SetExpectedVisErr
+ *
  * Revision 1.15  2006/03/07 15:33:39  scetre
  * Removed old scenario in band K
  *
@@ -136,6 +139,10 @@ public:
     virtual mcsCOMPL_STAT SetBrightFlag(mcsLOGICAL brightFlag);
     virtual mcsLOGICAL    IsBright(void);
 
+    // scenario
+    virtual mcsCOMPL_STAT SetOldScenario(mcsLOGICAL oldScenario);
+    virtual mcsLOGICAL    IsOldScenario();
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -151,6 +158,7 @@ private:
     mcsLOGICAL    _diamVKDefined;
     mcsFLOAT      _expectedVisibilityError;
     mcsLOGICAL    _brightFlag;
+    mcsLOGICAL    _oldScenario;    
     mcsSTRING256  _fileName;
 };
 
