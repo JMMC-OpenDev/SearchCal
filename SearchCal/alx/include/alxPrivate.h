@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.14 2006-06-12 15:32:55 gzins Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.15 2006-07-17 08:23:05 scetre Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2006/06/12 15:32:55  gzins
+ * Added error in polynomial for angular diameterc computation
+ *
  * Revision 1.13  2006/05/12 08:27:39  mella
  * Add general math.h inclusion
  *
@@ -84,7 +87,7 @@ extern "C" {
  * Number of color indexes used to compute the angular diameter : (B-V), (V-R),
  * (V-K), (I-J), (I-K), (J-H), (J-K)
  */
-#define alxNB_COLOR_INDEXES 7
+#define alxNB_COLOR_INDEXES 8
     
 /*
  * Polynomial to compute the angular diameter is made by 6 coefficients which
