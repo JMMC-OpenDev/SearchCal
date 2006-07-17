@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.37 2006-04-10 12:07:11 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.38 2006-07-17 09:12:20 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2006/04/10 12:07:11  gzins
+ * Removed IsSuitable() and ComputeMultiplicity() (not needed)
+ *
  * Revision 1.36  2006/03/28 13:49:22  gzins
  * Added IsSuitable method
  *
@@ -121,6 +124,7 @@
 #define sclsvrCALIBRATOR_DIAM_IK            "DIAM_IK"
 #define sclsvrCALIBRATOR_DIAM_JK            "DIAM_JK"
 #define sclsvrCALIBRATOR_DIAM_JH            "DIAM_JH"
+#define sclsvrCALIBRATOR_DIAM_HK            "DIAM_HK"
 #define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
 #define sclsvrCALIBRATOR_DIAM_BV_ERROR      "DIAM_BV_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VR_ERROR      "DIAM_VR_ERROR"
@@ -129,6 +133,7 @@
 #define sclsvrCALIBRATOR_DIAM_IK_ERROR      "DIAM_IK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_JK_ERROR      "DIAM_JK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_JH_ERROR      "DIAM_JH_ERROR"
+#define sclsvrCALIBRATOR_DIAM_HK_ERROR      "DIAM_HK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 #define sclsvrCALIBRATOR_DIST               "DIST"
