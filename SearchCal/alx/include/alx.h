@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.20 2006-04-19 12:07:16 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.21 2006-07-17 08:22:20 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2006/04/19 12:07:16  gzins
+ * Changed areComputed to areCoherent (for diameters)
+ *
  * Revision 1.19  2005/12/22 10:07:53  scetre
  * Added extinction coefficient computation
  * changed realMag to CorrectedMag
@@ -181,6 +184,7 @@ typedef struct
     alxDATA ik;
     alxDATA jk;
     alxDATA jh;
+    alxDATA hk;
     alxDATA mean;
     alxDATA bvErr;
     alxDATA vrErr;
@@ -189,6 +193,7 @@ typedef struct
     alxDATA ikErr;
     alxDATA jhErr;
     alxDATA jkErr;
+    alxDATA hkErr;
     alxDATA meanErr;
     alxCONFIDENCE_INDEX confidenceIdx;
     mcsLOGICAL areCoherent;
