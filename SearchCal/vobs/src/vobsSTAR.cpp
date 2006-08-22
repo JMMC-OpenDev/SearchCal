@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.70 2006-04-10 14:51:57 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.71 2006-08-22 14:45:08 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.70  2006/04/10 14:51:57  gzins
+* Added ClearPropertyValue
+*
 * Revision 1.69  2006/03/22 10:42:18  scetre
 * Added TYC2 and TYC3 properties
 *
@@ -186,7 +189,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.70 2006-04-10 14:51:57 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.71 2006-08-22 14:45:08 gzins Exp $"; 
 
 /*
  * System Headers
@@ -730,12 +733,6 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
 {
     logTrace("vobsSTAR::GetId()");
 
-    // Verify parameter validity
-    if (starId == NULL)
-    {
-        return mcsFAILURE;
-    }
-
     const char* propertyValue = NULL;
 
     if (IsPropertySet(vobsSTAR_ID_HD) == mcsTRUE)
@@ -830,7 +827,10 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         return mcsSUCCESS;        
     }
     
-    return mcsFAILURE;
+    // No id found
+    strncpy(starId, "????", (maxLength - 1));
+
+    return mcsSUCCESS;
 }
 
 /**
@@ -1090,8 +1090,15 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
     mcsFLOAT    starDec = 0.0;
 
     GetId(starId, sizeof(starId));
-    GetRa(starRa);
-    GetDec(starDec);
+
+    if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
+    {
+        GetRa(starRa);
+    }
+    if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
+    {
+        GetDec(starDec);
+    }
     printf("%s(%f,%f): ", starId, starRa, starDec);
 
     if (showPropId == mcsFALSE)
