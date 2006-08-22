@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.22 2006-03-28 12:57:21 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.23 2006-08-22 15:42:58 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2006/03/28 12:57:21  scetre
+* Removed Spectral Type constraints
+*
 * Revision 1.21  2006/03/03 15:03:27  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -78,7 +81,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.22 2006-03-28 12:57:21 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.23 2006-08-22 15:42:58 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -163,6 +166,8 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=HD");
     miscDynBufAppendString(&_query, "&-out=DM");
     miscDynBufAppendString(&_query, "&-out=TYC1");
+    miscDynBufAppendString(&_query, "&-out=TYC2");
+    miscDynBufAppendString(&_query, "&-out=TYC3");
     // constraints
     
     miscDynBufAppendString(&_query, "&-sort=_r");
