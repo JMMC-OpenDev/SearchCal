@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.26 2006-03-03 15:03:27 scetre Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.27 2006-08-22 14:42:50 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2006/03/03 15:03:27  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.25  2005/11/16 10:47:55  scetre
 * Updated documentation
 *
@@ -77,7 +80,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.26 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.27 2006-08-22 14:42:50 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -270,7 +273,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
             if (i == 0)
             {
                 logDebug("   +----------+--------------+--------------------+");
-                logDebug("   | Param #  | Name         | UCD                |");
+                logDebug("   | Param #  | Name         | UCD1               |");
                 logDebug("   +----------+--------------+--------------------+");
             }
             // Get the parameter name and UCD
@@ -540,7 +543,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     // If it is the UCD name of the corresponding
                     // parameter
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
-                        (strcmp(attrName->str, "ucd")  == 0))
+                        (strcmp(attrName->str, "ucd1")  == 0))
                     {
                         cData->AddUcdName(attrValue->str); 
                     }
