@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.25 2006-04-10 11:55:09 scetre Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.26 2006-08-22 14:45:42 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2006/04/10 11:55:09  scetre
+* Added tabulation in ucd list on extended format. Update the read of this new file
+*
 * Revision 1.24  2005/11/24 13:16:51  scetre
 * Added test on CODE_VARIB ucd and TYC1 for ID_ALTERNATIVE
 *
@@ -389,9 +392,11 @@ public:
                             ucdValue = lineSubStrings[propIdx * nbAttrs];
                             if (extendedFormat == mcsTRUE)
                             {
+                                int value;
                                 origin = lineSubStrings[(propIdx*nbAttrs) + 1];
                                 sscanf(lineSubStrings[(propIdx*nbAttrs) + 2],
-                                       "%d", &confidenceIndex);
+                                       "%d", &value);
+                                confidenceIndex = (vobsCONFIDENCE_INDEX)value;
                             }
                             else
                             {
