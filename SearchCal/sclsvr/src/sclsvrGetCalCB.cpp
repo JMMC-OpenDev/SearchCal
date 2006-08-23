@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.38 2006-07-17 09:10:36 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.39 2006-08-23 12:07:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.38  2006/07/17 09:10:36  scetre
+ * Added old scenario option
+ *
  * Revision 1.37  2006/07/04 10:18:00  scetre
  * Managed the format of the file for the save in command. Actually, it is possible to save in votable if extension of the -file option is .vot, otherwise standard format
  *
@@ -119,7 +122,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.38 2006-07-17 09:10:36 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.39 2006-08-23 12:07:43 gzins Exp $"; 
 
 
 /* 
@@ -295,9 +298,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 break;
         }
     }
-    else if ((request.IsBright() == mcsFALSE) &&
-             (request.GetSearchAreaGeometry() == vobsCIRCLE))
+    else if ((request.IsBright() == mcsFALSE))
     {
+        // If radius has not been given, set it to 0; i.e. determine by SW
+        if (request.GetSearchAreaGeometry() != vobsCIRCLE) 
+        {
+            request.SetSearchArea(0.0);
+        }
+
         // According to the desired band
         const char* band = request.GetSearchBand();
         switch(band[0])
@@ -326,26 +334,11 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     }
     else
     {        
-        if (request.IsBright() == mcsTRUE)
+        if (request.GetSearchAreaGeometry() == vobsCIRCLE)
         {
-            if (request.GetSearchAreaGeometry() == vobsCIRCLE)
-            {
-                errAdd(sclsvrERR_INVALID_SEARCH_AREA,
-                       "Bright",
-                       "Rectangular");
-            }
+            errAdd(sclsvrERR_INVALID_SEARCH_AREA, "bright", "rectangular");
         }
-        else if (request.IsBright() == mcsFALSE)
-        {
-             if (request.GetSearchAreaGeometry() == vobsBOX)
-             {
-                 errAdd(sclsvrERR_INVALID_SEARCH_AREA,
-                       "Faint",
-                       "Circle");
-
-             }
-        }
-
+ 
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
