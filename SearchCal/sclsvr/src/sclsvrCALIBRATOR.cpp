@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.88 2006-08-23 12:06:48 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.89 2006-08-23 13:53:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.88  2006/08/23 12:06:48  gzins
+ * Removed useless parameters in CommputeMissingMagnitude
+ * Fixed bug when computing diameters; case I unknown was not properly handled
+ * No longer set diameter IJ and IK when I is unknown
+ * No longer set HK diameter when I is known
+ *
  * Revision 1.87  2006/07/17 09:12:20  scetre
  * Added HK diameter
  * Modify the angular diameter coputation if magI is unknown
@@ -220,7 +226,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.88 2006-08-23 12:06:48 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.89 2006-08-23 13:53:33 gzins Exp $"; 
 
 
 /* 
@@ -1300,7 +1306,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
         // Set flag according to the confidence index 
         if (diameters.areCoherent == mcsFALSE)
         {
-            logInfo("star %s - error on diameter too hight; "
+            logInfo("star %s - error on diameter too high; "
                     "computed diameters are not coherent", starId);
             
             if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
@@ -1408,7 +1414,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
             // Set flag according to the confidence index 
             if (diameters.areCoherent == mcsFALSE)
             {
-                logInfo("star %s - error on diameter too hight; "
+                logInfo("star %s - error on diameter too high; "
                         "computed diameters are not coherent", starId);
                 if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
                                      vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
