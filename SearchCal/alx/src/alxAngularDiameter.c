@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.33 2006-07-17 08:23:34 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.34 2006-08-23 13:54:20 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2006/07/17 08:23:34  scetre
+ * Added hk diameter if magI is unknown
+ *
  * Revision 1.32  2006/06/19 16:16:51  gzins
  * Changed computation of diameter error for faint object; 0.2 * Phi(mean)
  *
@@ -122,7 +125,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.33 2006-07-17 08:23:34 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.34 2006-08-23 13:54:20 gzins Exp $"; 
 
 
 /* 
@@ -555,7 +558,6 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
         }        
 
         /* Display results */
-        logInfo("MagnitudeI is unknown, Diameter are computed from HK, JH and JK :");
         logInfo("Diameter HK = %.3f(%.4f), JH = %.3f(%.4f), JK = %.3f(%.4f), mean = %3f(%4f) ",
                 diameters->hk.value, diameters->hkErr.value,
                 diameters->jh.value, diameters->jhErr.value,
