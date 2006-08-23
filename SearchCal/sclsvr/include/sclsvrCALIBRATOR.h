@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.38 2006-07-17 09:12:20 scetre Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.39 2006-08-23 12:08:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.38  2006/07/17 09:12:20  scetre
+ * Added HK diameter
+ * Modify the angular diameter coputation if magI is unknown
+ *
  * Revision 1.37  2006/04/10 12:07:11  gzins
  * Removed IsSuitable() and ComputeMultiplicity() (not needed)
  *
@@ -165,9 +169,7 @@ private:
     mcsCOMPL_STAT AddProperties(void);
 
     // Compute specific property
-    mcsCOMPL_STAT ComputeMissingMagnitude(alxBAND firstBand,
-                                          alxBAND secondBand,
-                                          mcsLOGICAL isBright=mcsTRUE);
+    mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeExtinctionCoefficient();
     mcsCOMPL_STAT 
