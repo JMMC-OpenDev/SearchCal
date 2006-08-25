@@ -1,17 +1,30 @@
 # Test for bright scenario
-1   TestAlfPsa    sclsvrTestAlfPsa
-2   TestBetCap    sclsvrTestBetCap
-3   TestBetDor    sclsvrTestBetDor
-4   TestDelOph    sclsvrTestDelOph
-5   TestEpsSgr    sclsvrTestEpsSgr
-6   TestEtaTau    sclsvrTestEtaTau
-7   TestFuOri     sclsvrTestFuOri
-8   TestPi01Gru   sclsvrTestPi01Gru
-9   TestTau04Eri  sclsvrTestTau04Eri
-10  TestWaql      sclsvrTestWaql
-11  TestZetGem    sclsvrTestZetGem
+001   TestBright_AlfPsa    sclsvrTestBright_AlfPsa
+002   TestBright_BetCap    sclsvrTestBright_BetCap
+003   TestBright_BetDor    sclsvrTestBright_BetDor
+004   TestBright_DelOph    sclsvrTestBright_DelOph
+005   TestBright_EpsSgr    sclsvrTestBright_EpsSgr
+006   TestBright_EtaTau    sclsvrTestBright_EtaTau
+007   TestBright_FuOri     sclsvrTestBright_FuOri
+008   TestBright_Pi01Gru   sclsvrTestBright_Pi01Gru
+009   TestBright_Tau04Eri  sclsvrTestBright_Tau04Eri
+010   TestBright_Waql      sclsvrTestBright_Waql
+011   TestBright_ZetGem    sclsvrTestBright_ZetGem
 
 # Test for faint scenario
-12  TestHD_33793  sclsvrTestHD_33793
-13  TestL_Car     sclsvrTestL_Car
-
+101  TestFaint_HD_5980     sclsvrTestFaint_HD_5980     
+102  TestFaint_AzV_266     sclsvrTestFaint_AzV_266     
+103  TestFaint_NGC_1068    sclsvrTestFaint_NGC_1068 
+104  TestFaint_BD+23_492   sclsvrTestFaint_BD+23_492
+105  TestFaint_HD_26933    sclsvrTestFaint_HD_26933 
+106  TestFaint_HD_33793    sclsvrTestFaint_HD_33793 
+107  TestFaint_V615_Ori    sclsvrTestFaint_V615_Ori 
+108  TestFaint_FU_Ori      sclsvrTestFaint_FU_Ori      
+109  TestFaint_TW_Hya      sclsvrTestFaint_TW_Hya     
+110  TestFaint_HD_103945   sclsvrTestFaint_HD_103945
+111  TestFaint_HD_111688   sclsvrTestFaint_HD_111688
+112  TestFaint_U_Mus       sclsvrTestFaint_U_Mus     
+113  TestFaint_HD_144007   sclsvrTestFaint_HD_144007
+114  TestFaint_Elia_2-64   sclsvrTestFaint_Elia_2-64
+115  TestFaint_S_Cra       sclsvrTestFaint_S_Cra
+116  TestFaint_L_Car       sclsvrTestFaint_L_Car       
