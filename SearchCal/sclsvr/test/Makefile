@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2006-04-19 12:09:31 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.10 2006-08-25 06:58:56 gzins Exp $"
 #
 # Makefile of sclsvr test module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2006/04/19 12:09:31  gzins
+# Added L_Car test script
+#
 # Revision 1.8  2006/04/10 14:56:58  gzins
 # Added test scripts
 #
@@ -79,20 +82,34 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         =
-SCRIPTS_L       = sclsvrTestAlfPsa   \
-                  sclsvrTestBetCap   \
-                  sclsvrTestBetDor   \
-                  sclsvrTestDelOph   \
-                  sclsvrTestEpsSgr   \
-                  sclsvrTestEtaTau   \
-                  sclsvrTestFuOri    \
-                  sclsvrTestPi01Gru  \
-                  sclsvrTestTau04Eri \
-                  sclsvrTestWaql     \
-                  sclsvrTestZetGem   \
-                  sclsvrTestHD_33793 \
-                  sclsvrTestL_Car
-
+SCRIPTS_L       = sclsvrTestBright_AlfPsa    \
+                  sclsvrTestBright_BetCap    \
+                  sclsvrTestBright_BetDor    \
+                  sclsvrTestBright_DelOph    \
+                  sclsvrTestBright_EpsSgr    \
+                  sclsvrTestBright_EtaTau    \
+                  sclsvrTestBright_FuOri     \
+                  sclsvrTestBright_Pi01Gru   \
+                  sclsvrTestBright_Tau04Eri  \
+                  sclsvrTestBright_Waql      \
+				  sclsvrTestBright_ZetGem    \
+				  \
+				  sclsvrTestFaint_HD_5980    \
+				  sclsvrTestFaint_AzV_266    \
+				  sclsvrTestFaint_NGC_1068   \
+				  sclsvrTestFaint_BD+23_492  \
+				  sclsvrTestFaint_HD_26933   \
+				  sclsvrTestFaint_HD_33793   \
+				  sclsvrTestFaint_V615_Ori   \
+				  sclsvrTestFaint_FU_Ori     \
+				  sclsvrTestFaint_TW_Hya     \
+				  sclsvrTestFaint_HD_103945  \
+				  sclsvrTestFaint_HD_111688  \
+				  sclsvrTestFaint_U_Mus      \
+				  sclsvrTestFaint_HD_144007  \
+				  sclsvrTestFaint_Elia_2-64  \
+				  sclsvrTestFaint_S_Cra      \
+				  sclsvrTestFaint_L_Car
 #
 # TCL scripts (public and local)
 # ------------------------------
