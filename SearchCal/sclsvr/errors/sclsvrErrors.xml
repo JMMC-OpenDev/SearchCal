@@ -3,7 +3,7 @@
    <error id="4">
       <errName>PROPERTY_NOT_SET</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[property value not set : "%s"]]></errFormat>
+      <errFormat><![CDATA[Property value not set : "%s"]]></errFormat>
    </error>
    <error id="5">
       <errName>STAR_NOT_FOUND</errName>
@@ -34,5 +34,15 @@
       <errName>INVALID_SEARCH_AREA</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[A %s query need a %s search area]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>UNKNOWN_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid band %s; should be J, H, K, V or N]]></errFormat>
+   </error>
+   <error id="12">
+      <errName>NO_CDS_RETURN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Connexion to CDS failed]]></errFormat>
    </error>
 </errorList>
