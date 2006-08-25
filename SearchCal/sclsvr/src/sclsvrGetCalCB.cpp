@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.39 2006-08-23 12:07:43 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.40 2006-08-25 06:07:02 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2006/08/23 12:07:43  gzins
+ * When not given, set radius to 0 in faint scenario
+ *
  * Revision 1.38  2006/07/17 09:10:36  scetre
  * Added old scenario option
  *
@@ -122,7 +125,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.39 2006-08-23 12:07:43 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.40 2006-08-25 06:07:02 gzins Exp $"; 
 
 
 /* 
@@ -293,7 +296,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 break;
 
             default:
-                errAdd(vobsERR_UNKNOWN_BAND, band);
+                errAdd(sclsvrERR_UNKNOWN_BAND, band);
                 return evhCB_NO_DELETE | evhCB_FAILURE;
                 break;
         }
@@ -327,7 +330,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 break;
 
             default:
-                errAdd(vobsERR_UNKNOWN_BAND, band);
+                errAdd(sclsvrERR_UNKNOWN_BAND, band);
                 return evhCB_NO_DELETE | evhCB_FAILURE;
                 break;
         }

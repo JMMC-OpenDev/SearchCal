@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.19 2006-03-28 12:42:12 gzins Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.20 2006-08-25 06:07:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2006/03/28 12:42:12  gzins
+ * Added opt and Qflg option when querying 2mass
+ *
  * Revision 1.18  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -69,7 +72,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.19 2006-03-28 12:42:12 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.20 2006-08-25 06:07:22 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -89,6 +92,7 @@ using namespace std;
  * Local Headers 
  */
 #include "sclsvrSCENARIO_FAINT_K.h"
+#include "sclsvrErrors.h"
 #include "sclsvrPrivate.h"
 
 /**
@@ -227,7 +231,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         // loaded into memory
         if (scenarioCheck.Execute(_starListP) == mcsFAILURE)
         {
-            errUserAdd(vobsERR_NO_CDS_RETURN);
+            errUserAdd(sclsvrERR_NO_CDS_RETURN);
             return mcsFAILURE;
         }
         // If the return is lower than 25 star, twice the radius and recall
