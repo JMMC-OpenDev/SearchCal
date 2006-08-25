@@ -65,31 +65,6 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Unknown catalog name '%.80s']]></errFormat>
    </error>
-   <error id="24">
-      <errName>QUERY_WRITE_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[The query is not writing correctly : %s]]></errFormat>
-   </error>
-   <error id="25">
-      <errName>URI_WRITE_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[The URI is not writing correctly]]></errFormat>
-   </error>
-   <error id="26">
-      <errName>CONSTANT_WRITE_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[The Constants are not writing correctly]]></errFormat>
-   </error>
-   <error id="27">
-      <errName>POSITION_WRITE_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[The position are not writing correctly]]></errFormat>
-   </error>
-   <error id="28">
-      <errName>END_WRITE_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[The end is not writing correctly]]></errFormat>
-   </error>
    <error id="30">
       <errName>PROPERTY_NOT_SET</errName>
       <errSeverity>WARNING</errSeverity>
@@ -120,11 +95,6 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[No more criteria in the list]]></errFormat>
    </error>
-   <error id="36">
-      <errName>UNKNOWN_BAND</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Invalid band %s; should be J, H, K, V or N]]></errFormat>
-   </error>
    <error id="38">
       <errName>CATALOG_LOAD</errName>
       <errSeverity>WARNING</errSeverity>
@@ -134,11 +104,6 @@
       <errName>INVALID_PARSING_UCD_FORMAT</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Invalid format for UCD parsing]]></errFormat>
-   </error>
-   <error id="41">
-      <errName>APPEND_LINE_FAILED</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Line '%.80s' could not be appended to CDATA structure]]></errFormat>
    </error>
    <error id="42">
       <errName>PARSE_CDATA</errName>
@@ -188,16 +153,16 @@
    <error id="51">
       <errName>CONDITION_TYPE</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[new condition type (%s) differs from the other ones (%s)]]></errFormat>
+      <errFormat><![CDATA[New condition type (%s) differs from the other ones (%s)]]></errFormat>
    </error>
    <error id="53">
       <errName>INCOMPATIBLE_TYPES</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[condition type (%s) and property type (%s) are not compatible]]></errFormat>
+      <errFormat><![CDATA[Condition type (%s) and property type (%s) are not compatible]]></errFormat>
    </error>
-   <error id="54">
-      <errName>NO_OPTION_IN_LOCAL_CATALOG</errName>
+   <error id="57">
+      <errName>QUERY_OPTION_NOT_SUPPORTED</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[can't had option %s in a local catalog]]></errFormat>
+      <errFormat><![CDATA[Option %s is not supported for local catalog]]></errFormat>
    </error>
 </errorList>
