@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhSERVER.cpp,v 1.14 2006-05-11 13:04:18 mella Exp $"
+ * "@(#) $Id: evhSERVER.cpp,v 1.15 2006-08-25 07:28:05 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2006/05/11 13:04:18  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.13  2005/12/14 23:09:51  gzins
  * Fixed infinite loop bug when execution of command given in command line failed
  *
@@ -52,7 +55,7 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhSERVER.cpp,v 1.14 2006-05-11 13:04:18 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhSERVER.cpp,v 1.15 2006-08-25 07:28:05 gzins Exp $";
 
 /* 
  * System Headers 
@@ -181,8 +184,7 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
         if (_msg.GetBodySize() == 0)
         {
             // Set command parameters 
-            if (_msg.SetBody(argv[*optInd], 
-                             strlen(argv[*optInd])) == mcsFAILURE)
+            if (_msg.SetBody(argv[*optInd]) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
