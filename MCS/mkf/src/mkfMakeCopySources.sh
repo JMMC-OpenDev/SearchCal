@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeCopySources.sh,v 1.2 2005-02-15 08:40:15 gzins Exp $" 
+# "@(#) $Id: mkfMakeCopySources.sh,v 1.3 2006-08-25 08:58:31 gzins Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/02/15 08:40:15  gzins
+# Added CVS log as file modification history
+#
 # gzins     26-Aug-2004  Adapted from VLT
 #
 #************************************************************************
@@ -50,18 +53,22 @@
 #
 #----------------------------------------------------------------------
 
+# Integration area is not defined
 if [ "$INTROOT" = "" ]
 then
-    # Integration area is not specified --> nothing to do
-    exit 0
+    # Use MCS area
+    WHERE_TO_COPY=$MCSROOT
 else
-    if [ ! -d $INTROOT ]
-    then
-        echo ""
-        echo " ERROR: mkfMakeCopySources: INTROOT defined as >> $INTROOT << is not a directory"
-        echo ""
-        exit 1
-    fi
+    WHERE_TO_COPY=$INTROOT
+fi
+
+# Check destination directory
+if [ ! -d $WHERE_TO_COPY ]
+then
+    echo ""
+    echo " ERROR: mkfMakeCopySources: destination directory defined as >> $WHERE_TO_COPY << is not a directory"
+    echo ""
+    exit 1
 fi
 
 #
@@ -98,10 +105,7 @@ PARENT_DIR=`dirname $PWD`
 MODULE_NAME=`basename $PARENT_DIR`
 
 #
-# If Sources directory does not exists, create it (compatibility with 
-# existing INTROOT structures)
-
-WHERE_TO_COPY=$INTROOT
+# If Sources directory does not exists, create it
 for dir in Sources $MODULE_NAME 
 do
     WHERE_TO_COPY=$WHERE_TO_COPY/$dir
