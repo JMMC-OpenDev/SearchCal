@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.12 2006-08-25 05:56:35 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.10  2006/02/28 13:18:48  scetre
  * Added error in SetOption method only if a non null string is gave as parameters
  *
@@ -43,7 +46,7 @@
  *  Definition of vobsLOCAL_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.12 2006-08-25 05:56:35 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -145,7 +148,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(void)
 /**
  * Set catalog option.
  *
- * This method should return an error to say that no option can be use with a
+ * This method should return an error to say that no option can be used with a
  * local catalog
  *
  * @param option the option to add in the query
@@ -158,7 +161,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::SetOption(string option)
 
     if (option != "")
     {
-        errAdd(vobsERR_NO_OPTION_IN_LOCAL_CATALOG, option.c_str()); 
+        errAdd(vobsERR_QUERY_OPTION_NOT_SUPPORTED, option.c_str()); 
     }
 
     return mcsFAILURE;

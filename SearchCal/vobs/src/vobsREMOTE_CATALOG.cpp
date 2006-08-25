@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.11 2006-03-03 15:03:28 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.12 2006-08-25 05:56:35 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2006/03/03 15:03:28  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.10  2006/01/18 08:45:38  scetre
 * Added option in generic local and remote catalog
 *
@@ -44,7 +47,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.11 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.12 2006-08-25 05:56:35 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -229,11 +232,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::SetOption(string option)
  * @param request vobsREQUEST which have all the contraints for the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- *
- * \b Errors codes:\n 
- * The possible errors are:
- * \li vobsERR_QUERY_WRITE_FAILED
- *
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
 {
@@ -248,22 +246,18 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
     // the specific part of the query
     if (WriteQueryURIPart()==mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
     if (WriteReferenceStarPosition(request) == mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
     if (WriteQuerySpecificPart(request) == mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
     if (WriteOption() == mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
     
@@ -280,13 +274,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
  * @param tmpList vobsSTAR_LIST which come from an older ask to the CDS. 
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n 
- * The possible errors are:
- * \li vobsERR_QUERY_WRITE_FAILED
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request, 
-                                        vobsSTAR_LIST &tmpList)
+                                               vobsSTAR_LIST &tmpList)
 {
     logTrace("vobsREMOTE_CATALOG::PrepareQuery()");
     
@@ -298,27 +288,22 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
     // the list to complete
     if (WriteQueryURIPart()==mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
     if (WriteQueryConstantPart() == mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
     if (WriteQuerySpecificPart() == mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
     if (WriteOption() == mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
     if (WriteQueryStarListPart(tmpList) == mcsFAILURE)
     {
-        errAdd(vobsERR_QUERY_WRITE_FAILED, _query);
         return mcsFAILURE;
     }
 
@@ -333,11 +318,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
  * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n
- * The possible errors are:
- * \li vobsERR_URI_WRITE_FAILED
- *
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 {
@@ -346,17 +326,14 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")
         == mcsFAILURE)
     {
-        errAdd(vobsERR_URI_WRITE_FAILED);
         return mcsFAILURE;
     }
     if (miscDynBufAppendString(&_query, "asu-xml?-source=") == mcsFAILURE)
     {
-        errAdd(vobsERR_URI_WRITE_FAILED);
         return mcsFAILURE;
     }
     if (miscDynBufAppendString(&_query, _name.c_str()) == mcsFAILURE)
     {
-        errAdd(vobsERR_URI_WRITE_FAILED);
         return mcsFAILURE;
     }
 
@@ -371,10 +348,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  *
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n 
- * The possible errors are:
- * \li vobsERR_CONSTANT_WRITE_FAILED
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
 {
@@ -384,18 +357,15 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
                                "&-file=-c&-c.eq=J2000&-c.r=5&-c.u=arcsec")
         == mcsFAILURE)
     {
-        errAdd(vobsERR_CONSTANT_WRITE_FAILED);
         return mcsFAILURE;
     }
     if (miscDynBufAppendString(&_query, "&-out.max=50") == mcsFAILURE)
     {
-        errAdd(vobsERR_CONSTANT_WRITE_FAILED);
         return mcsFAILURE;
     }
     if (miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms")
         == mcsFAILURE)
     {
-        errAdd(vobsERR_CONSTANT_WRITE_FAILED);
         return mcsFAILURE;
     }
     
@@ -452,10 +422,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  * @param request vobsREQUEST which help to restrict the search 
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n
- * The possible errors are:
- * vobsERR_POSITION_WRITE_FAILED
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
 {
@@ -468,22 +434,18 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
     
     if (miscDynBufAppendString(&_query, "&-c.ra=") == mcsFAILURE)
     {
-        errAdd(vobsERR_POSITION_WRITE_FAILED);
         return mcsFAILURE;
     }
     if (miscDynBufAppendString(&_query, ra) == mcsFAILURE)
     {
-        errAdd(vobsERR_POSITION_WRITE_FAILED);
         return mcsFAILURE;
     }
     if (miscDynBufAppendString(&_query, "&-c.dec=") == mcsFAILURE)
     {
-        errAdd(vobsERR_POSITION_WRITE_FAILED);
         return mcsFAILURE;
     }
     if (miscDynBufAppendString(&_query, dec) == mcsFAILURE)
     {
-        errAdd(vobsERR_POSITION_WRITE_FAILED);
         return mcsFAILURE;
     }
     
@@ -498,10 +460,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
  * @param list vobsSTAR_LIST which help to build the end part
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n
- * The possible errors are:
- *
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 {
@@ -518,7 +476,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
          (miscDynBufAppendString(&_query,
                                  miscDynBufGetBuffer(&strList))==mcsFAILURE) )
     {
-        errAdd(vobsERR_END_WRITE_FAILED);
         miscDynBufDestroy(&strList);
         return mcsFAILURE;
     }
