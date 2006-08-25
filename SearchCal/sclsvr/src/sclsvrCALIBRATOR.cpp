@@ -1,13 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.89 2006-08-23 13:53:33 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.90 2006-08-25 06:19:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.89  2006/08/23 13:53:33  gzins
+ * Minor change in logged message
+ *
  * Revision 1.88  2006/08/23 12:06:48  gzins
- * Removed useless parameters in CommputeMissingMagnitude
+ * Removed useless parameters in ComputeMissingMagnitude
  * Fixed bug when computing diameters; case I unknown was not properly handled
  * No longer set diameter IJ and IK when I is unknown
  * No longer set HK diameter when I is known
@@ -226,7 +229,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.89 2006-08-23 13:53:33 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.90 2006-08-25 06:19:33 gzins Exp $"; 
 
 
 /* 
@@ -1072,7 +1075,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::
-ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS])
+    ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS])
 {
     logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorption()");
 
@@ -1395,7 +1398,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(alxDATA mg1,
         {
             // Check if I came from CDS. If not, do not use it for diameter
             // computation 
-            if (IsPropertySet(vobsSTAR_PHOT_PHG_I) == mcsTRUE)
+            vobsSTAR_PROPERTY *property;
+            property = GetProperty(vobsSTAR_PHOT_COUS_I);
+            if (strcmp(property->GetOrigin(), vobsSTAR_COMPUTED_PROP) != 0)
             {
                 mg1.isSet = mcsTRUE;
             }
@@ -1841,6 +1846,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitude()
     mcsFLOAT magK;
     mcsFLOAT magJ;
     mcsFLOAT magH;
+    mcsLOGICAL magKIsSet = mcsFALSE;
+    mcsLOGICAL magJIsSet = mcsFALSE;
+    mcsLOGICAL magHIsSet = mcsFALSE;
     mcsFLOAT magKcous;
     mcsFLOAT magJcous;
     mcsFLOAT magHcous;
@@ -1853,6 +1861,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitude()
         {       
             return mcsFAILURE;
         }
+        magKIsSet = mcsTRUE;
     }
     // if Jmag property is set        
     if (IsPropertySet(vobsSTAR_PHOT_JHN_J) == mcsTRUE)
@@ -1862,6 +1871,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitude()
         {       
             return mcsFAILURE;
         }
+        magJIsSet = mcsTRUE;
     }
     // if Hmag property is set
     if (IsPropertySet(vobsSTAR_PHOT_JHN_H) == mcsTRUE)
@@ -1871,30 +1881,40 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitude()
         {       
             return mcsFAILURE;
         }
+        magHIsSet = mcsTRUE;
     }
-
-    // Convert magnitude
-    magKcous = magK + 0.024;
-    magJcous = 0.947 * magJ + 0.053 * magK + 0.036;
-    magHcous = 0.975 * magH + 0.025 * magK - 0.004;
 
     // Set Kcous
-    if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_K, magKcous, 
-                         vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    if (magKIsSet == mcsTRUE)
     {
-        return mcsFAILURE;
+        magKcous = magK + 0.024;
+        if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_K, magKcous, 
+                             vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
+
     // Set Jcous
-    if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_J, magJcous, 
-                         vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    if ((magKIsSet == mcsTRUE) && (magJIsSet == mcsTRUE))
     {
-        return mcsFAILURE;
+        magJcous = 0.947 * magJ + 0.053 * magK + 0.036;
+        if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_J, magJcous, 
+                             vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
+
     // Set Hcous
-    if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_H, magHcous, 
-                         vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    if ((magKIsSet == mcsTRUE) && (magHIsSet == mcsTRUE))
     {
-        return mcsFAILURE;
+        magHcous = 0.975 * magH + 0.025 * magK - 0.004;
+        if (SetPropertyValue(sclsvrCALIBRATOR_PHOT_COUS_H, magHcous, 
+                             vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
     return mcsSUCCESS;
