@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMANAGER.cpp,v 1.21 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: msgMANAGER.cpp,v 1.22 2006-09-25 05:35:52 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.20  2006/04/06 08:20:06  gzins
  * Updated client notify when server exits abnormally; only remove client when last reply is received
  *
@@ -59,7 +62,7 @@
  * \sa msgMANAGER
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMANAGER.cpp,v 1.21 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMANAGER.cpp,v 1.22 2006-09-25 05:35:52 gzins Exp $";
 /* 
  * System Headers 
  */
@@ -521,8 +524,8 @@ mcsCOMPL_STAT msgMANAGER::AcceptConnection()
                 /* Retreives information on process. If no process information
                  * in message, ignore error.
                  */
-                mcsINT32   pid=-1;
-                mcsLOGICAL unicityFlag=mcsFALSE;
+                mcsINT32 pid=-1;
+                mcsINT32 unicityFlag=mcsFALSE;
                 sscanf(msg.GetBody(), "%d %d", &pid, &unicityFlag);
 
                 // If process must be unique, amd process already registered
@@ -545,7 +548,7 @@ mcsCOMPL_STAT msgMANAGER::AcceptConnection()
                     // Add the new process to the process list
                     newProcess->SetName(msg.GetSender());
                     newProcess->SetId(pid);
-                    newProcess->SetUnicity(unicityFlag);
+                    newProcess->SetUnicity((mcsLOGICAL)unicityFlag);
                     if (_processList.AddAtTail(newProcess) == mcsFAILURE)
                     {
                         errCloseStack();
