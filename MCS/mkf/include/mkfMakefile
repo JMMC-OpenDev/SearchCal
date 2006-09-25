@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.22 2006-03-20 14:45:45 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.23 2006-09-25 05:37:36 gzins Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2006/03/20 14:45:45  gzins
+# Added -DMCS flag
+#
 # Revision 1.21  2005/12/21 10:39:30  gzins
 # Moved thrd into C library list (instead of C++)
 #
@@ -341,7 +344,7 @@ ifdef MAKE_ALL_WARNINGS
                   -Wmissing-declarations
 endif
 
-CC_FLAGS   := $(CC_FLAGS) -fPIC
+CC_FLAGS   := $(CC_FLAGS) -fPIC -ffloat-store
 C_PLUS_PLUS_FLAGS = -fno-operator-names -fpermissive
 
 
