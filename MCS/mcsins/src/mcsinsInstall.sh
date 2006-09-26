@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.18 2006-03-23 07:26:41 swmgr Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.19 2006-09-26 07:26:10 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2006/03/23 07:26:41  swmgr
+# Added modjava module
+#
 # Revision 1.17  2006/03/23 07:11:24  swmgr
 # Added tat module
 #
@@ -229,7 +232,7 @@ then
 fi
 
 # List of MCS modules
-mcsModules="mkf tat mcscfg ctoo mcs log err misc thrd timlog mth modc modcpp modjava fnd misco env cmd msg sdb evh gwt"
+mcsModules="mkf tat ctoo mcs log err misc thrd timlog mth modc modcpp modjava fnd misco env cmd msg sdb evh gwt"
 
 # Log file
 mkdir -p $fromdir/INSTALL
