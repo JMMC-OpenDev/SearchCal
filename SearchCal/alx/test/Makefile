@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2006-04-06 11:49:08 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2006-09-27 15:05:34 mella Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2006/04/06 11:49:08  gzins
+# Minor changes
+#
 # Revision 1.5  2005/10/26 11:30:41  lafrasse
 # Created alxComputeDistance function stuff
 #
@@ -237,9 +240,9 @@ install : install_all
 # The following line is not generated in the alx.i file (if it is added in the
 # alx.i file, it works)
 # %pointer_functions(alxCONFIDENCE_INDEX,alxCONFIDENCE_INDEXp);
-# Error may be in the xsl files located in /home/MCS/config directory
+# Error may be in the xsl files located in $MCSROOT/config directory
 
-XSL_SOURCE = /home/MCS/config/
+XSL_SOURCE = $(MCSROOT)/config/
 
 MODULE_NAME = pyAlx
 
@@ -249,11 +252,11 @@ SOURCE_FILE =
 
 OBJECT_FILE = 
 
-HEADER_PATH =  -I../include -I/home/MCS/include
+HEADER_PATH =  -I../include -I$(MCSROOT)/include
 
 LIBRARYtoPROCESS =  -lalx -lmcs -llog -lerr -lmisc -lgdome
 
-LIBRARY_PATH =  -L../lib -L/home/MCS/lib
+LIBRARY_PATH =  -L../lib -L$(MCSROOT)/lib
 
 
 gentest: $(MODULE_NAME).so
@@ -267,7 +270,7 @@ $(HEADER_FILE)_wrap.c: $(HEADER_FILE).i
 	xsltproc $(XSL_SOURCE)/mkfSTKToPythonHelp.xsl $(HEADER_FILE).xml >> $(MODULE_NAME).py
 
 $(HEADER_FILE)_wrap.o: $(HEADER_FILE)_wrap.c
-	gcc -I/usr/include/python2.3/ -c -fpic $(SOURCE_FILE) $(HEADER_FILE)_wrap.c $(HEADER_PATH)
+	gcc -I/usr/include/python2.4/ -c -fpic $(SOURCE_FILE) $(HEADER_FILE)_wrap.c $(HEADER_PATH)
 
 $(MODULE_NAME).so: $(HEADER_FILE)_wrap.o 
 	gcc -shared $(LIBRARYtoPROCESS) $(LIBRARY_PATH) $(OBJECT_FILE) $(HEADER_FILE)_wrap.o -o _$(MODULE_NAME).so
