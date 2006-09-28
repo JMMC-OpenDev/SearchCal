@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.6 2006-09-28 14:52:37 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.7 2006-09-28 15:23:14 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.6  2006/09/28 14:52:37  mella
+    remove automatically generated... message
+
     Revision 1.5  2005/12/14 14:56:56  mella
     add comments
 
@@ -120,7 +123,7 @@ using namespace std;
 
     /////// Cut &amp; Paste the next lines to attach this callback into your server
     // Attach <xsl:value-of select="./mnemonic"/> command callback
-    evhCMD_KEY <xsl:value-of select="$lowerMnemo"/>CmdKey(<xsl:value-of select="$cmdClassName"/>, <xsl:value-of select="$moduleName"/><xsl:value-of select="./mnemonic"/>_CDF_NAME);
+    evhCMD_KEY <xsl:value-of select="$lowerMnemo"/>CmdKey(<xsl:value-of select="$cmdClassName"/>_NAME, <xsl:value-of select="$moduleName"/><xsl:value-of select="./mnemonic"/>_CDF_NAME);
     evhCMD_CALLBACK <xsl:value-of select="$lowerMnemo"/>CB(this, (evhCMD_CB_METHOD)&amp;<xsl:value-of select="$moduleName"/>ReplaceByClassName::<xsl:value-of select="$CBName"/>);
     AddCallback(<xsl:value-of select="$lowerMnemo"/>CmdKey, <xsl:value-of select="$CBName"/>);
     /////// End of Cut &amp; Paste
