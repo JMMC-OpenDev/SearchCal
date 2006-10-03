@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.7 2006-09-28 15:23:14 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.8 2006-10-03 13:48:55 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.7  2006/09/28 15:23:14  mella
+    Add _NAME to one command name define
+
     Revision 1.6  2006/09/28 14:52:37  mella
     remove automatically generated... message
 
@@ -67,21 +70,23 @@
     <!-- file from a given command node.                           -->
     <!-- ********************************************************* -->
     <xsl:template name="cmdCppCB">
-        <xsl:variable name="cmdClassName"><xsl:value-of select="$moduleName"/><xsl:call-template name="convertcase">
+         <xsl:variable name="cmdClassName"><xsl:value-of select="$moduleName"/><xsl:call-template name="convertcase">
                     <xsl:with-param name="toconvert" select="./mnemonic"/>
                     <xsl:with-param name="conversion">upper</xsl:with-param>
             </xsl:call-template>_CMD</xsl:variable>    
-       <xsl:variable name="cmdName"><xsl:value-of select="$moduleName"/><xsl:call-template name="convertcase">
+     
+            <xsl:variable name="cmdName"><xsl:value-of select="$moduleName"/><xsl:call-template name="convertcase">
                     <xsl:with-param name="toconvert" select="./mnemonic"/>
                     <xsl:with-param name="conversion">proper</xsl:with-param>
-                </xsl:call-template>Cmd</xsl:variable>    
-                <xsl:variable name="lowerMnemo"><xsl:call-template name="convertcase">
+            </xsl:call-template>Cmd</xsl:variable>    
+            
+            <xsl:variable name="lowerMnemo"><xsl:call-template name="convertcase">
                     <xsl:with-param name="toconvert" select="./mnemonic"/>
                     <xsl:with-param name="conversion">lower</xsl:with-param>
             </xsl:call-template></xsl:variable>               
 /**
  * \file
- * Generated for <xsl:value-of select="$CBName"/> callback definition.
+ * <xsl:value-of select="$CBName"/> callback definition.
  */
  
  
@@ -111,7 +116,7 @@ using namespace std;
  */
  
 /**
- * Callback for <xsl:value-of select="$CBName"/> command.
+ * Callback for <xsl:value-of select="./mnemonic"/> command.
  *
  * \param msg originator message.
  *
