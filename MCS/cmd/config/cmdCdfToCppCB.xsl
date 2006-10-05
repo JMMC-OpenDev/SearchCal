@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.8 2006-10-03 13:48:55 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.9 2006-10-05 09:31:26 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.8  2006/10/03 13:48:55  mella
+    Correct some subtil errors...
+
     Revision 1.7  2006/09/28 15:23:14  mella
     Add _NAME to one command name define
 
@@ -83,10 +86,24 @@
             <xsl:variable name="lowerMnemo"><xsl:call-template name="convertcase">
                     <xsl:with-param name="toconvert" select="./mnemonic"/>
                     <xsl:with-param name="conversion">lower</xsl:with-param>
-            </xsl:call-template></xsl:variable>               
+            </xsl:call-template></xsl:variable>              
+/*******************************************************************************
+ * JMMC project
+ *
+ * "@(#) $Id: cmdCdfToCppCB.xsl,v 1.9 2006-10-05 09:31:26 mella Exp $"
+ *
+ * History
+ * -------
+ * $Log: not supported by cvs2svn $
+ *
+ ******************************************************************************/
+
+
+
 /**
- * \file
- * <xsl:value-of select="$CBName"/> callback definition.
+ * @file
+ * Definition of <xsl:value-of select="$CBName"/> callback.
+ * Generated from <xsl:value-of select="./mnemonic"/> cdf file.
  */
  
  
@@ -118,9 +135,9 @@ using namespace std;
 /**
  * Callback for <xsl:value-of select="./mnemonic"/> command.
  *
- * \param msg originator message.
+ * @param msg originator message.
  *
- * \return an evhCB completion status code (evhCB_SUCCESS or evhCB_FAILURE)
+ * @return an evhCB completion status code (evhCB_SUCCESS or evhCB_FAILURE)
  */
  evhCB_COMPL_STAT <xsl:value-of select="$moduleName"/>ReplaceByClassName::<xsl:value-of select="$CBName"/>(msgMESSAGE &amp;msg, void *)
  {
