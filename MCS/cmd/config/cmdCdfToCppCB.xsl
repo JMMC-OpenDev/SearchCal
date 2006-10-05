@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.10 2006-10-05 15:09:01 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.11 2006-10-05 15:10:41 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.10  2006/10/05 15:09:01  mella
+    Suppress rcs log problem
+
     Revision 1.9  2006/10/05 09:31:26  mella
     Add header and change some doxygen documentation
 
@@ -92,7 +95,7 @@
             </xsl:call-template></xsl:variable>/*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCdfToCppCB.xsl,v 1.10 2006-10-05 15:09:01 mella Exp $"
+ * "@(#) $Id&#x24;"
  *
  * History
  * -------
