@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.9 2006-10-05 09:31:26 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.10 2006-10-05 15:09:01 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.9  2006/10/05 09:31:26  mella
+    Add header and change some doxygen documentation
+
     Revision 1.8  2006/10/03 13:48:55  mella
     Correct some subtil errors...
 
@@ -86,15 +89,14 @@
             <xsl:variable name="lowerMnemo"><xsl:call-template name="convertcase">
                     <xsl:with-param name="toconvert" select="./mnemonic"/>
                     <xsl:with-param name="conversion">lower</xsl:with-param>
-            </xsl:call-template></xsl:variable>              
-/*******************************************************************************
+            </xsl:call-template></xsl:variable>/*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCdfToCppCB.xsl,v 1.9 2006-10-05 09:31:26 mella Exp $"
+ * "@(#) $Id: cmdCdfToCppCB.xsl,v 1.10 2006-10-05 15:09:01 mella Exp $"
  *
  * History
  * -------
- * $Log: not supported by cvs2svn $
+ * $Log&#x24;
  *
  ******************************************************************************/
 
