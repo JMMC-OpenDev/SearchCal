@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.11 2006-10-05 15:10:41 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.12 2006-10-06 12:38:05 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.11  2006/10/05 15:10:41  mella
+    And Suppress 2nd rcs id $
+
     Revision 1.10  2006/10/05 15:09:01  mella
     Suppress rcs log problem
 
@@ -152,7 +155,7 @@ using namespace std;
     // Attach <xsl:value-of select="./mnemonic"/> command callback
     evhCMD_KEY <xsl:value-of select="$lowerMnemo"/>CmdKey(<xsl:value-of select="$cmdClassName"/>_NAME, <xsl:value-of select="$moduleName"/><xsl:value-of select="./mnemonic"/>_CDF_NAME);
     evhCMD_CALLBACK <xsl:value-of select="$lowerMnemo"/>CB(this, (evhCMD_CB_METHOD)&amp;<xsl:value-of select="$moduleName"/>ReplaceByClassName::<xsl:value-of select="$CBName"/>);
-    AddCallback(<xsl:value-of select="$lowerMnemo"/>CmdKey, <xsl:value-of select="$CBName"/>);
+    AddCallback(<xsl:value-of select="$lowerMnemo"/>CmdKey, <xsl:value-of select="$lowerMnemo"/>CB);
     /////// End of Cut &amp; Paste
 
     
