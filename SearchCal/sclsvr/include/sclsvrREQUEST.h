@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.17 2006-07-17 09:10:36 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.18 2006-10-09 15:07:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2006/07/17 09:10:36  scetre
+ * Added old scenario option
+ *
  * Revision 1.16  2006/04/10 12:07:31  gzins
  * Renamed SetExpectingVisErr to SetExpectedVisErr
  *
@@ -139,10 +142,11 @@ public:
     virtual mcsCOMPL_STAT SetBrightFlag(mcsLOGICAL brightFlag);
     virtual mcsLOGICAL    IsBright(void);
 
-    // scenario
+    // Scenario
     virtual mcsCOMPL_STAT SetOldScenario(mcsLOGICAL oldScenario);
     virtual mcsLOGICAL    IsOldScenario();
 
+    virtual const mcsCOMPL_STAT GetXMLString(string& xml);
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

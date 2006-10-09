@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.24 2006-07-17 09:10:36 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.25 2006-10-09 15:07:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2006/07/17 09:10:36  scetre
+ * Added old scenario option
+ *
  * Revision 1.23  2006/04/10 12:06:49  gzins
  * Fixed bug related to expected visibility parameter
  * Renamed SetExpectingVisErr to SetExpectedVisErr
@@ -88,7 +91,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.24 2006-07-17 09:10:36 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.25 2006-10-09 15:07:07 lafrasse Exp $"; 
 
 
 /* 
@@ -685,6 +688,22 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
     }
 
     return mcsSUCCESS;
+}
+
+/**
+ * Get the XML form of the request.
+ *
+ * @param xml the string to be first emptied, and then fulfilled with the XML.
+ *
+ * @return failure or success.
+ */
+const mcsCOMPL_STAT sclsvrREQUEST::GetXMLString(string& xml)
+{
+    logTrace("sclsvrREQUEST::GetXMLString()");
+
+    xml.clear();
+
+    return _getCalCmd->GetXMLSerialization(xml);
 }
 
 /**

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.40 2006-08-25 06:07:02 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.41 2006-10-09 15:07:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2006/08/25 06:07:02  gzins
+ * Fixed bug related to error handling; vobsERR_xxx errors was added in error stack.
+ *
  * Revision 1.39  2006/08/23 12:07:43  gzins
  * When not given, set radius to 0 in faint scenario
  *
@@ -125,7 +128,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.40 2006-08-25 06:07:02 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.41 2006-10-09 15:07:07 lafrasse Exp $"; 
 
 
 /* 
@@ -412,6 +415,9 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         
         msg.SetBody(dynBuff.GetBuffer());
 
+        string xmlRequest;
+        request.GetXMLString(xmlRequest);
+
         // If a file has been given, store result in this file
         if (strcmp(request.GetFileName(), "") != 0)
         {
@@ -427,7 +433,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 snprintf(software, sizeof(software), "%s v%s", "SearchCal",
                          sclsvrVERSION);
                 // Save the list as a VOTable v1.1
-                if (calibratorList.SaveToVOTable(request.GetFileName(), header, software, requestString) == mcsFAILURE)
+                if (calibratorList.SaveToVOTable(request.GetFileName(), header, software, requestString, xmlRequest.c_str()) == mcsFAILURE)
                 {
                     return evhCB_NO_DELETE | evhCB_FAILURE;
                 }

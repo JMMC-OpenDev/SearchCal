@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.21 2006-01-05 09:07:39 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.22 2006-10-09 15:07:08 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2006/01/05 09:07:39  lafrasse
+* Code review
+*
 * Revision 1.20  2005/12/07 15:28:20  lafrasse
 * Updated VOTable generation to include information about software version, request and date
 *
@@ -108,7 +111,8 @@ class vobsSTAR_LIST
     virtual mcsCOMPL_STAT SaveToVOTable(const char *filename,
                                         const char *header,
                                         const char *softwareVersion,
-                                        const char *request);
+                                        const char *request,
+                                        const char *xmlRequest);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                mcsLOGICAL extendedFormat=mcsFALSE);

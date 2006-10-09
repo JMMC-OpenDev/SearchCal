@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.12 2006-03-16 09:40:20 mella Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.13 2006-10-09 15:07:09 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2006/03/16 09:40:20  mella
+ * Main column is inserted into group definition
+ *
  * Revision 1.11  2006/03/03 15:03:28  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -51,7 +54,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.12 2006-03-16 09:40:20 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.13 2006-10-09 15:07:09 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -110,7 +113,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char *fileName,
                                 const char *header,
                                 const char *softwareVersion,
-                                const char *request)
+                                const char *request,
+                                const char *xmlRequest)
 {
     logTrace("vobsVOTABLE::Save()");
 
@@ -134,6 +138,10 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     // Add request informations
     buffer.AppendLine("  Request parameters: ");
     buffer.AppendString(request);
+
+    // Add XML Serialization
+    buffer.AppendLine("  XML Serialization: ");
+    buffer.AppendLine(xmlRequest);
 
     // Add current date
     mcsSTRING32 utcTime;

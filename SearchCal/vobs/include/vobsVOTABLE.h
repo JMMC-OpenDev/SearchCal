@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.h,v 1.3 2006-02-24 15:01:22 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.h,v 1.4 2006-10-09 15:07:08 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/02/24 15:01:22  lafrasse
+ * Updates Doxygen tags
+ *
  * Revision 1.2  2005/12/07 15:28:20  lafrasse
  * Updated VOTable generation to include information about software version, request and date
  *
@@ -61,7 +64,8 @@ public:
                        const char *fileName,
                        const char *header,
                        const char *softwareVersion,
-                       const char *request);
+                       const char *request,
+                       const char *xmlRequest);
 
 protected:
     

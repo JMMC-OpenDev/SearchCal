@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.33 2006-04-03 11:49:49 gzins Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.34 2006-10-09 15:07:09 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.33  2006/04/03 11:49:49  gzins
+* Hanlded list empty case in GetNextXxx() method
+*
 * Revision 1.32  2006/04/03 11:44:18  gzins
 * Fixed bug in GetNextStar() method; handled case where list is empty
 *
@@ -93,7 +96,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.33 2006-04-03 11:49:49 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.34 2006-10-09 15:07:09 lafrasse Exp $"; 
 
 
 /* 
@@ -632,12 +635,13 @@ void vobsSTAR_LIST::Display(void)
 mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
                                            const char *header,
                                            const char *softwareVersion,
-                                           const char *request)
+                                           const char *request,
+                                           const char *xmlRquest)
 {
     logTrace("vobsSTAR_LIST::SaveToVOTable()");
 
     vobsVOTABLE serializer;
-    return(serializer.Save(*this, filename, header, softwareVersion, request));
+    return(serializer.Save(*this, filename, header, softwareVersion, request, xmlRquest));
 }
 
 /**
