@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.34 2006-05-11 13:04:09 mella Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.35 2006-10-09 15:05:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2006/05/11 13:04:09  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.33  2006/01/04 12:35:57  mella
  * Modifiy documentation
  *
@@ -86,7 +89,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.34 2006-05-11 13:04:09 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.35 2006-10-09 15:05:41 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -276,7 +279,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
 /** 
  *  Return the detailed description of the command and its parameters.
  *
- *  param desc the detailed description string
+ *  \param desc the detailed description string
  *
  *  \returns the detailed description string.
  */
@@ -389,11 +392,113 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
             options.append("\tThis command takes no parameter.\n");
         }
     }
-    
+
     // Write in the detailed description the 3 parts
     desc.append(synopsis);
     desc.append(description);
     desc.append(options);
+
+    return mcsSUCCESS;
+}
+
+/** 
+ *  Return the an XML serailization of the command and its parameters.
+ *
+ *  \param xml the XML serailization string
+ *
+ *  \returns the XML serailization string.
+ */
+mcsCOMPL_STAT cmdCOMMAND::GetXMLSerialization(string &xml)
+{
+    logExtDbg ("cmdCOMMAND::GetXMLSerialization()");
+
+    // Clear recipient
+    xml.clear();
+
+    // If there is no CDF for this command
+    if (_cdfName.size() == 0 )
+    {
+        return mcsFAILURE;
+    }
+    // if the CDF exist
+    else
+    {
+        // Parse the CDF file to obtain full description
+        if (ParseCdf() == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Append the command name
+        xml.append("<cmdCommand -name='");
+        xml.append(_name);
+        xml.append("'>");
+
+        // if there is parameters to used
+        if (_paramList.size() > 0)
+        {
+            xml.append("\n");
+            // Append each parameter if any
+            STRING2PARAM::iterator i = _paramList.begin();
+            // for each parameter of the parameter list
+            while(i != _paramList.end())
+            {
+                cmdPARAM * child = i->second;
+
+                // Write the parameter name
+                xml.append(" <cmdParam -name='");
+                xml.append(child->GetName());
+                xml.append("'");
+
+                // Get the param type
+                xml.append(" -type='");
+                xml.append(child->GetType());
+                xml.append("'");
+
+                // Get the param unit
+                xml.append(" -unit='");
+                xml.append(child->GetUnit());
+                xml.append("'");
+
+                // if it is an optional parameter
+                xml.append(" -optionnal='");
+                if (child->IsOptional() == mcsTRUE)
+                {
+                    xml.append("true");
+                }
+                else
+                {
+                    xml.append("false");
+                }
+                xml.append("'");
+
+                // if it has a default value
+                xml.append(" -default='");
+                if (child->HasDefaultValue() == mcsTRUE)
+                {
+                    xml.append(child->GetDefaultValue());
+                }
+                xml.append("'");
+
+                // Write the closing bracket of the opening Param tag
+                xml.append(">");
+
+                // Write the user value if any
+                if (child->IsDefined() == mcsTRUE)
+                {
+                    xml.append(child->GetUserValue());
+                }
+
+                // Close the Command tag
+                xml.append("</cmdParam>\n");
+                
+                i++;
+            }
+        }
+
+        // Command end
+        xml.append("</cmdCommand>");
+    }
 
     return mcsSUCCESS;
 }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.12 2006-05-11 13:04:11 mella Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.13 2006-10-09 15:05:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2006/05/11 13:04:11  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.11  2006/01/04 12:33:01  mella
  * Improve test for default values
  *
@@ -33,7 +36,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdTEST.cpp,v 1.12 2006-05-11 13:04:11 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdTEST.cpp,v 1.13 2006-10-09 15:05:43 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -139,6 +142,16 @@ int main(int argc, char *argv[])
         cout<<"Short Description:" <<endl;
         cout<<help<<endl;
 
+        // Print XML Serialization for myCmd
+        string xml;
+        if (myCmd.GetXMLSerialization(xml) == mcsFAILURE)
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        };
+        cout<<"XML Serialization:" <<endl;
+        cout<<xml<<endl;
+
         if (argc != 3)
         {
             // we have parsed a VALID command
@@ -239,10 +252,6 @@ int main(int argc, char *argv[])
             cout << "dboolean parameter from myCmd gets the next value: " << dbooleanValue << endl;
         }
 
- 
-        
-        
-
         string cmdParamline;
         if (myCmd.GetCmdParamLine(cmdParamline) == mcsFAILURE) 
         {
@@ -253,8 +262,8 @@ int main(int argc, char *argv[])
         {
             cout << "command parameter line: " << cmdParamline << endl;
         }
-
     }
+
     // Close MCS services
     mcsExit();
 
