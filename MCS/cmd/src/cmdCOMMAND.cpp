@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.38 2006-10-10 13:48:38 lafrasse Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.39 2006-10-10 15:50:17 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.38  2006/10/10 13:48:38  lafrasse
+ * Corrected a bug in XML serialization.
+ *
  * Revision 1.37  2006/10/10 11:08:07  lafrasse
  * Typo correction.
  *
@@ -98,7 +101,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.38 2006-10-10 13:48:38 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.39 2006-10-10 15:50:17 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -411,18 +414,15 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
 }
 
 /** 
- *  Return the an XML serailization of the command and its parameters.
+ * Append a VOTable serailization of the command and its parameters.
  *
- *  \param xml the XML serailization string
+ * @param voTable the string in which the PARAMs will be appent
  *
- *  \returns the XML serailization string.
+ * @returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT cmdCOMMAND::SerializeToXML(string &xml)
+mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
 {
-    logExtDbg ("cmdCOMMAND::GetXMLSerialization()");
-
-    // Clear recipient
-    xml.clear();
+    logExtDbg ("cmdCOMMAND::AppendParamsToVOTable()");
 
     // If there is no CDF for this command
     if (_cdfName.size() == 0 )
@@ -438,15 +438,10 @@ mcsCOMPL_STAT cmdCOMMAND::SerializeToXML(string &xml)
             return mcsFAILURE;
         }
 
-        // Append the command name
-        xml.append("<cmdCommand name='");
-        xml.append(_name);
-        xml.append("'>");
-
         // if there is parameters to used
         if (_paramList.size() > 0)
         {
-            xml.append("\n");
+            voTable.append("\n");
             // Append each parameter if any
             STRING2PARAM::iterator i = _paramList.begin();
             // for each parameter of the parameter list
@@ -455,58 +450,60 @@ mcsCOMPL_STAT cmdCOMMAND::SerializeToXML(string &xml)
                 cmdPARAM * child = i->second;
 
                 // Write the parameter name
-                xml.append(" <cmdParam name='");
-                xml.append(child->GetName());
-                xml.append("'");
+                voTable.append("<PARAM name='");
+                voTable.append(child->GetName());
+                voTable.append("'");
 
                 // Get the param type
-                xml.append(" type='");
-                xml.append(child->GetType());
-                xml.append("'");
+                voTable.append(" datatype='");
+                voTable.append(child->GetType());
+                voTable.append("'");
 
                 // Get the param unit
-                xml.append(" unit='");
-                xml.append(child->GetUnit());
-                xml.append("'");
+                voTable.append(" unit='");
+                voTable.append(child->GetUnit());
+                voTable.append("'");
 
+// TODO : handle optionnal params
+/*
                 // if it is an optional parameter
-                xml.append(" optionnal='");
+                voTable.append(" optionnal='");
                 if (child->IsOptional() == mcsTRUE)
                 {
-                    xml.append("true");
+                    voTable.append("true");
                 }
                 else
                 {
-                    xml.append("false");
+                    voTable.append("false");
                 }
-                xml.append("'");
+                voTable.append("'");
+*/
 
-                // if it has a default value
-                xml.append(" default='");
-                if (child->HasDefaultValue() == mcsTRUE)
-                {
-                    xml.append(child->GetDefaultValue());
-                }
-                xml.append("'");
-
-                // Write the closing bracket of the opening Param tag
-                xml.append(">");
-
-                // Write the user value if any
+                // Write the user value, or default value if any
+                voTable.append(" value='");
                 if (child->IsDefined() == mcsTRUE)
                 {
-                    xml.append(child->GetUserValue());
+                    // Append user value
+                    voTable.append(child->GetUserValue());
                 }
+                else
+                {
+                    if(child->HasDefaultValue() == mcsTRUE)
+                    {
+                        // Append default value
+                        voTable.append(child->GetDefaultValue());
+                    }
+                }
+                voTable.append("'");
 
-                // Close the Command tag
-                xml.append("</cmdParam>\n");
+                // Close the PARAM tag
+                voTable.append("/>\n");
+
+                // TODO : handle min and max range
                 
                 i++;
             }
         }
-
-        // Command end
-        xml.append("</cmdCommand>");
     }
 
     return mcsSUCCESS;

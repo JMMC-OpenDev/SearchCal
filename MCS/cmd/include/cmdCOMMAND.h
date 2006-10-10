@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.h,v 1.17 2006-10-10 11:08:04 lafrasse Exp $"
+ * "@(#) $Id: cmdCOMMAND.h,v 1.18 2006-10-10 15:50:15 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2006/10/10 11:08:04  lafrasse
+ * Typo correction.
+ *
  * Revision 1.16  2006/10/10 10:56:38  lafrasse
  * Changed GetXMLSerialization() API in serializeToXML().
  *
@@ -88,7 +91,7 @@ public:
     /** methods to get command descriptions */
     virtual mcsCOMPL_STAT GetShortDescription(string &desc);
     virtual mcsCOMPL_STAT GetDescription(string &desc);
-    virtual mcsCOMPL_STAT SerializeToXML(string &xml);
+    virtual mcsCOMPL_STAT AppendParamsToVOTable(string &voTable);
 
     /* methods to handle parameters */
     virtual mcsCOMPL_STAT AddParam(cmdPARAM *param);

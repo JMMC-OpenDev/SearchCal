@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.15 2006-10-10 11:08:09 lafrasse Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.16 2006-10-10 15:50:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2006/10/10 11:08:09  lafrasse
+ * Typo correction.
+ *
  * Revision 1.14  2006/10/10 10:56:42  lafrasse
  * Changed GetXMLSerialization() API in serializeToXML().
  *
@@ -42,7 +45,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdTEST.cpp,v 1.15 2006-10-10 11:08:09 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdTEST.cpp,v 1.16 2006-10-10 15:50:19 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -150,7 +153,7 @@ int main(int argc, char *argv[])
 
         // Print XML Serialization for myCmd
         string xmlOutput;
-        if (myCmd.SerializeToXML(xmlOutput) == mcsFAILURE)
+        if (myCmd.AppendParamsToVOTable(xmlOutput) == mcsFAILURE)
         {
             errCloseStack();
             exit (EXIT_FAILURE);
