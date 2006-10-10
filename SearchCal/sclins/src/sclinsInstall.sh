@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsInstall.sh,v 1.9 2006-02-20 13:21:25 swmgr Exp $"
+# "@(#) $Id: sclinsInstall.sh,v 1.10 2006-10-10 10:54:49 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2006/02/20 13:21:25  swmgr
+# Updated to be similar to mcsinsInstall
+#
 # Revision 1.8  2005/12/02 13:54:25  gzins
 # Remove MCS installation check
 #
@@ -57,12 +60,13 @@
 
 # Print usage 
 function printUsage () {
-        echo -e "Usage: sclinsInstall [-h] [-c] [-u] [-t tag]" 
+        echo -e "Usage: sclinsInstall [-h] [-c] [-u] [-m] [-t tag]" 
         echo -e "\t-h\tprint this help."
         echo -e "\t-c\tonly compile; i.e. do not retrieve modules from "
         echo -e "\t\trepository."
         echo -e "\t-u\tdo not delete modules to be installed from the "
         echo -e "\t\tcurrent directory; they are just updated."
+        echo -e "\t-m\tdo not create man pages."
         echo -e "\t-t tag\tuse revision 'tag' when retrieving modules.\n"
         exit 1;
 }
@@ -70,10 +74,11 @@ function printUsage () {
 # Parse command-line parameters
 update="no";
 retrieve="yes";
+manpages="yes";
 tag="";
-while getopts "chut:" option
+while getopts "chumt:" option
 # Initial declaration.
-# c, h, u and t are the options (flags) expected.
+# c, h, u, m and t are the options (flags) expected.
 # The : after option 't' shows it will have an argument passed with it.
 do
   case $option in
@@ -85,6 +90,8 @@ do
         retrieve="no";;
     t ) # Update option
         tag="$OPTARG";;
+    m ) # No man pages creation
+        manpages="no";;
     * ) # Unknown option
         printUsage ;;
     esac
@@ -142,6 +149,10 @@ fi
 echo -e "\n-> All the SCALIB modules will be installed (or just updated)"
 echo -e "        from     : $fromdir"
 echo -e "        into     : $insDir"
+if [ "$manpages" == "no" ]
+then
+    echo -e "    WARNING: man pages and documentation will not be generated\n"
+fi
 if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
@@ -241,7 +252,12 @@ for mod in $scalibModules; do
         echo -e "\nERROR: 'cd $mod/src' failed ...\n";
         exit 1
     fi
-    make clean all man install  >> $logfile 2>&1
+    if [ "$manpages" == "no" ]
+    then
+        make clean all install  >> $logfile 2>&1
+    else
+        make clean all man install  >> $logfile 2>&1
+    fi
     if [ $? != 0 ]
     then
         echo -e "\nERROR: 'make all man install' in $mod failed ...\n";
