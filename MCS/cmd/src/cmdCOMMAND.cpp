@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.35 2006-10-09 15:05:41 lafrasse Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.36 2006-10-10 10:56:40 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2006/10/09 15:05:41  lafrasse
+ * Added XML serialization of any command.
+ *
  * Revision 1.34  2006/05/11 13:04:09  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -89,7 +92,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.35 2006-10-09 15:05:41 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.36 2006-10-10 10:56:40 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -408,7 +411,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
  *
  *  \returns the XML serailization string.
  */
-mcsCOMPL_STAT cmdCOMMAND::GetXMLSerialization(string &xml)
+mcsCOMPL_STAT cmdCOMMAND::serializeToXML(string &xml)
 {
     logExtDbg ("cmdCOMMAND::GetXMLSerialization()");
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdTEST.cpp,v 1.13 2006-10-09 15:05:43 lafrasse Exp $"
+ * "@(#) $Id: cmdTEST.cpp,v 1.14 2006-10-10 10:56:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2006/10/09 15:05:43  lafrasse
+ * Added XML serialization of any command.
+ *
  * Revision 1.12  2006/05/11 13:04:11  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -36,7 +39,7 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdTEST.cpp,v 1.13 2006-10-09 15:05:43 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdTEST.cpp,v 1.14 2006-10-10 10:56:42 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -143,14 +146,14 @@ int main(int argc, char *argv[])
         cout<<help<<endl;
 
         // Print XML Serialization for myCmd
-        string xml;
-        if (myCmd.GetXMLSerialization(xml) == mcsFAILURE)
+        string xmlOutput;
+        if (myCmd.serializeToXML(xmlOutput) == mcsFAILURE)
         {
             errCloseStack();
             exit (EXIT_FAILURE);
         };
         cout<<"XML Serialization:" <<endl;
-        cout<<xml<<endl;
+        cout<<xmlOutput<<endl;
 
         if (argc != 3)
         {
