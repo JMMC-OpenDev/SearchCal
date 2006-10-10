@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.37 2006-10-10 11:08:07 lafrasse Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.38 2006-10-10 13:48:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2006/10/10 11:08:07  lafrasse
+ * Typo correction.
+ *
  * Revision 1.36  2006/10/10 10:56:40  lafrasse
  * Changed GetXMLSerialization() API in serializeToXML().
  *
@@ -95,7 +98,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.37 2006-10-10 11:08:07 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.38 2006-10-10 13:48:38 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -436,7 +439,7 @@ mcsCOMPL_STAT cmdCOMMAND::SerializeToXML(string &xml)
         }
 
         // Append the command name
-        xml.append("<cmdCommand -name='");
+        xml.append("<cmdCommand name='");
         xml.append(_name);
         xml.append("'>");
 
@@ -452,22 +455,22 @@ mcsCOMPL_STAT cmdCOMMAND::SerializeToXML(string &xml)
                 cmdPARAM * child = i->second;
 
                 // Write the parameter name
-                xml.append(" <cmdParam -name='");
+                xml.append(" <cmdParam name='");
                 xml.append(child->GetName());
                 xml.append("'");
 
                 // Get the param type
-                xml.append(" -type='");
+                xml.append(" type='");
                 xml.append(child->GetType());
                 xml.append("'");
 
                 // Get the param unit
-                xml.append(" -unit='");
+                xml.append(" unit='");
                 xml.append(child->GetUnit());
                 xml.append("'");
 
                 // if it is an optional parameter
-                xml.append(" -optionnal='");
+                xml.append(" optionnal='");
                 if (child->IsOptional() == mcsTRUE)
                 {
                     xml.append("true");
@@ -479,7 +482,7 @@ mcsCOMPL_STAT cmdCOMMAND::SerializeToXML(string &xml)
                 xml.append("'");
 
                 // if it has a default value
-                xml.append(" -default='");
+                xml.append(" default='");
                 if (child->HasDefaultValue() == mcsTRUE)
                 {
                     xml.append(child->GetDefaultValue());
