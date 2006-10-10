@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.42 2006-10-10 11:30:18 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.43 2006-10-10 15:50:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2006/10/10 11:30:18  lafrasse
+ * Changed request XML serialization APIs in SerializeToXML().
+ *
  * Revision 1.41  2006/10/09 15:07:07  lafrasse
  * Added request XML serialization in VOTables.
  *
@@ -131,7 +134,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.42 2006-10-10 11:30:18 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.43 2006-10-10 15:50:44 lafrasse Exp $"; 
 
 
 /* 
@@ -419,7 +422,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         msg.SetBody(dynBuff.GetBuffer());
 
         string xmlOutput;
-        request.SerializeToXML(xmlOutput);
+        request.AppendParamsToVOTable(xmlOutput);
 
         // If a file has been given, store result in this file
         if (strcmp(request.GetFileName(), "") != 0)

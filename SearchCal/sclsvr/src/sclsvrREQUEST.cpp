@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.26 2006-10-10 11:30:18 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.27 2006-10-10 15:50:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2006/10/10 11:30:18  lafrasse
+ * Changed request XML serialization APIs in SerializeToXML().
+ *
  * Revision 1.25  2006/10/09 15:07:07  lafrasse
  * Added request XML serialization in VOTables.
  *
@@ -94,7 +97,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.26 2006-10-10 11:30:18 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.27 2006-10-10 15:50:44 lafrasse Exp $"; 
 
 
 /* 
@@ -694,19 +697,17 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 }
 
 /**
- * Get the XML form of the request.
+ * Append a VOTable serailization of the request and its parameters.
  *
- * @param xml the string to be first emptied, and then fulfilled with the XML.
+ * @param voTable the string in which the PARAMs will be appent
  *
- * @return failure or success.
+ * @returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-const mcsCOMPL_STAT sclsvrREQUEST::SerializeToXML(string& xmlOutput)
+const mcsCOMPL_STAT sclsvrREQUEST::AppendParamsToVOTable(string& voTable)
 {
-    logTrace("sclsvrREQUEST::SerializeToXML()");
+    logTrace("sclsvrREQUEST::AppendParamsToVOTable()");
 
-    xmlOutput.clear();
-
-    return _getCalCmd->SerializeToXML(xmlOutput);
+    return _getCalCmd->AppendParamsToVOTable(voTable);
 }
 
 /**

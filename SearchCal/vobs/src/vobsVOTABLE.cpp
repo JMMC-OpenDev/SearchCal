@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.13 2006-10-09 15:07:09 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.14 2006-10-10 15:50:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2006/10/09 15:07:09  lafrasse
+ * Added request XML serialization in VOTables.
+ *
  * Revision 1.12  2006/03/16 09:40:20  mella
  * Main column is inserted into group definition
  *
@@ -54,7 +57,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.13 2006-10-09 15:07:09 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.14 2006-10-10 15:50:45 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -139,10 +142,6 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     buffer.AppendLine("  Request parameters: ");
     buffer.AppendString(request);
 
-    // Add XML Serialization
-    buffer.AppendLine("  XML Serialization: ");
-    buffer.AppendLine(xmlRequest);
-
     // Add current date
     mcsSTRING32 utcTime;
     if (miscGetUtcTimeStr(0, utcTime) == mcsFAILURE)
@@ -167,6 +166,9 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     buffer.AppendLine("  <TABLE name=\"");
     buffer.AppendString(fileName);
     buffer.AppendString("\">");
+
+    // Add PARAMs
+    buffer.AppendLine(xmlRequest);
 
     // Get the first start of the list
     vobsSTAR* star = starList.GetNextStar(mcsTRUE);
