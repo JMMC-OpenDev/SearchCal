@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.18 2006-10-09 15:07:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.19 2006-10-10 11:30:17 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2006/10/09 15:07:05  lafrasse
+ * Added request XML serialization in VOTables.
+ *
  * Revision 1.17  2006/07/17 09:10:36  scetre
  * Added old scenario option
  *
@@ -146,7 +149,7 @@ public:
     virtual mcsCOMPL_STAT SetOldScenario(mcsLOGICAL oldScenario);
     virtual mcsLOGICAL    IsOldScenario();
 
-    virtual const mcsCOMPL_STAT GetXMLString(string& xml);
+    virtual const mcsCOMPL_STAT SerializeToXML(string& xmlOutput);
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

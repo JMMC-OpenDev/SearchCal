@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.25 2006-10-09 15:07:07 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.26 2006-10-10 11:30:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2006/10/09 15:07:07  lafrasse
+ * Added request XML serialization in VOTables.
+ *
  * Revision 1.24  2006/07/17 09:10:36  scetre
  * Added old scenario option
  *
@@ -91,7 +94,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.25 2006-10-09 15:07:07 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.26 2006-10-10 11:30:18 lafrasse Exp $"; 
 
 
 /* 
@@ -697,13 +700,13 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
  *
  * @return failure or success.
  */
-const mcsCOMPL_STAT sclsvrREQUEST::GetXMLString(string& xml)
+const mcsCOMPL_STAT sclsvrREQUEST::SerializeToXML(string& xmlOutput)
 {
-    logTrace("sclsvrREQUEST::GetXMLString()");
+    logTrace("sclsvrREQUEST::SerializeToXML()");
 
-    xml.clear();
+    xmlOutput.clear();
 
-    return _getCalCmd->GetXMLSerialization(xml);
+    return _getCalCmd->SerializeToXML(xmlOutput);
 }
 
 /**

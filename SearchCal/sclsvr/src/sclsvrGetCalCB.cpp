@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.41 2006-10-09 15:07:07 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.42 2006-10-10 11:30:18 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2006/10/09 15:07:07  lafrasse
+ * Added request XML serialization in VOTables.
+ *
  * Revision 1.40  2006/08/25 06:07:02  gzins
  * Fixed bug related to error handling; vobsERR_xxx errors was added in error stack.
  *
@@ -128,7 +131,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.41 2006-10-09 15:07:07 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.42 2006-10-10 11:30:18 lafrasse Exp $"; 
 
 
 /* 
@@ -415,8 +418,8 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         
         msg.SetBody(dynBuff.GetBuffer());
 
-        string xmlRequest;
-        request.GetXMLString(xmlRequest);
+        string xmlOutput;
+        request.SerializeToXML(xmlOutput);
 
         // If a file has been given, store result in this file
         if (strcmp(request.GetFileName(), "") != 0)
@@ -433,7 +436,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 snprintf(software, sizeof(software), "%s v%s", "SearchCal",
                          sclsvrVERSION);
                 // Save the list as a VOTable v1.1
-                if (calibratorList.SaveToVOTable(request.GetFileName(), header, software, requestString, xmlRequest.c_str()) == mcsFAILURE)
+                if (calibratorList.SaveToVOTable(request.GetFileName(), header, software, requestString, xmlOutput.c_str()) == mcsFAILURE)
                 {
                     return evhCB_NO_DELETE | evhCB_FAILURE;
                 }
