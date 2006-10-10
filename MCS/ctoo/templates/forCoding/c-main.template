@@ -1,13 +1,16 @@
 #%#-----------------------------------------------------------------------------
 #%# JMMC project
 #%# 
-#%# "@(#) $Id: c-main.template,v 1.18 2006-03-03 13:05:44 mella Exp $"
+#%# "@(#) $Id: c-main.template,v 1.19 2006-10-10 12:17:30 gluck Exp $"
 #%# 
 #%# Template for C main file          
 #%# 
 #%# History
 #%# -------
 #%# $Log: not supported by cvs2svn $
+#%# Revision 1.18  2006/03/03 13:05:44  mella
+#%# Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+#%#
 #%# Revision 1.17  2005/11/30 13:38:08  gzins
 #%# Used @ to refer documenation tags
 #%#
@@ -19,6 +22,9 @@
 #%#
 #%# Revision 1.14  2005/01/24 11:17:40  gluck
 #%# Correct bug when add log message automatic insertion ($Log: not supported by cvs2svn $
+#%# Correct bug when add log message automatic insertion (Revision 1.18  2006/03/03 13:05:44  mella
+#%# Correct bug when add log message automatic insertion (Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+#%# Correct bug when add log message automatic insertion (
 #%# Correct bug when add log message automatic insertion (Revision 1.17  2005/11/30 13:38:08  gzins
 #%# Correct bug when add log message automatic insertion (Used @ to refer documenation tags
 #%# Correct bug when add log message automatic insertion (
@@ -92,7 +98,7 @@
  *
  * @sa OPTIONAL. See also section, in which you can refer other documented
  * entities. Doxygen will create the link automatically.
- * @sa <entity to refer>
+ * @sa \<entity to refer\>
  * 
  * @bug OPTIONAL. Known bugs list if it exists.
  * @bug Bug 1 : bug 1 description
