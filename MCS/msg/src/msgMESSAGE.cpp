@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgMESSAGE.cpp,v 1.27 2006-06-20 13:31:39 gzins Exp $"
+ * "@(#) $Id: msgMESSAGE.cpp,v 1.28 2006-10-10 08:47:32 gluck Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2006/06/20 13:31:39  gzins
+ * Implemented SetBodyArgs method
+ *
  * Revision 1.26  2006/05/11 13:04:56  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -76,7 +79,7 @@
  * \sa msgMESSAGE
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMESSAGE.cpp,v 1.27 2006-06-20 13:31:39 gzins Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMESSAGE.cpp,v 1.28 2006-10-10 08:47:32 gluck Exp $";
 
 /* 
  * System Headers 
@@ -620,6 +623,7 @@ mcsCOMPL_STAT msgMESSAGE::SetBodyArgs(const char *format, ...)
     // Reset the body buffer and allocate sufficient memory
     if (AllocateBody(2048) == mcsFAILURE)
     {
+        va_end(argPtr);
         return mcsFAILURE;
     }
 
@@ -629,7 +633,9 @@ mcsCOMPL_STAT msgMESSAGE::SetBodyArgs(const char *format, ...)
     // Store the new body size in the header
     bufLen = strlen(_body.dynBuf) + 1;
     sprintf(_header.msgBodySize, "%d", bufLen);
-    
+
+    va_end(argPtr);
+
     return mcsSUCCESS;
 }
 
