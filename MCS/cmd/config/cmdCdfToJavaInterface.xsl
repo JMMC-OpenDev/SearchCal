@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToJavaInterface.xsl,v 1.1 2006-09-29 07:27:45 mella Exp $"
+    "@(#) $Id: cmdCdfToJavaInterface.xsl,v 1.2 2006-10-13 10:30:53 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.1  2006/09/29 07:27:45  mella
+    First revision
+
 
     ********************************************************************************
 -->
@@ -66,10 +69,10 @@
  * Method for <xsl:value-of select="./mnemonic"/> command.
  * <xsl:value-of select="./desc" />
  * <xsl:for-each select=".//param">
- * \param <xsl:value-of select="concat(./name,concat(' ',./desc))" />
+ * @param <xsl:value-of select="concat(./name,concat(' ',./desc))" />
  </xsl:for-each>
  *
- * \return a message 
+ * @return a message 
  */
 public static String <xsl:value-of select="$lowerMnemo"/>(<xsl:for-each select=".//param">
      <xsl:call-template name="getJavaType">
