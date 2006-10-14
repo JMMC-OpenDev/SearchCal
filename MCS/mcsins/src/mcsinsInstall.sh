@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.19 2006-09-26 07:26:10 gzins Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.20 2006-10-14 10:39:24 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2006/09/26 07:26:10  gzins
+# Supressed mcscfg from MCS module list
+#
 # Revision 1.18  2006/03/23 07:26:41  swmgr
 # Added modjava module
 #
@@ -153,15 +156,6 @@ then
     exit 1
 fi
 
-# Check that MCS configuration file is installed
-if [ ! -f $MCSTOP/etc/mcs.sh ]
-then
-    echo -e "\nWARNING : MCS configuration files not installed!!"
-    echo -e "Install mcscfg module first, and restart MCS installation!!"
-    echo -e ""
-    exit 1
-fi
-
 # Determine the SW package
 export SW_PACKAGE=MCS
 
@@ -232,7 +226,7 @@ then
 fi
 
 # List of MCS modules
-mcsModules="mkf tat ctoo mcs log err misc thrd timlog mth modc modcpp modjava fnd misco env cmd msg sdb evh gwt"
+mcsModules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth modc modcpp modjava fnd misco env cmd msg sdb evh gwt"
 
 # Log file
 mkdir -p $fromdir/INSTALL
