@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2005-02-11 09:38:47 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2006-10-16 07:34:22 mella Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/02/11 09:38:47  gzins
+# Added rules to created library and install public header files
+#
 # Revision 1.1  2005/02/10 13:34:06  sccmgr
 # Fix directory structure and add additional files
 #
@@ -56,7 +59,8 @@ xxxxx_LIBS      =
 # Includes (.h) files (public only)
 # ---------------------------------
 INCLUDES        = misco.h        \
-                  miscoDYN_BUF.h
+                  miscoDYN_BUF.h \
+                  miscoXML_ELEMENT.h
 
 #
 # Libraries (public and local)
@@ -66,7 +70,8 @@ LIBRARIES_L     =
 
 #
 # <brief description of misco library>
-misco_OBJECTS   = miscoDYN_BUF
+misco_OBJECTS   = miscoDYN_BUF \
+				  miscoXML_ELEMENT
 
 #
 # Scripts (public and local)

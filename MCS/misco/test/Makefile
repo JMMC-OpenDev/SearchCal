@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2005-02-11 09:39:57 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.2 2006-10-16 07:34:25 mella Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/02/11 09:39:57  gzins
+# Created
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -37,13 +40,20 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     =
-EXECUTABLES_L   = miscoTestDynBuf
+EXECUTABLES_L   = miscoTestDynBuf \
+				  miscoTestXmlElement
 
 #
 # <brief description of miscoTestDynBuf program>
 miscoTestDynBuf_OBJECTS   = miscoTestDynBuf
 miscoTestDynBuf_LDFLAGS   = -lgdome
 miscoTestDynBuf_LIBS      = mcs misc log err misco C++
+
+#
+# <brief description of miscoTestXmlElement program>
+miscoTestXmlElement_OBJECTS   = miscoTestXmlElement
+miscoTestXmlElement_LDFLAGS   = -lgdome
+miscoTestXmlElement_LIBS      = mcs misc log err misco C++
 
 #
 # special compilation flags for single c sources
