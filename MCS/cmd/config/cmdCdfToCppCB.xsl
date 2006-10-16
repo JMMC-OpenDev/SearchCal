@@ -6,11 +6,14 @@
     ********************************************************************************
     JMMC project
 
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.12 2006-10-06 12:38:05 mella Exp $"
+    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.13 2006-10-16 07:54:25 mella Exp $"
 
     History
     ~~~~~~~
     $Log: not supported by cvs2svn $
+    Revision 1.12  2006/10/06 12:38:05  mella
+    Correct lower case error for callback object name
+
     Revision 1.11  2006/10/05 15:10:41  mella
     And Suppress 2nd rcs id $
 
@@ -87,9 +90,9 @@
                     <xsl:with-param name="conversion">upper</xsl:with-param>
             </xsl:call-template>_CMD</xsl:variable>    
      
-            <xsl:variable name="cmdName"><xsl:value-of select="$moduleName"/><xsl:call-template name="convertcase">
+            <xsl:variable name="cmdName"><xsl:call-template name="convertcase">
                     <xsl:with-param name="toconvert" select="./mnemonic"/>
-                    <xsl:with-param name="conversion">proper</xsl:with-param>
+                    <xsl:with-param name="conversion">lower</xsl:with-param>
             </xsl:call-template>Cmd</xsl:variable>    
             
             <xsl:variable name="lowerMnemo"><xsl:call-template name="convertcase">
