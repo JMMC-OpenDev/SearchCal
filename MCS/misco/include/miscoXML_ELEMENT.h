@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoXML_ELEMENT.h,v 1.1 2006-10-16 07:34:19 mella Exp $"
+ * "@(#) $Id: miscoXML_ELEMENT.h,v 1.2 2006-10-16 11:34:54 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/10/16 07:34:19  mella
+ * Class miscoXML_ELEMENT created
+ *
  ******************************************************************************/
 
 /**
@@ -19,11 +22,22 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+/*
+ * System Headers
+ */
+#include<list>
+#include<map>
+
 
 /*
  * MCS header
  */
 #include "mcs.h"
+
+/**
+ * typedef of child elements
+ */
+//typedef std::list<XML_ELEMENTS*> miscoXML_ELEMENT_LIST;
 
 
 /*
@@ -31,41 +45,8 @@
  */
 
 /**
- * Brief description of the class, which ends at this dot.
- * 
- * OPTIONAL detailed description of the class follows here.
- *
- * @usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * @filename fileName1 :  usage description of fileName1
- * @filename fileName2 :  usage description of fileName2
- *
- * @env
- * OPTIONAL. If needed, environmental variables accessed by the class. For
- * each variable, name, and usage description, as below.
- * @envvar envVar1 :  usage description of envVar1
- * @envvar envVar2 :  usage description of envVar2
- * 
- * @warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * @ex
- * OPTIONAL. Code example if needed
- * \n Brief example description.
- * @code
- * Insert your code example here
- * @endcode
- *
- * @sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * @sa modcppMain.C
- * 
- * @bug OPTIONAL. Bugs list if it exists.
- * @bug For example, description of the first bug
- * @bug For example, description of the second bug
- * 
- * @todo OPTIONAL. Things to forsee list, if needed. For example, 
- * @todo add other methods, dealing with operations.
- * 
+ * miscoXML_ELEMENT permits user to build one simple xml tree and get its string
+ * representation.
  */
 class miscoXML_ELEMENT
 {
@@ -77,12 +58,21 @@ public:
     // Class destructor
     virtual ~miscoXML_ELEMENT();
 
-    virtual mcsCOMPL_STAT AddElement(miscoXML_ELEMENT * e);
+    virtual mcsCOMPL_STAT AddElement(miscoXML_ELEMENT * element);
     virtual mcsCOMPL_STAT AddAttribute(string attributeName,
                                        string attributeValue);
+    virtual mcsCOMPL_STAT AddContent(string content);
     virtual string ToString();    
 
 protected:
+    // List of children elements
+    std::list<miscoXML_ELEMENT*> _elements;
+    // List of attributes
+    std::map<string, string> _attributes;
+    // Store element name
+    string _name;
+    // Store element content
+    string _content;
     
 private:
     // Declaration of copy constructor and assignment operator as private
