@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.2 2006-10-16 11:34:57 mella Exp $"
+ * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.3 2006-10-16 11:41:07 swmgr Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/10/16 11:34:57  mella
+ * First functionnal revision
+ *
  * Revision 1.1  2006/10/16 07:34:22  mella
  * Class miscoXML_ELEMENT created
  *
@@ -16,7 +19,7 @@
  *  Definition of miscoXML_ELEMENT class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.2 2006-10-16 11:34:57 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.3 2006-10-16 11:41:07 swmgr Exp $"; 
 
 /* 
  * System Headers 
@@ -65,7 +68,7 @@ miscoXML_ELEMENT::~miscoXML_ELEMENT()
 mcsCOMPL_STAT miscoXML_ELEMENT::AddElement(miscoXML_ELEMENT * element)
 {
     logTrace("miscoXML_ELEMENT::AddElement()");
-    _elements.push_back(e);
+    _elements.push_back(element);
     return mcsSUCCESS;
 }
 
