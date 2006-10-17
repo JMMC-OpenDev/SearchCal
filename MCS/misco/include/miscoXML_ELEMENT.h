@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoXML_ELEMENT.h,v 1.2 2006-10-16 11:34:54 mella Exp $"
+ * "@(#) $Id: miscoXML_ELEMENT.h,v 1.3 2006-10-17 08:20:48 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/10/16 11:34:54  mella
+ * First functionnal revision
+ *
  * Revision 1.1  2006/10/16 07:34:19  mella
  * Class miscoXML_ELEMENT created
  *
@@ -62,7 +65,7 @@ public:
     virtual mcsCOMPL_STAT AddAttribute(string attributeName,
                                        string attributeValue);
     virtual mcsCOMPL_STAT AddContent(string content);
-    virtual string ToString();    
+    virtual string ToXml();    
 
 protected:
     // List of children elements

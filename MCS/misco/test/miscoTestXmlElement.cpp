@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoTestXmlElement.cpp,v 1.3 2006-10-16 10:32:30 mella Exp $"
+ * "@(#) $Id: miscoTestXmlElement.cpp,v 1.4 2006-10-17 08:20:56 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/10/16 10:32:30  mella
+ * Add AddContent calls
+ *
  * Revision 1.2  2006/10/16 10:29:21  mella
  * Just add attributes to one root child
  *
@@ -23,7 +26,7 @@
  * @<miscoTestXmlElement@>
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestXmlElement.cpp,v 1.3 2006-10-16 10:32:30 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestXmlElement.cpp,v 1.4 2006-10-17 08:20:56 mella Exp $";
 
 /* 
  * System Headers 
@@ -90,7 +93,7 @@ int main(int argc, char *argv[])
     e1.AddContent("Two lines \n with carriage return");
     
     // Print xml root desc
-    cout << root.ToString() << endl;
+    cout << root.ToXml() << endl;
     
 
 

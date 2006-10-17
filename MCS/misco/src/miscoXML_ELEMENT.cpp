@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.3 2006-10-16 11:41:07 swmgr Exp $"
+ * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.4 2006-10-17 08:20:53 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/10/16 11:41:07  swmgr
+ * typo ...
+ *
  * Revision 1.2  2006/10/16 11:34:57  mella
  * First functionnal revision
  *
@@ -19,7 +22,7 @@
  *  Definition of miscoXML_ELEMENT class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.3 2006-10-16 11:41:07 swmgr Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.4 2006-10-17 08:20:53 mella Exp $"; 
 
 /* 
  * System Headers 
@@ -106,7 +109,7 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddContent(string content)
  * Return the xml stringified  representation of the element.
  * @return the xml representation.
  */
-string miscoXML_ELEMENT::ToString()
+string miscoXML_ELEMENT::ToXml()
 {
     logTrace("miscoXML_ELEMENT::ToString()");
 
@@ -137,7 +140,7 @@ string miscoXML_ELEMENT::ToString()
     std::list<miscoXML_ELEMENT*>::iterator j = _elements.begin();
     while(j != _elements.end())
     {
-        xmlStr.append((*j)->ToString());
+        xmlStr.append((*j)->ToXml());
         j++;
     }
     
