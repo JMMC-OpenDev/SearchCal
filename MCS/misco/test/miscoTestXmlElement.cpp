@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoTestXmlElement.cpp,v 1.4 2006-10-17 08:20:56 mella Exp $"
+ * "@(#) $Id: miscoTestXmlElement.cpp,v 1.5 2006-10-17 11:27:19 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/10/17 08:20:56  mella
+ * Use standard ToXml() instead of previous ToString()
+ *
  * Revision 1.3  2006/10/16 10:32:30  mella
  * Add AddContent calls
  *
@@ -26,7 +29,7 @@
  * @<miscoTestXmlElement@>
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestXmlElement.cpp,v 1.4 2006-10-17 08:20:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestXmlElement.cpp,v 1.5 2006-10-17 11:27:19 mella Exp $";
 
 /* 
  * System Headers 
@@ -86,16 +89,27 @@ int main(int argc, char *argv[])
     // Add attributes to the root and e2 elements
     root.AddAttribute("att1", "val1");
     e2.AddAttribute("att1", "val2");
+    e2.AddAttribute("att2", 10.10);
+    e2.AddAttribute("att3", mcsTRUE);
     root.AddAttribute("att2", "val2");
 
     // Add content to the root and e1 elements
     root.AddContent("test line");
     e1.AddContent("Two lines \n with carriage return");
+
+    // Add typed elements to e2
+    miscoXML_ELEMENT e20("double");
+    miscoXML_ELEMENT e21("logical");
+    miscoXML_ELEMENT e22("logical");
+    e2.AddElement(&e20);
+    e2.AddElement(&e21);
+    e2.AddElement(&e22);
+    e20.AddContent(10.1);
+    e21.AddContent(mcsFALSE); 
+    e22.AddContent(mcsTRUE); 
     
     // Print xml root desc
     cout << root.ToXml() << endl;
-    
-
 
     cout << "---------------------------------------------------------" << endl
          << "                      THAT'S ALL FOLKS ;)                " << endl
