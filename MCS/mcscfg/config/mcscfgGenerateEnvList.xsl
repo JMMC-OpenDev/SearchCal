@@ -4,11 +4,14 @@
 ********************************************************************************
 JMMC project
 
-"@(#) $Id: mcscfgGenerateEnvList.xsl,v 1.5 2005-12-06 07:44:12 mella Exp $"
+"@(#) $Id: mcscfgGenerateEnvList.xsl,v 1.6 2006-10-23 12:03:04 mella Exp $"
 
 History
 ~~~~~~~
 $Log: not supported by cvs2svn $
+Revision 1.5  2005/12/06 07:44:12  mella
+Generate default localhost if no hostname founded
+
 Revision 1.4  2005/12/02 13:49:06  mella
 Do not generate localhost anymore
 
@@ -66,7 +69,7 @@ is outputed.
         <xsl:for-each select="//env[parent::host/@name=$hostname]">
             <xsl:value-of select="@name"/>
             <xsl:value-of select="' '"/>
-            <xsl:value-of select="parent::host/@name"/>
+            <xsl:value-of select="'localhost'"/>
             <xsl:value-of select="' '"/>
             <xsl:value-of select="port"/>
             <xsl:value-of select="'&#10;'"/>
