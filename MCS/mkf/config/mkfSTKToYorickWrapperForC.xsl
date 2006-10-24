@@ -20,11 +20,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.2 2006-07-06 07:55:27 mella Exp $"
+ "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.3 2006-10-24 08:27:24 mella Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.2  2006/07/06 07:55:27  mella
+ Modified to support amdlib porting in yorick
+
  Revision 1.1  2005/06/30 15:35:02  mella
  First import
 
@@ -65,7 +68,7 @@ write,"<xsl:value-of select="$moduleName"/> plugin loaded";
 /* GM: which else branch can we place here??? */
 
 <!-- For each Define -->
-/****** DEFINE CONSTANTS ******/
+/****** DEFINE CONSTANTS (numerical ones only) ******/
 <xsl:for-each select="//constant">
     <xsl:call-template name="wrapForConstantValues"/>
 </xsl:for-each>
@@ -97,8 +100,12 @@ write,"<xsl:value-of select="$moduleName"/> plugin loaded";
 <!-- *********                               -->
 <xsl:template name="wrapForConstantValues">
     <xsl:variable name="name" select="./attributelist/attribute[@name='name']/@value"/>
+    <xsl:choose>
+        <xsl:when test="./attributelist/attribute[@name='type']/@value='int'">
 /* Wrapping of '<xsl:value-of select="$name"/>' define */
 <xsl:value-of select="$name"/> = int (<xsl:value-of select="./attributelist/attribute[@name='value']/@value"/>);
+        </xsl:when>
+    </xsl:choose>
 </xsl:template>
  
 <!-- TEMPLATE:                               -->
@@ -141,7 +148,20 @@ struct <xsl:value-of select="$name"/>
             <xsl:with-param name="method" select="."/>
         </xsl:call-template>
     </xsl:variable>
-/* Wrapping of '<xsl:value-of select="$methName"/>' method */   
+    <!--  Next part will ouptut the codger PROTOTYPE only if it is possible -->
+    <xsl:choose>
+        <!-- Reject variables arguments -->
+    <xsl:when test="contains(./attributelist/attribute[@name='decl']/@value,'...')">
+/* Skipping wrapping of '<xsl:value-of select="$methName"/>' */ 
+/* WARNING this function contains variable arguments */
+    </xsl:when>        
+        <!-- Reject functions that return one pointer type -->
+    <xsl:when test="contains(./attributelist/attribute[@name='decl']/@value,').p.')">
+/* Skipping wrapping of '<xsl:value-of select="$methName"/>' */ 
+/* WARNING this function returns a pointer type */
+    </xsl:when>
+    <xsl:otherwise>
+/* Wrapping of '<xsl:value-of select="$methName"/>' function */   
 extern _<xsl:value-of select="$methName"/>;
 /* PROTOTYPE
     <xsl:call-template name="WriteYorickType">
@@ -157,11 +177,12 @@ extern _<xsl:value-of select="$methName"/>;
 </xsl:call-template></xsl:if>)
   * C-prototype:
     ------------
- <xsl:value-of select="$methName"/><xsl:value-of select="$methNameIndex"/>  (<xsl:if test=".//parmlist"> <xsl:call-template name="WriteParametersForPrototype">
+    <xsl:value-of select="./attributelist/attribute[@name='type']/@value"/> <xsl:value-of select="' '"/><xsl:value-of select="$methName"/><xsl:value-of select="$methNameIndex"/>  (<xsl:if test=".//parmlist"> <xsl:call-template name="WriteParametersForPrototype">
         <xsl:with-param name="Noeud" select="./attributelist/attribute[@name='name']"/>
 </xsl:call-template></xsl:if>)
 */
-
+</xsl:otherwise>
+</xsl:choose>
 </xsl:template>
 
 <!-- TEMPLATE:                               -->
@@ -319,7 +340,7 @@ extern _<xsl:value-of select="$methName"/>;
                 <xsl:when test="$typeMod='amdlibERROR_MSG'">pointer </xsl:when>
                 
                 
-                <xsl:when test="$typeMod='unsigned char'">char </xsl:when>
+                <xsl:when test="starts-with($typeMod,'unsigned')"><xsl:value-of select="substring-after($typeMod,'unsigned')"/></xsl:when>
                 <!-- used for yorick wrappers 
                 unsigned char are actually used as char PB todo :solve this
                 <xsl:when test="$typeMod='mcsCOMPL_STAT'">int </xsl:when>
