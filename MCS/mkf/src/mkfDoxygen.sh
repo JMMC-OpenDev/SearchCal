@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfDoxygen.sh,v 1.7 2006-04-04 09:01:18 gzins Exp $"
+# "@(#) $Id: mkfDoxygen.sh,v 1.8 2006-10-24 12:05:12 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2006/04/04 09:01:18  gzins
+# Added write access to temporary files
+#
 # Revision 1.6  2005/12/15 10:04:21  gzins
 # Changed logo in docmentation header.
 #
@@ -168,7 +171,7 @@ then
     fi
 
     # Remotion of all spaces before and after char "=" in the customized file
-    cat /tmp/doxyfile_clean | sed s/\ .*=/=/g >> /tmp/doxyfile.old
+    cat /tmp/doxyfile_clean | sed s/\ *=/=/g >> /tmp/doxyfile.old
     mv /tmp/doxyfile.old /tmp/doxyfile_clean
     cat /tmp/doxyfile_clean | sed s/=\ */=/g >> /tmp/doxyfile.old
     mv /tmp/doxyfile.old /tmp/doxyfile_clean
