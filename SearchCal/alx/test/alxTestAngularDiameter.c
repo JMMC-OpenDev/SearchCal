@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.15 2006-07-17 08:23:58 scetre Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.16 2006-10-26 16:46:00 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2006/07/17 08:23:58  scetre
+ * Added test if magI is unknown
+ *
  * Revision 1.14  2006/06/12 14:46:57  gzins
  * Added test for new polynomial coefficients
  *
@@ -59,7 +62,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestAngularDiameter.c,v 1.15 2006-07-17 08:23:58 scetre Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestAngularDiameter.c,v 1.16 2006-10-26 16:46:00 gzins Exp $";
 
 /* 
  * System Headers 
@@ -165,7 +168,29 @@ int main (int argc, char *argv[])
         return mcsFAILURE;
     }
 
-   /* Close MCS services */
+    mgI.value = 0.0; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsFALSE;
+    mgJ.value = 13.658; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
+    mgH.value = 13.126;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
+    mgKf.value = 13.069;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
+    
+    if (alxComputeAngularDiameterForFaintStar
+        (mgI, mgJ, mgKf, mgH, &diametersFaint)== mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    mgI.value = 0.0; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsFALSE;
+    mgJ.value = 12.950; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
+    mgH.value = 12.273;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
+    mgKf.value = 12.176;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
+    
+    if (alxComputeAngularDiameterForFaintStar
+        (mgI, mgJ, mgKf, mgH, &diametersFaint)== mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Close MCS services */
     mcsExit();
     
     /* Exit from the application with SUCCESS */
