@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.34 2006-08-23 13:54:20 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.35 2006-10-26 16:43:32 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2006/08/23 13:54:20  gzins
+ * Minor change related to log message
+ *
  * Revision 1.33  2006/07/17 08:23:34  scetre
  * Added hk diameter if magI is unknown
  *
@@ -125,7 +128,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.34 2006-08-23 13:54:20 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.35 2006-10-26 16:43:32 gzins Exp $"; 
 
 
 /* 
@@ -496,7 +499,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     diameters->ik.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_k;
     diameters->jk.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_k;
     diameters->jh.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_h;
-    diameters->hk.value    = 9.306 * pow(10, -0.2 * mgH.value) * p_j_h;
+    diameters->hk.value    = 9.306 * pow(10, -0.2 * mgH.value) * p_h_k;
     diameters->ijErr.value = diameters->ij.value * polynomial->error[3]/100.0;
     diameters->ikErr.value = diameters->ik.value * polynomial->error[4]/100.0;;
     diameters->jhErr.value = diameters->jh.value * polynomial->error[5]/100.0;;
