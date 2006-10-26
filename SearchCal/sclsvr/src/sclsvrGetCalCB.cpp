@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.43 2006-10-10 15:50:44 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.44 2006-10-26 08:15:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.43  2006/10/10 15:50:44  lafrasse
+ * Changed XML Serialization in VOTable PARAM.
+ *
  * Revision 1.42  2006/10/10 11:30:18  lafrasse
  * Changed request XML serialization APIs in SerializeToXML().
  *
@@ -134,7 +137,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.43 2006-10-10 15:50:44 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.44 2006-10-26 08:15:57 gzins Exp $"; 
 
 
 /* 
@@ -213,7 +216,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     actionMonitorParams.message  = &msg;
 
     // actionMonitor thread creation and launch
-    thrdTHREAD                     actionMonitor;
+    thrdTHREAD_STRUCT                     actionMonitor;
     actionMonitor.function       = sclsvrMonitorAction;
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
 

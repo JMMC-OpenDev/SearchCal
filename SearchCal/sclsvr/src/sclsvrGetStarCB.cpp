@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.28 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.29 2006-10-26 08:15:57 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.27  2006/02/23 16:08:21  lafrasse
  * Added error stack purge in case of bad 'sdb' initialization
  *
@@ -57,7 +60,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.28 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.29 2006-10-26 08:15:57 gzins Exp $"; 
 
 
 /* 
@@ -137,7 +140,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     actionMonitorParams.message  = &msg;
 
     // actionMonitor thread creation and launch
-    thrdTHREAD                     actionMonitor;
+    thrdTHREAD_STRUCT                     actionMonitor;
     actionMonitor.function       = sclsvrMonitorAction;
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
 
