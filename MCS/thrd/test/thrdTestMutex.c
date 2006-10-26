@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdTestMutex.c,v 1.3 2006-05-11 13:04:57 mella Exp $"
+ * "@(#) $Id: thrdTestMutex.c,v 1.4 2006-10-26 08:03:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/05/11 13:04:57  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.2  2005/12/19 16:46:30  lafrasse
  * Added log and corrected some typos
  *
@@ -15,7 +18,7 @@
  ******************************************************************************/
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: thrdTestMutex.c,v 1.3 2006-05-11 13:04:57 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: thrdTestMutex.c,v 1.4 2006-10-26 08:03:03 gzins Exp $";
 
 /* 
  * System Headers 
@@ -96,7 +99,7 @@ int main (int argc, char *argv[])
     }
 
     /* Thread creation */
-    thrdTHREAD           myThread;
+    thrdTHREAD_STRUCT           myThread;
     myThread.function  = myThreadFunction;
     myThread.parameter = "Thread 1";
     thrdThreadCreate(&myThread);

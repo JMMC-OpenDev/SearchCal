@@ -1,18 +1,21 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: thrdTestSemaphore.c,v 1.2 2006-05-11 13:04:57 mella Exp $"
+ * "@(#) $Id: thrdTestSemaphore.c,v 1.3 2006-10-26 08:03:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/05/11 13:04:57  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.1  2005/12/19 16:48:30  lafrasse
  * Added semaphore support
  *
  ******************************************************************************/
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: thrdTestSemaphore.c,v 1.2 2006-05-11 13:04:57 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: thrdTestSemaphore.c,v 1.3 2006-10-26 08:03:03 gzins Exp $";
 
 /* 
  * System Headers 
@@ -143,7 +146,7 @@ int main (int argc, char *argv[])
     }
 
     /* Thread creation */
-    thrdTHREAD           consumer;
+    thrdTHREAD_STRUCT           consumer;
     consumer.function  = consumerFunction;
     consumer.parameter = NULL;
     thrdThreadCreate(&consumer);

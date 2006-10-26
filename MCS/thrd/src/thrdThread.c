@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdThread.c,v 1.2 2006-01-10 14:40:39 mella Exp $"
+ * "@(#) $Id: thrdThread.c,v 1.3 2006-10-26 08:03:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/01/10 14:40:39  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.1  2005/10/21 15:09:01  lafrasse
  * thrdThread creation
  *
@@ -39,7 +42,7 @@
  * int main (int argc, char *argv[])
  * {
  *  /# Thread creation #/
- *  thrdTHREAD           myThread;
+ *  thrdTHREAD_STRUCT           myThread;
  *  myThread.function  = myThreadFunction;
  *  myThread.parameter = "Thread 1";
  *  thrdThreadCreate(&myThread);
@@ -57,7 +60,7 @@
  * @sa pthread
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdThread.c,v 1.2 2006-01-10 14:40:39 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdThread.c,v 1.3 2006-10-26 08:03:03 gzins Exp $"; 
 
 
 
@@ -103,7 +106,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdThread.c,v 1.2 2006
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD  *thread)
+mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD_STRUCT  *thread)
 {
     logExtDbg("thrdThreadCreate()");
 
@@ -152,7 +155,7 @@ mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD  *thread)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdThreadWait   (thrdTHREAD  *thread)
+mcsCOMPL_STAT thrdThreadWait   (thrdTHREAD_STRUCT  *thread)
 {
     logExtDbg("thrdThreadWait()");
 
