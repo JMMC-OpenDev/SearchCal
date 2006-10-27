@@ -20,7 +20,7 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.3 2006-10-24 08:27:24 mella Exp $"
+ "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.4 2006-10-27 09:07:24 mella Exp $"
 
  History
  ~~~~~~~
@@ -38,13 +38,15 @@
 
  DESCRIPTION
  Produce the yorick .i code to be able to use it using Yorick
- The given xml file should be obtained using swig onto the right-wrap.cpp file 
+ The given xml file should be obtained using swig onto the right_wrap.cpp file 
  which does not include any class description but only cdecl.
-after special preprocess:
+ after special preprocess:
  cpp -DSWIG oidata-wrap.cpp tmpoidata-wrap.cpp
  swig -xml -c++ -module oidata tmpoidata-wrap.cpp
-$ xsltproc mkfSTKToYorickWrapperForCpp.xsl ~/sw/oidata/src/tmpoidata-wrap_wrap.xml > ~/sw/ymcs/src/oidata.i
-
+ $ xsltproc mkfSTKToYorickWrapperForCpp.xsl ~/sw/oidata/src/tmpoidata-wrap_wrap.xml > ~/sw/ymcs/src/oidata.i
+ 
+ One user mapping file is used to solve type conversion: userMapping.xml
+ 
 -->
 
 <xsl:include href="mkfSTK_WriteFunctionPrototype.xsl"/>
@@ -151,22 +153,29 @@ struct <xsl:value-of select="$name"/>
     <!--  Next part will ouptut the codger PROTOTYPE only if it is possible -->
     <xsl:choose>
         <!-- Reject variables arguments -->
-    <xsl:when test="contains(./attributelist/attribute[@name='decl']/@value,'...')">
-/* Skipping wrapping of '<xsl:value-of select="$methName"/>' */ 
-/* WARNING this function contains variable arguments */
+        <xsl:when test="contains(./attributelist/attribute[@name='decl']/@value,'...')">
+            <xsl:message>Warning: '<xsl:value-of select="$methName"/>' which has variable arguments is not wrapped</xsl:message>
+/* '<xsl:value-of select="$methName"/>' function skipped :  
+ * this function contains variable arguments 
+ */
     </xsl:when>        
-        <!-- Reject functions that return one pointer type -->
-    <xsl:when test="contains(./attributelist/attribute[@name='decl']/@value,').p.')">
-/* Skipping wrapping of '<xsl:value-of select="$methName"/>' */ 
-/* WARNING this function returns a pointer type */
-    </xsl:when>
     <xsl:otherwise>
-/* Wrapping of '<xsl:value-of select="$methName"/>' function */   
+/* 
+ * Wrapping of '<xsl:value-of select="$methName"/>' function */   
+ <xsl:if test="contains(./attributelist/attribute[@name='decl']/@value,').p.')">/*
+ * WARNING : this function returns one pointer
+ */
+ <xsl:message>Warning: '<xsl:value-of select="$methName"/>' function returns one pointer</xsl:message>    </xsl:if> 
 extern _<xsl:value-of select="$methName"/>;
 /* PROTOTYPE
-    <xsl:call-template name="WriteYorickType">
+    <xsl:choose>
+        <xsl:when test="contains(./attributelist/attribute[@name='decl']/@value,').p.')">int</xsl:when>        
+    <xsl:otherwise>
+        <xsl:call-template name="WriteYorickType">
         <xsl:with-param name="type" select="./attributelist/attribute[@name='type']/@value"/>
-    </xsl:call-template>
+        </xsl:call-template>
+    </xsl:otherwise>
+    </xsl:choose>
     <xsl:text> </xsl:text>
     <xsl:value-of select="$methName"/><xsl:value-of select="$methNameIndex"/>( <xsl:if test=".//parmlist"><xsl:call-template name="WriteParametersTypeForYorickPrototype">
         <xsl:with-param name="Noeud" select="./attributelist/attribute[@name='name']"/>
@@ -177,7 +186,7 @@ extern _<xsl:value-of select="$methName"/>;
 </xsl:call-template></xsl:if>)
   * C-prototype:
     ------------
-    <xsl:value-of select="./attributelist/attribute[@name='type']/@value"/> <xsl:value-of select="' '"/><xsl:value-of select="$methName"/><xsl:value-of select="$methNameIndex"/>  (<xsl:if test=".//parmlist"> <xsl:call-template name="WriteParametersForPrototype">
+    <xsl:value-of select="./attributelist/attribute[@name='type']/@value"/> <xsl:if test="contains(./attributelist/attribute[@name='decl']/@value,').p.')"><xsl:value-of select="' *'"/></xsl:if> <xsl:value-of select="' '"/><xsl:value-of select="$methName"/><xsl:value-of select="$methNameIndex"/>  (<xsl:if test=".//parmlist"> <xsl:call-template name="WriteParametersForPrototype">
         <xsl:with-param name="Noeud" select="./attributelist/attribute[@name='name']"/>
 </xsl:call-template></xsl:if>)
 */
@@ -320,80 +329,36 @@ extern _<xsl:value-of select="$methName"/>;
         <xsl:when test="//enum//attribute[./@name='name' and ./@value=$typeMod]">int </xsl:when>
         <!-- transform into same type -->
         <xsl:when test="$typeMod='char'">char </xsl:when>
+        <xsl:when test="$typeMod='int'">int </xsl:when>
+        <xsl:when test="$typeMod='short'">short </xsl:when>
+        <xsl:when test="$typeMod='void'">void </xsl:when>
+        <xsl:when test="$typeMod='double'">double </xsl:when>
+        <xsl:when test="$typeMod='float'">float </xsl:when>
         <!-- transform typedef struct into same type -->
         <xsl:when test="//class[./attributelist/attribute[./@name='name' and @value=$typeMod]]"><xsl:value-of select="$typeMod"/><xsl:value-of select="' '"/></xsl:when>
+        <!-- transform unsigned xxxx into xxxx type -->
+        <xsl:when test="starts-with($typeMod,'unsigned')"><xsl:value-of select="substring-after($typeMod,'unsigned')"/></xsl:when>
+
+        <!-- transform array into pointer type -->
+        <xsl:when test="starts-with($type,'a(')">pointer </xsl:when>
+        <!-- transform arrays into pointer type -->
+        <xsl:when test="starts-with($type,$moduleName)">pointer </xsl:when>
+        <!-- transform char array into pointer type -->
+        <xsl:when test="$typeMod='p.char'">string </xsl:when>
+        <!-- transform pointer into pointer type -->
+        <xsl:when test="starts-with($typeMod,'p.')">pointer </xsl:when>
 
         
-        <xsl:when test="starts-with($type,'a(')">pointer </xsl:when>
-        <xsl:when test="starts-with($type,$moduleName)">pointer </xsl:when>
-                <xsl:when test="$typeMod='mcsCOMPL_STAT'">int </xsl:when>
-                <xsl:when test="$typeMod='mcsLOGICAL'">char </xsl:when>
-                <xsl:when test="$typeMod='p.char'">string </xsl:when>
-                <xsl:when test="starts-with($typeMod,'p.')">pointer </xsl:when>
-                <xsl:when test="$typeMod='int'">int </xsl:when>
-                <xsl:when test="$typeMod='short'">short </xsl:when>
-                <xsl:when test="$typeMod='void'">void </xsl:when>
-                <xsl:when test="$typeMod='double'">double </xsl:when>
-                <xsl:when test="$typeMod='float'">float </xsl:when>
-
-                <!-- amdlib -->
-                <xsl:when test="$typeMod='amdlibERROR_MSG'">pointer </xsl:when>
-                
-                
-                <xsl:when test="starts-with($typeMod,'unsigned')"><xsl:value-of select="substring-after($typeMod,'unsigned')"/></xsl:when>
-                <!-- used for yorick wrappers 
-                unsigned char are actually used as char PB todo :solve this
-                <xsl:when test="$typeMod='mcsCOMPL_STAT'">int </xsl:when>
-                <xsl:when test="$typeMod='mcsINT8'">char </xsl:when>
-                <xsl:when test="$typeMod='mcsUINT8'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsINT16'">short </xsl:when>
-                <xsl:when test="$typeMod='mcsUINT16'">unsigned short </xsl:when>
-                <xsl:when test="$typeMod='mcsINT32'">int </xsl:when>
-                <xsl:when test="$typeMod='mcsUINT32'">unsigned int </xsl:when>
-                <xsl:when test="$typeMod='mcsDOUBLE'">double </xsl:when>
-                <xsl:when test="$typeMod='mcsFLOAT'">float </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES4'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES8'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES12'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES16'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES20'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES32'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES48'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES64'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES80'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES128'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES256'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES512'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsBYTES1024'">unsigned char </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING4'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING8'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING12'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING16'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING20'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING32'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING48'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING64'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING80'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING128'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING256'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING512'">char * </xsl:when>
-                <xsl:when test="$typeMod='mcsSTRING1024'">char * </xsl:when>
-                -->
-                <xsl:when test="$typeMod='mcsCOMPL_STAT'">int </xsl:when>
-                <xsl:when test="$typeMod='mcsINT8'">char </xsl:when>
-                <xsl:when test="$typeMod='mcsUINT8'">char </xsl:when>
-                <xsl:when test="$typeMod='mcsINT16'">short </xsl:when>
-                <xsl:when test="$typeMod='mcsUINT16'">short </xsl:when>
-                <xsl:when test="$typeMod='mcsINT32'">int </xsl:when>
-                <xsl:when test="$typeMod='mcsUINT32'">int </xsl:when>
-                <xsl:when test="$typeMod='mcsDOUBLE'">double </xsl:when>
-                <xsl:when test="$typeMod='mcsFLOAT'">float </xsl:when>
-                <xsl:when test="starts-with($typeMod,'mcsBYTES')">char </xsl:when>
-                <xsl:when test="starts-with($typeMod,'mcsSTRING')">char * </xsl:when>
-
-                <!-- used to identify errors -->
-                <xsl:otherwise>_TYPE_<xsl:value-of select="$typeMod"/>_NOT_SUPPORTED_in_mkfSTKToYorickWrapperForCpp_xsl_file </xsl:otherwise>
+        <!-- used to identify errors -->
+        <xsl:otherwise>
+            <xsl:choose>
+                <!-- transform according userMapping if any -->
+                <xsl:when test="document('userMapping.xml')//type[c=$typeMod]"><xsl:value-of select="document('userMapping.xml')//type[c=$typeMod]/yorick"/></xsl:when>
+                <xsl:otherwise>
+                    <xsl:message>Type '<xsl:value-of select="$typeMod"/>' not supported (please fill userMapping.xml file) </xsl:message> _TYPE_<xsl:value-of select="$typeMod"/>_NOT_SUPPORTED_in_mkfSTKToYorickWrapperForCpp_xsl_file </xsl:otherwise>
             </xsl:choose>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
