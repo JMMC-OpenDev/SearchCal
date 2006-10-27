@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+********************************************************************************
+ JMMC project
+
+ "@(#) $Id: userMapping.xml,v 1.1 2006-10-27 09:07:48 mella Exp $"
+
+ History
+ ~~~~~~~
+ $Log: not supported by cvs2svn $
+********************************************************************************
+ NAME
+ userMapping.xml - List user's type mapping between two or more
+ languages.  
+ 
+ DESCRIPTION
+ This file is use during wrapping processes. Developpers can adjust target
+ language types given source types.
+ To be taken into account, the developper must realize  that the userMapping.xml
+ file is located in the same directory as xslt used files. To be sure that this
+ file can be editable, one workaround is to install the mkf module and copy the
+ proper userMapping file into the $INTROOT/config directory.
+
+ EXAMPLES
+ <typeMapping>
+    <type>
+        <c>size_t</c>
+        <yorick>int</yorick>
+    </type>
+    <type>
+        <c>titi</c>
+        <yorick>yiyi</yorick>
+    </type>
+    <type>
+        <c>tutu</c>
+        <yorick>yuyu</yorick>
+    </type>
+    </typeMapping> 
+-->
+
+<typeMapping>
+</typeMapping>
