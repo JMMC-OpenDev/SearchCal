@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.35 2006-10-26 16:43:32 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.36 2006-10-30 10:04:37 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2006/10/26 16:43:32  gzins
+ * Fixed bug when computing HK diameter
+ *
  * Revision 1.34  2006/08/23 13:54:20  gzins
  * Minor change related to log message
  *
@@ -128,7 +131,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.35 2006-10-26 16:43:32 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.36 2006-10-30 10:04:37 scetre Exp $"; 
 
 
 /* 
@@ -504,7 +507,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     diameters->ikErr.value = diameters->ik.value * polynomial->error[4]/100.0;;
     diameters->jhErr.value = diameters->jh.value * polynomial->error[5]/100.0;;
     diameters->jkErr.value = diameters->jk.value * polynomial->error[6]/100.0;;
-    diameters->hkErr.value = diameters->hk.value * polynomial->error[6]/100.0;;
+    diameters->hkErr.value = diameters->hk.value * polynomial->error[7]/100.0;;
 
     /* if mag I is not set, compute mean diam with only 3 diam*/
     if (mgI.isSet == mcsFALSE)
