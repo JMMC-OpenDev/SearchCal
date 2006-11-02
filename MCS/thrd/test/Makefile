@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2005-12-21 10:43:47 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.5 2006-11-02 07:41:16 gzins Exp $"
 #
 # Makefile of thrd module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/12/21 10:43:47  lafrasse
+# Removed 'thrd' from the linked libraries as it has been added to the MCS list
+#
 # Revision 1.3  2005/12/19 16:48:30  lafrasse
 # Added semaphore support
 #
@@ -45,26 +48,32 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = thrdTestThread thrdTestMutex thrdTestSemaphore
+EXECUTABLES     = thrdTestThread thrdTestMutex thrdTestSemaphore thrdTestTHREAD
 EXECUTABLES_L   = 
 
 #
 # <brief description of thrdTestThread program>
 thrdTestThread_OBJECTS   = thrdTestThread
 thrdTestThread_LDFLAGS   = 
-thrdTestThread_LIBS      = MCS
+thrdTestThread_LIBS      = MCS C++ 
 
 #
 # <brief description of thrdTestMutex program>
 thrdTestMutex_OBJECTS   = thrdTestMutex
 thrdTestMutex_LDFLAGS   = 
-thrdTestMutex_LIBS      = MCS
+thrdTestMutex_LIBS      = MCS C++
 
 #
 # <brief description of thrdTestSemaphore program>
 thrdTestSemaphore_OBJECTS   = thrdTestSemaphore
 thrdTestSemaphore_LDFLAGS   = 
-thrdTestSemaphore_LIBS      = MCS
+thrdTestSemaphore_LIBS      = MCS C++
+
+#
+# <brief description of thrdTestTHREAD program>
+thrdTestTHREAD_OBJECTS   = thrdTestTHREAD
+thrdTestTHREAD_LDFLAGS   = 
+thrdTestTHREAD_LIBS      = MCS C++
 
 #
 # special compilation flags for single c sources
