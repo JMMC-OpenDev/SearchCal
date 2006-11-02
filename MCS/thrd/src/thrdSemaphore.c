@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdSemaphore.c,v 1.3 2006-01-10 14:40:39 mella Exp $"
+ * "@(#) $Id: thrdSemaphore.c,v 1.4 2006-11-02 07:40:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/01/10 14:40:39  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.2  2005/12/22 14:08:00  lafrasse
  * Updated documentation to include the usefull UNIX command (special thanx to Fred. ROUSSEL) that remove any created semaphores when the OS can not create new semaphores anymore
  *
@@ -61,7 +64,7 @@
  * @sa ipcs ipcrm
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdSemaphore.c,v 1.3 2006-01-10 14:40:39 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdSemaphore.c,v 1.4 2006-11-02 07:40:19 gzins Exp $"; 
 
 
 /* 
@@ -104,8 +107,8 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdSemaphore.c,v 1.3 2
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdSemaphoreInit    (      thrdSEMAPHORE  *semaphore,
-                                    const mcsUINT32       value)
+mcsCOMPL_STAT thrdSemaphoreInit(thrdSEMAPHORE   *semaphore,
+                                const mcsUINT32 value)
 {
     logTrace("thrdSemaphoreInit()");
 
@@ -178,7 +181,7 @@ mcsCOMPL_STAT thrdSemaphoreInit    (      thrdSEMAPHORE  *semaphore,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdSemaphoreDestroy (const thrdSEMAPHORE   semaphore)
+mcsCOMPL_STAT thrdSemaphoreDestroy(const thrdSEMAPHORE   semaphore)
 {
     logTrace("thrdSemaphoreDestroy()");
 
@@ -238,8 +241,8 @@ mcsCOMPL_STAT thrdSemaphoreDestroy (const thrdSEMAPHORE   semaphore)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdSemaphoreGetValue(const thrdSEMAPHORE   semaphore,
-                                          mcsUINT32      *value)
+mcsCOMPL_STAT thrdSemaphoreGetValue(const thrdSEMAPHORE semaphore,
+                                    mcsUINT32           *value)
 {
     logTrace("thrdSemaphoreGetValue()");
 
@@ -308,8 +311,8 @@ mcsCOMPL_STAT thrdSemaphoreGetValue(const thrdSEMAPHORE   semaphore,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdSemaphoreSetValue(const thrdSEMAPHORE   semaphore,
-                                    const mcsUINT32       value)
+mcsCOMPL_STAT thrdSemaphoreSetValue(const thrdSEMAPHORE semaphore,
+                                    const mcsUINT32     value)
 {
     logTrace("thrdSemaphoreSetValue()");
 
@@ -371,7 +374,7 @@ mcsCOMPL_STAT thrdSemaphoreSetValue(const thrdSEMAPHORE   semaphore,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdSemaphoreWait    (const thrdSEMAPHORE   semaphore)
+mcsCOMPL_STAT thrdSemaphoreWait(const thrdSEMAPHORE semaphore)
 {
     logTrace("thrdSemaphoreWait()");
 
@@ -453,7 +456,7 @@ mcsCOMPL_STAT thrdSemaphoreWait    (const thrdSEMAPHORE   semaphore)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdSemaphoreSignal  (const thrdSEMAPHORE   semaphore)
+mcsCOMPL_STAT thrdSemaphoreSignal(const thrdSEMAPHORE semaphore)
 {
     logTrace("thrdSemaphoreSignal()");
 
