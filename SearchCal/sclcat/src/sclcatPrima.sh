@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrima.sh,v 1.1 2006-10-31 14:23:54 gzins Exp $"
+# "@(#) $Id: sclcatPrima.sh,v 1.2 2006-11-06 15:30:26 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2006/10/31 14:23:54  gzins
+# Added
+#
 #*******************************************************************************
 
 #/**
@@ -57,8 +60,12 @@ do
 done
 
 # Prepare an empty directory 
-rm -rf $dir
-mkdir $dir
+if [ $dir == "prima-ref" ]; then
+    rm -f $dir/*
+else
+    rm -rf $dir
+    mkdir $dir
+fi
 
 # Start program
 cd $dir
