@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.5 2006-03-22 07:45:18 gzins Exp $"
+# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.6 2006-11-21 10:25:35 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2006/03/22 07:45:18  gzins
+# Added tcl programs
+#
 # Revision 1.4  2005/02/22 13:56:50  gluck
 # Updated documentation
 #
@@ -85,8 +88,30 @@ case $fileExtension in
             # Print # */ line deleting the # character => */ which is the
             # end of a doxygen comment block
             print substr($0, 2, 3)
+            # Go to the next input line, because the treatment has been done,
+            # and to prevent further treatment by other action block 
+            next
         }
         
+        # For # */ lines = last line of the comment block
+        # Skip proc declaration  
+        /^##\ / {
+            # Set the line, deleting the ## characters
+            line = substr($0, 4)
+            # Print the new line adding in front of each one " *"
+            print line" {"
+            # Go to the next input line, because the treatment has been done,
+            # and to prevent further treatment by other action block 
+            next
+        }
+        # For 'proc' lines = procedure declaration
+        /^proc\ / {
+            # Skip this line which must be precede by a comment line containing
+            # the the C-like syntax
+            # Go to the next input line, because the treatment has been done,
+            # and to prevent further treatment by other action block 
+            next
+        }
         {
             # If a line has to be printed (inside the comment block)
             if (printLine == "yes")
@@ -101,7 +126,7 @@ case $fileExtension in
                 # The line has not to be print
                 # Comment the line (it is used to have the source code in the
                 # documentation)
-                print "// "$0
+                print ""$0
             }
         }
         ' $FILE
