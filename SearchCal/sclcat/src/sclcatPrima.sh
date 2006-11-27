@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrima.sh,v 1.2 2006-11-06 15:30:26 scetre Exp $"
+# "@(#) $Id: sclcatPrima.sh,v 1.3 2006-11-27 10:31:19 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2006/11/06 15:30:26  scetre
+# Cancelled removal of CVS repository when generated reference
+#
 # Revision 1.1  2006/10/31 14:23:54  gzins
 # Added
 #
@@ -35,16 +38,32 @@
 
 # Print usage 
 function printUsage () {
-        echo -e "Usage: sclcatPrima [-h] [-g]" 
+        echo -e "Usage: sclcatPrima [-h] [-g] [-c]" 
         echo -e "\t-h\tprint this help."
+        echo -e "\t-c\tgenerate the configuration file."
         echo -e "\t-g\tgenerate reference."
         exit 1;
 }
 
-# Parse command-line parameters
-dir="prima-run-`date +%Y-%m-%dT%H:%M:%S`";
+# generate the configuration file
+function generateConfig () {
+        echo -e "Generate configuration file ..."
+        ../bin/sclcatPrimaPreClass
+        ../bin/sclcatPrimaConcat
+        echo -e "...Done."
+}
 
-while getopts "hg" option
+# Parse result
+function parseResult () {
+        echo -e "Analyse the results..."
+        ../bin/sclcatPrimaLect $1
+        echo -e "...Done."
+}
+
+# Parse command-line parameters
+dir="prima-run-`date +%Y-%m-%dT%H-%M-%S`";
+
+while getopts "hrgc" option
 # Initial declaration.
 # c, h, u and t are the options (flags) expected.
 # The : after option 't' shows it will have an argument passed with it.
@@ -54,14 +73,19 @@ do
         printUsage ;;
     g ) # generation reference option
         dir="prima-ref";;
+    c ) # generate the configuration file
+        generateConfig ;
+        exit 1;;
     * ) # Unknown option
         printUsage ;;
     esac
 done
 
+
 # Prepare an empty directory 
 if [ $dir == "prima-ref" ]; then
     rm -f $dir/*
+    rm -rf $dir/log
 else
     rm -rf $dir
     mkdir $dir
@@ -70,5 +94,8 @@ fi
 # Start program
 cd $dir
 cmdBatch ../../config/sclcatPRIMA.cfg  -d log
+
+cd ..
+parseResult $dir
 
 #___oOo___

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2006-10-31 14:23:26 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.3 2006-11-27 10:31:19 scetre Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2006/10/31 14:23:26  gzins
+# Added sclcatPrima local script
+#
 # Revision 1.1.1.1  2006/10/31 09:56:24  sccmgr
 # Creation
 #
@@ -98,8 +101,8 @@ tttlll_OBJECTS  =
 #
 # Python scripts (public and local)
 # ---------------------------------
-PY_SCRIPTS     =
-PY_SCRIPTS_L   =
+PY_SCRIPTS     = 
+PY_SCRIPTS_L   = sclcatPrimaConcat
 
 #
 # Jarfiles and their directories
@@ -159,10 +162,10 @@ include $(MAKEDIR)/mkfMakefile
 #
 # TARGETS
 # -------
-all:	do_all
+all:	do_fortran do_all
 	@echo " . . . 'all' done" 
 
-clean : clean_all 
+clean : clean_fortran clean_all 
 	@echo " . . . clean done"
 
 man   : do_man 
@@ -170,5 +173,21 @@ man   : do_man
 
 install : install_all
 	@echo " . . . installation done"
+
+# Build fortran executables
+EXECUTABLES_FORTRAN = sclcatPrimaPreClass \
+					  sclcatPrimaLect
+
+do_fortran:
+	@for file in $(EXECUTABLES_FORTRAN) ; do \
+		echo "== FORTRAN Compiling: $${file}.f"; \
+		echo "Building executable::  ../bin/$${file}"; \
+		ifc -w -Vaxlib -o ../bin/$${file} $${file}.f; \
+	done
+
+clean_fortran:
+	@for file in $(EXECUTABLES_FORTRAN) ; do \
+		$(RM) -f ../bin/$${file}; \
+	done
 
 #___oOo___
