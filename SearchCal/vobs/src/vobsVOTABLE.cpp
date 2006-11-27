@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.14 2006-10-10 15:50:45 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.15 2006-11-27 17:28:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2006/10/10 15:50:45  lafrasse
+ * Changed XML Serialization in VOTable PARAM.
+ *
  * Revision 1.13  2006/10/09 15:07:09  lafrasse
  * Added request XML serialization in VOTables.
  *
@@ -57,7 +60,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.14 2006-10-10 15:50:45 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.15 2006-11-27 17:28:31 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -343,6 +346,22 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         i++;
     }
 
+    // Add the beginning of the deletedFlag field
+    buffer.AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\"");
+    // Add field ID
+    buffer.AppendString(" ID=\"");
+    sprintf(tmp, "col%d", i);
+    buffer.AppendString(tmp);
+    buffer.AppendString("\"");
+    // Add the end of the deletedFlag field
+    buffer.AppendString("\" ucd=\"deletedFalg\" datatype=\"boolean\">");
+
+    // Add deleteFlag description
+    buffer.AppendLine("    <DESCRIPTION>Used by SearchCal to flag deleted stars</DESCRIPTION>");
+
+    // Add standard field footer
+    buffer.AppendLine("   </FIELD>");
+
     // Serialize each of its properties as group description
     i = 0;
     starProperty = star->GetNextProperty(mcsTRUE);
@@ -463,6 +482,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
             // Add standard column footer
             buffer.AppendString("</TD>");
             
+            // Add dfault deleteFlag value
+            buffer.AppendString("<TD>false</TD>");
         }
 
         // Add standard row footer
