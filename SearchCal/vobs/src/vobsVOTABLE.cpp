@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.16 2006-11-28 13:04:57 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.17 2006-11-28 14:24:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2006/11/28 13:04:57  lafrasse
+ * Changed deletedFlag column in a group for easier SearchCal compatibility.
+ *
  * Revision 1.15  2006/11/27 17:28:31  lafrasse
  * Added deletedFlag column for SearchCal.
  *
@@ -63,7 +66,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.16 2006-11-28 13:04:57 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.17 2006-11-28 14:24:41 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -437,7 +440,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     }
 
     // Add deleteFlag group
-    buffer.AppendLine("   <GROUP name=\"deleteFlag\" ucd=\"DELETED_FLAG\">");
+    buffer.AppendLine("   <GROUP name=\"deletedFlag\" ucd=\"DELETED_FLAG\">");
     // Add field description
     buffer.AppendLine("    <DESCRIPTION>DELETED_FLAG with its origin and confidence index</DESCRIPTION>");
     // Bind main field ref
