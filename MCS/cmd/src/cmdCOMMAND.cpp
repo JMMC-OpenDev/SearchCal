@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.39 2006-10-10 15:50:17 lafrasse Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.40 2006-11-28 13:03:04 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2006/10/10 15:50:17  lafrasse
+ * Changed XML Serialization in VOTable PARAM.
+ *
  * Revision 1.38  2006/10/10 13:48:38  lafrasse
  * Corrected a bug in XML serialization.
  *
@@ -101,7 +104,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.39 2006-10-10 15:50:17 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.40 2006-11-28 13:03:04 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -450,24 +453,39 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
                 cmdPARAM * child = i->second;
 
                 // Write the parameter name
-                voTable.append("<PARAM name='");
+                voTable.append("<PARAM name=\"");
                 voTable.append(child->GetName());
-                voTable.append("'");
+                voTable.append("\"");
 
                 // Get the param type
-                voTable.append(" datatype='");
-                voTable.append(child->GetType());
-                voTable.append("'");
+                voTable.append(" datatype=\"");
+                string datatype = child->GetType().c_str();
+                // If the datatype matches 'string'
+                if (datatype == "string")
+                {
+                    voTable.append("char\" arraysize=\"*");
+                }
+                // Else if the datatype matches 'integer'
+                else if (datatype == "integer")
+                {
+                    voTable.append("int");
+                }
+                // Else for all other datatypes
+                else
+                {
+                    voTable.append(datatype);
+                }
+                voTable.append("\"");
 
                 // Get the param unit
-                voTable.append(" unit='");
+                voTable.append(" unit=\"");
                 voTable.append(child->GetUnit());
-                voTable.append("'");
+                voTable.append("\"");
 
 // TODO : handle optionnal params
 /*
                 // if it is an optional parameter
-                voTable.append(" optionnal='");
+                voTable.append(" optionnal=\"");
                 if (child->IsOptional() == mcsTRUE)
                 {
                     voTable.append("true");
@@ -476,11 +494,11 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
                 {
                     voTable.append("false");
                 }
-                voTable.append("'");
+                voTable.append("\"");
 */
 
                 // Write the user value, or default value if any
-                voTable.append(" value='");
+                voTable.append(" value=\"");
                 if (child->IsDefined() == mcsTRUE)
                 {
                     // Append user value
@@ -494,7 +512,7 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
                         voTable.append(child->GetDefaultValue());
                     }
                 }
-                voTable.append("'");
+                voTable.append("\"");
 
                 // Close the PARAM tag
                 voTable.append("/>\n");
