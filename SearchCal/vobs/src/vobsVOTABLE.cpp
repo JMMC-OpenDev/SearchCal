@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.15 2006-11-27 17:28:31 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.16 2006-11-28 13:04:57 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2006/11/27 17:28:31  lafrasse
+ * Added deletedFlag column for SearchCal.
+ *
  * Revision 1.14  2006/10/10 15:50:45  lafrasse
  * Changed XML Serialization in VOTable PARAM.
  *
@@ -60,7 +63,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.15 2006-11-27 17:28:31 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.16 2006-11-28 13:04:57 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -347,23 +350,41 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     }
 
     // Add the beginning of the deletedFlag field
-    buffer.AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\"");
+    buffer.AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\" ID=\"");
     // Add field ID
-    buffer.AppendString(" ID=\"");
     sprintf(tmp, "col%d", i);
     buffer.AppendString(tmp);
-    buffer.AppendString("\"");
     // Add the end of the deletedFlag field
-    buffer.AppendString("\" ucd=\"deletedFalg\" datatype=\"boolean\">");
-
+    buffer.AppendString("\" ucd=\"DELETED_FLAG\" datatype=\"boolean\">");
     // Add deleteFlag description
     buffer.AppendLine("    <DESCRIPTION>Used by SearchCal to flag deleted stars</DESCRIPTION>");
-
+    // Add standard field footer
+    buffer.AppendLine("   </FIELD>");
+    // Add the beginning of the deletedFlag origin field
+    buffer.AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag.origin\" ID=\"");
+    // Add field ID
+    sprintf(tmp, "col%d", i + 1);
+    buffer.AppendString(tmp);
+    // Add the end of the deletedFlag field
+    buffer.AppendString("\" ucd=\"DELETED_FLAG.origin\" datatype=\"char\" arraysize=\"*\">");
+    // Add deleteFlag description
+    buffer.AppendLine("    <DESCRIPTION>Origin of property deletedFlag</DESCRIPTION>");
+    // Add standard field footer
+    buffer.AppendLine("   </FIELD>");
+    // Add the beginning of the deletedFlag confidence indexfield
+    buffer.AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag.confidence\" ID=\"");
+    // Add field ID
+    sprintf(tmp, "col%d", i + 2);
+    buffer.AppendString(tmp);
+    // Add the end of the deletedFlag field
+    buffer.AppendString("\" ucd=\"DELETED_FLAG.confidence\" datatype=\"char\" arraysize=\"*\">");
+    // Add deleteFlag description
+    buffer.AppendLine("    <DESCRIPTION>Confidence index of property deletedFlag</DESCRIPTION>");
     // Add standard field footer
     buffer.AppendLine("   </FIELD>");
 
     // Serialize each of its properties as group description
-    i = 0;
+    int j = 0;
     starProperty = star->GetNextProperty(mcsTRUE);
     while (starProperty != NULL)
     {
@@ -390,20 +411,20 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         buffer.AppendString(" with its origin and confidence index</DESCRIPTION>");
  
         // Bind main field ref
-        sprintf(tmp, "col%d", i);
-        buffer.AppendLine("   <FIELDref ref=\"");
+        sprintf(tmp, "col%d", j);
+        buffer.AppendLine("    <FIELDref ref=\"");
         buffer.AppendString(tmp);
         buffer.AppendString("\" />");
 
         // Bind ORIGIN field ref
-        sprintf(tmp, "col%d", i+1);
-        buffer.AppendLine("   <FIELDref ref=\"");
+        sprintf(tmp, "col%d", j + 1);
+        buffer.AppendLine("    <FIELDref ref=\"");
         buffer.AppendString(tmp);
         buffer.AppendString("\" />");
 
         // Bind CONFIDENCE field ref
-        sprintf(tmp, "col%d", i+2);
-        buffer.AppendLine("   <FIELDref ref=\"");
+        sprintf(tmp, "col%d", j + 2);
+        buffer.AppendLine("    <FIELDref ref=\"");
         buffer.AppendString(tmp);
         buffer.AppendString("\" />");
 
@@ -412,8 +433,31 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
         
         // Retrieve the next property
         starProperty = star->GetNextProperty(mcsFALSE);
-        i+=3;
+        j += 3;
     }
+
+    // Add deleteFlag group
+    buffer.AppendLine("   <GROUP name=\"deleteFlag\" ucd=\"DELETED_FLAG\">");
+    // Add field description
+    buffer.AppendLine("    <DESCRIPTION>DELETED_FLAG with its origin and confidence index</DESCRIPTION>");
+    // Bind main field ref
+    sprintf(tmp, "col%d", j);
+    buffer.AppendLine("    <FIELDref ref=\"");
+    buffer.AppendString(tmp);
+    buffer.AppendString("\" />");
+    // Bind ORIGIN field ref
+    sprintf(tmp, "col%d", j + 1);
+    buffer.AppendLine("    <FIELDref ref=\"");
+    buffer.AppendString(tmp);
+    buffer.AppendString("\" />");
+    // Bind CONFIDENCE field ref
+    sprintf(tmp, "col%d", j + 2);
+    buffer.AppendLine("    <FIELDref ref=\"");
+    buffer.AppendString(tmp);
+    buffer.AppendString("\" />");
+    // Add standard group footer
+    buffer.AppendLine("   </GROUP>");
+    
     // Serialize each star property value
     buffer.AppendLine("   <DATA>");
     buffer.AppendLine("    <TABLEDATA>");
@@ -481,10 +525,10 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
 
             // Add standard column footer
             buffer.AppendString("</TD>");
-            
-            // Add dfault deleteFlag value
-            buffer.AppendString("<TD>false</TD>");
         }
+
+        // Add default deleteFlag value
+        buffer.AppendString("<TD>false</TD><TD></TD><TD></TD>");
 
         // Add standard row footer
         buffer.AppendLine("     </TR>");
