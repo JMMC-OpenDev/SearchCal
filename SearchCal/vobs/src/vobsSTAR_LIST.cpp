@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.34 2006-10-09 15:07:09 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.35 2006-12-21 15:08:15 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.34  2006/10/09 15:07:09  lafrasse
+* Added request XML serialization in VOTables.
+*
 * Revision 1.33  2006/04/03 11:49:49  gzins
 * Hanlded list empty case in GetNextXxx() method
 *
@@ -96,7 +99,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.34 2006-10-09 15:07:09 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.35 2006-12-21 15:08:15 lafrasse Exp $"; 
 
 
 /* 
@@ -620,6 +623,28 @@ void vobsSTAR_LIST::Display(void)
     }
 
     printf("\n");
+}
+
+/**
+ * Save each star in a VOTable v1.1.
+ *
+ * @param filename the path to the file in which the VOTable should be saved
+ * @param header header of the VO Table
+ * @param softwareVersion software version
+ * @param request user request
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char*    header,
+                                        const char*    softwareVersion,
+                                        const char*    request,
+                                        const char*    xmlRquest,
+                                        miscoDYN_BUF*  buffer)
+{
+    logTrace("vobsSTAR_LIST::GetVOTable()");
+
+    vobsVOTABLE serializer;
+    return(serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRquest, buffer));
 }
 
 /**

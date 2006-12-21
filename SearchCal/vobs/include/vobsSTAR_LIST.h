@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.22 2006-10-09 15:07:08 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.h,v 1.23 2006-12-21 15:08:15 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.22  2006/10/09 15:07:08  lafrasse
+* Added request XML serialization in VOTables.
+*
 * Revision 1.21  2006/01/05 09:07:39  lafrasse
 * Code review
 *
@@ -60,6 +63,11 @@
 #include<list>
 
 /*
+ * MCS Headers 
+ */
+#include "miscoDYN_BUF.h"
+
+/*
  * Local Headers 
  */
 #include"vobsSTAR.h"
@@ -107,6 +115,12 @@ class vobsSTAR_LIST
                                mcsLOGICAL reverseOrder=mcsFALSE);
 
     virtual void          Display(void);
+
+    virtual mcsCOMPL_STAT GetVOTable(const char*    header,
+                                     const char*    softwareVersion,
+                                     const char*    request,
+                                     const char*    xmlRquest,
+                                     miscoDYN_BUF*  buffer);
 
     virtual mcsCOMPL_STAT SaveToVOTable(const char *filename,
                                         const char *header,
