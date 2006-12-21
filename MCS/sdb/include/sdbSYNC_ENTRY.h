@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.3 2006-02-22 17:05:43 lafrasse Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.4 2006-12-21 15:03:08 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/02/22 17:05:43  lafrasse
+ * Added security check to disable semaphores use in case of  bad initialization
+ *
  * Revision 1.2  2005/12/22 14:10:35  lafrasse
  * Added a way to release all the created semaphores used by sdbENTRY
  *
@@ -85,12 +88,12 @@ public:
     // Class destructor
     virtual ~sdbENTRY();
 
-    static mcsCOMPL_STAT  Init    (void);
-    static mcsCOMPL_STAT  Destroy (void);
-    static mcsCOMPL_STAT  Write   (const char*       message,
-                                   const mcsLOGICAL  lastMessage);
-    static mcsCOMPL_STAT  Wait    (      char*       message,
-                                         mcsLOGICAL* lastMessage);
+    mcsCOMPL_STAT  Init    (void);
+    mcsCOMPL_STAT  Destroy (void);
+    mcsCOMPL_STAT  Write   (const char*       message,
+                            const mcsLOGICAL  lastMessage);
+    mcsCOMPL_STAT  Wait    (      char*       message,
+                                  mcsLOGICAL* lastMessage);
 
 protected:
     
@@ -100,13 +103,13 @@ private:
     sdbENTRY(const sdbENTRY&);
     sdbENTRY& operator=(const sdbENTRY&);
 
-    static thrdSEMAPHORE  _emptyBufferSemaphore;
-    static thrdSEMAPHORE  _fullBufferSemaphore;
+    thrdSEMAPHORE  _emptyBufferSemaphore;
+    thrdSEMAPHORE  _fullBufferSemaphore;
 
-    static mcsSTRING256   _buffer;
+    mcsSTRING256   _buffer;
 
-    static mcsLOGICAL     _initSucceed;
-    static mcsLOGICAL     _lastMessage;
+    mcsLOGICAL     _initSucceed;
+    mcsLOGICAL     _lastMessage;
 };
 
 #endif /*!sdbENTRY_H*/

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.7 2006-05-11 13:04:57 mella Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.8 2006-12-21 15:03:08 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/05/11 13:04:57  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.6  2006/04/07 07:51:38  swmgr
  * Changed logTest to logDebug
  *
@@ -31,7 +34,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.7 2006-05-11 13:04:57 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.8 2006-12-21 15:03:08 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -59,13 +62,6 @@ using namespace std;
 /*
  * Static members dfinition 
  */
-thrdSEMAPHORE  sdbENTRY::_emptyBufferSemaphore = 0;
-thrdSEMAPHORE  sdbENTRY::_fullBufferSemaphore  = 0;
-
-mcsSTRING256   sdbENTRY::_buffer;
-
-mcsLOGICAL     sdbENTRY::_initSucceed = mcsFALSE;
-mcsLOGICAL     sdbENTRY::_lastMessage = mcsFALSE;
 
 
 /**
@@ -73,6 +69,11 @@ mcsLOGICAL     sdbENTRY::_lastMessage = mcsFALSE;
  */
 sdbENTRY::sdbENTRY()
 {
+    _emptyBufferSemaphore = 0;
+    _fullBufferSemaphore  = 0;
+    
+    _initSucceed = mcsFALSE;
+    _lastMessage = mcsFALSE;
 }
 
 /**
