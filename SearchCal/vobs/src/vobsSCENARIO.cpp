@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.43 2006-04-10 11:49:12 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.44 2006-12-21 15:10:46 lafrasse Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.43  2006/04/10 11:49:12  gzins
+* Added missing breaks in action switch case in Execute() method
+*
 * Revision 1.42  2006/04/07 08:23:00  gzins
 * Removed useless \n in log messages
 *
@@ -136,7 +139,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.43 2006-04-10 11:49:12 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.44 2006-12-21 15:10:46 lafrasse Exp $"; 
 
 
 /* 
@@ -169,13 +172,15 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsSCENARIO::vobsSCENARIO()
+vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
 {
     _entryIterator = _entryList.begin();
     // affect to NULL the catalog list
     _catalogList = NULL;
     _nbOfCatalogs = 0;
     _catalogIndex = 0;
+
+    _progress = progress;
 }
 
 /*
@@ -321,7 +326,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             snprintf(message, sizeof(message),
                      "Looking in '%s' catalog (%d/%d)...",
                      catalog, (_catalogIndex + 1), _nbOfCatalogs);
-            if (sdbWriteAction(message, mcsFALSE) == mcsFAILURE)
+            if (_progress->Write(message, mcsFALSE) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }

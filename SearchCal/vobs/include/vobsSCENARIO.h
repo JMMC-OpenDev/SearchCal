@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.12 2006-01-18 08:46:49 scetre Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.13 2006-12-21 15:10:46 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2006/01/18 08:46:49  scetre
+* Managed the new option which could be gave to a catalog
+*
 * Revision 1.11  2005/12/22 14:14:17  lafrasse
 * Added a catalog counter and index to further report progression in the GUI status message
 *
@@ -49,9 +52,16 @@
 #endif
 
 /*
- * header files
+ * System Header
  */
 #include <list>
+
+
+/*
+ * MCS header
+ */
+#include "sdb.h"
+
 
 /*
  * local Header
@@ -62,6 +72,7 @@
 #include "vobsSCENARIO_ENTRY.h"
 #include "vobsCATALOG_LIST.h"
 #include "vobsREQUEST.h"
+
 
 /*
  * Class declaration
@@ -81,7 +92,7 @@
 class vobsSCENARIO
 {
 public :
-    vobsSCENARIO();
+    vobsSCENARIO(sdbENTRY* progress);
     virtual ~vobsSCENARIO(); 
     
     virtual mcsCOMPL_STAT AddEntry(mcsSTRING32      catalog,
@@ -101,6 +112,8 @@ public :
     virtual mcsCOMPL_STAT Clear(void);
     
 protected :
+    // Progression monitoring
+    sdbENTRY* _progress;
 
 private :
     // Declaration of copy constructor and assignment operator as private
