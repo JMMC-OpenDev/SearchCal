@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.h,v 1.5 2005-11-29 10:38:38 gzins Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.h,v 1.6 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/11/29 10:38:38  gzins
+ * Changed vobsBASE_FILTER to vobsFILTER
+ *
  * Revision 1.4  2005/11/24 13:21:38  scetre
  * Clean the presentation of the add entry
  *
@@ -50,7 +53,7 @@ class sclsvrSCENARIO_BRIGHT_V : public vobsSCENARIO
 
 public:
     // Class constructor
-    sclsvrSCENARIO_BRIGHT_V();
+    sclsvrSCENARIO_BRIGHT_V(sdbENTRY* progress);
 
     // Class destructor
     virtual ~sclsvrSCENARIO_BRIGHT_V();

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.13 2006-03-28 12:58:13 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.14 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2006/03/28 12:58:13  scetre
+ * Added parameters constraints on I/280 query
+ *
  * Revision 1.12  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -50,7 +53,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.13 2006-03-28 12:58:13 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.14 2006-12-21 15:16:05 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -74,8 +77,9 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_BRIGHT_K::sclsvrSCENARIO_BRIGHT_K():
-_originFilter("K origin = 2mass filter"),
+sclsvrSCENARIO_BRIGHT_K::sclsvrSCENARIO_BRIGHT_K(sdbENTRY* progress):
+    vobsSCENARIO(progress),
+    _originFilter("K origin = 2mass filter"),
     _magnitudeFilter("K mag filter"),
     _filterList("filter List"),
     _bvFilter("B-V filter")

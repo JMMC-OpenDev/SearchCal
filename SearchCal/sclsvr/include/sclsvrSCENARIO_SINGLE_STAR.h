@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.h,v 1.1 2005-11-21 13:51:47 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.h,v 1.2 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2005/11/21 13:51:47  scetre
+ * Changed bad scenario name
+ * Added scenario for single star research -> updated getStar
+ *
  ******************************************************************************/
 
 /**
@@ -39,7 +43,7 @@ class sclsvrSCENARIO_SINGLE_STAR : public vobsSCENARIO
 
 public:
     // Class constructor
-    sclsvrSCENARIO_SINGLE_STAR();
+    sclsvrSCENARIO_SINGLE_STAR(sdbENTRY* progress);
 
     // Class destructor
     virtual ~sclsvrSCENARIO_SINGLE_STAR();

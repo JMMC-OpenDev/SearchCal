@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.29 2006-10-26 08:15:57 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.30 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2006/10/26 08:15:57  gzins
+ * Renamed thrdTHREAD to thrdTHREAD_STRUCT
+ *
  * Revision 1.28  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -60,7 +63,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.29 2006-10-26 08:15:57 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.30 2006-12-21 15:16:05 lafrasse Exp $"; 
 
 
 /* 
@@ -122,18 +125,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     // Start timer log
     timlogInfoStart(msg.GetCommand());
 
-    // sdbAction initialization
-    mcsLOGICAL sdbInitSucceed = mcsFALSE;
-    if (sdbInitAction() == mcsSUCCESS)
-    {
-        sdbInitSucceed = mcsTRUE;
-    }
-    else
-    {
-        sdbInitSucceed = mcsFALSE;
-        errCloseStack();
-    }
-
     // actionMonitor thread parameters creation
     sclsvrMonitorActionParams      actionMonitorParams;
     actionMonitorParams.server   = this;
@@ -145,7 +136,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
 
     // Launch the thread only if SDB had been succesfully started
-    if (sdbInitSucceed == mcsTRUE)
+    if (_progressionMessageInitFlag == mcsTRUE)
     {
         if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
         {
@@ -214,8 +205,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;        
     }
     
-    if (_virtualObservatory.Search(&_scenarioSingleStar, request, starList) ==
-        mcsFAILURE)
+    if (_virtualObservatory.Search(&_scenarioSingleStar, request, starList) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -226,7 +216,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         // Get first star of the list 
         sclsvrCALIBRATOR calibrator(*starList.GetNextStar(mcsTRUE));
 
-        if (sdbWriteAction("Done", mcsTRUE) == mcsFAILURE)
+        if (_progress.Write("Done", mcsTRUE) == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
@@ -275,7 +265,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
         // sdbAction deletion
-        if (sdbDestroyAction() == mcsFAILURE)
+        if (_progress.Destroy() == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
@@ -286,7 +276,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     }
 
     // Wait for the thread only if it had been started
-    if (sdbInitSucceed == mcsTRUE)
+    if (_progressionMessageInitFlag == mcsTRUE)
     {
         // Wait for the actionForwarder thread end
         if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
@@ -296,7 +286,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     }
 
     // sdbAction deletion
-    if (sdbDestroyAction() == mcsFAILURE)
+    if (_progress.Destroy() == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.44 2006-10-26 08:15:57 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.45 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.44  2006/10/26 08:15:57  gzins
+ * Renamed thrdTHREAD to thrdTHREAD_STRUCT
+ *
  * Revision 1.43  2006/10/10 15:50:44  lafrasse
  * Changed XML Serialization in VOTable PARAM.
  *
@@ -137,7 +140,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.44 2006-10-26 08:15:57 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.45 2006-12-21 15:16:05 lafrasse Exp $"; 
 
 
 /* 
@@ -180,52 +183,70 @@ using namespace std;
 /*
  * Public methods
  */
-evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
+mcsCOMPL_STAT sclsvrSERVER::GetCalStatus(char* buffer, bool* lastCatalog)
 {
-    logTrace("sclsvrSERVER::GetCalCB()");
+    logTrace("GetCalNext()");
+
+    mcsLOGICAL mcsLastCatalog;
+
+    // Wait for a new action
+    if (_progress.Wait(buffer, &mcsLastCatalog) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    if (mcsLastCatalog == mcsTRUE)
+    {
+        *lastCatalog = true;
+    }
+    else
+    {
+        *lastCatalog = false;
+    }
+
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msgMESSAGE* msg = NULL)
+{
+    logTrace("sclsvrSERVER::GetCal()");
 
     // Build the request object from the parameters of the command
     sclsvrREQUEST request;
-    if (request.Parse(msg.GetBody()) == mcsFAILURE)
+    if (request.Parse(query) == mcsFAILURE)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        return mcsFAILURE;
     }
 
     // Get the request as a string for the case of Save in VOTable
     mcsSTRING256 requestString;
-    strcpy(requestString, msg.GetBody());
+    strcpy(requestString, query);
  
     // Start timer log
-    timlogInfoStart(msg.GetCommand());
+    timlogInfoStart("GETCAL");
     
-    // sdbAction initialization
-    mcsLOGICAL sdbInitSucceed = mcsFALSE;
-    if (sdbInitAction() == mcsSUCCESS)
-    {
-        sdbInitSucceed = mcsTRUE;
-    }
-    else
-    {
-        sdbInitSucceed = mcsFALSE;
-        errCloseStack();
-    }
-
     // actionMonitor thread parameters creation
-    sclsvrMonitorActionParams      actionMonitorParams;
-    actionMonitorParams.server   = this;
-    actionMonitorParams.message  = &msg;
+    sclsvrMonitorActionParams                  actionMonitorParams;
+    actionMonitorParams.server              =  this;
+    actionMonitorParams.message             =  msg;
+    actionMonitorParams.progressionMessage  = &_progress;
 
     // actionMonitor thread creation and launch
-    thrdTHREAD_STRUCT                     actionMonitor;
+    thrdTHREAD_STRUCT              actionMonitor;
     actionMonitor.function       = sclsvrMonitorAction;
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
 
-    // Launch the thread only if SDB had been succesfully started
-    if (sdbInitSucceed == mcsTRUE)
+    // SDB starting
+    if (_progressionMessageInitFlag == mcsTRUE)
     {
-        if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
+        // Status monitoring should be done by thread with msgMESSAGE reply.
+        if (msg != NULL)
         {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
+            // Launch the status monitoring thread
+            if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
         }
     }
 
@@ -249,14 +270,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                     // Load old Bright K Scenario
                     if (_scenarioBrightKOld.Init(&request) == mcsFAILURE)
                     {
-                        return evhCB_NO_DELETE | evhCB_FAILURE;
+                        return mcsFAILURE;
                     }
                     // Start the research in the virtual observatory
                     if (_virtualObservatory.Search(&_scenarioBrightKOld,
                                                    request,
                                                    starList) == mcsFAILURE)
                     {
-                        return evhCB_NO_DELETE | evhCB_FAILURE;
+                        return mcsFAILURE;
                     }
                 }
                 else
@@ -264,13 +285,13 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                     // Load Bright K Scenario
                     if (_scenarioBrightK.Init(&request) == mcsFAILURE)
                     {
-                        return evhCB_NO_DELETE | evhCB_FAILURE;
+                        return mcsFAILURE;
                     }
                     // Start the research in the virtual observatory
                     if (_virtualObservatory.Search(&_scenarioBrightK, request,
                                                    starList) == mcsFAILURE)
                     {
-                        return evhCB_NO_DELETE | evhCB_FAILURE;
+                        return mcsFAILURE;
                     }
                 }
                 break;
@@ -279,14 +300,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 // Load Bright V Scenario
                 if (_scenarioBrightV.Init(&request) == mcsFAILURE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    return mcsFAILURE;
                 }
 
                 // Start the research in the virtual observatory
                 if (_virtualObservatory.Search(&_scenarioBrightV, request,
                                                starList) == mcsFAILURE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    return mcsFAILURE;
                 }
 
                 break;
@@ -295,21 +316,21 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 // Load Bright N Scenario
                 if (_scenarioBrightN.Init(&request) == mcsFAILURE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    return mcsFAILURE;
                 }
 
                 // Start the research in the virtual observatory
                 if (_virtualObservatory.Search(&_scenarioBrightN, request,
                                                starList) == mcsFAILURE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    return mcsFAILURE;
                 }
 
                 break;
 
             default:
                 errAdd(sclsvrERR_UNKNOWN_BAND, band);
-                return evhCB_NO_DELETE | evhCB_FAILURE;
+                return mcsFAILURE;
                 break;
         }
     }
@@ -329,21 +350,21 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 // Load Faint K Scenario
                 if (_scenarioFaintK.Init(&request) == mcsFAILURE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    return mcsFAILURE;
                 }
 
                 // Start the research in the virtual observatory
                 if (_virtualObservatory.Search(&_scenarioFaintK, request,
                                                starList) == mcsFAILURE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    return mcsFAILURE;
                 }
 
                 break;
 
             default:
                 errAdd(sclsvrERR_UNKNOWN_BAND, band);
-                return evhCB_NO_DELETE | evhCB_FAILURE;
+                return mcsFAILURE;
                 break;
         }
     }
@@ -354,7 +375,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
             errAdd(sclsvrERR_INVALID_SEARCH_AREA, "bright", "rectangular");
         }
  
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        return mcsFAILURE;
     }
 
     // Build the list of calibrator
@@ -363,18 +384,18 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     // Get the returned star list and create a calibrator list from it
     if (calibratorList.Copy(starList) == mcsFAILURE)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        return mcsFAILURE;
     }
 
-    if (sdbWriteAction("Completing results...", mcsFALSE) == mcsFAILURE)
+    if (_progress.Write("Completing results...", mcsFALSE) == mcsFAILURE)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        return mcsFAILURE;
     }
 
     // Complete the calibrators list
     if (calibratorList.Complete(request) == mcsFAILURE)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        return mcsFAILURE;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -401,7 +422,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         // Get Star ID
         if (currentStar->GetId(starId, sizeof(starId)) == mcsFAILURE)
         {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
+            return mcsFAILURE;
         }
         logInfo("science star %s has been removed", starId);
         calibratorList.Remove(*currentStar);
@@ -411,23 +432,38 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     ////////////////////////////////////////////////////////////////////////////
 
 
-    if (sdbWriteAction("Done", mcsTRUE) == mcsFAILURE)
+    if (_progress.Write("Done", mcsTRUE) == mcsFAILURE)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        return mcsFAILURE;
     }
 
     // Pack the list result in a buffer in order to send it
     if (calibratorList.Size() != 0)
     { 
-        miscoDYN_BUF dynBuff;
-        calibratorList.Pack(&dynBuff);
-        
-        msg.SetBody(dynBuff.GetBuffer());
-
         string xmlOutput;
         request.AppendParamsToVOTable(xmlOutput);
+        char* voHeader = "SearchCal software: http://www.mariotti.fr/aspro_page.htm (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+        // Get the software name and version
+        mcsSTRING32 softwareVersion;
+        snprintf(softwareVersion, sizeof(softwareVersion), "%s v%s", "SearchCal",
+                 sclsvrVERSION);
 
-        // If a file has been given, store result in this file
+        // Give back CDATA for msgMESSAGE reply.
+        if (msg != NULL)
+        {
+            calibratorList.Pack(&dynBuff);
+        }
+        else
+        {
+            // Otherwise give back a VOTable
+            dynBuff.Reset();
+            if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), &dynBuff) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+
+        // If a filename has been given, store results as file
         if (strcmp(request.GetFileName(), "") != 0)
         {
             mcsSTRING32 fileName;
@@ -435,16 +471,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
             // If the extension is .vot, save as VO table
             if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
-                // define the header
-                char * header = "SearchCal software: http://www.mariotti.fr/aspro_page.htm (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
-                // Get the software name and version
-                mcsSTRING32 software;
-                snprintf(software, sizeof(software), "%s v%s", "SearchCal",
-                         sclsvrVERSION);
                 // Save the list as a VOTable v1.1
-                if (calibratorList.SaveToVOTable(request.GetFileName(), header, software, requestString, xmlOutput.c_str()) == mcsFAILURE)
+                if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion, requestString, xmlOutput.c_str()) == mcsFAILURE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    return mcsFAILURE;
                 }
             }
             else
@@ -452,41 +482,60 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
                 if (calibratorList.Save(request.GetFileName(), 
                                     request) == mcsFAILURE)
                 {
-                    return evhCB_NO_DELETE | evhCB_FAILURE;
+                    return mcsFAILURE;
                 };
             }
         }
     }
     else
     {
-        msg.ClearBody();
+        dynBuff.Reset();
     }
 
     // Wait for the thread only if it had been started
-    if (sdbInitSucceed == mcsTRUE)
+    if (_progressionMessageInitFlag == mcsTRUE)
     {
-        // Wait for the actionForwarder thread end
-        if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
+        // Status monitoring should be done by thread with msgMESSAGE reply.
+        if (msg != NULL)
         {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
+            // Wait for the actionForwarder thread end
+            if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
         }
     }
 
     // sdbAction deletion
-    if (sdbDestroyAction() == mcsFAILURE)
+    if (_progress.Destroy() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Stop timer log
+    timlogStop("GETCAL");
+    
+    return mcsSUCCESS;
+}
+
+evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
+{
+    logTrace("sclsvrSERVER::GetCalCB()");
+
+    // Get calibrators
+    miscoDYN_BUF dynBuff;
+    if (GetCal(msg.GetBody(), dynBuff, &msg) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // Send reply
+    msg.SetBody(dynBuff.GetBuffer());
     if (SendReply(msg) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
-    // Stop timer log
-    timlogStop(msg.GetCommand());
-    
     return evhCB_NO_DELETE;
 }
 

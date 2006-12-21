@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.5 2006-07-17 09:10:36 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.6 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/07/17 09:10:36  scetre
+ * Added old scenario option
+ *
  * Revision 1.3  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -22,7 +25,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_OLD class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.5 2006-07-17 09:10:36 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.cpp,v 1.6 2006-12-21 15:16:05 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -46,8 +49,9 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_BRIGHT_K_OLD::sclsvrSCENARIO_BRIGHT_K_OLD():
-_originFilter("K origin = 2mass filter"),
+sclsvrSCENARIO_BRIGHT_K_OLD::sclsvrSCENARIO_BRIGHT_K_OLD(sdbENTRY* progress):
+    vobsSCENARIO(progress),
+    _originFilter("K origin = 2mass filter"),
     _magnitudeFilter("K mag filter"),
     _filterList("filter List"),
     _bvFilter("B-V filter"),

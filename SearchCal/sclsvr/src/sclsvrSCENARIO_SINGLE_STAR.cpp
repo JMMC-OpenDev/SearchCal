@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.3 2006-05-11 13:04:57 mella Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.4 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/05/11 13:04:57  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.2  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -20,7 +23,7 @@
  *  Definition of sclsvrSCENARIO_SINGLE_STAR class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.3 2006-05-11 13:04:57 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.4 2006-12-21 15:16:05 lafrasse Exp $";
 /* 
  * System Headers 
  */
@@ -43,7 +46,8 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_SINGLE_STAR::sclsvrSCENARIO_SINGLE_STAR()
+sclsvrSCENARIO_SINGLE_STAR::sclsvrSCENARIO_SINGLE_STAR(sdbENTRY* progress):
+    vobsSCENARIO(progress)
 {
 }
 

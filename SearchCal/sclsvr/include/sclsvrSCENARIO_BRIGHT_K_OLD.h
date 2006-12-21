@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.h,v 1.3 2006-07-17 09:10:36 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_OLD.h,v 1.4 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/07/17 09:10:36  scetre
+ * Added old scenario option
+ *
  * Revision 1.1  2005/12/12 14:07:57  scetre
  * Added old scenario with 2mass in primary request
  *
@@ -41,7 +44,7 @@ class sclsvrSCENARIO_BRIGHT_K_OLD : public vobsSCENARIO
 
 public:
     // Class constructor
-    sclsvrSCENARIO_BRIGHT_K_OLD();
+    sclsvrSCENARIO_BRIGHT_K_OLD(sdbENTRY* progress);
 
     // Class destructor
     virtual ~sclsvrSCENARIO_BRIGHT_K_OLD();

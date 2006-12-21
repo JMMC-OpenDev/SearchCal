@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.21 2006-07-17 09:10:36 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.22 2006-12-21 15:16:05 lafrasse Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.21  2006/07/17 09:10:36  scetre
+# Added old scenario option
+#
 # Revision 1.20  2006/03/07 15:33:39  scetre
 # Removed old scenario in band K
 #
@@ -71,7 +74,7 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = sclsvrServer
+EXECUTABLES     = sclsvrServer sclsvrCLI
 EXECUTABLES_L   = 
 
 #
@@ -79,6 +82,12 @@ EXECUTABLES_L   =
 sclsvrServer_OBJECTS   = sclsvrServer
 sclsvrServer_LDFLAGS   =
 sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr simcli
+
+#
+# <brief description of xxxxx program>
+sclsvrCLI_OBJECTS   = sclsvrCLI
+sclsvrCLI_LDFLAGS   =
+sclsvrCLI_LIBS      = MCS C++ vobs alx sclsvr simcli
 
 #
 # special compilation flags for single c sources

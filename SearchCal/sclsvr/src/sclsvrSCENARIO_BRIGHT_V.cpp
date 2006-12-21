@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.9 2006-03-28 12:58:13 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.10 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2006/03/28 12:58:13  scetre
+ * Added parameters constraints on I/280 query
+ *
  * Revision 1.8  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -37,7 +40,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_V class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.9 2006-03-28 12:58:13 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.10 2006-12-21 15:16:05 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -61,8 +64,9 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_BRIGHT_V::sclsvrSCENARIO_BRIGHT_V():
-_filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG)
+sclsvrSCENARIO_BRIGHT_V::sclsvrSCENARIO_BRIGHT_V(sdbENTRY* progress):
+    vobsSCENARIO(progress),
+    _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG)
 {
 }
 

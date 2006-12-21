@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.9 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.10 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.8  2006/02/21 16:52:39  scetre
  * Moved the 2 same method in one in sclsvrSERVER.cpp
  * move the 2 same struct in sclsvrPrivate.h
@@ -31,7 +34,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.9 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.10 2006-12-21 15:16:05 lafrasse Exp $"; 
 
 
 /* 
@@ -74,15 +77,20 @@ thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
     mcsLOGICAL    lastMessage = mcsFALSE;
 
     // Get the server and message pointer back from the function parameter
-    sclsvrMonitorActionParams* paramsPtr = (sclsvrMonitorActionParams*)param;
-    sclsvrSERVER*                 server = (sclsvrSERVER*)paramsPtr->server;
+    sclsvrMonitorActionParams* paramsPtr = (sclsvrMonitorActionParams*) param;
+    sclsvrSERVER*                 server = (sclsvrSERVER*) paramsPtr->server;
     msgMESSAGE*                  message = (msgMESSAGE*) paramsPtr->message;
+    sdbENTRY*         progressionMessage = (sdbENTRY*) paramsPtr->progressionMessage;
+
+    int i =0;
+    cout << i++ << endl;
 
     // Get any new action and forward it to the GUI ...
     do
     {
+    cout << i++ << endl;
         // Wait for a new action
-        if (sdbWaitAction(buffer, &lastMessage) == mcsFAILURE)
+        if (progressionMessage->Wait(buffer, &lastMessage) == mcsFAILURE)
         {
             return NULL;
         }
@@ -108,8 +116,27 @@ thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
 /*
  * Class constructor
  */
-sclsvrSERVER::sclsvrSERVER()
+sclsvrSERVER::sclsvrSERVER():
+_virtualObservatory(),
+_scenarioBrightK(&_progress),
+_scenarioBrightKOld(&_progress),
+_scenarioBrightV(&_progress),
+_scenarioBrightN(&_progress),
+_scenarioFaintK(&_progress),
+_scenarioSingleStar(&_progress)
 {
+    // sdbAction initialization
+    _progressionMessageInitFlag = mcsFALSE;
+    if (_progress.Init() == mcsSUCCESS)
+    {
+        _progressionMessageInitFlag = mcsTRUE;
+    }
+    else
+    {
+        _progressionMessageInitFlag = mcsFALSE;
+        errCloseStack();
+    }
+
 }
 
 /*

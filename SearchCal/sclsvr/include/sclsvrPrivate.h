@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrPrivate.h,v 1.7 2006-05-12 08:27:45 mella Exp $"
+ * "@(#) $Id: sclsvrPrivate.h,v 1.8 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/05/12 08:27:45  mella
+ * Add general math.h inclusion
+ *
  * Revision 1.6  2006/02/21 16:52:39  scetre
  * Moved the 2 same method in one in sclsvrSERVER.cpp
  * move the 2 same struct in sclsvrPrivate.h
@@ -66,6 +69,8 @@ typedef struct
     sclsvrSERVER*  server;   /**< pointer on a sclsvrSERVER instance. */
 
     msgMESSAGE*    message;  /**< pointer on a msgMESSAGE instance. */
+
+    sdbENTRY*      progressionMessage;   /**< pointer on a sdbENTRY instance. */
 
 } sclsvrMonitorActionParams;
 

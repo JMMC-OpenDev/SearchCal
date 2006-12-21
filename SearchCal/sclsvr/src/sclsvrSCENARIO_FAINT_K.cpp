@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.20 2006-08-25 06:07:22 gzins Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.21 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2006/08/25 06:07:22  gzins
+ * Fixed bug related to error handling; vobsERR_xxx errors was added in error stack.
+ *
  * Revision 1.19  2006/03/28 12:42:12  gzins
  * Added opt and Qflg option when querying 2mass
  *
@@ -72,7 +75,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.20 2006-08-25 06:07:22 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.21 2006-12-21 15:16:05 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -98,8 +101,9 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K():
-_filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
+sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress):
+    vobsSCENARIO(progress),
+    _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
     _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
 {
 }
@@ -214,7 +218,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         }
 
         // Decisionnal scenario
-        vobsSCENARIO scenarioCheck;
+        vobsSCENARIO scenarioCheck(_progress);
         vobsSTAR_LIST starList;
         // Initialize it
         if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL,

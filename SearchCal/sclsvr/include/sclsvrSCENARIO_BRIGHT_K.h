@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.5 2006-01-18 08:49:40 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.6 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/01/18 08:49:40  scetre
+ * Removed unused filter on Qflg and opt because they are now managed by the catalog option
+ *
  * Revision 1.4  2005/11/29 10:38:29  gzins
  * Changed vobsBASE_FILTER to vobsFILTER
  *
@@ -50,7 +53,7 @@ class sclsvrSCENARIO_BRIGHT_K : public vobsSCENARIO
 
 public:
     // Class constructor
-    sclsvrSCENARIO_BRIGHT_K();
+    sclsvrSCENARIO_BRIGHT_K(sdbENTRY* progress);
 
     // Class destructor
     virtual ~sclsvrSCENARIO_BRIGHT_K();

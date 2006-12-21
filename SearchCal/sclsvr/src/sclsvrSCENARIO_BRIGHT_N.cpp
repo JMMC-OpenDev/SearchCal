@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_N.cpp,v 1.3 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_N.cpp,v 1.4 2006-12-21 15:16:05 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.2  2005/11/16 14:28:02  scetre
  * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
  *
@@ -19,7 +22,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_N class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_N.cpp,v 1.3 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_N.cpp,v 1.4 2006-12-21 15:16:05 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -43,7 +46,8 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_BRIGHT_N::sclsvrSCENARIO_BRIGHT_N()
+sclsvrSCENARIO_BRIGHT_N::sclsvrSCENARIO_BRIGHT_N(sdbENTRY* progress):
+    vobsSCENARIO(progress)
 {
 }
 
