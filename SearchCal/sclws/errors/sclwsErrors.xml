@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<errorList moduleName="sclws">
+   <error id="1">
+      <errName>BIND</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Could not bind on port '%d'.]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>THREAD_CREATION</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Could not create a thread]]></errFormat>
+   </error>
+</errorList>

@@ -1,7 +1,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.1 2006-12-21 15:19:19 ccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.2 2006-12-22 15:17:50 lafrasse Exp $"
 #
 # Makefile of sclws module
 #
@@ -33,17 +33,46 @@
 # As a general rule:  public file are "cleaned" and "installed"  
 #                     local (_L) are not "installed".
 
+
+# Generate code for SAOP access to sclwsWS
+# -n : use service name to rename service functions and namespace table
+# -p : generated filename prefix = soap
+# -L : don't generate soapClientLib/soapServerLib
+# -x : don't generate sample XML message files
+# -d : generated file output path = ../include/
+soapbuild:
+	/usr/local/bin/soapcpp2 -n -psoap -L -x -d../include/ ../include/sclwsWS.h
+	mv ../include/*.cpp ./
+
+# Remove any SOAP-generatdd file
+soapclean:
+	rm -f ../include/soap* ../include/*.xml ../include/*.xsd ../include/*.wsdl ../include/ns.*
+	rm -f soap*
+
+
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =
+EXECUTABLES     = sclwsServer sclwsGetCal
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
-xxxxx_OBJECTS   =
-xxxxx_LDFLAGS   =
-xxxxx_LIBS      =
+# <brief description of sclwsServer program>
+sclwsServer_OBJECTS   = sclwsServer \
+                        sclwsWS \
+                        soapC \
+                        soapServer
+sclwsServer_LDFLAGS   = 
+sclwsServer_LIBS      = MCS C++ gsoap++ pthread uuid sclsvr vobs alx simcli thrd
+
+#
+# <brief description of sclwsGetCal program>
+sclwsGetCal_OBJECTS   = sclwsGetCal \
+                        sclwsWS \
+                        soapC \
+                        soapClient
+sclwsGetCal_LDFLAGS   = 
+sclwsGetCal_LIBS      = MCS C++ gsoap++ pthread uuid sclsvr vobs alx simcli thrd
 
 #
 # special compilation flags for single c sources
@@ -52,17 +81,17 @@ xxxxx_LIBS      =
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        =
+INCLUDES        = sclws.h
 
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       =
+LIBRARIES       = 
 LIBRARIES_L     =
 
 #
-# <brief description of lllll library>
-lllll_OBJECTS   =
+# <brief description of sclws library>
+sclws_OBJECTS   = 
 
 #
 # Scripts (public and local)
