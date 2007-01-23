@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.10 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.11 2007-01-23 14:29:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.9  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -34,7 +37,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.10 2006-12-21 15:16:05 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.11 2007-01-23 14:29:45 lafrasse Exp $"; 
 
 
 /* 
@@ -82,13 +85,9 @@ thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
     msgMESSAGE*                  message = (msgMESSAGE*) paramsPtr->message;
     sdbENTRY*         progressionMessage = (sdbENTRY*) paramsPtr->progressionMessage;
 
-    int i =0;
-    cout << i++ << endl;
-
     // Get any new action and forward it to the GUI ...
     do
     {
-    cout << i++ << endl;
         // Wait for a new action
         if (progressionMessage->Wait(buffer, &lastMessage) == mcsFAILURE)
         {
