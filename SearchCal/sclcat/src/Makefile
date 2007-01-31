@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2006-11-27 10:31:19 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.4 2007-01-31 10:03:05 mella Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2006/11/27 10:31:19  scetre
+# Added Fortrant treatment in the catalogue file generation
+#
 # Revision 1.2  2006/10/31 14:23:26  gzins
 # Added sclcatPrima local script
 #
@@ -74,7 +77,11 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         =
-SCRIPTS_L       = sclcatPrima
+SCRIPTS_L       = sclcatPrima \
+				  sclcatPrimaGenerateConfig \
+				  sclcatPrimaParseResult \
+				  
+
 
 #
 # TCL scripts (public and local)
@@ -101,8 +108,8 @@ tttlll_OBJECTS  =
 #
 # Python scripts (public and local)
 # ---------------------------------
-PY_SCRIPTS     = 
-PY_SCRIPTS_L   = sclcatPrimaConcat
+PY_SCRIPTS     = sclcatPrimaPrepareBatchFile
+PY_SCRIPTS_L   =
 
 #
 # Jarfiles and their directories
@@ -175,8 +182,9 @@ install : install_all
 	@echo " . . . installation done"
 
 # Build fortran executables
-EXECUTABLES_FORTRAN = sclcatPrimaPreClass \
-					  sclcatPrimaLect
+EXECUTABLES_FORTRAN = sclcatPrimaFilter
+#                      sclcatPrimaPreClass \
+#					   sclcatPrimaLect \
 
 do_fortran:
 	@for file in $(EXECUTABLES_FORTRAN) ; do \
