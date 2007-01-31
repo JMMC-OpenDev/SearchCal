@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrima.sh,v 1.3 2006-11-27 10:31:19 scetre Exp $"
+# "@(#) $Id: sclcatPrima.sh,v 1.4 2007-01-31 10:02:23 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2006/11/27 10:31:19  scetre
+# Added Fortrant treatment in the catalogue file generation
+#
 # Revision 1.2  2006/11/06 15:30:26  scetre
 # Cancelled removal of CVS repository when generated reference
 #
@@ -56,7 +59,7 @@ function generateConfig () {
 # Parse result
 function parseResult () {
         echo -e "Analyse the results..."
-        ../bin/sclcatPrimaLect $1
+        sclcatPrimaParseResult $1
         echo -e "...Done."
 }
 
