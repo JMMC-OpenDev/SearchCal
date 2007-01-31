@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.1 2007-01-31 10:01:00 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.2 2007-01-31 10:25:31 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2007/01/31 10:01:00  mella
+# First revision
+#
 #
 #*******************************************************************************
 
@@ -64,7 +67,7 @@ mkdir $HTMLDIR &> /dev/null
 # copy every votable and transform it into html
 for i in *.vot
 do
-    if [ ! -n "$HTMLDIR/$i" ]
+    if [ ! -e "$HTMLDIR/$i" ]
     then
         cp "$i" $HTMLDIR
         xsltproc --path .:.. -o "$HTMLDIR/$i.html" $XSLT_VOT2HTML "$i"
