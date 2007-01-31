@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.2 2007-01-31 10:25:31 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.3 2007-01-31 12:39:54 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2007/01/31 10:25:31  mella
+# Change bad test condition
+#
 # Revision 1.1  2007/01/31 10:01:00  mella
 # First revision
 #
@@ -90,6 +93,17 @@ do
         starPmRa=$(xml sel -t -v "//object[name='$starName']/pmra" $MAIN_LIST_FILE)
         starDec=$(xml sel -t -v "//object[name='$starName']/dec" $MAIN_LIST_FILE)
         starPmDec=$(xml sel -t -v "//object[name='$starName']/pmdec" $MAIN_LIST_FILE)
+        
+        # if pmra or pmdec not found set it to 0
+        if [ -z "$starPmRa" ]
+        then
+            starPmRa=0
+        fi
+        if [ -z "$starPmDec" ]
+        then
+            starPmDec=0
+        fi
+        
         echo -n "$starName  "
         xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
         -v "count(//VOT:TR[./VOT:TD[268]='OK'])" -o "/" \
