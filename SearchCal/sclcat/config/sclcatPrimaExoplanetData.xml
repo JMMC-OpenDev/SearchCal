@@ -1,0 +1,3496 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE catalogue PUBLIC "-//DTD Extrasolar Planets 1.0//EN" "http://exoplanetes.obspm.fr/exoplanet.dtd">
+<catalogue>
+	<star>
+		<name>14 Her</name>
+		<dist>18.1</dist>
+		<spectype>K0 V</spectype>
+		<mass>0.9</mass>
+		<metal error="0.08">0.43</metal>
+		<rightasc>16 10 23</rightasc>
+		<decl>+43 49 18</decl>
+		<planet>
+			<name>14 Her b</name>
+			<mass error="0.19">4.64</mass>
+			<period error="2.5">1773.4</period>
+			<semiaxis error="0.05">2.77</semiaxis>
+			<ecc error="0.005">0.369</ecc>
+			<incl></incl>
+			<angulardist>0.153039</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>16 Cyg B</name>
+		<dist>21.4</dist>
+		<spectype>G2.5 V</spectype>
+		<mass>0.99</mass>
+		<metal error="0.04">0.08</metal>
+		<rightasc>19 41 51</rightasc>
+		<decl>+50 31 03</decl>
+		<planet>
+			<name>16 Cyg B b</name>
+			<mass error="0.07">1.68</mass>
+			<period error="0.6">799.5</period>
+			<semiaxis error="0.03">1.68</semiaxis>
+			<ecc error="0.011">0.689</ecc>
+			<incl></incl>
+			<angulardist>0.078505</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>2M1207</name>
+		<dist error="7">59</dist>
+		<spectype>M8</spectype>
+		<mass>0.025</mass>
+		<metal></metal>
+		<rightasc>12 07 33</rightasc>
+		<decl>-39 32 54</decl>
+		<planet>
+			<name>2M1207 b</name>
+			<mass error="13">5</mass>
+			<period></period>
+			<semiaxis error="5">46</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>0.779661</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>47 Uma</name>
+		<dist>13.3</dist>
+		<spectype>G0V</spectype>
+		<mass>1.03</mass>
+		<metal error="0.03">0.06</metal>
+		<rightasc>10 59 29</rightasc>
+		<decl>+40 25 46</decl>
+		<planet>
+			<name>47 Uma b</name>
+			<mass error="0.13">2.6</mass>
+			<period error="1.8">1083.2</period>
+			<semiaxis error="0.04">2.11</semiaxis>
+			<ecc error="0.014">0.049</ecc>
+			<incl></incl>
+			<angulardist>0.158647</angulardist>
+		</planet>
+		<planet>
+			<name>47 Uma c</name>
+			<mass error="0.22">1.34</mass>
+			<period error="90">2594</period>
+			<semiaxis error="0.58">7.73</semiaxis>
+			<ecc error="0.12">0</ecc>
+			<incl></incl>
+			<angulardist>0.581203</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>51 Peg</name>
+		<dist>14.7</dist>
+		<spectype>G2 IV</spectype>
+		<mass error="0.1">1.06</mass>
+		<metal>0.16</metal>
+		<rightasc>22 57 27</rightasc>
+		<decl>+20 46 07</decl>
+		<planet>
+			<name>51 Peg b</name>
+			<mass error="0.007">0.468</mass>
+			<period error="5e-05">4.23077</period>
+			<semiaxis>0.052</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.003537</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>55 Cnc</name>
+		<dist>13.4</dist>
+		<spectype>G8 V</spectype>
+		<mass>1.03</mass>
+		<metal>0.29</metal>
+		<rightasc>08 52 37</rightasc>
+		<decl>+28 20 02</decl>
+		<planet>
+			<name>55 Cnc b</name>
+			<mass error="0.09">0.784</mass>
+			<period error="0.0006">14.67</period>
+			<semiaxis error="0.003">0.115</semiaxis>
+			<ecc error="0.01">0.0197</ecc>
+			<incl></incl>
+			<angulardist>0.008582</angulardist>
+		</planet>
+		<planet>
+			<name>55 Cnc c</name>
+			<mass error="0.04">0.217</mass>
+			<period error="0.021">43.93</period>
+			<semiaxis error="0.005">0.24</semiaxis>
+			<ecc error="0.08">0.44</ecc>
+			<incl></incl>
+			<angulardist>0.018</angulardist>
+		</planet>
+		<planet>
+			<name>55 Cnc d</name>
+			<mass error="0.5">3.92</mass>
+			<period error="77.8">4517.4</period>
+			<semiaxis error="0.9">5.257</semiaxis>
+			<ecc error="0.28">0.327</ecc>
+			<incl></incl>
+			<angulardist>0.392</angulardist>
+		</planet>
+		<planet>
+			<name>55 Cnc e</name>
+			<mass error="0.01">0.045</mass>
+			<period error="0.002">2.81</period>
+			<semiaxis error="0.001">0.038</semiaxis>
+			<ecc error="0.127">0.174</ecc>
+			<incl></incl>
+			<angulardist>0.003</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>70 Vir</name>
+		<dist>22</dist>
+		<spectype>G4 V</spectype>
+		<mass>1.1</mass>
+		<metal>-0.03</metal>
+		<rightasc>13 28 26</rightasc>
+		<decl>+13 47 12</decl>
+		<planet>
+			<name>70 Vir b</name>
+			<mass>7.44</mass>
+			<period>116.689</period>
+			<semiaxis>0.48</semiaxis>
+			<ecc error="0.01">0.4</ecc>
+			<incl></incl>
+			<angulardist>0.021818</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>AB Pic</name>
+		<dist error="1.2">45.6</dist>
+		<spectype>K2 V</spectype>
+		<mass></mass>
+		<metal>-0.64</metal>
+		<rightasc>06 19 12</rightasc>
+		<decl>-58 03 15</decl>
+		<planet>
+			<name>AB Pic b</name>
+			<mass error="0.5">13.5</mass>
+			<period></period>
+			<semiaxis>275</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>6.030702</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>BD-10 3166</name>
+		<dist></dist>
+		<spectype>G4 V</spectype>
+		<mass>1.1</mass>
+		<metal>0.5</metal>
+		<rightasc>10 58 28</rightasc>
+		<decl>-10 46 13</decl>
+		<planet>
+			<name>BD-10 3166 b</name>
+			<mass>0.48</mass>
+			<period>3.488</period>
+			<semiaxis>0.046</semiaxis>
+			<ecc error="0.05">0.07</ecc>
+			<incl></incl>
+			<angulardist></angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>Epsilon Eridani</name>
+		<dist>3.2</dist>
+		<spectype>K2 V</spectype>
+		<mass error="0.05">0.83</mass>
+		<metal>-0.1</metal>
+		<rightasc>03 32 55</rightasc>
+		<decl>-09 27 29</decl>
+		<planet>
+			<name>Epsilon Eridani b</name>
+			<mass error="0.24">1.55</mass>
+			<period error="10">2502</period>
+			<semiaxis error="0.36">3.39</semiaxis>
+			<ecc error="0.039">0.702</ecc>
+			<incl error="3.8">30.1</incl>
+			<angulardist>1.059375</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>Gamma Cephei</name>
+		<dist>11.8</dist>
+		<spectype>K2 V</spectype>
+		<mass error="0.12">1.4</mass>
+		<metal>0</metal>
+		<rightasc>23 39 20</rightasc>
+		<decl>+77 37 56</decl>
+		<planet>
+			<name>Gamma Cephei b</name>
+			<mass error="0.13">1.6</mass>
+			<period error="3.5">902.9</period>
+			<semiaxis error="0.057">2.044</semiaxis>
+			<ecc error="0.058">0.115</ecc>
+			<incl></incl>
+			<angulardist>0.17322</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="gj">3021</name>
+		<dist>17.62</dist>
+		<spectype>G6 V</spectype>
+		<mass>0.9</mass>
+		<metal>0.2</metal>
+		<rightasc>00 16 12</rightasc>
+		<decl>-79 51 04</decl>
+		<planet>
+			<name>GJ 3021 b</name>
+			<mass>3.32</mass>
+			<period error="0.2">133.82</period>
+			<semiaxis>0.49</semiaxis>
+			<ecc error="0.018">0.505</ecc>
+			<incl></incl>
+			<angulardist>0.027809</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="gj">436</name>
+		<dist>10.2</dist>
+		<spectype>M2.5</spectype>
+		<mass error="0.05">0.41</mass>
+		<metal error="0.12">-0.32</metal>
+		<rightasc>11 42 11</rightasc>
+		<decl>+26 42 23</decl>
+		<planet>
+			<name>GJ 436 b</name>
+			<mass error="0.0063">0.0682</mass>
+			<period error="7.4e-05">2.634859</period>
+			<semiaxis error="0.0016">0.0278</semiaxis>
+			<ecc error="0.052">0.145</ecc>
+			<incl></incl>
+			<angulardist>0.002725</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="gj">849</name>
+		<dist error="0.2">8.8</dist>
+		<spectype>M3.5</spectype>
+		<mass>0.36</mass>
+		<metal></metal>
+		<rightasc>22 09 40</rightasc>
+		<decl>-04 38 27</decl>
+		<planet>
+			<name>Gj 849 b</name>
+			<mass>0.82</mass>
+			<period error="130">1890</period>
+			<semiaxis>2.35</semiaxis>
+			<ecc error="0.09">0.06</ecc>
+			<incl></incl>
+			<angulardist>0.267045</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="gl">581</name>
+		<dist>6.26</dist>
+		<spectype>M3</spectype>
+		<mass>0.31</mass>
+		<metal error="0.12">-0.33</metal>
+		<rightasc>15 19 26</rightasc>
+		<decl>-07 43 20</decl>
+		<planet>
+			<name>Gl 581 b</name>
+			<mass>0.056</mass>
+			<period error="0.001">5.366</period>
+			<semiaxis>0.041</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.00655</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="gl">86</name>
+		<dist>11</dist>
+		<spectype>K1V</spectype>
+		<mass>0.79</mass>
+		<metal>-0.24</metal>
+		<rightasc>02 10 14</rightasc>
+		<decl>-50 50 00</decl>
+		<planet>
+			<name>Gl 86 b</name>
+			<mass>4.01</mass>
+			<period error="0.04">15.766</period>
+			<semiaxis>0.11</semiaxis>
+			<ecc error="0.004">0.046</ecc>
+			<incl></incl>
+			<angulardist>0.01</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>Gliese 876</name>
+		<dist>4.72</dist>
+		<spectype>M4 V</spectype>
+		<mass>0.32</mass>
+		<metal error="0.12">-0.12</metal>
+		<rightasc>22 53 13</rightasc>
+		<decl>-14 15 13</decl>
+		<planet>
+			<name>Gliese 876 b</name>
+			<mass error="0.007">1.935</mass>
+			<period error="0.013">60.94</period>
+			<semiaxis error="3e-05">0.20783</semiaxis>
+			<ecc error="0.0026">0.0249</ecc>
+			<incl error="6">84</incl>
+			<angulardist>0.044032</angulardist>
+		</planet>
+		<planet>
+			<name>Gliese 876 c</name>
+			<mass>0.56</mass>
+			<period>30.1</period>
+			<semiaxis>0.13</semiaxis>
+			<ecc>0.27</ecc>
+			<incl error="6">84</incl>
+			<angulardist>0.027542</angulardist>
+		</planet>
+		<planet>
+			<name>Gliese 876 d</name>
+			<mass error="0.003">0.023</mass>
+			<period error="7e-05">1.93776</period>
+			<semiaxis error="5e-07">0.0208067</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.004408</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>GQ Lup</name>
+		<dist error="50">140</dist>
+		<spectype>K7eV</spectype>
+		<mass>0.7</mass>
+		<metal></metal>
+		<rightasc>15 49 12</rightasc>
+		<decl>-35 39 03</decl>
+		<planet>
+			<name>GQ Lup b</name>
+			<mass error="20.5">21.5</mass>
+			<period></period>
+			<semiaxis error="37">103</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>0.735714</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>HAT--P-1</name>
+		<dist error="20">139</dist>
+		<spectype>GOV</spectype>
+		<mass error="0.09">1.12</mass>
+		<metal error="0.02">0.13</metal>
+		<rightasc>22 57 47</rightasc>
+		<decl>+38 40 30</decl>
+		<planet>
+			<name>HAT--P-1 b</name>
+			<mass error="0.04">0.53</mass>
+			<period error="9e-05">4.46529</period>
+			<semiaxis error="0.0015">0.0551</semiaxis>
+			<ecc error="0.02">0.09</ecc>
+			<incl error="0.8">85.9</incl>
+			<angulardist>0.000396</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">101930</name>
+		<dist>30.49</dist>
+		<spectype>K1 V</spectype>
+		<mass error="0.05">0.74</mass>
+		<metal error="0.06">0.17</metal>
+		<rightasc>11 43 30</rightasc>
+		<decl>-58 00 24</decl>
+		<planet>
+			<name>HD 101930 b</name>
+			<mass>0.3</mass>
+			<period error="0.18">70.46</period>
+			<semiaxis>0.302</semiaxis>
+			<ecc error="0.02">0.11</ecc>
+			<incl></incl>
+			<angulardist>0.01</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">102117</name>
+		<dist>42</dist>
+		<spectype>G6V</spectype>
+		<mass error="0.05">0.95</mass>
+		<metal error="0.05">0.18</metal>
+		<rightasc>11 44 50</rightasc>
+		<decl>-58 42 13</decl>
+		<planet>
+			<name>HD 102117 b</name>
+			<mass error="0.018">0.172</mass>
+			<period error="0.04">20.67</period>
+			<semiaxis error="0.0088">0.1532</semiaxis>
+			<ecc error="0.07">0.106</ecc>
+			<incl></incl>
+			<angulardist>0.003648</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">102195</name>
+		<dist error="1">28.98</dist>
+		<spectype>G8V</spectype>
+		<mass error="0.016">0.926</mass>
+		<metal error="0.032">0.096</metal>
+		<rightasc>11 45 42</rightasc>
+		<decl>+02 49 17</decl>
+		<planet>
+			<name>HD 102195 b</name>
+			<mass error="0.015">0.488</mass>
+			<period error="0.00089">4.11434</period>
+			<semiaxis>0.049</semiaxis>
+			<ecc error="0.03">0.06</ecc>
+			<incl></incl>
+			<angulardist>0.001691</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">104985</name>
+		<dist>102</dist>
+		<spectype>G9 III</spectype>
+		<mass>1.5</mass>
+		<metal>-0.35</metal>
+		<rightasc>12 05 15</rightasc>
+		<decl>+76 54 20</decl>
+		<planet>
+			<name>HD 104985 b</name>
+			<mass>6.3</mass>
+			<period error="0.3">198.2</period>
+			<semiaxis>0.78</semiaxis>
+			<ecc error="0.02">0.03</ecc>
+			<incl></incl>
+			<angulardist>0.008</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">106252</name>
+		<dist>37.44</dist>
+		<spectype>G0</spectype>
+		<mass>1.05</mass>
+		<metal>-0.16</metal>
+		<rightasc>12 13 29</rightasc>
+		<decl>+10 02 29</decl>
+		<planet>
+			<name>HD 106252 b</name>
+			<mass>6.81</mass>
+			<period error="28">1500</period>
+			<semiaxis>2.61</semiaxis>
+			<ecc error="0.05">0.54</ecc>
+			<incl></incl>
+			<angulardist>0.069712</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">10647</name>
+		<dist>17.3</dist>
+		<spectype>F8V</spectype>
+		<mass>1.07</mass>
+		<metal error="0.04">-0.03</metal>
+		<rightasc>01 42 29</rightasc>
+		<decl>-53 44 27</decl>
+		<planet>
+			<name>HD 10647 b</name>
+			<mass>0.91</mass>
+			<period error="37">1040</period>
+			<semiaxis>2.1</semiaxis>
+			<ecc error="0.08">0.18</ecc>
+			<incl></incl>
+			<angulardist>0.121</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">10697</name>
+		<dist>30</dist>
+		<spectype>G5 IV</spectype>
+		<mass>1.1</mass>
+		<metal>0.15</metal>
+		<rightasc>01 44 55</rightasc>
+		<decl>+20 04 59</decl>
+		<planet>
+			<name>HD 10697 b</name>
+			<mass>6.12</mass>
+			<period>1077.906</period>
+			<semiaxis>2.13</semiaxis>
+			<ecc>0.11</ecc>
+			<incl></incl>
+			<angulardist>0.071</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">107148</name>
+		<dist error="2.6">51.3</dist>
+		<spectype>G5</spectype>
+		<mass>1.12</mass>
+		<metal>0.314</metal>
+		<rightasc>12 19 13</rightasc>
+		<decl>-03 19 11</decl>
+		<planet>
+			<name>HD 107148 b</name>
+			<mass error="0.036">0.21</mass>
+			<period error="0.057">48.056</period>
+			<semiaxis error="0.016">0.269</semiaxis>
+			<ecc error="0.17">0.05</ecc>
+			<incl></incl>
+			<angulardist>0.005244</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">108147</name>
+		<dist>38.57</dist>
+		<spectype>F8/G0 V</spectype>
+		<mass error="0.02">1.27</mass>
+		<metal error="0.06">0.2</metal>
+		<rightasc>12 25 46</rightasc>
+		<decl>-64 01 19</decl>
+		<planet>
+			<name>HD 108147 b</name>
+			<mass>0.4</mass>
+			<period error="0.001">10.901</period>
+			<semiaxis>0.104</semiaxis>
+			<ecc error="0.025">0.498</ecc>
+			<incl></incl>
+			<angulardist>0.002696</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">108874</name>
+		<dist>68.5</dist>
+		<spectype>G5</spectype>
+		<mass>1</mass>
+		<metal>0.14</metal>
+		<rightasc>12 30 26</rightasc>
+		<decl>+22 52 47</decl>
+		<planet>
+			<name>HD 108874 b</name>
+			<mass error="0.13">1.36</mass>
+			<period error="2.5">395.4</period>
+			<semiaxis error="0.02">1.051</semiaxis>
+			<ecc error="0.04">0.07</ecc>
+			<incl></incl>
+			<angulardist>0.015343</angulardist>
+		</planet>
+		<planet>
+			<name>HD 108874 c</name>
+			<mass error="0.3">1.018</mass>
+			<period error="88">1605.8</period>
+			<semiaxis error="0.25">2.68</semiaxis>
+			<ecc error="0.07">0.25</ecc>
+			<incl></incl>
+			<angulardist>0.039124</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">109749</name>
+		<dist>59</dist>
+		<spectype>G3 IV</spectype>
+		<mass error="0.1">1.2</mass>
+		<metal error="0.05">0.25</metal>
+		<rightasc>12 37 16</rightasc>
+		<decl>-40 48 43</decl>
+		<planet>
+			<name>HD 109749 b</name>
+			<mass error="0.016">0.28</mass>
+			<period error="0.02">5.24</period>
+			<semiaxis>0.0635</semiaxis>
+			<ecc error="0.01">0.01</ecc>
+			<incl></incl>
+			<angulardist>0.001076</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">111232</name>
+		<dist>29</dist>
+		<spectype>G8V</spectype>
+		<mass>0.78</mass>
+		<metal error="0.04">-0.36</metal>
+		<rightasc>12 48 51</rightasc>
+		<decl>-68 25 30</decl>
+		<planet>
+			<name>HD 111232 b</name>
+			<mass>6.8</mass>
+			<period error="14">1143</period>
+			<semiaxis>1.97</semiaxis>
+			<ecc error="0.01">0.2</ecc>
+			<incl></incl>
+			<angulardist>0.068</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">114386</name>
+		<dist>28</dist>
+		<spectype>K3 V</spectype>
+		<mass></mass>
+		<metal>-0.03</metal>
+		<rightasc>13 10 39</rightasc>
+		<decl>-35 03 17</decl>
+		<planet>
+			<name>HD 114386 b</name>
+			<mass>0.99</mass>
+			<period error="34">872</period>
+			<semiaxis>1.62</semiaxis>
+			<ecc error="0.1">0.28</ecc>
+			<incl></incl>
+			<angulardist>0.058</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">114729</name>
+		<dist>35</dist>
+		<spectype>G3 V</spectype>
+		<mass>0.93</mass>
+		<metal>-0.22</metal>
+		<rightasc>13 12 44</rightasc>
+		<decl>-31 52 24</decl>
+		<planet>
+			<name>HD 114729 b</name>
+			<mass>0.82</mass>
+			<period>1131.478</period>
+			<semiaxis>2.08</semiaxis>
+			<ecc>0.31</ecc>
+			<incl></incl>
+			<angulardist>0.059</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">114762</name>
+		<dist>28</dist>
+		<spectype>F9V</spectype>
+		<mass>0.82</mass>
+		<metal>-0.5</metal>
+		<rightasc>13 12 19</rightasc>
+		<decl>+17 31 01</decl>
+		<planet>
+			<name>HD 114762 b</name>
+			<mass>11.02</mass>
+			<period>83.89</period>
+			<semiaxis>0.3</semiaxis>
+			<ecc>0.34</ecc>
+			<incl></incl>
+			<angulardist>0.010714</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">114783</name>
+		<dist>22</dist>
+		<spectype>K0</spectype>
+		<mass>0.92</mass>
+		<metal>0.33</metal>
+		<rightasc>13 12 43</rightasc>
+		<decl>-02 15 54</decl>
+		<planet>
+			<name>HD 114783 b</name>
+			<mass>0.99</mass>
+			<period>501</period>
+			<semiaxis>1.2</semiaxis>
+			<ecc>0.1</ecc>
+			<incl></incl>
+			<angulardist>0.055</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">117207</name>
+		<dist>33</dist>
+		<spectype>G8VI/V</spectype>
+		<mass>1.04</mass>
+		<metal>0.27</metal>
+		<rightasc>13 29 21</rightasc>
+		<decl>-35 34 15</decl>
+		<planet>
+			<name>HD 117207 b</name>
+			<mass>2.06</mass>
+			<period error="63.51">2627.08</period>
+			<semiaxis>3.78</semiaxis>
+			<ecc error="0.05">0.16</ecc>
+			<incl></incl>
+			<angulardist>0.115</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">117618</name>
+		<dist>38</dist>
+		<spectype>G2V</spectype>
+		<mass error="0.05">1.05</mass>
+		<metal error="0.08">0.04</metal>
+		<rightasc>13 32 25</rightasc>
+		<decl>-47 16 16</decl>
+		<planet>
+			<name>HD 117618 b</name>
+			<mass error="0.04">0.19</mass>
+			<period error="0.5">52.2</period>
+			<semiaxis error="0.02">0.28</semiaxis>
+			<ecc error="0.1">0.39</ecc>
+			<incl></incl>
+			<angulardist>0.007368</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">118203</name>
+		<dist>88.6</dist>
+		<spectype>K0</spectype>
+		<mass error="0.03">1.23</mass>
+		<metal>0.1</metal>
+		<rightasc>13 34 02</rightasc>
+		<decl>+53 43 42</decl>
+		<planet>
+			<name>HD 118203 b</name>
+			<mass>2.13</mass>
+			<period error="0.0006">6.1335</period>
+			<semiaxis>0.07</semiaxis>
+			<ecc error="0.014">0.309</ecc>
+			<incl></incl>
+			<angulardist>0.00079</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">11964</name>
+		<dist>33.98</dist>
+		<spectype>G5</spectype>
+		<mass>1.125</mass>
+		<metal>0.17</metal>
+		<rightasc>01 57 09</rightasc>
+		<decl>-10 14 32</decl>
+		<planet>
+			<name>HD 11964 b</name>
+			<mass>0.11</mass>
+			<period>37.82</period>
+			<semiaxis>0.229</semiaxis>
+			<ecc>0.15</ecc>
+			<incl></incl>
+			<angulardist>0.006739</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">11977</name>
+		<dist error="2.1">66.5</dist>
+		<spectype>G8.5 III</spectype>
+		<mass error="0.21">1.91</mass>
+		<metal error="0.1">-0.21</metal>
+		<rightasc>01 54 56</rightasc>
+		<decl>-67 38 50</decl>
+		<planet>
+			<name>HD 11977 b</name>
+			<mass>6.54</mass>
+			<period error="0.07">711</period>
+			<semiaxis>1.93</semiaxis>
+			<ecc error="0.07">0.4</ecc>
+			<incl></incl>
+			<angulardist>0.029023</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">121504</name>
+		<dist>44.37</dist>
+		<spectype>G2 V</spectype>
+		<mass>1</mass>
+		<metal>0.16</metal>
+		<rightasc>13 57 17</rightasc>
+		<decl>-56 02 24</decl>
+		<planet>
+			<name>HD 121504 b</name>
+			<mass>0.89</mass>
+			<period>64.6</period>
+			<semiaxis>0.32</semiaxis>
+			<ecc>0.13</ecc>
+			<incl></incl>
+			<angulardist>0.007</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">122430</name>
+		<dist error="13">135</dist>
+		<spectype> K3III</spectype>
+		<mass error="0.27">1.39</mass>
+		<metal>-0.05</metal>
+		<rightasc>14 02 22</rightasc>
+		<decl>-27 25 47</decl>
+		<planet>
+			<name>HD 122430 b</name>
+			<mass>3.71</mass>
+			<period error="1.08">344.95</period>
+			<semiaxis>1.02</semiaxis>
+			<ecc error="0.09">0.68</ecc>
+			<incl></incl>
+			<angulardist>0.007556</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">12661</name>
+		<dist>37.16</dist>
+		<spectype>G6 V</spectype>
+		<mass>1.07</mass>
+		<metal>0.293</metal>
+		<rightasc>02 04 34</rightasc>
+		<decl>+25 24 51</decl>
+		<planet>
+			<name>HD 12661 b</name>
+			<mass>2.3</mass>
+			<period error="1.2">263.6</period>
+			<semiaxis>0.83</semiaxis>
+			<ecc error="0.03">0.35</ecc>
+			<incl></incl>
+			<angulardist>0.022</angulardist>
+		</planet>
+		<planet>
+			<name>HD 12661 c</name>
+			<mass>1.57</mass>
+			<period error="12.5">1444.5</period>
+			<semiaxis>2.56</semiaxis>
+			<ecc error="0.04">0.2</ecc>
+			<incl></incl>
+			<angulardist>0.069</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">128311</name>
+		<dist>16.6</dist>
+		<spectype>K0</spectype>
+		<mass>0.8</mass>
+		<metal>0.08</metal>
+		<rightasc>14 36 00</rightasc>
+		<decl>+09 44 47</decl>
+		<planet>
+			<name>HD 128311 b</name>
+			<mass error="0.022">2.18</mass>
+			<period error="6.8">448.6</period>
+			<semiaxis error="0.04">1.099</semiaxis>
+			<ecc error="0.1">0.25</ecc>
+			<incl></incl>
+			<angulardist>0.066205</angulardist>
+		</planet>
+		<planet>
+			<name>HD 128311 c</name>
+			<mass error="0.3">3.21</mass>
+			<period>919</period>
+			<semiaxis error="0.13">1.76</semiaxis>
+			<ecc error="0.09">0.17</ecc>
+			<incl></incl>
+			<angulardist>0.106024</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">130322</name>
+		<dist>30</dist>
+		<spectype>K0 V</spectype>
+		<mass>0.79</mass>
+		<metal>-0.02</metal>
+		<rightasc>14 47 32</rightasc>
+		<decl>-00 16 53</decl>
+		<planet>
+			<name>HD 130322 b</name>
+			<mass>1.08</mass>
+			<period>10.724</period>
+			<semiaxis>0.088</semiaxis>
+			<ecc>0.048</ecc>
+			<incl></incl>
+			<angulardist>0.003</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">13189</name>
+		<dist>185</dist>
+		<spectype>K2 II</spectype>
+		<mass error="2.5">4.5</mass>
+		<metal></metal>
+		<rightasc>02 09 40</rightasc>
+		<decl>+32 18 59</decl>
+		<planet>
+			<name>HD 13189 b</name>
+			<mass error="6">14</mass>
+			<period error="6">471.6</period>
+			<semiaxis error="0.35">1.85</semiaxis>
+			<ecc error="0.06">0.28</ecc>
+			<incl></incl>
+			<angulardist>0.01</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">134987</name>
+		<dist>25</dist>
+		<spectype>G5 V</spectype>
+		<mass>1.05</mass>
+		<metal>0.23</metal>
+		<rightasc>15 13 28</rightasc>
+		<decl>-25 18 33</decl>
+		<planet>
+			<name>HD 134987 b</name>
+			<mass>1.58</mass>
+			<period>260</period>
+			<semiaxis>0.78</semiaxis>
+			<ecc>0.24</ecc>
+			<incl></incl>
+			<angulardist>0.031</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">136118</name>
+		<dist>52.3</dist>
+		<spectype>F9 V</spectype>
+		<mass>1.24</mass>
+		<metal>-0.065</metal>
+		<rightasc>15 18 55</rightasc>
+		<decl>-01 35 32</decl>
+		<planet>
+			<name>HD 136118 b</name>
+			<mass>11.9</mass>
+			<period error="24">1209</period>
+			<semiaxis>2.3</semiaxis>
+			<ecc error="0.025">0.37</ecc>
+			<incl></incl>
+			<angulardist>0.044</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">141937</name>
+		<dist>33.46</dist>
+		<spectype>G2/G3 V</spectype>
+		<mass>1</mass>
+		<metal>0.16</metal>
+		<rightasc>15 52 17</rightasc>
+		<decl>-18 26 09</decl>
+		<planet>
+			<name>HD 141937 b</name>
+			<mass>9.7</mass>
+			<period error="1.21">653.22</period>
+			<semiaxis>1.52</semiaxis>
+			<ecc error="0.01">0.41</ecc>
+			<incl></incl>
+			<angulardist>0.045</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">142</name>
+		<dist>20.6</dist>
+		<spectype>G1 IV</spectype>
+		<mass>1.1</mass>
+		<metal>0.04</metal>
+		<rightasc>00 06 19</rightasc>
+		<decl>-49 04 30</decl>
+		<planet>
+			<name>HD 142 b</name>
+			<mass>1</mass>
+			<period>337.112</period>
+			<semiaxis>0.98</semiaxis>
+			<ecc>0.38</ecc>
+			<incl></incl>
+			<angulardist>0.048</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">142022 a</name>
+		<dist>35.87</dist>
+		<spectype>K0 V</spectype>
+		<mass>0.99</mass>
+		<metal error="0.04">0.19</metal>
+		<rightasc>16 10 15</rightasc>
+		<decl>-84 13 53</decl>
+		<planet>
+			<name>HD 142022 A b</name>
+			<mass>4.4</mass>
+			<period error="80">1923</period>
+			<semiaxis>2.8</semiaxis>
+			<ecc>0.57</ecc>
+			<incl></incl>
+			<angulardist>0.078</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">142415</name>
+		<dist>34.2</dist>
+		<spectype>G1 V</spectype>
+		<mass>1.03</mass>
+		<metal error="0.05">0.21</metal>
+		<rightasc>15 57 40</rightasc>
+		<decl>-60 12 00</decl>
+		<planet>
+			<name>HD 142415 b</name>
+			<mass>1.62</mass>
+			<period error="1.6">386.3</period>
+			<semiaxis>1.05</semiaxis>
+			<ecc>0.5</ecc>
+			<incl></incl>
+			<angulardist>0.031</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">147513</name>
+		<dist>12.9</dist>
+		<spectype>G3/G5V</spectype>
+		<mass>0.92</mass>
+		<metal>-0.03</metal>
+		<rightasc>16 24 01</rightasc>
+		<decl>-39 11 34</decl>
+		<planet>
+			<name>HD 147513 b</name>
+			<mass>1</mass>
+			<period error="4.4">540.4</period>
+			<semiaxis>1.26</semiaxis>
+			<ecc error="0.08">0.52</ecc>
+			<incl></incl>
+			<angulardist>0.098</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">149026</name>
+		<dist error="6.6">78.9</dist>
+		<spectype>G0 IV</spectype>
+		<mass error="0.1">1.3</mass>
+		<metal error="0.05">0.36</metal>
+		<rightasc>16 30 29</rightasc>
+		<decl>+38 20 50</decl>
+		<planet>
+			<name>HD 149026 b</name>
+			<mass error="0.03">0.36</mass>
+			<period error="0.001">2.8766</period>
+			<semiaxis>0.042</semiaxis>
+			<ecc>0</ecc>
+			<incl>85.3</incl>
+			<angulardist>0.000532</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">149143</name>
+		<dist>63</dist>
+		<spectype>G0 IV</spectype>
+		<mass error="0.1">1.21</mass>
+		<metal error="0.05">0.26</metal>
+		<rightasc>16 32 51</rightasc>
+		<decl>+02 05 05</decl>
+		<planet>
+			<name>HD 149143 b</name>
+			<mass>1.33</mass>
+			<period error="0.7">4.072</period>
+			<semiaxis>0.053</semiaxis>
+			<ecc error="0.01">0.016</ecc>
+			<incl></incl>
+			<angulardist>0.000841</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">150706</name>
+		<dist>27.2</dist>
+		<spectype>G0</spectype>
+		<mass error="0.8">0.94</mass>
+		<metal>-0.13</metal>
+		<rightasc>16 31 17</rightasc>
+		<decl>+79 47 23</decl>
+		<planet>
+			<name>HD 150706 b</name>
+			<mass>1</mass>
+			<period error="5.8">264</period>
+			<semiaxis>0.82</semiaxis>
+			<ecc error="0.12">0.38</ecc>
+			<incl></incl>
+			<angulardist>0.03</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">154857</name>
+		<dist>68.5</dist>
+		<spectype>G5V</spectype>
+		<mass error="0.05">1.17</mass>
+		<metal error="0.03">-0.23</metal>
+		<rightasc>17 11 15</rightasc>
+		<decl>-56 40 50</decl>
+		<planet>
+			<name>HD 154857 b</name>
+			<mass error="0.27">1.8</mass>
+			<period error="9">398.5</period>
+			<semiaxis error="0.02">1.11</semiaxis>
+			<ecc error="0.06">0.51</ecc>
+			<incl></incl>
+			<angulardist>0.016</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">160691</name>
+		<dist>15.3</dist>
+		<spectype>G3 IV-V</spectype>
+		<mass>1.08</mass>
+		<metal>0.28</metal>
+		<rightasc>17 44 08</rightasc>
+		<decl>-51 50 02</decl>
+		<planet>
+			<name>HD 160691 b</name>
+			<mass error="0.1">1.67</mass>
+			<period>654.5</period>
+			<semiaxis error="0.02">1.5</semiaxis>
+			<ecc>0.31</ecc>
+			<incl></incl>
+			<angulardist>0.098039</angulardist>
+		</planet>
+		<planet>
+			<name>HD 160691 c</name>
+			<mass error="0.71">3.1</mass>
+			<period error="30">2986</period>
+			<semiaxis>4.17</semiaxis>
+			<ecc error="0.1">0.57</ecc>
+			<incl></incl>
+			<angulardist>0.272549</angulardist>
+		</planet>
+		<planet>
+			<name>HD 160691 d</name>
+			<mass>0.044</mass>
+			<period error="0.03">9.55</period>
+			<semiaxis>0.09</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.005882</angulardist>
+		</planet>
+		<planet>
+			<name>HD 160691 e</name>
+			<mass>0.5219</mass>
+			<period error="0.83">310.55</period>
+			<semiaxis>0.921</semiaxis>
+			<ecc error="0.0122">0.0666</ecc>
+			<incl></incl>
+			<angulardist>0.060196</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">16141</name>
+		<dist>35.9</dist>
+		<spectype>G5 IV</spectype>
+		<mass>1</mass>
+		<metal>0.22</metal>
+		<rightasc>02 35 19</rightasc>
+		<decl>-03 33 38</decl>
+		<planet>
+			<name>HD 16141 b</name>
+			<mass>0.23</mass>
+			<period error="0.4">75.56</period>
+			<semiaxis>0.35</semiaxis>
+			<ecc error="0.15">0.21</ecc>
+			<incl></incl>
+			<angulardist>0.01</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">162020</name>
+		<dist>31.26</dist>
+		<spectype>K2 V</spectype>
+		<mass>0.7</mass>
+		<metal error="0.11">0.01</metal>
+		<rightasc>17 50 38</rightasc>
+		<decl>-40 19 06</decl>
+		<planet>
+			<name>HD 162020 b</name>
+			<mass>13.75</mass>
+			<period error="5.6e-05">8.428198</period>
+			<semiaxis>0.072</semiaxis>
+			<ecc error="0.002">0.277</ecc>
+			<incl></incl>
+			<angulardist>0.002</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">164922</name>
+		<dist error="0.34">21.93</dist>
+		<spectype>K0V</spectype>
+		<mass>0.94</mass>
+		<metal>0.17</metal>
+		<rightasc>18 02 30</rightasc>
+		<decl>+26 18 46</decl>
+		<planet>
+			<name>HD 164922 b</name>
+			<mass error="0.046">0.36</mass>
+			<period error="23">1155</period>
+			<semiaxis error="0.13">2.11</semiaxis>
+			<ecc error="0.14">0.05</ecc>
+			<incl></incl>
+			<angulardist>0.096215</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">168443</name>
+		<dist>33</dist>
+		<spectype>G5</spectype>
+		<mass>0.96</mass>
+		<metal error="0.03">0.1</metal>
+		<rightasc>18 20 04</rightasc>
+		<decl>-09 35 34</decl>
+		<planet>
+			<name>HD 168443 b</name>
+			<mass error="0.65">8.02</mass>
+			<period error="0.0055">58.11289</period>
+			<semiaxis error="0.017">0.3</semiaxis>
+			<ecc error="0.032">0.5286</ecc>
+			<incl></incl>
+			<angulardist>0.009091</angulardist>
+		</planet>
+		<planet>
+			<name>HD 168443 c</name>
+			<mass error="1.3">18.1</mass>
+			<period error="2.2">1765.8</period>
+			<semiaxis error="0.17">3.91</semiaxis>
+			<ecc error="0.0015">0.2125</ecc>
+			<incl></incl>
+			<angulardist>0.118485</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">168746</name>
+		<dist>43.12</dist>
+		<spectype>G5</spectype>
+		<mass>0.92</mass>
+		<metal>-0.07</metal>
+		<rightasc>18 21 49</rightasc>
+		<decl>-11 55 21</decl>
+		<planet>
+			<name>HD 168746 b</name>
+			<mass>0.23</mass>
+			<period error="0.001">6.403</period>
+			<semiaxis>0.065</semiaxis>
+			<ecc error="0.029">0.081</ecc>
+			<incl></incl>
+			<angulardist>0.002</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">169830</name>
+		<dist>36.32</dist>
+		<spectype>F8 V</spectype>
+		<mass>1.4</mass>
+		<metal error="0.05">0.21</metal>
+		<rightasc>18 27 49</rightasc>
+		<decl>-29 49 00</decl>
+		<planet>
+			<name>HD 169830 b</name>
+			<mass>2.88</mass>
+			<period error="0.22">225.62</period>
+			<semiaxis>0.81</semiaxis>
+			<ecc error="0.01">0.31</ecc>
+			<incl></incl>
+			<angulardist>0.022302</angulardist>
+		</planet>
+		<planet>
+			<name>HD 169830 c</name>
+			<mass>4.04</mass>
+			<period error="264">2102</period>
+			<semiaxis>3.6</semiaxis>
+			<ecc error="0.02">0.33</ecc>
+			<incl></incl>
+			<angulardist>0.099119</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">177830</name>
+		<dist>59</dist>
+		<spectype>K0</spectype>
+		<mass>1.17</mass>
+		<metal>0</metal>
+		<rightasc>19 05 20</rightasc>
+		<decl>+25 55 14</decl>
+		<planet>
+			<name>HD 177830 b</name>
+			<mass>1.28</mass>
+			<period>391</period>
+			<semiaxis>1</semiaxis>
+			<ecc>0.43</ecc>
+			<incl></incl>
+			<angulardist>0.017</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">178911 b</name>
+		<dist>46.73</dist>
+		<spectype>G5</spectype>
+		<mass>0.87</mass>
+		<metal>0.28</metal>
+		<rightasc>19 09 03</rightasc>
+		<decl>+34 35 59</decl>
+		<planet>
+			<name>HD 178911 B b</name>
+			<mass>6.292</mass>
+			<period error="0.018">71.487</period>
+			<semiaxis>0.32</semiaxis>
+			<ecc error="0.0075">0.1243</ecc>
+			<incl></incl>
+			<angulardist>0.007</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">179949</name>
+		<dist>27</dist>
+		<spectype>F8 V</spectype>
+		<mass>1.28</mass>
+		<metal error="0.05">0.22</metal>
+		<rightasc>19 15 33</rightasc>
+		<decl>-24 10 45</decl>
+		<planet>
+			<name>HD 179949 b</name>
+			<mass error="0.04">0.95</mass>
+			<period error="3e-05">3.0925</period>
+			<semiaxis error="0.001">0.045</semiaxis>
+			<ecc error="0.014">0.022</ecc>
+			<incl></incl>
+			<angulardist>0.001667</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">183263</name>
+		<dist>53</dist>
+		<spectype>G2IV</spectype>
+		<mass>1.17</mass>
+		<metal>0.3</metal>
+		<rightasc>19 28 24</rightasc>
+		<decl>+08 21 28</decl>
+		<planet>
+			<name>HD 183263 b</name>
+			<mass>3.69</mass>
+			<period>634.23</period>
+			<semiaxis>1.52</semiaxis>
+			<ecc error="0.03">0.38</ecc>
+			<incl></incl>
+			<angulardist>0.028679</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">185269</name>
+		<dist error="1">47</dist>
+		<spectype>G0IV</spectype>
+		<mass error="0.1">1.28</mass>
+		<metal error="0.05">0.11</metal>
+		<rightasc>19 37 12</rightasc>
+		<decl>+28 30 00</decl>
+		<planet>
+			<name>HD 185269 b</name>
+			<mass>0.94</mass>
+			<period error="0.001">6.838</period>
+			<semiaxis>0.077</semiaxis>
+			<ecc error="0.04">0.3</ecc>
+			<incl></incl>
+			<angulardist>0.001638</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">187085</name>
+		<dist error="1.3">44.98</dist>
+		<spectype>G0 V</spectype>
+		<mass error="0.1">1.22</mass>
+		<metal error="0.03">0.05</metal>
+		<rightasc>19 49 33</rightasc>
+		<decl>-37 46 50</decl>
+		<planet>
+			<name>HD 187085 b</name>
+			<mass>0.75</mass>
+			<period>986</period>
+			<semiaxis>2.05</semiaxis>
+			<ecc>0.47</ecc>
+			<incl></incl>
+			<angulardist>0.045576</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">187123</name>
+		<dist>50</dist>
+		<spectype>G5</spectype>
+		<mass>1.06</mass>
+		<metal>0.16</metal>
+		<rightasc>19 46 57</rightasc>
+		<decl>+34 25 15</decl>
+		<planet>
+			<name>HD 187123 b</name>
+			<mass>0.52</mass>
+			<period>3.097</period>
+			<semiaxis>0.042</semiaxis>
+			<ecc error="0.003">0.03</ecc>
+			<incl></incl>
+			<angulardist>0.00084</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">188015</name>
+		<dist>52.6</dist>
+		<spectype>G5IV</spectype>
+		<mass>1.08</mass>
+		<metal>0.29</metal>
+		<rightasc>19 52 04</rightasc>
+		<decl>+28 06 01</decl>
+		<planet>
+			<name>HD 188015 b</name>
+			<mass>1.26</mass>
+			<period>456.46</period>
+			<semiaxis>1.19</semiaxis>
+			<ecc error="0.09">0.15</ecc>
+			<incl></incl>
+			<angulardist>0.023</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">188753a</name>
+		<dist error="1.2">44.82</dist>
+		<spectype>K0</spectype>
+		<mass error="0.07">1.06</mass>
+		<metal></metal>
+		<rightasc>19 54 58</rightasc>
+		<decl>+41 52 17</decl>
+		<planet>
+			<name>HD 188753A b</name>
+			<mass error="0.1">1.14</mass>
+			<period error="0.0009">3.3481</period>
+			<semiaxis error="0.001">0.0446</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.000995</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">189733</name>
+		<dist error="0.2">19.3</dist>
+		<spectype>K1-K2</spectype>
+		<mass error="0.4">0.8</mass>
+		<metal error="0.04">-0.03</metal>
+		<rightasc>20 00 43</rightasc>
+		<decl>+22 42 39</decl>
+		<planet>
+			<name>HD 189733 b</name>
+			<mass error="0.046">1.15</mass>
+			<period error="2e-05">2.2185733</period>
+			<semiaxis error="0.0004">0.0312</semiaxis>
+			<ecc>0</ecc>
+			<incl error="0.29">85.76</incl>
+			<angulardist>0.001617</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">190228</name>
+		<dist>66.11</dist>
+		<spectype>G5IV</spectype>
+		<mass>1.3</mass>
+		<metal>-0.24</metal>
+		<rightasc>20 03 00</rightasc>
+		<decl>+28 18 24</decl>
+		<planet>
+			<name>HD 190228 b</name>
+			<mass>4.99</mass>
+			<period error="42">1127</period>
+			<semiaxis>2.31</semiaxis>
+			<ecc error="0.08">0.43</ecc>
+			<incl></incl>
+			<angulardist>0.035</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">190360</name>
+		<dist error="0.16">15.89</dist>
+		<spectype>G6 IV</spectype>
+		<mass>0.96</mass>
+		<metal error="0.08">0.24</metal>
+		<rightasc>20 03 37</rightasc>
+		<decl>+29 53 48</decl>
+		<planet>
+			<name>HD 190360 b</name>
+			<mass error="0.13">1.502</mass>
+			<period error="85">2891</period>
+			<semiaxis error="0.2">3.92</semiaxis>
+			<ecc error="0.03">0.36</ecc>
+			<incl></incl>
+			<angulardist>0.246696</angulardist>
+		</planet>
+		<planet>
+			<name>HD 190360 c</name>
+			<mass error="0.015">0.057</mass>
+			<period error="0.015">17.1</period>
+			<semiaxis error="0.002">0.128</semiaxis>
+			<ecc error="0.1">0.01</ecc>
+			<incl></incl>
+			<angulardist>0.008055</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">192263</name>
+		<dist>19.9</dist>
+		<spectype>K2 V</spectype>
+		<mass>0.79</mass>
+		<metal>-0.2</metal>
+		<rightasc>20 13 59</rightasc>
+		<decl>-00 52 00</decl>
+		<planet>
+			<name>HD 192263 b</name>
+			<mass>0.72</mass>
+			<period error="0.005">24.348</period>
+			<semiaxis>0.15</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.007538</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">195019</name>
+		<dist>20</dist>
+		<spectype>G3 IV-V</spectype>
+		<mass>1.06</mass>
+		<metal error="0.04">0.08</metal>
+		<rightasc>20 28 17</rightasc>
+		<decl>+18 46 12</decl>
+		<planet>
+			<name>HD 195019 b</name>
+			<mass error="0.3">3.7</mass>
+			<period error="0.0004">18.20163</period>
+			<semiaxis error="0.008">0.1388</semiaxis>
+			<ecc error="0.0044">0.014</ecc>
+			<incl></incl>
+			<angulardist>0.00694</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">196050</name>
+		<dist>46.9</dist>
+		<spectype>G3 V</spectype>
+		<mass>1.1</mass>
+		<metal>0</metal>
+		<rightasc>20 37 51</rightasc>
+		<decl>-60 38 04</decl>
+		<planet>
+			<name>HD 196050 b</name>
+			<mass>3</mass>
+			<period>1289</period>
+			<semiaxis>2.5</semiaxis>
+			<ecc>0.28</ecc>
+			<incl></incl>
+			<angulardist>0.053305</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">196885</name>
+		<dist>33</dist>
+		<spectype>F8IV</spectype>
+		<mass>1.27</mass>
+		<metal>-0.39</metal>
+		<rightasc>20 39 51</rightasc>
+		<decl>+11 14 58</decl>
+		<planet>
+			<name>HD 196885 b</name>
+			<mass>1.84</mass>
+			<period>386</period>
+			<semiaxis>1.12</semiaxis>
+			<ecc>0.3</ecc>
+			<incl></incl>
+			<angulardist>0.034</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">19994</name>
+		<dist>22.38</dist>
+		<spectype>F8 V</spectype>
+		<mass>1.35</mass>
+		<metal>0.23</metal>
+		<rightasc>03 12 46</rightasc>
+		<decl>-01 11 45</decl>
+		<planet>
+			<name>HD 19994 b</name>
+			<mass>2</mass>
+			<period error="19">454</period>
+			<semiaxis>1.3</semiaxis>
+			<ecc>0.2</ecc>
+			<incl></incl>
+			<angulardist>0.058</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">202206</name>
+		<dist>46.34</dist>
+		<spectype>G6 V</spectype>
+		<mass>1.15</mass>
+		<metal error="0.07">0.37</metal>
+		<rightasc>21 14 57</rightasc>
+		<decl>-20 47 21</decl>
+		<planet>
+			<name>HD 202206 b</name>
+			<mass>17.4</mass>
+			<period error="0.06">255.87</period>
+			<semiaxis>0.83</semiaxis>
+			<ecc error="0.001">0.435</ecc>
+			<incl></incl>
+			<angulardist>0.018</angulardist>
+		</planet>
+		<planet>
+			<name>HD 202206 c</name>
+			<mass>2.44</mass>
+			<period error="18.4">1383.4</period>
+			<semiaxis>2.55</semiaxis>
+			<ecc error="0.021">0.267</ecc>
+			<incl></incl>
+			<angulardist>0.055</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">20367</name>
+		<dist>27</dist>
+		<spectype>G0</spectype>
+		<mass error="0.06">1.04</mass>
+		<metal>0.1</metal>
+		<rightasc>03 17 40</rightasc>
+		<decl>+31 07 37</decl>
+		<planet>
+			<name>HD 20367 b</name>
+			<mass>1.07</mass>
+			<period error="6">500</period>
+			<semiaxis>1.25</semiaxis>
+			<ecc error="0.1">0.23</ecc>
+			<incl></incl>
+			<angulardist>0.046</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">2039</name>
+		<dist>89.8</dist>
+		<spectype>G2/G3 IV-V</spectype>
+		<mass error="0.05">0.98</mass>
+		<metal error="0.16">0.1</metal>
+		<rightasc>00 24 20</rightasc>
+		<decl>-56 39 00</decl>
+		<planet>
+			<name>HD 2039 b</name>
+			<mass error="1.7">4.85</mass>
+			<period error="150">1192.582</period>
+			<semiaxis error="0.2">2.19</semiaxis>
+			<ecc error="0.15">0.68</ecc>
+			<incl></incl>
+			<angulardist>0.024</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">20782</name>
+		<dist error="1">36.02</dist>
+		<spectype>G2 V</spectype>
+		<mass error="0.03">1</mass>
+		<metal error="0.03">-0.05</metal>
+		<rightasc>03 20 03</rightasc>
+		<decl>-28 51 14</decl>
+		<planet>
+			<name>HD 20782 b</name>
+			<mass error="0.23">1.8</mass>
+			<period error="0.03">585.86</period>
+			<semiaxis error="0.12">1.36</semiaxis>
+			<ecc error="0.03">0.92</ecc>
+			<incl></incl>
+			<angulardist>0.037757</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">208487</name>
+		<dist>45</dist>
+		<spectype>G2V</spectype>
+		<mass>1.3</mass>
+		<metal error="0.05">-0.06</metal>
+		<rightasc>21 57 19</rightasc>
+		<decl>-37 45 49</decl>
+		<planet>
+			<name>HD 208487 b</name>
+			<mass error="0.05">0.45</mass>
+			<period error="1">123</period>
+			<semiaxis error="0.04">0.49</semiaxis>
+			<ecc error="0.1">0.32</ecc>
+			<incl></incl>
+			<angulardist>0.010889</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">209458</name>
+		<dist>47</dist>
+		<spectype>G0 V</spectype>
+		<mass error="0.066">1.01</mass>
+		<metal>0.04</metal>
+		<rightasc>22 03 10</rightasc>
+		<decl>+18 53 04</decl>
+		<planet>
+			<name>HD 209458 b</name>
+			<mass error="0.05">0.69</mass>
+			<period error="3.8e-07">3.52474859</period>
+			<semiaxis>0.045</semiaxis>
+			<ecc>0.07</ecc>
+			<incl error="0.01">86.929</incl>
+			<angulardist>0.000957</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">210277</name>
+		<dist>22</dist>
+		<spectype>G0</spectype>
+		<mass>0.92</mass>
+		<metal error="0.04">0.19</metal>
+		<rightasc>22 09 29</rightasc>
+		<decl>-07 32 32</decl>
+		<planet>
+			<name>HD 210277 b</name>
+			<mass error="0.03">1.23</mass>
+			<period error="0.4">442.1</period>
+			<semiaxis error="0.02">1.1</semiaxis>
+			<ecc error="0.011">0.472</ecc>
+			<incl></incl>
+			<angulardist>0.05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">212301</name>
+		<dist>52.7</dist>
+		<spectype>F8 V</spectype>
+		<mass error="0.06">1.05</mass>
+		<metal>0.18</metal>
+		<rightasc>22 27 30</rightasc>
+		<decl>-77 43 04</decl>
+		<planet>
+			<name>HD 212301 b</name>
+			<mass>0.45</mass>
+			<period>2.457</period>
+			<semiaxis>0.036</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.000683</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">213240</name>
+		<dist>40.75</dist>
+		<spectype>G4 IV</spectype>
+		<mass>1.22</mass>
+		<metal>0.23</metal>
+		<rightasc>22 31 00</rightasc>
+		<decl>-49 25 59</decl>
+		<planet>
+			<name>HD 213240 b</name>
+			<mass>4.5</mass>
+			<period error="42">951</period>
+			<semiaxis>2.03</semiaxis>
+			<ecc error="0.04">0.45</ecc>
+			<incl></incl>
+			<angulardist>0.05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">216435</name>
+		<dist>33.3</dist>
+		<spectype>G0 V</spectype>
+		<mass>1.25</mass>
+		<metal>0.15</metal>
+		<rightasc>22 53 37</rightasc>
+		<decl>-48 35 53</decl>
+		<planet>
+			<name>HD 216435 b</name>
+			<mass>1.49</mass>
+			<period>1442.919</period>
+			<semiaxis>2.7</semiaxis>
+			<ecc>0.34</ecc>
+			<incl></incl>
+			<angulardist>0.081</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">216437</name>
+		<dist>26.5</dist>
+		<spectype>G4 IV-V</spectype>
+		<mass>1.07</mass>
+		<metal>0</metal>
+		<rightasc>22 54 39</rightasc>
+		<decl>-70 04 25</decl>
+		<planet>
+			<name>HD 216437 b</name>
+			<mass>2.1</mass>
+			<period>1294</period>
+			<semiaxis>2.7</semiaxis>
+			<ecc>0.34</ecc>
+			<incl></incl>
+			<angulardist>0.102</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">216770</name>
+		<dist>38</dist>
+		<spectype>K1 V</spectype>
+		<mass>0.9</mass>
+		<metal>0.23</metal>
+		<rightasc>22 55 53</rightasc>
+		<decl>-26 39 31</decl>
+		<planet>
+			<name>HD 216770 b</name>
+			<mass>0.65</mass>
+			<period error="0.4">118.45</period>
+			<semiaxis>0.46</semiaxis>
+			<ecc error="0.06">0.37</ecc>
+			<incl></incl>
+			<angulardist>0.012</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">217107</name>
+		<dist>37</dist>
+		<spectype>G8 IV</spectype>
+		<mass>1.02</mass>
+		<metal error="0.05">0.37</metal>
+		<rightasc>22 58 15</rightasc>
+		<decl>-02 23 42</decl>
+		<planet>
+			<name>HD 217107 b</name>
+			<mass error="0.05">1.33</mass>
+			<period error="5e-05">7.12689</period>
+			<semiaxis error="0.001">0.073</semiaxis>
+			<ecc error="0.005">0.132</ecc>
+			<incl></incl>
+			<angulardist>0.001973</angulardist>
+		</planet>
+		<planet>
+			<name>HD 217107 c</name>
+			<mass error="0.48">2.5</mass>
+			<period error="157">3352</period>
+			<semiaxis error="0.21">4.41</semiaxis>
+			<ecc error="0.026">0.537</ecc>
+			<incl></incl>
+			<angulardist>0.119189</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">219449</name>
+		<dist>45</dist>
+		<spectype>K0 III</spectype>
+		<mass></mass>
+		<metal error="0.055">-0.085</metal>
+		<rightasc>23 15 53</rightasc>
+		<decl>-09 05 15</decl>
+		<planet>
+			<name>HD 219449 b</name>
+			<mass>2.9</mass>
+			<period>182</period>
+			<semiaxis>0.3</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>0.006667</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">222582</name>
+		<dist>42</dist>
+		<spectype>G5</spectype>
+		<mass>1</mass>
+		<metal>-0.01</metal>
+		<rightasc>23 41 51</rightasc>
+		<decl>-05 59 08</decl>
+		<planet>
+			<name>HD 222582 b</name>
+			<mass>5.11</mass>
+			<period>572</period>
+			<semiaxis>1.35</semiaxis>
+			<ecc>0.76</ecc>
+			<incl></incl>
+			<angulardist>0.032</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">224693</name>
+		<dist>94</dist>
+		<spectype>G2IV</spectype>
+		<mass error="0.1">1.33</mass>
+		<metal error="0.03">0.343</metal>
+		<rightasc>23 59 54</rightasc>
+		<decl>-22 25 41</decl>
+		<planet>
+			<name>HD 224693 b</name>
+			<mass>0.71</mass>
+			<period error="0.02">26.73</period>
+			<semiaxis>0.233</semiaxis>
+			<ecc error="0.03">0.05</ecc>
+			<incl></incl>
+			<angulardist>0.002479</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">23079</name>
+		<dist>34.8</dist>
+		<spectype>F8/G0 V</spectype>
+		<mass>1.1</mass>
+		<metal>-0.24</metal>
+		<rightasc>03 39 43</rightasc>
+		<decl>-52 54 57</decl>
+		<planet>
+			<name>HD 23079 b</name>
+			<mass>2.61</mass>
+			<period>738.459</period>
+			<semiaxis>1.65</semiaxis>
+			<ecc>0.1</ecc>
+			<incl></incl>
+			<angulardist>0.047</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">23596</name>
+		<dist>52</dist>
+		<spectype>F8</spectype>
+		<mass error="0.04">1.27</mass>
+		<metal>0.32</metal>
+		<rightasc>03 48 00</rightasc>
+		<decl>+40 31 50</decl>
+		<planet>
+			<name>HD 23596 b</name>
+			<mass>7.19</mass>
+			<period error="32">1558</period>
+			<semiaxis>2.72</semiaxis>
+			<ecc error="0.035">0.314</ecc>
+			<incl></incl>
+			<angulardist>0.052</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">2638</name>
+		<dist>53.71</dist>
+		<spectype>G5</spectype>
+		<mass>0.93</mass>
+		<metal error="0.05">0.16</metal>
+		<rightasc>00 29 59</rightasc>
+		<decl>-05 45 50</decl>
+		<planet>
+			<name>HD 2638 b</name>
+			<mass>0.48</mass>
+			<period error="0.0002">3.4442</period>
+			<semiaxis>0.044</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.000819</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">27442</name>
+		<dist>18.1</dist>
+		<spectype>K2 IV a</spectype>
+		<mass>1.2</mass>
+		<metal>0.2</metal>
+		<rightasc>04 16 29</rightasc>
+		<decl>-59 18 07</decl>
+		<planet>
+			<name>HD 27442 b</name>
+			<mass>1.28</mass>
+			<period>423.841</period>
+			<semiaxis>1.18</semiaxis>
+			<ecc>0.07</ecc>
+			<incl></incl>
+			<angulardist>0.065193</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">27894</name>
+		<dist>42.37</dist>
+		<spectype>K2 V</spectype>
+		<mass>0.75</mass>
+		<metal error="0.07">0.3</metal>
+		<rightasc>04 20 47</rightasc>
+		<decl>-59 24 39</decl>
+		<planet>
+			<name>HD 27894 b</name>
+			<mass>0.62</mass>
+			<period error="0.007">17.991</period>
+			<semiaxis>0.122</semiaxis>
+			<ecc error="0.008">0.049</ecc>
+			<incl></incl>
+			<angulardist>0.002879</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">28185</name>
+		<dist>39.4</dist>
+		<spectype>G5</spectype>
+		<mass>0.99</mass>
+		<metal>0.24</metal>
+		<rightasc>04 26 26</rightasc>
+		<decl>-10 33 02</decl>
+		<planet>
+			<name>HD 28185 b</name>
+			<mass>5.7</mass>
+			<period error="2">383</period>
+			<semiaxis>1.03</semiaxis>
+			<ecc error="0.04">0.07</ecc>
+			<incl></incl>
+			<angulardist>0.026</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">30177</name>
+		<dist>55</dist>
+		<spectype>G8 V</spectype>
+		<mass>0.95</mass>
+		<metal>0.25</metal>
+		<rightasc>04 41 54</rightasc>
+		<decl>-58 01 14</decl>
+		<planet>
+			<name>HD 30177 b</name>
+			<mass error="1.5">9.17</mass>
+			<period error="800">2819.654</period>
+			<semiaxis error="0.9">3.86</semiaxis>
+			<ecc error="0.17">0.3</ecc>
+			<incl></incl>
+			<angulardist>0.07</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">330075</name>
+		<dist>50.2</dist>
+		<spectype>G5</spectype>
+		<mass>0.95</mass>
+		<metal>0.03</metal>
+		<rightasc>15 49 37</rightasc>
+		<decl>-49 57 48</decl>
+		<planet>
+			<name>HD 330075 b</name>
+			<mass>0.76</mass>
+			<period error="0.004">3.369</period>
+			<semiaxis>0.043</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.000857</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">33283</name>
+		<dist>86</dist>
+		<spectype>G3V</spectype>
+		<mass error="0.1">1.24</mass>
+		<metal error="0.03">0.366</metal>
+		<rightasc>05 08 01</rightasc>
+		<decl>-26 47 50</decl>
+		<planet>
+			<name>HD 33283 b</name>
+			<mass>0.33</mass>
+			<period error="0.007">18.179</period>
+			<semiaxis>0.168</semiaxis>
+			<ecc error="0.05">0.48</ecc>
+			<incl></incl>
+			<angulardist>0.001953</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">33564</name>
+		<dist error="0.2">20.98</dist>
+		<spectype>F6 V</spectype>
+		<mass>1.25</mass>
+		<metal>-0.12</metal>
+		<rightasc>05 22 33</rightasc>
+		<decl>+79 13 52</decl>
+		<planet>
+			<name>HD 33564 b</name>
+			<mass>9.1</mass>
+			<period error="3">388</period>
+			<semiaxis>1.1</semiaxis>
+			<ecc error="0.02">0.34</ecc>
+			<incl></incl>
+			<angulardist>0.052431</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">33636</name>
+		<dist>28.7</dist>
+		<spectype>G0 V</spectype>
+		<mass>0.99</mass>
+		<metal>-0.13</metal>
+		<rightasc>05 11 46</rightasc>
+		<decl>+04 24 12</decl>
+		<planet>
+			<name>HD 33636 b</name>
+			<mass>9.28</mass>
+			<period>2447.292</period>
+			<semiaxis>3.56</semiaxis>
+			<ecc>0.53</ecc>
+			<incl></incl>
+			<angulardist>0.124</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">3651</name>
+		<dist>11</dist>
+		<spectype>K0 V</spectype>
+		<mass>0.79</mass>
+		<metal>0.05</metal>
+		<rightasc>00 39 21</rightasc>
+		<decl>+21 15 01</decl>
+		<planet>
+			<name>HD 3651 b</name>
+			<mass>0.2</mass>
+			<period>62.23</period>
+			<semiaxis>0.284</semiaxis>
+			<ecc>0.63</ecc>
+			<incl></incl>
+			<angulardist>0.025818</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">37124</name>
+		<dist>33</dist>
+		<spectype>G4 V</spectype>
+		<mass>0.91</mass>
+		<metal>-0.32</metal>
+		<rightasc>05 37 02</rightasc>
+		<decl>+20 43 50</decl>
+		<planet>
+			<name>HD 37124 b</name>
+			<mass>0.61</mass>
+			<period error="0.369">154.46</period>
+			<semiaxis>0.53</semiaxis>
+			<ecc>0.055</ecc>
+			<incl></incl>
+			<angulardist>0.016061</angulardist>
+		</planet>
+		<planet>
+			<name>HD 37124 c</name>
+			<mass error="0.088">0.683</mass>
+			<period>2295</period>
+			<semiaxis error="0.18">3.19</semiaxis>
+			<ecc>0.2</ecc>
+			<incl></incl>
+			<angulardist>0.096667</angulardist>
+		</planet>
+		<planet>
+			<name>HD 37124 d</name>
+			<mass>0.6</mass>
+			<period>843.6</period>
+			<semiaxis>1.64</semiaxis>
+			<ecc>0.14</ecc>
+			<incl></incl>
+			<angulardist>0.049697</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">37605</name>
+		<dist>42.9</dist>
+		<spectype>K0V</spectype>
+		<mass error="0.1">0.8</mass>
+		<metal error="0.06">0.39</metal>
+		<rightasc>05 40 01</rightasc>
+		<decl>+06 03 38</decl>
+		<planet>
+			<name>HD 37605 b</name>
+			<mass>2.3</mass>
+			<period error="0.1">55</period>
+			<semiaxis>0.25</semiaxis>
+			<ecc error="0.0085">0.677</ecc>
+			<incl></incl>
+			<angulardist>0.005828</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">38529</name>
+		<dist>42.43</dist>
+		<spectype>G4 IV</spectype>
+		<mass>1.39</mass>
+		<metal>0.313</metal>
+		<rightasc>05 46 34</rightasc>
+		<decl>+01 10 05</decl>
+		<planet>
+			<name>HD 38529 b</name>
+			<mass>0.78</mass>
+			<period error="0.05">14.309</period>
+			<semiaxis>0.129</semiaxis>
+			<ecc error="0.02">0.29</ecc>
+			<incl></incl>
+			<angulardist>0.003</angulardist>
+		</planet>
+		<planet>
+			<name>HD 38529 c</name>
+			<mass>12.7</mass>
+			<period error="30">2174.3</period>
+			<semiaxis>3.68</semiaxis>
+			<ecc error="0.05">0.36</ecc>
+			<incl></incl>
+			<angulardist>0.087</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">39091</name>
+		<dist>20.55</dist>
+		<spectype>G1 IV</spectype>
+		<mass>1.1</mass>
+		<metal>0.09</metal>
+		<rightasc>05 37 09</rightasc>
+		<decl>-80 28 08</decl>
+		<planet>
+			<name>HD 39091 b</name>
+			<mass>10.35</mass>
+			<period>2063.818</period>
+			<semiaxis>3.29</semiaxis>
+			<ecc>0.62</ecc>
+			<incl></incl>
+			<angulardist>0.16</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">40979</name>
+		<dist>33.3</dist>
+		<spectype>F8 V</spectype>
+		<mass>1.08</mass>
+		<metal>0.194</metal>
+		<rightasc>06 04 29</rightasc>
+		<decl>+44 15 37</decl>
+		<planet>
+			<name>HD 40979 b</name>
+			<mass>3.32</mass>
+			<period error="3">267.2</period>
+			<semiaxis>0.811</semiaxis>
+			<ecc error="0.05">0.23</ecc>
+			<incl></incl>
+			<angulardist>0.024</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">41004 a</name>
+		<dist>42.5</dist>
+		<spectype>K1 V</spectype>
+		<mass>0.7</mass>
+		<metal error="0.1">-0.09</metal>
+		<rightasc>05 59 49</rightasc>
+		<decl>-48 14 22</decl>
+		<planet>
+			<name>HD 41004 A b</name>
+			<mass>2.3</mass>
+			<period error="37">655</period>
+			<semiaxis>1.31</semiaxis>
+			<ecc error="0.17">0.39</ecc>
+			<incl></incl>
+			<angulardist>0.031</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">41004 b</name>
+		<dist>43.03</dist>
+		<spectype>M2</spectype>
+		<mass>0.4</mass>
+		<metal>-0.01</metal>
+		<rightasc>05 59 50</rightasc>
+		<decl>-48 14 23</decl>
+		<planet>
+			<name>HD 41004 B b</name>
+			<mass error="0.22">18.4</mass>
+			<period error="1.2e-05">1.3283</period>
+			<semiaxis>0.0177</semiaxis>
+			<ecc error="0.012">0.081</ecc>
+			<incl></incl>
+			<angulardist>0.000411</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">4203</name>
+		<dist>77.5</dist>
+		<spectype>G5</spectype>
+		<mass>1.06</mass>
+		<metal>0.22</metal>
+		<rightasc>00 44 41</rightasc>
+		<decl>+20 26 56</decl>
+		<planet>
+			<name>HD 4203 b</name>
+			<mass>1.65</mass>
+			<period>400.944</period>
+			<semiaxis>1.09</semiaxis>
+			<ecc>0.46</ecc>
+			<incl></incl>
+			<angulardist>0.014</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">4208</name>
+		<dist>33.9</dist>
+		<spectype>G5 V</spectype>
+		<mass>0.93</mass>
+		<metal>-0.24</metal>
+		<rightasc>00 44 26</rightasc>
+		<decl>-26 30 56</decl>
+		<planet>
+			<name>HD 4208 b</name>
+			<mass>0.8</mass>
+			<period>812.197</period>
+			<semiaxis>1.67</semiaxis>
+			<ecc>0.05</ecc>
+			<incl></incl>
+			<angulardist>0.049</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">4308</name>
+		<dist>21.9</dist>
+		<spectype>G5 V</spectype>
+		<mass>0.83</mass>
+		<metal>-0.31</metal>
+		<rightasc>00 44 39</rightasc>
+		<decl>-65 38 58</decl>
+		<planet>
+			<name>HD 4308 b</name>
+			<mass>0.047</mass>
+			<period>15.56</period>
+			<semiaxis>0.114</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.005205</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">45350</name>
+		<dist>49</dist>
+		<spectype>G5 IV</spectype>
+		<mass>1.02</mass>
+		<metal>0.29</metal>
+		<rightasc>06 28 45</rightasc>
+		<decl>+38 57 46</decl>
+		<planet>
+			<name>HD 45350 b</name>
+			<mass error="0.14">1.79</mass>
+			<period error="37.42">890.76</period>
+			<semiaxis error="0.067">1.92</semiaxis>
+			<ecc error="0.009">0.778</ecc>
+			<incl></incl>
+			<angulardist>0.039184</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">46375</name>
+		<dist>33.4</dist>
+		<spectype>K1 IV</spectype>
+		<mass>1</mass>
+		<metal>0.25</metal>
+		<rightasc>06 33 12</rightasc>
+		<decl>+05 27 46</decl>
+		<planet>
+			<name>HD 46375 b</name>
+			<mass>0.249</mass>
+			<period>3.024</period>
+			<semiaxis>0.041</semiaxis>
+			<ecc>0.04</ecc>
+			<incl></incl>
+			<angulardist>0.001</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">47536</name>
+		<dist error="8.25">121.36</dist>
+		<spectype>K1 III</spectype>
+		<mass error="0.06">0.94</mass>
+		<metal>-0.68</metal>
+		<rightasc>06 37 47</rightasc>
+		<decl>-32 20 23</decl>
+		<planet>
+			<name>HD 47536 b</name>
+			<mass>4.96</mass>
+			<period error="0.31">712.13</period>
+			<semiaxis>1.61</semiaxis>
+			<ecc error="0.08">0.2</ecc>
+			<incl></incl>
+			<angulardist>0.013266</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">49674</name>
+		<dist>40.7</dist>
+		<spectype>G5 V</spectype>
+		<mass>1</mass>
+		<metal>0.25</metal>
+		<rightasc>06 51 30</rightasc>
+		<decl>+40 52 03</decl>
+		<planet>
+			<name>HD 49674 b</name>
+			<mass error="0.016">0.115</mass>
+			<period error="0.0033">4.9437</period>
+			<semiaxis error="0.0033">0.058</semiaxis>
+			<ecc error="0.15">0.23</ecc>
+			<incl></incl>
+			<angulardist>0.001425</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">50499</name>
+		<dist>47.26</dist>
+		<spectype>G IV</spectype>
+		<mass>1.27</mass>
+		<metal>0.23</metal>
+		<rightasc>06 52 02</rightasc>
+		<decl>-33 54 56</decl>
+		<planet>
+			<name>HD 50499 b</name>
+			<mass error="0.02">1.71</mass>
+			<period error="110">2582.7</period>
+			<semiaxis error="0.06">3.86</semiaxis>
+			<ecc error="0.14">0.23</ecc>
+			<incl></incl>
+			<angulardist>0.081676</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">50554</name>
+		<dist>31.03</dist>
+		<spectype>F8</spectype>
+		<mass>1.1</mass>
+		<metal>0.02</metal>
+		<rightasc>06 54 42</rightasc>
+		<decl>+24 14 44</decl>
+		<planet>
+			<name>HD 50554 b</name>
+			<mass>4.9</mass>
+			<period error="41">1279</period>
+			<semiaxis>2.38</semiaxis>
+			<ecc error="0.03">0.42</ecc>
+			<incl></incl>
+			<angulardist>0.077</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">52265</name>
+		<dist>28</dist>
+		<spectype>G0 V</spectype>
+		<mass>1.13</mass>
+		<metal>0.11</metal>
+		<rightasc>07 00 18</rightasc>
+		<decl>-05 22 01</decl>
+		<planet>
+			<name>HD 52265 b</name>
+			<mass error="0.06">1.13</mass>
+			<period error="0.1">118.96</period>
+			<semiaxis error="0.008">0.49</semiaxis>
+			<ecc error="0.04">0.29</ecc>
+			<incl></incl>
+			<angulardist>0.017</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">59686</name>
+		<dist>92</dist>
+		<spectype>K2 III</spectype>
+		<mass></mass>
+		<metal></metal>
+		<rightasc>07 31 48</rightasc>
+		<decl>+17 05 09</decl>
+		<planet>
+			<name>HD 59686 b</name>
+			<mass>5.25</mass>
+			<period>303</period>
+			<semiaxis>0.911</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.009902</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">62509</name>
+		<dist error="1">10.34</dist>
+		<spectype> K0IIIb</spectype>
+		<mass>1.86</mass>
+		<metal>0.19</metal>
+		<rightasc>07 45 18</rightasc>
+		<decl>+28 01 34</decl>
+		<planet>
+			<name>HD 62509 b</name>
+			<mass error="0.1">2.9</mass>
+			<period error="0.81">589.64</period>
+			<semiaxis error="0.03">1.69</semiaxis>
+			<ecc error="0.03">0.02</ecc>
+			<incl></incl>
+			<angulardist>0.163443</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">63454</name>
+		<dist>35.8</dist>
+		<spectype>K4 V</spectype>
+		<mass>0.8</mass>
+		<metal error="0.07">0.11</metal>
+		<rightasc>07 39 21</rightasc>
+		<decl>-78 16 44</decl>
+		<planet>
+			<name>HD 63454 b</name>
+			<mass>0.38</mass>
+			<period error="9.5e-05">2.81782</period>
+			<semiaxis>0.036</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.001006</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">6434</name>
+		<dist>40.32</dist>
+		<spectype>G3 IV</spectype>
+		<mass>1</mass>
+		<metal>-0.52</metal>
+		<rightasc>01 04 40</rightasc>
+		<decl>-39 29 17</decl>
+		<planet>
+			<name>HD 6434 b</name>
+			<mass>0.48</mass>
+			<period>22.09</period>
+			<semiaxis>0.15</semiaxis>
+			<ecc error="0.15">0.3</ecc>
+			<incl></incl>
+			<angulardist>0.004</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">65216</name>
+		<dist>34.3</dist>
+		<spectype>G5 V</spectype>
+		<mass>0.92</mass>
+		<metal error="0.04">-0.12</metal>
+		<rightasc>07 53 4</rightasc>
+		<decl>-63 38 50</decl>
+		<planet>
+			<name>HD 65216 b</name>
+			<mass>1.21</mass>
+			<period error="11.4">613.1</period>
+			<semiaxis>1.37</semiaxis>
+			<ecc error="0.06">0.41</ecc>
+			<incl></incl>
+			<angulardist>0.04</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">66428</name>
+		<dist error="3.8">55</dist>
+		<spectype>G5</spectype>
+		<mass>1.14552</mass>
+		<metal>0.31</metal>
+		<rightasc>08 03 28</rightasc>
+		<decl>-01 09 45</decl>
+		<planet>
+			<name>HD 66428 b</name>
+			<mass error="0.027">2.82</mass>
+			<period error="31">1973</period>
+			<semiaxis error="0.19">3.18</semiaxis>
+			<ecc error="0.03">0.465</ecc>
+			<incl></incl>
+			<angulardist>0.057818</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">68988</name>
+		<dist>58</dist>
+		<spectype>G0</spectype>
+		<mass>1.2</mass>
+		<metal>0.24</metal>
+		<rightasc>08 18 22</rightasc>
+		<decl>+61 27 38</decl>
+		<planet>
+			<name>HD 68988 b</name>
+			<mass>1.9</mass>
+			<period>6.276</period>
+			<semiaxis>0.071</semiaxis>
+			<ecc>0.14</ecc>
+			<incl></incl>
+			<angulardist>0.001</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">69830</name>
+		<dist>12.6</dist>
+		<spectype>K0V</spectype>
+		<mass error="0.03">0.86</mass>
+		<metal error="0.02">-0.05</metal>
+		<rightasc>08 18 23</rightasc>
+		<decl>-12 37 55</decl>
+		<planet>
+			<name>HD 69830 b</name>
+			<mass>0.033</mass>
+			<period error="0.003">8.667</period>
+			<semiaxis>0.0785</semiaxis>
+			<ecc error="0.04">0.1</ecc>
+			<incl></incl>
+			<angulardist>0.00623</angulardist>
+		</planet>
+		<planet>
+			<name>HD 69830 c</name>
+			<mass>0.038</mass>
+			<period error="0.04">31.56</period>
+			<semiaxis>0.186</semiaxis>
+			<ecc error="0.06">0.13</ecc>
+			<incl></incl>
+			<angulardist>0.014762</angulardist>
+		</planet>
+		<planet>
+			<name>HD 69830 d</name>
+			<mass>0.058</mass>
+			<period error="3">197</period>
+			<semiaxis>0.63</semiaxis>
+			<ecc error="0.07">0.07</ecc>
+			<incl></incl>
+			<angulardist>0.05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">70642</name>
+		<dist>29</dist>
+		<spectype>G5 IV-V</spectype>
+		<mass error="0.05">1</mass>
+		<metal error="0.02">0.16</metal>
+		<rightasc>08 21 28</rightasc>
+		<decl>-39 42 19</decl>
+		<planet>
+			<name>HD 70642 b</name>
+			<mass>2</mass>
+			<period error="400">2231</period>
+			<semiaxis>3.3</semiaxis>
+			<ecc error="0.06">0.1</ecc>
+			<incl></incl>
+			<angulardist>0.114</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">72659</name>
+		<dist>51.4</dist>
+		<spectype>GO V</spectype>
+		<mass>0.95</mass>
+		<metal>-0.14</metal>
+		<rightasc>08 34 03</rightasc>
+		<decl>-01 34 05</decl>
+		<planet>
+			<name>HD 72659 b</name>
+			<mass>2.96</mass>
+			<period>3177.4</period>
+			<semiaxis>4.16</semiaxis>
+			<ecc>0.2</ecc>
+			<incl></incl>
+			<angulardist>0.080934</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">73256</name>
+		<dist>36.5</dist>
+		<spectype>G8/K0</spectype>
+		<mass>1.05</mass>
+		<metal error="0.05">0.29</metal>
+		<rightasc>08 36 23</rightasc>
+		<decl>-30 02 15</decl>
+		<planet>
+			<name>HD 73256 b</name>
+			<mass>1.87</mass>
+			<period error="0.00016">2.54858</period>
+			<semiaxis>0.037</semiaxis>
+			<ecc error="0.02">0.03</ecc>
+			<incl></incl>
+			<angulardist>0.001014</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">73526</name>
+		<dist>99</dist>
+		<spectype>G6 V</spectype>
+		<mass>1.02</mass>
+		<metal>0.28</metal>
+		<rightasc>08 37 16</rightasc>
+		<decl>-41 19 08</decl>
+		<planet>
+			<name>HD 73526 b</name>
+			<mass error="0.2">2.9</mass>
+			<period error="0.9">188.3</period>
+			<semiaxis error="0.05">0.66</semiaxis>
+			<ecc error="0.05">0.19</ecc>
+			<incl></incl>
+			<angulardist>0.006667</angulardist>
+		</planet>
+		<planet>
+			<name>HD 73526 c</name>
+			<mass error="0.3">2.5</mass>
+			<period error="2.4">377.8</period>
+			<semiaxis error="0.08">1.05</semiaxis>
+			<ecc error="0.09">0.14</ecc>
+			<incl></incl>
+			<angulardist>0.010606</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">74156</name>
+		<dist>64.56</dist>
+		<spectype>G0</spectype>
+		<mass>1.05</mass>
+		<metal>0.13</metal>
+		<rightasc>08 42 25</rightasc>
+		<decl>+04 34 41</decl>
+		<planet>
+			<name>HD 74156 b</name>
+			<mass error="0.03">1.86</mass>
+			<period error="0.011">51.643</period>
+			<semiaxis>0.294</semiaxis>
+			<ecc error="0.009">0.636</ecc>
+			<incl></incl>
+			<angulardist>0.005</angulardist>
+		</planet>
+		<planet>
+			<name>HD 74156 c</name>
+			<mass error="0.23">6.17</mass>
+			<period error="11">2025</period>
+			<semiaxis>3.4</semiaxis>
+			<ecc error="0.039">0.583</ecc>
+			<incl></incl>
+			<angulardist>0.053</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">75289</name>
+		<dist>28.94</dist>
+		<spectype>G0 V</spectype>
+		<mass>1.05</mass>
+		<metal>0.29</metal>
+		<rightasc>08 47 40</rightasc>
+		<decl>-41 44 12</decl>
+		<planet>
+			<name>HD 75289 b</name>
+			<mass>0.42</mass>
+			<period>3.51</period>
+			<semiaxis>0.046</semiaxis>
+			<ecc>0.054</ecc>
+			<incl></incl>
+			<angulardist>0.002</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">76700</name>
+		<dist>59.7</dist>
+		<spectype>G6 V</spectype>
+		<mass error="0.05">1</mass>
+		<metal>0.14</metal>
+		<rightasc>08 53 55</rightasc>
+		<decl>-66 48 03</decl>
+		<planet>
+			<name>HD 76700 b</name>
+			<mass error="0.017">0.197</mass>
+			<period error="0.001">3.971</period>
+			<semiaxis error="0.004">0.049</semiaxis>
+			<ecc error="0.04">0.13</ecc>
+			<incl></incl>
+			<angulardist>0.000821</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">80606</name>
+		<dist>58.38</dist>
+		<spectype>G5</spectype>
+		<mass>0.9</mass>
+		<metal>0.43</metal>
+		<rightasc>09 22 37</rightasc>
+		<decl>+50 36 13</decl>
+		<planet>
+			<name>HD 80606 b</name>
+			<mass>3.41</mass>
+			<period error="0.21">111.78</period>
+			<semiaxis>0.439</semiaxis>
+			<ecc error="0.012">0.927</ecc>
+			<incl></incl>
+			<angulardist>0.008</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">81040</name>
+		<dist error="1.31">32.56</dist>
+		<spectype>G2/G3</spectype>
+		<mass error="0.04">0.96</mass>
+		<metal error="0.06">-0.16</metal>
+		<rightasc>09 23 47</rightasc>
+		<decl>+20 21 52</decl>
+		<planet>
+			<name>HD 81040 b</name>
+			<mass error="0.71">6.86</mass>
+			<period error="7">1001.7</period>
+			<semiaxis>1.94</semiaxis>
+			<ecc error="0.042">0.526</ecc>
+			<incl></incl>
+			<angulardist>0.059582</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">82943</name>
+		<dist>27.46</dist>
+		<spectype>G0</spectype>
+		<mass>1.15</mass>
+		<metal>0.27</metal>
+		<rightasc>09 34 50</rightasc>
+		<decl>-12 07 46</decl>
+		<planet>
+			<name>HD 82943 b</name>
+			<mass>1.75</mass>
+			<period>441.2</period>
+			<semiaxis>1.19</semiaxis>
+			<ecc>0.219</ecc>
+			<incl></incl>
+			<angulardist>0.043336</angulardist>
+		</planet>
+		<planet>
+			<name>HD 82943 c</name>
+			<mass>2.01</mass>
+			<period>219</period>
+			<semiaxis>0.746</semiaxis>
+			<ecc>0.359</ecc>
+			<incl></incl>
+			<angulardist>0.027167</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">83443</name>
+		<dist>43.54</dist>
+		<spectype>K0 V</spectype>
+		<mass>0.79</mass>
+		<metal>0.33</metal>
+		<rightasc>09 37 11</rightasc>
+		<decl>-43 16 19</decl>
+		<planet>
+			<name>HD 83443 b</name>
+			<mass error="0.034">0.4</mass>
+			<period error="0.0006">2.985625</period>
+			<semiaxis error="0.0033">0.0406</semiaxis>
+			<ecc error="0.025">0.008</ecc>
+			<incl></incl>
+			<angulardist>0.000932</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">8574</name>
+		<dist>44.15</dist>
+		<spectype>F8</spectype>
+		<mass error="0.05">1.04</mass>
+		<metal>-0.09</metal>
+		<rightasc>01 25 12</rightasc>
+		<decl>+28 34 00</decl>
+		<planet>
+			<name>HD 8574 b</name>
+			<mass>2.23</mass>
+			<period error="0.84">228.8</period>
+			<semiaxis>0.76</semiaxis>
+			<ecc error="0.04">0.4</ecc>
+			<incl></incl>
+			<angulardist>0.017</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">86081</name>
+		<dist>91</dist>
+		<spectype>F8V</spectype>
+		<mass error="0.05">1.21</mass>
+		<metal error="0.03">0.257</metal>
+		<rightasc>09 56 06</rightasc>
+		<decl>-03 48 30</decl>
+		<planet>
+			<name>HD 86081 b</name>
+			<mass>1.5</mass>
+			<period error="0.0002">2.1375</period>
+			<semiaxis>0.039</semiaxis>
+			<ecc error="0.004">0.008</ecc>
+			<incl></incl>
+			<angulardist>0.000429</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">88133</name>
+		<dist>74.5</dist>
+		<spectype>G5 IV</spectype>
+		<mass error="0.2">1.2</mass>
+		<metal error="0.04">0.34</metal>
+		<rightasc>10 10 07</rightasc>
+		<decl>+18 11 12</decl>
+		<planet>
+			<name>HD 88133 b</name>
+			<mass>0.22</mass>
+			<period error="0.001">3.41</period>
+			<semiaxis>0.047</semiaxis>
+			<ecc error="0.05">0.11</ecc>
+			<incl></incl>
+			<angulardist>0.000631</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">89307</name>
+		<dist>33</dist>
+		<spectype>G0V</spectype>
+		<mass>1.27</mass>
+		<metal>-0.23</metal>
+		<rightasc>10 18 21</rightasc>
+		<decl>+12 37 15</decl>
+		<planet>
+			<name>HD 89307 b</name>
+			<mass>2.73</mass>
+			<period>3090</period>
+			<semiaxis>4.15</semiaxis>
+			<ecc>0.27</ecc>
+			<incl></incl>
+			<angulardist>0.126</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">89744</name>
+		<dist>40</dist>
+		<spectype>F7 V</spectype>
+		<mass>1.4</mass>
+		<metal>0.18</metal>
+		<rightasc>10 22 10</rightasc>
+		<decl>+41 13 46</decl>
+		<planet>
+			<name>HD 89744 b</name>
+			<mass>7.99</mass>
+			<period>256.605</period>
+			<semiaxis>0.89</semiaxis>
+			<ecc>0.67</ecc>
+			<incl></incl>
+			<angulardist>0.022</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">92788</name>
+		<dist>32.82</dist>
+		<spectype>G5</spectype>
+		<mass>1.06</mass>
+		<metal>0.24</metal>
+		<rightasc>10 42 48</rightasc>
+		<decl>-02 11 01</decl>
+		<planet>
+			<name>HD 92788 b</name>
+			<mass>3.86</mass>
+			<period>377.7</period>
+			<semiaxis>0.97</semiaxis>
+			<ecc>0.27</ecc>
+			<incl></incl>
+			<angulardist>0.029555</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">93083</name>
+		<dist>28.9</dist>
+		<spectype>K3 V</spectype>
+		<mass error="0.04">0.7</mass>
+		<metal error="0.06">0.15</metal>
+		<rightasc>10 44 20</rightasc>
+		<decl>-33 34 37</decl>
+		<planet>
+			<name>HD 93083 b</name>
+			<mass>0.37</mass>
+			<period error="0.6">143.58</period>
+			<semiaxis>0.477</semiaxis>
+			<ecc error="0.03">0.14</ecc>
+			<incl></incl>
+			<angulardist>0.017</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">99109</name>
+		<dist error="4.8">60.5</dist>
+		<spectype>K0</spectype>
+		<mass>0.93</mass>
+		<metal>0.315</metal>
+		<rightasc>11 24 17</rightasc>
+		<decl>-01 31 44</decl>
+		<planet>
+			<name>HD 99109 b</name>
+			<mass error="0.07">0.502</mass>
+			<period error="5.6">439.3</period>
+			<semiaxis error="0.065">1.105</semiaxis>
+			<ecc error="0.16">0.09</ecc>
+			<incl></incl>
+			<angulardist>0.018264</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name cat="hd">99492</name>
+		<dist>18</dist>
+		<spectype>K2V</spectype>
+		<mass>0.78</mass>
+		<metal>0.36</metal>
+		<rightasc>11 26 46</rightasc>
+		<decl>+03 00 22</decl>
+		<planet>
+			<name>HD 99492 b</name>
+			<mass error="0.013">0.109</mass>
+			<period error="0.0047">17.0431</period>
+			<semiaxis error="0.0071">0.1232</semiaxis>
+			<ecc error="0.092">0.254</ecc>
+			<incl></incl>
+			<angulardist>0.006844</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>HIP 14810</name>
+		<dist error="4.1">52.9</dist>
+		<spectype>G5</spectype>
+		<mass>0.99</mass>
+		<metal error="0.3">0.23</metal>
+		<rightasc>03 11 14</rightasc>
+		<decl>+21 05 50</decl>
+		<planet>
+			<name>HIP 14810 b</name>
+			<mass error="0.54">3.84</mass>
+			<period error="0.002">6.6742</period>
+			<semiaxis error="0.004">0.0692</semiaxis>
+			<ecc error="0.006">0.147</ecc>
+			<incl></incl>
+			<angulardist>0.001308</angulardist>
+		</planet>
+		<planet>
+			<name>HIP 14810 c</name>
+			<mass error="0.12">0.76</mass>
+			<period error="0.002">95.2914</period>
+			<semiaxis error="0.23">0.407</semiaxis>
+			<ecc error="0.006">0.4088</ecc>
+			<incl></incl>
+			<angulardist>0.007694</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>HIP 75458</name>
+		<dist>31.5</dist>
+		<spectype>K2 III</spectype>
+		<mass>1.05</mass>
+		<metal>0.03</metal>
+		<rightasc>15 24 55</rightasc>
+		<decl>+58 57 57</decl>
+		<planet>
+			<name>HIP 75458 b</name>
+			<mass error="0.72">8.82</mass>
+			<period error="0.089">511.098</period>
+			<semiaxis error="0.074">1.275</semiaxis>
+			<ecc error="0.0039">0.7124</ecc>
+			<incl></incl>
+			<angulardist>0.040476</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>HR 810</name>
+		<dist>15.5</dist>
+		<spectype>G0V pecul.</spectype>
+		<mass error="0.07">1.11</mass>
+		<metal>0.25</metal>
+		<rightasc>02 42 31</rightasc>
+		<decl>-50 48 12</decl>
+		<planet>
+			<name>HR 810 b</name>
+			<mass error="0.18">1.94</mass>
+			<period error="2.1">311.288</period>
+			<semiaxis error="0.104">0.91</semiaxis>
+			<ecc error="0.07">0.24</ecc>
+			<incl></incl>
+			<angulardist>0.05871</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE-05-071L</name>
+		<dist>2900</dist>
+		<spectype></spectype>
+		<mass>0.13</mass>
+		<metal></metal>
+		<rightasc>17 50 09</rightasc>
+		<decl>-34 40 23</decl>
+		<planet>
+			<name>OGLE-05-071L b</name>
+			<mass>0.9</mass>
+			<period>2900</period>
+			<semiaxis>1.8</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>0.000621</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE-05-169L</name>
+		<dist>2700</dist>
+		<spectype></spectype>
+		<mass>0.49</mass>
+		<metal></metal>
+		<rightasc>18 06 05</rightasc>
+		<decl>-30 43 57</decl>
+		<planet>
+			<name>OGLE-05-169L b</name>
+			<mass>0.04</mass>
+			<period>3300</period>
+			<semiaxis>2.8</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>0.001037</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE-05-390L</name>
+		<dist>6500</dist>
+		<spectype>M</spectype>
+		<mass>0.22</mass>
+		<metal></metal>
+		<rightasc>17 54 19</rightasc>
+		<decl>-30 22 38</decl>
+		<planet>
+			<name>OGLE-05-390L b</name>
+			<mass>0.017</mass>
+			<period>3500</period>
+			<semiaxis>2.1</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>0.000323</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE-TR-10</name>
+		<dist>1500</dist>
+		<spectype>G or K</spectype>
+		<mass error="0.04">1.18</mass>
+		<metal>0.12</metal>
+		<rightasc>17 51 28</rightasc>
+		<decl>-29 52 34</decl>
+		<planet>
+			<name>OGLE-TR-10 b</name>
+			<mass error="0.14">0.63</mass>
+			<period error="1e-05">3.10129</period>
+			<semiaxis error="4e-05">0.04162</semiaxis>
+			<ecc>0</ecc>
+			<incl error="0.6">84.5</incl>
+			<angulardist>2.8e-05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE-TR-111</name>
+		<dist>1500</dist>
+		<spectype>G or K</spectype>
+		<mass error="0.15">0.82</mass>
+		<metal error="0.28">0.12</metal>
+		<rightasc>10 53 1</rightasc>
+		<decl>-61 24 20</decl>
+		<planet>
+			<name>OGLE-TR-111 b</name>
+			<mass error="0.11">0.53</mass>
+			<period error="4.1e-06">4.0144479</period>
+			<semiaxis error="0.001">0.047</semiaxis>
+			<ecc>0</ecc>
+			<incl error="0.5">88.1</incl>
+			<angulardist>3.1e-05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE-TR-113</name>
+		<dist>1500</dist>
+		<spectype>K</spectype>
+		<mass error="0.02">0.78</mass>
+		<metal error="0.14">0.14</metal>
+		<rightasc>10 52 24</rightasc>
+		<decl>-61 26 48</decl>
+		<planet>
+			<name>OGLE-TR-113 b</name>
+			<mass error="0.19">1.32</mass>
+			<period error="1.3e-06">1.4324757</period>
+			<semiaxis error="0.0002">0.0229</semiaxis>
+			<ecc>0</ecc>
+			<incl error="0.6">89.4</incl>
+			<angulardist>1.5e-05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE-TR-132</name>
+		<dist>1500</dist>
+		<spectype>F</spectype>
+		<mass error="0.06">1.35</mass>
+		<metal error="0.18">0.43</metal>
+		<rightasc>10 50 34</rightasc>
+		<decl>-61 57 25</decl>
+		<planet>
+			<name>OGLE-TR-132 b</name>
+			<mass error="0.13">1.19</mass>
+			<period error="6e-06">1.689857</period>
+			<semiaxis error="0.0008">0.0306</semiaxis>
+			<ecc>0</ecc>
+			<incl error="1">85</incl>
+			<angulardist>2e-05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE-TR-56</name>
+		<dist>1500</dist>
+		<spectype>G</spectype>
+		<mass error="0.04">1.17</mass>
+		<metal></metal>
+		<rightasc>17 56 35</rightasc>
+		<decl>-29 32 21</decl>
+		<planet>
+			<name>OGLE-TR-56 b</name>
+			<mass error="0.12">1.29</mass>
+			<period error="1e-06">1.211909</period>
+			<semiaxis error="0.0004">0.0225</semiaxis>
+			<ecc>0</ecc>
+			<incl error="0.5">78.8</incl>
+			<angulardist>1.5e-05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>OGLE235-MOA53</name>
+		<dist>5200</dist>
+		<spectype></spectype>
+		<mass error="0.08">0.63</mass>
+		<metal></metal>
+		<rightasc>18 05 16</rightasc>
+		<decl>-28 53 42</decl>
+		<planet>
+			<name>OGLE235-MOA53 b</name>
+			<mass error="0.8">2.6</mass>
+			<period></period>
+			<semiaxis error="1.6">5.1</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>0.000981</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>PSR 1257+12</name>
+		<dist>300</dist>
+		<spectype></spectype>
+		<mass></mass>
+		<metal></metal>
+		<rightasc>13 00 03</rightasc>
+		<decl>12 40 57</decl>
+		<planet>
+			<name>PSR 1257+12 b</name>
+			<mass>7e-05</mass>
+			<period error="0.003">25.262</period>
+			<semiaxis>0.19</semiaxis>
+			<ecc>0</ecc>
+			<incl></incl>
+			<angulardist>0.000633</angulardist>
+		</planet>
+		<planet>
+			<name>PSR 1257+12 c</name>
+			<mass>0.013</mass>
+			<period error="0.0001">66.5419</period>
+			<semiaxis>0.36</semiaxis>
+			<ecc error="0.0002">0.0186</ecc>
+			<incl error="4">53</incl>
+			<angulardist>0.0012</angulardist>
+		</planet>
+		<planet>
+			<name>PSR 1257+12 d</name>
+			<mass error="0.0006">0.012</mass>
+			<period error="0.0002">98.2114</period>
+			<semiaxis>0.46</semiaxis>
+			<ecc error="0.0002">0.0252</ecc>
+			<incl error="3">47</incl>
+			<angulardist>0.001533</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>PSR B1620-26</name>
+		<dist>3800</dist>
+		<spectype></spectype>
+		<mass>1.35</mass>
+		<metal></metal>
+		<rightasc>16 23 38</rightasc>
+		<decl>-26 31 53</decl>
+		<planet>
+			<name>PSR B1620-26 b</name>
+			<mass error="1">2.5</mass>
+			<period>36525</period>
+			<semiaxis>23</semiaxis>
+			<ecc></ecc>
+			<incl>55</incl>
+			<angulardist>0.006053</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>rho CrB</name>
+		<dist error="1.7">16.7</dist>
+		<spectype>G0V or G2V</spectype>
+		<mass>0.95</mass>
+		<metal>-0.19</metal>
+		<rightasc>16 01 03</rightasc>
+		<decl>+33 18 51</decl>
+		<planet>
+			<name>rho CrB b</name>
+			<mass>1.04</mass>
+			<period>39.845</period>
+			<semiaxis>0.22</semiaxis>
+			<ecc error="0.15">0.04</ecc>
+			<incl></incl>
+			<angulardist>0.013174</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>SCR 1845</name>
+		<dist error="0.02">3.85</dist>
+		<spectype>M8.5 V</spectype>
+		<mass></mass>
+		<metal></metal>
+		<rightasc>18 45 07</rightasc>
+		<decl>-63 57 43</decl>
+		<planet>
+			<name>SCR 1845 b</name>
+			<mass>8.5</mass>
+			<period></period>
+			<semiaxis>4.5</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>1.168831</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>SWEEPS-04</name>
+		<dist>2000</dist>
+		<spectype></spectype>
+		<mass>1.24</mass>
+		<metal></metal>
+		<rightasc>17 58 54</rightasc>
+		<decl>-29 11 21</decl>
+		<planet>
+			<name>SWEEPS-04</name>
+			<mass>3.8</mass>
+			<period>4.2</period>
+			<semiaxis>0.055</semiaxis>
+			<ecc></ecc>
+			<incl>87</incl>
+			<angulardist>2.8e-05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>SWEEPS-11</name>
+		<dist>2000</dist>
+		<spectype></spectype>
+		<mass>1.1</mass>
+		<metal></metal>
+		<rightasc>17 59 03</rightasc>
+		<decl>-29 11 54</decl>
+		<planet>
+			<name>SWEEPS-11</name>
+			<mass error="5.6">9.7</mass>
+			<period>1.796</period>
+			<semiaxis>0.03</semiaxis>
+			<ecc></ecc>
+			<incl>84</incl>
+			<angulardist>1.5e-05</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>Tau Boo</name>
+		<dist>15</dist>
+		<spectype>F7 V</spectype>
+		<mass>1.3</mass>
+		<metal>0.28</metal>
+		<rightasc>13 47 17</rightasc>
+		<decl>+17 27 22</decl>
+		<planet>
+			<name>Tau Boo b</name>
+			<mass>3.9</mass>
+			<period error="0.0014">3.3135</period>
+			<semiaxis>0.046</semiaxis>
+			<ecc></ecc>
+			<incl></incl>
+			<angulardist>0.003067</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>TrES-1</name>
+		<dist error="6">157</dist>
+		<spectype>K0V</spectype>
+		<mass error="0.03">0.87</mass>
+		<metal error="0.004">0.001</metal>
+		<rightasc>19 04 09</rightasc>
+		<decl>+36 37 57</decl>
+		<planet>
+			<name>TrES-1</name>
+			<mass error="0.06">0.61</mass>
+			<period error="2.6e-06">3.0300737</period>
+			<semiaxis error="0.0007">0.0393</semiaxis>
+			<ecc error="0.096">0.135</ecc>
+			<incl error="1">88.2</incl>
+			<angulardist>0.00025</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>TrES-2</name>
+		<dist></dist>
+		<spectype>G0V</spectype>
+		<mass error="0.11">1.08</mass>
+		<metal></metal>
+		<rightasc>19 07 14</rightasc>
+		<decl>+49 18 59</decl>
+		<planet>
+			<name>TrES-2</name>
+			<mass error="0.09">1.28</mass>
+			<period error="1e-05">2.47063</period>
+			<semiaxis error="0.0012">0.0367</semiaxis>
+			<ecc>0</ecc>
+			<incl error="0.22">83.9</incl>
+			<angulardist></angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>Ups And</name>
+		<dist>13.47</dist>
+		<spectype>F8 V</spectype>
+		<mass>1.3</mass>
+		<metal error="0.08">0.13</metal>
+		<rightasc>01 36 48</rightasc>
+		<decl>+41 24 38</decl>
+		<planet>
+			<name>Ups And b</name>
+			<mass error="0.03">0.69</mass>
+			<period error="6e-05">4.61708</period>
+			<semiaxis error="0.001">0.059</semiaxis>
+			<ecc error="0.013">0.029</ecc>
+			<incl>30</incl>
+			<angulardist>0.00438</angulardist>
+		</planet>
+		<planet>
+			<name>Ups And c</name>
+			<mass error="0.09">1.98</mass>
+			<period error="0.21">241.52</period>
+			<semiaxis error="0.01">0.83</semiaxis>
+			<ecc error="0.016">0.254</ecc>
+			<incl></incl>
+			<angulardist>0.061618</angulardist>
+		</planet>
+		<planet>
+			<name>Ups And d</name>
+			<mass error="0.16">3.95</mass>
+			<period error="5">1274.6</period>
+			<semiaxis error="0.04">2.51</semiaxis>
+			<ecc error="0.017">0.242</ecc>
+			<incl></incl>
+			<angulardist>0.18634</angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>WASP-1</name>
+		<dist></dist>
+		<spectype>F7V</spectype>
+		<mass error="0.24">1.15</mass>
+		<metal></metal>
+		<rightasc>00 20 40</rightasc>
+		<decl>+31 59 24</decl>
+		<planet>
+			<name>WASP-1 b</name>
+			<mass error="0.2">0.89</mass>
+			<period error="0.00016">2.51997</period>
+			<semiaxis error="0.0013">0.0382</semiaxis>
+			<ecc></ecc>
+			<incl error="6.1">83.9</incl>
+			<angulardist></angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>WASP-2</name>
+		<dist></dist>
+		<spectype>K1V</spectype>
+		<mass error="0.15">0.79</mass>
+		<metal></metal>
+		<rightasc>20 30 54</rightasc>
+		<decl>+06 25 46</decl>
+		<planet>
+			<name>WASP-2 b</name>
+			<mass error="0.11">0.88</mass>
+			<period error="4e-05">2.152226</period>
+			<semiaxis error="0.011">0.0307</semiaxis>
+			<ecc></ecc>
+			<incl error="3">87</incl>
+			<angulardist></angulardist>
+		</planet>
+	</star>
+	<star>
+		<name>XO-1</name>
+		<dist error="20">200</dist>
+		<spectype>G1V</spectype>
+		<mass error="0.03">1</mass>
+		<metal></metal>
+		<rightasc>16 02 12</rightasc>
+		<decl>+28 10 11</decl>
+		<planet>
+			<name>XO-1 b</name>
+			<mass error="0.07">0.9</mass>
+			<period error="2.7e-05">3.941534</period>
+			<semiaxis error="0.0005">0.0488</semiaxis>
+			<ecc></ecc>
+			<incl error="0.5">89.31</incl>
+			<angulardist>0.000244</angulardist>
+		</planet>
+	</star>
+</catalogue>
