@@ -107,16 +107,32 @@
                 </ul>
                 <xsl:call-template name="listAliases"/>
 
-                <h1> Source List (<xsl:value-of select="count(//star)"/> stars, 
-                    <xsl:value-of select="count($calibrators//calibrator)"/> calibrators, 
-                    avg=<xsl:value-of select="count(//star) div count($calibrators//calibrator)"/>
-                    )</h1>
+                <h1> Source List </h1>
+                
+                <h4> Statistics </h4>
+                <ul>
+                    <li><xsl:value-of select="count(//star)"/> stars</li>
+                    <li><xsl:value-of select="count($calibrators//star[count(./calibrator)=1])"/> stars with 1 calibrator </li>
+                    <li><xsl:value-of select="count($calibrators//star[count(./calibrator)=2])"/> stars with 2 calibrators </li>
+                    <li><xsl:value-of select="count($calibrators//star[count(./calibrator)>2])"/> stars with more than 2 calibrators </li>
+                    <li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators</li> 
+                    <li>average <xsl:value-of select="count(//star) div count($calibrators//calibrator)"/></li>
+                </ul>
+
+                <h4> Legends </h4>
                 <ul>
                     <li> E: exoplanet link</li>
                     <li> S: simbad link</li>
                     <li>Orange: star has no pmra or pmdec information into simbad </li>
                     <li>Red: star has no position information into simbad </li>
                     <li>Gray: retained calibrators</li>
+                </ul>
+                <h4> Columns </h4>
+                <ul>
+                    <li> dist1 [arcmin] on year <xsl:value-of
+                        select="$calibrators//calibrator[1]/calibInfo/dist[1]/year"/> </li>
+                    <li> dist2 [arcmin] on year <xsl:value-of
+                            select="$calibrators//calibrator[1]/calibInfo/dist[2]/year"/> </li>
                 </ul>
                 <!-- Print table -->
                 <table>
@@ -133,6 +149,19 @@
             </body>
         </html>
     </xsl:template>
+
+    <xsl:template name="objectTo2MASSLink">
+        <xsl:param name="ident" select="name"/>
+        <xsl:param name="content" select="$ident"/>
+        <xsl:element name="a">
+            <xsl:attribute name="href">
+                <xsl:value-of select="concat('http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=',$ident,'&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0')"/>
+                
+            </xsl:attribute>
+            <xsl:value-of select="$content"/>
+        </xsl:element>                       
+    </xsl:template>
+
 
     <xsl:template name="objectToSimbadLink">
         <xsl:param name="ident" select="name"/>
@@ -243,6 +272,7 @@
                                 <xsl:value-of select="'/'"/>
                                 <xsl:value-of
                                     select="$calibrators//star[./@simbadName=$simbadName]/@scCount"/>
+                                <xsl:value-of select="' '"/>
                                 <a href="{$votFileName}">VOTABLE</a>
                                 <xsl:value-of select="' '"/>
                                 <a href="{$votHtmlFileName}">HTML</a>
@@ -265,6 +295,10 @@
                     <xsl:variable name="selector" select="name()"/>
                     <xsl:element name="td">
                         <xsl:choose>
+                            <xsl:when test="$selector='dist'">
+                                <!-- mult by 60 to be in arcmin -->
+                                <xsl:value-of select="$tmpCalib/dist * 60"/>
+                            </xsl:when>
                             <xsl:when test="$selector='dist1'">
                                 <xsl:value-of select="$tmpCalib/calibInfo/dist[1]/value"/>
                             </xsl:when>
@@ -283,7 +317,9 @@
                             <xsl:when test="$selector='name'">
                             </xsl:when>
                             <xsl:when test="$selector='calibrators'">
-                                <xsl:value-of select="$tmpCalib/name"/>
+                                <xsl:call-template name="objectTo2MASSLink">
+                                    <xsl:with-param name="ident" select="$tmpCalib/name"/>
+                                </xsl:call-template>
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="$tmpCalib/*[name()=$selector]"/>
