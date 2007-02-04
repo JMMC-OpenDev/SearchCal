@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.11 2007-01-23 14:29:45 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.12 2007-02-04 20:45:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2007/01/23 14:29:45  lafrasse
+ * Removed unwanted debugging traces.
+ *
  * Revision 1.10  2006/12/21 15:16:05  lafrasse
  * Updated progression monitoring code (moved from static-based to instance-based).
  *
@@ -37,7 +40,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.11 2007-01-23 14:29:45 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.12 2007-02-04 20:45:53 lafrasse Exp $"; 
 
 
 /* 
@@ -136,6 +139,8 @@ _scenarioSingleStar(&_progress)
         errCloseStack();
     }
 
+    _selectedScenario = NULL;
+    _lastCatalog  = mcsFALSE;
 }
 
 /*
@@ -162,6 +167,40 @@ mcsCOMPL_STAT sclsvrSERVER::AppInit()
     AddCallback(key1, cb1);
     
     return mcsSUCCESS;
+}
+
+/**
+ * Return the total number of catalog queried by the scenario.
+ *
+ * @return an mcsUINT32 
+ */
+mcsUINT32 sclsvrSERVER::GetNbOfCatalogs()
+{
+    logTrace("sclsvrSERVER::GetNbOfCatalogs()");
+
+    if (_selectedScenario != NULL)
+    {
+        return _selectedScenario->GetNbOfCatalogs();
+    }
+
+    return 0;
+}
+ 
+/**
+ * Return the current index of the catalog being queried.
+ *
+ * @return an mcsUINT32 
+ */
+mcsUINT32 sclsvrSERVER::GetCatalogIndex()
+{
+    logTrace("sclsvrSERVER::GetCatalogIndex()");
+
+    if (_selectedScenario != NULL)
+    {
+        return _selectedScenario->GetCatalogIndex();
+    }
+
+    return 0;
 }
  
 /**
