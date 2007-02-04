@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCLI.cpp,v 1.1 2006-12-21 15:13:48 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCLI.cpp,v 1.2 2007-02-04 20:52:57 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/12/21 15:13:48  lafrasse
+ * Creation
+ *
  ******************************************************************************/
 
 /**
@@ -58,7 +61,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclsvrCLI.cpp,v 1.1 2006-12-21 15:13:48 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclsvrCLI.cpp,v 1.2 2007-02-04 20:52:57 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -143,7 +146,6 @@ thrdFCT_RET sclwsGetVOTableThreadFunction(thrdFCT_ARG param)
 /* 
  * Main
  */
-
 int main(int argc, char *argv[])
 {
     // Initialize MCS services
@@ -167,9 +169,9 @@ int main(int argc, char *argv[])
     getVOTableThreadParams.dynBuf = &dynBuf;
     getVOTableThreadParams.server = &server;
     // Thread creation and launch
-    thrdTHREAD_STRUCT                getVOTableThread;
-    getVOTableThread.function      = sclwsGetVOTableThreadFunction;
-    getVOTableThread.parameter     = (thrdFCT_ARG*)&getVOTableThreadParams;
+    thrdTHREAD_STRUCT            getVOTableThread;
+    getVOTableThread.function  = sclwsGetVOTableThreadFunction;
+    getVOTableThread.parameter = (thrdFCT_ARG*)&getVOTableThreadParams;
     // Launch the thread
     if (thrdThreadCreate(&getVOTableThread) == mcsFAILURE)
     {
@@ -178,15 +180,23 @@ int main(int argc, char *argv[])
     }
     cout << "Thread creation succeed." << endl;
 
-    bool   lastMessage = false;
     mcsSTRING256 buffer;
-    // Get any new action and forward it to the GUI ...
+    int          catalogIndex = 0;
+    int          nbOfCatalogs = 0;
+    bool         lastMessage  = false;
+    // Wait for each catalog...
     do
     {
-        server.GetCalStatus((char*)buffer, &lastMessage);
-        cout << "buffer = '" << buffer << "'" << endl;
+        server.WaitForCurrentCatalogName((char*)buffer);
+        cout << "buffer = '" << buffer << " - ";
+        catalogIndex = server.GetCatalogIndex();
+        cout << catalogIndex << "/";
+        nbOfCatalogs = server.GetNbOfCatalogs();
+        cout << nbOfCatalogs;
+        lastMessage  = server.IsLastCatalog();
+        cout << " (" << lastMessage << ")." << endl;
     }
-    while (lastMessage == mcsFALSE); // ... until the last action occured
+    while (lastMessage == mcsFALSE); // ... until the last catalog
 
     // Wait for the thread end
     if (thrdThreadWait(&getVOTableThread) == mcsFAILURE)
