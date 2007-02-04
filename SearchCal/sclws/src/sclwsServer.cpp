@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.1 2006-12-22 15:17:50 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/12/22 15:17:50  lafrasse
+ * Creation
+ *
  ******************************************************************************/
 
 /**
@@ -58,7 +61,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.1 2006-12-22 15:17:50 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -94,7 +97,7 @@ using namespace std;
  * Local Variables
  */
 struct Namespace *namespaces;
-uint   portNumber = 8061;
+uint   portNumber = 8078;
 
 
 

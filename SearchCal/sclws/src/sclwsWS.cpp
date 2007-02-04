@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.cpp,v 1.1 2006-12-22 15:17:50 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/12/22 15:17:50  lafrasse
+ * Creation
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of sclwsWS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.1 2006-12-22 15:17:50 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -146,30 +149,104 @@ int ns__GetCalAsyncQuery(struct soap *p_soap,
 }
 
 /**
- * Get the progression of a GetCal query.
+ * Give back the name of the current catalog being queried.
  *
  * @param p_soap SOAP execution context.
  * @param taskID the communication "session" ID.
- * @param status give-back pointer to return the progression status.
+ * @param catalogName give-back pointer to return the current catalog name.
  *
  * @return a SOAP error code.
  */
-int ns__GetCalStatus(struct soap *p_soap,
-                     char*  taskID,
-                     struct sclwsGETCAL_TASK_STATUS &status)
+int ns__GetCalWaitForCurrentCatalogName(struct soap *p_soap,
+                                        char*  taskID,
+                                        char** catalogName)
 {
-    logTrace("ns__GetCalStatus('%s')", taskID);
+    logTrace("ns__GetCalWaitForCurrentCatalogName('%s')", taskID);
 
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = tasks[taskID];
 
-    // Allocate SOAP-aware memory to return the query progression status
-    status.currentCatalogName = (char*) soap_malloc(p_soap, 256);
-    server->GetCalStatus(status.currentCatalogName, &status.lastCatalog);
-    logInfo("Catalog = '%s'.", status.currentCatalogName);
+    // Allocate SOAP-aware memory to return the current catalog name
+    *catalogName = (char*) soap_malloc(p_soap, 256);
+    server->WaitForCurrentCatalogName(*catalogName);
+    logInfo("CatalogName = '%s'.", *catalogName);
 
     return SOAP_OK;
 }
 
+/**
+ * Give back whether the current catalog is the last one being queried.
+ *
+ * @param p_soap SOAP execution context.
+ * @param taskID the communication "session" ID.
+ * @param lastCatalog give-back pointer to return the last catalog flag.
+ *
+ * @return a SOAP error code.
+ */
+int ns__GetCalIsLastCatalog(struct soap *p_soap,
+                            char*  taskID,
+                            bool*  lastCatalog)
+{
+    logTrace("ns__GetCalIsLastCatalog('%s')", taskID);
+
+    // Retrieve the sclsvrSERVER instance associated with th received UUID
+    sclsvrSERVER* server = tasks[taskID];
+
+    // Allocate SOAP-aware memory to return the current catalog name
+    *lastCatalog = server->IsLastCatalog();
+    logInfo("lastCatalog = '%d'.", *lastCatalog);
+
+    return SOAP_OK;
+}
+
+/**
+ * Give back the index of the current catalog being queried.
+ *
+ * @param p_soap SOAP execution context.
+ * @param taskID the communication "session" ID.
+ * @param catalogIndex give-back pointer to return the current catalog index.
+ *
+ * @return a SOAP error code.
+ */
+int ns__GetCalCurrentCatalogIndex(struct soap *p_soap,
+                                  char*  taskID,
+                                  int*   catalogIndex)
+{
+    logTrace("ns__GetCalCurrentCatalogIndex('%s')", taskID);
+
+    // Retrieve the sclsvrSERVER instance associated with th received UUID
+    sclsvrSERVER* server = tasks[taskID];
+
+    // Allocate SOAP-aware memory to return the current catalog name
+    *catalogIndex = server->GetCatalogIndex();
+    logInfo("CatalogIndex = '%d'.", *catalogIndex);
+
+    return SOAP_OK;
+}
+
+/**
+ * Give back the total number of catalogs to be queried.
+ *
+ * @param p_soap SOAP execution context.
+ * @param taskID the communication "session" ID.
+ * @param nbOfCatalogs give-back pointer to return the number of catalogs.
+ *
+ * @return a SOAP error code.
+ */
+int ns__GetCalNbOfCatalogs(struct soap *p_soap,
+                                  char*  taskID,
+                                  int*   nbOfCatalogs)
+{
+    logTrace("ns__GetCalNbOfCatalogs('%s')", taskID);
+
+    // Retrieve the sclsvrSERVER instance associated with th received UUID
+    sclsvrSERVER* server = tasks[taskID];
+
+    // Allocate SOAP-aware memory to return the current catalog name
+    *nbOfCatalogs = server->GetNbOfCatalogs();
+    logInfo("NbOfCatalogs = '%d'.", *nbOfCatalogs);
+
+    return SOAP_OK;
+}
 
 /*___oOo___*/

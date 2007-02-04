@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsGetCal.cpp,v 1.1 2006-12-22 15:17:50 lafrasse Exp $"
+ * "@(#) $Id: sclwsGetCal.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2006/12/22 15:17:50  lafrasse
+ * Creation
+ *
  ******************************************************************************/
 
 /**
@@ -58,7 +61,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsGetCal.cpp,v 1.1 2006-12-22 15:17:50 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsGetCal.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -95,7 +98,7 @@ using namespace std;
  * Local Variables
  */
 struct Namespace *namespaces;
-char* wsURL = "http://localhost:8061";
+char* wsURL = "http://jmmc.fr:8078";
  
 typedef struct
 {
@@ -120,7 +123,7 @@ typedef struct
  */
 thrdFCT_RET sclwsGetVOTableThreadFunction(thrdFCT_ARG param)
 {   
-    // Define a new SOAP context for the thread (can run in parallel of main() )
+    // Define a new SOAP context for the thread (can run in parallel of main())
     struct soap v_soap;
     soap_init(&v_soap);
     soap_set_namespaces(&v_soap, soap_namespaces);
@@ -200,19 +203,43 @@ int main(int argc, char *argv[])
     }
 
     // Fetch each queried catalog name to monitor query progress
-    sclwsGETCAL_TASK_STATUS status;
+    char* catalogName  = NULL;
+    int   catalogIndex = 0;
+    int   nbOfCatalogs = 0;
+    bool  lastCatalog  = false;
     do
     {
-        // Ask the currently quireid catalog name
-        soap_call_ns__GetCalStatus(&v_soap, wsURL, "", taskID, status);
+        // Ask and wait for the currently quereid catalog name
+        soap_call_ns__GetCalWaitForCurrentCatalogName(&v_soap, wsURL, "", taskID, &catalogName);
         if (v_soap.error)
         {
             soap_print_fault(&v_soap, stderr);
             exit (EXIT_FAILURE);
         }
-        logInfo("Querying '%s'.", status.currentCatalogName);
+        // Ask for the currently quereid catalog index
+        soap_call_ns__GetCalCurrentCatalogIndex(&v_soap, wsURL, "", taskID, &catalogIndex);
+        if (v_soap.error)
+        {
+            soap_print_fault(&v_soap, stderr);
+            exit (EXIT_FAILURE);
+        }
+        // Ask for the total number of catalogs
+        soap_call_ns__GetCalNbOfCatalogs(&v_soap, wsURL, "", taskID, &nbOfCatalogs);
+        if (v_soap.error)
+        {
+            soap_print_fault(&v_soap, stderr);
+            exit (EXIT_FAILURE);
+        }
+        // Ask for the last catalog flag
+        soap_call_ns__GetCalIsLastCatalog(&v_soap, wsURL, "", taskID, &lastCatalog);
+        if (v_soap.error)
+        {
+            soap_print_fault(&v_soap, stderr);
+            exit (EXIT_FAILURE);
+        }
+        logInfo("Querying '%s' - %d/%d (%d).", catalogName, catalogIndex, nbOfCatalogs, lastCatalog);
     }
-    while(status.lastCatalog == false); // Until last catalog is reached
+    while(lastCatalog  == false); // Until last catalog is reached
 
     // Wait for the thread end (eg. result receiving)
     if (thrdThreadWait(&getVOTableThread) == mcsFAILURE)
