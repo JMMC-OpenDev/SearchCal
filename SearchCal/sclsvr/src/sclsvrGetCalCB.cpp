@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.45 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.46 2007-02-04 20:49:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.45  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.44  2006/10/26 08:15:57  gzins
  * Renamed thrdTHREAD to thrdTHREAD_STRUCT
  *
@@ -140,7 +143,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.45 2006-12-21 15:16:05 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.46 2007-02-04 20:49:42 lafrasse Exp $"; 
 
 
 /* 
@@ -183,28 +186,32 @@ using namespace std;
 /*
  * Public methods
  */
-mcsCOMPL_STAT sclsvrSERVER::GetCalStatus(char* buffer, bool* lastCatalog)
+/**
+ * Return the current index of the catalog being queried.
+ *
+ * @param buffer will an already allocated buffer to contain the catalog name.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned 
+ */
+mcsCOMPL_STAT sclsvrSERVER::WaitForCurrentCatalogName(char* buffer)
 {
-    logTrace("GetCalNext()");
-
-    mcsLOGICAL mcsLastCatalog;
+    logTrace("sclsvrSERVER::WaitForCurrentCatalogName()");
 
     // Wait for a new action
-    if (_progress.Wait(buffer, &mcsLastCatalog) == mcsFAILURE)
+    if (_progress.Wait(buffer, &_lastCatalog) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    if (mcsLastCatalog == mcsTRUE)
-    {
-        *lastCatalog = true;
-    }
-    else
-    {
-        *lastCatalog = false;
-    }
-
     return mcsSUCCESS;
+}
+
+mcsLOGICAL sclsvrSERVER::IsLastCatalog()
+{
+    logTrace("sclsvrSERVER::IsLastCatalog()");
+
+    return _lastCatalog;
 }
 
 mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msgMESSAGE* msg = NULL)
@@ -252,6 +259,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
 
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
+    _selectedScenario = NULL;
 
     // If the request should return bright starts
     if ((request.IsBright() == mcsTRUE) &&
@@ -268,64 +276,23 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
                 if (request.IsOldScenario() == mcsTRUE)
                 {
                     // Load old Bright K Scenario
-                    if (_scenarioBrightKOld.Init(&request) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
-                    // Start the research in the virtual observatory
-                    if (_virtualObservatory.Search(&_scenarioBrightKOld,
-                                                   request,
-                                                   starList) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
+                    _selectedScenario = &_scenarioBrightKOld;
                 }
                 else
                 {
                     // Load Bright K Scenario
-                    if (_scenarioBrightK.Init(&request) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
-                    // Start the research in the virtual observatory
-                    if (_virtualObservatory.Search(&_scenarioBrightK, request,
-                                                   starList) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
+                    _selectedScenario = &_scenarioBrightK;
                 }
                 break;
 
             case 'V':
                 // Load Bright V Scenario
-                if (_scenarioBrightV.Init(&request) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
-                // Start the research in the virtual observatory
-                if (_virtualObservatory.Search(&_scenarioBrightV, request,
-                                               starList) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
+                _selectedScenario = &_scenarioBrightV;
                 break;
 
             case 'N':
                 // Load Bright N Scenario
-                if (_scenarioBrightN.Init(&request) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
-                // Start the research in the virtual observatory
-                if (_virtualObservatory.Search(&_scenarioBrightN, request,
-                                               starList) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
+                _selectedScenario = &_scenarioBrightN;
                 break;
 
             default:
@@ -348,18 +315,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
         {
             case 'K':
                 // Load Faint K Scenario
-                if (_scenarioFaintK.Init(&request) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
-                // Start the research in the virtual observatory
-                if (_virtualObservatory.Search(&_scenarioFaintK, request,
-                                               starList) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
+                _selectedScenario = &_scenarioFaintK;
                 break;
 
             default:
@@ -375,6 +331,18 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
             errAdd(sclsvrERR_INVALID_SEARCH_AREA, "bright", "rectangular");
         }
  
+        return mcsFAILURE;
+    }
+
+    // Load the scenario
+    if (_selectedScenario->Init(&request) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Start the research in the virtual observatory
+    if (_virtualObservatory.Search(_selectedScenario, request, starList) == mcsFAILURE)
+    {
         return mcsFAILURE;
     }
 
@@ -398,9 +366,9 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
         return mcsFAILURE;
     }
 
-    ////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     // Remove the science object if it belongs to the calibrator list.
-    ////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     // 1) Make a copy of the calibrator list in order to create a temp list
     // containing all calibrators within 0.01 ra and dec of the user coordinates
     vobsSTAR_LIST scienceObjects;
