@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.15 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.16 2007-02-04 20:50:37 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.14  2006/07/17 09:10:36  scetre
  * Added old scenario option
  *
@@ -132,7 +135,10 @@ public:
     virtual evhCB_COMPL_STAT GetStarCB(msgMESSAGE &msg, void*);
 
     virtual mcsCOMPL_STAT GetCal(const char* query, miscoDYN_BUF &dynBuff, msgMESSAGE* msg);
-    virtual mcsCOMPL_STAT GetCalStatus(char* buffer, bool* lastCatalog);
+    virtual mcsCOMPL_STAT WaitForCurrentCatalogName(char* buffer);
+    virtual mcsLOGICAL    IsLastCatalog();
+    virtual mcsUINT32     GetNbOfCatalogs();
+    virtual mcsUINT32     GetCatalogIndex();
 
 protected:
 
@@ -145,9 +151,11 @@ private:
     // Query progression monitoring
     mcsLOGICAL                   _progressionMessageInitFlag;
     sdbENTRY                     _progress;
+    mcsLOGICAL                   _lastCatalog;
 
     // Virtual observatory
     vobsVIRTUAL_OBSERVATORY      _virtualObservatory;
+    vobsSCENARIO*                _selectedScenario;
     sclsvrSCENARIO_BRIGHT_K      _scenarioBrightK;
     sclsvrSCENARIO_BRIGHT_K_OLD  _scenarioBrightKOld;
     sclsvrSCENARIO_BRIGHT_V      _scenarioBrightV;
