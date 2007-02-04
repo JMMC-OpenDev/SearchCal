@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.h,v 1.13 2006-12-21 15:10:46 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.h,v 1.14 2007-02-04 20:23:11 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2006/12/21 15:10:46  lafrasse
+* Updated progression monitoring code (moved from static-based to instance-based).
+*
 * Revision 1.12  2006/01/18 08:46:49  scetre
 * Managed the new option which could be gave to a catalog
 *
@@ -109,8 +112,12 @@ public :
 
     virtual mcsCOMPL_STAT SetCatalogList(vobsCATALOG_LIST * catalogList);
 
+    virtual mcsCOMPL_STAT Init (vobsREQUEST*);
     virtual mcsCOMPL_STAT Clear(void);
-    
+
+    virtual mcsUINT32 GetNbOfCatalogs();
+    virtual mcsUINT32 GetCatalogIndex();
+
 protected :
     // Progression monitoring
     sdbENTRY* _progress;

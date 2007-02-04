@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.44 2006-12-21 15:10:46 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.45 2007-02-04 20:23:11 lafrasse Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.44  2006/12/21 15:10:46  lafrasse
+* Updated progression monitoring code (moved from static-based to instance-based).
+*
 * Revision 1.43  2006/04/10 11:49:12  gzins
 * Added missing breaks in action switch case in Execute() method
 *
@@ -139,7 +142,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.44 2006-12-21 15:10:46 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.45 2007-02-04 20:23:11 lafrasse Exp $"; 
 
 
 /* 
@@ -194,6 +197,42 @@ vobsSCENARIO::~vobsSCENARIO()
 /*
  * Public methods
  */
+
+/**
+ * Return the total number of catalog queried by the scenario.
+ *
+ * @return an mcsUINT32 
+ */
+mcsUINT32 vobsSCENARIO::GetNbOfCatalogs()
+{
+    logTrace("vobsSCENARIO::GetNbOfCatalogs()");
+
+    return _nbOfCatalogs;
+}
+
+/**
+ * Return the current index of the catalog being queried.
+ *
+ * @return an mcsUINT32 
+ */
+mcsUINT32 vobsSCENARIO::GetCatalogIndex()
+{
+    logTrace("vobsSCENARIO::GetCatalogIndex()");
+
+    return _catalogIndex;
+}
+
+/**
+ * Initialize the scenario.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned 
+ */
+mcsCOMPL_STAT vobsSCENARIO::Init(vobsREQUEST * request)
+{
+    logTrace("vobsSCENARIO::Init()");
+    return mcsFAILURE;
+}
 
 /**
  * Adds the element at the end of the list.
