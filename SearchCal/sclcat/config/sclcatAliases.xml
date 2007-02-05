@@ -1,0 +1,69 @@
+<!-- This file define somes aliases to achieve simbad request. -->
+<aliases>
+    <object name="2M1207"          alias="2MASS J12073346-3932539" />
+    <object name="HAT--P-1"        alias="NAME HAT-P-1" />
+    <object name="OGLE235-MOA53 b"   alias="EWS 2003-BUL-235" />
+    <object name="SCR 1845"        alias="SCR J1845-6357" />
+    <object name="TrES-1"            alias="NAME TrES-1 Parent Star" />
+    <object name="TrES-2"            alias="gsc 03549-02811" />
+    <object name="XO-1"            alias="GSC 02041-01657" />
+    <object name="hd 188753a" alias="hd 188753"/>
+    <object name="WASP-1"          alias="NAME WASP-1 " />
+    <object name="WASP-2"          alias="NAME WASP-2 " />
+    <object name="SWEEPS-04"         alias="NAME SWEEPS-04" />
+    <object name="SWEEPS-11"         alias="NAME SWEEPS-11" />
+    <old>
+   <!-- Next object use their parent as alias exoplanet often do the same-->
+    <object name='16 Cyg B b' alias='16 Cyg B' /> 
+    <object name='Gj 849 b' alias='Gj 849' /> 
+    <object name='HD 118203 b' alias='HD 118203' /> 
+    <object name='HD 122430 b' alias='HD 122430' /> 
+    <object name='HD 142022 A b' alias='HD 142022 A' /> 
+    <object name='HD 154857 b' alias='HD 154857' /> 
+    <object name='HD 160691 e' alias='HD 160691' /> 
+    <object name='HD 187085 b' alias='HD 187085' /> 
+    <object name='HD 196885 b' alias='HD 196885' /> 
+    <object name='HD 20782 b' alias='HD 20782' /> 
+    <object name='HD 212301 b' alias='HD 212301' /> 
+    <object name='HD 33564 b' alias='HD 33564' /> 
+    <object name='HD 4308 b' alias='HD 4308' /> 
+    <object name='HD 59686 b' alias='HD 59686' /> 
+    <object name='HD 62509 b' alias='HD 62509' /> 
+    <object name='HD 81040 b' alias='HD 81040' /> 
+    <object name='HD 89307 b' alias='HD 89307' /> 
+    <object name='HIP 14810 b' alias='HIP 14810' /> 
+    <object name='HIP 14810 c' alias='HIP 14810' /> 
+    <object name='HIP 75458 b' alias='HIP 75458' /> 
+    <object name='HR 810 b' alias='HR 810' /> 
+    <object name='OGLE-TR-10 b' alias='OGLE-TR-10' /> 
+    <object name='OGLE-TR-111 b' alias='OGLE-TR-111' /> 
+    <object name='OGLE-TR-113 b' alias='OGLE-TR-113' /> 
+    <object name='OGLE-TR-132 b' alias='OGLE-TR-132' /> 
+    <object name='OGLE-TR-56 b' alias='OGLE-TR-56' />
+    <object name='HD 102195 b' alias='HD 102195' />
+    <object name='HD 107148 b' alias='HD 107148' />
+    <object name='HD 108874 c' alias='HD 108874' />
+    <object name='HD 11977 b' alias='HD 11977' />
+    <object name='HD 128311 c' alias='HD 128311' />
+    <object name='HD 164922 b' alias='HD 164922' />
+    <object name='HD 185269 b' alias='HD 185269' />
+    <object name='HD 224693 b' alias='HD 224693' />
+    <object name='HD 33283 b' alias='HD 33283' />
+    <object name='HD 41004 B b' alias='HD 41004 B' />
+    <object name='HD 66428 b' alias='HD 66428' />
+    <object name='HD 73526 c' alias='HD 73526' />
+    <object name='HD 86081 b' alias='HD 86081' />
+    <object name='HD 99109 b' alias='HD 99109' />
+
+    <!-- Next object use their parent as alias as telled by simbad -->
+    <object name='AB Pic b' alias="HD 44627"/>
+    
+    <!-- next sources waits one alias... 
+    <object name="OGLE-05-071L b"    alias="" />
+    <object name="OGLE-05-169L b"    alias="" />
+    <object name="OGLE-05-390L b"    alias="" />
+    <object name="WASP-1 b"          alias=" " />
+    <object name="WASP-2 b"          alias="" />
+    -->
+</old>
+</aliases>
