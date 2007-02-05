@@ -8,8 +8,8 @@
     <object name="TrES-2"            alias="gsc 03549-02811" />
     <object name="XO-1"            alias="GSC 02041-01657" />
     <object name="hd 188753a" alias="hd 188753"/>
-    <object name="WASP-1"          alias="NAME WASP-1 " />
-    <object name="WASP-2"          alias="NAME WASP-2 " />
+    <object name="WASP-1"          alias="NAME WASP-1" />
+    <object name="WASP-2"          alias="NAME WASP-2" />
     <object name="SWEEPS-04"         alias="NAME SWEEPS-04" />
     <object name="SWEEPS-11"         alias="NAME SWEEPS-11" />
     <old>
