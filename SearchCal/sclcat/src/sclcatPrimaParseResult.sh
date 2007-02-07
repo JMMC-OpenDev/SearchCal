@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.3 2007-01-31 12:39:54 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.4 2007-02-07 14:57:23 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2007/01/31 12:39:54  mella
+# Use pmra and pmDec to 0 if star has not yet for filter program
+#
 # Revision 1.2  2007/01/31 10:25:31  mella
 # Change bad test condition
 #
@@ -133,6 +136,16 @@ do
             echo "    <ra>$calRa</ra><dec>$calDec</dec>" >>  $CALIBRATORS
             echo "    <pmra>$calPmRa</pmra><pmdec>$calPmDec</pmdec>" >>  $CALIBRATORS
             echo "    <dist>$calDist</dist>" >>  $CALIBRATORS
+            # if pmra or pmdec not found set it to 0
+            if [ -z "$calPmRa" ]
+            then
+                calPmRa=0
+            fi
+            if [ -z "$calPmDec" ]
+            then
+                calPmDec=0
+            fi
+
             # prep command
             FILTERINFO=$(sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
             "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan")
@@ -141,13 +154,13 @@ do
                 echo "ERROR occured for calib n° $index"
                 echo "<calibInfo><error/></calibInfo>" >> $CALIBRATORS
             else
-                echo "<!-- \ 
-                sclcatPrimaFilter \"$starRa\" \"$starDec\" \"$starPmRa\" \
-                \"$starPmDec\" \"$calRa\" \"$calDec\" \"$calPmRa\" \"$calPmDec\" \"$timespan\" \
-                -->" >> $CALIBRATORS
-                echo $FILTERINFO >> $CALIBRATORS
+               echo $FILTERINFO >> $CALIBRATORS
             fi
-            
+            echo "<!-- \ 
+            sclcatPrimaFilter \"$starRa\" \"$starDec\" \"$starPmRa\" \
+            \"$starPmDec\" \"$calRa\" \"$calDec\" \"$calPmRa\" \"$calPmDec\" \"$timespan\" \
+            -->" >> $CALIBRATORS
+
             echo "  </calibrator>" >>  $CALIBRATORS
 
         done
