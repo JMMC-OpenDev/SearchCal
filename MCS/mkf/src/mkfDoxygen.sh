@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfDoxygen.sh,v 1.8 2006-10-24 12:05:12 gzins Exp $"
+# "@(#) $Id: mkfDoxygen.sh,v 1.9 2007-02-07 15:02:46 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2006/10/24 12:05:12  gzins
+# Fixed regular expression used to remove all spaces before char =
+#
 # Revision 1.7  2006/04/04 09:01:18  gzins
 # Added write access to temporary files
 #
@@ -37,7 +40,7 @@
 # FILES  
 #   ${MCSROOT}/templates/forDoxygen/doxyfile
 #   ${MCSROOT}/templates/forDoxygen/doxygen-footer.html
-#   ${MCSROOT}/templates/forDoxygen/doxygen-header.html
+#   ${MCSROOT}/templates/forDoxygen/doxygen-header-<institute>.html
 #
 # RETURN VALUES
 #   0  for success
@@ -63,6 +66,38 @@
 # cannot create directories
 # current location is src
 
+# Convert the given argument into an all lower case string.
+toLower() {
+  echo $1 | tr "[:upper:]" "[:lower:]" 
+} 
+
+# Convert the given argument into an all upper case string.
+toUpper() {
+  echo $1 | tr "[:lower:]" "[:upper:]" 
+} 
+
+# Set institute (by default jmmc) 
+file=../doc/moduleDescription.xml
+if [ -f $file ]
+then
+    # get line containing the name of the module in moduledescription.xml file
+    # =>     <institute>INSTITUTE</institute>
+    lineContainingInstitute=`grep "<institute>.*</institute>" $file | grep -v Institute`
+    # trim left the above extracted line => institute">
+    rightSideOfInstitute=${lineContainingInstitute## *<institute>}
+
+    # trim right the above extracted string to get module name => modulename
+    institute=${rightSideOfInstitute%%</institute>}
+fi
+
+if [ "$institute" != "" ]
+then
+    institute=`toLower $institute`
+else
+    institute=jmmc
+fi
+
+# Directory for templates
 if [ -d ../templates/forDoxygen ] 
 then
     T_DIR=../templates/forDoxygen
@@ -77,9 +112,10 @@ else
 fi
 
 BASELINE=${T_DIR}/doxyfile
-HEADER=${T_DIR}/doxygen-header.html
+HEADER=${T_DIR}/doxygen-header-${institute}.html
 FOOTER=${T_DIR}/doxygen-footer.html
-IMAGE=${T_DIR}/jmmc.jpg
+IMAGE=${T_DIR}/${institute}.jpg
+
 #
 BASECAMP=`\pwd`
 #

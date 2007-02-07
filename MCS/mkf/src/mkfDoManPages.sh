@@ -7,6 +7,9 @@
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2005/12/15 10:04:21  gzins
+# Changed logo in docmentation header.
+#
 # Revision 1.5  2005/05/20 09:59:59  gzins
 # Fixed bug related to revision retrieving
 #
@@ -55,6 +58,37 @@
 # cannot create directories
 # current location is src
 
+# Convert the given argument into an all lower case string.
+toLower() {
+  echo $1 | tr "[:upper:]" "[:lower:]" 
+} 
+
+# Convert the given argument into an all upper case string.
+toUpper() {
+  echo $1 | tr "[:lower:]" "[:upper:]" 
+} 
+
+# Set institute (by default jmmc) 
+file=../doc/moduleDescription.xml
+if [ -f $file ]
+then
+    # get line containing the name of the module in moduledescription.xml file
+    # =>     <institute>INSTITUTE</institute>
+    lineContainingInstitute=`grep "<institute>.*</institute>" $file | grep -v Institute`
+    # trim left the above extracted line => institute">
+    rightSideOfInstitute=${lineContainingInstitute## *<institute>}
+
+    # trim right the above extracted string to get module name => modulename
+    institute=${rightSideOfInstitute%%</institute>}
+fi
+
+if [ "$institute" != "" ]
+then
+    institute=`toLower $institute`
+else
+    institute=jmmc
+fi
+
 MAN_SECTION=$1
 shift
 INPUT_FILES=$*
@@ -72,9 +106,10 @@ else
     echo "Could not find template directory"
 fi
 BASELINE=${T_DIR}/doxyfile
-HEADER=${T_DIR}/doxygen-header.html
+HEADER=${T_DIR}/doxygen-header-${institute}.html
 FOOTER=${T_DIR}/doxygen-footer.html
-IMAGE=${T_DIR}/jmmc.jpg
+IMAGE=${T_DIR}/${institute}.jpg
+
 #
 BASECAMP=`\pwd`
 #
