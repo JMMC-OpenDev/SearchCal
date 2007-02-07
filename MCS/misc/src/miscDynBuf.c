@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.41 2006-01-10 14:40:39 mella Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.42 2007-02-07 14:44:12 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2006/01/10 14:40:39  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.40  2005/12/02 13:04:32  lafrasse
  * Added miscDynBufSavePartInFile() and miscDynBufSaveInASCIIFile().
  * Changed miscDynBufSaveInFile() to rely on miscDynBufSavePartInFile().
@@ -141,7 +144,7 @@
  * @warning A Dynamic Buffer <b> must be initialised and destroyed </b> before
  * and after use with miscDynBufInit() and miscDynBufDestroy() functions.
  *
- * \n @b Code @b Example:\n
+ * \n @b Code @b Example:
  * \n A C program using a Dynamic Buffer.
  * @code
  * #include "miscDynBuf.h"
@@ -182,7 +185,7 @@
  * @endcode
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.41 2006-01-10 14:40:39 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.42 2007-02-07 14:44:12 gzins Exp $"; 
 
 
 
