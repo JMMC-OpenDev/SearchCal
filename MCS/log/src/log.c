@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.30 2006-05-16 15:31:47 gzins Exp $"
+* "@(#) $Id: log.c,v 1.31 2007-02-08 10:33:06 gluck Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.30  2006/05/16 15:31:47  gzins
+* Fixed strcpy source/destination overlap
+*
 * Revision 1.29  2006/04/07 12:06:59  gzins
 * Added fflush to force stdout
 *
@@ -105,7 +108,7 @@
  *   \li logTrace().
  * \n\n
  *
- * \b Files:\n
+ * \b Files:
  *   \li \e \<$MCSDATA/log/logfile\> : contains the logged informations
  * \n\n
  *

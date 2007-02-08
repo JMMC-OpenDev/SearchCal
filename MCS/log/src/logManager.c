@@ -1,12 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: logManager.c,v 1.9 2005-12-06 10:03:25 gzins Exp $"
+ * "@(#) $Id: logManager.c,v 1.10 2007-02-08 10:33:06 gluck Exp $"
  *
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2005/12/06 10:03:25  gzins
+ * No longer use gethostbyname to get host information; set directly to localhost
+ *
  * Revision 1.8  2005/03/06 18:05:41  gzins
  * Removed message about number of logged messages
  *
@@ -37,12 +40,12 @@
  * \e \<logManager\> - \em file logging daemon, receiving log messages from
  * extern programs and libraries through a network connection.
  *
- * \b Synopsis:\n
+ * \b Synopsis: \n
  * \e \<logManager\> [\e \<-f\> path/to/logfile]
  *                   [\e \<-s\> maximum log file size] 
  *                   [\e \<-p\> listened port number] 
  *
- * \b Details:\n
+ * \b Details: \n
  * \e \<logManager\> writes log messages in \e \<$MCSDATA/log/logfile\> (or at a
  * user-specified path), until the log file size reaches 1MBytes (or a
  * user-specified value). Then, the log file is suffixed with '.old',
@@ -51,7 +54,7 @@
  * \e \<logManager\> listen on the network port number \e 8791 (or on a
  * user-specified one).
  * 
- * \b Files:\n
+ * \b Files:
  * \li \e \<$MCSDATA/log/logfile\>     : default log file;
  * \li \e \<$MCSDATA/log/logfile.old\> : default old log file.
  * \n\n
