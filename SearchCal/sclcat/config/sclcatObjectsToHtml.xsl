@@ -23,8 +23,10 @@
 
     <xsl:variable name="columns">
         <name/>
+        <!--
         <alias/>
         <candidates/>
+        -->
         <calibrators/>
         <ra/>
         <dec/>
@@ -111,12 +113,14 @@
                 
                 <h4> Statistics </h4>
                 <ul>
-                    <li><xsl:value-of select="count(//star)"/> stars</li>
+                    <li><xsl:value-of select="count(//star)"/> analysed stars</li>
+                    <li><xsl:value-of select="count($calibrators//star[./calibrator])"/> stars with one or
+                    more than one calibrator</li>
                     <li><xsl:value-of select="count($calibrators//star[count(./calibrator)=1])"/> stars with 1 calibrator </li>
                     <li><xsl:value-of select="count($calibrators//star[count(./calibrator)=2])"/> stars with 2 calibrators </li>
                     <li><xsl:value-of select="count($calibrators//star[count(./calibrator)>2])"/> stars with more than 2 calibrators </li>
                     <li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators</li> 
-                    <li>average <xsl:value-of select="count(//star) div count($calibrators//calibrator)"/></li>
+                    <li>average <xsl:value-of select="count($calibrators//calibrator[./calibInfo/accepted]) div count(//star)"/> accepted calibrators per star</li>
                 </ul>
 
                 <h4> Legends </h4>
@@ -141,7 +145,32 @@
                             <th><xsl:value-of select="name()"/></th>
                         </xsl:for-each>
                     </tr>
-                    <xsl:apply-templates select="//star" mode="table"/>
+                    <xsl:for-each select="$calibrators//star[./calibrator]">
+                        <xsl:sort select="./calibrator[1]/dist" data-type="number" />
+                        <xsl:variable name="simbadName" select="./@simbadName"/>
+                        <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
+                        <xsl:call-template name="starInTable">
+                            <xsl:with-param name="object" select="$object"/>
+                        </xsl:call-template>    
+                    </xsl:for-each>
+                    <xsl:for-each select="$calibrators//star[not(./calibrator)]">
+                        <xsl:variable name="simbadName" select="./@simbadName"/>
+                        <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
+                        <xsl:call-template name="starInTable">
+                            <xsl:with-param name="object" select="$object"/>
+                        </xsl:call-template>    
+                    </xsl:for-each>
+                    <xsl:for-each select="//star">
+                        <xsl:variable name="simbadName" select="./simbadName"/>
+                        <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
+                        <xsl:if test="not($calibrators//star[@simbadName=$simbadName])">
+                            <xsl:call-template name="starInTable">
+                                <xsl:with-param name="object" select="$object"/>
+                            </xsl:call-template>    
+                        </xsl:if>
+                    </xsl:for-each>
+
+                    
                 </table>
 
                 <hr/>
@@ -184,8 +213,6 @@
 
     </xsl:template>
 
-
-
     <xsl:template name="listAliases">
         <table>
             <xsl:for-each select="//star[./alias]">
@@ -206,8 +233,6 @@
                             <xsl:with-param name="content" select="'E'"/>
                         </xsl:call-template>
                         ]
-
-
                     </td>
                     <td>
                         <xsl:call-template name="objectToSimbadLink">
@@ -220,23 +245,23 @@
 
     </xsl:template>
 
-    <xsl:template match="star" mode="table">
-        <xsl:variable name="star" select="."/>
-        <xsl:variable name="simbadName" select="./simbadName"/>
-        <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
+    <xsl:template name="starInTable">
+        <xsl:param name="object"/>
+        <xsl:variable name="simbadName" select="$object/name"/>
         <xsl:variable name="votHtmlFileName" select="concat($simbadName,'.vot.html')"/>
         <xsl:variable name="votFileName" select="concat($simbadName,'.vot')"/>
-        <!-- first tr contains star info and next ones calibrators -->
+        
+        <!-- first tr contains object info and next ones calibrators -->
         <xsl:element name="tr">
             <xsl:for-each select="exslt:node-set($columns)/*">
                 <xsl:variable name="selector" select="name()"/>
                 <xsl:element name="td">
                     <xsl:choose>
                         <xsl:when test="$selector='alias'">
-                            <xsl:if test="$star/alias">X</xsl:if>
+                            <xsl:if test="$object/alias">X</xsl:if>
                         </xsl:when>
                         <xsl:when test="$selector='candidates'">
-                            <xsl:value-of select="count($star/planet)"/>
+                            <xsl:value-of select="count($object/planet)"/>
                         </xsl:when>
                         <xsl:when test="$selector='name'">
                             <xsl:if test="not($object/pmra and $object/pmdec)">
@@ -245,16 +270,16 @@
                             <xsl:if test="not($object/ra and $object/dec)">
                                 <xsl:attribute name="style">background-color: #ff0000</xsl:attribute>
                             </xsl:if>
-                            <xsl:variable name="sourceName" select="$star/*[name()=$selector]"/>
+                            <xsl:variable name="sourceName" select="$object/*[name()=$selector]"/>
                             <xsl:value-of select="$sourceName"/>
                             [
                             <xsl:call-template name="objectToSimbadLink">
-                                <xsl:with-param name="ident" select="$star/simbadName"/>
+                                <xsl:with-param name="ident" select="$object/simbadName"/>
                                 <xsl:with-param name="content" select="'S'"/>
                             </xsl:call-template>
                             <xsl:value-of select="' '"/>
                             <xsl:call-template name="objectToExoplanetLink">
-                                <xsl:with-param name="ident" select="$star/exoplanetName"/>
+                                <xsl:with-param name="ident" select="$object/exoplanetName"/>
                                 <xsl:with-param name="content" select="'E'"/>
                             </xsl:call-template>
                             ]
@@ -262,7 +287,7 @@
 
                         <xsl:when test="$selector='calibrators'">
                             <!-- because vo table filename contains spaces we
-                            can`t open them . hack just test if star is present
+                            can`t open them . hack just test if object is present
                             in calibrators list-->
                             <xsl:if
                                 test="$calibrators//star[./@simbadName=$simbadName]">
@@ -286,8 +311,8 @@
                 </xsl:element>
             </xsl:for-each>
         </xsl:element>
-        <!-- place one tr per calibrator -->
-        <xsl:for-each select="$calibrators//star[./@simbadName=$simbadName]/calibrator">
+        <!-- place one tr per accepted calibrator -->
+        <xsl:for-each select="$calibrators//star[./@simbadName=$simbadName]/calibrator[./calibInfo/accepted]">
             <xsl:variable name="tmpCalib" select="."/>
             <xsl:element name="tr">
                 <xsl:attribute name="style">background-color: #CCCCCC</xsl:attribute>
@@ -317,6 +342,8 @@
                             <xsl:when test="$selector='name'">
                             </xsl:when>
                             <xsl:when test="$selector='calibrators'">
+                                    [<xsl:value-of  select="$tmpCalib/@index"/>]
+                                    <xsl:value-of  select="' '"/>
                                 <xsl:call-template name="objectTo2MASSLink">
                                     <xsl:with-param name="ident" select="$tmpCalib/name"/>
                                 </xsl:call-template>
