@@ -45,6 +45,7 @@
 
     <!-- acces filtered calibrators -->
     <xsl:variable name="calibrators" select="document($calibratorsFilename)"/>
+    <xsl:variable name="primaStars" select="/"/>
 
     <xsl:template match="/">
         <!--XHTML document outline-->
@@ -148,6 +149,11 @@
                     <xsl:for-each select="$calibrators//star[./calibrator]">
                         <xsl:sort select="./calibrator[1]/dist" data-type="number" />
                         <xsl:variable name="simbadName" select="./@simbadName"/>
+                        <xsl:if test="not($primaStars//star[./name=$simbadName])">
+                            <xsl:message> Not star found with simabdName = '<xsl:value-of select="$simbadName"/>' 
+                                <xsl:value-of select="count($primaStars//star)"/> 
+                            </xsl:message>
+                        </xsl:if>
                         <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
                         <xsl:call-template name="starInTable">
                             <xsl:with-param name="object" select="$object"/>
@@ -248,6 +254,7 @@
     <xsl:template name="starInTable">
         <xsl:param name="object"/>
         <xsl:variable name="simbadName" select="$object/name"/>
+        <xsl:variable name="primaStar" select="$primaStars//star[./simbadName=$simbadName]"/>
         <xsl:variable name="votHtmlFileName" select="concat($simbadName,'.vot.html')"/>
         <xsl:variable name="votFileName" select="concat($simbadName,'.vot')"/>
         
@@ -261,7 +268,7 @@
                             <xsl:if test="$object/alias">X</xsl:if>
                         </xsl:when>
                         <xsl:when test="$selector='candidates'">
-                            <xsl:value-of select="count($object/planet)"/>
+                            <xsl:value-of select="count($primaStar/planet)"/>
                         </xsl:when>
                         <xsl:when test="$selector='name'">
                             <xsl:if test="not($object/pmra and $object/pmdec)">
@@ -274,12 +281,14 @@
                             <xsl:value-of select="$sourceName"/>
                             [
                             <xsl:call-template name="objectToSimbadLink">
-                                <xsl:with-param name="ident" select="$object/simbadName"/>
+                                <xsl:with-param name="ident" select="$simbadName"/>
                                 <xsl:with-param name="content" select="'S'"/>
                             </xsl:call-template>
                             <xsl:value-of select="' '"/>
                             <xsl:call-template name="objectToExoplanetLink">
-                                <xsl:with-param name="ident" select="$object/exoplanetName"/>
+                                <xsl:with-param name="ident" select="$primaStar/name"/>
+                                <!-- exoplanet name is to short ??
+                                <xsl:with-param name="ident" select="$primaStar/exoplanetName"/>-->
                                 <xsl:with-param name="content" select="'E'"/>
                             </xsl:call-template>
                             ]
