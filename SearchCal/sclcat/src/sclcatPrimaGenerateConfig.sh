@@ -140,9 +140,22 @@ collectCandidates(){
 XML_STAR_LIST=../config/sclcatPrimaStars.xml
 collectCandidates $XML_STAR_LIST
 
+#list star to remove eg microlensing...
+STAR_TO_REJECT="OGLE235-MOA53 OGLE-05-071L OGLE-05-169L OGLE-05-390L"
+#STAR_TO_REJECT="OGLE235-MOA53 OGLE-05-390L"
+for s in $STAR_TO_REJECT
+do 
+    echo rejecting $s from prima list
+    xml ed -d "//star[./name='$s']" $XML_STAR_LIST > $XML_STAR_LIST.tmp
+    mv $XML_STAR_LIST.tmp $XML_STAR_LIST
+    echo mv $XML_STAR_LIST.tmp $XML_STAR_LIST
+    
+done
+
 # create one file with one star per line to loop over
 TMPFILE=stars.txt
 xml sel -t -m "//star" -v "./simbadName" -i "position()!=last()" -n $XML_STAR_LIST > $TMPFILE
+
 echo "Building star list ( $(xml sel -t -v 'count(//star)' $XML_STAR_LIST) sources )"
 
 # check every stars 
