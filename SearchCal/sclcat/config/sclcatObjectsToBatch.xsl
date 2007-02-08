@@ -24,7 +24,7 @@
             <xsl:variable name="object" select="document($mainFile)//object[name=$simbadName]"/>
 
             <xsl:if test="not($object/ra and $object/dec)">
-                <xsl:message><xsl:value-of select="$simbadName"/> has no ra and dec </xsl:message>
+                <xsl:message>'<xsl:value-of select="$simbadName"/>' has no ra and dec </xsl:message>
             </xsl:if>
             <xsl:if test="$object/ra and $object/dec">
                 <xsl:value-of select="'['"/>
