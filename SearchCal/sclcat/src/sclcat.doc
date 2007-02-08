@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclcat.doc,v 1.5 2007-02-05 13:32:23 mella Exp $"
+ * "@(#) $Id: sclcat.doc,v 1.6 2007-02-08 07:51:42 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2007/02/05 13:32:23  mella
+ * Add how to enter a new object informations if( simbad script does not know
+ * how...)
+ *
  * Revision 1.4  2007/01/31 11:18:20  mella
  * Add timespan comment
  *
@@ -52,6 +56,7 @@ Use following format:
 </object>
 </verbatim>
 
+
 to process prima collection do:
 sclcatPrimaGenerateConfig
 sclcatPrima
@@ -59,5 +64,8 @@ One prima-run-$date directory will be created with one html dir that presents
 results
 \warning 
 timespan is defined several times into several scripts...
+
+sclcatPrimaGenerateConfig.sh contains one variable to make some stars not
+analysed. eg. microlensing stars ...
 
 */
