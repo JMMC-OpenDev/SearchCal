@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.46 2007-02-04 20:49:42 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.47 2007-02-09 17:04:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.46  2007/02/04 20:49:42  lafrasse
+ * Simplified scenario selection API with polymorphism.
+ * Replaced GetCalStatus() by WaitForCurrentCatalogName() and IsLastCatalog().
+ *
  * Revision 1.45  2006/12/21 15:16:05  lafrasse
  * Updated progression monitoring code (moved from static-based to instance-based).
  *
@@ -143,7 +147,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.46 2007-02-04 20:49:42 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.47 2007-02-09 17:04:06 lafrasse Exp $"; 
 
 
 /* 
@@ -472,12 +476,6 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
                 return mcsFAILURE;
             }
         }
-    }
-
-    // sdbAction deletion
-    if (_progress.Destroy() == mcsFAILURE)
-    {
-        return mcsFAILURE;
     }
 
     // Stop timer log

@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.12 2007-02-04 20:45:53 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.13 2007-02-09 17:04:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2007/02/04 20:45:53  lafrasse
+ * Added GetCatalogIndex() API to get the index of the catalog being queried.
+ * Added GetNbOfCatalogs() API to get the number of catalogs of the scenario.
+ *
  * Revision 1.11  2007/01/23 14:29:45  lafrasse
  * Removed unwanted debugging traces.
  *
@@ -40,7 +44,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.12 2007-02-04 20:45:53 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.13 2007-02-09 17:04:06 lafrasse Exp $"; 
 
 
 /* 
@@ -148,6 +152,7 @@ _scenarioSingleStar(&_progress)
  */
 sclsvrSERVER::~sclsvrSERVER()
 {
+    _progress.Destroy();
 }
 
 
