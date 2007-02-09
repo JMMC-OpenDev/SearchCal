@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/02/04 20:56:45  lafrasse
+ * Updated webservice URL port number.
+ * Updated according to APIs changes in sclsvr.
+ *
  * Revision 1.1  2006/12/22 15:17:50  lafrasse
  * Creation
  *
@@ -61,7 +65,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -147,6 +151,7 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
+    // Set stdout log level 
     logSetStdoutLogLevel(logINFO);
 
     struct soap  v_soap;    // SOAP execution context

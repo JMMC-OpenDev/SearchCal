@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/02/04 20:56:45  lafrasse
+ * Updated webservice URL port number.
+ * Updated according to APIs changes in sclsvr.
+ *
  * Revision 1.1  2006/12/22 15:17:50  lafrasse
  * Creation
  *
@@ -16,7 +20,7 @@
  *  Definition of sclwsWS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -38,6 +42,7 @@ using namespace std;
 /*
  * Local Headers 
  */
+#include "sclwsErrors.h"
 #include "sclwsPrivate.h"
 #include "soapH.h"
 
@@ -92,17 +97,45 @@ int ns__GetCalAsyncID(struct soap *p_soap, char** taskID)
 {
     logTrace("ns__GetCalAsyncID()");
 
+    // Test parameters validity
+    if (p_soap == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (taskID == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
     // Create a "Universally Unique Identifier" (man uuid for more informations)
     uuid_t uuidID;
     uuid_generate(uuidID);
 
     // Allocate SOAP-aware memory to return the generated UUID
     *taskID = (char*) soap_malloc(p_soap, 37);
+    if (*taskID == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "*taskID");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
+    // Get the string of the newly generated uuid_t structure
     uuid_unparse(uuidID, *taskID);
     logInfo("UUID = '%s'.", *taskID);
 
     // Create a new instance of sclsvrSERVER to perform the GETCAL query
     sclsvrSERVER* server = new sclsvrSERVER();
+    if (server == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "server");
+        errCloseStack();
+        return SOAP_ERR;
+    }
 
     // Associate the new sclsvrSERVER instance with the generated UUID for later
     tasks[*taskID] = server;
@@ -127,24 +160,70 @@ int ns__GetCalAsyncQuery(struct soap *p_soap,
 {
     logTrace("ns__GetCalAsyncQuery('%s')", taskID);
 
+    // Test parameters validity
+    if (p_soap == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (taskID == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (query == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "query");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (voTable == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "voTable");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
     // Retrieve the sclsvrSERVER instance associated with th received UUID
-    sclsvrSERVER* server = tasks[taskID];
+    sclsvrSERVER* server = NULL;
+    server = tasks[taskID];
+    if (server == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "server");
+        errCloseStack();
+        return SOAP_ERR;
+    }
 
     // Launch the GETCAL query with the received paramters
     miscoDYN_BUF dynBuf;
-    server->GetCal(query, dynBuf, NULL);
+    if (server->GetCal(query, dynBuf, NULL) == mcsFAILURE)
+    {
+        errAdd(sclwsERR_GETCAL);
+        errCloseStack();
+        return SOAP_ERR;
+    }
 
     // Allocate SOAP-aware memory to return the resulting VO Table
-    uint resultSize;
+    char* result = NULL;
+    uint resultSize = 0;
     dynBuf.GetNbStoredBytes(&resultSize);
+    if (resultSize != 0)
+    {
+        result = dynBuf.GetBuffer();
+    }
+    else
+    {
+        logDebug("No stars found.");
+        result = "<xml> No stars found </xml>";
+        resultSize = strlen(result);
+    }
     resultSize++; // For the '\0'
     *voTable = (char*) soap_malloc(p_soap, resultSize);
-    strncpy(*voTable, dynBuf.GetBuffer(), resultSize);
+    strncpy(*voTable, result, resultSize);
 
-    // Deallocate & remove the sclsvrSERVER instance as the GETCAL query is over
-    delete(server);
-    tasks.erase(taskID);
-
+    logDebug("Terminating query.");
     return SOAP_OK;
 }
 
@@ -163,12 +242,49 @@ int ns__GetCalWaitForCurrentCatalogName(struct soap *p_soap,
 {
     logTrace("ns__GetCalWaitForCurrentCatalogName('%s')", taskID);
 
+    // Test parameters validity
+    if (p_soap == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (taskID == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (catalogName == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "catalogName");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = tasks[taskID];
+    if (server == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "server");
+        errCloseStack();
+        return SOAP_ERR;
+    }
 
     // Allocate SOAP-aware memory to return the current catalog name
     *catalogName = (char*) soap_malloc(p_soap, 256);
-    server->WaitForCurrentCatalogName(*catalogName);
+    if (*catalogName == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "*catalogName");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (server->WaitForCurrentCatalogName(*catalogName) == mcsFAILURE)
+    {
+        errAdd(sclwsERR_CATALOG_NAME);
+        errCloseStack();
+        return SOAP_ERR;
+    }
     logInfo("CatalogName = '%s'.", *catalogName);
 
     return SOAP_OK;
@@ -189,8 +305,34 @@ int ns__GetCalIsLastCatalog(struct soap *p_soap,
 {
     logTrace("ns__GetCalIsLastCatalog('%s')", taskID);
 
+    // Test parameters validity
+    if (p_soap == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (taskID == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (lastCatalog == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "lastCatalog");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = tasks[taskID];
+    if (server == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "server");
+        errCloseStack();
+        return SOAP_ERR;
+    }
 
     // Allocate SOAP-aware memory to return the current catalog name
     *lastCatalog = server->IsLastCatalog();
@@ -214,8 +356,34 @@ int ns__GetCalCurrentCatalogIndex(struct soap *p_soap,
 {
     logTrace("ns__GetCalCurrentCatalogIndex('%s')", taskID);
 
+    // Test parameters validity
+    if (p_soap == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (taskID == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (catalogIndex == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "catalogIndex");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = tasks[taskID];
+    if (server == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "server");
+        errCloseStack();
+        return SOAP_ERR;
+    }
 
     // Allocate SOAP-aware memory to return the current catalog name
     *catalogIndex = server->GetCatalogIndex();
@@ -239,8 +407,34 @@ int ns__GetCalNbOfCatalogs(struct soap *p_soap,
 {
     logTrace("ns__GetCalNbOfCatalogs('%s')", taskID);
 
+    // Test parameters validity
+    if (p_soap == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (taskID == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (nbOfCatalogs == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "nbOfCatalogs");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = tasks[taskID];
+    if (server == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "server");
+        errCloseStack();
+        return SOAP_ERR;
+    }
 
     // Allocate SOAP-aware memory to return the current catalog name
     *nbOfCatalogs = server->GetNbOfCatalogs();

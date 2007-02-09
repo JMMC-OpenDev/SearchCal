@@ -8,6 +8,21 @@
    <error id="2">
       <errName>THREAD_CREATION</errName>
       <errSeverity>FATAL</errSeverity>
-      <errFormat><![CDATA[Could not create a thread]]></errFormat>
+      <errFormat><![CDATA[Could not create a thread.]]></errFormat>
+   </error>
+   <error id="3">
+      <errName>NULL_PTR</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[The pointer '%s' is NULL.]]></errFormat>
+   </error>
+   <error id="4">
+      <errName>GETCAL</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Query failed.]]></errFormat>
+   </error>
+   <error id="5">
+      <errName>CATALOG_NAME</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Catalog name retrieving failed.]]></errFormat>
    </error>
 </errorList>

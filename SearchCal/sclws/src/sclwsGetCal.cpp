@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsGetCal.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"
+ * "@(#) $Id: sclwsGetCal.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/02/04 20:56:45  lafrasse
+ * Updated webservice URL port number.
+ * Updated according to APIs changes in sclsvr.
+ *
  * Revision 1.1  2006/12/22 15:17:50  lafrasse
  * Creation
  *
@@ -61,7 +65,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsGetCal.cpp,v 1.2 2007-02-04 20:56:45 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsGetCal.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -132,7 +136,7 @@ thrdFCT_RET sclwsGetVOTableThreadFunction(thrdFCT_ARG param)
     sclwsGetVOTableThreadParams* paramPtr = (sclwsGetVOTableThreadParams*)param;
     char*  taskID      = paramPtr->taskID;
     char*  query       = paramPtr->query;
-    char* result       = NULL;
+    char*  result      = NULL;
 
     // Launch the GETCAL query
     soap_call_ns__GetCalAsyncQuery(&v_soap, wsURL, "", taskID, query, &result);
@@ -140,6 +144,8 @@ thrdFCT_RET sclwsGetVOTableThreadFunction(thrdFCT_ARG param)
     {
         soap_print_fault(&v_soap, stderr);
     }
+
+    logDebug("Received '%d' bytes.", strlen(result));
 
     // Give back the received VO Table
     paramPtr->result = result;
@@ -169,6 +175,7 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
+    // Set stdout log level 
     logSetStdoutLogLevel(logINFO);
 
     // Define a SOAP context for main()
@@ -186,7 +193,7 @@ int main(int argc, char *argv[])
     }
     logInfo("Connection to '%s' established (ID = '%s').", wsURL, taskID);
 
-    // Launch th thread that handle the GETCAL query
+    // Launch the thread that handle the GETCAL query
     // Thread parameters creation
     sclwsGetVOTableThreadParams      getVOTableThreadParams;
     getVOTableThreadParams.taskID  = taskID;
@@ -210,6 +217,7 @@ int main(int argc, char *argv[])
     do
     {
         // Ask and wait for the currently quereid catalog name
+        logDebug("Waiting for the Catalog Name.");
         soap_call_ns__GetCalWaitForCurrentCatalogName(&v_soap, wsURL, "", taskID, &catalogName);
         if (v_soap.error)
         {
@@ -217,6 +225,7 @@ int main(int argc, char *argv[])
             exit (EXIT_FAILURE);
         }
         // Ask for the currently quereid catalog index
+        logDebug("Getting the Catalog Index.");
         soap_call_ns__GetCalCurrentCatalogIndex(&v_soap, wsURL, "", taskID, &catalogIndex);
         if (v_soap.error)
         {
@@ -224,6 +233,7 @@ int main(int argc, char *argv[])
             exit (EXIT_FAILURE);
         }
         // Ask for the total number of catalogs
+        logDebug("Getting the Number of Catalogs.");
         soap_call_ns__GetCalNbOfCatalogs(&v_soap, wsURL, "", taskID, &nbOfCatalogs);
         if (v_soap.error)
         {
@@ -231,6 +241,7 @@ int main(int argc, char *argv[])
             exit (EXIT_FAILURE);
         }
         // Ask for the last catalog flag
+        logDebug("Getting the Last Catalog Flag.");
         soap_call_ns__GetCalIsLastCatalog(&v_soap, wsURL, "", taskID, &lastCatalog);
         if (v_soap.error)
         {
@@ -242,18 +253,29 @@ int main(int argc, char *argv[])
     while(lastCatalog  == false); // Until last catalog is reached
 
     // Wait for the thread end (eg. result receiving)
+    logDebug("Waiting for thread termination");
     if (thrdThreadWait(&getVOTableThread) == mcsFAILURE)
     {
         errAdd(sclwsERR_THREAD_CREATION);
         errCloseStack();
         exit (EXIT_FAILURE);
     }
+    logDebug("Thread terminated");
 
-    // Output the received VO Table on stdout
-    cout << getVOTableThreadParams.result << endl;
+    if (getVOTableThreadParams.result.length() == 0)
+    {
+        logWarning("Received nothing.");
+    }
+    else
+    {
+        // Output the received VO Table on stdout
+        cout << getVOTableThreadParams.result << endl;
+    }
 
     // Dealloc SOAP context
+    logDebug("Disconnecting from '%s' (ID = '%s').", wsURL, taskID);
     soap_end(&v_soap);
+    logInfo("Connection closed.");
 
     // Close MCS services
     mcsExit();
