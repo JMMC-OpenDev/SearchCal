@@ -48,6 +48,6 @@
    <error id="10">
       <errName>ERRNO</errName>
       <errSeverity>FATAL</errSeverity>
-      <errFormat><![CDATA[System call '%100s' error : errno='%100s'.]]></errFormat>
+      <errFormat><![CDATA[System call '%.100s' error : errno='%.100s' -> '%.100s'.]]></errFormat>
    </error>
 </errorList>
