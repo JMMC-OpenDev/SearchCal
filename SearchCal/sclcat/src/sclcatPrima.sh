@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrima.sh,v 1.4 2007-01-31 10:02:23 mella Exp $"
+# "@(#) $Id: sclcatPrima.sh,v 1.5 2007-02-09 07:26:57 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2007/01/31 10:02:23  mella
+# Launch result parsing at end of script
+#
 # Revision 1.3  2006/11/27 10:31:19  scetre
 # Added Fortrant treatment in the catalogue file generation
 #
@@ -48,14 +51,6 @@ function printUsage () {
         exit 1;
 }
 
-# generate the configuration file
-function generateConfig () {
-        echo -e "Generate configuration file ..."
-        ../bin/sclcatPrimaPreClass
-        ../bin/sclcatPrimaConcat
-        echo -e "...Done."
-}
-
 # Parse result
 function parseResult () {
         echo -e "Analyse the results..."
@@ -77,8 +72,8 @@ do
     g ) # generation reference option
         dir="prima-ref";;
     c ) # generate the configuration file
-        generateConfig ;
-        exit 1;;
+        sclcatPrimaGenerateConfig ;
+        exit ;;
     * ) # Unknown option
         printUsage ;;
     esac
