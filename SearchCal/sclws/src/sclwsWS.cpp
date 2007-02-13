@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.cpp,v 1.4 2007-02-13 16:18:34 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/02/09 17:07:46  lafrasse
+ * Enhanced log and error monitoring.
+ * Corrected a bug inherent to early deallocation of sclsvrSERVER _progress
+ * leading to a crash on empty resulting queries.
+ *
  * Revision 1.2  2007/02/04 20:56:45  lafrasse
  * Updated webservice URL port number.
  * Updated according to APIs changes in sclsvr.
@@ -20,7 +25,7 @@
  *  Definition of sclwsWS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.4 2007-02-13 16:18:34 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -216,7 +221,7 @@ int ns__GetCalAsyncQuery(struct soap *p_soap,
     else
     {
         logDebug("No stars found.");
-        result = "<xml> No stars found </xml>";
+        result = "";
         resultSize = strlen(result);
     }
     resultSize++; // For the '\0'
