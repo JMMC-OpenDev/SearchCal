@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2006-12-22 15:17:50 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.3 2007-02-14 10:25:03 lafrasse Exp $"
 #
 # Makefile of sclws module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2006/12/22 15:17:50  lafrasse
+# Creation
+#
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
@@ -33,22 +36,20 @@
 # As a general rule:  public file are "cleaned" and "installed"  
 #                     local (_L) are not "installed".
 
-
 # Generate code for SAOP access to sclwsWS
 # -n : use service name to rename service functions and namespace table
 # -p : generated filename prefix = soap
 # -L : don't generate soapClientLib/soapServerLib
 # -x : don't generate sample XML message files
 # -d : generated file output path = ../include/
-soapbuild:
+do_soap:
 	/usr/local/bin/soapcpp2 -n -psoap -L -x -d../include/ ../include/sclwsWS.h
 	mv ../include/*.cpp ./
 
 # Remove any SOAP-generatdd file
-soapclean:
+clean_soap:
 	rm -f ../include/soap* ../include/*.xml ../include/*.xsd ../include/*.wsdl ../include/ns.*
 	rm -f soap*
-
 
 #
 # C programs (public and local)
@@ -185,10 +186,10 @@ include $(MAKEDIR)/mkfMakefile
 #
 # TARGETS
 # -------
-all:	do_all
+all:	do_soap do_all
 	@echo " . . . 'all' done" 
 
-clean : clean_all 
+clean : clean_soap clean_all 
 	@echo " . . . clean done"
 
 man   : do_man 
