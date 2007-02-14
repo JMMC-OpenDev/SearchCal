@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclinsInstall.sh,v 1.10 2006-10-10 10:54:49 lafrasse Exp $"
+# "@(#) $Id: sclinsInstall.sh,v 1.11 2007-02-14 10:22:09 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2006/10/10 10:54:49  lafrasse
+# Added '-m' option to deactivate man pages and documentation generation.
+#
 # Revision 1.9  2006/02/20 13:21:25  swmgr
 # Updated to be similar to mcsinsInstall
 #
@@ -175,7 +178,7 @@ then
 fi
 
 # List of SCALIB modules
-scalibModules="simcli alx vobs sclsvr sclgui"
+scalibModules="simcli alx vobs sclsvr sclws jmcs sclgui"
 
 # Log file
 mkdir -p $fromdir/INSTALL
