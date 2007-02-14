@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2007-02-14 10:25:03 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.4 2007-02-14 13:40:26 lafrasse Exp $"
 #
 # Makefile of sclws module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2007/02/14 10:25:03  lafrasse
+# Added and integrated SOAP targets.
+#
 # Revision 1.2  2006/12/22 15:17:50  lafrasse
 # Creation
 #
@@ -82,7 +85,7 @@ sclwsGetCal_LIBS      = MCS C++ gsoap++ pthread uuid sclsvr vobs alx simcli thrd
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = sclws.h
+INCLUDES        = sclws.h sclws.wsdl
 
 #
 # Libraries (public and local)
