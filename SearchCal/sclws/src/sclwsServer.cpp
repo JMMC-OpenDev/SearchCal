@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.4 2007-02-16 09:54:55 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/02/09 17:07:46  lafrasse
+ * Enhanced log and error monitoring.
+ * Corrected a bug inherent to early deallocation of sclsvrSERVER _progress
+ * leading to a crash on empty resulting queries.
+ *
  * Revision 1.2  2007/02/04 20:56:45  lafrasse
  * Updated webservice URL port number.
  * Updated according to APIs changes in sclsvr.
@@ -65,7 +70,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.4 2007-02-16 09:54:55 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -132,7 +137,8 @@ void* threadFunction(void* p_tsoap)
 /* 
  * Signal catching functions  
  */
-/** @TODO add ctrl-c catching to gracefully dispose the socket (bind error) */
+
+// @TODO add ctrl-c catching to gracefully dispose the socket (bind error)
 
 
 
@@ -151,8 +157,11 @@ int main(int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    // Set stdout log level 
-    logSetStdoutLogLevel(logINFO);
+    // Set stdout and file log levels 
+    logSetStdoutLogLevel(logQUIET);
+    logSetFileLogLevel(logINFO);
+
+    // @TODO : manage a "garbage collector" to close pending connections
 
     struct soap  v_soap;    // SOAP execution context
     struct soap *v_tsoap;   // SOAP execution context fork for the threads
