@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS.h,v 1.7 2007-02-22 12:27:31 gzins Exp $"
+ * "@(#) $Id: msgPROCESS.h,v 1.8 2007-02-22 13:06:04 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2007/02/22 12:27:31  gzins
+ * Fixed minor documentation warning
+ *
  * Revision 1.6  2005/02/14 07:59:01  gzins
  * Minor documentation changes
  *
@@ -65,7 +68,7 @@ public:
     virtual mcsCOMPL_STAT SetName     (const char *name);
     virtual const char   *GetName     (void       ) const;
 
-    virtual mcsCOMPL_STAT SetId       (const mcsINT32 int);
+    virtual mcsCOMPL_STAT SetId       (const mcsINT32 id);
     virtual mcsINT32      GetId       (void          ) const;
 
     virtual mcsCOMPL_STAT SetUnicity  (const mcsLOGICAL flag);
