@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: evhINTERFACE.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $"
+ * "@(#) $Id: evhINTERFACE.cpp,v 1.9 2007-02-22 12:30:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/05/11 13:04:18  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.7  2005/11/03 09:02:15  mella
  * Correct bug with message filtering onto Send method
  *
@@ -34,7 +37,7 @@
  * evhINTERFACE class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhINTERFACE.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhINTERFACE.cpp,v 1.9 2007-02-22 12:30:42 gzins Exp $";
 /* 
  * System Headers 
  */
@@ -230,9 +233,10 @@ mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
  * It is the callback which is attached to the reply of the command sent by
  * Forward() method. When reply is received, it unpack error message in error
  * stack if an erro occured during command execution, and then executes the
- * callback specified by in Forword().
+ * callback specified by in Forward().
  *
  * \param msg received message reply.
+ * \param replyCb user callback attached to the reply  
  *
  * \return return value of user callback. 
  */
