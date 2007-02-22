@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.5 2006-10-17 11:27:19 mella Exp $"
+ * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.6 2007-02-22 12:23:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/10/17 11:27:19  mella
+ * Add typed attribute and content
+ *
  * Revision 1.4  2006/10/17 08:20:53  mella
  * Use standard ToXml() instead of previous ToString()
  *
@@ -25,7 +28,7 @@
  *  Definition of miscoXML_ELEMENT class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.5 2006-10-17 11:27:19 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.6 2007-02-22 12:23:03 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -69,8 +72,10 @@ miscoXML_ELEMENT::~miscoXML_ELEMENT()
 /**
  * Create one new attribute. If one attribute already exist, its content will be
  * replaced.
+ * 
  * @param attributeName the attribute name
  * @param attributeValue the attribute value
+ *
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT miscoXML_ELEMENT::AddAttribute(string attributeName,
@@ -85,8 +90,10 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddAttribute(string attributeName,
 /**
  * Create one new attribute. If one attribute already exist, its content will be
  * replaced.
+ * 
  * @param attributeName the attribute name
  * @param attributeValue the attribute value as double
+ * 
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT miscoXML_ELEMENT::AddAttribute(string attributeName,
@@ -103,8 +110,10 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddAttribute(string attributeName,
 /**
  * Create one new attribute. If one attribute already exist, its content will be
  * replaced.
+ * 
  * @param attributeName the attribute name
  * @param attributeValue the attribute value as logical
+ * 
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT miscoXML_ELEMENT::AddAttribute(string attributeName,
@@ -125,7 +134,9 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddAttribute(string attributeName,
 
 /**
  * Add the given element as child 
+ * 
  * @param element new child to add
+ * 
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT miscoXML_ELEMENT::AddElement(miscoXML_ELEMENT * element)
@@ -137,7 +148,9 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddElement(miscoXML_ELEMENT * element)
 
 /**
  * Append the given string to the element's content. 
+ * 
  * @param content new contetn to append.
+ * 
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT miscoXML_ELEMENT::AddContent(string content)
@@ -149,7 +162,9 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddContent(string content)
 
 /**
  * Append true or false value to the content depending of the given argument.
- * @param flag mcsTRUE or mcsFALSE.
+ *
+ * @param content mcsTRUE or mcsFALSE.
+ *
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT miscoXML_ELEMENT::AddContent(mcsLOGICAL content)
@@ -168,7 +183,9 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddContent(mcsLOGICAL content)
 
 /**
  * Append a numerical value to the content depending of the given argument.
- * @param flag mcsTRUE or mcsFALSE.
+ * 
+ * @param content numerical value
+ * 
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT miscoXML_ELEMENT::AddContent(mcsDOUBLE content)
@@ -183,6 +200,7 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddContent(mcsDOUBLE content)
 
 /**
  * Return the xml stringified  representation of the element.
+ * 
  * @return the xml representation.
  */
 string miscoXML_ELEMENT::ToXml()
