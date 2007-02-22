@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.6 2006-11-21 10:25:35 gzins Exp $"
+# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.7 2007-02-22 17:22:35 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2006/11/21 10:25:35  gzins
+# Updated to improved generated documentation
+#
 # Revision 1.5  2006/03/22 07:45:18  gzins
 # Added tcl programs
 #
@@ -99,7 +102,7 @@ case $fileExtension in
             # Set the line, deleting the ## characters
             line = substr($0, 4)
             # Print the new line adding in front of each one " *"
-            print line" {"
+            print line
             # Go to the next input line, because the treatment has been done,
             # and to prevent further treatment by other action block 
             next
