@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcscfgSetRelease.sh,v 1.1 2005-12-06 07:56:19 gzins Exp $"
+# "@(#) $Id: mcscfgSetRelease.sh,v 1.2 2007-02-22 12:16:13 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2005/12/06 07:56:19  gzins
+# Moved from mcs module
+#
 # Revision 1.3  2005/12/02 15:04:37  mella
 # Finish to make good parsing
 #
@@ -40,7 +43,7 @@
 # setMcsRelease='source /home/MCS/DEVELOPMENT/bin/mcscfgSetRelease'
 #
 # \usedfiles
-# \filename /home/MCS/<dirs> : used as list of existing revision of MCSRELEASE.
+# \filename /home/MCS/\<dirs\> : used as list of existing revision of MCSRELEASE.
 #
 # \warning
 # If this script is not sourced, one new shell is open into the old one.

@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.8 2005-12-07 09:07:01 mella Exp $"
+# "@(#) $Id: mcscfgGenerateEnvList.sh,v 1.9 2007-02-22 12:16:13 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2005/12/07 09:07:01  mella
+# Use short hostnames
+#
 # Revision 1.7  2005/12/06 12:08:53  gzins
 # Removed useless code
 #
@@ -35,7 +38,7 @@
 # Generate a MCS env list from the given general xml description file.
 #
 # @synopsis
-# mcscfgGenerateEnvList <mcscfgEnvList.xml> <mcscfgEnvList> 
+# mcscfgGenerateEnvList \<mcscfgEnvList.xml\> \<mcscfgEnvList\> 
 #
 # @usedfiles
 # @filename mcscfgGenerateEnvList :  transformation rules
