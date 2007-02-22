@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgPROCESS.h,v 1.6 2005-02-14 07:59:01 gzins Exp $"
+ * "@(#) $Id: msgPROCESS.h,v 1.7 2007-02-22 12:27:31 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2005/02/14 07:59:01  gzins
+ * Minor documentation changes
+ *
  * Revision 1.5  2005/02/09 16:34:51  lafrasse
  * Changed method prototypes to use as much 'const' parameters as possible
  *
@@ -59,13 +62,13 @@ public:
     // Class destructor
     virtual ~msgPROCESS();
 
-    virtual mcsCOMPL_STAT SetName     (const char*);
+    virtual mcsCOMPL_STAT SetName     (const char *name);
     virtual const char   *GetName     (void       ) const;
 
-    virtual mcsCOMPL_STAT SetId       (const mcsINT32);
+    virtual mcsCOMPL_STAT SetId       (const mcsINT32 int);
     virtual mcsINT32      GetId       (void          ) const;
 
-    virtual mcsCOMPL_STAT SetUnicity  (const mcsLOGICAL);
+    virtual mcsCOMPL_STAT SetUnicity  (const mcsLOGICAL flag);
     virtual mcsLOGICAL    IsUnique    (void            ) const;
 
 protected:

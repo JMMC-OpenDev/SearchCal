@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: msgSendCommand.cpp,v 1.21 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: msgSendCommand.cpp,v 1.22 2007-02-22 12:27:59 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.20  2005/03/08 16:24:00  gzins
  * Fixed bug related to disconnection with msgManager
  *
@@ -60,7 +63,7 @@
  * \e \<msgSendCommand\> - program sending a command to a specified process, 
  * then waiting for a reply.
  *
- * \b Synopsis:\n
+ * \b Synopsis:
  * \e \<msgSendCommand\> [-v] \<process\> \<command\> \<commandPar\>
  * [\<time-out\>]
  *
@@ -72,7 +75,7 @@
  *
  * \optname v        : enable verbose mode
  *
- * \b Details:\n
+ * \b Details:
  * \e \<msgSendCommand\> sends the \<command\> command to the \<process\>
  * process, and then waits for the corresponding reply(ies). The received
  * reply(ies) and all possible errors are then printed on the standard output.
@@ -87,7 +90,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgSendCommand.cpp,v 1.21 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgSendCommand.cpp,v 1.22 2007-02-22 12:27:59 gzins Exp $";
 /*
  * System Headers
  */

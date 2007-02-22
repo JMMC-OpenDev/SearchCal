@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: msgManager.cpp,v 1.6 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: msgManager.cpp,v 1.7 2007-02-22 12:27:59 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.5  2005/02/04 15:57:06  lafrasse
  * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
  *
@@ -23,16 +26,16 @@
  * \file
  * \e \<msgManager\> - MCS inter-process communication server.
  *
- * \b Synopsis:\n
+ * \b Synopsis:
  * \e \<msgManager\>
  *
- * \b Details:\n
+ * \b Details:
  * \e \<msgManager\> is the communication server doing message forwarding
  * between processes. Each process connected to this server can send messages to
  * (and receive messages from) the other connected processes.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgManager.cpp,v 1.6 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgManager.cpp,v 1.7 2007-02-22 12:27:59 gzins Exp $";
 
 /* 
  * System Headers 
