@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2005-08-19 14:01:20 mella Exp $"
+# "@(#) $Id: Makefile,v 1.15 2007-02-22 12:12:37 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2005/08/19 14:01:20  mella
+# Typo
+#
 # Revision 1.13  2005/08/19 13:56:54  mella
 # Add some Yorick files
 #
@@ -127,7 +130,7 @@ tttlll_OBJECTS  =
 #
 # man pages to be done
 # --------------------
-MANSECTIONS = 1 
+MANSECTIONS = 
 MAN1 = $(addsuffix .sh, $(SCRIPTS))
 MAN3 =
 MAN5 =
