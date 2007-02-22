@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.7 2005-04-11 07:52:50 gluck Exp $"
+# "@(#) $Id: ctooGetSpecificHeaderFile.sh,v 1.8 2007-02-22 13:01:21 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2005/04/11 07:52:50  gluck
+# Fix problem report 3: directories creation with correct header file for C++ and template names update
+#
 # Revision 1.6  2005/02/22 15:30:52  gluck
 # Added comment block
 #
@@ -15,6 +18,9 @@
 #
 # Revision 1.4  2005/01/24 15:47:51  gluck
 # Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
+# Bug correction for log message automatic insertion (Revision 1.7  2005/04/11 07:52:50  gluck
+# Bug correction for log message automatic insertion (Fix problem report 3: directories creation with correct header file for C++ and template names update
+# Bug correction for log message automatic insertion (
 # Bug correction for log message automatic insertion (Revision 1.6  2005/02/22 15:30:52  gluck
 # Bug correction for log message automatic insertion (Added comment block
 # Bug correction for log message automatic insertion (
@@ -155,7 +161,8 @@ case $headerFileType in
                  echo " */" >> $specificHeaderFile
                  echo -e "" >> $specificHeaderFile
                  echo "/* Module name */" >> $specificHeaderFile
-                 echo "#define MODULE_ID \"$MOD_NAME\"" >> $specificHeaderFile
+                 set dash="#"
+                 echo "${dash}define MODULE_ID \"$MOD_NAME\"" >> $specificHeaderFile
                  echo -e "\n \n" >> $specificHeaderFile
                  ;;
 esac
