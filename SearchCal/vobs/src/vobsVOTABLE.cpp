@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.18 2006-12-21 15:08:15 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.19 2007-02-26 16:40:28 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2006/12/21 15:08:15  lafrasse
+ * Added GetVotable() API.
+ *
  * Revision 1.17  2006/11/28 14:24:41  lafrasse
  * Renamed deleteFlag group in deletedFlag group (typo).
  *
@@ -69,7 +72,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.18 2006-12-21 15:08:15 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.19 2007-02-26 16:40:28 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -121,6 +124,7 @@ vobsVOTABLE::~vobsVOTABLE()
  * @param header header of the VO Table
  * @param softwareVersion software version
  * @param request user request
+ * @param xmlRequest user request as XML
  * @param buffer the output buffer
  *
  * @return always mcsSUCCESS. 
@@ -566,6 +570,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
  * @param header header of the VO Table
  * @param softwareVersion software version
  * @param request user request
+ * @param xmlRequest user request as XML
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */

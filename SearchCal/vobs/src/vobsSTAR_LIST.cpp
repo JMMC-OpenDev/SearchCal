@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.35 2006-12-21 15:08:15 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.36 2007-02-26 16:40:28 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.35  2006/12/21 15:08:15  lafrasse
+* Added GetVotable() API.
+*
 * Revision 1.34  2006/10/09 15:07:09  lafrasse
 * Added request XML serialization in VOTables.
 *
@@ -99,7 +102,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.35 2006-12-21 15:08:15 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.36 2007-02-26 16:40:28 lafrasse Exp $"; 
 
 
 /* 
@@ -628,23 +631,24 @@ void vobsSTAR_LIST::Display(void)
 /**
  * Save each star in a VOTable v1.1.
  *
- * @param filename the path to the file in which the VOTable should be saved
  * @param header header of the VO Table
  * @param softwareVersion software version
  * @param request user request
+ * @param xmlRequest user request as XML
+ * @param buffer the buffer in which the VOTable should be written
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */
 mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char*    header,
                                         const char*    softwareVersion,
                                         const char*    request,
-                                        const char*    xmlRquest,
+                                        const char*    xmlRequest,
                                         miscoDYN_BUF*  buffer)
 {
     logTrace("vobsSTAR_LIST::GetVOTable()");
 
     vobsVOTABLE serializer;
-    return(serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRquest, buffer));
+    return(serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, buffer));
 }
 
 /**
@@ -654,6 +658,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char*    header,
  * @param header header of the VO Table
  * @param softwareVersion software version
  * @param request user request
+ * @param xmlRequest user request as XML
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */
@@ -661,12 +666,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
                                            const char *header,
                                            const char *softwareVersion,
                                            const char *request,
-                                           const char *xmlRquest)
+                                           const char *xmlRequest)
 {
     logTrace("vobsSTAR_LIST::SaveToVOTable()");
 
     vobsVOTABLE serializer;
-    return(serializer.Save(*this, filename, header, softwareVersion, request, xmlRquest));
+    return(serializer.Save(*this, filename, header, softwareVersion, request, xmlRequest));
 }
 
 /**
