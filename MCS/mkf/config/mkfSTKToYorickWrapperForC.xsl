@@ -20,11 +20,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.4 2006-10-27 09:07:24 mella Exp $"
+ "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.5 2007-03-12 15:56:07 mella Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.4  2006/10/27 09:07:24  mella
+ Use one external file to define new user's type mapping
+
  Revision 1.2  2006/07/06 07:55:27  mella
  Modified to support amdlib porting in yorick
 
@@ -337,7 +340,7 @@ extern _<xsl:value-of select="$methName"/>;
         <!-- transform typedef struct into same type -->
         <xsl:when test="//class[./attributelist/attribute[./@name='name' and @value=$typeMod]]"><xsl:value-of select="$typeMod"/><xsl:value-of select="' '"/></xsl:when>
         <!-- transform unsigned xxxx into xxxx type -->
-        <xsl:when test="starts-with($typeMod,'unsigned')"><xsl:value-of select="substring-after($typeMod,'unsigned')"/></xsl:when>
+        <xsl:when test="starts-with($typeMod,'unsigned')"><xsl:value-of select="substring-after($typeMod,'unsigned')"/><xsl:value-of select="' '"/></xsl:when>
 
         <!-- transform array into pointer type -->
         <xsl:when test="starts-with($type,'a(')">pointer </xsl:when>
