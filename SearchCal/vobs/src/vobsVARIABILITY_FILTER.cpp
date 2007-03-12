@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.8 2006-04-07 08:23:00 gzins Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.9 2007-03-12 13:51:11 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/04/07 08:23:00  gzins
+ * Removed useless \n in log messages
+ *
  * Revision 1.7  2006/03/03 15:03:28  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -42,7 +45,7 @@
  *  Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.8 2006-04-07 08:23:00 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.9 2007-03-12 13:51:11 scetre Exp $"; 
 
 /* 
  * System Headers 
@@ -109,15 +112,21 @@ mcsCOMPL_STAT vobsVARIABILITY_FILTER::Apply(vobsSTAR_LIST *list)
             if (star->IsPropertySet(vobsSTAR_CODE_VARIAB_V3) == mcsTRUE)
             {
                 logInfo("star %s has been removed by the filter '%s'", starId, GetId());
-                // Remove it
-                logTest("star %d had variability %s",
-                        el+1, 
-                        star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V3));
-                if (list->Remove(*star) == mcsFAILURE)
+                // Check that flag is not "C" for remove star because "C" means
+                // no flag : as beahviour that if flag is not affected
+                if (strcmp(star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V3),
+                           "C") != 0)
                 {
-                    return mcsFAILURE;
+                    // Remove it
+                    logTest("star %d had variability %s",
+                            el+1, 
+                            star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V3));
+                    if (list->Remove(*star) == mcsFAILURE)
+                    {
+                        return mcsFAILURE;
+                    }
+                    el = el-1;            
                 }
-                el = el-1;            
             }
         }
     }
