@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.9 2007-01-26 14:22:56 lafrasse Exp $
+# Version: $Id: mcs.sh,v 1.10 2007-03-15 14:59:17 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2007/01/26 14:22:56  lafrasse
+# Fixed bug in ipcClean macro
+#
 # Revision 1.8  2006/04/07 07:01:34  gzins
 # Fixed bug in ipcClean macro
 #
@@ -114,9 +117,15 @@ fi
 # Set PATH
 if [ "$PATH" != "" ]
 then
-        export PATH=$PATH:../bin
+    export PATH=$PATH:../bin
 else
     export PATH=../bin
+fi
+
+# Java
+if [ ! -z "$JAVA_HOME" ]
+then
+    export PATH=$PATH:$JAVA_HOME/bin
 fi
 
 # Add $INTROOT to LD_LIBRARY_PATH, PATH and MANPATH
