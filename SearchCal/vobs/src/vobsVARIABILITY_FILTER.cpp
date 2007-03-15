@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.10 2007-03-15 12:12:14 scetre Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.11 2007-03-15 12:35:03 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2007/03/15 12:12:14  scetre
+ * Added in variability filter varflag1 and varflag2
+ *
  * Revision 1.9  2007/03/12 13:51:11  scetre
  * Don't removed star if flag is C
  *
@@ -48,7 +51,7 @@
  *  Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.10 2007-03-15 12:12:14 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.11 2007-03-15 12:35:03 scetre Exp $"; 
 
 /* 
  * System Headers 
@@ -141,11 +144,12 @@ mcsCOMPL_STAT vobsVARIABILITY_FILTER::Apply(vobsSTAR_LIST *list)
                 }
                 el = el-1;            
             }
-            // if it is possible to get the varflag3, remove the star
+            // if it is possible to get the varflag3 and flag is not "C",
+            // remove the star
             else if (star->IsPropertySet(vobsSTAR_CODE_VARIAB_V3) == mcsTRUE)
             {
                 // Check that flag is not "C" for remove star because "C" means
-                // no flag : as beahviour that if flag is not affected
+                // no flag : same behaviour that if flag is not affected
                 if (strcmp(star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V3),
                            "C") != 0)
                 {
