@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2006/01/10 14:40:39  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.35  2005/10/10 12:00:11  lafrasse
  * Added miscLocateDir()
  *
@@ -83,7 +86,7 @@
  * "$MCSROOT/lib:$INTROOT/bin:$HOME/Dev/misc/src/../doc/").
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscFile.c,v 1.36 2006-01-10 14:40:39 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscFile.c,v 1.37 2007-03-15 15:57:12 lafrasse Exp $"; 
 
 
 
@@ -139,6 +142,7 @@ static char *pathSearchList[][2] = {
    {"xsd", "../config:$INTROOT/config:$MCSROOT/config"},
    {"xsl", "../config:$INTROOT/config:$MCSROOT/config"},
    {"xml", "../errors:$INTROOT/errors:$MCSROOT/errors"},
+   {"wsdl", "../include:$INTROOT/include:$MCSROOT/include"},
    {NULL, NULL }
 };
 
