@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.9 2007-03-12 13:51:11 scetre Exp $"
+ * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.10 2007-03-15 12:12:14 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2007/03/12 13:51:11  scetre
+ * Don't removed star if flag is C
+ *
  * Revision 1.8  2006/04/07 08:23:00  gzins
  * Removed useless \n in log messages
  *
@@ -45,7 +48,7 @@
  *  Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.9 2007-03-12 13:51:11 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.10 2007-03-15 12:12:14 scetre Exp $"; 
 
 /* 
  * System Headers 
@@ -108,15 +111,46 @@ mcsCOMPL_STAT vobsVARIABILITY_FILTER::Apply(vobsSTAR_LIST *list)
             {
                 return mcsFAILURE;
             }
-            // if it is not possible to get the visibility, remove the star
-            if (star->IsPropertySet(vobsSTAR_CODE_VARIAB_V3) == mcsTRUE)
+            // if it is possible to get the varflag1, remove the star
+            if (star->IsPropertySet(vobsSTAR_CODE_VARIAB_V1) == mcsTRUE)
             {
-                logInfo("star %s has been removed by the filter '%s'", starId, GetId());
+                logInfo("star %s has been removed by the filter '%s'",
+                        starId, GetId());
+                // Remove it
+                logTest("star %d had variability %s",
+                        el+1, 
+                        star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V1));
+                if (list->Remove(*star) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                el = el-1;            
+            }
+            // if it is possible to get the varflag2, remove the star
+            else if (star->IsPropertySet(vobsSTAR_CODE_VARIAB_V2) == mcsTRUE)
+            {
+                logInfo("star %s has been removed by the filter '%s'",
+                        starId, GetId());
+                // Remove it
+                logTest("star %d had variability %s",
+                        el+1, 
+                        star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V2));
+                if (list->Remove(*star) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                el = el-1;            
+            }
+            // if it is possible to get the varflag3, remove the star
+            else if (star->IsPropertySet(vobsSTAR_CODE_VARIAB_V3) == mcsTRUE)
+            {
                 // Check that flag is not "C" for remove star because "C" means
                 // no flag : as beahviour that if flag is not affected
                 if (strcmp(star->GetPropertyValue(vobsSTAR_CODE_VARIAB_V3),
                            "C") != 0)
                 {
+                    logInfo("star %s has been removed by the filter '%s'",
+                            starId, GetId());
                     // Remove it
                     logTest("star %d had variability %s",
                             el+1, 
@@ -130,7 +164,7 @@ mcsCOMPL_STAT vobsVARIABILITY_FILTER::Apply(vobsSTAR_LIST *list)
             }
         }
     }
-    
+
     return mcsSUCCESS;
 }
 
