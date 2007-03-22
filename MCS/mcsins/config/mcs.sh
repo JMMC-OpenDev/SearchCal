@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.11 2007-03-15 15:24:39 gzins Exp $
+# Version: $Id: mcs.sh,v 1.12 2007-03-22 14:10:36 mella Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2007/03/15 15:24:39  gzins
+# Put JAVA_HOME/bin at the first position in PATH
+#
 # Revision 1.10  2007/03/15 14:59:17  gzins
 # Added JAVA_HOME/bin in PATH
 #
@@ -167,6 +170,8 @@ alias psg='ps -aef | grep $*'
 alias m=more
 alias Pu='rm -f *~ .*~ core | echo -en'
 alias gvim='gvim -geometry 80x45'
+alias givm='gvim -geometry 80x45'
+alias maca='make clean all'
 alias macam='make clean all man'
 alias macami='make clean all man install'
 alias setMcsRelease='source $MCSTOP/DEVELOPMENT/bin/mcscfgSetRelease'
@@ -200,3 +205,47 @@ ipcClean ()
     ipcs -s | grep $USER | grep 0x00000000 | awk '{ id = $2; cmd = sprintf("ipcrm -s %s",id); system(cmd)}'
     ipcs -q | grep $USER | grep 0x00000000 | awk '{ id = $2; cmd = sprintf("ipcrm -q %s",id); system(cmd)}'
 }
+
+# Function to allow what command onto linux
+if [ "$(uname)" == "Linux" ]
+then
+    # check if it already is associated to something
+    type what &> /dev/null   
+    if [ $? -ne 0 ]
+    then
+    what()
+    {    
+        # try to mimic hpux's what
+        # to do support -s option
+        files=$*
+        oldIFS="$IFS"
+        for file in $files
+        do
+            # check if file is readable
+            if [ -r "$file" ]
+            then
+                # do real job
+                echo "${file}:"
+                LINES="$(strings $file | grep '@(#)')"
+                # change IFS to split according CR only
+                IFS=$'\x0A'
+                # print every lines
+                for line in $LINES
+                do
+                    tmp="$IFS"
+                    iIFS="ai $'\x0A' $'\x3E' "
+                    IFS="1"
+                    str=($line)
+                    echo "    $str"
+                    IFS="$tmp"
+                done
+                IFS="$oldIFS"
+            else
+                echo "can't open $file (TBD)"
+            fi
+        done
+        IFS="$oldIFS"
+    }
+    fi
+fi
+
