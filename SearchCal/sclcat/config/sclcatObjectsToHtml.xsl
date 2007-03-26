@@ -1,16 +1,19 @@
+<?xml version="1.0"?>
 <!--
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.5 2007-03-26 11:34:23 scetre Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.6 2007-03-26 11:53:03 scetre Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2007/03/26 11:34:23  scetre
+# Added header documentation
+#
 #
 #*******************************************************************************
 -->
-<?xml version="1.0"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:exslt="http://exslt.org/common"
     xmlns:math="http://exslt.org/math"

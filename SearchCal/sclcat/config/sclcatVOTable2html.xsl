@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <!--
+#*******************************************************************************
+# JMMC project
+#
+# "@(#) $Id: sclcatVOTable2html.xsl,v 1.2 2007-03-26 11:53:03 scetre Exp $"
+#
+# History
+#
+# $Log: not supported by cvs2svn $
+#
+#*******************************************************************************
+-->
+<!--
 # VOTable2XHTML
 # Version: 1.0
 # Author: Jian SANG (China-VO)
