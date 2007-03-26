@@ -1,3 +1,11 @@
+<!--
+/**
+ * Aliases file.
+ * 
+ * This file contains aliases for non resolved stars.
+ *
+ */
+-->
 <!-- This file define somes aliases to achieve simbad request. -->
 <aliases>
     <object name="2M1207"          alias="2MASS J12073346-3932539" />
