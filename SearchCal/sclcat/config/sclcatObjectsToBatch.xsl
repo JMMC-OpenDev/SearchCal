@@ -3,16 +3,30 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToBatch.xsl,v 1.4 2007-03-26 11:53:03 scetre Exp $"
+# "@(#) $Id: sclcatObjectsToBatch.xsl,v 1.5 2007-03-27 14:53:42 scetre Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2007/03/26 11:53:03  scetre
+# Moved documentation blok in the first xml tag
+#
 # Revision 1.3  2007/03/26 11:34:13  scetre
 # Added header documentation
 #
 #
 #*******************************************************************************
+
+##
+# Create a file containing one block per star. In each blok are presented the
+# Simbad name, the current object name, its coordinates and its proper motion
+#
+# This script take as parameter an xml file where are stored the different names
+# of the stars. for more information on the file format, see sclcatObjectsToBatch.xsl which generates it.
+#
+# To provide the results file, it uses the sclcatSimbadList.xml where are store
+# ifnformations about stars.
+#
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:exslt="http://exslt.org/common"

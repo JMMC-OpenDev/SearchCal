@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatVOTable2html.xsl,v 1.2 2007-03-26 11:53:03 scetre Exp $"
+# "@(#) $Id: sclcatVOTable2html.xsl,v 1.3 2007-03-27 14:53:42 scetre Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2007/03/26 11:53:03  scetre
+# Moved documentation blok in the first xml tag
+#
 #
 #*******************************************************************************
 -->
@@ -35,6 +38,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" xmlns:VOT="http://www.ivoa.net/xml/VOTable/v1.1">
 	<xsl:output method="xml" encoding="UTF-8" media-type="application/xhtml+xml" indent="no" doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" omit-xml-declaration="no"/>
 	<xsl:template match="/">
+        <xsl:comment> Generated with sclcatVOTable2html.xsl</xsl:comment>
 		<html>
 			<head>
 				<meta content="Created by VOTable2XHTML 2.0 (China-VO)"/>

@@ -3,16 +3,24 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatBuildMainList.xsl,v 1.3 2007-03-26 11:53:03 scetre Exp $"
+# "@(#) $Id: sclcatBuildMainList.xsl,v 1.4 2007-03-27 14:53:42 scetre Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2007/03/26 11:53:03  scetre
+# Moved documentation blok in the first xml tag
+#
 # Revision 1.2  2007/03/26 11:34:03  scetre
 # Added header documentation
 #
 #
 #*******************************************************************************
+
+##
+# Create the list of PRIMA stars in a xml file according to the exoplanet file
+# and the aliases file
+#
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:exslt="http://exslt.org/common"
@@ -35,10 +43,10 @@
         encoding="ISO-8859-1"
         doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
-    <xsl:param name="outputFile">../config/sclcatPrimaCandidates.xml</xsl:param>
     <xsl:param name="aliasFile">../config/sclcatAliases.xml</xsl:param>
 
     <xsl:template match="/">
+        <xsl:comment> Generated with sclcatBuildMain.xsl</xsl:comment>
         <list>
             <xsl:if test="//catalogue">
                 <xsl:call-template name="exoplanet" select="/" /> 
