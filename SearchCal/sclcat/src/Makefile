@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2007-01-31 10:03:05 mella Exp $"
+# "@(#) $Id: Makefile,v 1.5 2007-03-27 14:55:42 scetre Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2007/01/31 10:03:05  mella
+# Add new programs
+#
 # Revision 1.3  2006/11/27 10:31:19  scetre
 # Added Fortrant treatment in the catalogue file generation
 #
@@ -183,8 +186,6 @@ install : install_all
 
 # Build fortran executables
 EXECUTABLES_FORTRAN = sclcatPrimaFilter
-#                      sclcatPrimaPreClass \
-#					   sclcatPrimaLect \
 
 do_fortran:
 	@for file in $(EXECUTABLES_FORTRAN) ; do \
