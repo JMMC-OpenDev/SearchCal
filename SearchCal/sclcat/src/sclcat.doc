@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclcat.doc,v 1.6 2007-02-08 07:51:42 mella Exp $"
+ * "@(#) $Id: sclcat.doc,v 1.7 2007-03-27 14:55:56 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2007/02/08 07:51:42  mella
+ * Add message for removed stars
+ *
  * Revision 1.5  2007/02/05 13:32:23  mella
  * Add how to enter a new object informations if( simbad script does not know
  * how...)
@@ -25,26 +28,80 @@
  ******************************************************************************/
 
 /**
-\mainpage sclcat : SearchCal catalogs 
+@mainpage sclcat : SearchCal catalogs 
 
-\bdesc
+@section Descripton Description
 Calibrator catalog created with SearchCal tool.
 
-\ddesc
 This modules contains scripts to create catalog of calibrators using SearchCal
-tool. For the time beeing, it create catalog for :
-    \li PRIMA
+tool. For the time beeing, it creates catalog for :
+@li @ref refPRIMA
 
-config/sclcatPrimaExoplanetData.xml must be dowloaded from http://exoplanet.eu
-web site requesting xml format.
+*/
 
-config/sclcatAliases.xml must be completed to permit simabad request to star
-names that come from exoplanet site.
+/**
+@page refPRIMA PRIMA
 
-config/sclcatSimbadList.xml is completed automatically by script or must be
-filled by hand to set object coords, proper motions and parallax.
+The three scipts used to generate the PRIMA catalog are :
+@li sclcatPrimaGenerateConfig.sh.
+@li sclcatPrima.sh.
+@li sclcatPrimaParseResult.sh.
+
+\n
+For more information about these scripts, type:
+@verbatim
+% sclcatPrimaGenerateConfig -h
+@endverbatim
+
+@verbatim
+% sclcatPrima -h
+Usage: sclcatPrima [-h] [-g] [-c]
+        -h      print this help.
+        -c      generate the configuration file.
+        -g      generate reference.
+@endverbatim
+
+@verbatim
+% sclcatPrimaParseResult -h
+Usage: sclcatPrimaParseResult [prima-ref] or [prima-run-<YYYY-MM-DDTHH-MM-SS>]
+        -h              print this help.
+        <prima-run>     Parse results in prima-run directory
+@endverbatim
+
+There is 3 steps to process to create the PRIMA catalog. The two first steps are
+optionnal if the <b>prima-ref</b> is up to date.
+
+To be sure to use the last version of the prima reference stars,
+you need to re-generate the configuration file \b sclcatPRIMA.xml in \b ../config repository.
+To do this, retreive the catalog at http://exoplanet.eu in the <b> Interactive
+Catalog </b> section.
+Choose <b>All Candidates detected</b>, the catalog will be displayed as an html table.
+In the header of the table choose <b>ALL FORMATS</b> and select <b>XML</b> in the Output format.
+Then, click <b>Download button</b>. Save the file provided by the web site as
+<b>sclcatPrimaExoplanetData.xml</b>.
+
+The prima reference stars are provided in the sclcat module. If stars has been
+added in the web site, it is possible to re-generate the <b>sclcatPRIMA.cfg</b> file.
+Run:
+@verbatim
+% sclcatPrimaGenerateConfig
+or
+% sclcatPrima -c
+@endverbatim
+
+This script will create a new <b>sclcatPRIMA.cfg</b> file.
+
+@warning
+@li <b>sclcatAliases.xml</b>  must be completed to permit simbad request to star
+names that come from exoplanet site, to add an aliases, use following format:
+@verbatim
+<object name="2M1207"          alias="2MASS J12073346-3932539" />
+@endverbatim
+@li <b>sclcatSimbadList.xml</b> is completed automatically by
+sclcatPrimaGenerateConfig.sh script during configuration process or must be
+filled by hand to set object coordinates, proper motions and parallax
 Use following format:
-<verbatim>
+@verbatim
 <!-- add on Wed Jan 31 09:22:38 CET 2007 -->
 <object>
 <name>47 Uma</name>
@@ -54,18 +111,28 @@ Use following format:
 <pmdec>55.15</pmdec>
 <plx>71.04</plx>
 </object>
-</verbatim>
+@endverbatim
 
+\n
 
-to process prima collection do:
-sclcatPrimaGenerateConfig
-sclcatPrima
-One prima-run-$date directory will be created with one html dir that presents
-results
-\warning 
+The next step is the research of PRIMA calibrators.
+To create the <b>prima-run-YYYY-MM-DDTHH-MM-SS</b> directory, run :
+@verbatim
+% sclcatPrima
+@endverbatim
+
+To create the prima-ref directory, run :
+@verbatim
+% sclcatPrima -g
+@endverbatim
+
+The last step of the PRIMA catalog generation is to publish the results.
+The sclcat module provides a script to generate a web page, sclcatPrimaParseResult.sh.
+This script is automatically call after the research. 
+(i.e after <b>% sclcatPrima [-g]</b>). The web page is stored in
+<b><prima-run>/html/index.html</b>
+
+@warning 
 timespan is defined several times into several scripts...
-
-sclcatPrimaGenerateConfig.sh contains one variable to make some stars not
-analysed. eg. microlensing stars ...
 
 */

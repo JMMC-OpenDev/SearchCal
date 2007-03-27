@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.4 2007-02-07 14:57:23 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.5 2007-03-27 14:55:56 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2007/02/07 14:57:23  mella
+# Set calPmRa or calPmDec to 0 for filter process call
+#
 # Revision 1.3  2007/01/31 12:39:54  mella
 # Use pmra and pmDec to 0 if star has not yet for filter program
 #
@@ -24,25 +27,40 @@
 # Create synthesis files for the PRIMA calibrator catalog
 #
 # @synopsis
-# \<sclcatPrimaParseResult\> \<run-directory\>
+# sclcatPrimaParseResult \<run-directory\>
 # 
 # @details
 # This script build the synthesis file from the collected calibrator lists.
 #
 # @usedfiles
 # @filename ../config/sclcatPRIMA.cfg : list of stars of interest for PRIMA
+# @filename ../config/sclcatVOTable2html.xsl : xsl style sheet to convert VOTable to html
+# @filename ../config/sclcatObjectsToHtml.xsl :  xsl style sheet to convert object file to html
+# @filename ../config/sclcatSimbadList.xml : Simbad return properties for each stars (ra, dec, pmra, pmdec, parallax).
+# @filename ../config/sclcatPrimaStars.xml : Stars list
 #
 # */
 
 # Print usage 
 function printUsage () {
-    echo -e "TBD"
-    echo -e "Usage: sclcatPrima [-h] [-g] [-c]" 
-    echo -e "\t-h\tprint this help."
-    echo -e "\t-c\tgenerate the configuration file."
-    echo -e "\t-g\tgenerate reference."
+    echo -e "Usage: sclcatPrimaParseResult [prima-ref] or [prima-run-<YYYY-MM-DDTHH-MM-SS>]" 
+    echo -e "\t-h\t\tprint this help."
+    echo -e "\t<prima-run>\tParse results in prima-run directory"
     exit 1;
 }
+
+while getopts "h" option
+# Initial declaration.
+# c, h, u and t are the options (flags) expected.
+# The : after option 't' shows it will have an argument passed with it.
+do
+  case $option in
+    h ) # Help option
+        printUsage ;;
+    * ) # Unknown option
+        printUsage ;;
+    esac
+done
 
 XSLT_VOT2HTML="$PWD/../config/sclcatVOTable2html.xsl"
 XSLT_OBJECT2HTML="$PWD/../config/sclcatObjectsToHtml.xsl"

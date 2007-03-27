@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.6 2007-03-26 11:53:03 scetre Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.7 2007-03-27 14:53:51 scetre Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2007/03/26 11:53:03  scetre
+# Moved documentation blok in the first xml tag
+#
 # Revision 1.5  2007/03/26 11:34:23  scetre
 # Added header documentation
 #
@@ -63,6 +66,7 @@
     <xsl:variable name="primaStars" select="/"/>
 
     <xsl:template match="/">
+        <xsl:comment> Generated with sclcatObjectsToHtml.xsl</xsl:comment>      
         <!--XHTML document outline-->
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <head>

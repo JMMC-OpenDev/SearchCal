@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrima.sh,v 1.5 2007-02-09 07:26:57 mella Exp $"
+# "@(#) $Id: sclcatPrima.sh,v 1.6 2007-03-27 14:55:56 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2007/02/09 07:26:57  mella
+#  respond to -g option
+#
 # Revision 1.4  2007/01/31 10:02:23  mella
 # Launch result parsing at end of script
 #
@@ -26,7 +29,7 @@
 # Create calibrator catalog for PRIMA 
 #
 # @synopsis
-# \<sclcatPrima\>
+# sclcatPrima
 # 
 # @details
 # This script creates catalog of calibrator for PRIMA, using SearchCal tool. The
@@ -36,6 +39,9 @@
 #
 # The log files, resulting of the SearchCal execution for each star, are stored
 # in \em log sub-directory.
+#
+# The results of SearchCal are VOTables which are converted to html for
+# visualisation.
 #
 # @usedfiles
 # @filename ../config/sclcatPRIMA.cfg : list of stars of interest for PRIMA
@@ -51,7 +57,9 @@ function printUsage () {
         exit 1;
 }
 
+#/**
 # Parse result
+# */
 function parseResult () {
         echo -e "Analyse the results..."
         sclcatPrimaParseResult $1
