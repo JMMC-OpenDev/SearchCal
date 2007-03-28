@@ -20,11 +20,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.5 2007-03-12 15:56:07 mella Exp $"
+ "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.6 2007-03-28 11:39:25 gzins Exp $"
 
  History
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.5  2007/03/12 15:56:07  mella
+ Add blank before variable name for unsigned types
+
  Revision 1.4  2006/10/27 09:07:24  mella
  Use one external file to define new user's type mapping
 
@@ -70,7 +73,6 @@
 
 if (!is_void(plug_in)) plug_in, "<xsl:value-of select="$moduleName"/>";
 write,"<xsl:value-of select="$moduleName"/> plugin loaded";
-/* GM: which else branch can we place here??? */
 
 <!-- For each Define -->
 /****** DEFINE CONSTANTS (numerical ones only) ******/
@@ -169,7 +171,7 @@ struct <xsl:value-of select="$name"/>
  * WARNING : this function returns one pointer
  */
  <xsl:message>Warning: '<xsl:value-of select="$methName"/>' function returns one pointer</xsl:message>    </xsl:if> 
-extern _<xsl:value-of select="$methName"/>;
+extern __<xsl:value-of select="$methName"/>;
 /* PROTOTYPE
     <xsl:choose>
         <xsl:when test="contains(./attributelist/attribute[@name='decl']/@value,').p.')">int</xsl:when>        
