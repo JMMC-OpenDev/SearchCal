@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.3 2007-03-27 14:55:56 scetre Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.4 2007-04-10 08:34:17 scetre Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2007/03/27 14:55:56  scetre
+# Updated documentation
+#
 #
 #*******************************************************************************
 
@@ -230,7 +233,7 @@ then
     echo "Please append next lines to alias file and run script again:"
     echo -e $info
 fi
-echo "Here comes the not found list:"
+echo "!!!!!!!!!!!!!! Here comes the not found list: !!!!!!!!!!!!!!"
 echo -e $error
 
 # Generate batch file
