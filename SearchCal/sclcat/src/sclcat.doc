@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclcat.doc,v 1.8 2007-04-10 08:34:17 scetre Exp $"
+ * "@(#) $Id: sclcat.doc,v 1.9 2007-04-10 12:18:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2007/04/10 08:34:17  scetre
+ * Updated documentation
+ *
  * Revision 1.7  2007/03/27 14:55:56  scetre
  * Updated documentation
  *
@@ -146,8 +149,5 @@ To generate it, run:
 % sclcatPrimaParseResult prima-ref
 @endverbatim
 The web page is stored in <b>sclcat/src/<prima-run>/html/index.html</b>.
-
-@warning 
-timespan is defined several times into several scripts...
 
 */
