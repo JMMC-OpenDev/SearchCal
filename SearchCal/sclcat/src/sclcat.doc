@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclcat.doc,v 1.9 2007-04-10 12:18:59 scetre Exp $"
+ * "@(#) $Id: sclcat.doc,v 1.10 2007-04-12 07:34:19 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2007/04/10 12:18:59  scetre
+ * Updated documentation
+ *
  * Revision 1.8  2007/04/10 08:34:17  scetre
  * Updated documentation
  *
@@ -68,6 +71,7 @@ Usage: sclcatPrima [-h] [-g] [-c]
         -g      generate reference.
 @endverbatim
 
+@warning
 All work should be done in the sclcat/src repository.
 
 @par "Re-generate the prima reference stars (Optionnal)"
@@ -148,6 +152,6 @@ To generate it, run:
 @verbatim
 % sclcatPrimaParseResult prima-ref
 @endverbatim
-The web page is stored in <b>sclcat/src/<prima-run>/html/index.html</b>.
+The web page is stored in <b>sclcat/src/prima-ref/html/index.html</b>.
 
 */
