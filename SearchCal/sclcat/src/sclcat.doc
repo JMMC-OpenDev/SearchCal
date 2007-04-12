@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclcat.doc,v 1.10 2007-04-12 07:34:19 scetre Exp $"
+ * "@(#) $Id: sclcat.doc,v 1.11 2007-04-12 07:42:09 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2007/04/12 07:34:19  scetre
+ * Updated documentation
+ *
  * Revision 1.9  2007/04/10 12:18:59  scetre
  * Updated documentation
  *
@@ -43,10 +46,9 @@
 Calibrator catalog created with SearchCal tool.
 
 This modules contains scripts to create catalog of calibrators using SearchCal
-tool. For the time beeing, it creates catalog for :
+tool. For the time beeing, it creates catalog for (Click on the following link
+for more information):
 @li @ref refPRIMA
-
-Click on the link for more information.
 
 */
 
