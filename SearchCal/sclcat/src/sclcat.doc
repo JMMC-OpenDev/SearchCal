@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclcat.doc,v 1.11 2007-04-12 07:42:09 scetre Exp $"
+ * "@(#) $Id: sclcat.doc,v 1.12 2007-04-12 09:36:47 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2007/04/12 07:42:09  scetre
+ * Updated documentation
+ *
  * Revision 1.10  2007/04/12 07:34:19  scetre
  * Updated documentation
  *
@@ -73,8 +76,14 @@ Usage: sclcatPrima [-h] [-g] [-c]
         -g      generate reference.
 @endverbatim
 
-@warning
-All work should be done in the sclcat/src repository.
+@par Pre-requisites
+\li All work should be done in the <b>sclcat/src</b> directory.
+\li searchCal V3.3.6
+To know the searchCal version, type:
+@verbatim
+% sclsvrServer -version
+3.3.6
+@endverbatim
 
 @par "Re-generate the prima reference stars (Optionnal)"
 The number of reference stars provided by the http://exoplanet.eu web site can changed. 
