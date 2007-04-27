@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.47 2007-02-09 17:04:06 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.48 2007-04-27 09:04:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.47  2007/02/09 17:04:06  lafrasse
+ * Moved _progress deletion from GetCalCB() to sclsvrSERVER destructor.
+ *
  * Revision 1.46  2007/02/04 20:49:42  lafrasse
  * Simplified scenario selection API with polymorphism.
  * Replaced GetCalStatus() by WaitForCurrentCatalogName() and IsLastCatalog().
@@ -147,7 +150,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.47 2007-02-09 17:04:06 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.48 2007-04-27 09:04:03 gzins Exp $"; 
 
 
 /* 
@@ -429,7 +432,9 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
         {
             // Otherwise give back a VOTable
             dynBuff.Reset();
-            if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), &dynBuff) == mcsFAILURE)
+            if (calibratorList.GetVOTable(voHeader, softwareVersion, 
+                                          requestString, xmlOutput.c_str(),
+                                          &dynBuff) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -444,7 +449,9 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
             if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
                 // Save the list as a VOTable v1.1
-                if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion, requestString, xmlOutput.c_str()) == mcsFAILURE)
+                if (calibratorList.SaveToVOTable
+                    (request.GetFileName(), voHeader, softwareVersion,
+                     requestString, xmlOutput.c_str()) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -495,8 +502,19 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
+    // Set reply
+    mcsUINT32 nbStoredBytes;
+    dynBuff.GetNbStoredBytes(&nbStoredBytes);
+    if (nbStoredBytes != 0)
+    {
+        msg.SetBody(dynBuff.GetBuffer());
+    }
+    else
+    {
+        msg.SetBody("");
+    }
+
     // Send reply
-    msg.SetBody(dynBuff.GetBuffer());
     if (SendReply(msg) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
