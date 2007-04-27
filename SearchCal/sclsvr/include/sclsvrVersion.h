@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.23 2007-03-15 12:33:24 scetre Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.24 2007-04-27 09:10:08 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2007/03/15 12:33:24  scetre
+ * Set version to 3.3.6
+ *
  * Revision 1.22  2006/10/30 13:37:43  scetre
  * Set version to 3.3.5c
  *
@@ -90,7 +93,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.3.6"
+#define sclsvrVERSION "3.3.6a"
 
 #ifdef __cplusplus
 }
