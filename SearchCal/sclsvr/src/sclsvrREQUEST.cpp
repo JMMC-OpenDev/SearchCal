@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.27 2006-10-10 15:50:44 lafrasse Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.28 2007-04-27 09:04:33 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2006/10/10 15:50:44  lafrasse
+ * Changed XML Serialization in VOTable PARAM.
+ *
  * Revision 1.26  2006/10/10 11:30:18  lafrasse
  * Changed request XML serialization APIs in SerializeToXML().
  *
@@ -97,7 +100,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.27 2006-10-10 15:50:44 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.28 2007-04-27 09:04:33 gzins Exp $"; 
 
 
 /* 
@@ -221,7 +224,8 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
 
     // Search area size
-    mcsINT32 radius, deltaRa, deltaDec;
+    mcsDOUBLE deltaRa, deltaDec;
+    mcsDOUBLE radius;
     mcsLOGICAL circularQueryFlag = _getCalCmd->IsDefinedRadius();
     // If a radius is specified
     if (circularQueryFlag == mcsTRUE)
