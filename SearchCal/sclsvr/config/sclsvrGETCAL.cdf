@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.20 2006-07-17 09:10:36 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.21 2007-04-27 09:02:36 gzins Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.20  2006/07/17 09:10:36  scetre
+ Added old scenario option
+
  Revision 1.19  2006/03/07 15:33:39  scetre
  Removed old scenario in band K
 
@@ -86,28 +89,28 @@
         </param>
         <param>
             <name>diffRa</name>
-            <type>integer</type>
-            <defaultValue><integer>1800</integer></defaultValue>
+            <type>double</type>
+            <defaultValue><double>1800</double></defaultValue>
             <desc>right ascension value of the rectangular search box size</desc>
-            <minValue><integer>0</integer></minValue>
-            <maxValue><integer>3600</integer></maxValue>
+            <minValue><double>0</double></minValue>
+            <maxValue><double>3600</double></maxValue>
             <unit>arcmin</unit>                
         </param>
         <param>
             <name>diffDec</name>
-            <type>integer</type>
-            <defaultValue><integer>600</integer></defaultValue>
+            <type>double</type>
+            <defaultValue><double>600</double></defaultValue>
             <desc>declinaison value of the rectangular search box size</desc>
-            <minValue><integer>0</integer></minValue>
-            <maxValue><integer>1800</integer></maxValue>
+            <minValue><double>0</double></minValue>
+            <maxValue><double>1800</double></maxValue>
             <unit>arcmin</unit>
         </param>
         <param optional="true">
             <name>radius</name>
-            <type>integer</type>
+            <type>double</type>
             <desc>radius value of the circular search box size</desc>
-            <minValue><integer>0</integer></minValue>
-            <maxValue><integer>3600</integer></maxValue>
+            <minValue><double>0</double></minValue>
+            <maxValue><double>3600</double></maxValue>
             <unit>arcmin</unit>                
         </param>
         <param>
