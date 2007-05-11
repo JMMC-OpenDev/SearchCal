@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.30 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.31 2007-05-11 15:42:46 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.29  2006/10/26 08:15:57  gzins
  * Renamed thrdTHREAD to thrdTHREAD_STRUCT
  *
@@ -63,7 +66,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.30 2006-12-21 15:16:05 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.31 2007-05-11 15:42:46 gzins Exp $"; 
 
 
 /* 
@@ -126,9 +129,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     timlogInfoStart(msg.GetCommand());
 
     // actionMonitor thread parameters creation
-    sclsvrMonitorActionParams      actionMonitorParams;
-    actionMonitorParams.server   = this;
-    actionMonitorParams.message  = &msg;
+    sclsvrMonitorActionParams                 actionMonitorParams;
+    actionMonitorParams.server              = this;
+    actionMonitorParams.message             = &msg;
+    actionMonitorParams.progressionMessage  = &_progress;
 
     // actionMonitor thread creation and launch
     thrdTHREAD_STRUCT                     actionMonitor;
