@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxApparentMagnitude.c,v 1.2 2006-03-03 14:48:24 scetre Exp $"
+ * "@(#) $Id: alxApparentMagnitude.c,v 1.3 2007-05-11 15:38:42 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/03/03 14:48:24  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.1  2005/12/22 10:08:58  scetre
  * Added extinction coefficient computation
  * changed realMag to CorrectedMag
@@ -19,7 +22,7 @@
  * @sa JMMC-SPE-2600-0001 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxApparentMagnitude.c,v 1.2 2006-03-03 14:48:24 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxApparentMagnitude.c,v 1.3 2007-05-11 15:38:42 gzins Exp $"; 
 
 
 /* 
@@ -116,8 +119,5 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsFLOAT av,
     
     return mcsSUCCESS;
 }
-
-
-
 
 /*___oOo___*/
