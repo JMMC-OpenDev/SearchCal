@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrServer.cpp,v 1.11 2007-05-11 15:41:28 gzins Exp $"
+ * "@(#) $Id: sclsvrServer.cpp,v 1.12 2007-05-11 15:58:43 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2007/05/11 15:41:28  gzins
+ * Updated to prevent unreleased semaphores
+ *
  * Revision 1.10  2006/03/03 15:25:23  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -30,7 +33,7 @@
  * Search Calibrators SERVER
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.11 2007-05-11 15:41:28 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.12 2007-05-11 15:58:43 gzins Exp $"; 
 
 
 /* 
@@ -38,14 +41,7 @@ static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.11 2
  */
 #include <stdlib.h>
 #include <iostream>
-
-
-/**
- * @namespace std
- * Export standard iostream objects (cin, cout,...).
- */
 using namespace std;
-
 
 /*
  * MCS Headers 
