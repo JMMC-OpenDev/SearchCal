@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.36 2006-10-30 10:04:37 scetre Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.37 2007-05-11 15:38:11 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2006/10/30 10:04:37  scetre
+ * Fixed Bug when computed H-K diameter errors
+ *
  * Revision 1.35  2006/10/26 16:43:32  gzins
  * Fixed bug when computing HK diameter
  *
@@ -131,7 +134,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.36 2006-10-30 10:04:37 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.37 2007-05-11 15:38:11 gzins Exp $"; 
 
 
 /* 
@@ -313,14 +316,6 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
     /* Declare polynomials P(B-V), P(V-R), P(V-K) */
     mcsFLOAT p_b_v, p_v_r, p_v_k;
 
-    /* 
-     * Declare the 3 diameters D(B-V), D(V-R), D(V-K),
-     * the mean diameter
-     * and the mean delta
-     */
-    mcsFLOAT meanDiam;
-    mcsFLOAT meanDiamErr;
-
     /* Compute the polynomials P(B-V), P(V-R), P(V-K) */
     p_b_v =   polynomial->coeff[0][0]
         + polynomial->coeff[0][1] * b_v
@@ -352,15 +347,18 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
     diameters->vkErr.value = diameters->vk.value * polynomial->error[2]/100.0;;
 
     /* Compute mean diameter and its associated error (10%) */
-    meanDiam = (  diameters->vk.value 
-                  + diameters->vr.value
-                  + diameters->bv.value) / 3;
-    meanDiamErr = 0.1 * meanDiam;
+    diameters->mean.value = (  diameters->vk.value 
+                               + diameters->vr.value
+                               + diameters->bv.value) / 3;
+     diameters->meanErr.value = 0.1 * diameters->mean.value;
 
     /* Check whether the diameter is coherent or not */
-    if ((fabs(diameters->bv.value - meanDiam) > 2.0 * meanDiamErr) ||
-        (fabs(diameters->vr.value - meanDiam) > 2.0 * meanDiamErr) ||
-        (fabs(diameters->vk.value - meanDiam) > 2.0 * meanDiamErr) )
+    if ((fabs(diameters->bv.value - diameters->mean.value) > 
+         2.0 * diameters->meanErr.value) ||
+        (fabs(diameters->vr.value - diameters->mean.value) > 
+         2.0 * diameters->meanErr.value) ||
+        (fabs(diameters->vk.value - diameters->mean.value) > 
+         2.0 * diameters->meanErr.value) )
     {
         /* Reject star (i.e the diameter should not appear as computed) */
         diameters->areCoherent = mcsFALSE;
@@ -424,6 +422,8 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
  * @param mgJ star magnitude in band J
  * @param mgK star magnitude in band K
  * @param mgH star magnitude in band H
+ * @param mgV star magnitude in band V
+ * @param mgKJnk star magnitude in band K (in Jonshon)
  * @param diameters the structure to give back all the computed diameters
  *  
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -433,6 +433,8 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                                                     alxDATA mgJ,
                                                     alxDATA mgK,
                                                     alxDATA mgH,
+                                                    alxDATA mgV,
+                                                    alxDATA mgKJnk,
                                                     alxDIAMETERS *diameters)
 {
     logTrace("alxComputeAngularDiameterFaint()");
@@ -445,23 +447,16 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
         return mcsFAILURE;        
     }
 
-    /* Compute I-J, I-K, J-K, J-H */
+    /* Compute I-J, I-K, J-K, J-H, V-K */
     mcsFLOAT i_j = mgI.value - mgJ.value;
     mcsFLOAT i_k = mgI.value - mgK.value;
     mcsFLOAT j_k = mgJ.value - mgK.value;
     mcsFLOAT j_h = mgJ.value - mgH.value;
     mcsFLOAT h_k = mgH.value - mgK.value;
+    mcsFLOAT v_k = mgV.value - mgKJnk.value;
 
-    /* Declare polynomials P(I-J), P(I-K), P(J-K), P(J-H), P(H-K) */
-    mcsFLOAT p_i_j, p_i_k, p_j_k, p_j_h, p_h_k;
-
-    /* 
-     * Declare the 5 diameters D(I-J), D(I-K), D(J-K), D(J-H), D(H-K)
-     * the mean diameter
-     * and the mean delta
-     */
-
-    /* Compute the polynomials P(I-J), P(I-K), P(J-K), P(J-H), P(H-K) */
+    /* Compute the polynomials P(I-J), P(I-K), P(J-K), P(J-H), P(H-K), P(V-K) */
+    mcsFLOAT p_i_j, p_i_k, p_j_k, p_j_h, p_h_k, p_v_k;
     p_i_j =   polynomial->coeff[3][0]
             + polynomial->coeff[3][1] * i_j
             + polynomial->coeff[3][2] * pow(i_j, 2)
@@ -497,165 +492,144 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
             + polynomial->coeff[7][4] * pow(h_k, 4)
             + polynomial->coeff[7][5] * pow(h_k, 5);
 
-    /* Compute the diameters D(B-V), D(V-R), D(V-K) */
+    p_v_k =   polynomial->coeff[2][0]
+        + polynomial->coeff[2][1] * v_k
+        + polynomial->coeff[2][2] * pow(v_k, 2)
+        + polynomial->coeff[2][3] * pow(v_k, 3)
+        + polynomial->coeff[2][4] * pow(v_k, 4)
+        + polynomial->coeff[2][5] * pow(v_k, 5);
+
+    /* Compute the diameters D(I-J), D(I-K), D(J-K), D(J-H), D(H-K), D(V-K) */
     diameters->ij.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_j;
     diameters->ik.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_k;
     diameters->jk.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_k;
     diameters->jh.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_h;
     diameters->hk.value    = 9.306 * pow(10, -0.2 * mgH.value) * p_h_k;
+    diameters->vk.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_v_k;
     diameters->ijErr.value = diameters->ij.value * polynomial->error[3]/100.0;
     diameters->ikErr.value = diameters->ik.value * polynomial->error[4]/100.0;;
     diameters->jhErr.value = diameters->jh.value * polynomial->error[5]/100.0;;
     diameters->jkErr.value = diameters->jk.value * polynomial->error[6]/100.0;;
     diameters->hkErr.value = diameters->hk.value * polynomial->error[7]/100.0;;
+    diameters->vkErr.value = diameters->vk.value * polynomial->error[2]/100.0;;
 
-    /* if mag I is not set, compute mean diam with only 3 diam*/
+    /* Computer mean diameter and associated error */
+    int nbDiameters = 2;
+    diameters->mean.value = diameters->jh.value + diameters->jk.value;
+    if (mgV.isSet == mcsTRUE)
+    {
+        diameters->mean.value +=diameters->vk.value;
+        nbDiameters += 1;
+    }
     if (mgI.isSet == mcsFALSE)
     {
-        /* Compute mean diameter and its associated error (20%) */
-        diameters->mean.value = (  diameters->hk.value 
-                                   + diameters->jh.value
-                                   + diameters->jk.value) / 3;
-        diameters->meanErr.value = 0.2 * diameters->mean.value;
+        diameters->mean.value +=diameters->hk.value;
+        nbDiameters += 1;
+    }
+    else
+    {
+        diameters->mean.value += diameters->ij.value;
+        diameters->mean.value += diameters->ik.value;
+        nbDiameters += 2;
+    }
+    diameters->mean.value = diameters->mean.value / nbDiameters;
+    diameters->meanErr.value = 0.2 * diameters->mean.value;
 
-        /* Check whether the diameter is coherent or not */
-        if ((fabs(diameters->hk.value - diameters->mean.value) >
-             diameters->meanErr.value) ||
-            (fabs(diameters->jh.value - diameters->mean.value) >
-             diameters->meanErr.value) ||
-            (fabs(diameters->jk.value - diameters->mean.value) >
-             diameters->meanErr.value) )
-        {
-            /* Reject star (i.e the diameter should not appear as computed) */
-            diameters->areCoherent = mcsFALSE;
-        }
-        else
-        {
-            /* Set Confidence index to CONFIDENCE_HIGH */
-            diameters->areCoherent = mcsTRUE;
-        }
-        /*
-         * If diameter is OK (i.e. confidence index is alxCONFIDENCE_HIGH), set
-         * confidence index of the computed diameter according to the ones of
-         * magnitudes used to compute it. 
-         */
-        if (diameters->areCoherent == mcsTRUE)
-        {
-            if ((mgJ.confIndex == alxCONFIDENCE_LOW) ||
-                (mgK.confIndex == alxCONFIDENCE_LOW) ||
-                (mgH.confIndex == alxCONFIDENCE_LOW))
-            {
-                diameters->confidenceIdx = alxCONFIDENCE_LOW;
-            }
-            else if ((mgJ.confIndex == alxCONFIDENCE_MEDIUM) ||
-                     (mgK.confIndex == alxCONFIDENCE_MEDIUM) ||
-                     (mgH.confIndex == alxCONFIDENCE_MEDIUM))
-            {
-                diameters->confidenceIdx = alxCONFIDENCE_MEDIUM;
-            }
-            else 
-            {
-                diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
-            }
-        }
-        else
-        {
-            diameters->confidenceIdx = alxCONFIDENCE_LOW;            
-        }        
+    /* Check whether the diameter is coherent or not */
+    if ((fabs(diameters->jh.value - diameters->mean.value) >
+         diameters->meanErr.value) ||
+        (fabs(diameters->jk.value - diameters->mean.value) >
+         diameters->meanErr.value) ||
+        ((mgV.isSet == mcsTRUE) && 
+         (fabs(diameters->vk.value - diameters->mean.value) >
+         diameters->meanErr.value)) ||
+        ((mgI.isSet == mcsFALSE) && 
+         (fabs(diameters->hk.value - diameters->mean.value) >
+         diameters->meanErr.value)) ||
+        ((mgI.isSet == mcsTRUE) && 
+         (fabs(diameters->ij.value - diameters->mean.value) >
+         diameters->meanErr.value)) ||
+        ((mgI.isSet == mcsTRUE) && 
+         (fabs(diameters->ik.value - diameters->mean.value) >
+         diameters->meanErr.value)))
+    {
+        /* Reject star (i.e the diameter should not appear as computed) */
+        diameters->areCoherent = mcsFALSE;
+    }
+    else
+    {
+        /* Set Confidence index to CONFIDENCE_HIGH */
+        diameters->areCoherent = mcsTRUE;
+    }
 
-        /* Display results */
-        logInfo("Diameter HK = %.3f(%.4f), JH = %.3f(%.4f), JK = %.3f(%.4f), mean = %3f(%4f) ",
-                diameters->hk.value, diameters->hkErr.value,
-                diameters->jh.value, diameters->jhErr.value,
-                diameters->jk.value, diameters->jkErr.value,
-                diameters->mean.value, diameters->meanErr.value);
-        if (diameters->areCoherent == mcsTRUE)
+    /*
+     * If diameter is OK (i.e. confidence index is alxCONFIDENCE_HIGH), set
+     * confidence index of the computed diameter according to the ones of
+     * magnitudes used to compute it. 
+     */
+    if (diameters->areCoherent == mcsTRUE)
+    {
+        if ((mgJ.confIndex == alxCONFIDENCE_LOW) ||
+            (mgK.confIndex == alxCONFIDENCE_LOW) ||
+            (mgH.confIndex == alxCONFIDENCE_LOW) ||
+            ((mgI.isSet == mcsTRUE) && (mgI.confIndex == alxCONFIDENCE_LOW)))
         {
-            logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
-                    diameters->confidenceIdx, alxCONFIDENCE_LOW, 
-                    alxCONFIDENCE_MEDIUM, alxCONFIDENCE_HIGH);
+            diameters->confidenceIdx = alxCONFIDENCE_LOW;
         }
-        else
+        else if ((mgJ.confIndex == alxCONFIDENCE_MEDIUM) ||
+                 (mgK.confIndex == alxCONFIDENCE_MEDIUM) ||
+                 (mgH.confIndex == alxCONFIDENCE_MEDIUM) ||
+                 ((mgI.isSet == mcsTRUE) &&
+                  (mgI.confIndex == alxCONFIDENCE_MEDIUM)))
         {
-            logTest("Computed diameters are not coherent between them; they are not kept");
+            diameters->confidenceIdx = alxCONFIDENCE_MEDIUM;
+        }
+        else 
+        {
+            diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
         }
     }
     else
     {
-        /* Compute mean diameter and its associated error (10%) */
-        diameters->mean.value = (  diameters->ij.value 
-                                   + diameters->ik.value
-                                   + diameters->jk.value
-                                   + diameters->jh.value) / 4;
-        diameters->meanErr.value = 0.2 * diameters->mean.value;
+        diameters->confidenceIdx = alxCONFIDENCE_LOW;            
+    }        
 
-        /* Check whether the diameter is coherent or not */
-        if ((fabs(diameters->ij.value - diameters->mean.value) >
-             diameters->meanErr.value) ||
-            (fabs(diameters->ik.value - diameters->mean.value) >
-             diameters->meanErr.value) ||
-            (fabs(diameters->jk.value - diameters->mean.value) >
-             diameters->meanErr.value) ||
-            (fabs(diameters->jh.value - diameters->mean.value) >
-             diameters->meanErr.value) )
-        {
-            /* Reject star (i.e the diameter should not appear as computed) */
-            diameters->areCoherent = mcsFALSE;
-        }
-        else
-        {
-            /* Set Confidence index to CONFIDENCE_HIGH */
-            diameters->areCoherent = mcsTRUE;
-        }
+    /* Display results */
+    logInfo("Diameter JH = %.3f(%.4f)", 
+            diameters->jh.value, diameters->jhErr.value);
+    logInfo("Diameter JK = %.3f(%.4f)", 
+            diameters->jk.value, diameters->jkErr.value);
+    if (mgV.isSet == mcsTRUE)
+    {
+        logInfo("Diameter VK = %.3f(%.4f)", 
+                diameters->vk.value, diameters->vkErr.value);
+    }
+    if (mgI.isSet == mcsFALSE)
+    {
+        logInfo("Diameter HK = %.3f(%.4f)", 
+                diameters->hk.value, diameters->hkErr.value);
+    }
+    else
+    {
+        logInfo("Diameter IJ = %.3f(%.4f)", 
+                diameters->ij.value, diameters->ijErr.value);
+        
+        logInfo("Diameter IK = %.3f(%.4f)", 
+                diameters->ik.value, diameters->ikErr.value);
+    }
+    logInfo("Mean diameter = %.3f(%.4f)", 
+            diameters->mean.value, diameters->meanErr.value);
 
-        /*
-         * If diameter is OK (i.e. confidence index is alxCONFIDENCE_HIGH), set
-         * confidence index of the computed diameter according to the ones of
-         * magnitudes used to compute it. 
-         */
-        if (diameters->areCoherent == mcsTRUE)
-        {
-            if ((mgI.confIndex == alxCONFIDENCE_LOW) ||
-                (mgJ.confIndex == alxCONFIDENCE_LOW) ||
-                (mgK.confIndex == alxCONFIDENCE_LOW) ||
-                (mgH.confIndex == alxCONFIDENCE_LOW))
-            {
-                diameters->confidenceIdx = alxCONFIDENCE_LOW;
-            }
-            else if ((mgI.confIndex == alxCONFIDENCE_MEDIUM) ||
-                     (mgJ.confIndex == alxCONFIDENCE_MEDIUM) ||
-                     (mgK.confIndex == alxCONFIDENCE_MEDIUM) ||
-                     (mgH.confIndex == alxCONFIDENCE_MEDIUM))
-            {
-                diameters->confidenceIdx = alxCONFIDENCE_MEDIUM;
-            }
-            else 
-            {
-                diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
-            }
-        }
-        else
-        {
-            diameters->confidenceIdx = alxCONFIDENCE_LOW;            
-        }        
-
-        /* Display results */
-        logInfo("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f), JK = %.3f(%.4f), JH = %.3f(%.4f), mean = %3f(%4f) ",
-                diameters->ij.value, diameters->ijErr.value, diameters->ik.value,
-                diameters->ikErr.value, diameters->jk.value,
-                diameters->jkErr.value, diameters->jh.value,
-                diameters->jhErr.value, diameters->mean.value,
-                diameters->meanErr.value);
-        if (diameters->areCoherent == mcsTRUE)
-        {
-            logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
-                    diameters->confidenceIdx, alxCONFIDENCE_LOW, 
-                    alxCONFIDENCE_MEDIUM, alxCONFIDENCE_HIGH);
-        }
-        else
-        {
-            logTest("Computed diameters are not coherent between them; they are not kept");
-        }
+    if (diameters->areCoherent == mcsTRUE)
+    {
+        logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
+                diameters->confidenceIdx, alxCONFIDENCE_LOW, 
+                alxCONFIDENCE_MEDIUM, alxCONFIDENCE_HIGH);
+    }
+    else
+    {
+        logTest("Computed diameters are not coherent between them; "
+                "they are not kept");
     }
 
     return mcsSUCCESS;
