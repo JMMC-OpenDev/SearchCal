@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.30 2006-04-10 11:55:09 scetre Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.31 2007-05-11 09:01:21 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.30  2006/04/10 11:55:09  scetre
+* Added tabulation in ucd list on extended format. Update the read of this new file
+*
 * Revision 1.29  2006/03/22 10:43:24  scetre
 * Added test on ID_ALTERNATIVE ucd to retreive TYC2 and TYC3
 *
@@ -95,7 +98,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.30 2006-04-10 11:55:09 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.31 2007-05-11 09:01:21 gzins Exp $"; 
 
 
 /* 
@@ -631,7 +634,6 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         {
             return vobsSTAR_CODE_VARIAB_V2;
         }
-
     }
     
     // Code misc
@@ -649,7 +651,6 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         {
             return vobsSTAR_CODE_MISC_K;
         }
-
     }
     
     // Diameters

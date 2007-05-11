@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.12 2007-05-11 09:01:21 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2006/03/03 15:03:27  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.10  2005/11/23 08:34:31  scetre
 * Added property for faint K scenario
 *
@@ -42,7 +45,7 @@
  * vobsCATALOG_DENIS class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.12 2007-05-11 09:01:21 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -111,14 +114,10 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
     // properties to retreive
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_RA_OTHER");
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_DEC_OTHER");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_K");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_J");
     miscDynBufAppendString(&_query, "&-out=*PHOT_COUS_I");
     miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
     miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
     miscDynBufAppendString(&_query, "&-out=Iflg");
-    miscDynBufAppendString(&_query, "&-out=Jflg");
-    miscDynBufAppendString(&_query, "&-out=Kflg");
     miscDynBufAppendString(&_query, "&-out=DENIS");
             
     return mcsSUCCESS;
