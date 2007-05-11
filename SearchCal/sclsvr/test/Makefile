@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2006-08-25 06:58:56 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.11 2007-05-11 15:52:23 gzins Exp $"
 #
 # Makefile of sclsvr test module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2006/08/25 06:58:56  gzins
+# New name for tests related to 'bright' scenario
+#
 # Revision 1.9  2006/04/19 12:09:31  gzins
 # Added L_Car test script
 #
@@ -93,6 +96,8 @@ SCRIPTS_L       = sclsvrTestBright_AlfPsa    \
                   sclsvrTestBright_Tau04Eri  \
                   sclsvrTestBright_Waql      \
 				  sclsvrTestBright_ZetGem    \
+				  sclsvrTestBright_HD_103945 \
+				  sclsvrTestBright_BD+23_492 \
 				  \
 				  sclsvrTestFaint_HD_5980    \
 				  sclsvrTestFaint_AzV_266    \

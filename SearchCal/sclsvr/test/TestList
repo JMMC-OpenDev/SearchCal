@@ -10,6 +10,8 @@
 009   TestBright_Tau04Eri  sclsvrTestBright_Tau04Eri
 010   TestBright_Waql      sclsvrTestBright_Waql
 011   TestBright_ZetGem    sclsvrTestBright_ZetGem
+012   TestBright_HD_103945 sclsvrTestBright_HD_103945
+013   TestBright_BD+23_492 sclsvrTestBright_BD+23_492
 
 # Test for faint scenario
 101  TestFaint_HD_5980     sclsvrTestFaint_HD_5980     
