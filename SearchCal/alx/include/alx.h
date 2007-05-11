@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.21 2006-07-17 08:22:20 scetre Exp $"
+ * "@(#) $Id: alx.h,v 1.22 2007-05-11 15:30:29 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2006/07/17 08:22:20  scetre
+ * Added hk diameter in alxDIAMETERS structure
+ *
  * Revision 1.20  2006/04/19 12:07:16  gzins
  * Changed areComputed to areCoherent (for diameters)
  *
@@ -225,6 +228,8 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                                              alxDATA mgJ,
                                              alxDATA mgK,
                                              alxDATA mgH,
+                                             alxDATA mgV,
+                                             alxDATA mgKJnk,
                                              alxDIAMETERS *diameters);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
