@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrServer.cpp,v 1.10 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrServer.cpp,v 1.11 2007-05-11 15:41:28 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.9  2005/10/26 11:27:24  lafrasse
  * Code review
  *
@@ -27,7 +30,7 @@
  * Search Calibrators SERVER
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.10 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.11 2007-05-11 15:41:28 gzins Exp $"; 
 
 
 /* 
@@ -64,23 +67,27 @@ using namespace std;
  */
 int main(int argc, char *argv[])
 {
-    // Init MCS event server
-    sclsvrSERVER scalibServer;
-    if (scalibServer.Init(argc, argv) == mcsFAILURE)
+    // The following instructions have been placed in {} in order sclsvrSERVER
+    // destructor is called when application exits.
     {
-        errCloseStack();
-        exit (EXIT_FAILURE);
-    }
+        // Init MCS event server
+        sclsvrSERVER scalibServer;
+        if (scalibServer.Init(argc, argv) == mcsFAILURE)
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        }
 
-    // Main loop
-    while (scalibServer.MainLoop() == mcsFAILURE)
-    {
-        errDisplayStack();
-    }
+        // Main loop
+        while (scalibServer.MainLoop() == mcsFAILURE)
+        {
+            errDisplayStack();
+        }
 
-    // Close MCS services
-    scalibServer.Disconnect();
-    mcsExit();
+        // Close MCS services
+        scalibServer.Disconnect();
+        mcsExit();
+    }
 
     // Exit from the application with mcsSUCCESS
     exit (EXIT_SUCCESS);
