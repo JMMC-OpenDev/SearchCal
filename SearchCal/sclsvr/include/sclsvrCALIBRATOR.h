@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.39 2006-08-23 12:08:10 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.40 2007-05-11 15:45:34 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2006/08/23 12:08:10  gzins
+ * Removed useless parameters in CommputeMissingMagnitude
+ *
  * Revision 1.38  2006/07/17 09:12:20  scetre
  * Added HK diameter
  * Modify the angular diameter coputation if magI is unknown
@@ -172,15 +175,9 @@ private:
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeExtinctionCoefficient();
-    mcsCOMPL_STAT 
-        ComputeInterstellarAbsorption(char *magPropertyId[alxNB_BANDS]);
-    mcsCOMPL_STAT ComputeApparentMagnitude(char *magPropertyId[alxNB_BANDS]);     
-    mcsCOMPL_STAT ComputeAngularDiameter(alxDATA mg1,
-                                         alxDATA mg2,
-                                         alxDATA mg3,
-                                         alxDATA mg4,
-                                         char *starPropertyId[4],
-                                         mcsLOGICAL isBright=mcsTRUE);
+    mcsCOMPL_STAT ComputeInterstellarAbsorption(mcsLOGICAL isBright=mcsTRUE);
+    mcsCOMPL_STAT ComputeApparentMagnitude(mcsLOGICAL isBright=mcsTRUE);     
+    mcsCOMPL_STAT ComputeAngularDiameter(mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
     mcsCOMPL_STAT ComputeCousinMagnitude(); 
