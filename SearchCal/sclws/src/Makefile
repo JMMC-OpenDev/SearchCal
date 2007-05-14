@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.4 2007-02-14 13:40:26 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.5 2007-05-14 08:38:22 gzins Exp $"
 #
 # Makefile of sclws module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2007/02/14 13:40:26  lafrasse
+# Added export of the WSDL file.
+#
 # Revision 1.3  2007/02/14 10:25:03  lafrasse
 # Added and integrated SOAP targets.
 #
@@ -46,7 +49,7 @@
 # -x : don't generate sample XML message files
 # -d : generated file output path = ../include/
 do_soap:
-	/usr/local/bin/soapcpp2 -n -psoap -L -x -d../include/ ../include/sclwsWS.h
+	soapcpp2 -n -psoap -L -x -d../include/ ../include/sclwsWS.h
 	mv ../include/*.cpp ./
 
 # Remove any SOAP-generatdd file
