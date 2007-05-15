@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.9 2007-05-15 08:17:25 gzins Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.10 2007-05-15 09:15:10 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2007/05/15 08:17:25  gzins
+ * Added IsInit method
+ *
  * Revision 1.8  2006/12/21 15:03:08  lafrasse
  * Moved from static-based design to instance-based design.
  *
@@ -37,7 +40,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.9 2007-05-15 08:17:25 gzins Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.10 2007-05-15 09:15:10 gzins Exp $";
 
 /* 
  * System Headers 
@@ -132,6 +135,7 @@ mcsCOMPL_STAT sdbENTRY::Destroy(void)
             return mcsFAILURE;
         }
     }
+    _initSucceed = mcsFALSE;
 
     return mcsSUCCESS;
 }
