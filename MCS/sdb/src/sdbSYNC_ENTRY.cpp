@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.8 2006-12-21 15:03:08 lafrasse Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.9 2007-05-15 08:17:25 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/12/21 15:03:08  lafrasse
+ * Moved from static-based design to instance-based design.
+ *
  * Revision 1.7  2006/05/11 13:04:57  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -34,7 +37,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.8 2006-12-21 15:03:08 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.9 2007-05-15 08:17:25 gzins Exp $";
 
 /* 
  * System Headers 
@@ -222,6 +225,15 @@ mcsCOMPL_STAT sdbENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
     return mcsSUCCESS;
 }
 
+/**
+ * !!! NOT YET DOCUMENTED cause THIS IMPLEMENTATION IS TEMPORARY !!!
+ */
+mcsLOGICAL sdbENTRY::IsInit()
+{
+    logTrace("sdbENTRY::IsInit()");
+
+    return _initSucceed;
+}
 
 /*
  * Protected methods

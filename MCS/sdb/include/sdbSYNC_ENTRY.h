@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.4 2006-12-21 15:03:08 lafrasse Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.5 2007-05-15 08:17:25 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/12/21 15:03:08  lafrasse
+ * Moved from static-based design to instance-based design.
+ *
  * Revision 1.3  2006/02/22 17:05:43  lafrasse
  * Added security check to disable semaphores use in case of  bad initialization
  *
@@ -95,6 +98,7 @@ public:
     mcsCOMPL_STAT  Wait    (      char*       message,
                                   mcsLOGICAL* lastMessage);
 
+    mcsLOGICAL     IsInit  (void);
 protected:
     
 private:
