@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.10 2007-05-15 09:15:10 gzins Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.11 2007-05-15 11:11:18 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2007/05/15 09:15:10  gzins
+ * Fixed minor bug
+ *
  * Revision 1.9  2007/05/15 08:17:25  gzins
  * Added IsInit method
  *
@@ -40,7 +43,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.10 2007-05-15 09:15:10 gzins Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.11 2007-05-15 11:11:18 gzins Exp $";
 
 /* 
  * System Headers 
@@ -101,6 +104,11 @@ mcsCOMPL_STAT sdbENTRY::Init(void)
     // Static member initialization
     memset(_buffer, '\0', sizeof(_buffer));
     _lastMessage = mcsFALSE;
+
+    if (Destroy() == mcsTRUE)
+    {
+        return mcsFAILURE;
+    }
 
     /* Semaphores initialisation */
     if (thrdSemaphoreInit(&_emptyBufferSemaphore, 1) == mcsFAILURE)
