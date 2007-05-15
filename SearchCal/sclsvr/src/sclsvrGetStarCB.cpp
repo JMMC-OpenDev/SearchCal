@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.31 2007-05-11 15:42:46 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.32 2007-05-15 08:37:16 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2007/05/11 15:42:46  gzins
+ * Fixed bug; missing progressionMessage tread parameter setting
+ *
  * Revision 1.30  2006/12/21 15:16:05  lafrasse
  * Updated progression monitoring code (moved from static-based to instance-based).
  *
@@ -66,7 +69,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.31 2007-05-11 15:42:46 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.32 2007-05-15 08:37:16 gzins Exp $"; 
 
 
 /* 
@@ -139,8 +142,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     actionMonitor.function       = sclsvrMonitorAction;
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
 
+    // sdbAction init
+    if (_progress.Init() == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+    
     // Launch the thread only if SDB had been succesfully started
-    if (_progressionMessageInitFlag == mcsTRUE)
+    if (_progress.IsInit() == mcsTRUE)
     {
         if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
         {
@@ -148,7 +157,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         }
     }
 
-    
     // Get star name 
     char* objectName;
     if (getStarCmd.GetObjectName(&objectName) == mcsFAILURE)
@@ -280,7 +288,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     }
 
     // Wait for the thread only if it had been started
-    if (_progressionMessageInitFlag == mcsTRUE)
+    if (_progress.IsInit() == mcsTRUE)
     {
         // Wait for the actionForwarder thread end
         if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
@@ -294,7 +302,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    return evhCB_NO_DELETE | evhCB_FAILURE;
 
     // Stop timer log
     timlogStop(msg.GetCommand());

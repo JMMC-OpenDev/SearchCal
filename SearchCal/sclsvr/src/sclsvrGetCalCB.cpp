@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.48 2007-04-27 09:04:03 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.49 2007-05-15 08:37:16 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.48  2007/04/27 09:04:03  gzins
+ * Returned empty buffer instead of error when no calibrator has been found
+ *
  * Revision 1.47  2007/02/09 17:04:06  lafrasse
  * Moved _progress deletion from GetCalCB() to sclsvrSERVER destructor.
  *
@@ -150,7 +153,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.48 2007-04-27 09:04:03 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.49 2007-05-15 08:37:16 gzins Exp $"; 
 
 
 /* 
@@ -221,7 +224,8 @@ mcsLOGICAL sclsvrSERVER::IsLastCatalog()
     return _lastCatalog;
 }
 
-mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msgMESSAGE* msg = NULL)
+mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, 
+                                   msgMESSAGE* msg = NULL)
 {
     logTrace("sclsvrSERVER::GetCal()");
 
@@ -250,8 +254,14 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
     actionMonitor.function       = sclsvrMonitorAction;
     actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
 
+    // sdbAction init
+    if (_progress.Init() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     // SDB starting
-    if (_progressionMessageInitFlag == mcsTRUE)
+    if (_progress.IsInit() == mcsTRUE)
     {
         // Status monitoring should be done by thread with msgMESSAGE reply.
         if (msg != NULL)
@@ -472,7 +482,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
     }
 
     // Wait for the thread only if it had been started
-    if (_progressionMessageInitFlag == mcsTRUE)
+    if (_progress.IsInit() == mcsTRUE)
     {
         // Status monitoring should be done by thread with msgMESSAGE reply.
         if (msg != NULL)
@@ -483,6 +493,12 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, msg
                 return mcsFAILURE;
             }
         }
+    }
+
+    // sdbAction deletion
+    if (_progress.Destroy() == mcsFAILURE)
+    {
+        return mcsFAILURE;
     }
 
     // Stop timer log

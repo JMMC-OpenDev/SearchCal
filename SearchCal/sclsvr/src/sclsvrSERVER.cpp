@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.13 2007-02-09 17:04:06 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.14 2007-05-15 08:37:16 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2007/02/09 17:04:06  lafrasse
+ * Moved _progress deletion from GetCalCB() to sclsvrSERVER destructor.
+ *
  * Revision 1.12  2007/02/04 20:45:53  lafrasse
  * Added GetCatalogIndex() API to get the index of the catalog being queried.
  * Added GetNbOfCatalogs() API to get the number of catalogs of the scenario.
@@ -44,7 +47,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.13 2007-02-09 17:04:06 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.14 2007-05-15 08:37:16 gzins Exp $"; 
 
 
 /* 
@@ -83,6 +86,7 @@ thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param)
 {   
     logTrace("sclsvrMonitorAction()");
 
+    logTrace("sclsvrMonitorAction()");
     mcsSTRING256  buffer;
     mcsLOGICAL    lastMessage = mcsFALSE;
 
@@ -132,14 +136,8 @@ _scenarioFaintK(&_progress),
 _scenarioSingleStar(&_progress)
 {
     // sdbAction initialization
-    _progressionMessageInitFlag = mcsFALSE;
-    if (_progress.Init() == mcsSUCCESS)
+    if (_progress.Init() == mcsFAILURE)
     {
-        _progressionMessageInitFlag = mcsTRUE;
-    }
-    else
-    {
-        _progressionMessageInitFlag = mcsFALSE;
         errCloseStack();
     }
 
