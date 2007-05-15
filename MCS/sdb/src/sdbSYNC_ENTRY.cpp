@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.11 2007-05-15 11:11:18 gzins Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.12 2007-05-15 11:12:40 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2007/05/15 11:11:18  gzins
+ * Updtated to prevent multiple semaphore creation
+ *
  * Revision 1.10  2007/05/15 09:15:10  gzins
  * Fixed minor bug
  *
@@ -43,7 +46,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.11 2007-05-15 11:11:18 gzins Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.12 2007-05-15 11:12:40 gzins Exp $";
 
 /* 
  * System Headers 
@@ -105,7 +108,7 @@ mcsCOMPL_STAT sdbENTRY::Init(void)
     memset(_buffer, '\0', sizeof(_buffer));
     _lastMessage = mcsFALSE;
 
-    if (Destroy() == mcsTRUE)
+    if (Destroy() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
