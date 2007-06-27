@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.cpp,v 1.4 2007-02-13 16:18:34 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.cpp,v 1.5 2007-06-27 21:19:40 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2007/02/13 16:18:34  lafrasse
+ * *** empty log message ***
+ *
  * Revision 1.3  2007/02/09 17:07:46  lafrasse
  * Enhanced log and error monitoring.
  * Corrected a bug inherent to early deallocation of sclsvrSERVER _progress
@@ -25,7 +28,7 @@
  *  Definition of sclwsWS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.4 2007-02-13 16:18:34 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.5 2007-06-27 21:19:40 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -286,9 +289,13 @@ int ns__GetCalWaitForCurrentCatalogName(struct soap *p_soap,
     }
     if (server->WaitForCurrentCatalogName(*catalogName) == mcsFAILURE)
     {
+#if 0
         errAdd(sclwsERR_CATALOG_NAME);
         errCloseStack();
         return SOAP_ERR;
+#else
+	strcpy(*catalogName, "Unknown");
+#endif
     }
     logInfo("CatalogName = '%s'.", *catalogName);
 
