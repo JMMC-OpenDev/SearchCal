@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.27 2006-08-22 14:42:50 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.28 2007-06-27 20:41:47 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2006/08/22 14:42:50  gzins
+* Used 'ucd1' instead of 'ucd' which is now used for UCD1+
+*
 * Revision 1.26  2006/03/03 15:03:27  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -80,7 +83,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.27 2006-08-22 14:42:50 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.28 2007-06-27 20:41:47 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -156,7 +159,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     domimpl = gdome_di_mkref ();
 
     // Load a new document from the URI
-    logTest("Get XML document from '%s'", uri);
+    logTest("Get XML document from '%.80s'", uri);
 
     msgMESSAGE msg;
     // Create a misco buffer where is put "GET http://..." (GET + uri)

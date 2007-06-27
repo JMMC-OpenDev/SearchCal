@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.31 2007-05-11 09:01:21 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.32 2007-06-27 20:41:47 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.31  2007/05/11 09:01:21  gzins
+* No longer retrieve J and K magnitudes from DENIS
+*
 * Revision 1.30  2006/04/10 11:55:09  scetre
 * Added tabulation in ucd list on extended format. Update the read of this new file
 *
@@ -98,7 +101,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.31 2007-05-11 09:01:21 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.32 2007-06-27 20:41:47 gzins Exp $"; 
 
 
 /* 
@@ -416,7 +419,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
         return mcsFAILURE;
     }
     
-    logDebug("Buffer to process : %s", buffer);
+    logDebug("Buffer to process : %.80s", buffer);
 
     // Store usefull line into internal buffer; i.e skip header lines and
     // empty lines
