@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.32 2007-05-15 08:37:16 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.33 2007-06-27 13:00:59 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2007/05/15 08:37:16  gzins
+ * Fixed bug related to thread synchronisation
+ *
  * Revision 1.31  2007/05/11 15:42:46  gzins
  * Fixed bug; missing progressionMessage tread parameter setting
  *
@@ -69,7 +72,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.32 2007-05-15 08:37:16 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.33 2007-06-27 13:00:59 scetre Exp $"; 
 
 
 /* 
@@ -216,14 +219,19 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;        
     }
-    
-    if (_virtualObservatory.Search(&_scenarioSingleStar, request, starList) == mcsFAILURE)
+
+    if (_virtualObservatory.Search(&_scenarioSingleStar, request,
+                                   starList) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    
+
     // If the star has been found in catalog
-    if (starList.Size() != 0)
+    if (starList.Size() == 0)
+    {
+        errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "CDS catalogs");
+    }
+    else
     {
         // Get first star of the list 
         sclsvrCALIBRATOR calibrator(*starList.GetNextStar(mcsTRUE));
@@ -232,14 +240,14 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
-
-        // Complete missing properties of the calibrator 
-        if (calibrator.Complete(request) == mcsFAILURE)
-        {
-            // Ignore error
-            errCloseStack(); 
-        }
-
+        //
+        //       // Complete missing properties of the calibrator 
+        //       if (calibrator.Complete(request) == mcsFAILURE)
+        //       {
+        //           // Ignore error
+        //           errCloseStack(); 
+        //       }
+        //
         // Prepare reply
         miscDYN_BUF reply;
         miscDynBufInit(&reply);
@@ -282,10 +290,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
     }
-    else
-    {
-        errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "CDS catalogs");
-    }
+
 
     // Wait for the thread only if it had been started
     if (_progress.IsInit() == mcsTRUE)
