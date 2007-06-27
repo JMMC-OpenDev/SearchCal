@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.21 2007-04-27 09:02:36 gzins Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.22 2007-06-27 14:25:42 scetre Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.21  2007/04/27 09:02:36  gzins
+ Change diffRa, diffDec and radius parameter type; integer -> double
+
  Revision 1.20  2006/07/17 09:10:36  scetre
  Added old scenario option
 
@@ -192,6 +195,12 @@
             <type>boolean</type>
             <defaultValue><boolean>false</boolean></defaultValue>
             <desc>specify wether an old scenario should be used</desc>
+        </param>
+        <param optional="true">
+            <name>noScienceStar</name>
+            <type>boolean</type>
+            <defaultValue><boolean>true</boolean></defaultValue>
+            <desc>specify wether the science has to be retreived in the list</desc>
         </param>
     </params>        
 </cmd>
