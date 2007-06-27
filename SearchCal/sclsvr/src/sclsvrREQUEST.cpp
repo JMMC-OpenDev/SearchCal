@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.28 2007-04-27 09:04:33 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.29 2007-06-27 14:26:49 scetre Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2007/04/27 09:04:33  gzins
+ * Changed diffRa, diffDec and radius parameter type; integer -> double
+ *
  * Revision 1.27  2006/10/10 15:50:44  lafrasse
  * Changed XML Serialization in VOTable PARAM.
  *
@@ -100,7 +103,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.28 2007-04-27 09:04:33 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.29 2007-06-27 14:26:49 scetre Exp $"; 
 
 
 /* 
@@ -138,6 +141,7 @@ sclsvrREQUEST::sclsvrREQUEST()
     _getCalCmd                = NULL;
     _brightFlag               = mcsTRUE;
     _oldScenario              = mcsFALSE;
+    _noScienceObject          = mcsFALSE;
     memset(_fileName, '\0', sizeof(_fileName));
 }
 
@@ -173,6 +177,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Copy(sclsvrREQUEST& request)
     _getCalCmd                = request._getCalCmd;
     _brightFlag               = request._brightFlag;
     _oldScenario              = request._oldScenario;
+    _noScienceObject          = request._noScienceObject;
     strncpy(_fileName, request._fileName, sizeof(_fileName));
 
     return mcsSUCCESS;
@@ -340,6 +345,16 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         }
     }
 
+    // science star
+    mcsLOGICAL noScienceStar = mcsTRUE;
+    if (_getCalCmd->IsDefinedNoScienceStar() == mcsTRUE)
+    {
+        if (_getCalCmd->GetNoScienceStar(&noScienceStar) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+
     // File name
     char* fileName = NULL;
     if (_getCalCmd->IsDefinedFile() == mcsTRUE)
@@ -443,6 +458,11 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
     // Affect the old scenario flag
     if (SetOldScenario(oldScenario) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    } 
+    // Affect the science star flag
+    if (SetNoScienceStar(noScienceStar) == mcsFAILURE)
     {
         return mcsFAILURE;
     } 
@@ -679,6 +699,36 @@ mcsLOGICAL sclsvrREQUEST::IsOldScenario(void)
 
     return _oldScenario;
 }
+
+/**
+ * Specify wether the query should return science star in list.
+ *
+ * @param noScienceStar mcsTRUE if the query should return science star
+ * otherwise mcsFALSE to not return science star
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetNoScienceStar(mcsLOGICAL noScienceStar)
+{
+    logTrace("sclsvrREQUEST::SetNoScienceStar()");
+    
+    _noScienceObject = noScienceStar;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Return wether the query should return bright or faint stars.
+ *
+ * @return mcsTRUE if the query should return science star, otherwise mcsFALSE.
+ */
+mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void)
+{
+    logTrace("sclsvrREQUEST::IsNoScienceStar()");
+
+    return _noScienceObject;
+}
+
 
 /**
  * Set the file name in which the value will be saved.
