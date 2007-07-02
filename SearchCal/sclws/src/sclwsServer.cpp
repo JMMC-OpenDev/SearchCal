@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.4 2007-02-16 09:54:55 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.5 2007-07-02 13:58:47 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2007/02/16 09:54:55  lafrasse
+ * Refined log management.
+ *
  * Revision 1.3  2007/02/09 17:07:46  lafrasse
  * Enhanced log and error monitoring.
  * Corrected a bug inherent to early deallocation of sclsvrSERVER _progress
@@ -70,13 +73,15 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.4 2007-02-16 09:54:55 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.5 2007-07-02 13:58:47 lafrasse Exp $"; 
 
 /* 
  * System Headers 
  */
 #include <stdlib.h>
 #include <iostream>
+#include <signal.h>
+
 
 /**
  * @namespace std
@@ -106,8 +111,8 @@ using namespace std;
  * Local Variables
  */
 struct Namespace *namespaces;
-uint   portNumber = 8078;
-
+uint   portNumber = 8079;
+struct soap  v_soap;    // SOAP execution context
 
 
 /*
@@ -133,28 +138,65 @@ void* threadFunction(void* p_tsoap)
     return NULL;
 }
 
+void sclwsExit(int returnCode)
+{
+    // Dealloc SOAP context
+    logInfo("Cleaning gSOAP ...");
+    soap_done(&v_soap);
+
+    // Close MCS services
+    logInfo("Cleaning MCS ...");
+    mcsExit();
+    
+    // Exit from the application with SUCCESS
+    printf("Exiting now.\n");
+    exit (returnCode);
+}
+
 
 /* 
  * Signal catching functions  
  */
+void sclwsSignalHandler (int signalNumber)
+{
+    logInfo("Received a '%d' system signal ...", signalNumber);
 
-// @TODO add ctrl-c catching to gracefully dispose the socket (bind error)
+    if (signalNumber == SIGPIPE)
+    {
+        return;
+    }
 
+    sclwsExit(EXIT_SUCCESS);
+}
 
 
 /* 
  * Main
  */
-
 int main(int argc, char *argv[])
 {
+    /* Init system signal trapping */
+    if (signal(SIGINT, sclwsSignalHandler) == SIG_ERR)
+    {
+        logError("signal(SIGINT, ...) function error");
+        sclwsExit(EXIT_FAILURE);
+    }
+    if (signal(SIGTERM, sclwsSignalHandler) == SIG_ERR)
+    {
+        logError("signal(SIGTERM, ...) function error");
+        sclwsExit(EXIT_FAILURE);
+    }
+    if (signal(SIGPIPE, sclwsSignalHandler) == SIG_ERR)
+    {
+        logError("signal(SIGPIPE, ...) function error");
+        sclwsExit(EXIT_FAILURE);
+    }
+
     // Initialize MCS services
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        // Error handling if necessary
-        
         // Exit from the application with FAILURE
-        exit (EXIT_FAILURE);
+        sclwsExit(EXIT_FAILURE);
     }
 
     // Set stdout and file log levels 
@@ -163,7 +205,8 @@ int main(int argc, char *argv[])
 
     // @TODO : manage a "garbage collector" to close pending connections
 
-    struct soap  v_soap;    // SOAP execution context
+    logInfo("Initializing gSOAP ...", portNumber);
+
     struct soap *v_tsoap;   // SOAP execution context fork for the threads
     pthread_t v_tid;        // Thread ID
 
@@ -176,8 +219,10 @@ int main(int argc, char *argv[])
     {
         errAdd(sclwsERR_BIND, portNumber);
         errCloseStack();
-        exit (EXIT_FAILURE);
+        sclwsExit(EXIT_FAILURE);
     }
+
+    logInfo("Listening on port '%d'.", portNumber);
 
     // Infinite loop to receive requests
     for (;;)
@@ -191,18 +236,18 @@ int main(int argc, char *argv[])
         
         // Fork the SOAP context end start e new thread to handle the request
         v_tsoap = soap_copy(&v_soap);
-        pthread_create(&v_tid, NULL, (void*(*)(void*))threadFunction, (void*)v_tsoap);
+        int status = pthread_create(&v_tid, NULL, (void*(*)(void*))threadFunction, (void*)v_tsoap);
+        if (status != 0)
+        {
+            // error handling
+            errAdd(sclwsERR_THREAD_CREATION);
+            errCloseStack();
+            sclwsExit(EXIT_FAILURE);
+        }
+        logInfo("New connection received.");
     }
 
-    // Dealloc SOAP context
-    soap_done(&v_soap);
-
-    // Close MCS services
-    mcsExit();
-    
-    // Exit from the application with SUCCESS
-    exit (EXIT_SUCCESS);
+    sclwsExit(EXIT_SUCCESS);
 }
-
 
 /*___oOo___*/
