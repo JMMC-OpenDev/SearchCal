@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.5 2007-07-02 13:58:47 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.6 2007-07-03 17:00:03 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2007/07/02 13:58:47  lafrasse
+ * Added signal and error handling, plus proper exit.
+ *
  * Revision 1.4  2007/02/16 09:54:55  lafrasse
  * Refined log management.
  *
@@ -73,7 +76,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.5 2007-07-02 13:58:47 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.6 2007-07-03 17:00:03 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -234,7 +237,7 @@ int main(int argc, char *argv[])
             continue;
         }
         
-        // Fork the SOAP context end start e new thread to handle the request
+        // Fork the SOAP context end start a new thread to handle the request
         v_tsoap = soap_copy(&v_soap);
         int status = pthread_create(&v_tid, NULL, (void*(*)(void*))threadFunction, (void*)v_tsoap);
         if (status != 0)
@@ -244,7 +247,6 @@ int main(int argc, char *argv[])
             errCloseStack();
             sclwsExit(EXIT_FAILURE);
         }
-        logInfo("New connection received.");
     }
 
     sclwsExit(EXIT_SUCCESS);

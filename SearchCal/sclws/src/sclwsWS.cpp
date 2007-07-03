@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.cpp,v 1.5 2007-06-27 21:19:40 gzins Exp $"
+ * "@(#) $Id: sclwsWS.cpp,v 1.6 2007-07-03 17:00:03 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2007/06/27 21:19:40  gzins
+ * Implemented work-around related to 'semop - EIDRM' -> 'Identifier removed' bug
+ *
  * Revision 1.4  2007/02/13 16:18:34  lafrasse
  * *** empty log message ***
  *
@@ -28,7 +31,7 @@
  *  Definition of sclwsWS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.5 2007-06-27 21:19:40 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.6 2007-07-03 17:00:03 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -37,6 +40,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.5 2007-
 using namespace std;
 #include <map>
 #include <uuid/uuid.h>
+#include <pthread.h>
 
 /*
  * MCS Headers 
@@ -61,7 +65,15 @@ using namespace std;
  * Used to store each "Communication ID"-"sclsvSERVER instance" couples
  * to ensure multiple concurrent query handling.
  */
-map<string,sclsvrSERVER*> tasks;
+map<string,sclsvrSERVER*> servers;
+/**
+ * Used to store each "Communication ID"-"thread ID" couples
+ * to ensure proper thread cancellation on GetCancel call.
+ */
+multimap<string,pthread_t> threads;
+typedef multimap<string,pthread_t>::iterator threadsIT;
+typedef pair<threadsIT, threadsIT> threadsRange;
+
 
 /*
  * Public methods
@@ -97,11 +109,11 @@ int ns__GetStar(
  * based web service.
  *
  * @param p_soap SOAP execution context.
- * @param taskID give-back pointer to return the communication "session" ID.
+ * @param jobID give-back pointer to return the communication "session" ID.
  *
  * @return a SOAP error code.
  */
-int ns__GetCalAsyncID(struct soap *p_soap, char** taskID)
+int ns__GetCalAsyncID(struct soap *p_soap, char** jobID)
 {
     logTrace("ns__GetCalAsyncID()");
 
@@ -112,9 +124,9 @@ int ns__GetCalAsyncID(struct soap *p_soap, char** taskID)
         errCloseStack();
         return SOAP_ERR;
     }
-    if (taskID == NULL)
+    if (jobID == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errAdd(sclwsERR_NULL_PTR, "jobID");
         errCloseStack();
         return SOAP_ERR;
     }
@@ -124,17 +136,17 @@ int ns__GetCalAsyncID(struct soap *p_soap, char** taskID)
     uuid_generate(uuidID);
 
     // Allocate SOAP-aware memory to return the generated UUID
-    *taskID = (char*) soap_malloc(p_soap, 37);
-    if (*taskID == NULL)
+    *jobID = (char*) soap_malloc(p_soap, 37);
+    if (*jobID == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "*taskID");
+        errAdd(sclwsERR_NULL_PTR, "*jobID");
         errCloseStack();
         return SOAP_ERR;
     }
 
     // Get the string of the newly generated uuid_t structure
-    uuid_unparse(uuidID, *taskID);
-    logInfo("UUID = '%s'.", *taskID);
+    uuid_unparse(uuidID, *jobID);
+    logInfo("UUID = '%s'.", *jobID);
 
     // Create a new instance of sclsvrSERVER to perform the GETCAL query
     sclsvrSERVER* server = new sclsvrSERVER();
@@ -146,7 +158,7 @@ int ns__GetCalAsyncID(struct soap *p_soap, char** taskID)
     }
 
     // Associate the new sclsvrSERVER instance with the generated UUID for later
-    tasks[*taskID] = server;
+    servers[*jobID] = server;
 
     return SOAP_OK;
 }
@@ -155,18 +167,21 @@ int ns__GetCalAsyncID(struct soap *p_soap, char** taskID)
  * Launch a GetCal query.
  *
  * @param p_soap SOAP execution context.
- * @param taskID the communication "session" ID.
+ * @param jobID the communication "session" ID.
  * @param query the query to execute, in a double-quoted sclinsQuery format.
  * @param voTable give-back pointer to return the resulting VO Table.
  *
  * @return a SOAP error code.
  */
 int ns__GetCalAsyncQuery(struct soap *p_soap,
-                         char*  taskID,
+                         char*  jobID,
                          char*  query,
                          char** voTable)
 {
-    logTrace("ns__GetCalAsyncQuery('%s')", taskID);
+    logTrace("ns__GetCalAsyncQuery('%s')", jobID);
+
+    // Store the thread ID iterator
+    threadsIT mmit = threads.insert(make_pair(jobID, pthread_self()));
 
     // Test parameters validity
     if (p_soap == NULL)
@@ -175,9 +190,9 @@ int ns__GetCalAsyncQuery(struct soap *p_soap,
         errCloseStack();
         return SOAP_ERR;
     }
-    if (taskID == NULL)
+    if (jobID == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errAdd(sclwsERR_NULL_PTR, "jobID");
         errCloseStack();
         return SOAP_ERR;
     }
@@ -196,7 +211,7 @@ int ns__GetCalAsyncQuery(struct soap *p_soap,
 
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = NULL;
-    server = tasks[taskID];
+    server = servers[jobID];
     if (server == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "server");
@@ -232,6 +247,10 @@ int ns__GetCalAsyncQuery(struct soap *p_soap,
     strncpy(*voTable, result, resultSize);
 
     logDebug("Terminating query.");
+
+    // Delete the thread ID
+    threads.erase(mmit);
+
     return SOAP_OK;
 }
 
@@ -239,16 +258,19 @@ int ns__GetCalAsyncQuery(struct soap *p_soap,
  * Give back the name of the current catalog being queried.
  *
  * @param p_soap SOAP execution context.
- * @param taskID the communication "session" ID.
+ * @param jobID the communication "session" ID.
  * @param catalogName give-back pointer to return the current catalog name.
  *
  * @return a SOAP error code.
  */
 int ns__GetCalWaitForCurrentCatalogName(struct soap *p_soap,
-                                        char*  taskID,
+                                        char*  jobID,
                                         char** catalogName)
 {
-    logTrace("ns__GetCalWaitForCurrentCatalogName('%s')", taskID);
+    logTrace("ns__GetCalWaitForCurrentCatalogName('%s')", jobID);
+
+    // Store the thread ID iterator
+    threadsIT mmit = threads.insert(make_pair(jobID, pthread_self()));
 
     // Test parameters validity
     if (p_soap == NULL)
@@ -257,9 +279,9 @@ int ns__GetCalWaitForCurrentCatalogName(struct soap *p_soap,
         errCloseStack();
         return SOAP_ERR;
     }
-    if (taskID == NULL)
+    if (jobID == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errAdd(sclwsERR_NULL_PTR, "jobID");
         errCloseStack();
         return SOAP_ERR;
     }
@@ -271,7 +293,8 @@ int ns__GetCalWaitForCurrentCatalogName(struct soap *p_soap,
     }
 
     // Retrieve the sclsvrSERVER instance associated with th received UUID
-    sclsvrSERVER* server = tasks[taskID];
+    sclsvrSERVER* server = NULL;
+    server = servers[jobID];
     if (server == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "server");
@@ -299,6 +322,9 @@ int ns__GetCalWaitForCurrentCatalogName(struct soap *p_soap,
     }
     logInfo("CatalogName = '%s'.", *catalogName);
 
+    // Delete the thread ID
+    threads.erase(mmit);
+
     return SOAP_OK;
 }
 
@@ -306,16 +332,19 @@ int ns__GetCalWaitForCurrentCatalogName(struct soap *p_soap,
  * Give back whether the current catalog is the last one being queried.
  *
  * @param p_soap SOAP execution context.
- * @param taskID the communication "session" ID.
+ * @param jobID the communication "session" ID.
  * @param lastCatalog give-back pointer to return the last catalog flag.
  *
  * @return a SOAP error code.
  */
 int ns__GetCalIsLastCatalog(struct soap *p_soap,
-                            char*  taskID,
+                            char*  jobID,
                             bool*  lastCatalog)
 {
-    logTrace("ns__GetCalIsLastCatalog('%s')", taskID);
+    logTrace("ns__GetCalIsLastCatalog('%s')", jobID);
+
+    // Store the thread ID iterator
+    threadsIT mmit = threads.insert(make_pair(jobID, pthread_self()));
 
     // Test parameters validity
     if (p_soap == NULL)
@@ -324,9 +353,9 @@ int ns__GetCalIsLastCatalog(struct soap *p_soap,
         errCloseStack();
         return SOAP_ERR;
     }
-    if (taskID == NULL)
+    if (jobID == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errAdd(sclwsERR_NULL_PTR, "jobID");
         errCloseStack();
         return SOAP_ERR;
     }
@@ -338,7 +367,8 @@ int ns__GetCalIsLastCatalog(struct soap *p_soap,
     }
 
     // Retrieve the sclsvrSERVER instance associated with th received UUID
-    sclsvrSERVER* server = tasks[taskID];
+    sclsvrSERVER* server = NULL;
+    server = servers[jobID];
     if (server == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "server");
@@ -350,6 +380,9 @@ int ns__GetCalIsLastCatalog(struct soap *p_soap,
     *lastCatalog = server->IsLastCatalog();
     logInfo("lastCatalog = '%d'.", *lastCatalog);
 
+    // Delete the thread ID
+    threads.erase(mmit);
+
     return SOAP_OK;
 }
 
@@ -357,16 +390,19 @@ int ns__GetCalIsLastCatalog(struct soap *p_soap,
  * Give back the index of the current catalog being queried.
  *
  * @param p_soap SOAP execution context.
- * @param taskID the communication "session" ID.
+ * @param jobID the communication "session" ID.
  * @param catalogIndex give-back pointer to return the current catalog index.
  *
  * @return a SOAP error code.
  */
 int ns__GetCalCurrentCatalogIndex(struct soap *p_soap,
-                                  char*  taskID,
+                                  char*  jobID,
                                   int*   catalogIndex)
 {
-    logTrace("ns__GetCalCurrentCatalogIndex('%s')", taskID);
+    logTrace("ns__GetCalCurrentCatalogIndex('%s')", jobID);
+
+    // Store the thread ID iterator
+    threadsIT mmit = threads.insert(make_pair(jobID, pthread_self()));
 
     // Test parameters validity
     if (p_soap == NULL)
@@ -375,9 +411,9 @@ int ns__GetCalCurrentCatalogIndex(struct soap *p_soap,
         errCloseStack();
         return SOAP_ERR;
     }
-    if (taskID == NULL)
+    if (jobID == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errAdd(sclwsERR_NULL_PTR, "jobID");
         errCloseStack();
         return SOAP_ERR;
     }
@@ -389,7 +425,8 @@ int ns__GetCalCurrentCatalogIndex(struct soap *p_soap,
     }
 
     // Retrieve the sclsvrSERVER instance associated with th received UUID
-    sclsvrSERVER* server = tasks[taskID];
+    sclsvrSERVER* server = NULL;
+    server = servers[jobID];
     if (server == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "server");
@@ -401,6 +438,9 @@ int ns__GetCalCurrentCatalogIndex(struct soap *p_soap,
     *catalogIndex = server->GetCatalogIndex();
     logInfo("CatalogIndex = '%d'.", *catalogIndex);
 
+    // Delete the thread ID
+    threads.erase(mmit);
+
     return SOAP_OK;
 }
 
@@ -408,16 +448,19 @@ int ns__GetCalCurrentCatalogIndex(struct soap *p_soap,
  * Give back the total number of catalogs to be queried.
  *
  * @param p_soap SOAP execution context.
- * @param taskID the communication "session" ID.
+ * @param jobID the communication "session" ID.
  * @param nbOfCatalogs give-back pointer to return the number of catalogs.
  *
  * @return a SOAP error code.
  */
 int ns__GetCalNbOfCatalogs(struct soap *p_soap,
-                                  char*  taskID,
+                                  char*  jobID,
                                   int*   nbOfCatalogs)
 {
-    logTrace("ns__GetCalNbOfCatalogs('%s')", taskID);
+    logTrace("ns__GetCalNbOfCatalogs('%s')", jobID);
+
+    // Store the thread ID iterator
+    threadsIT mmit = threads.insert(make_pair(jobID, pthread_self()));
 
     // Test parameters validity
     if (p_soap == NULL)
@@ -426,9 +469,9 @@ int ns__GetCalNbOfCatalogs(struct soap *p_soap,
         errCloseStack();
         return SOAP_ERR;
     }
-    if (taskID == NULL)
+    if (jobID == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "taskID");
+        errAdd(sclwsERR_NULL_PTR, "jobID");
         errCloseStack();
         return SOAP_ERR;
     }
@@ -440,7 +483,8 @@ int ns__GetCalNbOfCatalogs(struct soap *p_soap,
     }
 
     // Retrieve the sclsvrSERVER instance associated with th received UUID
-    sclsvrSERVER* server = tasks[taskID];
+    sclsvrSERVER* server = NULL;
+    server = servers[jobID];
     if (server == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "server");
@@ -451,6 +495,77 @@ int ns__GetCalNbOfCatalogs(struct soap *p_soap,
     // Allocate SOAP-aware memory to return the current catalog name
     *nbOfCatalogs = server->GetNbOfCatalogs();
     logInfo("NbOfCatalogs = '%d'.", *nbOfCatalogs);
+
+    // Delete the thread ID
+    threads.erase(mmit);
+
+    return SOAP_OK;
+}
+
+/**
+ * Abort the work done under the given ID.
+ *
+ * @param p_soap SOAP execution context.
+ * @param jobID pointer to communication "session" ID.
+ * @param isOK give-back pointer to return whether the cancellation went OK or not.
+ *
+ * @return a SOAP error code.
+ */
+int ns__GetCalCancelID(struct soap *p_soap,
+                              char*  jobID,
+                              bool*  isOK)
+{
+    logTrace("ns__GetCalCancelID()");
+
+    // Test parameters validity
+    if (p_soap == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (jobID == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "jobID");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+    if (isOK == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "isOK");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
+    // Retrieve the sclsvrSERVER instance associated with th received UUID
+    sclsvrSERVER* server = NULL;
+    server = servers[jobID];
+    if (server == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "server");
+        errCloseStack();
+        return SOAP_ERR;
+    }
+
+    // For each thread launched with the current job ID
+    logInfo("Killing all job threads");
+    threadsRange range = threads.equal_range(jobID);
+    for(threadsIT mmit = range.first; mmit != range.second; ++mmit)
+    {
+        // Kill the thread
+        pthread_cancel(mmit->second);
+
+        // Delete the thread ID
+        threads.erase(mmit);
+    }
+
+    // Delete the server instance
+    logInfo("Deleting server");
+    delete(server);
+    servers.erase(jobID);
+
+    // Allocate SOAP-aware memory to return the current catalog name
+    *isOK = true;
 
     return SOAP_OK;
 }

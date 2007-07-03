@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsGetCal.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"
+ * "@(#) $Id: sclwsGetCal.cpp,v 1.4 2007-07-03 17:00:03 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/02/09 17:07:46  lafrasse
+ * Enhanced log and error monitoring.
+ * Corrected a bug inherent to early deallocation of sclsvrSERVER _progress
+ * leading to a crash on empty resulting queries.
+ *
  * Revision 1.2  2007/02/04 20:56:45  lafrasse
  * Updated webservice URL port number.
  * Updated according to APIs changes in sclsvr.
@@ -65,13 +70,14 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsGetCal.cpp,v 1.3 2007-02-09 17:07:46 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsGetCal.cpp,v 1.4 2007-07-03 17:00:03 lafrasse Exp $"; 
 
 /* 
  * System Headers 
  */
 #include <stdlib.h>
 #include <iostream>
+#include <signal.h>
 
 /**
  * @namespace std
@@ -102,8 +108,7 @@ using namespace std;
  * Local Variables
  */
 struct Namespace *namespaces;
-char* wsURL = "http://jmmc.fr:8078";
- 
+char* wsURL = "http://jmmc.fr:8079";
 typedef struct
 {
     char* taskID;        /** GETCAL WebService communication ID */
@@ -113,6 +118,7 @@ typedef struct
     std::string result;  /** The VO Table */
 
 } sclwsGetVOTableThreadParams;
+char* taskID;
 
 
 /*
@@ -158,7 +164,35 @@ thrdFCT_RET sclwsGetVOTableThreadFunction(thrdFCT_ARG param)
 /* 
  * Signal catching functions  
  */
+void sclwsSignalHandler (int signalNumber)
+{
+    logInfo("Received a '%d' system signal ...", signalNumber);
 
+    if (signalNumber == SIGPIPE)
+    {
+        return;
+    }
+
+    // Cancelling the query
+    logInfo("Cancelling the query.");
+    struct soap v_soap;
+    soap_init(&v_soap);
+    soap_set_namespaces(&v_soap, soap_namespaces);
+    bool  isOk  = false;
+    soap_call_ns__GetCalCancelID(&v_soap, wsURL, "", taskID, &isOk);
+    if (v_soap.error)
+    {
+        soap_print_fault(&v_soap, stderr);
+        exit (EXIT_FAILURE);
+    }
+    logInfo("Cancel status = '%d'.", isOk);
+
+    // Close MCS services
+    mcsExit();
+    
+    // Exit from the application with SUCCESS
+    exit (EXIT_SUCCESS);
+}
 
 
 /* 
@@ -166,6 +200,23 @@ thrdFCT_RET sclwsGetVOTableThreadFunction(thrdFCT_ARG param)
  */
 int main(int argc, char *argv[])
 {
+    /* Init system signal trapping */
+    if (signal(SIGINT, sclwsSignalHandler) == SIG_ERR)
+    {
+        logError("signal(SIGINT, ...) function error");
+        exit (EXIT_FAILURE);
+    }
+    if (signal(SIGTERM, sclwsSignalHandler) == SIG_ERR)
+    {
+        logError("signal(SIGTERM, ...) function error");
+        exit (EXIT_FAILURE);
+    }
+    if (signal(SIGPIPE, sclwsSignalHandler) == SIG_ERR)
+    {
+        logError("signal(SIGPIPE, ...) function error");
+        exit (EXIT_FAILURE);
+    }
+
     // Initialize MCS services
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
@@ -184,7 +235,6 @@ int main(int argc, char *argv[])
     soap_set_namespaces(&v_soap, soap_namespaces);
 
     // Fetch the a CGETCAL WebService communication ID
-    char* taskID;
     soap_call_ns__GetCalAsyncID(&v_soap, wsURL, "", &taskID);
     if (v_soap.error)
     {
@@ -240,6 +290,7 @@ int main(int argc, char *argv[])
             soap_print_fault(&v_soap, stderr);
             exit (EXIT_FAILURE);
         }
+
         // Ask for the last catalog flag
         logDebug("Getting the Last Catalog Flag.");
         soap_call_ns__GetCalIsLastCatalog(&v_soap, wsURL, "", taskID, &lastCatalog);
@@ -250,7 +301,7 @@ int main(int argc, char *argv[])
         }
         logInfo("Querying '%s' - %d/%d (%d).", catalogName, catalogIndex, nbOfCatalogs, lastCatalog);
     }
-    while(lastCatalog  == false); // Until last catalog is reached
+    while(lastCatalog == false); // Until last catalog is reached
 
     // Wait for the thread end (eg. result receiving)
     logDebug("Waiting for thread termination");
