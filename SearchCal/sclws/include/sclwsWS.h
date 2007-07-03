@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.h,v 1.3 2007-07-03 17:00:03 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.h,v 1.4 2007-07-03 17:07:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2007/07/03 17:00:03  lafrasse
+ * Added support for query cancellation.
+ *
  * Revision 1.2  2007/02/04 20:56:45  lafrasse
  * Updated webservice URL port number.
  * Updated according to APIs changes in sclsvr.
@@ -33,7 +36,7 @@
 //gsoap ns service name: sclws
 //gsoap ns service style: rpc
 //gsoap ns service encoding: literal
-//gsoap ns service location: http://jmmc.fr:8079
+//gsoap ns service location: http://jmmc.fr:8078
 //gsoap ns schema namespace: urn:sclws
 
 

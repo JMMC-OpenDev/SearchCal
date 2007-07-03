@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.6 2007-07-03 17:00:03 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.7 2007-07-03 17:07:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2007/07/03 17:00:03  lafrasse
+ * Added support for query cancellation.
+ *
  * Revision 1.5  2007/07/02 13:58:47  lafrasse
  * Added signal and error handling, plus proper exit.
  *
@@ -76,7 +79,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.6 2007-07-03 17:00:03 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.7 2007-07-03 17:07:58 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -114,7 +117,7 @@ using namespace std;
  * Local Variables
  */
 struct Namespace *namespaces;
-uint   portNumber = 8079;
+uint   portNumber = 8078;
 struct soap  v_soap;    // SOAP execution context
 
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsGetCal.cpp,v 1.4 2007-07-03 17:00:03 lafrasse Exp $"
+ * "@(#) $Id: sclwsGetCal.cpp,v 1.5 2007-07-03 17:07:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2007/07/03 17:00:03  lafrasse
+ * Added support for query cancellation.
+ *
  * Revision 1.3  2007/02/09 17:07:46  lafrasse
  * Enhanced log and error monitoring.
  * Corrected a bug inherent to early deallocation of sclsvrSERVER _progress
@@ -70,7 +73,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsGetCal.cpp,v 1.4 2007-07-03 17:00:03 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsGetCal.cpp,v 1.5 2007-07-03 17:07:58 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -108,7 +111,7 @@ using namespace std;
  * Local Variables
  */
 struct Namespace *namespaces;
-char* wsURL = "http://jmmc.fr:8079";
+char* wsURL = "http://jmmc.fr:8078";
 typedef struct
 {
     char* taskID;        /** GETCAL WebService communication ID */
