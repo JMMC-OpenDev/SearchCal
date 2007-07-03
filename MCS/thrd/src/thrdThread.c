@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: thrdThread.c,v 1.3 2006-10-26 08:03:03 gzins Exp $"
+ * "@(#) $Id: thrdThread.c,v 1.4 2007-07-03 12:12:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2006/10/26 08:03:03  gzins
+ * Renamed thrdTHREAD to thrdTHREAD_STRUCT
+ *
  * Revision 1.2  2006/01/10 14:40:39  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -60,7 +63,7 @@
  * @sa pthread
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdThread.c,v 1.3 2006-10-26 08:03:03 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdThread.c,v 1.4 2007-07-03 12:12:30 lafrasse Exp $"; 
 
 
 
@@ -142,7 +145,7 @@ mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD_STRUCT  *thread)
 /**
  * Wait for termination of the given thread.
  *
- * Please note that the value returned by the thread will be storred in the
+ * Please note that the value returned by the thread will be stored in the
  * 'result' field of the given thrdThred structure after termination.
  *
  * @warning The given thrdThread structure must have been fully initialized
@@ -155,7 +158,7 @@ mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD_STRUCT  *thread)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT thrdThreadWait   (thrdTHREAD_STRUCT  *thread)
+mcsCOMPL_STAT thrdThreadWait (thrdTHREAD_STRUCT  *thread)
 {
     logExtDbg("thrdThreadWait()");
 
@@ -190,6 +193,51 @@ mcsCOMPL_STAT thrdThreadWait   (thrdTHREAD_STRUCT  *thread)
             case EDEADLK:
                 /* The given thread refers to itself, leading to a dead lock */
                 errAdd(thrdERR_THREAD_DEADLOCK, thread->id);
+                return mcsFAILURE;
+                break;
+    
+            default:
+                errAdd(thrdERR_ASSERT_FAILED);
+                return mcsFAILURE;
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Kill the given thread.
+ *
+ * @warning The given thrdThread structure must have been fully initialized
+ * before.
+ *
+ * @param thread the thread to kill
+ *
+ * @sa pthread_join
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT thrdThreadKill (thrdTHREAD_STRUCT  *thread)
+{
+    logExtDbg("thrdThreadKill()");
+
+    /* Verify parameter vailidity */
+    if (thread == NULL)
+    {
+        errAdd(thrdERR_NULL_PARAM, "thread");
+        return mcsFAILURE;
+    }
+
+    /* Wait until the given thread function ends */
+    if (pthread_cancel(thread->id) != 0)
+    {
+        /* If an eror occured, raise the corresponding error */
+        switch (errno)
+        {
+            case ESRCH:
+                /* No thread could be found with the specified id */
+                errAdd(thrdERR_THREAD_NOT_FOUND, thread->id);
                 return mcsFAILURE;
                 break;
     
