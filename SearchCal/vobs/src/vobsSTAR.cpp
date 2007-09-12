@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.71 2006-08-22 14:45:08 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.72 2007-09-12 10:13:52 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.71  2006/08/22 14:45:08  gzins
+* Improved error handling in GetId() method.
+* Check RA/DEC is set, before calling GetRa()/GetDec() method
+*
 * Revision 1.70  2006/04/10 14:51:57  gzins
 * Added ClearPropertyValue
 *
@@ -189,7 +193,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.71 2006-08-22 14:45:08 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.72 2007-09-12 10:13:52 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1173,14 +1177,14 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     logTrace("vobsSTAR::AddProperties()");
 
-    AddProperty(vobsSTAR_ID_HD, "HD", vobsFLOAT_PROPERTY, "-", "%.0f",
+    AddProperty(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, "-",
                 "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=HD${HD}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
                 "HD identifier, click to call Simbad on this object");
-    AddProperty(vobsSTAR_ID_HIP, "HIP", vobsFLOAT_PROPERTY, "-", "%.0f");
-    AddProperty(vobsSTAR_ID_DM, "DM", vobsFLOAT_PROPERTY, "-", "%.0f");    
-    AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsFLOAT_PROPERTY, "-", "%.0f");    
-    AddProperty(vobsSTAR_ID_TYC2, "TYC2", vobsFLOAT_PROPERTY, "-", "%.0f");    
-    AddProperty(vobsSTAR_ID_TYC3, "TYC3", vobsFLOAT_PROPERTY, "-", "%.0f");    
+    AddProperty(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, "-");  
+    AddProperty(vobsSTAR_ID_DM, "DM", vobsSTRING_PROPERTY, "-");  
+    AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsSTRING_PROPERTY, "-");  
+    AddProperty(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY, "-");  
+    AddProperty(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY, "-");  
     AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY, "-");    
     AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, "-", NULL,
                 "http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0",
