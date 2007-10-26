@@ -1,13 +1,16 @@
-#ifndef sdbENTRY_H
-#define sdbENTRY_H
+#ifndef sdbSYNC_ENTRY_H
+#define sdbSYNC_ENTRY_H
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.5 2007-05-15 08:17:25 gzins Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.h,v 1.6 2007-10-26 13:25:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2007/05/15 08:17:25  gzins
+ * Added IsInit method
+ *
  * Revision 1.4  2006/12/21 15:03:08  lafrasse
  * Moved from static-based design to instance-based design.
  *
@@ -15,7 +18,7 @@
  * Added security check to disable semaphores use in case of  bad initialization
  *
  * Revision 1.2  2005/12/22 14:10:35  lafrasse
- * Added a way to release all the created semaphores used by sdbENTRY
+ * Added a way to release all the created semaphores used by sdbSYNC_ENTRY
  *
  * Revision 1.1  2005/12/20 13:52:34  lafrasse
  * Added preliminary support for INTRA-process action log
@@ -24,7 +27,7 @@
 
 /**
  * @file
- * Declaration of sdbENTRY class.
+ * Declaration of sdbSYNC_ENTRY class.
  */
 
 #ifndef __cplusplus
@@ -82,14 +85,14 @@
  * @todo add other methods, dealing with operations.
  * 
  */
-class sdbENTRY
+class sdbSYNC_ENTRY
 {
 public:
     // Class constructor
-    sdbENTRY();
+    sdbSYNC_ENTRY();
 
     // Class destructor
-    virtual ~sdbENTRY();
+    virtual ~sdbSYNC_ENTRY();
 
     mcsCOMPL_STAT  Init    (void);
     mcsCOMPL_STAT  Destroy (void);
@@ -99,13 +102,14 @@ public:
                                   mcsLOGICAL* lastMessage);
 
     mcsLOGICAL     IsInit  (void);
+
 protected:
     
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-    sdbENTRY(const sdbENTRY&);
-    sdbENTRY& operator=(const sdbENTRY&);
+    sdbSYNC_ENTRY(const sdbSYNC_ENTRY&);
+    sdbSYNC_ENTRY& operator=(const sdbSYNC_ENTRY&);
 
     thrdSEMAPHORE  _emptyBufferSemaphore;
     thrdSEMAPHORE  _fullBufferSemaphore;
@@ -116,6 +120,6 @@ private:
     mcsLOGICAL     _lastMessage;
 };
 
-#endif /*!sdbENTRY_H*/
+#endif /*!sdbSYNC_ENTRY_H*/
 
 /*___oOo___*/

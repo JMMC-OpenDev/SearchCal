@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.2 2005-12-21 10:42:26 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.3 2007-10-26 13:25:26 lafrasse Exp $"
 #
 # Makefile of sdb module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2005/12/21 10:42:26  lafrasse
+# Removed 'sdb' and 'thrd' as library inclusion as they have been added to the MCS list
+#
 # Revision 1.1  2005/12/20 13:52:34  lafrasse
 # Added preliminary support for INTRA-process action log
 #
@@ -39,7 +42,8 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = sdbTestEntry
+EXECUTABLES     = sdbTestEntry sdbTestSynckedEntry
+#EXECUTABLES     = sdbTestSynckedEntry
 EXECUTABLES_L   = 
 
 #
@@ -47,6 +51,12 @@ EXECUTABLES_L   =
 sdbTestEntry_OBJECTS   = sdbTestEntry
 sdbTestEntry_LDFLAGS   = 
 sdbTestEntry_LIBS      = MCS C++
+
+#
+# <brief description of sdbTestSynckedEntry program>
+sdbTestSynckedEntry_OBJECTS   = sdbTestSynckedEntry
+sdbTestSynckedEntry_LDFLAGS   = 
+sdbTestSynckedEntry_LIBS      = MCS C++
 
 #
 # special compilation flags for single c sources

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.12 2007-05-15 11:12:40 gzins Exp $"
+ * "@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.13 2007-10-26 13:25:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2007/05/15 11:12:40  gzins
+ * Fixed warning
+ *
  * Revision 1.11  2007/05/15 11:11:18  gzins
  * Updtated to prevent multiple semaphore creation
  *
@@ -34,7 +37,7 @@
  * Added security check to disable semaphores use in case of  bad initialization
  *
  * Revision 1.2  2005/12/22 14:10:35  lafrasse
- * Added a way to release all the created semaphores used by sdbENTRY
+ * Added a way to release all the created semaphores used by sdbSYNC_ENTRY
  *
  * Revision 1.1  2005/12/20 13:52:34  lafrasse
  * Added preliminary support for INTRA-process action log
@@ -43,10 +46,10 @@
 
 /**
  * @file
- * Definition of sdbENTRY class.
+ * Definition of sdbSYNC_ENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.12 2007-05-15 11:12:40 gzins Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.13 2007-10-26 13:25:26 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -66,7 +69,7 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "sdbENTRY.h"
+#include "sdbSYNC_ENTRY.h"
 #include "sdbPrivate.h"
 #include "sdbErrors.h"
 
@@ -79,7 +82,7 @@ using namespace std;
 /**
  * Class constructor
  */
-sdbENTRY::sdbENTRY()
+sdbSYNC_ENTRY::sdbSYNC_ENTRY()
 {
     _emptyBufferSemaphore = 0;
     _fullBufferSemaphore  = 0;
@@ -91,7 +94,7 @@ sdbENTRY::sdbENTRY()
 /**
  * Class destructor
  */
-sdbENTRY::~sdbENTRY()
+sdbSYNC_ENTRY::~sdbSYNC_ENTRY()
 {
 }
 
@@ -102,7 +105,7 @@ sdbENTRY::~sdbENTRY()
 /**
  * !!! NOT YET DOCUMENTED cause THIS IMPLEMENTATION IS TEMPORARY !!!
  */
-mcsCOMPL_STAT sdbENTRY::Init(void)
+mcsCOMPL_STAT sdbSYNC_ENTRY::Init(void)
 {
     // Static member initialization
     memset(_buffer, '\0', sizeof(_buffer));
@@ -132,7 +135,7 @@ mcsCOMPL_STAT sdbENTRY::Init(void)
 /**
  * !!! NOT YET DOCUMENTED cause THIS IMPLEMENTATION IS TEMPORARY !!!
  */
-mcsCOMPL_STAT sdbENTRY::Destroy(void)
+mcsCOMPL_STAT sdbSYNC_ENTRY::Destroy(void)
 {
     if (_initSucceed == mcsTRUE)
     {
@@ -154,9 +157,9 @@ mcsCOMPL_STAT sdbENTRY::Destroy(void)
 /**
  * !!! NOT YET DOCUMENTED cause THIS IMPLEMENTATION IS TEMPORARY !!!
  */
-mcsCOMPL_STAT sdbENTRY::Write(const char* message, const mcsLOGICAL lastMessage)
+mcsCOMPL_STAT sdbSYNC_ENTRY::Write(const char* message, const mcsLOGICAL lastMessage)
 {
-    logTrace("sdbENTRY::Write()");
+    logTrace("sdbSYNC_ENTRY::Write()");
 
     /* Verify parameter vailidity */
     if (message == NULL)
@@ -196,9 +199,9 @@ mcsCOMPL_STAT sdbENTRY::Write(const char* message, const mcsLOGICAL lastMessage)
 /**
  * !!! NOT YET DOCUMENTED cause THIS IMPLEMENTATION IS TEMPORARY !!!
  */
-mcsCOMPL_STAT sdbENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
+mcsCOMPL_STAT sdbSYNC_ENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
 {
-    logTrace("sdbENTRY::Wait()");
+    logTrace("sdbSYNC_ENTRY::Wait()");
 
     /* Verify parameter vailidity */
     if (message == NULL)
@@ -243,9 +246,9 @@ mcsCOMPL_STAT sdbENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
 /**
  * !!! NOT YET DOCUMENTED cause THIS IMPLEMENTATION IS TEMPORARY !!!
  */
-mcsLOGICAL sdbENTRY::IsInit()
+mcsLOGICAL sdbSYNC_ENTRY::IsInit()
 {
-    logTrace("sdbENTRY::IsInit()");
+    logTrace("sdbSYNC_ENTRY::IsInit()");
 
     return _initSucceed;
 }

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2005-12-20 14:43:11 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.4 2007-10-26 13:25:26 lafrasse Exp $"
 #
 # Makefile of sdb module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2005/12/20 14:43:11  lafrasse
+# Added sbdENTRY.h as a public header
+#
 # Revision 1.2  2005/12/20 13:52:34  lafrasse
 # Added preliminary support for INTRA-process action log
 #
@@ -59,7 +62,8 @@ xxxxx_LIBS      =
 # Includes (.h) files (public only)
 # ---------------------------------
 INCLUDES        = sdb.h       \
-                  sdbENTRY.h
+                  sdbENTRY.h  \
+                  sdbSYNC_ENTRY.h
 
 #
 # Libraries (public and local)
@@ -69,7 +73,7 @@ LIBRARIES_L     =
 
 #
 # <brief description of sdb library>
-sdb_OBJECTS   = sdbENTRY
+sdb_OBJECTS   = sdbENTRY sdbSYNC_ENTRY
 sdb_LIBS      = MCS
 
 #

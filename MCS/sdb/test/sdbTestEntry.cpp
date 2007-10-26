@@ -1,28 +1,19 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbTestSynckedEntry.cpp,v 1.4 2007-10-26 13:25:26 lafrasse Exp $"
+ * "@(#) $Id: sdbTestEntry.cpp,v 1.1 2007-10-26 13:25:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * Revision 1.3  2006/12/21 15:03:08  lafrasse
- * Moved from static-based design to instance-based design.
- *
- * Revision 1.2  2006/05/11 13:04:57  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.1  2005/12/20 13:52:34  lafrasse
- * Added preliminary support for INTRA-process action log
- *
  ******************************************************************************/
 
 /**
  * @file
- * sdbSYNC_ENTRY class test program.
+ * sdbEntry class test program.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbTestSynckedEntry.cpp,v 1.4 2007-10-26 13:25:26 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sdbTestEntry.cpp,v 1.1 2007-10-26 13:25:26 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -60,16 +51,18 @@ using namespace std;
  */
 thrdFCT_RET myThreadFunction(thrdFCT_ARG param)
 {
-    sdbSYNC_ENTRY* entry = (sdbSYNC_ENTRY*) param;
+    sdbENTRY* entry = (sdbENTRY*) param;
 
-    sleep(1);
-    entry->Write("Message 1", mcsFALSE);
+    mcsSTRING256 message;
+    int i = 1;
 
-    sleep(2);
-    entry->Write("Message 2", mcsFALSE);
-
-    sleep(3);
-    entry->Write("Message 3", mcsTRUE);
+    while (1)
+    {
+        sprintf(message, "The writer is entering sleep for %d seconds", i);
+        entry->Write(message);
+        sleep(i);
+        i++;
+    }
 
     return NULL;
 }
@@ -98,7 +91,7 @@ int main(int argc, char *argv[])
     logSetStdoutLogLevel(logINFO);
 
     /* Allocate synchronization ressources */
-    sdbSYNC_ENTRY entry;
+    sdbENTRY entry;
     if (entry.Init() == mcsFAILURE)
     {
         errCloseStack();
@@ -109,31 +102,48 @@ int main(int argc, char *argv[])
     thrdTHREAD_STRUCT    myThread;
     myThread.function  = myThreadFunction;
     myThread.parameter = (thrdFCT_ARG)&entry;
+    mcsSTRING256 message;
+
     thrdThreadCreate(&myThread);
 
-    mcsSTRING256 message;
-    mcsLOGICAL   lastMessage = mcsFALSE;
-    do
+    cout << "Reading message right away :" << endl;
+    for (int i = 0; i < 5; i++)
     {
-        if (entry.Wait(message, &lastMessage) == mcsFAILURE)
+        if (entry.Read(message) == mcsFAILURE)
         {
             errCloseStack();
             exit (EXIT_FAILURE);
         }
+        cout << " Reader got message = '" << message << "'." << endl;
+    }
 
-        if (lastMessage == mcsFALSE)
+    cout << endl;
+
+    cout << "Reading message with a 1 second timeout :" << endl;
+    for (int i = 0; i < 20; i++)
+    {
+        if (entry.Read(message, mcsTRUE, 1000) == mcsFAILURE)
         {
-            cout << "Received message : '" << message <<"'." << endl;
+            cout << " Reader timed out." << endl;
         }
         else
         {
-            cout << "Received LAST message : '" << message <<"'." << endl;
+            cout << " Redear got message = '" << message << "'." << endl;
         }
     }
-    while (lastMessage == mcsFALSE);
 
-    /* Wait for the thread end */
-    thrdThreadWait(&myThread);
+    cout << endl;
+
+    cout << "Reading message without any timeout :" << endl;
+    for (int i = 0; i < 3; i++)
+    {
+        if (entry.Read(message, mcsTRUE) == mcsFAILURE)
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        }
+        cout << " Redear got message = '" << message << "'." << endl;
+    }
 
     /* Deallocate synchronization ressources */
     if (entry.Destroy() == mcsFAILURE)
