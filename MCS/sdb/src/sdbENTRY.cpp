@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbENTRY.cpp,v 1.1 2007-10-26 13:25:26 lafrasse Exp $"
+ * "@(#) $Id: sdbENTRY.cpp,v 1.2 2007-10-29 13:17:23 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2007/10/26 13:25:26  lafrasse
+ * Moved synchronized entry in sdbSYNC_ENTRY, and added timeout-based entry as
+ * sdbENTRY.
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +17,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sdbENTRY.cpp,v 1.1 2007-10-26 13:25:26 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sdbENTRY.cpp,v 1.2 2007-10-29 13:17:23 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -64,14 +68,177 @@ sdbENTRY::sdbENTRY()
  */
 sdbENTRY::~sdbENTRY()
 {
+    Destroy();
 }
 
 
 /*
  * Public methods
  */
+
 /**
- * Initialize internal synchronization mecanism.
+ * Write a new message in the entry.
+ *
+ * @param message a null-terminated string.
+ *
+ * @return mcsSUCCESS or mcsFAILURE.
+ */
+mcsCOMPL_STAT sdbENTRY::Write(const char* message)
+{
+    logTrace("sdbENTRY::Write()");
+
+    // Check parameter
+    if (message == NULL)
+    {
+        errAdd(sdbERR_NULL_PARAM, "message");
+        return mcsFAILURE;
+    }
+    
+    // Initialize object if needed
+    if (IsInit() == mcsFALSE)
+    {
+        if (Init()  == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+
+    logDebug("Enter critical section for writing");
+    if (thrdMutexLock(&_mutex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Copy the new message to the internal buffer
+    strncpy(_buffer, message, sizeof(mcsSTRING256));
+    _isNewMessage = mcsTRUE;
+
+    logDebug("Exit critical section after writing");
+    if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Read a message from the entry.
+ *
+ * @param message an already allocated buffer to return the entry content.
+ * @param waitNewMessage if mcsTRUE wait for a new message to be posted,
+ * otherwise return the current one.
+ * @param timeoutInSec if not -1, wait for a new message until the specified
+ * amount of seconds and return the current one, otherwise wait forever.
+ *
+ * @return mcsSUCCESS or mcsFAILURE.
+ */
+mcsCOMPL_STAT sdbENTRY::Read(char*             message,
+                             mcsLOGICAL        waitNewMessage,
+                             mcsINT32          timeoutInSec)
+{
+    logTrace("sdbENTRY::Read()");
+
+    // Check parameter
+    if (message == NULL)
+    {
+        errAdd(sdbERR_NULL_PARAM, "message");
+        return mcsFAILURE;
+    }
+
+    // Initialize object if needed
+    if (IsInit() == mcsFALSE)
+    {
+        if (Init()  == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+
+    // Loop configuration
+    int period;     /* Number of usec the program is suspended */
+    int decrement;  /* Timer decremenent */
+    int remTime;    /* Remaining time (in usec) before timeout expiration */
+    // Wait forever
+    if (timeoutInSec == -1)
+    {
+        remTime = 1000;
+        period = 100000; // 100 ms
+        decrement = 0;   // Remaining time will be never decremented
+    }
+    // Given time-out
+    else
+    {
+        remTime = (timeoutInSec * 1000000);
+        period = 100000; // 100 ms
+        decrement = period;
+    }
+
+    // Loop
+    mcsLOGICAL done=mcsFALSE;
+    while (done == mcsFALSE)
+    {            
+        // Lock data access
+        logDebug("Enter critical section for reading");
+        if (thrdMutexLock(&_mutex) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // If message has been changed
+        if ((waitNewMessage == mcsFALSE) || (_isNewMessage == mcsTRUE))
+        {
+            // Return it
+            strncpy(message, _buffer, sizeof(mcsSTRING256));
+            _isNewMessage = mcsFALSE;
+
+            done = mcsTRUE;
+        }
+
+        // Unlock data access
+        logDebug("Exit critical section after reading");
+        if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Suspend process if no message was available
+        if (done == mcsFALSE)
+        {
+            // Check if time-out has expired
+            if (remTime <=0)
+            {
+                errAdd(sdbERR_TIMEOUT_EXPIRED);
+                return mcsFAILURE;
+            }
+
+            // Supsend process
+            logDebug("Sleeping %dms before restarting.", period / 1000);
+            usleep(period);
+            remTime -= decrement;
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
+/*
+ * Protected methods
+ */
+/**
+ * Return whter the object has been fully initialized or not.
+ *
+ * @return mcsTRUE if the object has been fully initialized, mcsFALSE otherwise.
+ */
+mcsLOGICAL sdbENTRY::IsInit()
+{
+    logTrace("sdbENTRY::IsInit()");
+
+    return _initSucceed;
+}
+
+/**
+ * Initialize internal synchronization mechanism.
  *
  * @wa Must be called before any other sdbENTRY calls.
  *
@@ -96,7 +263,7 @@ mcsCOMPL_STAT sdbENTRY::Init(void)
 }
 
 /**
- * Destroy internal synchronization mecanism.
+ * Destroy internal synchronization mechanism.
  *
  * @wa Must be called after all other sdbENTRY calls.
  *
@@ -116,231 +283,6 @@ mcsCOMPL_STAT sdbENTRY::Destroy(void)
 
     return mcsSUCCESS;
 }
-
-/**
- * Write a new message in the entry.
- *
- * @param message a null-terminated string.
- *
- * @return mcsSUCCESS or mcsFAILURE.
- */
-mcsCOMPL_STAT sdbENTRY::Write(const char* message)
-{
-    logTrace("sdbENTRY::Write()");
-
-    /* Verify parameter vailidity */
-    if (message == NULL)
-    {
-        errAdd(sdbERR_NULL_PARAM, "message");
-        return mcsFAILURE;
-    }
-    
-    // If the object has not been fully initialized yet
-    if (_initSucceed == mcsFALSE)
-    {
-        return mcsFAILURE;
-    }
-
-    logDebug("Get the right to write in the internal buffer.");
-    if (thrdMutexLock(&_mutex) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    logDebug("Internal buffer locked.");
-
-    // Copy the new message to the internal buffer
-    strncpy(_buffer, message, sizeof(mcsSTRING256));
-    _isNewMessage = mcsTRUE;
-
-    logDebug("Release the right to write in the internal buffer.");
-    if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    logDebug("Internal buffer unlocked.");
-
-    return mcsSUCCESS;
-}
-
-/**
- * Read a message from the entry.
- *
- * @param message an already allocated buffer to return the entry content.
- * @param waitNewMessage if mcsTRUE wait for a new message to be posted,
- * otherwise return the current one.
- * @param timeoutInMs if not -1, wait for a new message until the specified
- * amount of milliseonds and return the current one, otherwise wait forever.
- *
- * @return mcsSUCCESS or mcsFAILURE.
- */
-mcsCOMPL_STAT sdbENTRY::Read(char*             message,
-                             mcsLOGICAL        waitNewMessage,
-                             mcsINT32          timeoutInMs)
-{
-    logTrace("sdbENTRY::Read()");
-
-    /* Verify parameter vailidity */
-    if (message == NULL)
-    {
-        errAdd(sdbERR_NULL_PARAM, "message");
-        return mcsFAILURE;
-    }
-
-    // If the object has not been fully initialized yet
-    if (_initSucceed == mcsFALSE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Return the current message right away
-    if (waitNewMessage == mcsFALSE)
-    {
-        logDebug("Get the right to read in the internal buffer.");
-        if (thrdMutexLock(&_mutex) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        logDebug("Internal buffer locked.");
-
-        // Copy the new message to the internal buffer
-        strncpy(message, _buffer, sizeof(mcsSTRING256));
-        _isNewMessage = mcsFALSE;
-
-        logDebug("Release the right to read in the internal buffer.");
-        if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        logDebug("Internal buffer unlocked.");
-
-        return mcsSUCCESS;
-    }
-
-    // Wait forever
-    if (timeoutInMs == -1)
-    {
-        int idleTime = 100000; // 100ms
-        // Forever
-        while (1)
-        {            
-            // Lock data access
-            logDebug("Get the right to read in the internal buffer.");
-            if (thrdMutexLock(&_mutex) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            logDebug("Internal buffer locked.");
-
-            // If data has changed
-            if (_isNewMessage == mcsTRUE)
-            {
-                // Return it
-                strncpy(message, _buffer, sizeof(mcsSTRING256));
-                _isNewMessage = mcsFALSE;
-
-                // Unlock data access
-                logDebug("Release the right to read in the internal buffer.");
-                if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-                logDebug("Internal buffer unlocked.");
-
-                return mcsSUCCESS;
-            }
-
-            // Unlock data access
-            logDebug("Release the right to read in the internal buffer.");
-            if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            logDebug("Internal buffer unlocked.");
-
-            // Sleep for a while before restarting
-            logDebug("Sleeping %dms before restarting.", idleTime / 1000);
-            usleep(idleTime);
-        }
-
-        logError("Assertion failed (exited while(1) loop !).");
-    }
-    else
-    {
-        // Compute the time left in microseconds
-        int timeLeft = (timeoutInMs * 1000);
-
-        // Compute the idle time of each step (the least beetwen 100us and 1/10th
-        // of the initial timeout)
-        int idleTime = min(100000, timeLeft / 10);
-
-        // While there is some time left
-        while (timeLeft > 0)
-        {            
-            // Lock data access
-            logDebug("Get the right to read in the internal buffer.");
-            if (thrdMutexLock(&_mutex) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            logDebug("Internal buffer locked.");
-
-            // If data has changed
-            if (_isNewMessage == mcsTRUE)
-            {
-                // Return it
-                strncpy(message, _buffer, sizeof(mcsSTRING256));
-                _isNewMessage = mcsFALSE;
-
-                // Unlock data access
-                logDebug("Release the right to read in the internal buffer.");
-                if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-                logDebug("Internal buffer unlocked.");
-
-                return mcsSUCCESS;
-            }
-
-            // Unlock data access
-            logDebug("Release the right to read in the internal buffer.");
-            if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            logDebug("Internal buffer unlocked.");
-
-            // Sleep for a while before restarting
-            logDebug("Sleeping %dms before restarting.", idleTime / 1000);
-            usleep(idleTime);
-
-            // Compute the time left before timeout
-            timeLeft -= idleTime;
-            logDebug("%dms left before timeout.", timeLeft / 1000);
-        }
-
-        logDebug("Stopped (timed out).");
-    }
-
-    return mcsFAILURE;
-}
-
-/**
- * Return whter the object has been fully initialized or not.
- *
- * @return mcsTRUE if the object has been fully initialized, mcsFALSE otherwise.
- */
-mcsLOGICAL sdbENTRY::IsInit()
-{
-    logTrace("sdbENTRY::IsInit()");
-
-    return _initSucceed;
-}
-
-/*
- * Protected methods
- */
-
 
 /*
  * Private methods
