@@ -1,13 +1,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.3 2007-10-26 13:25:26 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.4 2007-10-29 12:07:10 gzins Exp $"
 #
 # Makefile of sdb module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2007/10/26 13:25:26  lafrasse
+# Moved synchronized entry in sdbSYNC_ENTRY, and added timeout-based entry as
+# sdbENTRY.
+#
 # Revision 1.2  2005/12/21 10:42:26  lafrasse
 # Removed 'sdb' and 'thrd' as library inclusion as they have been added to the MCS list
 #
@@ -42,21 +46,20 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = sdbTestEntry sdbTestSynckedEntry
-#EXECUTABLES     = sdbTestSynckedEntry
+EXECUTABLES     = sdbTestENTRY sdbTestSYNC_ENTRY
 EXECUTABLES_L   = 
 
 #
-# <brief description of sdbTestEntry program>
-sdbTestEntry_OBJECTS   = sdbTestEntry
-sdbTestEntry_LDFLAGS   = 
-sdbTestEntry_LIBS      = MCS C++
+# <brief description of sdbTestENTRY program>
+sdbTestENTRY_OBJECTS   = sdbTestENTRY
+sdbTestENTRY_LDFLAGS   = 
+sdbTestENTRY_LIBS      = MCS C++
 
 #
-# <brief description of sdbTestSynckedEntry program>
-sdbTestSynckedEntry_OBJECTS   = sdbTestSynckedEntry
-sdbTestSynckedEntry_LDFLAGS   = 
-sdbTestSynckedEntry_LIBS      = MCS C++
+# <brief description of sdbTestSYNC_ENTRY program>
+sdbTestSYNC_ENTRY_OBJECTS   = sdbTestSYNC_ENTRY
+sdbTestSYNC_ENTRY_LDFLAGS   = 
+sdbTestSYNC_ENTRY_LIBS      = MCS C++
 
 #
 # special compilation flags for single c sources
