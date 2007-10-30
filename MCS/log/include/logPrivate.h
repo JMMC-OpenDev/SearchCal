@@ -3,11 +3,16 @@
 /*******************************************************************************
 *  JMMC Project
 *  
-*  "@(#) $Id: logPrivate.h,v 1.9 2005-01-26 17:27:47 lafrasse Exp $"
+*  "@(#) $Id: logPrivate.h,v 1.10 2007-10-30 11:43:15 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.9  2005/01/26 17:27:47  lafrasse
+* Added automatic CVS history, refined user documentation, removed all
+* ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
+* mcsFAILURE
+*
 * gzins     10-Nov-2004  Renamed logDisplayMessage to logPrintErrMessage
 *                        Removed logDisplayError
 *
@@ -55,7 +60,6 @@ extern "C" {
  * Constants
  */
 #define MODULE_ID    "log"
-#define logTEXT_LEN  64
 
 /**
  * logManager default listened network port number.

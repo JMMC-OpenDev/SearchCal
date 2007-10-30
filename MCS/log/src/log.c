@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.31 2007-02-08 10:33:06 gluck Exp $"
+* "@(#) $Id: log.c,v 1.32 2007-10-30 11:43:15 gzins Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.31  2007/02/08 10:33:06  gluck
+* Corrected doxygen warnings
+*
 * Revision 1.30  2006/05/16 15:31:47  gzins
 * Fixed strcpy source/destination overlap
 *
@@ -521,7 +524,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     va_list argPtr;
 
     mcsBYTES32 infoTime;
-    char buffer[4*logTEXT_LEN];
+    char buffer[8192];
     buffer[0] = '\0';
 
     mcsCOMPL_STAT status = mcsSUCCESS;
@@ -627,7 +630,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     /* Message formating gstuff */
     mcsBYTES32      infoTime;
     char            *priorityMsg = NULL;
-    char            logMsg[4*logTEXT_LEN];
+    char            logMsg[8192];
     logMsg[0]       = '\0';
 
     /* Get UNIX-style time and display as number and string. */
