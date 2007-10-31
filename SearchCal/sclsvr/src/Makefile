@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.22 2006-12-21 15:16:05 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.23 2007-10-31 11:36:51 gzins Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2006/12/21 15:16:05  lafrasse
+# Updated progression monitoring code (moved from static-based to instance-based).
+#
 # Revision 1.21  2006/07/17 09:10:36  scetre
 # Added old scenario option
 #
@@ -74,20 +77,14 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = sclsvrServer sclsvrCLI
+EXECUTABLES     = sclsvrServer
 EXECUTABLES_L   = 
 
 #
-# <brief description of xxxxx program>
+# Main server program 
 sclsvrServer_OBJECTS   = sclsvrServer
 sclsvrServer_LDFLAGS   =
 sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr simcli
-
-#
-# <brief description of xxxxx program>
-sclsvrCLI_OBJECTS   = sclsvrCLI
-sclsvrCLI_LDFLAGS   =
-sclsvrCLI_LIBS      = MCS C++ vobs alx sclsvr simcli
 
 #
 # special compilation flags for single c sources
@@ -106,7 +103,6 @@ INCLUDES        = sclsvr.h						\
 				  sclsvrSERVER.h				\
 				  sclsvrVISIBILITY_FILTER.h		\
 				  sclsvrSCENARIO_BRIGHT_K.h		\
-				  sclsvrSCENARIO_BRIGHT_K_OLD.h	\
 				  sclsvrSCENARIO_BRIGHT_V.h		\
 				  sclsvrSCENARIO_BRIGHT_N.h		\
 				  sclsvrSCENARIO_FAINT_K.h		\
@@ -131,7 +127,6 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		\
 				   sclsvrGetStarCB				\
 				   sclsvrVISIBILITY_FILTER		\
 				   sclsvrSCENARIO_BRIGHT_K		\
-				   sclsvrSCENARIO_BRIGHT_K_OLD	\
 				   sclsvrSCENARIO_BRIGHT_V		\
 				   sclsvrSCENARIO_BRIGHT_N		\
 				   sclsvrSCENARIO_FAINT_K		\
