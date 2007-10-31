@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.10 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.11 2007-10-31 11:31:25 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.9  2006/03/28 12:58:13  scetre
  * Added parameters constraints on I/280 query
  *
@@ -40,7 +43,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_V class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.10 2006-12-21 15:16:05 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.11 2007-10-31 11:31:25 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -131,11 +134,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+
     // Add crietria on HD
     if (_criteriaListHd.Add(vobsSTAR_ID_HD, 0) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
     //////////////////////////////////////////////////////////////////////////
     // BUILD FILTER USED
     //////////////////////////////////////////////////////////////////////////
@@ -164,7 +169,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // I/196
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -172,7 +177,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // 2MASS
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -189,7 +194,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // II/225
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_CIO_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -197,7 +202,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // LBSI
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -205,7 +210,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // MERAND
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -221,7 +226,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // CHARM2
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -229,7 +234,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // II/7A
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -237,7 +242,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // BSC
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_BSC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -245,7 +250,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // SBSC
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -261,7 +266,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // DENIS_JK
     ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
