@@ -25,4 +25,19 @@
       <errSeverity>FATAL</errSeverity>
       <errFormat><![CDATA[Catalog name retrieving failed.]]></errFormat>
    </error>
+   <error id="6">
+      <errName>ALLOC_MEM</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not allocate not %d bytes]]></errFormat>
+   </error>
+   <error id="7">
+      <errName>SERVER_INSTANCIATION</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not instantiate server]]></errFormat>
+   </error>
+   <error id="8">
+      <errName>WRONG_SERVER_ID</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid '%s' server id]]></errFormat>
+   </error>
 </errorList>
