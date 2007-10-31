@@ -3,11 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.16 2007-02-04 20:50:37 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.17 2007-10-31 11:28:20 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2007/02/04 20:50:37  lafrasse
+ * Replaced GetCalStatus() by WaitForCurrentCatalogName() and IsLastCatalog().
+ * Added GetCatalogIndex() API to get the index of the catalog being queried.
+ * Added GetNbOfCatalogs() API to get the number of catalogs of the scenario.
+ *
  * Revision 1.15  2006/12/21 15:16:05  lafrasse
  * Updated progression monitoring code (moved from static-based to instance-based).
  *
@@ -65,7 +70,6 @@
  */
 #include "vobs.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
-#include "sclsvrSCENARIO_BRIGHT_K_OLD.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
 #include "sclsvrSCENARIO_FAINT_K.h"
@@ -75,44 +79,7 @@
  * Class declaration
  */
 /**
- * Brief description of the class, which ends at this dot.
- * 
- * OPTIONAL detailed description of the class follows here.
- *
- * @usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * @filename fileName1 :  usage description of fileName1
- * @filename fileName2 :  usage description of fileName2
- *
- * @n
- * @env
- * OPTIONAL. If needed, environmental variables accessed by the class. For
- * each variable, name, and usage description, as below.
- * @envvar envVar1 :  usage description of envVar1
- * @envvar envVar2 :  usage description of envVar2
- * 
- * @n
- * @warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * @n
- * @ex
- * OPTIONAL. Code example if needed
- * @n Brief example description.
- * @code
- * Insert your code example here
- * @endcode
- *
- * @sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * @sa modcppMain.C
- * 
- * @bug OPTIONAL. Bugs list if it exists.
- * @bug For example, description of the first bug
- * @bug For example, description of the second bug
- * 
- * @todo OPTIONAL. Things to forsee list, if needed. For example, 
- * @todo add other methods, dealing with operations.
- * 
+ * Server main class 
  */
 class sclsvrSERVER : public evhSERVER 
 {
@@ -134,13 +101,17 @@ public:
     virtual evhCB_COMPL_STAT GetCalCB(msgMESSAGE &msg, void*);
     virtual evhCB_COMPL_STAT GetStarCB(msgMESSAGE &msg, void*);
 
-    virtual mcsCOMPL_STAT GetCal(const char* query, miscoDYN_BUF &dynBuff, msgMESSAGE* msg);
-    virtual mcsCOMPL_STAT WaitForCurrentCatalogName(char* buffer);
-    virtual mcsLOGICAL    IsLastCatalog();
-    virtual mcsUINT32     GetNbOfCatalogs();
-    virtual mcsUINT32     GetCatalogIndex();
+    // Method to invoke command directly
+    virtual mcsCOMPL_STAT GetCal(const char* query, miscoDYN_BUF &dynBuf);
+
+
+    // Get request execution status 
+    virtual mcsCOMPL_STAT GetStatus(char* buffer, mcsINT32 timeoutInSec=300);
 
 protected:
+    virtual mcsCOMPL_STAT ProcessGetCalCmd(const char* query, 
+                                           miscoDYN_BUF &dynBuf,
+                                           msgMESSAGE* msg);
 
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -149,15 +120,11 @@ private:
     sclsvrSERVER& operator=(const sclsvrSERVER&); 
 
     // Query progression monitoring
-    mcsLOGICAL                   _progressionMessageInitFlag;
-    sdbENTRY                     _progress;
-    mcsLOGICAL                   _lastCatalog;
+    sdbENTRY  _status;
 
     // Virtual observatory
     vobsVIRTUAL_OBSERVATORY      _virtualObservatory;
-    vobsSCENARIO*                _selectedScenario;
     sclsvrSCENARIO_BRIGHT_K      _scenarioBrightK;
-    sclsvrSCENARIO_BRIGHT_K_OLD  _scenarioBrightKOld;
     sclsvrSCENARIO_BRIGHT_V      _scenarioBrightV;
     sclsvrSCENARIO_BRIGHT_N      _scenarioBrightN;
     sclsvrSCENARIO_FAINT_K       _scenarioFaintK;
