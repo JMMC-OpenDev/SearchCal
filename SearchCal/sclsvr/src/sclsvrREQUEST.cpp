@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.29 2007-06-27 14:26:49 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.30 2007-10-31 11:32:24 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29  2007/06/27 14:26:49  scetre
+ * Handled noScienceStar parameter in request
+ * Removed science star if parameter is false
+ *
  * Revision 1.28  2007/04/27 09:04:33  gzins
  * Changed diffRa, diffDec and radius parameter type; integer -> double
  *
@@ -103,7 +107,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.29 2007-06-27 14:26:49 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.30 2007-10-31 11:32:24 gzins Exp $"; 
 
 
 /* 
@@ -140,7 +144,6 @@ sclsvrREQUEST::sclsvrREQUEST()
     _expectedVisibilityError  = 0.0;
     _getCalCmd                = NULL;
     _brightFlag               = mcsTRUE;
-    _oldScenario              = mcsFALSE;
     _noScienceObject          = mcsFALSE;
     memset(_fileName, '\0', sizeof(_fileName));
 }
@@ -176,7 +179,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Copy(sclsvrREQUEST& request)
     _expectedVisibilityError  = request._expectedVisibilityError;
     _getCalCmd                = request._getCalCmd;
     _brightFlag               = request._brightFlag;
-    _oldScenario              = request._oldScenario;
     _noScienceObject          = request._noScienceObject;
     strncpy(_fileName, request._fileName, sizeof(_fileName));
 
@@ -325,7 +327,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         return mcsFAILURE;
     }
 
-    // Brightness
+    // Bright/Faint scenario
     mcsLOGICAL brightFlag = mcsTRUE;
     if (_getCalCmd->IsDefinedBright() == mcsTRUE)
     {
@@ -335,17 +337,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         }
     }
 
-    // old scenario
-    mcsLOGICAL oldScenario = mcsFALSE;
-    if (_getCalCmd->IsDefinedOldScenario() == mcsTRUE)
-    {
-        if (_getCalCmd->GetOldScenario(&oldScenario) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-    }
-
-    // science star
+    // Science star
     mcsLOGICAL noScienceStar = mcsTRUE;
     if (_getCalCmd->IsDefinedNoScienceStar() == mcsTRUE)
     {
@@ -456,11 +448,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         return mcsFAILURE;
     }
-    // Affect the old scenario flag
-    if (SetOldScenario(oldScenario) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    } 
+
     // Affect the science star flag
     if (SetNoScienceStar(noScienceStar) == mcsFAILURE)
     {
@@ -590,7 +578,7 @@ mcsCOMPL_STAT sclsvrREQUEST::ResetDiamVK()
 }
 
 /**
- * Return wether VK diameter is defined or not.
+ * Return whether VK diameter is defined or not.
  *
  * @return mcsTRUE if VK diameter is defined, mcsFALSE otherwise.
  */
@@ -641,7 +629,7 @@ mcsFLOAT sclsvrREQUEST::GetExpectedVisErr(void)
 
 
 /**
- * Specify wether the query should return bright (by default) or faint stars.
+ * Specify whether the query should return bright (by default) or faint stars.
  *
  * @param brightFlag mcsTRUE if the query should return bright starts, otherwise
  * mcsFALSE to get faint stars.
@@ -658,7 +646,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetBrightFlag(mcsLOGICAL brightFlag)
 }
 
 /**
- * Return wether the query should return bright or faint stars.
+ * Return whether the query should return bright or faint stars.
  *
  * @return mcsTRUE if the query should return bright stars, otherwise mcsFALSE
  * for faint stars.
@@ -671,37 +659,7 @@ mcsLOGICAL sclsvrREQUEST::IsBright(void)
 }
 
 /**
- * Specify wether the query should used old Scenario or new (default).
- *
- * @param oldScenario mcsTRUE if the query should used the old scenario,
- * otherwise mcsFALSE to use new scenario.
- *
- * @return Always mcsSUCCESS.
- */
-mcsCOMPL_STAT sclsvrREQUEST::SetOldScenario(mcsLOGICAL oldScenario)
-{
-    logTrace("sclsvrREQUEST::SetOldScenario()");
-    
-    _oldScenario = oldScenario;
-
-    return mcsSUCCESS;
-}
-
-/**
- * Return wether the query should return bright or faint stars.
- *
- * @return mcsTRUE if the query should return bright stars, otherwise mcsFALSE
- * for faint stars.
- */
-mcsLOGICAL sclsvrREQUEST::IsOldScenario(void)
-{
-    logTrace("sclsvrREQUEST::IsOldScenario()");
-
-    return _oldScenario;
-}
-
-/**
- * Specify wether the query should return science star in list.
+ * Specify whether the query should return science star in list or not.
  *
  * @param noScienceStar mcsTRUE if the query should return science star
  * otherwise mcsFALSE to not return science star
@@ -718,7 +676,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetNoScienceStar(mcsLOGICAL noScienceStar)
 }
 
 /**
- * Return wether the query should return bright or faint stars.
+ * Return whether the query should return bright or faint stars.
  *
  * @return mcsTRUE if the query should return science star, otherwise mcsFALSE.
  */
