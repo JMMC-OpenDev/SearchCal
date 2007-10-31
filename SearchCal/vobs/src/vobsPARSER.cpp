@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.28 2007-06-27 20:41:47 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.29 2007-10-31 11:16:17 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2007/06/27 20:41:47  gzins
+* Limited length of logged string causing segmentation fault
+*
 * Revision 1.27  2006/08/22 14:42:50  gzins
 * Used 'ucd1' instead of 'ucd' which is now used for UCD1+
 *
@@ -83,7 +86,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.28 2007-06-27 20:41:47 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.29 2007-10-31 11:16:17 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -159,7 +162,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     domimpl = gdome_di_mkref ();
 
     // Load a new document from the URI
-    logTest("Get XML document from '%.80s'", uri);
+    logTest("Get XML document from '%.4096s'", uri);
 
     msgMESSAGE msg;
     // Create a misco buffer where is put "GET http://..." (GET + uri)
