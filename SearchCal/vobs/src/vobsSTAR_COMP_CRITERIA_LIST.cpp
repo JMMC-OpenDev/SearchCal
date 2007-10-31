@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.11 2006-04-03 11:49:49 gzins Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.12 2007-10-31 11:18:47 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.11  2006/04/03 11:49:49  gzins
+* Hanlded list empty case in GetNextXxx() method
+*
 * Revision 1.10  2006/03/03 15:03:28  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -35,7 +38,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.11 2006-04-03 11:49:49 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.12 2007-10-31 11:18:47 gzins Exp $"; 
 
 /* 
  * System Headers 
@@ -117,7 +120,8 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
  * Add a criteria in the list
  *
  * @param propertyId the identifier of property.
- * @param range the range value of the criteria.
+ * @param range the range value of the criteria used when comparing float
+ * property. It is ignored when comparing string.
  * 
  * @return
  * Always mcsSUCCESS.
