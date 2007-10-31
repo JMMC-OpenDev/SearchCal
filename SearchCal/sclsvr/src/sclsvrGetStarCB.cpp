@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.33 2007-06-27 13:00:59 scetre Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.34 2007-10-31 11:29:09 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.33  2007/06/27 13:00:59  scetre
+ * Do not removed science star if present in the resulting list.
+ * Updated get star command
+ *
  * Revision 1.32  2007/05/15 08:37:16  gzins
  * Fixed bug related to thread synchronisation
  *
@@ -72,7 +76,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.33 2007-06-27 13:00:59 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.34 2007-10-31 11:29:09 gzins Exp $"; 
 
 
 /* 
@@ -134,30 +138,21 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     // Start timer log
     timlogInfoStart(msg.GetCommand());
 
-    // actionMonitor thread parameters creation
-    sclsvrMonitorActionParams                 actionMonitorParams;
-    actionMonitorParams.server              = this;
-    actionMonitorParams.message             = &msg;
-    actionMonitorParams.progressionMessage  = &_progress;
+    // Monitoring task parameters
+    sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
+    monitorTaskParams.server  = this;
+    monitorTaskParams.message = &msg;
+    monitorTaskParams.status  = &_status;
 
-    // actionMonitor thread creation and launch
-    thrdTHREAD_STRUCT                     actionMonitor;
-    actionMonitor.function       = sclsvrMonitorAction;
-    actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
-
-    // sdbAction init
-    if (_progress.Init() == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
+    // Monitoring task
+    thrdTHREAD_STRUCT       monitorTask;
+    monitorTask.function  = sclsvrMonitorTask;
+    monitorTask.parameter = (thrdFCT_ARG*)&monitorTaskParams;
     
     // Launch the thread only if SDB had been succesfully started
-    if (_progress.IsInit() == mcsTRUE)
+    if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
     {
-        if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
-        {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
-        }
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // Get star name 
@@ -236,7 +231,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         // Get first star of the list 
         sclsvrCALIBRATOR calibrator(*starList.GetNextStar(mcsTRUE));
 
-        if (_progress.Write("Done", mcsTRUE) == mcsFAILURE)
+        if (_status.Write("Done") == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
@@ -280,33 +275,18 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
         // Wait for the actionForwarder thread end
-        if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
-        {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
-        }
-        // sdbAction deletion
-        if (_progress.Destroy() == mcsFAILURE)
+        if (thrdThreadWait(&monitorTask) == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
     }
 
 
-    // Wait for the thread only if it had been started
-    if (_progress.IsInit() == mcsTRUE)
-    {
         // Wait for the actionForwarder thread end
-        if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
+        if (thrdThreadWait(&monitorTask) == mcsFAILURE)
         {
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
-    }
-
-    // sdbAction deletion
-    if (_progress.Destroy() == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
 
     // Stop timer log
     timlogStop(msg.GetCommand());
