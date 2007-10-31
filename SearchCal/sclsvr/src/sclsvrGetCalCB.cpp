@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.51 2007-06-27 14:26:49 scetre Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.52 2007-10-31 11:36:22 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.51  2007/06/27 14:26:49  scetre
+ * Handled noScienceStar parameter in request
+ * Removed science star if parameter is false
+ *
  * Revision 1.50  2007/06/27 13:00:59  scetre
  * Do not removed science star if present in the resulting list.
  * Updated get star command
@@ -160,7 +164,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.51 2007-06-27 14:26:49 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.52 2007-10-31 11:36:22 gzins Exp $"; 
 
 
 /* 
@@ -211,12 +215,12 @@ using namespace std;
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned 
  */
-mcsCOMPL_STAT sclsvrSERVER::WaitForCurrentCatalogName(char* buffer)
+mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
 {
-    logTrace("sclsvrSERVER::WaitForCurrentCatalogName()");
+    logWarning("sclsvrSERVER::WaitForCurrentCatalogName()");
 
-    // Wait for a new action
-    if (_progress.Wait(buffer, &_lastCatalog) == mcsFAILURE)
+    // Wait for an updated status
+    if (_status.Read(buffer, mcsTRUE, timeoutInSec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -224,17 +228,106 @@ mcsCOMPL_STAT sclsvrSERVER::WaitForCurrentCatalogName(char* buffer)
     return mcsSUCCESS;
 }
 
-mcsLOGICAL sclsvrSERVER::IsLastCatalog()
+/**
+ * Callback method for GETCAL command.
+ * 
+ * It handles the request contained in received message, processes it and
+ * returns the list of found calibrators.
+ *
+ * @param msg message containing request
+ *
+ * \return evhCB_NO_DELETE.
+ */
+evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 {
-    logTrace("sclsvrSERVER::IsLastCatalog()");
+    logTrace("sclsvrSERVER::GetCalCB()");
 
-    return _lastCatalog;
+    // Get calibrators
+    miscoDYN_BUF dynBuf;
+    mcsCOMPL_STAT complStatus;
+    complStatus = ProcessGetCalCmd(msg.GetBody(), dynBuf, &msg);
+
+    // Update status to inform request processing is completed 
+    if (_status.Write("0") == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+
+    // Check completion status
+    if (complStatus == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+
+    // Set reply
+    mcsUINT32 nbStoredBytes;
+    dynBuf.GetNbStoredBytes(&nbStoredBytes);
+    if (nbStoredBytes != 0)
+    {
+        msg.SetBody(dynBuf.GetBuffer());
+    }
+    else
+    {
+        msg.SetBody("");
+    }
+
+    // Send reply
+    if (SendReply(msg) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+
+    return evhCB_NO_DELETE;
 }
 
-mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff, 
-                                   msgMESSAGE* msg = NULL)
+/**
+ * Handle GETCAL command.
+ * 
+ * It handles the given query corresponding to the parameter list of GETCAL
+ * command, processes it and returns the list of found calibrators.
+ *
+ * @param msg message containing request
+ * @param dynBuf dynamical buffer where calibrator list will be stored
+ *
+ * \return evhCB_NO_DELETE.
+ */
+mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuf)
 {
-    logTrace("sclsvrSERVER::GetCal()");
+    logTrace("sclsvrSERVER::GetCalCB()");
+
+    // Get calibrators
+    mcsCOMPL_STAT complStatus;
+    complStatus = ProcessGetCalCmd(query, dynBuf, NULL);
+
+    // Update status to inform request processing is completed 
+    if (_status.Write("0") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    return complStatus;
+}
+
+/**
+ * GETCAL command processing method.
+ *
+ * This method is called by GETCAL command callback. It selects appropriated
+ * scenario, executes it and returns resulting list of calibrators
+ *
+ * @param query user query containing all command parameters in string format 
+ * @param dynBuf dynamical buffer where calibrator list will be stored
+ * @param msg message corresponding to the received command. If not NULL, a
+ * thread is started and intermediate replies are sent giving the request
+ * processing status.
+ *
+ * @return Upon successful completion returns mcsSUCCESS. Otherwise,
+ * mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query, 
+                                             miscoDYN_BUF &dynBuf, 
+                                             msgMESSAGE* msg = NULL)
+{
+    logTrace("sclsvrSERVER::ProcessGetCalCmd()");
 
     // Build the request object from the parameters of the command
     sclsvrREQUEST request;
@@ -250,42 +343,33 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
     // Start timer log
     timlogInfoStart("GETCAL");
     
-    // actionMonitor thread parameters creation
-    sclsvrMonitorActionParams                  actionMonitorParams;
-    actionMonitorParams.server              =  this;
-    actionMonitorParams.message             =  msg;
-    actionMonitorParams.progressionMessage  = &_progress;
+    // Monitoring task parameters
+    sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
+    monitorTaskParams.server  =  this;
+    monitorTaskParams.message =  msg;
+    monitorTaskParams.status  = &_status;
 
-    // actionMonitor thread creation and launch
-    thrdTHREAD_STRUCT              actionMonitor;
-    actionMonitor.function       = sclsvrMonitorAction;
-    actionMonitor.parameter      = (thrdFCT_ARG*)&actionMonitorParams;
+    // Monitoring task
+    thrdTHREAD_STRUCT       monitorTask;
+    monitorTask.function  = sclsvrMonitorTask;
+    monitorTask.parameter = (thrdFCT_ARG*)&monitorTaskParams;
 
-    // sdbAction init
-    if (_progress.Init() == mcsFAILURE)
+    // If request comes from msgMESSAGE, start monitoring task send send
+    // request progression status
+    if (msg != NULL)
     {
-        return mcsFAILURE;
-    }
-
-    // SDB starting
-    if (_progress.IsInit() == mcsTRUE)
-    {
-        // Status monitoring should be done by thread with msgMESSAGE reply.
-        if (msg != NULL)
+        // Launch the status monitoring thread
+        if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
         {
-            // Launch the status monitoring thread
-            if (thrdThreadCreate(&actionMonitor) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            return mcsFAILURE;
         }
     }
 
     // Build the list of star which will come from the virtual observatory
     vobsSTAR_LIST starList;
-    _selectedScenario = NULL;
 
     // If the request should return bright starts
+    vobsSCENARIO *scenario;
     if ((request.IsBright() == mcsTRUE) &&
         (request.GetSearchAreaGeometry() == vobsBOX))
     {
@@ -297,26 +381,18 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
             case 'J':
             case 'H':
             case 'K':
-                if (request.IsOldScenario() == mcsTRUE)
-                {
-                    // Load old Bright K Scenario
-                    _selectedScenario = &_scenarioBrightKOld;
-                }
-                else
-                {
-                    // Load Bright K Scenario
-                    _selectedScenario = &_scenarioBrightK;
-                }
+                // Load Bright K Scenario
+                scenario = &_scenarioBrightK;
                 break;
 
             case 'V':
                 // Load Bright V Scenario
-                _selectedScenario = &_scenarioBrightV;
+                scenario = &_scenarioBrightV;
                 break;
 
             case 'N':
                 // Load Bright N Scenario
-                _selectedScenario = &_scenarioBrightN;
+                scenario = &_scenarioBrightN;
                 break;
 
             default:
@@ -339,7 +415,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
         {
             case 'K':
                 // Load Faint K Scenario
-                _selectedScenario = &_scenarioFaintK;
+                scenario = &_scenarioFaintK;
                 break;
 
             default:
@@ -359,13 +435,13 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
     }
 
     // Load the scenario
-    if (_selectedScenario->Init(&request) == mcsFAILURE)
+    if (scenario->Init(&request) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Start the research in the virtual observatory
-    if (_virtualObservatory.Search(_selectedScenario, request, starList) == mcsFAILURE)
+    if (_virtualObservatory.Search(scenario, request, starList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -379,22 +455,16 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
         return mcsFAILURE;
     }
 
-    if (_progress.Write("Completing results...", mcsFALSE) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
     // Complete the calibrators list
     if (calibratorList.Complete(request) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
+    // If requested, remove the science object if it belongs to the calibrator
+    // list.
     if (request.IsNoScienceStar() == mcsTRUE)
     {
-        ////////////////////////////////////////////////////////////////////////
-        // Remove the science object if it belongs to the calibrator list.
-        ////////////////////////////////////////////////////////////////////////
         // 1) Make a copy of the calibrator list in order to create a temp list
         // containing all calibrators within 0.01 ra and dec of the user
         // coordinates
@@ -408,9 +478,8 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
         // 3) Apply the filter to the copied calibrator list
         distanceFilter.Apply(&scienceObjects);
 
-        // 4) Remove from the original calibrator list any star left by the 
-        // filter
-        // in the temporary list
+        // 4) Remove from the original calibrator list any star left by the
+        // filter in the temporary list
         vobsSTAR* currentStar = scienceObjects.GetNextStar(mcsTRUE);
         while (currentStar != NULL)
         {
@@ -423,16 +492,9 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
             logInfo("science star %s has been removed", starId);
             calibratorList.Remove(*currentStar);
             currentStar = scienceObjects.GetNextStar();
-
         }
-        ////////////////////////////////////////////////////////////////////////
     }
     
-    if (_progress.Write("Done", mcsTRUE) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
     // Pack the list result in a buffer in order to send it
     if (calibratorList.Size() != 0)
     { 
@@ -441,21 +503,21 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
         char* voHeader = "SearchCal software: http://www.mariotti.fr/aspro_page.htm (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
         // Get the software name and version
         mcsSTRING32 softwareVersion;
-        snprintf(softwareVersion, sizeof(softwareVersion), "%s v%s", "SearchCal",
-                 sclsvrVERSION);
+        snprintf(softwareVersion, sizeof(softwareVersion), 
+                 "%s v%s", "SearchCal", sclsvrVERSION);
 
         // Give back CDATA for msgMESSAGE reply.
         if (msg != NULL)
         {
-            calibratorList.Pack(&dynBuff);
+            calibratorList.Pack(&dynBuf);
         }
         else
         {
             // Otherwise give back a VOTable
-            dynBuff.Reset();
+            dynBuf.Reset();
             if (calibratorList.GetVOTable(voHeader, softwareVersion, 
                                           requestString, xmlOutput.c_str(),
-                                          &dynBuff) == mcsFAILURE)
+                                          &dynBuf) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -489,27 +551,23 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
     }
     else
     {
-        dynBuff.Reset();
+        dynBuf.Reset();
     }
 
-    // Wait for the thread only if it had been started
-    if (_progress.IsInit() == mcsTRUE)
-    {
-        // Status monitoring should be done by thread with msgMESSAGE reply.
-        if (msg != NULL)
-        {
-            // Wait for the actionForwarder thread end
-            if (thrdThreadWait(&actionMonitor) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-        }
-    }
-
-    // sdbAction deletion
-    if (_progress.Destroy() == mcsFAILURE)
+    // Informing the request is completed
+    if (_status.Write("0") == mcsFAILURE)
     {
         return mcsFAILURE;
+    }
+
+    // Monitoring task is started only when msgMESSAGE is received.
+    if (msg != NULL)
+    {
+        // Wait for the monitoring task end
+        if (thrdThreadWait(&monitorTask) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
     // Stop timer log
@@ -517,38 +575,5 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuff,
     
     return mcsSUCCESS;
 }
-
-evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
-{
-    logTrace("sclsvrSERVER::GetCalCB()");
-
-    // Get calibrators
-    miscoDYN_BUF dynBuff;
-    if (GetCal(msg.GetBody(), dynBuff, &msg) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    // Set reply
-    mcsUINT32 nbStoredBytes;
-    dynBuff.GetNbStoredBytes(&nbStoredBytes);
-    if (nbStoredBytes != 0)
-    {
-        msg.SetBody(dynBuff.GetBuffer());
-    }
-    else
-    {
-        msg.SetBody("");
-    }
-
-    // Send reply
-    if (SendReply(msg) == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
-
-    return evhCB_NO_DELETE;
-}
-
 
 /*___oOo___*/
