@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrPrivate.h,v 1.8 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrPrivate.h,v 1.9 2007-10-31 11:26:30 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.7  2006/05/12 08:27:45  mella
  * Add general math.h inclusion
  *
@@ -62,23 +65,22 @@ extern "C" {
 
 
 /**
- * Structure used to pass two values as one paramter to a thrdTHREAD function.
+ * Parameters for the monitoring task
  */
 typedef struct
 {
     sclsvrSERVER*  server;   /**< pointer on a sclsvrSERVER instance. */
-
     msgMESSAGE*    message;  /**< pointer on a msgMESSAGE instance. */
+    sdbENTRY*      status;   /**< pointer on a sdbENTRY instance. */
 
-    sdbENTRY*      progressionMessage;   /**< pointer on a sdbENTRY instance. */
-
-} sclsvrMonitorActionParams;
+} sclsvrMONITOR_TASK_PARAMS;
 
 #ifdef __cplusplus
 }
 #endif
 
-thrdFCT_RET sclsvrMonitorAction(thrdFCT_ARG param);
+// Monitoring task entry function
+thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param);
 
 
 #endif /*!sclsvrPrivate_H*/
