@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.24 2006-04-10 14:51:29 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.25 2007-10-31 11:22:32 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2006/04/10 14:51:29  gzins
+* Added ClearValue()
+*
 * Revision 1.23  2006/03/03 15:03:28  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -80,7 +83,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.24 2006-04-10 14:51:29 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.25 2007-10-31 11:22:32 gzins Exp $"; 
 
 
 /* 
@@ -267,7 +270,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
         else
         {
             // Just copy given value
-            strcpy(_value, value);
+            memset(_value, '\0', sizeof(_value)); 
+            strncpy(_value, value, sizeof(_value) - 1);
         }
 
         _confidenceIndex = confidenceIndex;
