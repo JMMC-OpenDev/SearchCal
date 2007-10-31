@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.45 2007-02-04 20:23:11 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.46 2007-10-31 11:18:21 gzins Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.45  2007/02/04 20:23:11  lafrasse
+* Added Init() API to enable polymorphism.
+* Added GetCatalogIndex() API to get the index of the catalog being queried.
+* Added GetNbOfCatalogs() API to get the number of catalogs of the scenario.
+*
 * Revision 1.44  2006/12/21 15:10:46  lafrasse
 * Updated progression monitoring code (moved from static-based to instance-based).
 *
@@ -142,7 +147,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.45 2007-02-04 20:23:11 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.46 2007-10-31 11:18:21 gzins Exp $"; 
 
 
 /* 
@@ -290,7 +295,16 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32                   catalogName,
  * Execute the scenario
  *
  * The methods execute the scenario which had been loaded before. It will
- * read each entry and ask the specific catalog.
+ * read each entry and query the specific catalog.
+ * The scenario execution progress is reported using sdbENTRY instance given to
+ * constructor. It writes a message having the following format:
+ *      &lt;status&gt; &lt;catalog name&gt; &lt;catalog number&gt; 
+ *      &lt;number of catalogs&gt;
+ * where
+ *  <li> &lt;status&gt; is 1 meaning 'In progress'
+ *  <li> &lt;catalog name&gt; is the name of catalog currently consulted
+ *  <li> &lt;catalog number&gt; is the catalog number in the list
+ *  <li> &;number of catalogs&gt; is the number of catalogs in the list
  *
  * @param starList vobsSTAR_LIST which is the result of the interrogation,
  * this is the last list return of the last interrogation.
@@ -363,9 +377,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // Write the current action in the shared database
             mcsSTRING256 message;
             snprintf(message, sizeof(message),
-                     "Looking in '%s' catalog (%d/%d)...",
+                     "1\t%s\t%d\t%d",
                      catalog, (_catalogIndex + 1), _nbOfCatalogs);
-            if (_progress->Write(message, mcsFALSE) == mcsFAILURE)
+            if (_progress->Write(message) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
