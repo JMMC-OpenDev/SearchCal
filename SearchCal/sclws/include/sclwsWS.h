@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.h,v 1.4 2007-07-03 17:07:58 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.h,v 1.5 2007-10-31 11:45:12 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2007/07/03 17:07:58  lafrasse
+ * Corrected connection port number.
+ *
  * Revision 1.3  2007/07/03 17:00:03  lafrasse
  * Added support for query cancellation.
  *
@@ -36,49 +39,23 @@
 //gsoap ns service name: sclws
 //gsoap ns service style: rpc
 //gsoap ns service encoding: literal
-//gsoap ns service location: http://jmmc.fr:8078
+//gsoap ns service location: http://jmmc.fr:8079
 //gsoap ns schema namespace: urn:sclws
-
-
-/*
- * sclwsGETSTAR Web Service.
- * @TODO implement
- */
-/*
-class sclwsGETSTAR_RESPONSE
-{
-    float magnitude;
-
-    char* ra;
-    char* dec;
-};
-int ns__GetStar(std::string, sclwsGETSTAR_RESPONSE&);
-*/
-
 
 /*
  * sclwsGETCAL Web Service.
  */
-/* Give back an ID later used to follow a GetCal query progression. */
-int ns__GetCalAsyncID(char**);
+/* Get an ID used by all Web Service related functions */
+int ns__GetCalGetId(char**);
 
-/* Launch a GetCal query. */
-int ns__GetCalAsyncQuery(char*, char*, char**);
+/* Query server to get calibrator list */
+int ns__GetCalQuery(char*, char*, char**);
 
-/* Give back the name of the current catalog beeing queried. */
-int ns__GetCalWaitForCurrentCatalogName(char*, char**);
+/* Get status of the query */
+int ns__GetCalGetStatus(char*, char**);
 
-/* Give back the index of the current catalog being queried. */
-int ns__GetCalCurrentCatalogIndex(char*, int*);
-
-/* Give back the total number of catalogs to be queried. */
-int ns__GetCalNbOfCatalogs(char*, int*);
-
-/* Give back the last catalogs flag. */
-int ns__GetCalIsLastCatalog(char*, bool*);
-
-/* Abort the work done under the given ID. */
-int ns__GetCalCancelID(char*, bool*);
+/* Abort the query */
+int ns__GetCalCancel(char*, bool*);
 
 
 #endif /*!sclwsWS_H*/
