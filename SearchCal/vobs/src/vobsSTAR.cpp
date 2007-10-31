@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.72 2007-09-12 10:13:52 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.73 2007-10-31 11:21:12 gzins Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.72  2007/09/12 10:13:52  lafrasse
+* Changed catalog identifier property types from FLOAT to STRING.
+*
 * Revision 1.71  2006/08/22 14:45:08  gzins
 * Improved error handling in GetId() method.
 * Check RA/DEC is set, before calling GetRa()/GetDec() method
@@ -193,7 +196,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.72 2007-09-12 10:13:52 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.73 2007-10-31 11:21:12 gzins Exp $"; 
 
 /*
  * System Headers
@@ -996,6 +999,46 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                     return mcsFALSE;
                 }
             }
+            // If property is a sting
+            else if (GetProperty(propertyId)->GetType() == vobsSTRING_PROPERTY)
+            {
+                const char *val1Str, *val2Str;
+                // Get value of the property id
+                if (IsPropertySet(propertyId) == mcsTRUE)
+                {
+                    val1Str = GetPropertyValue(propertyId);
+                    if (val1Str == NULL)
+                    {
+                        errCloseStack();
+                        return mcsFALSE;
+                    }
+                }
+                else
+                {
+                    return mcsFALSE;
+                }    
+                if (star.IsPropertySet(propertyId) == mcsTRUE)
+                {
+                    val2Str = star.GetPropertyValue(propertyId);
+                    if (val2Str == NULL)
+                    {
+                        errCloseStack();
+                        return mcsFALSE;
+                    } 
+                }
+                else
+                {
+                    return mcsFALSE;
+                }    
+                if (strcmp(val1Str, val2Str) == 0)
+                {
+                    return mcsTRUE;
+                }
+                else
+                {
+                    return mcsFALSE;
+                }
+            }
             else
             {
                 // Get value of the property id
@@ -1177,7 +1220,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     logTrace("vobsSTAR::AddProperties()");
 
-    AddProperty(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, "-",
+    AddProperty(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, "-", "%.0f",
                 "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=HD${HD}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
                 "HD identifier, click to call Simbad on this object");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, "-");  
