@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.22 2007-06-27 14:25:42 scetre Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.23 2007-10-31 11:25:30 gzins Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.22  2007/06/27 14:25:42  scetre
+ Added noScienceStar parameter default is true
+
  Revision 1.21  2007/04/27 09:02:36  gzins
  Change diffRa, diffDec and radius parameter type; integer -> double
 
@@ -180,7 +183,7 @@
             <name>bright</name>
             <type>boolean</type>
             <defaultValue><boolean>true</boolean></defaultValue>
-            <desc>specify wether the query should return bright (by default) or faint stars</desc>
+            <desc>specify whether the query should return bright (by default) or faint stars</desc>
         </param>
         <param optional="true">
             <name>visErr</name>
@@ -191,16 +194,10 @@
             <desc>expected visibility error</desc>
         </param>
         <param optional="true">
-            <name>oldScenario</name>
-            <type>boolean</type>
-            <defaultValue><boolean>false</boolean></defaultValue>
-            <desc>specify wether an old scenario should be used</desc>
-        </param>
-        <param optional="true">
             <name>noScienceStar</name>
             <type>boolean</type>
             <defaultValue><boolean>true</boolean></defaultValue>
-            <desc>specify wether the science has to be retreived in the list</desc>
+            <desc>specify whether the science has to be removed from the list or not</desc>
         </param>
     </params>        
 </cmd>

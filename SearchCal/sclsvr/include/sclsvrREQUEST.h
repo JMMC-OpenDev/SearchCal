@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.21 2007-06-27 14:26:49 scetre Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.22 2007-10-31 11:25:19 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2007/06/27 14:26:49  scetre
+ * Handled noScienceStar parameter in request
+ * Removed science star if parameter is false
+ *
  * Revision 1.20  2006/10/10 15:50:43  lafrasse
  * Changed XML Serialization in VOTable PARAM.
  *
@@ -147,13 +151,9 @@ public:
     virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
     virtual const char*   GetFileName(void);
 
-    // Brightness
+    // Bright/Faint scenario
     virtual mcsCOMPL_STAT SetBrightFlag(mcsLOGICAL brightFlag);
     virtual mcsLOGICAL    IsBright(void);
-
-    // Scenario
-    virtual mcsCOMPL_STAT SetOldScenario(mcsLOGICAL oldScenario);
-    virtual mcsLOGICAL    IsOldScenario();
 
     // Science star
     virtual mcsCOMPL_STAT SetNoScienceStar(mcsLOGICAL noScienceStar);
@@ -175,7 +175,6 @@ private:
     mcsLOGICAL    _diamVKDefined;
     mcsFLOAT      _expectedVisibilityError;
     mcsLOGICAL    _brightFlag;
-    mcsLOGICAL    _oldScenario;    
     mcsSTRING256  _fileName;
     mcsLOGICAL    _noScienceObject;
 };
