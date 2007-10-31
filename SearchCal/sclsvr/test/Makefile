@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2007-05-11 15:52:23 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.12 2007-10-31 11:40:01 gzins Exp $"
 #
 # Makefile of sclsvr test module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2007/05/11 15:52:23  gzins
+# Added sclsvrTestBright_BD+23_492 and sclsvrTestBright_HD_103945 tests
+#
 # Revision 1.10  2006/08/25 06:58:56  gzins
 # New name for tests related to 'bright' scenario
 #
@@ -52,16 +55,20 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = sclsvrTestCalibrator 
-EXECUTABLES_L   = 
+EXECUTABLES     =  
+EXECUTABLES_L   = sclsvrTestCALIBRATOR sclsvrTestSERVER
 
 #
-# <brief description of xxxxx program>
+# Test program for sclsvrCALIBRATOR class 
+sclsvrTestCALIBRATOR_OBJECTS   = sclsvrTestCALIBRATOR
+sclsvrTestCALIBRATOR_LDFLAGS   = 
+sclsvrTestCALIBRATOR_LIBS      = MCS C++ sclsvr vobs alx simcli
 
-sclsvrTestCalibrator_OBJECTS   = sclsvrTestCalibrator
-sclsvrTestCalibrator_LDFLAGS   = 
-sclsvrTestCalibrator_LIBS      = MCS C++ sclsvr vobs alx simcli
-
+#
+# Test program for sclsvrSERVER class 
+sclsvrTestSERVER_OBJECTS   = sclsvrTestSERVER
+sclsvrTestSERVER_LDFLAGS   = 
+sclsvrTestSERVER_LIBS      = MCS C++ sclsvr vobs alx simcli
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
