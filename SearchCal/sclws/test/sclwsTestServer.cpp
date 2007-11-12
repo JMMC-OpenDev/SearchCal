@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsTestServer.cpp,v 1.1 2007-10-31 11:52:42 gzins Exp $"
+ * "@(#) $Id: sclwsTestServer.cpp,v 1.2 2007-11-12 10:32:15 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2007/10/31 11:52:42  gzins
+ * Created from sclwsGetCal program
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  * Test program implenting a clinet to web service
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsTestServer.cpp,v 1.1 2007-10-31 11:52:42 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsTestServer.cpp,v 1.2 2007-11-12 10:32:15 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -88,7 +91,7 @@ thrdFCT_RET sclwsGetCalTask(thrdFCT_ARG param)
     char*  result  = NULL;
 
     // Launch the GETCAL query
-    soap_call_ns__GetCalQuery(&v_soap, sclwsURL, "", taskId, query, &result);
+    soap_call_ns__GetCalSearchCal(&v_soap, sclwsURL, "", taskId, query, &result);
 
     // Check completion status
     if (v_soap.error)
@@ -127,7 +130,7 @@ void sclwsSignalHandler (int signalNumber)
     soap_init(&v_soap);
     soap_set_namespaces(&v_soap, soap_namespaces);
     bool  isOk  = false;
-    soap_call_ns__GetCalCancel(&v_soap, sclwsURL, "", sclwsTaskId, &isOk);
+    soap_call_ns__GetCalCancelSession(&v_soap, sclwsURL, "", sclwsTaskId, &isOk);
     if (v_soap.error)
     {
         soap_print_fault(&v_soap, stderr);
@@ -183,7 +186,7 @@ int main(int argc, char *argv[])
     soap_set_namespaces(&v_soap, soap_namespaces);
 
     // Fetch the a CGETCAL WebService communication ID
-    soap_call_ns__GetCalGetId(&v_soap, sclwsURL, "", &sclwsTaskId);
+    soap_call_ns__GetCalOpenSession(&v_soap, sclwsURL, "", &sclwsTaskId);
     if (v_soap.error)
     {
         soap_print_fault(&v_soap, stderr);
@@ -214,8 +217,8 @@ int main(int argc, char *argv[])
     {
         // Ask and wait for the currently quereid catalog name
         logDebug("Waiting for the Catalog Name.");
-        soap_call_ns__GetCalGetStatus(&v_soap, sclwsURL, "", 
-                                      sclwsTaskId, &status);
+        soap_call_ns__GetCalQueryStatus(&v_soap, sclwsURL, "", 
+                                        sclwsTaskId, &status);
         if (v_soap.error)
         {
             soap_print_fault(&v_soap, stderr);

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.h,v 1.6 2007-10-31 11:46:56 gzins Exp $"
+ * "@(#) $Id: sclwsWS.h,v 1.7 2007-11-12 10:32:15 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2007/10/31 11:46:56  gzins
+ * Set web-service port to 8078
+ *
  * Revision 1.5  2007/10/31 11:45:12  gzins
  * Updated web-service API
  *
@@ -48,17 +51,17 @@
 /*
  * sclwsGETCAL Web Service.
  */
-/* Get an ID used by all Web Service related functions */
-int ns__GetCalGetId(char**);
+/* Get a session Id used by all the Web Service related functions */
+int ns__GetCalOpenSession(char**);
 
-/* Query server to get calibrator list */
-int ns__GetCalQuery(char*, char*, char**);
+/* Query the server to get calibrator list */
+int ns__GetCalSearchCal(char*, char*, char**);
 
 /* Get status of the query */
-int ns__GetCalGetStatus(char*, char**);
+int ns__GetCalQueryStatus(char*, char**);
 
-/* Abort the query */
-int ns__GetCalCancel(char*, bool*);
+/* Abort the given session */
+int ns__GetCalCancelSession(char*, bool*);
 
 
 #endif /*!sclwsWS_H*/

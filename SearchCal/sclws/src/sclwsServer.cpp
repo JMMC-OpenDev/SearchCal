@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.7 2007-07-03 17:07:58 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.8 2007-11-12 10:32:15 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2007/07/03 17:07:58  lafrasse
+ * Corrected connection port number.
+ *
  * Revision 1.6  2007/07/03 17:00:03  lafrasse
  * Added support for query cancellation.
  *
@@ -79,7 +82,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.7 2007-07-03 17:07:58 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.8 2007-11-12 10:32:15 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -102,6 +105,7 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "evh.h"
 
 
 /*
@@ -124,7 +128,7 @@ struct soap  v_soap;    // SOAP execution context
 /*
  * Local Functions
  */
-void* threadFunction(void* p_tsoap)
+void* sclwsJobHandler(void* p_tsoap)
 {
     struct soap* v_soap = (struct soap*) p_tsoap;
 
@@ -205,9 +209,12 @@ int main(int argc, char *argv[])
         sclwsExit(EXIT_FAILURE);
     }
 
-    // Set stdout and file log levels 
-    logSetStdoutLogLevel(logQUIET);
-    logSetFileLogLevel(logINFO);
+    // Used to handle common comand-line options (log levels, ...)
+    evhTASK cliHandler;
+    if (cliHandler.Init(argc, argv) == mcsFAILURE)
+    {
+        exit (EXIT_FAILURE);
+    }
 
     // @TODO : manage a "garbage collector" to close pending connections
 
@@ -242,7 +249,7 @@ int main(int argc, char *argv[])
         
         // Fork the SOAP context end start a new thread to handle the request
         v_tsoap = soap_copy(&v_soap);
-        int status = pthread_create(&v_tid, NULL, (void*(*)(void*))threadFunction, (void*)v_tsoap);
+        int status = pthread_create(&v_tid, NULL, (void*(*)(void*))sclwsJobHandler, (void*)v_tsoap);
         if (status != 0)
         {
             // error handling
