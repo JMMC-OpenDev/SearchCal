@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.91 2007-05-11 15:49:57 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.92 2007-11-14 15:52:03 gzins Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.91  2007/05/11 15:49:57  gzins
+ * Ignored I magnitude from DENIS catalog when saturated (faint case)
+ * Computed V-K diameter when V is coming from I/280 (faint case)
+ * Added test on paralax error (Perr/P must be less than 25%) (bright case)
+ * Corrected K magnitude when read from 2mass, Merand or J-K Denis catalogs
+ *
  * Revision 1.90  2006/08/25 06:19:33  gzins
  * Fixed bug when computing Cousin magnitudes; they were computed even if Johnson magnitudes were not set.
  * Fixed test on I magnitude to know whether it came from CDS or it is computed
@@ -233,7 +239,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.91 2007-05-11 15:49:57 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.92 2007-11-14 15:52:03 gzins Exp $"; 
 
 
 /* 
@@ -1882,6 +1888,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     {
         return mcsFAILURE;
     }
+
+    // If visibility has been computed, diameter (coming from catalog or
+    // computed) must be considered as OK.
+    SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP);
 
     // If the observed band is N, computed visibility with wlen = 8 and 13 um
     if (strcmp(request.GetSearchBand(), "N") == 0)
