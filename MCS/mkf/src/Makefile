@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.15 2007-02-22 12:12:37 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.16 2007-11-15 08:09:04 mella Exp $"
 #
 # Makefile for MCS customization of make
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2007/02/22 12:12:37  gzins
+# No longer generate man pages
+#
 # Revision 1.14  2005/08/19 14:01:20  mella
 # Typo
 #
@@ -102,7 +105,8 @@ SCRIPTS         = mkfBuildDocIndex \
                   mkfMakeTclScriptDependencies \
                   mkfMakeTclScript \
                   mkfMakeScriptDependencies \
-                  mkfMakeScript
+                  mkfMakeScript\
+				  mkfMakeXslPath
 SCRIPTS_L       =
 
 #
