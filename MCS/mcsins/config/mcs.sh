@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.12 2007-03-22 14:10:36 mella Exp $
+# Version: $Id: mcs.sh,v 1.13 2007-11-19 13:41:31 gzins Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2007/03/22 14:10:36  mella
+# Add 2 alias
+#
 # Revision 1.11  2007/03/15 15:24:39  gzins
 # Put JAVA_HOME/bin at the first position in PATH
 #
@@ -177,7 +180,7 @@ alias macami='make clean all man install'
 alias setMcsRelease='source $MCSTOP/DEVELOPMENT/bin/mcscfgSetRelease'
 alias tat=tatTestDriver
 
-# Functions
+# List of functions
 # Function to create .h and .cpp files for a C++ class in the right
 # directories
 ctooGetTemplateForCppClass ()
@@ -248,4 +251,3 @@ then
     }
     fi
 fi
-
