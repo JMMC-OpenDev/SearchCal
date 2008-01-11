@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeXslPath.sh,v 1.1 2007-11-15 08:09:04 mella Exp $"
+# "@(#) $Id: mkfMakeXslPath.sh,v 1.2 2008-01-11 13:10:13 laogtool Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2007/11/15 08:09:04  mella
+# Add new mkfMakeXslPath script
+#
 #
 #************************************************************************
 
@@ -42,6 +45,8 @@ do
         XSLTPATH+=":$rootDir/config"
     fi
 done
+# add default db area path
+XSLTPATH+=":${MCSDATA}/db/${MCSENV}/"
 echo $XSLTPATH
 #
 # ___oOo___
