@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.15 2005-10-10 12:00:38 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.16 2008-02-13 07:17:18 mella Exp $"
 #
 # Makefile of misc Library
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2005/10/10 12:00:38  lafrasse
+# Added miscLocateDir
+#
 # Revision 1.14  2005/02/15 10:26:22  gzins
 # Removed unused target
 #
@@ -56,13 +59,13 @@ EXECUTABLES_L   =
 #
 # 
 miscLocateFile_OBJECTS   = miscLocateFile
-miscLocateFile_LDFLAGS   = -lgdome
+miscLocateFile_LDFLAGS   = $(MCSSTD_LIBLIST)
 miscLocateFile_LIBS      = mcs log err misc
 
 #
 # 
 miscLocateDir_OBJECTS   = miscLocateDir
-miscLocateDir_LDFLAGS   = -lgdome
+miscLocateDir_LDFLAGS   = $(MCSSTD_LIBLIST)
 miscLocateDir_LIBS      = mcs log err misc
 
 #
