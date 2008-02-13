@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.21 2005-02-15 11:55:05 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.22 2008-02-13 08:07:44 mella Exp $"
 #
 # Makefile of msg
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.21  2005/02/15 11:55:05  gzins
+# Removed unused target
+#
 # Revision 1.20  2005/02/09 16:42:26  lafrasse
 # Added msgMESSAGE_FILTER class to manage message queues
 #
@@ -60,11 +63,11 @@ msgManager_OBJECTS           = msgManager        \
 							   msgPROCESS        \
 							   msgPROCESS_LIST   \
 							   msgMANAGER
-msgManager_LDFLAGS           = -lgdome
+msgManager_LDFLAGS           = $(MCSSTD_LIBLIST)
 msgManager_LIBS              = mcs log err cmd misc env msg C++
 
 msgSendCommand_OBJECTS       = msgSendCommand
-msgSendCommand_LDFLAGS       = -lgdome
+msgSendCommand_LDFLAGS       = $(MCSSTD_LIBLIST)
 msgSendCommand_LIBS          = mcs log err cmd misc env msg C++
 
 #
