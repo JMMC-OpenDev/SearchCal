@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.23 2006-09-25 05:37:36 gzins Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.24 2008-02-13 07:42:23 mella Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.23  2006/09/25 05:37:36  gzins
+# Added -ffloat-store C compilation option
+#
 # Revision 1.22  2006/03/20 14:45:45  gzins
 # Added -DMCS flag
 #
@@ -409,7 +412,7 @@ ifeq ($(platform),Linux)
     XLIB_DEFAULT  = -L/usr/X11R6/lib     
     MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -ltimlog -lthrd
     MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lmisco -lenv -lcmd -lmsg -lsdb -levh -lgwt
-    MCSSTD_LIBLIST       := -lgdome -lm
+    MCSSTD_LIBLIST       := -lgdome -lm -lxml2 -lglib-2.0
     MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)  
     MCSCPP_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(MCSCPP_LIBLIST) $(NOSHARED_OFF) $(MCSSTD_LIBLIST)
 endif
@@ -539,7 +542,8 @@ endif
 TOOLS_INC := -I/usr/include/libxml2/ \
              -I/usr/include/libgdome \
              -I/usr/lib/glib-2.0/include/ \
-             -I/usr/include/glib-2.0 
+             -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include
+	
 
 #
 # ... for JMMC software
@@ -606,8 +610,9 @@ L_PATH := $(L_PATH) $(TOOLS_LIB)
 # search path, the -I- option is added (see Using and Porting GNU CC
 # for version 2.5, Oct 93, p.48, 3.12 Options for directory searching)
 #
-
-I_PATH := -I- $(I_PATH)
+# I_PATH := -I- $(I_PATH)
+# -I- has been replaced by -Iquote with gcc4.X
+I_PATH := -Iquote $(I_PATH)
 
 #
 # REMARK about L_PATH
