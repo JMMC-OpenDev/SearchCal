@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarList.cpp,v 1.9 2006-03-03 15:17:43 scetre Exp $"
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.10 2008-03-10 07:52:16 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2006/03/03 15:17:43  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.8  2005/12/07 16:49:18  lafrasse
  * Added support for 'description' attribute in VOTable column descriptors FIELD.
  *
@@ -32,7 +35,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarList.cpp,v 1.9 2006-03-03 15:17:43 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarList.cpp,v 1.10 2008-03-10 07:52:16 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -94,7 +97,8 @@ int main(int argc, char *argv[])
     if (starList.SaveToVOTable("starList.xml",
                                "JMMC_team@Grenoble.france",
                                "vobsTestStarList v?? :)",
-                               "No request for this one...") == mcsFAILURE)
+                               "No request for this one...",
+                               "No XML request either.") == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
