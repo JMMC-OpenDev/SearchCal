@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.29 2007-10-31 11:16:17 gzins Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.30 2008-03-10 07:50:22 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.29  2007/10/31 11:16:17  gzins
+* Increased size of logged message related to HTTP request
+*
 * Revision 1.28  2007/06/27 20:41:47  gzins
 * Limited length of logged string causing segmentation fault
 *
@@ -86,7 +89,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.29 2007-10-31 11:16:17 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.30 2008-03-10 07:50:22 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -179,12 +182,14 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     {
         return mcsFAILURE;
     }
+    logTrace("URI = %s", uri);
+
     // Create a misco buffer whe is put all the CDS return
     miscoDYN_BUF completeReturnBuffer;
 
     // return string
     string returnString;
-    
+
     // Create a socket client
     msgSOCKET_CLIENT clientSocket;
     // Set Time out of the socket

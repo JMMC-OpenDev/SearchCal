@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.73 2007-10-31 11:21:12 gzins Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.74 2008-03-10 07:50:22 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.73  2007/10/31 11:21:12  gzins
+* Updated IsSame() to support string star property comparison
+*
 * Revision 1.72  2007/09/12 10:13:52  lafrasse
 * Changed catalog identifier property types from FLOAT to STRING.
 *
@@ -196,7 +199,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.73 2007-10-31 11:21:12 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.74 2008-03-10 07:50:22 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1194,7 +1197,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
 {
     logTrace("vobsSTAR::AddProperty()");
 
-    // Verify that hte desired property does not already exist
+    // Verify that the desired property does not already exist
     if (_propertyList.find(id) != _propertyList.end())
     {
         errAdd(vobsERR_DUPLICATED_PROPERTY, id);

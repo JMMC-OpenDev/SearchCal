@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.32 2007-06-27 20:41:47 gzins Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.33 2008-03-10 07:50:22 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.32  2007/06/27 20:41:47  gzins
+* Limited length of logged string causing segmentation fault
+*
 * Revision 1.31  2007/05/11 09:01:21  gzins
 * No longer retrieve J and K magnitudes from DENIS
 *
@@ -101,7 +104,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.32 2007-06-27 20:41:47 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.33 2008-03-10 07:50:22 lafrasse Exp $"; 
 
 
 /* 
@@ -324,7 +327,7 @@ mcsUINT32 vobsCDATA::GetNbParams(void)
 /**
  * Returns the next parameter description in the CDATA section.
  *
- * This method returns the pointers to the name and teh UCD of the next
+ * This method returns the pointers to the name and the UCD of the next
  * parameter of the CDATA. If \em init is mcsTRUE, it returns the description of
  * the first parameter.
  * 
@@ -477,7 +480,7 @@ mcsUINT32 vobsCDATA::GetNbLines(void)
  */
 mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
 {
-    logTrace("vobsCDATA::Load(file)");
+    logTrace("vobsCDATA::LoadFile()");
     
     // Use miscoDYN_BUF method to load file into the dynBuf of the class
     if (miscoDYN_BUF::LoadFile(fileName, "#") == mcsFAILURE)
@@ -504,7 +507,7 @@ mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
  */
 mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
 {
-    logTrace("vobsCDATA::Load(dynBuf)");
+    logTrace("vobsCDATA::LoadBuffer(dynBuf)");
 
     // Get the content of the buffer and copy it in the CDATA
     if (AppendString(buffer) == mcsFAILURE)
@@ -583,7 +586,6 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
  */
 char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
 {
-
     // object identifiers 
     if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
     {
@@ -613,7 +615,7 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         }
     }
 
-    // object identifier
+    // Object identifier
     if (strcmp(ucdName, "ID_MAIN") == 0)
     {
         if (strcmp(paramName, "DENIS") == 0)
@@ -699,4 +701,5 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
     // No property corresponding to the parameter name/UCD
     return NULL;
 }
+
 /*___oOo___*/
