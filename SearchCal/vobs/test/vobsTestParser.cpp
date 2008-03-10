@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestParser.cpp,v 1.6 2006-03-03 15:17:43 scetre Exp $"
+ * "@(#) $Id: vobsTestParser.cpp,v 1.7 2008-03-10 07:53:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/03/03 15:17:43  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.5  2005/11/16 10:45:14  scetre
  * Updated vobs test
  *
@@ -23,7 +26,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestParser.cpp,v 1.6 2006-03-03 15:17:43 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestParser.cpp,v 1.7 2008-03-10 07:53:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -66,12 +69,10 @@ int main(int argc, char *argv[])
     // Initialize MCS services
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        // Error handling if necessary
-        
         // Exit from the application with FAILURE
         exit (EXIT_FAILURE);
     }
-    logSetStdoutLogLevel(logTEST);
+    logSetStdoutLogLevel(logTRACE);
 
     logInfo("Starting ...");
 
@@ -79,7 +80,7 @@ int main(int argc, char *argv[])
     vobsPARSER    parser;
     char          *uri;
 
-    uri = "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280";
+    uri = "http://vizier.u-strasbg.fr/viz1bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*";
     logTest("Try to retreive the xml file at the URL: %s", uri);
     if (parser.Parse(uri, "I/280", starList) == mcsFAILURE)
     {

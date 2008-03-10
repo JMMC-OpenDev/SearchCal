@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.12 2006-08-25 05:56:35 gzins Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.13 2008-03-10 07:53:42 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2006/08/25 05:56:35  gzins
+* Removed useless errors
+*
 * Revision 1.11  2006/03/03 15:03:28  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -47,7 +50,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.12 2006-08-25 05:56:35 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.13 2008-03-10 07:53:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -311,9 +314,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
 }
 
 /**
- * Build the destination part of the asking.
+ * Build the destination part of the query.
  *
- * Build the destination part of the asking. All catalog files are located on
+ * Build the destination part of the query. All catalog files are located on
  * web server. It is possible to find them on the URL : 
  * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
  *
@@ -321,9 +324,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 {
-    logTrace("vobsREMOTE_CATALOG::WriteQueryURI()");
+    logTrace("vobsREMOTE_CATALOG::WriteQueryURIPart()");
 
-    if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")
+    if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz1bin/")
         == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -351,7 +354,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
 {
-    logTrace("vobsREMOTE_CATALOG::GetAskingConstant()");
+    logTrace("vobsREMOTE_CATALOG::WriteQueryConstantPart()");
 
     if (miscDynBufAppendString(&_query,
                                "&-file=-c&-c.eq=J2000&-c.r=5&-c.u=arcsec")
@@ -385,7 +388,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsREMOTE_CATALOG::GetAskingSpecificParameters()");
+    logTrace("vobsREMOTE_CATALOG::WriteQuerySpecificPart()");
 
     
     return mcsSUCCESS;
@@ -408,7 +411,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logTrace("vobsREMOTE_CATALOG::GetAskingSpecificParameters()");
+    logTrace("vobsREMOTE_CATALOG::WriteQuerySpecificPart()");
 
     return mcsSUCCESS;
 }
@@ -425,7 +428,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
 {
-    logTrace("vobsREMOTE_CATALOG::GetAskingPosition()");
+    logTrace("vobsREMOTE_CATALOG::WriteReferenceStarPosition()");
 
     const char *ra;
     ra = request.GetObjectRa();
@@ -463,7 +466,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 {
-    logTrace("vobsREMOTE_CATALOG::GetAskingEnd()");
+    logTrace("vobsREMOTE_CATALOG::WriteQueryStarListPart()");
     // Build of the stringlist
     miscDYN_BUF strList;
     miscDynBufInit(&strList);
