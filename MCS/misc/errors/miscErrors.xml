@@ -130,4 +130,14 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[a temporary error of the name server append, try again later]]></errFormat>
    </error>
+   <error id="31">
+      <errName>BUFFER_OVERFLOW</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Buffer size exceeded : '%d' bytes available, '%d' bytes needed.]]></errFormat>
+   </error>
+   <error id="32">
+      <errName>CURL_STATUS</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['curl' exited with status '%d' : please see 'man curl' for detailed information.]]></errFormat>
+   </error>
 </errorList>

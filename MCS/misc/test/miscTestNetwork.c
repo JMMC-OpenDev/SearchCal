@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestNetwork.c,v 1.8 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: miscTestNetwork.c,v 1.9 2008-04-04 12:30:04 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.7  2005/10/06 15:11:23  lafrasse
  * Corrections in order to ensure compilation of src and test again
  *
@@ -22,7 +25,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestNetwork.c,v 1.8 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestNetwork.c,v 1.9 2008-04-04 12:30:04 lafrasse Exp $";
 /* 
  * System Headers 
  */
@@ -53,12 +56,13 @@ int main (int argc, char *argv[])
     /* Give process name to mcs library */
     mcsInit(argv[0]);
 
+    /* miscGetHostName() Function Test  */
     mcsBYTES256  string;
     mcsUINT32    length = 256;
-
-    /* Test of miscGetHostName() */
-    printf("miscGetHostName() Function Test :\n\n");
-    printf("miscGetHostName(NULL, 0)  = ");
+    printf("-------------------------------\n");
+    printf("miscGetHostName() Function Test :\n");
+    printf("-------------------------------\n");
+    printf("miscGetHostName(NULL, 0) = ");
     if (miscGetHostName(NULL, 0) == mcsFAILURE)
     {
         printf("mcsFAILURE.\n");
@@ -66,10 +70,10 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("%s\n", string);
+        printf("'%s'\n", string);
     }
-
-    printf("miscGetHostName(string, 0)  = ");
+    printf("\n");
+    printf("miscGetHostName(string, 0) = ");
     if (miscGetHostName(string, 0) == mcsFAILURE)
     {
         printf("mcsFAILURE.\n");
@@ -77,10 +81,10 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("%s\n", string);
+        printf("'%s'\n", string);
     }
-
-    printf("miscGetHostName(string, length)  = ");
+    printf("\n");
+    printf("miscGetHostName(string, length) = ");
     if (miscGetHostName(string, length) == mcsFAILURE)
     {
         printf("mcsFAILURE.\n");
@@ -88,21 +92,82 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("%s\n", string);
+        printf("'%s'\n", string);
     }
     printf("\n\n");
 
-    mcsSTRING32 host;
-    mcsSTRING32 hostIp; 
-    strcpy(host, "vizier.u-strasbg.fr");
+    /* miscGetHostByName() Function Test  */
+    printf("---------------------------------\n");
+    printf("miscGetHostByName() Function Test :\n");
+    printf("---------------------------------\n");
+    char* host = "vizier.u-strasbg.fr";
+    mcsSTRING32 hostIp;
+    printf("miscGetHostByName('%s') = ", host);
     if (miscGetHostByName(hostIp, host) == mcsFAILURE)
     {
         printf("mcsFAILURE.\n");
         errCloseStack();
     }
+    else
+    {
+        printf("'%s'\n", hostIp);
+    }
+    printf("\n\n");
 
-    printf("IP of '%s' = '%s'\n", host, hostIp);
-    
+    /* miscPerformHttpGet() Function Test  */
+    printf("----------------------------------\n");
+    printf("miscPerformHttpGet() Function Test :\n");
+    printf("----------------------------------\n");
+    char result[100 * 1024]; /* 100 KByte buffer */
+    char* uri = "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*";
+    printf("miscPerformHttpGet('%.50s ...') ", uri);
+    if (miscPerformHttpGet(uri, result, sizeof(result), 0) == mcsFAILURE)
+    {
+        printf("= mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(":\n%s", result);
+    }
+    printf("\n");
+    uri = "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280";
+    printf("miscPerformHttpGet('%s') ", uri);
+    if (miscPerformHttpGet(uri, result, sizeof(result), 0) == mcsFAILURE)
+    {
+        printf("= mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(":\n%s", result);
+    }
+    printf("\n");
+    uri = "http://apple.co";
+    printf("miscPerformHttpGet('%.50s ...') ", uri);
+    if (miscPerformHttpGet(uri, result, sizeof(result), 0) == mcsFAILURE)
+    {
+        printf("= mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(":\n%s", result);
+    }
+    printf("\n");
+    uri = "htp://apple.com";
+    printf("miscPerformHttpGet('%.50s ...') ", uri);
+    if (miscPerformHttpGet(uri, result, sizeof(result), 0) == mcsFAILURE)
+    {
+        printf("= mcsFAILURE.\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(":\n%s", result);
+    }
+    printf("\n\n");
+
     mcsExit();
     exit (EXIT_SUCCESS);
 }
