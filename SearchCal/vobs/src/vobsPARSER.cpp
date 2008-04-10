@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.30 2008-03-10 07:50:22 lafrasse Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.31 2008-04-10 14:19:25 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.30  2008/03/10 07:50:22  lafrasse
+* Minor modifications on comments and log traces.
+*
 * Revision 1.29  2007/10/31 11:16:17  gzins
 * Increased size of logged message related to HTTP request
 *
@@ -89,7 +92,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.30 2008-03-10 07:50:22 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.31 2008-04-10 14:19:25 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -167,49 +170,21 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     // Load a new document from the URI
     logTest("Get XML document from '%.4096s'", uri);
 
-    msgMESSAGE msg;
-    // Create a misco buffer where is put "GET http://..." (GET + uri)
-    miscoDYN_BUF address;
-    if (address.AppendString("GET ") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (address.AppendString(uri) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (address.AppendString("\n") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    logTrace("URI = %s", uri);
-
-    // Create a misco buffer whe is put all the CDS return
+    // Create a misco buffer to store CDS results
     miscoDYN_BUF completeReturnBuffer;
 
-    // return string
-    string returnString;
+    // Temporary 10MByte buffer
+    char returnString[10 * 1024 * 1024];
 
-    // Create a socket client
-    msgSOCKET_CLIENT clientSocket;
-    // Set Time out of the socket
-    if (clientSocket.Open(vobsVIZIER_IP_ADDRESS, vobsQUERY_PORT) == mcsFAILURE)
+    // Query the CDS
+    logTrace("URI = %s", uri);
+    if (miscPerformHttpGet(uri, returnString, sizeof(returnString), vobsTIME_OUT) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    // Send Address
-    if (clientSocket.Send(address.GetBuffer()) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Receive XML file
-    if (clientSocket.Receive(returnString, vobsTIME_OUT) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    completeReturnBuffer.AppendString(returnString.c_str());
+    completeReturnBuffer.AppendString(returnString);
     
+    // XML parsing of the CDS answer
     doc = gdome_di_createDocFromMemory(domimpl,
                                        completeReturnBuffer.GetBuffer(),
                                        GDOME_LOAD_PARSING, &exc);

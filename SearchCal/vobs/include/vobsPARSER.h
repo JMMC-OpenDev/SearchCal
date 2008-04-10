@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.16 2008-03-10 07:53:42 lafrasse Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.17 2008-04-10 14:19:25 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2008/03/10 07:53:42  lafrasse
+* Changed VIZIER URI to reflect CDS changes.
+* Minor modifications on comments and log traces.
+*
 * Revision 1.15  2006/02/14 13:00:02  lafrasse
 * Changed receive time out from 4 minutes to 10
 *
@@ -47,15 +51,8 @@
 #include <vector>
 #include <gdome.h>
 
-/**
- * Time out to get the CDS XML file
- * Vizier IP adress
- * Vizier address
- * Port
- */
-#define vobsTIME_OUT 600000
-#define vobsVIZIER_IP_ADDRESS "130.79.128.13" // IP address of the vizier.u-strasbg.fr
-#define vobsQUERY_PORT 80
+/** Time out (in seconds) to get the CDS XML file */
+#define vobsTIME_OUT 600
 
 /*
  * header files
