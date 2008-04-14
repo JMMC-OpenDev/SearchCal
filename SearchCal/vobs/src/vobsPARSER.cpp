@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.31 2008-04-10 14:19:25 lafrasse Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.32 2008-04-14 16:25:41 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.31  2008/04/10 14:19:25  lafrasse
+* Replaced manual HTTP GET request forging by miscPerformHttpGet() to handle
+* CDS web page redirections.
+*
 * Revision 1.30  2008/03/10 07:50:22  lafrasse
 * Minor modifications on comments and log traces.
 *
@@ -92,7 +96,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.31 2008-04-10 14:19:25 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.32 2008-04-14 16:25:41 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -173,8 +177,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     // Create a misco buffer to store CDS results
     miscoDYN_BUF completeReturnBuffer;
 
-    // Temporary 10MByte buffer
-    char returnString[10 * 1024 * 1024];
+    // Temporary 1MByte buffer
+    char returnString[1 * 1024 * 1024];
 
     // Query the CDS
     logTrace("URI = %s", uri);
