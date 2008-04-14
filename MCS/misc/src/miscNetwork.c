@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2008/04/04 12:30:04  lafrasse
+ * Added miscPerformHttpGet() function.
+ *
  * Revision 1.6  2006/01/10 14:40:39  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -25,7 +28,7 @@
  * Declaration of miscNetwork functions.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.7 2008-04-04 12:30:04 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.8 2008-04-14 16:18:02 lafrasse Exp $"; 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
 #define  _BSD_SOURCE 1
@@ -223,10 +226,13 @@ mcsCOMPL_STAT miscPerformHttpGet(const char *uri, char *outputBuffer, const mcsU
     while (feof(process) == 0)
     {
         /* While buffer is not full yet */
-        if (totalReadSize < availableMemory)
+        if (totalReadSize < (availableMemory - 1))
         {
             /* Write the command result in the buffer */
             totalReadSize += fread(outputBuffer, 1, availableMemory, process);
+
+            /* Write tailing '\0' accordinaly */
+            outputBuffer[totalReadSize] = '\0';
         }
         else /* Once the buffer has been fulfiled entirely */
         {
