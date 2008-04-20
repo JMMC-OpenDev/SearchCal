@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.16 2007-11-15 08:09:04 mella Exp $"
+# "@(#) $Id: Makefile,v 1.17 2008-04-20 09:23:02 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2007/11/15 08:09:04  mella
+# Add new mkfMakeXslPath script
+#
 # Revision 1.15  2007/02/22 12:12:37  gzins
 # No longer generate man pages
 #
@@ -52,6 +55,9 @@
 # ------------------------
 # As a general rule:  public file are "cleaned" and "installed"  
 #                     local (_L) are not "installed".
+
+# Set PATH in order to use local scripts located in ../bin directory
+export PATH:=../bin:$(PATH);
 
 #
 # C programs (public and local)
