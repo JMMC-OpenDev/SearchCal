@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2006-10-14 10:38:37 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2008-04-21 09:43:23 ccmgr Exp $"
 #
 # Makefile for installation script of MCS 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2006/10/14 10:38:37  gzins
+# Removed test related to INTROOT existence; i.e. always install configuration files
+#
 # Revision 1.7  2005/12/06 06:38:06  gzins
 # Added installation of MCS configuration files
 #
@@ -39,7 +42,8 @@ PWD    := $(shell echo ${PWD%/*/*})
 CFG_FILES = ../config/mcs.sh      \
 			../config/emacs       \
 			../config/vimrc       \
-			../config/gvimrc
+			../config/gvimrc       \
+			../config/keystore
 
 all: 
 	@echo " . . . all done"
