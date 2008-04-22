@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2006-11-02 07:40:19 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2008-04-22 13:48:09 ccmgr Exp $"
 #
 # Makefile of thrd module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2006/11/02 07:40:19  gzins
+# Added
+#
 # Revision 1.5  2005/12/19 16:48:30  lafrasse
 # Added semaphore support
 #
@@ -81,7 +84,7 @@ LIBRARIES_L     =
 #
 # <brief description of thrd library>
 thrd_OBJECTS   = thrdThread thrdMutex thrdSemaphore thrdTHREAD
-thrd_LDFLAGS   = 
+thrd_LDFLAGS   = -lpthread
 
 #
 # Scripts (public and local)
