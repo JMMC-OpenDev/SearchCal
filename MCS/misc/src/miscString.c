@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2006/01/10 14:40:39  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.23  2005/05/26 08:48:20  lafrasse
  * Code review : user and developper documentation refinments and code simplifications
  *
@@ -49,7 +52,7 @@
  * Declaration of miscString functions.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscString.c,v 1.24 2006-01-10 14:40:39 mella Exp $";
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscString.c,v 1.25 2008-05-16 09:24:59 lafrasse Exp $";
 
 
 /*
@@ -489,11 +492,18 @@ mcsCOMPL_STAT miscSplitString(const char         *str,
         /* If the sub-string array is not full yet... */
         if (foundSubStrNb < maxSubStrNb)
         {
+            /* Compute the sub-string length */
+            subStrLength = nextDelimPtr - subStrPtr;
             /*
-             * Compute the sub-string length from its real length or its
-             * maximun possible length (defined by the sub-string array type)
+             * The sub-string length should not exceed the maximun possible
+             * length (defined by the sub-string array type)
              */
-            subStrLength = mcsMIN((nextDelimPtr - subStrPtr), maxSubStrLength);
+            subStrLength = mcsMIN(subStrLength, maxSubStrLength);
+            /*
+             * The sub-string length should not be below 0 (otherwise
+             * strncpy() raise a SIGSEV under 64bit platforms)
+             */
+            subStrLength = mcsMAX(subStrLength, 0);
 
             /* Copy the sub-string in the sub-string array */
             strncpy(subStrArray[foundSubStrNb], subStrPtr, subStrLength);
