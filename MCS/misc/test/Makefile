@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2005-10-10 12:00:11 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.13 2008-05-16 08:13:47 ccmgr Exp $"
 #
 # Makefile of misc Tests
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2005/10/10 12:00:11  lafrasse
+# Added miscLocateDir()
+#
 # Revision 1.11  2005/02/15 10:26:22  gzins
 # Removed unused target
 #
@@ -62,37 +65,37 @@ EXECUTABLES_L   =
 #
 # <brief description of xxxxx program>
 miscTestDate_OBJECTS   = miscTestDate
-miscTestDate_LDFLAGS   = -lgdome
+miscTestDate_LDFLAGS   = $(MCSSTD_LIBLIST)
 miscTestDate_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
 miscTestDynBuf_OBJECTS   = miscTestDynBuf
-miscTestDynBuf_LDFLAGS   = -lgdome
+miscTestDynBuf_LDFLAGS   = $(MCSSTD_LIBLIST)
 miscTestDynBuf_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
 miscTestFile_OBJECTS   = miscTestFile
-miscTestFile_LDFLAGS   = -lgdome
+miscTestFile_LDFLAGS   = $(MCSSTD_LIBLIST)
 miscTestFile_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
 miscTestNetwork_OBJECTS   = miscTestNetwork
-miscTestNetwork_LDFLAGS   = -lgdome
+miscTestNetwork_LDFLAGS   = $(MCSSTD_LIBLIST)
 miscTestNetwork_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
 miscTestString_OBJECTS   = miscTestString
-miscTestString_LDFLAGS   = -lgdome
+miscTestString_LDFLAGS   = $(MCSSTD_LIBLIST)
 miscTestString_LIBS      = mcs err log misc
 
 #
 # <brief description of xxxxx program>
 miscTestHash_OBJECTS   = miscTestHash
-miscTestHash_LDFLAGS   = -lgdome
+miscTestHash_LDFLAGS   = $(MCSSTD_LIBLIST)
 miscTestHash_LIBS      = mcs err log misc
 
 #
