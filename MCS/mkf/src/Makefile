@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.17 2008-04-20 09:23:02 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.18 2008-05-25 13:31:22 gzins Exp $"
 #
 # Makefile for MCS customization of make
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.17  2008/04/20 09:23:02  gzins
+# Added PATH setting
+#
 # Revision 1.16  2007/11/15 08:09:04  mella
 # Add new mkfMakeXslPath script
 #
@@ -111,8 +114,13 @@ SCRIPTS         = mkfBuildDocIndex \
                   mkfMakeTclScriptDependencies \
                   mkfMakeTclScript \
                   mkfMakeScriptDependencies \
-                  mkfMakeScript\
-				  mkfMakeXslPath
+                  mkfMakeScript \
+                  mkfMakeXslPath \
+                  mkfMakePythonModDependencies \
+                  mkfMakePythonModule \
+                  mkfMakePythonPackDependencies \
+                  mkfMakePythonPackage
+
 SCRIPTS_L       =
 
 #
