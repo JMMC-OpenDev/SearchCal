@@ -2,7 +2,7 @@
 #*******************************************************************************
 # E.S.O. - VLT project
 #
-# "@(#) $Id: mkfMakePythonModule.sh,v 1.2 2008-05-25 14:22:50 gzins Exp $" 
+# "@(#) $Id: mkfMakePythonModule.sh,v 1.3 2008-05-25 14:37:05 gzins Exp $" 
 #
 # who       when        what
 # --------  ----------  ----------------------------------------------
@@ -54,7 +54,16 @@ fi
 # set up more readable variables:
 modName=$1
 
-OUTPUT=../lib/python/site-packages/${modName}.py
+OUTPUT=../lib/python/site-packages/
+if [ ! -e $OUTPUT ] 
+then
+    mkdir -p $OUTPUT
+    chmod 755 $OUTPUT
+elif [ ! -d $OUTPUT ]
+then
+    echo "$OUTPUT is not a directory!!"
+    exit 1
+fi
 
 cp ${modName}.py $OUTPUT
 

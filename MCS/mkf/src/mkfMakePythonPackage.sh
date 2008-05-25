@@ -2,7 +2,7 @@
 #*******************************************************************************
 # E.S.O. - VLT project
 #
-# "@(#) $Id: mkfMakePythonPackage.sh,v 1.2 2008-05-25 14:22:50 gzins Exp $" 
+# "@(#) $Id: mkfMakePythonPackage.sh,v 1.3 2008-05-25 14:37:05 gzins Exp $" 
 #
 # who       when        what
 # --------  ----------  ----------------------------------------------
@@ -57,7 +57,7 @@ objList=$2
 OUTPUT=../lib/python/site-packages/${packName}
 if [ ! -e $OUTPUT ] 
 then
-    mkdir $OUTPUT
+    mkdir -p $OUTPUT
     chmod 755 $OUTPUT
 elif [ ! -d $OUTPUT ]
 then
