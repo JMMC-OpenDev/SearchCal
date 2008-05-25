@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.5 2005-12-05 14:32:45 gzins Exp $"
+# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.6 2008-05-25 13:39:52 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2005/12/05 14:32:45  gzins
+# Fixed wrong MCSDATA directory structure
+#
 # Revision 1.4  2005/12/02 08:28:06  gzins
 # Updated to create directories according to the new MCS directory structure
 #
@@ -65,22 +68,24 @@ fi
 # Define the content of each area 
 
 # Directories that shall be present in any area 
-BASE_DIR_LIST="config      \
-               doc         \
-               bin         \
-               include     \
-               lib         \
-               errors      \
-               man         \
-               man/man1    \
-               man/man2    \
-               man/man3    \
-               man/man4    \
-               man/man5    \
-               man/man6    \
-               man/man7    \
-               man/man8    \
-               templates   \
+BASE_DIR_LIST="config                   \
+               doc                      \
+               bin                      \
+               include                  \
+               lib                      \
+               lib/python               \
+               lib/python/site-packages \
+               errors                   \
+               man                      \
+               man/man1                 \
+               man/man2                 \
+               man/man3                 \
+               man/man4                 \
+               man/man5                 \
+               man/man6                 \
+               man/man7                 \
+               man/man8                 \
+               templates                \
                "
 
 # Additional directories for MCSDATA
