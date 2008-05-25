@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfPythonMakefile,v 1.4 2008-05-25 13:32:10 gzins Exp $"
+# "@(#) $Id: mkfPythonMakefile,v 1.5 2008-05-25 14:05:44 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2008/05/25 13:32:10  gzins
+# Updated to build python module and package
+#
 # Revision 1.3  2005/09/02 09:49:57  gzins
 # Used bash instead of ksh
 #
@@ -120,12 +123,12 @@ ifneq ($(strip $(PY_MODULES)),)
 	-$(AT) for member in $(foreach name, $(PY_MODULES), $(name) ); \
 		do \
 		    $(ECHO) "$(LIB)/python/site-packages/$${member}.py: ../lib/python/site-packages/$${member}.py" >>$(FILE);\
-		    $(ECHO) "	-\$$(AT)echo \"\t$${member}.py\";\\" >>$(FILE);\
-		    $(ECHO) "	cp ../lib/python/site-packages/$${member}.py $(LIB)/python/site-packages;\\" >>$(FILE);\
-		    $(ECHO) "	chmod $(P644) $(LIB)/python/site-packages/$${member}.py" >>$(FILE);\
-		    $(ECHO) "	python $(PYTHON_ROOT)/lib/python$(PYTHON_VERS)/compileall.py ../lib/python/site-packages ;\\" >>$(FILE);\
-		    $(ECHO) "	cp ../lib/python/site-packages/$${member}.pyc $(LIB)/python/site-packages;\\" >>$(FILE);\
-		    $(ECHO) "	chmod $(P644) $(LIB)/python/site-packages/$${member}.pyc" >>$(FILE);\
+		    $(ECHO) "	-\$$(AT)echo \"\t$${member}.py\";" >>$(FILE);\
+		    $(ECHO) "	@cp ../lib/python/site-packages/$${member}.py $(LIB)/python/site-packages;" >>$(FILE);\
+		    $(ECHO) "	@chmod $(P644) $(LIB)/python/site-packages/$${member}.py" >>$(FILE);\
+		    $(ECHO) "	@python $(PYTHON_ROOT)/lib/python$(PYTHON_VERS)/compileall.py ../lib/python/site-packages ;" >>$(FILE);\
+		    $(ECHO) "	@cp ../lib/python/site-packages/$${member}.pyc $(LIB)/python/site-packages;" >>$(FILE);\
+		    $(ECHO) "	@chmod $(P644) $(LIB)/python/site-packages/$${member}.pyc" >>$(FILE);\
 		done
 endif
 
