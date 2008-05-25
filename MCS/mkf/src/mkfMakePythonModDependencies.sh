@@ -1,8 +1,8 @@
-#! /bin/ksh
+#! /bin/bash
 #*******************************************************************************
 # E.S.O. - VLT project
 #
-# "@(#) $Id: mkfMakePythonModDependencies.sh,v 1.1 2008-05-25 13:31:22 gzins Exp $" 
+# "@(#) $Id: mkfMakePythonModDependencies.sh,v 1.2 2008-05-25 14:22:50 gzins Exp $" 
 #
 # who       when      what
 # --------  --------  ----------------------------------------------
