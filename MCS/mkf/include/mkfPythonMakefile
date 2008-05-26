@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfPythonMakefile,v 1.5 2008-05-25 14:05:44 gzins Exp $"
+# "@(#) $Id: mkfPythonMakefile,v 1.6 2008-05-26 09:04:18 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/05/25 14:05:44  gzins
+# Updated to do not print executed commands when installing python modules
+#
 # Revision 1.4  2008/05/25 13:32:10  gzins
 # Updated to build python module and package
 #
@@ -23,6 +26,14 @@ SHELL=/bin/bash
 PYTHON_VERS = $(shell python -V 2>&1 | awk '{print $$2}' | awk -F. '{print $$1 "." $$2}')
 PYTHON_DOCS=../doc/api/html/python
 PYTHONPATHDOC=${PYTHONPATH}:../../../../src
+ifndef PYTHON_ROOT
+    PYTHON_ROOT=/usr
+endif
+PYTHON_COMPILEALL  = $(shell ls $(PYTHON_ROOT)/lib64/python$(PYTHON_VERS)/compileall.py 2> /dev/null)
+ifeq ($(strip $(PYTHON_COMPILEALL)),)
+	PYTHON_COMPILEALL = $(PYTHON_ROOT)/lib/python$(PYTHON_VERS)/compileall.py
+endif
+
 ######################################
 # phony section
 ######################################
@@ -39,10 +50,6 @@ PY_ALL_LIST = $(PY_SCRIPTS) $(PY_SCRIPTS_L) $(PY_PACKAGES) $(PY_PACKAGES_L)  $(P
 ######################################
 # incrementing tasks
 ######################################
-
-ifndef PYTHON_ROOT
-    PYTHON_ROOT=/usr
-endif
 ifneq ($(strip $(PY_SCRIPTS)),)
     INSTALL_TARGET := $(INSTALL_TARGET) install_python_scripts
 endif
@@ -126,7 +133,7 @@ ifneq ($(strip $(PY_MODULES)),)
 		    $(ECHO) "	-\$$(AT)echo \"\t$${member}.py\";" >>$(FILE);\
 		    $(ECHO) "	@cp ../lib/python/site-packages/$${member}.py $(LIB)/python/site-packages;" >>$(FILE);\
 		    $(ECHO) "	@chmod $(P644) $(LIB)/python/site-packages/$${member}.py" >>$(FILE);\
-		    $(ECHO) "	@python $(PYTHON_ROOT)/lib/python$(PYTHON_VERS)/compileall.py ../lib/python/site-packages ;" >>$(FILE);\
+		    $(ECHO) "	@python $(PYTHON_COMPILEALL) ../lib/python/site-packages ;" >>$(FILE);\
 		    $(ECHO) "	@cp ../lib/python/site-packages/$${member}.pyc $(LIB)/python/site-packages;" >>$(FILE);\
 		    $(ECHO) "	@chmod $(P644) $(LIB)/python/site-packages/$${member}.pyc" >>$(FILE);\
 		done
@@ -175,7 +182,7 @@ ifneq ($(strip $(PY_PACKAGES)),)
 		    $(ECHO) "$(LIB)/python/site-packages/$${dir}/%.pyc: ../lib/python/site-packages/$${dir}/%.py" >>$(FILE);\
 		    $(ECHO) "	\$$(AT)mkdir -p $(LIB)/python/site-packages/$${dir}  " >>$(FILE);\
 		    $(ECHO) "	\$$(AT)echo \"Compiling python $${member}\" " >>$(FILE);\
-		    $(ECHO) "	\$$(AT)(cd $(LIB)/python/site-packages && python $(PYTHON_ROOT)/lib/python$(PYTHON_VERS)/compileall.py $(LIB)/python/site-packages/$${member} )" >>$(FILE);\
+		    $(ECHO) "	\$$(AT)(cd $(LIB)/python/site-packages && python $(PYTHON_COMPILEALL) $(LIB)/python/site-packages/$${member} )" >>$(FILE);\
                     $(ECHO) "" >>$(FILE);\
 		    $(ECHO) "$(LIB)/python/site-packages/$${dir}/%.def: ../lib/python/site-packages/$${dir}/%.def " >>$(FILE);\
 		    $(ECHO) "	\$$(AT)mkdir -p $(LIB)/python/site-packages/$${dir}  " >>$(FILE);\
