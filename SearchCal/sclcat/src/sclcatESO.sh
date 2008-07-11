@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESO.sh,v 1.1 2008-07-11 12:56:55 lafrasse Exp $"
+# "@(#) $Id: sclcatESO.sh,v 1.2 2008-07-11 16:15:02 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2008/07/11 12:56:55  lafrasse
+# Added ESO Calibrator catalog generation scripts.
+#
 #*******************************************************************************
 
 #/**
@@ -56,7 +59,10 @@ function parseResult () {
 }
 
 # Parse command-line parameters
-dir="eso-run-`date +%Y-%m-%dT%H-%M-%S`";
+dir="../tmp/eso-run-`date +%Y-%m-%dT%H-%M-%S`";
+
+echo -e "Started at: "
+date
 
 while getopts "hrgc" option
 # Initial declaration.
@@ -67,10 +73,9 @@ do
     h ) # Help option
         printUsage ;;
     g ) # generation reference option
-        dir="eso-ref";;
+        dir="eso-ref" ;;
     c ) # generate the configuration file
-        sclcatESOGenerateConfig ;
-        exit ;;
+        sclcatESOGenerateConfig ;;
     * ) # Unknown option
         printUsage ;;
     esac
@@ -88,9 +93,12 @@ fi
 
 # Start program
 cd $dir
-cmdBatch ../../config/sclcatESO.cfg  -d log
+cmdBatch ../../config/sclcatESO.cfg -d log
 
 cd ..
 parseResult $dir
+
+echo -e "Finished at: "
+date
 
 #___oOo___
