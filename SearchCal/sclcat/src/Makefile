@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.5 2007-03-27 14:55:42 scetre Exp $"
+# "@(#) $Id: Makefile,v 1.6 2008-07-11 12:56:55 lafrasse Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2007/03/27 14:55:42  scetre
+# Remuved unused fortran program
+#
 # Revision 1.4  2007/01/31 10:03:05  mella
 # Add new programs
 #
@@ -83,7 +86,8 @@ SCRIPTS         =
 SCRIPTS_L       = sclcatPrima \
 				  sclcatPrimaGenerateConfig \
 				  sclcatPrimaParseResult \
-				  
+                  sclcatESO \
+                  sclcatESOParseResult \
 
 
 #
@@ -111,8 +115,10 @@ tttlll_OBJECTS  =
 #
 # Python scripts (public and local)
 # ---------------------------------
-PY_SCRIPTS     = sclcatPrimaPrepareBatchFile
-PY_SCRIPTS_L   =
+PY_SCRIPTS     =
+PY_SCRIPTS_L   = sclcatPrimaPrepareBatchFile \
+                 sclcatESOGenerateConfig
+
 
 #
 # Jarfiles and their directories
