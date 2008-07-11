@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrima.sh,v 1.6 2007-03-27 14:55:56 scetre Exp $"
+# "@(#) $Id: sclcatPrima.sh,v 1.7 2008-07-11 12:55:29 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2007/03/27 14:55:56  scetre
+# Updated documentation
+#
 # Revision 1.5  2007/02/09 07:26:57  mella
 #  respond to -g option
 #
@@ -30,6 +33,11 @@
 #
 # @synopsis
 # sclcatPrima
+# 
+# @opt
+# @optname h : show usage help
+# @optname g : generate a reference catalog
+# @optname c : generate a configuration file
 # 
 # @details
 # This script creates catalog of calibrator for PRIMA, using SearchCal tool. The
