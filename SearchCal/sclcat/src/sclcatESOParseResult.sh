@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.1 2008-07-11 12:56:56 lafrasse Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.2 2008-07-11 15:55:22 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2008/07/11 12:56:56  lafrasse
+# Added ESO Calibrator catalog generation scripts.
+#
 #*******************************************************************************
 
 #/**
@@ -93,9 +96,6 @@ done
 
 # Generating VOTable footer
 cat $tmp | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
-
-echo -e "Finished at: "
-date
 
 echo -e "Number of calibrators retrieved: "
 xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" $RESULTFILE
