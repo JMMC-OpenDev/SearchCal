@@ -2,11 +2,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESO.sh,v 1.2 2008-07-11 16:15:02 lafrasse Exp $"
+# "@(#) $Id: sclcatESO.sh,v 1.3 2008-07-17 07:12:35 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2008/07/11 16:15:02  lafrasse
+# Moved generation directo from src/ to tmp/.
+# Added exectution timestamps.
+# Code syntax polishing.
+#
 # Revision 1.1  2008/07/11 12:56:55  lafrasse
 # Added ESO Calibrator catalog generation scripts.
 #
@@ -17,7 +22,7 @@
 # Create calibrator catalog for ESO
 #
 # @synopsis
-# \<sclcatESO\> [\e \<-g\>] [\e \<instrumentalConfigurationFile\>]
+# \<sclcatESO\> [\e \<-g\> \<-c\> \<-r\>] [\e \<instrumentalConfigurationFile\>]
 #
 # @param instrumentalConfigurationFile : file containing the ESO instrumental
 # configuration the calibrator catalog should be generated for.
@@ -25,6 +30,8 @@
 # @opt
 # @optname h : show usage help
 # @optname g : generate a reference catalog
+# @optname c : generate the configuration file and exit
+# @optname r : generate the configuration file and run
 # 
 # @details
 # This script creates catalog of calibrator for ESO, using SearchCal tool. The
@@ -42,9 +49,10 @@
 
 # Print usage 
 function printUsage () {
-        echo -e "Usage: sclcatESO [-h] [-g] [-c]" 
+        echo -e "Usage: sclcatESO [-h] [-g] [-c] [-r]" 
         echo -e "\t-h\tprint this help."
-        echo -e "\t-c\tgenerate the configuration file."
+        echo -e "\t-c\tgenerate the configuration file and exit."
+        echo -e "\t-r\tgenerate the configuration file and run."
         echo -e "\t-g\tgenerate reference."
         exit 1;
 }
@@ -75,6 +83,9 @@ do
     g ) # generation reference option
         dir="eso-ref" ;;
     c ) # generate the configuration file
+        sclcatESOGenerateConfig ;
+        exit ;;
+    r ) # generate the configuration file
         sclcatESOGenerateConfig ;;
     * ) # Unknown option
         printUsage ;;
