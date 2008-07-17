@@ -2,11 +2,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.2 2008-07-17 15:17:38 lafrasse Exp $"
+# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.3 2008-07-17 15:23:22 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2008/07/17 15:17:38  lafrasse
+# Added conversion functions (arcmin to HMS & DMS) from ESO.
+# Added parameters to computeSkyBoxes() to restrict queried sky zone (for test
+# purpose).
+# Polished code source.
+#
 # Revision 1.1  2008/07/11 12:56:55  lafrasse
 # Added ESO Calibrator catalog generation scripts.
 #
@@ -161,8 +167,6 @@ def writeConfigurationList(boxList):
     return str
 
 headerFile = open("../config/sclcatESOHeader.cfg")
-contentFile = open("../tmp/command.dat")
-tailFile = "../tmp/tailBatch.cfg"
 sclcatESO = open("../config/sclcatESO.cfg", "w")
 
 print "Generate configuration file into '%s'..."%sclcatESO.name
