@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.2 2008-07-11 15:55:22 lafrasse Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.3 2008-07-21 15:45:33 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2008/07/11 15:55:22  lafrasse
+# Removed 'Finished' timestamp.
+#
 # Revision 1.1  2008/07/11 12:56:56  lafrasse
 # Added ESO Calibrator catalog generation scripts.
 #
@@ -24,8 +27,6 @@
 #
 # @usedfiles
 # @filename ../config/sclcatESO.cfg : list of stars of interest for PRIMA
-# @filename ../config/sclcatVOTable2html.xsl : xsl style sheet to convert
-# VOTable to html
 # */
 
 # Print usage 
@@ -49,9 +50,7 @@ do
     esac
 done
 
-XSLT_VOT2HTML="$PWD/../config/sclcatVOTable2html.xsl"
-
-# define temporary PATH # change it if the script becomes extern
+# Define temporary PATH # change it if the script becomes extern
 PATH=$PATH:$PWD/../bin
 
 # Parse command-line parameters
@@ -62,46 +61,37 @@ then
     exit 1
 fi
 
+# Moving to the right directory
 cd $dir
-
-HTMLDIR="html/"
-mkdir $HTMLDIR &> /dev/null
-
-# copy every votable and append its calibrators to result VOTable
-for i in *.vot
-do
-    if [ ! -e "$HTMLDIR/$i" ]
-    then
-        cp "$i" $HTMLDIR
-    fi
-done
-
-
-cd $HTMLDIR
+RESULTPATH=result
+mkdir $RESULTPATH
 
 # Generating VOTable header
-tmp=( $(ls *.vot) )
-RESULTFILE=../catalog.vot
+tmp=( $(ls | grep ".vot") )
+RESULTFILE=$RESULTPATH/catalog.vot
+echo -n "Generating result header ... "
 cat $tmp | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
+echo "DONE"
 
-# loop on every calibrators of every stars
-# and build calibrator file
+# Loop on every calibrators of every stars, then build calibrator file
 for i in *.vot
 do
     if [ -f "$i" ]
     then
+        echo -n "Analyzing file $i ... "
         xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" $i >> $RESULTFILE
+        echo "DONE"
+    else
+        echo "ERROR accessing file $i !"
     fi
 done
 
 # Generating VOTable footer
+echo -n "Generating result footer ... "
 cat $tmp | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
+echo "DONE"
 
-echo -e "Number of calibrators retrieved: "
-xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" $RESULTFILE
-
-#Now CALIBRATORS file can be presented by next stylesheet
-echo "Html resume generated"
-xsltproc --path .:.. -o "catalog.html" $XSLT_VOT2HTML "$RESULTFILE"
+#echo -n "Calculating number of calibrators retrieved : "
+#xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" $RESULTFILE
 
 #___oOo___
