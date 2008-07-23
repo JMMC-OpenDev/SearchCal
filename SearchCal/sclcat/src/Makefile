@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2008-07-11 12:56:55 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.7 2008-07-23 22:35:44 lafrasse Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2008/07/11 12:56:55  lafrasse
+# Added ESO Calibrator catalog generation scripts.
+#
 # Revision 1.5  2007/03/27 14:55:42  scetre
 # Remuved unused fortran program
 #
@@ -83,7 +86,8 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         =
-SCRIPTS_L       = sclcatPrima \
+SCRIPTS_L       = sclcatRetryFailedQueries \
+				  sclcatPrima \
 				  sclcatPrimaGenerateConfig \
 				  sclcatPrimaParseResult \
                   sclcatESO \
