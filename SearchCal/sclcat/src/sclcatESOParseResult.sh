@@ -2,11 +2,20 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.3 2008-07-21 15:45:33 lafrasse Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.4 2008-07-23 22:32:53 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2008/07/21 15:45:33  lafrasse
+# Corrected way to list vot files to handle large collections to remove "argument
+# list too long" errors.
+# Removed unneeded VOtable copying process.
+# Changed default path of generated catalog file.
+# Added output log to better monitor progression.
+# Removed HTML resume generation.
+# Disabled calibrator numbering due to memory errors on large catalogs.
+#
 # Revision 1.2  2008/07/11 15:55:22  lafrasse
 # Removed 'Finished' timestamp.
 #
@@ -74,13 +83,16 @@ cat $tmp | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
 echo "DONE"
 
 # Loop on every calibrators of every stars, then build calibrator file
+totalNbOfCalibrators=0
 for i in *.vot
 do
     if [ -f "$i" ]
     then
         echo -n "Analyzing file $i ... "
         xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" $i >> $RESULTFILE
-        echo "DONE"
+        nbOfCalibrators=`xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" $i`
+        let "totalNbOfCalibrators += nbOfCalibrators"
+        echo " DONE (found '$nbOfCalibrators' new calibrators for a total of '$totalNbOfCalibrators')."
     else
         echo "ERROR accessing file $i !"
     fi
@@ -90,8 +102,5 @@ done
 echo -n "Generating result footer ... "
 cat $tmp | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
 echo "DONE"
-
-#echo -n "Calculating number of calibrators retrieved : "
-#xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" $RESULTFILE
 
 #___oOo___
