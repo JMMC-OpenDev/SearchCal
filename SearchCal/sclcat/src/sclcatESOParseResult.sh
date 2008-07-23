@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.4 2008-07-23 22:32:53 lafrasse Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.5 2008-07-23 23:06:23 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2008/07/23 22:32:53  lafrasse
+# Changed calibrator couting method.
+#
 # Revision 1.3  2008/07/21 15:45:33  lafrasse
 # Corrected way to list vot files to handle large collections to remove "argument
 # list too long" errors.
@@ -83,16 +86,21 @@ cat $tmp | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
 echo "DONE"
 
 # Loop on every calibrators of every stars, then build calibrator file
+nbOfVOTablesDone=0
+totalNbOfVOTables=`ls -l | grep ".vot"| wc | awk '{print $1}'`
 totalNbOfCalibrators=0
 for i in *.vot
 do
+    # Increment counter
+    let "nbOfVOTablesDone += 1"
+
     if [ -f "$i" ]
     then
         echo -n "Analyzing file $i ... "
         xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" $i >> $RESULTFILE
         nbOfCalibrators=`xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" $i`
         let "totalNbOfCalibrators += nbOfCalibrators"
-        echo " DONE (found '$nbOfCalibrators' new calibrators for a total of '$totalNbOfCalibrators')."
+        echo " DONE (${nbOfVOTablesDone} / ${totalNbOfVOTables}, found '$nbOfCalibrators' new calibrators for a total of '$totalNbOfCalibrators')."
     else
         echo "ERROR accessing file $i !"
     fi
