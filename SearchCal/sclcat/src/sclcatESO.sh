@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESO.sh,v 1.3 2008-07-17 07:12:35 lafrasse Exp $"
+# "@(#) $Id: sclcatESO.sh,v 1.4 2008-07-23 22:31:07 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2008/07/17 07:12:35  lafrasse
+# Added an option to generate config file and run commands.
+#
 # Revision 1.2  2008/07/11 16:15:02  lafrasse
 # Moved generation directo from src/ to tmp/.
 # Added exectution timestamps.
@@ -51,9 +54,9 @@
 function printUsage () {
         echo -e "Usage: sclcatESO [-h] [-g] [-c] [-r]" 
         echo -e "\t-h\tprint this help."
+        echo -e "\t-g\tgenerate reference."
         echo -e "\t-c\tgenerate the configuration file and exit."
         echo -e "\t-r\tgenerate the configuration file and run."
-        echo -e "\t-g\tgenerate reference."
         exit 1;
 }
 
@@ -66,18 +69,16 @@ function parseResult () {
         echo -e "...Done."
 }
 
-# Parse command-line parameters
-dir="../tmp/eso-run-`date +%Y-%m-%dT%H-%M-%S`";
-
-echo -e "Started at: "
+echo -n "Started at: "
 date
 
+# Generate output directory name
+dir="../tmp/eso-run-`date +%Y-%m-%dT%H-%M-%S`";
+
+# Parse command-line parameters
 while getopts "hrgc" option
-# Initial declaration.
-# c, h, u and t are the options (flags) expected.
-# The : after option 't' shows it will have an argument passed with it.
 do
-  case $option in
+    case $option in
     h ) # Help option
         printUsage ;;
     g ) # generation reference option
@@ -109,7 +110,7 @@ cmdBatch ../../config/sclcatESO.cfg -d log
 cd ..
 parseResult $dir
 
-echo -e "Finished at: "
+echo -n "Finished at: "
 date
 
 #___oOo___
