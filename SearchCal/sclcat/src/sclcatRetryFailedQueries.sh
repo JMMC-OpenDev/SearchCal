@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.1 2008-07-23 22:34:10 lafrasse Exp $"
+# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.2 2008-07-25 12:56:33 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2008/07/23 22:34:10  lafrasse
+# Creation.
+#
 #*******************************************************************************
 
 #/**
@@ -22,52 +25,89 @@
 #
 # @opt
 # @optname h : show usage help
-# @optname n : show the number of failed queries
-# @optname l : show the failed '.err' filenames
-# @optname v : show the failed '.vot' filenames
+# @optname n : compute the number of failed queries
+# @optname l : list all failed filenames (without extension)
+# @optname e : report warnings (problem during queries) and errors (failed queries)
 # */
 
 # Print usage 
 function printUsage () {
     echo -e "Usage: sclcatRetryFailedQueries [dir-ref] or [dir-run-<YYYY-MM-DDTHH-MM-SS>]" 
-    echo -e "\t-h\t\tprint this help."
-    echo -e "\t-n\t\tshow the number of failed queries."
-    echo -e "\t-l\t\tshow the failed '.err' filenames."
-    echo -e "\t-v\t\tshow the failed '.vot' filenames."
+    echo -e "\t-h\t\tPrint this help."
+    echo -e "\t-n\t\tCompute the number of failed queries."
+    echo -e "\t-l\t\tList all failed filenames (without extension)."
+    echo -e "\t-e\t\tReport warnings (problem during queries) and errors (failed queries)."
     echo -e "\t<dir-run>\tRetry failed queries in dir-run directory"
     exit 1;
 }
 
-# Diplay number of failed commands
-function showNbOfFailedCommands () {
+# Compute the number of failed commands
+function computeNbOfFailedCommands () {
+    # Get the number of .err files in <dir>/log with size not null
     totalNbOfQueries=`ls -l log/ | grep ".err" | grep -v "      0 " | wc | awk '{print $1}'`
     echo "${totalNbOfQueries} failed queries found." ;
 }
 
-# Diplay commands that failed 
-function showFailedCommands () {
-    ls -l log/ | grep ".err" | grep -v "      0 " | awk '{print $9}'
-}
-
-# Diplay VOTable that failed 
-function showFailedVOTables () {
+# List all failed filenames (without extension)
+function listFailedFilenames () {
+    # For each .err files in <dir>/log with size not null
     errFilesList=`ls -l log/ | grep ".err" | grep -v "      0 " | awk '{print $9}'`
     for errFilename in $errFilesList
     do
         # Remove '.err' extension of the current .err filename
         filename="${errFilename%.err}"
 
-        # Display the VOTable filname
-        votFilename="${filename}.vot"
-        echo ${votFilename}
+        # Display the filename
+        echo ${filename}
     done
+}
+
+# Report found warnings (.err file not empty but .vot exist) and errors (.err file not empty and .vot does not exist)
+function reportWarningsAndErrors () {
+    warningCounter=0
+    errorCounter=0
+
+    # For each .err files in <dir>/log with size not null
+    errFilesList=`ls -l log/ | grep ".err" | grep -v "      0 " | awk '{print $9}'`
+    for errFilename in $errFilesList
+    do
+        # Remove '.err' extension of the current .err filename
+        filename="${errFilename%.err}"
+
+        # If the corresponding VOTable file does not exist
+        votFilename="${filename}.vot"
+        if [ ! -f $votFilename ]; then
+            # The query failed, so report it as an error
+            let "errorCounter += 1"
+            echo "ERROR: ${filename} failed."
+        else
+            # The query did not complete succesfully, so report it as a warning
+            let "warningCounter += 1"
+            echo "WARNING: ${filename} did not complete succesfully."
+        fi
+    done
+
+    # Generate general error and warning report
+    everyThingIsOK=1
+    if [ $warningCounter -gt 0 ]; then
+        echo "Found ${warningCounter} warnings."
+        everyThingIsOK=0
+    fi
+    if [ $errorCounter -gt 0 ]; then
+        echo "Found ${errorCounter} errors."
+        everyThingIsOK=0
+    fi
+    if [ $everyThingIsOK -eq 1 ]; then
+        echo "No errors nor warnings found."
+        everyThingIsOK=0
+    fi
 }
 
 # Define temporary PATH # change it if the script becomes extern
 PATH=$PATH:$PWD/../bin
 
 # Parse command-line parameters
-eval last=\${$#} # Get last parameter
+eval last=\${$#} # Get last 'command-line' parameter
 givenRunDirectory=$last
 if [ ! -d "${givenRunDirectory}" ]
 then
@@ -78,21 +118,21 @@ fi
 cd ${givenRunDirectory}
 
 # Parse command-line parameters
-while getopts "hnlv" option
+while getopts "hnle" option
 do
     case $option in
-    h ) # Help option
+    h ) # Print usage help
         printUsage ;;
-    n ) # Show number of failed commands
-        showNbOfFailedCommands ;
+    n ) # Compute the number of failed queries
+        computeNbOfFailedCommands ;
         exit ;;
-    l ) # Show list of failed commands
-        showFailedCommands ;
+    l ) # List all failed filenames (without extension)
+        listFailedFilenames ;
         exit ;;
-    v ) # Show list of failed VOTables
-        showFailedVOTables ;
+    e ) # Report warnings (problem during queries) and errors (failed queries)
+        reportWarningsAndErrors ;
         exit ;;
-    * ) # Unknown option
+    * ) # Unknown option default
         printUsage ;;
     esac
 done
@@ -105,11 +145,13 @@ today=`date +%Y-%m-%dT%H-%M-%S`
 
 # Searching for failed queries
 echo -n "Searching for failed queries ... "
+# Get the name of each .err files in <dir>/log with size not null
 errFilesList=`ls -l log/ | grep ".err" | grep -v "      0 " | awk '{print $9}'`
+# Get the number of .err files in <dir>/log with size not null
 totalNbOfQueries=`ls -l log/ | grep ".err" | grep -v "      0 " | wc | awk '{print $1}'`
 echo "DONE (found '${totalNbOfQueries}' to retry)."
 
-# Loop on every calibrators of every stars, then build calibrator file
+# For each .err files in <dir>/log with size not null
 nbOfRetryDone=0
 for errFilename in $errFilesList
 do
