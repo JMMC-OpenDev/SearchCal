@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.2 2008-07-25 12:56:33 lafrasse Exp $"
+# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.3 2008-07-28 13:39:46 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2008/07/25 12:56:33  lafrasse
+# Added a new option to report errors and warnings separatively.
+# Enhanced documentation.
+#
 # Revision 1.1  2008/07/23 22:34:10  lafrasse
 # Creation.
 #
@@ -28,6 +32,7 @@
 # @optname n : compute the number of failed queries
 # @optname l : list all failed filenames (without extension)
 # @optname e : report warnings (problem during queries) and errors (failed queries)
+# @optname m : report missing result file (command without results)
 # */
 
 # Print usage 
@@ -37,6 +42,7 @@ function printUsage () {
     echo -e "\t-n\t\tCompute the number of failed queries."
     echo -e "\t-l\t\tList all failed filenames (without extension)."
     echo -e "\t-e\t\tReport warnings (problem during queries) and errors (failed queries)."
+    echo -e "\t-m\t\tReport missing results file (command without votables)."
     echo -e "\t<dir-run>\tRetry failed queries in dir-run directory"
     exit 1;
 }
@@ -103,6 +109,50 @@ function reportWarningsAndErrors () {
     fi
 }
 
+# Report missing results (.cmd file exists but not .vot file)
+function reportMissingResults () {
+    cmdCounter=0
+    missCounter=0
+    errorCounter=0
+    emptyCounter=0
+
+    # For each .cmd files in <dir> with size not null
+    cmdFilesList=`ls -l log/ | grep ".cmd" | awk '{print $9}'`
+    for cmdFilename in $cmdFilesList
+    do
+        let "cmdCounter += 1"
+        # Remove '.cmd' extension of the current .cmd filename
+        filename="${cmdFilename%.cmd}"
+
+        # If the corresponding VOTable file does not exist
+        votFilename="${filename}.vot"
+        if [ ! -f $votFilename ]; then
+            let "missCounter += 1"
+            # Search if the result should be inexistant (no calibrators found).
+            tmp=`grep "sclsvrServer - vobs - 0 star(s) found." log/${filename}.out`
+            if [ -n "$tmp" ]; then
+                # It is normal as no calibrators were found for the given .cmd file
+                let "emptyCounter += 1"
+            else
+                # The query did failed, so report it as an error
+                let "errorCounter += 1"
+                echo "***************************************************************"
+                echo "ERROR: ${filename}.vot is abnormally missing."
+                echo "       ${filename}.out contains:"
+                cat log/${filename}.out
+                echo "       ${filename}.err contains:"
+                cat log/${filename}.err
+                echo "***************************************************************"
+            fi
+        fi
+    done
+
+    votCounter=`ls -l | grep ".vot" | wc | awk '{print $1}'`
+    echo "Analyzed ${votCounter} '.vot' files for ${cmdCounter} '.cmd' files:"
+    echo "Found ${missCounter} legit missing result(s) (no calibrators found)."
+    echo "Found ${errorCounter} abnormal missing result(s)."
+}
+
 # Define temporary PATH # change it if the script becomes extern
 PATH=$PATH:$PWD/../bin
 
@@ -118,7 +168,7 @@ fi
 cd ${givenRunDirectory}
 
 # Parse command-line parameters
-while getopts "hnle" option
+while getopts "hnlem" option
 do
     case $option in
     h ) # Print usage help
@@ -131,6 +181,9 @@ do
         exit ;;
     e ) # Report warnings (problem during queries) and errors (failed queries)
         reportWarningsAndErrors ;
+        exit ;;
+    m ) # Report missing result file (command without votable)
+        reportMissingResults ;
         exit ;;
     * ) # Unknown option default
         printUsage ;;
