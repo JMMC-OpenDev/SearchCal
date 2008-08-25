@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2008-08-25 12:48:16 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.8 2008-08-25 12:51:40 lafrasse Exp $"
 #
 # Makefile of sclws module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2008/08/25 12:48:16  lafrasse
+# Added commom MCS LDFLAG.
+#
 # Revision 1.6  2007/10/31 11:50:24  gzins
 # Removed sclwsGetCal program (moved to test directory)
 # Created library
@@ -88,7 +91,7 @@ sclws_OBJECTS   = sclwsWS 		\
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = sclwsManager
 SCRIPTS_L       =
 
 #
