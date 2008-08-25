@@ -1,13 +1,18 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.6 2007-10-31 11:50:24 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.7 2008-08-25 12:48:16 lafrasse Exp $"
 #
 # Makefile of sclws module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2007/10/31 11:50:24  gzins
+# Removed sclwsGetCal program (moved to test directory)
+# Created library
+# Re-organized targets
+#
 # Revision 1.5  2007/05/14 08:38:22  gzins
 # Removed full path when invoking soapcpp2 tool
 #
@@ -54,7 +59,7 @@ EXECUTABLES_L   =
 #
 # Web service server
 sclwsServer_OBJECTS   = sclwsServer
-sclwsServer_LDFLAGS   = 
+sclwsServer_LDFLAGS   = ${MCSSTD_LIBLIST}
 sclwsServer_LIBS      = MCS C++ gsoap++ pthread uuid sclws sclsvr vobs alx simcli thrd
 
 #
