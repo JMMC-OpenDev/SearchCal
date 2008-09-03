@@ -3,11 +3,14 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetCode.sh,v 1.8 2006-06-09 11:56:31 mella Exp $"
+# "@(#) $Id: ctooGetCode.sh,v 1.9 2008-09-03 14:01:51 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2006/06/09 11:56:31  mella
+# Add templates for xml files
+#
 # Revision 1.7  2006/06/05 14:30:30  gzins
 # Added command-definition-file choice
 #
@@ -52,6 +55,8 @@
 #   -# script
 #   -# Makefile
 #   -# java-class
+#   -# java-interface
+#   -# java-singleton
 # 
 # \sa ctooGetTemplateForCoding.sh, ctooGetTemplateFile.sh, ctooGetTemplate.sh
 #  
@@ -78,8 +83,9 @@ Templates are available for:
         4- c++-small-main                10- java-main
         5- c++-class-definition-file     11- java-class
         6- c++-class-interface-file      12- java-interface
+                                         13- java-singleton
 
-        7- command-definition-file       13- xml-file
+        7- command-definition-file       14- xml-file
 xyz
 
 # Propose the user to enter his choice
@@ -123,7 +129,7 @@ then
             
         7)  # command-definition-file 
             ctooGetTemplateForCoding cdf-xml
-          ;;
+            ;;
 
         8)  # script file choice
             ctooGetTemplateForCoding script
@@ -133,19 +139,23 @@ then
             ctooGetTemplateForCoding Makefile
             ;;
  
-        10)  # java-main choice
+        10) # java-main choice
             ctooGetTemplateForCoding java-main
             ;;
         
-        11)  # java-class choice
+        11) # java-class choice
             ctooGetTemplateForCoding java-class
             ;;
  
-        12)  # java-interface choice
+        12) # java-interface choice
             ctooGetTemplateForCoding java-interface
             ;;
                 
-        13)  # xml-file choice
+        13) # java-singleton choice
+            ctooGetTemplateForCoding java-singleton
+            ;;
+                
+        14) # xml-file choice
             ctooGetTemplateForCoding xml-file
             ;;
         

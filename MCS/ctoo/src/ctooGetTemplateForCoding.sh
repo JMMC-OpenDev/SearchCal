@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.22 2006-06-09 11:56:31 mella Exp $"
+# "@(#) $Id: ctooGetTemplateForCoding.sh,v 1.23 2008-09-03 14:01:51 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2006/06/09 11:56:31  mella
+# Add templates for xml files
+#
 # Revision 1.21  2006/06/05 13:57:37  lsauge
 # change file access permission code for cdf-xml template from 755 to 644
 #
@@ -93,6 +96,8 @@
 #   - c++-class-file
 #   - c++-h-file
 #   - java-class
+#   - java-interface
+#   - java-singleton
 #   - script
 #   - cdf-xml
 #   - Makefile
@@ -116,7 +121,7 @@ usage()
 {
     echo -e "\n\tUsage: ctooGetTemplateForCoding c-main|c-procedure|h-file|" 
     echo -e "\tc++-small-main|c++-class-definition-file|c++-class-interface-file|"
-    echo -e "\tjava-main|java-class|java-interface|script|cdf-xml|xml-file|Makefile"
+    echo -e "\tjava-main|java-class|java-interface|java-singleton|script|cdf-xml|xml-file|Makefile"
 }
 
 
@@ -194,7 +199,7 @@ then
             MODE=644
             ;;
 
-        java-main|java-class|java-interface)
+        java-main|java-class|java-interface|java-singleton)
             TEMPLATE=$CODE_DIR/$choice.template
             FILE_NAME=""
             FILE_SUFFIX=".java"
