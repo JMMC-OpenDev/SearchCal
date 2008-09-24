@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.74 2008-03-10 07:50:22 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.75 2008-09-24 11:34:59 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.74  2008/03/10 07:50:22  lafrasse
+* Minor modifications on comments and log traces.
+*
 * Revision 1.73  2007/10/31 11:21:12  gzins
 * Updated IsSame() to support string star property comparison
 *
@@ -199,7 +202,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.74 2008-03-10 07:50:22 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.75 2008-09-24 11:34:59 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1224,7 +1227,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     logTrace("vobsSTAR::AddProperties()");
 
     AddProperty(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, "-", "%.0f",
-                "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=HD${HD}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
+                "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
                 "HD identifier, click to call Simbad on this object");
     AddProperty(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, "-");  
     AddProperty(vobsSTAR_ID_DM, "DM", vobsSTRING_PROPERTY, "-");  
@@ -1236,10 +1239,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                 "http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0",
                 "2MASS identifier, click to call Vizier on this object");
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
-                "h:m:s", NULL, "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
+                "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
                 "Click to call Simbad based on those coordinates");
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
-                "d:m:s", NULL, "http://simbad.u-strasbg.fr/sim-id.pl?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
+                "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
                 "Click to call Simbad based on those coordinates");
     AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, "-");    
     AddProperty(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, 
