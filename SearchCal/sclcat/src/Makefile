@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2008-07-23 22:35:44 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.8 2008-09-30 14:54:18 mella Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2008/07/23 22:35:44  lafrasse
+# Added sclcatRetryFailedQueries to SCRIPTS_L section.
+#
 # Revision 1.6  2008/07/11 12:56:55  lafrasse
 # Added ESO Calibrator catalog generation scripts.
 #
@@ -201,7 +204,7 @@ do_fortran:
 	@for file in $(EXECUTABLES_FORTRAN) ; do \
 		echo "== FORTRAN Compiling: $${file}.f"; \
 		echo "Building executable::  ../bin/$${file}"; \
-		ifc -w -Vaxlib -o ../bin/$${file} $${file}.f; \
+		g95 -o ../bin/$${file} $${file}.f; \
 	done
 
 clean_fortran:
