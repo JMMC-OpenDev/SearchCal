@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.3 2008-07-17 15:23:22 lafrasse Exp $"
+# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.4 2008-10-03 12:44:12 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2008/07/17 15:23:22  lafrasse
+# Removed unneeded files open.
+#
 # Revision 1.2  2008/07/17 15:17:38  lafrasse
 # Added conversion functions (arcmin to HMS & DMS) from ESO.
 # Added parameters to computeSkyBoxes() to restrict queried sky zone (for test
@@ -20,7 +23,8 @@
 
 #/**
 # @file
-# Generate the configuration file for the ESO calibrators research. 
+# Generate the configuration file for the ESO calibrators research, and the HTML
+# map file to browse results. 
 #
 # @synopsis
 # sclcatESOGenerateConfig
@@ -29,6 +33,8 @@
 # This script generate the sclcatESO.cfg file which is used for the calibrators
 # research. It starts by inserting the static header file sclcatESOHeader.cfg .
 # Then, the sky is mosaiced in order to prepare each needed SearchCal requests.
+# It also generate an HTML file with image mapping to provide downloadable
+# result files to scientist.
 #
 # @usedfiles
 # @filename <b>../config/sclcatESOHeader.cfg :</b> SearchCal parameters file
@@ -39,6 +45,7 @@
 # (sclcatESOHeader.cfg + ../tmp/tailBatch)
 # @filename <b>../tmp/command.dat :</b>  temporary file where are store
 # generated body of the final sclcatESO.cfg file
+# @filename <b>../config/sclcatESOMap.html :</b> generated HTML Map file
 #
 # */
 
@@ -97,6 +104,16 @@ def deg2DMS( Decin ):
    return out
 ################################################################################
 
+raMin = 0
+raMax = 360 * 60
+decMin = -90 * 60
+decMax = 90 * 60
+imageXSize = 1113
+imageXOffset = 66
+imageYSize = 594
+imageYOffset = 17
+
+
 def ArcmintoHMS(arcmin):
     """ Converts RA arcmin to Hours Minutes Seconds h:m:s ."""
     degrees = arcmin / 60.0
@@ -109,6 +126,18 @@ def ArcmintoDMS(arcmin):
     dms = deg2DMS(degrees)
     return dms
 
+def ArcmintoXPixel(arcmin, imageXSize, leftOffset):
+    """ Converts RA arcmin to X pixel coordinates."""
+    global raMax
+    xPixel = ((arcmin * imageXSize) / raMax) + leftOffset
+    return xPixel
+
+def ArcmintoYPixel(arcmin, imageYSize, upwardOffset):
+    """ Converts DEC arcmin to Y pixel coordinates."""
+    global decMax
+    yPixel = ((((-1 * arcmin) + decMax) * imageYSize) / (2 * decMax)) + upwardOffset
+    return yPixel
+
 def computeSkyBoxes(raBoxSize, decBoxSize, nbOfRaBoxes = 0, nbOfDecBoxes = 0):
     """ Returns a list of coordinates of boxes of the given size
     -  raBoxSize    arcmin
@@ -116,11 +145,17 @@ def computeSkyBoxes(raBoxSize, decBoxSize, nbOfRaBoxes = 0, nbOfDecBoxes = 0):
     -  nbOfRaBoxes  Desired number of RA boxes (0 for the whole sky, by default)
     -  nbOfDecBoxes Desired number of DEC boxes (0 for the whole sky, by default)
     """
+    global raMin
+    global raMax
+    global decMin
+    global decMax
+    global imageXSize
+    global imageYSize
+    global imageXOffset
+    global imageYOffset
     # Result list
     boxList = []
     # RA range computation
-    raMin = 0
-    raMax = 360 * 60
     if nbOfRaBoxes > 0:
         raMin2 = ((raMin + raMax) / 2) - ((nbOfRaBoxes / 2.0) * raBoxSize)
         raMax2 = ((raMin + raMax) / 2) + ((nbOfRaBoxes / 2.0) * raBoxSize)
@@ -129,21 +164,28 @@ def computeSkyBoxes(raBoxSize, decBoxSize, nbOfRaBoxes = 0, nbOfDecBoxes = 0):
     nbOfRaBoxes = (raMax - raMin) / raBoxSize
     #print "[%d < ra < %d] / %d = %d"%(raMin, raMax, raBoxSize, nbOfRaBoxes)
     # DEC range computation
-    decMin = -90 * 60
-    decMax = 90 * 60
     if nbOfDecBoxes > 0:
         decMin2 = ((decMin + decMax) / 2) - ((nbOfDecBoxes / 2.0) * decBoxSize)
         decMax2 = ((decMin + decMax) / 2) + ((nbOfDecBoxes / 2.0) * decBoxSize)
         decMin = int(decMin2)
         decMax = int(decMax2)
     nbOfDecBoxes = (decMax - decMin) / decBoxSize
+    raBoxPixelSize = imageXSize / nbOfRaBoxes
+    decBoxPixelSize = imageYSize / nbOfDecBoxes
     #print "[%d < dec < %d] / %d = %d"%(decMin, decMax, decBoxSize, nbOfDecBoxes)
     print "Total number of queries: %d"%(nbOfRaBoxes * nbOfDecBoxes)
     # Generate coordinates list
     for ra in range(raMin, raMax, raBoxSize):
         for dec in range(decMin, decMax, decBoxSize):
             #print "Adding [%s , %s]"%(ArcmintoHMS(ra), ArcmintoDMS(dec))
-            boxList.append([ArcmintoHMS(ra), ArcmintoDMS(dec)])
+            raPX = ArcmintoXPixel(ra, imageXSize, imageXOffset)
+            decPX = ArcmintoYPixel(dec, imageYSize, imageYOffset)
+            #print "RADEC[%s , %s] => PIXEL[%d , %d]"%(ArcmintoHMS(ra), ArcmintoDMS(dec), raPX, decPX)
+            xSG = int(raPX - (raBoxPixelSize / 2))
+            ySG = int(decPX + (decBoxPixelSize / 2))
+            xID = int(raPX + (raBoxPixelSize / 2))
+            yID = int(decPX - (decBoxPixelSize / 2))
+            boxList.append([ArcmintoHMS(ra), ArcmintoDMS(dec), xSG, ySG, xID, yID])
     return boxList
 
 def writeConfigurationList(boxList):
@@ -151,7 +193,6 @@ def writeConfigurationList(boxList):
     -  boxList list of [ra, dec]
     """
     str = ""
-    i = 0
     for box in boxList:
         ident = "box_RA%s_DEC%s"%(box[0], box[1])
         str += "[%s]\n"%ident
@@ -164,6 +205,35 @@ def writeConfigurationList(boxList):
         str += "dec = %s\n"%box[1]
         str += "mag = 6\n"
         str += "\n"
+    return str
+
+def writeHTMLMap(boxList):
+    """ Write SerachCal HTML map with coordinates of boxes of the given size
+    -  boxList list of [ra, dec]
+    """
+    str = ""
+    str += """<html>\n"""
+    str += """<body>\n"""
+    str += """<br/>\n"""
+    str += """ATTENTION : le chargement de cette page est long, soyez patients !\n"""
+    str += """<br/>\n"""
+    str += """<br/>\n"""
+    str += """<img src="catalog.png" USEMAP="#boxes"/>\n"""
+    str += """<map name="boxes">\n"""
+    for box in boxList:
+        ident = "box_RA%s_DEC%s"%(box[0], box[1])
+        str += """<area shape="rect" coords="%d,%d,%d,%d" href="../%s.vot"/>\n"""%(box[2], box[3], box[4], box[5], ident)
+    str += "</map>\n"
+    str += """<br/>\n"""
+    str += """<a href="catalog.vot">Catalogue complet en VOTable</a> - environ 700Mo<br/>\n"""
+    str += """<a href="filtre.vot">Catalogue filtre en VOTable</a> - environ 200Mo<br/>\n"""
+    str += """<a href="catalog.fits">Catalogue complet en FITS</a> - environ 350Mo<br/>\n"""
+    str += """<a href="filtre.fits">Catalogue filtre en FITS</a> - environ 50Mo<br/>\n"""
+    str += """<br/>\n"""
+    str += """<br/>\n"""
+    str += """Utiliser le "clic-droit - Enregistrer sous..." pour telecharger les donnees.\n"""
+    str += """</body>\n"""
+    str += """</html>"""
     return str
 
 headerFile = open("../config/sclcatESOHeader.cfg")
@@ -185,15 +255,21 @@ fileContent += headerFile.read()
 
 #raRange = 3600 # arcmin -> 4 hour
 #decRange = 1800 # arcmin -> 30 degrees
-raRange = 360 # 24 min
-decRange = 120 # 3 degrees
-#boxes=computeSkyBoxes(raRange, decRange, 3, 3)
+#raRange = 360 # 24 min
+raRange = 180 # 12 min
+# decRange = 120 # 3 degrees
+decRange = 60 # 1 degree
+#boxes = computeSkyBoxes(raRange, decRange, 3, 2)
 boxes=computeSkyBoxes(raRange, decRange)
 
 fileContent+=writeConfigurationList(boxes)
 
 # Write the resulting file content to disk
 sclcatESO.write(fileContent)
+
+# Generate HTML map file
+htmlMapFile = open("../config/sclcatESOMap.html", "w")
+htmlMapFile.write(writeHTMLMap(boxes))
 
 print "Done."
 
