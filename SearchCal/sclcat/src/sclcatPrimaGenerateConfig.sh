@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.4 2007-04-10 08:34:17 scetre Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.5 2008-10-08 15:58:20 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2007/04/10 08:34:17  scetre
+# Updated documentation
+#
 # Revision 1.3  2007/03/27 14:55:56  scetre
 # Updated documentation
 #
@@ -141,6 +144,10 @@ askSourceInfo(){
         echo "$END_CONTENT" >> $MAIN_LIST_FILE
    else
             echo "'$sourceName' not known by simbad"
+            if res=$(getSimbadInfos "NAME $simbadName")
+            then
+                info="$info\n<object name='$simbadName' alias='NAME $simbadName' />"
+            fi
             error="$error\n'$sourceName' not found"
     fi
 }
