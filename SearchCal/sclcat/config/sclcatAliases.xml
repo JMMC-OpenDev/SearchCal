@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatAliases.xml,v 1.4 2007-03-26 11:53:03 scetre Exp $"
+# "@(#) $Id: sclcatAliases.xml,v 1.5 2008-10-08 15:52:48 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2007/03/26 11:53:03  scetre
+# Moved documentation blok in the first xml tag
+#
 #
 #*******************************************************************************
 
@@ -31,6 +34,19 @@
     <object name="WASP-2"          alias="NAME WASP-2" />
     <object name="SWEEPS-04"         alias="NAME SWEEPS-04" />
     <object name="SWEEPS-11"         alias="NAME SWEEPS-11" />
+    <!-- next have been retrieve automatically appending NAME before objName -->
+    <!-- Astronomer should validate these entries -->
+    <object name='ChaHa8' alias='NAME ChaHa8' />
+    <object name='HAT-P-1' alias='NAME HAT-P-1' />
+    <object name='HAT-P-2' alias='NAME HAT-P-2' />
+    <object name='HAT-P-3' alias='NAME HAT-P-3' />
+    <object name='HAT-P-4' alias='NAME HAT-P-4' />
+    <object name='HAT-P-5' alias='NAME HAT-P-5' />
+    <object name='HAT-P-6' alias='NAME HAT-P-6' />
+    <object name='HAT-P-7' alias='NAME HAT-P-7' />
+    <object name='MOA-2007-BLG-192-L' alias='NAME MOA-2007-BLG-192-L' />
+    <object name='MOA-2007-BLG-400-L' alias='NAME MOA-2007-BLG-400-L' />
+
     <old>
    <!-- Next object use their parent as alias exoplanet often do the same-->
     <object name='16 Cyg B b' alias='16 Cyg B' /> 
