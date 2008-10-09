@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatBuildMainList.xsl,v 1.5 2008-10-08 15:53:05 mella Exp $"
+# "@(#) $Id: sclcatBuildMainList.xsl,v 1.6 2008-10-09 08:13:54 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/10/08 15:53:05  mella
+# Handle votable as input file
+#
 # Revision 1.4  2007/03/27 14:53:42  scetre
 # Updated documentation
 # Added creation information in resulting file
@@ -63,22 +66,37 @@
             </xsl:if>
         </list>
     </xsl:template>
+    
+    <!-- This template remove the namespace of current node and associated
+    descendants -->
+    <xsl:template name="removeNS">
+        <xsl:element name="{local-name()}">
+            <xsl:copy-of select="@*|text()"/>
+            <xsl:for-each select="./exoplanet:*">
+                <xsl:call-template name="removeNS"/>
+            </xsl:for-each>
+        </xsl:element>
+    </xsl:template>
 
     <xsl:template name="exoplanet2">
-        <xsl:for-each select="//exoplanet:TR">
 
-            <xsl:variable name="exoplanetName">
-                <xsl:value-of select="./exoplanet:TD[1]" />
-            </xsl:variable>
+        <xsl:variable name="votable">
+            <xsl:for-each select="/exoplanet:*">
+                <xsl:call-template name="removeNS"/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="starList">
+            <xsl:for-each select="//exoplanet:TR">
+                <e>
+                    <xsl:value-of select="./exoplanet:TD[13]" />
+                </e>
+            </xsl:for-each>
+        </xsl:variable>
 
-
+        <xsl:for-each select="set:distinct(exslt:node-set($starList)/e)">
             <xsl:variable name="starName">
-                <xsl:if test="name/@cat">                    
-                    <xsl:value-of select="concat(name/@cat, ' ')" />
-                </xsl:if>
-                <xsl:value-of select="./exoplanet:TD[13]" />
+                <xsl:value-of select="." />
             </xsl:variable>
-
             <xsl:variable name="simbadName">
                 <xsl:choose>
                     <xsl:when test="document($aliasFile)//object[@name=$starName]">
@@ -89,17 +107,20 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
-
             <star>
                 <name><xsl:value-of select="$starName"/></name>
-                <exoplanetName><xsl:value-of select="$exoplanetName"/></exoplanetName>
+                <exoplanetName><xsl:value-of select="$starName"/></exoplanetName>
                 <xsl:if test="document($aliasFile)//object[@name=$starName]">
                     <alias><xsl:value-of select="document($aliasFile)//object[@name=$starName]/@alias"/></alias>
                 </xsl:if>
                 <simbadName><xsl:value-of select="$simbadName"/></simbadName>
-                    <planet>
-                        <name><xsl:value-of select="$exoplanetName"/></name>
-                    </planet>
+
+                <planet>
+                    <xsl:for-each
+                        select="exslt:node-set($votable)//TR[TD[13]=$starName]">
+                        <name><xsl:value-of select="./TD[1]"/></name>
+                    </xsl:for-each>
+                </planet>
             </star>
         </xsl:for-each>
     </xsl:template>
