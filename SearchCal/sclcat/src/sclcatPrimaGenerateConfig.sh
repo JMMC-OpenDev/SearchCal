@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.5 2008-10-08 15:58:20 mella Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.6 2008-10-09 08:10:37 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/10/08 15:58:20  mella
+# Help to build aliases
+#
 # Revision 1.4  2007/04/10 08:34:17  scetre
 # Updated documentation
 #
@@ -176,7 +179,7 @@ collectCandidates(){
 
     # get collection from exoplanet 
     # novalid is used because dtd is not reachable...
-    xsltproc --novalid -o $OUTPUT ../config/sclcatBuildMainList.xsl ../config/sclcatPrimaExoplanetData.xml
+    xsltproc --novalid -o $OUTPUT ../config/sclcatBuildMainList.xsl ../config/sclcatPrimaExoplanetData.xml || exit 1
 
     # next collection should be added here ...
     
