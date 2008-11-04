@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.5 2008-07-23 23:06:23 lafrasse Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.6 2008-11-04 09:39:56 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/07/23 23:06:23  lafrasse
+# Added more detailled progression monitoring.
+#
 # Revision 1.4  2008/07/23 22:32:53  lafrasse
 # Changed calibrator couting method.
 #
@@ -49,10 +52,8 @@ function printUsage () {
     exit 1;
 }
 
+# Command line options parsing
 while getopts "h" option
-# Initial declaration.
-# c, h, u and t are the options (flags) expected.
-# The : after option 't' shows it will have an argument passed with it.
 do
   case $option in
     h ) # Help option
@@ -71,6 +72,8 @@ if [ ! -d "$dir" ]
 then
     echo "Please give one run directory"
     exit 1
+else
+    echo "Parsing results from $dir"
 fi
 
 # Moving to the right directory
@@ -79,10 +82,14 @@ RESULTPATH=result
 mkdir $RESULTPATH
 
 # Generating VOTable header
-tmp=( $(ls | grep ".vot") )
+votList=( $(ls | grep ".vot") )
+if [ -n $votList ]; then
+    echo "No VOTable to parse, exiting now."
+    exit 0
+fi
 RESULTFILE=$RESULTPATH/catalog.vot
 echo -n "Generating result header ... "
-cat $tmp | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
+cat $votList | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
 echo "DONE"
 
 # Loop on every calibrators of every stars, then build calibrator file
@@ -108,7 +115,7 @@ done
 
 # Generating VOTable footer
 echo -n "Generating result footer ... "
-cat $tmp | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
+cat $votList | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
 echo "DONE"
 
 #___oOo___
