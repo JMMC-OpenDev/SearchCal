@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.4 2008-10-03 12:44:12 lafrasse Exp $"
+# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.5 2008-11-04 09:16:18 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2008/10/03 12:44:12  lafrasse
+# Added preliminary support for HTML Map.
+#
 # Revision 1.3  2008/07/17 15:23:22  lafrasse
 # Removed unneeded files open.
 #
@@ -155,25 +158,43 @@ def computeSkyBoxes(raBoxSize, decBoxSize, nbOfRaBoxes = 0, nbOfDecBoxes = 0):
     global imageYOffset
     # Result list
     boxList = []
+
     # RA range computation
-    if nbOfRaBoxes > 0:
-        raMin2 = ((raMin + raMax) / 2) - ((nbOfRaBoxes / 2.0) * raBoxSize)
-        raMax2 = ((raMin + raMax) / 2) + ((nbOfRaBoxes / 2.0) * raBoxSize)
-        raMin = int(raMin2)
-        raMax = int(raMax2)
-    nbOfRaBoxes = (raMax - raMin) / raBoxSize
+    if nbOfRaBoxes > 0: # If not running on the whole sky
+        # Compute the seeked RA region min & max coordinates according to:
+        #  - the number of boxes wanted;
+        #  - the size of those boxes.
+        raRangeCenter = (raMin + raMax) / 2
+        raHalfSize = (nbOfRaBoxes / 2.0) * raBoxSize
+        raMin = int(raRangeCenter - raHalfSize)
+        raMax = int(raRangeCenter + raHalfSize)
+    else:
+        # Compute the total number of RA boxes to cover the whole sky according to its RA size
+        nbOfRaBoxes = (raMax - raMin) / raBoxSize
+
     #print "[%d < ra < %d] / %d = %d"%(raMin, raMax, raBoxSize, nbOfRaBoxes)
+
     # DEC range computation
-    if nbOfDecBoxes > 0:
-        decMin2 = ((decMin + decMax) / 2) - ((nbOfDecBoxes / 2.0) * decBoxSize)
-        decMax2 = ((decMin + decMax) / 2) + ((nbOfDecBoxes / 2.0) * decBoxSize)
-        decMin = int(decMin2)
-        decMax = int(decMax2)
-    nbOfDecBoxes = (decMax - decMin) / decBoxSize
+    if nbOfDecBoxes > 0: # If not running on the whole sky
+        # Compute the seeked DEC region min & max coordinates according to:
+        #  - the number of boxes wanted;
+        #  - the size of those boxes.
+        decRangeCenter = (decMin + decMax) / 2
+        decHalfSize = (nbOfDecBoxes / 2.0) * decBoxSize
+        decMin = int(decRangeCenter - decHalfSize)
+        decMax = int(decRangeCenter + decHalfSize)
+    else:
+        # Compute the total number of DEC boxes to cover the whole sky according to its DEC size
+        nbOfDecBoxes = (decMax - decMin) / decBoxSize
+
+    # Compute the number of pixel for each box for the HTML map
     raBoxPixelSize = imageXSize / nbOfRaBoxes
     decBoxPixelSize = imageYSize / nbOfDecBoxes
+
     #print "[%d < dec < %d] / %d = %d"%(decMin, decMax, decBoxSize, nbOfDecBoxes)
+
     print "Total number of queries: %d"%(nbOfRaBoxes * nbOfDecBoxes)
+
     # Generate coordinates list
     for ra in range(raMin, raMax, raBoxSize):
         for dec in range(decMin, decMax, decBoxSize):
@@ -181,11 +202,11 @@ def computeSkyBoxes(raBoxSize, decBoxSize, nbOfRaBoxes = 0, nbOfDecBoxes = 0):
             raPX = ArcmintoXPixel(ra, imageXSize, imageXOffset)
             decPX = ArcmintoYPixel(dec, imageYSize, imageYOffset)
             #print "RADEC[%s , %s] => PIXEL[%d , %d]"%(ArcmintoHMS(ra), ArcmintoDMS(dec), raPX, decPX)
-            xSG = int(raPX - (raBoxPixelSize / 2))
-            ySG = int(decPX + (decBoxPixelSize / 2))
-            xID = int(raPX + (raBoxPixelSize / 2))
-            yID = int(decPX - (decBoxPixelSize / 2))
-            boxList.append([ArcmintoHMS(ra), ArcmintoDMS(dec), xSG, ySG, xID, yID])
+            upperLeftX = int(raPX - (raBoxPixelSize / 2))
+            upperLeftY = int(decPX + (decBoxPixelSize / 2))
+            lowerRightX = int(raPX + (raBoxPixelSize / 2))
+            lowerRightY = int(decPX - (decBoxPixelSize / 2))
+            boxList.append([ArcmintoHMS(ra), ArcmintoDMS(dec), upperLeftX, upperLeftY, lowerRightX, lowerRightY])
     return boxList
 
 def writeConfigurationList(boxList):
@@ -198,12 +219,10 @@ def writeConfigurationList(boxList):
         str += "[%s]\n"%ident
         str += "file = %s.vot\n"%ident
         str += "objectName = %s\n"%ident
-        str += "file = %s.vot\n"%ident
         str += "diffRa = %d\n"%raRange
         str += "diffDec = %d\n"%decRange
         str += "ra = %s\n"%box[0]
         str += "dec = %s\n"%box[1]
-        str += "mag = 6\n"
         str += "\n"
     return str
 
@@ -257,7 +276,7 @@ fileContent += headerFile.read()
 #decRange = 1800 # arcmin -> 30 degrees
 #raRange = 360 # 24 min
 raRange = 180 # 12 min
-# decRange = 120 # 3 degrees
+# decRange = 120 # 2 degrees
 decRange = 60 # 1 degree
 #boxes = computeSkyBoxes(raRange, decRange, 3, 2)
 boxes=computeSkyBoxes(raRange, decRange)
