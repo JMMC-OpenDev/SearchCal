@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.6 2008-11-04 09:39:56 lafrasse Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.7 2008-11-26 10:25:52 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2008/11/04 09:39:56  lafrasse
+# Handled case where no VOTable were found.
+#
 # Revision 1.5  2008/07/23 23:06:23  lafrasse
 # Added more detailled progression monitoring.
 #
@@ -82,8 +85,8 @@ RESULTPATH=result
 mkdir $RESULTPATH
 
 # Generating VOTable header
-votList=( $(ls | grep ".vot") )
-if [ -n $votList ]; then
+votList=`ls | grep ".vot"`
+if [ -z "${votList}" ]; then
     echo "No VOTable to parse, exiting now."
     exit 0
 fi
