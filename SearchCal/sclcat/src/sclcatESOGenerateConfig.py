@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.5 2008-11-04 09:16:18 lafrasse Exp $"
+# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.6 2008-11-26 10:22:56 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/11/04 09:16:18  lafrasse
+# Enhanced code documentation and lisibility.
+# Removed uneeded generated parameters.
+#
 # Revision 1.4  2008/10/03 12:44:12  lafrasse
 # Added preliminary support for HTML Map.
 #
@@ -278,8 +282,8 @@ fileContent += headerFile.read()
 raRange = 180 # 12 min
 # decRange = 120 # 2 degrees
 decRange = 60 # 1 degree
-#boxes = computeSkyBoxes(raRange, decRange, 3, 2)
-boxes=computeSkyBoxes(raRange, decRange)
+boxes = computeSkyBoxes(raRange, decRange, 3, 2)
+#boxes=computeSkyBoxes(raRange, decRange)
 
 fileContent+=writeConfigurationList(boxes)
 
