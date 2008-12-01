@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESO.sh,v 1.5 2008-12-01 09:38:22 lafrasse Exp $"
+# "@(#) $Id: sclcatESO.sh,v 1.6 2008-12-01 10:45:52 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/12/01 09:38:22  lafrasse
+# Enhanced documentation and inline help.
+#
 # Revision 1.4  2008/07/23 22:31:07  lafrasse
 # Code polishing.
 #
@@ -67,9 +70,7 @@ function printUsage () {
 # Parse result
 # */
 function parseResult () {
-        echo -e "Analyse the results..."
         sclcatESOParseResult $1
-        echo -e "...Done."
 }
 
 echo -n "Started at: "
