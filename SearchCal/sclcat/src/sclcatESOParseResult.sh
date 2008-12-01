@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.7 2008-11-26 10:25:52 lafrasse Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.8 2008-12-01 10:45:14 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2008/11/26 10:25:52  lafrasse
+# Corrected 'no VOTable found' case.
+#
 # Revision 1.6  2008/11/04 09:39:56  lafrasse
 # Handled case where no VOTable were found.
 #
@@ -85,40 +88,46 @@ RESULTPATH=result
 mkdir $RESULTPATH
 
 # Generating VOTable header
-votList=`ls | grep ".vot"`
-if [ -z "${votList}" ]; then
+firstVotFile=(`ls | grep ".vot"`)
+if [ -z "${firstVotFile}" ]; then
     echo "No VOTable to parse, exiting now."
     exit 0
 fi
+
 RESULTFILE=$RESULTPATH/catalog.vot
+
+# Generating VOTable header
 echo -n "Generating result header ... "
-cat $votList | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
+cat $firstVotFile | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
 echo "DONE"
 
 # Loop on every calibrators of every stars, then build calibrator file
 nbOfVOTablesDone=0
 totalNbOfVOTables=`ls -l | grep ".vot"| wc | awk '{print $1}'`
 totalNbOfCalibrators=0
-for i in *.vot
+for file in *.vot
 do
     # Increment counter
     let "nbOfVOTablesDone += 1"
 
-    if [ -f "$i" ]
+    if [ -f "$file" ]
     then
-        echo -n "Analyzing file $i ... "
-        xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" $i >> $RESULTFILE
-        nbOfCalibrators=`xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" $i`
+        echo -n "Extracting data from '$file' (${nbOfVOTablesDone} / ${totalNbOfVOTables}) : "
+
+        xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" ${file} >> $RESULTFILE
+
+        nbOfCalibrators=`xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" ${file}`
         let "totalNbOfCalibrators += nbOfCalibrators"
-        echo " DONE (${nbOfVOTablesDone} / ${totalNbOfVOTables}, found '$nbOfCalibrators' new calibrators for a total of '$totalNbOfCalibrators')."
+
+        echo "found '${nbOfCalibrators}' new calibrators for a total of '${totalNbOfCalibrators}' ... DONE."
     else
-        echo "ERROR accessing file $i !"
+        echo "ERROR accessing file !"
     fi
 done
 
 # Generating VOTable footer
 echo -n "Generating result footer ... "
-cat $votList | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
+cat $firstVotFile | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
 echo "DONE"
 
 #___oOo___
