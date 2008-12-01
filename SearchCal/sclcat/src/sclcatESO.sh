@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESO.sh,v 1.4 2008-07-23 22:31:07 lafrasse Exp $"
+# "@(#) $Id: sclcatESO.sh,v 1.5 2008-12-01 09:38:22 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2008/07/23 22:31:07  lafrasse
+# Code polishing.
+#
 # Revision 1.3  2008/07/17 07:12:35  lafrasse
 # Added an option to generate config file and run commands.
 #
@@ -83,13 +86,14 @@ do
         printUsage ;;
     g ) # generation reference option
         dir="eso-ref" ;;
-    c ) # generate the configuration file
+    c ) # generate the configuration file and exit
         sclcatESOGenerateConfig ;
         exit ;;
-    r ) # generate the configuration file
+    r ) # generate the configuration file and run
         sclcatESOGenerateConfig ;;
-    * ) # Unknown option
-        printUsage ;;
+    [?] ) # Unknown option
+        printUsage ;
+        exit ;;
     esac
 done
 
