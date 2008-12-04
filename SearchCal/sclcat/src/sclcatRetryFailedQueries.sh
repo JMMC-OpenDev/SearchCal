@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.3 2008-07-28 13:39:46 lafrasse Exp $"
+# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.4 2008-12-04 10:42:16 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2008/07/28 13:39:46  lafrasse
+# Added an option to detect abnormally missing result files.
+#
 # Revision 1.2  2008/07/25 12:56:33  lafrasse
 # Added a new option to report errors and warnings separatively.
 # Enhanced documentation.
@@ -21,7 +24,7 @@
 # Try to relaunch queries that returned errors while processed
 #
 # @synopsis
-# sclcatRetryFailedQueries \<run-directory\>
+# sclcatRetryFailedQueries [h|n|l|e|m|a|r] \<dir\>
 # 
 # @details
 # This script search for log/*.err files whith size not null, and then restart
@@ -33,31 +36,36 @@
 # @optname l : list all failed filenames (without extension)
 # @optname e : report warnings (problem during queries) and errors (failed queries)
 # @optname m : report missing result file (command without results)
+# @optname a : all the previous reporting options.
+# @optname r : retry failed queries.
+# @optname <dir> : the directory to process, either [dir-ref] or [dir-run-<YYYY-MM-DDTHH-MM-SS>].
 # */
 
 # Print usage 
 function printUsage () {
-    echo -e "Usage: sclcatRetryFailedQueries [dir-ref] or [dir-run-<YYYY-MM-DDTHH-MM-SS>]" 
-    echo -e "\t-h\t\tPrint this help."
-    echo -e "\t-n\t\tCompute the number of failed queries."
-    echo -e "\t-l\t\tList all failed filenames (without extension)."
-    echo -e "\t-e\t\tReport warnings (problem during queries) and errors (failed queries)."
-    echo -e "\t-m\t\tReport missing results file (command without votables)."
-    echo -e "\t<dir-run>\tRetry failed queries in dir-run directory"
+    echo -e "Usage: sclcatRetryFailedQueries [h|n|l|e|m|a|r] <dir>" 
+    echo -e "\t-h\tPrint this help."
+    echo -e "\t-n\tCompute the number of failed queries."
+    echo -e "\t-l\tList all failed filenames (without extension)."
+    echo -e "\t-e\tReport warnings (problem during queries) and errors (failed queries)."
+    echo -e "\t-m\tReport missing results file (command without votables)."
+    echo -e "\t-a\tAll the previous reporting options."
+    echo -e "\t-r\tRetry failed queries."
+    echo -e "\t<dir>\tThe directory to process, either [dir-ref] or [dir-run-<YYYY-MM-DDTHH-MM-SS>]."
     exit 1;
 }
 
 # Compute the number of failed commands
 function computeNbOfFailedCommands () {
     # Get the number of .err files in <dir>/log with size not null
-    totalNbOfQueries=`ls -l log/ | grep ".err" | grep -v "      0 " | wc | awk '{print $1}'`
+    totalNbOfQueries=`find log/ -name "*.err" ! -size 0 | wc | awk '{print $1}'`
     echo "${totalNbOfQueries} failed queries found." ;
 }
 
 # List all failed filenames (without extension)
 function listFailedFilenames () {
     # For each .err files in <dir>/log with size not null
-    errFilesList=`ls -l log/ | grep ".err" | grep -v "      0 " | awk '{print $9}'`
+    errFilesList=`find log/ -name "*.err" ! -size 0 -printf "%f\n"`
     for errFilename in $errFilesList
     do
         # Remove '.err' extension of the current .err filename
@@ -74,7 +82,7 @@ function reportWarningsAndErrors () {
     errorCounter=0
 
     # For each .err files in <dir>/log with size not null
-    errFilesList=`ls -l log/ | grep ".err" | grep -v "      0 " | awk '{print $9}'`
+    errFilesList=`find log/ -name "*.err" ! -size 0 -printf "%f\n"`
     for errFilename in $errFilesList
     do
         # Remove '.err' extension of the current .err filename
@@ -116,8 +124,8 @@ function reportMissingResults () {
     errorCounter=0
     emptyCounter=0
 
-    # For each .cmd files in <dir> with size not null
-    cmdFilesList=`ls -l log/ | grep ".cmd" | awk '{print $9}'`
+    # For each .cmd files in <dir>/log
+    cmdFilesList=`find log/ -name "*.cmd" -printf "%f\n"`
     for cmdFilename in $cmdFilesList
     do
         let "cmdCounter += 1"
@@ -147,10 +155,85 @@ function reportMissingResults () {
         fi
     done
 
-    votCounter=`ls -l | grep ".vot" | wc | awk '{print $1}'`
+    votCounter=`find ./ -name "*.vot" | wc | awk '{print $1}'`
     echo "Analyzed ${votCounter} '.vot' files for ${cmdCounter} '.cmd' files:"
     echo "Found ${missCounter} legit missing result(s) (no calibrators found)."
     echo "Found ${errorCounter} abnormal missing result(s)."
+}
+
+# Relaunch each failed queries
+function retryFailedQueries () {
+    echo -n "Started at: "
+    date
+
+    # Compute today's date
+    today=`date +%Y-%m-%dT%H-%M-%S`
+
+    # Searching for failed queries
+    echo -n "Searching for failed queries ... "
+    # Get the name of each .err files in <dir>/log with size not null
+    errFilesList=`find log/ -name "*.err" ! -size 0 -printf "%f\n"`
+    # Get the number of .err files in <dir>/log with size not null
+    totalNbOfQueries=`find log/ -name "*.err" ! -size 0 | wc | awk '{print $1}'`
+    echo "DONE (found '${totalNbOfQueries}' to retry)."
+
+    # For each .err files in <dir>/log with size not null
+    nbOfRetryDone=0
+    for errFilename in $errFilesList
+    do
+        # Increment counter
+        let "nbOfRetryDone += 1"
+
+        # Remove '.err' extension of the current .err filename
+        filename="${errFilename%.err}"
+
+        # Compute corresponding '.cmd' filename
+        cmdFilename="${filename}.cmd"
+        echo "Retrying '${cmdFilename}' (${nbOfRetryDone} / ${totalNbOfQueries}) ..."
+
+        # Display the previous size of the VOTable (if any) before retry
+        votFilename="${filename}.vot"
+        if [ -f $votFilename ]; then
+            votFileSize=`du -sk ${votFilename} | awk '{print $1}'`
+            echo "    Previous VOTable size was ${votFileSize}KB."
+        else
+            echo "    Previous VOTable was not created."
+        fi
+
+        # Compute temporary output '.out' filename
+        tmpOutFilename="log/${filename}-${today}.out"
+        outFilename="log/${filename}.out"
+
+        # Compute temporary err '.err' filename
+        tmpErrFilename="log/${filename}-${today}.err"
+        errFilename="log/${filename}.err"
+
+        # Retry the command
+        command=`cat log/${cmdFilename}`
+        command="${command} 1>${tmpOutFilename} 2>${tmpErrFilename}"
+        echo $command
+        eval $command
+
+        # Only overwrite previous files after command completion.
+        # If the script is interrupted while retrying a comand (i.e ctrl-c),
+        # previous files are not overwritten nor zeroed.
+        mv -f ${tmpOutFilename} ${outFilename}
+        mv -f ${tmpErrFilename} ${errFilename}
+
+        # Get the new size of the VOTable (if any) after retry
+        if [ -f $votFilename ]; then
+            votFileSize=`du -sk ${votFilename} | awk '{print $1}'`
+            echo "    New VOTable size is ${votFileSize}KB."
+        else
+            echo "    New VOTable was not created."
+        fi
+
+        echo "...DONE"
+        echo
+    done
+
+    echo -n "Finished at: "
+    date
 }
 
 # Define temporary PATH # change it if the script becomes extern
@@ -168,7 +251,7 @@ fi
 cd ${givenRunDirectory}
 
 # Parse command-line parameters
-while getopts "hnlem" option
+while getopts "hnlemar" option
 do
     case $option in
     h ) # Print usage help
@@ -185,81 +268,18 @@ do
     m ) # Report missing result file (command without votable)
         reportMissingResults ;
         exit ;;
+    a ) # All the previous options
+        computeNbOfFailedCommands ;
+        listFailedFilenames ;
+        reportWarningsAndErrors ;
+        reportMissingResults ;
+        exit ;;
+    r ) # Relaunch each failed queries
+        retryFailedQueries ;
+        exit ;;
     * ) # Unknown option default
         printUsage ;;
     esac
 done
-
-echo -n "Started at: "
-date
-
-# Compute today's date
-today=`date +%Y-%m-%dT%H-%M-%S`
-
-# Searching for failed queries
-echo -n "Searching for failed queries ... "
-# Get the name of each .err files in <dir>/log with size not null
-errFilesList=`ls -l log/ | grep ".err" | grep -v "      0 " | awk '{print $9}'`
-# Get the number of .err files in <dir>/log with size not null
-totalNbOfQueries=`ls -l log/ | grep ".err" | grep -v "      0 " | wc | awk '{print $1}'`
-echo "DONE (found '${totalNbOfQueries}' to retry)."
-
-# For each .err files in <dir>/log with size not null
-nbOfRetryDone=0
-for errFilename in $errFilesList
-do
-    # Increment counter
-    let "nbOfRetryDone += 1"
-
-    # Remove '.err' extension of the current .err filename
-    filename="${errFilename%.err}"
-
-    # Compute corresponding '.cmd' filename
-    cmdFilename="${filename}.cmd"
-    echo "Retrying '${cmdFilename}' (${nbOfRetryDone} / ${totalNbOfQueries}) ..."
-
-    # Display the previous size of the VOTable (if any) before retry
-    votFilename="${filename}.vot"
-    if [ -f $votFilename ]; then
-        votFileSize=`du -sk ${votFilename} | awk '{print $1}'`
-        echo "Previous VOTable size was ${votFileSize}KB."
-    else
-        echo "Previous VOTable was not created."
-    fi
-
-    # Compute temporary output '.out' filename
-    tmpOutFilename="log/${filename}-${today}.out"
-    outFilename="log/${filename}.out"
-
-    # Compute temporary err '.err' filename
-    tmpErrFilename="log/${filename}-${today}.err"
-    errFilename="log/${filename}.err"
-
-    # Retry the command
-    command=`cat log/${cmdFilename}`
-    command="${command} 1>${tmpOutFilename} 2>${tmpErrFilename}"
-    echo $command
-    eval $command
-
-    # Only overwrite previous files after command completion.
-    # If the script is interrupted while retrying a comand (i.e ctrl-c),
-    # previous files are not overwritten nor zeroed.
-    mv -f ${tmpOutFilename} ${outFilename}
-    mv -f ${tmpErrFilename} ${errFilename}
-
-    # Get the new size of the VOTable (if any) after retry
-    if [ -f $votFilename ]; then
-        votFileSize=`du -sk ${votFilename} | awk '{print $1}'`
-        echo "New VOTable size is ${votFileSize}KB."
-    else
-        echo "New VOTable was not created."
-    fi
-
-    echo "...DONE"
-    echo
-done
-
-echo -n "Finished at: "
-date
 
 #___oOo___
