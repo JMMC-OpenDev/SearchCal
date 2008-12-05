@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESO.sh,v 1.9 2008-12-05 16:31:39 lafrasse Exp $"
+# "@(#) $Id: sclcatESO.sh,v 1.10 2008-12-05 22:00:05 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2008/12/05 16:31:39  lafrasse
+# Coorected a bug related to the END value while only regenerateing HTML output.
+#
 # Revision 1.8  2008/12/05 16:22:22  lafrasse
 # Moved generated HTML file in the <eso-dir>.
 #
@@ -75,6 +78,13 @@ function printUsage () {
         echo -e "\t-r\tgenerate the configuration file and run."
         echo -e "\t-i\tgenerate HTML output."
         exit 1;
+}
+
+#/**
+# Retry failed queries
+# */
+function retryFailedQueries () {
+        sclcatRetryFailedQueries $1
 }
 
 #/**
@@ -220,12 +230,13 @@ cd $dir
 cmdBatch ../../config/sclcatESO.cfg -d log
 
 cd ..
+retryFailedQueries $dir
 parseResult $dir
 filterResult $dir
 
 END=`date`
 echo "Finished at: $END"
 
-generateHtmlOutput ./
+generateHtmlOutput $dir
 
 #___oOo___
