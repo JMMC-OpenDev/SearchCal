@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.8 2008-12-05 16:22:22 lafrasse Exp $"
+# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.9 2008-12-05 16:30:56 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2008/12/05 16:22:22  lafrasse
+# Moved generated HTML file in the <eso-dir>.
+#
 # Revision 1.7  2008/12/05 16:09:59  lafrasse
 # Streamlined HTML generation output.
 #
@@ -285,8 +288,8 @@ fileContent += headerFile.read()
 raRange = 180 # 12 min
 # decRange = 120 # 2 degrees
 decRange = 60 # 1 degree
-boxes = computeSkyBoxes(raRange, decRange, 3, 2)
-#boxes=computeSkyBoxes(raRange, decRange)
+#boxes = computeSkyBoxes(raRange, decRange, 3, 2)
+boxes=computeSkyBoxes(raRange, decRange)
 
 fileContent+=writeConfigurationList(boxes)
 
