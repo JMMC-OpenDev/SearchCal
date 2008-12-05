@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOFilterResult.sh,v 1.2 2008-12-03 10:08:11 lafrasse Exp $"
+# "@(#) $Id: sclcatESOFilterResult.sh,v 1.3 2008-12-05 15:03:19 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2008/12/03 10:08:11  lafrasse
+# Added VOT conversion to FITS.
+# Enhanced output traces.
+#
 # Revision 1.1  2008/12/01 16:21:44  mella
 # First revision
 #
@@ -101,7 +105,16 @@ newStep()
         echo
         # KEEP quotes arround $@ to ensure a correct arguments process
         "$@"
-        echo "DONE."
+        if [ $? -eq 0 ]
+        then
+            echo "DONE."
+        else
+            echo "FAILED (using previous catalog instead)."
+        fi
+        if [ ! -e $CATALOG ]
+        then
+            cp $PREVIOUSCATALOG $CATALOG
+        fi
         stilts tpipe in=$CATALOG omode='count'
     else
         echo "SKIPPED."
