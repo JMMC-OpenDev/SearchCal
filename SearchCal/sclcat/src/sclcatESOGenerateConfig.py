@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.6 2008-11-26 10:22:56 lafrasse Exp $"
+# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.7 2008-12-05 16:09:59 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2008/11/26 10:22:56  lafrasse
+# Enhanced documentation.
+#
 # Revision 1.5  2008/11/04 09:16:18  lafrasse
 # Enhanced code documentation and lisibility.
 # Removed uneeded generated parameters.
@@ -111,14 +114,18 @@ def deg2DMS( Decin ):
    return out
 ################################################################################
 
-raMin = 0
-raMax = 360 * 60
-decMin = -90 * 60
-decMax = 90 * 60
-imageXSize = 1113
-imageXOffset = 66
-imageYSize = 594
-imageYOffset = 17
+raMinDeg = 0
+raMin = raMinDeg * 60
+raMaxDeg = 360
+raMax = raMaxDeg * 60
+decMinDeg = -90
+decMin = decMinDeg * 60
+decMaxDeg = 90
+decMax = decMaxDeg * 60
+imageXSize = 777 # Horizontal size of the 0-360 plotted area
+imageXOffset = 68 # Horizontal offset from upper left to the 0-360 plotted area
+imageYSize = 674 # Vertical size of the -90/90 plotted area
+imageYOffset = 40 # Vertical offset from upper left to the -90/90 plotted area
 
 
 def ArcmintoHMS(arcmin):
@@ -238,7 +245,7 @@ def writeHTMLMap(boxList):
     str += """<html>\n"""
     str += """<body>\n"""
     str += """<br/>\n"""
-    str += """ATTENTION : le chargement de cette page est long, soyez patients !\n"""
+    str += """WARNING : this page may take a while to load !\n"""
     str += """<br/>\n"""
     str += """<br/>\n"""
     str += """<img src="catalog.png" USEMAP="#boxes"/>\n"""
@@ -246,17 +253,10 @@ def writeHTMLMap(boxList):
     for box in boxList:
         ident = "box_RA%s_DEC%s"%(box[0], box[1])
         str += """<area shape="rect" coords="%d,%d,%d,%d" href="../%s.vot"/>\n"""%(box[2], box[3], box[4], box[5], ident)
-    str += "</map>\n"
-    str += """<br/>\n"""
-    str += """<a href="catalog.vot">Catalogue complet en VOTable</a> - environ 700Mo<br/>\n"""
-    str += """<a href="filtre.vot">Catalogue filtre en VOTable</a> - environ 200Mo<br/>\n"""
-    str += """<a href="catalog.fits">Catalogue complet en FITS</a> - environ 350Mo<br/>\n"""
-    str += """<a href="filtre.fits">Catalogue filtre en FITS</a> - environ 50Mo<br/>\n"""
+    str += """</map>\n"""
     str += """<br/>\n"""
     str += """<br/>\n"""
-    str += """Utiliser le "clic-droit - Enregistrer sous..." pour telecharger les donnees.\n"""
-    str += """</body>\n"""
-    str += """</html>"""
+    str += """This catalog covers the sky from %d&deg; &le; RA &le; %d&deg; and %d&deg; &le; DEC &le; %d&deg;.<br/>\n"""%(raMinDeg, raMaxDeg, decMinDeg, decMaxDeg)
     return str
 
 headerFile = open("../config/sclcatESOHeader.cfg")
