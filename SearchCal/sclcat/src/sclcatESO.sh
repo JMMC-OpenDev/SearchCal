@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESO.sh,v 1.8 2008-12-05 16:22:22 lafrasse Exp $"
+# "@(#) $Id: sclcatESO.sh,v 1.9 2008-12-05 16:31:39 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2008/12/05 16:22:22  lafrasse
+# Moved generated HTML file in the <eso-dir>.
+#
 # Revision 1.7  2008/12/05 16:10:40  lafrasse
 # Added automatic HTML generation with PLOT.
 #
@@ -133,7 +136,6 @@ pwd
     OUTPUT_FILE=$1/index.html
     mv $1/../../config/sclcatESOMap.html $OUTPUT_FILE
 
-    END=`date`
     echo "The generation started on '$BEGINNING' and finished on '$END'.<br/>" >> $OUTPUT_FILE
 
     CONFIG_FILE=../config/sclcatESO.cfg
@@ -168,6 +170,7 @@ pwd
 }
 
 BEGINNING=`date`
+END=$BEGINNING
 echo "Started at: $BEGINNING"
 
 # Generate output directory name
