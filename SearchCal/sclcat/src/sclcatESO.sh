@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESO.sh,v 1.7 2008-12-05 16:10:40 lafrasse Exp $"
+# "@(#) $Id: sclcatESO.sh,v 1.8 2008-12-05 16:22:22 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2008/12/05 16:10:40  lafrasse
+# Added automatic HTML generation with PLOT.
+#
 # Revision 1.6  2008/12/01 10:45:52  lafrasse
 # Streamlined output.
 #
@@ -127,7 +130,7 @@ pwd
     echo "DONE."
 
     echo -n "Completing HTML file ... "
-    OUTPUT_FILE=$1/result/index.html
+    OUTPUT_FILE=$1/index.html
     mv $1/../../config/sclcatESOMap.html $OUTPUT_FILE
 
     END=`date`
@@ -155,9 +158,9 @@ pwd
 
     echo "You can download the catalogs below:<br/>" >> $OUTPUT_FILE
     RAW_CATALOG_SIZE=`du -sh $FIRST_CATALOG_PATH | awk '{print $1}'`
-    echo "<li><a href='$FIRST_CATALOG'>Raw Catalog</a> (FITS format, &plusmn;$RAW_CATALOG_SIZE);<br/>" >> $OUTPUT_FILE
+    echo "<li><a href='result/$FIRST_CATALOG'>Raw Catalog</a> (FITS format, &plusmn;$RAW_CATALOG_SIZE);<br/>" >> $OUTPUT_FILE
     FILTERED_CATALOG_SIZE=`du -sh $SECOND_CATALOG_PATH | awk '{print $1}'`
-    echo "<li><a href='$SECOND_CATALOG'>Filtered Catalog</a> (FITS format, &plusmn;$FILTERED_CATALOG_SIZE);<br/>" >> $OUTPUT_FILE
+    echo "<li><a href='result/$SECOND_CATALOG'>Filtered Catalog</a> (FITS format, &plusmn;$FILTERED_CATALOG_SIZE);<br/>" >> $OUTPUT_FILE
 
     echo "</body>" >> $OUTPUT_FILE
     echo "</html>" >> $OUTPUT_FILE

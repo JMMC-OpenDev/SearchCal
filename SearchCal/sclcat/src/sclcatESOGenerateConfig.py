@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.7 2008-12-05 16:09:59 lafrasse Exp $"
+# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.8 2008-12-05 16:22:22 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2008/12/05 16:09:59  lafrasse
+# Streamlined HTML generation output.
+#
 # Revision 1.6  2008/11/26 10:22:56  lafrasse
 # Enhanced documentation.
 #
@@ -248,11 +251,11 @@ def writeHTMLMap(boxList):
     str += """WARNING : this page may take a while to load !\n"""
     str += """<br/>\n"""
     str += """<br/>\n"""
-    str += """<img src="catalog.png" USEMAP="#boxes"/>\n"""
+    str += """<img src="result/catalog.png" USEMAP="#boxes"/>\n"""
     str += """<map name="boxes">\n"""
     for box in boxList:
         ident = "box_RA%s_DEC%s"%(box[0], box[1])
-        str += """<area shape="rect" coords="%d,%d,%d,%d" href="../%s.vot"/>\n"""%(box[2], box[3], box[4], box[5], ident)
+        str += """<area shape="rect" coords="%d,%d,%d,%d" href="%s.vot"/>\n"""%(box[2], box[3], box[4], box[5], ident)
     str += """</map>\n"""
     str += """<br/>\n"""
     str += """<br/>\n"""
