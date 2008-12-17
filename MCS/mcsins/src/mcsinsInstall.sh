@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.21 2008-09-22 14:04:13 ccmgr Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.22 2008-12-17 10:32:53 ccmgr Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.21  2008/09/22 14:04:13  ccmgr
+# Added 'jmcs' module installation.
+#
 # Revision 1.20  2006/10/14 10:39:24  gzins
 # Added again mcscfg module
 #
@@ -93,14 +96,19 @@
 #
 #-------------------------------------------------------------------------------
 #
+
+# List of MCS modules
+mcsModules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth fnd misco env cmd msg sdb evh gwt jmcs modc modcpp modjava"
+
 function printUsage () {
-        echo -e "Usage: mcsinsInstall [-h] [-c] [-u] [-t tag]" 
+        echo -e "Usage: mcsinsInstall [-h] [-c] [-u] [-t tag] [-r tag]" 
         echo -e "\t-h\tprint this help."
         echo -e "\t-c\tonly compile; i.e. do not retrieve modules from "
         echo -e "\t\trepository."
         echo -e "\t-u\tdo not delete modules to be installed from the "
         echo -e "\t\tcurrent directory; they are just updated."
         echo -e "\t-t tag\tuse revision 'tag' when retrieving modules.\n"
+        echo -e "\t-r tag\t perform a cvs rtag 'tag'.\n"
         exit 1;
 }
 
@@ -108,7 +116,8 @@ function printUsage () {
 update="no";
 retrieve="yes";
 tag="";
-while getopts "chut:" option
+rtag="";
+while getopts "chut:r:" option
 # Initial declaration.
 # c, h, u and t are the options (flags) expected.
 # The : after option 't' shows it will have an argument passed with it.
@@ -122,6 +131,8 @@ do
         retrieve="no";;
     t ) # Update option
         tag="$OPTARG";;
+    r ) # Update option
+        rtag="$OPTARG";;
     * ) # Unknown option
         printUsage ;;
     esac
@@ -130,8 +141,18 @@ done
 # Check that all options have been parsed 
 if [ $# -ge $OPTIND ]
 then 
-    echo -e "\nUsage: mcsinsInstall [-c] [-h] [-u] [-t tag]" 
-    exit 1
+    printUsage
+fi
+
+# Determine the MCS release
+if [ "$rtag" != "" ]
+then
+	echo "Tagging cvs repository for following module list with tag='$rtag' :"
+	echo "$mcsModules"
+	echo -e "    Press enter to continue or ^C to abort "
+	read choice
+	cvs rtag $rtag $mcsModules
+	exit
 fi
 
 #
@@ -228,8 +249,6 @@ then
     exit 1
 fi
 
-# List of MCS modules
-mcsModules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth modc modcpp modjava fnd misco env cmd msg sdb evh gwt jmcs"
 
 # Log file
 mkdir -p $fromdir/INSTALL
