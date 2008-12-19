@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.6 2008-05-25 13:39:52 gzins Exp $"
+# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.7 2008-12-19 08:14:15 gzins Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2008/05/25 13:39:52  gzins
+# Added python directories
+#
 # Revision 1.5  2005/12/05 14:32:45  gzins
 # Fixed wrong MCSDATA directory structure
 #
@@ -71,6 +74,7 @@ fi
 BASE_DIR_LIST="config                   \
                doc                      \
                bin                      \
+               bitmaps                  \
                include                  \
                lib                      \
                lib/python               \
