@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.7 2007-03-27 14:53:51 scetre Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.8 2009-01-22 14:12:10 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2007/03/27 14:53:51  scetre
+# Updated documentation
+#
 # Revision 1.6  2007/03/26 11:53:03  scetre
 # Moved documentation blok in the first xml tag
 #
@@ -169,15 +172,15 @@
                         <xsl:sort select="./calibrator[1]/dist" data-type="number" />
                         <xsl:variable name="simbadName" select="./@simbadName"/>
                         <xsl:if test="not($primaStars//star[./name=$simbadName])">
-                            <xsl:message> Not star found with simabdName = '<xsl:value-of select="$simbadName"/>' 
-                                <xsl:value-of select="count($primaStars//star)"/> 
-                            </xsl:message>
+                            <xsl:message> No star(with calibrators) found with simbadName = '<xsl:value-of select="$simbadName"/>'</xsl:message>
                         </xsl:if>
                         <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
                         <xsl:call-template name="starInTable">
                             <xsl:with-param name="object" select="$object"/>
                         </xsl:call-template>    
                     </xsl:for-each>
+                    <xsl:comment>End of stars with calibrators </xsl:comment>
+
                     <xsl:for-each select="$calibrators//star[not(./calibrator)]">
                         <xsl:variable name="simbadName" select="./@simbadName"/>
                         <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
@@ -185,89 +188,30 @@
                             <xsl:with-param name="object" select="$object"/>
                         </xsl:call-template>    
                     </xsl:for-each>
+                    <xsl:comment>End of stars without retained calibrators </xsl:comment>
+
                     <xsl:for-each select="//star">
                         <xsl:variable name="simbadName" select="./simbadName"/>
-                        <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
                         <xsl:if test="not($calibrators//star[@simbadName=$simbadName])">
-                            <xsl:call-template name="starInTable">
-                                <xsl:with-param name="object" select="$object"/>
-                            </xsl:call-template>    
+                            <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
+                            <xsl:if test="$object">
+                                <xsl:call-template name="starInTable">
+                                    <xsl:with-param name="object" select="$object"/>
+                                </xsl:call-template>    
+                            </xsl:if>
+                            <xsl:if test="not($object)">
+                                <xsl:call-template name="starInTable">
+                                    <xsl:with-param name="object" select="."/>
+                                </xsl:call-template>    
+                            </xsl:if>
                         </xsl:if>
                     </xsl:for-each>
-
-                    
                 </table>
 
                 <hr/>
                 Generated on <xsl:value-of select="date:date-time()"/><br/>
             </body>
         </html>
-    </xsl:template>
-
-    <xsl:template name="objectTo2MASSLink">
-        <xsl:param name="ident" select="name"/>
-        <xsl:param name="content" select="$ident"/>
-        <xsl:element name="a">
-            <xsl:attribute name="href">
-                <xsl:value-of select="concat('http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=',$ident,'&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0')"/>
-                
-            </xsl:attribute>
-            <xsl:value-of select="$content"/>
-        </xsl:element>                       
-    </xsl:template>
-
-
-    <xsl:template name="objectToSimbadLink">
-        <xsl:param name="ident" select="name"/>
-        <xsl:param name="content" select="$ident"/>
-        <xsl:element name="a">
-            <xsl:attribute name="href"><xsl:value-of select="concat('http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=',$ident,'&amp;NbIdent=1&amp;Radius=10&amp;Radius.unit=arcmin&amp;submit=submit+id')"/>
-            </xsl:attribute>
-            <xsl:value-of select="$content"/>
-        </xsl:element>                       
-    </xsl:template>
-
-    <xsl:template name="objectToExoplanetLink">
-        <xsl:param name="ident" select="name"/>
-        <xsl:param name="content" select="$ident"/>
-        <xsl:element name="a">
-            <xsl:attribute name="href"><xsl:value-of select="concat('http://exoplanet.eu/star.php?st=',$ident)"/>
-            </xsl:attribute>
-            <xsl:value-of select="$content"/>
-        </xsl:element>                       
-
-    </xsl:template>
-
-    <xsl:template name="listAliases">
-        <table>
-            <xsl:for-each select="//star[./alias]">
-                <tr>
-                    <td>
-                        <xsl:value-of select="name"/>
-                        [
-                        <xsl:call-template name="objectToSimbadLink">
-                            <xsl:with-param name="ident" select="simbadName"/>
-                            <xsl:with-param name="content" select="'S'"/>
-                        </xsl:call-template>
-
-                        <xsl:variable name="sourceName" select="./name"/>
-
-                        <xsl:value-of select="' '"/>
-                        <xsl:call-template name="objectToExoplanetLink">
-                            <xsl:with-param name="ident" select="exoplanetName"/>
-                            <xsl:with-param name="content" select="'E'"/>
-                        </xsl:call-template>
-                        ]
-                    </td>
-                    <td>
-                        <xsl:call-template name="objectToSimbadLink">
-                            <xsl:with-param name="ident" select="simbadName"/>
-                        </xsl:call-template>
-                    </td>
-                </tr>
-            </xsl:for-each>
-        </table>
-
     </xsl:template>
 
     <xsl:template name="starInTable">
@@ -296,8 +240,11 @@
                             <xsl:if test="not($object/ra and $object/dec)">
                                 <xsl:attribute name="style">background-color: #ff0000</xsl:attribute>
                             </xsl:if>
-                            <xsl:variable name="sourceName" select="$object/*[name()=$selector]"/>
+                            <xsl:variable name="sourceName" select="$object/name"/>
                             <xsl:value-of select="$sourceName"/>
+                            <xsl:comment>
+                            <xsl:copy-of select="$object"/>
+                        </xsl:comment>
                             [
                             <xsl:call-template name="objectToSimbadLink">
                                 <xsl:with-param name="ident" select="$simbadName"/>
@@ -359,9 +306,12 @@
                                 <xsl:value-of select="$tmpCalib/calibInfo/dist[2]/value"/>
                             </xsl:when>
                             <xsl:when test="$selector='minDist'">
-                                <xsl:value-of select="$tmpCalib/calibInfo/minDist/value"/>
-                                <xsl:value-of select="' in '"/>
-                                <xsl:value-of select="$tmpCalib/calibInfo/minDist/year"/>
+                                <xsl:if
+                                    test="number($tmpCalib/calibInfo/minDist/value)">
+                                    <xsl:value-of select="$tmpCalib/calibInfo/minDist/value"/>
+                                    <xsl:value-of select="' in '"/>
+                                    <xsl:value-of select="$tmpCalib/calibInfo/minDist/year"/>
+                                </xsl:if>
                             </xsl:when>
                             <xsl:when test="$selector='alias'">
                             </xsl:when>
@@ -391,4 +341,71 @@
 
     </xsl:template>
 
+   <xsl:template name="listAliases">
+        <table>
+            <xsl:for-each select="//star[./alias]">
+                <tr>
+                    <td>
+                        <xsl:value-of select="name"/>
+                        [
+                        <xsl:call-template name="objectToSimbadLink">
+                            <xsl:with-param name="ident" select="simbadName"/>
+                            <xsl:with-param name="content" select="'S'"/>
+                        </xsl:call-template>
+
+                        <xsl:variable name="sourceName" select="./name"/>
+
+                        <xsl:value-of select="' '"/>
+                        <xsl:call-template name="objectToExoplanetLink">
+                            <xsl:with-param name="ident" select="exoplanetName"/>
+                            <xsl:with-param name="content" select="'E'"/>
+                        </xsl:call-template>
+                        ]
+                    </td>
+                    <td>
+                        <xsl:call-template name="objectToSimbadLink">
+                            <xsl:with-param name="ident" select="simbadName"/>
+                        </xsl:call-template>
+                    </td>
+                </tr>
+            </xsl:for-each>
+        </table>
+
+    </xsl:template>
+
+
+    <xsl:template name="objectTo2MASSLink">
+        <xsl:param name="ident" select="name"/>
+        <xsl:param name="content" select="$ident"/>
+        <xsl:element name="a">
+            <xsl:attribute name="href">
+                <xsl:value-of select="concat('http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=',$ident,'&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0')"/>
+            </xsl:attribute>
+            <xsl:value-of select="$content"/>
+        </xsl:element>                       
+    </xsl:template>
+
+
+    <xsl:template name="objectToSimbadLink">
+        <xsl:param name="ident" select="name"/>
+        <xsl:param name="content" select="$ident"/>
+        <xsl:element name="a">
+            <xsl:attribute name="href"><xsl:value-of select="concat('http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=',$ident,'&amp;NbIdent=1&amp;Radius=10&amp;Radius.unit=arcmin&amp;submit=submit+id')"/>
+            </xsl:attribute>
+            <xsl:value-of select="$content"/>
+        </xsl:element>                       
+    </xsl:template>
+
+    <xsl:template name="objectToExoplanetLink">
+        <xsl:param name="ident" select="name"/>
+        <xsl:param name="content" select="$ident"/>
+        <xsl:element name="a">
+            <xsl:attribute name="href"><xsl:value-of select="concat('http://exoplanet.eu/star.php?st=',$ident)"/>
+            </xsl:attribute>
+            <xsl:value-of select="$content"/>
+        </xsl:element>                       
+
+    </xsl:template>
+
+ 
 </xsl:stylesheet>
