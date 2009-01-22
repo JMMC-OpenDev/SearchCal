@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.5 2007-03-27 14:55:56 scetre Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.6 2009-01-22 14:03:22 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2007/03/27 14:55:56  scetre
+# Updated documentation
+#
 # Revision 1.4  2007/02/07 14:57:23  mella
 # Set calPmRa or calPmDec to 0 for filter process call
 #
@@ -194,5 +197,6 @@ echo "Html resume generated"
 xsltproc  --path ./html:.:.. -o index.html --stringparam calibratorsFilename \
           $CALIBRATORS --stringparam mainFilename $MAIN_LIST_FILE \
           $XSLT_OBJECT2HTML $PRIMA_STAR_LIST
-
+cp -v $PRIMA_STAR_LIST .
+cp -v $MAIN_LIST_FILE .
 #___oOo___
