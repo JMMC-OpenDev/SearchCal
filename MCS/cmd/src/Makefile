@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2005-12-16 15:35:52 mella Exp $"
+# "@(#) $Id: Makefile,v 1.13 2009-01-26 14:53:33 mella Exp $"
 #
 # Makefile of cmd
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2005/12/16 15:35:52  mella
+# First revision
+#
 # Revision 1.11  2005/12/14 12:41:32  mella
 # Add CdfToTestScript
 #
@@ -82,7 +85,8 @@ cmd_OBJECTS   = cmdCOMMAND cmdPARAM
 SCRIPTS         = cmdCdfToCppClass \
 				  cmdIsCdfValid \
 				  cmdCdfToTestScript \
-				  cmdCdfToCppCB
+				  cmdCdfToCppCB \
+				  cmdCdfToJavaInterface
 SCRIPTS_L       =
 
 #
@@ -130,6 +134,7 @@ MAN8 =
 INSTALL_FILES = ../config/cmdDefinitionFile.xsd 	\
 				../config/cmdCdfToCppClass.xsl		\
 				../config/cmdCdfToTestScript.xsl		\
+				../config/cmdCdfToJavaInterface.xsl		\
 				../config/cmdCdfToCppCB.xsl
 
 #

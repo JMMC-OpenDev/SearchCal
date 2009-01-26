@@ -2,11 +2,14 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdBatch.py,v 1.5 2006-01-03 11:39:10 mella Exp $"
+# "@(#) $Id: cmdBatch.py,v 1.6 2009-01-26 14:53:33 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2006/01/03 11:39:10  mella
+# Improve parameters parsing
+#
 # Revision 1.4  2006/01/03 10:12:24  mella
 # Remove unused part and protect parameters value with double quotes
 #
@@ -37,7 +40,7 @@ import os.path
 import os
 from optparse import OptionParser
 
-Id="@(#) $Id: cmdBatch.py,v 1.5 2006-01-03 11:39:10 mella Exp $"
+Id="@(#) $Id: cmdBatch.py,v 1.6 2009-01-26 14:53:33 mella Exp $"
 
 # default output will 
 resultDir="results"
@@ -51,8 +54,9 @@ def main(filename):
     config = MyParser()
     try:
         config.readfp(open(filename))
-    except:
+    except Exception  ,e:
         print "Problem reading " + filename
+        print 'Exception was:', e
         return
 
     # Start to build batch list for every section
