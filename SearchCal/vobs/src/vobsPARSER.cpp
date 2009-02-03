@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.32 2008-04-14 16:25:41 lafrasse Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.33 2009-02-03 08:53:08 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.32  2008/04/14 16:25:41  lafrasse
+* Reduced the size of returnString from 10MByte to 1MByte in Parse() in order to
+* remove a segmentation fault caused by the buffer size being too large for the
+* default stack size.
+*
 * Revision 1.31  2008/04/10 14:19:25  lafrasse
 * Replaced manual HTTP GET request forging by miscPerformHttpGet() to handle
 * CDS web page redirections.
@@ -96,7 +101,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.32 2008-04-14 16:25:41 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.33 2009-02-03 08:53:08 mella Exp $"; 
 
 /* 
  * System Headers 
@@ -533,7 +538,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                     // If it is the UCD name of the corresponding
                     // parameter
                     if ((strcmp(nodeName->str, "FIELD") == 0) &&
-                        (strcmp(attrName->str, "ucd1")  == 0))
+                        (strcmp(attrName->str, "ucd")  == 0))
                     {
                         cData->AddUcdName(attrValue->str); 
                     }

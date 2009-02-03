@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.13 2008-03-10 07:53:42 lafrasse Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.14 2009-02-03 08:53:08 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.13  2008/03/10 07:53:42  lafrasse
+* Changed VIZIER URI to reflect CDS changes.
+* Minor modifications on comments and log traces.
+*
 * Revision 1.12  2006/08/25 05:56:35  gzins
 * Removed useless errors
 *
@@ -50,7 +54,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.13 2008-03-10 07:53:42 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.14 2009-02-03 08:53:08 mella Exp $"; 
 
 /* 
  * System Headers 
@@ -319,6 +323,16 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
  * Build the destination part of the query. All catalog files are located on
  * web server. It is possible to find them on the URL : 
  * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
+ * * &-out.meta=hudU1&-oc.form=sexa has been added o get previous UCD1 instead
+ * of UCD1+ with the
+ *  * rest of information
+ *   * more info found here http://cdsweb.u-strasbg.fr/doc/asu-summary.htx
+ *  -oc.form forces rigth coordinates h:m:s (dispite given param -oc=hms)
+ *  -out.meta=
+ *    h -> add column names into cdata header (required by our parser)
+ *    u -> retrieve column units as viz1bin used to do by default
+ *    d -> retrieve column descriptions as viz1bin used to do by default
+ *    U1 -> request ucd1 instead of ucd1+
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -326,7 +340,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 {
     logTrace("vobsREMOTE_CATALOG::WriteQueryURIPart()");
 
-    if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz1bin/")
+    if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")
         == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -339,7 +353,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     {
         return mcsFAILURE;
     }
-
+    if (miscDynBufAppendString(&_query, "&-out.meta=hudU1&-oc.form=sexa") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     return mcsSUCCESS;
 }
 
