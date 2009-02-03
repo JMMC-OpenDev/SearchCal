@@ -2,11 +2,14 @@
 #******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: cmdBatch.py,v 1.7 2009-02-03 09:52:27 mella Exp $"
+# "@(#) $Id: cmdBatch.py,v 1.8 2009-02-03 09:57:16 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2009/02/03 09:52:27  mella
+# support config names on command line arguments
+#
 # Revision 1.6  2009/01/26 14:53:33  mella
 # improve error message
 #
@@ -27,8 +30,9 @@
 #
 #
 #************************************************************************
-""" This script aims to launch multiple request based onto an input file that must be 
-given as first parameter.
+""" This script aims to launch multiple requests based onto an input file that must be 
+given as first parameter. All sections are executed until user specified some on
+command line.
 The config file must contain the minimum line:
 [DEFAULT]
 command=msgSendCommand sclsvrServer GETCAL
@@ -43,7 +47,7 @@ import os.path
 import os
 from optparse import OptionParser
 
-Id="@(#) $Id: cmdBatch.py,v 1.7 2009-02-03 09:52:27 mella Exp $"
+Id="@(#) $Id: cmdBatch.py,v 1.8 2009-02-03 09:57:16 mella Exp $"
 
 # default output will 
 resultDir="results"
@@ -58,8 +62,8 @@ def main(filename,requiredSections):
     try:
         config.readfp(open(filename))
     except Exception  ,e:
-        print "Problem reading " + filename
-        print 'Exception was:', e
+        print("Problem reading " + filename)
+        print('Exception was:', e)
         return
 
     # Start to build batch list for every section
@@ -108,7 +112,7 @@ def main(filename,requiredSections):
 
     # Execute batch line by line
     for cmd in batchList:
-        print cmd
+        print(cmd)
         os.system(cmd)
 
 if __name__ == '__main__':
@@ -131,29 +135,28 @@ if __name__ == '__main__':
         sys.exit(1)
 
     requestedSections=args[1:]
-    print requestedSections
 
     try:
-        print "This batch will loop on batch file '%s'." % (args[0],)
+        print("This batch will loop on batch file '%s'." % (args[0],))
         if len(requestedSections):
             print("For given sections:")
             print(requestedSections)
-        print "Output directory for results '%s'"%(resultDir,)
+        print("Output directory for results '%s'"%(resultDir,))
         
         # uncomment next line if you want to allow user to control-c the
         # execution
-        # print "Press Control-C to stop process now or something else to \
-        # continue"
+        # print("Press Control-C to stop process now or something else to \
+        # continue")
         # raw_input()
         
         if not os.path.isdir(resultDir) :
             try:
                 os.mkdir(resultDir)
-                print "'%s' directory has been created." %(resultDir,) 
+                print("'%s' directory has been created." %(resultDir,) )
             except:
                 sys.stderr.write( "Failed to create '%s' directory.%s" %(resultDir,os.linesep))
     except:
         sys.stderr.write("Usage: %s <inputscript.cfg>%s"%(sys.argv[0],os.linesep))
         sys.exit(1)
     
-    main(args[0], requestedSections)     
+    main(args[0], requestedSections)
