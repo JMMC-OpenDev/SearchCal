@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.h,v 1.4 2005-11-29 13:47:12 gzins Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.h,v 1.5 2009-02-09 16:26:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/11/29 13:47:12  gzins
+ * Removed useless iterator
+ *
  * Revision 1.3  2005/11/29 10:27:06  gzins
  * Minor change in documentation
  *
@@ -57,6 +60,8 @@
 #include "vobsCATALOG_SBSC.h"
 #include "vobsCATALOG_MIDI.h"
 #include "vobsCATALOG_UNSO.h"
+#include "vobsCATALOG_SB9.h"
+
 /*
  * Class declaration
  */
@@ -102,6 +107,7 @@ private:
     vobsCATALOG_DENIS_JK _denisJK;
     vobsCATALOG_MIDI     _midi;
     vobsCATALOG_UNSO     _unso;
+    vobsCATALOG_SB9      _sb9;
 };
 
 

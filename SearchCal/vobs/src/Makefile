@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.26 2006-01-05 14:26:33 mella Exp $"
+# "@(#) $Id: Makefile,v 1.27 2009-02-09 16:26:10 lafrasse Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.26  2006/01/05 14:26:33  mella
+# Add vobsCheckVOTable
+#
 # Revision 1.25  2005/11/30 15:24:37  lafrasse
 # Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
 #
@@ -164,6 +167,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_SBSC				\
 				   vobsCATALOG_MIDI 			\
 				   vobsCATALOG_UNSO 			\
+				   vobsCATALOG_SB9   			\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\

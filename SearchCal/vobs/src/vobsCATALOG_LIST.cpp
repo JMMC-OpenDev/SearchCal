@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.8 2009-02-09 16:26:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.6  2005/11/29 13:52:41  gzins
  * Use local iterator instead of class member which has been removed
  *
@@ -31,7 +34,7 @@
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.8 2009-02-09 16:26:10 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -52,6 +55,7 @@ using namespace std;
 #include "vobsCATALOG_LIST.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
+
 
 /**
  * Class constructor
@@ -74,6 +78,7 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
     _catalogList[vobsCATALOG_MIDI_ID]     = &_midi;
     _catalogList[vobsCATALOG_SBSC_ID]     = &_sbsc;
     _catalogList[vobsCATALOG_UNSO_ID]     = &_unso;
+    _catalogList[vobsCATALOG_SB9_ID]      = &_sb9;
 }
 
 /**

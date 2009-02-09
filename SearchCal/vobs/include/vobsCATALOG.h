@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.16 2006-01-18 09:06:43 scetre Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.17 2009-02-09 16:26:10 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2006/01/18 09:06:43  scetre
+* Added option in the query
+*
 * Revision 1.15  2005/11/24 14:54:25  scetre
 * UNSO catalog added
 *
@@ -57,6 +60,7 @@
 #define vobsCATALOG_PHOTO_ID        "II/7A/catalog"
 #define vobsCATALOG_SBSC_ID         "V/36B/bsc4s"
 #define vobsCATALOG_UNSO_ID         "I/284"
+#define vobsCATALOG_SB9_ID          "B/sb9"
 
 /*
  * MCS header
