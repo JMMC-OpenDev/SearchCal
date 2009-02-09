@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.14 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.15 2009-02-09 16:28:25 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.13  2006/03/28 12:58:13  scetre
  * Added parameters constraints on I/280 query
  *
@@ -53,7 +56,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.14 2006-12-21 15:16:05 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.15 2009-02-09 16:28:25 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -116,9 +119,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     _starListP.Clear();
     _starListS.Clear();
     
-    //////////////////////////////////////////////////////////////////////////
     // BUILD REQUEST USED
-    //////////////////////////////////////////////////////////////////////////  
     // Build Genaral request
     _request.Copy(*request);
     // Build the request for I/280
@@ -130,9 +131,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     _requestI280.SetMinMagRange(vMin);
     _requestI280.SetMaxMagRange(vMax);
 
-    //////////////////////////////////////////////////////////////////////////
     // BUILD CRITERIA LIST
-    //////////////////////////////////////////////////////////////////////////
     // Build criteria list on ra dec
     _criteriaListRaDec.Clear();
     // Add Criteria on coordinates
@@ -144,6 +143,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+
     // Build criteria list on ra dec and V
     _criteriaListRaDecMagV.Clear();
     // Add Criteria on coordinates
@@ -157,11 +157,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+
     // Add mgV criteria
     if (_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
     // Build criteria list on ra dec and hd
     _criteriaListRaDecHd.Clear();
     if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) ==
@@ -174,14 +176,14 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+
     // Add hd criteria
     if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD, 0) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    //////////////////////////////////////////////////////////////////////////
+
     // BUILD FILTER USED
-    //////////////////////////////////////////////////////////////////////////
     // Build B-V < 1 filter
     _bvFilter.SetMagnitudeValue(1);
     _bvFilter.Enable();
@@ -200,159 +202,138 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     _filterList.Add(&_originFilter, "Origin Filter");
     _filterList.Add(&_magnitudeFilter, "Magnitude Filter");
     
-    ///////////////////////////////////////////////////////////////////////////
     // PRIMARY REQUEST
-    ///////////////////////////////////////////////////////////////////////////
     
-    ///////////////////////////////////////////////////////////////////////////
     // I/280
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP,
                  vobsCOPY, NULL, &_bvFilter, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // 2MASS
-    /////////////////////////////////////////////////////////////////////////// 
     if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP,
                  vobsCOPY, NULL, &_filterList, "&opt=T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // BORDE
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_LBSI_ID, &_request, NULL, &_starListP, vobsMERGE) 
         == mcsFAILURE)
     {
         return mcsFAILURE;
     } 
     
-    ///////////////////////////////////////////////////////////////////////////
     // MERAND
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_MERAND_ID, &_request, NULL, &_starListP, vobsMERGE) 
         == mcsFAILURE)
     {
         return mcsFAILURE;
     } 
 
-    ///////////////////////////////////////////////////////////////////////////
     // II/225
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
-    ///////////////////////////////////////////////////////////////////////////
     // II/7A
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, NULL, &_starListP, vobsMERGE) 
         == mcsFAILURE)
     {
         return mcsFAILURE;
     } 
     
-    ///////////////////////////////////////////////////////////////////////////
     // I/280 bis
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS,
                  vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
-    ///////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
-    ///////////////////////////////////////////////////////////////////////////
     // The primary list is completed with the query on catalogs II/225, 
     // I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
-    ///////////////////////////////////////////////////////////////////////////
     // LBSI
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // MERAND
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // CHARM2
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // DENIS_JK
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // 2MASS
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec, NULL,
                           "&opt=T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // II/7A
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDecMagV) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // II/225
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_CIO_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }        
-    ///////////////////////////////////////////////////////////////////////////
     // I/196
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // BSC
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_BSC_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    ///////////////////////////////////////////////////////////////////////////
+
     // SBSC
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
+    // B/sb9
+    if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS, &_starListS,
+                 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     
     return mcsSUCCESS;
 }
