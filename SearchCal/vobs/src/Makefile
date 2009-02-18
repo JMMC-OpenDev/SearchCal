@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.27 2009-02-09 16:26:10 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.28 2009-02-18 09:22:30 lafrasse Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.27  2009/02/09 16:26:10  lafrasse
+# Added Spectral Binary catalog (SB9).
+#
 # Revision 1.26  2006/01/05 14:26:33  mella
 # Add vobsCheckVOTable
 #
@@ -118,6 +121,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_SBSC.h	   		\
 				  vobsCATALOG_MIDI.h			\
 				  vobsCATALOG_UNSO.h			\
+				  vobsCATALOG_SB9.h 	   		\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
