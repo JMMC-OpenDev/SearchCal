@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.75 2008-09-24 11:34:59 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.76 2009-02-19 14:00:36 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.75  2008/09/24 11:34:59  lafrasse
+* Updated CDS link in star property from SIMBAD3 URLs to SIMBAD4 URLs.
+*
 * Revision 1.74  2008/03/10 07:50:22  lafrasse
 * Minor modifications on comments and log traces.
 *
@@ -202,7 +205,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.75 2008-09-24 11:34:59 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.76 2009-02-19 14:00:36 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -424,7 +427,7 @@ mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char *id)
  * The possible errors are :
  * @li vobsERR_INVALID_PROPERTY_ID
  */
-vobsSTAR_PROPERTY* vobsSTAR::GetProperty(char *id)
+vobsSTAR_PROPERTY* vobsSTAR::GetProperty(const char* id)
 {
     logTrace("vobsSTAR::GetProperty()");
 
@@ -502,7 +505,7 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
  * @return pointer to the found star property value on successful completion.
  * Otherwise NULL is returned.
  */
-const char *vobsSTAR::GetPropertyValue(char *id)
+const char *vobsSTAR::GetPropertyValue(const char* id)
 {
     logTrace("(char*)vobsSTAR::GetPropertyValue()");
 
@@ -526,7 +529,7 @@ const char *vobsSTAR::GetPropertyValue(char *id)
  *
  * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
+mcsCOMPL_STAT vobsSTAR::GetPropertyValue(const char* id, mcsFLOAT *value)
 {
     logTrace("vobsSTAR::GetPropertyValue(float*)");
 
@@ -551,7 +554,7 @@ mcsCOMPL_STAT vobsSTAR::GetPropertyValue(char *id, mcsFLOAT *value)
  *
  * @return property type.
  */
-vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(char *id)
+vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(const char* id)
 {
     logTrace("vobsSTAR::GetPropertyType()");
 
@@ -572,7 +575,7 @@ vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(char *id)
  *
  * @return property confidence index.
  */
-vobsCONFIDENCE_INDEX vobsSTAR::GetPropertyConfIndex(char *id)
+vobsCONFIDENCE_INDEX vobsSTAR::GetPropertyConfIndex(const char* id)
 {
     logTrace("vobsSTAR::GetPropertyConfIndex()");
 
@@ -593,7 +596,7 @@ vobsCONFIDENCE_INDEX vobsSTAR::GetPropertyConfIndex(char *id)
  *
  * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
  */
-mcsLOGICAL vobsSTAR::IsPropertySet(char *id)
+mcsLOGICAL vobsSTAR::IsPropertySet(const char* id)
 {
     logTrace("vobsSTAR::IsPropertySet()");
 
@@ -614,7 +617,7 @@ mcsLOGICAL vobsSTAR::IsPropertySet(char *id)
  *
  * @return mcsTRUE) if the the property is known, mcsFALSE otherwise.
  */
-mcsLOGICAL vobsSTAR::IsProperty(char *id)
+mcsLOGICAL vobsSTAR::IsProperty(const char* id)
 {
     logTrace("vobsSTAR::IsProperty()");
 
@@ -1102,15 +1105,15 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
          propertyIter != _propertyList.end();
          propertyIter++)
     {
-        /*
-         * If the current property can be filled with the one coming from the
-         * given star
-         */
-        if (IsPropertySet((char *)(*propertyIter).first.c_str()) == mcsFALSE)
+        // Retrieve the identifier of the current property
+        string propertyID = propertyIter->first;
+        const char* propertyIdPtr = propertyID.c_str();
+
+        // If the current property is not yet defined
+        if (IsPropertySet(propertyIdPtr) == mcsFALSE)
         {
-            // Copy the property form the given star inside
-            _propertyList[(*propertyIter).first] =
-                star._propertyList[(*propertyIter).first];
+            // Use the property from the given star
+            _propertyList[propertyID] = star._propertyList[propertyID];
         }
     }
 
@@ -1194,7 +1197,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsSTAR::AddProperty(char *id, char *name,
+mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, char *name,
                                     vobsPROPERTY_TYPE type, char *unit,
                                     char *format, char *link, char *description)
 {
