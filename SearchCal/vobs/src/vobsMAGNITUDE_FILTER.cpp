@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.6 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.7 2009-02-19 16:56:37 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.5  2005/12/14 15:07:53  scetre
  * Added log information about deleted star in filters
  *
@@ -36,7 +39,7 @@
  * Definition of vobsMAGNITUDE_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.6 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.7 2009-02-19 16:56:37 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -136,44 +139,52 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
         mcsSTRING256 magnitudeUcd;
         strcpy(magnitudeUcd, "PHOT_JHN_");
         strcat(magnitudeUcd, _band);
-        // create a star correponding to the science object
-        vobsSTAR scienceStar;
-        if (scienceStar.SetPropertyValue(magnitudeUcd,
+
+        // Create a star correponding to the reference object
+        vobsSTAR referenceStar;
+        if (referenceStar.SetPropertyValue(magnitudeUcd,
                                          _magValue, "") == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        // Create a criterialist
+
+        // Add criteria on magnitude
         vobsSTAR_COMP_CRITERIA_LIST criteriaList;
-        // Add criteria on right ascension
         if (criteriaList.Add(magnitudeUcd, _magRange) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        // for each star of the list
-        vobsSTAR *star;
 
+        // For each star of the given list
+        vobsSTAR* star = NULL;
+        mcsLOGICAL firstIteration = mcsTRUE;
         for (unsigned int el = 0; el < list->Size(); el++)
         {
-            // if the star is different of the science star according to
-            // the criteria list
-            star=
-                (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
-            mcsSTRING32 starId;
-            // Get Star ID
-            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            // Get first (if in the first iteration), or following ones
+            firstIteration = (mcsLOGICAL) (el == 0); // computed each time as 'el' could be decreased
+            star = list->GetNextStar(firstIteration);
+            if (star == NULL)
             {
                 return mcsFAILURE;
             }
-            if (star->IsSame(scienceStar, &criteriaList) != mcsTRUE )
+            
+            // Get Star ID
+            mcsSTRING32 starID;
+            if (star->GetId(starID, sizeof(starID)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // if the star is not like the reference star (according to criteria list)
+            if (star->IsSame(referenceStar, &criteriaList) != mcsTRUE)
             {
                 // Remove it
-                logInfo("star %s has been removed by the filter '%s'", starId, GetId());
+                logInfo("star %s has been removed by the filter '%s'", starID, GetId());
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
-                el = el-1;            
+                el = el-1;
             }
         }
     }
