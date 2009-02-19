@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.50 2006-04-10 14:51:57 gzins Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.51 2009-02-19 14:01:22 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.50  2006/04/10 14:51:57  gzins
+* Added ClearPropertyValue
+*
 * Revision 1.49  2006/03/22 10:41:49  scetre
 * Added TYC2 and TYC3 properties
 *
@@ -254,25 +257,25 @@ public:
     virtual mcsCOMPL_STAT ClearPropertyValue (const char* id);
 
     // Get the star properties
-    virtual vobsSTAR_PROPERTY* GetProperty      (char*      id);
+    virtual vobsSTAR_PROPERTY* GetProperty      (const char*      id);
     virtual vobsSTAR_PROPERTY* GetNextProperty  (mcsLOGICAL init = mcsFALSE);
-    virtual const char*        GetPropertyValue (char*      id);
-    virtual mcsCOMPL_STAT      GetPropertyValue (char*      id,
+    virtual const char*        GetPropertyValue (const char*      id);
+    virtual mcsCOMPL_STAT      GetPropertyValue (const char*      id,
                                                  mcsFLOAT*  value);
-    virtual vobsPROPERTY_TYPE  GetPropertyType  (char*      id) ;
-    virtual vobsCONFIDENCE_INDEX GetPropertyConfIndex( char *id); 
+    virtual vobsPROPERTY_TYPE  GetPropertyType  (const char*      id) ;
+    virtual vobsCONFIDENCE_INDEX GetPropertyConfIndex(const char* id); 
     // Is a property set?
-    virtual mcsLOGICAL         IsPropertySet    (char*      propertyId);
+    virtual mcsLOGICAL         IsPropertySet    (const char*      propertyId);
 
     // Is a name a property?
-    virtual mcsLOGICAL         IsProperty       (char*      propertyId);
+    virtual mcsLOGICAL         IsProperty       (const char*      propertyId);
 
     // Return the star RA and DEC coordinates (in arcsecond)
     virtual mcsCOMPL_STAT GetRa (float &ra);
     virtual mcsCOMPL_STAT GetDec(float &dec);
 
     // Return the star ID
-    virtual mcsCOMPL_STAT GetId (      char*     starId,
+    virtual mcsCOMPL_STAT GetId (char*     starId,
                                  const mcsUINT32 maxLength);
 
     // Return whether the star is the same as another given one
@@ -290,7 +293,7 @@ public:
     
 protected:
     // Add a property. Should be only called by constructors.
-    mcsCOMPL_STAT AddProperty(char*              id,
+    mcsCOMPL_STAT AddProperty(const char*              id,
                               char*              name,
                               vobsPROPERTY_TYPE  type,
                               char*              unit,
