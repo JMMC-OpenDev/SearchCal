@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.17 2009-02-09 16:26:10 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.18 2009-02-26 10:39:03 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2009/02/09 16:26:10  lafrasse
+* Added Spectral Binary catalog (SB9).
+*
 * Revision 1.16  2006/01/18 09:06:43  scetre
 * Added option in the query
 *
@@ -60,7 +63,7 @@
 #define vobsCATALOG_PHOTO_ID        "II/7A/catalog"
 #define vobsCATALOG_SBSC_ID         "V/36B/bsc4s"
 #define vobsCATALOG_UNSO_ID         "I/284"
-#define vobsCATALOG_SB9_ID          "B/sb9"
+#define vobsCATALOG_SB9_ID          "B/sb9/main"
 
 /*
  * MCS header
