@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_SB9.cpp,v 1.1 2009-02-09 16:23:48 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_SB9.cpp,v 1.2 2009-02-26 10:43:07 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2009/02/09 16:23:48  lafrasse
+ * Created.
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of vobsCATALOG_SB9 class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: vobsCATALOG_SB9.cpp,v 1.1 2009-02-09 16:23:48 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: vobsCATALOG_SB9.cpp,v 1.2 2009-02-26 10:43:07 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -58,7 +61,7 @@ vobsCATALOG_SB9::~vobsCATALOG_SB9()
  * Protected methods
  */
 /**
- * Build the specific part of the CDS query.
+ * Build the URL part of the CDS query that is specific to SB9.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
@@ -67,20 +70,11 @@ vobsCATALOG_SB9::~vobsCATALOG_SB9()
 mcsCOMPL_STAT vobsCATALOG_SB9::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_SB9::WriteQuerySpecificPart()");
-/*    
-    // properties to retreive
-    miscDynBufAppendString(&_query, "&-out=LD");
-    miscDynBufAppendString(&_query, "&-out=e_LD");
-    miscDynBufAppendString(&_query, "&-out=UD");
-    miscDynBufAppendString(&_query, "&-out=e_UD");
-    miscDynBufAppendString(&_query, "&-out=Method");
-    miscDynBufAppendString(&_query, "&-out=Lambda");
-    miscDynBufAppendString(&_query, "&-out=Kmag");
-    miscDynBufAppendString(&_query, "&-out=Vmag");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
-    // constraint
-    miscDynBufAppendString(&_query, "&Method=,LBI,LO,SPE");
-*/
+
+    // We want to get the SB9 sequential index for each given star
+    miscDynBufAppendString(&_query, "&-out=Seq");
+    // This value will be stored in the 'vobsSTAR_ID_SB9' star property
+
     return mcsSUCCESS;
 }
 
