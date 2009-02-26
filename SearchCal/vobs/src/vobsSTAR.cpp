@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.76 2009-02-19 14:00:36 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.77 2009-02-26 10:41:49 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.76  2009/02/19 14:00:36  lafrasse
+* Moved all 'char*' to 'const char*' when possible.
+* Simplified IsProperty().
+*
 * Revision 1.75  2008/09/24 11:34:59  lafrasse
 * Updated CDS link in star property from SIMBAD3 URLs to SIMBAD4 URLs.
 *
@@ -205,7 +209,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.76 2009-02-19 14:00:36 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.77 2009-02-26 10:41:49 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1229,16 +1233,16 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     logTrace("vobsSTAR::AddProperties()");
 
-    AddProperty(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, "-", "%.0f",
+    AddProperty(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
                 "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
                 "HD identifier, click to call Simbad on this object");
-    AddProperty(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, "-");  
-    AddProperty(vobsSTAR_ID_DM, "DM", vobsSTRING_PROPERTY, "-");  
-    AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsSTRING_PROPERTY, "-");  
-    AddProperty(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY, "-");  
-    AddProperty(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY, "-");  
-    AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY, "-");    
-    AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, "-", NULL,
+    AddProperty(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);  
+    AddProperty(vobsSTAR_ID_DM, "DM", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);  
+    AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);  
+    AddProperty(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);  
+    AddProperty(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);  
+    AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);    
+    AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
                 "http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0",
                 "2MASS identifier, click to call Vizier on this object");
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
@@ -1247,7 +1251,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
                 "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
                 "Click to call Simbad based on those coordinates");
-    AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, "-");    
+    AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);    
     AddProperty(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, 
                 "h:m:s");
     AddProperty(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY,
@@ -1256,39 +1260,39 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsSTRING_PROPERTY, "mas/yr");
     AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas",
                 "%.2f");
-    AddProperty(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY, "-");
+    AddProperty(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg",
                 "%.2f");
     AddProperty(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg",
                 "%.2f");
-    AddProperty(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_LD_DIAM, "LD", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(vobsSTAR_LD_DIAM_ERROR, "e_LD", vobsFLOAT_PROPERTY, "-",
+    AddProperty(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_LD_DIAM, "LD", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(vobsSTAR_LD_DIAM_ERROR, "e_LD", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET,
                 "%.3f");
-    AddProperty(vobsSTAR_UD_DIAM, "UD", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(vobsSTAR_UD_DIAM_ERROR, "e_UD", vobsFLOAT_PROPERTY, "-",
+    AddProperty(vobsSTAR_UD_DIAM, "UD", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(vobsSTAR_UD_DIAM_ERROR, "e_UD", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET,
                 "%.3f");
-    AddProperty(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "-",
+    AddProperty(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET,
                 "%.3f");
-    AddProperty(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "-",
+    AddProperty(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET,
                 "%.3f");
-    AddProperty(vobsSTAR_OBS_METHOD, "Meth", vobsSTRING_PROPERTY, "-");
+    AddProperty(vobsSTAR_OBS_METHOD, "Meth", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "lambda", vobsFLOAT_PROPERTY,
-                "-");
-    AddProperty(vobsSTAR_INST_FILTER_CODE, "lambda", vobsSTRING_PROPERTY, "-");
+                vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_INST_FILTER_CODE, "lambda", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY,
-                "-");
-    AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY, "-");
+                vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag", "%.3f");
@@ -1305,24 +1309,25 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "mag", "%.3f");
     AddProperty(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "mag", "%.3f");
-    AddProperty(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx",  vobsFLOAT_PROPERTY, "-", 
+    AddProperty(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx",  vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, 
                 "%.3f");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_12, "F12",  vobsFLOAT_PROPERTY, "-", 
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_12, "F12",  vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, 
                 "%.3f");
     AddProperty(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12",  
-                vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY, "-");
-    AddProperty(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, "-", 
+                vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, 
                 "%.3f");
-    AddProperty(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", vobsFLOAT_PROPERTY, "-", "%.3f");
-    AddProperty(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, "-", 
+    AddProperty(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, 
                 "%.3f");
-    AddProperty(vobsSTAR_CHI2_QUALITY, "Chi2", vobsFLOAT_PROPERTY, "-", "%.3f");
+    AddProperty(vobsSTAR_CHI2_QUALITY, "Chi2", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
     AddProperty(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", 
-                vobsFLOAT_PROPERTY, "-", "%.3f");
+                vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(vobsSTAR_ID_SB9, "Seq", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
 
 
     return mcsSUCCESS;
