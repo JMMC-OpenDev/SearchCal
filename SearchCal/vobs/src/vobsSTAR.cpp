@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.77 2009-02-26 10:41:49 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.78 2009-04-15 16:19:51 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.77  2009/02/26 10:41:49  lafrasse
+* Added SB9 property idefinition.
+* Replaced all '-' by vobsSTAR_PROP_NOT_SET.
+*
 * Revision 1.76  2009/02/19 14:00:36  lafrasse
 * Moved all 'char*' to 'const char*' when possible.
 * Simplified IsProperty().
@@ -209,7 +213,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.77 2009-02-26 10:41:49 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.78 2009-04-15 16:19:51 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1119,6 +1123,7 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
             // Use the property from the given star
             _propertyList[propertyID] = star._propertyList[propertyID];
         }
+        logDebug("_propertyList[%s] = '%s'.\n", propertyIdPtr, star._propertyList[propertyID].GetSummaryString().c_str());
     }
 
     return mcsSUCCESS;
