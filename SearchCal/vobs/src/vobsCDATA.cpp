@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.34 2009-04-15 12:57:12 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.35 2009-04-15 16:12:56 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.34  2009/04/15 12:57:12  lafrasse
+* Added test on "Seq" parameter name for ID_MAIN ucd to retreive ID_SB9 catalog ID.
+*
 * Revision 1.33  2008/03/10 07:50:22  lafrasse
 * Minor modifications on comments and log traces.
 *
@@ -107,7 +110,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.34 2009-04-15 12:57:12 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.35 2009-04-15 16:12:56 lafrasse Exp $"; 
 
 
 /* 
@@ -134,7 +137,7 @@ using namespace std;
 #include "vobsPrivate.h"
 
 /*
- * Class constructor
+ * Class constructor.
  */
 vobsCDATA::vobsCDATA()
 {
@@ -143,7 +146,7 @@ vobsCDATA::vobsCDATA()
 }
 
 /*
- * Class destructor
+ * Class destructor.
  */
 vobsCDATA::~vobsCDATA()
 {
@@ -163,10 +166,8 @@ vobsCDATA::~vobsCDATA()
     }
 
     // Free all strings containing UCD names
-
     _paramName.clear();
     _ucdName.clear();
-
     _catalogName = "";
 }
 
@@ -175,7 +176,7 @@ vobsCDATA::~vobsCDATA()
  */
 
 /**
- * Set the catalog name from where data is coming from 
+ * Set the catalog name from where data is coming.
  *
  * @return Always mcsSUCCESS.
  */
@@ -189,7 +190,7 @@ mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char *name)
 }
 
 /**
- * Get the catalog name from where data is coming from 
+ * Get the catalog name from where data is coming.
  *
  * @return catalog name.
  */
@@ -201,68 +202,65 @@ const char *vobsCDATA::GetCatalogName(void)
 }
  
 /** 
- * Add description (name and ucd) for all parameters
+ * Parse and store each parameters and UCD names.
  *
  * This method parses the two lines containing the description of the parameters
- * contain in the CDATA section. The first line contains the parameter names,
- * while the second contain the corresponding UCD. The number of fields
- * (separated by tab) must be the same for name and UCD.
+ * contained in the CDATA section. The first line contains the parameter names,
+ * while the second contains the corresponding UCD. The number of fields
+ * (separated by tab) must be the same for each line.
  *
- * @param paramNameLine line containing names of parameters separated by tab
+ * @param paramNameLine line containing names of parameters separated by tab.
  * @param ucdNameLine line containing UCD associated to parameters separated by
- * tab
+ * tab.
  *
- * @return
- * mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
+mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char *ucdNameLine)
 {
-    logTrace("vobsCDATA::AddParamsDesc()");
+    logTrace("vobsCDATA::ParseParamsAndUCDsNamesLines()");
 
-    const mcsUINT32 nbMaxParams=512;
+    const mcsUINT32 nbMaxParams = 512;
     mcsUINT32 nbOfUcdName;
     mcsSTRING256 ucdNameArray[nbMaxParams];
     mcsUINT32 nbOfParamName;
     mcsSTRING256 paramNameArray[nbMaxParams];
 
-    // Parse UCD name line and store them in an array
+    // Split UCD name line on '\t' character, and store each token
     if (miscSplitString(ucdNameLine, '\t', ucdNameArray, 
                         nbMaxParams, &nbOfUcdName) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    // and remove trailind and leading blanks
+    // Remove each token trailing and leading blanks
     for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
     {
         miscTrimString(ucdNameArray[i], " ");
     }
 
 
-    // Parse parameter name line and strore them in an array
+    // Split parameter name line on '\t' character, and store each token
     if (miscSplitString(paramNameLine, '\t', paramNameArray, 
                         nbMaxParams, &nbOfParamName) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    // and remove trailind and leading blanks
+    // Remove each token trailing and leading blanks
     for (mcsUINT32 i = 0; i < nbOfParamName; i++)
     {
         miscTrimString(paramNameArray[i], " ");
     }
     
-    // Check the numbers of parameters and of UCDs are the same
+    // Check that we found the same number of parameters and UCDs
     if (nbOfUcdName != nbOfParamName)
     {
         errAdd(vobsERR_INCONSISTENT_PARAMS_DESC, nbOfUcdName, nbOfParamName);
         return mcsFAILURE;
     }
 
-    // For each UCD name stored in the array
-    logDebug("\t-> Add %d parameter names and UCDs to CDATA structure ...",
-             nbOfUcdName);
+    // For each UCD name token stored in the array
     for (mcsUINT32 i=0; i<nbOfUcdName; i++)
     {
-        // Check if the value f the ucd and the param is not ""
+        // If both UCD and the param names are not empty
         if ((strcmp(ucdNameArray[i], "") != 0) &&
             (strcmp(paramNameArray[i], "") != 0))
         {
@@ -271,21 +269,22 @@ mcsCOMPL_STAT vobsCDATA::AddParamsDesc(char *paramNameLine, char *ucdNameLine)
             AddParamName(paramNameArray[i]);
         }
     }
+    logDebug("\t-> Added '%d' parameter names and UCDs to CDATA structure ...",
+             nbOfUcdName);
 
     return mcsSUCCESS;
 }
 
 /**
- * Adds a parameter description (parameter name) at the end of the list
+ * Add a parameter name at the end of the internal parameter name list.
  *
  * This method adds the description (parameter name) of a parameter in the
- * CDATA section. The description of the parameters has to be done in the same
- * order they appear in the CDATA section.
+ * CDATA section. The name of the parameters have to be added in the same order
+ * they appear in the CDATA section.
  *
  * @param paramName parameter name to be added to the list.
  *
- * @return
- * Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
 {
@@ -295,17 +294,17 @@ mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
 
     return mcsSUCCESS;
 }
+
 /**
- * Adds a parameter description (UCD) at the end of the list
+ * Add a UCD name at the end of the internal UCD name list.
  *
- * This method adds the description (UCD) of a parameter in the
- * CDATA section. The description of the parameters has to be done in the same
- * order they appear in the CDATA section.
+ * This method adds the description (UCD) of a parameter in the CDATA section.
+ * The name of the UCD have to be added in the same order they appear in the
+ * CDATA section.
  *
  * @param ucdName corresponding UCD to be added to the list.
  *
- * @return
- * Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
 {
@@ -317,10 +316,9 @@ mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
 }
 
 /**
- * Returns the number of parameters.
+ * Returns the number of stored parameters.
  *
- * @return 
- * The the number of parameters contained in CDATA
+ * @return The the number of parameters contained in CDATA
  */
 mcsUINT32 vobsCDATA::GetNbParams(void) 
 {
@@ -328,17 +326,19 @@ mcsUINT32 vobsCDATA::GetNbParams(void)
 }
  
 /**
- * Returns the next parameter description in the CDATA section.
+ * Returns pointers on the next parameter and UCD names.
  *
  * This method returns the pointers to the name and the UCD of the next
- * parameter of the CDATA. If \em init is mcsTRUE, it returns the description of
- * the first parameter.
+ * parameter of the CDATA. If \em init is mcsTRUE, it returns the names of the
+ * first parameter.
  * 
- * @param paramName pointer to the name of the next parameter
- * @param ucdName pointer to the corresponding UCD 
- * @param init
+ * @param paramName pointer to the name of the next parameter.
+ * @param ucdName pointer to the corresponding UCD.
+ * @param init returns the description of the first parameter if mcsTRUE.
  * 
- * @return mcsSUCCESS or mcsFAILURE if the end of the parameter list is reached.
+ * @warning This method call is NOT re-entrant.
+ * 
+ * @return mcsSUCCESS, or mcsFAILURE if the end of the parameter list is reached.
  */
 mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName, 
                                           char **ucdName,
@@ -371,12 +371,11 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
 }
 
 /**
- * Set the number of lines to be skipped in CDATA. 
+ * Set the number of lines to be skipped in CDATA (headers, empty lines).
  *
  * @param nbLines number of lines to be skipped.
  *
- * @return
- * Always mcsSUCCESS.
+ * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
 {
@@ -388,31 +387,30 @@ mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
 }
 
 /**
- * Returns the number of lines to be skipped in CDATA.
+ * Returns the number of lines to be skipped in CDATA (headers, empty lines).
  *
- * @return 
- * The number of lines to be skipped
+ * @return The number of lines to be skipped.
  */
 mcsUINT32 vobsCDATA::GetNbLinesToSkip(void) 
 {
+    logTrace("vobsCDATA::GetNbLinesToSkip()");
+    
     return _nbLinesToSkip;
 }
  
 /**
- * Append lines of the given buffer to the CDATA 
+ * Append lines of the given buffer to the CDATA internal buffer.
  *
- * This method appends the lines which are provided in the buffer into an
- * internal buffer. The lines of the given buffer must be seperated by '\n'.
+ * This method appends the lines which are provided in the given buffer into an
+ * internal buffer. Each line of the given buffer must be seperated by '\n'.
  * The first lines, defined with SetNbLinesToSkip() method, are skipped. 
  * The GetNbLines() method gives the number of lines currently stored in
  * internal buffer. And they can be retrieved using GetNextLine().
  *
- * @param buffer pointer to the CDATA, which must be null-terminated
- * @param nbLinesToSkip number of line to skip
+ * @param buffer pointer to the CDATA raw data, which must be null-terminated.
+ * @param nbLinesToSkip number of line to skip.
  *
- * @return
- * mcsSUCCESS, or mcsFAILURE if an error occurs when manipuling internal dynamic
- * buffer.
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
 {
@@ -427,20 +425,21 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
     
     logDebug("Buffer to process : %.80s", buffer);
 
-    // Store usefull line into internal buffer; i.e skip header lines and
+    // Store usefull lines into internal buffer; i.e skip header lines and
     // empty lines
-    int lineNum   = 0;
+    int nbOfLine = 0;
     const char *from = NULL;
     mcsSTRING1024 line;
     do 
     {
-        from = tmpBuffer.GetNextLine
-            (from, line, sizeof(mcsSTRING1024), mcsFALSE);
-        lineNum++;
-        if ((from != NULL) && (lineNum > (nbLinesToSkip)) &&
+        from = tmpBuffer.GetNextLine(from, line, sizeof(mcsSTRING1024), mcsFALSE);
+        nbOfLine++;
+
+        // If a non-empty, non-header, line was found
+        if ((from != NULL) && (nbOfLine > (nbLinesToSkip)) &&
             (miscIsSpaceStr(line) == mcsFALSE))
         {
-            logDebug("   > Add line : %s", line);
+            logDebug("\t-> Add line : %s", line);
             
             if (AppendString(line) == mcsFAILURE)
             {
@@ -454,7 +453,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
         }
         else
         {
-            logDebug("   > Skip line : %s", line);
+            logDebug("\t-> Skip line : %s", line);
         }
     }
     while (from != NULL);
@@ -465,8 +464,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
 /**
  * Returns the number of lines currently stored in internal buffer.
  *
- * @return 
- * The number of lines stored in internal buffer.
+ * @return The number of lines stored in the internal buffer.
  */
 mcsUINT32 vobsCDATA::GetNbLines(void) 
 {
@@ -474,12 +472,11 @@ mcsUINT32 vobsCDATA::GetNbLines(void)
 }
 
 /**
- * Load a file into itself
+ * Load raw CDATA from file.
  *
- * @param fileName the file to load
+ * @param fileName the file to load.
  * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned. 
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
 {
@@ -491,8 +488,8 @@ mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
         return mcsFAILURE;
     }
     
-    // Load header of the CDATA : build list of UCD and parameter names
-    if (SetParamsDesc() == mcsFAILURE)
+    // Parse header of the CDATA and build the list of UCD and parameter names
+    if (LoadParamsAndUCDsNamesLines() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -501,26 +498,25 @@ mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
 }
 
 /**
- * Load a buffer into itself
+ * Load raw CDATA from a given buffer.
  *
- * @param buffer the buffer in which the data will be loaded
+ * @param buffer the buffer from which the raw data will be loaded
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned. 
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
 {
-    logTrace("vobsCDATA::LoadBuffer(dynBuf)");
+    logTrace("vobsCDATA::LoadBuffer()");
 
-    // Get the content of the buffer and copy it in the CDATA
+    // Get the content of the buffer and copy it in the internal buffer
     if (AppendString(buffer) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     SetCommentPattern("#");
 
-    // Load header of the CDATA : build list of UCD and parameter names
-    if (SetParamsDesc() == mcsFAILURE)
+    // Parse header of the CDATA and build the list of UCD and parameter names
+    if (LoadParamsAndUCDsNamesLines() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -529,22 +525,22 @@ mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
 }
 
 /**
- * Set the parameter descriptions.
+ * Find and parse the parameter and UCD names.
  *
  * The two first lines of the buffer contain the parameter description. i.e. the
  * UCDs and the parameter names lists. This method retreives these two lines and
- * set the parameter description using the AddParamsDesc() method. It also sets
+ * set the parameter description using the ParseParamsAndUCDsNamesLines() method. It also sets
  * the number of line to be skipped to 2.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned. 
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
+mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
 {
-    logTrace("vobsCDATA::SetParamsDesc()");
+    logTrace("vobsCDATA::LoadParamsAndUCDsNamesLines()");
 
-    // Get pointer to the UCDs 
-    const char    *from=NULL;
+    const char* from = NULL;
+
+    // Get a pointer to the UCD name line
     mcsSTRING2048 ucdNameLine;
     mcsUINT32     ucdNameLineMaxLength = sizeof(ucdNameLine);
     from = GetNextLine(from, ucdNameLine, ucdNameLineMaxLength);
@@ -554,7 +550,7 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
         return mcsFAILURE;
     }
 
-    // Get pointer to the parameter names 
+    // Get a pointer to the parameter name line
     mcsSTRING2048 paramNameLine;
     from = GetNextLine(from, paramNameLine, ucdNameLineMaxLength);
     if (paramNameLine == NULL)
@@ -563,14 +559,13 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
         return mcsFAILURE;
     }
     
-    // Update parameters description 
-    if (AddParamsDesc(paramNameLine, ucdNameLine) == mcsFAILURE)
+    // Retrieve each parameter and UCD names.
+    if (ParseParamsAndUCDsNamesLines(paramNameLine, ucdNameLine) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
-    // Set the number of lines to skip to 2; the two lines containing containing
-    // parameter description.
+    // Set the number of lines to skip to 2 : the 2 lines containing parameter description.
     SetNbLinesToSkip(2);
 
     return mcsSUCCESS;
@@ -585,7 +580,7 @@ mcsCOMPL_STAT vobsCDATA::SetParamsDesc(void)
  * @param paramName parameter name
  * @param ucdName UCD name
  *
- * @return property Id or NULL
+ * @return the found property ID, or NULL id none corresponded.
  */
 char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
 {
