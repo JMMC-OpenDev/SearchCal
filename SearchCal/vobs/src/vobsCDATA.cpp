@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.33 2008-03-10 07:50:22 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.34 2009-04-15 12:57:12 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.33  2008/03/10 07:50:22  lafrasse
+* Minor modifications on comments and log traces.
+*
 * Revision 1.32  2007/06/27 20:41:47  gzins
 * Limited length of logged string causing segmentation fault
 *
@@ -104,7 +107,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.33 2008-03-10 07:50:22 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.34 2009-04-15 12:57:12 lafrasse Exp $"; 
 
 
 /* 
@@ -625,6 +628,10 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         else if (strcmp(paramName, "2MASS") == 0)
         {
             return vobsSTAR_ID_2MASS;
+        }
+        else if (strcmp(paramName, "Seq") == 0)
+        {
+            return vobsSTAR_ID_SB9;
         }
     }
 
