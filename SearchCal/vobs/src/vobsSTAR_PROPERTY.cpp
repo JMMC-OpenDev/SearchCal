@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.25 2007-10-31 11:22:32 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.26 2009-04-15 12:51:56 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25  2007/10/31 11:22:32  gzins
+* Updated SetValue() to prevent buffer overflow when storing value
+*
 * Revision 1.24  2006/04/10 14:51:29  gzins
 * Added ClearValue()
 *
@@ -83,7 +86,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.25 2007-10-31 11:22:32 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.26 2009-04-15 12:51:56 lafrasse Exp $"; 
 
 
 /* 
@@ -548,6 +551,17 @@ const char *vobsSTAR_PROPERTY::GetLink(void) const
 
     // Return property CDS link
     return _link.c_str();
+}
+
+/**
+ * Get the object summary as a string, including all its member's values.
+ *
+ * @return the summary as a string object.
+ */
+string vobsSTAR_PROPERTY::GetSummaryString(void) const
+{
+    string summary = "vobsSTAR_PROPERTY(Id = '" + _id + "'; Name = '" + _name + "'; Value = '" + string(_value) + "'; Unit = '" + _unit + + "'; Type = '" + (_type == vobsSTRING_PROPERTY ? "STRING" : "FLOAT") + "', Origin = '" + _origin + "'; Confidence = '" + (_confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (_confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH")) + "'; Desc = '" + _description + "'; Link = '" + _link + "')";
+    return summary;
 }
 
 

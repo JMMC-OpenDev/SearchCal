@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.16 2006-04-10 14:51:29 gzins Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.17 2009-04-15 12:51:56 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2006/04/10 14:51:29  gzins
+* Added ClearValue()
+*
 * Revision 1.15  2006/01/06 15:59:55  lafrasse
 * Added CDS link in star property
 *
@@ -162,6 +165,9 @@ public:
 
     // Get property CDS link
     virtual const char *GetLink(void) const;
+
+    // Get the object summary as a string, including all its member's values
+    virtual string vobsSTAR_PROPERTY::GetSummaryString(void) const;
 
 protected:
     
