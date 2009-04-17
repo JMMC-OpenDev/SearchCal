@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.cpp,v 1.8 2007-11-12 10:32:15 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.cpp,v 1.9 2009-04-17 15:38:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2007/11/12 10:32:15  lafrasse
+ * Update Web Service API function name.
+ * Update documentation and traces.
+ * Added support for command line option parsing and handling.
+ *
  * Revision 1.7  2007/10/31 11:51:17  gzins
  * Updated according to new web-service API
  * Improved error handling
@@ -38,7 +43,7 @@
  *  Definition of sclwsWS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.8 2007-11-12 10:32:15 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.9 2009-04-17 15:38:44 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -100,19 +105,19 @@ static char sclwsSoapErrMsg[256];
  * The returned Id is used to perform asynchroneous treatment using the
  * synchroneous SOAP based web service.
  *
- * @param p_soap SOAP execution context.
+ * @param soapContext SOAP execution context.
  * @param jobId give-back pointer to return the communication "session" ID.
  *
  * @return a SOAP error code.
  */
-int ns__GetCalOpenSession(struct soap *p_soap, char** jobId)
+int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 {
     logTrace("ns__GetCalOpenSession()");
 
     // Test parameters validity
-    if (p_soap == NULL)
+    if (soapContext == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errAdd(sclwsERR_NULL_PTR, "soapContext");
         sclwsReturnSoapError();
     }
     if (jobId == NULL)
@@ -121,13 +126,24 @@ int ns__GetCalOpenSession(struct soap *p_soap, char** jobId)
         sclwsReturnSoapError();
     }
 
+    // Compute connection IP and log it
+    mcsSTRING16 conectionIP;
+    // @WARNING : IP address computing code is probably endian-ness dependant !
+    unsigned long ipAddress = soapContext->ip;
+    long firstByte  = (long)((ipAddress >> 24) & 0xFF);
+    long secondByte = (long)((ipAddress >> 16) & 0xFF);
+    long thirdByte  = (long)((ipAddress >> 8)  & 0xFF);
+    long forthByte  = (long)((ipAddress >> 0)  & 0xFF);
+    snprintf(conectionIP, sizeof(conectionIP), "%ld.%ld.%ld.%ld", firstByte, secondByte, thirdByte, forthByte);
+    logInfo("Accepted connection from IP address '%s'.", conectionIP);
+    
     // Create a "Universally Unique Identifier" (man uuid for more informations)
     uuid_t uuidID;
     uuid_generate(uuidID);
 
     // Allocate SOAP-aware memory to return the generated UUID
     int jobIdLength = 37; // An UUID is 36-byte string (plus tailing '\0')
-    *jobId = (char*) soap_malloc(p_soap, jobIdLength);
+    *jobId = (char*) soap_malloc(soapContext, jobIdLength);
     if (*jobId == NULL)
     {
         errAdd(sclwsERR_ALLOC_MEM, jobIdLength);
@@ -136,7 +152,7 @@ int ns__GetCalOpenSession(struct soap *p_soap, char** jobId)
 
     // Get the string of the newly generated uuid_t structure
     uuid_unparse(uuidID, *jobId);
-    logInfo("UUID = '%s'.", *jobId);
+    logTest("\tSession '%s': uniq identifier generated.", *jobId);
 
     // Create a new instance of sclsvrSERVER to perform the GETCAL query
     sclsvrSERVER* server = new sclsvrSERVER();
@@ -149,20 +165,22 @@ int ns__GetCalOpenSession(struct soap *p_soap, char** jobId)
     // Associate the new sclsvrSERVER instance with the generated UUID for later
     sclwsServerList[*jobId] = server;
 
+    logDebug("\tSession '%s': server instanciated.", *jobId);
+    
     return SOAP_OK;
 }
 
 /**
  * Launch a GetCal query.
  *
- * @param p_soap SOAP execution context.
+ * @param soapContext SOAP execution context.
  * @param jobId the communication "session" ID.
  * @param query the query to execute, in a double-quoted sclinsQuery format.
  * @param voTable give-back pointer to return the resulting VO Table.
  *
  * @return a SOAP error code.
  */
-int ns__GetCalSearchCal(struct soap *p_soap,
+int ns__GetCalSearchCal(struct soap* soapContext,
                     char*  jobId,
                     char*  query,
                     char** voTable)
@@ -174,9 +192,9 @@ int ns__GetCalSearchCal(struct soap *p_soap,
         sclwsThreadList.insert(make_pair(jobId, pthread_self()));
 
     // Test parameters validity
-    if (p_soap == NULL)
+    if (soapContext == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errAdd(sclwsERR_NULL_PTR, "soapContext");
         sclwsReturnSoapError();
     }
     if (jobId == NULL)
@@ -195,14 +213,15 @@ int ns__GetCalSearchCal(struct soap *p_soap,
         sclwsReturnSoapError();
     }
 
-    // Retrieve the sclsvrSERVER instance associated with th received UUID
-    sclsvrSERVER* server = NULL;
-    server = sclwsServerList[jobId];
+    // Retrieve the sclsvrSERVER instance associated with the received UUID
+    sclsvrSERVER* server = sclwsServerList[jobId];
     if (server == NULL)
     {
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
         sclwsReturnSoapError();
     }
+
+    logTest("\tSession '%s': launching query.", jobId);
 
     // Launch the GETCAL query with the received paramters
     miscoDYN_BUF dynBuf;
@@ -218,18 +237,19 @@ int ns__GetCalSearchCal(struct soap *p_soap,
     if (resultSize != 0)
     {
         result = dynBuf.GetBuffer();
+        logDebug("\tSession '%s': resulting VOTable ('%d' bytes) =\n%s", jobId , resultSize, result);
     }
     else
     {
-        logDebug("No star found.");
+        logDebug("\tSession '%s': no star found.", jobId);
         result = "";
         resultSize = strlen(result);
     }
-    resultSize++; // For the tailing '\0'
-    *voTable = (char*) soap_malloc(p_soap, resultSize);
+    resultSize++; // For the trailing '\0'
+    *voTable = (char*) soap_malloc(soapContext, resultSize);
     strncpy(*voTable, result, resultSize);
 
-    logDebug("Terminating query.");
+    logTest("\tSession '%s': terminating query.", jobId);
 
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
@@ -240,13 +260,13 @@ int ns__GetCalSearchCal(struct soap *p_soap,
 /**
  * Give back the query execution state.
  *
- * @param p_soap SOAP execution context.
+ * @param soapContext SOAP execution context.
  * @param jobId the communication "session" ID.
  * @param status give-back pointer to return the current query status.
  *
  * @return a SOAP error code.
  */
-int ns__GetCalQueryStatus(struct soap *p_soap,
+int ns__GetCalQueryStatus(struct soap* soapContext,
                         char*  jobId,
                         char** status)
 {
@@ -257,9 +277,9 @@ int ns__GetCalQueryStatus(struct soap *p_soap,
         sclwsThreadList.insert(make_pair(jobId, pthread_self()));
 
     // Test parameters validity
-    if (p_soap == NULL)
+    if (soapContext == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "p_soap");
+        errAdd(sclwsERR_NULL_PTR, "soapContext");
         sclwsReturnSoapError();
     }
     if (jobId == NULL)
@@ -274,8 +294,7 @@ int ns__GetCalQueryStatus(struct soap *p_soap,
     }
 
     // Retrieve the sclsvrSERVER instance associated with th received UUID
-    sclsvrSERVER* server = NULL;
-    server = sclwsServerList[jobId];
+    sclsvrSERVER* server = sclwsServerList[jobId];
     if (server == NULL)
     {
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
@@ -283,8 +302,8 @@ int ns__GetCalQueryStatus(struct soap *p_soap,
     }
 
     // Allocate SOAP-aware memory to return the current catalog name
-    int statusLength = 256;
-    *status = (char*) soap_malloc(p_soap, statusLength);
+    int statusLength = 256; // Should be enough !
+    *status = (char*) soap_malloc(soapContext, statusLength);
     if (*status == NULL)
     {
         errAdd(sclwsERR_ALLOC_MEM, statusLength);
@@ -294,7 +313,8 @@ int ns__GetCalQueryStatus(struct soap *p_soap,
     {
         sclwsReturnSoapError();
     }
-    logInfo("Status: '%s'.", *status);
+
+    logTest("\tSession '%s': query status = '%s'.", jobId, *status);
 
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
@@ -305,50 +325,52 @@ int ns__GetCalQueryStatus(struct soap *p_soap,
 /**
  * Abort the work done under the given ID.
  *
- * @param p_soap SOAP execution context.
+ * @param soapContext SOAP execution context.
  * @param jobId pointer to communication "session" ID.
  * @param isOK give-back pointer to return whether the cancellation went OK or not.
  *
  * @return a SOAP error code.
  */
-int ns__GetCalCancelSession(struct soap *p_soap,
+int ns__GetCalCancelSession(struct soap* soapContext,
                      char*  jobId,
                      bool*  isOK)
 {
     logTrace("ns__GetCalCancelSession()");
 
     // Test parameters validity
-    if (p_soap == NULL)
+    if (soapContext == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "p_soap");
         *isOK = false;
+        errAdd(sclwsERR_NULL_PTR, "soapContext");
         sclwsReturnSoapError();
     }
     if (jobId == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "jobId");
         *isOK = false;
+        errAdd(sclwsERR_NULL_PTR, "jobId");
         sclwsReturnSoapError();
     }
     if (isOK == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "isOK");
         *isOK = false;
+        errAdd(sclwsERR_NULL_PTR, "isOK");
         sclwsReturnSoapError();
     }
 
+    logTest("\tSession '%s': cancelling query.", jobId);
+
     // Retrieve the sclsvrSERVER instance associated with th received UUID
-    sclsvrSERVER* server = NULL;
-    server = sclwsServerList[jobId];
+    sclsvrSERVER* server = sclwsServerList[jobId];
     if (server == NULL)
     {
-        errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
         *isOK = false; // Cancellation went bad
+        errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
+        logWarning("\tSession '%s': cancelling FAILED !", jobId);
         sclwsReturnSoapError();
     }
 
     // For each thread launched with the current job ID
-    logInfo("Killing all job threads");
+    logDebug("\tSession '%s': killing all associated threads,", jobId);
     sclwsTHREAD_RANGE range = sclwsThreadList.equal_range(jobId);
     sclwsTHREAD_ITERATOR threadIterator;
     for (threadIterator = range.first; threadIterator != range.second; ++threadIterator)
@@ -361,11 +383,13 @@ int ns__GetCalCancelSession(struct soap *p_soap,
     }
 
     // Delete the server instance
-    logInfo("Deleting server");
+    logDebug("\tSession '%s': deleting associated server.", jobId);
     delete(server);
     sclwsServerList.erase(jobId);
 
-    *isOK = true; // Cancellation went OK
+    *isOK = true; // Cancellation succesfully completed
+
+    logTest("\tSession '%s': cancelling done.", jobId);
 
     return SOAP_OK;
 }

@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.8 2007-11-12 10:32:15 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.9 2009-04-17 15:38:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2007/11/12 10:32:15  lafrasse
+ * Update Web Service API function name.
+ * Update documentation and traces.
+ * Added support for command line option parsing and handling.
+ *
  * Revision 1.7  2007/07/03 17:07:58  lafrasse
  * Corrected connection port number.
  *
@@ -34,55 +39,16 @@
 
 /**
  * @file
- * brief description of the program, which ends at this dot.
+ * SearchCal SOAP webservice server.
  *
  * @synopsis
- * \<Command Name\> [\e \<param1\> ... \e \<paramN\>] 
- *                     [\e \<option1\> ... \e \<optionN\>] 
- *
- * @param param1 : description of parameter 1, if it exists
- * @param paramN : description of parameter N, if it exists
- *
- * @opt
- * @optname option1 : description of option 1, if it exists
- * @optname optionN : description of option N, if it exists
+ * \<sclwsServer\>
  * 
  * @details
- * OPTIONAL detailed description of the c main file follows here.
- * 
- * @usedfiles
- * OPTIONAL. If files are used, for each one, name, and usage description.
- * @filename fileName1 :  usage description of fileName1
- * @filename fileName2 :  usage description of fileName2
- *
- * @env
- * OPTIONAL. If needed, environmental variables accessed by the program. For
- * each variable, name, and usage description, as below.
- * @envvar envVar1 :  usage description of envVar1
- * @envvar envVar2 :  usage description of envVar2
- * 
- * @warning OPTIONAL. Warning if any (software requirements, ...)
- *
- * @ex
- * OPTIONAL. Command example if needed
- * \n Brief example description.
- * @code
- * Insert your command example here
- * @endcode
- *
- * @sa OPTIONAL. See also section, in which you can refer other documented
- * entities. Doxygen will create the link automatically.
- * @sa \<entity to refer\>
- * 
- * @bug OPTIONAL. Known bugs list if it exists.
- * @bug Bug 1 : bug 1 description
- *
- * @todo OPTIONAL. Things to forsee list, if needed. 
- * @todo Action 1 : action 1 description
- * 
+ * This daemon listen on port 8078.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.8 2007-11-12 10:32:15 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.9 2009-04-17 15:38:44 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -120,28 +86,28 @@ using namespace std;
 /*
  * Local Variables
  */
-struct Namespace *namespaces;
 uint   portNumber = 8078;
-struct soap  v_soap;    // SOAP execution context
+struct Namespace* namespaces;
+struct soap globalSoapContext; // SOAP execution context
 
 
 /*
  * Local Functions
  */
-void* sclwsJobHandler(void* p_tsoap)
+void* sclwsJobHandler(void* soapContextPtr)
 {
-    struct soap* v_soap = (struct soap*) p_tsoap;
+    struct soap* soapContext = (struct soap*) soapContextPtr;
 
     pthread_detach(pthread_self());
 
     // Fulfill the received remote call
-    soap_serve(v_soap);
+    soap_serve(soapContext);
 
-    soap_destroy(v_soap); // Dealloc C++ data
-    soap_end(v_soap);     // Dealloc data and cleanup
-    soap_done(v_soap);    // Detach soap struct
+    soap_destroy(soapContext); // Dealloc C++ data
+    soap_end(soapContext);     // Dealloc data and cleanup
+    soap_done(soapContext);    // Detach soap struct
 
-    free(v_soap);
+    free(soapContext);
 
     pthread_exit(NULL);
 
@@ -151,11 +117,11 @@ void* sclwsJobHandler(void* p_tsoap)
 void sclwsExit(int returnCode)
 {
     // Dealloc SOAP context
-    logInfo("Cleaning gSOAP ...");
-    soap_done(&v_soap);
+    logTest("Cleaning gSOAP ...");
+    soap_done(&globalSoapContext);
 
     // Close MCS services
-    logInfo("Cleaning MCS ...");
+    logDebug("Cleaning MCS ...");
     mcsExit();
     
     // Exit from the application with SUCCESS
@@ -169,7 +135,7 @@ void sclwsExit(int returnCode)
  */
 void sclwsSignalHandler (int signalNumber)
 {
-    logInfo("Received a '%d' system signal ...", signalNumber);
+    logDebug("Received a '%d' system signal ...", signalNumber);
 
     if (signalNumber == SIGPIPE)
     {
@@ -218,41 +184,41 @@ int main(int argc, char *argv[])
 
     // @TODO : manage a "garbage collector" to close pending connections
 
-    logInfo("Initializing gSOAP ...", portNumber);
-
-    struct soap *v_tsoap;   // SOAP execution context fork for the threads
-    pthread_t v_tid;        // Thread ID
+    logDebug("Initializing gSOAP ...", portNumber);
 
     // SOAP Initialization
-    soap_init(&v_soap);
-    soap_set_namespaces(&v_soap, soap_namespaces);
+    soap_init(&globalSoapContext);
+    soap_set_namespaces(&globalSoapContext, soap_namespaces);
 
     // Main SOAP socket creation
-    if (soap_bind(&v_soap, NULL, portNumber, 100) < 0)
+    if (soap_bind(&globalSoapContext, NULL, portNumber, 100) < 0)
     {
         errAdd(sclwsERR_BIND, portNumber);
         errCloseStack();
         sclwsExit(EXIT_FAILURE);
     }
 
-    logInfo("Listening on port '%d'.", portNumber);
+    logTest("Listening on port '%d'.", portNumber);
 
     // Infinite loop to receive requests
-    for (;;)
+    for (uint nbOfConnection = 1; ; nbOfConnection++)
     {
         // Wait (without timeout) a new connection
-        v_soap.accept_timeout = 1;
-        if (soap_accept(&v_soap) < 0)
+        globalSoapContext.accept_timeout = 1;
+        if (soap_accept(&globalSoapContext) < 0)
         {
             continue;
         }
-        
-        // Fork the SOAP context end start a new thread to handle the request
-        v_tsoap = soap_copy(&v_soap);
-        int status = pthread_create(&v_tid, NULL, (void*(*)(void*))sclwsJobHandler, (void*)v_tsoap);
+
+        // Fork the SOAP context
+        struct soap* forkedSoapContext = soap_copy(&globalSoapContext);
+
+        // Start a new thread to handle the request
+        pthread_t threadId;
+        int status = pthread_create(&threadId, NULL, (void*(*)(void*))sclwsJobHandler, (void*)forkedSoapContext);
         if (status != 0)
         {
-            // error handling
+            // Error handling
             errAdd(sclwsERR_THREAD_CREATION);
             errCloseStack();
             sclwsExit(EXIT_FAILURE);
