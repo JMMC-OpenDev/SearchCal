@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.7 2009-02-19 16:56:37 lafrasse Exp $"
+ * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.8 2009-04-17 15:29:48 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/02/19 16:56:37  lafrasse
+ * Improved lisibility.
+ *
  * Revision 1.6  2006/03/03 15:03:27  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -39,7 +42,7 @@
  * Definition of vobsMAGNITUDE_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.7 2009-02-19 16:56:37 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.8 2009-04-17 15:29:48 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -179,7 +182,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
             if (star->IsSame(referenceStar, &criteriaList) != mcsTRUE)
             {
                 // Remove it
-                logInfo("star %s has been removed by the filter '%s'", starID, GetId());
+                logTest("star %s has been removed by the filter '%s'", starID, GetId());
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;

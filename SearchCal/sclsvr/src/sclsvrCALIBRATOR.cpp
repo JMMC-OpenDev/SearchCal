@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.92 2007-11-14 15:52:03 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.93 2009-04-17 15:28:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.92  2007/11/14 15:52:03  gzins
+ * Set DIAM_FLAG to OK when diameter is coming from catalog
+ *
  * Revision 1.91  2007/05/11 15:49:57  gzins
  * Ignored I magnitude from DENIS catalog when saturated (faint case)
  * Computed V-K diameter when V is coming from I/280 (faint case)
@@ -239,7 +242,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.92 2007-11-14 15:52:03 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.93 2009-04-17 15:28:10 lafrasse Exp $"; 
 
 
 /* 
@@ -401,13 +404,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 if (request.IsBright() == mcsTRUE)
                 {
-                    logInfo("star %s - paralax %.2f(%.2f) is not valid; "
+                    logTest("star %s - paralax %.2f(%.2f) is not valid; "
                             "could not compute diameter", starId, 
                             paralax, paralaxError);
                 }
                 else
                 {
-                    logInfo("star %s - paralax %.2f(%.2f) is not valid...",
+                    logTest("star %s - paralax %.2f(%.2f) is not valid...",
                             starId, paralax, paralaxError);
                 }            
                 // Clear paralax values; invalid paralax is not shown to user
@@ -419,13 +422,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 if (request.IsBright() == mcsTRUE)
                 {
-                    logInfo("star %s - paralax %.2f(%.2f) less than 1 mas; "
+                    logTest("star %s - paralax %.2f(%.2f) less than 1 mas; "
                             "could not compute diameter", starId, 
                             paralax, paralaxError);
                 }
                 else
                 {
-                    logInfo("star %s - paralax %.2f(%.2f) less than 1 mas...",
+                    logTest("star %s - paralax %.2f(%.2f) less than 1 mas...",
                             starId, paralax, paralaxError);
                 }            
                 // Clear paralax values; invalid paralax is not shown to user
@@ -437,13 +440,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 if (request.IsBright() == mcsTRUE)
                 {
-                    logInfo("star %s - paralax error %.2f is not valid; "
+                    logTest("star %s - paralax error %.2f is not valid; "
                             "could not compute diameter", starId, 
                             paralaxError);
                 }
                 else
                 {
-                    logInfo("star %s - paralax error %.2f is not valid...", 
+                    logTest("star %s - paralax error %.2f is not valid...", 
                             starId, paralaxError);
                 }
                 // Clear paralax values; invalid paralax is not shown to user
@@ -455,13 +458,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 if (request.IsBright() == mcsTRUE)
                 {
-                    logInfo("star %s - paralax %.2f(%.2f) is not valid; "
+                    logTest("star %s - paralax %.2f(%.2f) is not valid; "
                             "could not compute diameter", starId, 
                             paralax, paralaxError);
                 }
                 else
                 {
-                    logInfo("star %s - paralax %.2f(%.2f) is not valid...", 
+                    logTest("star %s - paralax %.2f(%.2f) is not valid...", 
                             starId, paralax, paralaxError);
                 }
                 // Clear paralax values; invalid paralax is not shown to user
@@ -481,12 +484,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         {
             if (request.IsBright() == mcsTRUE)
             {
-                logInfo("star %s - paralax error is unknown; "
+                logTest("star %s - paralax error is unknown; "
                         "could not compute diameter", starId);
             }
             else
             {
-                logInfo("star %s - paralax error is unknown...", starId);
+                logTest("star %s - paralax error is unknown...", starId);
             }
             // Clear paralax value; invalid paralax is not shown to user
             ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
@@ -497,12 +500,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     {
         if (request.IsBright() == mcsTRUE)
         {
-            logInfo("star %s - paralax is unknown; "
+            logTest("star %s - paralax is unknown; "
                     "could not compute diameter", starId); 
         }
         else
         {
-            logInfo("star %s - paralax is unknown", starId);
+            logTest("star %s - paralax is unknown", starId);
         }
     }
 
@@ -672,7 +675,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             }
 
             // Compute Angular Diameter
-            logInfo("star %s - computing diameter without absorption...",
+            logTest("star %s - computing diameter without absorption...",
                     starId);
             if (starWithout.ComputeAngularDiameter (mcsFALSE) == mcsFAILURE)
             {
@@ -719,7 +722,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 }
              
                 // Compute Angular Diameter
-                logInfo("star %s - Computing diameter with absorption...", 
+                logTest("star %s - Computing diameter with absorption...", 
                         starId);
                 if (starWith.
                     ComputeAngularDiameter(mcsFALSE) == mcsFAILURE)
@@ -769,7 +772,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                     mcsFLOAT expectedVisErr = request.GetExpectedVisErr();
                     if (visibilityErr > expectedVisErr)
                     {
-                        logInfo("star %s - visibility error (%f) is higher than the expected one (%f)",
+                        logTest("star %s - visibility error (%f) is higher than the expected one (%f)",
                                 starId, visibilityErr, expectedVisErr);
                     }
                     else
@@ -870,7 +873,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
                 (errIsInStack("alx", 
                               alxERR_WRONG_SPECTRAL_TYPE_FORMAT) == mcsTRUE))
             {
-                logInfo("star %s - spectral type '%s' is unknown; "
+                logTest("star %s - spectral type '%s' is unknown; "
                         "could not compute missing magnitudes", starId, spType); 
                 errResetStack();
                 return mcsSUCCESS;
@@ -898,7 +901,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
                     (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) ==
                      mcsTRUE))
                 {
-                    logInfo("star %s - spectral type '%s' is unknown; "
+                    logTest("star %s - spectral type '%s' is unknown; "
                             "could not compute missing magnitudes",
                             starId, spType); 
                     errResetStack();
@@ -918,7 +921,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
                 if ((errIsInStack("alx",alxERR_NO_LINE_FOUND) ==mcsTRUE) ||
                     (errIsInStack("alx",alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE))
                 {
-                    logInfo("star %s - J-K differential magnitude not found "
+                    logTest("star %s - J-K differential magnitude not found "
                             "in color table; could not compute missing magnitudes",
                             starId);
                     errResetStack();
@@ -1395,7 +1398,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         }
         else
         {
-            logInfo("star %s - unknown %s property; "
+            logTest("star %s - unknown %s property; "
                     "could not compute diameter", starId, starPropertyId[i]);
             // Do nothing
             return mcsSUCCESS;
@@ -1481,7 +1484,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         // Set flag according to the confidence index 
         if (diameters.areCoherent == mcsFALSE)
         {
-            logInfo("star %s - error on diameter too high; "
+            logTest("star %s - error on diameter too high; "
                     "computed diameters are not coherent", starId);
             
             if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
@@ -1558,7 +1561,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             (magKProp->IsComputed() == mcsTRUE))
         {
             // stop the treatment
-            logInfo("star %s - J, H and/or K magitudes are unknown; "
+            logTest("star %s - J, H and/or K magitudes are unknown; "
                     "could not compute diameter", starId); 
             if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
                                  vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
@@ -1592,7 +1595,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             // Set flag according to the confidence index 
             if (diameters.areCoherent == mcsFALSE)
             {
-                logInfo("star %s - error on diameter too high; "
+                logTest("star %s - error on diameter too high; "
                         "computed diameters are not coherent", starId);
                 if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK",
                                      vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
@@ -1826,7 +1829,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
             // Else do not compute visibility
             else
             {
-                logInfo("star %s - unknown diameter; "
+                logTest("star %s - unknown diameter; "
                         "could not compute visibility", starId);
                 return mcsSUCCESS;
             }
@@ -1857,7 +1860,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
             // Else do not compute visibility
             else
             {
-                logInfo("star %s - unknown diameter; "
+                logTest("star %s - unknown diameter; "
                         "could not compute visibility", starId);
                 return mcsSUCCESS;
             }

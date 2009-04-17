@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.52 2007-10-31 11:36:22 gzins Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.53 2009-04-17 15:28:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.52  2007/10/31 11:36:22  gzins
+ * Updated to use new sdbENTRY non-blocking class
+ * Changed progression status format
+ * Removed obsolete methods related to web-service
+ *
  * Revision 1.51  2007/06/27 14:26:49  scetre
  * Handled noScienceStar parameter in request
  * Removed science star if parameter is false
@@ -164,7 +169,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.52 2007-10-31 11:36:22 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.53 2009-04-17 15:28:10 lafrasse Exp $"; 
 
 
 /* 
@@ -217,7 +222,7 @@ using namespace std;
  */
 mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
 {
-    logWarning("sclsvrSERVER::WaitForCurrentCatalogName()");
+    logTrace("sclsvrSERVER::WaitForCurrentCatalogName()");
 
     // Wait for an updated status
     if (_status.Read(buffer, mcsTRUE, timeoutInSec) == mcsFAILURE)
@@ -341,7 +346,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     strcpy(requestString, query);
  
     // Start timer log
-    timlogInfoStart("GETCAL");
+    timlogTestStart("GETCAL");
     
     // Monitoring task parameters
     sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
@@ -489,7 +494,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             {
                 return mcsFAILURE;
             }
-            logInfo("science star %s has been removed", starId);
+            logTest("science star %s has been removed", starId);
             calibratorList.Remove(*currentStar);
             currentStar = scienceObjects.GetNextStar();
         }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsBV_FILTER.cpp,v 1.9 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsBV_FILTER.cpp,v 1.10 2009-04-17 15:29:48 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.8  2005/12/14 15:07:53  scetre
  * Added log information about deleted star in filters
  *
@@ -37,7 +40,7 @@
  * Definition of vobsBV_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsBV_FILTER.cpp,v 1.9 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsBV_FILTER.cpp,v 1.10 2009-04-17 15:29:48 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -155,7 +158,7 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
                 // If B-V > magValue remove star
                 if (magB - magV > _magValue)
                 {
-                    logInfo("star %s has been removed by the filter '%s'", starId, GetId());
+                    logTest("star %s has been removed by the filter '%s'", starId, GetId());
                     if (list->Remove(*star) == mcsFAILURE)
                     {
                         return mcsFAILURE;
@@ -167,7 +170,7 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
             else 
             {
                 // Remove it
-                logInfo("star %s has been removed by the filter '%s' : property %s is not set", starId, GetId(), "B or V");
+                logTest("star %s has been removed by the filter '%s' : property %s is not set", starId, GetId(), "B or V");
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;

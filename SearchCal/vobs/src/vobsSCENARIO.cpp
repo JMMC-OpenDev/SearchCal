@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.46 2007-10-31 11:18:21 gzins Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.47 2009-04-17 15:29:48 lafrasse Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.46  2007/10/31 11:18:21  gzins
+* Changed format of the execution progress status
+*
 * Revision 1.45  2007/02/04 20:23:11  lafrasse
 * Added Init() API to enable polymorphism.
 * Added GetCatalogIndex() API to get the index of the catalog being queried.
@@ -147,7 +150,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.46 2007-10-31 11:18:21 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.47 2009-04-17 15:29:48 lafrasse Exp $"; 
 
 
 /* 
@@ -348,7 +351,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
              ((inputList != NULL) && (inputList->Size() != 0))))
         {
             // Start research in entry's catalog
-            logInfo("Consulting %s ...", catalogName);
+            logTest("Consulting %s ...", catalogName);
 
             // define action for timlog trace
             mcsSTRING256 timLogActionName;
@@ -372,7 +375,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
 
             // Start time counter
-            timlogInfoStart(timLogActionName);
+            timlogTestStart(timLogActionName);
 
             // Write the current action in the shared database
             mcsSTRING256 message;
@@ -410,7 +413,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 return mcsFAILURE;
             }
-            logInfo("...number of stars return = %d", tempList.Size());
+            logTest("...number of stars return = %d", tempList.Size());
             _catalogIndex++;
 
             // Clean the catalog option
@@ -487,7 +490,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     return mcsFAILURE;
                 }
 
-                logInfo("after COPY, star list size = %d", outputList->Size());
+                logTest("after COPY, star list size = %d", outputList->Size());
                 
                 break;
             }
@@ -503,7 +506,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     return mcsFAILURE;
                 }
 
-                logInfo("after MERGE, star list size = %d", outputList->Size());
+                logTest("after MERGE, star list size = %d", outputList->Size());
             
                 break;
             }
@@ -519,7 +522,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     return mcsFAILURE;
                 }
 
-                logInfo("after UPDATE_ONLY, star list size = %d",
+                logTest("after UPDATE_ONLY, star list size = %d",
                         outputList->Size());
                 
                 break;
@@ -535,7 +538,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         if (filter != NULL)
         {
             filter->Apply(outputList);
-            logInfo("after FILTER, star list size = %d", outputList->Size());
+            logTest("after FILTER, star list size = %d", outputList->Size());
         }
         
         // Next entry
@@ -547,7 +550,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     {
         return mcsFAILURE;
     }
-    logInfo("%d star(s) found.", starList.Size()); 
+    logTest("%d star(s) found.", starList.Size()); 
 
     _catalogIndex = 0;
     return mcsSUCCESS;
