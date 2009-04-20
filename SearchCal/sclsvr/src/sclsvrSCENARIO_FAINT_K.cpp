@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.21 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.22 2009-04-20 14:37:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.20  2006/08/25 06:07:22  gzins
  * Fixed bug related to error handling; vobsERR_xxx errors was added in error stack.
  *
@@ -75,7 +78,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.21 2006-12-21 15:16:05 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.22 2009-04-20 14:37:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -137,14 +140,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     _starListS1.Clear();
     _starListS2.Clear();
 
-    //////////////////////////////////////////////////////////////////////////
     // BUILD REQUEST USED
-    //////////////////////////////////////////////////////////////////////////
     _request.Copy(*request);
 
-    //////////////////////////////////////////////////////////////////////////
     // BUILD CRITERIA LIST
-    //////////////////////////////////////////////////////////////////////////
     _criteriaListRaDec.Clear();
     // Add Criteria on coordinates
     if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) == mcsFAILURE)
@@ -156,9 +155,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
     
-    //////////////////////////////////////////////////////////////////////////
     // BUILD FILTER USED
-    //////////////////////////////////////////////////////////////////////////
     // Build Filter used opt=T
     if (_filterOptT.AddCondition(vobsEQUAL, "T") == mcsFAILURE)
     {
@@ -172,9 +169,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     }
     _filterOptU.Enable();
 
-    ///////////////////////////////////////////////////////////////////////////
     // PRIMARY REQUEST
-    ///////////////////////////////////////////////////////////////////////////
 
     // Get Radius entering by the user
     mcsFLOAT radius;
@@ -248,9 +243,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
             }
             logInfo("New Sky research radius = %.2f(arcmin)", sqrt(2.0)*radius);
 
-            ///////////////////////////////////////////////////////////////////
             // II/246
-            ///////////////////////////////////////////////////////////////////
             if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
                          vobsCOPY, NULL, NULL, 
                          "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
@@ -262,9 +255,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // else if radius is defined, simply query 2mass
     else
     {
-        ///////////////////////////////////////////////////////////////////////
         // II/246
-        ///////////////////////////////////////////////////////////////////////
         if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
                      vobsCOPY, NULL, NULL, 
                      "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
@@ -273,27 +264,21 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
     // Filter on opt=T
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, 
                 vobsCOPY, NULL, &_filterOptT) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
    
-    ///////////////////////////////////////////////////////////////////////////
     // Filter on opt=U
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS2, 
                 vobsCOPY, NULL, &_filterOptU) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // query on I/280 with S1
-    ///////////////////////////////////////////////////////////////////////////
     // I/280 with 
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1,
                           vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
     {
@@ -301,50 +286,47 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     }
 
     // query on I/284 with S2
-    ///////////////////////////////////////////////////////////////////////////
     // I/284-UNSO
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_UNSO_ID, &_request, &_starListS2, &_starListS2,
                           vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
     // Merge S2 and S1
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1,
                  vobsMERGE) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
-    ///////////////////////////////////////////////////////////////////////////
     // Update this new list S1 with P, S1 = reference list
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1,
                  vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
-    ///////////////////////////////////////////////////////////////////////////
     // B/denis
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
-    } 
-    ///////////////////////////////////////////////////////////////////////////
+    }
+    
     // charm2
-    ///////////////////////////////////////////////////////////////////////////
     if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS1, &_starListS1,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
+    // B/sb9
+    if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS, &_starListS,
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     
     return mcsSUCCESS;
 }
