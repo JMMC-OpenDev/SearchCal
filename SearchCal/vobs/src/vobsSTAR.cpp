@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.78 2009-04-15 16:19:51 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.79 2009-04-20 14:44:36 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.78  2009/04/15 16:19:51  lafrasse
+* Log enhancement.
+*
 * Revision 1.77  2009/02/26 10:41:49  lafrasse
 * Added SB9 property idefinition.
 * Replaced all '-' by vobsSTAR_PROP_NOT_SET.
@@ -213,7 +216,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.78 2009-04-15 16:19:51 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.79 2009-04-20 14:44:36 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1248,8 +1251,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);  
     AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);    
     AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
-                "http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0",
-                "2MASS identifier, click to call Vizier on this object");
+                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0",
+                "2MASS identifier, click to call VizieR on this object");
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
                 "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
                 "Click to call Simbad based on those coordinates");
@@ -1270,6 +1273,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.max=9999&amp;Seq===%20${SBC9}",
+                "SBC9 identifier, click to call VizieR on this object");
     AddProperty(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
@@ -1332,8 +1338,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_CHI2_QUALITY, "Chi2", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
     AddProperty(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", 
                 vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
-    AddProperty(vobsSTAR_ID_SB9, "Seq", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
-
 
     return mcsSUCCESS;
 }

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.52 2009-02-26 10:40:46 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.53 2009-04-20 14:44:36 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.52  2009/02/26 10:40:46  lafrasse
+* Added SB9 property UCD.
+*
 * Revision 1.51  2009/02/19 14:01:22  lafrasse
 * Moved all 'char*' to 'const char*' when possible.
 *
@@ -151,6 +154,7 @@
 #define vobsSTAR_ID_CATALOG                     "ID_CATALOG"
 #define vobsSTAR_ID_2MASS                       "ID_2MASS"
 #define vobsSTAR_ID_DENIS                       "ID_DENIS"
+#define vobsSTAR_ID_SB9                         "ID_SB9"
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_RA_OTHER                "POS_EQ_RA_OTHER"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
@@ -213,7 +217,6 @@
 #define vobsSTAR_PHOT_EXTINCTION_TOTAL          "PHOT_EXTINCTION_TOTAL"
 #define vobsSTAR_CHI2_QUALITY                   "CHI2_QUALITY"
 #define vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC         "SP_TYP_PHYS_TEMP_EFFEC"
-#define vobsSTAR_ID_SB9                         "ID_SB9"
 
 
 /*
