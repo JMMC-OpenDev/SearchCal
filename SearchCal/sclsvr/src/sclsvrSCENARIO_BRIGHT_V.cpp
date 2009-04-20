@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.12 2009-04-20 14:37:42 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.13 2009-04-20 14:41:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2009/04/20 14:37:42  lafrasse
+ * Added spectral binary detection (SBC9 catalog).
+ *
  * Revision 1.11  2007/10/31 11:31:25  gzins
  * Code indentation
  *
@@ -46,7 +49,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_V class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.12 2009-04-20 14:37:42 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.13 2009-04-20 14:41:41 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -229,7 +232,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     
     // B/sb9
     if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS, &_starListS,
-                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
