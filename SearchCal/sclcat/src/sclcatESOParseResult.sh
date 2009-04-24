@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.8 2008-12-01 10:45:14 lafrasse Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.9 2009-04-24 12:03:11 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2008/12/01 10:45:14  lafrasse
+# Corrected vot list bug.
+# Enhanced output format.
+#
 # Revision 1.7  2008/11/26 10:25:52  lafrasse
 # Corrected 'no VOTable found' case.
 #
@@ -88,17 +92,13 @@ RESULTPATH=result
 mkdir $RESULTPATH
 
 # Generating VOTable header
-firstVotFile=(`ls | grep ".vot"`)
-if [ -z "${firstVotFile}" ]; then
-    echo "No VOTable to parse, exiting now."
-    exit 0
-fi
+firstVotFile="$(xml ls |xml sel -t -v "//f[1]/@n")"
 
 RESULTFILE=$RESULTPATH/catalog.vot
 
 # Generating VOTable header
 echo -n "Generating result header ... "
-cat $firstVotFile | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
+cat "$firstVotFile" | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
 echo "DONE"
 
 # Loop on every calibrators of every stars, then build calibrator file
@@ -114,9 +114,9 @@ do
     then
         echo -n "Extracting data from '$file' (${nbOfVOTablesDone} / ${totalNbOfVOTables}) : "
 
-        xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" ${file} >> $RESULTFILE
+        xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" "${file}" >> $RESULTFILE
 
-        nbOfCalibrators=`xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" ${file}`
+        nbOfCalibrators=`xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" "${file}"`
         let "totalNbOfCalibrators += nbOfCalibrators"
 
         echo "found '${nbOfCalibrators}' new calibrators for a total of '${totalNbOfCalibrators}' ... DONE."
@@ -127,7 +127,7 @@ done
 
 # Generating VOTable footer
 echo -n "Generating result footer ... "
-cat $firstVotFile | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
+cat "$firstVotFile" | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
 echo "DONE"
 
 #___oOo___
