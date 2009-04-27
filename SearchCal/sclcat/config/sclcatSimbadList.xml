@@ -3644,4 +3644,121 @@
 <pmdec>57.61</pmdec>
 <plx>7.41</plx>
 </object>
+<!-- add on Wed Apr 22 14:02:07 CEST 2009 -->
+<object>
+<name>WASP-12</name>
+<ra>06 30 32.794</ra>
+<dec>+29 40 20.29</dec>
+<pmra>-0.7</pmra>
+<pmdec>-7.8</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Wed Apr 22 14:02:07 CEST 2009 -->
+<object>
+<name>WASP-15</name>
+<ra>13 55 42.71</ra>
+<dec>-32 09 34.6</dec>
+<!-- simbad returns '~' for pmra -->
+<!-- simbad returns '~' for pmdec -->
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Wed Apr 22 14:02:08 CEST 2009 -->
+<object>
+<name>WASP-7</name>
+<ra>20 44 10.2190</ra>
+<dec>-39 13 30.894</dec>
+<pmra>29.20</pmra>
+<pmdec>-61.00</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Wed Apr 22 14:40:09 CEST 2009 -->
+<object>
+<name>42 Dra</name>
+<ra>18 25 59.1381</ra>
+<dec>+65 33 48.530</dec>
+<pmra>106.52</pmra>
+<pmdec>-27.07</pmdec>
+<plx>10.28</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:12 CEST 2009 -->
+<object>
+<name>eps Eridani</name>
+<ra>03 32 55.8442</ra>
+<dec>-09 27 29.744</dec>
+<pmra>-976.36</pmra>
+<pmdec>17.98</pmdec>
+<plx>310.74</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:12 CEST 2009 -->
+<object>
+<name>gamma Cephei</name>
+<ra>23 39 20.8490</ra>
+<dec>+77 37 56.193</dec>
+<pmra>-48.85</pmra>
+<pmdec>127.19</pmdec>
+<plx>72.50</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:15 CEST 2009 -->
+<object>
+<name>HD 139357</name>
+<ra>15 35 16.1992</ra>
+<dec>+53 55 19.717</dec>
+<pmra>-17.96</pmra>
+<pmdec>2.08</pmdec>
+<plx>8.24</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:15 CEST 2009 -->
+<object>
+<name>HD 16417</name>
+<ra>02 36 58.6079</ra>
+<dec>-34 34 40.717</dec>
+<pmra>-18.27</pmra>
+<pmdec>-259.92</pmdec>
+<plx>39.16</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:17 CEST 2009 -->
+<object>
+<name>HD 45364</name>
+<ra>06 25 38.4751</ra>
+<dec>-31 28 51.433</dec>
+<pmra>53.31</pmra>
+<pmdec>-12.01</pmdec>
+<plx>30.69</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:17 CEST 2009 -->
+<object>
+<name>HD 7924</name>
+<ra>01 21 59.1153</ra>
+<dec>+76 42 37.024</dec>
+<pmra>-34.12</pmra>
+<pmdec>-34.45</pmdec>
+<plx>59.46</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:18 CEST 2009 -->
+<object>
+<name>HD 96167</name>
+<ra>11 05 15.0681</ra>
+<dec>-10 17 28.681</dec>
+<pmra>-51.79</pmra>
+<pmdec>-7.06</pmdec>
+<plx>11.90</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:20 CEST 2009 -->
+<object>
+<name>tau Boo</name>
+<ra>13 47 15.7429</ra>
+<dec>+17 27 24.862</dec>
+<pmra>-480.34</pmra>
+<pmdec>54.18</pmdec>
+<plx>64.12</plx>
+</object>
+<!-- add on Wed Apr 22 14:40:20 CEST 2009 -->
+<object>
+<name>ups And</name>
+<ra>01 36 47.8428</ra>
+<dec>+41 24 19.652</dec>
+<pmra>-172.57</pmra>
+<pmdec>-381.03</pmdec>
+<plx>74.25</plx>
+</object>
 </objects>
