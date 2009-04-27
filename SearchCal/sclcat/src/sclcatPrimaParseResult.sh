@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.6 2009-01-22 14:03:22 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.7 2009-04-27 08:58:39 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2009/01/22 14:03:22  mella
+# copy input xml file at end of generation
+#
 # Revision 1.5  2007/03/27 14:55:56  scetre
 # Updated documentation
 #
@@ -103,6 +106,30 @@ done
 
 cd $HTMLDIR
 
+getColumnIndex()
+{
+    VOTABLE_FILENAME="$1"
+    COLNAME="$2"
+    xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t  -m "//VOT:FIELD" -i "@name='$COLNAME'" -v "position()" "$VOTABLE_FILENAME"
+}
+
+getCellValue()
+{
+    VOTABLE_FILENAME="$1"
+    COLNAME="$2"
+    ROWINDEX="$3"
+
+    COLINDEX=$(getColumnIndex "$VOTABLE_FILENAME" "$COLNAME")
+    xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "//VOT:TR[$ROWINDEX]/VOT:TD[$COLINDEX]" "$VOTABLE_FILENAME"
+}
+
+
+CALIBRATORS=calibrators.xml
+echo "<calibrators>" > $CALIBRATORS
+
+# loop on every calibrators of every stars
+# and build calibrator file
+
 CALIBRATORS=calibrators.xml
 echo "<calibrators>" > $CALIBRATORS
 
@@ -112,6 +139,9 @@ for i in *.vot
 do
     if [ -f "$i" ]
     then
+        # Search indice of diamFlag column
+        MULTFLAG_INDEX=$( getColumnIndex "$i" "diamFlag" )
+        
         starName=${i%.vot}
         starRa=$(xml sel -t -v "//object[name='$starName']/ra" $MAIN_LIST_FILE)
         starPmRa=$(xml sel -t -v "//object[name='$starName']/pmra" $MAIN_LIST_FILE)
@@ -130,27 +160,29 @@ do
         
         echo -n "$starName  "
         xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-        -v "count(//VOT:TR[./VOT:TD[268]='OK'])" -o "/" \
-        -v "count(//VOT:TR)" -n "$i" 
+        -v "count(//VOT:TR[./VOT:TD[$MULTFLAG_INDEX]='OK'])" -o "/" \
+        -v "count(//VOT:TR)" "$i" 
 
         NBCAL=$(xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
         -v "count(//VOT:TR)" "$i")
 
         # output copy of calibrator
         INDICES=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-        -m "//VOT:TR" -i "./VOT:TD[268]='OK'" \
-        -v "position()" -n "$i")
-
+        -m "//VOT:TR" -i "./VOT:TD[$MULTFLAG_INDEX]='OK'" \
+        -v "position()" -o " " "$i")
+        
         echo "<star simbadName=\"$starName\" scCount=\"$NBCAL\">" >>  $CALIBRATORS
+        xml sel -t -m "//object[name='$starName']" -e "ra" -v "ra" -b -e "dec" -v "dec" -b -e "pmra" -v "pmra" -b -e "pmdec" -v "pmdec" -b $MAIN_LIST_FILE >> $CALIBRATORS
+
         for index in $INDICES
         do
-            calName=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "//VOT:TR[$index]/VOT:TD[22]" "$i")
-            calMagK=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "//VOT:TR[$index]/VOT:TD[157]" "$i")
-            calRa=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "//VOT:TR[$index]/VOT:TD[25]" "$i")
-            calDec=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "//VOT:TR[$index]/VOT:TD[28]" "$i")
-            calPmRa=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "//VOT:TR[$index]/VOT:TD[43]" "$i")
-            calPmDec=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "//VOT:TR[$index]/VOT:TD[40]" "$i")
-            calDist=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "//VOT:TR[$index]/VOT:TD[322]" "$i")
+            calName=$(getCellValue "$i" 2MASS $index )
+            calMagK=$(getCellValue "$i" K $index )
+            calRa=$(getCellValue "$i" RAJ2000 $index )
+            calDec=$(getCellValue "$i" DEJ2000 $index )
+            calPmRa=$(getCellValue "$i" pmRa $index )
+            calPmDec=$(getCellValue "$i" pmDec $index )
+            calDist=$(getCellValue "$i" pmDec $index )
             echo "  <calibrator index=\"$index\">" >>  $CALIBRATORS
             echo "    <name>$calName</name>" >>  $CALIBRATORS
             echo "    <magK>$calMagK</magK>" >>  $CALIBRATORS
@@ -168,6 +200,8 @@ do
             fi
 
             # prep command
+            echo sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
+            "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan"
             FILTERINFO=$(sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
             "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan")
             if [ $? -ne 0 ]
