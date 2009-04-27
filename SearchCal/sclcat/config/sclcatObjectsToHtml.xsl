@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.8 2009-01-22 14:12:10 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.9 2009-04-27 10:04:35 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2009/01/22 14:12:10  mella
+# improve presetation
+#
 # Revision 1.7  2007/03/27 14:53:51  scetre
 # Updated documentation
 #
@@ -171,15 +174,11 @@
                     <xsl:for-each select="$calibrators//star[./calibrator]">
                         <xsl:sort select="./calibrator[1]/dist" data-type="number" />
                         <xsl:variable name="simbadName" select="./@simbadName"/>
-                        <xsl:if test="not($primaStars//star[./name=$simbadName])">
-                            <xsl:message> No star(with calibrators) found with simbadName = '<xsl:value-of select="$simbadName"/>'</xsl:message>
-                        </xsl:if>
                         <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
                         <xsl:call-template name="starInTable">
                             <xsl:with-param name="object" select="$object"/>
                         </xsl:call-template>    
                     </xsl:for-each>
-                    <xsl:comment>End of stars with calibrators </xsl:comment>
 
                     <xsl:for-each select="$calibrators//star[not(./calibrator)]">
                         <xsl:variable name="simbadName" select="./@simbadName"/>
@@ -188,7 +187,6 @@
                             <xsl:with-param name="object" select="$object"/>
                         </xsl:call-template>    
                     </xsl:for-each>
-                    <xsl:comment>End of stars without retained calibrators </xsl:comment>
 
                     <xsl:for-each select="//star">
                         <xsl:variable name="simbadName" select="./simbadName"/>
