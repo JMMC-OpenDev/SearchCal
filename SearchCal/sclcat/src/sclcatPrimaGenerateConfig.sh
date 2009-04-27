@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.7 2009-01-22 14:06:13 mella Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.8 2009-04-27 10:02:30 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2009/01/22 14:06:13  mella
+# Improve process
+#
 # Revision 1.6  2008/10/09 08:10:37  mella
 # exit on build failure
 #
@@ -213,7 +216,7 @@ collectCandidates $XML_STAR_LIST
 
 MICROLENSING_STAR_LIST=../config/sclcatMicrolensingStars.xml
 
-STAR_TO_REJECT=$(xml sel -t -m "//name" -v "." -n $MICROLENSING_STAR_LIST)
+STAR_TO_REJECT=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "//VOT:TD" -v "." -n $MICROLENSING_STAR_LIST)
 echo 
 echo "Next step rejects following starts:"
 echo "$STAR_TO_REJECT"
@@ -253,6 +256,3 @@ fi
 
 # Generate batch file
 generateBatch
-
-
-
