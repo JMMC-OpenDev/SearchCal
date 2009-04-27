@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatAliases.xml,v 1.5 2008-10-08 15:52:48 mella Exp $"
+# "@(#) $Id: sclcatAliases.xml,v 1.6 2009-04-27 10:29:14 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2008/10/08 15:52:48  mella
+# Add new aliases
+#
 # Revision 1.4  2007/03/26 11:53:03  scetre
 # Moved documentation blok in the first xml tag
 #
@@ -47,6 +50,17 @@
     <object name='MOA-2007-BLG-192-L' alias='NAME MOA-2007-BLG-192-L' />
     <object name='MOA-2007-BLG-400-L' alias='NAME MOA-2007-BLG-400-L' />
 
+
+    <object name="CoRoT-1" alias="GSC 04804-02268" />
+    <object name="CoRoT-2" alias="GSC 00465-01282" />
+    <object name="CoRoT-3" alias="GSC 00465-01645" />
+    <object name="CoRoT-4" alias="2MASS J06484671-0040219" />
+    <object name="HAT-P-11" alias="GSC 03561-02092" />
+    <object name="HAT-P-8" alias="GSC 02757-01152" />
+    <object name="HAT-P-9" alias="GSC 02463-00281" />
+    <object name="NGC 4349 No 127" alias="C 1221-616" />
+    <object name="WASP-11/HAT-P-10" alias="GSC 02340-01714" />
+ 
     <old>
    <!-- Next object use their parent as alias exoplanet often do the same-->
     <object name='16 Cyg B b' alias='16 Cyg B' /> 
@@ -99,6 +113,12 @@
     <object name="OGLE-05-390L b"    alias="" />
     <object name="WASP-1 b"          alias=" " />
     <object name="WASP-2 b"          alias="" />
+    <object name="CoRoT-5 alias="" />
+    <object name="CoRoT-6 alias="" />
+    <object name="CoRoT-7 alias="" />
+   <object name="OGLE2-TR-L9 alias="" />
+    <object name="Lupus-TR-3 alias="" />
     -->
+
 </old>
 </aliases>
