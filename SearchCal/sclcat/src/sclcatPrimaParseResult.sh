@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.7 2009-04-27 08:58:39 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.8 2009-04-27 11:57:51 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2009/04/27 08:58:39  mella
+# fix hardcoded values with dynamic accessor
+#
 # Revision 1.6  2009/01/22 14:03:22  mella
 # copy input xml file at end of generation
 #
@@ -182,7 +185,7 @@ do
             calDec=$(getCellValue "$i" DEJ2000 $index )
             calPmRa=$(getCellValue "$i" pmRa $index )
             calPmDec=$(getCellValue "$i" pmDec $index )
-            calDist=$(getCellValue "$i" pmDec $index )
+            calDist=$(getCellValue "$i" dist $index )
             echo "  <calibrator index=\"$index\">" >>  $CALIBRATORS
             echo "    <name>$calName</name>" >>  $CALIBRATORS
             echo "    <magK>$calMagK</magK>" >>  $CALIBRATORS
