@@ -3761,4 +3761,85 @@
 <pmdec>-381.03</pmdec>
 <plx>74.25</plx>
 </object>
+<!-- add on Mon Apr 27 12:19:57 CEST 2009 -->
+<object>
+<name>GSC 04804-02268</name>
+<ra>06 48 19.172</ra>
+<dec>-03 06 07.68</dec>
+<pmra>-9.6</pmra>
+<pmdec>6.2</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Mon Apr 27 12:19:57 CEST 2009 -->
+<object>
+<name>GSC 00465-01282</name>
+<ra>19 27 06.496</ra>
+<dec>+01 23 01.38</dec>
+<pmra>-5.3</pmra>
+<pmdec>-9.1</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Mon Apr 27 12:19:58 CEST 2009 -->
+<object>
+<name>GSC 00465-01645</name>
+<ra>19 28 13.265</ra>
+<dec>+00 07 18.62</dec>
+<pmra>-10.8</pmra>
+<pmdec>21.8</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Mon Apr 27 12:20:00 CEST 2009 -->
+<object>
+<name>2MASS J06484671-0040219</name>
+<ra>06 48 46.715</ra>
+<dec>-00 40 21.98</dec>
+<pmra>-9.3</pmra>
+<pmdec>-6.4</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Mon Apr 27 12:24:29 CEST 2009 -->
+<object>
+<name>GSC 03561-02092</name>
+<ra>19 50 50.2469</ra>
+<dec>+48 04 51.085</dec>
+<pmra>126.44</pmra>
+<pmdec>230.98</pmdec>
+<plx>27.50</plx>
+</object>
+<!-- add on Mon Apr 27 12:24:29 CEST 2009 -->
+<object>
+<name>GSC 02757-01152</name>
+<ra>22 52 09.862</ra>
+<dec>+35 26 49.59</dec>
+<pmra>75.5</pmra>
+<pmdec>17.2</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Mon Apr 27 12:24:30 CEST 2009 -->
+<object>
+<name>GSC 02463-00281</name>
+<ra>07 20 40.479</ra>
+<dec>+37 08 26.17</dec>
+<pmra>-8.5</pmra>
+<pmdec>-13.3</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Mon Apr 27 12:24:32 CEST 2009 -->
+<object>
+<name>C 1221-616</name>
+<ra>12 24.2</ra>
+<dec>-61 52</dec>
+<pmra>-7.02</pmra>
+<pmdec>3.68</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Mon Apr 27 12:24:33 CEST 2009 -->
+<object>
+<name>GSC 02340-01714</name>
+<ra>03 09 28.55</ra>
+<dec>+30 40 24.9</dec>
+<pmra>-4.0</pmra>
+<pmdec>-49.4</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
 </objects>
