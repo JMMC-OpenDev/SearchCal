@@ -49,4 +49,4 @@ if __name__ == '__main__':
         Pl_Ecc=float(PlArgs[3*i+2])
         o+=Pl_Mass/St_Mass*1/1.047355*St_Parax*Pl_SemiAxis*(1+Pl_Ecc)
     
-    print ("""<orbit> %.3g </orbit>""" % o)
+    print ("""<orbit>%.2E</orbit>""" % o)
