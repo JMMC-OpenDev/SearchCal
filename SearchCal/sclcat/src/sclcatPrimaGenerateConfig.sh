@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.8 2009-04-27 10:02:30 mella Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.9 2009-04-29 10:43:41 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2009/04/27 10:02:30  mella
+# use votables to extract microlensing stars
+#
 # Revision 1.7  2009/01/22 14:06:13  mella
 # Improve process
 #
@@ -188,7 +191,10 @@ collectCandidates(){
 
     # get collection from exoplanet 
     # novalid is used because dtd is not reachable...
-    xsltproc --novalid -o $OUTPUT ../config/sclcatBuildMainList.xsl ../config/sclcatPrimaExoplanetData.xml || exit 1
+    EXOPLANET_VOTABLE_FILE=../config/sclcatPrimaExoplanetData.xml
+    EXOPLANET_VOTABLE_URL="http://www.exoplanet.eu/export.php?all=yes&outputType=votable"
+    curl $EXOPLANET_VOTABLE_URL > $EXOPLANET_VOTABLE_FILE
+    xsltproc --novalid -o $OUTPUT ../config/sclcatBuildMainList.xsl $EXOPLANET_VOTABLE_FILE || exit 1
     # next collection should be added here ...
     
     echo "   * Exoplanet list exported "
