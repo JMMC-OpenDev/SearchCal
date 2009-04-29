@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2008-12-03 10:07:01 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.10 2009-04-29 10:43:02 mella Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2008/12/03 10:07:01  lafrasse
+# Added sclcatESOFilterResult script.
+#
 # Revision 1.8  2008/09/30 14:54:18  mella
 # use g95 instead of ifc
 #
@@ -99,6 +102,7 @@ SCRIPTS_L       = sclcatRetryFailedQueries \
                   sclcatESO \
                   sclcatESOParseResult \
                   sclcatESOFilterResult \
+				  sclcatComputeOrbit \
 
 
 #
