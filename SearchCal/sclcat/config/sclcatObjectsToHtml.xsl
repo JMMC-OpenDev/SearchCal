@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.9 2009-04-27 10:04:35 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.10 2009-04-29 10:45:16 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2009/04/27 10:04:35  mella
+# add better comment
+#
 # Revision 1.8  2009/01/22 14:12:10  mella
 # improve presetation
 #
@@ -57,6 +60,7 @@
         <pmra/>
         <pmdec/>
         <plx/>
+        <orbit/>
         <magK/>
         <dist/>
         <dist1/>
@@ -225,6 +229,11 @@
                 <xsl:variable name="selector" select="name()"/>
                 <xsl:element name="td">
                     <xsl:choose>
+                        <xsl:when test="$selector='orbit'">
+                            <!-- info have benn computed and stored into
+                            calibrators file -->
+                            <xsl:value-of select="$calibrators//star[./@simbadName=$simbadName]/orbit"/>
+                        </xsl:when>
                         <xsl:when test="$selector='alias'">
                             <xsl:if test="$object/alias">X</xsl:if>
                         </xsl:when>
