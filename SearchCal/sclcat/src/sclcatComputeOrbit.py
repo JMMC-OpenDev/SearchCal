@@ -21,14 +21,44 @@ def getRadius(pmra, pmdec, timespan):
     dkal=vitsky*timespan+1.0
     return dkal
 
+def latexValue(number,dim=2):
+    """ Returns the best frm that we can accept as latex number value"""
+    s=str(number)
+    # shorten too long decimals
+    if len(s)>5:
+        format="%." + "%d" % dim + "g"
+        s=format%number
+    # shorten too long integers
+    if not( "." in s ):
+        s="%g"%number
+    if "e" in s:
+        array=s.split("e")
+        format="\ee{%." + "%d" % (dim-1) + "f}{%d}"
+        s=format%(float(array[0]),int(array[1]))
+    return s
+    
+
+
 if __name__ == '__main__':
     usage="""usage: %prog [options] STAR_MASS STAR_DIST PL_MASS PL_SEMIAXIS PL_ECC [PL_MASS PL_SEMIAXIS PL_ECC] """
     parser = OptionParser(usage=usage)
-    parser.add_option("-o", "--output", dest="outputFilename", metavar="OUT",  
-            help="Output result in given file instead of default 'output.txt'")
+    parser.add_option("-t", "--test", dest="test", metavar="OUT",  
+            help="Test latexValue function")
 
     (options, args) = parser.parse_args()
-   
+  
+    if options.test:
+        idx=0;
+        for i in [105,1050,10500,105000,1050000, 1.2,1.00,1.0001,1.0001001, 0.1, .12,.000001,.00000123,.00000167]:
+            idx=idx+1
+            print(idx)
+            print("inputValue: ")
+            print(i)
+            print("latexValue: " + latexValue(i))
+            print("")
+            print("")
+        sys.exit(0)
+
     if len(args) < 5:
         parser.print_help(file=sys.stderr)
         sys.exit(1)
@@ -48,5 +78,6 @@ if __name__ == '__main__':
         Pl_SemiAxis=float(PlArgs[3*i+1])
         Pl_Ecc=float(PlArgs[3*i+2])
         o+=Pl_Mass/St_Mass*1/1.047355*St_Parax*Pl_SemiAxis*(1+Pl_Ecc)
-    
-    print ("""<orbit>%.2E</orbit>""" % o)
+   
+
+    print ("""<orbit latex="%s">%.2E</orbit>""" % (latexValue(o),o))
