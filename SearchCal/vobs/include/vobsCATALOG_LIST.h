@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.h,v 1.5 2009-02-09 16:26:10 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.h,v 1.6 2009-05-04 15:20:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2009/02/09 16:26:10  lafrasse
+ * Added Spectral Binary catalog (SB9).
+ *
  * Revision 1.4  2005/11/29 13:47:12  gzins
  * Removed useless iterator
  *
@@ -47,7 +50,6 @@
 #include "vobsCATALOG.h"
 #include "vobsCATALOG_ASCC.h"
 #include "vobsCATALOG_BSC.h"
-#include "vobsCATALOG_CHARM.h"
 #include "vobsCATALOG_CHARM2.h"
 #include "vobsCATALOG_CIO.h"
 #include "vobsCATALOG_DENIS.h"
@@ -99,7 +101,6 @@ private:
     vobsCATALOG_MASS     _mass;
     vobsCATALOG_LBSI     _lbsi;
     vobsCATALOG_MERAND   _merand;
-    vobsCATALOG_CHARM    _charm;
     vobsCATALOG_CHARM2   _charm2;
     vobsCATALOG_BSC      _bsc;
     vobsCATALOG_SBSC     _sbsc;

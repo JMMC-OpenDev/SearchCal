@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.8 2009-02-09 16:26:10 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.9 2009-05-04 15:20:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2009/02/09 16:26:10  lafrasse
+ * Added Spectral Binary catalog (SB9).
+ *
  * Revision 1.7  2006/03/03 15:03:27  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -34,7 +37,7 @@
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.8 2009-02-09 16:26:10 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.9 2009-05-04 15:20:26 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -66,7 +69,6 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
     _catalogList[vobsCATALOG_ASCC_ID]     = &_ascc;
     _catalogList[vobsCATALOG_BSC_ID]      = &_bsc;
     _catalogList[vobsCATALOG_CHARM2_ID]   = &_charm2;
-    _catalogList[vobsCATALOG_CHARM_ID]    = &_charm;
     _catalogList[vobsCATALOG_CIO_ID]      = &_cio;
     _catalogList[vobsCATALOG_PHOTO_ID]    = &_photo;
     _catalogList[vobsCATALOG_DENIS_ID]    = &_denis;

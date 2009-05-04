@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.28 2009-02-18 09:22:30 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.29 2009-05-04 15:20:26 lafrasse Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.28  2009/02/18 09:22:30  lafrasse
+# Added missing SB9 catalog header file.
+#
 # Revision 1.27  2009/02/09 16:26:10  lafrasse
 # Added Spectral Binary catalog (SB9).
 #
@@ -108,7 +111,6 @@ INCLUDES        = vobs.h						\
 				  vobsLOCAL_CATALOG.h 			\
 				  vobsCATALOG_ASCC.h 	   		\
 				  vobsCATALOG_BSC.h 	   		\
-				  vobsCATALOG_CHARM.h 	   		\
 				  vobsCATALOG_CHARM2.h 	   		\
 				  vobsCATALOG_CIO.h 	   		\
 				  vobsCATALOG_DENIS.h 	   		\
@@ -158,7 +160,6 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsLOCAL_CATALOG			\
 				   vobsCATALOG_ASCC 			\
 				   vobsCATALOG_BSC 				\
-				   vobsCATALOG_CHARM 			\
 				   vobsCATALOG_CHARM2 			\
 				   vobsCATALOG_CIO 				\
 				   vobsCATALOG_DENIS 			\

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.18 2009-02-26 10:39:03 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.19 2009-05-04 15:20:26 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2009/02/26 10:39:03  lafrasse
+* Corrected SB9 catalog ID.
+*
 * Revision 1.17  2009/02/09 16:26:10  lafrasse
 * Added Spectral Binary catalog (SB9).
 *
@@ -51,7 +54,6 @@
 #define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_BSC_ID          "V/50/catalog"
 #define vobsCATALOG_CHARM2_ID       "J/A+A/386/492/charm"
-#define vobsCATALOG_CHARM_ID        "J/A+A/431/773/charm2"
 #define vobsCATALOG_CIO_ID          "II/225/catalog"
 #define vobsCATALOG_DENIS_ID        "B/denis"
 #define vobsCATALOG_DENIS_JK_ID     "J/A+A/413/1037"
