@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.28 2009-04-20 14:37:42 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.29 2009-05-04 15:21:34 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2009/04/20 14:37:42  lafrasse
+ * Added spectral binary detection (SBC9 catalog).
+ *
  * Revision 1.27  2007/11/15 05:12:30  gzins
  * Updated version to 3.3.7
  *
@@ -105,7 +108,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.4.0"
+#define sclsvrVERSION "3.4.1"
 
 #ifdef __cplusplus
 }
