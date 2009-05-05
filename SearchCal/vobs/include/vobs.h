@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobs.h,v 1.12 2006-01-04 12:34:25 lafrasse Exp $"
+* "@(#) $Id: vobs.h,v 1.13 2009-05-05 12:52:37 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2006/01/04 12:34:25  lafrasse
+* Added vobsVOTABLE.h include
+*
 * Revision 1.11  2005/11/29 10:29:48  gzins
 * Moved vobsFILTER to vobsGENERIC_FILTER
 *
@@ -48,7 +51,7 @@
 #include "vobsVIRTUAL_OBSERVATORY.h"
 #include "vobsCATALOG_ASCC.h"
 #include "vobsCATALOG_BSC.h"
-#include "vobsCATALOG_CHARM.h"
+#include "vobsCATALOG_CHARM2.h"
 #include "vobsCATALOG_CIO.h"
 #include "vobsCATALOG_DENIS.h"
 #include "vobsCATALOG.h"

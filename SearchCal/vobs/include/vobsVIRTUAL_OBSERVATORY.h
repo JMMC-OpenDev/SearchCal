@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.16 2006-01-05 09:07:39 lafrasse Exp $"
+* "@(#) $Id: vobsVIRTUAL_OBSERVATORY.h,v 1.17 2009-05-05 12:52:37 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2006/01/05 09:07:39  lafrasse
+* Code review
+*
 * Revision 1.15  2005/11/15 14:57:56  scetre
 * Added new scenario structure
 * Added possibility to query merand and borde as primary catalog
@@ -49,7 +52,6 @@
 #include "vobsCATALOG.h"
 #include "vobsCATALOG_ASCC.h"
 #include "vobsCATALOG_BSC.h"
-#include "vobsCATALOG_CHARM.h"
 #include "vobsCATALOG_CHARM2.h"
 #include "vobsCATALOG_CIO.h"
 #include "vobsCATALOG_DENIS.h"
