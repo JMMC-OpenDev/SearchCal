@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.10 2009-04-29 10:45:16 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.11 2009-05-06 13:54:34 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2009/04/29 10:45:16  mella
+# add orbit column in html and latex
+#
 # Revision 1.9  2009/04/27 10:04:35  mella
 # add better comment
 #
@@ -48,25 +51,7 @@
         encoding="ISO-8859-1"
         doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
-    <xsl:variable name="columns">
-        <name/>
-        <!--
-        <alias/>
-        <candidates/>
-        -->
-        <calibrators/>
-        <ra/>
-        <dec/>
-        <pmra/>
-        <pmdec/>
-        <plx/>
-        <orbit/>
-        <magK/>
-        <dist/>
-        <dist1/>
-        <dist2/>
-        <minDist/>
-    </xsl:variable>
+    <xsl:include href="sclcatObjectsCommon.xsl"/>
 
     <xsl:param name="mainFilename">sclcatSimbadList.xml</xsl:param>
     <xsl:param name="calibratorsFilename">calibrators.xml</xsl:param>
@@ -172,7 +157,7 @@
                 <table>
                     <tr> 
                         <xsl:for-each select="exslt:node-set($columns)/*">
-                            <th><xsl:value-of select="name()"/></th>
+                            <th><xsl:value-of select="@name"/></th>
                         </xsl:for-each>
                     </tr>
                     <xsl:for-each select="$calibrators//star[./calibrator]">
@@ -226,7 +211,7 @@
         <!-- first tr contains object info and next ones calibrators -->
         <xsl:element name="tr">
             <xsl:for-each select="exslt:node-set($columns)/*">
-                <xsl:variable name="selector" select="name()"/>
+                <xsl:variable name="selector" select="@name"/>
                 <xsl:element name="td">
                     <xsl:choose>
                         <xsl:when test="$selector='orbit'">
@@ -299,7 +284,7 @@
             <xsl:element name="tr">
                 <xsl:attribute name="style">background-color: #CCCCCC</xsl:attribute>
                 <xsl:for-each select="exslt:node-set($columns)/*">
-                    <xsl:variable name="selector" select="name()"/>
+                    <xsl:variable name="selector" select="@name"/>
                     <xsl:element name="td">
                         <xsl:choose>
                             <xsl:when test="$selector='dist'">

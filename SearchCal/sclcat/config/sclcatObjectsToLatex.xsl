@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.1 2009-04-29 10:45:16 mella Exp $"
+# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.2 2009-05-06 13:54:34 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2009/04/29 10:45:16  mella
+# add orbit column in html and latex
+#
 # Revision 1.9  2009/04/27 10:04:35  mella
 # add better comment
 #
@@ -44,21 +47,8 @@
     exclude-result-prefixes="math str">
     <xsl:output method="text"/>
 
-    <xsl:variable name="columns">
-        <c name="name" desc="Star name" />
-        <c name="calibrators" desc="Calibrators"/>
-        <c name="ra" desc="Right ascension" unit="(h min s)"/>
-        <c name="dec" desc="Declination" unit="(\degr\ \arcmin\ \arcsec\)"/>
-        <c name="pmra" desc="Proper" unit="motion ($\alpha$)"/>
-        <c name="pmdec" desc="Proper" unit="motion ($\delta$)"/>
-        <c name="plx" desc="Parallax" unit="(mas)"/>
-        <c name="orbit" desc="Size of" unit="(mas)"/>
-        <c name="magK" desc="K mag" unit=""/>
-        <c name="dist1" desc="distance" unit=""/>
-        <c name="dist2" desc="distance" unit=""/>
-        <c name="minDist" desc="Minimal distance" unit=""/>
-    </xsl:variable>
-
+    <xsl:include href="sclcatObjectsCommon.xsl"/>
+    
     <xsl:param name="mainFilename">sclcatSimbadList.xml</xsl:param>
     <xsl:param name="calibratorsFilename">calibrators.xml</xsl:param>
 
@@ -67,7 +57,7 @@
     <xsl:variable name="primaStars" select="/"/>
 
     <xsl:template match="/">
-        <!-- Column header -->
+        <!-- Column header 
         <xsl:for-each select="exslt:node-set($columns)/*">
             <xsl:value-of select="' '"/>
             <xsl:value-of select="@desc"/>
@@ -80,6 +70,7 @@
             <xsl:value-of select="' &amp; '"/>
         </xsl:for-each>
         <xsl:value-of select="'\\&#10;'"/>
+        -->
         <!-- table for all stars with one or more calibrator-->
         <xsl:for-each select="$calibrators//star[./calibrator[./calibInfo/accepted]]">
             <xsl:sort select="./calibrator[1]/dist" data-type="number" />
@@ -99,7 +90,7 @@
         <xsl:variable name="votFileName" select="concat($simbadName,'.vot')"/>
         <xsl:text>\noalign{\smallskip}\hline\noalign{\smallskip}&#10;</xsl:text> 
         <!-- star line -->
-        <xsl:for-each select="exslt:node-set($columns)/*">
+        <xsl:for-each select="exslt:node-set($columns)/*[not(@name='dist')]">
             <xsl:variable name="selector" select="@name"/>
             <xsl:choose>
                 <xsl:when test="$selector='name'">
@@ -107,7 +98,7 @@
                     <xsl:value-of select="$sourceName"/>
                 </xsl:when>
                 <xsl:when test="$selector='orbit'">
-                    <xsl:value-of select="$calibrators//star[./@simbadName=$simbadName]/orbit"/>
+                    <xsl:value-of select="$calibrators//star[./@simbadName=$simbadName]/orbit/@latex"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="$object/*[name()=$selector]"/>
@@ -125,7 +116,7 @@
         <!-- place one line per accepted calibrator -->
         <xsl:for-each select="$calibrators//star[./@simbadName=$simbadName]/calibrator[./calibInfo/accepted]">
             <xsl:variable name="tmpCalib" select="."/>
-            <xsl:for-each select="exslt:node-set($columns)/*">
+            <xsl:for-each select="exslt:node-set($columns)/*[not(@name='dist')]">
                 <xsl:variable name="selector" select="@name"/>
                 <xsl:choose>
                     <xsl:when test="$selector='dist'">
