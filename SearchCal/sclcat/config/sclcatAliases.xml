@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatAliases.xml,v 1.6 2009-04-27 10:29:14 mella Exp $"
+# "@(#) $Id: sclcatAliases.xml,v 1.7 2009-05-07 19:41:41 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2009/04/27 10:29:14  mella
+# GM: add aliases manually
+#
 # Revision 1.5  2008/10/08 15:52:48  mella
 # Add new aliases
 #
@@ -47,6 +50,7 @@
     <object name='HAT-P-5' alias='NAME HAT-P-5' />
     <object name='HAT-P-6' alias='NAME HAT-P-6' />
     <object name='HAT-P-7' alias='NAME HAT-P-7' />
+    <object name='HAT-P-12' alias='GSC 03033-00706' />
     <object name='MOA-2007-BLG-192-L' alias='NAME MOA-2007-BLG-192-L' />
     <object name='MOA-2007-BLG-400-L' alias='NAME MOA-2007-BLG-400-L' />
 
