@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.2 2009-05-06 13:54:34 mella Exp $"
+# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.3 2009-05-07 20:48:32 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2009/05/06 13:54:34  mella
+# add common column description
+#
 # Revision 1.1  2009/04/29 10:45:16  mella
 # add orbit column in html and latex
 #
@@ -81,6 +84,24 @@
             </xsl:call-template>    
         </xsl:for-each>
     </xsl:template>
+    
+    <!-- this template surround by $ the given string or the first word of the given string ifany white space is encountered
+    -->
+    <xsl:template name="latexFilter">
+        <xsl:param name="inputStr"/>
+        <xsl:for-each select="str:tokenize($inputStr)">
+            <xsl:if test="starts-with(.,'-')">
+                <xsl:value-of select="'$'"/>
+            </xsl:if>
+            <xsl:value-of select="."/>
+            <xsl:if test="starts-with(.,'-')">
+                <xsl:value-of select="'$'"/>
+            </xsl:if>
+            <xsl:if test="not(position()=last())">
+                <xsl:value-of select="' '"/>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
 
     <xsl:template name="starInTable">
         <xsl:param name="object"/>
@@ -92,18 +113,23 @@
         <!-- star line -->
         <xsl:for-each select="exslt:node-set($columns)/*[not(@name='dist')]">
             <xsl:variable name="selector" select="@name"/>
-            <xsl:choose>
-                <xsl:when test="$selector='name'">
-                    <xsl:variable name="sourceName" select="$object/name"/>
-                    <xsl:value-of select="$sourceName"/>
-                </xsl:when>
-                <xsl:when test="$selector='orbit'">
-                    <xsl:value-of select="$calibrators//star[./@simbadName=$simbadName]/orbit/@latex"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$object/*[name()=$selector]"/>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:variable name="value">
+                <xsl:choose>
+                    <xsl:when test="$selector='name'">
+                        <xsl:variable name="sourceName" select="$object/name"/>
+                        <xsl:value-of select="$sourceName"/>
+                    </xsl:when>
+                    <xsl:when test="$selector='orbit'">
+                        <xsl:value-of select="$calibrators//star[./@simbadName=$simbadName]/orbit/@latex"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$object/*[name()=$selector]"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <xsl:call-template name="latexFilter">
+                <xsl:with-param name="inputStr" select="$value"/>
+            </xsl:call-template>    
             <xsl:choose>
                 <xsl:when test="position()=last()">
                     <xsl:value-of select="'\\&#10;'"/>
@@ -118,33 +144,38 @@
             <xsl:variable name="tmpCalib" select="."/>
             <xsl:for-each select="exslt:node-set($columns)/*[not(@name='dist')]">
                 <xsl:variable name="selector" select="@name"/>
-                <xsl:choose>
-                    <xsl:when test="$selector='dist'">
-                        <!-- mult by 60 to be in arcmin -->
-                        <xsl:value-of select="$tmpCalib/dist * 60"/>
-                    </xsl:when>
-                    <xsl:when test="$selector='name'">
-                    </xsl:when>
-                    <xsl:when test="$selector='dist1'">
-                        <xsl:value-of select="$tmpCalib/calibInfo/dist[1]/value"/>
-                    </xsl:when>
-                    <xsl:when test="$selector='dist2'">
-                        <xsl:value-of select="$tmpCalib/calibInfo/dist[2]/value"/>
-                    </xsl:when>
-                    <xsl:when test="$selector='minDist'">
-                        <xsl:if test="number($tmpCalib/calibInfo/minDist/value)">
-                            <xsl:value-of select="$tmpCalib/calibInfo/minDist/value"/>
-                            <xsl:value-of select="' in '"/>
-                            <xsl:value-of select="$tmpCalib/calibInfo/minDist/year"/>
-                        </xsl:if>
-                    </xsl:when>
-                    <xsl:when test="$selector='calibrators'">
-                        <xsl:value-of  select="concat('2M',$tmpCalib/name)"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$tmpCalib/*[name()=$selector]"/>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:variable name="value">
+                    <xsl:choose>
+                        <xsl:when test="$selector='dist'">
+                            <!-- mult by 60 to be in arcmin -->
+                            <xsl:value-of select="$tmpCalib/dist * 60"/>
+                        </xsl:when>
+                        <xsl:when test="$selector='name'">
+                        </xsl:when>
+                        <xsl:when test="$selector='dist1'">
+                            <xsl:value-of select="$tmpCalib/calibInfo/dist[1]/value"/>
+                        </xsl:when>
+                        <xsl:when test="$selector='dist2'">
+                            <xsl:value-of select="$tmpCalib/calibInfo/dist[2]/value"/>
+                        </xsl:when>
+                        <xsl:when test="$selector='minDist'">
+                            <xsl:if test="number($tmpCalib/calibInfo/minDist/value)">
+                                <xsl:value-of select="$tmpCalib/calibInfo/minDist/value"/>
+                                <xsl:value-of select="' in '"/>
+                                <xsl:value-of select="$tmpCalib/calibInfo/minDist/year"/>
+                            </xsl:if>
+                        </xsl:when>
+                        <xsl:when test="$selector='calibrators'">
+                            <xsl:value-of  select="concat('2M',$tmpCalib/name)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$tmpCalib/*[name()=$selector]"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:call-template name="latexFilter">
+                    <xsl:with-param name="inputStr" select="$value"/>
+                </xsl:call-template>    
                 <xsl:choose>
                     <xsl:when test="position()=last()">
                         <xsl:value-of select="'\\&#10;'"/>
