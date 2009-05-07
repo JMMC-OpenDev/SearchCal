@@ -3842,4 +3842,13 @@
 <pmdec>-49.4</pmdec>
 <!-- simbad returns '~' for plx -->
 </object>
+<!-- add on Wed May  6 16:06:48 CEST 2009 -->
+<object>
+<name>GSC 03033-00706</name>
+<ra>13 57 33.47</ra>
+<dec>+43 29 36.8</dec>
+<pmra>-132</pmra>
+<pmdec>-38</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
 </objects>
