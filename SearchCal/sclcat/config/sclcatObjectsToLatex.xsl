@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.3 2009-05-07 20:48:32 mella Exp $"
+# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.4 2009-05-11 10:36:35 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2009/05/07 20:48:32  mella
+# Use latex filter to surround negative values by $
+#
 # Revision 1.2  2009/05/06 13:54:34  mella
 # add common column description
 #
@@ -90,13 +93,11 @@
     <xsl:template name="latexFilter">
         <xsl:param name="inputStr"/>
         <xsl:for-each select="str:tokenize($inputStr)">
-            <xsl:if test="starts-with(.,'-')">
-                <xsl:value-of select="'$'"/>
-            </xsl:if>
+            <xsl:if test="starts-with(.,'-')"><xsl:value-of select="'$'"/></xsl:if>
+            <xsl:if test="starts-with(.,'+')"><xsl:value-of select="'$'"/></xsl:if>
             <xsl:value-of select="."/>
-            <xsl:if test="starts-with(.,'-')">
-                <xsl:value-of select="'$'"/>
-            </xsl:if>
+            <xsl:if test="starts-with(.,'-')"><xsl:value-of select="'$'"/></xsl:if>
+            <xsl:if test="starts-with(.,'+')"><xsl:value-of select="'$'"/></xsl:if>
             <xsl:if test="not(position()=last())">
                 <xsl:value-of select="' '"/>
             </xsl:if>
@@ -116,8 +117,7 @@
             <xsl:variable name="value">
                 <xsl:choose>
                     <xsl:when test="$selector='name'">
-                        <xsl:variable name="sourceName" select="$object/name"/>
-                        <xsl:value-of select="$sourceName"/>
+                        <xsl:value-of select="$primaStar/name"/>
                     </xsl:when>
                     <xsl:when test="$selector='orbit'">
                         <xsl:value-of select="$calibrators//star[./@simbadName=$simbadName]/orbit/@latex"/>
