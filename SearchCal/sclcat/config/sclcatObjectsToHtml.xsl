@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.11 2009-05-06 13:54:34 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.12 2009-05-11 10:36:18 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2009/05/06 13:54:34  mella
+# add common column description
+#
 # Revision 1.10  2009/04/29 10:45:16  mella
 # add orbit column in html and latex
 #
@@ -232,8 +235,7 @@
                             <xsl:if test="not($object/ra and $object/dec)">
                                 <xsl:attribute name="style">background-color: #ff0000</xsl:attribute>
                             </xsl:if>
-                            <xsl:variable name="sourceName" select="$object/name"/>
-                            <xsl:value-of select="$sourceName"/>
+                            <xsl:value-of select="$primaStar/name"/>
                             <xsl:comment>
                             <xsl:copy-of select="$object"/>
                         </xsl:comment>
