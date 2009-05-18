@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.9 2009-04-29 10:44:03 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.10 2009-05-18 15:48:57 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2009/04/29 10:44:03  mella
+# add first implementation to compute orbit
+#
 # Revision 1.8  2009/04/27 11:57:51  mella
 # fix bug
 #
@@ -77,6 +80,7 @@ done
 XSLT_VOT2HTML="$PWD/../config/sclcatVOTable2html.xsl"
 XSLT_OBJECT2HTML="$PWD/../config/sclcatObjectsToHtml.xsl"
 XSLT_OBJECT2LATEX="$PWD/../config/sclcatObjectsToLatex.xsl"
+XSLT_OBJECT2DAT="$PWD/../config/sclcatObjectsToDat.xsl"
 # Next file contains all grabed data
 SIMBAD_FILE="$PWD/../config/sclcatSimbadList.xml"
 ALIAS_FILE="$PWD/../config/sclcatAliases.xml"
@@ -298,16 +302,20 @@ echo "</calibrators>" >> $CALIBRATORS
 #Now CALIBRATORS file can be presented by next stylesheet
 OUTPUT_FILE=index.html
 echo "Html resume generated into $PWD/$OUTPUT_FILE"
-# generate the html view
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
           $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
           $XSLT_OBJECT2HTML $PRIMA_STAR_LIST
 OUTPUT_FILE=table.tex
 echo "Latex table generated into $PWD/$OUTPUT_FILE"
-# generate the html view
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
           $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
           $XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
+OUTPUT_FILE=table.dat
+echo "Dat ( ascii file ) generated into $PWD/$OUTPUT_FILE"
+xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
+          $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+          $XSLT_OBJECT2DAT $PRIMA_STAR_LIST
+
 
 cp -v $PRIMA_STAR_LIST .
 cp -v $SIMBAD_FILE .
