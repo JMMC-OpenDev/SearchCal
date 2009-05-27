@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.23 2009-05-27 21:31:08 mella Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.24 2009-05-27 21:32:59 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.23  2009/05/27 21:31:08  mella
+# fix error messages
+#
 # Revision 1.22  2008/12/17 10:32:53  ccmgr
 # Add option to remotly tag the list of modules
 #
@@ -178,7 +181,7 @@ fi
 # Check that MCSDATA is defined
 if [ "$MCSDATA" == "" ]
 then
-    echo -e "\nWARNING : MCSDATA must be defined (you may have forgot to source ~/.bash*)!!"
+    echo -e "\nWARNING : MCSDATA must be defined (you may have forgot to source ~/.bash_profile)!!"
     echo -e ""
     exit 1
 fi
