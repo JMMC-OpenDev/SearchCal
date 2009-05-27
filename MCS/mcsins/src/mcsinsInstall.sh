@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.22 2008-12-17 10:32:53 ccmgr Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.23 2009-05-27 21:31:08 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2008/12/17 10:32:53  ccmgr
+# Add option to remotly tag the list of modules
+#
 # Revision 1.21  2008/09/22 14:04:13  ccmgr
 # Added 'jmcs' module installation.
 #
@@ -167,7 +170,7 @@ fi
 # Check that MCSTOP is defined
 if [ "$MCSTOP" == "" ]
 then
-    echo -e "\nWARNING : MCSTOP must be not defined!!"
+    echo -e "\nWARNING : MCSTOP must be defined!!"
     echo -e ""
     exit 1
 fi
@@ -175,7 +178,7 @@ fi
 # Check that MCSDATA is defined
 if [ "$MCSDATA" == "" ]
 then
-    echo -e "\nWARNING : MCSDATA must be not defined!!"
+    echo -e "\nWARNING : MCSDATA must be defined (you may have forgot to source ~/.bash*)!!"
     echo -e ""
     exit 1
 fi
