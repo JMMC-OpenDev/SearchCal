@@ -1,11 +1,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakefile,v 1.24 2008-02-13 07:42:23 mella Exp $" 
+# "@(#) $Id: mkfMakefile,v 1.25 2009-05-27 20:49:19 mella Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.24  2008/02/13 07:42:23  mella
+# replace -I- by -Iquote and include additional libraries into MCSSTD_LIBLIST
+#
 # Revision 1.23  2006/09/25 05:37:36  gzins
 # Added -ffloat-store C compilation option
 #
@@ -301,6 +304,13 @@ else
    WHAT = what
 endif
 
+# Darwin case
+ifeq ($(os),Darwin)
+   platform = Darwin
+   ECHO = echo -e
+   WHAT = grep @\(#\)
+endif
+
 ifndef platform
     # force a syntax error, so that mkfMake stops on a
     UNSUPPORTED platform
@@ -347,7 +357,13 @@ ifdef MAKE_ALL_WARNINGS
                   -Wmissing-declarations
 endif
 
-CC_FLAGS   := $(CC_FLAGS) -fPIC -ffloat-store
+CC_FLAGS   := $(CC_FLAGS) -ffloat-store
+ifeq ($(platform),Darwin)
+	CC_FLAGS   := $(CC_FLAGS) -fno-common
+else
+	CC_FLAGS   := $(CC_FLAGS) -fPIC
+endif
+
 C_PLUS_PLUS_FLAGS = -fno-operator-names -fpermissive
 
 
@@ -416,6 +432,28 @@ ifeq ($(platform),Linux)
     MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)  
     MCSCPP_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(MCSCPP_LIBLIST) $(NOSHARED_OFF) $(MCSSTD_LIBLIST)
 endif
+
+# Darwin-case
+ifeq ($(platform),Darwin)
+    CC            = gcc -ansi
+    CCDEP         = gcc -MM -ansi
+    CXX           = c++ -ansi
+    LD            = gcc
+    NOSHARED_ON   = -static 
+    NOSHARED_OFF  = -dynamic
+    SHLIB_EXT     = so
+    RANLIB        = ranlib
+    LIB_DEFAULT   = -L/usr/local/lib ${LDFLAGS}
+    XINC_DEFAULT  = -I/usr/X11R6/include/X11
+    XLIB_DEFAULT  = -L/usr/X11R6/lib
+    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -ltimlog -lthrd
+    MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lmisco -lenv -lcmd -lmsg -lsdb -levh -lgwt
+    MCSSTD_LIBLIST       := -lgdome -lm -lxml2 -lglib-2.0
+    MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)
+    MCSCPP_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(MCSCPP_LIBLIST) $(NOSHARED_OFF) $(MCSSTD_LIBLIST)
+endif
+
+
 
 BINDIR   = bin
 LIBDIR   = lib
@@ -907,15 +945,15 @@ clean_all: rm_links $(CLEAN_TARGET)
 	-$(AT)$(RM) mkfMake_clean_cdfClasses $(foreach member, $(CDF_FILES), ../include/$(member)_CMD.h ./$(member)_CMD.cpp )            $(OUTPUT)
 	-$(AT)$(RM) mkfMake_clean_indexfiles   ../object/mkfMakeGeneratedFiles.del  $(OUTPUT)
 	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \#\* -print | xargs -i $(RM) {}
+	-$(AT)find .. -name \#\* -exec $(RM) {} \;
 	-@$(ECHO) " .\c"
-	-$(AT)find .. -name core -print | xargs -i $(RM) {}
+	-$(AT)find .. -name core -exec $(RM) {} \;
 	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\.gdb_history -print | xargs -i $(RM) {}
+	-$(AT)find .. -name \*\.gdb_history -exec $(RM) {} \;
 	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \*\~ -print | xargs -i $(RM) {}    $(OUTPUT)
+	-$(AT)find .. -name \*\~ -exec $(RM) {} \;
 	-@$(ECHO) " .\c"
-	-$(AT)find .. -name \.\*\~ -print | xargs -i $(RM) {}    $(OUTPUT)
+	-$(AT)find .. -name \.\*\~ -exec $(RM) {} \;
 	-@$(ECHO) " .\c"
 	-$(AT)if [ -f .testSession ];\
 		then tat -nc cleanEnv ;\
