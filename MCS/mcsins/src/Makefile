@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2008-04-21 09:43:23 ccmgr Exp $"
+# "@(#) $Id: Makefile,v 1.10 2009-05-27 21:26:21 mella Exp $"
 #
 # Makefile for installation script of MCS 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2008/04/21 09:43:23  ccmgr
+# Add java keystore in config files
+#
 # Revision 1.8  2006/10/14 10:38:37  gzins
 # Removed test related to INTROOT existence; i.e. always install configuration files
 #
@@ -64,7 +67,7 @@ install :
 	@echo "Installing configuration files: ";
 	@if [ ! -d $(MCSTOP)/etc ]; \
 	then \
-		mkdir $(MCSTOP)/etc; \
+		mkdir -p $(MCSTOP)/etc; \
 	fi;
 	@$(foreach file, $(CFG_FILES), echo "        `basename $(file)`" ;\
 		chmod 755 $(file) ; \
