@@ -3,13 +3,16 @@
 #------------------------------------------------------------------------------
 # File:    $MCSROOT/etc/mcs.sh
 #
-# Version: $Id: mcs.sh,v 1.13 2007-11-19 13:41:31 gzins Exp $
+# Version: $Id: mcs.sh,v 1.14 2009-05-27 22:04:58 mella Exp $
 #
 # Purpose: bash configuration file
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2007/11/19 13:41:31  gzins
+# Minor changes
+#
 # Revision 1.12  2007/03/22 14:10:36  mella
 # Add 2 alias
 #
@@ -250,4 +253,12 @@ then
         IFS="$oldIFS"
     }
     fi
+fi
+
+# Fix Darwin pecularities
+if [ "$(uname)" == "Darwin" ]
+then
+    # force -e support on echo command inside Mac OS X 10.5 /bin/sh
+    # http://developer.apple.com/releasenotes/Darwin/RN-Unix03Conformance/
+    export COMMAND_MODE=legacy
 fi
