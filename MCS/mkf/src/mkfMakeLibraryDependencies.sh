@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeLibraryDependencies.sh,v 1.4 2005-02-15 08:40:15 gzins Exp $" 
+# "@(#) $Id: mkfMakeLibraryDependencies.sh,v 1.5 2009-05-28 10:35:24 mella Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2005/02/15 08:40:15  gzins
+# Added CVS log as file modification history
+#
 # gzins     26-Aug-2004  Adapted from VLT
 # gzins     18-Nov-2004  Added MCS C++ libraries only when MCS and C++ are
 #                        specified
@@ -85,7 +88,10 @@ else
     # as internal name. This gives problems at run time in finding the 
     # the correct file (see ldd output) 
     # Here I force the name without parent directory 
-    sharedLibName="-Xlinker -h -Xlinker lib${libName}.so"
+    if [ "`uname`" != "Darwin" ]
+    then
+        sharedLibName="-Xlinker -h -Xlinker lib${libName}.so"
+    fi
 fi 
 
 echo "# Dependency file for library: ${libName}"
@@ -241,7 +247,7 @@ then
         echo "${sharedLib}: \$(xyz_${libName}_OBJ) ${lList}"
         echo "	@echo \"== Making library: ${sharedLib}\" "
         echo "	-\$(AT)\$(RM) ${sharedLib} "
-        echo "	\$(AT)\$(CC) -shared -fPIC ${sharedLibName} \$(L_PATH) ${libraryList} ${ldFlags} -o ${sharedLib} \$(xyz_${libName}_OBJ)"
+        echo "	\$(AT)\$(LD) -shared -fPIC ${sharedLibName} \$(L_PATH) ${libraryList} ${ldFlags} -o ${sharedLib} \$(xyz_${libName}_OBJ)"
         echo "	\$(AT) chmod a-w ${sharedLib} "
     fi
     echo "	@echo "
