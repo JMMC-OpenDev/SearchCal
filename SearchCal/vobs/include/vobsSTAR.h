@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.53 2009-04-20 14:44:36 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.54 2009-07-16 13:47:13 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.53  2009/04/20 14:44:36  lafrasse
+* Moved 'SBC9' column just after MultFlag, and added corresponding VizieR URL and
+* comments.
+*
 * Revision 1.52  2009/02/26 10:40:46  lafrasse
 * Added SB9 property UCD.
 *
@@ -164,6 +168,7 @@
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
 #define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
+#define vobsSTAR_CODE_VARIAB                    "CODE_VARIAB"
 #define vobsSTAR_CODE_VARIAB_V1                 "CODE_VARIAB_V1"
 #define vobsSTAR_CODE_VARIAB_V2                 "CODE_VARIAB_V2"
 #define vobsSTAR_CODE_VARIAB_V3                 "VAR_CLASS"

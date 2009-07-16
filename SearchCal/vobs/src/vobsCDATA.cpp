@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.35 2009-04-15 16:12:56 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.36 2009-07-16 13:47:14 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.35  2009/04/15 16:12:56  lafrasse
+* Code, log and documentation enhancements.
+*
 * Revision 1.34  2009/04/15 12:57:12  lafrasse
 * Added test on "Seq" parameter name for ID_MAIN ucd to retreive ID_SB9 catalog ID.
 *
@@ -110,7 +113,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.35 2009-04-15 16:12:56 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.36 2009-07-16 13:47:14 lafrasse Exp $"; 
 
 
 /* 
@@ -624,7 +627,7 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         {
             return vobsSTAR_ID_2MASS;
         }
-        else if (strcmp(paramName, "Seq") == 0)
+        else if (strcmp(paramName, "Seq") == 0) // SBC9 catalog ID
         {
             return vobsSTAR_ID_SB9;
         }
@@ -633,13 +636,17 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
     // Flag of variability
     if (strcmp(ucdName, "CODE_VARIAB") == 0)
     {
-        if (strcmp(paramName, "v1") == 0)
+        if (strcmp(paramName, "v1") == 0) // ASCC catalog
         {
             return vobsSTAR_CODE_VARIAB_V1;
         }
-        else if (strcmp(paramName, "v2") == 0)
+        else if (strcmp(paramName, "v2") == 0) // ASCC catalog
         {
             return vobsSTAR_CODE_VARIAB_V2;
+        }
+        else if (strcmp(paramName, "Var") == 0) // MIDI catalog
+        {
+            return vobsSTAR_CODE_VARIAB;
         }
     }
     

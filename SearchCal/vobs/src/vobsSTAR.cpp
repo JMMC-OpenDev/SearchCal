@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.79 2009-04-20 14:44:36 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.80 2009-07-16 13:47:14 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.79  2009/04/20 14:44:36  lafrasse
+* Moved 'SBC9' column just after MultFlag, and added corresponding VizieR URL and
+* comments.
+*
 * Revision 1.78  2009/04/15 16:19:51  lafrasse
 * Log enhancement.
 *
@@ -216,7 +220,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.79 2009-04-20 14:44:36 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.80 2009-07-16 13:47:14 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1269,6 +1273,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas",
                 "%.2f");
     AddProperty(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_VARIAB, "VFlag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
