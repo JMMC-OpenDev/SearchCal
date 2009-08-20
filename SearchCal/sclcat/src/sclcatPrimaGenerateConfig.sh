@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.10 2009-08-20 15:06:28 mella Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.11 2009-08-20 15:29:20 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2009/08/20 15:06:28  mella
+# add more info
+#
 # Revision 1.9  2009/04/29 10:43:41  mella
 # get last version of exoplanet votable on the fly
 #
@@ -227,13 +230,14 @@ MICROLENSING_STAR_LIST=../config/sclcatMicrolensingStars.xml
 
 STAR_TO_REJECT=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "//VOT:TD" -v "." -n $MICROLENSING_STAR_LIST)
 echo 
-echo "Next step rejects following starts: $(basename $MICROLENSING_STAR_LIST)"
+echo "Next step rejects following stars:"
 echo "$STAR_TO_REJECT"
 echo
 echo "$STAR_TO_REJECT" | while read s 
 do 
     xml ed -d "//star[./name='$s']" $XML_STAR_LIST > $XML_STAR_LIST.tmp
     mv $XML_STAR_LIST.tmp $XML_STAR_LIST
+    # we should assert that the file has shrunk
 done
 
 
