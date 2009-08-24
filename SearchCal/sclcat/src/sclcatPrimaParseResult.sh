@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.10 2009-05-18 15:48:57 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.11 2009-08-24 11:31:19 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2009/05/18 15:48:57  mella
+# output table.dat
+#
 # Revision 1.9  2009/04/29 10:44:03  mella
 # add first implementation to compute orbit
 #
@@ -160,10 +163,6 @@ getCellValue()
     fi
     return 1
 }
-
-
-CALIBRATORS=calibrators.xml
-echo "<calibrators>" > $CALIBRATORS
 
 # loop on every calibrators of every stars
 # and build calibrator file
