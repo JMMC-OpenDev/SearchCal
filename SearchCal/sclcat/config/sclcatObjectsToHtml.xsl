@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.12 2009-05-11 10:36:18 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.13 2009-08-24 12:40:08 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2009/05/11 10:36:18  mella
+# fix exoplanet name for starname column
+#
 # Revision 1.11  2009/05/06 13:54:34  mella
 # add common column description
 #
@@ -141,7 +144,7 @@
                     <li>average <xsl:value-of select="count($calibrators//calibrator[./calibInfo/accepted]) div count(//star)"/> accepted calibrators per star</li>
                 </ul>
 
-                <h4> Legends </h4>
+                <h4> Legend </h4>
                 <ul>
                     <li> E: exoplanet link</li>
                     <li> S: simbad link</li>
@@ -160,7 +163,11 @@
                 <table>
                     <tr> 
                         <xsl:for-each select="exslt:node-set($columns)/*">
-                            <th><xsl:value-of select="@name"/></th>
+                            <th>
+                                <xsl:value-of select="@desc"/><br/>
+                                <em><xsl:value-of select="@unit"/></em><br/>
+                                <xsl:value-of select="@name"/>
+                            </th>
                         </xsl:for-each>
                     </tr>
                     <xsl:for-each select="$calibrators//star[./calibrator]">
