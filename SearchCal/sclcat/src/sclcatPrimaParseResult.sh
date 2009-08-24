@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.11 2009-08-24 11:31:19 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.12 2009-08-24 12:38:45 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2009/08/24 11:31:19  mella
+# remove unused code
+#
 # Revision 1.10  2009/05/18 15:48:57  mella
 # output table.dat
 #
@@ -61,21 +64,21 @@
 
 # Print usage 
 function printUsage () {
-    echo -e "Usage: sclcatPrimaParseResult [prima-ref] or [prima-run-<YYYY-MM-DDTHH-MM-SS>]" 
-    echo -e "\t-h\t\tprint this help."
-    echo -e "\t<prima-run>\tParse results in prima-run directory"
-    exit 1;
+echo -e "Usage: sclcatPrimaParseResult [prima-ref] or [prima-run-<YYYY-MM-DDTHH-MM-SS>]" 
+echo -e "\t-h\t\tprint this help."
+echo -e "\t<prima-run>\tParse results in prima-run directory"
+exit 1;
 }
 
 while getopts "h" option
-# Initial declaration.
-# c, h, u and t are the options (flags) expected.
-# The : after option 't' shows it will have an argument passed with it.
+    # Initial declaration.
+    # c, h, u and t are the options (flags) expected.
+    # The : after option 't' shows it will have an argument passed with it.
 do
-  case $option in
-    h ) # Help option
+    case $option in
+        h ) # Help option
         printUsage ;;
-    * ) # Unknown option
+        * ) # Unknown option
         printUsage ;;
     esac
 done
@@ -164,156 +167,167 @@ getCellValue()
     return 1
 }
 
-# loop on every calibrators of every stars
-# and build calibrator file
-
 CALIBRATORS=calibrators.xml
-echo "<calibrators>" > $CALIBRATORS
-
 # loop on every calibrators of every stars
 # and build calibrator file
-for i in *.vot
-do
-    if [ -f "$i" ]
-    then
-        echo
-        # Search indice of diamFlag column
-        MULTFLAG_INDEX=$( getColumnIndex "$i" "diamFlag" )
- 
-        # Search indexes into exoplanet votable
-        ST_NAME_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "St_Name")
-        ST_MASS_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "St_Mass")
-        ST_DIST_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "St_Dist")
-        PL_MASS_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "Pl_Mass")
-        PL_SEMIAXIS_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "Pl_SemiAxis")
-        PL_ECC_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "Pl_Ecc")
-        
-        starName=${i%.vot}
-        OUT="$(xml sel -N VOT=http://exoplanet.eu -t -v "count(//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$starName'])" "$EXOPLANET_VOTABLE" )"
-        if [ "$OUT" -ge 1 ]
+genCalibratorList()
+{
+    echo "<calibrators>" > $CALIBRATORS
+
+    # loop on every calibrators of every stars
+    # and build calibrator file
+    for i in *.vot
+    do
+        if [ -f "$i" ]
         then
-            exoplanetStarName="$starName"
-        else
-            exoplanetStarName=$(xml sel -t -v "//object[@alias='$starName']/@name" $ALIAS_FILE)
-            OUT="$(xml sel -N VOT=http://exoplanet.eu -t -v "count(//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName'])" "$EXOPLANET_VOTABLE" )"
-            if [ "$OUT" -lt 1 ]
+            echo
+            # Search indice of diamFlag column
+            MULTFLAG_INDEX=$( getColumnIndex "$i" "diamFlag" )
+
+            # Search indexes into exoplanet votable
+            ST_NAME_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "St_Name")
+            ST_MASS_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "St_Mass")
+            ST_DIST_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "St_Dist")
+            PL_MASS_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "Pl_Mass")
+            PL_SEMIAXIS_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "Pl_SemiAxis")
+            PL_ECC_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "Pl_Ecc")
+
+            starName=${i%.vot}
+            OUT="$(xml sel -N VOT=http://exoplanet.eu -t -v "count(//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$starName'])" "$EXOPLANET_VOTABLE" )"
+            if [ "$OUT" -ge 1 ]
             then
-                echo
-                echo "Can't find star into exoplanet votable using following names $starName $exoplanetStarName"
-                echo
-            fi
-        fi
-        
-
-        starRa=$(xml sel -t -v "//object[name='$starName']/ra" $SIMBAD_FILE)
-        starPmRa=$(xml sel -t -v "//object[name='$starName']/pmra" $SIMBAD_FILE)
-        starDec=$(xml sel -t -v "//object[name='$starName']/dec" $SIMBAD_FILE)
-        starPmDec=$(xml sel -t -v "//object[name='$starName']/pmdec" $SIMBAD_FILE)
-        
-        # if pmra or pmdec not found set it to 0
-        if [ -z "$starPmRa" ]
-        then
-            starPmRa=0
-        fi
-        if [ -z "$starPmDec" ]
-        then
-            starPmDec=0
-        fi
-        
-        echo "<star simbadName=\"$starName\" scCount=\"$NBCAL\">" >>  $CALIBRATORS
-        xml sel -t -m "//object[name='$starName']" -e "ra" -v "ra" -b -e "dec" -v "dec" -b -e "pmra" -v "pmra" -b -e "pmdec" -v "pmdec" -b $SIMBAD_FILE >> $CALIBRATORS
-
-        # compute orbit size
-       ST_ARG="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName']" -i "position()=1" -o "&quot;" -v "./VOT:TD[$ST_MASS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$ST_DIST_INDEX]" -o "&quot; " "$EXOPLANET_VOTABLE" )"
-        PL_ARGS="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR" -i "./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName'" -o "&quot;" -v "./VOT:TD[$PL_MASS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$PL_SEMIAXIS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$PL_ECC_INDEX]" -o "&quot; " -n "$EXOPLANET_VOTABLE" )"
-        ORBIT=$(eval sclcatComputeOrbit $ST_ARG $PL_ARGS)
-        echo "<!-- sclcatComputeOrbit $ST_ARG $PL_ARGS -->">> $CALIBRATORS
-        echo $ORBIT >> $CALIBRATORS
-        echo "sclcatComputeOrbit $ST_ARG $PL_ARGS "
-        echo $ORBIT 
-        
-        
-        echo -n "$starName  "
-        xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-        -v "count(//VOT:TR[./VOT:TD[$MULTFLAG_INDEX]='OK'])" -o "/" \
-        -v "count(//VOT:TR)" "$i" 
-
-        NBCAL=$(xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-        -v "count(//VOT:TR)" "$i")
-
-
-        # output copy of calibrator
-        INDICES=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-        -m "//VOT:TR" -i "./VOT:TD[$MULTFLAG_INDEX]='OK'" \
-        -v "position()" -o " " "$i")
-        
-                for index in $INDICES
-        do
-            calName=$(getCellValue "$i" 2MASS $index )
-            calMagK=$(getCellValue "$i" K $index )
-            calRa=$(getCellValue "$i" RAJ2000 $index )
-            calDec=$(getCellValue "$i" DEJ2000 $index )
-            calPmRa=$(getCellValue "$i" pmRa $index )
-            calPmDec=$(getCellValue "$i" pmDec $index )
-            calDist=$(getCellValue "$i" dist $index )
-            echo "  <calibrator index=\"$index\">" >>  $CALIBRATORS
-            echo "    <name>$calName</name>" >>  $CALIBRATORS
-            echo "    <magK>$calMagK</magK>" >>  $CALIBRATORS
-            echo "    <ra>$calRa</ra><dec>$calDec</dec>" >>  $CALIBRATORS
-            echo "    <pmra>$calPmRa</pmra><pmdec>$calPmDec</pmdec>" >>  $CALIBRATORS
-            echo "    <dist>$calDist</dist>" >>  $CALIBRATORS
-            # if pmra or pmdec not found set it to 0
-            if [ -z "$calPmRa" ]
-            then
-                calPmRa=0
-            fi
-            if [ -z "$calPmDec" ]
-            then
-                calPmDec=0
-            fi
-
-            # prep command
-            echo sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
-            "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan"
-            FILTERINFO=$(sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
-            "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan")
-            if [ $? -ne 0 ]
-            then
-                echo "ERROR occured for calib n° $index"
-                echo "<calibInfo><error/></calibInfo>" >> $CALIBRATORS
+                exoplanetStarName="$starName"
             else
-               echo $FILTERINFO >> $CALIBRATORS
+                exoplanetStarName=$(xml sel -t -v "//object[@alias='$starName']/@name" $ALIAS_FILE)
+                OUT="$(xml sel -N VOT=http://exoplanet.eu -t -v "count(//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName'])" "$EXOPLANET_VOTABLE" )"
+                if [ "$OUT" -lt 1 ]
+                then
+                    echo
+                    echo "Can't find star into exoplanet votable using following names $starName $exoplanetStarName"
+                    echo
+                fi
             fi
-            echo "<!-- \ 
-            sclcatPrimaFilter \"$starRa\" \"$starDec\" \"$starPmRa\" \
-            \"$starPmDec\" \"$calRa\" \"$calDec\" \"$calPmRa\" \"$calPmDec\" \"$timespan\" \
-            -->" >> $CALIBRATORS
 
-            echo "  </calibrator>" >>  $CALIBRATORS
 
-        done
-        echo "</star>" >>  $CALIBRATORS  
-    fi
-done
-echo "</calibrators>" >> $CALIBRATORS
+            starRa=$(xml sel -t -v "//object[name='$starName']/ra" $SIMBAD_FILE)
+            starPmRa=$(xml sel -t -v "//object[name='$starName']/pmra" $SIMBAD_FILE)
+            starDec=$(xml sel -t -v "//object[name='$starName']/dec" $SIMBAD_FILE)
+            starPmDec=$(xml sel -t -v "//object[name='$starName']/pmdec" $SIMBAD_FILE)
+
+            # if pmra or pmdec not found set it to 0
+            if [ -z "$starPmRa" ]
+            then
+                starPmRa=0
+            fi
+            if [ -z "$starPmDec" ]
+            then
+                starPmDec=0
+            fi
+
+            echo "<star simbadName=\"$starName\" scCount=\"$NBCAL\">" >>  $CALIBRATORS
+            xml sel -t -m "//object[name='$starName']" -e "ra" -v "ra" -b -e "dec" -v "dec" -b -e "pmra" -v "pmra" -b -e "pmdec" -v "pmdec" -b $SIMBAD_FILE >> $CALIBRATORS
+
+            # compute orbit size
+            ST_ARG="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName']" -i "position()=1" -o "&quot;" -v "./VOT:TD[$ST_MASS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$ST_DIST_INDEX]" -o "&quot; " "$EXOPLANET_VOTABLE" )"
+            PL_ARGS="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR" -i "./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName'" -o "&quot;" -v "./VOT:TD[$PL_MASS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$PL_SEMIAXIS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$PL_ECC_INDEX]" -o "&quot; " -n "$EXOPLANET_VOTABLE" )"
+            ORBIT=$(eval sclcatComputeOrbit $ST_ARG $PL_ARGS)
+            echo "<!-- sclcatComputeOrbit $ST_ARG $PL_ARGS -->">> $CALIBRATORS
+            echo $ORBIT >> $CALIBRATORS
+            echo "sclcatComputeOrbit $ST_ARG $PL_ARGS "
+            echo $ORBIT 
+
+
+            echo -n "$starName  "
+            xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
+            -v "count(//VOT:TR[./VOT:TD[$MULTFLAG_INDEX]='OK'])" -o "/" \
+            -v "count(//VOT:TR)" "$i" 
+
+            NBCAL=$(xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
+            -v "count(//VOT:TR)" "$i")
+
+
+            # output copy of calibrator
+            INDICES=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
+            -m "//VOT:TR" -i "./VOT:TD[$MULTFLAG_INDEX]='OK'" \
+            -v "position()" -o " " "$i")
+
+            for index in $INDICES
+            do
+                calName=$(getCellValue "$i" 2MASS $index )
+                calMagK=$(getCellValue "$i" K $index )
+                calRa=$(getCellValue "$i" RAJ2000 $index )
+                calDec=$(getCellValue "$i" DEJ2000 $index )
+                calPmRa=$(getCellValue "$i" pmRa $index )
+                calPmDec=$(getCellValue "$i" pmDec $index )
+                calDist=$(getCellValue "$i" dist $index )
+                echo "  <calibrator index=\"$index\">" >>  $CALIBRATORS
+                echo "    <name>$calName</name>" >>  $CALIBRATORS
+                echo "    <magK>$calMagK</magK>" >>  $CALIBRATORS
+                echo "    <ra>$calRa</ra><dec>$calDec</dec>" >>  $CALIBRATORS
+                echo "    <pmra>$calPmRa</pmra><pmdec>$calPmDec</pmdec>" >>  $CALIBRATORS
+                echo "    <dist>$calDist</dist>" >>  $CALIBRATORS
+                # if pmra or pmdec not found set it to 0
+                if [ -z "$calPmRa" ]
+                then
+                    calPmRa=0
+                fi
+                if [ -z "$calPmDec" ]
+                then
+                    calPmDec=0
+                fi
+
+                # prep command
+                echo sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
+                "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan"
+                FILTERINFO=$(sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
+                "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan")
+                if [ $? -ne 0 ]
+                then
+                    echo "ERROR occured for calib n° $index"
+                    echo "<calibInfo><error/></calibInfo>" >> $CALIBRATORS
+                else
+                    echo $FILTERINFO >> $CALIBRATORS
+                fi
+                echo "<!-- \ 
+                sclcatPrimaFilter \"$starRa\" \"$starDec\" \"$starPmRa\" \
+                \"$starPmDec\" \"$calRa\" \"$calDec\" \"$calPmRa\" \"$calPmDec\" \"$timespan\" \
+                -->" >> $CALIBRATORS
+
+                echo "  </calibrator>" >>  $CALIBRATORS
+
+            done
+            echo "</star>" >>  $CALIBRATORS  
+        fi
+    done
+    echo "</calibrators>" >> $CALIBRATORS
+}
+
+if [ -e "$CALIBRATORS" ]
+then
+    echo " $CALIBRATORS file already computed skip build "
+else
+    genCalibratorList
+fi
+
+
 
 
 #Now CALIBRATORS file can be presented by next stylesheet
 OUTPUT_FILE=index.html
 echo "Html resume generated into $PWD/$OUTPUT_FILE"
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
-          $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
-          $XSLT_OBJECT2HTML $PRIMA_STAR_LIST
+$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+$XSLT_OBJECT2HTML $PRIMA_STAR_LIST
 OUTPUT_FILE=table.tex
 echo "Latex table generated into $PWD/$OUTPUT_FILE"
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
-          $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
-          $XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
+$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+$XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
 OUTPUT_FILE=table.dat
 echo "Dat ( ascii file ) generated into $PWD/$OUTPUT_FILE"
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
-          $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
-          $XSLT_OBJECT2DAT $PRIMA_STAR_LIST
+$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+$XSLT_OBJECT2DAT $PRIMA_STAR_LIST
 
 
 cp -v $PRIMA_STAR_LIST .
