@@ -3851,4 +3851,148 @@
 <pmdec>-38</pmdec>
 <!-- simbad returns '~' for plx -->
 </object>
+<!-- add on Wed Jun  3 08:03:10 CEST 2009 -->
+<object>
+<name>VB 10</name>
+<ra>19 16 57.62</ra>
+<dec>+05 09 02.2</dec>
+<pmra>-614</pmra>
+<pmdec>-1368</pmdec>
+<plx>164.3</plx>
+</object>
+<!-- add on Wed Jun 10 10:55:57 CEST 2009 -->
+<object>
+<name>BD +14 4559</name>
+<ra>21 13 35.9917</ra>
+<dec>+14 41 21.794</dec>
+<pmra>236.44</pmra>
+<pmdec>1.20</pmdec>
+<plx>19.99</plx>
+</object>
+<!-- add on Wed Jun 10 10:55:57 CEST 2009 -->
+<object>
+<name>BD +20 2457</name>
+<ra>10 16 44.8635</ra>
+<dec>+19 53 28.974</dec>
+<pmra>-35.20</pmra>
+<pmdec>-31.70</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Wed Jun 10 10:56:00 CEST 2009 -->
+<object>
+<name>HD 240210</name>
+<ra>23 10 29.2303</ra>
+<dec>+57 01 46.035</dec>
+<pmra>21.20</pmra>
+<pmdec>6.00</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Thu Aug 20 16:52:03 CEST 2009 -->
+<object>
+<name>CoRoT-5</name>
+<ra>Identifier not found in the database : NAME COROT-5</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
+<!-- add on Thu Aug 20 16:52:04 CEST 2009 -->
+<object>
+<name>CoRoT-6</name>
+<ra>Identifier not found in the database : NAME COROT-6</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
+<!-- add on Thu Aug 20 16:52:04 CEST 2009 -->
+<object>
+<name>CoRoT-7</name>
+<ra>Identifier not found in the database : NAME COROT-7</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
+<!-- add on Thu Aug 20 16:52:06 CEST 2009 -->
+<object>
+<name>Lupus-TR-3</name>
+<ra>Identifier not found in the database : NAME LUPUS-TR-3</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
+<!-- add on Thu Aug 20 16:52:06 CEST 2009 -->
+<object>
+<name>OGLE2-TR-L9</name>
+<ra>Identifier not found in the database : NAME OGLE 2-TR-L9</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
+<!-- add on Thu Aug 20 16:52:07 CEST 2009 -->
+<object>
+<name>WASP-13</name>
+<ra>09 20 24.71</ra>
+<dec>+33 52 56.8</dec>
+<pmra>-8.4</pmra>
+<pmdec>-13.2</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Thu Aug 20 16:52:07 CEST 2009 -->
+<object>
+<name>WASP-6</name>
+<ra>23 12 37.74</ra>
+<dec>-22 40 26.2</dec>
+<pmra>-21.9</pmra>
+<pmdec>-34.5</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Thu Aug 20 17:11:51 CEST 2009 -->
+<object>
+<name>OGLE-05-071L</name>
+<ra>17 50 09.0</ra>
+<dec>-34 40 23</dec>
+<!-- simbad returns '~' for pmra -->
+<!-- simbad returns '~' for pmdec -->
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Thu Aug 20 17:11:51 CEST 2009 -->
+<object>
+<name>OGLE-05-169L</name>
+<ra>Identifier not found in the database : NAME OGLE-05-169L</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
+<!-- add on Thu Aug 20 17:11:51 CEST 2009 -->
+<object>
+<name>OGLE-05-390L</name>
+<ra>Identifier not found in the database : NAME OGLE-05-390L</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
+<!-- add on Thu Aug 20 17:11:51 CEST 2009 -->
+<object>
+<name>OGLE-06-109L</name>
+<ra>Identifier not found in the database : NAME OGLE-06-109L</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
+<!-- add on Thu Aug 20 17:11:52 CEST 2009 -->
+<object>
+<name>OGLE235-MOA53</name>
+<ra>Identifier not found in the database : NAME OGLE 235-MOA53</ra>
+<!-- simbad returns no value for dec -->
+<!-- simbad returns no value for pmra -->
+<!-- simbad returns no value for pmdec -->
+<!-- simbad returns no value for plx -->
+</object>
 </objects>
