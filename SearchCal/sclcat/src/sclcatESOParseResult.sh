@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.9 2009-04-24 12:03:11 mella Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.10 2009-09-14 12:03:16 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2009/04/24 12:03:11  mella
+# fix bug for votable filenames with blank
+#
 # Revision 1.8  2008/12/01 10:45:14  lafrasse
 # Corrected vot list bug.
 # Enhanced output format.
@@ -92,7 +95,10 @@ RESULTPATH=result
 mkdir $RESULTPATH
 
 # Generating VOTable header
-firstVotFile="$(xml ls |xml sel -t -v "//f[1]/@n")"
+oldIFS="$IFS"
+IFS=$'\x0A'
+firstVotFile=( $( ls *.vot ) )
+IFS="$oldIFS"
 
 RESULTFILE=$RESULTPATH/catalog.vot
 
