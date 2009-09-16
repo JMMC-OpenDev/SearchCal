@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.10 2009-09-14 12:03:16 mella Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.11 2009-09-16 13:21:38 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2009/09/14 12:03:16  mella
+# fix bug that get first vot file
+#
 # Revision 1.9  2009/04/24 12:03:11  mella
 # fix bug for votable filenames with blank
 #
@@ -103,13 +106,13 @@ IFS="$oldIFS"
 RESULTFILE=$RESULTPATH/catalog.vot
 
 # Generating VOTable header
-echo -n "Generating result header ... "
-cat "$firstVotFile" | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
+echo -n "Generating result header (using $firstVotFile)... "
+xml fo "$firstVotFile" | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
 echo "DONE"
 
 # Loop on every calibrators of every stars, then build calibrator file
 nbOfVOTablesDone=0
-totalNbOfVOTables=`ls -l | grep ".vot"| wc | awk '{print $1}'`
+totalNbOfVOTables=`ls -l *.vot | wc -l`
 totalNbOfCalibrators=0
 for file in *.vot
 do
@@ -132,6 +135,7 @@ do
 done
 
 # Generating VOTable footer
+cp $RESULTFILE $RESULTFILE.2
 echo -n "Generating result footer ... "
 cat "$firstVotFile" | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
 echo "DONE"
