@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.29 2009-05-04 15:20:26 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.30 2009-09-16 11:10:52 mella Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.29  2009/05/04 15:20:26  lafrasse
+# Removed all references to unused CHARM catalog.
+#
 # Revision 1.28  2009/02/18 09:22:30  lafrasse
 # Added missing SB9 catalog header file.
 #
@@ -194,7 +197,8 @@ vobs_OBJECTS   =   vobsSTAR 					\
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = vobsCheckVOTable
+SCRIPTS         = vobsCheckVOTable \
+				  vobsCopyVotParamsAsFields
 SCRIPTS_L       =
 
 #
