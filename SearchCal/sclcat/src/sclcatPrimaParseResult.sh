@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.12 2009-08-24 12:38:45 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.13 2009-09-16 12:41:02 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2009/08/24 12:38:45  mella
+# do not compute twice orbits
+#
 # Revision 1.11  2009/08/24 11:31:19  mella
 # remove unused code
 #
@@ -118,8 +121,8 @@ for i in *.vot
 do
     if [ ! -e "$HTMLDIR/$i" ]
     then
-        cp "$i" $HTMLDIR
-        xsltproc --path .:.. -o "$HTMLDIR/$i.html" $XSLT_VOT2HTML "$i"
+        vobsCopyVotParamsAsFields "$i" > "$HTMLDIR/$i"
+        xsltproc --path .:.. -o "$HTMLDIR/$i.html" $XSLT_VOT2HTML "$HTMLDIR/$i"
     fi
 done
 
