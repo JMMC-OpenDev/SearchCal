@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.30 2009-09-16 11:10:52 mella Exp $"
+# "@(#) $Id: Makefile,v 1.31 2009-09-16 11:19:05 mella Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.30  2009/09/16 11:10:52  mella
+# add vobsCopyVotParamsAsFields.sh script
+#
 # Revision 1.29  2009/05/04 15:20:26  lafrasse
 # Removed all references to unused CHARM catalog.
 #
@@ -238,7 +241,8 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../config/vobsMidiCatalog.cfg
+INSTALL_FILES = ../config/vobsMidiCatalog.cfg \
+				../config/*.xs*
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
