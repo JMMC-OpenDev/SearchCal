@@ -3995,4 +3995,166 @@
 <!-- simbad returns no value for pmdec -->
 <!-- simbad returns no value for plx -->
 </object>
+<!-- add on Thu Sep 10 10:15:10 CEST 2009 -->
+<object>
+<name>11 UMi</name>
+<ra>15 17 05.8886</ra>
+<dec>+71 49 26.044</dec>
+<pmra>3.73</pmra>
+<pmdec>9.37</pmdec>
+<plx>8.37</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:12 CEST 2009 -->
+<object>
+<name>HAT-P-13</name>
+<ra>08 39 31.8132</ra>
+<dec>+47 21 07.330</dec>
+<pmra>-25.2</pmra>
+<pmdec>-27.6</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Thu Sep 10 10:15:13 CEST 2009 -->
+<object>
+<name>HD 110014</name>
+<ra>12 39 14.7669</ra>
+<dec>-07 59 44.032</dec>
+<pmra>-77.30</pmra>
+<pmdec>-24.66</pmdec>
+<plx>10.24</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:13 CEST 2009 -->
+<object>
+<name>HD 147018</name>
+<ra>16 23 00.1463</ra>
+<dec>-61 41 19.542</dec>
+<pmra>-178.50</pmra>
+<pmdec>-315.21</pmdec>
+<plx>23.43</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:14 CEST 2009 -->
+<object>
+<name>HD 148427</name>
+<ra>16 28 28.1513</ra>
+<dec>-13 23 58.704</dec>
+<pmra>-37.09</pmra>
+<pmdec>1.45</pmdec>
+<plx>16.87</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:14 CEST 2009 -->
+<object>
+<name>HD 149382</name>
+<ra>16 34 23.3338</ra>
+<dec>-04 00 52.015</dec>
+<pmra>-5.95</pmra>
+<pmdec>-3.92</pmdec>
+<plx>13.07</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:14 CEST 2009 -->
+<object>
+<name>HD 16760</name>
+<ra>02 42 21.3139</ra>
+<dec>+38 37 07.204</dec>
+<pmra>82.84</pmra>
+<pmdec>-110.65</pmdec>
+<plx>19.93</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:15 CEST 2009 -->
+<object>
+<name>HD 171238</name>
+<ra>18 34 43.6733</ra>
+<dec>-28 04 20.328</dec>
+<pmra>-31.99</pmra>
+<pmdec>-109.68</pmdec>
+<plx>22.70</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:15 CEST 2009 -->
+<object>
+<name>HD 179079</name>
+<ra>19 11 09.8291</ra>
+<dec>-02 38 18.185</dec>
+<pmra>-133.56</pmra>
+<pmdec>-89.34</pmdec>
+<plx>15.70</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:15 CEST 2009 -->
+<object>
+<name>HD 204313</name>
+<ra>21 28 12.2063</ra>
+<dec>-21 43 34.517</dec>
+<pmra>41.58</pmra>
+<pmdec>-271.22</pmdec>
+<plx>21.14</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:16 CEST 2009 -->
+<object>
+<name>HD 30562</name>
+<ra>04 48 36.3857</ra>
+<dec>-05 40 26.561</dec>
+<pmra>312.66</pmra>
+<pmdec>-249.27</pmdec>
+<plx>37.73</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:16 CEST 2009 -->
+<object>
+<name>HD 32518</name>
+<ra>05 09 36.7193</ra>
+<dec>+69 38 21.844</dec>
+<pmra>60.42</pmra>
+<pmdec>-63.55</pmdec>
+<plx>8.52</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:17 CEST 2009 -->
+<object>
+<name>HD 73534</name>
+<ra>08 39 15.8035</ra>
+<dec>+12 57 37.351</dec>
+<pmra>-113.68</pmra>
+<pmdec>-93.19</pmdec>
+<plx>10.31</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:17 CEST 2009 -->
+<object>
+<name>HD 86264</name>
+<ra>09 56 57.8388</ra>
+<dec>-15 53 42.438</dec>
+<pmra>-13.66</pmra>
+<pmdec>-66.19</pmdec>
+<plx>13.78</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:17 CEST 2009 -->
+<object>
+<name>HD 87883</name>
+<ra>10 08 43.1395</ra>
+<dec>+34 14 32.135</dec>
+<pmra>-64.48</pmra>
+<pmdec>-60.28</pmdec>
+<plx>55.37</plx>
+</object>
+<!-- add on Thu Sep 10 10:15:18 CEST 2009 -->
+<object>
+<name>WASP-16</name>
+<ra>14 18 43.922</ra>
+<dec>-20 16 31.85</dec>
+<pmra>-2.4</pmra>
+<pmdec>14.5</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Thu Sep 10 10:15:18 CEST 2009 -->
+<object>
+<name>WASP-17</name>
+<ra>15 59 50.947</ra>
+<dec>-28 03 42.33</dec>
+<pmra>-7.9</pmra>
+<pmdec>-11.0</pmdec>
+<!-- simbad returns '~' for plx -->
+</object>
+<!-- add on Thu Sep 10 10:15:19 CEST 2009 -->
+<object>
+<name>WASP-18</name>
+<ra>01 37 25.0347</ra>
+<dec>-45 40 40.389</dec>
+<pmra>27.46</pmra>
+<pmdec>18.67</pmdec>
+<plx>9.48</plx>
+</object>
 </objects>
