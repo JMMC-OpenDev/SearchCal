@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mkfMakeJavaExecutable.sh,v 1.4 2007-02-15 09:19:33 mella Exp $" 
+# "@(#) $Id: mkfMakeJavaExecutable.sh,v 1.5 2009-10-06 14:22:02 mella Exp $" 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2007/02/15 09:19:33  mella
+# Use now /home/users/mella/.java/logging.properties file if any
+#
 # Revision 1.3  2005/02/15 08:40:15  gzins
 # Added CVS log as file modification history
 #
@@ -67,9 +70,9 @@ addLine "CLASSPATH=\`mkfMakeJavaClasspath\`"
 
 addLine "if [ -n \"$HOME/.java/logging.properties\" ]"
 addLine "then"
-addLine "    java -Djava.util.logging.config.file=$HOME/.java/logging.properties -classpath \$CLASSPATH ${class} \$*"
+addLine "    java -Djava.util.logging.config.file=$HOME/.java/logging.properties -classpath \$CLASSPATH ${class} \"\$@\""
 addLine "else"
-addLine "    java -classpath \$CLASSPATH ${class} \$*"
+addLine "    java -classpath \$CLASSPATH ${class} \"\$@\""
 addLine "fi"
 
 chmod +x ${javaName}
