@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.13 2009-09-16 12:41:02 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.14 2009-10-07 08:18:27 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2009/09/16 12:41:02  mella
+# add transformation to get param of table as new fields
+#
 # Revision 1.12  2009/08/24 12:38:45  mella
 # do not compute twice orbits
 #
@@ -117,6 +120,7 @@ HTMLDIR="html/"
 mkdir $HTMLDIR &> /dev/null
 
 # copy every votable and transform it into html
+# the copy ethod also copy the param of the votable as fields
 for i in *.vot
 do
     if [ ! -e "$HTMLDIR/$i" ]
@@ -125,6 +129,8 @@ do
         xsltproc --path .:.. -o "$HTMLDIR/$i.html" $XSLT_VOT2HTML "$HTMLDIR/$i"
     fi
 done
+
+sclcatESOParseResult $HTMLDIR
 
 cd $HTMLDIR
 
