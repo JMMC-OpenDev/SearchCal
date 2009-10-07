@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: vobsCopyVotParamsAsFields.sh,v 1.1 2009-09-16 11:10:52 mella Exp $"
+# "@(#) $Id: vobsCopyVotParamsAsFields.sh,v 1.2 2009-10-07 09:18:28 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2009/09/16 11:10:52  mella
+# add vobsCopyVotParamsAsFields.sh script
+#
 # Revision 1.1  2006/01/05 14:26:48  mella
 # First revision
 #
@@ -38,7 +41,7 @@ then
     echo "Usage: $0 votable.xml"
     exit 1
 fi
-votableFile=$1
+votableFile="$1"
 
 XSL=vobsCopyVotParamsAsFields.xsl
 
@@ -51,6 +54,6 @@ fi
 
 
 # proceed to real job
-xsltproc $XSLT $votableFile 
+xsltproc $XSLT "$votableFile"
 
 #___oOo___
