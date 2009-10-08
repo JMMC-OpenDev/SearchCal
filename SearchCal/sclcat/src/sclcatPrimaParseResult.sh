@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.16 2009-10-08 14:31:44 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.17 2009-10-08 20:45:18 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2009/10/08 14:31:44  mella
+# generate html view of compiled catalog
+#
 # Revision 1.15  2009/10/08 13:17:59  mella
 # change varaible name
 #
@@ -241,6 +244,7 @@ genCalibratorList()
                 starPmDec=0
             fi
 
+            NBCAL=$(xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "count(//VOT:TR)" "$i")
             echo "<star simbadName=\"$starName\" scCount=\"$NBCAL\">" >>  $CALIBRATORS
             xml sel -t -m "//object[name='$starName']" -e "ra" -v "ra" -b -e "dec" -v "dec" -b -e "pmra" -v "pmra" -b -e "pmdec" -v "pmdec" -b $SIMBAD_FILE >> $CALIBRATORS
 
@@ -259,8 +263,6 @@ genCalibratorList()
             -v "count(//VOT:TR[./VOT:TD[$DIAM_FLAG_INDEX]='OK'])" -o "/" \
             -v "count(//VOT:TR)" "$i" 
 
-            NBCAL=$(xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-            -v "count(//VOT:TR)" "$i")
 
 
             # output copy of calibrator
