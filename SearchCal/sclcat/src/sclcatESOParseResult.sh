@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.11 2009-09-16 13:21:38 mella Exp $"
+# "@(#) $Id: sclcatESOParseResult.sh,v 1.12 2009-10-08 13:23:12 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2009/09/16 13:21:38  mella
+# fix number of vot
+#
 # Revision 1.10  2009/09/14 12:03:16  mella
 # fix bug that get first vot file
 #
@@ -135,7 +138,6 @@ do
 done
 
 # Generating VOTable footer
-cp $RESULTFILE $RESULTFILE.2
 echo -n "Generating result footer ... "
 cat "$firstVotFile" | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
 echo "DONE"
