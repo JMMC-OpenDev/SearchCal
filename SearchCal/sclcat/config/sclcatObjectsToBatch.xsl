@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToBatch.xsl,v 1.6 2009-10-08 19:13:44 mella Exp $"
+# "@(#) $Id: sclcatObjectsToBatch.xsl,v 1.7 2009-10-08 19:32:41 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2009/10/08 19:13:44  mella
+# add support for kmag
+#
 # Revision 1.5  2007/03/27 14:53:42  scetre
 # Updated documentation
 # Added creation information in resulting file
@@ -85,11 +88,14 @@
                 <xsl:value-of select="$object/pmdec"/>
                 <xsl:value-of select="'&#10;'"/>
     
-                <xsl:if test="$object/kmag">
                     <xsl:value-of select="'mag='"/>
-                    <xsl:value-of select="$object/kmag"/>
+		    <xsl:if test="$object/kmag">
+			    <xsl:value-of select="$object/kmag"/>
+		    </xsl:if>
+		    <xsl:if test="not($object/kmag)">
+			    <xsl:value-of select="'0'"/>
+		    </xsl:if>
                     <xsl:value-of select="'&#10;'"/>
-                </xsl:if>
  
                 <xsl:value-of select="'&#10;'"/>
             </xsl:if>
