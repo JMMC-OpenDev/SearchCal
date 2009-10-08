@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.13 2009-08-24 12:40:08 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.14 2009-10-08 20:45:37 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2009/08/24 12:40:08  mella
+# Add description and unit into the table header
+#
 # Revision 1.12  2009/05/11 10:36:18  mella
 # fix exoplanet name for starname column
 #
@@ -130,8 +133,10 @@
                 </ul>
                 <xsl:call-template name="listAliases"/>
 
-                <h1> Source List </h1>
-                
+		<h1> Source List </h1>
+		<table>
+			<tr>
+				<td>	
                 <h4> Statistics </h4>
                 <ul>
                     <li><xsl:value-of select="count(//star)"/> analysed stars</li>
@@ -143,7 +148,8 @@
                     <li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators</li> 
                     <li>average <xsl:value-of select="count($calibrators//calibrator[./calibInfo/accepted]) div count(//star)"/> accepted calibrators per star</li>
                 </ul>
-
+	</td>
+	<td>
                 <h4> Legend </h4>
                 <ul>
                     <li> E: exoplanet link</li>
@@ -153,12 +159,15 @@
                     <li>Gray: retained calibrators</li>
                 </ul>
                 <h4> Columns </h4>
-                <ul>
-                    <li> dist1 [arcmin] on year <xsl:value-of
+		<ul>
+			<li> dist1 [arcmin] on year <xsl:value-of
                         select="$calibrators//calibrator[1]/calibInfo/dist[1]/year"/> </li>
-                    <li> dist2 [arcmin] on year <xsl:value-of
+	<li> dist2 [arcmin] on year <xsl:value-of
                             select="$calibrators//calibrator[1]/calibInfo/dist[2]/year"/> </li>
-                </ul>
+    </ul>
+    </td>
+    </tr>
+    </table>
                 <!-- Print table -->
                 <table>
                     <tr> 
