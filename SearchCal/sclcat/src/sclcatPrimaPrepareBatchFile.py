@@ -68,9 +68,6 @@ def main(inputFilename, outputFilename):
         except Exceptio:
             pass
 
-        # add dummy mag information
-        config.set(s,"mag", "0")
-
         # add file information
         config.set(s,"file", objectName+".vot")
            

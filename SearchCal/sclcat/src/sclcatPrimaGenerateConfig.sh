@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.11 2009-08-20 15:29:20 mella Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.12 2009-10-08 19:13:44 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2009/08/20 15:29:20  mella
+# add assert todo
+#
 # Revision 1.10  2009/08/20 15:06:28  mella
 # add more info
 #
@@ -126,7 +129,7 @@ fillElement(){
 # */
 getSimbadInfos(){
     sourceName=$*
-    simbadWS.py "$sourceName" "%COO(A|D)|%PM(A|D)|%PLX(V)"  2> /dev/null
+    simbadWS.py "$sourceName" "%COO(A|D)|%PM(A|D)|%PLX(V)|%FLUXLIST(K;F)"  2> /dev/null
     return $?
 }
 
@@ -174,6 +177,7 @@ askSourceInfo(){
         fillElement "pmra" ${infos[2]} >> $SIMBAD_LIST_FILE
         fillElement "pmdec" ${infos[3]} >> $SIMBAD_LIST_FILE
         fillElement "plx" ${infos[4]} >> $SIMBAD_LIST_FILE
+        fillElement "kmag" ${infos[5]} >> $SIMBAD_LIST_FILE
         echo "</object>" >> $SIMBAD_LIST_FILE
 
         # end with same previous end

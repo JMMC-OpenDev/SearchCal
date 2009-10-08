@@ -3,11 +3,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToBatch.xsl,v 1.5 2007-03-27 14:53:42 scetre Exp $"
+# "@(#) $Id: sclcatObjectsToBatch.xsl,v 1.6 2009-10-08 19:13:44 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2007/03/27 14:53:42  scetre
+# Updated documentation
+# Added creation information in resulting file
+#
 # Revision 1.4  2007/03/26 11:53:03  scetre
 # Moved documentation blok in the first xml tag
 #
@@ -80,7 +84,13 @@
                 <xsl:value-of select="'pmdec='"/>
                 <xsl:value-of select="$object/pmdec"/>
                 <xsl:value-of select="'&#10;'"/>
-
+    
+                <xsl:if test="$object/kmag">
+                    <xsl:value-of select="'mag='"/>
+                    <xsl:value-of select="$object/kmag"/>
+                    <xsl:value-of select="'&#10;'"/>
+                </xsl:if>
+ 
                 <xsl:value-of select="'&#10;'"/>
             </xsl:if>
             
