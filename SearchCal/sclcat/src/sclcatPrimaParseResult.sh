@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.15 2009-10-08 13:17:59 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.16 2009-10-08 14:31:44 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2009/10/08 13:17:59  mella
+# change varaible name
+#
 # Revision 1.14  2009/10/07 08:18:27  mella
 # add concatenation to build main catalog
 #
@@ -134,6 +137,8 @@ do
 done
 
 sclcatESOParseResult $HTMLDIR
+i=result/catalog.vot
+xsltproc --path .:.. -o "$HTMLDIR/$i.html" $XSLT_VOT2HTML "$HTMLDIR/$i"
 
 cd $HTMLDIR
 
