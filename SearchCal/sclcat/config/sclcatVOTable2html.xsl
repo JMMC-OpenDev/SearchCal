@@ -97,13 +97,14 @@
     <!-- add one TD in all TR for every param at the beginning -->
     <xsl:template match="//VOT:TR" priority="10">
         <xsl:variable name="trIndex" select="position()"/>
+        <xsl:variable name="trNode" select="."/>
         <xsl:element name="{name()}">
             <xsl:apply-templates select="./@*"/>
             <xsl:for-each select="//VOT:GROUP">
                 <xsl:variable name="groupIndex" select="position()"/>
-                <xsl:variable name="value" select="//VOT:TR[$trIndex]/VOT:TD[($groupIndex * 3) - 2]"/>
-                <xsl:variable name="origin" select="translate(//VOT:TR[$trIndex]/VOT:TD[($groupIndex * 3) - 1],'/+.','___')"/>
-                <xsl:variable name="confidence" select="translate(//VOT:TR[$trIndex]/VOT:TD[$groupIndex * 3],'/+.','___')"/>
+                <xsl:variable name="value" select="$trNode/VOT:TD[($groupIndex * 3) - 2]"/>
+                <xsl:variable name="origin" select="translate($trNode/VOT:TD[($groupIndex * 3) - 1],'/+.','___')"/>
+                <xsl:variable name="confidence" select="translate($trNode/VOT:TD[$groupIndex * 3],'/+.','___')"/>
                 <xsl:element name="td">
                         <xsl:attribute name="class">
                             <xsl:value-of select="concat($origin,' ', $confidence)"/>
