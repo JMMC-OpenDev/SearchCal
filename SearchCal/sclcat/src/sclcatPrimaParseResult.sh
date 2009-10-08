@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.14 2009-10-07 08:18:27 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.15 2009-10-08 13:17:59 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2009/10/07 08:18:27  mella
+# add concatenation to build main catalog
+#
 # Revision 1.13  2009/09/16 12:41:02  mella
 # add transformation to get param of table as new fields
 #
@@ -191,7 +194,7 @@ genCalibratorList()
         then
             echo
             # Search indice of diamFlag column
-            MULTFLAG_INDEX=$( getColumnIndex "$i" "diamFlag" )
+            DIAM_FLAG_INDEX=$( getColumnIndex "$i" "diamFlag" )
 
             # Search indexes into exoplanet votable
             ST_NAME_INDEX=$(getColumnIndex "$EXOPLANET_VOTABLE" "St_Name")
@@ -248,7 +251,7 @@ genCalibratorList()
 
             echo -n "$starName  "
             xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-            -v "count(//VOT:TR[./VOT:TD[$MULTFLAG_INDEX]='OK'])" -o "/" \
+            -v "count(//VOT:TR[./VOT:TD[$DIAM_FLAG_INDEX]='OK'])" -o "/" \
             -v "count(//VOT:TR)" "$i" 
 
             NBCAL=$(xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
@@ -257,7 +260,7 @@ genCalibratorList()
 
             # output copy of calibrator
             INDICES=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-            -m "//VOT:TR" -i "./VOT:TD[$MULTFLAG_INDEX]='OK'" \
+            -m "//VOT:TR" -i "./VOT:TD[$DIAM_FLAG_INDEX]='OK'" \
             -v "position()" -o " " "$i")
 
             for index in $INDICES
