@@ -71,6 +71,9 @@
     <xsl:for-each select="//VOT:PARAM">
         <xsl:variable name="paramName" select="@name"/>
         <xsl:element name="GROUP">
+                <xsl:attribute name="name">
+                    <xsl:value-of select="$paramName"/>
+                </xsl:attribute>
             <xsl:element name="FIELDref">
                 <xsl:attribute name="ref">
                     <xsl:value-of select="concat('id_',$paramName)"/>
