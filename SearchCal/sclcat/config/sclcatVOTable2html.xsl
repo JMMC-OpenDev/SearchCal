@@ -41,14 +41,18 @@
     <xsl:variable name="cssHeader">
         <style type="text/css">        
             <xsl:comment>                  
-                .content {                    
-                background-color:#F0F0F0;  
+		    .legend {
+		    position : fixed ;
+		    bottom : 0 ;
+		    font-size : 60%;
+		    }
+		    .content {                    
+		    background-color:#F0F0F0;  
                 border:1px solid #BBBBBB;          
                 color: #010170;                    
                 padding: 1px;                      
                 margin: 1px;                       
-                font-family:Arial,Helvetica,sans-serif;
-                font-size:11px;                        
+		    font-size : 70%;
                 }                                      
                 .vbox {                                
                 border:1px solid #CCCCCC;              
@@ -86,21 +90,30 @@
                 <xsl:copy-of select="$cssHeader"/>
             </head>
             <body>
-                <table><tr>
-                <xsl:for-each select="exslt:node-set($colorSets)/*">
-                    <td class="{VOT:key}">
-                        <xsl:value-of select="VOT:key"/>
-                    </td>
-                </xsl:for-each>
-        </tr></table>
-                <table>
-                    <xsl:for-each select="//VOT:GROUP">
-                        <xsl:element name="th">
-                            <xsl:value-of select="@name"/>
-                        </xsl:element>
-                    </xsl:for-each>
-                    <xsl:apply-templates select="//VOT:TR"/>
-                </table>
+		    <table class="legend">
+			    <tr>
+				    <xsl:for-each select="exslt:node-set($colorSets)/*">
+					    <td class="{VOT:key}">
+						    <xsl:value-of select="VOT:key"/>
+					    </td>
+				    </xsl:for-each>
+			    </tr>
+		    </table>
+	<table>
+		<thead>
+			<xsl:for-each select="//VOT:GROUP">
+				<xsl:element name="th">
+					<xsl:value-of select="@name"/>
+				</xsl:element>
+			</xsl:for-each>
+		</thead>
+		<tbody>
+			<xsl:apply-templates select="//VOT:TR"/>
+		</tbody>
+	</table>
+	<br/>
+	<br/>
+	<br/>
             </body>
         </html>
     </xsl:template>
