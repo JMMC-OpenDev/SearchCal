@@ -17,6 +17,27 @@
     extension-element-prefixes="exslt math date func set str dyn saxon xalanredirect xt libxslt test"
     exclude-result-prefixes="math str">
     <xsl:output method="xml" indent="yes" />
+    <xsl:variable name="colorSets">
+        <set><key>MEDIUM</key><value>#D8D8D8</value></set>
+        <set><key>HIGH</key><value>#EFEFEF</value></set>
+        <set><key>LOW</key><value>#6E6E6E</value></set>
+        <set><key>J_A_A_433_1155</key><value>#C89292</value></set>
+        <set><key>V_50_catalog</key><value>#B6FFE6</value></set>
+        <set><key>II_246_out</key><value>#B6E8FF</value></set>
+        <set><key>II_225_catalog</key><value>#F6B6FF</value></set>
+        <set><key>V_36B_bsc4s</key><value>#88A0A6</value></set>
+        <set><key>I_196_main</key><value>#78FB8B</value></set>
+        <set><key>J_A_A_431_773_charm2</key><value>#B7FF5A</value></set>
+        <set><key>MIDI</key><value>#C994CA</value></set>
+        <set><key>I_284</key><value>#F1FB58</value></set>
+        <set><key>I_280</key><value>#FFB6B6</value></set>
+        <set><key>J_A_A_393_183_catalog</key><value>#9778FB</value></set>
+        <set><key>B_sb9_main</key><value>#A688A0</value></set>
+        <set><key>J_A_A_413_1037</key><value>#FFFADD</value></set>
+        <set><key>II_7A_catalog</key><value>#B9B6FF</value></set>
+        <set><key>B_denis</key><value>#FFF4B6</value></set>
+    </xsl:variable>
+    
     <xsl:variable name="cssHeader">
         <style type="text/css">        
             <xsl:comment>                  
@@ -47,25 +68,8 @@
                 td {                                   
                 border: 1px solid #000099;             
                 }                                      
-                td.J_A_A_433_1155 { background-color : #C89292; }
-                td.MEDIUM { background-color : #D8D8D8; }
-                td.HIGH { background-color : #EFEFEF; }
-                td.MIDI { background-color : #C994CA; }
-                td.V_50_catalog { background-color : #B6FFE6; }
-                td.II_246_out { background-color : #B6E8FF; }
-                td.II_225_catalog { background-color : #F6B6FF; }
-                td.V_36B_bsc4s { background-color : #88A0A6; }
-                td.I_196_main { background-color : #78FB8B; }
-                td.J_A_A_431_773_charm2 { background-color : #B7FF5A; }
-                td.LOW { background-color : #6E6E6E; }
-                td.I_284 { background-color : #F1FB58; }
-                td.I_280 { background-color : #FFB6B6; }
-                td.J_A_A_393_183_catalog { background-color : #9778FB; }
-                td.B_sb9_main { background-color : #A688A0; }
-                td.J_A_A_413_1037 { background-color : #FFFADD; }
-                td.II_7A_catalog { background-color : #B9B6FF; }
-                td.B_denis { background-color : #FFF4B6; }
-
+<xsl:for-each select="exslt:node-set($colorSets)/*"><xsl:value-of select="concat('                td.',VOT:key,' { background-color : ',VOT:value,' }&#10;')"/>
+                </xsl:for-each>
                 th {                                   
                 border: 1px solid #000099;             
                 background-color:#FFFFDD;      
@@ -82,6 +86,13 @@
                 <xsl:copy-of select="$cssHeader"/>
             </head>
             <body>
+                <table><tr>
+                <xsl:for-each select="exslt:node-set($colorSets)/*">
+                    <td class="{VOT:key}">
+                        <xsl:value-of select="VOT:key"/>
+                    </td>
+                </xsl:for-each>
+        </tr></table>
                 <table>
                     <xsl:for-each select="//VOT:GROUP">
                         <xsl:element name="th">
@@ -98,7 +109,7 @@
     <xsl:template match="//VOT:TR" priority="10">
         <xsl:variable name="trIndex" select="position()"/>
         <xsl:variable name="trNode" select="."/>
-        <xsl:element name="{name()}">
+        <xsl:element name="tr">
             <xsl:apply-templates select="./@*"/>
             <xsl:for-each select="//VOT:GROUP">
                 <xsl:variable name="groupIndex" select="position()"/>
