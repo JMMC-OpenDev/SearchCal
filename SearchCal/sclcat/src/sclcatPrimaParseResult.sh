@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.17 2009-10-08 20:45:18 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.18 2009-10-09 11:40:06 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.17  2009/10/08 20:45:18  mella
+# fix ok_number/cal/count
+#
 # Revision 1.16  2009/10/08 14:31:44  mella
 # generate html view of compiled catalog
 #
@@ -139,9 +142,16 @@ do
     fi
 done
 
-sclcatESOParseResult $HTMLDIR
-i=result/catalog.vot
-xsltproc --path .:.. -o "$HTMLDIR/$i.html" $XSLT_VOT2HTML "$HTMLDIR/$i"
+XMLFILE=$HTMLDIR/result/catalog.vot
+if [ ! -e $XMLFILE ]
+then
+	sclcatESOParseResult $HTMLDIR
+fi
+HTMLFILE=$XMLFILE.html
+if [ $HTMLFILE -ot $XMLFILE ]
+then
+	xsltproc --path .:.. -o "$HTMLFILE" $XSLT_VOT2HTML "$XMLFILE"
+fi
 
 cd $HTMLDIR
 
@@ -328,9 +338,6 @@ else
     genCalibratorList
 fi
 
-
-
-
 #Now CALIBRATORS file can be presented by next stylesheet
 OUTPUT_FILE=index.html
 echo "Html resume generated into $PWD/$OUTPUT_FILE"
@@ -342,13 +349,27 @@ echo "Latex table generated into $PWD/$OUTPUT_FILE"
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
 $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
 $XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
+mv $OUTPUT_FILE result
 OUTPUT_FILE=table.dat
 echo "Dat ( ascii file ) generated into $PWD/$OUTPUT_FILE"
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
 $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
 $XSLT_OBJECT2DAT $PRIMA_STAR_LIST
+mv $OUTPUT_FILE result
+
+# copy xml files
+cp -v $PRIMA_STAR_LIST  result
+cp -v $SIMBAD_FILE result
+
+cd result
+
+# plot 2d repartition diagram
+stilts plot2d cmd='addcol -units radians deltaRA "hmsToRadians(ra)-hmsToRadians(RAJ2000)"; addcol -units radians deltaDEC "dmsToRadians(dec)-dmsToRadians(DEJ2000)"; addcol starDEC "dmsToRadians(DEJ2000)"' subset2='equals(diamFlag,"OK")' name2='diam OK' subset1='equals(diamFlag,"NOK")' name1='diam NOK' xdata='deltaRA*cos(starDEC)' ydata='deltaDEC' in=catalog.vot omode=out out=calibsRelativePositions.png
+
+# plot data for herve's greg scripts
+stilts tpipe cmd='clearparams * ; keepcols "ra dec RAJ2000 DEJ2000 diamFlag"' in=catalog.vot out=Star_RaDec_Cal_RaDecDiamFlag.csv 
+sed -i~ "s/,/ /g" Star_RaDec_Cal_RaDecDiamFlag.csv
+stilts tpipe cmd='clearparams * ; keepcols "ra dec RAJ2000 DEJ2000 diamFlag"' in=catalog.vot out=Star_RaDec_Cal_RaDecDiamFlag.ascii ofmt=ascii
 
 
-cp -v $PRIMA_STAR_LIST .
-cp -v $SIMBAD_FILE .
 #___oOo___
