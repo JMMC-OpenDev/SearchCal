@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestVisibility.c,v 1.5 2006-05-11 13:03:29 mella Exp $"
+ * "@(#) $Id: alxTestVisibility.c,v 1.6 2009-10-14 05:56:09 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/05/11 13:03:29  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.4  2005/03/30 12:48:46  scetre
  * Changed API
  *
@@ -28,7 +31,7 @@
  * Test program of the function which computes visibilities.
  */ 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestVisibility.c,v 1.5 2006-05-11 13:03:29 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestVisibility.c,v 1.6 2009-10-14 05:56:09 mella Exp $";
 
 /* 
  * System Headers 
@@ -111,7 +114,7 @@ int main (int argc, char *argv[])
     printf("\t V   = %f\n", visibilities.vis);
     printf("\t V²  = %f\n", visibilities.vis2);
     printf("\tdV² = %f\n", visibilities.vis2Error);
-/****************************/
+    /****************************/
     angularDiameter=0.452;
     angularDiameterError=0.031;
     baseMax=102.45;
@@ -136,6 +139,164 @@ int main (int argc, char *argv[])
     printf("\t V   = %f\n", visibilities.vis);
     printf("\t V²  = %f\n", visibilities.vis2);
     printf("\tdV²  = %f\n", visibilities.vis2Error);
+ 
+    /****************************/
+    angularDiameter=0.418;
+    angularDiameterError=0.029;
+    baseMax=102.45;
+    wavelength=2.2;
+    
+    printf("for : \n");
+    printf("\t diam       = %f (mas)\n", angularDiameter);
+    printf("\t diam error = %f \n", angularDiameterError);
+    printf("\t baseMax    = %f (m)\n", baseMax);
+    printf("\t wavelength = %f (microm)\n", wavelength);
+    
+    if (alxComputeVisibility(angularDiameter,
+                                angularDiameterError,
+                                baseMax,
+                                wavelength,
+                                &visibilities)==mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    printf("we compute visibility :\n");
+    printf("\t V   = %f\n", visibilities.vis);
+    printf("\t V²  = %f\n", visibilities.vis2);
+    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    
+    /****************************/
+    angularDiameter=1.296;
+    angularDiameterError=0.089;
+    baseMax=102.45;
+    wavelength=2.2;
+    
+    printf("for : \n");
+    printf("\t diam       = %f (mas)\n", angularDiameter);
+    printf("\t diam error = %f \n", angularDiameterError);
+    printf("\t baseMax    = %f (m)\n", baseMax);
+    printf("\t wavelength = %f (microm)\n", wavelength);
+    
+    if (alxComputeVisibility(angularDiameter,
+                                angularDiameterError,
+                                baseMax,
+                                wavelength,
+                                &visibilities)==mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    printf("we compute visibility :\n");
+    printf("\t V   = %f\n", visibilities.vis);
+    printf("\t V²  = %f\n", visibilities.vis2);
+    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    
+     /****************************/
+    angularDiameter=1.096;
+    angularDiameterError=0.076;
+    baseMax=102.45;
+    wavelength=2.2;
+    
+    printf("for : \n");
+    printf("\t diam       = %f (mas)\n", angularDiameter);
+    printf("\t diam error = %f \n", angularDiameterError);
+    printf("\t baseMax    = %f (m)\n", baseMax);
+    printf("\t wavelength = %f (microm)\n", wavelength);
+    
+    if (alxComputeVisibility(angularDiameter,
+                                angularDiameterError,
+                                baseMax,
+                                wavelength,
+                                &visibilities)==mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    printf("we compute visibility :\n");
+    printf("\t V   = %f\n", visibilities.vis);
+    printf("\t V²  = %f\n", visibilities.vis2);
+    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    
+    /****************************/
+    angularDiameter=0.120;
+    angularDiameterError=0.024;
+    baseMax=102.45;
+    wavelength=2.2;
+    
+    printf("for : \n");
+    printf("\t diam       = %f (mas)\n", angularDiameter);
+    printf("\t diam error = %f \n", angularDiameterError);
+    printf("\t baseMax    = %f (m)\n", baseMax);
+    printf("\t wavelength = %f (microm)\n", wavelength);
+    
+    if (alxComputeVisibility(angularDiameter,
+                                angularDiameterError,
+                                baseMax,
+                                wavelength,
+                                &visibilities)==mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    printf("we compute visibility :\n");
+    printf("\t V   = %f\n", visibilities.vis);
+    printf("\t V²  = %f\n", visibilities.vis2);
+    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    
+    /****************************/
+    angularDiameter=0.369;
+    angularDiameterError=0.074;
+    baseMax=102.45;
+    wavelength=2.2;
+    
+    printf("for : \n");
+    printf("\t diam       = %f (mas)\n", angularDiameter);
+    printf("\t diam error = %f \n", angularDiameterError);
+    printf("\t baseMax    = %f (m)\n", baseMax);
+    printf("\t wavelength = %f (microm)\n", wavelength);
+    
+    if (alxComputeVisibility(angularDiameter,
+                                angularDiameterError,
+                                baseMax,
+                                wavelength,
+                                &visibilities)==mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    printf("we compute visibility :\n");
+    printf("\t V   = %f\n", visibilities.vis);
+    printf("\t V²  = %f\n", visibilities.vis2);
+    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    
+     /****************************/
+    angularDiameter=0.331;
+    angularDiameterError=0.066;
+    baseMax=102.45;
+    wavelength=2.2;
+    
+    printf("for : \n");
+    printf("\t diam       = %f (mas)\n", angularDiameter);
+    printf("\t diam error = %f \n", angularDiameterError);
+    printf("\t baseMax    = %f (m)\n", baseMax);
+    printf("\t wavelength = %f (microm)\n", wavelength);
+    
+    if (alxComputeVisibility(angularDiameter,
+                                angularDiameterError,
+                                baseMax,
+                                wavelength,
+                                &visibilities)==mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+   
+    printf("we compute visibility :\n");
+    printf("\t V   = %f\n", visibilities.vis);
+    printf("\t V²  = %f\n", visibilities.vis2);
+    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    
+    
     logInfo("Exiting...");
     
     /* Close MCS services */
