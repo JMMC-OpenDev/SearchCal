@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.26 2009-04-15 12:51:56 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.27 2009-10-14 14:50:58 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.26  2009/04/15 12:51:56  lafrasse
+* Added GetSummaryString() method to easily output members values.
+*
 * Revision 1.25  2007/10/31 11:22:32  gzins
 * Updated SetValue() to prevent buffer overflow when storing value
 *
@@ -86,13 +89,14 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.26 2009-04-15 12:51:56 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.27 2009-10-14 14:50:58 lafrasse Exp $"; 
 
 
 /* 
  * System Headers 
  */
 #include <iostream>
+#include <sstream> 
 using namespace std;
 
 /*
@@ -119,6 +123,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 
     _origin = "-";
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
+    _numerical = FP_NAN;
 }
 
 /**
@@ -180,6 +185,8 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
     _origin = "-";
 
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
+
+    _numerical = FP_NAN;
 }
 
 /**
@@ -208,6 +215,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _format          = property._format;
     _confidenceIndex = property._confidenceIndex;
     _origin          = property._origin;
+    _numerical       = property._numerical;
 
     strcpy(_value, property._value);
 
@@ -257,13 +265,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
         if (_type == vobsFLOAT_PROPERTY)
         {
             // Use format to affect value
-            float fValue;
-            if (sscanf(value, "%f", &fValue) != 1)
+            if (sscanf(value, "%f", &_numerical) != 1)
             {
                 errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value, "%f");
                 return (mcsFAILURE);
             }
-            if (sprintf(_value, _format.c_str(), fValue) == 0)
+            if (sprintf(_value, _format.c_str(), _numerical) == 0)
             {
                 errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value,
                         _format.c_str());
@@ -314,8 +321,11 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
     }
 
     // Affect value
-    if ((IsSet() == mcsFALSE) || (overwrite==mcsTRUE))
+    if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
     {
+        _numerical = value;
+        
+        // @warning Potentially loosing precision here !!!
         if (sprintf(_value, _format.c_str(), value) == 0)
         {
             errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value,
@@ -345,7 +355,9 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
 
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
 
-    return mcsSUCCESS;    
+    _numerical = FP_NAN;
+
+    return mcsSUCCESS;
 }
 
 /**
@@ -390,11 +402,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
 
     // Get value
     // Convert property string value to integer value
-    if (sscanf(_value, "%f", value) != 1)
-    {
-        errAdd(vobsERR_INVALID_PROP_FORMAT, _name.c_str(), _value, "float");
-        return mcsFAILURE;
-    }
+    *value = _numerical;
 
     return mcsSUCCESS;
 }
@@ -404,7 +412,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
  *
  * @return property origin
  */
-const char   *vobsSTAR_PROPERTY::GetOrigin()
+const char *vobsSTAR_PROPERTY::GetOrigin()
 {
     return _origin.c_str();
 }
@@ -560,7 +568,11 @@ const char *vobsSTAR_PROPERTY::GetLink(void) const
  */
 string vobsSTAR_PROPERTY::GetSummaryString(void) const
 {
-    string summary = "vobsSTAR_PROPERTY(Id = '" + _id + "'; Name = '" + _name + "'; Value = '" + string(_value) + "'; Unit = '" + _unit + + "'; Type = '" + (_type == vobsSTRING_PROPERTY ? "STRING" : "FLOAT") + "', Origin = '" + _origin + "'; Confidence = '" + (_confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (_confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH")) + "'; Desc = '" + _description + "'; Link = '" + _link + "')";
+    stringstream numericalStream;
+    numericalStream << (float)_numerical; 
+
+    string summary = "vobsSTAR_PROPERTY(Id = '" + _id + "'; Name = '" + _name + "'; Value = '" + string(_value) + "'; Numerical = '" + numericalStream.str() + "'; Unit = '" + _unit + "'; Type = '" + (_type == vobsSTRING_PROPERTY ? "STRING" : "FLOAT") + "', Origin = '" + _origin + "'; Confidence = '" + (_confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (_confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH")) + "'; Desc = '" + _description + "'; Link = '" + _link + "')";
+
     return summary;
 }
 

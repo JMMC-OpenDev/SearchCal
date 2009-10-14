@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.17 2009-04-15 12:51:56 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.18 2009-10-14 14:50:58 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2009/04/15 12:51:56  lafrasse
+* Added GetSummaryString() method to easily output members values.
+*
 * Revision 1.16  2006/04/10 14:51:29  gzins
 * Added ClearValue()
 *
@@ -180,6 +183,7 @@ private:
     string               _link;            // CDS link of the value
     string               _description;     // Description of the value
     mcsSTRING64          _value;           // Value
+    mcsFLOAT             _numerical;       // Value as a true floating point numerical (!)
     vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index
     string               _origin;          /* Either the catalog name where the
                                             * value has been found or
