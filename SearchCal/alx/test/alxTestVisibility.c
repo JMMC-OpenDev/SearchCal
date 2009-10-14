@@ -1,7 +1,7 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestVisibility.c,v 1.6 2009-10-14 05:56:09 mella Exp $"
+ * "@(#) $Id: alxTestVisibility.c,v 1.7 2009-10-14 06:11:00 mella Exp $"
  *
  * History
  * -------
@@ -31,7 +31,7 @@
  * Test program of the function which computes visibilities.
  */ 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestVisibility.c,v 1.6 2009-10-14 05:56:09 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestVisibility.c,v 1.7 2009-10-14 06:11:00 mella Exp $";
 
 /* 
  * System Headers 
@@ -112,8 +112,8 @@ int main (int argc, char *argv[])
    
     printf("we compute visibility :\n");
     printf("\t V   = %f\n", visibilities.vis);
-    printf("\t V²  = %f\n", visibilities.vis2);
-    printf("\tdV² = %f\n", visibilities.vis2Error);
+    printf("\t VÂ²  = %f\n", visibilities.vis2);
+    printf("\tdVÂ² = %f\n", visibilities.vis2Error);
     /****************************/
     angularDiameter=0.452;
     angularDiameterError=0.031;
@@ -137,8 +137,8 @@ int main (int argc, char *argv[])
    
     printf("we compute visibility :\n");
     printf("\t V   = %f\n", visibilities.vis);
-    printf("\t V²  = %f\n", visibilities.vis2);
-    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    printf("\t VÂ²  = %f\n", visibilities.vis2);
+    printf("\tdVÂ²  = %f\n", visibilities.vis2Error);
  
     /****************************/
     angularDiameter=0.418;
@@ -163,8 +163,8 @@ int main (int argc, char *argv[])
    
     printf("we compute visibility :\n");
     printf("\t V   = %f\n", visibilities.vis);
-    printf("\t V²  = %f\n", visibilities.vis2);
-    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    printf("\t VÂ²  = %f\n", visibilities.vis2);
+    printf("\tdVÂ²  = %f\n", visibilities.vis2Error);
     
     /****************************/
     angularDiameter=1.296;
@@ -189,8 +189,8 @@ int main (int argc, char *argv[])
    
     printf("we compute visibility :\n");
     printf("\t V   = %f\n", visibilities.vis);
-    printf("\t V²  = %f\n", visibilities.vis2);
-    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    printf("\t VÂ²  = %f\n", visibilities.vis2);
+    printf("\tdVÂ²  = %f\n", visibilities.vis2Error);
     
      /****************************/
     angularDiameter=1.096;
@@ -215,8 +215,8 @@ int main (int argc, char *argv[])
    
     printf("we compute visibility :\n");
     printf("\t V   = %f\n", visibilities.vis);
-    printf("\t V²  = %f\n", visibilities.vis2);
-    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    printf("\t VÂ²  = %f\n", visibilities.vis2);
+    printf("\tdVÂ²  = %f\n", visibilities.vis2Error);
     
     /****************************/
     angularDiameter=0.120;
@@ -241,8 +241,8 @@ int main (int argc, char *argv[])
    
     printf("we compute visibility :\n");
     printf("\t V   = %f\n", visibilities.vis);
-    printf("\t V²  = %f\n", visibilities.vis2);
-    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    printf("\t VÂ²  = %f\n", visibilities.vis2);
+    printf("\tdVÂ²  = %f\n", visibilities.vis2Error);
     
     /****************************/
     angularDiameter=0.369;
@@ -267,8 +267,8 @@ int main (int argc, char *argv[])
    
     printf("we compute visibility :\n");
     printf("\t V   = %f\n", visibilities.vis);
-    printf("\t V²  = %f\n", visibilities.vis2);
-    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    printf("\t VÂ²  = %f\n", visibilities.vis2);
+    printf("\tdVÂ²  = %f\n", visibilities.vis2Error);
     
      /****************************/
     angularDiameter=0.331;
@@ -293,8 +293,8 @@ int main (int argc, char *argv[])
    
     printf("we compute visibility :\n");
     printf("\t V   = %f\n", visibilities.vis);
-    printf("\t V²  = %f\n", visibilities.vis2);
-    printf("\tdV²  = %f\n", visibilities.vis2Error);
+    printf("\t VÂ²  = %f\n", visibilities.vis2);
+    printf("\tdVÂ²  = %f\n", visibilities.vis2Error);
     
     
     logInfo("Exiting...");
