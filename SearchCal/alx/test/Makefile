@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.7 2006-09-27 15:05:34 mella Exp $"
+# "@(#) $Id: Makefile,v 1.8 2009-10-15 07:33:59 mella Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2006/09/27 15:05:34  mella
+# Use MCSROOT instead of /home/MCSROOT and use Python2.4 includes
+#
 # Revision 1.6  2006/04/06 11:49:08  gzins
 # Minor changes
 #
@@ -57,10 +60,10 @@
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = alxTestAngularDiameter     \
+EXECUTABLES     = alxTestVisibility          \
+				  alxTestAngularDiameter     \
                   alxTestMagnitude           \
                   alxTestGalacticCoordinates \
-                  alxTestVisibility          \
                   alxTestResearchArea        \
                   alxTestDistance
 EXECUTABLES_L   = 
@@ -87,7 +90,7 @@ alxTestAngularDiameter_LIBS      = MCS alx
 # <brief description of alxTestVisibility program>
 alxTestVisibility_OBJECTS   = alxTestVisibility
 alxTestVisibility_LDFLAGS   =
-alxTestVisibility_LIBS      = MCS alx
+alxTestVisibility_LIBS      = MCS C++ alx
 
 #
 # <brief description of alxTestResearchArea program>
