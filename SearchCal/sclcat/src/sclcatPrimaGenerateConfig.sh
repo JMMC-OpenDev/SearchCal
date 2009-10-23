@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.12 2009-10-08 19:13:44 mella Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.13 2009-10-23 09:54:10 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2009/10/08 19:13:44  mella
+# add support for kmag
+#
 # Revision 1.11  2009/08/20 15:29:20  mella
 # add assert todo
 #
@@ -203,7 +206,7 @@ collectCandidates(){
     # novalid is used because dtd is not reachable...
     EXOPLANET_VOTABLE_FILE=../config/sclcatPrimaExoplanetData.xml
     EXOPLANET_VOTABLE_URL="http://www.exoplanet.eu/export.php?all=yes&outputType=votable"
-    #curl $EXOPLANET_VOTABLE_URL > $EXOPLANET_VOTABLE_FILE
+    curl $EXOPLANET_VOTABLE_URL > $EXOPLANET_VOTABLE_FILE
     xsltproc --novalid -o $OUTPUT ../config/sclcatBuildMainList.xsl $EXOPLANET_VOTABLE_FILE || exit 1
     # next collection should be added here ...
     
