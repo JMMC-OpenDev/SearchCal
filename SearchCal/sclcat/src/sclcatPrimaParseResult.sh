@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.18 2009-10-09 11:40:06 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.19 2009-10-23 19:13:40 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2009/10/09 11:40:06  mella
+# fix generation of results into html/result dir
+#
 # Revision 1.17  2009/10/08 20:45:18  mella
 # fix ok_number/cal/count
 #
@@ -276,12 +279,14 @@ genCalibratorList()
 
 
             # output copy of calibrator
+#            -m "//VOT:TR" -i "./VOT:TD[$DIAM_FLAG_INDEX]='OK'" \
             INDICES=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t \
-            -m "//VOT:TR" -i "./VOT:TD[$DIAM_FLAG_INDEX]='OK'" \
+            -m "//VOT:TR" \
             -v "position()" -o " " "$i")
 
             for index in $INDICES
             do
+		echo -n "$index "
                 calName=$(getCellValue "$i" 2MASS $index )
                 calMagK=$(getCellValue "$i" K $index )
                 calRa=$(getCellValue "$i" RAJ2000 $index )
@@ -289,6 +294,7 @@ genCalibratorList()
                 calPmRa=$(getCellValue "$i" pmRa $index )
                 calPmDec=$(getCellValue "$i" pmDec $index )
                 calDist=$(getCellValue "$i" dist $index )
+                calDiamFlag=$(getCellValue "$i" diamFlag $index )
                 echo "  <calibrator index=\"$index\">" >>  $CALIBRATORS
                 echo "    <name>$calName</name>" >>  $CALIBRATORS
                 echo "    <magK>$calMagK</magK>" >>  $CALIBRATORS
@@ -305,26 +311,28 @@ genCalibratorList()
                     calPmDec=0
                 fi
 
-                # prep command
-                echo sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
-                "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan"
-                FILTERINFO=$(sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
-                "$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan")
-                if [ $? -ne 0 ]
-                then
-                    echo "ERROR occured for calib n° $index"
-                    echo "<calibInfo><error/></calibInfo>" >> $CALIBRATORS
-                else
-                    echo $FILTERINFO >> $CALIBRATORS
-                fi
-                echo "<!-- \ 
-                sclcatPrimaFilter \"$starRa\" \"$starDec\" \"$starPmRa\" \
-                \"$starPmDec\" \"$calRa\" \"$calDec\" \"$calPmRa\" \"$calPmDec\" \"$timespan\" \
-                -->" >> $CALIBRATORS
-
+		if [ "$calDiamFlag" == "OK" ]
+		then
+			# prep command
+			FILTERINFO=$(sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
+			"$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan")
+			if [ $? -ne 0 ]
+			then
+				echo "ERROR occured for calib n° $index"
+				echo "<calibInfo><error/></calibInfo>" >> $CALIBRATORS
+			else
+				echo $FILTERINFO >> $CALIBRATORS
+			fi
+			echo "<!-- \ 
+			sclcatPrimaFilter \"$starRa\" \"$starDec\" \"$starPmRa\" \
+			\"$starPmDec\" \"$calRa\" \"$calDec\" \"$calPmRa\" \"$calPmDec\" \"$timespan\" \
+			-->" >> $CALIBRATORS
+		else
+			echo "<rejected><diamFlagNok/></rejected>" >>  $CALIBRATORS
+		fi
                 echo "  </calibrator>" >>  $CALIBRATORS
-
             done
+	    echo 
             echo "</star>" >>  $CALIBRATORS  
         fi
     done
@@ -339,27 +347,31 @@ else
 fi
 
 #Now CALIBRATORS file can be presented by next stylesheet
-OUTPUT_FILE=index.html
-echo "Html resume generated into $PWD/$OUTPUT_FILE"
-xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
-$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
-$XSLT_OBJECT2HTML $PRIMA_STAR_LIST
-OUTPUT_FILE=table.tex
-echo "Latex table generated into $PWD/$OUTPUT_FILE"
-xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
-$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
-$XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
-mv $OUTPUT_FILE result
 OUTPUT_FILE=table.dat
 echo "Dat ( ascii file ) generated into $PWD/$OUTPUT_FILE"
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
 $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
 $XSLT_OBJECT2DAT $PRIMA_STAR_LIST
-mv $OUTPUT_FILE result
+mv -v $OUTPUT_FILE result
+
+OUTPUT_FILE=index.html
+echo "Html resume generated into $PWD/$OUTPUT_FILE"
+xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
+$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+$XSLT_OBJECT2HTML $PRIMA_STAR_LIST
+
+OUTPUT_FILE=table.tex
+echo "Latex table generated into $PWD/$OUTPUT_FILE"
+xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
+$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+$XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
+mv -v $OUTPUT_FILE result
+
 
 # copy xml files
 cp -v $PRIMA_STAR_LIST  result
 cp -v $SIMBAD_FILE result
+cp -v $CALIBRATORS result
 
 cd result
 

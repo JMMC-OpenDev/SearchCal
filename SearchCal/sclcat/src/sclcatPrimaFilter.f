@@ -61,10 +61,13 @@
       PRINT*,'<calibInfo>' 
       OK = ((D0.LT.DLIM).OR.(D1.LT.DLIM).OR.
      &         ((DMIN.LT.DLIM).AND.(TMIN*(TMIN-TIMESPAN).LT.0.d0)))
-      OK = OK.AND.((D0.GT.DMLIM).OR.(D1.GT.DMLIM))
       WRITE(*,1)TREF,D0,TREF+TIMESPAN,D1,DMIN,TMIN+TREF
       IF (OK) THEN 
-        PRINT*,'<accepted/>' 
+           IF((D0.GT.DMLIM).OR.(D1.GT.DMLIM)) THEN
+               PRINT*,'<accepted/>' 
+           ELSE
+               PRINT*,'<rejected><seemsScienceStar/></rejected>' 
+           END IF 
       ELSE
         PRINT*,'<rejected/>'
       END IF 
