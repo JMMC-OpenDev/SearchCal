@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.28 2009-10-26 14:16:37 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.29 2009-10-26 14:33:04 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.28  2009/10/26 14:16:37  lafrasse
+* Enhanced float value output precision by using '%g' instead of custom formats or
+* default '%f'.
+*
 * Revision 1.27  2009/10/14 14:50:58  lafrasse
 * Added proper support of floating point value (without loosing presion with
 * conversion from string representation) with accompagning tests.
@@ -93,7 +97,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.28 2009-10-26 14:16:37 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.29 2009-10-26 14:33:04 lafrasse Exp $"; 
 
 
 /* 
@@ -209,7 +213,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _unit            = property._unit;
     _link            = property._link;
     _description     = property._description;
-    //_format          = property._format;
+    _format          = property._format;
     _confidenceIndex = property._confidenceIndex;
     _origin          = property._origin;
     _numerical       = property._numerical;
