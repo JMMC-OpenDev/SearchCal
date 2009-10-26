@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.15 2009-10-26 12:31:22 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.16 2009-10-26 12:44:41 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.15  2009/10/26 12:31:22  mella
+# fix wrong vizier link
+#
 # Revision 1.14  2009/10/08 20:45:37  mella
 # fix output
 #
@@ -143,12 +146,12 @@
                 <h4> Statistics </h4>
                 <ul>
                     <li><xsl:value-of select="count(//star)"/> analysed stars</li>
-                    <li><xsl:value-of select="count($calibrators//star[./calibrator])"/> stars with one or
-                    more than one calibrator</li>
-                    <li><xsl:value-of select="count($calibrators//star[count(./calibrator)=1])"/> stars with 1 calibrator </li>
-                    <li><xsl:value-of select="count($calibrators//star[count(./calibrator)=2])"/> stars with 2 calibrators </li>
-                    <li><xsl:value-of select="count($calibrators//star[count(./calibrator)>2])"/> stars with more than 2 calibrators </li>
-                    <li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators</li> 
+		    <li><xsl:value-of select="count($calibrators//star[./calibrator[./calibInfo/accepted]])"/> stars with one or
+                    more than one accepted calibrator</li>
+	    <li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])=1])"/> stars with 1 accepted calibrator </li>
+	    <li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])=2])"/> stars with 2 accepted calibrators </li>
+	    <li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])>2])"/> stars with more than 2 calibrators </li>
+                    <li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators ( it could be the science star or a calibrator with poor quality flags)</li> 
                     <li>average <xsl:value-of select="count($calibrators//calibrator[./calibInfo/accepted]) div count(//star)"/> accepted calibrators per star</li>
                 </ul>
 	</td>
