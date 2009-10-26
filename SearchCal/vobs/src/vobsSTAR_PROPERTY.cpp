@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.27 2009-10-14 14:50:58 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.28 2009-10-26 14:16:37 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2009/10/14 14:50:58  lafrasse
+* Added proper support of floating point value (without loosing presion with
+* conversion from string representation) with accompagning tests.
+*
 * Revision 1.26  2009/04/15 12:51:56  lafrasse
 * Added GetSummaryString() method to easily output members values.
 *
@@ -89,7 +93,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.27 2009-10-14 14:50:58 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.28 2009-10-26 14:16:37 lafrasse Exp $"; 
 
 
 /* 
@@ -152,22 +156,15 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
     _type = type;
     _unit = unit;
 
-    if (format != NULL)
+    switch (type) 
     {
-        _format = format;
-    }
-    else
-    {
-        switch (type) 
-        {
-            case vobsSTRING_PROPERTY:
-                _format = "%s";
-                break;
+        case vobsSTRING_PROPERTY:
+            _format = "%s";
+            break;
 
-            case vobsFLOAT_PROPERTY:
-                _format = "%f";
-                break;
-        }
+        case vobsFLOAT_PROPERTY:
+            _format = "%g";
+            break;
     }
 
     if (link != NULL)
@@ -212,7 +209,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _unit            = property._unit;
     _link            = property._link;
     _description     = property._description;
-    _format          = property._format;
+    //_format          = property._format;
     _confidenceIndex = property._confidenceIndex;
     _origin          = property._origin;
     _numerical       = property._numerical;
