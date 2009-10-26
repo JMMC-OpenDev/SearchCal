@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.31 2009-09-16 11:19:05 mella Exp $"
+# "@(#) $Id: Makefile,v 1.32 2009-10-26 13:54:58 mella Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.31  2009/09/16 11:19:05  mella
+# copy also xsl and xsd files
+#
 # Revision 1.30  2009/09/16 11:10:52  mella
 # add vobsCopyVotParamsAsFields.sh script
 #
@@ -201,7 +204,8 @@ vobs_OBJECTS   =   vobsSTAR 					\
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         = vobsCheckVOTable \
-				  vobsCopyVotParamsAsFields
+				  vobsCopyVotParamsAsFields \
+				  vobsSCVOTable2Html
 SCRIPTS_L       =
 
 #
