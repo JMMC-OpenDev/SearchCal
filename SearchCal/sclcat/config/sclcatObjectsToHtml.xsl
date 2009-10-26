@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.14 2009-10-08 20:45:37 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.15 2009-10-26 12:31:22 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2009/10/08 20:45:37  mella
+# fix output
+#
 # Revision 1.13  2009/08/24 12:40:08  mella
 # Add description and unit into the table header
 #
@@ -278,7 +281,7 @@
                                 test="$calibrators//star[./@simbadName=$simbadName]">
                                 <xsl:value-of select="' '"/>
                                 <xsl:value-of
-                                    select="count($calibrators//star[./@simbadName=$simbadName]/calibrator)"/>
+					select="count($calibrators//star[./@simbadName=$simbadName]/calibrator[./calibInfo/accepted])"/>
                                 <xsl:value-of select="'/'"/>
                                 <xsl:value-of
                                     select="$calibrators//star[./@simbadName=$simbadName]/@scCount"/>
@@ -389,7 +392,7 @@
         <xsl:param name="content" select="$ident"/>
         <xsl:element name="a">
             <xsl:attribute name="href">
-                <xsl:value-of select="concat('http://cdsweb.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=',$ident,'&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0')"/>
+                <xsl:value-of select="concat('http://vizier.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=',$ident,'&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0')"/>
             </xsl:attribute>
             <xsl:value-of select="$content"/>
         </xsl:element>                       
