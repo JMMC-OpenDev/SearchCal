@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.22 2007-05-11 15:30:29 gzins Exp $"
+ * "@(#) $Id: alx.h,v 1.23 2009-10-27 09:58:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2007/05/11 15:30:29  gzins
+ * Upadated alxComputeAngularDiameterForFaintStar prototype
+ *
  * Revision 1.21  2006/07/17 08:22:20  scetre
  * Added hk diameter in alxDIAMETERS structure
  *
@@ -99,10 +102,11 @@ extern "C" {
 #include "mcs.h"
 
 
-/*
- * Blanking value.
- */
-#define alxBLANKING_VALUE (float)99.99
+/** Blanking value. */
+#define alxBLANKING_VALUE ((float)99.99)
+
+/** 1 arcsec in degrees. */
+#define alxARCSEC_IN_DEGREES ((float)(1.0/3600.0))
 
 
 /**
