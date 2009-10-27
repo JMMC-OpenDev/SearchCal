@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.80 2009-07-16 13:47:14 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.81 2009-10-27 10:01:36 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.80  2009/07/16 13:47:14  lafrasse
+* Added VFlag column for MIDI catalog.
+*
 * Revision 1.79  2009/04/20 14:44:36  lafrasse
 * Moved 'SBC9' column just after MultFlag, and added corresponding VizieR URL and
 * comments.
@@ -220,7 +223,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.80 2009-07-16 13:47:14 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.81 2009-10-27 10:01:36 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -649,7 +652,7 @@ mcsLOGICAL vobsSTAR::IsProperty(const char* id)
 
 
 /**
- * Get right ascension (RA) coordinate in arcseconds.
+ * Get right ascension (RA) coordinate in degrees.
  *
  * @param ra pointer on an already allocated float value.
  *
@@ -704,7 +707,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 }
 
 /**
- * Get declinaison (DEC) coordinate in arcseconds.
+ * Get declinaison (DEC) coordinate in degrees.
  *
  * @param dec pointer on an already allocated float value.
  *
