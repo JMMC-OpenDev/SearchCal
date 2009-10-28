@@ -2562,8 +2562,8 @@
 <!-- add on Thu Oct  8 21:20:33 CEST 2009 -->
 <object>
 <name>C 1221-616</name>
-<ra>12 24.2</ra>
-<dec>-61 52</dec>
+<ra>12 24 08</ra>
+<dec>-61 52 18</dec>
 <pmra>-7.02</pmra>
 <pmdec>3.68</pmdec>
 <!-- simbad returns '~' for plx -->
@@ -2958,5 +2958,265 @@
 <pmdec>-24.4</pmdec>
 <!-- simbad returns '~' for plx -->
 <kmag>10.345</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:21 CEST 2009 -->
+<object>
+<name>BD-082823</name>
+<ra>10 00 47.7213</ra>
+<dec>-09 31 00.046</dec>
+<pmra>-373.95</pmra>
+<pmdec>25.35</pmdec>
+<plx>23.76</plx>
+<kmag>7.323</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:23 CEST 2009 -->
+<object>
+<name>GJ 433</name>
+<ra>11 35 26.9485</ra>
+<dec>-32 32 23.900</dec>
+<pmra>-69.85</pmra>
+<pmdec>-852.54</pmdec>
+<plx>110.65</plx>
+<kmag>5.623</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:23 CEST 2009 -->
+<object>
+<name>GJ 667C</name>
+<ra>17 18 58.688</ra>
+<dec>-34 59 48.34</dec>
+<pmra>1149</pmra>
+<pmdec>-90</pmdec>
+<plx>143.45</plx>
+<kmag>6.036</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:23 CEST 2009 -->
+<object>
+<name>GJ 676A</name>
+<ra>17 30 11.2042</ra>
+<dec>-51 38 13.116</dec>
+<pmra>-259.23</pmra>
+<pmdec>-185.69</pmdec>
+<plx>61.98</plx>
+<kmag>5.825</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:24 CEST 2009 -->
+<object>
+<name>HD 103197</name>
+<ra>11 52 52.9787</ra>
+<dec>-50 17 34.160</dec>
+<pmra>-80.50</pmra>
+<pmdec>7.36</pmdec>
+<plx>20.27</plx>
+<kmag>7.426</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:24 CEST 2009 -->
+<object>
+<name>HD 104067</name>
+<ra>11 59 10.0100</ra>
+<dec>-20 21 13.609</dec>
+<pmra>143.16</pmra>
+<pmdec>-423.32</pmdec>
+<plx>48.04</plx>
+<kmag>5.614</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:24 CEST 2009 -->
+<object>
+<name>HD 125595</name>
+<ra>14 21 23.1859</ra>
+<dec>-40 23 38.211</dec>
+<pmra>-561.67</pmra>
+<pmdec>-67.35</pmdec>
+<plx>36.43</plx>
+<kmag>6.447</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:25 CEST 2009 -->
+<object>
+<name>HD 148156</name>
+<ra>16 28 17.2832</ra>
+<dec>-46 19 03.445</dec>
+<pmra>43.93</pmra>
+<pmdec>29.74</pmdec>
+<plx>18.85</plx>
+<kmag>6.397</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:25 CEST 2009 -->
+<object>
+<name>HD 156411</name>
+<ra>17 19 51.3992</ra>
+<dec>-48 32 57.548</dec>
+<pmra>-35.37</pmra>
+<pmdec>-209.84</pmdec>
+<plx>18.15</plx>
+<kmag>5.170</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:25 CEST 2009 -->
+<object>
+<name>HD 181720</name>
+<ra>19 22 52.9859</ra>
+<dec>-32 55 08.595</dec>
+<pmra>89.37</pmra>
+<pmdec>-415.98</pmdec>
+<plx>17.88</plx>
+<kmag>6.294</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:26 CEST 2009 -->
+<object>
+<name>HD 190984</name>
+<ra>20 11 30.7166</ra>
+<dec>-64 37 13.694</dec>
+<pmra>1.04</pmra>
+<pmdec>44.50</pmdec>
+<plx>5.28</plx>
+<kmag>7.319</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:26 CEST 2009 -->
+<object>
+<name>HD 215497</name>
+<ra>22 46 36.7543</ra>
+<dec>-56 35 58.322</dec>
+<pmra>-54.23</pmra>
+<pmdec>-60.88</pmdec>
+<plx>22.97</plx>
+<kmag>6.784</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:26 CEST 2009 -->
+<object>
+<name>HD 28254</name>
+<ra>04 24 50.7052</ra>
+<dec>-50 37 19.889</dec>
+<pmra>-66.98</pmra>
+<pmdec>-144.01</pmdec>
+<plx>17.80</plx>
+<kmag>6.006</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:27 CEST 2009 -->
+<object>
+<name>HD 290327</name>
+<ra>05 23 21.5647</ra>
+<dec>-02 16 39.428</dec>
+<pmra>33.91</pmra>
+<pmdec>-96.88</pmdec>
+<plx>18.21</plx>
+<kmag>7.271</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:27 CEST 2009 -->
+<object>
+<name>HD 43197</name>
+<ra>06 13 35.6615</ra>
+<dec>-29 53 50.169</dec>
+<pmra>148.18</pmra>
+<pmdec>13.97</pmdec>
+<plx>18.20</plx>
+<kmag>7.203</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:27 CEST 2009 -->
+<object>
+<name>HD 44219</name>
+<ra>06 20 14.3225</ra>
+<dec>-10 43 30.032</dec>
+<pmra>70.92</pmra>
+<pmdec>-16.20</pmdec>
+<plx>19.83</plx>
+<kmag>6.115</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:28 CEST 2009 -->
+<object>
+<name>HD 5388</name>
+<ra>00 55 11.8897</ra>
+<dec>-47 24 21.475</dec>
+<pmra>-80.48</pmra>
+<pmdec>-177.97</pmdec>
+<plx>18.77</plx>
+<kmag>5.441</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:28 CEST 2009 -->
+<object>
+<name>HD 63765</name>
+<ra>07 47 49.7185</ra>
+<dec>-54 15 50.921</dec>
+<pmra>147.22</pmra>
+<pmdec>-278.72</pmdec>
+<plx>30.66</plx>
+<kmag>6.316</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:28 CEST 2009 -->
+<object>
+<name>HD 6718</name>
+<ra>01 07 48.6625</ra>
+<dec>-08 14 01.341</dec>
+<pmra>191.71</pmra>
+<pmdec>18.75</pmdec>
+<plx>18.18</plx>
+<kmag>6.876</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:29 CEST 2009 -->
+<object>
+<name>HD 8535</name>
+<ra>01 23 37.2361</ra>
+<dec>-41 16 11.284</dec>
+<pmra>58.18</pmra>
+<pmdec>-70.42</pmdec>
+<plx>17.75</plx>
+<kmag>6.354</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:29 CEST 2009 -->
+<object>
+<name>HD 85390</name>
+<ra>09 50 02.4969</ra>
+<dec>-49 47 24.959</dec>
+<pmra>24.57</pmra>
+<pmdec>-59.83</pmdec>
+<plx>29.45</plx>
+<kmag>6.491</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:30 CEST 2009 -->
+<object>
+<name>HD 90156</name>
+<ra>10 23 55.2749</ra>
+<dec>-29 38 43.905</dec>
+<pmra>-38.02</pmra>
+<pmdec>99.72</pmdec>
+<plx>45.26</plx>
+<kmag>5.245</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:30 CEST 2009 -->
+<object>
+<name>HD 9578</name>
+<ra>01 33 17.1440</ra>
+<dec>-38 14 42.058</dec>
+<pmra>-31.86</pmra>
+<pmdec>-38.30</pmdec>
+<plx>17.47</plx>
+<kmag>6.798</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:30 CEST 2009 -->
+<object>
+<name>HIP 12961</name>
+<ra>02 46 42.8858</ra>
+<dec>-23 05 11.800</dec>
+<pmra>292.67</pmra>
+<pmdec>141.42</pmdec>
+<plx>42.01</plx>
+<kmag>6.736</kmag>
+</object>
+<!-- add on Fri Oct 23 11:54:31 CEST 2009 -->
+<object>
+<name>HIP 5158</name>
+<ra>01 06 02.0482</ra>
+<dec>-22 27 11.350</dec>
+<pmra>201.83</pmra>
+<pmdec>-107.22</pmdec>
+<plx>22.32</plx>
+<!-- simbad returns no value for kmag -->
+</object>
+<!-- add on Fri Oct 23 11:54:31 CEST 2009 -->
+<object>
+<name>HIP 70849</name>
+<ra>14 29 18.5631</ra>
+<dec>-46 27 49.738</dec>
+<pmra>-46.68</pmra>
+<pmdec>-202.92</pmdec>
+<plx>41.71</plx>
+<kmag>6.790</kmag>
 </object>
 </objects>
