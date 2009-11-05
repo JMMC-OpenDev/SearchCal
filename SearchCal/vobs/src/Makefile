@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.32 2009-10-26 13:54:58 mella Exp $"
+# "@(#) $Id: Makefile,v 1.33 2009-11-05 14:20:29 mella Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.32  2009/10/26 13:54:58  mella
+# Add new utility to transform a searchcal votable to html
+#
 # Revision 1.31  2009/09/16 11:19:05  mella
 # copy also xsl and xsd files
 #
@@ -204,8 +207,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         = vobsCheckVOTable \
-				  vobsCopyVotParamsAsFields \
-				  vobsSCVOTable2Html
+				  vobsCopyVotParamsAsFields
 SCRIPTS_L       =
 
 #
