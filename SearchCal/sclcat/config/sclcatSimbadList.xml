@@ -3219,4 +3219,120 @@
 <plx>41.71</plx>
 <kmag>6.790</kmag>
 </object>
+<!-- add on Fri Nov  6 13:18:47 CET 2009 -->
+<object>
+<name>BD+14 4559</name>
+<ra>21 13 35.9917</ra>
+<dec>+14 41 21.794</dec>
+<pmra>236.44</pmra>
+<pmdec>1.20</pmdec>
+<plx>19.99</plx>
+<kmag>7.336</kmag>
+</object>
+<!-- add on Fri Nov  6 13:18:47 CET 2009 -->
+<object>
+<name>BD+20 2457</name>
+<ra>10 16 44.8635</ra>
+<dec>+19 53 28.974</dec>
+<pmra>-35.20</pmra>
+<pmdec>-31.70</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>6.420</kmag>
+</object>
+<!-- add on Fri Nov  6 13:18:48 CET 2009 -->
+<object>
+<name>CoRoT-Exo-5</name>
+<ra>06 45 06.541</ra>
+<dec>+00 48 54.86</dec>
+<pmra>-0.9</pmra>
+<pmdec>-7.5</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>12.546</kmag>
+</object>
+<!-- add on Fri Nov  6 13:18:48 CET 2009 -->
+<object>
+<name>CoRoT-Exo-7</name>
+<ra>06 43 49.470</ra>
+<dec>-01 03 46.92</dec>
+<pmra>12.9</pmra>
+<pmdec>-4.0</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>9.806</kmag>
+</object>
+<!-- add on Fri Nov  6 13:18:52 CET 2009 -->
+<object>
+<name>OGLE2-TR L9</name>
+<ra>11 07 55.181</ra>
+<dec>-61 08 46.58</dec>
+<pmra>-2.0</pmra>
+<pmdec>7.1</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>13.12</kmag>
+</object>
+<!-- add on Fri Nov  6 13:18:52 CET 2009 -->
+<object>
+<name>SWEEPS J175902.67-291153.5</name>
+<ra>17 59 02.67</ra>
+<dec>-29 11 53.5</dec>
+<!-- simbad returns '~' for pmra -->
+<!-- simbad returns '~' for pmdec -->
+<!-- simbad returns '~' for plx -->
+<!-- simbad returns no value for kmag -->
+</object>
+<!-- add on Fri Nov  6 13:18:53 CET 2009 -->
+<object>
+<name>TYC 2265-107-1</name>
+<ra>00 20 40.077</ra>
+<dec>+31 59 23.79</dec>
+<pmra>-4.8</pmra>
+<pmdec>-5.6</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>10.276</kmag>
+</object>
+<!-- add on Fri Nov  6 13:18:53 CET 2009 -->
+<object>
+<name>GSC 00522-01199</name>
+<ra>20 30 54.130</ra>
+<dec>+06 25 46.37</dec>
+<pmra>3.0</pmra>
+<pmdec>-53.1</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>9.632</kmag>
+</object>
+<!-- add on Fri Nov  6 13:24:36 CET 2009 -->
+<object>
+<name>SWEEPS 04</name>
+<ra>17 58 53.92</ra>
+<dec>-29 11 20.6</dec>
+<!-- simbad returns '~' for pmra -->
+<!-- simbad returns '~' for pmdec -->
+<!-- simbad returns '~' for plx -->
+<!-- simbad returns no value for kmag -->
+</object>
+<!-- add on Fri Nov  6 13:28  by GM and HB-->
+<object>
+<name>Lupus-TR-3</name>
+<ra>15 30 18.67</ra>
+<dec>-42 58 41.5</dec>
+</object>
+<!-- add on Mon Nov 16 10:10:23 CET 2009 -->
+<object>
+<name>QS Vir</name>
+<ra>13 49 51.95</ra>
+<dec>-13 13 37.5</dec>
+<!-- simbad returns '~' for pmra -->
+<!-- simbad returns '~' for pmdec -->
+<!-- simbad returns '~' for plx -->
+<!-- simbad returns no value for kmag -->
+</object>
+<!-- add on Mon Nov 16 10:12:25 CET 2009 -->
+<object>
+<name>HD 89484</name>
+<ra>10 19 58.427</ra>
+<dec>+19 50 28.53</dec>
+<pmra>294.9</pmra>
+<pmdec>-154.0</pmdec>
+<plx>25.96</plx>
+<kmag>-0.81</kmag>
+</object>
 </objects>
