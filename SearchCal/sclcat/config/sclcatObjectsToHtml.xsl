@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.16 2009-10-26 12:44:41 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.17 2009-11-16 11:58:01 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.16  2009/10/26 12:44:41  mella
+# add info
+#
 # Revision 1.15  2009/10/26 12:31:22  mella
 # fix wrong vizier link
 #
@@ -121,61 +124,64 @@
                         text-align:center;
                         }
 
-                    </xsl:comment>
-                </style>
+		</xsl:comment>
+	</style>
 
-            </head>
-            <body>
-                <h1> General informations </h1>
-                The following list was build using <a
-                    href="http://exoplanet.eu"> Exoplanet</a> potential list.
-                Each data are then collected using <a href="http://simbad.u-strasbg.fr"> simbad web service </a>.
-                <h1> Aliases </h1>
-                To achieve data collection some aliases have been defined (most of these are
-                used by Exoplanet site):
-                <ul>
-                    <li> E: exoplanet link</li>
-                    <li> S: simbad link</li>
-                </ul>
-                <xsl:call-template name="listAliases"/>
+</head>
+<body>
+	<![CDATA[
+	<script type="text/javascript">
+		function toggleTRs(){
+		var myStyle = (document.getElementById('rejectedFlagCheckBox').value)? '' : 'none';
+		rejectedFlagNOKs = document.getElementsByClassName('rejectedFlagNOK');
+		for ( i=0 ; i<rejectedFlagNOKs.length ; i++ ) {
+			rejectedFlagNOKs.item(i).style.display=myStyle;
+			};
 
-		<h1> Source List </h1>
-		<table>
-			<tr>
-				<td>	
-                <h4> Statistics </h4>
-                <ul>
-                    <li><xsl:value-of select="count(//star)"/> analysed stars</li>
-		    <li><xsl:value-of select="count($calibrators//star[./calibrator[./calibInfo/accepted]])"/> stars with one or
-                    more than one accepted calibrator</li>
-	    <li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])=1])"/> stars with 1 accepted calibrator </li>
-	    <li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])=2])"/> stars with 2 accepted calibrators </li>
-	    <li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])>2])"/> stars with more than 2 calibrators </li>
-                    <li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators ( it could be the science star or a calibrator with poor quality flags)</li> 
-                    <li>average <xsl:value-of select="count($calibrators//calibrator[./calibInfo/accepted]) div count(//star)"/> accepted calibrators per star</li>
-                </ul>
-	</td>
-	<td>
-                <h4> Legend </h4>
-                <ul>
-                    <li> E: exoplanet link</li>
-                    <li> S: simbad link</li>
-                    <li>Orange: star has no pmra or pmdec information into simbad </li>
-                    <li>Red: star has no position information into simbad </li>
-                    <li>Gray: retained calibrators</li>
-                </ul>
-                <h4> Columns </h4>
-		<ul>
-			<li> dist1 [arcmin] on year <xsl:value-of
-                        select="$calibrators//calibrator[1]/calibInfo/dist[1]/year"/> </li>
-	<li> dist2 [arcmin] on year <xsl:value-of
-                            select="$calibrators//calibrator[1]/calibInfo/dist[2]/year"/> </li>
-    </ul>
-    </td>
-    </tr>
-    </table>
-                <!-- Print table -->
-                <table>
+			}
+		</script>
+		]]>
+	<h1> General informations </h1>
+	The following list was build using <a
+		href="http://exoplanet.eu"> Exoplanet</a> potential list.
+	Each data are then collected using <a href="http://simbad.u-strasbg.fr"> Simbad web service </a>. Sometimes some <a href="#aliases">aliases</a> have been used to query Simbad.
+	<h1> Source List </h1>
+	<table>
+		<tr>
+			<td>
+				<h4> Legend </h4>
+				<ul>
+					<li> E: exoplanet link</li>
+					<li> S: simbad link</li>
+					<li>Orange: star has no pmra or pmdec information into simbad </li>
+					<li>Red: star has no position information into simbad </li>
+					<li>Gray: retained calibrators</li>
+				</ul>
+				<h4> Columns </h4>
+				<ul>
+					<li> dist1 [arcmin] on year <xsl:value-of
+							select="$calibrators//calibrator[1]/calibInfo/dist[1]/year"/> </li>
+					<li> dist2 [arcmin] on year <xsl:value-of
+							select="$calibrators//calibrator[1]/calibInfo/dist[2]/year"/> </li>
+				</ul>
+			</td>
+			<td>	
+				<h4> Statistics </h4>
+				<ul>
+					<li><xsl:value-of select="count(//star)"/> analysed stars</li>
+					<li><xsl:value-of select="count($calibrators//star[./calibrator[./calibInfo/accepted]])"/> stars with one or more accepted calibrator</li>
+					<li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])=1])"/> stars with 1 calibrator </li>
+					<li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])=2])"/> stars with 2 calibrators </li>
+					<li><xsl:value-of select="count($calibrators//star[count(./calibrator[./calibInfo/accepted])>2])"/> stars with more than 2 calibrators </li>
+					<li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators ( contains also the rejected calibrators : distance or diameter quality flag )</li> 
+					<li>average <xsl:value-of select="count($calibrators//calibrator[./calibInfo/accepted]) div count(//star)"/> calibrators per star</li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+	<!-- Print table -->
+	<label>Show flagged calibrators <input id="rejectedFlagCheckBox" type="checkbox" onclick="toggleTRs()" checked="true" /></label><br/>
+	<table>
                     <tr> 
                         <xsl:for-each select="exslt:node-set($columns)/*">
                             <th>
@@ -219,6 +225,17 @@
                         </xsl:if>
                     </xsl:for-each>
                 </table>
+		<hr/>
+		<a name="aliases"/>
+		<h1> Aliases </h1>
+                To achieve data collection some aliases have been defined (most of these are
+                used by Exoplanet site):
+                <ul>
+                    <li> E: exoplanet link</li>
+                    <li> S: simbad link</li>
+                </ul>
+                <xsl:call-template name="listAliases"/>
+
 
                 <hr/>
                 Generated on <xsl:value-of select="date:date-time()"/><br/>
