@@ -3,9 +3,12 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsCommon.xsl,v 1.1 2009-05-06 13:54:34 mella Exp $"
+# "@(#) $Id: sclcatObjectsCommon.xsl,v 1.2 2009-11-16 09:08:08 mella Exp $"
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2009/05/06 13:54:34  mella
+# add common column description
+#
 #
 #*******************************************************************************
 -->
@@ -34,7 +37,7 @@
         <c name="pmdec" desc="Proper" unit="motion ($\delta$)"/>
         <c name="plx" desc="Parallax" unit="(mas)"/>
         <c name="orbit" desc="Size of" unit="(mas)"/>
-        <c name="magK" desc="K mag" unit=""/>
+        <c name="kmag" desc="K mag" unit=""/>
         <c name="dist1" desc="distance" unit=""/>
         <c name="dist2" desc="distance" unit=""/>
         <c name="minDist" desc="Minimal distance" unit=""/>
