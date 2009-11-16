@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.21 2009-11-16 16:54:25 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.22 2009-11-16 17:32:01 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.21  2009/11/16 16:54:25  mella
+# compute dist1 dist2 even for bad calibrators
+#
 # Revision 1.20  2009/11/16 09:08:53  mella
 # add kmag and galactical coordinates in calibrators files
 #
@@ -341,7 +344,7 @@ genCalibratorList()
 																echo $FILTERINFO >> $CALIBRATORS
 												else
 																# copy all information excepted the accepted flag
-																echo $FILTERINFO | xml sel -t -e calibInfo -m "calibInfo/*[contains(name(),'accepted')]" -c "." -b -e rejected -e diamFlagNok -b >> $CALIBRATORS
+																echo $FILTERINFO | xml sel -t -e calibInfo -m "calibInfo/*[not(contains(name(),'accepted'))]" -c "." -b -e rejected -e diamFlagNok -b >> $CALIBRATORS
 												fi
 												echo "  </calibrator>" >>  $CALIBRATORS
 								fi
