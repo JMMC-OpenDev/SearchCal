@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.20 2009-11-16 09:08:53 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.21 2009-11-16 16:54:25 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.20  2009/11/16 09:08:53  mella
+# add kmag and galactical coordinates in calibrators files
+#
 # Revision 1.19  2009/10/23 19:13:40  mella
 # Fix parsing to include diamFlag=Nok into calibrator file
 #
@@ -139,12 +142,15 @@ mkdir $HTMLDIR &> /dev/null
 
 # copy every votable and transform it into html
 # the copy ethod also copy the param of the votable as fields
+let idx=0
 for i in *.vot
 do
     if [ ! -e "$HTMLDIR/$i" ]
     then
         vobsCopyVotParamsAsFields "$i" > "$HTMLDIR/$i"
         xsltproc --path .:.. -o "$HTMLDIR/$i.html" $XSLT_VOT2HTML "$HTMLDIR/$i"
+				echo -ne "\r$idx $i                        \r$idx"
+				let idx=$idx+1
     fi
 done
 
@@ -318,28 +324,29 @@ genCalibratorList()
                     calPmDec=0
                 fi
 
-		if [ "$calDiamFlag" == "OK" ]
-		then
-			# prep command
-			FILTERINFO=$(sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
-			"$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan")
-			if [ $? -ne 0 ]
-			then
-				echo "ERROR occured for calib n° $index"
-				echo "<calibInfo><error/></calibInfo>" >> $CALIBRATORS
-			else
-				echo $FILTERINFO >> $CALIBRATORS
-			fi
-			echo "<!-- \ 
-			sclcatPrimaFilter \"$starRa\" \"$starDec\" \"$starPmRa\" \
-			\"$starPmDec\" \"$calRa\" \"$calDec\" \"$calPmRa\" \"$calPmDec\" \"$timespan\" \
-			-->" >> $CALIBRATORS
-		else
-			echo "<rejected><diamFlagNok/></rejected>" >>  $CALIBRATORS
-		fi
-                echo "  </calibrator>" >>  $CALIBRATORS
+								# prep command
+								FILTERINFO=$(sclcatPrimaFilter "$starRa" "$starDec" "$starPmRa" \
+								"$starPmDec" "$calRa" "$calDec" "$calPmRa" "$calPmDec" "$timespan")
+								if [ $? -ne 0 ]
+								then
+												echo "ERROR occured for calib n° $index"
+												echo "<calibInfo><error/></calibInfo>" >> $CALIBRATORS
+								else
+												echo "<!-- \ 
+												sclcatPrimaFilter \"$starRa\" \"$starDec\" \"$starPmRa\" \
+												\"$starPmDec\" \"$calRa\" \"$calDec\" \"$calPmRa\" \"$calPmDec\" \"$timespan\" \
+												-->" >> $CALIBRATORS
+												if [ "$calDiamFlag" == "OK" ]
+												then
+																echo $FILTERINFO >> $CALIBRATORS
+												else
+																# copy all information excepted the accepted flag
+																echo $FILTERINFO | xml sel -t -e calibInfo -m "calibInfo/*[contains(name(),'accepted')]" -c "." -b -e rejected -e diamFlagNok -b >> $CALIBRATORS
+												fi
+												echo "  </calibrator>" >>  $CALIBRATORS
+								fi
             done
-	    echo 
+						echo 
             echo "</star>" >>  $CALIBRATORS  
         fi
     done
