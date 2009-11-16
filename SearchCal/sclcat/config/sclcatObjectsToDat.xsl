@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToDat.xsl,v 1.2 2009-11-16 09:09:58 mella Exp $"
+# "@(#) $Id: sclcatObjectsToDat.xsl,v 1.3 2009-11-16 14:20:56 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2009/11/16 09:09:58  mella
+# add kmag and galactical coordinates in the final dat file
+#
 # Revision 1.1  2009/05/18 15:49:35  mella
 # output table.dat
 #
@@ -58,15 +61,27 @@
 				<xsl:value-of select="' '"/>
 				<xsl:choose>
 					<xsl:when test=".//accepted">
-						<xsl:value-of select="'OK '"/>
+						<xsl:value-of select="'1 '"/>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="'NOK '"/>
+						<xsl:value-of select="'0 '"/>
 					</xsl:otherwise>
 				</xsl:choose>
-				<xsl:value-of select="$starKMag"/>
+					<xsl:if test="not($starKMag)">
+								<xsl:message> missing k magnitude for star </xsl:message>
+								<xsl:value-of select="'0'"/>
+				</xsl:if>
+				<xsl:if test="$starKMag">
+								<xsl:value-of select="$starKMag"/>
+				</xsl:if>
 				<xsl:value-of select="' '"/>
-				<xsl:value-of select="./kmag"/>
+				<xsl:if test="not(./kmag/text())">
+								<xsl:message> missing k magnitude for calib </xsl:message>
+								<xsl:value-of select="'0'"/>
+				</xsl:if>
+				<xsl:if test="./kmag">
+								<xsl:value-of select="./kmag"/>
+				</xsl:if>
 				<xsl:value-of select="' '"/>
 				<xsl:value-of select="./glat"/>
 				<xsl:value-of select="' '"/>
