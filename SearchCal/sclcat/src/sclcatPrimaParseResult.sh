@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.19 2009-10-23 19:13:40 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.20 2009-11-16 09:08:53 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2009/10/23 19:13:40  mella
+# Fix parsing to include diamFlag=Nok into calibrator file
+#
 # Revision 1.18  2009/10/09 11:40:06  mella
 # fix generation of results into html/result dir
 #
@@ -259,7 +262,7 @@ genCalibratorList()
 
             NBCAL=$(xml sel   -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -v "count(//VOT:TR)" "$i")
             echo "<star simbadName=\"$starName\" scCount=\"$NBCAL\">" >>  $CALIBRATORS
-            xml sel -t -m "//object[name='$starName']" -e "ra" -v "ra" -b -e "dec" -v "dec" -b -e "pmra" -v "pmra" -b -e "pmdec" -v "pmdec" -b $SIMBAD_FILE >> $CALIBRATORS
+            xml sel -t -m "//object[name='$starName']" -c "*[not(name()='name')]" -b $SIMBAD_FILE >> $CALIBRATORS
 
             # compute orbit size
             ST_ARG="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName']" -i "position()=1" -o "&quot;" -v "./VOT:TD[$ST_MASS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$ST_DIST_INDEX]" -o "&quot; " "$EXOPLANET_VOTABLE" )"
@@ -295,12 +298,16 @@ genCalibratorList()
                 calPmDec=$(getCellValue "$i" pmDec $index )
                 calDist=$(getCellValue "$i" dist $index )
                 calDiamFlag=$(getCellValue "$i" diamFlag $index )
+                calGLat=$(getCellValue "$i" GLAT $index )
+                calGLon=$(getCellValue "$i" GLON $index )
                 echo "  <calibrator index=\"$index\">" >>  $CALIBRATORS
                 echo "    <name>$calName</name>" >>  $CALIBRATORS
-                echo "    <magK>$calMagK</magK>" >>  $CALIBRATORS
+                echo "    <kmag>$calMagK</kmag>" >>  $CALIBRATORS
                 echo "    <ra>$calRa</ra><dec>$calDec</dec>" >>  $CALIBRATORS
                 echo "    <pmra>$calPmRa</pmra><pmdec>$calPmDec</pmdec>" >>  $CALIBRATORS
                 echo "    <dist>$calDist</dist>" >>  $CALIBRATORS
+                echo "    <glat>$calGLat</glat>" >>  $CALIBRATORS
+                echo "    <glon>$calGLon</glon>" >>  $CALIBRATORS
                 # if pmra or pmdec not found set it to 0
                 if [ -z "$calPmRa" ]
                 then
