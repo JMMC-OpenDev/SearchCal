@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.22 2009-11-16 17:32:01 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.23 2009-11-17 21:18:32 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2009/11/16 17:32:01  mella
+# fix accepted filter
+#
 # Revision 1.21  2009/11/16 16:54:25  mella
 # compute dist1 dist2 even for bad calibrators
 #
@@ -116,6 +119,7 @@ done
 XSLT_VOT2HTML="$PWD/../config/sclcatVOTable2html.xsl"
 XSLT_OBJECT2HTML="$PWD/../config/sclcatObjectsToHtml.xsl"
 XSLT_OBJECT2LATEX="$PWD/../config/sclcatObjectsToLatex.xsl"
+XSLT_OBJECT2CSV="$PWD/../config/sclcatObjectsToCSV.xsl"
 XSLT_OBJECT2DAT="$PWD/../config/sclcatObjectsToDat.xsl"
 # Next file contains all grabed data
 SIMBAD_FILE="$PWD/../config/sclcatSimbadList.xml"
@@ -363,6 +367,16 @@ else
     genCalibratorList
 fi
 
+OUTPUT_FILE=stars.csv
+echo "Stars votable generated into $PWD/$OUTPUT_FILE"
+xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
+$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+$XSLT_OBJECT2CSV $PRIMA_STAR_LIST
+stilts tpipe ifmt=csv istream=false in=$OUTPUT_FILE cmd='addskycoords -inunit sex fk5 gal $2 $3 GAL_LONG GAL_LAT' omode=out ofmt=csv out=starsWithGal.csv
+mv -v starsWithGal.csv result
+mv -v $OUTPUT_FILE result
+
+
 #Now CALIBRATORS file can be presented by next stylesheet
 OUTPUT_FILE=table.dat
 echo "Dat ( ascii file ) generated into $PWD/$OUTPUT_FILE"
@@ -383,6 +397,7 @@ xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename
 $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
 $XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
 mv -v $OUTPUT_FILE result
+
 
 
 # copy xml files
