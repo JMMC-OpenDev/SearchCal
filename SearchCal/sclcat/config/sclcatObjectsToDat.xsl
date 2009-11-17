@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToDat.xsl,v 1.3 2009-11-16 14:20:56 mella Exp $"
+# "@(#) $Id: sclcatObjectsToDat.xsl,v 1.4 2009-11-17 20:41:20 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2009/11/16 14:20:56  mella
+# add null value for missing kmag
+#
 # Revision 1.2  2009/11/16 09:09:58  mella
 # add kmag and galactical coordinates in the final dat file
 #
@@ -68,7 +71,6 @@
 					</xsl:otherwise>
 				</xsl:choose>
 					<xsl:if test="not($starKMag)">
-								<xsl:message> missing k magnitude for star </xsl:message>
 								<xsl:value-of select="'0'"/>
 				</xsl:if>
 				<xsl:if test="$starKMag">
@@ -76,7 +78,6 @@
 				</xsl:if>
 				<xsl:value-of select="' '"/>
 				<xsl:if test="not(./kmag/text())">
-								<xsl:message> missing k magnitude for calib </xsl:message>
 								<xsl:value-of select="'0'"/>
 				</xsl:if>
 				<xsl:if test="./kmag">
