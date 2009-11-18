@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.18 2009-11-16 16:14:04 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.19 2009-11-18 12:28:09 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.18  2009/11/16 16:14:04  mella
+# add style for bad calibs and add more statistics
+#
 # Revision 1.17  2009/11/16 11:58:01  mella
 # change layout and add javascript
 #
@@ -171,8 +174,8 @@
 																																				<li><xsl:value-of select="count(//star)"/> analysed stars</li>
 																																				<li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators (
 																																								<xsl:value-of select="count($calibrators//calibrator[./calibInfo/accepted])"/> accepted,  
-																																								<xsl:value-of select="count($calibrators//calibrator[./calibInfo/rejected])"/> flagged on distance or
-																																								<xsl:value-of select="count($calibrators//calibrator[not(calibInfo)])"/> flagged on diameter quality )</li> 
+																																								<xsl:value-of select="count($calibrators//calibrator[./calibInfo/rejected[not(diamFlagNok)]])"/> flagged on distance or
+																																								<xsl:value-of select="count($calibrators//calibrator[calibInfo/rejected/diamFlagNok])"/> flagged on diameter quality )</li>
 																																								<li>Considering accepted only calibrators:</li>
 																																				<ul>
 																																				<li><xsl:value-of select="count($calibrators//star[./calibrator/calibInfo/accepted])"/> stars with one or more calibrator</li>
