@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOFilterResult.sh,v 1.3 2008-12-05 15:03:19 lafrasse Exp $"
+# "@(#) $Id: sclcatESOFilterResult.sh,v 1.4 2009-12-02 10:34:21 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2008/12/05 15:03:19  lafrasse
+# Updated to handle catalogs when no match is found (using previous catalog
+# instead, in order to continue the execution).
+#
 # Revision 1.2  2008/12/03 10:08:11  lafrasse
 # Added VOT conversion to FITS.
 # Enhanced output traces.
@@ -156,7 +160,7 @@ newStep "Renaming GroupId and GroupSize to DMGroupId and DMGroupSize" stilts tpi
 
 # The 3 next actions will remove entries without index catalog -> which should be kept
 newStep "Removing duplicated catalog identifiers rows" stilts tpipe in=$PREVIOUSCATALOG cmd='progress; select NULL_HIPGroupSize' cmd='progress; select NULL_HDGroupSize' cmd='progress; select NULL_DMGroupSize' out=$CATALOG
-newStep "Removing stars with DEC > 40 " stilts tpipe in=$PREVIOUSCATALOG cmd='progress; select "dmsToRadians(DEJ2000) < degreesToRadians(40)"' out=$CATALOG
+newStep "Removing stars with DEC < 40 " stilts tpipe in=$PREVIOUSCATALOG cmd='progress; select "dmsToRadians(DEJ2000) < degreesToRadians(40)"' out=$CATALOG
 
 
 # TODO check that no star exists with duplicated coords using one of the next
