@@ -3,7 +3,7 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsWithoutKmag.xsl,v 1.1 2009-12-02 10:38:21 mella Exp $"
+# "@(#) $Id: sclcatObjectsWithoutKmag.xsl,v 1.2 2009-12-02 10:41:24 mella Exp $"
 #
 #*******************************************************************************
 
@@ -40,10 +40,10 @@
                     <xsl:message>'<xsl:value-of select="$simbadName"/>' has no ra and dec </xsl:message>
                 </xsl:if>
                 <xsl:if test="$object/ra and $object/dec">
-                    <xsl:value-of select="concat('# query by coords&#10;')"/>
+                    <xsl:value-of select="'# query by coords&#10;'"/>
                     <xsl:value-of select="concat('%',$simbadName,'&#10;')"/>
                     <xsl:value-of select="concat($object/ra, ' ', $object/dec,'&#10;')"/>
-                    <xsl:value-of select="concat('# query by name&#10;')"/>
+                    <xsl:value-of select="'# query by name&#10;'"/>
                     <xsl:value-of select="concat('%',$simbadName,'&#10;')"/>
                     <xsl:value-of select="concat($simbadName,'&#10;&#10;')"/>
                 </xsl:if>
