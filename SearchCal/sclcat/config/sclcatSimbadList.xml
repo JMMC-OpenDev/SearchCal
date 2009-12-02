@@ -69,6 +69,8 @@
     <pmdec>26.44</pmdec>
     <plx>12.92</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>1.734</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:39 CEST 2009 -->
   <object>
@@ -149,6 +151,8 @@
     <pmdec>45.21</pmdec>
     <plx>21.97</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.981</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:42 CEST 2009 -->
   <object>
@@ -179,6 +183,8 @@
     <pmdec>81.96</pmdec>
     <plx>51.87</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>3.526</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:43 CEST 2009 -->
   <object>
@@ -269,6 +275,8 @@
     <pmdec>-164.21</pmdec>
     <plx>130.08</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>0.945</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:48 CEST 2009 -->
   <object>
@@ -289,6 +297,8 @@
     <pmdec>-57.91</pmdec>
     <plx>56.76</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.859</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:48 CEST 2009 -->
   <object>
@@ -359,6 +369,8 @@
     <pmdec>654.49</pmdec>
     <plx>91.63</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.125</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:49 CEST 2009 -->
   <object>
@@ -369,6 +381,8 @@
     <pmdec>-675.61</pmdec>
     <plx>212.69</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.010</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:49 CEST 2009 -->
   <object>
@@ -389,6 +403,8 @@
     <pmdec>-51.0</pmdec>
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>8.858</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:50 CEST 2009 -->
   <object>
@@ -449,6 +465,8 @@
     <pmdec>-20.10</pmdec>
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>9.770</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:51 CEST 2009 -->
   <object>
@@ -509,6 +527,8 @@
     <pmdec>33.45</pmdec>
     <plx>18.94</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.735</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:52 CEST 2009 -->
   <object>
@@ -519,6 +539,8 @@
     <pmdec>347.49</pmdec>
     <plx>32.79</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.147</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:52 CEST 2009 -->
   <object>
@@ -529,6 +551,8 @@
     <pmdec>-69.87</pmdec>
     <plx>23.81</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.833</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:52 CEST 2009 -->
   <object>
@@ -579,6 +603,8 @@
     <pmdec>-106.71</pmdec>
     <plx>57.63</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.340</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:53 CEST 2009 -->
   <object>
@@ -589,6 +615,8 @@
     <pmdec>-105.39</pmdec>
     <plx>30.71</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.601</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:54 CEST 2009 -->
   <object>
@@ -599,6 +627,8 @@
     <pmdec>-47.66</pmdec>
     <plx>19.51</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.474</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:54 CEST 2009 -->
   <object>
@@ -609,6 +639,8 @@
     <pmdec>-60.80</pmdec>
     <plx>25.93</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.721</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:54 CEST 2009 -->
   <object>
@@ -629,6 +661,8 @@
     <pmdec>-5.48</pmdec>
     <plx>16.94</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.678</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:54 CEST 2009 -->
   <object>
@@ -639,6 +673,8 @@
     <pmdec>-24.66</pmdec>
     <plx>10.24</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>2.011</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:55 CEST 2009 -->
   <object>
@@ -649,6 +685,8 @@
     <pmdec>112.81</pmdec>
     <plx>34.63</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.898</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:55 CEST 2009 -->
   <object>
@@ -659,6 +697,8 @@
     <pmdec>-325.10</pmdec>
     <plx>35.66</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.351</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:55 CEST 2009 -->
   <object>
@@ -669,6 +709,8 @@
     <pmdec>-308.49</pmdec>
     <plx>28.57</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.136</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:55 CEST 2009 -->
   <object>
@@ -689,6 +731,8 @@
     <pmdec>9.62</pmdec>
     <plx>48.95</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.475</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:56 CEST 2009 -->
   <object>
@@ -699,6 +743,8 @@
     <pmdec>-98.22</pmdec>
     <plx>18.58</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.168</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:56 CEST 2009 -->
   <object>
@@ -709,6 +755,8 @@
     <pmdec>-71.73</pmdec>
     <plx>30.29</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.650</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:56 CEST 2009 -->
   <object>
@@ -719,6 +767,8 @@
     <pmdec>-124.63</pmdec>
     <plx>26.30</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.737</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:56 CEST 2009 -->
   <object>
@@ -729,6 +779,8 @@
     <pmdec>-78.43</pmdec>
     <plx>11.29</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.543</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:56 CEST 2009 -->
   <object>
@@ -739,6 +791,8 @@
     <pmdec>-243.15</pmdec>
     <plx>29.43</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.491</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:56 CEST 2009 -->
   <object>
@@ -749,6 +803,8 @@
     <pmdec>73.17</pmdec>
     <plx>15.04</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>2.590</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:57 CEST 2009 -->
   <object>
@@ -759,6 +815,8 @@
     <pmdec>-84.02</pmdec>
     <plx>22.54</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.124</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:57 CEST 2009 -->
   <object>
@@ -779,6 +837,8 @@
     <pmdec>-65.64</pmdec>
     <plx>18.93</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.838</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:57 CEST 2009 -->
   <object>
@@ -809,6 +869,8 @@
     <pmdec>-140.79</pmdec>
     <plx>33.60</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.234</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:58 CEST 2009 -->
   <object>
@@ -829,6 +891,8 @@
     <pmdec>5.83</pmdec>
     <plx>0.54</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>3.997</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:58 CEST 2009 -->
   <object>
@@ -849,6 +913,8 @@
     <pmdec>-75.10</pmdec>
     <plx>38.98</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.882</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:59 CEST 2009 -->
   <object>
@@ -859,6 +925,8 @@
     <pmdec>23.50</pmdec>
     <plx>19.13</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.599</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:59 CEST 2009 -->
   <object>
@@ -879,6 +947,8 @@
     <pmdec>24.00</pmdec>
     <plx>29.89</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.764</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:59 CEST 2009 -->
   <object>
@@ -889,6 +959,8 @@
     <pmdec>-39.92</pmdec>
     <plx>39.00</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.474</kmag>
   </object>
   <!-- add on Thu Oct  8 21:19:59 CEST 2009 -->
   <object>
@@ -899,6 +971,8 @@
     <pmdec>-31.10</pmdec>
     <plx>27.88</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.964</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:00 CEST 2009 -->
   <object>
@@ -909,6 +983,8 @@
     <pmdec>-102.35</pmdec>
     <plx>28.93</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.892</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:00 CEST 2009 -->
   <object>
@@ -949,6 +1025,8 @@
     <pmdec>3.41</pmdec>
     <plx>77.69</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>3.933</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:01 CEST 2009 -->
   <object>
@@ -969,6 +1047,8 @@
     <pmdec>53.34</pmdec>
     <plx>12.68</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.819</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:01 CEST 2009 -->
   <object>
@@ -979,6 +1059,8 @@
     <pmdec>-85.03</pmdec>
     <plx>15.75</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.434</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:01 CEST 2009 -->
   <object>
@@ -999,6 +1081,8 @@
     <pmdec>-87.97</pmdec>
     <plx>36.73</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.565</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:02 CEST 2009 -->
   <object>
@@ -1039,6 +1123,8 @@
     <pmdec>-55.37</pmdec>
     <plx>14.59</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.509</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:02 CEST 2009 -->
   <object>
@@ -1059,6 +1145,8 @@
     <pmdec>-142.80</pmdec>
     <plx>20.41</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.149</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:03 CEST 2009 -->
   <object>
@@ -1079,6 +1167,8 @@
     <pmdec>-191.17</pmdec>
     <plx>65.46</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>3.683</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:03 CEST 2009 -->
   <object>
@@ -1089,6 +1179,8 @@
     <pmdec>-437.07</pmdec>
     <plx>27.85</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.266</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:03 CEST 2009 -->
   <object>
@@ -1109,6 +1201,8 @@
     <pmdec>-25.20</pmdec>
     <plx>31.99</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.539</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:04 CEST 2009 -->
   <object>
@@ -1119,6 +1213,8 @@
     <pmdec>-259.92</pmdec>
     <plx>39.16</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.246</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:04 CEST 2009 -->
   <object>
@@ -1159,6 +1255,8 @@
     <pmdec>-224.16</pmdec>
     <plx>26.40</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.211</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:05 CEST 2009 -->
   <object>
@@ -1169,6 +1267,8 @@
     <pmdec>-69.23</pmdec>
     <plx>23.19</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.253</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:05 CEST 2009 -->
   <object>
@@ -1179,6 +1279,8 @@
     <pmdec>15.16</pmdec>
     <plx>27.53</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.688</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:06 CEST 2009 -->
   <object>
@@ -1189,6 +1291,8 @@
     <pmdec>-17.29</pmdec>
     <plx>15.39</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.707</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:06 CEST 2009 -->
   <object>
@@ -1229,6 +1333,8 @@
     <pmdec>-32.45</pmdec>
     <plx>12.78</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.763</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:07 CEST 2009 -->
   <object>
@@ -1259,6 +1365,8 @@
     <pmdec>-51.84</pmdec>
     <plx>16.94</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.809</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:07 CEST 2009 -->
   <object>
@@ -1289,6 +1397,8 @@
     <pmdec>-101.81</pmdec>
     <plx>36.97</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.936</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:08 CEST 2009 -->
   <object>
@@ -1309,6 +1419,8 @@
     <pmdec>-33.14</pmdec>
     <plx>18.93</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.422</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:08 CEST 2009 -->
   <object>
@@ -1319,6 +1431,8 @@
     <pmdec>-80.81</pmdec>
     <plx>21.11</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.260</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:09 CEST 2009 -->
   <object>
@@ -1349,6 +1463,8 @@
     <pmdec>-91.03</pmdec>
     <plx>19.00</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.632</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:09 CEST 2009 -->
   <object>
@@ -1369,6 +1485,8 @@
     <pmdec>-69.85</pmdec>
     <plx>16.10</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.352</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:09 CEST 2009 -->
   <object>
@@ -1389,6 +1507,8 @@
     <pmdec>-206.97</pmdec>
     <plx>18.44</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.161</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:10 CEST 2009 -->
   <object>
@@ -1399,6 +1519,8 @@
     <pmdec>262.26</pmdec>
     <plx>50.27</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.537</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:10 CEST 2009 -->
   <object>
@@ -1429,6 +1551,8 @@
     <pmdec>-64.27</pmdec>
     <plx>21.31</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.034</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:11 CEST 2009 -->
   <object>
@@ -1439,6 +1563,8 @@
     <pmdec>83.05</pmdec>
     <plx>30.31</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.072</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:11 CEST 2009 -->
   <object>
@@ -1449,6 +1575,8 @@
     <pmdec>-69.23</pmdec>
     <plx>44.69</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>3.748</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:11 CEST 2009 -->
   <object>
@@ -1459,6 +1587,8 @@
     <pmdec>-119.77</pmdec>
     <plx>21.58</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.485</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:11 CEST 2009 -->
   <object>
@@ -1469,6 +1599,8 @@
     <pmdec>-56.65</pmdec>
     <plx>36.86</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.039</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:11 CEST 2009 -->
   <object>
@@ -1479,6 +1611,8 @@
     <pmdec>15.23</pmdec>
     <plx>11.13</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>7.549</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:12 CEST 2009 -->
   <object>
@@ -1509,6 +1643,8 @@
     <pmdec>-64.82</pmdec>
     <plx>27.76</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.827</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:12 CEST 2009 -->
   <object>
@@ -1519,6 +1655,8 @@
     <pmdec>-117.99</pmdec>
     <plx>22.73</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.159</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:13 CEST 2009 -->
   <object>
@@ -1569,6 +1707,8 @@
     <pmdec>-91.64</pmdec>
     <plx>18.97</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.466</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:14 CEST 2009 -->
   <object>
@@ -1579,6 +1719,8 @@
     <pmdec>-194.06</pmdec>
     <plx>24.54</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.354</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:14 CEST 2009 -->
   <object>
@@ -1589,6 +1731,8 @@
     <pmdec>-81.49</pmdec>
     <plx>30.04</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.612</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:14 CEST 2009 -->
   <object>
@@ -1599,6 +1743,8 @@
     <pmdec>73.20</pmdec>
     <plx>37.71</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.518</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:14 CEST 2009 -->
   <object>
@@ -1609,6 +1755,8 @@
     <pmdec>-178.18</pmdec>
     <plx>26.39</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.311</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:15 CEST 2009 -->
   <object>
@@ -1619,6 +1767,8 @@
     <pmdec>-16.03</pmdec>
     <plx>50.71</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.536</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:15 CEST 2009 -->
   <object>
@@ -1629,6 +1779,8 @@
     <pmdec>-17.02</pmdec>
     <plx>21.97</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>1.597</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:15 CEST 2009 -->
   <object>
@@ -1649,6 +1801,8 @@
     <pmdec>-5.59</pmdec>
     <plx>18.91</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.569</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:15 CEST 2009 -->
   <object>
@@ -1659,6 +1813,8 @@
     <pmdec>-111.10</pmdec>
     <plx>23.84</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.173</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:16 CEST 2009 -->
   <object>
@@ -1679,6 +1835,8 @@
     <pmdec>-91.92</pmdec>
     <plx>28.90</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.705</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:16 CEST 2009 -->
   <object>
@@ -1699,6 +1857,8 @@
     <pmdec>15.49</pmdec>
     <plx>9.22</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>7.657</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:16 CEST 2009 -->
   <object>
@@ -1709,6 +1869,8 @@
     <pmdec>21.06</pmdec>
     <plx>19.24</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.874</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:16 CEST 2009 -->
   <object>
@@ -1719,6 +1881,8 @@
     <pmdec>6.00</pmdec>
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.388</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:17 CEST 2009 -->
   <object>
@@ -1729,6 +1893,8 @@
     <pmdec>-224.06</pmdec>
     <plx>18.62</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>7.308</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:17 CEST 2009 -->
   <object>
@@ -1739,6 +1905,8 @@
     <pmdec>-167.81</pmdec>
     <plx>54.84</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>1.745</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:17 CEST 2009 -->
   <object>
@@ -1749,6 +1917,8 @@
     <pmdec>272.33</pmdec>
     <plx>23.60</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>7.071</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:17 CEST 2009 -->
   <object>
@@ -1759,6 +1929,8 @@
     <pmdec>-60.29</pmdec>
     <plx>25.28</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.185</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:17 CEST 2009 -->
   <object>
@@ -1779,6 +1951,8 @@
     <pmdec>-12.01</pmdec>
     <plx>18.28</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.715</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:18 CEST 2009 -->
   <object>
@@ -1809,6 +1983,8 @@
     <pmdec>-94.14</pmdec>
     <plx>19.92</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>7.171</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:18 CEST 2009 -->
   <object>
@@ -1879,6 +2055,8 @@
     <pmdec>1050.20</pmdec>
     <plx>54.92</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.241</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:20 CEST 2009 -->
   <object>
@@ -1909,6 +2087,8 @@
     <pmdec>65.16</pmdec>
     <plx>23.24</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.428</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:20 CEST 2009 -->
   <object>
@@ -1919,6 +2099,8 @@
     <!-- simbad returns '~' for pmdec -->
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.428</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:20 CEST 2009 -->
   <object>
@@ -1949,6 +2131,8 @@
     <pmdec>150.00</pmdec>
     <plx>30.58</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.163</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:21 CEST 2009 -->
   <object>
@@ -1989,6 +2173,8 @@
     <pmdec>-53.45</pmdec>
     <plx>20.43</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.224</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:22 CEST 2009 -->
   <object>
@@ -2039,6 +2225,8 @@
     <pmdec>64.13</pmdec>
     <plx>8.24</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>2.383</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:22 CEST 2009 -->
   <object>
@@ -2059,6 +2247,8 @@
     <pmdec>-122.85</pmdec>
     <plx>24.55</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.432</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:23 CEST 2009 -->
   <object>
@@ -2069,6 +2259,8 @@
     <pmdec>68.52</pmdec>
     <plx>21.16</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.836</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:23 CEST 2009 -->
   <object>
@@ -2079,6 +2271,8 @@
     <pmdec>-96.36</pmdec>
     <plx>32.23</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.467</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:23 CEST 2009 -->
   <object>
@@ -2089,6 +2283,8 @@
     <pmdec>80.35</pmdec>
     <plx>35.63</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.953</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:23 CEST 2009 -->
   <object>
@@ -2139,6 +2335,8 @@
     <pmdec>-39.69</pmdec>
     <plx>27.93</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.998</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:24 CEST 2009 -->
   <object>
@@ -2149,6 +2347,8 @@
     <pmdec>-527.70</pmdec>
     <plx>24.80</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.187</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:24 CEST 2009 -->
   <object>
@@ -2159,6 +2359,8 @@
     <pmdec>145.90</pmdec>
     <plx>28.10</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.329</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:25 CEST 2009 -->
   <object>
@@ -2169,6 +2371,8 @@
     <pmdec>-207.70</pmdec>
     <plx>18.17</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.660</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:25 CEST 2009 -->
   <object>
@@ -2179,6 +2383,8 @@
     <pmdec>31.73</pmdec>
     <plx>17.00</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.743</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:25 CEST 2009 -->
   <object>
@@ -2209,6 +2415,8 @@
     <pmdec>225.59</pmdec>
     <plx>34.77</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.574</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:26 CEST 2009 -->
   <object>
@@ -2219,6 +2427,8 @@
     <pmdec>-98.30</pmdec>
     <plx>19.47</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.982</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:26 CEST 2009 -->
   <object>
@@ -2229,6 +2439,8 @@
     <pmdec>65.71</pmdec>
     <plx>27.38</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.264</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:26 CEST 2009 -->
   <object>
@@ -2249,6 +2461,8 @@
     <pmdec>161.70</pmdec>
     <plx>10.57</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>7.302</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:26 CEST 2009 -->
   <object>
@@ -2279,6 +2493,8 @@
     <pmdec>-227.68</pmdec>
     <plx>34.55</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.012</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:27 CEST 2009 -->
   <object>
@@ -2299,6 +2515,8 @@
     <pmdec>121.22</pmdec>
     <plx>16.75</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.500</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:28 CEST 2009 -->
   <object>
@@ -2319,6 +2537,8 @@
     <pmdec>6.92</pmdec>
     <plx>17.13</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>7.316</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:28 CEST 2009 -->
   <object>
@@ -2339,6 +2559,8 @@
     <pmdec>-128.20</pmdec>
     <plx>11.33</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>3.056</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:29 CEST 2009 -->
   <object>
@@ -2349,6 +2571,8 @@
     <pmdec>-174.05</pmdec>
     <plx>36.42</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.105</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:29 CEST 2009 -->
   <object>
@@ -2439,6 +2663,8 @@
     <pmdec>-222.75</pmdec>
     <plx>30.94</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.721</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:30 CEST 2009 -->
   <object>
@@ -2449,6 +2675,8 @@
     <pmdec>-151.12</pmdec>
     <plx>34.60</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.132</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:31 CEST 2009 -->
   <object>
@@ -2469,6 +2697,8 @@
     <pmdec>-160.61</pmdec>
     <plx>16.54</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>7.162</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:31 CEST 2009 -->
   <object>
@@ -2489,6 +2719,8 @@
     <pmdec>-53.57</pmdec>
     <plx>18.91</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>6.828</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:31 CEST 2009 -->
   <object>
@@ -2499,6 +2731,8 @@
     <pmdec>17.30</pmdec>
     <plx>31.92</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>0.671</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:32 CEST 2009 -->
   <object>
@@ -2509,6 +2743,8 @@
     <pmdec>219.21</pmdec>
     <plx>58.00</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>4.138</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:32 CEST 2009 -->
   <object>
@@ -2519,6 +2755,8 @@
     <pmdec>-50.08</pmdec>
     <plx>25.04</plx>
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>5.240</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:32 CEST 2009 -->
   <object>
@@ -2579,6 +2817,8 @@
     <!-- simbad returns '~' for pmdec -->
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>12.856</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:33 CEST 2009 -->
   <object>
@@ -2609,6 +2849,8 @@
     <!-- simbad returns '~' for pmdec -->
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>14.990</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:34 CEST 2009 -->
   <object>
@@ -2719,6 +2961,8 @@
     <!-- simbad returns '~' for pmdec -->
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>10.608</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:38 CEST 2009 -->
   <object>
@@ -2729,6 +2973,8 @@
     <!-- simbad returns '~' for pmdec -->
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>10.330</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:38 CEST 2009 -->
   <object>
@@ -2879,6 +3125,8 @@
     <!-- simbad returns '~' for pmdec -->
     <!-- simbad returns '~' for plx -->
     <!-- simbad returns no value for kmag -->
+    <!--kmag extracted from 2mass-->
+    <kmag>10.746</kmag>
   </object>
   <!-- add on Thu Oct  8 21:20:42 CEST 2009 -->
   <object>
