@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.23 2009-11-17 21:18:32 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.24 2009-12-02 10:39:40 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.23  2009/11/17 21:18:32  mella
+# add two new files for stars and their galactical coords
+#
 # Revision 1.22  2009/11/16 17:32:01  mella
 # fix accepted filter
 #
@@ -121,6 +124,7 @@ XSLT_OBJECT2HTML="$PWD/../config/sclcatObjectsToHtml.xsl"
 XSLT_OBJECT2LATEX="$PWD/../config/sclcatObjectsToLatex.xsl"
 XSLT_OBJECT2CSV="$PWD/../config/sclcatObjectsToCSV.xsl"
 XSLT_OBJECT2DAT="$PWD/../config/sclcatObjectsToDat.xsl"
+XSLT_OBJECT2MISSINGKMAG="$PWD/../config/sclcatObjectsWithoutKmag.xsl"
 # Next file contains all grabed data
 SIMBAD_FILE="$PWD/../config/sclcatSimbadList.xml"
 ALIAS_FILE="$PWD/../config/sclcatAliases.xml"
@@ -366,6 +370,14 @@ then
 else
     genCalibratorList
 fi
+
+OUTPUT_FILE=starsWithoutKmag.txt
+echo "List of star without kmag $PWD/$OUTPUT_FILE"
+xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
+$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+$XSLT_OBJECT2MISSINGKMAG $PRIMA_STAR_LIST
+mv -v $OUTPUT_FILE result
+
 
 OUTPUT_FILE=stars.csv
 echo "Stars votable generated into $PWD/$OUTPUT_FILE"
