@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.54 2009-10-27 10:04:08 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.55 2009-12-09 10:01:55 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.54  2009/10/27 10:04:08  lafrasse
+ * Corrected the value used to remove the science objet star (was 0.01 degrees, is
+ * now 1 arcsecond).
+ *
  * Revision 1.53  2009/04/17 15:28:10  lafrasse
  * Updated log level from Info to Test to clean sclws log output.
  *
@@ -172,7 +176,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.54 2009-10-27 10:04:08 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.55 2009-12-09 10:01:55 lafrasse Exp $"; 
 
 
 /* 
@@ -226,7 +230,7 @@ using namespace std;
  */
 mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
 {
-    logTrace("sclsvrSERVER::WaitForCurrentCatalogName()");
+    logTrace("sclsvrSERVER::GetStatus()");
 
     // Wait for an updated status
     if (_status.Read(buffer, mcsTRUE, timeoutInSec) == mcsFAILURE)
@@ -302,7 +306,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
  */
 mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuf)
 {
-    logTrace("sclsvrSERVER::GetCalCB()");
+    logTrace("sclsvrSERVER::GetCal()");
 
     // Get calibrators
     mcsCOMPL_STAT complStatus;
@@ -479,12 +483,13 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         // science object coordinates
         vobsSTAR_LIST scienceObjects;
         scienceObjects.Copy(calibratorList);
-        // 2) Create a filter to only get stars near the original science object
+
+        // 2) Create a filter to only get stars within 1 arcsecond of the original science object
         vobsDISTANCE_FILTER distanceFilter("");
         distanceFilter.SetDistanceValue(request.GetObjectRa(),
                                         request.GetObjectDec(),
-                                        (1 * alxARCSEC_IN_DEGREES),
                                         (1 * alxARCSEC_IN_DEGREES));
+
         // 3) Apply the filter to the copied calibrator list
         distanceFilter.Apply(&scienceObjects);
 
@@ -499,7 +504,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             {
                 return mcsFAILURE;
             }
-            logTest("science star %s has been removed", starId);
+            logTest("(What should be) Science star %s has been removed.", starId);
             calibratorList.Remove(*currentStar);
             currentStar = scienceObjects.GetNextStar();
         }
@@ -510,7 +515,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     { 
         string xmlOutput;
         request.AppendParamsToVOTable(xmlOutput);
-        char* voHeader = "SearchCal software: http://www.mariotti.fr/aspro_page.htm (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+        char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
         // Get the software name and version
         mcsSTRING32 softwareVersion;
         snprintf(softwareVersion, sizeof(softwareVersion), 
