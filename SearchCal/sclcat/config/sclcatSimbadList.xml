@@ -3584,4 +3584,14 @@
     <plx>25.96</plx>
     <kmag>-0.81</kmag>
   </object>
+<!-- add on Wed Dec  2 12:05:11 CET 2009 -->
+<object>
+<name>30 Ari B</name>
+<ra>02 36 57.7405</ra>
+<dec>+24 38 53.027</dec>
+<pmra>150.58</pmra>
+<pmdec>-12.55</pmdec>
+<plx>25.36</plx>
+<kmag>5.822</kmag>
+</object>
 </objects>
