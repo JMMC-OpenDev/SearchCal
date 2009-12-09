@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.33 2009-11-05 14:20:29 mella Exp $"
+# "@(#) $Id: Makefile,v 1.34 2009-12-09 09:57:53 lafrasse Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.33  2009/11/05 14:20:29  mella
+# move searchcal votable converter to HTML into sclgui
+#
 # Revision 1.32  2009/10/26 13:54:58  mella
 # Add new utility to transform a searchcal votable to html
 #
@@ -102,7 +105,7 @@ EXECUTABLES_L   =
 # <brief description of vobsStarSeparation program>
 vobsStarSeparation_OBJECTS   = vobsStarSeparation 
 vobsStarSeparation_LDFLAGS   = 
-vobsStarSeparation_LIBS      = MCS C++ vobs
+vobsStarSeparation_LIBS      = MCS C++ vobs alx
 
 #
 # special compilation flags for single c sources
