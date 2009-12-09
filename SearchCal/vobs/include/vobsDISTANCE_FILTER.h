@@ -3,11 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.6 2006-03-01 16:41:38 lafrasse Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.7 2009-12-09 10:00:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/03/01 16:41:38  lafrasse
+ * Added const attributes for SetDistanceValue() method parameters.
+ * Replaced all the 'strcpy' calls with 'strncpy'.
+ * Code review
+ *
  * Revision 1.5  2005/12/13 16:30:33  lafrasse
  * Added filter Id management through additional constructor parameter
  *
@@ -78,13 +83,11 @@ public:
 
     virtual mcsCOMPL_STAT SetDistanceValue(const mcsSTRING32  raRef,
                                            const mcsSTRING32  decRef,
-                                           const mcsFLOAT     raRange,
-                                           const mcsFLOAT     decRange);
+                                           const mcsFLOAT     distance);
 
-    virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32*  raRef,
-                                           mcsSTRING32*  decRef,
-                                           mcsFLOAT*     raRange,
-                                           mcsFLOAT*     decRange);
+    virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32  *raRef,
+                                           mcsSTRING32  *decRef,
+                                           mcsFLOAT     *distance);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
@@ -98,8 +101,7 @@ private:
 
     mcsSTRING32  _raRef;
     mcsSTRING32  _decRef;
-    mcsFLOAT     _raRange;
-    mcsFLOAT     _decRange;
+    mcsFLOAT     _distance;
 };
 
 #endif /*!vobsDISTANCE_FILTER_H*/

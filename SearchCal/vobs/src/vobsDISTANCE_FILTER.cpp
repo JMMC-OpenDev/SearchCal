@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.9 2006-04-07 08:23:00 gzins Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.10 2009-12-09 10:00:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2006/04/07 08:23:00  gzins
+ * Removed useless \n in log messages
+ *
  * Revision 1.8  2006/03/03 15:03:27  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -47,7 +50,7 @@
  * Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.9 2006-04-07 08:23:00 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.10 2009-12-09 10:00:10 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -61,6 +64,11 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+
+/*
+ * SCALIB Headers 
+ */
+#include "alx.h"
 
 /*
  * Local Headers 
@@ -88,27 +96,24 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
 /**
  * Set value to the filter
  *
- * @param raRef right ascension of the science star
- * @param decRef declinaison of the science star
- * @param raRange right ascension range
- * @param decRange declinaision range
+ * @param raRef right ascension of the reference star
+ * @param decRef declinaison of the reference star
+ * @param distance distance to reference star
  *
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32  raRef,
                                                     const mcsSTRING32  decRef,
-                                                    const mcsFLOAT     raRange,
-                                                    const mcsFLOAT     decRange)
+                                                    const mcsFLOAT     distance)
 {
     logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
 
-    // Copy right ascension and declinaison get in parameter
+    // Copy reference star right ascension and declinaison
     strncpy(_raRef,  raRef,  sizeof(_raRef));
     strncpy(_decRef, decRef, sizeof(_decRef));
 
-    // Copy right ascension and declinaison range get as parameter
-    _raRange  = raRange;
-    _decRange = decRange;
+    // Copy distance to reference star
+    _distance  = distance;
     
     return mcsSUCCESS;
 }
@@ -116,33 +121,33 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32  raRef,
 /**
  * Get value of the filter 
  *
- * @param raRef right ascension of the science star
- * @param decRef declinaison of the science star
- * @param raRange right ascension range
- * @param decRange declinaision range
+ * @param raRef right ascension of the reference star
+ * @param decRef declinaison of the reference star
+ * @param distance distance to reference star
  *
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
                                                     mcsSTRING32 *decRef,
-                                                    mcsFLOAT *raRange,
-                                                    mcsFLOAT *decRange)
+                                                    mcsFLOAT    *distance)
 {
-    logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
+    logTrace("vobsDISTANCE_FILTER::GetDistanceValue()");
     
-    // Copy right ascension and declinaison get in parameter
+    // Give back reference star right ascension and declinaison
     strncpy(*raRef,  _raRef,  sizeof(*raRef));
     strncpy(*decRef, _decRef, sizeof(*decRef));
 
-    // Copy right ascension and declinaison range get as parameter
-    *raRange  = _raRange;
-    *decRange = _decRange;
+    // Give back reference star distance
+    *distance  = _distance;
 
     return mcsSUCCESS;
 }
 
 /**
- * Apply the filter on a list
+ * Apply the filter on a list.
+ *
+ * Will go through each star of the given list, compute its separation from the
+ * reference coordinates, and remove any star farther than the given distance.
  *
  * @param list star list on wich the filter is applied
  *
@@ -154,62 +159,73 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
     logTrace("vobsDISTANCE_FILTER::Apply()");
 
     // Create a star correponding to the science object
-    vobsSTAR scienceStar;
+    // (just to convert sexagesimal cooridantes in degrees !!!)
+    vobsSTAR referenceStar;
 
     // Set right ascension property (ref) to this star
-    if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, _raRef, "") ==
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, _raRef, "") ==
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Set declinaison property (ref) to this star
-    if (scienceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, _decRef, "") ==
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, _decRef, "") ==
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // Create a criterialist
-    vobsSTAR_COMP_CRITERIA_LIST criteriaList;
+    // Get reference RA coordinate in degrees
+    float referenceStarRA;
+    referenceStar.GetRa(referenceStarRA);
 
-    // Add criteria on right ascension
-    if (criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, _raRange) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    // Get reference DEC coordinate in degrees
+    float referenceStarDEC;
+    referenceStar.GetDec(referenceStarDEC);
 
-    // Add criteria on declinaison
-    if (criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, _decRange) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // For each star of the list
-    vobsSTAR* star;
+    // For each star of the given star list
+    vobsSTAR* currentStar;
     for (unsigned int el = 0; el < list->Size(); el++)
     {
-        star = list->GetNextStar((mcsLOGICAL)(el == 0));
+        currentStar = list->GetNextStar((mcsLOGICAL)(el == 0));
 
-        // Get Star ID
+        // Get current star ID
+        // Just to log it !!!
         mcsSTRING32 starId;
-        if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+        if (currentStar->GetId(starId, sizeof(starId)) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
 
-        // If the star is different of the science star according to the
-        // criteria list
-        if (star->IsSame(scienceStar, &criteriaList) == mcsFALSE)
+        // Get current star RA coordinate in degrees
+        float currentStarRA;
+        currentStar->GetRa(currentStarRA);
+
+        // Get current star DEC coordinate in degrees
+        float currentStarDEC;
+        currentStar->GetDec(currentStarDEC);
+
+        // (at last) Compute distance between refence star and the current star
+        mcsFLOAT distance;
+        // Compute seperation in arcsec
+        alxComputeDistance(referenceStarRA, referenceStarDEC, currentStarRA, currentStarDEC, &distance);
+        // Convert separation in degrees
+        distance = distance * alxARCSEC_IN_DEGREES;
+
+        logDebug("Distance between star '%s' (RA=%f; DEC=%f) and reference star (RA=%f; DEC=%f) = %f .", starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);
+
+        // If the current star is farther than the reference distance to the reference star
+        if (distance > _distance)
         {
-            // Remove it
-            logTest("star %s not in the box", starId);
-            list->Remove(*star);
-            el = el-1;
+            // Remove the current star from the given star list
+            logTest("Star '%s' is farther than %f degrees of the reference star.", starId, _distance);
+            list->Remove(*currentStar);
+            el = el - 1;
         }
         else
         {
-            logTest("star %s in the box", starId);
+            logTest("Star '%s' is within %f degrees of the reference star.", starId, _distance);
         }
     }
     
