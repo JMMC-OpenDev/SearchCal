@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.81 2009-10-27 10:01:36 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.82 2009-12-09 09:57:14 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.81  2009/10/27 10:01:36  lafrasse
+* Corrected GetRa() and GetDec() documentation to reflect the truly used unit
+* (degrees instead of arcseconds).
+*
 * Revision 1.80  2009/07/16 13:47:14  lafrasse
 * Added VFlag column for MIDI catalog.
 *
@@ -223,7 +227,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.81 2009-10-27 10:01:36 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.82 2009-12-09 09:57:14 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -969,7 +973,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             {
                 return mcsFALSE;
             }
-            logDebug("%s: %s delta is in +/- %.3f?", hd, propertyId, range);
+            logDebug("%s: %s delta is in +/- %g?", hd, propertyId, range);
             if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
             {
                 // Get right ascension of the stars. If not set return FALSE
@@ -1094,9 +1098,10 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                     return mcsFALSE;
                 }    
             }
-            logDebug("%s: %s delta = (%.3f - %.3f) %.3f", 
-                     hd, propertyId, val1, val2, fabs(val1-val2));
-            if (fabs(val1-val2) > range)
+            double delta = fabs(val1 - val2);
+            logDebug("%s: %s delta = (%g - %g) = %g", 
+                     hd, propertyId, val1, val2, delta);
+            if (delta > range)
             {
                 return mcsFALSE;
             }
