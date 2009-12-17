@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.82 2009-12-09 09:57:14 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.83 2009-12-17 14:16:59 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.82  2009/12/09 09:57:14  lafrasse
+* Log refinments.
+*
 * Revision 1.81  2009/10/27 10:01:36  lafrasse
 * Corrected GetRa() and GetDec() documentation to reflect the truly used unit
 * (degrees instead of arcseconds).
@@ -227,7 +230,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.82 2009-12-09 09:57:14 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.83 2009-12-17 14:16:59 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1281,7 +1284,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas",
                 "%.2f");
     AddProperty(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
-    AddProperty(vobsSTAR_CODE_VARIAB, "VFlag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
+    AddProperty(vobsSTAR_CODE_VARIAB_MIDI, "VFlag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);

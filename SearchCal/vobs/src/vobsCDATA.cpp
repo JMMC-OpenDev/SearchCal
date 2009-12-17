@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.36 2009-07-16 13:47:14 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.37 2009-12-17 14:16:59 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.36  2009/07/16 13:47:14  lafrasse
+* Added VFlag column for MIDI catalog.
+*
 * Revision 1.35  2009/04/15 16:12:56  lafrasse
 * Code, log and documentation enhancements.
 *
@@ -113,7 +116,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.36 2009-07-16 13:47:14 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.37 2009-12-17 14:16:59 lafrasse Exp $"; 
 
 
 /* 
@@ -636,18 +639,22 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
     // Flag of variability
     if (strcmp(ucdName, "CODE_VARIAB") == 0)
     {
+        char* id = NULL;
+
         if (strcmp(paramName, "v1") == 0) // ASCC catalog
         {
-            return vobsSTAR_CODE_VARIAB_V1;
+            id = vobsSTAR_CODE_VARIAB_V1;
         }
         else if (strcmp(paramName, "v2") == 0) // ASCC catalog
         {
-            return vobsSTAR_CODE_VARIAB_V2;
+            id = vobsSTAR_CODE_VARIAB_V2;
         }
         else if (strcmp(paramName, "Var") == 0) // MIDI catalog
         {
-            return vobsSTAR_CODE_VARIAB;
+            id = vobsSTAR_CODE_VARIAB_MIDI;
         }
+
+        return id;
     }
     
     // Code misc
