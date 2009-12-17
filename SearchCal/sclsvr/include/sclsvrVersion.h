@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.30 2009-12-10 13:48:00 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.31 2009-12-17 14:21:13 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2009/12/10 13:48:00  lafrasse
+ * Enforced sceicen object detection to 1 arcsec using star separation.
+ *
  * Revision 1.29  2009/05/04 15:21:34  lafrasse
  * Updated version number to 3.4.1 : Removed all references to unused CHARM catalog.
  *
@@ -111,7 +114,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.4.2"
+#define sclsvrVERSION "3.5.0"
 
 #ifdef __cplusplus
 }
