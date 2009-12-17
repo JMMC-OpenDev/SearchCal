@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.23 2007-10-31 11:36:51 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.24 2009-12-17 15:14:31 lafrasse Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.23  2007/10/31 11:36:51  gzins
+# Moved test program in test directory
+#
 # Revision 1.22  2006/12/21 15:16:05  lafrasse
 # Updated progression monitoring code (moved from static-based to instance-based).
 #
@@ -93,20 +96,21 @@ sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr simcli
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = sclsvr.h						\
-				  sclsvrCALIBRATOR.h			\
-				  sclsvrCALIBRATOR_LIST.h		\
-				  sclsvrREQUEST.h        		\
-				  sclsvrGETCAL_CMD.h        	\
-				  sclsvrGETSTAR_CMD.h       	\
-				  sclsvrVersion.h           	\
-				  sclsvrSERVER.h				\
-				  sclsvrVISIBILITY_FILTER.h		\
-				  sclsvrSCENARIO_BRIGHT_K.h		\
-				  sclsvrSCENARIO_BRIGHT_V.h		\
-				  sclsvrSCENARIO_BRIGHT_N.h		\
-				  sclsvrSCENARIO_FAINT_K.h		\
-				  sclsvrSCENARIO_SINGLE_STAR.h 	\
+INCLUDES        = sclsvr.h						       \
+				  sclsvrCALIBRATOR.h			       \
+				  sclsvrCALIBRATOR_LIST.h		       \
+				  sclsvrREQUEST.h        		       \
+				  sclsvrGETCAL_CMD.h        	       \
+				  sclsvrGETSTAR_CMD.h       	       \
+				  sclsvrVersion.h           	       \
+				  sclsvrSERVER.h				       \
+				  sclsvrVISIBILITY_FILTER.h		       \
+				  sclsvrSCENARIO_BRIGHT_K.h		       \
+				  sclsvrSCENARIO_BRIGHT_K_CATALOG.h	   \
+				  sclsvrSCENARIO_BRIGHT_V.h		       \
+				  sclsvrSCENARIO_BRIGHT_N.h		       \
+				  sclsvrSCENARIO_FAINT_K.h		       \
+				  sclsvrSCENARIO_SINGLE_STAR.h 	       \
 
 
 #
@@ -117,20 +121,21 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-sclsvr_OBJECTS   = sclsvrCALIBRATOR      		\
-				   sclsvrCALIBRATOR_LIST 		\
-				   sclsvrSERVER          		\
-				   sclsvrREQUEST         		\
-				   sclsvrGETCAL_CMD      		\
-				   sclsvrGETSTAR_CMD     		\
-				   sclsvrGetCalCB		 		\
-				   sclsvrGetStarCB				\
-				   sclsvrVISIBILITY_FILTER		\
-				   sclsvrSCENARIO_BRIGHT_K		\
-				   sclsvrSCENARIO_BRIGHT_V		\
-				   sclsvrSCENARIO_BRIGHT_N		\
-				   sclsvrSCENARIO_FAINT_K		\
-				   sclsvrSCENARIO_SINGLE_STAR	\
+sclsvr_OBJECTS   = sclsvrCALIBRATOR      		      \
+				   sclsvrCALIBRATOR_LIST 		      \
+				   sclsvrSERVER          		      \
+				   sclsvrREQUEST         		      \
+				   sclsvrGETCAL_CMD      		      \
+				   sclsvrGETSTAR_CMD     		      \
+				   sclsvrGetCalCB		 		      \
+				   sclsvrGetStarCB				      \
+				   sclsvrVISIBILITY_FILTER		      \
+				   sclsvrSCENARIO_BRIGHT_K		      \
+                   sclsvrSCENARIO_BRIGHT_K_CATALOG    \
+				   sclsvrSCENARIO_BRIGHT_V		      \
+				   sclsvrSCENARIO_BRIGHT_N		      \
+				   sclsvrSCENARIO_FAINT_K		      \
+				   sclsvrSCENARIO_SINGLE_STAR	      \
 
 
 #

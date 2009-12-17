@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.31 2009-12-17 14:21:13 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.32 2009-12-17 15:14:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.31  2009/12/17 14:21:13  lafrasse
+ * Changed MIDI Vflag column UCD from 'CODE_VARIAB' to 'CODE_VARIAB_MIDI' to
+ * resolve bug #1259055516 form Daniel BONNEAU.
+ *
  * Revision 1.30  2009/12/10 13:48:00  lafrasse
  * Enforced sceicen object detection to 1 arcsec using star separation.
  *
@@ -114,7 +118,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.5.0"
+#define sclsvrVERSION "3.5.1"
 
 #ifdef __cplusplus
 }

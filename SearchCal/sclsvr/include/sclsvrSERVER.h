@@ -3,11 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.17 2007-10-31 11:28:20 gzins Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.18 2009-12-17 15:14:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2007/10/31 11:28:20  gzins
+ * Removed oldScenario parameter
+ * Updated to use new sdbENTRY non-blocking class
+ * Updated API related to web-service
+ *
  * Revision 1.16  2007/02/04 20:50:37  lafrasse
  * Replaced GetCalStatus() by WaitForCurrentCatalogName() and IsLastCatalog().
  * Added GetCatalogIndex() API to get the index of the catalog being queried.
@@ -70,6 +75,7 @@
  */
 #include "vobs.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
+#include "sclsvrSCENARIO_BRIGHT_K_CATALOG.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
 #include "sclsvrSCENARIO_FAINT_K.h"
@@ -123,12 +129,13 @@ private:
     sdbENTRY  _status;
 
     // Virtual observatory
-    vobsVIRTUAL_OBSERVATORY      _virtualObservatory;
-    sclsvrSCENARIO_BRIGHT_K      _scenarioBrightK;
-    sclsvrSCENARIO_BRIGHT_V      _scenarioBrightV;
-    sclsvrSCENARIO_BRIGHT_N      _scenarioBrightN;
-    sclsvrSCENARIO_FAINT_K       _scenarioFaintK;
-    sclsvrSCENARIO_SINGLE_STAR   _scenarioSingleStar;
+    vobsVIRTUAL_OBSERVATORY          _virtualObservatory;
+    sclsvrSCENARIO_BRIGHT_K          _scenarioBrightK;
+    sclsvrSCENARIO_BRIGHT_K_CATALOG  _scenarioBrightKCatalog;
+    sclsvrSCENARIO_BRIGHT_V          _scenarioBrightV;
+    sclsvrSCENARIO_BRIGHT_N          _scenarioBrightN;
+    sclsvrSCENARIO_FAINT_K           _scenarioFaintK;
+    sclsvrSCENARIO_SINGLE_STAR       _scenarioSingleStar;
 };
 
 #endif /*!sclsvrSERVER_H*/

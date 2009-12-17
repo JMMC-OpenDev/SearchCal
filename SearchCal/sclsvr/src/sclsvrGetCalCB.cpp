@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.55 2009-12-09 10:01:55 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.56 2009-12-17 15:14:31 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.55  2009/12/09 10:01:55  lafrasse
+ * Updated to accuratly filter science star using star separation instead of
+ * coordinates box (wrong when stars near earth pole).
+ * Code and log refinments.
+ *
  * Revision 1.54  2009/10/27 10:04:08  lafrasse
  * Corrected the value used to remove the science objet star (was 0.01 degrees, is
  * now 1 arcsecond).
@@ -176,7 +181,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.55 2009-12-09 10:01:55 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.56 2009-12-17 15:14:31 lafrasse Exp $"; 
 
 
 /* 
@@ -406,6 +411,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'N':
                 // Load Bright N Scenario
                 scenario = &_scenarioBrightN;
+                break;
+
+            case '1':
+                // Load Bright K Catalog Scenario
+                scenario = &_scenarioBrightKCatalog;
                 break;
 
             default:
