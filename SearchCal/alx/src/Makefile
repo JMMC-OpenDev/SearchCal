@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2006-03-28 07:17:25 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.9 2010-01-08 22:29:04 lafrasse Exp $"
 #
 # Makefile of the alx module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2006/03/28 07:17:25  gzins
+# Changed alxAngDiamPolynomialForBrightStar to alxAngDiamPolynomial
+#
 # Revision 1.7  2005/12/22 10:08:58  scetre
 # Added extinction coefficient computation
 # changed realMag to CorrectedMag
@@ -92,7 +95,8 @@ alx_OBJECTS   = alxAngularDiameter          \
 				alxInterstellarAbsorption   \
 				alxVisibility               \
 				alxResearchArea             \
-				alxDistance
+				alxDistance                 \
+				alxLD2UD
 
 #
 # Scripts (public and local)

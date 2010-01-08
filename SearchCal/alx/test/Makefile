@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2009-10-15 07:33:59 mella Exp $"
+# "@(#) $Id: Makefile,v 1.9 2010-01-08 22:29:04 lafrasse Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2009/10/15 07:33:59  mella
+# Make alxTestVisibility compile and set is as first target
+#
 # Revision 1.7  2006/09/27 15:05:34  mella
 # Use MCSROOT instead of /home/MCSROOT and use Python2.4 includes
 #
@@ -61,30 +64,31 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = alxTestVisibility          \
-				  alxTestAngularDiameter     \
-                  alxTestMagnitude           \
+                  alxTestLD2UD               \
                   alxTestGalacticCoordinates \
                   alxTestResearchArea        \
-                  alxTestDistance
+                  alxTestDistance            \
+#				  alxTestAngularDiameter     \
+#                 alxTestMagnitude           \
 EXECUTABLES_L   = 
 
 #
 # <brief description of alxTestMagnitude program>
 alxTestMagnitude_OBJECTS   = alxTestMagnitude
 alxTestMagnitude_LDFLAGS   =
-alxTestMagnitude_LIBS      = MCS alx 
+alxTestMagnitude_LIBS      = MCS C++ alx 
 
 #
 # <brief description of alxTestGalacticCoordinates program>
 alxTestGalacticCoordinates_OBJECTS   = alxTestGalacticCoordinates
 alxTestGalacticCoordinates_LDFLAGS   =
-alxTestGalacticCoordinates_LIBS      = MCS alx
+alxTestGalacticCoordinates_LIBS      = MCS C++ alx
 
 #
 # <brief description of alxTestAngularDiameter program>
 alxTestAngularDiameter_OBJECTS   = alxTestAngularDiameter
 alxTestAngularDiameter_LDFLAGS   =
-alxTestAngularDiameter_LIBS      = MCS alx
+alxTestAngularDiameter_LIBS      = MCS C++ alx
 
 #
 # <brief description of alxTestVisibility program>
@@ -96,13 +100,19 @@ alxTestVisibility_LIBS      = MCS C++ alx
 # <brief description of alxTestResearchArea program>
 alxTestResearchArea_OBJECTS   = alxTestResearchArea
 alxTestResearchArea_LDFLAGS   =
-alxTestResearchArea_LIBS      = MCS alx
+alxTestResearchArea_LIBS      = MCS C++ alx
 
 #
 # <brief description of alxTestDistance program>
 alxTestDistance_OBJECTS   = alxTestDistance
 alxTestDistance_LDFLAGS   =
-alxTestDistance_LIBS      = MCS alx
+alxTestDistance_LIBS      = MCS C++ alx
+
+#
+# <brief description of alxTestLD2UD program>
+alxTestLD2UD_OBJECTS   = alxTestLD2UD
+alxTestLD2UD_LDFLAGS   =
+alxTestLD2UD_LIBS      = MCS C++ alx
 
 #
 # special compilation flags for single c sources

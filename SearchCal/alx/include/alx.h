@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.23 2009-10-27 09:58:58 lafrasse Exp $"
+ * "@(#) $Id: alx.h,v 1.24 2010-01-08 22:29:04 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2009/10/27 09:58:58  lafrasse
+ * Added a constant to define what is an arcsec in degrees.
+ *
  * Revision 1.22  2007/05/11 15:30:29  gzins
  * Upadated alxComputeAngularDiameterForFaintStar prototype
  *
@@ -206,6 +209,20 @@ typedef struct
     mcsLOGICAL areCoherent;
 } alxDIAMETERS;
 
+/** Structure holding uniform diameters */
+typedef struct
+{
+    mcsDOUBLE b;
+    mcsDOUBLE i;
+    mcsDOUBLE j;
+    mcsDOUBLE h;
+    mcsDOUBLE k;
+    mcsDOUBLE l;
+    mcsDOUBLE n;
+    mcsDOUBLE r;
+    mcsDOUBLE v;
+} alxUNIFORM_DIAMETERS;
+
 
 /*
  * Pubic functions declaration
@@ -226,7 +243,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
                                         alxDATA mgV,
                                         alxDATA mgR,
                                         alxDATA mgK,
-                                        alxDIAMETERS *diameters);
+                                        alxDIAMETERS* diameters);
 
 mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                                              alxDATA mgJ,
@@ -234,35 +251,39 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                                              alxDATA mgH,
                                              alxDATA mgV,
                                              alxDATA mgKJnk,
-                                             alxDIAMETERS *diameters);
+                                             alxDIAMETERS* diameters);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
                                             mcsFLOAT dec,
-                                            mcsFLOAT *gLat,
-                                            mcsFLOAT *gLon);
+                                            mcsFLOAT* gLat,
+                                            mcsFLOAT* gLon);
 
 mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
                                    mcsFLOAT angDiamError,
                                    mcsFLOAT baseMax,
                                    mcsFLOAT wlen,
-                                   alxVISIBILITIES *visibilities);
+                                   alxVISIBILITIES* visibilities);
 
 mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT ra,
                                      mcsFLOAT dec,
                                      mcsFLOAT minMag,
                                      mcsFLOAT maxMag,
-                                     mcsFLOAT *radius);
+                                     mcsFLOAT* radius);
 
 mcsCOMPL_STAT alxComputeDistance(mcsFLOAT ra1,
                                  mcsFLOAT dec1,
                                  mcsFLOAT ra2,
                                  mcsFLOAT dec2,
-                                 mcsFLOAT *distance);
+                                 mcsFLOAT* distance);
 
-mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT *av,
+mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT* av,
                                               mcsFLOAT plx,
                                               mcsFLOAT gLat,
                                               mcsFLOAT gLon);
+
+mcsCOMPL_STAT alxComputeUDFromLDAndSP(mcsDOUBLE ld,
+                                      mcsSTRING32 sp,
+                                      alxUNIFORM_DIAMETERS* ud);
 
 #ifdef __cplusplus
 }
