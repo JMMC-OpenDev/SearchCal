@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.40 2007-05-11 15:45:34 gzins Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.41 2010-01-11 17:20:25 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2007/05/11 15:45:34  gzins
+ * Aligned prototype of methods related to calibrator's properties completion
+ *
  * Revision 1.39  2006/08/23 12:08:10  gzins
  * Removed useless parameters in CommputeMissingMagnitude
  *
@@ -143,6 +146,15 @@
 #define sclsvrCALIBRATOR_DIAM_HK_ERROR      "DIAM_HK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
+#define sclsvrCALIBRATOR_UD_B               "UD_B"
+#define sclsvrCALIBRATOR_UD_I               "UD_I"
+#define sclsvrCALIBRATOR_UD_J               "UD_J"
+#define sclsvrCALIBRATOR_UD_H               "UD_H"
+#define sclsvrCALIBRATOR_UD_K               "UD_K"
+#define sclsvrCALIBRATOR_UD_L               "UD_L"
+#define sclsvrCALIBRATOR_UD_N               "UD_N"
+#define sclsvrCALIBRATOR_UD_R               "UD_R"
+#define sclsvrCALIBRATOR_UD_V               "UD_V"
 #define sclsvrCALIBRATOR_DIST               "DIST"
 
 /*
@@ -178,6 +190,7 @@ private:
     mcsCOMPL_STAT ComputeInterstellarAbsorption(mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeApparentMagnitude(mcsLOGICAL isBright=mcsTRUE);     
     mcsCOMPL_STAT ComputeAngularDiameter(mcsLOGICAL isBright=mcsTRUE);
+    mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
     mcsCOMPL_STAT ComputeCousinMagnitude(); 
