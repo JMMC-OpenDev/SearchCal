@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.93 2009-04-17 15:28:10 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.94 2010-01-11 17:21:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.93  2009/04/17 15:28:10  lafrasse
+ * Updated log level from Info to Test to clean sclws log output.
+ *
  * Revision 1.92  2007/11/14 15:52:03  gzins
  * Set DIAM_FLAG to OK when diameter is coming from catalog
  *
@@ -242,7 +245,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.93 2009-04-17 15:28:10 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.94 2010-01-11 17:21:42 lafrasse Exp $"; 
 
 
 /* 
@@ -495,7 +498,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
         }
     }
-    // Paralax  is unknown 
+    // Paralax is unknown 
     else
     {
         if (request.IsBright() == mcsTRUE)
@@ -556,6 +559,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 
                 // Compute Angular Diameter
                 if (ComputeAngularDiameter() == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+
+                // Compute UD from LD and SP
+                if (ComputeUDFromLDAndSP() == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -633,7 +642,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             {
                 return mcsFAILURE;
             }
-
         }
         // Paralax unknown
         else
@@ -1748,6 +1756,92 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
 
 
 /**
+ * Compute UD from LD and SP.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeUDFromLDAndSP()");
+
+    // Get the value of the Spectral Type
+    mcsSTRING32 spType;
+    strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
+
+    // UD Output struct initialization
+    alxUNIFORM_DIAMETERS ud;
+    ud.b = FP_NAN;
+    ud.i = FP_NAN;
+    ud.j = FP_NAN;
+    ud.h = FP_NAN;
+    ud.k = FP_NAN;
+    ud.l = FP_NAN;
+    ud.n = FP_NAN;
+    ud.r = FP_NAN;
+    ud.v = FP_NAN;
+
+    // Compute UD only if LD are already OK
+    if (IsDiameterOk() == mcsTRUE)
+    {
+        // Get LD diameter
+        mcsFLOAT ld = FP_NAN;
+        // Retrieve DIAM_VK
+        if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Compute UD
+        if (alxComputeUDFromLDAndSP(ld, spType, &ud) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+
+    // Set each property accordinaly
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_B, ud.b, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_I, ud.i, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_J, ud.j, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_H, ud.h, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_K, ud.k, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_L, ud.l, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_N, ud.n, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_R, ud.r, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_V, ud.v, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+
+/**
  * Compute visibility.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -2174,6 +2268,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                 vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", 
                 vobsSTRING_PROPERTY, "-");
+    AddProperty(sclsvrCALIBRATOR_UD_B, "UD_B", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_I, "UD_I", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_J, "UD_J", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_H, "UD_H", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_K, "UD_K", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_R, "UD_R", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_V, "UD_V", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
     AddProperty(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av",
                 vobsFLOAT_PROPERTY, "-", "%.3f");
     AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "mag", "%.3f");
