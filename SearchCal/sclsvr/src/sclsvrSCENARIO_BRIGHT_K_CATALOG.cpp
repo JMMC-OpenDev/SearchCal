@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.1 2009-12-17 15:14:32 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.2 2010-01-11 17:19:32 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2009/12/17 15:14:32  lafrasse
+ * *** empty log message ***
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.1 2009-12-17 15:14:32 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.2 2010-01-11 17:19:32 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -154,11 +157,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     _originFilter.Enable();
     // Build filter on magnitude
     // Get research band
-    mcsSTRING32 band;
-    strcpy(band, _request.GetSearchBand());
     mcsFLOAT kMaxi = _request.GetMaxMagRange();
     mcsFLOAT kMini = _request.GetMinMagRange();
-    _magnitudeFilter.SetMagnitudeValue(band, (kMaxi+kMini)/2, (kMaxi-kMini)/2);
+    _magnitudeFilter.SetMagnitudeValue("K", (kMaxi+kMini)/2, (kMaxi-kMini)/2);
     _magnitudeFilter.Enable();
     // Build filter list
     _filterList.Add(&_originFilter, "Origin Filter");
