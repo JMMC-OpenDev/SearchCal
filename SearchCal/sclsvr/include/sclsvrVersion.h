@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.32 2009-12-17 15:14:31 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.33 2010-01-11 17:22:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.32  2009/12/17 15:14:31  lafrasse
+ * *** empty log message ***
+ *
  * Revision 1.31  2009/12/17 14:21:13  lafrasse
  * Changed MIDI Vflag column UCD from 'CODE_VARIAB' to 'CODE_VARIAB_MIDI' to
  * resolve bug #1259055516 form Daniel BONNEAU.
@@ -118,7 +121,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.5.1"
+#define sclsvrVERSION "3.6.0"
 
 #ifdef __cplusplus
 }
