@@ -98,12 +98,12 @@
    <error id="16">
       <errName>HASH_KEY_NOT_FOUND</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Key '%.100s' not found in the Hash Table]]></errFormat>
+      <errFormat><![CDATA[Key '%.100s' not found in the Hash Table.]]></errFormat>
    </error>
    <error id="17">
       <errName>STRING_MAX_SUBSTRING_NB_OVERFLOW</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Too many sub-strings found (more than '%d')]]></errFormat>
+      <errFormat><![CDATA[Too many sub-strings found (more than '%d').]]></errFormat>
    </error>
    <error id="25">
       <errName>FILE_EXTENSION_UNKNOWN</errName>
@@ -113,31 +113,36 @@
    <error id="26">
       <errName>HOST_NOT_FOUND</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[host '%s' not found]]></errFormat>
+      <errFormat><![CDATA[host '%s' not found.]]></errFormat>
    </error>
    <error id="27">
       <errName>NO_ADDRESS</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[the name '%s' is valid but have no IP address]]></errFormat>
+      <errFormat><![CDATA[the name '%s' is valid but have no IP address.]]></errFormat>
    </error>
    <error id="28">
       <errName>NO_RECOVERY</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[a fatal error of the name server append]]></errFormat>
+      <errFormat><![CDATA[a fatal error of the name server append.]]></errFormat>
    </error>
    <error id="29">
       <errName>TRY_AGAIN</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[a temporary error of the name server append, try again later]]></errFormat>
+      <errFormat><![CDATA[a temporary error of the name server append, try again later.]]></errFormat>
    </error>
    <error id="31">
       <errName>BUFFER_OVERFLOW</errName>
       <errSeverity>SEVERE</errSeverity>
       <errFormat><![CDATA[Buffer size exceeded : '%d' bytes available, '%d' bytes needed.]]></errFormat>
    </error>
-   <error id="32">
-      <errName>CURL_STATUS</errName>
+   <error id="33">
+      <errName>COMMAND_STATUS</errName>
       <errSeverity>SEVERE</errSeverity>
-      <errFormat><![CDATA['curl' exited with status '%d' : please see 'man curl' for detailed information.]]></errFormat>
+      <errFormat><![CDATA['%s' command exited with status '%d' : please use command's manpage for detailed information.]]></errFormat>
+   </error>
+   <error id="34">
+      <errName>COMMAND_EXEC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' command could not be performed.]]></errFormat>
    </error>
 </errorList>
