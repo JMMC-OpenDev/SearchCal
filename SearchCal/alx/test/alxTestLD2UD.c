@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestLD2UD.c,v 1.1 2010-01-08 22:29:04 lafrasse Exp $"
+ * "@(#) $Id: alxTestLD2UD.c,v 1.2 2010-01-15 17:42:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/08 22:29:04  lafrasse
+ * Added preliminary support for alxLD2UD.
+ *
  ******************************************************************************/
 
 /**
@@ -58,7 +61,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.1 2010-01-08 22:29:04 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.2 2010-01-15 17:42:43 lafrasse Exp $"; 
 
 
 /* 
@@ -110,8 +113,25 @@ int main (int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
+    logSetStdoutLogLevel(logTRACE);
+
     alxUNIFORM_DIAMETERS ud;
-    alxComputeUDFromLDAndSP(1.0, "ABCD", &ud);
+    if (alxComputeUDFromLDAndSP(1.0, "ABCD", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        printf("ud.b = %f\n", ud.b);
+        printf("ud.i = %f\n", ud.i);
+        printf("ud.j = %f\n", ud.j);
+        printf("ud.h = %f\n", ud.h);
+        printf("ud.k = %f\n", ud.k);
+        printf("ud.l = %f\n", ud.l);
+        printf("ud.n = %f\n", ud.n);
+        printf("ud.r = %f\n", ud.r);
+        printf("ud.v = %f\n", ud.v);
+    }    
 
     /* Close MCS services */
     mcsExit();
