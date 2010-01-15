@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.1 2010-01-08 22:29:04 lafrasse Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.2 2010-01-15 17:44:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/08 22:29:04  lafrasse
+ * Added preliminary support for alxLD2UD.
+ *
  ******************************************************************************/
 
 /**
@@ -19,7 +22,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.1 2010-01-08 22:29:04 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.2 2010-01-15 17:44:22 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -85,107 +88,60 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(mcsDOUBLE ld,
         return mcsFAILURE;
     }
 
-    /* Retrieve MCSROOT file path */
-    const mcsENVNAME mcsRootEnvName = "INTROOT";
-    mcsSTRING256 mcsRootPath;
-    mcsCOMPL_STAT status = miscGetEnvVarValue(mcsRootEnvName, mcsRootPath, sizeof(mcsRootPath));
-    if (status == mcsFAILURE)
+    /* Retrieve jmcsLD2UD executable amongst MCS standard path */
+    char* executablePath = miscLocateExe("jmcsLD2UD");
+    if (executablePath == NULL)
     {
         return mcsFAILURE;
     }
 
     /* Forge command */
-    const char* staticCommand = "%s/bin/jmcsLD2UD %f \"%s\"";
-    int composedCommandLength = strlen(mcsRootPath) + strlen(staticCommand) + strlen(sp) + 10 + 1;
+    const char* staticCommand = "%s %f \"%s\"";
+    int composedCommandLength = strlen(staticCommand) + strlen(executablePath) + strlen(sp) + 10 + 1;
     char* composedCommand = (char*)malloc(composedCommandLength * sizeof(char));
     if (composedCommand == NULL)
     {
         /*errAdd(miscERR_ALLOC);*/
         return mcsFAILURE;
     }
-    snprintf(composedCommand, composedCommandLength, staticCommand, mcsRootPath, ld, sp);
+    snprintf(composedCommand, composedCommandLength, staticCommand, executablePath, ld, sp);
 
-    /* Executing the command */
-    FILE* process = popen(composedCommand, "r");
-
-    /* Keep reading command result, until an error occurs */
-    mcsSTRING1024 outputBuffer;
-    int availableMemory = sizeof(outputBuffer);
-    int totalReadSize = 0;
-    while (feof(process) == 0)
+    /* Dynamic buffer initializaton */
+    miscDYN_BUF resultBuffer;
+    if (miscDynBufInit(&resultBuffer) == mcsFAILURE)
     {
-        /* While buffer is not full yet */
-        if (totalReadSize < (availableMemory - 1))
-        {
-            /* Write the command result in the buffer */
-            totalReadSize += fread(outputBuffer, 1, availableMemory, process);
-
-            /* Write tailing '\0' accordinaly */
-            outputBuffer[totalReadSize] = '\0';
-        }
-        else /* Once the buffer has been fulfiled entirely */
-        {
-            /* Keep reading the result in a temporary buffer, to count needed
-               memory space for later error message */
-            mcsSTRING1024 tmp;
-            totalReadSize += fread(tmp, 1, sizeof(tmp), process);
-        }
+        /* Handle error */
+        return mcsFAILURE;
     }
-    int pcloseStatus = pclose(process);
+
+    mcsCOMPL_STAT executionStatus = miscDynBufExecuteCommand(&resultBuffer, composedCommand);
 
     /* Give back local dynamically-allocated memory */
     free(composedCommand);
-
-    /* Buffer overflow check */
-    if (totalReadSize >= availableMemory)
+    if (executionStatus == mcsFAILURE)
     {
-        /*errAdd(miscERR_BUFFER_OVERFLOW, availableMemory, totalReadSize);*/
         return mcsFAILURE;
     }
 
-    /* pclose() status check */
-    if (pcloseStatus == -1)
-    {
-        /*errAdd(miscERR_FUNC_CALL, "pclose", strerror(errno));*/
-        return mcsFAILURE;
-    }
-    else
-    {
-        /* command exec status check */
-        int commandStatus = WEXITSTATUS(pcloseStatus);
-        if (commandStatus != 0)
-        {
-            return mcsFAILURE;
-        }
-    }
-
-    /* Start parsing command output */
-    miscDYN_BUF parsingBuffer;
-    /* Dynamic buffer initializaton */
-    if (miscDynBufInit(&parsingBuffer) == mcsFAILURE)
+    /* Remove any trailing or leading '\n' */
+    if (miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n") == mcsFAILURE)
     {
         /* Handle error */
         return mcsFAILURE;
     }
-    /* Dynamic buffer filing */
-    if (miscDynBufAppendString(&parsingBuffer, outputBuffer) == mcsFAILURE)
-    {
-        /* Handle error */
-        return mcsFAILURE;
-    }
-    char* index = NULL;
+
+    /* Parsing each line */
+    const char* index = NULL;
     mcsSTRING256 currentLine;
     const mcsUINT32 lineSize = sizeof(currentLine);
-    int i = 0;
-    /* Parsing each line */
-    while ((index = miscDynBufGetNextLine(&parsingBuffer,
+    while ((index = miscDynBufGetNextLine(&resultBuffer,
                                            index,
                                            currentLine,
                                            lineSize,
-                                           mcsFALSE)) != NULL)
+                                           mcsTRUE)) != NULL)
     {
-        printf("Line #%d : %s\n", i, currentLine);
-        char band = 0;
+        logDebug("Parsing line : %s\n", currentLine);
+        char band = '0';
         mcsDOUBLE value = 0.0;
         if (sscanf(currentLine, "UD_%c=%lf", &band, &value) != 2)
         {
@@ -196,60 +152,57 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(mcsDOUBLE ld,
         switch (tolower(band))
         {
             case 'b':
-                printf("B=%f\n", value);
+                logTest("UD_B = %f\n", value);
                 ud->b = value;
                 break;
 
             case 'i':
-                printf("I=%f\n", value);
+                logTest("UD_I = %f\n", value);
                 ud->i = value;
                 break;
 
             case 'j':
-                printf("J=%f\n", value);
+                logTest("UD_J = %f\n", value);
                 ud->j = value;
                 break;
 
             case 'h':
-                printf("H=%f\n", value);
+                logTest("UD_H = %f\n", value);
                 ud->h = value;
                 break;
 
             case 'k':
-                printf("K=%f\n", value);
+                logTest("UD_K = %f\n", value);
                 ud->k = value;
                 break;
 
             case 'l':
-                printf("L=%f\n", value);
+                logTest("UD_L = %f\n", value);
                 ud->l = value;
                 break;
 
             case 'n':
-                printf("N=%f\n", value);
+                logTest("UD_N = %f\n", value);
                 ud->n = value;
                 break;
 
             case 'r':
-                printf("R=%f\n", value);
+                logTest("UD_R = %f\n", value);
                 ud->r = value;
                 break;
 
             case 'v':
-                printf("V=%f\n", value);
+                logTest("V = %f\n", value);
                 ud->v = value;
                 break;
 
             default:
-                printf("???\n");
+                logTest("Unknown band '%c'.\n", band);
                 break;
         }
-        i++;
     }
 
-    printf("Received:\n%s", outputBuffer);
-    ud->b = 0;
-
+    miscDynBufDestroy(&resultBuffer);
     return mcsSUCCESS;
 }
 
