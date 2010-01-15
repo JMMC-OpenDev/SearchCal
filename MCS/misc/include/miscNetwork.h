@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscNetwork.h,v 1.6 2008-04-04 12:30:04 lafrasse Exp $"
+ * "@(#) $Id: miscNetwork.h,v 1.7 2010-01-15 17:05:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2008/04/04 12:30:04  lafrasse
+ * Added miscPerformHttpGet() function.
+ *
  * Revision 1.5  2005/09/15 14:19:07  scetre
  * Added miscGetHostByName in the miscNetwork file
  *
@@ -41,13 +44,19 @@ extern "C" {
 #include "mcs.h"
 
 
+/* 
+ * Local Headers
+ */
+#include "miscDynBuf.h"
+
+
 /*
  * Pubic functions declaration
  */
  
 mcsCOMPL_STAT miscGetHostName(char *hostName, const mcsUINT32 length);
 mcsCOMPL_STAT miscGetHostByName(char *ipAddress, const char *hostName);
-mcsCOMPL_STAT miscPerformHttpGet(const char *uri, char *outputBuffer, const mcsUINT32 availableMemory, const mcsUINT32 timeout);
+mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout);
 
 
 #ifdef __cplusplus

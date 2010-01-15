@@ -4,6 +4,10 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2008/04/14 16:18:02  lafrasse
+ * Corrected a bug causing a missing tailing '\0' on miscPerformHttpGet() output
+ * buffer when using the same external buffer several time with varying result lengthes.
+ *
  * Revision 1.7  2008/04/04 12:30:04  lafrasse
  * Added miscPerformHttpGet() function.
  *
@@ -28,12 +32,13 @@
  * Declaration of miscNetwork functions.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.8 2008-04-14 16:18:02 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.9 2010-01-15 17:05:45 lafrasse Exp $"; 
+
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
 #define  _BSD_SOURCE 1
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -46,7 +51,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.8 200
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <netdb.h>
-#include <netinet/in.h>
+
 
 /* 
  * MCS Headers
@@ -54,7 +59,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.8 200
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "miscNetwork.h"
@@ -173,15 +178,14 @@ mcsCOMPL_STAT miscGetHostByName(char *ipAddress, const char *hostName)
  * not directly portable without this dependency.\n\n
  *
  * @param uri the HTTP request that should be performed (eg. http://apple.com).
- * @param outputBuffer address of the receiving, already allocated extern buffer
+ * @param outputBuffer address of the receiving, already allocated dynamic buffer
  * in which the query result will be stored.
- * @param availableMemory maximum output buffer capacity.
  * @param timeout maximum connection timeout (in seconds, 30 if 0 is given).
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscPerformHttpGet(const char *uri, char *outputBuffer, const mcsUINT32 availableMemory, const mcsUINT32 timeout)
+mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout)
 {
     /* Test 'uri' parameter validity */
     if (uri == NULL)
@@ -194,13 +198,6 @@ mcsCOMPL_STAT miscPerformHttpGet(const char *uri, char *outputBuffer, const mcsU
     if (outputBuffer == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "outputBuffer");
-        return mcsFAILURE;
-    }
-
-    /* Test 'availableMemory' parameter validity */
-    if (availableMemory == 0)
-    {
-        errAdd(miscERR_NULL_PARAM, "availableMemory");
         return mcsFAILURE;
     }
 
@@ -219,59 +216,12 @@ mcsCOMPL_STAT miscPerformHttpGet(const char *uri, char *outputBuffer, const mcsU
              internalTimeout, uri);
 
     /* Executing the command */
-    FILE* process = popen(composedCommand, "r");
-
-    /* Keep reading command result, until an error occurs */
-    int totalReadSize = 0;
-    while (feof(process) == 0)
-    {
-        /* While buffer is not full yet */
-        if (totalReadSize < (availableMemory - 1))
-        {
-            /* Write the command result in the buffer */
-            totalReadSize += fread(outputBuffer, 1, availableMemory, process);
-
-            /* Write tailing '\0' accordinaly */
-            outputBuffer[totalReadSize] = '\0';
-        }
-        else /* Once the buffer has been fulfiled entirely */
-        {
-            /* Keep reading the result in a temporary buffer, to count needed
-               memory space for later error message */
-            mcsSTRING1024 tmp;
-            totalReadSize += fread(tmp, 1, sizeof(tmp), process);
-        }
-    }
-    int pcloseStatus = pclose(process);
+    mcsCOMPL_STAT executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
 
     /* Give back local dynamically-allocated memory */
     free(composedCommand);
 
-    /* Buffer overflow check */
-    if (totalReadSize >= availableMemory)
-    {
-        errAdd(miscERR_BUFFER_OVERFLOW, availableMemory, totalReadSize);
-        return mcsFAILURE;
-    }
-
-    /* pclose() status check */
-    if (pcloseStatus == -1)
-    {
-        errAdd(miscERR_FUNC_CALL, "pclose", strerror(errno));
-        return mcsFAILURE;
-    }
-    else
-    {
-        /* curl exec status check */
-        int curlStatus = WEXITSTATUS(pcloseStatus);
-        if (curlStatus != 0)
-        {
-            errAdd(miscERR_CURL_STATUS, curlStatus);
-            return mcsFAILURE;
-        }
-    }
-
-    return mcsSUCCESS;
+    return executionStatus;
 }
 
 /*___oOo___*/
