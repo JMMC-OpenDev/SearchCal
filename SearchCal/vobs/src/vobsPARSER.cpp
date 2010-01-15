@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.33 2009-02-03 08:53:08 mella Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.34 2010-01-15 17:31:01 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.33  2009/02/03 08:53:08  mella
+* Made changes to fall back on UCD1 with viz-bin service
+*
 * Revision 1.32  2008/04/14 16:25:41  lafrasse
 * Reduced the size of returnString from 10MByte to 1MByte in Parse() in order to
 * remove a segmentation fault caused by the buffer size being too large for the
@@ -101,7 +104,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.33 2009-02-03 08:53:08 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.34 2010-01-15 17:31:01 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -182,16 +185,12 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     // Create a misco buffer to store CDS results
     miscoDYN_BUF completeReturnBuffer;
 
-    // Temporary 1MByte buffer
-    char returnString[1 * 1024 * 1024];
-
     // Query the CDS
     logTrace("URI = %s", uri);
-    if (miscPerformHttpGet(uri, returnString, sizeof(returnString), vobsTIME_OUT) == mcsFAILURE)
+    if (miscPerformHttpGet(uri, completeReturnBuffer.GetInternalMiscDYN_BUF(), vobsTIME_OUT) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    completeReturnBuffer.AppendString(returnString);
     
     // XML parsing of the CDS answer
     doc = gdome_di_createDocFromMemory(domimpl,
