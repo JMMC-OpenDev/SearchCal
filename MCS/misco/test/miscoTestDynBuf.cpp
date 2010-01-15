@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoTestDynBuf.cpp,v 1.6 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: miscoTestDynBuf.cpp,v 1.7 2010-01-15 17:27:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.5  2005/12/02 13:10:36  lafrasse
  * Added SavePartInFile() and SaveInASCIIFile().
  *
@@ -31,7 +34,7 @@
  * @<miscOTestDynBuf@>
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestDynBuf.cpp,v 1.6 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestDynBuf.cpp,v 1.7 2010-01-15 17:27:51 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -934,6 +937,42 @@ int main(int argc, char *argv[])
     bytes = "../tmp/testASCII.txt";
     cout << "buffer.SaveInASCIIFile('" << bytes << "') ";
     executionStatusCode = buffer.SaveInASCIIFile(bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+
+
+
+    // buffer.ExecuteCommand
+    cout << "---------------------------------------------------------" << endl;
+    buffer.Reset();
+    bytes = "toto";
+    cout << "buffer.ExecuteCommand('" << bytes << "') ";
+    executionStatusCode = buffer.ExecuteCommand(bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+    bytes = "echo \"toto\"";
+    cout << "buffer.ExecuteCommand('" << bytes << "') ";
+    executionStatusCode = buffer.ExecuteCommand(bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+    bytes = "echo $PATH";
+    cout << "buffer.ExecuteCommand('" << bytes << "') ";
+    executionStatusCode = buffer.ExecuteCommand(bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+    bytes = "pwd";
+    cout << "buffer.ExecuteCommand('" << bytes << "') ";
+    executionStatusCode = buffer.ExecuteCommand(bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+    bytes = "/usr/bin/curl --max-time 30 -s -L \"http://www.apple.com\"";
+    cout << "buffer.ExecuteCommand('" << bytes << "') ";
+    executionStatusCode = buffer.ExecuteCommand(bytes);
+    displayExecStatus(executionStatusCode);
+    cout << buffer << endl;
+    bytes = "/usr/bin/curl --max-time 30 -s -L \"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*\"";
+    cout << "buffer.ExecuteCommand('" << bytes << "') ";
+    executionStatusCode = buffer.ExecuteCommand(bytes);
     displayExecStatus(executionStatusCode);
     cout << buffer << endl;
 

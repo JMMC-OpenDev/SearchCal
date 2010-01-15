@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoDYN_BUF.cpp,v 1.10 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: miscoDYN_BUF.cpp,v 1.11 2010-01-15 17:27:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.9  2005/12/02 13:10:36  lafrasse
  * Added SavePartInFile() and SaveInASCIIFile().
  *
@@ -38,7 +41,7 @@
  * byte-based buffers.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoDYN_BUF.cpp,v 1.10 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoDYN_BUF.cpp,v 1.11 2010-01-15 17:27:51 lafrasse Exp $";
 /* 
  * System Headers 
  */
@@ -98,6 +101,16 @@ miscoDYN_BUF::~miscoDYN_BUF()
 /*
  * Public methods
  */
+
+/**
+ * @return A pointer on the internal miscDYN_BUF.
+ */
+miscDYN_BUF* miscoDYN_BUF::GetInternalMiscDYN_BUF()
+{
+    logExtDbg("miscoDYN_BUF::GetInternalMiscDYN_BUF()");
+
+    return &_dynBuf;
+}
 
 /**
  * @sa miscDynBufAlloc() documentation in the 'misc' module
@@ -239,6 +252,16 @@ mcsCOMPL_STAT miscoDYN_BUF::SetCommentPattern(const char *commentPattern)
     logExtDbg("miscoDYN_BUF::SetCommentPattern()");
 
     return miscDynBufSetCommentPattern(&_dynBuf, commentPattern);
+}
+
+/**
+ * @sa miscDynBufExecuteCommand() documentation in the 'misc' module
+ */
+mcsCOMPL_STAT miscoDYN_BUF::ExecuteCommand(const char *command)
+{
+    logExtDbg("miscoDYN_BUF::ExecuteCommand()");
+
+    return miscDynBufExecuteCommand(&_dynBuf, command);
 }
 
 /**
