@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2007/03/15 15:57:12  lafrasse
+ * Added handling of the '.wsdl' file type.
+ *
  * Revision 1.36  2006/01/10 14:40:39  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -86,7 +89,7 @@
  * "$MCSROOT/lib:$INTROOT/bin:$HOME/Dev/misc/src/../doc/").
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscFile.c,v 1.37 2007-03-15 15:57:12 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscFile.c,v 1.38 2010-01-15 14:18:44 lafrasse Exp $"; 
 
 
 
@@ -127,6 +130,9 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscFile.c,v 1.37 2007-
 
 /** Index defining the @em path column in the @em pathSearchList array */
 #define miscPATH_IDX  1
+
+/** Standard MCS Search Path */
+#define MCS_STANDARD_SERACH_PATH "../:$INTROOT/:$MCSROOT/"
 
 
 /* 
@@ -835,8 +841,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
     /* Test the path parameter validity */
     if ((path == NULL) || (strlen(path) == 0))
     {
-        errAdd(miscERR_NULL_PARAM, "path");
-        return NULL;
+        path = MCS_STANDARD_SERACH_PATH;
     }
 
     /* Test the fileName parameter validity */
@@ -1001,7 +1006,25 @@ char* miscLocateFile (const char *fileName)
 char* miscLocateDir (const char *dirName)
 {
     /* Return wether the directory is at the path or not */
-    return miscLocateFileInPath("../:$INTROOT/:$MCSROOT/", dirName);
+    return miscLocateFileInPath(NULL, dirName);
+}
+
+
+/**
+ * Search for an executable in the standard "../bin/:$INTROOT/bin/:$MCSROOT/bin/" MCS path.
+ *
+ * @warning This function is @em NOT re-entrant. The returned allocated buffer
+ * will be @em DEALLOCATED on next call !\n\n
+ *
+ * @param exeName the name of the searched executable.
+ *
+ * @return a pointer to the @em FIRST path where the executable is, or NULL if
+ * not found or an error occurred.
+ */
+char* miscLocateExe (const char *exeName)
+{
+    /* Return wether the executable is at the path or not */
+    return miscLocateFileInPath("../bin/:$INTROOT/bin/:$MCSROOT/bin/", exeName);
 }
 
 

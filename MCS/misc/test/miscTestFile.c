@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestFile.c,v 1.20 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: miscTestFile.c,v 1.21 2010-01-15 14:18:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.19  2005/10/10 12:00:11  lafrasse
  * Added miscLocateDir()
  *
@@ -37,7 +40,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestFile.c,v 1.20 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestFile.c,v 1.21 2010-01-15 14:18:44 lafrasse Exp $";
 /* 
  * System Headers 
  */
@@ -1161,6 +1164,74 @@ int main (int argc, char *argv[])
         printf(" -> EXIST at : %s\n", tmp);
     }
 
+    /* Test of miscLocateExe() */
+    printf("miscLocateExe() Function Test :\n\n");
+    printf("   ---------------------------------------------------------\n");
+    printf("Tested Exe = \"%s\" ", "NULL");
+    if ((tmp = miscLocateExe(NULL)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "miscLocateDir");
+    printf("Tested Exe = \"%s\" ", string);
+    if ((tmp = miscLocateExe(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "sclsvrServer");
+    printf("Tested Exe = \"%s\" ", string);
+    if ((tmp = miscLocateExe(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "logManager");
+    printf("Tested Exe = \"%s\" ", string);
+    if ((tmp = miscLocateExe(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "cvs");
+    printf("Tested Exe = \"%s\" ", string);
+    if ((tmp = miscLocateExe(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
+    strcpy (string, "error");
+    printf("Tested Exe = \"%s\" ", string);
+    if ((tmp = miscLocateExe(string)) == NULL)
+    {
+        printf(" -> DOESN'T EXIST\n");
+        errCloseStack();
+    }
+    else
+    {
+        printf(" -> EXIST at : %s\n", tmp);
+    }
 
     exit (EXIT_SUCCESS);
 }

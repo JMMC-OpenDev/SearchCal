@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscFile.h,v 1.14 2005-10-10 12:00:11 lafrasse Exp $"
+ * "@(#) $Id: miscFile.h,v 1.15 2010-01-15 14:18:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2005/10/10 12:00:11  lafrasse
+ * Added miscLocateDir()
+ *
  * Revision 1.13  2005/10/06 15:12:46  lafrasse
  * Added miscGetEnvVarIntValue function
  *
@@ -82,6 +85,8 @@ char*         miscLocateFileInPath  (const char       *path,
 char*         miscLocateFile        (const char       *fileName);
 
 char*         miscLocateDir         (const char       *dirName);
+
+char*         miscLocateExe         (const char       *exeName);
 
 #ifdef __cplusplus
 }
