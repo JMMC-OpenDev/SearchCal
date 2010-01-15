@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestDynBuf.c,v 1.21 2006-05-11 13:04:56 mella Exp $"
+ * "@(#) $Id: miscTestDynBuf.c,v 1.22 2010-01-15 17:03:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2006/05/11 13:04:56  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.20  2005/12/02 13:04:32  lafrasse
  * Added miscDynBufSavePartInFile() and miscDynBufSaveInASCIIFile().
  * Changed miscDynBufSaveInFile() to rely on miscDynBufSavePartInFile().
@@ -45,7 +48,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestDynBuf.c,v 1.21 2006-05-11 13:04:56 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestDynBuf.c,v 1.22 2010-01-15 17:03:30 lafrasse Exp $";
 /* 
  * System Headers 
  */
@@ -1134,6 +1137,60 @@ int main (int argc, char *argv[])
     printf("commentPattern = '%s'\n", miscDynBufGetCommentPattern(&dynBuf));
     printf("line           = '%s'\n", bytes);
     executionStatusCode = miscDynBufAppendCommentLine(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    errCloseStack();
+    printf("\n");
+
+
+
+    /* miscDynBufExecuteCommand */
+    printf("---------------------------------------------------------------\n");
+    printf("------------------\n");
+    miscDynBufInit(&dynBuf);
+    bytes = "toto";
+    printf("Executing '%s':\n", bytes);
+    executionStatusCode = miscDynBufExecuteCommand(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    errCloseStack();
+    printf("\n");
+    printf("------------------\n");
+    bytes = "echo \"toto\"";
+    printf("Executing '%s':\n", bytes);
+    executionStatusCode = miscDynBufExecuteCommand(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    errCloseStack();
+    printf("\n");
+    printf("------------------\n");
+    bytes = "echo $PATH";
+    printf("Executing '%s':\n", bytes);
+    executionStatusCode = miscDynBufExecuteCommand(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    errCloseStack();
+    printf("\n");
+    printf("------------------\n");
+    bytes = "pwd";
+    printf("Executing '%s':\n", bytes);
+    executionStatusCode = miscDynBufExecuteCommand(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    errCloseStack();
+    printf("\n");
+    printf("------------------\n");
+    bytes = "/usr/bin/curl --max-time 30 -s -L \"http://www.apple.com\"";
+    printf("Executing '%s':\n", bytes);
+    executionStatusCode = miscDynBufExecuteCommand(&dynBuf, bytes);
+    displayExecStatus(executionStatusCode);
+    displayDynBuf(&dynBuf);
+    errCloseStack();
+    printf("\n");
+    printf("------------------\n");
+    bytes = "/usr/bin/curl --max-time 30 -s -L \"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*\"";
+    printf("Executing '%s':\n", bytes);
+    executionStatusCode = miscDynBufExecuteCommand(&dynBuf, bytes);
     displayExecStatus(executionStatusCode);
     displayDynBuf(&dynBuf);
     errCloseStack();

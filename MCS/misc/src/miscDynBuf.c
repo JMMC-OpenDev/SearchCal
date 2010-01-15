@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.42 2007-02-07 14:44:12 gzins Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.43 2010-01-15 17:03:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2007/02/07 14:44:12  gzins
+ * Fixed warning in doxygne documenation
+ *
  * Revision 1.41  2006/01/10 14:40:39  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -185,11 +188,13 @@
  * @endcode
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.42 2007-02-07 14:44:12 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.43 2010-01-15 17:03:30 lafrasse Exp $"; 
 
 
+/* Needed to preclude warnings on popen() and pclose() */
+#define  _BSD_SOURCE 1
 
-/* 
+/*
  * System Headers
  */
 #include <string.h>
@@ -199,6 +204,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.42 200
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/wait.h>
 
 
 /*
@@ -207,7 +213,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.42 200
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "miscDynBuf.h"
@@ -216,7 +222,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.42 200
 #include "miscErrors.h"
 
 
-/* 
+/*
  * Local functions declaration 
  */
 static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf);
@@ -234,7 +240,7 @@ static mcsCOMPL_STAT miscDynBufChkBytesAndLengthParams(const char *bytes,
 static mcsUINT32 miscDynBufChkStringParam(const char *str);
 
 
-/* 
+/*
  * Local functions definition
  */
 
@@ -1125,6 +1131,75 @@ const char* miscDynBufGetNextCommentLine(const miscDYN_BUF *dynBuf,
            == mcsFALSE));
 
     return currentPos;
+}
+
+
+/**
+ * Run the given shell command and store its STDOUT into a Dynamic Buffer.
+ *
+ * @warning
+ * - The given Dynamic Buffer content (if any) will be @em destroyed by this
+ * function call.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure in which STDOUT will be put as a null-terminated string.
+ * @param command the shell command that should be performed.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
+                                       const char  *command)
+{
+    /* Destroy the received Dynamic Buffer first */
+    if (miscDynBufDestroy(dynBuf) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Executing the command */
+    FILE* process = popen(command, "r");
+    if (process == NULL)
+    {
+        errAdd(miscERR_COMMAND_EXEC, command);
+        return mcsFAILURE;
+    }
+
+    /* Keep reading command result, until an error occurs */
+    mcsSTRING1024 tempBuffer;
+    mcsUINT32 tempBufferLength = sizeof(tempBuffer);
+    mcsUINT32 totalReadSize = 0;
+    while (feof(process) == 0)
+    {
+        /* Put the command result in the temp buffer */
+        totalReadSize = fread(tempBuffer, 1, tempBufferLength, process);
+        
+        /* Put temp buffer content in the true output buffer */
+        if (miscDynBufAppendBytes(dynBuf, tempBuffer, totalReadSize) == mcsFAILURE)
+        {
+            break;
+        }
+    }
+
+    /* Add trailing '\0' in order to be able to read output as a string */
+    miscDynBufAppendBytes(dynBuf, "\0", 1);
+
+    /* pclose() status check */
+    int pcloseStatus = pclose(process);
+    if (pcloseStatus == -1)
+    {
+        errAdd(miscERR_FUNC_CALL, "pclose", strerror(errno));
+        return mcsFAILURE;
+    }
+
+    /* Command execution status check */
+    int commandStatus = WEXITSTATUS(pcloseStatus);
+    if (commandStatus != 0)
+    {
+        errAdd(miscERR_COMMAND_STATUS, command, commandStatus);
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
 }
 
 
