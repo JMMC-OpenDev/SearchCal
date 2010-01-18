@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestLD2UD.c,v 1.2 2010-01-15 17:42:43 lafrasse Exp $"
+ * "@(#) $Id: alxTestLD2UD.c,v 1.3 2010-01-18 15:33:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/01/15 17:42:43  lafrasse
+ * Added mnimal error management.
+ *
  * Revision 1.1  2010/01/08 22:29:04  lafrasse
  * Added preliminary support for alxLD2UD.
  *
@@ -61,7 +64,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.2 2010-01-15 17:42:43 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.3 2010-01-18 15:33:24 lafrasse Exp $"; 
 
 
 /* 
@@ -116,7 +119,7 @@ int main (int argc, char *argv[])
     logSetStdoutLogLevel(logTRACE);
 
     alxUNIFORM_DIAMETERS ud;
-    if (alxComputeUDFromLDAndSP(1.0, "ABCD", &ud) == mcsFAILURE)
+    if (alxComputeUDFromLDAndSP(1.185, "K3III", &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
     }
@@ -133,6 +136,14 @@ int main (int argc, char *argv[])
         printf("ud.v = %f\n", ud.v);
     }    
 
+    if (alxComputeUDFromLDAndSP(1.185, "ZERTY", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        printf("There is a bug in error handling.\n");
+    }
     /* Close MCS services */
     mcsExit();
     
