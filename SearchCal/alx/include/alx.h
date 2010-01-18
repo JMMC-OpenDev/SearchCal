@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.24 2010-01-08 22:29:04 lafrasse Exp $"
+ * "@(#) $Id: alx.h,v 1.25 2010-01-18 15:52:37 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2010/01/08 22:29:04  lafrasse
+ * Added preliminary support for alxLD2UD.
+ *
  * Revision 1.23  2009/10/27 09:58:58  lafrasse
  * Added a constant to define what is an arcsec in degrees.
  *
@@ -281,9 +284,11 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT* av,
                                               mcsFLOAT gLat,
                                               mcsFLOAT gLon);
 
-mcsCOMPL_STAT alxComputeUDFromLDAndSP(mcsDOUBLE ld,
-                                      mcsSTRING32 sp,
+mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
+                                      const mcsSTRING32 sp,
                                       alxUNIFORM_DIAMETERS* ud);
+
+mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
 
 #ifdef __cplusplus
 }

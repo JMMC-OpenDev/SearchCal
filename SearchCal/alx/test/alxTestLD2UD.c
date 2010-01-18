@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestLD2UD.c,v 1.3 2010-01-18 15:33:24 lafrasse Exp $"
+ * "@(#) $Id: alxTestLD2UD.c,v 1.4 2010-01-18 15:52:37 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/01/18 15:33:24  lafrasse
+ * Added execution error test.
+ *
  * Revision 1.2  2010/01/15 17:42:43  lafrasse
  * Added mnimal error management.
  *
@@ -64,7 +67,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.3 2010-01-18 15:33:24 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.4 2010-01-18 15:52:37 lafrasse Exp $"; 
 
 
 /* 
@@ -125,15 +128,7 @@ int main (int argc, char *argv[])
     }
     else
     {
-        printf("ud.b = %f\n", ud.b);
-        printf("ud.i = %f\n", ud.i);
-        printf("ud.j = %f\n", ud.j);
-        printf("ud.h = %f\n", ud.h);
-        printf("ud.k = %f\n", ud.k);
-        printf("ud.l = %f\n", ud.l);
-        printf("ud.n = %f\n", ud.n);
-        printf("ud.r = %f\n", ud.r);
-        printf("ud.v = %f\n", ud.v);
+        alxShowUNIFORM_DIAMETERS(&ud);
     }    
 
     if (alxComputeUDFromLDAndSP(1.185, "ZERTY", &ud) == mcsFAILURE)

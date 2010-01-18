@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.2 2010-01-15 17:44:22 lafrasse Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.3 2010-01-18 15:52:37 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/01/15 17:44:22  lafrasse
+ * Added use of miscLocateExe() to properly resolve 'jmcsLD2UD' executable path.
+ * Moved shell command execution code to miscDynBufExecuteCommand().
+ * Added log.
+ *
  * Revision 1.1  2010/01/08 22:29:04  lafrasse
  * Added preliminary support for alxLD2UD.
  *
@@ -22,7 +27,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.2 2010-01-15 17:44:22 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.3 2010-01-18 15:52:37 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -70,8 +75,8 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.2 2010-0
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeUDFromLDAndSP(mcsDOUBLE ld,
-                                      mcsSTRING32 sp,
+mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
+                                      const mcsSTRING32 sp,
                                       alxUNIFORM_DIAMETERS* ud)
 {
     logTrace("alxComputeUDFromLDAndSP()");
@@ -110,7 +115,6 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(mcsDOUBLE ld,
     miscDYN_BUF resultBuffer;
     if (miscDynBufInit(&resultBuffer) == mcsFAILURE)
     {
-        /* Handle error */
         return mcsFAILURE;
     }
 
@@ -126,7 +130,6 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(mcsDOUBLE ld,
     /* Remove any trailing or leading '\n' */
     if (miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n") == mcsFAILURE)
     {
-        /* Handle error */
         return mcsFAILURE;
     }
 
@@ -204,6 +207,37 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(mcsDOUBLE ld,
 
     miscDynBufDestroy(&resultBuffer);
     return mcsSUCCESS;
+}
+
+/**
+ * Log content of an alxUNIFORM_DIAMETERS strucutre on STDOUT.
+ *
+ * @param ud uniform diameters to log.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
+{
+    logTrace("alxComputeUDFromLDAndSP()");
+
+    /* Check parameter validity */
+    if (ud == NULL)
+    {
+        errAdd(alxERR_NULL_PARAMETER, "ud");
+        return mcsFAILURE;
+    }
+
+    printf("alxUNIFORM_DIAMETERS struct at %p contains:\n", ud);
+    printf("\tud.b = %lf\n", ud->b);
+    printf("\tud.i = %lf\n", ud->i);
+    printf("\tud.j = %lf\n", ud->j);
+    printf("\tud.h = %lf\n", ud->h);
+    printf("\tud.k = %lf\n", ud->k);
+    printf("\tud.l = %lf\n", ud->l);
+    printf("\tud.n = %lf\n", ud->n);
+    printf("\tud.r = %lf\n", ud->r);
+    printf("\tud.v = %lf\n", ud->v);
 }
 
 /*___oOo___*/
