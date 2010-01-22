@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.41 2010-01-11 17:20:25 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.42 2010-01-22 15:51:31 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2010/01/11 17:20:25  lafrasse
+ * Added columns for UD diamters.
+ *
  * Revision 1.40  2007/05/11 15:45:34  gzins
  * Aligned prototype of methods related to calibrator's properties completion
  *
@@ -173,9 +176,11 @@ public:
   
     // Complete calibrator properties
     mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
- 
-    // Return whether the calibrator has a coherent diameter or not
-    virtual mcsLOGICAL IsDiameterOk();
+    mcsCOMPL_STAT CompleteWithParallax(mcsLOGICAL isBright);
+    mcsCOMPL_STAT CompleteWithoutParallax();
+
+     // Return whether the calibrator has a coherent diameter or not
+     virtual mcsLOGICAL IsDiameterOk();
 
 protected:
     
