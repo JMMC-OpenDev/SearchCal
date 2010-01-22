@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.h,v 1.8 2010-01-22 15:35:29 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.h,v 1.9 2010-01-22 15:41:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/01/22 15:35:29  lafrasse
+ * Log refinments.
+ *
  * Revision 1.7  2007/11/12 10:32:15  lafrasse
  * Update Web Service API function name.
  * Update documentation and traces.
@@ -50,7 +53,7 @@
 //gsoap ns service name: sclws
 //gsoap ns service style: rpc
 //gsoap ns service encoding: literal
-//gsoap ns service location: http://jmmc.fr:8079
+//gsoap ns service location: http://jmmc.fr:8078
 //gsoap ns schema namespace: urn:sclws
 
 /*
