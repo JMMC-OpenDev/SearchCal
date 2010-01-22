@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.14 2009-02-03 08:53:08 mella Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.15 2010-01-22 15:35:29 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2009/02/03 08:53:08  mella
+* Made changes to fall back on UCD1 with viz-bin service
+*
 * Revision 1.13  2008/03/10 07:53:42  lafrasse
 * Changed VIZIER URI to reflect CDS changes.
 * Minor modifications on comments and log traces.
@@ -54,7 +57,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.14 2009-02-03 08:53:08 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.15 2010-01-22 15:35:29 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -340,7 +343,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 {
     logTrace("vobsREMOTE_CATALOG::WriteQueryURIPart()");
 
-    if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")
+//    if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")
+    if (miscDynBufAppendString(&_query, "http://viz-beta.u-strasbg.fr/viz-bin/")
         == mcsFAILURE)
     {
         return mcsFAILURE;

@@ -3,11 +3,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.h,v 1.7 2007-11-12 10:32:15 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.h,v 1.8 2010-01-22 15:35:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2007/11/12 10:32:15  lafrasse
+ * Update Web Service API function name.
+ * Update documentation and traces.
+ * Added support for command line option parsing and handling.
+ *
  * Revision 1.6  2007/10/31 11:46:56  gzins
  * Set web-service port to 8078
  *
@@ -45,7 +50,7 @@
 //gsoap ns service name: sclws
 //gsoap ns service style: rpc
 //gsoap ns service encoding: literal
-//gsoap ns service location: http://jmmc.fr:8078
+//gsoap ns service location: http://jmmc.fr:8079
 //gsoap ns schema namespace: urn:sclws
 
 /*

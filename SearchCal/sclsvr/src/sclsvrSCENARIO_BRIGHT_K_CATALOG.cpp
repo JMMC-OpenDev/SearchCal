@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.2 2010-01-11 17:19:32 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.3 2010-01-22 15:35:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/01/11 17:19:32  lafrasse
+ * Changed magnitude filter band selection to an hardcoded 'K' instead of the '1'
+ * from the request.
+ *
  * Revision 1.1  2009/12/17 15:14:32  lafrasse
  * *** empty log message ***
  *
@@ -16,7 +20,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.2 2010-01-11 17:19:32 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.3 2010-01-22 15:35:29 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -49,8 +53,8 @@ sclsvrSCENARIO_BRIGHT_K_CATALOG::sclsvrSCENARIO_BRIGHT_K_CATALOG(sdbENTRY* progr
     vobsSCENARIO(progress),
     _originFilter("K origin = 2mass filter"),
     _magnitudeFilter("K mag filter"),
-    _filterList("filter List"),
-    _bvFilter("B-V filter")
+    _filterList("filter List")
+/*   , _bvFilter("B-V filter")*/
 {
 }
 
@@ -149,9 +153,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     }
 
     // BUILD FILTER USED
+/*
     // Build B-V < 1 filter
     _bvFilter.SetMagnitudeValue(1);
     _bvFilter.Enable();
+*/
     // Build origin = 2MASS for Kmag filter
     _originFilter.SetOriginName(vobsCATALOG_MASS_ID ,vobsSTAR_PHOT_JHN_K);
     _originFilter.Enable();
@@ -168,8 +174,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     // PRIMARY REQUEST
     
     // I/280
+/*
     if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP,
                  vobsCOPY, NULL, &_bvFilter, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+*/
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP,
+                 vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.94 2010-01-11 17:21:42 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.95 2010-01-22 15:35:29 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.94  2010/01/11 17:21:42  lafrasse
+ * Added UD diameters columns, and a way to compute them.
+ *
  * Revision 1.93  2009/04/17 15:28:10  lafrasse
  * Updated log level from Info to Test to clean sclws log output.
  *
@@ -245,7 +248,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.94 2010-01-11 17:21:42 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.95 2010-01-22 15:35:29 lafrasse Exp $"; 
 
 
 /* 
@@ -387,128 +390,128 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         }
     }
 
-    // Check paralax
-    mcsFLOAT paralax;
-    mcsLOGICAL paralaxIsOK = mcsFALSE;
-    // If paralax of the star if known
+    // Check parallax
+    mcsFLOAT parallax;
+    mcsLOGICAL parallaxIsOK = mcsFALSE;
+    // If parallax of the star if known
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
     {
-        // Check paralax
-        mcsFLOAT paralaxError  = -1.0;
-        GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax);
+        // Check parallax
+        mcsFLOAT parallaxError  = -1.0;
+        GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &parallax);
 
         // Get error
         if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG_ERROR) == mcsTRUE)
         {
-            GetPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR, &paralaxError);
+            GetPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR, &parallaxError);
 
-            // If paralax is negative 
-            if (paralax <= 0) 
+            // If parallax is negative 
+            if (parallax <= 0) 
             {
                 if (request.IsBright() == mcsTRUE)
                 {
-                    logTest("star %s - paralax %.2f(%.2f) is not valid; "
+                    logTest("star %s - parallax %.2f(%.2f) is not valid; "
                             "could not compute diameter", starId, 
-                            paralax, paralaxError);
+                            parallax, parallaxError);
                 }
                 else
                 {
-                    logTest("star %s - paralax %.2f(%.2f) is not valid...",
-                            starId, paralax, paralaxError);
+                    logTest("star %s - parallax %.2f(%.2f) is not valid...",
+                            starId, parallax, parallaxError);
                 }            
-                // Clear paralax values; invalid paralax is not shown to user
+                // Clear parallax values; invalid parallax is not shown to user
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
-            // If paralax is less than 1 mas 
-            else if (paralax < 1) 
+            // If parallax is less than 1 mas 
+            else if (parallax < 1) 
             {
                 if (request.IsBright() == mcsTRUE)
                 {
-                    logTest("star %s - paralax %.2f(%.2f) less than 1 mas; "
+                    logTest("star %s - parallax %.2f(%.2f) less than 1 mas; "
                             "could not compute diameter", starId, 
-                            paralax, paralaxError);
+                            parallax, parallaxError);
                 }
                 else
                 {
-                    logTest("star %s - paralax %.2f(%.2f) less than 1 mas...",
-                            starId, paralax, paralaxError);
+                    logTest("star %s - parallax %.2f(%.2f) less than 1 mas...",
+                            starId, parallax, parallaxError);
                 }            
-                // Clear paralax values; invalid paralax is not shown to user
+                // Clear parallax values; invalid parallax is not shown to user
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
-            // If paralax error is invalid 
-            else if (paralaxError <= 0.0) 
+            // If parallax error is invalid 
+            else if (parallaxError <= 0.0) 
             {
                 if (request.IsBright() == mcsTRUE)
                 {
-                    logTest("star %s - paralax error %.2f is not valid; "
+                    logTest("star %s - parallax error %.2f is not valid; "
                             "could not compute diameter", starId, 
-                            paralaxError);
+                            parallaxError);
                 }
                 else
                 {
-                    logTest("star %s - paralax error %.2f is not valid...", 
-                            starId, paralaxError);
+                    logTest("star %s - parallax error %.2f is not valid...", 
+                            starId, parallaxError);
                 }
-                // Clear paralax values; invalid paralax is not shown to user
+                // Clear parallax values; invalid parallax is not shown to user
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
-            // If paralax error is too high 
-            else if ((paralaxError/paralax) >= 0.25)
+            // If parallax error is too high 
+            else if ((parallaxError / parallax) >= 0.25)
             {
                 if (request.IsBright() == mcsTRUE)
                 {
-                    logTest("star %s - paralax %.2f(%.2f) is not valid; "
+                    logTest("star %s - parallax %.2f(%.2f) is not valid; "
                             "could not compute diameter", starId, 
-                            paralax, paralaxError);
+                            parallax, parallaxError);
                 }
                 else
                 {
-                    logTest("star %s - paralax %.2f(%.2f) is not valid...", 
-                            starId, paralax, paralaxError);
+                    logTest("star %s - parallax %.2f(%.2f) is not valid...", 
+                            starId, parallax, parallaxError);
                 }
-                // Clear paralax values; invalid paralax is not shown to user
+                // Clear parallax values; invalid parallax is not shown to user
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
-            // Paralax OK
+            // parallax OK
             else
             {
-                paralaxIsOK = mcsTRUE;
-                logTest("star %s - paralax %.2f(%.2f) is OK...", starId, 
-                        paralax, paralaxError);
+                parallaxIsOK = mcsTRUE;
+                logTest("star %s - parallax %.2f(%.2f) is OK...", starId, 
+                        parallax, parallaxError);
             }                
         }
-        // If paralax error is unknown 
+        // If parallax error is unknown 
         else
         {
             if (request.IsBright() == mcsTRUE)
             {
-                logTest("star %s - paralax error is unknown; "
+                logTest("star %s - parallax error is unknown; "
                         "could not compute diameter", starId);
             }
             else
             {
-                logTest("star %s - paralax error is unknown...", starId);
+                logTest("star %s - parallax error is unknown...", starId);
             }
-            // Clear paralax value; invalid paralax is not shown to user
+            // Clear parallax value; invalid parallax is not shown to user
             ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
         }
     }
-    // Paralax is unknown 
+    // parallax is unknown 
     else
     {
         if (request.IsBright() == mcsTRUE)
         {
-            logTest("star %s - paralax is unknown; "
+            logTest("star %s - parallax is unknown; "
                     "could not compute diameter", starId); 
         }
         else
         {
-            logTest("star %s - paralax is unknown", starId);
+            logTest("star %s - parallax is unknown", starId);
         }
     }
 
@@ -527,8 +530,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
         // If it is not the scenario for N band
         if (strcmp(band, "N") != 0)
         {
-            // If paralax of the star if known
-            if (paralaxIsOK == mcsTRUE)
+            // If parallax of the star if known
+            if (parallaxIsOK == mcsTRUE)
             {
                 // Compute real magnitudes, missing magnitudes and the angular
                 // diameter 
@@ -603,9 +606,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             return mcsFAILURE;
         }
         
-        // If paralax is OK, compute real magnitudes, missing magnitudes and the
+        // If parallax is OK, compute real magnitudes, missing magnitudes and the
         // angular diameter
-        if (paralaxIsOK == mcsTRUE)
+        if (parallaxIsOK == mcsTRUE)
         {
             // Get the extinction ratio
             if (ComputeExtinctionCoefficient() == mcsFAILURE)
@@ -643,7 +646,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 return mcsFAILURE;
             }
         }
-        // Paralax unknown
+        // parallax unknown
         else
         {
             // Temporary stars with/without iterstellar absorption
@@ -1016,8 +1019,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 }
 
 /**
- * Compute extinction coefficient
- *
+ * Compute extinction coefficient.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -1026,13 +1028,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
     logTrace("sclsvrCALIBRATOR::ComputeExtinctionCoefficient()");
 
-    mcsFLOAT paralax, gLat, gLon;
+    mcsFLOAT parallax, gLat, gLon;
     mcsFLOAT av;
 
-    // Get the value of the paralax
+    // Get the value of the parallax
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
     {
-        if (GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &paralax) == mcsFAILURE)
+        if (GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &parallax) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -1075,7 +1077,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     }
 
     // Compute Extinction ratio
-    if (alxComputeExtinctionCoefficient(&av, paralax, gLat, gLon) == mcsFAILURE)
+    if (alxComputeExtinctionCoefficient(&av, parallax, gLat, gLon) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1765,9 +1767,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 {
     logTrace("sclsvrCALIBRATOR::ComputeUDFromLDAndSP()");
 
-    // Get the value of the Spectral Type
-    mcsSTRING32 spType;
-    strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
+    // Compute UD only if LD are already OK
+    if (IsDiameterOk() == mcsFALSE)
+    {
+        logTest("Aborting (diameters are not OK).\n");
+        return mcsSUCCESS;
+    }
 
     // UD Output struct initialization
     alxUNIFORM_DIAMETERS ud;
@@ -1781,25 +1786,33 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     ud.r = FP_NAN;
     ud.v = FP_NAN;
 
-    // Compute UD only if LD are already OK
-    if (IsDiameterOk() == mcsTRUE)
+    // Get the value of the Spectral Type
+    mcsSTRING32 spType;
+    strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
+    if (strlen(spType) < 1)
     {
-        // Get LD diameter
-        mcsFLOAT ld = FP_NAN;
-        // Retrieve DIAM_VK
-        if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-
-        // Compute UD
-        if (alxComputeUDFromLDAndSP(ld, spType, &ud) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        logTest("Aborting (SpType unknown).\n");
+        return mcsFAILURE;
     }
 
-    // Set each property accordinaly
+    // Get LD diameter
+    mcsFLOAT ld = FP_NAN;
+    // Retrieve DIAM_VK
+    if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
+    {
+        logTest("Aborting (LD unknown).\n");
+        return mcsFAILURE;
+    }
+
+    logTest("Computing UDs for LD='%f' and SP='%s'...\n", ld, spType);
+    // Compute UD
+    if (alxComputeUDFromLDAndSP(ld, spType, &ud) == mcsFAILURE)
+    {
+        logTest("Aborting (error while computing).\n");
+        return mcsFAILURE;
+    }
+
+    // Set each UD_* property accordinaly
     if (SetPropertyValue(sclsvrCALIBRATOR_UD_B, ud.b, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1835,6 +1848,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     if (SetPropertyValue(sclsvrCALIBRATOR_UD_V, ud.v, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
     {
         return mcsFAILURE;
+    }
+
+    if (logGetStdoutLogLevel() >= logTEST)
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
     }
 
     return mcsSUCCESS;
