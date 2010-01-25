@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.83 2009-12-17 14:16:59 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.84 2010-01-25 09:23:01 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.83  2009/12/17 14:16:59  lafrasse
+* Changed MIDI Vflag column UCD from 'CODE_VARIAB' to 'CODE_VARIAB_MIDI' to resolve bug #1259055516 form Daniel BONNEAU.
+*
 * Revision 1.82  2009/12/09 09:57:14  lafrasse
 * Log refinments.
 *
@@ -230,7 +233,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.83 2009-12-17 14:16:59 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.84 2010-01-25 09:23:01 mella Exp $"; 
 
 /*
  * System Headers
@@ -1115,13 +1118,16 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
 
 /**
  * Update a star with the properies of another given one.
- *
+ * By default ( overwrite = mcsFALSE ) it does not modify the content if
+ * the property has already been set.
  * @param star the other star.
+ * @param overwrite a true flag indicates to copy the value even if it is
+ * already set. (default value set to false)
  *
  * @return always mcsSUCCESS.
  *
  */
-mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
+mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star, mcsLOGICAL overwrite)
 {
     logTrace("vobsSTAR::Update()");
 
@@ -1136,7 +1142,7 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star)
         const char* propertyIdPtr = propertyID.c_str();
 
         // If the current property is not yet defined
-        if (IsPropertySet(propertyIdPtr) == mcsFALSE)
+        if (IsPropertySet(propertyIdPtr) == mcsFALSE || overwrite == mcsTRUE )
         {
             // Use the property from the given star
             _propertyList[propertyID] = star._propertyList[propertyID];

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.55 2009-12-17 14:16:58 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.56 2010-01-25 09:23:01 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.55  2009/12/17 14:16:58  lafrasse
+* Changed MIDI Vflag column UCD from 'CODE_VARIAB' to 'CODE_VARIAB_MIDI' to resolve bug #1259055516 form Daniel BONNEAU.
+*
 * Revision 1.54  2009/07/16 13:47:13  lafrasse
 * Added VFlag column for MIDI catalog.
 *
@@ -298,7 +301,7 @@ public:
                               vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL);
 
     // Update the star properties with the given star ones
-    virtual mcsCOMPL_STAT Update(vobsSTAR &star);
+    virtual mcsCOMPL_STAT Update(vobsSTAR &star, mcsLOGICAL overwrite=mcsFALSE);
 
     // Return the number of star properties
     virtual mcsINT32 NbProperties(void);
