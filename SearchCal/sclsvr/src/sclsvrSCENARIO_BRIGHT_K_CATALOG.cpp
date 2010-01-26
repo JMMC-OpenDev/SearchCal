@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.3 2010-01-22 15:35:29 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.4 2010-01-26 14:16:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/01/22 15:35:29  lafrasse
+ * Log refinments.
+ *
  * Revision 1.2  2010/01/11 17:19:32  lafrasse
  * Changed magnitude filter band selection to an hardcoded 'K' instead of the '1'
  * from the request.
@@ -20,7 +23,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.3 2010-01-22 15:35:29 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.4 2010-01-26 14:16:06 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -307,7 +310,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
     
-    
+    // B/wsd/wsd
+    if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS, &_starListS,
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     return mcsSUCCESS;
 }
 

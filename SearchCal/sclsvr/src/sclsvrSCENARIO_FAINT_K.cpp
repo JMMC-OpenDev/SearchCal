@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.23 2009-04-20 14:41:41 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.24 2010-01-26 14:16:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.23  2009/04/20 14:41:41  lafrasse
+ * Corrected copy-paste errors.
+ *
  * Revision 1.22  2009/04/20 14:37:42  lafrasse
  * Added spectral binary detection (SBC9 catalog).
  *
@@ -81,7 +84,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.23 2009-04-20 14:41:41 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.24 2010-01-26 14:16:06 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -326,6 +329,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     
     // B/sb9
     if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS1, &_starListS1,
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    // B/wsd/wsd
+    if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS1, &_starListS1,
                  vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
