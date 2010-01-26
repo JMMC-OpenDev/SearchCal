@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.84 2010-01-25 09:23:01 mella Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.85 2010-01-26 14:15:38 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.84  2010/01/25 09:23:01  mella
+* add overwrite flag (false by default) to Uptade()
+*
 * Revision 1.83  2009/12/17 14:16:59  lafrasse
 * Changed MIDI Vflag column UCD from 'CODE_VARIAB' to 'CODE_VARIAB_MIDI' to resolve bug #1259055516 form Daniel BONNEAU.
 *
@@ -233,7 +236,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.84 2010-01-25 09:23:01 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.85 2010-01-26 14:15:38 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1298,6 +1301,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
                 "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.max=9999&amp;Seq===%20${SBC9}",
                 "SBC9 identifier, click to call VizieR on this object");
+    AddProperty(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.max=9999&amp;WDS===${WDS}",
+                "WDS identifier, click to call VizieR on this object");
     AddProperty(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);
     AddProperty(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET);

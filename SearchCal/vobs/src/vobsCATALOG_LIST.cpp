@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.9 2009-05-04 15:20:26 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.10 2010-01-26 14:15:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2009/05/04 15:20:26  lafrasse
+ * Removed all references to unused CHARM catalog.
+ *
  * Revision 1.8  2009/02/09 16:26:10  lafrasse
  * Added Spectral Binary catalog (SB9).
  *
@@ -37,7 +40,7 @@
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.9 2009-05-04 15:20:26 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.10 2010-01-26 14:15:38 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -81,6 +84,7 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
     _catalogList[vobsCATALOG_SBSC_ID]     = &_sbsc;
     _catalogList[vobsCATALOG_UNSO_ID]     = &_unso;
     _catalogList[vobsCATALOG_SB9_ID]      = &_sb9;
+    _catalogList[vobsCATALOG_WDS_ID]      = &_wds;
 }
 
 /**

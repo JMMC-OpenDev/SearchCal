@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.19 2009-05-04 15:20:26 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.20 2010-01-26 14:15:38 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2009/05/04 15:20:26  lafrasse
+* Removed all references to unused CHARM catalog.
+*
 * Revision 1.18  2009/02/26 10:39:03  lafrasse
 * Corrected SB9 catalog ID.
 *
@@ -66,6 +69,7 @@
 #define vobsCATALOG_SBSC_ID         "V/36B/bsc4s"
 #define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_SB9_ID          "B/sb9/main"
+#define vobsCATALOG_WDS_ID          "B/wds/wds"
 
 /*
  * MCS header

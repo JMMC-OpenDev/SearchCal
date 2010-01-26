@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.34 2009-12-09 09:57:53 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.35 2010-01-26 14:15:38 lafrasse Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.34  2009/12/09 09:57:53  lafrasse
+# Added alx library dependency for vobsDISTANCE_FILTER.
+#
 # Revision 1.33  2009/11/05 14:20:29  mella
 # move searchcal votable converter to HTML into sclgui
 #
@@ -139,6 +142,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_MIDI.h			\
 				  vobsCATALOG_UNSO.h			\
 				  vobsCATALOG_SB9.h 	   		\
+				  vobsCATALOG_WDS.h 	   		\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
@@ -188,6 +192,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_MIDI 			\
 				   vobsCATALOG_UNSO 			\
 				   vobsCATALOG_SB9   			\
+				   vobsCATALOG_WDS   			\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.37 2009-12-17 14:16:59 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.38 2010-01-26 14:15:38 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.37  2009/12/17 14:16:59  lafrasse
+* Changed MIDI Vflag column UCD from 'CODE_VARIAB' to 'CODE_VARIAB_MIDI' to resolve bug #1259055516 form Daniel BONNEAU.
+*
 * Revision 1.36  2009/07/16 13:47:14  lafrasse
 * Added VFlag column for MIDI catalog.
 *
@@ -116,7 +119,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.37 2009-12-17 14:16:59 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.38 2010-01-26 14:15:38 lafrasse Exp $"; 
 
 
 /* 
@@ -633,6 +636,10 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         else if (strcmp(paramName, "Seq") == 0) // SBC9 catalog ID
         {
             return vobsSTAR_ID_SB9;
+        }
+        else if (strcmp(paramName, "WDS") == 0) // WDS catalog ID
+        {
+            return vobsSTAR_ID_WDS;
         }
     }
 

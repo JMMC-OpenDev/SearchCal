@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.h,v 1.6 2009-05-04 15:20:26 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.h,v 1.7 2010-01-26 14:15:38 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2009/05/04 15:20:26  lafrasse
+ * Removed all references to unused CHARM catalog.
+ *
  * Revision 1.5  2009/02/09 16:26:10  lafrasse
  * Added Spectral Binary catalog (SB9).
  *
@@ -63,6 +66,7 @@
 #include "vobsCATALOG_MIDI.h"
 #include "vobsCATALOG_UNSO.h"
 #include "vobsCATALOG_SB9.h"
+#include "vobsCATALOG_WDS.h"
 
 /*
  * Class declaration
@@ -109,6 +113,7 @@ private:
     vobsCATALOG_MIDI     _midi;
     vobsCATALOG_UNSO     _unso;
     vobsCATALOG_SB9      _sb9;
+    vobsCATALOG_WDS      _wds;
 };
 
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.56 2010-01-25 09:23:01 mella Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.57 2010-01-26 14:15:38 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.56  2010/01/25 09:23:01  mella
+* add overwrite flag (false by default) to Uptade()
+*
 * Revision 1.55  2009/12/17 14:16:58  lafrasse
 * Changed MIDI Vflag column UCD from 'CODE_VARIAB' to 'CODE_VARIAB_MIDI' to resolve bug #1259055516 form Daniel BONNEAU.
 *
@@ -165,6 +168,7 @@
 #define vobsSTAR_ID_2MASS                       "ID_2MASS"
 #define vobsSTAR_ID_DENIS                       "ID_DENIS"
 #define vobsSTAR_ID_SB9                         "ID_SB9"
+#define vobsSTAR_ID_WDS                         "ID_WDS"
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_RA_OTHER                "POS_EQ_RA_OTHER"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
