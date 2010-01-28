@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.97 2010-01-28 16:34:06 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.98 2010-01-28 16:45:49 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.97  2010/01/28 16:34:06  lafrasse
+ * Removed no more needed UD diameter structure initialization.
+ *
  * Revision 1.96  2010/01/22 15:49:05  mella
  * factorization of diameters computation to be refined
  *
@@ -254,7 +257,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
- static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.97 2010-01-28 16:34:06 lafrasse Exp $"; 
+ static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.98 2010-01-28 16:45:49 lafrasse Exp $"; 
 
 
 /* 
@@ -1768,7 +1771,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     // Compute UD only if LD are already OK
     if (IsDiameterOk() == mcsFALSE)
     {
-        logTest("Aborting (diameters are not OK).\n");
+        logTest("Skipping (diameters are not OK).\n");
         return mcsSUCCESS;
     }
 
@@ -1777,8 +1780,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
     if (strlen(spType) < 1)
     {
-        logTest("Aborting (SpType unknown).\n");
-        return mcsFAILURE;
+        logTest("Skipping (SpType unknown).\n");
+        return mcsSUCCESS;
     }
 
     // Get LD diameter
@@ -1786,8 +1789,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     // Retrieve DIAM_VK
     if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
     {
-        logTest("Aborting (LD unknown).\n");
-        return mcsFAILURE;
+        logTest("Skipping (LD unknown).\n");
+        return mcsSUCCESS;
     }
 
     // Compute UD
@@ -1829,6 +1832,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
         return mcsFAILURE;
     }
     if (SetPropertyValue(sclsvrCALIBRATOR_UD_R, ud.r, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_U, ud.u, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -2281,6 +2288,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
     AddProperty(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
     AddProperty(sclsvrCALIBRATOR_UD_R, "UD_R", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
+    AddProperty(sclsvrCALIBRATOR_UD_U, "UD_U", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
     AddProperty(sclsvrCALIBRATOR_UD_V, "UD_V", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
     AddProperty(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av",
                 vobsFLOAT_PROPERTY, "-", "%.3f");

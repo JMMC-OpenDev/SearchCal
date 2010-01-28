@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.42 2010-01-22 15:51:31 mella Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.43 2010-01-28 16:45:49 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2010/01/22 15:51:31  mella
+ * add completeWith/WithoutParallax methods
+ *
  * Revision 1.41  2010/01/11 17:20:25  lafrasse
  * Added columns for UD diamters.
  *
@@ -157,6 +160,7 @@
 #define sclsvrCALIBRATOR_UD_L               "UD_L"
 #define sclsvrCALIBRATOR_UD_N               "UD_N"
 #define sclsvrCALIBRATOR_UD_R               "UD_R"
+#define sclsvrCALIBRATOR_UD_U               "UD_U"
 #define sclsvrCALIBRATOR_UD_V               "UD_V"
 #define sclsvrCALIBRATOR_DIST               "DIST"
 
