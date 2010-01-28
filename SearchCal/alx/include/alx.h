@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.25 2010-01-18 15:52:37 lafrasse Exp $"
+ * "@(#) $Id: alx.h,v 1.26 2010-01-28 16:20:12 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2010/01/18 15:52:37  lafrasse
+ * Added alxShowUNIFORM_DIAMETERS().
+ *
  * Revision 1.24  2010/01/08 22:29:04  lafrasse
  * Added preliminary support for alxLD2UD.
  *
@@ -223,6 +226,7 @@ typedef struct
     mcsDOUBLE l;
     mcsDOUBLE n;
     mcsDOUBLE r;
+    mcsDOUBLE u;
     mcsDOUBLE v;
 } alxUNIFORM_DIAMETERS;
 
@@ -289,6 +293,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       alxUNIFORM_DIAMETERS* ud);
 
 mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
+mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 
 #ifdef __cplusplus
 }
