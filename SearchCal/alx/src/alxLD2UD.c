@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.3 2010-01-18 15:52:37 lafrasse Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.4 2010-01-28 16:23:17 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2010/01/18 15:52:37  lafrasse
+ * Added alxShowUNIFORM_DIAMETERS().
+ *
  * Revision 1.2  2010/01/15 17:44:22  lafrasse
  * Added use of miscLocateExe() to properly resolve 'jmcsLD2UD' executable path.
  * Moved shell command execution code to miscDynBufExecuteCommand().
@@ -27,11 +30,11 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.3 2010-01-18 15:52:37 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.4 2010-01-28 16:23:17 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
-#define  _BSD_SOURCE 1
+#define  _BSD_SOURCE  1
 
 /*
  * System Headers
@@ -41,6 +44,10 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.3 2010-0
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <ctype.h>
+
+/* Needed for FP_NAN support */
+#define  __USE_ISOC99 1
+#include <math.h>
 
 
 /*
@@ -69,6 +76,9 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.3 2010-0
  * @param ld limb-darkened diameter (milli arcseconds)
  * @param sp spectral type
  * @param ud output uniform diameters (milli arcseconds)
+ *
+ * @warning ud will be flushed on each call.
+ * @sa alxFlushUNIFORM_DIAMETERS()
  *
  * @todo Handle executon failures.
  *
@@ -133,6 +143,12 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
         return mcsFAILURE;
     }
 
+    /* Flush output structure before use */
+    if (alxFlushUNIFORM_DIAMETERS(ud) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     /* Parsing each line */
     const char* index = NULL;
     mcsSTRING256 currentLine;
@@ -143,59 +159,64 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                            lineSize,
                                            mcsTRUE)) != NULL)
     {
-        logDebug("Parsing line : %s\n", currentLine);
+        logDebug("Parsing token '%s'.", currentLine);
         char band = '0';
         mcsDOUBLE value = 0.0;
         if (sscanf(currentLine, "UD_%c=%lf", &band, &value) != 2)
         {
-            /* Handle error */
-            return mcsFAILURE;
+            logWarning("Could not parse token '%s'... skipping it.", currentLine);
+            continue;
         }
 
         switch (tolower(band))
         {
             case 'b':
-                logTest("UD_B = %f\n", value);
+                logTest("UD_B = %f", value);
                 ud->b = value;
                 break;
 
             case 'i':
-                logTest("UD_I = %f\n", value);
+                logTest("UD_I = %f", value);
                 ud->i = value;
                 break;
 
             case 'j':
-                logTest("UD_J = %f\n", value);
+                logTest("UD_J = %f", value);
                 ud->j = value;
                 break;
 
             case 'h':
-                logTest("UD_H = %f\n", value);
+                logTest("UD_H = %f", value);
                 ud->h = value;
                 break;
 
             case 'k':
-                logTest("UD_K = %f\n", value);
+                logTest("UD_K = %f", value);
                 ud->k = value;
                 break;
 
             case 'l':
-                logTest("UD_L = %f\n", value);
+                logTest("UD_L = %f", value);
                 ud->l = value;
                 break;
 
             case 'n':
-                logTest("UD_N = %f\n", value);
+                logTest("UD_N = %f", value);
                 ud->n = value;
                 break;
 
             case 'r':
-                logTest("UD_R = %f\n", value);
+                logTest("UD_R = %f", value);
                 ud->r = value;
                 break;
 
+            case 'u':
+                logTest("UD_U = %f", value);
+                ud->u = value;
+                break;
+
             case 'v':
-                logTest("V = %f\n", value);
+                logTest("UD_V = %f", value);
                 ud->v = value;
                 break;
 
@@ -210,7 +231,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
 }
 
 /**
- * Log content of an alxUNIFORM_DIAMETERS strucutre on STDOUT.
+ * Log content of an alxUNIFORM_DIAMETERS structure on STDOUT.
  *
  * @param ud uniform diameters to log.
  *
@@ -219,7 +240,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
  */
 mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
 {
-    logTrace("alxComputeUDFromLDAndSP()");
+    logTrace("alxShowUNIFORM_DIAMETERS()");
 
     /* Check parameter validity */
     if (ud == NULL)
@@ -237,7 +258,43 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
     printf("\tud.l = %lf\n", ud->l);
     printf("\tud.n = %lf\n", ud->n);
     printf("\tud.r = %lf\n", ud->r);
+    printf("\tud.u = %lf\n", ud->u);
     printf("\tud.v = %lf\n", ud->v);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Flush content of an alxUNIFORM_DIAMETERS structure.
+ *
+ * @param ud uniform diameters to flush.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
+{
+    logTrace("alxFlushUNIFORM_DIAMETERS()");
+
+    /* Check parameter validity */
+    if (ud == NULL)
+    {
+        errAdd(alxERR_NULL_PARAMETER, "ud");
+        return mcsFAILURE;
+    }
+
+    ud->b = FP_NAN;
+    ud->i = FP_NAN;
+    ud->j = FP_NAN;
+    ud->h = FP_NAN;
+    ud->k = FP_NAN;
+    ud->l = FP_NAN;
+    ud->n = FP_NAN;
+    ud->r = FP_NAN;
+    ud->u = FP_NAN;
+    ud->v = FP_NAN;
+
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/
