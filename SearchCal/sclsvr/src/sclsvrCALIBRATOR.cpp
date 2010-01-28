@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.96 2010-01-22 15:49:05 mella Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.97 2010-01-28 16:34:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.96  2010/01/22 15:49:05  mella
+ * factorization of diameters computation to be refined
+ *
  * Revision 1.95  2010/01/22 15:35:29  lafrasse
  * Log refinments.
  *
@@ -251,7 +254,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
- static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.96 2010-01-22 15:49:05 mella Exp $"; 
+ static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.97 2010-01-28 16:34:06 lafrasse Exp $"; 
 
 
 /* 
@@ -1769,18 +1772,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
         return mcsSUCCESS;
     }
 
-    // UD Output struct initialization
-    alxUNIFORM_DIAMETERS ud;
-    ud.b = FP_NAN;
-    ud.i = FP_NAN;
-    ud.j = FP_NAN;
-    ud.h = FP_NAN;
-    ud.k = FP_NAN;
-    ud.l = FP_NAN;
-    ud.n = FP_NAN;
-    ud.r = FP_NAN;
-    ud.v = FP_NAN;
-
     // Get the value of the Spectral Type
     mcsSTRING32 spType;
     strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
@@ -1799,8 +1790,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
         return mcsFAILURE;
     }
 
-    logTest("Computing UDs for LD='%f' and SP='%s'...\n", ld, spType);
     // Compute UD
+    logTest("Computing UDs for LD='%f' and SP='%s'...\n", ld, spType);
+    alxUNIFORM_DIAMETERS ud;
     if (alxComputeUDFromLDAndSP(ld, spType, &ud) == mcsFAILURE)
     {
         logTest("Aborting (error while computing).\n");
