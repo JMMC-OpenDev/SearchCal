@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestLD2UD.c,v 1.4 2010-01-18 15:52:37 lafrasse Exp $"
+ * "@(#) $Id: alxTestLD2UD.c,v 1.5 2010-01-28 16:25:12 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/01/18 15:52:37  lafrasse
+ * Added alxShowUNIFORM_DIAMETERS().
+ *
  * Revision 1.3  2010/01/18 15:33:24  lafrasse
  * Added execution error test.
  *
@@ -67,7 +70,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.4 2010-01-18 15:52:37 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.5 2010-01-28 16:25:12 lafrasse Exp $"; 
 
 
 /* 
@@ -122,7 +125,22 @@ int main (int argc, char *argv[])
     logSetStdoutLogLevel(logTRACE);
 
     alxUNIFORM_DIAMETERS ud;
+    alxShowUNIFORM_DIAMETERS(&ud);
+    alxFlushUNIFORM_DIAMETERS(&ud);
+    alxShowUNIFORM_DIAMETERS(&ud);
+
+    printf("alxComputeUDFromLDAndSP(1.185, \"K3III\"):\n");
     if (alxComputeUDFromLDAndSP(1.185, "K3III", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
+    }
+
+    printf("alxComputeUDFromLDAndSP(0.966557, \"B7III\"):\n");
+    if (alxComputeUDFromLDAndSP(0.966557, "B7III", &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
     }
@@ -131,6 +149,7 @@ int main (int argc, char *argv[])
         alxShowUNIFORM_DIAMETERS(&ud);
     }    
 
+    printf("alxComputeUDFromLDAndSP(1.185, \"ZERTY\"):\n");
     if (alxComputeUDFromLDAndSP(1.185, "ZERTY", &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
@@ -139,6 +158,7 @@ int main (int argc, char *argv[])
     {
         printf("There is a bug in error handling.\n");
     }
+
     /* Close MCS services */
     mcsExit();
     
