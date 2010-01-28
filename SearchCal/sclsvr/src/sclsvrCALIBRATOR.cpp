@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.98 2010-01-28 16:45:49 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.99 2010-01-28 17:36:40 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.98  2010/01/28 16:45:49  lafrasse
+ * Added UD_U property.
+ *
  * Revision 1.97  2010/01/28 16:34:06  lafrasse
  * Removed no more needed UD diameter structure initialization.
  *
@@ -257,7 +260,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
- static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.98 2010-01-28 16:45:49 lafrasse Exp $"; 
+ static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.99 2010-01-28 17:36:40 lafrasse Exp $"; 
 
 
 /* 
@@ -1771,7 +1774,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     // Compute UD only if LD are already OK
     if (IsDiameterOk() == mcsFALSE)
     {
-        logTest("Skipping (diameters are not OK).\n");
+        logTest("Skipping (diameters are not OK).");
         return mcsSUCCESS;
     }
 
@@ -1780,25 +1783,31 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
     if (strlen(spType) < 1)
     {
-        logTest("Skipping (SpType unknown).\n");
+        logTest("Skipping (SpType unknown).");
         return mcsSUCCESS;
     }
 
-    // Get LD diameter
+    // Does LD diameter exist ?
+    if (IsPropertySet(sclsvrCALIBRATOR_DIAM_VK) == mcsFALSE)
+    {
+        logTest("Skipping (LD unknown).");
+        return mcsSUCCESS;
+    }
+
+    // Get LD diameter (DIAM_VK)
     mcsFLOAT ld = FP_NAN;
-    // Retrieve DIAM_VK
     if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
     {
-        logTest("Skipping (LD unknown).\n");
+        logError("Aborting (error while retrieving DIAM_VK).");
         return mcsSUCCESS;
     }
 
     // Compute UD
-    logTest("Computing UDs for LD='%f' and SP='%s'...\n", ld, spType);
+    logTest("Computing UDs for LD='%f' and SP='%s'...", ld, spType);
     alxUNIFORM_DIAMETERS ud;
     if (alxComputeUDFromLDAndSP(ld, spType, &ud) == mcsFAILURE)
     {
-        logTest("Aborting (error while computing).\n");
+        logError("Aborting (error while computing).");
         return mcsFAILURE;
     }
 
