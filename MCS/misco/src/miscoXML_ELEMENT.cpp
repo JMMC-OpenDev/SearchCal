@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.6 2007-02-22 12:23:03 gzins Exp $"
+ * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.7 2010-01-28 13:04:02 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2007/02/22 12:23:03  gzins
+ * Fixed parameter documentation error
+ *
  * Revision 1.5  2006/10/17 11:27:19  mella
  * Add typed attribute and content
  *
@@ -28,7 +31,7 @@
  *  Definition of miscoXML_ELEMENT class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.6 2007-02-22 12:23:03 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.7 2010-01-28 13:04:02 mella Exp $"; 
 
 /* 
  * System Headers 
@@ -205,7 +208,7 @@ mcsCOMPL_STAT miscoXML_ELEMENT::AddContent(mcsDOUBLE content)
  */
 string miscoXML_ELEMENT::ToXml()
 {
-    logTrace("miscoXML_ELEMENT::ToString()");
+    logTrace("miscoXML_ELEMENT::ToXml()");
 
     string xmlStr ;
    
