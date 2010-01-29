@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.20 2010-01-26 14:15:38 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.21 2010-01-29 13:07:59 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2010/01/26 14:15:38  lafrasse
+* Added vobsCATALOG_WDS.
+*
 * Revision 1.19  2009/05/04 15:20:26  lafrasse
 * Removed all references to unused CHARM catalog.
 *
@@ -56,7 +59,7 @@
 #define vobsCATALOG_ASCC_ID         "I/280"
 #define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_BSC_ID          "V/50/catalog"
-#define vobsCATALOG_CHARM2_ID       "J/A+A/386/492/charm"
+#define vobsCATALOG_CHARM2_ID       "J/A+A/431/773/charm2"
 #define vobsCATALOG_CIO_ID          "II/225/catalog"
 #define vobsCATALOG_DENIS_ID        "B/denis"
 #define vobsCATALOG_DENIS_JK_ID     "J/A+A/413/1037"

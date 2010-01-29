@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.5 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.6 2010-01-29 13:07:59 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.4  2005/11/21 13:47:57  scetre
  * arrange properties when the URL is written
  *
@@ -25,7 +28,7 @@
  *  Definition of vobsCATALOG_CHARM2 class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.5 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.6 2010-01-29 13:07:59 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -50,7 +53,7 @@ using namespace std;
  * Class constructor
  */
 vobsCATALOG_CHARM2::vobsCATALOG_CHARM2() :
-                                    vobsREMOTE_CATALOG("J/A+A/431/773/charm2")
+                                    vobsREMOTE_CATALOG(vobsCATALOG_CHARM2_ID)
 {
 }
 
