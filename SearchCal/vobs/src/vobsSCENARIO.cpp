@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.47 2009-04-17 15:29:48 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.48 2010-01-29 13:06:51 lafrasse Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.47  2009/04/17 15:29:48  lafrasse
+* Updated log level from Info to Test to clean sclws log output.
+*
 * Revision 1.46  2007/10/31 11:18:21  gzins
 * Changed format of the execution progress status
 *
@@ -150,7 +153,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.47 2009-04-17 15:29:48 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.48 2010-01-29 13:06:51 lafrasse Exp $"; 
 
 
 /* 
@@ -381,7 +384,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             mcsSTRING256 message;
             snprintf(message, sizeof(message),
                      "1\t%s\t%d\t%d",
-                     catalog, (_catalogIndex + 1), _nbOfCatalogs);
+                     catalogName, (_catalogIndex + 1), _nbOfCatalogs);
             if (_progress->Write(message) == mcsFAILURE)
             {
                 return mcsFAILURE;
