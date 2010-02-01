@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.19 2007-02-26 16:40:28 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.20 2010-02-01 16:26:04 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2007/02/26 16:40:28  lafrasse
+ * Corrected Doxygen documentation.
+ *
  * Revision 1.18  2006/12/21 15:08:15  lafrasse
  * Added GetVotable() API.
  *
@@ -72,7 +75,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.19 2007-02-26 16:40:28 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.20 2010-02-01 16:26:04 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -249,12 +252,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         }
         buffer->AppendString("\"");
 
-        // Add field unit if it is not "-"
+        // Add field unit if it is not vobsSTAR_PROP_NOT_SET
         const char* unit = starProperty->GetUnit();
         if (unit != NULL)
         {
-            // If the unit exists (not the default "-")
-            if (strcmp(unit, "-") != 0)
+            // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
+            if (strcmp(unit, vobsSTAR_PROP_NOT_SET) != 0)
             {
                 // Add field unit
                 buffer->AppendString(" unit=\"");
@@ -488,12 +491,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
             // Add standard column header beginning
             buffer->AppendString("<TD>");
 
-            // Add value if it is not "-"
+            // Add value if it is not vobsSTAR_PROP_NOT_SET
             const char* value = starProperty->GetValue();
             if (value != NULL)
             {
-                // If the value exists (not the default "-")
-                if (strcmp(value, "-") != 0)
+                // If the value exists (not the default vobsSTAR_PROP_NOT_SET)
+                if (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0)
                 {
                     // Add value
                     buffer->AppendString(value);
