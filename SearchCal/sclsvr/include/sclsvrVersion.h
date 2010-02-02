@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.35 2010-02-02 10:19:22 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.36 2010-02-02 11:08:45 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2010/02/02 10:19:22  lafrasse
+ * Changed default output precision format for numerical values to 3 significant
+ * digits.
+ *
  * Revision 1.34  2010/01/26 14:16:06  lafrasse
  * Added WDS catalog querying.
  *
@@ -127,7 +131,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.6.2"
+#define sclsvrVERSION "3.6.3"
 
 #ifdef __cplusplus
 }
