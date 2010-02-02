@@ -1,11 +1,16 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.31 2010-02-02 11:08:22 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.32 2010-02-02 11:14:22 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.31  2010/02/02 11:08:22  lafrasse
+* Changed output format for values read from catalog to maximum precision.
+* Factorized float handling code.
+* Refined log and comments.
+*
 * Revision 1.30  2010/02/02 10:14:44  lafrasse
 * Added default value for unit and format in STAR_PROPERTY creation.
 * Enforced use of vobsSTAR_PROP_NOT_SET.
@@ -104,7 +109,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.31 2010-02-02 11:08:22 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.32 2010-02-02 11:14:22 lafrasse Exp $"; 
 
 
 /* 
@@ -363,7 +368,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
             return (mcsFAILURE);
         }
 
-        printf("_numerical('%s') = %f -('%s')-> \"%s\".\n", _id.c_str(), _numerical, usedFormat, _value);
+        logDebug("_numerical('%s') = %f -('%s')-> \"%s\".\n", _id.c_str(), _numerical, usedFormat, _value);
     }
 
     return mcsSUCCESS;    
