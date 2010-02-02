@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.29 2009-10-26 14:33:04 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.30 2010-02-02 10:14:44 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.29  2009/10/26 14:33:04  lafrasse
+* Fixed copy constructor format initialization.
+*
 * Revision 1.28  2009/10/26 14:16:37  lafrasse
 * Enhanced float value output precision by using '%g' instead of custom formats or
 * default '%f'.
@@ -97,7 +100,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.29 2009-10-26 14:33:04 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.30 2010-02-02 10:14:44 lafrasse Exp $"; 
 
 
 /* 
@@ -129,7 +132,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 {
     logTrace("vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()");
 
-    _origin = "-";
+    _origin = vobsSTAR_PROP_NOT_SET;
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
     _numerical = FP_NAN;
 }
@@ -137,13 +140,13 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 /**
  * Class constructor
  * 
- * @param id     property identifier
- * @param name   property name 
- * @param type   property type
- * @param unit   property unit
- * @param format format used to set property
- * @param link link for this property
- * @param description property description
+ * @param id property identifier
+ * @param name property name 
+ * @param type property type
+ * @param unit property unit, vobsSTAR_PROP_NOT_SET by default or for 'NULL'.
+ * @param format format used to set property (%s or %.3f by default or for 'NULL').
+ * @param link link for this property (none by default or for 'NULL').
+ * @param description property description (none by default or for 'NULL').
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
                                      const char*              name, 
@@ -158,17 +161,29 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
     _id   = id;
     _name = name;
     _type = type;
-    _unit = unit;
 
+    _unit = vobsSTAR_PROP_NOT_SET;
+    if (unit != NULL)
+    {
+        _unit = unit;
+    }
+
+    char* defaultFormat = "%s";
     switch (type) 
     {
         case vobsSTRING_PROPERTY:
-            _format = "%s";
+            defaultFormat = "%s";
             break;
 
         case vobsFLOAT_PROPERTY:
-            _format = "%g";
+            defaultFormat = "%.3f";
             break;
+    }
+    _format = defaultFormat;
+
+    if (format != NULL)
+    {
+        _format = format;
     }
 
     if (link != NULL)
@@ -183,7 +198,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
 
     _confidenceIndex = vobsCONFIDENCE_LOW;
 
-    _origin = "-";
+    _origin = vobsSTAR_PROP_NOT_SET;
 
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
 
@@ -265,12 +280,13 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
         // If type of property is float
         if (_type == vobsFLOAT_PROPERTY)
         {
-            // Use format to affect value
+            // Use the most precision format to read value
             if (sscanf(value, "%f", &_numerical) != 1)
             {
                 errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value, "%f");
                 return (mcsFAILURE);
             }
+            // @warning Potentially loosing precision in outputed numerical values
             if (sprintf(_value, _format.c_str(), _numerical) == 0)
             {
                 errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value,
@@ -326,13 +342,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
     {
         _numerical = value;
         
-        // @warning Potentially loosing precision here !!!
+        // @warning Potentially loosing precision in outputed numerical values
         if (sprintf(_value, _format.c_str(), value) == 0)
         {
             errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value,
                     _format.c_str());
             return (mcsFAILURE);
         }
+        logDebug("_numerical('%s') = %f -('%s')-> \"%s\".\n", _id.c_str(), _numerical, _format.c_str(), _value);
 
         _confidenceIndex = confidenceIndex;
         _origin = origin;
@@ -352,7 +369,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
 
     _confidenceIndex = vobsCONFIDENCE_LOW;
 
-    _origin = "-";
+    _origin = vobsSTAR_PROP_NOT_SET;
 
     strcpy(_value, vobsSTAR_PROP_NOT_SET);
 
@@ -509,7 +526,7 @@ vobsPROPERTY_TYPE vobsSTAR_PROPERTY::GetType(void) const
  *
  * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
  *
- * @return property unit if present, "-" otherwise.
+ * @return property unit if present, vobsSTAR_PROP_NOT_SET otherwise.
  */
 const char *vobsSTAR_PROPERTY::GetUnit(void) const
 {
@@ -517,7 +534,7 @@ const char *vobsSTAR_PROPERTY::GetUnit(void) const
 
     if (_unit.length() == 0)
     {
-        return "-";
+        return vobsSTAR_PROP_NOT_SET;
     }
 
     // Return property unit
