@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.30 2010-02-02 10:14:44 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.31 2010-02-02 11:08:22 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.30  2010/02/02 10:14:44  lafrasse
+* Added default value for unit and format in STAR_PROPERTY creation.
+* Enforced use of vobsSTAR_PROP_NOT_SET.
+*
 * Revision 1.29  2009/10/26 14:33:04  lafrasse
 * Fixed copy constructor format initialization.
 *
@@ -100,7 +104,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.30 2010-02-02 10:14:44 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.31 2010-02-02 11:08:22 lafrasse Exp $"; 
 
 
 /* 
@@ -266,43 +270,42 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                                           vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
 {
-    logTrace("vobsSTAR_PROPERTY::SetValue()");
+    logTrace("vobsSTAR_PROPERTY::SetValue(vobsSTRING_PROPERTY)");
 
-    // If value is empty, return
+    // If the given new value is empty
     if (strcmp(value, vobsSTAR_PROP_NOT_SET) == 0)
     {
+        // Return immediatly
         return mcsSUCCESS;
     }
 
-    // Affect value
+    // Affect value (only if the value is not set yet, or overwritting right is granted)
     if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
     {
-        // If type of property is float
-        if (_type == vobsFLOAT_PROPERTY)
+        // If type of property is a string
+        if (_type == vobsSTRING_PROPERTY)
+        {
+            // Make sure we always keep the trailing \0 regardless of any buffer overflow.
+            memset(_value, '\0', sizeof(_value));
+            strncpy(_value, value, sizeof(_value) - 1);
+
+            _confidenceIndex = confidenceIndex;
+
+            _origin = origin;
+        }
+        else // Value is a float
         {
             // Use the most precision format to read value
-            if (sscanf(value, "%f", &_numerical) != 1)
+            mcsFLOAT numerical = FP_NAN;
+            if (sscanf(value, "%f", &numerical) != 1)
             {
                 errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value, "%f");
                 return (mcsFAILURE);
             }
-            // @warning Potentially loosing precision in outputed numerical values
-            if (sprintf(_value, _format.c_str(), _numerical) == 0)
-            {
-                errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value,
-                        _format.c_str());
-                return (mcsFAILURE);
-            }
-        }
-        else
-        {
-            // Just copy given value
-            memset(_value, '\0', sizeof(_value)); 
-            strncpy(_value, value, sizeof(_value) - 1);
-        }
 
-        _confidenceIndex = confidenceIndex;
-        _origin = origin;
+            // Delegate work to float-dedicated method.
+            return SetValue(numerical, origin, confidenceIndex, overwrite);
+        }
     }
 
     return mcsSUCCESS;    
@@ -328,7 +331,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
                                           vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
 {
-    logTrace("vobsSTAR_PROPERTY::SetValue()");
+    logTrace("vobsSTAR_PROPERTY::SetValue(vobsFLOAT_PROPERTY)");
 
     // Check type
     if (_type != vobsFLOAT_PROPERTY)
@@ -337,22 +340,30 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
         return (mcsFAILURE);
     }
 
-    // Affect value
+    // Affect value (only if the value is not set yet, or overwritting right is granted)
     if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
     {
-        _numerical = value;
-        
-        // @warning Potentially loosing precision in outputed numerical values
-        if (sprintf(_value, _format.c_str(), value) == 0)
-        {
-            errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value,
-                    _format.c_str());
-            return (mcsFAILURE);
-        }
-        logDebug("_numerical('%s') = %f -('%s')-> \"%s\".\n", _id.c_str(), _numerical, _format.c_str(), _value);
-
         _confidenceIndex = confidenceIndex;
         _origin = origin;
+        _numerical = value;
+        
+        // Use the custom property format by default
+        char* usedFormat = _format.c_str();
+        // If the value comes from a catalog
+        if (IsComputed() == mcsFALSE)
+        {
+            // Keep maximum precision
+            usedFormat = "%g";
+        }
+
+        // @warning Potentially loosing precision in outputed numerical values
+        if (sprintf(_value, usedFormat, value) == 0)
+        {
+            errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value, usedFormat);
+            return (mcsFAILURE);
+        }
+
+        printf("_numerical('%s') = %f -('%s')-> \"%s\".\n", _id.c_str(), _numerical, usedFormat, _value);
     }
 
     return mcsSUCCESS;    
@@ -419,7 +430,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
     }
 
     // Get value
-    // Convert property string value to integer value
     *value = _numerical;
 
     return mcsSUCCESS;
@@ -448,19 +458,19 @@ vobsCONFIDENCE_INDEX vobsSTAR_PROPERTY::GetConfidenceIndex()
 /**
  * Check whether the property is computed or not.  
  * 
- * @return mcsTRUE) if the the property has been set, mcsFALSE otherwise.
+ * @return mcsTRUE if the the property has been computed, mcsFALSE otherwise.
  */
 mcsLOGICAL vobsSTAR_PROPERTY::IsComputed(void) const
 {
     logTrace("vobsSTAR_PROPERTY::IsComputed()");
 
-    // Check whether property has been or not computed
-    if (_origin != vobsSTAR_COMPUTED_PROP)
+    // Check whether property has been computed or not
+    if (_origin == vobsSTAR_COMPUTED_PROP)
     {
-        return mcsFALSE;
+        return mcsTRUE;
     }
 
-    return mcsTRUE;
+    return mcsFALSE;
 }
 
 
