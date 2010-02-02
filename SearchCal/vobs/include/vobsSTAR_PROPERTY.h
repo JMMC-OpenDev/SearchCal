@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.18 2009-10-14 14:50:58 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.19 2010-02-02 10:12:49 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.18  2009/10/14 14:50:58  lafrasse
+* Added proper support of floating point value (without loosing presion with
+* conversion from string representation) with accompagning tests.
+*
 * Revision 1.17  2009/04/15 12:51:56  lafrasse
 * Added GetSummaryString() method to easily output members values.
 *
@@ -114,7 +118,7 @@ public:
     vobsSTAR_PROPERTY(const char*        id,
                       const char*        name,
                       vobsPROPERTY_TYPE  type,
-                      const char*        unit,
+                      const char*        unit        = NULL,
                       const char*        format      = NULL,
                       const char*        link        = NULL,
                       const char*        description = NULL);

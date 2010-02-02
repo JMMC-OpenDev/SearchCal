@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.57 2010-01-26 14:15:38 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.58 2010-02-02 10:12:49 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.57  2010/01/26 14:15:38  lafrasse
+* Added vobsCATALOG_WDS.
+*
 * Revision 1.56  2010/01/25 09:23:01  mella
 * add overwrite flag (false by default) to Uptade()
 *
@@ -318,7 +321,7 @@ protected:
     mcsCOMPL_STAT AddProperty(const char*              id,
                               char*              name,
                               vobsPROPERTY_TYPE  type,
-                              char*              unit,
+                              char*              unit        = NULL,
                               char*              format      = NULL,
                               char*              link        = NULL,
                               char*              description = NULL);
