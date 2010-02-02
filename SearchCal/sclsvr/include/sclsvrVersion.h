@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.34 2010-01-26 14:16:06 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.35 2010-02-02 10:19:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2010/01/26 14:16:06  lafrasse
+ * Added WDS catalog querying.
+ *
  * Revision 1.33  2010/01/11 17:22:10  lafrasse
  * Added UD diameters columns computation.
  *
@@ -124,7 +127,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.6.1"
+#define sclsvrVERSION "3.6.2"
 
 #ifdef __cplusplus
 }
