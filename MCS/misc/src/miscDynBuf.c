@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: miscDynBuf.c,v 1.43 2010-01-15 17:03:30 lafrasse Exp $"
+ * "@(#) $Id: miscDynBuf.c,v 1.44 2010-02-05 13:07:17 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.43  2010/01/15 17:03:30  lafrasse
+ * Added miscDynBufExecuteCommand().
+ *
  * Revision 1.42  2007/02/07 14:44:12  gzins
  * Fixed warning in doxygne documenation
  *
@@ -188,7 +191,7 @@
  * @endcode
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.43 2010-01-15 17:03:30 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.44 2010-02-05 13:07:17 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on popen() and pclose() */
@@ -233,9 +236,6 @@ static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
 static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
                                                const mcsUINT32 from,
                                                const mcsUINT32 to);
-
-static mcsCOMPL_STAT miscDynBufChkBytesAndLengthParams(const char *bytes,
-                                                       const mcsUINT32 length);
 
 static mcsUINT32 miscDynBufChkStringParam(const char *str);
 
@@ -354,39 +354,6 @@ static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF  *dynBuf,
     if (to < from)
     {
         errAdd(miscERR_DYN_BUF_BAD_FROM_TO);
-        return mcsFAILURE;
-    }
-
-    return mcsSUCCESS;
-}
-
-/**
- * Verify if a Dynamic Buffer has already been initialized, and if the given
- * 'bytes' pointer and 'length' size are correct (eg. bytes != 0 & length != 0).
- *
- * This function is only used internally by funtions receiving 'bytes' and
- * 'length' parameters.
- *
- * @param bytes bytes buffer pointer to test
- * @param length number of bytes in the buffer to test
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-static mcsCOMPL_STAT miscDynBufChkBytesAndLengthParams(const char       *bytes,
-                                                       const mcsUINT32  length)
-{
-    /* Test the 'bytes' parameter validity */
-    if (bytes == NULL)
-    {
-        errAdd(miscERR_NULL_PARAM, "bytes");
-        return mcsFAILURE;
-    }
-
-    /* Test the 'length' parameter validity */
-    if (length == 0)
-    {
-        errAdd(miscERR_NULL_PARAM, "length");
         return mcsFAILURE;
     }
 
@@ -803,16 +770,16 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo(const miscDYN_BUF *dynBuf,
                                        const mcsUINT32    from,
                                        const mcsUINT32    to)
 {
-    /* Test the 'dynBuf', 'from' and 'to' parameters validity */
-    if (miscDynBufChkFromToParams(dynBuf, from, to) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
     /* Test the 'bytes' parameter validity */
     if (bytes == NULL)
     {
         errAdd(miscERR_NULL_PARAM, "bytes");
+        return mcsFAILURE;
+    }
+
+    /* Test the 'dynBuf', 'from' and 'to' parameters validity */
+    if (miscDynBufChkFromToParams(dynBuf, from, to) == mcsFAILURE)
+    {
         return mcsFAILURE;
     }
 
@@ -1168,6 +1135,7 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
     mcsSTRING1024 tempBuffer;
     mcsUINT32 tempBufferLength = sizeof(tempBuffer);
     mcsUINT32 totalReadSize = 0;
+    mcsCOMPL_STAT completionStatus = mcsSUCCESS;
     while (feof(process) == 0)
     {
         /* Put the command result in the temp buffer */
@@ -1176,12 +1144,13 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
         /* Put temp buffer content in the true output buffer */
         if (miscDynBufAppendBytes(dynBuf, tempBuffer, totalReadSize) == mcsFAILURE)
         {
+            completionStatus = mcsFAILURE;
             break;
         }
     }
 
     /* Add trailing '\0' in order to be able to read output as a string */
-    miscDynBufAppendBytes(dynBuf, "\0", 1);
+    completionStatus = miscDynBufAppendBytes(dynBuf, "\0", 1);
 
     /* pclose() status check */
     int pcloseStatus = pclose(process);
@@ -1199,7 +1168,7 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
         return mcsFAILURE;
     }
 
-    return mcsSUCCESS;
+    return completionStatus;
 }
 
 
@@ -1499,14 +1468,22 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo(miscDYN_BUF    *dynBuf,
                                            const mcsUINT32 from,
                                            const mcsUINT32 to)
 {
-    /* Test the 'dynBuf', 'from' and 'to' parameters validity */
-    if (miscDynBufChkFromToParams(dynBuf, from, to) == mcsFAILURE)
+    /* If nothing to replace */
+    if (length <= 0)
     {
+        /* Return immediately */
+        return mcsSUCCESS;
+    }
+
+    /* Test the 'bytes' parameter validity */
+    if (bytes == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "bytes");
         return mcsFAILURE;
     }
 
-    /* Test the 'bytes' and 'length' parameters validity */
-    if (miscDynBufChkBytesAndLengthParams(bytes, length) == mcsFAILURE)
+    /* Test the 'dynBuf', 'from' and 'to' parameters validity */
+    if (miscDynBufChkFromToParams(dynBuf, from, to) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1620,6 +1597,20 @@ mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF    *dynBuf,
                                     const char     *bytes,
                                     const mcsUINT32 length)
 {
+    /* If nothing to append */
+    if (length <= 0)
+    {
+        /* Return immediately */
+        return mcsSUCCESS;
+    }
+
+    /* Test the 'bytes' parameter validity */
+    if (bytes == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "bytes");
+        return mcsFAILURE;
+    }
+
     /* Initialize the received Dynamic Buffer if it is not */
     if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
     {
@@ -1635,12 +1626,6 @@ mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF    *dynBuf,
     nonUsedBytes = dynBuf->allocatedBytes - dynBuf->storedBytes;
     bytesToAlloc = length - nonUsedBytes;
     if (miscDynBufAlloc(dynBuf, bytesToAlloc) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    /* Test the 'bytes' and 'length' parameters validity */
-    if (miscDynBufChkBytesAndLengthParams(bytes, length) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1843,14 +1828,22 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
                                       const mcsUINT32 length,
                                       const mcsUINT32 position)
 {
-    /* Test the 'dynBuf' and 'position' parameters validity */
-    if (miscDynBufChkPositionParam(dynBuf, position) == mcsFAILURE)
+    /* If nothing to insert */
+    if (length <= 0)
     {
+        /* Return immediately */
+        return mcsSUCCESS;
+    }
+
+    /* Test the 'bytes' parameter validity */
+    if (bytes == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "bytes");
         return mcsFAILURE;
     }
 
-    /* Test the 'bytes' and 'length' parameters validity */
-    if (miscDynBufChkBytesAndLengthParams(bytes, length) == mcsFAILURE)
+    /* Test the 'dynBuf' and 'position' parameters validity */
+    if (miscDynBufChkPositionParam(dynBuf, position) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
