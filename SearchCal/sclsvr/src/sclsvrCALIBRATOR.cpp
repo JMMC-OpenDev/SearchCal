@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.100 2010-02-02 10:16:50 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.101 2010-02-05 09:54:46 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.100  2010/02/02 10:16:50  lafrasse
+ * Updated AddProperty() calls to make use of the new default parameters.
+ *
  * Revision 1.99  2010/01/28 17:36:40  lafrasse
  * Removed 'DIAM_VK' error while computing UD diameter (prop. not set).
  * Enhanced log and output.
@@ -264,7 +267,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
- static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.100 2010-02-02 10:16:50 lafrasse Exp $"; 
+ static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.101 2010-02-05 09:54:46 lafrasse Exp $"; 
 
 
 /* 
@@ -1768,8 +1771,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
 /**
  * Compute UD from LD and SP.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion or computation cancellation.
+ * Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 {
@@ -1802,8 +1805,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     mcsFLOAT ld = FP_NAN;
     if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
     {
-        logError("Aborting (error while retrieving DIAM_VK).");
-        return mcsSUCCESS;
+        logWarning("Aborting (error while retrieving DIAM_VK).");
+        return mcsSUCCESS; // 
     }
 
     // Compute UD
@@ -1811,8 +1814,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     alxUNIFORM_DIAMETERS ud;
     if (alxComputeUDFromLDAndSP(ld, spType, &ud) == mcsFAILURE)
     {
-        logError("Aborting (error while computing).");
-        return mcsFAILURE;
+        logWarning("Aborting (error while computing).");
+        errResetStack(); // To flush miscDynBufExecuteCommand() related errors
+        return mcsSUCCESS;
     }
 
     // Set each UD_* property accordinaly
