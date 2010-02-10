@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.10 2009-04-29 10:43:02 mella Exp $"
+# "@(#) $Id: Makefile,v 1.11 2010-02-10 14:00:27 lafrasse Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2009/04/29 10:43:02  mella
+# add compute orbit prog
+#
 # Revision 1.9  2008/12/03 10:07:01  lafrasse
 # Added sclcatESOFilterResult script.
 #
@@ -131,8 +134,9 @@ tttlll_OBJECTS  =
 # Python scripts (public and local)
 # ---------------------------------
 PY_SCRIPTS     =
-PY_SCRIPTS_L   = sclcatPrimaPrepareBatchFile \
-                 sclcatESOGenerateConfig
+PY_SCRIPTS_L   = sclcatPrimaPrepareBatchFile         \
+                 sclcatESOGenerateConfig             \
+                 sclcatGenerateConfigFromCoordinates
 
 
 #
