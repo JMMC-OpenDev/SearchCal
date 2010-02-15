@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.16 2010-01-22 15:38:07 lafrasse Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.17 2010-02-15 15:43:30 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.16  2010/01/22 15:38:07  lafrasse
+* Remote Vizier beta testing.
+*
 * Revision 1.15  2010/01/22 15:35:29  lafrasse
 * Log refinments.
 *
@@ -60,7 +63,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.16 2010-01-22 15:38:07 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.17 2010-02-15 15:43:30 mella Exp $"; 
 
 /* 
  * System Headers 
@@ -92,6 +95,8 @@ using namespace std;
  * Local Variables
  */
 
+//#define vobsVIZIER_URI "http://viz-beta.u-strasbg.fr/viz-bin/"
+#define vobsVIZIER_URI "http://vizier.u-strasbg.fr/viz-bin/asu-xml?"
 
 /*
  * Class constructor
@@ -208,7 +213,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     vobsPARSER parser;
     // the parser get the internet of the query and analyse th file coming
     // from this address
-    if (parser.Parse(miscDynBufGetBuffer(&_query),
+    if (parser.Parse(vobsVIZIER_URI, miscDynBufGetBuffer(&_query),
                      GetName(), list, logFileName) == mcsFAILURE)
     {
         return mcsFAILURE; 
@@ -346,13 +351,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 {
     logTrace("vobsREMOTE_CATALOG::WriteQueryURIPart()");
 
-//    if (miscDynBufAppendString(&_query, "http://viz-beta.u-strasbg.fr/viz-bin/")
-    if (miscDynBufAppendString(&_query, "http://vizier.u-strasbg.fr/viz-bin/")
-        == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (miscDynBufAppendString(&_query, "asu-xml?-source=") == mcsFAILURE)
+    if (miscDynBufAppendString(&_query, "-source=") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -498,10 +497,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
     // string format in the query
     StarList2Sring(strList, list);
     
-    
-    if ( (miscDynBufAppendString(&_query,"&-out.form=List")==mcsFAILURE) ||
+    if ( (miscDynBufAppendString(&_query,"&-out.form=List") == mcsFAILURE) ||
          (miscDynBufAppendString(&_query,
-                                 miscDynBufGetBuffer(&strList))==mcsFAILURE) )
+                                 miscDynBufGetBuffer(&strList)) == mcsFAILURE))
     {
         miscDynBufDestroy(&strList);
         return mcsFAILURE;
