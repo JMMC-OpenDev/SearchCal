@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.35 2010-02-15 12:53:48 lafrasse Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.36 2010-02-15 15:42:04 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.35  2010/02/15 12:53:48  lafrasse
+* Removed URL truncation in log.
+*
 * Revision 1.34  2010/01/15 17:31:01  lafrasse
 * Updated to new miscPerformHttpGet() API.
 *
@@ -107,7 +110,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.35 2010-02-15 12:53:48 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.36 2010-02-15 15:42:04 mella Exp $"; 
 
 /* 
  * System Headers 
@@ -164,6 +167,7 @@ vobsPARSER::~vobsPARSER()
  * returned
  */
 mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
+                                const char *data,
                                 const char *catalogName,
                                 vobsSTAR_LIST &starList,
                                 const char *logFileName)
@@ -183,14 +187,14 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     domimpl = gdome_di_mkref ();
 
     // Load a new document from the URI
-    logTest("Get XML document from '%s'", uri);
+    logTest("Get XML document from '%s' with POST data '%s'", uri, data);
 
     // Create a misco buffer to store CDS results
     miscoDYN_BUF completeReturnBuffer;
 
     // Query the CDS
     logTrace("URI = %s", uri);
-    if (miscPerformHttpGet(uri, completeReturnBuffer.GetInternalMiscDYN_BUF(), vobsTIME_OUT) == mcsFAILURE)
+    if (miscPerformHttpPost(uri, data,completeReturnBuffer.GetInternalMiscDYN_BUF(), vobsTIME_OUT) == mcsFAILURE)
     {
         return mcsFAILURE;
     }

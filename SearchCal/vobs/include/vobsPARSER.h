@@ -3,11 +3,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.h,v 1.17 2008-04-10 14:19:25 lafrasse Exp $"
+* "@(#) $Id: vobsPARSER.h,v 1.18 2010-02-15 15:44:57 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2008/04/10 14:19:25  lafrasse
+* Replaced manual HTTP GET request forging by miscPerformHttpGet() to handle
+* CDS web page redirections.
+*
 * Revision 1.16  2008/03/10 07:53:42  lafrasse
 * Changed VIZIER URI to reflect CDS changes.
 * Minor modifications on comments and log traces.
@@ -75,6 +79,7 @@ public:
     
     // Parse of the XML document from a URI
     mcsCOMPL_STAT Parse(const char *uri, 
+                        const char *data,
                         const char *catalogName,
                         vobsSTAR_LIST &starList,
                         const char *logFileName=NULL);
