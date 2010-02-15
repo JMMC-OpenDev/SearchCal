@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.34 2010-01-15 17:31:01 lafrasse Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.35 2010-02-15 12:53:48 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.34  2010/01/15 17:31:01  lafrasse
+* Updated to new miscPerformHttpGet() API.
+*
 * Revision 1.33  2009/02/03 08:53:08  mella
 * Made changes to fall back on UCD1 with viz-bin service
 *
@@ -104,7 +107,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.34 2010-01-15 17:31:01 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.35 2010-02-15 12:53:48 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -180,7 +183,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     domimpl = gdome_di_mkref ();
 
     // Load a new document from the URI
-    logTest("Get XML document from '%.4096s'", uri);
+    logTest("Get XML document from '%s'", uri);
 
     // Create a misco buffer to store CDS results
     miscoDYN_BUF completeReturnBuffer;
