@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/01/15 17:05:45  lafrasse
+ * Updated miscPerformHttpGet() to use miscDynBufExecuteCommand().
+ *
  * Revision 1.8  2008/04/14 16:18:02  lafrasse
  * Corrected a bug causing a missing tailing '\0' on miscPerformHttpGet() output
  * buffer when using the same external buffer several time with varying result lengthes.
@@ -32,7 +35,7 @@
  * Declaration of miscNetwork functions.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.9 2010-01-15 17:05:45 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.10 2010-02-15 15:59:55 mella Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -168,6 +171,72 @@ mcsCOMPL_STAT miscGetHostByName(char *ipAddress, const char *hostName)
     strcpy(ipAddress, inet_ntoa(address));
     return mcsSUCCESS;
 }
+
+/**
+ * Perform the given request as an HTTP POST.
+ *
+ * This method ensures proper handling of HTTP redirections and proxies.
+ *
+ * @warning As is, this function uses the 'curl' command-line utility, so it is
+ * not directly portable without this dependency.\n\n
+ *
+ * @param uri the HTTP request that should be performed 
+ *   (eg. http://site.org/script.php?).
+ * @param data the POST data that should be performed 
+ *   (eg. p1=v1&p2=v2).
+ * @param outputBuffer address of the receiving, already allocated dynamic buffer
+ * in which the query result will be stored.
+ * @param timeout maximum connection timeout (in seconds, 30 if 0 is given).
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout)
+{
+    /* Test 'uri' parameter validity */
+    if (uri == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "uri");
+        return mcsFAILURE;
+    }
+
+    /* Test 'data' parameter validity */
+    if (data == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "data");
+        return mcsFAILURE;
+    }
+
+    /* Test 'outputBuffer' parameter validity */
+    if (outputBuffer == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "outputBuffer");
+        return mcsFAILURE;
+    }
+
+    /* 30sec timeout, -s makes curl silent, -L handle HTTP redirections */
+    mcsUINT32 internalTimeout = (timeout > 0 ? timeout : 30);
+    const char* staticCommand = "/usr/bin/curl --max-time %d -s -L \"%s\" -d \"%s\"";
+    int composedCommandLength = strlen(staticCommand) + strlen(uri) + strlen(data) + 10 + 1;
+    /* Forging the command */
+    char* composedCommand = (char*)malloc(composedCommandLength * sizeof(char));
+    if (composedCommand == NULL)
+    {
+        errAdd(miscERR_ALLOC);
+        return mcsFAILURE;
+    }
+    snprintf(composedCommand, composedCommandLength, staticCommand,
+             internalTimeout, uri, data);
+
+    /* Executing the command */
+    mcsCOMPL_STAT executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
+
+    /* Give back local dynamically-allocated memory */
+    free(composedCommand);
+
+    return executionStatus;
+}
+
 
 /**
  * Perform the given request as an HTTP GET.
