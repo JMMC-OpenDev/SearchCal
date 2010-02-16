@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.9 2008-12-05 16:30:56 lafrasse Exp $"
+# "@(#) $Id: sclcatESOGenerateConfig.py,v 1.10 2010-02-16 09:39:33 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2008/12/05 16:30:56  lafrasse
+# Re-enabled full-sky boxing by default.
+#
 # Revision 1.8  2008/12/05 16:22:22  lafrasse
 # Moved generated HTML file in the <eso-dir>.
 #
@@ -235,7 +238,7 @@ def writeConfigurationList(boxList):
         ident = "box_RA%s_DEC%s"%(box[0], box[1])
         str += "[%s]\n"%ident
         str += "file = %s.vot\n"%ident
-        str += "objectName = %s\n"%ident
+        str += "objectName = toto\n"
         str += "diffRa = %d\n"%raRange
         str += "diffDec = %d\n"%decRange
         str += "ra = %s\n"%box[0]
