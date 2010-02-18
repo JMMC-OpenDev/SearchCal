@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.32 2010-02-02 11:14:22 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.33 2010-02-18 09:53:24 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.32  2010/02/02 11:14:22  lafrasse
+* Removed debugging printf().
+*
 * Revision 1.31  2010/02/02 11:08:22  lafrasse
 * Changed output format for values read from catalog to maximum precision.
 * Factorized float handling code.
@@ -109,7 +112,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.32 2010-02-02 11:14:22 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.33 2010-02-18 09:53:24 lafrasse Exp $"; 
 
 
 /* 
@@ -353,7 +356,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
         _numerical = value;
         
         // Use the custom property format by default
-        char* usedFormat = _format.c_str();
+        char* usedFormat = (char*) _format.c_str();
         // If the value comes from a catalog
         if (IsComputed() == mcsFALSE)
         {
