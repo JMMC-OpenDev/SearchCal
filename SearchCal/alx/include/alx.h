@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.26 2010-01-28 16:20:12 lafrasse Exp $"
+ * "@(#) $Id: alx.h,v 1.27 2010-02-18 12:07:00 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2010/01/28 16:20:12  lafrasse
+ * Added UD_U diameter in alxUNIFORM_DIAMETERS.
+ *
  * Revision 1.25  2010/01/18 15:52:37  lafrasse
  * Added alxShowUNIFORM_DIAMETERS().
  *
@@ -218,6 +221,9 @@ typedef struct
 /** Structure holding uniform diameters */
 typedef struct
 {
+    mcsDOUBLE Teff;
+    mcsDOUBLE LogG;
+
     mcsDOUBLE b;
     mcsDOUBLE i;
     mcsDOUBLE j;
@@ -228,6 +234,7 @@ typedef struct
     mcsDOUBLE r;
     mcsDOUBLE u;
     mcsDOUBLE v;
+
 } alxUNIFORM_DIAMETERS;
 
 

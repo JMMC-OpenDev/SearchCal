@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.4 2010-01-28 16:23:17 lafrasse Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.5 2010-02-18 12:07:00 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/01/28 16:23:17  lafrasse
+ * Added UD_U diameter in alxUNIFORM_DIAMETERS.
+ * Added alxFlushUNIFORM_DIAMETERS() with FP_NAN support.
+ * Enhanced log and outputs.
+ *
  * Revision 1.3  2010/01/18 15:52:37  lafrasse
  * Added alxShowUNIFORM_DIAMETERS().
  *
@@ -30,7 +35,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.4 2010-01-28 16:23:17 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.5 2010-02-18 12:07:00 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -162,7 +167,23 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
         logDebug("Parsing token '%s'.", currentLine);
         char band = '0';
         mcsDOUBLE value = 0.0;
-        if (sscanf(currentLine, "UD_%c=%lf", &band, &value) != 2)
+
+        /* Try to read effective temperature */
+        if (sscanf(currentLine, "TEFF=%lf", &value) == 1)
+        {
+            ud->Teff = value;
+            logTest("Teff = %f", value);
+            continue;
+        }
+        /* Try to read surface gravity */
+        else if (sscanf(currentLine, "LOGG=%lf", &value) == 1)
+        {
+            ud->LogG = value;
+            logTest("LogG = %f", value);
+            continue;
+        }
+        /* Try to read uniform diameter */
+        else if (sscanf(currentLine, "UD_%c=%lf", &band, &value) != 2)
         {
             logWarning("Could not parse token '%s'... skipping it.", currentLine);
             continue;
@@ -250,16 +271,18 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
     }
 
     printf("alxUNIFORM_DIAMETERS struct at %p contains:\n", ud);
-    printf("\tud.b = %lf\n", ud->b);
-    printf("\tud.i = %lf\n", ud->i);
-    printf("\tud.j = %lf\n", ud->j);
-    printf("\tud.h = %lf\n", ud->h);
-    printf("\tud.k = %lf\n", ud->k);
-    printf("\tud.l = %lf\n", ud->l);
-    printf("\tud.n = %lf\n", ud->n);
-    printf("\tud.r = %lf\n", ud->r);
-    printf("\tud.u = %lf\n", ud->u);
-    printf("\tud.v = %lf\n", ud->v);
+    printf("\tud.Teff = %lf\n", ud->Teff);
+    printf("\tud.LogG = %lf\n", ud->LogG);
+    printf("\tud.b    = %lf\n", ud->b);
+    printf("\tud.i    = %lf\n", ud->i);
+    printf("\tud.j    = %lf\n", ud->j);
+    printf("\tud.h    = %lf\n", ud->h);
+    printf("\tud.k    = %lf\n", ud->k);
+    printf("\tud.l    = %lf\n", ud->l);
+    printf("\tud.n    = %lf\n", ud->n);
+    printf("\tud.r    = %lf\n", ud->r);
+    printf("\tud.u    = %lf\n", ud->u);
+    printf("\tud.v    = %lf\n", ud->v);
 
     return mcsSUCCESS;
 }
@@ -282,6 +305,9 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
         errAdd(alxERR_NULL_PARAMETER, "ud");
         return mcsFAILURE;
     }
+
+    ud->Teff = FP_NAN;
+    ud->LogG = FP_NAN;
 
     ud->b = FP_NAN;
     ud->i = FP_NAN;
