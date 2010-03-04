@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.11 2010-02-10 14:00:27 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.12 2010-03-04 16:26:43 lafrasse Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.11  2010/02/10 14:00:27  lafrasse
+# Added sclcatGenerateConfigFromCoordinates.
+#
 # Revision 1.10  2009/04/29 10:43:02  mella
 # add compute orbit prog
 #
@@ -106,6 +109,7 @@ SCRIPTS_L       = sclcatRetryFailedQueries \
                   sclcatESOParseResult \
                   sclcatESOFilterResult \
 				  sclcatComputeOrbit \
+				  sclcatCleanOutputDirectory
 
 
 #
