@@ -2,11 +2,15 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.4 2008-12-04 10:42:16 lafrasse Exp $"
+# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.5 2010-03-04 16:29:09 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2008/12/04 10:42:16  lafrasse
+# Hardened robustness.
+# Updated options.
+#
 # Revision 1.3  2008/07/28 13:39:46  lafrasse
 # Added an option to detect abnormally missing result files.
 #
@@ -134,10 +138,13 @@ function reportMissingResults () {
 
         # If the corresponding VOTable file does not exist
         votFilename="${filename}.vot"
-        if [ ! -f $votFilename ]; then
+        if [ ! -f ${votFilename} ]; then
             let "missCounter += 1"
             # Search if the result should be inexistant (no calibrators found).
-            tmp=`grep "sclsvrServer - vobs - 0 star(s) found." log/${filename}.out`
+            outFilename="log/${filename}.out"
+            if [ -f  ${outFilename} ]; then
+                tmp=`grep "sclsvrServer - vobs - 0 star(s) found." ${outFilename}`
+            fi
             if [ -n "$tmp" ]; then
                 # It is normal as no calibrators were found for the given .cmd file
                 let "emptyCounter += 1"
