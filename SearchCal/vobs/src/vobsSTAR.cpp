@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.87 2010-02-18 09:54:17 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.88 2010-03-11 08:22:53 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.87  2010/02/18 09:54:17  lafrasse
+* Moved parallax error below parallax.
+*
 * Revision 1.86  2010/02/02 10:15:52  lafrasse
 * Updated AddProperty() calls to make use of the new default parameters.
 * Refined documentation.
@@ -243,7 +246,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.87 2010-02-18 09:54:17 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.88 2010-03-11 08:22:53 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1302,8 +1305,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "h:m:s");
     AddProperty(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY, "d:m:s");
 
-    AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsSTRING_PROPERTY, "mas/yr");
-    AddProperty(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsSTRING_PROPERTY, "mas/yr");
+    AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsFLOAT_PROPERTY, "mas/yr");
+    AddProperty(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsFLOAT_PROPERTY, "mas/yr");
 
     AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas", "%.2f");
     AddProperty(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", vobsFLOAT_PROPERTY);
