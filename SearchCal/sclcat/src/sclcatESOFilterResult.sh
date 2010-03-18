@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOFilterResult.sh,v 1.5 2010-03-04 16:27:39 lafrasse Exp $"
+# "@(#) $Id: sclcatESOFilterResult.sh,v 1.6 2010-03-18 14:55:48 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2010/03/04 16:27:39  lafrasse
+# Separeted ESO and CDS filtering.
+#
 # Revision 1.4  2009/12/02 10:34:21  mella
 # fix filter label
 #
@@ -161,17 +164,16 @@ case $FILTERING_STYLE in
         newStep "Rejecting stars with low confidence on 'DIAM_VK'" stilts tpipe in=$PREVIOUSCATALOG  cmd='progress ; select equals(diam_vk.confidence,\"HIGH\")' out=$CATALOG ;
         newStep "Rejecting stars with SB9 references" stilts tpipe in=$PREVIOUSCATALOG  cmd='progress ; select NULL_SBC9' out=$CATALOG ;
         newStep "Rejecting stars with WDS references" stilts tpipe in=$PREVIOUSCATALOG  cmd='progress ; select NULL_WDS' out=$CATALOG ;
-        newStep "Adding a flag column for R provenance" stilts tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f-Rmag NULL_R.confidence?1:0' out=$CATALOG ;
-        newStep "Adding a flag column for I provenance" stilts tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f-Imag NULL_I.confidence?1:0' out=$CATALOG ;
+        newStep "Adding a flag column for R provenance" stilts tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Rmag NULL_R.confidence?1:0' out=$CATALOG ;
+        newStep "Adding a flag column for I provenance" stilts tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Imag NULL_I.confidence?1:0' out=$CATALOG ;
         newStep "Adding the 'Name' column" stilts tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:(!NULL_TYC2?\"TYC\"+TYC2:\"\")' out=$CATALOG ;
         
         # Columns deletion (to force output of computed values in 'sclsvr' over retrieved one in 'vobs')
-        newStep "Removing unwanted column Teff" stilts tpipe in=$PREVIOUSCATALOG cmd='delcols "Teff"' out=$CATALOG ;
         newStep "Removing unwanted column UDDK" stilts tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
         
         # Columns renaming
-        OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     diam_vk  e_diam_vk  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K  e_Plx  jTeff        LogG ) ;
-        NEW_NAMES=( pmRA  pmDEC  Bmag  Vmag  Rmag  Imag  Jmag  Hmag  Kmag  LDD      e_LDD      UDDB  UDDV  UDDR  UDDI  UDDJ  UDDH  UDDK  e_plx  Teff_SpType  logg_SpType ) ;
+        OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     diam_vk  e_diam_vk  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K  e_Plx ) ;
+        NEW_NAMES=( pmRA  pmDEC  Bmag  Vmag  Rmag  Imag  Jmag  Hmag  Kmag  LDD      e_LDD      UDDB  UDDV  UDDR  UDDI  UDDJ  UDDH  UDDK  e_plx ) ;
         i=0 ;
         for OLD_NAME in ${OLD_NAMES[*]}
         do
@@ -179,8 +181,13 @@ case $FILTERING_STYLE in
             newStep "Renaming column '${OLD_NAME}' to '${NEW_NAME}'" stilts tpipe in=$PREVIOUSCATALOG cmd="progress ; colmeta -name ${NEW_NAME} ${OLD_NAME}" out=$CATALOG ;
             let "i=$i+1" ;
         done
-        
-        newStep "Applying final columns set" stilts tpipe in=$PREVIOUSCATALOG cmd='keepcols "Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f-Rmag Imag f-Imag Jmag Hmag Kmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK plx e_plx SpType Teff_SpType logg_SpType"' out=$CATALOG ;
+
+        COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK plx e_plx SpType Teff_SpType logg_SpType" ;
+        newStep "Applying final columns set" stilts tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
+        for COLUMN_NAME in ${COLUMNS_SET}
+        do
+            newStep "Rejecting stars without '${COLUMN_NAME}'" stilts tpipe in=$PREVIOUSCATALOG  cmd="progress ; select !NULL_${COLUMN_NAME}" out=$CATALOG ;
+        done
         ;;
 
     ESO ) # ESO fitering
