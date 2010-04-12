@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatCleanOutputDirectory.sh,v 1.1 2010-03-04 16:26:19 lafrasse Exp $"
+# "@(#) $Id: sclcatCleanOutputDirectory.sh,v 1.2 2010-04-12 13:43:28 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2010/03/04 16:26:19  lafrasse
+# First revision.
+#
 #*******************************************************************************
 
 #/**
@@ -18,7 +21,7 @@
 # 
 # @opt
 # @optname h : Show usage help.
-# @optname r : REMOVE compressed files.
+# @optname r : REMOVE uncompressed files left.
 # @optname i : Compress input files (each result votable).
 # @optname l : Compress log files (cmd, out and err files in \<dir\>/log/).
 # @optname o : Compress output files (aggregation votable and fits files in \<dir\>/results/).
@@ -29,7 +32,7 @@
 function printUsage () {
     echo -e "Usage: sclcatCleanOutputDirectory [h|r|i|l|o|a] <dir>" 
     echo -e "\t-h\tPrint this help."
-    echo -e "\t-r\tREMOVE compressed files."
+    echo -e "\t-r\tREMOVE uncompressed files left."
     echo -e "\t-i\tCompress input files only (each result votable)."
     echo -e "\t-l\tCompress log files only (cmd, out and err files in log/)."
     echo -e "\t-o\tCompress output files only (aggregation votable plus each fits)."
@@ -107,10 +110,6 @@ do
         printUsage ;;
     esac
 done
-
-cleanInputs
-cleanLogs
-cleanOutputs
 
 exit
 
