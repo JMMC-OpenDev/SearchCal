@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatConcatenateVotables.sh,v 1.1 2010-04-12 13:59:59 lafrasse Exp $"
+# "@(#) $Id: sclcatConcatenateVotables.sh,v 1.2 2010-04-12 15:25:31 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2010/04/12 13:59:59  lafrasse
+# Renamed (and generalyzed) sclcatESOParseResult in sclcatConcatenateVotables.
+#
 #*******************************************************************************
 
 #/**
@@ -32,9 +35,11 @@ while getopts "h" option
 do
   case $option in
     h ) # Help option
-        printUsage ;;
+        printUsage ;
+        exit ;;
     * ) # Unknown option
-        printUsage ;;
+        printUsage ;
+        exit ;;
     esac
 done
 
