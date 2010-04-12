@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2010-04-12 13:59:59 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.14 2010-04-12 14:45:52 lafrasse Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2010/04/12 13:59:59  lafrasse
+# Renamed (and generalyzed) sclcatESOParseResult in sclcatConcatenateVotables.
+#
 # Revision 1.12  2010/03/04 16:26:43  lafrasse
 # Added sclcatCleanOutputDirectory script.
 #
@@ -142,7 +145,7 @@ tttlll_OBJECTS  =
 # ---------------------------------
 PY_SCRIPTS     =
 PY_SCRIPTS_L   = sclcatPrimaPrepareBatchFile         \
-                 sclcatESOGenerateConfig             \
+                 sclcatGenerateConfigByMozaicing     \
                  sclcatGenerateConfigFromCoordinates
 
 
