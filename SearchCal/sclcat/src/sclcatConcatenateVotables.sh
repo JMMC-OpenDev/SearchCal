@@ -2,72 +2,28 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOParseResult.sh,v 1.12 2009-10-08 13:23:12 mella Exp $"
+# "@(#) $Id: sclcatConcatenateVotables.sh,v 1.1 2010-04-12 13:59:59 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
-# Revision 1.11  2009/09/16 13:21:38  mella
-# fix number of vot
-#
-# Revision 1.10  2009/09/14 12:03:16  mella
-# fix bug that get first vot file
-#
-# Revision 1.9  2009/04/24 12:03:11  mella
-# fix bug for votable filenames with blank
-#
-# Revision 1.8  2008/12/01 10:45:14  lafrasse
-# Corrected vot list bug.
-# Enhanced output format.
-#
-# Revision 1.7  2008/11/26 10:25:52  lafrasse
-# Corrected 'no VOTable found' case.
-#
-# Revision 1.6  2008/11/04 09:39:56  lafrasse
-# Handled case where no VOTable were found.
-#
-# Revision 1.5  2008/07/23 23:06:23  lafrasse
-# Added more detailled progression monitoring.
-#
-# Revision 1.4  2008/07/23 22:32:53  lafrasse
-# Changed calibrator couting method.
-#
-# Revision 1.3  2008/07/21 15:45:33  lafrasse
-# Corrected way to list vot files to handle large collections to remove "argument
-# list too long" errors.
-# Removed unneeded VOtable copying process.
-# Changed default path of generated catalog file.
-# Added output log to better monitor progression.
-# Removed HTML resume generation.
-# Disabled calibrator numbering due to memory errors on large catalogs.
-#
-# Revision 1.2  2008/07/11 15:55:22  lafrasse
-# Removed 'Finished' timestamp.
-#
-# Revision 1.1  2008/07/11 12:56:56  lafrasse
-# Added ESO Calibrator catalog generation scripts.
-#
 #*******************************************************************************
 
 #/**
 # @file
-# Create synthesis files for the ESO calibrator catalog
+# Create one synthesis file from multiple VOTables.
 #
 # @synopsis
-# sclcatESOParseResult \<run-directory\>
+# sclcatConcatenateVotables \<run-directory\>
 # 
 # @details
-# This script build the synthesis file from the collected calibrator lists.
-#
-# @usedfiles
-# @filename ../config/sclcatESO.cfg : list of stars of interest for PRIMA
+# This script uses the header of the first VOTable for the output.
 # */
 
 # Print usage 
 function printUsage () {
-    echo -e "Usage: sclcatESOParseResult [eso-ref] or [eso-run-<YYYY-MM-DDTHH-MM-SS>]" 
+    echo -e "Usage: sclcatConcatenateVotables [cat-ref] or [cat-run-<YYYY-MM-DDTHH-MM-SS>]" 
     echo -e "\t-h\t\tprint this help."
-    echo -e "\t<eso-run>\tParse results in eso-run directory"
     exit 1;
 }
 
@@ -101,10 +57,7 @@ RESULTPATH=result
 mkdir $RESULTPATH
 
 # Generating VOTable header
-oldIFS="$IFS"
-IFS=$'\x0A'
 firstVotFile=( $( ls *.vot ) )
-IFS="$oldIFS"
 
 RESULTFILE=$RESULTPATH/catalog.vot
 
