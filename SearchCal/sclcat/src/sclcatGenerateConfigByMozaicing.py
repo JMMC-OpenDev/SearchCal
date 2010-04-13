@@ -2,16 +2,19 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatGenerateConfigByMozaicing.py,v 1.1 2010-04-12 14:45:52 lafrasse Exp $"
+# "@(#) $Id: sclcatGenerateConfigByMozaicing.py,v 1.2 2010-04-13 14:36:58 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2010/04/12 14:45:52  lafrasse
+# Renamed (and generalyzed) sclcatESOGenerateConfig in sclcatGenerateConfigByMozaicing.
+#
 #*******************************************************************************
 
 #/**
 # @file
-# Generate a configuration file for batch querying using <cmdBatch> by moza•cing
+# Generate a configuration file for batch querying using <cmdBatch> by mozaicing
 # the whole sky in smaller boxes. Plus it generates an HTML map file to later
 # browse results.
 #
@@ -265,5 +268,5 @@ outputFile.write(fileContent)
 print "Generating HTML map file into '%s'..."%htmlFile.name
 htmlFile.write(writeHTMLMap(boxes))
 
-print "Done."
+print "DONE."
 
