@@ -2,29 +2,11 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatESOFilterResult.sh,v 1.6 2010-03-18 14:55:48 lafrasse Exp $"
+# "@(#) $Id: sclcatFilterCatalog.sh,v 1.1 2010-04-13 14:53:34 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
-# Revision 1.5  2010/03/04 16:27:39  lafrasse
-# Separeted ESO and CDS filtering.
-#
-# Revision 1.4  2009/12/02 10:34:21  mella
-# fix filter label
-#
-# Revision 1.3  2008/12/05 15:03:19  lafrasse
-# Updated to handle catalogs when no match is found (using previous catalog
-# instead, in order to continue the execution).
-#
-# Revision 1.2  2008/12/03 10:08:11  lafrasse
-# Added VOT conversion to FITS.
-# Enhanced output traces.
-#
-# Revision 1.1  2008/12/01 16:21:44  mella
-# First revision
-#
-#
 #*******************************************************************************
 
 #/**
@@ -32,20 +14,20 @@
 # Clean bad, multiple or untrusted stars from raw catalog.
 #
 # @synopsis
-# sclcatESOFilterResult [h|c|e] \<run-directory\>
+# sclcatFilterCatalog <h|c|e> \<run-directory\>
 # 
 # @details
 # This script build the synthesis file from the collected calibrator lists.
 #
 # @opt
-# @optname h : show usage help
-# @optname c : CDS catalog filtering
-# @optname e : ESO catalog filtering
+# @optname h : show usage help.
+# @optname c : CDS catalog filtering.
+# @optname e : ESO catalog filtering.
 # */
 
 # Print usage 
 function printUsage () {
-    echo -e "Usage: sclcatESOFilterResult [h|c|e] <xxx-ref|xxx-run-YYYY-MM-DDTHH-MM-SS>" 
+    echo -e "Usage: sclcatFilterCatalog <h|c|e> <xxx-ref|xxx-run-YYYY-MM-DDTHH-MM-SS>" 
     echo -e "\t-h\t\tprint this help."
     echo -e "\t-c\t\tCDS filtering."
     echo -e "\t-e\t\tESO filtering."
@@ -96,7 +78,11 @@ newStep()
 }
 
 # Command line options parsing
-FILTERING_STYLE=""
+if [ $# -lt 1 ] # Always at least 1 option specified
+then
+    printUsage
+fi
+FILTERING_STYLE="NONE"
 while getopts "hce" option
 do
   case $option in
@@ -104,7 +90,7 @@ do
         printUsage ;;
     c ) # CDS filtering option
         FILTERING_STYLE="CDS" ;;
-    h ) # ESO filtering option
+    e ) # ESO filtering option
         FILTERING_STYLE="ESO" ;;
     * ) # Unknown option
         printUsage ;;
