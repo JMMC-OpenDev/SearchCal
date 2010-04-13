@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.14 2010-04-12 14:45:52 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.15 2010-04-13 14:35:16 lafrasse Exp $"
 #
 # Makefile of sclcat module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2010/04/12 14:45:52  lafrasse
+# Renamed (and generalyzed) sclcatESOGenerateConfig in sclcatGenerateConfigByMozaicing.
+#
 # Revision 1.13  2010/04/12 13:59:59  lafrasse
 # Renamed (and generalyzed) sclcatESOParseResult in sclcatConcatenateVotables.
 #
@@ -115,7 +118,8 @@ SCRIPTS_L       = sclcatRetryFailedQueries \
                   sclcatConcatenateVotables \
                   sclcatESOFilterResult \
 				  sclcatComputeOrbit \
-				  sclcatCleanOutputDirectory
+				  sclcatCleanOutputDirectory \
+				  sclcatGenerateMapPlot
 
 
 #
