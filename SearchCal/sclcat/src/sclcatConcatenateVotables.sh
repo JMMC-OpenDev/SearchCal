@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatConcatenateVotables.sh,v 1.2 2010-04-12 15:25:31 lafrasse Exp $"
+# "@(#) $Id: sclcatConcatenateVotables.sh,v 1.3 2010-04-13 08:41:17 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.2  2010/04/12 15:25:31  lafrasse
+# Enforced exit after usage printing.
+#
 # Revision 1.1  2010/04/12 13:59:59  lafrasse
 # Renamed (and generalyzed) sclcatESOParseResult in sclcatConcatenateVotables.
 #
@@ -17,10 +20,13 @@
 # Create one synthesis file from multiple VOTables.
 #
 # @synopsis
-# sclcatConcatenateVotables \<run-directory\>
+# sclcatConcatenateVotables \<catalogDir\>
 # 
 # @details
 # This script uses the header of the first VOTable for the output.
+#
+# @usedfiles
+# @filename <catalogDir>/result/catalog.vot : the aggregated resulting file;
 # */
 
 # Print usage 
@@ -47,27 +53,27 @@ done
 PATH=$PATH:$PWD/../bin
 
 # Parse command-line parameters
-dir=$1
-if [ ! -d "$dir" ]
+CATALOG_DIR=$1
+if [ ! -d "$CATALOG_DIR" ]
 then
-    echo "Please give one run directory"
+    echo "Please give a catalog directory"
     exit 1
 else
-    echo "Parsing results from $dir"
+    echo "Parsing results from '$CATALOG_DIR'."
 fi
 
 # Moving to the right directory
-cd $dir
+cd $CATALOG_DIR
+
+# Creating result path
 RESULTPATH=result
-mkdir $RESULTPATH
+RESULTFILE=$RESULTPATH/catalog.vot
+echo "Writing aggregation result in '$CATALOG_DIR/$RESULTFILE'."
+mkdir -p $RESULTPATH
 
 # Generating VOTable header
 firstVotFile=( $( ls *.vot ) )
-
-RESULTFILE=$RESULTPATH/catalog.vot
-
-# Generating VOTable header
-echo -n "Generating result header (using $firstVotFile)... "
+echo -n "Extracting result header from '$firstVotFile'... "
 xml fo "$firstVotFile" | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
 echo "DONE"
 
@@ -82,7 +88,7 @@ do
 
     if [ -f "$file" ]
     then
-        echo -n "Extracting data from '$file' (${nbOfVOTablesDone} / ${totalNbOfVOTables}) : "
+        echo -n "Aggregating data from '$file' (${nbOfVOTablesDone} / ${totalNbOfVOTables}) : "
 
         xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" "${file}" >> $RESULTFILE
 
@@ -96,7 +102,7 @@ do
 done
 
 # Generating VOTable footer
-echo -n "Generating result footer ... "
+echo -n "Extracting result footer from '$firstVotFile'... "
 cat "$firstVotFile" | awk '{if ($1=="</TABLEDATA>")start=1;if(start==1)print;}' >> $RESULTFILE
 echo "DONE"
 
