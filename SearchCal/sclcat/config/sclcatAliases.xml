@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatAliases.xml,v 1.8 2009-11-16 16:13:04 mella Exp $"
+# "@(#) $Id: sclcatAliases.xml,v 1.9 2010-05-27 20:58:13 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2009/11/16 16:13:04  mella
+# manual update
+#
 # Revision 1.7  2009/05/07 19:41:41  mella
 # gm update
 #
@@ -29,7 +32,8 @@
  *
  */
 -->
-<!-- This file define somes aliases to achieve simbad request. -->
+<!-- This file define somes aliases to achieve simbad request from exoplanet
+names. -->
 <aliases>
 
     <object name="BD14 4559" alias="BD+14 4559" />
@@ -129,11 +133,14 @@
     <object name="WASP-1 b"          alias=" " />
     <object name="WASP-2 b"          alias="" />
     <object name="CoRoT-5 alias="" />
-    <object name="CoRoT-6 alias="" />
     <object name="CoRoT-7 alias="" />
    <object name="OGLE2-TR-L9 alias="" />
     <object name="Lupus-TR-3 alias="" />
     -->
+    <object name="CoRoT-6" alias="2MASS J18441740+0639474" />
+    <object name="CoRoT-9" alias="2MASS J18430881+0612150" />
+    <object name="WASP-8"  alias="TYC 7522-505-1" />
+    <object name="2M J044144"  alias="2MASS J04414489+2301513" />
 
 </old>
 </aliases>

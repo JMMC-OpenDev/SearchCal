@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.13 2009-10-23 09:54:10 mella Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.14 2010-05-27 20:58:13 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2009/10/23 09:54:10  mella
+# always download last votable
+#
 # Revision 1.12  2009/10/08 19:13:44  mella
 # add support for kmag
 #
@@ -190,8 +193,9 @@ askSourceInfo(){
             if res=$(getSimbadInfos "NAME $simbadName")
             then
                 info="$info\n<object name='$simbadName' alias='NAME $simbadName' />"
+            else
+                error="$error\n'$sourceName' not found"
             fi
-            error="$error\n'$sourceName' not found"
     fi
 }
 
