@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatFilterCatalog.sh,v 1.3 2010-06-02 09:14:43 mella Exp $"
+# "@(#) $Id: sclcatFilterCatalog.sh,v 1.4 2010-06-07 14:33:16 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2010/06/02 09:14:43  mella
+# Build valid TYCO name for cds cataogue
+#
 # Revision 1.2  2010/06/01 13:22:02  lafrasse
 # Added Java options to stilts.
 #
@@ -161,7 +164,7 @@ case $FILTERING_STYLE in
         newStep "Rejecting stars with WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select NULL_WDS' out=$CATALOG ;
         newStep "Adding a flag column for R provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Rmag NULL_R.confidence?1:0' out=$CATALOG ;
         newStep "Adding a flag column for I provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Imag NULL_I.confidence?1:0' out=$CATALOG ;
-        newStep "Adding the 'Name' column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:(!(NULL_TYC1||NULL_TYC2||NULL_TYC3)?\"TYC\ \"+TYC1+\"-\"+TYC2+\"-\"+TYC3:\"\")' out=$CATALOG ;
+        newStep "Adding the 'Name' column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:(!(NULL_TYC1||NULL_TYC2||NULL_TYC3)?\"TYC\"+TYC1+\"-\"+TYC2+\"-\"+TYC3:\"\")' out=$CATALOG ;
         
         # Columns deletion (to force output of computed values in 'sclsvr' over retrieved one in 'vobs')
         newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
