@@ -4084,4 +4084,64 @@
 <!-- simbad returns '~' for plx -->
 <!-- simbad returns no value for kmag -->
 </object>
+<!-- add on Wed Jun 16 11:04:58 CEST 2010 -->
+<object>
+<name>NAME CoRoT-Exo-10</name>
+<ra>19 24 15.296</ra>
+<dec>+00 44 45.99</dec>
+<pmra>4.2</pmra>
+<pmdec>-12.8</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>11.782</kmag>
+</object>
+<!-- add on Wed Jun 16 11:04:58 CEST 2010 -->
+<object>
+<name>NAME CoRoT-Exo-11</name>
+<ra>18 42 44.947</ra>
+<dec>+05 56 15.70</dec>
+<pmra>13.4</pmra>
+<pmdec>-18.8</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>11.248</kmag>
+</object>
+<!-- add on Wed Jun 16 11:04:58 CEST 2010 -->
+<object>
+<name>NAME CoRoT-Exo-12</name>
+<ra>06 43 03.762</ra>
+<dec>-01 17 47.12</dec>
+<pmra>5.6</pmra>
+<pmdec>-5.9</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>13.56</kmag>
+</object>
+<!-- add on Wed Jun 16 11:04:59 CEST 2010 -->
+<object>
+<name>NAME CoRoT-Exo-13</name>
+<ra>06 50 53.072</ra>
+<dec>-05 05 11.14</dec>
+<pmra>-8.6</pmra>
+<pmdec>-13.5</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>13.38</kmag>
+</object>
+<!-- add on Wed Jun 16 11:04:59 CEST 2010 -->
+<object>
+<name>GSC2.3 N29S083644</name>
+<ra>19 26 21.243</ra>
+<dec>+01 25 35.17</dec>
+<pmra>15.6</pmra>
+<pmdec>-30.3</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>11.463</kmag>
+</object>
+<!-- add on Wed Jun 16 11:05:00 CEST 2010 -->
+<object>
+<name>HAT-P-15</name>
+<ra>04 24 59.534</ra>
+<dec>+39 27 38.31</dec>
+<pmra>5.6</pmra>
+<pmdec>-10.2</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>9.641</kmag>
+</object>
 </objects>
