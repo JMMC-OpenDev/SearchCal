@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.14 2010-05-27 20:58:13 mella Exp $"
+# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.15 2010-06-16 07:24:23 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.14  2010/05/27 20:58:13  mella
+# update
+#
 # Revision 1.13  2009/10/23 09:54:10  mella
 # always download last votable
 #
@@ -158,7 +161,6 @@ askSourceInfo(){
         if [ "No Coord." = "${res:0:9}" ]
         then
             echo "'$sourceName' exists but not coord returned"
-            error="$error\n'$sourceName' has no coords"
             return
         fi
 
@@ -189,12 +191,18 @@ askSourceInfo(){
         # end with same previous end
         echo "$END_CONTENT" >> $SIMBAD_LIST_FILE
    else
-            echo "'$sourceName' not known by simbad"
-            if res=$(getSimbadInfos "NAME $simbadName")
+            GUESS="NAME $simbadName"
+            if res=$(getSimbadInfos "$GUESS")
             then
-                info="$info\n<object name='$simbadName' alias='NAME $simbadName' />"
+                echo "<object name='$simbadName' alias='$GUESS' />"
             else
-                error="$error\n'$sourceName' not found"
+                GUESS="NAME ${simbadName/-/-Exo-}"
+                if res=$(getSimbadInfos "$GUESS")
+                then
+                    echo "<object name='$simbadName' alias='$GUESS' />"
+                else
+                    echo "'$sourceName' not found by simbad"
+                fi
             fi
     fi
 }
@@ -265,18 +273,6 @@ do
         askSourceInfo "$starName"
     fi
 done
-
-# print information collected during askSourceInfo calls
-if [ -n "$info" ]
-then
-    echo "Please append next lines to alias file and run script again:"
-    echo -e $info
-fi
-if [ -n "$error" ]
-then
-    echo "!!!!!!!!!!!!!! Here comes the not found list: !!!!!!!!!!!!!!"
-    echo -e $error
-fi
 
 # Generate batch file
 generateBatch
