@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrima.sh,v 1.7 2008-07-11 12:55:29 lafrasse Exp $"
+# "@(#) $Id: sclcatPrima.sh,v 1.8 2010-06-16 08:59:23 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2008/07/11 12:55:29  lafrasse
+# Added documentation.
+#
 # Revision 1.6  2007/03/27 14:55:56  scetre
 # Updated documentation
 #
@@ -75,7 +78,7 @@ function parseResult () {
 }
 
 # Parse command-line parameters
-dir="prima-run-`date +%Y-%m-%dT%H-%M-%S`";
+dir="../tmp/prima-run-`date +%Y-%m-%dT%H-%M-%S`";
 
 while getopts "hrgc" option
 # Initial declaration.
@@ -109,7 +112,7 @@ fi
 cd $dir
 cmdBatch ../../config/sclcatPRIMA.cfg  -d log
 
-cd ..
+cd -
 parseResult $dir
 
 #___oOo___
