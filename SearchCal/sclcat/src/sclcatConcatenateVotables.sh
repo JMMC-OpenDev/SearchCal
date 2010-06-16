@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatConcatenateVotables.sh,v 1.3 2010-04-13 08:41:17 lafrasse Exp $"
+# "@(#) $Id: sclcatConcatenateVotables.sh,v 1.4 2010-06-16 11:35:03 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.3  2010/04/13 08:41:17  lafrasse
+# Enhanced documentation and execution log.
+#
 # Revision 1.2  2010/04/12 15:25:31  lafrasse
 # Enforced exit after usage printing.
 #
@@ -72,7 +75,7 @@ echo "Writing aggregation result in '$CATALOG_DIR/$RESULTFILE'."
 mkdir -p $RESULTPATH
 
 # Generating VOTable header
-firstVotFile=( $( ls *.vot ) )
+firstVotFile="$( ls *.vot |head -1)"
 echo -n "Extracting result header from '$firstVotFile'... "
 xml fo "$firstVotFile" | awk '{if ($1=="<TR>")end=1;if(end!=1)print;}' &> $RESULTFILE
 echo "DONE"
