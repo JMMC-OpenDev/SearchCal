@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatAliases.xml,v 1.9 2010-05-27 20:58:13 mella Exp $"
+# "@(#) $Id: sclcatAliases.xml,v 1.10 2010-06-16 09:04:37 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2010/05/27 20:58:13  mella
+# update
+#
 # Revision 1.8  2009/11/16 16:13:04  mella
 # manual update
 #
@@ -79,7 +82,15 @@ names. -->
     <object name="HAT-P-9" alias="GSC 02463-00281" />
     <object name="NGC 4349 No 127" alias="C 1221-616" />
     <object name="WASP-11/HAT-P-10" alias="GSC 02340-01714" />
- 
+
+    <object name='CoRoT-10' alias='NAME CoRoT-Exo-10' />
+    <object name='CoRoT-11' alias='NAME CoRoT-Exo-11' />
+    <object name='CoRoT-12' alias='NAME CoRoT-Exo-12' />
+    <object name='CoRoT-13' alias='NAME CoRoT-Exo-13' />
+    <!--    <object name='CoRoT-14' alias='2MASS J06534181-0532097' /> -->
+    <object name='CoRoT-8'  alias='GSC2.3 N29S083644' />
+
+
     <old>
    <!-- Next object use their parent as alias exoplanet often do the same-->
     <object name='16 Cyg B b' alias='16 Cyg B' /> 
