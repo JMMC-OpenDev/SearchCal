@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.24 2009-12-02 10:39:40 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.25 2010-06-16 08:40:40 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.24  2009/12/02 10:39:40  mella
+# add computation of stars without kmag
+#
 # Revision 1.23  2009/11/17 21:18:32  mella
 # add two new files for stars and their galactical coords
 #
@@ -168,7 +171,7 @@ done
 XMLFILE=$HTMLDIR/result/catalog.vot
 if [ ! -e $XMLFILE ]
 then
-	sclcatESOParseResult $HTMLDIR
+	sclcatConcatenateVotables $HTMLDIR
 fi
 HTMLFILE=$XMLFILE.html
 if [ $HTMLFILE -ot $XMLFILE ]
