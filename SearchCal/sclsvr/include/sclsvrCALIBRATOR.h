@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.43 2010-01-28 16:45:49 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.44 2010-06-28 14:15:09 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.43  2010/01/28 16:45:49  lafrasse
+ * Added UD_U property.
+ *
  * Revision 1.42  2010/01/22 15:51:31  mella
  * add completeWith/WithoutParallax methods
  *
@@ -152,6 +155,8 @@
 #define sclsvrCALIBRATOR_DIAM_HK_ERROR      "DIAM_HK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
+#define sclsvrCALIBRATOR_TEFF_SPTYP         "TEFF_SPTYP"
+#define sclsvrCALIBRATOR_LOGG_SPTYP         "LOGG_SPTYP"
 #define sclsvrCALIBRATOR_UD_B               "UD_B"
 #define sclsvrCALIBRATOR_UD_I               "UD_I"
 #define sclsvrCALIBRATOR_UD_J               "UD_J"
