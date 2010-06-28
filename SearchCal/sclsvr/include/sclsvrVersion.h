@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.36 2010-02-02 11:08:45 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.37 2010-06-28 14:17:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2010/02/02 11:08:45  lafrasse
+ * Changed output format for values read from catalog to maximum precision.
+ *
  * Revision 1.35  2010/02/02 10:19:22  lafrasse
  * Changed default output precision format for numerical values to 3 significant
  * digits.
@@ -131,7 +134,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.6.3"
+#define sclsvrVERSION "3.6.4"
 
 #ifdef __cplusplus
 }
