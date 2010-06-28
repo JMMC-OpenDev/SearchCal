@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.19 2006-03-03 15:03:27 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.20 2010-06-28 14:12:11 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2006/03/03 15:03:27  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.18  2006/02/20 16:30:49  scetre
 * Patched with option -c.geom=b in request
 *
@@ -66,7 +69,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.19 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.20 2010-06-28 14:12:11 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -136,7 +139,8 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
 
     miscDynBufAppendString(&_query,"&-file=-c");
     miscDynBufAppendString(&_query, "&-c.eq=J2000");
-    miscDynBufAppendString(&_query,"&-out.max=50");
+//    miscDynBufAppendString(&_query,"&-out.max=50");
+    miscDynBufAppendString(&_query,"&-out.max=1000");
     miscDynBufAppendString(&_query,"-c.r=1");
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
@@ -231,7 +235,8 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
         return mcsFAILURE;
     }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
-    miscDynBufAppendString(&_query, "&-out.max=50");
+//    miscDynBufAppendString(&_query, "&-out.max=50");
+    miscDynBufAppendString(&_query, "&-out.max=1000");
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");

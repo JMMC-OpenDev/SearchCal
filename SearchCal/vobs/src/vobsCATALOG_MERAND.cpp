@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.8 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.9 2010-06-28 14:12:11 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.7  2006/02/20 16:30:49  scetre
  * Patched with option -c.geom=b in request
  *
@@ -35,7 +38,7 @@
  *  Definition of vobsCATALOG_MERAND class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.8 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.9 2010-06-28 14:12:11 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -154,7 +157,8 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
     }
     miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, "&-c.eq=J2000");
-    miscDynBufAppendString(&_query, "&-out.max=100");
+//    miscDynBufAppendString(&_query, "&-out.max=100");
+    miscDynBufAppendString(&_query, "&-out.max=1000");
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");

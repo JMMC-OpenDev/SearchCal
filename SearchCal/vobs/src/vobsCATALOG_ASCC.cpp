@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.23 2006-08-22 15:42:58 gzins Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.24 2010-06-28 14:12:11 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.23  2006/08/22 15:42:58  gzins
+* Added TYC2 & TYC3
+*
 * Revision 1.22  2006/03/28 12:57:21  scetre
 * Removed Spectral Type constraints
 *
@@ -81,7 +84,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.23 2006-08-22 15:42:58 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.24 2010-06-28 14:12:11 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -219,7 +222,8 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
 
-    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=");
+//    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=");
+    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=1000&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
     // properties to retreive

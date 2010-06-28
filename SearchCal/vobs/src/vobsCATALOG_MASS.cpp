@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.27 2006-03-03 15:03:27 scetre Exp $"
+* "@(#) $Id: vobsCATALOG_MASS.cpp,v 1.28 2010-06-28 14:12:11 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2006/03/03 15:03:27  scetre
+* Changed rcsId to rcsId __attribute__ ((unused))
+*
 * Revision 1.26  2006/02/20 16:30:49  scetre
 * Patched with option -c.geom=b in request
 *
@@ -92,7 +95,7 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.27 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.28 2010-06-28 14:12:11 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -203,7 +206,8 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, "mag=");
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&-out.max=150");
+//    miscDynBufAppendString(&_query, "&-out.max=150");
+    miscDynBufAppendString(&_query, "&-out.max=1000");
     // Add search box size
     mcsSTRING32 separation;
     if (request.GetSearchAreaGeometry() == vobsBOX)
