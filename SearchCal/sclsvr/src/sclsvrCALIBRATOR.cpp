@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.101 2010-02-05 09:54:46 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.102 2010-06-28 14:16:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.101  2010/02/05 09:54:46  lafrasse
+ * Updated error management in ComputeUDFromLDAndSP() to avoid server failure on
+ * wrong spectral types.
+ *
  * Revision 1.100  2010/02/02 10:16:50  lafrasse
  * Updated AddProperty() calls to make use of the new default parameters.
  *
@@ -267,7 +271,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
- static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.101 2010-02-05 09:54:46 lafrasse Exp $"; 
+ static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.102 2010-06-28 14:16:10 lafrasse Exp $"; 
 
 
 /* 
@@ -1806,8 +1810,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
     {
         logWarning("Aborting (error while retrieving DIAM_VK).");
-        return mcsSUCCESS; // 
+        return mcsSUCCESS;
     }
+
+    // Get LD diameter confidence index (UDs will have the same one)
+    vobsCONFIDENCE_INDEX ldDiameterConfidenceIndex = GetPropertyConfIndex(sclsvrCALIBRATOR_DIAM_VK);
 
     // Compute UD
     logTest("Computing UDs for LD='%f' and SP='%s'...", ld, spType);
@@ -1819,44 +1826,54 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
         return mcsSUCCESS;
     }
 
-    // Set each UD_* property accordinaly
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_B, ud.b, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    // Set Teff eand LogG properties
+    if (SetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, ud.Teff, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_I, ud.i, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_LOGG_SPTYP, ud.LogG, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_J, ud.j, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+
+    // Set each UD_* properties accordinaly
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_B, ud.b, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_H, ud.h, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_I, ud.i, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_K, ud.k, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_J, ud.j, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_L, ud.l, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_H, ud.h, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_N, ud.n, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_K, ud.k, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_R, ud.r, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_L, ud.l, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_U, ud.u, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_N, ud.n, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_V, ud.v, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_R, ud.r, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_U, ud.u, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_V, ud.v, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -2280,6 +2297,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     AddProperty(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY);
 
     AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsSTRING_PROPERTY);
+
+    AddProperty(sclsvrCALIBRATOR_TEFF_SPTYP, "Teff_SpType", vobsFLOAT_PROPERTY);
+    AddProperty(sclsvrCALIBRATOR_LOGG_SPTYP, "logg_SpType", vobsFLOAT_PROPERTY);
 
     AddProperty(sclsvrCALIBRATOR_UD_B, "UD_B", vobsFLOAT_PROPERTY);
     AddProperty(sclsvrCALIBRATOR_UD_I, "UD_I", vobsFLOAT_PROPERTY);
