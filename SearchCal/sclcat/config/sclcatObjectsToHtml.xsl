@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.19 2009-11-18 12:28:09 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.20 2010-07-19 14:43:36 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.19  2009/11/18 12:28:09  mella
+# fix stats
+#
 # Revision 1.18  2009/11/16 16:14:04  mella
 # add style for bad calibs and add more statistics
 #
@@ -90,7 +93,7 @@
 								<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 												<head>
 																<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-																<title>Astrometric calibrators for exoplanet hosting stars observed with VLT/PRIMA</title>
+																<title>Astrometric calibrators for exoplanet hosting stars</title>
 																<link rel="stylesheet" href="/css/2col_leftNav.css" type="text/css" />
 																<style type="text/css">
 																				<xsl:comment>
@@ -141,10 +144,10 @@
 																</div>
 
 																<div id="vertical_content">
-																				<h1> Astrometric calibrators for exoplanet hosting stars observed with VLT/PRIMA</h1>
+																				<h1> Astrometric calibrators for exoplanet hosting stars</h1>
 																				<p>The following list was build using <a href="http://exoplanet.eu"> Exoplanet</a> potential list.
 																								Each data are then collected using <a href="http://simbad.u-strasbg.fr"> Simbad web service </a>. Sometimes some <a href="#aliases">aliases</a> have been used to query Simbad.<br/>
-																								Get <a href="http://www.jmmc.fr/prima">more details</a> on this catalog.
+																								Get <a href="http://www.jmmc.fr/calex">more details</a> on this catalog.
 																				</p>
 																				<h1> Source List </h1>
 																				<div class="coloredtable">
