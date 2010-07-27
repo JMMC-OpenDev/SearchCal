@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_WDS.cpp,v 1.1 2010-01-26 14:15:38 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_WDS.cpp,v 1.2 2010-07-27 11:58:36 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2010/01/26 14:15:38  lafrasse
+ * Added vobsCATALOG_WDS.
+ *
  ******************************************************************************/
 
 /**
@@ -13,7 +16,7 @@
  *  Definition of vobsCATALOG_WDS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: vobsCATALOG_WDS.cpp,v 1.1 2010-01-26 14:15:38 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: vobsCATALOG_WDS.cpp,v 1.2 2010-07-27 11:58:36 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -68,12 +71,18 @@ mcsCOMPL_STAT vobsCATALOG_WDS::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_WDS::WriteQuerySpecificPart()");
 
-    // We want to get the WDS sequential index...
+    // Get the WDS sequential index
     miscDynBufAppendString(&_query, "&-out=WDS");
-    // ...for each given star with sep2 <= 2 arcsec.
-    miscDynBufAppendString(&_query, "&sep2=%3C2");
-
     // This value will be stored in the 'vobsSTAR_ID_WDS' star property
+
+    // Get the first mesured separation
+    miscDynBufAppendString(&_query, "&-out=sep1");
+    // This value will be stored in the 'vobsSTAR_ID_WDS' star property
+
+    // Get the last mesured separation
+    miscDynBufAppendString(&_query, "&-out=sep2");
+    // This value will be stored in the 'vobsSTAR_ID_WDS' star property
+
 
     return mcsSUCCESS;
 }

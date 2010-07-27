@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.58 2010-02-02 10:12:49 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.59 2010-07-27 11:58:36 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.58  2010/02/02 10:12:49  lafrasse
+* Added default value for unit for STAR_PROPERTY creation.
+*
 * Revision 1.57  2010/01/26 14:15:38  lafrasse
 * Added vobsCATALOG_WDS.
 *
@@ -186,6 +189,8 @@
 #define vobsSTAR_CODE_VARIAB_V2                 "CODE_VARIAB_V2"
 #define vobsSTAR_CODE_VARIAB_V3                 "VAR_CLASS"
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
+#define vobsSTAR_ORBIT_SEPARATION_SEP1          "ORBIT_SEPARATION_SEP1"
+#define vobsSTAR_ORBIT_SEPARATION_SEP2          "ORBIT_SEPARATION_SEP2"
 #define vobsSTAR_CODE_MISC_I                    "CODE_MISC_I"
 #define vobsSTAR_CODE_MISC_J                    "CODE_MISC_J"
 #define vobsSTAR_CODE_MISC_K                    "CODE_MISC_K"

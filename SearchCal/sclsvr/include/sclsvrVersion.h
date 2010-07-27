@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.37 2010-06-28 14:17:50 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.38 2010-07-27 11:58:36 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2010/06/28 14:17:50  lafrasse
+ * Moved CDS return limit to 1000.
+ * Added properties and computations for UDs, Teff and LogG computed from SpectralType.
+ *
  * Revision 1.36  2010/02/02 11:08:45  lafrasse
  * Changed output format for values read from catalog to maximum precision.
  *
@@ -134,7 +138,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.6.4"
+#define sclsvrVERSION "3.6.5"
 
 #ifdef __cplusplus
 }

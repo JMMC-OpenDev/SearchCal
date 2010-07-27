@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.88 2010-03-11 08:22:53 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.89 2010-07-27 11:58:36 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.88  2010/03/11 08:22:53  lafrasse
+* Updated pnRa and pmDec property definition to be float values instead of
+* strings.
+*
 * Revision 1.87  2010/02/18 09:54:17  lafrasse
 * Moved parallax error below parallax.
 *
@@ -246,7 +250,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.88 2010-03-11 08:22:53 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.89 2010-07-27 11:58:36 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1326,6 +1330,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
                 "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.max=9999&amp;WDS===${WDS}",
                 "WDS identifier, click to call VizieR on this object");
+    AddProperty(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec", "%.1f");
+    AddProperty(vobsSTAR_ORBIT_SEPARATION_SEP2, "sep2", vobsFLOAT_PROPERTY, "arcsec", "%.1f");
 
     AddProperty(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY);

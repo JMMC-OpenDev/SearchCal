@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.38 2010-01-26 14:15:38 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.39 2010-07-27 11:58:36 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.38  2010/01/26 14:15:38  lafrasse
+* Added vobsCATALOG_WDS.
+*
 * Revision 1.37  2009/12/17 14:16:59  lafrasse
 * Changed MIDI Vflag column UCD from 'CODE_VARIAB' to 'CODE_VARIAB_MIDI' to resolve bug #1259055516 form Daniel BONNEAU.
 *
@@ -119,7 +122,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.38 2010-01-26 14:15:38 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.39 2010-07-27 11:58:36 lafrasse Exp $"; 
 
 
 /* 
@@ -718,6 +721,19 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         else if ((strcmp(paramName, "e_Plx") == 0))
         {
             return vobsSTAR_POS_PARLX_TRIG_ERROR;
+        }
+    }
+
+    // Orbit Separation
+    if (strcmp(ucdName, "ORBIT_SEPARATION") == 0)
+    {
+        if (strcmp(paramName, "sep1") == 0)
+        {
+            return vobsSTAR_ORBIT_SEPARATION_SEP1;
+        }
+        else if (strcmp(paramName, "sep2") == 0)
+        {
+            return vobsSTAR_ORBIT_SEPARATION_SEP2;
         }
     }
 
