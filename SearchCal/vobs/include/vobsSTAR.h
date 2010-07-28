@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.59 2010-07-27 11:58:36 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.60 2010-07-28 14:08:44 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.59  2010/07/27 11:58:36  lafrasse
+* Added sep1 and sep2 data retrieval from WDS catalog.
+*
 * Revision 1.58  2010/02/02 10:12:49  lafrasse
 * Added default value for unit for STAR_PROPERTY creation.
 *
@@ -184,10 +187,10 @@
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
 #define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
-#define vobsSTAR_CODE_VARIAB_MIDI               "CODE_VARIAB_MIDI"
 #define vobsSTAR_CODE_VARIAB_V1                 "CODE_VARIAB_V1"
 #define vobsSTAR_CODE_VARIAB_V2                 "CODE_VARIAB_V2"
 #define vobsSTAR_CODE_VARIAB_V3                 "VAR_CLASS"
+#define vobsSTAR_CODE_BIN_FLAG                  "CODE_BIN_FLAG"
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
 #define vobsSTAR_ORBIT_SEPARATION_SEP1          "ORBIT_SEPARATION_SEP1"
 #define vobsSTAR_ORBIT_SEPARATION_SEP2          "ORBIT_SEPARATION_SEP2"

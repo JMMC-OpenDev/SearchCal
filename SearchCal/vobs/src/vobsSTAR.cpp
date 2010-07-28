@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.89 2010-07-27 11:58:36 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.90 2010-07-28 14:08:44 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.89  2010/07/27 11:58:36  lafrasse
+* Added sep1 and sep2 data retrieval from WDS catalog.
+*
 * Revision 1.88  2010/03/11 08:22:53  lafrasse
 * Updated pnRa and pmDec property definition to be float values instead of
 * strings.
@@ -250,7 +253,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.89 2010-07-27 11:58:36 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.90 2010-07-28 14:08:44 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -1317,11 +1320,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
     AddProperty(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY);
 
-    AddProperty(vobsSTAR_CODE_VARIAB_MIDI, "VFlag", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY);
     AddProperty(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY);
+
     AddProperty(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY);
+    AddProperty(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY);
 
     AddProperty(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
                 "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.max=9999&amp;Seq===%20${SBC9}",

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.38 2010-07-27 11:58:36 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.39 2010-07-28 14:08:44 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.38  2010/07/27 11:58:36  lafrasse
+ * Added sep1 and sep2 data retrieval from WDS catalog.
+ *
  * Revision 1.37  2010/06/28 14:17:50  lafrasse
  * Moved CDS return limit to 1000.
  * Added properties and computations for UDs, Teff and LogG computed from SpectralType.
@@ -138,7 +141,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.6.5"
+#define sclsvrVERSION "3.6.6"
 
 #ifdef __cplusplus
 }

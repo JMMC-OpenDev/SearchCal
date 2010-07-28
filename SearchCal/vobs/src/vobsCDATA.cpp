@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.39 2010-07-27 11:58:36 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.40 2010-07-28 14:08:44 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.39  2010/07/27 11:58:36  lafrasse
+* Added sep1 and sep2 data retrieval from WDS catalog.
+*
 * Revision 1.38  2010/01/26 14:15:38  lafrasse
 * Added vobsCATALOG_WDS.
 *
@@ -122,7 +125,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.39 2010-07-27 11:58:36 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.40 2010-07-28 14:08:44 lafrasse Exp $"; 
 
 
 /* 
@@ -661,7 +664,7 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         }
         else if (strcmp(paramName, "Var") == 0) // MIDI catalog
         {
-            id = vobsSTAR_CODE_VARIAB_MIDI;
+            id = vobsSTAR_CODE_BIN_FLAG;
         }
 
         return id;
