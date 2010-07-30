@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.39 2010-07-28 14:08:44 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.40 2010-07-30 13:05:04 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.39  2010/07/28 14:08:44  lafrasse
+ * Renamed VFlag columns to BinFlag for detailled bright N.
+ *
  * Revision 1.38  2010/07/27 11:58:36  lafrasse
  * Added sep1 and sep2 data retrieval from WDS catalog.
  *
@@ -141,7 +144,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.6.6"
+#define sclsvrVERSION "3.6.7"
 
 #ifdef __cplusplus
 }
