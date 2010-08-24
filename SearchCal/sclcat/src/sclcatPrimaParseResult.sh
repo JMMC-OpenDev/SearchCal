@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.26 2010-08-24 14:05:01 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.27 2010-08-24 15:23:07 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.26  2010/08/24 14:05:01  mella
+# copy vot catalog with scvot extension
+#
 # Revision 1.25  2010/06/16 08:40:40  mella
 # use sclcatConcatenateVotables instead of old sclcatESOParseResult
 #
@@ -136,6 +139,7 @@ SIMBAD_FILE="$PWD/../config/sclcatSimbadList.xml"
 ALIAS_FILE="$PWD/../config/sclcatAliases.xml"
 PRIMA_STAR_LIST="$PWD/../config/sclcatPrimaStars.xml"
 EXOPLANET_VOTABLE="$PWD/../config/sclcatPrimaExoplanetData.xml"
+MICROLENSING_STAR_LIST="$PWD/../config/sclcatMicrolensingStars.xml"
 
 # define temporary PATH # change it if the script becomes extern
 PATH=$PATH:$PWD/../bin
@@ -408,6 +412,7 @@ OUTPUT_FILE=index.html
 echo "Html resume generated into $PWD/$OUTPUT_FILE"
 xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
 $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+--stringparam microlensingFilename $MICROLENSING_STAR_LIST \
 $XSLT_OBJECT2HTML $PRIMA_STAR_LIST
 
 OUTPUT_FILE=table.tex
