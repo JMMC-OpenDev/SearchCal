@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.91 2010-07-30 12:21:07 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.92 2010-08-24 10:52:43 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.91  2010/07/30 12:21:07  lafrasse
+* Added columns description and units when available.
+*
 * Revision 1.90  2010/07/28 14:08:44  lafrasse
 * Renamed VFlag columns to BinFlag for detailled bright N.
 *
@@ -256,7 +259,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.91 2010-07-30 12:21:07 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.92 2010-08-24 10:52:43 mella Exp $"; 
 
 /*
  * System Headers
@@ -1306,10 +1309,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                 "2MASS identifier, click to call VizieR on this object");
 
     AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
-                "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
+                "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
                 "Right Ascencion - J2000");
     AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
-                "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${RAJ2000}%20${DEJ2000}&amp;NbIdent=1&amp;Radius=1&amp;Radius.unit=arcsec",
+                "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
                 "Declination - J2000");
 
     AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f", NULL,
