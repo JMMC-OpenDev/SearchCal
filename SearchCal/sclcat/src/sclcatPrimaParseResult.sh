@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.25 2010-06-16 08:40:40 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.26 2010-08-24 14:05:01 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.25  2010/06/16 08:40:40  mella
+# use sclcatConcatenateVotables instead of old sclcatESOParseResult
+#
 # Revision 1.24  2009/12/02 10:39:40  mella
 # add computation of stars without kmag
 #
@@ -178,6 +181,7 @@ if [ $HTMLFILE -ot $XMLFILE ]
 then
 	xsltproc --path .:.. -o "$HTMLFILE" $XSLT_VOT2HTML "$XMLFILE"
 fi
+cp $XMLFILE ${XMLFILE/.vot/.scvot}
 
 cd $HTMLDIR
 
