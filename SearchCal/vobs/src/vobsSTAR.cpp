@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.92 2010-08-24 10:52:43 mella Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.93 2010-08-24 13:54:03 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.92  2010/08/24 10:52:43  mella
+* fix VOTABLE link for RA DEC search on simbad
+*
 * Revision 1.91  2010/07/30 12:21:07  lafrasse
 * Added columns description and units when available.
 *
@@ -259,7 +262,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.92 2010-08-24 10:52:43 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.93 2010-08-24 13:54:03 mella Exp $"; 
 
 /*
  * System Headers
@@ -1347,11 +1350,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                 "Multiplicity type among SB or eclipsing B");
 
     AddProperty(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
-                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.max=9999&amp;Seq===%20${SBC9}",
+                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
                 "SBC9 identifier, click to call VizieR on this object");
 
     AddProperty(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
-                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.max=9999&amp;WDS===${WDS}",
+                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
                 "WDS identifier, click to call VizieR on this object");
     AddProperty(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec", "%.1f", NULL,
                 "Angular Separation of the binary on first observation");
