@@ -88,6 +88,10 @@
     </xsl:variable>
     <xsl:variable name="root" select="/" />
 
+    <!-- define as global variables the frequently used sets --> 
+    <xsl:variable name="fieldNodes" select="//VOT:FIELD"/>
+    <xsl:variable name="groupNodes" select="//VOT:GROUP"/>
+
     <xsl:template match="/">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <head>
@@ -95,6 +99,7 @@
                 <xsl:copy-of select="$cssHeader"/>
             </head>
             <body>
+
                 <table class="legend">
                     <tr>
                         <xsl:for-each select="exslt:node-set($legend)/*">
@@ -136,25 +141,24 @@
 
     <xsl:template name="getFieldIndex">
         <xsl:param name="fname"/>
-        <xsl:for-each select="$root//VOT:FIELD">
+        <xsl:for-each select="$fieldNodes">
             <xsl:if test="@name=$fname">
                 <xsl:value-of select="concat(position(),' ')"/>
             </xsl:if>
         </xsl:for-each>
     </xsl:template>
     <!-- add one TD in all TR for every param at the beginning -->
-    <xsl:template match="//VOT:TR" priority="10">
-        <xsl:variable name="trIndex" select="position()"/>
+    <xsl:template match="VOT:TR" priority="10">
         <xsl:variable name="trNode" select="."/>
         <xsl:element name="tr">
             <xsl:apply-templates select="./@*"/>
             <td><xsl:value-of select="position()"/></td>
-            <xsl:for-each select="//VOT:GROUP">
+            <xsl:for-each select="$groupNodes">
                 <xsl:variable name="groupIndex" select="position()"/>
                 <xsl:variable name="value" select="str:replace($trNode/VOT:TD[($groupIndex * 3) - 2],' ','&#160;')"/>
-                <xsl:variable name="link" select="ancestor::VOT:TABLE//VOT:FIELD[position()=($groupIndex*3)-2]//VOT:LINK/@href"/>
                 <xsl:variable name="origin" select="translate($trNode/VOT:TD[($groupIndex * 3) - 1],'/+.','___')"/>
                 <xsl:variable name="confidence" select="translate($trNode/VOT:TD[$groupIndex * 3],'/+.','___')"/>
+                <xsl:variable name="link" select="$fieldNodes[position()=($groupIndex*3)-2]/VOT:LINK/@href"/>
                 <xsl:element name="td">
                     <xsl:attribute name="class">
                         <xsl:value-of select="concat($origin,' ', $confidence)"/>
@@ -172,7 +176,7 @@
                                                 <xsl:with-param name="fname"><xsl:value-of select="$fname"/></xsl:with-param>
                                             </xsl:call-template>
                                         </xsl:variable>
-                                        <xsl:for-each select="exslt:node-set($trNode)/VOT:TD">
+                                        <xsl:for-each select="$trNode/VOT:TD">
                                             <xsl:if
                                                 test="position()=$cindex">
                                                 <xsl:value-of select="."/>
