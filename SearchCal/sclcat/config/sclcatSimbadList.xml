@@ -4144,4 +4144,104 @@
 <!-- simbad returns '~' for plx -->
 <kmag>9.641</kmag>
 </object>
+<!-- add on Mon Jul 19 13:15:55 CEST 2010 -->
+<object>
+<name>CoRoT-14</name>
+<ra>06 53 41.804</ra>
+<dec>-05 32 09.69</dec>
+<pmra>-1.7</pmra>
+<pmdec>-2.9</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>13.81</kmag>
+</object>
+<!-- add on Mon Jul 19 13:15:56 CEST 2010 -->
+<object>
+<name>HD 109246</name>
+<ra>12 32 07.1887</ra>
+<dec>+74 29 22.385</dec>
+<pmra>-171.02</pmra>
+<pmdec>-46.61</pmdec>
+<plx>15.24</plx>
+<kmag>7.216</kmag>
+</object>
+<!-- add on Mon Jul 19 13:15:58 CEST 2010 -->
+<object>
+<name>HD 8673</name>
+<ra>01 26 08.7849</ra>
+<dec>+34 34 46.921</dec>
+<pmra>235.58</pmra>
+<pmdec>-84.99</pmdec>
+<plx>26.14</plx>
+<kmag>5.17</kmag>
+</object>
+<!-- add on Mon Aug 23 15:04:27 CEST 2010 -->
+<object>
+<name>1RXS J160929.1-210524</name>
+<ra>16 09 30.3</ra>
+<dec>-21 04 58</dec>
+<!-- simbad returns '~' for pmra -->
+<!-- simbad returns '~' for pmdec -->
+<!-- simbad returns '~' for plx -->
+<kmag>8.916</kmag>
+</object>
+<!-- add on Mon Aug 23 15:04:28 CEST 2010 -->
+<object>
+<name>24 Sex</name>
+<ra>10 23 28.3701</ra>
+<dec>-00 54 08.079</dec>
+<pmra>65.19</pmra>
+<pmdec>-33.77</pmdec>
+<plx>13.37</plx>
+<kmag>4.285</kmag>
+</object>
+<!-- add on Mon Aug 23 15:04:29 CEST 2010 -->
+<object>
+<name>HAT-P-18</name>
+<ra>17 05 23.151</ra>
+<dec>+33 00 44.97</dec>
+<pmra>-21.3</pmra>
+<pmdec>-44.2</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>10.234</kmag>
+</object>
+<!-- add on Mon Aug 23 15:04:29 CEST 2010 -->
+<object>
+<name>HAT-P-19</name>
+<ra>00 38 04.012</ra>
+<dec>+34 42 41.56</dec>
+<pmra>-29.8</pmra>
+<pmdec>-36.4</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>10.546</kmag>
+</object>
+<!-- add on Mon Aug 23 15:04:29 CEST 2010 -->
+<object>
+<name>HD 102956</name>
+<ra>11 51 22.5116</ra>
+<dec>+57 38 26.648</dec>
+<pmra>-11.24</pmra>
+<pmdec>-16.80</pmdec>
+<plx>8.26</plx>
+<kmag>5.663</kmag>
+</object>
+<!-- add on Mon Aug 23 15:04:31 CEST 2010 -->
+<object>
+<name>HD 200964</name>
+<ra>21 06 39.8423</ra>
+<dec>+03 48 11.227</dec>
+<pmra>94.78</pmra>
+<pmdec>50.31</pmdec>
+<plx>14.63</plx>
+<kmag>4.286</kmag>
+</object>
+<!-- add on Mon Aug 23 15:04:34 CEST 2010 -->
+<object>
+<name>WASP-37</name>
+<ra>14 47 46.560</ra>
+<dec>+01 03 53.85</dec>
+<pmra>-23.3</pmra>
+<pmdec>22.8</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>11.093</kmag>
+</object>
 </objects>

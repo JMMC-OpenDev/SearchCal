@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatAliases.xml,v 1.10 2010-06-16 09:04:37 mella Exp $"
+# "@(#) $Id: sclcatAliases.xml,v 1.11 2010-08-24 13:47:32 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.10  2010/06/16 09:04:37  mella
+# add some aliases
+#
 # Revision 1.9  2010/05/27 20:58:13  mella
 # update
 #
@@ -89,6 +92,7 @@ names. -->
     <object name='CoRoT-13' alias='NAME CoRoT-Exo-13' />
     <!--    <object name='CoRoT-14' alias='2MASS J06534181-0532097' /> -->
     <object name='CoRoT-8'  alias='GSC2.3 N29S083644' />
+    <object name="1RXS1609" alias="1RXS J160929.1-210524" />
 
 
     <old>
@@ -152,6 +156,5 @@ names. -->
     <object name="CoRoT-9" alias="2MASS J18430881+0612150" />
     <object name="WASP-8"  alias="TYC 7522-505-1" />
     <object name="2M J044144"  alias="2MASS J04414489+2301513" />
-
 </old>
 </aliases>
