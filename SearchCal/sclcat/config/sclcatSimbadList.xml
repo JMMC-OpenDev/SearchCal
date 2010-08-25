@@ -4244,4 +4244,64 @@
 <!-- simbad returns '~' for plx -->
 <kmag>11.093</kmag>
 </object>
+<!-- add on Tue Aug 24 16:07:21 CEST 2010 -->
+<object>
+<name>HAT-P-20</name>
+<ra>07 27 39.949</ra>
+<dec>+24 20 11.37</dec>
+<pmra>0.0</pmra>
+<pmdec>0.0</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>8.601</kmag>
+</object>
+<!-- add on Tue Aug 24 16:07:21 CEST 2010 -->
+<object>
+<name>HAT-P-21</name>
+<ra>11 25 05.988</ra>
+<dec>+41 01 40.65</dec>
+<pmra>-0.7</pmra>
+<pmdec>11.9</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>10.111</kmag>
+</object>
+<!-- add on Tue Aug 24 16:07:21 CEST 2010 -->
+<object>
+<name>HAT-P-22</name>
+<ra>10 22 43.5888</ra>
+<dec>+50 07 42.031</dec>
+<pmra>-26.6</pmra>
+<pmdec>83.1</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>7.837</kmag>
+</object>
+<!-- add on Tue Aug 24 16:07:21 CEST 2010 -->
+<object>
+<name>HAT-P-23</name>
+<ra>20 24 29.724</ra>
+<dec>+16 45 43.79</dec>
+<pmra>15.7</pmra>
+<pmdec>0.5</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>10.791</kmag>
+</object>
+<!-- add on Tue Aug 24 16:07:22 CEST 2010 -->
+<object>
+<name>HAT-P-24</name>
+<ra>07 15 18.020</ra>
+<dec>+14 15 45.39</dec>
+<pmra>9.8</pmra>
+<pmdec>-3.5</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>10.543</kmag>
+</object>
+<!-- add on Tue Aug 24 16:07:22 CEST 2010 -->
+<object>
+<name>HD 10180</name>
+<ra>01 37 53.5763</ra>
+<dec>-60 30 41.499</dec>
+<pmra>-14.92</pmra>
+<pmdec>6.17</pmdec>
+<plx>25.39</plx>
+<kmag>5.868</kmag>
+</object>
 </objects>
