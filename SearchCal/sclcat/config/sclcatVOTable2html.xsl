@@ -89,8 +89,8 @@
     <xsl:variable name="root" select="/" />
 
     <!-- define as global variables the frequently used sets --> 
-    <xsl:variable name="fieldNodes" select="//VOT:FIELD"/>
-    <xsl:variable name="groupNodes" select="//VOT:GROUP"/>
+    <xsl:variable name="fieldNodes" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:FIELD"/>
+    <xsl:variable name="groupNodes" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:GROUP"/>
 
     <xsl:template match="/">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -114,10 +114,10 @@
                 <table class="centered">
                     <thead>
                         <th>Index</th>
-                        <xsl:for-each select="//VOT:GROUP">
+                        <xsl:for-each select="$groupNodes">
                             <xsl:variable name="groupIndex" select="position()"/>
                             <xsl:variable name="FIELD"
-                                select="//VOT:FIELD[position()=($groupIndex*3)-2]"/>
+                                select="$fieldNodes[position()=($groupIndex*3)-2]"/>
                             <xsl:element name="th">
                                 <xsl:element name="a">
                                     <xsl:attribute name="title">
@@ -129,7 +129,7 @@
                         </xsl:for-each>
                     </thead>
                     <tbody>
-                        <xsl:apply-templates select="//VOT:TR"/>
+                        <xsl:apply-templates select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:DATA/VOT:TABLEDATA/VOT:TR"/>
                     </tbody>
                 </table>
                 <br/>
