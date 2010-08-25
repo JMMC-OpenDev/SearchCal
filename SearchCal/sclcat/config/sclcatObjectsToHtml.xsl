@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.21 2010-08-25 12:45:02 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.22 2010-08-25 20:18:27 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.21  2010/08/25 12:45:02  mella
+# display microlensing list to double check according exoplanet.eu
+#
 # Revision 1.20  2010/07/19 14:43:36  mella
 # remove Prima from title
 #
@@ -177,7 +180,8 @@
                     </ul>
                   </td>
                   <td>	
-                    <h4> Statistics </h4>
+													<h4> Statistics on <xsl:value-of select="substring(date:date(),0,11)"/><br/>
+													</h4>
                     <ul>
                       <li><xsl:value-of select="count(//star)"/> analysed stars</li>
                       <li><xsl:value-of select="count($calibrators//calibrator)"/> calibrators (
