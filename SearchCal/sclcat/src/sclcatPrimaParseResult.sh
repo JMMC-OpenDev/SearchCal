@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.27 2010-08-24 15:23:07 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.28 2010-08-25 20:17:44 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.27  2010/08/24 15:23:07  mella
+# set microlensing filename as xslt param
+#
 # Revision 1.26  2010/08/24 14:05:01  mella
 # copy vot catalog with scvot extension
 #
@@ -164,6 +167,7 @@ mkdir $HTMLDIR &> /dev/null
 # copy every votable and transform it into html
 # the copy ethod also copy the param of the votable as fields
 let idx=0
+echo "Copy votable and transform into html..."
 for i in *.vot
 do
     if [ ! -e "$HTMLDIR/$i" ]
@@ -183,6 +187,7 @@ fi
 HTMLFILE=$XMLFILE.html
 if [ $HTMLFILE -ot $XMLFILE ]
 then
+	echo "transforming $XMLFILE -> $HTMLFILE"
 	xsltproc --path .:.. -o "$HTMLFILE" $XSLT_VOT2HTML "$XMLFILE"
 fi
 cp $XMLFILE ${XMLFILE/.vot/.scvot}
