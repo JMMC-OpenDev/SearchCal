@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.4 2009-05-11 10:36:35 mella Exp $"
+# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.5 2010-08-26 10:28:13 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.4  2009/05/11 10:36:35  mella
+# fix exoplanet name for starname column and surround +XX latex values
+#
 # Revision 1.3  2009/05/07 20:48:32  mella
 # Use latex filter to surround negative values by $
 #
@@ -79,7 +82,8 @@
         -->
         <!-- table for all stars with one or more calibrator-->
         <xsl:for-each select="$calibrators//star[./calibrator[./calibInfo/accepted]]">
-            <xsl:sort select="./calibrator[1]/dist" data-type="number" />
+								<!--<xsl:sort select="./calibrator[1]/dist" data-type="number" />-->
+            <xsl:sort select="translate(ra,' ','')" data-type="number" />
             <xsl:variable name="simbadName" select="./@simbadName"/>
             <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
             <xsl:call-template name="starInTable">
