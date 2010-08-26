@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatBuildMainList.xsl,v 1.6 2008-10-09 08:13:54 mella Exp $"
+# "@(#) $Id: sclcatBuildMainList.xsl,v 1.7 2010-08-26 09:54:06 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.6  2008/10/09 08:13:54  mella
+# fix multi planet per star generation
+#
 # Revision 1.5  2008/10/08 15:53:05  mella
 # Handle votable as input file
 #
@@ -107,7 +110,15 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
-            <star>
+						<star>
+										<xsl:comment>ra extracted from exoplanet votable</xsl:comment>
+										<ra>
+                    <xsl:for-each select="exslt:node-set($votable)//TR[TD[13]=$starName]">
+														<xsl:if test="position()=1">
+																		<xsl:value-of select="./TD[21]"/>
+														</xsl:if>
+                    </xsl:for-each>
+										</ra>
                 <name><xsl:value-of select="$starName"/></name>
                 <exoplanetName><xsl:value-of select="$starName"/></exoplanetName>
                 <xsl:if test="document($aliasFile)//object[@name=$starName]">
