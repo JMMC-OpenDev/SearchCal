@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.22 2010-08-25 20:18:27 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.23 2010-08-26 10:46:58 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.22  2010/08/25 20:18:27  mella
+# Add date in statistic paragrph
+#
 # Revision 1.21  2010/08/25 12:45:02  mella
 # display microlensing list to double check according exoplanet.eu
 #
@@ -216,55 +219,65 @@
             Show flagged calibrators <input id="rejectedFlagCheckBox" type="checkbox" onchange="toggleTRs()" />
           </div>
           <br/>
-          <div class="coloredtable">
-            <table>
-              <tbody>
-                <tr> 
-                  <xsl:for-each select="exslt:node-set($columns)/*">
-                    <th>
-                      <xsl:value-of select="@desc"/><br/>
-                      <em><xsl:value-of select="@unit"/></em><br/>
-                      <xsl:value-of select="@name"/>
-                    </th>
-                  </xsl:for-each>
-                </tr>
-                <xsl:for-each select="$calibrators//star[./calibrator]">
-                  <xsl:sort select="./calibrator[1]/dist" data-type="number" />
-                  <xsl:variable name="simbadName" select="./@simbadName"/>
-                  <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
-                  <xsl:call-template name="starInTable">
-                    <xsl:with-param name="object" select="$object"/>
-                  </xsl:call-template>    
-                </xsl:for-each>
-
-                <xsl:for-each select="$calibrators//star[not(./calibrator)]">
-                  <xsl:variable name="simbadName" select="./@simbadName"/>
-                  <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
-                  <xsl:call-template name="starInTable">
-                    <xsl:with-param name="object" select="$object"/>
-                  </xsl:call-template>    
-                </xsl:for-each>
-
-                <xsl:for-each select="//star">
-                  <xsl:variable name="simbadName" select="./simbadName"/>
-                  <xsl:if test="not($calibrators//star[@simbadName=$simbadName])">
-                    <xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
-                    <xsl:if test="$object">
-                      <xsl:call-template name="starInTable">
-                        <xsl:with-param name="object" select="$object"/>
-                      </xsl:call-template>    
-                    </xsl:if>
-                    <xsl:if test="not($object)">
-                      <xsl:call-template name="starInTable">
-                        <xsl:with-param name="object" select="."/>
-                      </xsl:call-template>    
-                    </xsl:if>
-                  </xsl:if>
-                </xsl:for-each>
-              </tbody>
-            </table>
-          </div>
-          <hr/>
+					<div class="coloredtable">
+									<table>
+													<tbody>
+																	<tr> 
+																					<xsl:for-each select="exslt:node-set($columns)/*">
+																									<th>
+																													<xsl:value-of select="@desc"/><br/>
+																													<em><xsl:value-of select="@unit"/></em><br/>
+																													<xsl:value-of select="@name"/>
+																									</th>
+																					</xsl:for-each>
+																	</tr>
+																	<!--<xsl:for-each select="$calibrators//star[./calibrator]">-->
+																					<xsl:for-each select="$calibrators//star">
+																									<!--<xsl:sort select="./calibrator[1]/dist" data-type="number" />-->
+																									<xsl:sort select="translate(./ra, ' ','')" data-type="number" />
+																									<xsl:variable name="simbadName" select="./@simbadName"/>
+																									<xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
+																									<xsl:call-template name="starInTable">
+																													<xsl:with-param name="object" select="$object"/>
+																									</xsl:call-template>    
+																					</xsl:for-each>
+													</tbody>
+									</table>
+					</div>
+					<h3> Stars without calibrator:</h3>
+					<div class="coloredtable">
+									<table>
+													<tbody>
+																	<tr> 
+																					<xsl:for-each select="exslt:node-set($columns)/*">
+																									<th>
+																													<xsl:value-of select="@desc"/><br/>
+																													<em><xsl:value-of select="@unit"/></em><br/>
+																													<xsl:value-of select="@name"/>
+																									</th>
+																					</xsl:for-each>
+																	</tr>
+																	<xsl:for-each select="//star">
+																					<xsl:sort select="translate(./ra, ' ','')" data-type="number" />
+																					<xsl:variable name="simbadName" select="./simbadName"/>
+																					<xsl:if test="not($calibrators//star[@simbadName=$simbadName])">
+																									<xsl:variable name="object" select="document($mainFilename)//object[name=$simbadName]"/>
+																									<xsl:if test="$object">
+																													<xsl:call-template name="starInTable">
+																																	<xsl:with-param name="object" select="$object"/>
+																													</xsl:call-template>    
+																									</xsl:if>
+																									<xsl:if test="not($object)">
+																													<xsl:call-template name="starInTable">
+																																	<xsl:with-param name="object" select="."/>
+																													</xsl:call-template>    
+																									</xsl:if>
+																					</xsl:if>
+																	</xsl:for-each>
+													</tbody>
+									</table>
+					</div>
+					<hr/>
           <a name="aliases"/>
           <h1> Aliases </h1>
           To achieve data collection some aliases have been defined (most of these are
@@ -320,9 +333,6 @@
                 <xsl:attribute name="style">background-color: #ff0000</xsl:attribute>
               </xsl:if>
               <xsl:value-of select="$primaStar/name"/>
-              <xsl:comment>
-                <xsl:copy-of select="$object"/>
-              </xsl:comment>
               [
               <xsl:call-template name="objectToSimbadLink">
                 <xsl:with-param name="ident" select="$simbadName"/>
