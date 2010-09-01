@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.6 2007-10-31 11:31:56 gzins Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.7 2010-09-01 07:28:35 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2007/10/31 11:31:56  gzins
+ * Removed some useless code
+ *
  * Revision 1.5  2007/06/27 13:00:59  scetre
  * Do not removed science star if present in the resulting list.
  * Updated get star command
@@ -30,7 +33,7 @@
  *  Definition of sclsvrSCENARIO_SINGLE_STAR class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.6 2007-10-31 11:31:56 gzins Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.7 2010-09-01 07:28:35 mella Exp $";
 /* 
  * System Headers 
  */
@@ -78,8 +81,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
     Clear();
     _request.Copy(*request);
 
-    // Clear the list input and list output which will be used
-    _starListP.Clear();
+    // Clear the storage list 
     _starListS.Clear();
 
     // Build criteriaList used
@@ -133,7 +135,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
         return mcsFAILURE;
     }
     
-    _starListP.Display();
     mcsFLOAT magV=1;
     if (_starListS.GetNextStar(mcsTRUE)->GetPropertyValue(vobsSTAR_PHOT_JHN_V,
                                                           &magV) == mcsFAILURE)
