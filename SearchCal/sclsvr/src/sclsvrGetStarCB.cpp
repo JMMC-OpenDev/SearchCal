@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.34 2007-10-31 11:29:09 gzins Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.35 2010-09-23 19:18:41 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.34  2007/10/31 11:29:09  gzins
+ * Updated to use new sdbENTRY non-blocking class
+ *
  * Revision 1.33  2007/06/27 13:00:59  scetre
  * Do not removed science star if present in the resulting list.
  * Updated get star command
@@ -76,7 +79,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.34 2007-10-31 11:29:09 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.35 2010-09-23 19:18:41 mella Exp $"; 
 
 
 /* 
@@ -108,6 +111,7 @@ extern "C"{
 /*
  * Local Headers 
  */
+#include "sclsvrVersion.h"
 #include "sclsvrSERVER.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrErrors.h"
@@ -128,7 +132,11 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 
     // Search command
     sclsvrGETSTAR_CMD getStarCmd(msg.GetCommand(), msg.GetBody());
-    
+    // Get the request as a string for the case of Save in VOTable
+    mcsSTRING256 requestString;
+    strncpy(requestString, msg.GetCommand(), 256);
+
+
     // Parse command
     if (getStarCmd.Parse() == mcsFAILURE)
     {
@@ -162,6 +170,13 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }    
 
+    // Get filename 
+    char* fileName;
+    if (getStarCmd.GetFile(&fileName) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }    
+
     // Get observed wavelength 
     double wlen;
     if (getStarCmd.GetWlen(&wlen) == mcsFAILURE)
@@ -187,6 +202,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     // Prepare request to search information in other catalog
     sclsvrREQUEST request;
     if (request.SetObjectName(objectName) == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+    if (request.SetFileName(fileName) == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
@@ -268,6 +287,28 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         // Send reply
         msg.SetBody(miscDynBufGetBuffer(&reply));
         miscDynBufDestroy(&reply);
+
+
+
+        string xmlOutput;
+//        request.AppendParamsToVOTable(xmlOutput);
+        char* voHeader = "Produced by beta version of getStar (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+        // Get the software name and version
+        mcsSTRING32 softwareVersion;
+        snprintf(softwareVersion, sizeof(softwareVersion), 
+                 "%s v%s", "sclsvr", sclsvrVERSION);
+
+        // If a filename has been given, store results as file
+        if (strcmp(request.GetFileName(), "") != 0)
+        {
+            // Save the list as a VOTable v1.1
+            if (starList.SaveToVOTable
+                (request.GetFileName(), voHeader, softwareVersion,
+                 requestString, xmlOutput.c_str()) == mcsFAILURE)
+            {
+                return evhCB_NO_DELETE | evhCB_FAILURE;
+            }
+        }
 
         // Send reply
         if (SendReply(msg) == mcsFAILURE)

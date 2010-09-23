@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETSTAR.cdf,v 1.5 2005-02-07 14:42:11 gzins Exp $"
+ "@(#) $Id: sclsvrGETSTAR.cdf,v 1.6 2010-09-23 19:18:41 mella Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.5  2005/02/07 14:42:11  gzins
+ Renamed lambda to wlen.
+
  Revision 1.4  2005/02/03 10:38:32  gzins
  Fixed conflict
 
@@ -24,6 +27,11 @@
             <name>objectName</name>
             <type>string</type>
             <desc>star name</desc>
+        </param>
+        <param>
+            <name>file</name>
+            <type>string</type>
+            <desc>file name to write votable</desc>
         </param>
         <param>
             <name>baseline</name>
