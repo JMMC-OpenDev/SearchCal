@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatAliases.xml,v 1.12 2010-08-26 10:46:16 mella Exp $"
+# "@(#) $Id: sclcatAliases.xml,v 1.13 2010-09-24 11:20:30 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2010/08/26 10:46:16  mella
+# restart from scratch
+#
 # Revision 1.11  2010/08/24 13:47:32  mella
 # update
 #
@@ -54,4 +57,8 @@ names. -->
     <object name="1RXS1609" alias="1RXS J160929.1-210524" />
     <object name="WASP-8"  alias="TYC 7522-505-1" />
     <object name="2M J044144"  alias="2MASS J04414489+2301513" />
+
+
+		<object name="BD14 4559" alias="BD +14 4559"/>
+		<object name="Lupus-TR-3" alias="Lupus-TR 3"/>
 </aliases>

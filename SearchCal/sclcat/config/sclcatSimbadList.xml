@@ -3921,9 +3921,9 @@
 </object>
 <!-- add on Thu Aug 26 12:44:03 CEST 2010 -->
 <object>
+<ra>12 24 08</ra>
+<dec>-61 52 18</dec>
 <name>C 1221-616</name>
-<ra>12 24.2</ra>
-<dec>-61 52</dec>
 <pmra>-7.02</pmra>
 <pmdec>3.68</pmdec>
 <!-- simbad returns '~' for plx -->
@@ -3968,5 +3968,45 @@
 <pmdec>10.10</pmdec>
 <!-- simbad returns '~' for plx -->
 <!-- simbad returns no value for kmag -->
+</object>
+<!-- add on Thu Aug 26 14:29:13 CEST 2010 -->
+<object>
+<name>HAT-P-17</name>
+<ra>21 38 08.7316</ra>
+<dec>+30 29 19.416</dec>
+<pmra>-78.50</pmra>
+<pmdec>-124.10</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>8.544</kmag>
+</object>
+<!-- add on Thu Aug 26 14:29:13 CEST 2010 -->
+<object>
+<name>HAT-P-25</name>
+<ra>03 13 44.500</ra>
+<dec>+25 11 50.68</dec>
+<pmra>16.7</pmra>
+<pmdec>-10.1</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>10.815</kmag>
+</object>
+<!-- add on Thu Aug 26 14:31:27 CEST 2010 -->
+<object>
+<name>BD +14 4559</name>
+<ra>21 13 35.9917</ra>
+<dec>+14 41 21.794</dec>
+<pmra>236.44</pmra>
+<pmdec>1.20</pmdec>
+<plx>19.99</plx>
+<kmag>7.336</kmag>
+</object>
+<!-- add on Thu Aug 26 14:39:47 CEST 2010 -->
+<object>
+<name>Lupus-TR 3</name>
+<ra>15 30 18.67</ra>
+<dec>-42 58 41.5</dec>
+<pmra>-8</pmra>
+<pmdec>-24</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>15.48</kmag>
 </object>
 </objects>
