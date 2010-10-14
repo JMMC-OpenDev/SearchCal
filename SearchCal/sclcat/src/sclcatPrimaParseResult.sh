@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.28 2010-08-25 20:17:44 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.29 2010-10-14 13:15:59 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.28  2010/08/25 20:17:44  mella
+# add progression message
+#
 # Revision 1.27  2010/08/24 15:23:07  mella
 # set microlensing filename as xslt param
 #
@@ -133,6 +136,7 @@ done
 
 XSLT_VOT2HTML="$PWD/../config/sclcatVOTable2html.xsl"
 XSLT_OBJECT2HTML="$PWD/../config/sclcatObjectsToHtml.xsl"
+XSLT_OBJECT2DIAGDEP="$PWD/../config/sclcatObjectsToDiagdep.xsl"
 XSLT_OBJECT2LATEX="$PWD/../config/sclcatObjectsToLatex.xsl"
 XSLT_OBJECT2CSV="$PWD/../config/sclcatObjectsToCSV.xsl"
 XSLT_OBJECT2DAT="$PWD/../config/sclcatObjectsToDat.xsl"
@@ -413,21 +417,28 @@ $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
 $XSLT_OBJECT2DAT $PRIMA_STAR_LIST
 mv -v $OUTPUT_FILE result
 
+if [ ! -d diagdep ]
+then
+echo "Generating diagrams of displacement"
+xsltproc  --path ./html:.:.. $XSLT_OBJECT2DIAGDEP $CALIBRATORS 
+# this produce files into diagdep directory which can be used in html view
+else
+    echo "diagdep directory already present, do not generate diagrams of displacement again"
+fi
+
 OUTPUT_FILE=index.html
 echo "Html resume generated into $PWD/$OUTPUT_FILE"
-xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
+xsltproc  --path $PWD/diagdep:./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
 $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
 --stringparam microlensingFilename $MICROLENSING_STAR_LIST \
 $XSLT_OBJECT2HTML $PRIMA_STAR_LIST
 
-OUTPUT_FILE=table.tex
-echo "Latex table generated into $PWD/$OUTPUT_FILE"
-xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsFilename \
-$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
-$XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
-mv -v $OUTPUT_FILE result
-
-
+output_file=table.tex
+echo "latex table generated into $pwd/$output_file"
+xsltproc  --path ./html:.:.. -o "$output_file" --stringparam calibratorsfilename \
+$calibrators --stringparam mainfilename $simbad_file \
+$xslt_object2latex $prima_star_list
+mv -v $output_file result
 
 # copy xml files
 cp -v $PRIMA_STAR_LIST  result
@@ -443,6 +454,7 @@ stilts plot2d cmd='addcol -units radians deltaRA "hmsToRadians(ra)-hmsToRadians(
 stilts tpipe cmd='clearparams * ; keepcols "ra dec RAJ2000 DEJ2000 diamFlag"' in=catalog.vot out=Star_RaDec_Cal_RaDecDiamFlag.csv 
 sed -i~ "s/,/ /g" Star_RaDec_Cal_RaDecDiamFlag.csv
 stilts tpipe cmd='clearparams * ; keepcols "ra dec RAJ2000 DEJ2000 diamFlag"' in=catalog.vot out=Star_RaDec_Cal_RaDecDiamFlag.ascii ofmt=ascii
+# plot data for herve's diagdep scripts
 
 
 #___oOo___
