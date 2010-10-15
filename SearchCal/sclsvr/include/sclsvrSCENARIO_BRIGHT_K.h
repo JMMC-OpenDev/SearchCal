@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.6 2006-12-21 15:16:05 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.7 2010-10-15 13:33:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/12/21 15:16:05  lafrasse
+ * Updated progression monitoring code (moved from static-based to instance-based).
+ *
  * Revision 1.5  2006/01/18 08:49:40  scetre
  * Removed unused filter on Qflg and opt because they are now managed by the catalog option
  *
@@ -81,8 +84,6 @@ private:
     vobsMAGNITUDE_FILTER _magnitudeFilter;
     // filter list build with the 2 filter on origin and magnitude
     vobsFILTER_LIST _filterList;
-    // filter on B-V for I/280
-    vobsBV_FILTER _bvFilter;
     
     // criteria list for LBSI, Merand, charm2, denis JK, 2MASS, II/225
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;

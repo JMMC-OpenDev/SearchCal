@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.h,v 1.2 2010-01-22 15:35:29 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.h,v 1.3 2010-10-15 13:33:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2010/01/22 15:35:29  lafrasse
+ * Log refinments.
+ *
  * Revision 1.1  2009/12/17 15:14:31  lafrasse
  * *** empty log message ***
  *
@@ -69,9 +72,7 @@ private:
     vobsMAGNITUDE_FILTER _magnitudeFilter;
     // filter list build with the 2 filter on origin and magnitude
     vobsFILTER_LIST _filterList;
-    // filter on B-V for I/280
-/*    vobsBV_FILTER _bvFilter;*/
-    
+
     // criteria list for denis JK, 2MASS, II/225
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;
     // criteria list for II/7A

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.17 2010-01-26 14:16:06 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.18 2010-10-15 13:33:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2010/01/26 14:16:06  lafrasse
+ * Added WDS catalog querying.
+ *
  * Revision 1.16  2009/02/26 10:58:31  lafrasse
  * Changed cross-matching method for SB9 catalog.
  *
@@ -62,7 +65,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.17 2010-01-26 14:16:06 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.18 2010-10-15 13:33:19 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -90,8 +93,7 @@ sclsvrSCENARIO_BRIGHT_K::sclsvrSCENARIO_BRIGHT_K(sdbENTRY* progress):
     vobsSCENARIO(progress),
     _originFilter("K origin = 2mass filter"),
     _magnitudeFilter("K mag filter"),
-    _filterList("filter List"),
-    _bvFilter("B-V filter")
+    _filterList("filter List")
 {
 }
 
@@ -190,9 +192,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     }
 
     // BUILD FILTER USED
-    // Build B-V < 1 filter
-    _bvFilter.SetMagnitudeValue(1);
-    _bvFilter.Enable();
     // Build origin = 2MASS for Kmag filter
     _originFilter.SetOriginName(vobsCATALOG_MASS_ID ,vobsSTAR_PHOT_JHN_K);
     _originFilter.Enable();
@@ -212,7 +211,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     
     // I/280
     if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP,
-                 vobsCOPY, NULL, &_bvFilter, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+                 vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
