@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatFilterCatalog.sh,v 1.5 2010-10-15 07:06:01 mella Exp $"
+# "@(#) $Id: sclcatFilterCatalog.sh,v 1.6 2010-10-15 07:08:48 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.5  2010/10/15 07:06:01  mella
+# add manual filtering to sort out wds and sbc9
+#
 # Revision 1.4  2010/06/07 14:33:16  mella
 # do not put a space after TYC to build tyco identifiers
 #
@@ -237,7 +240,7 @@ case $FILTERING_STYLE in
 
         newStep "Reject bad WDS computed with simbad and clean temporary columns" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG out=$CATALOG cmd='select (NULL_ID_2\ &&\ NULL_WDS_2)' cmd='delcols $380\ $381\ $382\ $383\ $384\ $385\ $386\ $387\ $388\ $389\ $390\ $391\ $392\ $393\ $394\ $395\ $396\ $397' #\ $398\ $399\ $400'
         
-        newStep "Removing remaining stars with sep1 or sep2 < 2 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select !(sep1<2||sep2<2)' out=$CATALOG ;
+        newStep "Removing remaining stars sbc9 and wds with sep1 or sep2 < 2 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select !(!NULL_SBC9||sep1<2||sep2<2)' out=$CATALOG ;
 
         ;;
     * ) # Unknown filtering
