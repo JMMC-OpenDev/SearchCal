@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: mcsinsInstall.sh,v 1.24 2009-05-27 21:32:59 mella Exp $"
+# "@(#) $Id: mcsinsInstall.sh,v 1.25 2010-10-22 09:24:32 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.24  2009/05/27 21:32:59  mella
+# fix error messages
+#
 # Revision 1.23  2009/05/27 21:31:08  mella
 # fix error messages
 #
@@ -104,7 +107,7 @@
 #
 
 # List of MCS modules
-mcsModules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth fnd misco env cmd msg sdb evh gwt jmcs modc modcpp modjava"
+mcsModules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth fnd misco env cmd msg sdb evh gwt jmcs modc modcpp modsh modjava"
 
 function printUsage () {
         echo -e "Usage: mcsinsInstall [-h] [-c] [-u] [-t tag] [-r tag]" 
