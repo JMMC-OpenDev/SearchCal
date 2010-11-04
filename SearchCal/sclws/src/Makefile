@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.8 2008-08-25 12:51:40 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.9 2010-11-04 15:59:48 lafrasse Exp $"
 #
 # Makefile of sclws module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.8  2008/08/25 12:51:40  lafrasse
+# Added sclwsManager file installation (automated replicat needs it to start it automatically).
+#
 # Revision 1.7  2008/08/25 12:48:16  lafrasse
 # Added commom MCS LDFLAG.
 #
@@ -180,16 +183,16 @@ include $(MAKEDIR)/mkfMakefile
 #
 # TARGETS
 # -------
-all:	do_soap do_all
+all: do_soap do_all
 	@echo " . . . 'all' done" 
 
-clean : clean_soap clean_all 
+clean : clean_soap clean_all
 	@echo " . . . clean done"
 
-man   : do_man 
+man   : do_man
 	@echo " . . . man page(s) done"
 
-install : install_all
+install : install_proxy install_all
 	@echo " . . . installation done"
 
 # Specific targets
@@ -201,11 +204,22 @@ install : install_all
 # -x : don't generate sample XML message files
 # -d : generated file output path = ../include/
 do_soap:
+	@echo "Synthetizing SOAP code . . ."
 	soapcpp2 -n -psoap -L -x -d../include/ ../include/sclwsWS.h
 	mv ../include/*.cpp ./
+	@echo " . . . done"
 
 # Remove any SOAP-generatdd file
 clean_soap:
+	@echo "Cleaning SOAP code . . ."
 	rm -f ../include/soap* ../include/*.xml ../include/*.xsd ../include/*.wsdl ../include/ns.*
 	rm -f soap*
+	@echo " . . . done"
+
+# Copy PHP proxy script in current user's public_html directory
+install_proxy:
+	@echo "Installing PHP proxy in ~/public_html . . ."
+	cp sclws-proxy.php ~/public_html/
+	@echo " . . . done"
+
 #___oOo___
