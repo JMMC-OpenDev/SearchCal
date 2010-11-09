@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.12 2007-10-31 11:40:01 gzins Exp $"
+# "@(#) $Id: Makefile,v 1.13 2010-11-09 11:15:30 lafrasse Exp $"
 #
 # Makefile of sclsvr test module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.12  2007/10/31 11:40:01  gzins
+# Added sclsvrTestSERVER program
+#
 # Revision 1.11  2007/05/11 15:52:23  gzins
 # Added sclsvrTestBright_BD+23_492 and sclsvrTestBright_HD_103945 tests
 #
@@ -92,36 +95,7 @@ lllll_OBJECTS   =
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         =
-SCRIPTS_L       = sclsvrTestBright_AlfPsa    \
-                  sclsvrTestBright_BetCap    \
-                  sclsvrTestBright_BetDor    \
-                  sclsvrTestBright_DelOph    \
-                  sclsvrTestBright_EpsSgr    \
-                  sclsvrTestBright_EtaTau    \
-                  sclsvrTestBright_FuOri     \
-                  sclsvrTestBright_Pi01Gru   \
-                  sclsvrTestBright_Tau04Eri  \
-                  sclsvrTestBright_Waql      \
-				  sclsvrTestBright_ZetGem    \
-				  sclsvrTestBright_HD_103945 \
-				  sclsvrTestBright_BD+23_492 \
-				  \
-				  sclsvrTestFaint_HD_5980    \
-				  sclsvrTestFaint_AzV_266    \
-				  sclsvrTestFaint_NGC_1068   \
-				  sclsvrTestFaint_BD+23_492  \
-				  sclsvrTestFaint_HD_26933   \
-				  sclsvrTestFaint_HD_33793   \
-				  sclsvrTestFaint_V615_Ori   \
-				  sclsvrTestFaint_FU_Ori     \
-				  sclsvrTestFaint_TW_Hya     \
-				  sclsvrTestFaint_HD_103945  \
-				  sclsvrTestFaint_HD_111688  \
-				  sclsvrTestFaint_U_Mus      \
-				  sclsvrTestFaint_HD_144007  \
-				  sclsvrTestFaint_Elia_2-64  \
-				  sclsvrTestFaint_S_Cra      \
-				  sclsvrTestFaint_L_Car
+SCRIPTS_L       = 
 #
 # TCL scripts (public and local)
 # ------------------------------
