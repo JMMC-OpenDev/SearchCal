@@ -1,14 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrTestCALIBRATOR.cpp,v 1.1 2007-10-31 11:38:45 gzins Exp $"
+ * "@(#) $Id: sclsvrTestCALIBRATOR.cpp,v 1.2 2010-11-09 10:58:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.1  2007/10/31 11:38:45  gzins
+ * Moved from sclsvrTestCalibrator.cpp
+ *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrTestCALIBRATOR.cpp,v 1.1 2007-10-31 11:38:45 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrTestCALIBRATOR.cpp,v 1.2 2010-11-09 10:58:30 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -131,13 +134,13 @@ int main(int argc, char *argv[])
     distanceFilterbis = (vobsDISTANCE_FILTER*)filterList.GetFilter("Distance Filter");
     // Set as enable the filter
     distanceFilterbis->Enable();
-    distanceFilterbis->SetDistanceValue("03 47 29.08", "+24 06 18.5", 0.1, 0.1);
+    distanceFilterbis->SetDistanceValue("03 47 29.08", "+24 06 18.5", 0.1);
   
     // apply filter
     filterList.Apply(&list2);
     //distanceFilter.Apply(&list2);
     //list2.FilterByDistanceSeparation( "03 47 29.08", "+24 06 18.5", 0.1, 0.1);
-/*    list2.GetMaximalMagnitudeSeparation("K", 2.5, 0.1);*/
+    //list2.GetMaximalMagnitudeSeparation("K", 2.5, 0.1);
     printf("filter list\n");
     list2.Display();
 
