@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrServer.cpp,v 1.12 2007-05-11 15:58:43 gzins Exp $"
+ * "@(#) $Id: sclsvrServer.cpp,v 1.13 2010-11-09 15:00:59 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2007/05/11 15:58:43  gzins
+ * Minor documentation fixing
+ *
  * Revision 1.11  2007/05/11 15:41:28  gzins
  * Updated to prevent unreleased semaphores
  *
@@ -33,7 +36,7 @@
  * Search Calibrators SERVER
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.12 2007-05-11 15:58:43 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.13 2010-11-09 15:00:59 lafrasse Exp $"; 
 
 
 /* 
@@ -63,10 +66,26 @@ using namespace std;
  */
 int main(int argc, char *argv[])
 {
-    // The following instructions have been placed in {} in order sclsvrSERVER
-    // destructor is called when application exits.
+    /*
+     * The following instructions have been placed in {} in order to call
+     * sclsvrSERVER destructor when application exits.
+     */
     {
-        // Init MCS event server
+        /*
+         * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Warning !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         *
+         * As of version 3.7.0 and later, sclsvrServer callback mecanism based
+         * on MCS module 'evh' is no longuer in use, in order to at last support
+         * GCC 4.x and later.
+         *
+         * The workarround consists in statically parsing the two last CLI args,
+         * and run the proper method accordinally.
+         */
+
+        /*
+         * Init MCS event server, only to handle MCS standard options like '-v',
+         * '-h' and so on.
+         */
         sclsvrSERVER scalibServer;
         if (scalibServer.Init(argc, argv) == mcsFAILURE)
         {
@@ -74,15 +93,32 @@ int main(int argc, char *argv[])
             exit (EXIT_FAILURE);
         }
 
-        // Main loop
-        while (scalibServer.MainLoop() == mcsFAILURE)
+        // Retrieve the COMMAND name to select among GETCAL or GETSTAR mode.
+        char* cmdName = argv[argc - 2];
+        
+        // Get COMMAND argument
+        char* cmdArgs = argv[argc - 1];
+
+        miscoDYN_BUF cmdResults;
+        mcsCOMPL_STAT cmdStatus = mcsFAILURE;
+
+        // GETCAL mode
+        if (strcmp(cmdName, "GETCAL") == 0)
         {
-            errDisplayStack();
+            cmdStatus = scalibServer.GetCal(cmdArgs, cmdResults);
+        }
+        else
+        {
+            printf("Unknown COMMAND '%s'.\n", cmdName);
         }
 
-        // Close MCS services
-        scalibServer.Disconnect();
         mcsExit();
+
+        if (cmdStatus == mcsFAILURE)
+        {
+            errCloseStack();
+            exit (EXIT_FAILURE);
+        }
     }
 
     // Exit from the application with mcsSUCCESS
@@ -90,4 +126,4 @@ int main(int argc, char *argv[])
 }
 
 
-/*___oOo___*/
+
