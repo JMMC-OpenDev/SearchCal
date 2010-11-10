@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrServer.cpp,v 1.13 2010-11-09 15:00:59 lafrasse Exp $"
+ * "@(#) $Id: sclsvrServer.cpp,v 1.14 2010-11-10 15:46:14 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2010/11/09 15:00:59  lafrasse
+ * Refactored to cut on EVH dependencies to handle callbacks, preventing compilation under GCC 4.x and newer.
+ *
  * Revision 1.12  2007/05/11 15:58:43  gzins
  * Minor documentation fixing
  *
@@ -36,7 +39,7 @@
  * Search Calibrators SERVER
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.13 2010-11-09 15:00:59 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.14 2010-11-10 15:46:14 lafrasse Exp $"; 
 
 
 /* 
@@ -106,6 +109,11 @@ int main(int argc, char *argv[])
         if (strcmp(cmdName, "GETCAL") == 0)
         {
             cmdStatus = scalibServer.GetCal(cmdArgs, cmdResults);
+        }
+        else
+        if (strcmp(cmdName, "GETSTAR") == 0)
+        {
+            cmdStatus = scalibServer.GetStar(cmdArgs, cmdResults);
         }
         else
         {
