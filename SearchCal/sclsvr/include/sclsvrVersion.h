@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.40 2010-07-30 13:05:04 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.41 2010-11-10 15:48:24 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2010/07/30 13:05:04  lafrasse
+ * Added columns URLs, descriptions and units whenever available.
+ *
  * Revision 1.39  2010/07/28 14:08:44  lafrasse
  * Renamed VFlag columns to BinFlag for detailled bright N.
  *
@@ -144,7 +147,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.6.7"
+#define sclsvrVERSION "3.7.0"
 
 #ifdef __cplusplus
 }
