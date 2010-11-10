@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.18 2009-12-17 15:14:31 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.19 2010-11-10 15:45:16 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2009/12/17 15:14:31  lafrasse
+ * *** empty log message ***
+ *
  * Revision 1.17  2007/10/31 11:28:20  gzins
  * Removed oldScenario parameter
  * Updated to use new sdbENTRY non-blocking class
@@ -109,6 +112,7 @@ public:
 
     // Method to invoke command directly
     virtual mcsCOMPL_STAT GetCal(const char* query, miscoDYN_BUF &dynBuf);
+    virtual mcsCOMPL_STAT GetStar(const char* query, miscoDYN_BUF &dynBuf);
 
 
     // Get request execution status 
@@ -118,6 +122,9 @@ protected:
     virtual mcsCOMPL_STAT ProcessGetCalCmd(const char* query, 
                                            miscoDYN_BUF &dynBuf,
                                            msgMESSAGE* msg);
+    virtual evhCB_COMPL_STAT ProcessGetStarCmd(const char* query, 
+                                               miscoDYN_BUF &dynBuf,
+                                               msgMESSAGE* msg);
 
 private:
     // Declaration of copy constructor and assignment operator as private

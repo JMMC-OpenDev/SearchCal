@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.35 2010-09-23 19:18:41 mella Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.36 2010-11-10 15:45:16 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.35  2010/09/23 19:18:41  mella
+ * add to getstar ability to export in votable
+ *
  * Revision 1.34  2007/10/31 11:29:09  gzins
  * Updated to use new sdbENTRY non-blocking class
  *
@@ -79,7 +82,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.35 2010-09-23 19:18:41 mella Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.36 2010-11-10 15:45:16 lafrasse Exp $"; 
 
 
 /* 
@@ -130,12 +133,73 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 {
     logTrace("sclsvrSERVER::GetStarCB()");
 
+    miscoDYN_BUF dynBuf;
+    evhCB_COMPL_STAT complStatus;
+    complStatus = ProcessGetStarCmd(msg.GetBody(), dynBuf, &msg);
+
+    return complStatus;
+}
+
+/**
+ * Handle GETSTAR command.
+ * 
+ * It handles the given query corresponding to the parameter list of GETSTAR
+ * command, processes it and returns the result.
+ *
+ * @param query string containing request
+ * @param dynBuf dynamical buffer where result will be stored
+ *
+ * @return evhCB_NO_DELETE.
+ */
+mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF &dynBuf)
+{
+    logTrace("sclsvrSERVER::GetStar()");
+
+    // Get calibrators
+    evhCB_COMPL_STAT complStatus;
+    complStatus = ProcessGetStarCmd(query, dynBuf, NULL);
+
+    // Update status to inform request processing is completed 
+    if (_status.Write("0") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    if (complStatus != evhCB_SUCCESS)
+    {
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;
+}
+
+/**
+ * GETSTAR command processing method.
+ *
+ * This method is called by GETSTAR command callback. It selects appropriated
+ * scenario, executes it and returns resulting list of calibrators
+ *
+ * @param query user query containing all command parameters in string format 
+ * @param dynBuf dynamical buffer where star data will be stored
+ * @param msg message corresponding to the received command. If not NULL, a
+ * thread is started and intermediate replies are sent giving the request
+ * processing status.
+ *
+ * @return Upon successful completion returns mcsSUCCESS. Otherwise,
+ * mcsFAILURE is returned.
+ */
+evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query, 
+                                                 miscoDYN_BUF &dynBuf, 
+                                                 msgMESSAGE* msg = NULL)
+{
+    logTrace("sclsvrSERVER::ProcessGetStarCmd()");
+
+    const char* cmdName = "GETSTAR";
+
     // Search command
-    sclsvrGETSTAR_CMD getStarCmd(msg.GetCommand(), msg.GetBody());
+    sclsvrGETSTAR_CMD getStarCmd(cmdName, query);
     // Get the request as a string for the case of Save in VOTable
     mcsSTRING256 requestString;
-    strncpy(requestString, msg.GetCommand(), 256);
-
+    strncpy(requestString, cmdName, 256);
 
     // Parse command
     if (getStarCmd.Parse() == mcsFAILURE)
@@ -144,23 +208,25 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     }
     
     // Start timer log
-    timlogInfoStart(msg.GetCommand());
-
-    // Monitoring task parameters
-    sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
-    monitorTaskParams.server  = this;
-    monitorTaskParams.message = &msg;
-    monitorTaskParams.status  = &_status;
-
-    // Monitoring task
-    thrdTHREAD_STRUCT       monitorTask;
-    monitorTask.function  = sclsvrMonitorTask;
-    monitorTask.parameter = (thrdFCT_ARG*)&monitorTaskParams;
-    
-    // Launch the thread only if SDB had been succesfully started
-    if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
+    timlogInfoStart(cmdName);
+    thrdTHREAD_STRUCT monitorTask;
+    if (msg != NULL)
     {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
+        // Monitoring task parameters
+        sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
+        monitorTaskParams.server  = this;
+        monitorTaskParams.message = msg;
+        monitorTaskParams.status  = &_status;
+    
+        // Monitoring task
+        monitorTask.function  = sclsvrMonitorTask;
+        monitorTask.parameter = (thrdFCT_ARG*)&monitorTaskParams;
+
+        // Launch the thread only if SDB had been succesfully started
+        if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
+        {
+            return evhCB_NO_DELETE | evhCB_FAILURE;
+        }
     }
 
     // Get star name 
@@ -263,35 +329,38 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         //       }
         //
         // Prepare reply
-        miscDYN_BUF reply;
-        miscDynBufInit(&reply);
         int propIdx;
         vobsSTAR_PROPERTY *property;
         // Add property name
         for (propIdx = 0; propIdx < calibrator.NbProperties(); propIdx++)
         {
             property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
-            miscDynBufAppendString(&reply, property->GetName());
-            miscDynBufAppendString(&reply, "\t");
+            dynBuf.AppendString(property->GetName());
+            dynBuf.AppendString("\t");
         }
-        miscDynBufAppendString(&reply, "\n");
+        dynBuf.AppendString("\n");
         // Add property value
         for (propIdx = 0; propIdx < calibrator.NbProperties(); propIdx++)
         {
             property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
-            miscDynBufAppendString(&reply, property->GetValue());
-            miscDynBufAppendString(&reply, "\t");
+            dynBuf.AppendString(property->GetValue());
+            dynBuf.AppendString("\t");
         }
-        miscDynBufAppendString(&reply, "\n");
+        dynBuf.AppendString("\n");
 
         // Send reply
-        msg.SetBody(miscDynBufGetBuffer(&reply));
-        miscDynBufDestroy(&reply);
-
-
+        if (msg != NULL)
+        {
+            msg->SetBody(dynBuf.GetBuffer());
+        }
+        else
+        {
+            printf("%s", dynBuf.GetBuffer());
+        }
+        dynBuf.Reset();
 
         string xmlOutput;
-//        request.AppendParamsToVOTable(xmlOutput);
+        //request.AppendParamsToVOTable(xmlOutput);
         char* voHeader = "Produced by beta version of getStar (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
         // Get the software name and version
         mcsSTRING32 softwareVersion;
@@ -311,10 +380,22 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         }
 
         // Send reply
-        if (SendReply(msg) == mcsFAILURE)
+        if (msg != NULL)
         {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
+            if (SendReply(*msg) == mcsFAILURE)
+            {
+                return evhCB_NO_DELETE | evhCB_FAILURE;
+            }
+            // Wait for the actionForwarder thread end
+            if (thrdThreadWait(&monitorTask) == mcsFAILURE)
+            {
+                return evhCB_NO_DELETE | evhCB_FAILURE;
+            }
         }
+    }
+
+    if (msg != NULL)
+    {
         // Wait for the actionForwarder thread end
         if (thrdThreadWait(&monitorTask) == mcsFAILURE)
         {
@@ -322,17 +403,10 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
         }
     }
 
-
-        // Wait for the actionForwarder thread end
-        if (thrdThreadWait(&monitorTask) == mcsFAILURE)
-        {
-            return evhCB_NO_DELETE | evhCB_FAILURE;
-        }
-
     // Stop timer log
-    timlogStop(msg.GetCommand());
+    timlogStop(cmdName);
 
-    return evhCB_NO_DELETE;
+    return evhCB_SUCCESS;
 }
 
 /*___oOo___*/
