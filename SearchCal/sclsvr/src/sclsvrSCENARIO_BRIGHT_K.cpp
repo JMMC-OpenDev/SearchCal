@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.18 2010-10-15 13:33:19 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.19 2010-11-24 15:27:27 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2010/10/15 13:33:19  lafrasse
+ * Removed "B-V<1" filter.
+ *
  * Revision 1.17  2010/01/26 14:16:06  lafrasse
  * Added WDS catalog querying.
  *
@@ -65,7 +68,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.18 2010-10-15 13:33:19 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.19 2010-11-24 15:27:27 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -260,7 +263,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     
     // SECONDARY REQUEST
     // The primary list is completed with the query on catalogs II/225, 
-    // I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
+    // I/196, 2MASS, LBSI, II/7A, BSC, SBSC, DENIS
     // LBSI
     if (AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
@@ -270,13 +273,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
 
     // MERAND
     if (AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // CHARM2
-    if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;

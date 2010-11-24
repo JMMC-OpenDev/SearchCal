@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.41 2010-11-10 15:48:24 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.42 2010-11-24 15:27:27 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.41  2010/11/10 15:48:24  lafrasse
+ * Removed "B-V<1" filter in Bright K scenario.
+ * Removed EVH dependencies that prevented compilation under GCC 4.x and newer.
+ *
  * Revision 1.40  2010/07/30 13:05:04  lafrasse
  * Added columns URLs, descriptions and units whenever available.
  *
@@ -147,7 +151,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.7.0"
+#define sclsvrVERSION "3.7.1"
 
 #ifdef __cplusplus
 }
