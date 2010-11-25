@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.24 2010-01-26 14:16:06 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.25 2010-11-25 15:45:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.24  2010/01/26 14:16:06  lafrasse
+ * Added WDS catalog querying.
+ *
  * Revision 1.23  2009/04/20 14:41:41  lafrasse
  * Corrected copy-paste errors.
  *
@@ -84,7 +87,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.24 2010-01-26 14:16:06 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.25 2010-11-25 15:45:33 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -315,13 +318,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     
     // B/denis
     if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
-    // charm2
-    if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS1, &_starListS1,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;

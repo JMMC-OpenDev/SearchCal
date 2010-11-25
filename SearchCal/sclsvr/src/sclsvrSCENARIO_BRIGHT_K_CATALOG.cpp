@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.4 2010-01-26 14:16:06 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.5 2010-11-25 15:45:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2010/01/26 14:16:06  lafrasse
+ * Added WDS catalog querying.
+ *
  * Revision 1.3  2010/01/22 15:35:29  lafrasse
  * Log refinments.
  *
@@ -23,7 +26,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.4 2010-01-26 14:16:06 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.5 2010-11-25 15:45:33 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -230,29 +233,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     }
     
     // SECONDARY REQUEST
-    // The primary list is completed with the query on catalogs II/225, 
-    // I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
-    /* LBSI
-    if (AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }*/
-
-    /* MERAND
-    if (AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }*/
-
-    /* CHARM2
-    if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }*/
-
     // DENIS_JK
     if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS,
                           vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.42 2010-11-24 15:27:27 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.43 2010-11-25 15:45:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.42  2010/11/24 15:27:27  lafrasse
+ * Removed CHARM querying from Bright K scenario.
+ *
  * Revision 1.41  2010/11/10 15:48:24  lafrasse
  * Removed "B-V<1" filter in Bright K scenario.
  * Removed EVH dependencies that prevented compilation under GCC 4.x and newer.
@@ -151,7 +154,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.7.1"
+#define sclsvrVERSION "3.7.2"
 
 #ifdef __cplusplus
 }

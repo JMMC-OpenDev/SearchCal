@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.14 2010-01-26 14:16:06 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.15 2010-11-25 15:45:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2010/01/26 14:16:06  lafrasse
+ * Added WDS catalog querying.
+ *
  * Revision 1.13  2009/04/20 14:41:41  lafrasse
  * Corrected copy-paste errors.
  *
@@ -52,7 +55,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_V class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.14 2010-01-26 14:16:06 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.15 2010-11-25 15:45:33 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -164,7 +167,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     }
 
     // The primary list is completed with the query on catalogs I/196,
-    // MASS, II/225, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
+    // MASS, II/225, LBSI, II/7A, BSC, SBSC, DENIS
     // I/196
     if (AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS,
                  vobsUPDATE_ONLY, &_criteriaListHd) == mcsFAILURE)
@@ -198,12 +201,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     }
     // MERAND
     if (AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starListS, &_starListS,
-                 vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // CHARM2
-    if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS, &_starListS,
                  vobsUPDATE_ONLY, &_criteriaList) == mcsFAILURE)
     {
         return mcsFAILURE;
