@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatGenerateMapPlot.sh,v 1.1 2010-04-13 14:35:17 lafrasse Exp $"
+# "@(#) $Id: sclcatGenerateMapPlot.sh,v 1.2 2010-11-26 12:48:55 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2010/04/13 14:35:17  lafrasse
+# Added sclcatGenerateMapPlot.
+#
 #*******************************************************************************
 
 #/**
@@ -94,11 +97,8 @@ function completeHtmlMap () {
 
     echo "<br/>" >> $HTML_FILE
 
-    echo "You can download the catalogs below:<br/>" >> $HTML_FILE
-    RAW_CATALOG_SIZE=`du -sh $RAW_CATALOG_PATH | awk '{print $1}'`
-    echo "<li><a href='result/${RAW_CATALOG}'>Raw Catalog</a> (FITS format, &plusmn;${RAW_CATALOG_SIZE});<br/>" >> $HTML_FILE
     FILTERED_CATALOG_SIZE=`du -sh $FILTERED_CATALOG_PATH | awk '{print $1}'`
-    echo "<li><a href='result/${FILTERED_CATALOG}'>Filtered Catalog</a> (FITS format, &plusmn;${FILTERED_CATALOG_SIZE});<br/>" >> $HTML_FILE
+    echo "<a href='result/${FILTERED_CATALOG}'>Click to Download the Catalog</a> (FITS format, &plusmn;${FILTERED_CATALOG_SIZE}).<br/>" >> $HTML_FILE
 
     echo "</body>" >> $HTML_FILE
     echo "</html>" >> $HTML_FILE
@@ -150,7 +150,7 @@ RAW_CATALOG=catalog0.fits
 RAW_CATALOG_PATH=$CATALOG_DIR/result/$RAW_CATALOG
 if [ ! -f "${RAW_CATALOG_PATH}" ]
 then
-    echo "Please a raw FITS catalog file."
+    echo "Please give a raw FITS catalog file."
     exit 1
 else
     echo "Reading raw FITS catalog from ${RAW_CATALOG_PATH}"
@@ -160,7 +160,7 @@ FILTERED_CATALOG=final.fits
 FILTERED_CATALOG_PATH=$CATALOG_DIR/result/$FILTERED_CATALOG
 if [ ! -f "${FILTERED_CATALOG_PATH}" ]
 then
-    echo "Please a filtered FITS catalog file."
+    echo "Please give a filtered FITS catalog file."
     exit 1
 else
     echo "Reading filtered FITS catalog from ${FILTERED_CATALOG_PATH}"
