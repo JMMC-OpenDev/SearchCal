@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatFilterCatalog.sh,v 1.7 2010-10-15 15:03:03 mella Exp $"
+# "@(#) $Id: sclcatFilterCatalog.sh,v 1.8 2010-11-26 12:33:53 lafrasse Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2010/10/15 15:03:03  mella
+# change filter with new WDS handling in the server: we must check sep1 and sep2
+#
 # Revision 1.6  2010/10/15 07:08:48  mella
 # add manual filtering for wds and sbc9 using simbad
 #
@@ -200,8 +203,8 @@ case $FILTERING_STYLE in
         ;;
 
     ESO ) # ESO fitering
-        newStep "Removing stars with DEC < 40 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select "dmsToRadians(DEJ2000) < degreesToRadians(40)"' out=$CATALOG ;
-         newStep "Removing star with RA=18 56 44.3 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select !equals(RAJ2000,\"18\ 56\ 44.3\")' out=$CATALOG ;
+        #newStep "Removing stars with DEC < 40 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select "dmsToRadians(DEJ2000) < degreesToRadians(40)"' out=$CATALOG ;
+        newStep "Removing star with RA=18 56 44.3 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select !equals(RAJ2000,\"18\ 56\ 44.3\")' out=$CATALOG ;
        
         #
         # Add special simbad filtering until wds and sbc9 coordinates fixes
