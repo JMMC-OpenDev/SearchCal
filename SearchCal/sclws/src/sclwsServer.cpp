@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.11 2010-01-22 15:41:29 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.12 2010-12-02 13:54:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2010/01/22 15:41:29  lafrasse
+ * Re-commited production port number (8078 instead of 8079 used for beta-testing).
+ *
  * Revision 1.10  2010/01/22 15:35:29  lafrasse
  * Log refinments.
  *
@@ -55,7 +58,7 @@
  * This daemon listen on port 8078.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.11 2010-01-22 15:41:29 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.12 2010-12-02 13:54:19 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -93,7 +96,7 @@ using namespace std;
 /*
  * Local Variables
  */
-uint   portNumber = 8078;
+uint   portNumber = 8079;
 struct Namespace* namespaces;
 struct soap globalSoapContext; // SOAP execution context
 

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsWS.h,v 1.9 2010-01-22 15:41:29 lafrasse Exp $"
+ * "@(#) $Id: sclwsWS.h,v 1.10 2010-12-02 13:54:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/01/22 15:41:29  lafrasse
+ * Re-commited production port number (8078 instead of 8079 used for beta-testing).
+ *
  * Revision 1.8  2010/01/22 15:35:29  lafrasse
  * Log refinments.
  *
@@ -53,7 +56,7 @@
 //gsoap ns service name: sclws
 //gsoap ns service style: rpc
 //gsoap ns service encoding: literal
-//gsoap ns service location: http://jmmc.fr:8078
+//gsoap ns service location: http://jmmc.fr:8079
 //gsoap ns schema namespace: urn:sclws
 
 /*
