@@ -2,11 +2,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.29 2010-10-14 13:15:59 mella Exp $"
+# "@(#) $Id: sclcatPrimaParseResult.sh,v 1.30 2010-12-06 15:52:44 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.29  2010/10/14 13:15:59  mella
+# add first implementation to reject wds and sb9 using simbad
+#
 # Revision 1.28  2010/08/25 20:17:44  mella
 # add progression message
 #
@@ -437,7 +440,7 @@ output_file=table.tex
 echo "latex table generated into $pwd/$output_file"
 xsltproc  --path ./html:.:.. -o "$output_file" --stringparam calibratorsfilename \
 $calibrators --stringparam mainfilename $simbad_file \
-$xslt_object2latex $prima_star_list
+$XSLT_OBJECT2LATEX $prima_star_list
 mv -v $output_file result
 
 # copy xml files
