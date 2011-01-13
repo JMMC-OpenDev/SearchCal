@@ -1,4 +1,5 @@
 #!/bin/sh
+if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 #
 # sclwsManger:      SearchCal WebService Server
 #
@@ -12,11 +13,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclwsManager.sh,v 1.1 2008-02-18 15:31:44 lafrasse Exp $"
+# "@(#) $Id: sclwsManager.sh,v 1.2 2011-01-13 08:48:04 mella Exp $"
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.1  2008/02/18 15:31:44  lafrasse
+# Creation.
+#
 #*******************************************************************************
 
 #/**
@@ -36,9 +40,13 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
+# uncomment next line to accept some cores
+# ulimit -c unlimited
+
 # Define some usefull program name and process id
 prog="sclwsServer"
 processId="sclwsServer"
+PID_FILE="/var/run/${prog}.pid"
 
 #handle parameter
 case "$1" in
@@ -46,13 +54,14 @@ case "$1" in
   	gprintf "Starting %s: " "$prog"
     echo
    
-    if [ `pidofproc $processId` ]
+    if [ `pidofproc -p "{$PID_FILE}" "${processId}"` ]
        then
            gprintf "Sorry, %s is already running" "$prog"
            failure
        else
        # start real process
-       su - sclws -c "$prog &"
+       su - sclws -c "$prog" &
+       echo "$!" > "${PID_FILE}"
        if [ $? -eq 0 ]
            then
            	success 
@@ -64,11 +73,11 @@ case "$1" in
 	;;
   stop)
 	gprintf "Shutting down %s: " "$prog"
-	killproc $processId
+	killproc -p "${PID_FILE}" "${processId}"
 	echo
 	;;
   status)
-	status $processId
+	status -p "${PID_FILE}" "${processId}"
 	;;
   restart)
   	gprintf "Re" 
