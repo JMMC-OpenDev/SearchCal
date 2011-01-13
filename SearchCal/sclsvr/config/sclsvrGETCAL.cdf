@@ -3,11 +3,14 @@
 ********************************************************************************
  JMMC project
 
- "@(#) $Id: sclsvrGETCAL.cdf,v 1.23 2007-10-31 11:25:30 gzins Exp $"
+ "@(#) $Id: sclsvrGETCAL.cdf,v 1.24 2011-01-13 14:25:35 lafrasse Exp $"
 
  History 
  ~~~~~~~
  $Log: not supported by cvs2svn $
+ Revision 1.23  2007/10/31 11:25:30  gzins
+ Removed oldScenario parameter
+
  Revision 1.22  2007/06/27 14:25:42  scetre
  Added noScienceStar parameter default is true
 
@@ -79,7 +82,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:noNamespaceSchemaLocation="cmdDefinitionFile.xsd">
     <mnemonic>GETCAL</mnemonic>
-    <desc>Get a list of interferometric calibrators for a given science object. It returns any stars found in CDS catalogs around the science object, which can be used as calibrator during an observation. It computes diameters and the expected visibility for each found calibrator.</desc>
+    <desc>Get a list of interferometric calibrators for a given science object. It returns any star found in CDS catalogs around the science object, which could be used as calibrator during an observation. It computes diameters and the expected visibility for each found calibrator.</desc>
     <params>
         <param>
             <name>objectName</name>
@@ -197,7 +200,7 @@
             <name>noScienceStar</name>
             <type>boolean</type>
             <defaultValue><boolean>true</boolean></defaultValue>
-            <desc>specify whether the science has to be removed from the list or not</desc>
+            <desc>specify whether the science object should be removed from the list or not</desc>
         </param>
     </params>        
 </cmd>
