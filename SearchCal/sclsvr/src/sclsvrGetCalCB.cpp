@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.56 2009-12-17 15:14:31 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.57 2011-01-13 14:26:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.56  2009/12/17 15:14:31  lafrasse
+ * *** empty log message ***
+ *
  * Revision 1.55  2009/12/09 10:01:55  lafrasse
  * Updated to accuratly filter science star using star separation instead of
  * coordinates box (wrong when stars near earth pole).
@@ -181,7 +184,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.56 2009-12-17 15:14:31 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.57 2011-01-13 14:26:51 lafrasse Exp $"; 
 
 
 /* 
@@ -436,6 +439,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         const char* band = request.GetSearchBand();
         switch(band[0])
         {
+            case 'I':
+            case 'J':
+            case 'H':
             case 'K':
                 // Load Faint K Scenario
                 scenario = &_scenarioFaintK;

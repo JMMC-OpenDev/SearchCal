@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.43 2010-11-25 15:45:33 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.44 2011-01-13 14:26:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.43  2010/11/25 15:45:33  lafrasse
+ * Removed CHARM querying from all scenarii.
+ *
  * Revision 1.42  2010/11/24 15:27:27  lafrasse
  * Removed CHARM querying from Bright K scenario.
  *
@@ -154,7 +157,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.7.2"
+#define sclsvrVERSION "3.7.3"
 
 #ifdef __cplusplus
 }
