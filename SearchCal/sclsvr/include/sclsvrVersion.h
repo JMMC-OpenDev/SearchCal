@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.44 2011-01-13 14:26:51 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.45 2011-02-10 13:48:30 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.44  2011/01/13 14:26:51  lafrasse
+ * Added I, J and H band in Faint K.
+ *
  * Revision 1.43  2010/11/25 15:45:33  lafrasse
  * Removed CHARM querying from all scenarii.
  *
@@ -157,7 +160,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.7.3"
+#define sclsvrVERSION "3.7.4"
 
 #ifdef __cplusplus
 }
