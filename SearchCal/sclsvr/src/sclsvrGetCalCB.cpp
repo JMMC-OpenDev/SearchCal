@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.57 2011-01-13 14:26:51 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.58 2011-02-10 13:46:36 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.57  2011/01/13 14:26:51  lafrasse
+ * Added I, J and H band in Faint K.
+ *
  * Revision 1.56  2009/12/17 15:14:31  lafrasse
  * *** empty log message ***
  *
@@ -184,7 +187,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.57 2011-01-13 14:26:51 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.58 2011-02-10 13:46:36 lafrasse Exp $"; 
 
 
 /* 
@@ -422,7 +425,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 break;
 
             default:
-                errAdd(sclsvrERR_UNKNOWN_BAND, band);
+                errAdd(sclsvrERR_UNKNOWN_BRIGHT_BAND, band);
                 return mcsFAILURE;
                 break;
         }
@@ -435,20 +438,17 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             request.SetSearchArea(0.0);
         }
 
-        // According to the desired band
+        // Faint is only avalable in K band
         const char* band = request.GetSearchBand();
         switch(band[0])
         {
-            case 'I':
-            case 'J':
-            case 'H':
             case 'K':
                 // Load Faint K Scenario
                 scenario = &_scenarioFaintK;
                 break;
 
             default:
-                errAdd(sclsvrERR_UNKNOWN_BAND, band);
+                errAdd(sclsvrERR_UNKNOWN_FAINT_BAND, band);
                 return mcsFAILURE;
                 break;
         }
