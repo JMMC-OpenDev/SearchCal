@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: log.c,v 1.32 2007-10-30 11:43:15 gzins Exp $"
+* "@(#) $Id: log.c,v 1.33 2011-02-10 16:31:59 lafrasse Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.32  2007/10/30 11:43:15  gzins
+* Increased size of buffer used to format logged message to prevent overflow
+*
 * Revision 1.31  2007/02/08 10:33:06  gluck
 * Corrected doxygen warnings
 *
@@ -491,6 +494,16 @@ mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
     return mcsSUCCESS;
 }
 
+/**
+ * Return whether date output is switched ON/OFF (useful in test mode).
+ *
+ * \return mcsTRUE if date printing is turned ON, mcsFALSE otherwise.
+ */
+mcsLOGICAL logGetPrintDate()
+{
+    return logRulePtr->printDate;
+}
+
 
 /**
  * Switch ON/OFF the fileline output (useful in test mode).
@@ -505,6 +518,16 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
     logRulePtr->printFileLine = flag;
 
     return mcsSUCCESS;
+}
+
+/**
+ * Return whether fileline output is switched ON/OFF (useful in test mode).
+ *
+ * \return mcsTRUE if fileline printing is turned ON, mcsFALSE otherwise.
+ */
+mcsLOGICAL logGetPrintFileLine()
+{
+    return logRulePtr->printFileLine;
 }
 
 

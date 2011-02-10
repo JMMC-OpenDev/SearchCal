@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: log.h,v 1.20 2005-09-05 14:35:17 gzins Exp $"
+* "@(#) $Id: log.h,v 1.21 2011-02-10 16:31:59 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.20  2005/09/05 14:35:17  gzins
+* Added logEXTDBG definition for backward-compatibility
+*
 * Revision 1.19  2005/06/01 13:19:16  gzins
 * Changed 'extended debug' to 'trace'
 *
@@ -117,7 +120,9 @@ mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char*);
 
 
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL);
+mcsLOGICAL logGetPrintDate(void);
 mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL);
+mcsLOGICAL logGetPrintFileLine(void);
 
 
 mcsCOMPL_STAT logPrint(const mcsMODULEID, logLEVEL, const char *, const char *,

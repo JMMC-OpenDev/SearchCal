@@ -1,12 +1,15 @@
 /*******************************************************************************
 * JMMC project
 * 
-* "@(#) $Id: logTest.c,v 1.14 2005-06-01 13:21:39 gzins Exp $"
+* "@(#) $Id: logTest.c,v 1.15 2011-02-10 16:31:59 lafrasse Exp $"
 *
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.14  2005/06/01 13:21:39  gzins
+* Changed logExtDbg to logTrace
+*
 * Revision 1.13  2005/06/01 13:19:16  gzins
 * Changed 'extended debug' to 'trace'
 *
@@ -153,17 +156,23 @@ mcsCOMPL_STAT test1(mcsLOGICAL fileLogState, mcsLOGICAL stdoutLogState)
     return mcsSUCCESS;
 }
 
-mcsCOMPL_STAT testNoFileLine(void)
+mcsCOMPL_STAT testNoFileLineOrDate(void)
 {
-    logTest("ENTER_FUNC testNoFileLine");
+    logTest("ENTER_FUNC testNoFileLineOrDate");
     
     logSetPrintFileLine(mcsFALSE);
-    logTest("FileLine must not appear");
+    logTest("FileLine must not appear (FileLine mode is '%s')", (logGetPrintFileLine() == mcsTRUE ? "ON" : "OFF"));
 
     logSetPrintFileLine(mcsTRUE);
-    logTest("FileLine must appear");
+    logTest("FileLine must appear (FileLine mode is '%s')", (logGetPrintFileLine() == mcsTRUE ? "ON" : "OFF"));
     
-    logTest("EXIT_FUNC testNoFileLine");
+    logSetPrintDate(mcsFALSE);
+    logTest("Date must not appear (Date mode is '%s')", (logGetPrintDate() == mcsTRUE ? "ON" : "OFF"));
+
+    logSetPrintDate(mcsTRUE);
+    logTest("Date must appear (Date mode is '%s')", (logGetPrintDate() == mcsTRUE ? "ON" : "OFF"));
+    
+    logTest("EXIT_FUNC testNoFileLineOrDate");
     return mcsSUCCESS;
 }
 
@@ -204,7 +213,7 @@ int main(int argc, char ** argv)
     logEnableStdoutLog();
     logSetStdoutLogLevel(logTEST);
 
-    testNoFileLine();
+    testNoFileLineOrDate();
 
     mcsExit();
 
