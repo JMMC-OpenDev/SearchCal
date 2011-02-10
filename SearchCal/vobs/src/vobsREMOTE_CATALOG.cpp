@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.17 2010-02-15 15:43:30 mella Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.18 2011-02-10 13:44:38 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.17  2010/02/15 15:43:30  mella
+* Move to POST query method
+*
 * Revision 1.16  2010/01/22 15:38:07  lafrasse
 * Remote Vizier beta testing.
 *
@@ -63,7 +66,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.17 2010-02-15 15:43:30 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.18 2011-02-10 13:44:38 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -95,8 +98,8 @@ using namespace std;
  * Local Variables
  */
 
-//#define vobsVIZIER_URI "http://viz-beta.u-strasbg.fr/viz-bin/"
-#define vobsVIZIER_URI "http://vizier.u-strasbg.fr/viz-bin/asu-xml?"
+#define vobsVIZIER_URI "http://viz-beta.u-strasbg.fr/viz-bin/asu-xml?"
+//#define vobsVIZIER_URI "http://vizier.u-strasbg.fr/viz-bin/asu-xml?"
 
 /*
  * Class constructor
@@ -385,10 +388,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
     {
         return mcsFAILURE;
     }
-    if (miscDynBufAppendString(&_query, "&-out.max=50") == mcsFAILURE)
+
+    if (miscDynBufAppendString(&_query, "&-out.max=1000") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
     if (miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms")
         == mcsFAILURE)
     {
