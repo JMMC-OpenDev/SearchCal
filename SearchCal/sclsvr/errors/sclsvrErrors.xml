@@ -35,14 +35,19 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[A %s query need a %s search area]]></errFormat>
    </error>
-   <error id="11">
-      <errName>UNKNOWN_BAND</errName>
-      <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Invalid band %s; should be J, H, K, V or N]]></errFormat>
-   </error>
    <error id="12">
       <errName>NO_CDS_RETURN</errName>
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Connexion to CDS failed]]></errFormat>
+   </error>
+   <error id="13">
+      <errName>UNKNOWN_FAINT_BAND</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Invalid band '%s' for FAINT : should be K]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>UNKNOWN_BRIGHT_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid band '%s' for BRIGHT : should be I, J, H, K, V or N]]></errFormat>
    </error>
 </errorList>
