@@ -1,11 +1,15 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSCENARIO.cpp,v 1.48 2010-01-29 13:06:51 lafrasse Exp $"
+* "@(#) $Id: vobsSCENARIO.cpp,v 1.49 2011-02-10 17:17:21 lafrasse Exp $"
 *
 * History
 * ------- 
 * $Log: not supported by cvs2svn $
+* Revision 1.48  2010/01/29 13:06:51  lafrasse
+* Changed catalog name used for status message to be the true one (not with '_'
+* instead of '/').
+*
 * Revision 1.47  2009/04/17 15:29:48  lafrasse
 * Updated log level from Info to Test to clean sclws log output.
 *
@@ -153,7 +157,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.48 2010-01-29 13:06:51 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.49 2011-02-10 17:17:21 lafrasse Exp $"; 
 
 
 /* 
@@ -370,15 +374,15 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // Add request type (primary or not)
             if (inputList == NULL)
             {
-                strcat(timLogActionName, "_1");
+                strcat(timLogActionName, "_PRIMARY");
             }
             else
             {
-                strcat(timLogActionName, "_2");
+                strcat(timLogActionName, "_SECONDARY");
             }
 
             // Start time counter
-            timlogTestStart(timLogActionName);
+            timlogDebugStart(timLogActionName);
 
             // Write the current action in the shared database
             mcsSTRING256 message;

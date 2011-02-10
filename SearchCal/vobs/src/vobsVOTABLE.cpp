@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsVOTABLE.cpp,v 1.20 2010-02-01 16:26:04 lafrasse Exp $"
+ * "@(#) $Id: vobsVOTABLE.cpp,v 1.21 2011-02-10 17:17:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2010/02/01 16:26:04  lafrasse
+ * Replaced all "-" with vobsSTAR_PROP_NOT_SET.
+ *
  * Revision 1.19  2007/02/26 16:40:28  lafrasse
  * Corrected Doxygen documentation.
  *
@@ -75,7 +78,7 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.20 2010-02-01 16:26:04 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.21 2011-02-10 17:17:21 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -160,13 +163,21 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     buffer->AppendString(request);
 
     // Add current date
-    mcsSTRING32 utcTime;
-    if (miscGetUtcTimeStr(0, utcTime) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    } 
     buffer->AppendLine("  Generated on (UTC): ");
-    buffer->AppendString(utcTime);
+    // If not in regression test mode (-noDate)
+    if (logGetPrintDate() == mcsTRUE)
+    {
+        mcsSTRING32 utcTime;
+        if (miscGetUtcTimeStr(0, utcTime) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        } 
+        buffer->AppendString(utcTime);
+    }
+    else
+    {
+        buffer->AppendString("SearchCal Regression Test Mode");
+    }
 
     buffer->AppendLine(" </DESCRIPTION>");
     buffer->AppendLine("");
@@ -177,7 +188,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
 
     // Add software informations
     buffer->AppendLine(" <RESOURCE name=\"");
-    buffer->AppendString(softwareVersion);
+    // If not in regression test mode (-noFileLine)
+    if (logGetPrintFileLine() == mcsTRUE)
+    {
+        buffer->AppendString(softwareVersion);
+    }
+    else
+    {
+        buffer->AppendString("SearchCal Regression Test Mode");
+    }
     buffer->AppendString("\">");
 
     buffer->AppendLine("  <TABLE");

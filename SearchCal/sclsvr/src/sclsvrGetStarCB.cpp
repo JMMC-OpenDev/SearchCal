@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.36 2010-11-10 15:45:16 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.37 2011-02-10 17:17:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.36  2010/11/10 15:45:16  lafrasse
+ * Decorelated GETSTAR from EVH callback mecanism.
+ *
  * Revision 1.35  2010/09/23 19:18:41  mella
  * add to getstar ability to export in votable
  *
@@ -82,7 +85,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.36 2010-11-10 15:45:16 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.37 2011-02-10 17:17:21 lafrasse Exp $"; 
 
 
 /* 
@@ -208,7 +211,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
     
     // Start timer log
-    timlogInfoStart(cmdName);
+    timlogDebugStart(cmdName);
     thrdTHREAD_STRUCT monitorTask;
     if (msg != NULL)
     {

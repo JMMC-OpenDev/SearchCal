@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.58 2011-02-10 13:46:36 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.59 2011-02-10 17:17:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.58  2011/02/10 13:46:36  lafrasse
+ * Removed I, J and H bands in Faint K.
+ *
  * Revision 1.57  2011/01/13 14:26:51  lafrasse
  * Added I, J and H band in Faint K.
  *
@@ -187,7 +190,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.58 2011-02-10 13:46:36 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.59 2011-02-10 17:17:21 lafrasse Exp $"; 
 
 
 /* 
@@ -365,7 +368,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     strcpy(requestString, query);
  
     // Start timer log
-    timlogTestStart("GETCAL");
+    timlogDebugStart("GETCAL");
     
     // Monitoring task parameters
     sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
