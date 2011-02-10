@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.5 2010-02-18 12:07:00 lafrasse Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.6 2011-02-10 15:38:14 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/02/18 12:07:00  lafrasse
+ * Retrieve Teff and LogG in alxComputeUDFromLDAndSP().
+ *
  * Revision 1.4  2010/01/28 16:23:17  lafrasse
  * Added UD_U diameter in alxUNIFORM_DIAMETERS.
  * Added alxFlushUNIFORM_DIAMETERS() with FP_NAN support.
@@ -35,7 +38,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.5 2010-02-18 12:07:00 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.6 2011-02-10 15:38:14 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -270,7 +273,7 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
         return mcsFAILURE;
     }
 
-    printf("alxUNIFORM_DIAMETERS struct at %p contains:\n", ud);
+    printf("alxUNIFORM_DIAMETERS structure contains:\n", ud);
     printf("\tud.Teff = %lf\n", ud->Teff);
     printf("\tud.LogG = %lf\n", ud->LogG);
     printf("\tud.b    = %lf\n", ud->b);
