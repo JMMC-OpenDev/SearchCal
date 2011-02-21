@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.6 2011-02-10 15:38:14 lafrasse Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.7 2011-02-21 08:25:15 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2011/02/10 15:38:14  lafrasse
+ * Cleaned ouput log of runtime-dependant pointer addresses.
+ *
  * Revision 1.5  2010/02/18 12:07:00  lafrasse
  * Retrieve Teff and LogG in alxComputeUDFromLDAndSP().
  *
@@ -38,7 +41,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.6 2011-02-10 15:38:14 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.7 2011-02-21 08:25:15 mella Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -111,24 +114,6 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
         return mcsFAILURE;
     }
 
-    /* Retrieve jmcsLD2UD executable amongst MCS standard path */
-    char* executablePath = miscLocateExe("jmcsLD2UD");
-    if (executablePath == NULL)
-    {
-        return mcsFAILURE;
-    }
-
-    /* Forge command */
-    const char* staticCommand = "%s %f \"%s\"";
-    int composedCommandLength = strlen(staticCommand) + strlen(executablePath) + strlen(sp) + 10 + 1;
-    char* composedCommand = (char*)malloc(composedCommandLength * sizeof(char));
-    if (composedCommand == NULL)
-    {
-        /*errAdd(miscERR_ALLOC);*/
-        return mcsFAILURE;
-    }
-    snprintf(composedCommand, composedCommandLength, staticCommand, executablePath, ld, sp);
-
     /* Dynamic buffer initializaton */
     miscDYN_BUF resultBuffer;
     if (miscDynBufInit(&resultBuffer) == mcsFAILURE)
@@ -136,10 +121,21 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
         return mcsFAILURE;
     }
 
-    mcsCOMPL_STAT executionStatus = miscDynBufExecuteCommand(&resultBuffer, composedCommand);
+    /* Forge uri using hard coded URL */
+    const char* staticUri = "http://apps.jmmc.fr:8080/ld2ud/ld2ud.jsp?ld=%f&sptype=%s";
+    int composedUriLength = strlen(staticUri) + strlen(sp) + 10 + 1;
+    char* composedUri = (char*)malloc(composedUriLength * sizeof(char));
+    if (composedUri == NULL)
+    {
+        return mcsFAILURE;
+    }
+    snprintf(composedUri, composedUriLength, staticUri, ld, sp);
+    
+    /* Call the web service */
+    mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 60);
 
     /* Give back local dynamically-allocated memory */
-    free(composedCommand);
+    free(composedUri);
     if (executionStatus == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -273,7 +269,7 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
         return mcsFAILURE;
     }
 
-    printf("alxUNIFORM_DIAMETERS structure contains:\n", ud);
+    printf("alxUNIFORM_DIAMETERS structure contains:\n");
     printf("\tud.Teff = %lf\n", ud->Teff);
     printf("\tud.LogG = %lf\n", ud->LogG);
     printf("\tud.b    = %lf\n", ud->b);
