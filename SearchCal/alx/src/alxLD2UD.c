@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.7 2011-02-21 08:25:15 mella Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.8 2011-02-22 10:36:50 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2011/02/21 08:25:15  mella
+ * replace jmcsLD2UD call by a web service onto http://jmmc.fr:8080/ld2ud/ld2ud.jsp
+ *
  * Revision 1.6  2011/02/10 15:38:14  lafrasse
  * Cleaned ouput log of runtime-dependant pointer addresses.
  *
@@ -41,7 +44,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.7 2011-02-21 08:25:15 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.8 2011-02-22 10:36:50 mella Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -121,15 +124,18 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
         return mcsFAILURE;
     }
 
-    /* Forge uri using hard coded URL */
-    const char* staticUri = "http://apps.jmmc.fr:8080/ld2ud/ld2ud.jsp?ld=%f&sptype=%s";
-    int composedUriLength = strlen(staticUri) + strlen(sp) + 10 + 1;
+    /* Forge uri using hard coded URL 
+     * (sptype is encoded because it can embed spaces or special characters) */
+    char* encodedSp = miscUrlEncode(sp);
+    const char* staticUri = "http://apps.jmmc.fr:8080/jmcs_ws/ld2ud.jsp?ld=%f&sptype=%s";
+    int composedUriLength = strlen(staticUri) + strlen(encodedSp) + 10 + 1;
     char* composedUri = (char*)malloc(composedUriLength * sizeof(char));
     if (composedUri == NULL)
     {
         return mcsFAILURE;
     }
-    snprintf(composedUri, composedUriLength, staticUri, ld, sp);
+    snprintf(composedUri, composedUriLength, staticUri, ld, encodedSp);
+    free(encodedSp);
     
     /* Call the web service */
     mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 60);
@@ -165,7 +171,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
     {
         logDebug("Parsing token '%s'.", currentLine);
         char band = '0';
-        mcsDOUBLE value = 0.0;
+        mcsDOUBLE value = FP_NAN;
 
         /* Try to read effective temperature */
         if (sscanf(currentLine, "TEFF=%lf", &value) == 1)
