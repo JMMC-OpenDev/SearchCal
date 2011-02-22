@@ -4,6 +4,9 @@
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2010/02/15 15:59:55  mella
+ * added miscPerformHttpPost()
+ *
  * Revision 1.9  2010/01/15 17:05:45  lafrasse
  * Updated miscPerformHttpGet() to use miscDynBufExecuteCommand().
  *
@@ -35,7 +38,7 @@
  * Declaration of miscNetwork functions.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.10 2010-02-15 15:59:55 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.11 2011-02-22 10:03:09 mella Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -54,6 +57,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.10 20
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <netdb.h>
+#include <ctype.h>
 
 
 /* 
@@ -292,5 +296,65 @@ mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, con
 
     return executionStatus;
 }
+
+/* Converts a hex character to its integer value */
+char from_hex(char ch) {
+    return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
+}
+
+/* Converts an integer value to its hex character*/
+char to_hex(char code) {
+    static char hex[] = "0123456789abcdef";
+    return hex[code & 15];
+}
+
+/* Returns a url-encoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+char *miscUrlEncode(const char *str) {
+    if( str == NULL )
+    {
+        return NULL;
+    }
+    const char *pstr=str;
+    char *buf = malloc(strlen(str) * 3 + 1), *pbuf = buf;
+    while (*pstr) {
+        if (isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
+            *pbuf++ = *pstr;
+        else if (*pstr == ' ') 
+            *pbuf++ = '+';
+        else 
+            *pbuf++ = '%', *pbuf++ = to_hex(*pstr >> 4), *pbuf++ = to_hex(*pstr & 15);
+        pstr++;
+    }
+    *pbuf = '\0';
+    return buf;
+}
+
+/* Returns a url-decoded version of str */
+/* IMPORTANT: be sure to free() the returned string after use */
+char *miscUrlDecode(const char *str) {
+    if( str == NULL )
+    {
+        return NULL;
+    }
+    const char *pstr = str;
+    char *buf = malloc(strlen(str) + 1), *pbuf = buf;
+    while (*pstr) {
+        if (*pstr == '%') {
+            if (pstr[1] && pstr[2]) {
+                *pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
+                pstr += 2;
+            }
+        } else if (*pstr == '+') { 
+            *pbuf++ = ' ';
+        } else {
+            *pbuf++ = *pstr;
+        }
+        pstr++;
+    }
+    *pbuf = '\0';
+    return buf;
+}
+
 
 /*___oOo___*/

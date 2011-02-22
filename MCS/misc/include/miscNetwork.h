@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscNetwork.h,v 1.8 2010-02-15 15:59:55 mella Exp $"
+ * "@(#) $Id: miscNetwork.h,v 1.9 2011-02-22 10:03:26 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2010/02/15 15:59:55  mella
+ * added miscPerformHttpPost()
+ *
  * Revision 1.7  2010/01/15 17:05:45  lafrasse
  * Updated miscPerformHttpGet() to use miscDynBufExecuteCommand().
  *
@@ -61,7 +64,8 @@ mcsCOMPL_STAT miscGetHostName(char *hostName, const mcsUINT32 length);
 mcsCOMPL_STAT miscGetHostByName(char *ipAddress, const char *hostName);
 mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout);
 mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout);
-
+char *        miscUrlEncode(const char *str);
+char *        miscUrlDecode(const char *str);
 
 #ifdef __cplusplus
 }
