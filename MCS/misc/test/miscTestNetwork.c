@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: miscTestNetwork.c,v 1.11 2010-02-15 15:59:55 mella Exp $"
+ * "@(#) $Id: miscTestNetwork.c,v 1.12 2011-02-22 10:02:43 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2010/02/15 15:59:55  mella
+ * added miscPerformHttpPost()
+ *
  * Revision 1.10  2010/01/15 17:05:45  lafrasse
  * Updated miscPerformHttpGet() to use miscDynBufExecuteCommand().
  *
@@ -31,7 +34,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestNetwork.c,v 1.11 2010-02-15 15:59:55 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestNetwork.c,v 1.12 2011-02-22 10:02:43 mella Exp $";
 /* 
  * System Headers 
  */
@@ -61,6 +64,30 @@ int main (int argc, char *argv[])
 {
     /* Give process name to mcs library */
     mcsInit(argv[0]);
+
+    /* miscUrl*() Function Test  */
+    printf("-------------------------------\n");
+    printf("miscUrlEncode/Decode() Function Test :\n");
+    printf("-------------------------------\n");
+ 
+    char * url = "http://www.jmmc.fr/&% toto=";
+    char * encodedUrl = miscUrlEncode(url);
+    char * decodedUrl = miscUrlDecode(encodedUrl);
+    printf("miscUrlEncode(%s) = '%s'\n", url, encodedUrl);
+    printf("miscUrlDecode(%s) = '%s'\n", encodedUrl, decodedUrl);
+    free(encodedUrl);
+    free(decodedUrl);
+
+    encodedUrl = miscUrlEncode(NULL);
+    decodedUrl = miscUrlDecode(NULL);
+    printf("miscUrlEncode(NULL) = '%s'\n", encodedUrl);
+    printf("miscUrlDecode(NULL) = '%s'\n", decodedUrl);
+    free(encodedUrl);
+    free(decodedUrl);
+
+    printf("\n\n");
+
+
 
     /* miscGetHostName() Function Test  */
     mcsBYTES256  string;
