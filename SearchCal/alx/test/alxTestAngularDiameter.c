@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestAngularDiameter.c,v 1.16 2006-10-26 16:46:00 gzins Exp $"
+ * "@(#) $Id: alxTestAngularDiameter.c,v 1.17 2011-02-23 15:15:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2006/10/26 16:46:00  gzins
+ * Added test cases - faint object and magnitude I unknown
+ *
  * Revision 1.15  2006/07/17 08:23:58  scetre
  * Added test if magI is unknown
  *
@@ -62,7 +65,7 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestAngularDiameter.c,v 1.16 2006-10-26 16:46:00 gzins Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestAngularDiameter.c,v 1.17 2011-02-23 15:15:19 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -99,8 +102,6 @@ int main (int argc, char *argv[])
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
-        /* Error handling if necessary */
-        
         /* Exit from the application with mcsFAILURE */
         exit (EXIT_FAILURE);
     }
@@ -134,14 +135,17 @@ int main (int argc, char *argv[])
     alxDATA mgJ;
     alxDATA mgKf;
     alxDATA mgH;
+    alxDATA mgKj;
     mgI.value = 11.094; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsTRUE;
     mgJ.value = 10.418; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
     mgH.value = 9.907;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
     mgKf.value = 9.856;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
+    mgV.value = 10.079; mgV.confIndex = alxCONFIDENCE_HIGH; mgV.isSet = mcsTRUE;
+    mgKj.value = 9.856;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
     
     alxDIAMETERS diametersFaint;
     if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, &diametersFaint)== mcsFAILURE)
+        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -152,7 +156,7 @@ int main (int argc, char *argv[])
     mgKf.value = 0.36;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
     
     if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, &diametersFaint)== mcsFAILURE)
+        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -163,7 +167,7 @@ int main (int argc, char *argv[])
     mgKf.value = 0.36;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
     
     if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, &diametersFaint)== mcsFAILURE)
+        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -174,7 +178,7 @@ int main (int argc, char *argv[])
     mgKf.value = 13.069;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
     
     if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, &diametersFaint)== mcsFAILURE)
+        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -185,7 +189,7 @@ int main (int argc, char *argv[])
     mgKf.value = 12.176;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
     
     if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, &diametersFaint)== mcsFAILURE)
+        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
     {
         return mcsFAILURE;
     }

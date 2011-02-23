@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.16 2006-05-11 13:03:29 mella Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.17 2011-02-23 15:15:19 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2006/05/11 13:03:29  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.15  2006/04/07 06:13:24  gzins
  * Adjust logging service for test
  *
@@ -62,7 +65,7 @@
  *
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.16 2006-05-11 13:03:29 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.17 2011-02-23 15:15:19 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -293,10 +296,13 @@ printf("*********************\n");
         errCloseStack();
     }
     alxDIAMETERS diameters2;
+    alxDATA mgV, mgKj;
     if (alxComputeAngularDiameterForFaintStar(magnitudes[alxI_BAND],
                                               magnitudes[alxJ_BAND],
                                               magnitudes[alxK_BAND],
                                               magnitudes[alxH_BAND],
+                                              mgV,
+                                              mgKj,
                                               &diameters2)== mcsFAILURE)
     {
         return mcsFAILURE;
