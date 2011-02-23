@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.8 2011-02-22 10:36:50 mella Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.9 2011-02-23 15:13:33 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2011/02/22 10:36:50  mella
+ * encode sptype during ld2ud uri built
+ *
  * Revision 1.7  2011/02/21 08:25:15  mella
  * replace jmcsLD2UD call by a web service onto http://jmmc.fr:8080/ld2ud/ld2ud.jsp
  *
@@ -44,7 +47,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.8 2011-02-22 10:36:50 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.9 2011-02-23 15:13:33 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -159,7 +162,8 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
         return mcsFAILURE;
     }
 
-    /* Parsing each line */
+    /* Parsing each line that does not start with '#' */
+    miscDynBufSetCommentPattern(&resultBuffer, "#");
     const char* index = NULL;
     mcsSTRING256 currentLine;
     const mcsUINT32 lineSize = sizeof(currentLine);
