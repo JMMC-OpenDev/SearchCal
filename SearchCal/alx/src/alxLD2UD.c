@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.9 2011-02-23 15:13:33 lafrasse Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.10 2011-02-23 17:19:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2011/02/23 15:13:33  lafrasse
+ * Do not parse webservice result comment lines anymore.
+ *
  * Revision 1.8  2011/02/22 10:36:50  mella
  * encode sptype during ld2ud uri built
  *
@@ -47,7 +50,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.9 2011-02-23 15:13:33 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.10 2011-02-23 17:19:26 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -127,12 +130,12 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
         return mcsFAILURE;
     }
 
-    /* Forge uri using hard coded URL 
+    /* Forge URI using hard coded URL 
      * (sptype is encoded because it can embed spaces or special characters) */
     char* encodedSp = miscUrlEncode(sp);
     const char* staticUri = "http://apps.jmmc.fr:8080/jmcs_ws/ld2ud.jsp?ld=%f&sptype=%s";
     int composedUriLength = strlen(staticUri) + strlen(encodedSp) + 10 + 1;
-    char* composedUri = (char*)malloc(composedUriLength * sizeof(char));
+    char* composedUri = (char*) malloc(composedUriLength * sizeof(char));
     if (composedUri == NULL)
     {
         return mcsFAILURE;
@@ -140,8 +143,8 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
     snprintf(composedUri, composedUriLength, staticUri, ld, encodedSp);
     free(encodedSp);
     
-    /* Call the web service */
-    mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 60);
+    /* Call the web service (10 seconds timeout) */
+    mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 10);
 
     /* Give back local dynamically-allocated memory */
     free(composedUri);
@@ -164,6 +167,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
 
     /* Parsing each line that does not start with '#' */
     miscDynBufSetCommentPattern(&resultBuffer, "#");
+    mcsCOMPL_STAT parsingWentFine = mcsSUCCESS;
     const char* index = NULL;
     mcsSTRING256 currentLine;
     const mcsUINT32 lineSize = sizeof(currentLine);
@@ -192,72 +196,75 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
             continue;
         }
         /* Try to read uniform diameter */
-        else if (sscanf(currentLine, "UD_%c=%lf", &band, &value) != 2)
+        else if (sscanf(currentLine, "UD_%c=%lf", &band, &value) == 2)
         {
-            logWarning("Could not parse token '%s'... skipping it.", currentLine);
+            switch (tolower(band))
+            {
+                case 'b':
+                    logTest("UD_B = %f", value);
+                    ud->b = value;
+                    break;
+    
+                case 'i':
+                    logTest("UD_I = %f", value);
+                    ud->i = value;
+                    break;
+    
+                case 'j':
+                    logTest("UD_J = %f", value);
+                    ud->j = value;
+                    break;
+    
+                case 'h':
+                    logTest("UD_H = %f", value);
+                    ud->h = value;
+                    break;
+    
+                case 'k':
+                    logTest("UD_K = %f", value);
+                    ud->k = value;
+                    break;
+    
+                case 'l':
+                    logTest("UD_L = %f", value);
+                    ud->l = value;
+                    break;
+    
+                case 'n':
+                    logTest("UD_N = %f", value);
+                    ud->n = value;
+                    break;
+    
+                case 'r':
+                    logTest("UD_R = %f", value);
+                    ud->r = value;
+                    break;
+    
+                case 'u':
+                    logTest("UD_U = %f", value);
+                    ud->u = value;
+                    break;
+    
+                case 'v':
+                    logTest("UD_V = %f", value);
+                    ud->v = value;
+                    break;
+    
+                default:
+                    logWarning("Unknown band '%c'.\n", band);
+                    break;
+            }
             continue;
         }
 
-        switch (tolower(band))
-        {
-            case 'b':
-                logTest("UD_B = %f", value);
-                ud->b = value;
-                break;
-
-            case 'i':
-                logTest("UD_I = %f", value);
-                ud->i = value;
-                break;
-
-            case 'j':
-                logTest("UD_J = %f", value);
-                ud->j = value;
-                break;
-
-            case 'h':
-                logTest("UD_H = %f", value);
-                ud->h = value;
-                break;
-
-            case 'k':
-                logTest("UD_K = %f", value);
-                ud->k = value;
-                break;
-
-            case 'l':
-                logTest("UD_L = %f", value);
-                ud->l = value;
-                break;
-
-            case 'n':
-                logTest("UD_N = %f", value);
-                ud->n = value;
-                break;
-
-            case 'r':
-                logTest("UD_R = %f", value);
-                ud->r = value;
-                break;
-
-            case 'u':
-                logTest("UD_U = %f", value);
-                ud->u = value;
-                break;
-
-            case 'v':
-                logTest("UD_V = %f", value);
-                ud->v = value;
-                break;
-
-            default:
-                logTest("Unknown band '%c'.\n", band);
-                break;
-        }
+        /* Could not parse current token - stop and exit on failure */
+        parsingWentFine = mcsFAILURE;
+        break;
     }
 
+    /* Parsing went fine all along */
     miscDynBufDestroy(&resultBuffer);
-    return mcsSUCCESS;
+    return parsingWentFine;
 }
 
 /**
