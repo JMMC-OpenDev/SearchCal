@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2010-01-08 22:29:04 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.10 2011-02-23 15:16:13 lafrasse Exp $"
 #
 # Makefile of ........
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2010/01/08 22:29:04  lafrasse
+# Added preliminary support for alxLD2UD.
+#
 # Revision 1.8  2009/10/15 07:33:59  mella
 # Make alxTestVisibility compile and set is as first target
 #
@@ -68,8 +71,8 @@ EXECUTABLES     = alxTestVisibility          \
                   alxTestGalacticCoordinates \
                   alxTestResearchArea        \
                   alxTestDistance            \
-#				  alxTestAngularDiameter     \
-#                 alxTestMagnitude           \
+ 				  alxTestAngularDiameter     \
+                  alxTestMagnitude           \
 EXECUTABLES_L   = 
 
 #
