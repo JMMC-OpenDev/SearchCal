@@ -1,11 +1,16 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestLD2UD.c,v 1.5 2010-01-28 16:25:12 lafrasse Exp $"
+ * "@(#) $Id: alxTestLD2UD.c,v 1.6 2011-02-23 15:30:10 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/01/28 16:25:12  lafrasse
+ * Broaden test cases.
+ * Added alxFlushUNIFORM_DIAMETERS() with FP_NAN support.
+ * Enhanced log and outputs.
+ *
  * Revision 1.4  2010/01/18 15:52:37  lafrasse
  * Added alxShowUNIFORM_DIAMETERS().
  *
@@ -70,7 +75,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.5 2010-01-28 16:25:12 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.6 2011-02-23 15:30:10 lafrasse Exp $"; 
 
 
 /* 
@@ -123,6 +128,8 @@ int main (int argc, char *argv[])
     }
 
     logSetStdoutLogLevel(logTRACE);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
 
     alxUNIFORM_DIAMETERS ud;
     alxShowUNIFORM_DIAMETERS(&ud);
