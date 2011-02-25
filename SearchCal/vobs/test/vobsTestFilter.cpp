@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestFilter.cpp,v 1.6 2006-03-03 15:18:35 scetre Exp $"
+ * "@(#) $Id: vobsTestFilter.cpp,v 1.7 2011-02-25 15:58:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/03/03 15:18:35  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ * Updated test filter
+ *
  * Revision 1.5  2005/12/07 12:23:38  gzins
  * Updated according to the new vobsGENERIC_FILTER API
  *
@@ -28,7 +32,7 @@
  * Test file on filter 
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestFilter.cpp,v 1.6 2006-03-03 15:18:35 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestFilter.cpp,v 1.7 2011-02-25 15:58:58 lafrasse Exp $"; 
 
 
 /* 
@@ -87,6 +91,9 @@ int main(int argc, char *argv[])
     }
     
     logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     logInfo("Starting ...");
 
     vobsSTAR star1;

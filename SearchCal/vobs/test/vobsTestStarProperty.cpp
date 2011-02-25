@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarProperty.cpp,v 1.3 2009-10-26 12:59:16 lafrasse Exp $"
+ * "@(#) $Id: vobsTestStarProperty.cpp,v 1.4 2011-02-25 15:58:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2009/10/26 12:59:16  lafrasse
+ * Changed delta compution method on String tests.
+ *
  * Revision 1.2  2009/10/16 10:00:54  mella
  * add string tests
  *
@@ -15,7 +18,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarProperty.cpp,v 1.3 2009-10-26 12:59:16 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarProperty.cpp,v 1.4 2011-02-25 15:58:58 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -44,6 +47,9 @@ int main(int argc, char *argv[])
     mcsInit(argv[0]);
 
     logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     timlogStart(MODULE_ID, logINFO, "98", "testStarProperty");
     logInfo("Starting ...");
 

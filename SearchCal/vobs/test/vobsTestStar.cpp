@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStar.cpp,v 1.11 2006-03-03 15:17:43 scetre Exp $"
+ * "@(#) $Id: vobsTestStar.cpp,v 1.12 2011-02-25 15:58:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.11  2006/03/03 15:17:43  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.10  2005/11/16 10:45:14  scetre
  * Updated vobs test
  *
@@ -18,7 +21,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStar.cpp,v 1.11 2006-03-03 15:17:43 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStar.cpp,v 1.12 2011-02-25 15:58:58 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -47,6 +50,9 @@ int main(int argc, char *argv[])
     mcsInit(argv[0]);
 
     logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     timlogStart(MODULE_ID, logINFO, "98", "testStar");
     logInfo("Starting ...");
 

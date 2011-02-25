@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestParser.cpp,v 1.9 2011-02-25 14:59:27 lafrasse Exp $"
+ * "@(#) $Id: vobsTestParser.cpp,v 1.10 2011-02-25 15:58:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2011/02/25 14:59:27  lafrasse
+ * Fixed compilation due to API change.
+ *
  * Revision 1.8  2009/02/03 08:53:08  mella
  * Made changes to fall back on UCD1 with viz-bin service
  *
@@ -33,7 +36,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestParser.cpp,v 1.9 2011-02-25 14:59:27 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestParser.cpp,v 1.10 2011-02-25 15:58:58 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -79,7 +82,10 @@ int main(int argc, char *argv[])
         // Exit from the application with FAILURE
         exit (EXIT_FAILURE);
     }
+
     logSetStdoutLogLevel(logTRACE);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
 
     logInfo("Starting ...");
 

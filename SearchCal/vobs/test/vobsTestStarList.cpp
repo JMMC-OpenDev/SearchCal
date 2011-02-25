@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarList.cpp,v 1.10 2008-03-10 07:52:16 lafrasse Exp $"
+ * "@(#) $Id: vobsTestStarList.cpp,v 1.11 2011-02-25 15:58:58 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2008/03/10 07:52:16  lafrasse
+ * Updated according to API changes in VOTable generation.
+ *
  * Revision 1.9  2006/03/03 15:17:43  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -35,7 +38,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarList.cpp,v 1.10 2008-03-10 07:52:16 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarList.cpp,v 1.11 2011-02-25 15:58:58 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -62,6 +65,8 @@ int main(int argc, char *argv[])
     mcsInit(argv[0]);
 
     logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
 
     vobsSTAR_LIST starList;
     vobsSTAR      stars[6];
