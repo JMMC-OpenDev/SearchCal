@@ -1,0 +1,9 @@
+1 TestCatalogList   vobsTestCatalogList
+2 TestCriteria      vobsTestCriteria
+3 TestFilter        vobsTestFilter
+4 TestMidiCatalog   vobsTestMidiCatalog
+5 TestParser        vobsTestParser
+6 TestRequest       vobsTestRequest
+7 TestStar          vobsTestStar
+8 TestStarList      vobsTestStarList
+9 TestStarProperty  vobsTestStarProperty

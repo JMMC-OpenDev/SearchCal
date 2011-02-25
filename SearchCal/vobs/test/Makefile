@@ -1,13 +1,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.21 2009-10-14 14:50:58 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.22 2011-02-25 14:57:16 lafrasse Exp $"
 #
 # Makefile for test of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.21  2009/10/14 14:50:58  lafrasse
+# Added proper support of floating point value (without loosing presion with
+# conversion from string representation) with accompagning tests.
+#
 # Revision 1.20  2005/11/23 10:22:20  scetre
 # Generalized filter
 #
@@ -71,39 +75,39 @@ EXECUTABLES_L   =
 # List of test programs 
 vobsTestParser_OBJECTS      = vobsTestParser 
 vobsTestParser_LDFLAGS      = 
-vobsTestParser_LIBS         = MCS C++ vobs
+vobsTestParser_LIBS         = MCS C++ vobs alx
 
 vobsTestRequest_OBJECTS     = vobsTestRequest 
 vobsTestRequest_LDFLAGS     = 
-vobsTestRequest_LIBS        = MCS C++ vobs
+vobsTestRequest_LIBS        = MCS C++ vobs alx
 
 vobsTestCriteria_OBJECTS    = vobsTestCriteria 
 vobsTestCriteria_LDFLAGS    = 
-vobsTestCriteria_LIBS       = MCS C++ vobs
+vobsTestCriteria_LIBS       = MCS C++ vobs alx
 
 vobsTestStar_OBJECTS        = vobsTestStar
 vobsTestStar_LDFLAGS        = 
-vobsTestStar_LIBS           = MCS C++ vobs
+vobsTestStar_LIBS           = MCS C++ vobs alx
 
 vobsTestStarProperty_OBJECTS    = vobsTestStarProperty
 vobsTestStarProperty_LDFLAGS    = 
-vobsTestStarProperty_LIBS       = MCS C++ vobs
+vobsTestStarProperty_LIBS       = MCS C++ vobs alx
 
 vobsTestStarList_OBJECTS    = vobsTestStarList
 vobsTestStarList_LDFLAGS    = 
-vobsTestStarList_LIBS       = MCS C++ vobs
+vobsTestStarList_LIBS       = MCS C++ vobs alx
 
 vobsTestMidiCatalog_OBJECTS = vobsTestMidiCatalog 
 vobsTestMidiCatalog_LDFLAGS = 
-vobsTestMidiCatalog_LIBS    = MCS C++ vobs
+vobsTestMidiCatalog_LIBS    = MCS C++ vobs alx
 
 vobsTestFilter_OBJECTS = vobsTestFilter 
 vobsTestFilter_LDFLAGS = 
-vobsTestFilter_LIBS    = MCS C++ vobs
+vobsTestFilter_LIBS    = MCS C++ vobs alx
 
 vobsTestCatalogList_OBJECTS = vobsTestCatalogList 
 vobsTestCatalogList_LDFLAGS = 
-vobsTestCatalogList_LIBS    = MCS C++ vobs
+vobsTestCatalogList_LIBS    = MCS C++ vobs alx
 #
 # special compilation flags for single c sources
 #yyyyy_CFLAGS   = 
