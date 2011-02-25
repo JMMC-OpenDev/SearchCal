@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestParser.cpp,v 1.8 2009-02-03 08:53:08 mella Exp $"
+ * "@(#) $Id: vobsTestParser.cpp,v 1.9 2011-02-25 14:59:27 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2009/02/03 08:53:08  mella
+ * Made changes to fall back on UCD1 with viz-bin service
+ *
  * Revision 1.7  2008/03/10 07:53:42  lafrasse
  * Changed VIZIER URI to reflect CDS changes.
  * Minor modifications on comments and log traces.
@@ -30,7 +33,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestParser.cpp,v 1.8 2009-02-03 08:53:08 mella Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestParser.cpp,v 1.9 2011-02-25 14:59:27 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -82,11 +85,10 @@ int main(int argc, char *argv[])
 
     vobsSTAR_LIST starList;
     vobsPARSER    parser;
-    char          *uri;
-
-    uri = "http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-out.meta=hudU1&-oc.form=sexa&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*";
+    char*          uri = "http://vizier.u-strasbg.fr/viz-bin/asu-xml?";
+    char*         data = "-source=I/280&-out.meta=hudU1&-oc.form=sexa&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*";
     logTest("Try to retreive the xml file at the URL: %s", uri);
-    if (parser.Parse(uri, "I/280", starList) == mcsFAILURE)
+    if (parser.Parse(uri, data, "I/280", starList) == mcsFAILURE)
     {
         errDisplayStack();
         errCloseStack();
