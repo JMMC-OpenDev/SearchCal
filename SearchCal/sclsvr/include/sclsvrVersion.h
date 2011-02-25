@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.45 2011-02-10 13:48:30 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.46 2011-02-25 16:19:02 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.45  2011/02/10 13:48:30  lafrasse
+ * Increased default max number of stars retruned by CDS from 50 to 1000.
+ * Removed I, J and H bands in Faint K.
+ *
  * Revision 1.44  2011/01/13 14:26:51  lafrasse
  * Added I, J and H band in Faint K.
  *
@@ -160,7 +164,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.7.4"
+#define sclsvrVERSION "3.7.5"
 
 #ifdef __cplusplus
 }
