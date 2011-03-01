@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: cmdCOMMAND.cpp,v 1.40 2006-11-28 13:03:04 lafrasse Exp $"
+ * "@(#) $Id: cmdCOMMAND.cpp,v 1.41 2011-03-01 12:24:40 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.40  2006/11/28 13:03:04  lafrasse
+ * Handled param types to ensure VOTable validation.
+ *
  * Revision 1.39  2006/10/10 15:50:17  lafrasse
  * Changed XML Serialization in VOTable PARAM.
  *
@@ -104,7 +107,7 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.40 2006-11-28 13:03:04 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.41 2011-03-01 12:24:40 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -269,7 +272,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
         else
         {
             // Get only the first sentence of the main description.
-            unsigned int end = _desc.find_first_of(".\n");
+            size_t end = _desc.find_first_of(".\n");
 
             // If dot is found
             if (end != string::npos)
@@ -1777,15 +1780,15 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
 {
     logExtDbg ("cmdCOMMAND::ParseTupleParam()");
     
-    unsigned int dashPos = tuple.find_first_of("-");
-    unsigned int endPos = tuple.find_last_not_of(" ");
+    size_t dashPos = tuple.find_first_of("-");
+    size_t endPos = tuple.find_last_not_of(" ");
 
     // If parameter name does not start with '-'
     if ((dashPos == string::npos) || (endPos == string::npos))
     {
         // Find parameter name
         string paramName;
-        unsigned int spacePos = tuple.find_first_of(" ");
+        size_t spacePos = tuple.find_first_of(" ");
         if (spacePos == string::npos)
         {
             paramName = tuple;
@@ -1801,7 +1804,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     string str = tuple.substr(dashPos, endPos+1);
 
     // Find end of parameter name
-    unsigned int spacePos = str.find_first_of(" ");
+    size_t spacePos = str.find_first_of(" ");
     if (spacePos == string::npos)
     {
         errAdd(cmdERR_PARAMS_FORMAT, tuple.data());
