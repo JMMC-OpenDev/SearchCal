@@ -13,7 +13,7 @@ import java.io.File;
  * <p>Titre : errEditor</p>
  * <p>Description : Errors Editor</p>
  * <p>Copyright : Copyright (c) 2004</p>
- * <p>Société : LAOG</p>
+ * <p>Societe : LAOG</p>
  * @author Vittoz Fabien
  * @version 1.0
  */

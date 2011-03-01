@@ -38,7 +38,7 @@ public class ErrTableGenerator
       errorTable.setValueAt(errFormat, line, 3);
       line++;
       ID++;
-      //Mécanisme MVC
+      //Mecanisme MVC
       setChanged(); //Mecanisme MVC
       notifyObservers();
 
@@ -74,7 +74,7 @@ public class ErrTableGenerator
       errorTable.setValueAt(errFormat, line, 3);
       line++;
       modifyID(id);
-      //Mécanisme MVC
+      //Mecanisme MVC
       setChanged(); //Mecanisme MVC
       notifyObservers();
 
@@ -131,7 +131,7 @@ public class ErrTableGenerator
       clearRow(line - 1);
     }
     line--;
-    //Mécanisme MVC
+    //Mecanisme MVC
     setChanged(); //Mecanisme MVC
     notifyObservers();
   }
