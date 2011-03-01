@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sdbENTRY.cpp,v 1.2 2007-10-29 13:17:23 gzins Exp $"
+ * "@(#) $Id: sdbENTRY.cpp,v 1.3 2011-03-01 12:33:56 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2007/10/29 13:17:23  gzins
+ * Simplified Read() method + added error when timeout expires
+ *
  * Revision 1.1  2007/10/26 13:25:26  lafrasse
  * Moved synchronized entry in sdbSYNC_ENTRY, and added timeout-based entry as
  * sdbENTRY.
@@ -17,7 +20,7 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sdbENTRY.cpp,v 1.2 2007-10-29 13:17:23 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sdbENTRY.cpp,v 1.3 2011-03-01 12:33:56 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -240,7 +243,7 @@ mcsLOGICAL sdbENTRY::IsInit()
 /**
  * Initialize internal synchronization mechanism.
  *
- * @wa Must be called before any other sdbENTRY calls.
+ * @warning Must be called before any other sdbENTRY calls.
  *
  * @return mcsSUCCESS or mcsFAILURE.
  */
@@ -265,7 +268,7 @@ mcsCOMPL_STAT sdbENTRY::Init(void)
 /**
  * Destroy internal synchronization mechanism.
  *
- * @wa Must be called after all other sdbENTRY calls.
+ * @warning Must be called after all other sdbENTRY calls.
  *
  * @return mcsSUCCESS or mcsFAILURE.
  */
