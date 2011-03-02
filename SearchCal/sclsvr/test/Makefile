@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.13 2010-11-09 11:15:30 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.14 2011-03-02 16:52:16 lafrasse Exp $"
 #
 # Makefile of sclsvr test module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.13  2010/11/09 11:15:30  lafrasse
+# Removed deprecated TAT test suite.
+#
 # Revision 1.12  2007/10/31 11:40:01  gzins
 # Added sclsvrTestSERVER program
 #
@@ -94,7 +97,7 @@ lllll_OBJECTS   =
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         =
+SCRIPTS         = sclsvrTestCompareResults
 SCRIPTS_L       = 
 #
 # TCL scripts (public and local)
