@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestVisibility.c,v 1.7 2009-10-14 06:11:00 mella Exp $"
+ * "@(#) $Id: alxTestVisibility.c,v 1.8 2011-03-03 12:59:54 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/10/14 06:11:00  mella
+ * move source code to utf-8
+ *
  * Revision 1.5  2006/05/11 13:03:29  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -31,7 +34,7 @@
  * Test program of the function which computes visibilities.
  */ 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestVisibility.c,v 1.7 2009-10-14 06:11:00 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestVisibility.c,v 1.8 2011-03-03 12:59:54 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -89,10 +92,10 @@ int main (int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    mcsFLOAT angularDiameter=1.35;
-    mcsFLOAT angularDiameterError=0.13;
-    mcsFLOAT baseMax=100;
-    mcsFLOAT wavelength=2.2;
+    mcsDOUBLE angularDiameter=1.35;
+    mcsDOUBLE angularDiameterError=0.13;
+    mcsDOUBLE baseMax=100;
+    mcsDOUBLE wavelength=2.2;
     alxVISIBILITIES visibilities;
     
     printf("for : \n");

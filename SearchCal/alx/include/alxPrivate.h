@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.15 2006-07-17 08:23:05 scetre Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.16 2011-03-03 12:59:53 lafrasse Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2006/07/17 08:23:05  scetre
+ * Added One colum when reading Angular Diameter configuration file
+ *
  * Revision 1.14  2006/06/12 15:32:55  gzins
  * Added error in polynomial for angular diameterc computation
  *
@@ -102,8 +105,8 @@ typedef struct
 {
     mcsLOGICAL loaded;
     char      *fileName;
-    mcsFLOAT   coeff[alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsFLOAT   error[alxNB_COLOR_INDEXES];
+    mcsDOUBLE   coeff[alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE   error[alxNB_COLOR_INDEXES];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
 
 /******** Macros and structure for missing magnitudes computation */
@@ -130,7 +133,7 @@ typedef struct
 typedef struct
 {
     char        code;          /* Code of the spectral type */
-    mcsFLOAT    quantity;      /* Quantity of the spectral subtype */
+    mcsDOUBLE    quantity;      /* Quantity of the spectral subtype */
     mcsSTRING32 lightClass;    /* Luminosity class*/
 } alxSPECTRAL_TYPE;
 
@@ -191,7 +194,7 @@ typedef struct
 {
     mcsLOGICAL  loaded;    
     char       *fileName;
-    mcsFLOAT    rc[alxNB_BANDS];
+    mcsDOUBLE    rc[alxNB_BANDS];
 } alxEXTINCTION_RATIO_TABLE;
 /*
  * Polynomial to compute the interstellar absorbtion is made by 4 coefficients
@@ -209,9 +212,9 @@ typedef struct
     mcsLOGICAL loaded;
     char      *fileName;
     mcsINT32   nbLines;
-    mcsFLOAT   gLonMin[alxNB_MAX_LONGITUDE_STEPS];
-    mcsFLOAT   gLonMax[alxNB_MAX_LONGITUDE_STEPS];
-    mcsFLOAT   coeff[alxNB_MAX_LONGITUDE_STEPS][alxNB_POLYNOMIAL_COEFF_ABSORPTION];
+    mcsDOUBLE   gLonMin[alxNB_MAX_LONGITUDE_STEPS];
+    mcsDOUBLE   gLonMax[alxNB_MAX_LONGITUDE_STEPS];
+    mcsDOUBLE   coeff[alxNB_MAX_LONGITUDE_STEPS][alxNB_POLYNOMIAL_COEFF_ABSORPTION];
 } alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION;
 
 /*
@@ -226,9 +229,9 @@ typedef struct
 {
     mcsLOGICAL loaded;
     char      *fileName;
-    mcsFLOAT   gLonList[alxNB_GLON_STEPS];
-    mcsFLOAT   gLatList[alxNB_GLAT_STEPS];
-    mcsFLOAT   mag[alxNB_MAG_STEPS];
+    mcsDOUBLE   gLonList[alxNB_GLON_STEPS];
+    mcsDOUBLE   gLatList[alxNB_GLAT_STEPS];
+    mcsDOUBLE   mag[alxNB_MAG_STEPS];
     mcsINT32   nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
 } alxSTAR_POPULATION;
 

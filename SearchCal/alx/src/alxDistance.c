@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxDistance.c,v 1.4 2006-03-03 14:48:24 scetre Exp $"
+ * "@(#) $Id: alxDistance.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/03/03 14:48:24  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.3  2005/11/10 16:18:22  lafrasse
  * Corrected unit consistency in alxComputeDistance()
  *
@@ -23,7 +26,7 @@
  * coordinates.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxDistance.c,v 1.4 2006-03-03 14:48:24 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxDistance.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 
@@ -65,11 +68,11 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxDistance.c,v 1.4 2006
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeDistance(mcsFLOAT  ra1,
-                                 mcsFLOAT  dec1,
-                                 mcsFLOAT  ra2,
-                                 mcsFLOAT  dec2,
-                                 mcsFLOAT* distance)
+mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE  ra1,
+                                 mcsDOUBLE  dec1,
+                                 mcsDOUBLE  ra2,
+                                 mcsDOUBLE  dec2,
+                                 mcsDOUBLE* distance)
 {
     logTrace("alxComputeDistance()");
 

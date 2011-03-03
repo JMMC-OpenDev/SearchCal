@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestGalacticCoordinates.c,v 1.4 2006-05-11 13:03:29 mella Exp $"
+ * "@(#) $Id: alxTestGalacticCoordinates.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2006/05/11 13:03:29  mella
+ * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+ *
  * Revision 1.3  2005/02/17 19:05:23  gzins
  * Changed remaining FAILURE to mcsFAILURE
  *
@@ -25,7 +28,7 @@
  * Test program of the function which computes galactic coordinates.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestGalacticCoordinates.c,v 1.4 2006-05-11 13:03:29 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestGalacticCoordinates.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -83,7 +86,7 @@ int main (int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    mcsFLOAT ra, dec, gLat, gLon;
+    mcsDOUBLE ra, dec, gLat, gLon;
     mcsINT32 i;
     
     /*
@@ -106,7 +109,7 @@ int main (int argc, char *argv[])
     };
     
     /* Input right ascension (ra) array */
-    mcsFLOAT raTable[11][3] ={
+    mcsDOUBLE raTable[11][3] ={
         {0, 0, 0},
         {17, 42, 29.3},
         { 5, 16, 41.4},
@@ -121,7 +124,7 @@ int main (int argc, char *argv[])
     };
     
     /* Input declinaison (dec) array */
-    mcsFLOAT decTable[11][4] ={
+    mcsDOUBLE decTable[11][4] ={
         { 1, 90,  0,  0.0},
         {-1, 39,  1, 47.9},
         { 1, 45, 59, 52.8},

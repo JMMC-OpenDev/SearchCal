@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxAngularDiameter.c,v 1.37 2007-05-11 15:38:11 gzins Exp $"
+ * "@(#) $Id: alxAngularDiameter.c,v 1.38 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2007/05/11 15:38:11  gzins
+ * Added V-K diameter computation for faint object when V is known
+ *
  * Revision 1.36  2006/10/30 10:04:37  scetre
  * Fixed Bug when computed H-K diameter errors
  *
@@ -134,7 +137,7 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.37 2007-05-11 15:38:11 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.38 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 
@@ -239,7 +242,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
             }
 
             /* Read polynomial coefficients */
-            if (sscanf(line, "%*s %f %f %f %f %f %f %f",   
+            if (sscanf(line, "%*s %lf %lf %lf %lf %lf %lf %lf",   
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
@@ -309,12 +312,12 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
     }
 
     /* Compute B-V, V-R, V-K */
-    mcsFLOAT b_v = mgB.value - mgV.value;
-    mcsFLOAT v_r = mgV.value - mgR.value;
-    mcsFLOAT v_k = mgV.value - mgK.value;
+    mcsDOUBLE b_v = mgB.value - mgV.value;
+    mcsDOUBLE v_r = mgV.value - mgR.value;
+    mcsDOUBLE v_k = mgV.value - mgK.value;
 
     /* Declare polynomials P(B-V), P(V-R), P(V-K) */
-    mcsFLOAT p_b_v, p_v_r, p_v_k;
+    mcsDOUBLE p_b_v, p_v_r, p_v_k;
 
     /* Compute the polynomials P(B-V), P(V-R), P(V-K) */
     p_b_v =   polynomial->coeff[0][0]
@@ -448,15 +451,15 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }
 
     /* Compute I-J, I-K, J-K, J-H, V-K */
-    mcsFLOAT i_j = mgI.value - mgJ.value;
-    mcsFLOAT i_k = mgI.value - mgK.value;
-    mcsFLOAT j_k = mgJ.value - mgK.value;
-    mcsFLOAT j_h = mgJ.value - mgH.value;
-    mcsFLOAT h_k = mgH.value - mgK.value;
-    mcsFLOAT v_k = mgV.value - mgKJnk.value;
+    mcsDOUBLE i_j = mgI.value - mgJ.value;
+    mcsDOUBLE i_k = mgI.value - mgK.value;
+    mcsDOUBLE j_k = mgJ.value - mgK.value;
+    mcsDOUBLE j_h = mgJ.value - mgH.value;
+    mcsDOUBLE h_k = mgH.value - mgK.value;
+    mcsDOUBLE v_k = mgV.value - mgKJnk.value;
 
     /* Compute the polynomials P(I-J), P(I-K), P(J-K), P(J-H), P(H-K), P(V-K) */
-    mcsFLOAT p_i_j, p_i_k, p_j_k, p_j_h, p_h_k, p_v_k;
+    mcsDOUBLE p_i_j, p_i_k, p_j_k, p_j_h, p_h_k, p_v_k;
     p_i_j =   polynomial->coeff[3][0]
             + polynomial->coeff[3][1] * i_j
             + polynomial->coeff[3][2] * pow(i_j, 2)

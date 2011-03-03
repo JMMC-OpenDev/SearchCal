@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: alxTestResearchArea.c,v 1.5 2006-05-11 13:03:29 mella Exp $"
+* "@(#) $Id: alxTestResearchArea.c,v 1.6 2011-03-03 12:59:54 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.5  2006/05/11 13:03:29  mella
+* Changed rcsId declaration to perform good gcc4 and gcc3 compilation
+*
 * Revision 1.4  2006/04/06 11:52:57  gzins
 * Added test 6
 *
@@ -20,7 +23,7 @@
 *
 *******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestResearchArea.c,v 1.5 2006-05-11 13:03:29 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestResearchArea.c,v 1.6 2011-03-03 12:59:54 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -61,9 +64,9 @@ int main (int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    mcsFLOAT magMin, magMax;
-    mcsFLOAT ra, dec;
-    mcsFLOAT areaSize=0.0;
+    mcsDOUBLE magMin, magMax;
+    mcsDOUBLE ra, dec;
+    mcsDOUBLE areaSize=0.0;
 
     /* Test 1 */
     magMin =  6.0;

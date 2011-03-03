@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxGalacticCoordinates.c,v 1.6 2006-03-03 14:48:24 scetre Exp $"
+ * "@(#) $Id: alxGalacticCoordinates.c,v 1.7 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/03/03 14:48:24  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.5  2005/10/26 11:24:01  lafrasse
  * Code review
  *
@@ -36,7 +39,7 @@
  * @sa file : JMMC-MEM-2600-0007
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxGalacticCoordinates.c,v 1.6 2006-03-03 14:48:24 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxGalacticCoordinates.c,v 1.7 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 
@@ -81,17 +84,17 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxGalacticCoordinates.c
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
-                                            mcsFLOAT dec,
-                                            mcsFLOAT *gLat,
-                                            mcsFLOAT *gLon)
+mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
+                                            mcsDOUBLE dec,
+                                            mcsDOUBLE *gLat,
+                                            mcsDOUBLE *gLon)
 {
     logTrace("alxComputeGalacticCoordinates()");
 
-    mcsFLOAT b;         /* galactic latitude */
-    mcsFLOAT sinusB;    /* galactic latitude sinus */
-    mcsFLOAT x;         /* cos(l-0.574737), l=galactic longitude */
-    mcsFLOAT y;         /* sin(l-0.574737), l=galactic longitude */
+    mcsDOUBLE b;         /* galactic latitude */
+    mcsDOUBLE sinusB;    /* galactic latitude sinus */
+    mcsDOUBLE x;         /* cos(l-0.574737), l=galactic longitude */
+    mcsDOUBLE y;         /* sin(l-0.574737), l=galactic longitude */
 
     /* Convert ra from degrees (decimal) to radians */
     ra = ra * M_PI / 180;

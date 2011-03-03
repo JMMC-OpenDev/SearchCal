@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.27 2010-02-18 12:07:00 lafrasse Exp $"
+ * "@(#) $Id: alx.h,v 1.28 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.27  2010/02/18 12:07:00  lafrasse
+ * Retrieve Teff and LogG in alxComputeUDFromLDAndSP().
+ *
  * Revision 1.26  2010/01/28 16:20:12  lafrasse
  * Added UD_U diameter in alxUNIFORM_DIAMETERS.
  *
@@ -115,10 +118,10 @@ extern "C" {
 
 
 /** Blanking value. */
-#define alxBLANKING_VALUE ((float)99.99)
+#define alxBLANKING_VALUE ((mcsDOUBLE)99.99)
 
 /** 1 arcsec in degrees. */
-#define alxARCSEC_IN_DEGREES ((float)(1.0/3600.0))
+#define alxARCSEC_IN_DEGREES ((mcsDOUBLE)(1.0/3600.0))
 
 
 /**
@@ -157,7 +160,7 @@ typedef enum
  */
 typedef struct
 {
-    mcsFLOAT            value;
+    mcsDOUBLE            value;
     alxCONFIDENCE_INDEX confIndex;
     mcsLOGICAL          isSet; 
 } alxDATA;
@@ -178,10 +181,10 @@ typedef alxDATA alxMAGNITUDES[alxNB_BANDS];
  */
 typedef struct
 {
-    mcsFLOAT vis;
-    mcsFLOAT vis2;
-    mcsFLOAT visError;
-    mcsFLOAT vis2Error;
+    mcsDOUBLE vis;
+    mcsDOUBLE vis2;
+    mcsDOUBLE visError;
+    mcsDOUBLE vis2Error;
 } alxVISIBILITIES;
 
 /**
@@ -247,10 +250,10 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
 mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(mcsSTRING32 spType, 
                                                alxMAGNITUDES magnitudes); 
 
-mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsFLOAT av,
+mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
                                             alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsFLOAT av,
+mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE av,
                                            alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
@@ -267,33 +270,33 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                                              alxDATA mgKJnk,
                                              alxDIAMETERS* diameters);
 
-mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsFLOAT ra,
-                                            mcsFLOAT dec,
-                                            mcsFLOAT* gLat,
-                                            mcsFLOAT* gLon);
+mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
+                                            mcsDOUBLE dec,
+                                            mcsDOUBLE* gLat,
+                                            mcsDOUBLE* gLon);
 
-mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
-                                   mcsFLOAT angDiamError,
-                                   mcsFLOAT baseMax,
-                                   mcsFLOAT wlen,
+mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
+                                   mcsDOUBLE angDiamError,
+                                   mcsDOUBLE baseMax,
+                                   mcsDOUBLE wlen,
                                    alxVISIBILITIES* visibilities);
 
-mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT ra,
-                                     mcsFLOAT dec,
-                                     mcsFLOAT minMag,
-                                     mcsFLOAT maxMag,
-                                     mcsFLOAT* radius);
+mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE ra,
+                                     mcsDOUBLE dec,
+                                     mcsDOUBLE minMag,
+                                     mcsDOUBLE maxMag,
+                                     mcsDOUBLE* radius);
 
-mcsCOMPL_STAT alxComputeDistance(mcsFLOAT ra1,
-                                 mcsFLOAT dec1,
-                                 mcsFLOAT ra2,
-                                 mcsFLOAT dec2,
-                                 mcsFLOAT* distance);
+mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE ra1,
+                                 mcsDOUBLE dec1,
+                                 mcsDOUBLE ra2,
+                                 mcsDOUBLE dec2,
+                                 mcsDOUBLE* distance);
 
-mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT* av,
-                                              mcsFLOAT plx,
-                                              mcsFLOAT gLat,
-                                              mcsFLOAT gLon);
+mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
+                                              mcsDOUBLE plx,
+                                              mcsDOUBLE gLat,
+                                              mcsDOUBLE gLon);
 
 mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       const mcsSTRING32 sp,

@@ -6,6 +6,9 @@
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2006/04/06 09:32:31  gzins
+* Fixed bug when no star is found is magnitude range; consider there is at least 1 star
+*
 * Revision 1.11  2006/03/03 14:48:24  scetre
 * Changed rcsId to rcsId __attribute__ ((unused))
 *
@@ -49,7 +52,7 @@
  * @sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxResearchArea.c,v 1.12 2006-04-06 09:32:31 gzins Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxResearchArea.c,v 1.13 2011-03-03 12:59:53 lafrasse Exp $";
 
 
 /*
@@ -81,10 +84,10 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxResearchArea.c,v 1.12
  * Local Functions declaration
  */
 static alxSTAR_POPULATION *alxGetStarPopulation(void);
-static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
-                                     mcsFLOAT            gLat,
-                                     mcsFLOAT            minMag,
-                                     mcsFLOAT            maxMag,
+static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
+                                     mcsDOUBLE            gLat,
+                                     mcsDOUBLE            minMag,
+                                     mcsDOUBLE            maxMag,
                                      alxSTAR_POPULATION* starPopulation,
                                      mcsINT32*           nbOfStars);
 
@@ -183,7 +186,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
 
             /* Store values in structure */
             /* Magnitude for this line */
-            if (sscanf(subStrings[0], "%f", &starPopulation.mag[lineNum]) != 1)
+            if (sscanf(subStrings[0], "%lf", &starPopulation.mag[lineNum]) != 1)
             {
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 miscDynBufDestroy(&dynBuf);
@@ -233,10 +236,10 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
  *
  * @return the estimated number of stars at the given galactic coordinates. 
  */
-static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
-                                     mcsFLOAT            gLat,
-                                     mcsFLOAT            minMag,
-                                     mcsFLOAT            maxMag,
+static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
+                                     mcsDOUBLE            gLat,
+                                     mcsDOUBLE            minMag,
+                                     mcsDOUBLE            maxMag,
                                      alxSTAR_POPULATION* starPopulation,
                                      mcsINT32*           nbOfStars)
 {
@@ -321,13 +324,13 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
    
     /* Compute relative distance of the given position in the selected sky 
      * area. */
-    mcsFLOAT gLatDistance;
+    mcsDOUBLE gLatDistance;
     gLatDistance = (gLat -  starPopulation->gLatList[gLatIdx]) / 
         (starPopulation->gLatList[gLatIdx + 1] -
          starPopulation->gLatList[gLatIdx]);
     logDebug("Relative position in lattitude direction = %.2f", gLatDistance); 
  
-    mcsFLOAT gLonDistance;
+    mcsDOUBLE gLonDistance;
     gLonDistance = (gLon - starPopulation->gLonList[gLonIdx]) / 
         (starPopulation->gLonList[gLonIdx + 1] -
          starPopulation->gLonList[gLonIdx]);
@@ -370,14 +373,14 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsFLOAT            gLon,
  * @return 
  * mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT  ra,
-                                     mcsFLOAT  dec,
-                                     mcsFLOAT  minMag,
-                                     mcsFLOAT  maxMag,
-                                     mcsFLOAT* radius)
+mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
+                                     mcsDOUBLE  dec,
+                                     mcsDOUBLE  minMag,
+                                     mcsDOUBLE  maxMag,
+                                     mcsDOUBLE* radius)
 {
-    mcsFLOAT gLat;
-    mcsFLOAT gLon;
+    mcsDOUBLE gLat;
+    mcsDOUBLE gLon;
 
     logTrace("alxGetResearchAreaSize()");
 
@@ -420,7 +423,7 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsFLOAT  ra,
     /* Compute the area size according to estimated number of stars at this sky
      * position to only have 50 stars in this area.
      * NOTE: the area of the 1 degree solid angle circle is: PI/4 */
-    mcsFLOAT areaSize;
+    mcsDOUBLE areaSize;
     areaSize = 50.0 * M_PI/4 / (mcsDOUBLE) nbOfStars;
     logTest("Sky research area size = %.2f (deg)", areaSize);
     /* Convert degree to arcmin */

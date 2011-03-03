@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.8 2006-04-10 12:36:41 gzins Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.9 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2006/04/10 12:36:41  gzins
+ * Minor change in logged message
+ *
  * Revision 1.7  2006/04/07 06:15:03  gzins
  * Do not set magnitude value to 0.0 when can not compute it.
  *
@@ -87,7 +90,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.8 2006-04-10 12:36:41 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.9 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 
@@ -126,7 +129,7 @@ static alxCOLOR_TABLE *
 static alxCOLOR_TABLE *
     alxGetColorTableForFaintStar(alxSPECTRAL_TYPE *spectralType);
     
-static mcsLOGICAL alxIsBlankingValue(mcsFLOAT cellValue);
+static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
     
 static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
                                             alxSPECTRAL_TYPE  *spectralType);
@@ -138,31 +141,31 @@ static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
 static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
                                        alxSPECTRAL_TYPE  *spectralType,
                                        mcsSTRING32        spType,
-                                       mcsFLOAT          diffMagJK);
+                                       mcsDOUBLE          diffMagJK);
 
 static mcsCOMPL_STAT 
 alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
-                                     mcsFLOAT                    mgB,
-                                     mcsFLOAT                    mgV,
+                                     mcsDOUBLE                    mgB,
+                                     mcsDOUBLE                    mgV,
                                      alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
 
 static mcsCOMPL_STAT 
 alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                 spType,
-                                    mcsFLOAT                    mgJ,
-                                    mcsFLOAT                    mgK,
+                                    mcsDOUBLE                    mgJ,
+                                    mcsDOUBLE                    mgK,
                                     alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
 
 static mcsCOMPL_STAT
 alxComputeAllMagnitudesForBrightStar(alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes,
                                      alxMAGNITUDES               magnitudes,
-                                     mcsFLOAT                    mgV);
+                                     mcsDOUBLE                    mgV);
 
 static mcsCOMPL_STAT
 alxComputeAllMagnitudesForFaintStar(alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes,
                                     alxMAGNITUDES               magnitudes,
-                                    mcsFLOAT                    mgJ);
+                                    mcsDOUBLE                    mgJ);
 
-static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT              firstMag,
+static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE              firstMag,
                                          alxDATA               diffMag,
                                          alxDATA              *magnitude,
                                          alxCONFIDENCE_INDEX   confIndex);
@@ -489,7 +492,7 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
             }
 
             /* Get polynomial coefficients */
-            if (sscanf(line, "%c%f %f %f %f %f %f %f %f %f",   
+            if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf",   
                        &colorTables[starType].spectralType[lineNum].code,
                        &colorTables[starType].spectralType[lineNum].quantity,
                        &colorTables[starType].index[lineNum][0].value,
@@ -559,11 +562,11 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
  * @return mcsTRUE if cell value != alxBLANKING_VALUE, otherwise mcsFALSE is 
  * returned.
  */
-static mcsLOGICAL alxIsBlankingValue(mcsFLOAT cellValue)
+static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
 {
     logTrace("alxIsBlankingValue()");
     
-    if (cellValue == (mcsFLOAT)alxBLANKING_VALUE)
+    if (cellValue == (mcsDOUBLE)alxBLANKING_VALUE)
     {
         return mcsFALSE;
     }
@@ -726,7 +729,7 @@ alxGetColorTableForFaintStar(alxSPECTRAL_TYPE *spectralType)
             }
 
             /* Get polynomial coefficients */
-            if (sscanf(line, "%c%f %f %f %f %f %f %f %f %f",   
+            if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf",   
                        &colorTables[starType].spectralType[lineNum].code,
                        &colorTables[starType].spectralType[lineNum].quantity,
                        &colorTables[starType].index[lineNum][0].value,
@@ -803,7 +806,7 @@ static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
      * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
      * number between 0 and 9 and LLL is the light class
      */
-    mcsINT32 nbItems = sscanf(spType, "%c%f%s", &(spectralType->code), 
+    mcsINT32 nbItems = sscanf(spType, "%c%lf%s", &(spectralType->code), 
                              &spectralType->quantity, spectralType->lightClass);
     if ((nbItems != 2) && (nbItems != 3))
     {
@@ -928,7 +931,7 @@ static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
 static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
                                        alxSPECTRAL_TYPE  *spectralType,
                                        mcsSTRING32       spType,
-                                       mcsFLOAT          diffMagJK)
+                                       mcsDOUBLE          diffMagJK)
 {
     logTrace("alxGetLineForFaintStar()");
 
@@ -1050,8 +1053,8 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
  */
 static mcsCOMPL_STAT 
 alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
-                        mcsFLOAT                   mgB,
-                        mcsFLOAT                   mgV,
+                        mcsDOUBLE                   mgB,
+                        mcsDOUBLE                   mgV,
                         alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitudeForBrightStar()");
@@ -1137,7 +1140,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
     /* Else, interpolate */
     else
     {
-        mcsFLOAT ratio; /* need to compute ratio */
+        mcsDOUBLE ratio; /* need to compute ratio */
         mcsINT32 lineInf, lineSup; /* integer to have the lines sup and inf */
         lineSup = line;
         lineInf = line - 1;
@@ -1257,8 +1260,8 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
  */
 static mcsCOMPL_STAT
 alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
-                                    mcsFLOAT                   mgJ,
-                                    mcsFLOAT                   mgK,
+                                    mcsDOUBLE                   mgJ,
+                                    mcsDOUBLE                   mgK,
                                     alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitudeForFaintStar()");
@@ -1320,7 +1323,7 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
     /* Else, interpolate */
     else
     {
-        mcsFLOAT ratio; /* need to compute ratio */
+        mcsDOUBLE ratio; /* need to compute ratio */
         mcsINT32 lineInf, lineSup; /* integer to have the lines sup and inf */
         lineSup = line;
         lineInf = line - 1;
@@ -1415,7 +1418,7 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
  * 
  * @return always SUCCESS
  */
-static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
+static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
                                          alxDATA diffMag,
                                          alxDATA *magnitude,
                                          alxCONFIDENCE_INDEX confIndex)
@@ -1454,7 +1457,7 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsFLOAT firstMag,
 static mcsCOMPL_STAT 
 alxComputeAllMagnitudesForBrightStar(alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
                                      alxMAGNITUDES magnitudes,
-                                     mcsFLOAT mgV)
+                                     mcsDOUBLE mgV)
 {
     logTrace("alxComputeAllMagnitudesForBrightStar()");
 
@@ -1515,7 +1518,7 @@ alxComputeAllMagnitudesForBrightStar(alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
 static mcsCOMPL_STAT 
 alxComputeAllMagnitudesForFaintStar(alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
                                     alxMAGNITUDES magnitudes,
-                                    mcsFLOAT mgJ)
+                                    mcsDOUBLE mgJ)
 {
     logTrace("alxComputeAllMagnitudesForFaintStar()");
     
@@ -1609,7 +1612,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
     }
 
     /* If B and V are affected, get magnitudes in B and V bands */
-    mcsFLOAT mgB, mgV;
+    mcsDOUBLE mgB, mgV;
     mgB = magnitudes[alxB_BAND].value;
     mgV = magnitudes[alxV_BAND].value;
     
@@ -1698,7 +1701,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
         return mcsSUCCESS;
     }
     /* If B and V are affected, get magnitudes in B and V bands */
-    mcsFLOAT mgJ, mgK;
+    mcsDOUBLE mgJ, mgK;
     mgJ = magnitudes[alxJ_BAND].value;
     mgK = magnitudes[alxK_BAND].value;
     
@@ -1759,7 +1762,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
  * been implemented because there is no catalog which provides this information
  * for a representative number of stars.
  */
-mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsFLOAT      av,
+mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
                                             alxMAGNITUDES magnitudes)
 {
     logTrace("alxComputeRealMagnitudes()");

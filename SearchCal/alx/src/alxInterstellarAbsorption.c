@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxInterstellarAbsorption.c,v 1.2 2006-03-03 14:48:24 scetre Exp $"
+ * "@(#) $Id: alxInterstellarAbsorption.c,v 1.3 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2006/03/03 14:48:24  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.1  2005/12/22 10:08:58  scetre
  * Added extinction coefficient computation
  * changed realMag to CorrectedMag
@@ -19,7 +22,7 @@
  * @sa JMMC-MEM-2600-0008 document. 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxInterstellarAbsorption.c,v 1.2 2006-03-03 14:48:24 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxInterstellarAbsorption.c,v 1.3 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 
@@ -132,7 +135,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
             }
 
             /* Get polynomial coefficients */
-            if (sscanf(line, "%f-%f %f %f %f %f",
+            if (sscanf(line, "%lf-%lf %lf %lf %lf %lf",
                        &polynomial.gLonMin[lineNum],
                        &polynomial.gLonMax[lineNum],
                        &polynomial.coeff[lineNum][0],
@@ -175,10 +178,10 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned. 
  */
-mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT* av,
-                                              mcsFLOAT  plx,
-                                              mcsFLOAT  gLat,
-                                              mcsFLOAT  gLon)
+mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
+                                              mcsDOUBLE  plx,
+                                              mcsDOUBLE  gLat,
+                                              mcsDOUBLE  gLon)
 {
     logTrace("alxComputeExtinctionCoefficient()");
 
@@ -191,7 +194,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT* av,
     }
 
     /* Compute distance */
-    mcsFLOAT distance;
+    mcsDOUBLE distance;
     if (plx == 0)
     {
         errAdd(alxERR_INVALID_PARALAX_VALUE, plx);
@@ -213,7 +216,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsFLOAT* av,
     /* If the latitude is between 10 and 50 degrees */ 
     else if ((fabs(gLat) < 50) && (fabs(gLat) > 10))
     {
-        mcsFLOAT ho = 0.120;
+        mcsDOUBLE ho = 0.120;
         *av = (0.165 * ( 1.192 - fabs(tan(gLat * M_PI / 180)))) 
             / fabs(sin(gLat * M_PI / 180)) 
             * (1 - exp(-distance * fabs(sin(gLat * M_PI / 180)) / ho));

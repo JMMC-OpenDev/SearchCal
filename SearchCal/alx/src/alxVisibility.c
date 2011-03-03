@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxVisibility.c,v 1.10 2006-03-03 14:48:24 scetre Exp $"
+ * "@(#) $Id: alxVisibility.c,v 1.11 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/03/03 14:48:24  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.9  2005/10/26 11:24:01  lafrasse
  * Code review
  *
@@ -48,7 +51,7 @@
  * @sa JMMC-MEM-2600-0005 document 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxVisibility.c,v 1.10 2006-03-03 14:48:24 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxVisibility.c,v 1.11 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 
@@ -91,15 +94,15 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxVisibility.c,v 1.10 2
  *
  * @return Always mcsSUCCESS
  */
-mcsCOMPL_STAT alxComputeVisibility(mcsFLOAT angDiam,
-                                   mcsFLOAT angDiamError,
-                                   mcsFLOAT baseMax,
-                                   mcsFLOAT wlen,
+mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
+                                   mcsDOUBLE angDiamError,
+                                   mcsDOUBLE baseMax,
+                                   mcsDOUBLE wlen,
                                    alxVISIBILITIES *visibilities)
 {
     logTrace("alxComputeVisibility()");
     
-    mcsFLOAT x = 15.23 * baseMax * angDiam / (1000 * wlen);
+    mcsDOUBLE x = 15.23 * baseMax * angDiam / (1000 * wlen);
 
     /* Compute V */
     visibilities->vis = fabs(2 * j1f(x) / x);

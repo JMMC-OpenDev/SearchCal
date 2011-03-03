@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.17 2011-02-23 15:15:19 lafrasse Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.18 2011-03-03 12:59:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2011/02/23 15:15:19  lafrasse
+ * Updated to reflect alx API changes.
+ *
  * Revision 1.16  2006/05/11 13:03:29  mella
  * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
  *
@@ -65,7 +68,7 @@
  *
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.17 2011-02-23 15:15:19 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.18 2011-03-03 12:59:53 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -170,7 +173,7 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
 
-    mcsFLOAT av;
+    mcsDOUBLE av;
     alxComputeExtinctionCoefficient(&av, 10, 5, 165);        
     if (alxComputeCorrectedMagnitudes
         (av, magnitudes) == mcsFAILURE)
