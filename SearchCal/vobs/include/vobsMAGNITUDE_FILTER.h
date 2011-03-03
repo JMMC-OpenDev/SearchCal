@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMAGNITUDE_FILTER.h,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsMAGNITUDE_FILTER.h,v 1.6 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.4  2005/11/29 13:45:57  gzins
  * Removed filter name definition
  *
@@ -74,12 +77,12 @@ public:
     virtual ~vobsMAGNITUDE_FILTER();
 
     virtual mcsCOMPL_STAT SetMagnitudeValue(mcsSTRING32 band,
-                                            mcsFLOAT magValue,
-                                            mcsFLOAT magRange);
+                                            mcsDOUBLE magValue,
+                                            mcsDOUBLE magRange);
 
     virtual mcsCOMPL_STAT GetMagnitudeValue(mcsSTRING32 *band,
-                                            mcsFLOAT *magValue,
-                                            mcsFLOAT *magRange);
+                                            mcsDOUBLE *magValue,
+                                            mcsDOUBLE *magRange);
     
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
     
@@ -92,8 +95,8 @@ private:
     vobsMAGNITUDE_FILTER& operator=(const vobsMAGNITUDE_FILTER&);
 
     mcsSTRING32 _band;
-    mcsFLOAT _magValue;
-    mcsFLOAT _magRange;
+    mcsDOUBLE _magValue;
+    mcsDOUBLE _magRange;
 };
 
 #endif /*!vobsMAGNITUDE_FILTER_H*/

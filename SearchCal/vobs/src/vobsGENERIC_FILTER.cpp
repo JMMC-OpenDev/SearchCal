@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.8 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.6  2005/12/22 10:38:45  scetre
  * Updated doxygen documentation
  *
@@ -66,7 +69,7 @@
  * Definition of vobsGENERIC_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.8 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -133,12 +136,12 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
  * returned.
  */
 mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
-                                               mcsFLOAT value)
+                                               mcsDOUBLE value)
 {
     logTrace("vobsGENERIC_FILTER::AddCondition(float)");
 
     // If condition list is not empty, check that new condition has same type
-    // (float or string) than the other conditions
+    // (mcsDOUBLE or string) than the other conditions
     if (_conditions.empty() == false)
     {
         if (_propType != vobsFLOAT_PROPERTY)
@@ -174,7 +177,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
     logTrace("vobsGENERIC_FILTER::AddCondition(string)");
 
     // If condition list is not empty, check that new condition has same type
-    // (float or string) than the other conditions
+    // (mcsDOUBLE or string) than the other conditions
     if (_conditions.empty() == false)
     {
         if (_propType != vobsSTRING_PROPERTY)
@@ -284,7 +287,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             }
             else
             {
-                mcsFLOAT numValue;
+                mcsDOUBLE numValue;
                 string   strValue;
                 if (_propType == vobsFLOAT_PROPERTY)
                 {
@@ -349,7 +352,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
  * Class constructor
  */
 vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(vobsOPERATOR op, 
-                                                 mcsFLOAT operand)
+                                                 mcsDOUBLE operand)
 {
     _operator = op;
     _numOperand = operand;
@@ -372,7 +375,7 @@ vobsGENERIC_FILTER::vobsCONDITION::~vobsCONDITION()
 /**
  * Condition evaluators.
  */
-bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(mcsFLOAT value)
+bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(mcsDOUBLE value)
 {
     switch (_operator)
     {

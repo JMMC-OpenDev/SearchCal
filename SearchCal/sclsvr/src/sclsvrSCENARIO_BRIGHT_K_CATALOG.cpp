@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.5 2010-11-25 15:45:33 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.6 2011-03-03 13:12:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2010/11/25 15:45:33  lafrasse
+ * Removed CHARM querying from all scenarii.
+ *
  * Revision 1.4  2010/01/26 14:16:06  lafrasse
  * Added WDS catalog querying.
  *
@@ -26,7 +29,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.5 2010-11-25 15:45:33 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.6 2011-03-03 13:12:52 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -100,9 +103,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     // Build the request for I/280
     _requestI280.Copy(_request);
     _requestI280.SetSearchBand("V");
-    mcsFLOAT kMax = _request.GetMaxMagRange();
-    mcsFLOAT vMax = kMax + 2.0;
-    mcsFLOAT vMin = 0.0;
+    mcsDOUBLE kMax = _request.GetMaxMagRange();
+    mcsDOUBLE vMax = kMax + 2.0;
+    mcsDOUBLE vMin = 0.0;
     _requestI280.SetMinMagRange(vMin);
     _requestI280.SetMaxMagRange(vMax);
 
@@ -169,8 +172,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     _originFilter.Enable();
     // Build filter on magnitude
     // Get research band
-    mcsFLOAT kMaxi = _request.GetMaxMagRange();
-    mcsFLOAT kMini = _request.GetMinMagRange();
+    mcsDOUBLE kMaxi = _request.GetMaxMagRange();
+    mcsDOUBLE kMini = _request.GetMinMagRange();
     _magnitudeFilter.SetMagnitudeValue("K", (kMaxi+kMini)/2, (kMaxi-kMini)/2);
     _magnitudeFilter.Enable();
     // Build filter list

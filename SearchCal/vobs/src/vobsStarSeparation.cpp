@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsStarSeparation.cpp,v 1.6 2006-03-03 15:03:28 scetre Exp $"
+ * "@(#) $Id: vobsStarSeparation.cpp,v 1.7 2011-03-03 13:09:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2006/03/03 15:03:28  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.5  2005/11/16 10:47:55  scetre
  * Updated documentation
  *
@@ -39,7 +42,7 @@
  * the star separation.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsStarSeparation.cpp,v 1.6 2006-03-03 15:03:28 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsStarSeparation.cpp,v 1.7 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 
 /* 
@@ -120,14 +123,14 @@ int main(int argc, char *argv[])
     
     // Star 1
     vobsSTAR star1;
-    mcsFLOAT raStar1InDeg;
+    mcsDOUBLE raStar1InDeg;
     star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, argv[1], "");
     if (star1.GetRa(raStar1InDeg) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
     }
-    mcsFLOAT decStar1InDeg;
+    mcsDOUBLE decStar1InDeg;
     star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, argv[2], "");
     if (star1.GetDec(decStar1InDeg) == mcsFAILURE)
     {
@@ -146,14 +149,14 @@ int main(int argc, char *argv[])
 
     // Star 2
     vobsSTAR star2;
-    mcsFLOAT raStar2InDeg;
+    mcsDOUBLE raStar2InDeg;
     star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, argv[3], "");
     if (star2.GetRa(raStar2InDeg) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
     }
-    mcsFLOAT decStar2InDeg;
+    mcsDOUBLE decStar2InDeg;
     star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, argv[4], "");
     if (star2.GetDec(decStar2InDeg) == mcsFAILURE)
     {

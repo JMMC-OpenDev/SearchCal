@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.10 2009-12-09 10:00:10 lafrasse Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.11 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2009/12/09 10:00:10  lafrasse
+ * Updated to truly compute distance as star separation and not as coordinates box
+ * selection, to better filter science objects in sclsvr.
+ *
  * Revision 1.9  2006/04/07 08:23:00  gzins
  * Removed useless \n in log messages
  *
@@ -50,7 +54,7 @@
  * Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.10 2009-12-09 10:00:10 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.11 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -104,7 +108,7 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32  raRef,
                                                     const mcsSTRING32  decRef,
-                                                    const mcsFLOAT     distance)
+                                                    const mcsDOUBLE     distance)
 {
     logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
 
@@ -129,7 +133,7 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32  raRef,
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
                                                     mcsSTRING32 *decRef,
-                                                    mcsFLOAT    *distance)
+                                                    mcsDOUBLE    *distance)
 {
     logTrace("vobsDISTANCE_FILTER::GetDistanceValue()");
     
@@ -177,11 +181,11 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
     }
 
     // Get reference RA coordinate in degrees
-    float referenceStarRA;
+    mcsDOUBLE referenceStarRA;
     referenceStar.GetRa(referenceStarRA);
 
     // Get reference DEC coordinate in degrees
-    float referenceStarDEC;
+    mcsDOUBLE referenceStarDEC;
     referenceStar.GetDec(referenceStarDEC);
 
     // For each star of the given star list
@@ -199,15 +203,15 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
         }
 
         // Get current star RA coordinate in degrees
-        float currentStarRA;
+        mcsDOUBLE currentStarRA;
         currentStar->GetRa(currentStarRA);
 
         // Get current star DEC coordinate in degrees
-        float currentStarDEC;
+        mcsDOUBLE currentStarDEC;
         currentStar->GetDec(currentStarDEC);
 
         // (at last) Compute distance between refence star and the current star
-        mcsFLOAT distance;
+        mcsDOUBLE distance;
         // Compute seperation in arcsec
         alxComputeDistance(referenceStarRA, referenceStarDEC, currentStarRA, currentStarDEC, &distance);
         // Convert separation in degrees

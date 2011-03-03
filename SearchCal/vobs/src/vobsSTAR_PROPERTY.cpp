@@ -1,17 +1,20 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.33 2010-02-18 09:53:24 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.34 2011-03-03 13:09:43 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.33  2010/02/18 09:53:24  lafrasse
+* Removed a cast-related warning.
+*
 * Revision 1.32  2010/02/02 11:14:22  lafrasse
 * Removed debugging printf().
 *
 * Revision 1.31  2010/02/02 11:08:22  lafrasse
 * Changed output format for values read from catalog to maximum precision.
-* Factorized float handling code.
+* Factorized mcsDOUBLE handling code.
 * Refined log and comments.
 *
 * Revision 1.30  2010/02/02 10:14:44  lafrasse
@@ -22,7 +25,7 @@
 * Fixed copy constructor format initialization.
 *
 * Revision 1.28  2009/10/26 14:16:37  lafrasse
-* Enhanced float value output precision by using '%g' instead of custom formats or
+* Enhanced mcsDOUBLE value output precision by using '%g' instead of custom formats or
 * default '%f'.
 *
 * Revision 1.27  2009/10/14 14:50:58  lafrasse
@@ -83,7 +86,7 @@
 * Updated GetConfidenceIndex prototype
 *
 * Revision 1.9  2005/02/22 14:22:25  gzins
-* Fixed bug when testing convertion of float values to string
+* Fixed bug when testing convertion of mcsDOUBLE values to string
 *
 * Revision 1.8  2005/02/22 14:15:22  gzins
 * Used format when affecting floatting value
@@ -112,7 +115,7 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.33 2010-02-18 09:53:24 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_PROPERTY.cpp,v 1.34 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 
 /* 
@@ -304,8 +307,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
         else // Value is a float
         {
             // Use the most precision format to read value
-            mcsFLOAT numerical = FP_NAN;
-            if (sscanf(value, "%f", &numerical) != 1)
+            mcsDOUBLE numerical = FP_NAN;
+            if (sscanf(value, "%lf", &numerical) != 1)
             {
                 errAdd(vobsERR_PROPERTY_TYPE, _id.c_str(), value, "%f");
                 return (mcsFAILURE);
@@ -334,7 +337,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
  * The possible error is :
  * \li vobsERR_PROPERTY_TYPE
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsFLOAT value,
+mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
                                           const char *origin,
                                           vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
@@ -419,7 +422,7 @@ const char *vobsSTAR_PROPERTY::GetValue(void) const
  * returned.
  *
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsFLOAT *value) const
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
 {
     logTrace("vobsSTAR_PROPERTY::GetValue()");
 

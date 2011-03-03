@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.10 2006-03-03 15:25:23 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.11 2011-03-03 13:12:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2006/03/03 15:25:23  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.9  2006/02/21 12:16:33  gzins
  * Fixed wrong test on visibility; i.e. relative visibility is expressed in %
  *
@@ -42,7 +45,7 @@
  * Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.10 2006-03-03 15:25:23 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.11 2011-03-03 13:12:52 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -91,7 +94,7 @@ sclsvrVISIBILITY_FILTER::~sclsvrVISIBILITY_FILTER()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::SetVisibilityValue(mcsFLOAT visMax)
+mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::SetVisibilityValue(mcsDOUBLE visMax)
 {
     logTrace("sclsvrVISIBILITY_FILTER::SetVisibilityValue()");
 
@@ -107,7 +110,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::SetVisibilityValue(mcsFLOAT visMax)
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::GetVisibilityValue(mcsFLOAT *visMax)
+mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::GetVisibilityValue(mcsDOUBLE *visMax)
 {
     logTrace("sclsvrVISIBILITY_FILTER::GetVisibilityValue()");
 
@@ -133,7 +136,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
     {
         // for each star of the list
         vobsSTAR *star;
-        mcsFLOAT starVis, starVisError;
+        mcsDOUBLE starVis, starVisError;
         for (unsigned int el = 0; el < list->Size(); el++)
         {
             star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));

@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.h,v 1.22 2007-10-31 11:25:19 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.h,v 1.23 2011-03-03 13:12:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.22  2007/10/31 11:25:19  gzins
+ * Removed oldScenario parameter
+ *
  * Revision 1.21  2007/06/27 14:26:49  scetre
  * Handled noScienceStar parameter in request
  * Removed science star if parameter is false
@@ -130,22 +133,22 @@ public:
     virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine);
 
     // Baseline
-    virtual mcsCOMPL_STAT SetMaxBaselineLength(mcsFLOAT length);
-    virtual mcsFLOAT      GetMaxBaselineLength(void);
+    virtual mcsCOMPL_STAT SetMaxBaselineLength(mcsDOUBLE length);
+    virtual mcsDOUBLE      GetMaxBaselineLength(void);
 
     // Wavelengh
-    virtual mcsCOMPL_STAT SetObservingWlen(mcsFLOAT wlen);
-    virtual mcsFLOAT      GetObservingWlen(void);
+    virtual mcsCOMPL_STAT SetObservingWlen(mcsDOUBLE wlen);
+    virtual mcsDOUBLE      GetObservingWlen(void);
 
     // DiamVK
-    virtual mcsCOMPL_STAT SetDiamVK(mcsFLOAT diamVK);
+    virtual mcsCOMPL_STAT SetDiamVK(mcsDOUBLE diamVK);
     virtual mcsCOMPL_STAT ResetDiamVK();
     virtual mcsLOGICAL    IsDiamVKDefined(void);
-    virtual mcsFLOAT      GetDiamVK(void);
+    virtual mcsDOUBLE      GetDiamVK(void);
 
     // Expected visibility error
-    virtual mcsCOMPL_STAT SetExpectedVisErr(mcsFLOAT expectedVisErr);
-    virtual mcsFLOAT      GetExpectedVisErr(void);
+    virtual mcsCOMPL_STAT SetExpectedVisErr(mcsDOUBLE expectedVisErr);
+    virtual mcsDOUBLE      GetExpectedVisErr(void);
     
     // File name where file should be saved
     virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
@@ -169,11 +172,11 @@ private:
     sclsvrGETCAL_CMD *_getCalCmd;
 
     // Request parameters
-    mcsFLOAT      _maxBaselineLength;
-    mcsFLOAT      _observingWlen;
-    mcsFLOAT      _diamVK;
+    mcsDOUBLE      _maxBaselineLength;
+    mcsDOUBLE      _observingWlen;
+    mcsDOUBLE      _diamVK;
     mcsLOGICAL    _diamVKDefined;
-    mcsFLOAT      _expectedVisibilityError;
+    mcsDOUBLE      _expectedVisibilityError;
     mcsLOGICAL    _brightFlag;
     mcsSTRING256  _fileName;
     mcsLOGICAL    _noScienceObject;

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsPARSER.cpp,v 1.36 2010-02-15 15:42:04 mella Exp $"
+* "@(#) $Id: vobsPARSER.cpp,v 1.37 2011-03-03 13:09:42 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.36  2010/02/15 15:42:04  mella
+* Use POST method instead of GET (too long uri errors...)
+*
 * Revision 1.35  2010/02/15 12:53:48  lafrasse
 * Removed URL truncation in log.
 *
@@ -110,7 +113,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.36 2010-02-15 15:42:04 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.37 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -194,7 +197,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
 
     // Query the CDS
     logTrace("URI = %s", uri);
-    if (miscPerformHttpPost(uri, data,completeReturnBuffer.GetInternalMiscDYN_BUF(), vobsTIME_OUT) == mcsFAILURE)
+    if (miscPerformHttpPost(uri, data, completeReturnBuffer.GetInternalMiscDYN_BUF(), vobsTIME_OUT) == mcsFAILURE)
     {
         return mcsFAILURE;
     }

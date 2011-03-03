@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.24 2010-06-28 14:12:11 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.25 2011-03-03 13:09:42 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2010/06/28 14:12:11  lafrasse
+* Moved CDS return limit to 1000.
+*
 * Revision 1.23  2006/08/22 15:42:58  gzins
 * Added TYC2 & TYC3
 *
@@ -84,7 +87,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.24 2010-06-28 14:12:11 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.25 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -204,8 +207,8 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
-    mcsFLOAT minMagRange;
-    mcsFLOAT maxMagRange;
+    mcsDOUBLE minMagRange;
+    mcsDOUBLE maxMagRange;
     minMagRange = request.GetMinMagRange();
     maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
@@ -214,8 +217,8 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
 
     // Add search box size
     mcsSTRING32 separation;
-    mcsFLOAT deltaRa;
-    mcsFLOAT deltaDec;
+    mcsDOUBLE deltaRa;
+    mcsDOUBLE deltaDec;
     if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
     {
         return mcsFAILURE;

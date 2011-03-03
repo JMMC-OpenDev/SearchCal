@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.12 2007-10-31 11:18:47 gzins Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.12  2007/10/31 11:18:47  gzins
+* Minod documentation change
+*
 * Revision 1.11  2006/04/03 11:49:49  gzins
 * Hanlded list empty case in GetNextXxx() method
 *
@@ -38,7 +41,7 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.12 2007-10-31 11:18:47 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -127,7 +130,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
  * Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
-                                               mcsFLOAT range)
+                                               mcsDOUBLE range)
 {
     logTrace("vobsSTAR_COMP_CRITERIA_LIST::Add()");
   
@@ -198,7 +201,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(char *propertyId)
  * \li vobsERR_NO_MORE_CRITERIA
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
-                                                           mcsFLOAT *range,
+                                                           mcsDOUBLE *range,
                                                            mcsLOGICAL init)
 {
     logTrace("vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria()");

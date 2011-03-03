@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestCriteria.cpp,v 1.9 2011-02-25 15:58:58 lafrasse Exp $"
+ * "@(#) $Id: vobsTestCriteria.cpp,v 1.10 2011-03-03 13:09:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2011/02/25 15:58:58  lafrasse
+ * Removed date and filelines from test outputs.
+ *
  * Revision 1.8  2006/03/03 15:17:43  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -24,7 +27,7 @@
  ******************************************************************************/
 
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestCriteria.cpp,v 1.9 2011-02-25 15:58:58 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestCriteria.cpp,v 1.10 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 
 /* 
@@ -101,7 +104,7 @@ int main(int argc, char *argv[])
 
     // logTest all criteria
     mcsSTRING32 propertyId;
-    mcsFLOAT range;
+    mcsDOUBLE range;
     mcsINT32 listSize=criteriaList->Size();
     logTest("size of the criteria list created = %d", listSize);    
     for (int el = 0; el < listSize; el++)

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.7 2010-09-01 07:28:35 mella Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.8 2011-03-03 13:12:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2010/09/01 07:28:35  mella
+ * clean unused variable
+ *
  * Revision 1.6  2007/10/31 11:31:56  gzins
  * Removed some useless code
  *
@@ -33,7 +36,7 @@
  *  Definition of sclsvrSCENARIO_SINGLE_STAR class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.7 2010-09-01 07:28:35 mella Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.8 2011-03-03 13:12:52 lafrasse Exp $";
 /* 
  * System Headers 
  */
@@ -135,7 +138,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
         return mcsFAILURE;
     }
     
-    mcsFLOAT magV=1;
+    mcsDOUBLE magV=1;
     if (_starListS.GetNextStar(mcsTRUE)->GetPropertyValue(vobsSTAR_PHOT_JHN_V,
                                                           &magV) == mcsFAILURE)
     {

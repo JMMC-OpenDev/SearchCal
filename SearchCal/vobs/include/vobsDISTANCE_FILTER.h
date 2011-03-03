@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.7 2009-12-09 10:00:10 lafrasse Exp $"
+ * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.8 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7  2009/12/09 10:00:10  lafrasse
+ * Updated to truly compute distance as star separation and not as coordinates box
+ * selection, to better filter science objects in sclsvr.
+ *
  * Revision 1.6  2006/03/01 16:41:38  lafrasse
  * Added const attributes for SetDistanceValue() method parameters.
  * Replaced all the 'strcpy' calls with 'strncpy'.
@@ -83,11 +87,11 @@ public:
 
     virtual mcsCOMPL_STAT SetDistanceValue(const mcsSTRING32  raRef,
                                            const mcsSTRING32  decRef,
-                                           const mcsFLOAT     distance);
+                                           const mcsDOUBLE     distance);
 
     virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32  *raRef,
                                            mcsSTRING32  *decRef,
-                                           mcsFLOAT     *distance);
+                                           mcsDOUBLE     *distance);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
@@ -101,7 +105,7 @@ private:
 
     mcsSTRING32  _raRef;
     mcsSTRING32  _decRef;
-    mcsFLOAT     _distance;
+    mcsDOUBLE     _distance;
 };
 
 #endif /*!vobsDISTANCE_FILTER_H*/

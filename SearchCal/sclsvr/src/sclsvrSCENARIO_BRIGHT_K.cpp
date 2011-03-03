@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.19 2010-11-24 15:27:27 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.20 2011-03-03 13:12:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2010/11/24 15:27:27  lafrasse
+ * Removed CHARM querying from Bright K scenario.
+ *
  * Revision 1.18  2010/10/15 13:33:19  lafrasse
  * Removed "B-V<1" filter.
  *
@@ -68,7 +71,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.19 2010-11-24 15:27:27 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.20 2011-03-03 13:12:52 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -136,9 +139,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // Build the request for I/280
     _requestI280.Copy(_request);
     _requestI280.SetSearchBand("V");
-    mcsFLOAT kMax = _request.GetMaxMagRange();
-    mcsFLOAT vMax = kMax + 2.0;
-    mcsFLOAT vMin = 0.0;
+    mcsDOUBLE kMax = _request.GetMaxMagRange();
+    mcsDOUBLE vMax = kMax + 2.0;
+    mcsDOUBLE vMin = 0.0;
     _requestI280.SetMinMagRange(vMin);
     _requestI280.SetMaxMagRange(vMax);
 
@@ -202,8 +205,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // Get research band
     mcsSTRING32 band;
     strcpy(band, _request.GetSearchBand());
-    mcsFLOAT kMaxi = _request.GetMaxMagRange();
-    mcsFLOAT kMini = _request.GetMinMagRange();
+    mcsDOUBLE kMaxi = _request.GetMaxMagRange();
+    mcsDOUBLE kMini = _request.GetMinMagRange();
     _magnitudeFilter.SetMagnitudeValue(band, (kMaxi+kMini)/2, (kMaxi-kMini)/2);
     _magnitudeFilter.Enable();
     // Build filter list

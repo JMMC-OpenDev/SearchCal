@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.19 2011-02-10 14:16:28 lafrasse Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.20 2011-03-03 13:09:43 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2011/02/10 14:16:28  lafrasse
+* Moved back to official version of Vizier service (not beta).
+*
 * Revision 1.18  2011/02/10 13:44:38  lafrasse
 * Increased default max number of stars retruned by CDS from 50 to 1000.
 *
@@ -69,7 +72,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.19 2011-02-10 14:16:28 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.20 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -101,8 +104,8 @@ using namespace std;
  * Local Variables
  */
 
-//#define vobsVIZIER_URI "http://viz-beta.u-strasbg.fr/viz-bin/asu-xml?"
-#define vobsVIZIER_URI "http://vizier.u-strasbg.fr/viz-bin/asu-xml?"
+#define vobsVIZIER_URI "http://viz-beta.u-strasbg.fr/viz-bin/asu-xml?"
+//#define vobsVIZIER_URI "http://vizier.u-strasbg.fr/viz-bin/asu-xml?"
 
 /*
  * Class constructor

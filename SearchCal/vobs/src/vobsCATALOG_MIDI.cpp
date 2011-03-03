@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.25 2006-03-03 15:03:27 scetre Exp $"
+ * "@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.26 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2006/03/03 15:03:27  scetre
+ * Changed rcsId to rcsId __attribute__ ((unused))
+ *
  * Revision 1.24  2005/11/23 17:30:21  lafrasse
  * Added circular search box geometry support and normalized area size methods
  *
@@ -84,7 +87,7 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.25 2006-03-03 15:03:27 scetre Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.26 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -160,7 +163,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // Get reference object properties
     const char *ra;          // reference object right ascension
     const char *dec;         // reference object declinaison
-    mcsFLOAT magnitude;      // reference object magnitude
+    mcsDOUBLE magnitude;      // reference object magnitude
     // ra
     ra = request.GetObjectRa();
     // dec
@@ -197,8 +200,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // Aim is to set search field
     
     // Get reference object constraints
-    mcsFLOAT deltaRa;    // reference object ra constaint
-    mcsFLOAT deltaDec;    // reference object dec constaint
+    mcsDOUBLE deltaRa;    // reference object ra constaint
+    mcsDOUBLE deltaDec;    // reference object dec constaint
 
     // Get search area size
     if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
@@ -227,11 +230,11 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
 
     // Magnitude range constraint
     // Object magnitude conversion to IRAS flux 12mu
-    mcsFLOAT referenceStarFlux;
-    mcsFLOAT minNFlux;
-    mcsFLOAT maxNFlux;
-    mcsFLOAT diffNFlux;
-    mcsFLOAT middleNFlux;
+    mcsDOUBLE referenceStarFlux;
+    mcsDOUBLE minNFlux;
+    mcsDOUBLE maxNFlux;
+    mcsDOUBLE diffNFlux;
+    mcsDOUBLE middleNFlux;
     referenceStarFlux = 0.89 * pow(10, -0.4 * (magnitude - 4.1));
 
     // Calculate N magnitude range constraint depending on object flux
@@ -330,8 +333,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
             starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
 
             // Get IR flux
-            mcsFLOAT flux;
-            mcsFLOAT magnitude;
+            mcsDOUBLE flux;
+            mcsDOUBLE magnitude;
             starPtr->GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, &flux);
 
             // Compute magnitude
@@ -347,8 +350,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
             starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
 
             // Get diameter and its associated error 
-            mcsFLOAT diam;
-            mcsFLOAT diamError;
+            mcsDOUBLE diam;
+            mcsDOUBLE diamError;
             starPtr->GetPropertyValue(vobsSTAR_DIAM12, &diam);
             starPtr->GetPropertyValue(vobsSTAR_DIAM12_ERROR, &diamError);
 

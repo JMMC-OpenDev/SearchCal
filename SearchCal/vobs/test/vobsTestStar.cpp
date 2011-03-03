@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStar.cpp,v 1.12 2011-02-25 15:58:58 lafrasse Exp $"
+ * "@(#) $Id: vobsTestStar.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2011/02/25 15:58:58  lafrasse
+ * Removed date and filelines from test outputs.
+ *
  * Revision 1.11  2006/03/03 15:17:43  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -21,7 +24,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStar.cpp,v 1.12 2011-02-25 15:58:58 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStar.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -63,12 +66,12 @@ int main(int argc, char *argv[])
     }
     printf("\n");
     star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "-03 47 29.08", "");
-    mcsFLOAT ra;
+    mcsDOUBLE ra;
     star.GetRa(ra);
     logTest("ra (deg) = %f", ra);
 
     star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "24 06 18.5", "");
-    mcsFLOAT dec;
+    mcsDOUBLE dec;
     star.GetDec(dec);
     logTest("dec (deg) = %f", dec);
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.103 2010-07-30 12:21:07 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.104 2011-03-03 13:12:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.103  2010/07/30 12:21:07  lafrasse
+ * Added columns description and units when available.
+ *
  * Revision 1.102  2010/06/28 14:16:10  lafrasse
  * Added properties for UDs, Teff and LogG computed from SpectralType.
  *
@@ -274,7 +277,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
- static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.103 2010-07-30 12:21:07 lafrasse Exp $"; 
+ static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.104 2011-03-03 13:12:51 lafrasse Exp $"; 
 
 
 /* 
@@ -504,13 +507,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     }
 
     // Check parallax
-    mcsFLOAT parallax;
+    mcsDOUBLE parallax;
     mcsLOGICAL parallaxIsOK = mcsFALSE;
     // If parallax of the star if known
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
     {
         // Check parallax
-        mcsFLOAT parallaxError  = -1.0;
+        mcsDOUBLE parallaxError  = -1.0;
         GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &parallax);
 
         // Get error
@@ -761,14 +764,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                 if (starWith.IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE)
                 {
                     // Get Visibility of the star (without absorption)
-                    mcsFLOAT vis2;
-                    mcsFLOAT vis2Err;
+                    mcsDOUBLE vis2;
+                    mcsDOUBLE vis2Err;
                     GetPropertyValue(sclsvrCALIBRATOR_VIS2, &vis2);
                     GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR,
                                      &vis2Err);
                     // Get Visibility of the star (with absorption)
-                    mcsFLOAT vis2A;
-                    mcsFLOAT vis2ErrA;
+                    mcsDOUBLE vis2A;
+                    mcsDOUBLE vis2ErrA;
                     starWith.GetPropertyValue(sclsvrCALIBRATOR_VIS2, &vis2A);
                     starWith.GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, 
                                               &vis2ErrA);
@@ -778,7 +781,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                     logTest("vis2A = %f", vis2A);
                     logTest("|vis2A - vis2| = %f", fabs(vis2A - vis2));
                     logTest("vis2Err = %f", vis2Err);
-                    mcsFLOAT visibilityErr;
+                    mcsDOUBLE visibilityErr;
                     if (fabs(vis2A - vis2) < vis2Err)
                     {
                         visibilityErr = vis2Err;
@@ -790,7 +793,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
                     logTest("visibilityErr = %f", visibilityErr); 
 
                     // Test of validity of the visibility
-                    mcsFLOAT expectedVisErr = request.GetExpectedVisErr();
+                    mcsDOUBLE expectedVisErr = request.GetExpectedVisErr();
                     if (visibilityErr > expectedVisErr)
                     {
                         logTest("star %s - visibility error (%f) is higher than the expected one (%f)",
@@ -999,7 +1002,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 {
     logTrace("sclsvrCALIBRATOR::ComputeGalacticCoordinates()");
 
-    mcsFLOAT gLat, gLon, ra, dec;
+    mcsDOUBLE gLat, gLon, ra, dec;
 
     // Get right ascension position in degree
     if (GetRa(ra)==mcsFAILURE)
@@ -1046,8 +1049,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
     logTrace("sclsvrCALIBRATOR::ComputeExtinctionCoefficient()");
 
-    mcsFLOAT parallax, gLat, gLon;
-    mcsFLOAT av;
+    mcsDOUBLE parallax, gLat, gLon;
+    mcsDOUBLE av;
 
     // Get the value of the parallax
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
@@ -1167,7 +1170,7 @@ ComputeInterstellarAbsorption(mcsLOGICAL isBright)
     };
 
     // Get the extinction ratio
-    mcsFLOAT av;
+    mcsDOUBLE av;
     if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1304,7 +1307,7 @@ sclsvrCALIBRATOR::ComputeApparentMagnitude(mcsLOGICAL isBright)
     };
 
     // Get the extinction ratio
-    mcsFLOAT av;
+    mcsDOUBLE av;
     if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1461,7 +1464,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             }
             // Compute apparent magnitude for V and K
             // Get the extinction ratio
-            mcsFLOAT av;
+            mcsDOUBLE av;
             if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO,
                                  &av) == mcsFAILURE)
             {
@@ -1809,7 +1812,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     }
 
     // Get LD diameter (DIAM_VK)
-    mcsFLOAT ld = FP_NAN;
+    mcsDOUBLE ld = FP_NAN;
     if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
     {
         logWarning("Aborting (error while retrieving DIAM_VK).");
@@ -1900,7 +1903,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::ComputeVisibility()");
 
-    mcsFLOAT diam, diamError, baseMax, wavelength;
+    mcsDOUBLE diam, diamError, baseMax, wavelength;
     alxVISIBILITIES visibilities;
     vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH;
 
@@ -2098,11 +2101,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::ComputeDistance()");
 
-    mcsFLOAT scienceObjectRa  = 0;
-    mcsFLOAT scienceObjectDec = 0;
-    mcsFLOAT calibratorRa     = 0;
-    mcsFLOAT calibratorDec    = 0;
-    mcsFLOAT distance         = 0;
+    mcsDOUBLE scienceObjectRa  = 0;
+    mcsDOUBLE scienceObjectDec = 0;
+    mcsDOUBLE calibratorRa     = 0;
+    mcsDOUBLE calibratorDec    = 0;
+    mcsDOUBLE distance         = 0;
     const char* buffer        = NULL;
     vobsSTAR scienceObject;
 
@@ -2187,15 +2190,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitude()
     logTrace("sclsvrCALIBRATOR::ComputeCousinMagnitude()");
 
     // convert J H K mag Jcous hcous Kcous
-    mcsFLOAT magK;
-    mcsFLOAT magJ;
-    mcsFLOAT magH;
+    mcsDOUBLE magK;
+    mcsDOUBLE magJ;
+    mcsDOUBLE magH;
     mcsLOGICAL magKIsSet = mcsFALSE;
     mcsLOGICAL magJIsSet = mcsFALSE;
     mcsLOGICAL magHIsSet = mcsFALSE;
-    mcsFLOAT magKcous;
-    mcsFLOAT magJcous;
-    mcsFLOAT magHcous;
+    mcsDOUBLE magKcous;
+    mcsDOUBLE magJcous;
+    mcsDOUBLE magHcous;
 
     // if Kmag property is set
     if (IsPropertySet(vobsSTAR_PHOT_JHN_K) == mcsTRUE)
@@ -2333,25 +2336,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                 "Gravity adopted from Spectral Type");
 
     AddProperty(sclsvrCALIBRATOR_UD_B, "UD_B", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "B-band Uniform-Disk Diamter");
+                "B-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_I, "UD_I", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "I-band Uniform-Disk Diamter");
+                "I-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_J, "UD_J", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "J-band Uniform-Disk Diamter");
+                "J-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_H, "UD_H", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "H-band Uniform-Disk Diamter");
+                "H-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_K, "UD_K", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "K-band Uniform-Disk Diamter");
+                "K-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "L-band Uniform-Disk Diamter");
+                "L-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "N-band Uniform-Disk Diamter");
+                "N-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_R, "UD_R", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "R-band Uniform-Disk Diamter");
+                "R-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_U, "UD_U", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "U-band Uniform-Disk Diamter");
+                "U-band Uniform-Disk Diameter");
     AddProperty(sclsvrCALIBRATOR_UD_V, "UD_V", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "V-band Uniform-Disk Diamter");
+                "V-band Uniform-Disk Diameter");
 
     AddProperty(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                 "Visual Interstellar Absorption");

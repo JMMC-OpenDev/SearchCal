@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.19 2010-02-02 10:12:49 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.20 2011-03-03 13:09:42 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.19  2010/02/02 10:12:49  lafrasse
+* Added default value for unit for STAR_PROPERTY creation.
+*
 * Revision 1.18  2009/10/14 14:50:58  lafrasse
 * Added proper support of floating point value (without loosing presion with
 * conversion from string representation) with accompagning tests.
@@ -135,7 +138,7 @@ public:
                                    const char *origin,
                                    vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite=mcsFALSE);
-    virtual mcsCOMPL_STAT SetValue(mcsFLOAT value,
+    virtual mcsCOMPL_STAT SetValue(mcsDOUBLE value,
                                    const char *origin,
                                    vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite=mcsFALSE);
@@ -143,7 +146,7 @@ public:
     
     // Get value
     virtual const char   *GetValue(void) const;
-    virtual mcsCOMPL_STAT GetValue(mcsFLOAT *value) const;
+    virtual mcsCOMPL_STAT GetValue(mcsDOUBLE *value) const;
 
     // Get property origin 
     virtual const char   *GetOrigin(void);
@@ -187,7 +190,7 @@ private:
     string               _link;            // CDS link of the value
     string               _description;     // Description of the value
     mcsSTRING64          _value;           // Value
-    mcsFLOAT             _numerical;       // Value as a true floating point numerical (!)
+    mcsDOUBLE             _numerical;       // Value as a true floating point numerical (!)
     vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index
     string               _origin;          /* Either the catalog name where the
                                             * value has been found or

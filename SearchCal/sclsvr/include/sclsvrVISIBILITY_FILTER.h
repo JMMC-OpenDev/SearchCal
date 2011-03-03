@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.8 2005-12-14 09:02:00 scetre Exp $"
+ * "@(#) $Id: sclsvrVISIBILITY_FILTER.h,v 1.9 2011-03-03 13:12:51 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2005/12/14 09:02:00  scetre
+ * Updated constructor with filter name
+ *
  * Revision 1.7  2005/11/30 10:35:21  scetre
  * Updated Filter without name
  * Updated scenario
@@ -83,9 +86,9 @@ public:
     // Class destructor
     virtual ~sclsvrVISIBILITY_FILTER();
 
-    virtual mcsCOMPL_STAT SetVisibilityValue(mcsFLOAT visMax);
+    virtual mcsCOMPL_STAT SetVisibilityValue(mcsDOUBLE visMax);
 
-    virtual mcsCOMPL_STAT GetVisibilityValue(mcsFLOAT *visMax);
+    virtual mcsCOMPL_STAT GetVisibilityValue(mcsDOUBLE *visMax);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);    
 
@@ -99,7 +102,7 @@ private:
     sclsvrVISIBILITY_FILTER(const sclsvrVISIBILITY_FILTER&);
     sclsvrVISIBILITY_FILTER& operator=(const sclsvrVISIBILITY_FILTER&);
 
-    mcsFLOAT _visMax;
+    mcsDOUBLE _visMax;
 };
 
 #endif /*!sclsvrVISIBILITY_FILTER_H*/

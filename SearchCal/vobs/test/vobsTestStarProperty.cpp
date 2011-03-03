@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestStarProperty.cpp,v 1.4 2011-02-25 15:58:58 lafrasse Exp $"
+ * "@(#) $Id: vobsTestStarProperty.cpp,v 1.5 2011-03-03 13:09:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2011/02/25 15:58:58  lafrasse
+ * Removed date and filelines from test outputs.
+ *
  * Revision 1.3  2009/10/26 12:59:16  lafrasse
  * Changed delta compution method on String tests.
  *
@@ -18,7 +21,7 @@
  *
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarProperty.cpp,v 1.4 2011-02-25 15:58:58 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarProperty.cpp,v 1.5 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -55,13 +58,13 @@ int main(int argc, char *argv[])
 
     vobsSTAR_PROPERTY property(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET,  "%.3f");
 
-    mcsFLOAT testingFloats[] = {1.234567890123456789, 987654321.123456789, 0.00000123};
+    mcsDOUBLE testingFloats[] = {1.234567890123456789, 987654321.123456789, 0.00000123};
     for (int i = 0; i < 3; i++)
     {
         property.SetValue(testingFloats[i], "Float Test", (vobsCONFIDENCE_INDEX)0, mcsTRUE);
-        mcsFLOAT value = FP_NAN;
+        mcsDOUBLE value = FP_NAN;
         property.GetValue(&value);
-        mcsFLOAT reference = testingFloats[i];
+        mcsDOUBLE reference = testingFloats[i];
         mcsDOUBLE delta = reference - value;
         cout << "FLOAT --- value = '" << value << "' " << (reference == value ? "==" : "!=") << " '" << reference << "' (original value), delta = '" << delta << "'." << endl;
         cout << "FLOAT --- Sumary : " << property.GetSummaryString() << endl << endl;
@@ -73,10 +76,10 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 3; i++)
     {
         property.SetValue(testingStrings[i], "String Test", (vobsCONFIDENCE_INDEX)0, mcsTRUE);
-        mcsFLOAT value = FP_NAN;
+        mcsDOUBLE value = FP_NAN;
         property.GetValue(&value);
-        //mcsFLOAT reference = atof(testingStrings[i]);
-        mcsFLOAT reference = testingFloats[i];
+        //mcsDOUBLE reference = atof(testingStrings[i]);
+        mcsDOUBLE reference = testingFloats[i];
         mcsDOUBLE delta = reference - value;
         cout << "STRING --- value = '" << value << "' " << (reference == value ? "==" : "!=") << " '" << string(testingStrings[i]) << "' (original value), delta = '" << delta << "'." << endl;
         cout << "STRING --- Sumary : " << property.GetSummaryString() << endl << endl;

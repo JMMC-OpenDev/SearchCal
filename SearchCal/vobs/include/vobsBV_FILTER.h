@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsBV_FILTER.h,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsBV_FILTER.h,v 1.6 2011-03-03 13:09:41 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.4  2005/11/29 13:45:57  gzins
  * Removed filter name definition
  *
@@ -64,9 +67,9 @@ public:
     // Class destructor
     virtual ~vobsBV_FILTER();
 
-    virtual mcsCOMPL_STAT SetMagnitudeValue(mcsFLOAT magValue);
+    virtual mcsCOMPL_STAT SetMagnitudeValue(mcsDOUBLE magValue);
 
-    virtual mcsCOMPL_STAT GetMagnitudeValue(mcsFLOAT *magValue);
+    virtual mcsCOMPL_STAT GetMagnitudeValue(mcsDOUBLE *magValue);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
@@ -78,7 +81,7 @@ private:
     vobsBV_FILTER(const vobsBV_FILTER&);
     vobsBV_FILTER& operator=(const vobsBV_FILTER&);
 
-    mcsFLOAT _magValue;
+    mcsDOUBLE _magValue;
 };
 
 #endif /*!vobsBV_FILTER_H*/

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsTestRequest.cpp,v 1.12 2011-02-25 15:58:58 lafrasse Exp $"
+ * "@(#) $Id: vobsTestRequest.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2011/02/25 15:58:58  lafrasse
+ * Removed date and filelines from test outputs.
+ *
  * Revision 1.11  2006/03/03 15:17:43  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -45,7 +48,7 @@
  *
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestRequest.cpp,v 1.12 2011-02-25 15:58:58 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestRequest.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 
 /* 
@@ -151,7 +154,7 @@ int main(int argc, char *argv[])
     logTest("Get ra = %f", request.GetObjectRa());
     logTest("Get dec = %f", request.GetObjectDec());
     logTest("Get Mag = %f", request.GetObjectMag());
-    logTest("Get search band = %c", request.GetSearchBand());
+    logTest("Get search band = %s", request.GetSearchBand());
     char* type = NULL;
     switch(request.GetSearchAreaGeometry())
     {
@@ -168,7 +171,7 @@ int main(int argc, char *argv[])
             break;
     }
     logTest("Get search area geometry: %s", type);
-    mcsFLOAT deltaRa, deltaDec, radius;
+    mcsDOUBLE deltaRa, deltaDec, radius;
     switch(request.GetSearchAreaGeometry())
     {
         case vobsBOX:

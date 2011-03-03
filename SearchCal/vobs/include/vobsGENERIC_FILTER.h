@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsGENERIC_FILTER.h,v 1.4 2005-12-13 16:30:33 lafrasse Exp $"
+ * "@(#) $Id: vobsGENERIC_FILTER.h,v 1.5 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.4  2005/12/13 16:30:33  lafrasse
+ * Added filter Id management through additional constructor parameter
+ *
  * Revision 1.3  2005/12/07 12:22:43  gzins
  * Added vobsCONDITION class for easier expression evaluation
  *
@@ -113,7 +116,7 @@ public:
     // Class destructor
     virtual ~vobsGENERIC_FILTER();
 
-    virtual mcsCOMPL_STAT AddCondition(vobsOPERATOR op, mcsFLOAT value);
+    virtual mcsCOMPL_STAT AddCondition(vobsOPERATOR op, mcsDOUBLE value);
     virtual mcsCOMPL_STAT AddCondition(vobsOPERATOR op, char *value);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
@@ -126,19 +129,19 @@ private:
     public:
 
         // Class constructor
-        vobsCONDITION(vobsOPERATOR op, mcsFLOAT operand=0.0);
+        vobsCONDITION(vobsOPERATOR op, mcsDOUBLE operand=0.0);
         vobsCONDITION(vobsOPERATOR op, char *operand);
 
         // Class destructor
         virtual ~vobsCONDITION();
 
         // Condition evaluation
-        bool Evaluate(mcsFLOAT value);
+        bool Evaluate(mcsDOUBLE value);
         bool Evaluate(string   value);
 
     protected:
         vobsOPERATOR _operator;
-        mcsFLOAT     _numOperand;
+        mcsDOUBLE     _numOperand;
         string       _strOperand;
 
     private:

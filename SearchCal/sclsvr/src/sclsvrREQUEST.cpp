@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrREQUEST.cpp,v 1.30 2007-10-31 11:32:24 gzins Exp $"
+ * "@(#) $Id: sclsvrREQUEST.cpp,v 1.31 2011-03-03 13:12:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.30  2007/10/31 11:32:24  gzins
+ * Removed oldScenario parameter
+ *
  * Revision 1.29  2007/06/27 14:26:49  scetre
  * Handled noScienceStar parameter in request
  * Removed science star if parameter is false
@@ -107,7 +110,7 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.30 2007-10-31 11:32:24 gzins Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.31 2011-03-03 13:12:52 lafrasse Exp $"; 
 
 
 /* 
@@ -500,7 +503,7 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine)
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsFLOAT length)
+mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsDOUBLE length)
 {
     logTrace("sclsvrREQUEST::SetMaxBaselineLength()");
 
@@ -514,7 +517,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsFLOAT length)
  *
  * @return maximum baseline length.
  */
-mcsFLOAT sclsvrREQUEST::GetMaxBaselineLength(void)
+mcsDOUBLE sclsvrREQUEST::GetMaxBaselineLength(void)
 {
     logTrace("sclsvrREQUEST::GetMaxBaselineLength()");
 
@@ -526,7 +529,7 @@ mcsFLOAT sclsvrREQUEST::GetMaxBaselineLength(void)
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsFLOAT wlen)
+mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsDOUBLE wlen)
 {
     logTrace("sclsvrREQUEST::SetObservingWlen()");
 
@@ -540,7 +543,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsFLOAT wlen)
  *
  * @return observing wavelength.
  */
-mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
+mcsDOUBLE sclsvrREQUEST::GetObservingWlen(void)
 {
     logTrace("sclsvrREQUEST::GetObservingWlen()");
 
@@ -552,7 +555,7 @@ mcsFLOAT sclsvrREQUEST::GetObservingWlen(void)
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrREQUEST::SetDiamVK(mcsFLOAT diamVK)
+mcsCOMPL_STAT sclsvrREQUEST::SetDiamVK(mcsDOUBLE diamVK)
 {
     logTrace("sclsvrREQUEST::SetDiamVK()");
 
@@ -594,7 +597,7 @@ mcsLOGICAL sclsvrREQUEST::IsDiamVKDefined(void)
  *
  * @return VK diameter.
  */
-mcsFLOAT sclsvrREQUEST::GetDiamVK(void)
+mcsDOUBLE sclsvrREQUEST::GetDiamVK(void)
 {
     logTrace("sclsvrREQUEST::GetDiamVK()");
 
@@ -606,7 +609,7 @@ mcsFLOAT sclsvrREQUEST::GetDiamVK(void)
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsFLOAT expectedVisErr)
+mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsDOUBLE expectedVisErr)
 {
     logTrace("sclsvrREQUEST::SetExpectedVisErr()");
 
@@ -620,7 +623,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsFLOAT expectedVisErr)
  *
  * @return expected visibility error.
  */
-mcsFLOAT sclsvrREQUEST::GetExpectedVisErr(void)
+mcsDOUBLE sclsvrREQUEST::GetExpectedVisErr(void)
 {
     logTrace("sclsvrREQUEST::GetExpectedVisErr()");
 

@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.36 2007-02-26 16:40:28 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.37 2011-03-03 13:09:43 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.36  2007/02/26 16:40:28  lafrasse
+* Corrected Doxygen documentation.
+*
 * Revision 1.35  2006/12/21 15:08:15  lafrasse
 * Added GetVotable() API.
 *
@@ -102,7 +105,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.36 2007-02-26 16:40:28 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.37 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 
 /* 
@@ -530,8 +533,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(char *propertyId, mcsLOGICAL reverseOrder)
                         (strcmp (propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0) ||
                         (propertyType == vobsFLOAT_PROPERTY))
                     {
-                        mcsFLOAT value1;
-                        mcsFLOAT value2;
+                        mcsDOUBLE value1;
+                        mcsDOUBLE value2;
                         if (strcmp (propertyId, vobsSTAR_POS_EQ_RA_MAIN)  == 0)
                         {
                             (*prevIter)->GetRa(value1);
@@ -776,7 +779,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char *filename,
     }
         
     // Extract list from the CDATA
-    vobsSTAR  star;
+    vobsSTAR star;
     if (cData.Extract(star, *this, extendedFormat) == mcsFAILURE)
     {
         return mcsFAILURE;

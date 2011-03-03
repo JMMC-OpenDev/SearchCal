@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsBV_FILTER.cpp,v 1.10 2009-04-17 15:29:48 lafrasse Exp $"
+ * "@(#) $Id: vobsBV_FILTER.cpp,v 1.11 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2009/04/17 15:29:48  lafrasse
+ * Updated log level from Info to Test to clean sclws log output.
+ *
  * Revision 1.9  2006/03/03 15:03:27  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -40,7 +43,7 @@
  * Definition of vobsBV_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsBV_FILTER.cpp,v 1.10 2009-04-17 15:29:48 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsBV_FILTER.cpp,v 1.11 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -85,7 +88,7 @@ vobsBV_FILTER::~vobsBV_FILTER()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsBV_FILTER::SetMagnitudeValue(mcsFLOAT magValue)
+mcsCOMPL_STAT vobsBV_FILTER::SetMagnitudeValue(mcsDOUBLE magValue)
 {
     logTrace("vobsBV_FILTER::SetMagnitudeValue()");
 
@@ -101,7 +104,7 @@ mcsCOMPL_STAT vobsBV_FILTER::SetMagnitudeValue(mcsFLOAT magValue)
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsBV_FILTER::GetMagnitudeValue(mcsFLOAT *magValue)
+mcsCOMPL_STAT vobsBV_FILTER::GetMagnitudeValue(mcsDOUBLE *magValue)
 {
     logTrace("vobsBV_FILTER::GetMagnitudeValue()");
 
@@ -142,14 +145,14 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
             {
                 // If OK: 
                 // Get magB
-                mcsFLOAT magB;
+                mcsDOUBLE magB;
                 if (star->GetPropertyValue(vobsSTAR_PHOT_JHN_B, &magB) ==
                     mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
                 // Get magV
-                mcsFLOAT magV;
+                mcsDOUBLE magV;
                 if (star->GetPropertyValue(vobsSTAR_PHOT_JHN_V, &magV) ==
                     mcsFAILURE)
                 {

@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.7 2005-11-16 14:26:19 scetre Exp $"
+* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.8 2011-03-03 13:09:42 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.7  2005/11/16 14:26:19  scetre
+* Added Clear method
+*
 * Revision 1.6  2005/11/16 10:47:54  scetre
 * Updated documentation
 *
@@ -66,12 +69,12 @@ public:
     virtual mcsCOMPL_STAT Clear(void);
     
     // Method to add a criteria in the list
-    virtual mcsCOMPL_STAT Add(char *propertyId, mcsFLOAT range);
+    virtual mcsCOMPL_STAT Add(char *propertyId, mcsDOUBLE range);
     // Method to remove a criteria of the list
     virtual mcsCOMPL_STAT Remove(char *propertyId);
     // Method to Get the next criteria
     virtual mcsCOMPL_STAT GetNextCriteria(char *propertyId,
-                                          mcsFLOAT *range,
+                                          mcsDOUBLE *range,
                                           mcsLOGICAL init = mcsFALSE);
 
     // Method to get the number of criteria

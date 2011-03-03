@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREQUEST.h,v 1.24 2005-11-30 15:26:50 gzins Exp $"
+* "@(#) $Id: vobsREQUEST.h,v 1.25 2011-03-03 13:09:42 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.24  2005/11/30 15:26:50  gzins
+* Added _objectDecInDeg member
+*
 * Revision 1.23  2005/11/23 17:30:21  lafrasse
 * Added circular search box geometry support and normalized area size methods
 *
@@ -115,8 +118,8 @@ public:
     virtual const char*   GetObjectDec(void) const;
 
     // Set and get science object magnitude
-    virtual mcsCOMPL_STAT SetObjectMag(const mcsFLOAT objectMag);
-    virtual mcsFLOAT      GetObjectMag(void) const;
+    virtual mcsCOMPL_STAT SetObjectMag(const mcsDOUBLE objectMag);
+    virtual mcsDOUBLE      GetObjectMag(void) const;
 
     // Set and get search band
     virtual mcsCOMPL_STAT SetSearchBand(const char *searchBand);
@@ -124,23 +127,23 @@ public:
 
     //  Set and get maximum magnitude difference between the selected object
     //  minimum magnitude and the science object magnitude
-    virtual mcsCOMPL_STAT SetMinMagRange(const mcsFLOAT minMagRange);
-    virtual mcsFLOAT      GetMinMagRange(void) const;
+    virtual mcsCOMPL_STAT SetMinMagRange(const mcsDOUBLE minMagRange);
+    virtual mcsDOUBLE      GetMinMagRange(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  maximum magnitude and the science object magnitude
-    virtual mcsCOMPL_STAT SetMaxMagRange(const mcsFLOAT maxMagRange);
-    virtual mcsFLOAT      GetMaxMagRange(void) const;
+    virtual mcsCOMPL_STAT SetMaxMagRange(const mcsDOUBLE maxMagRange);
+    virtual mcsDOUBLE      GetMaxMagRange(void) const;
 
     // Set and get rectangular search area size
-    virtual mcsCOMPL_STAT SetSearchArea(const mcsFLOAT deltaRa,
-                                        const mcsFLOAT deltaDec);
-    virtual mcsCOMPL_STAT GetSearchArea(mcsFLOAT &deltaRa,
-                                        mcsFLOAT &deltaDec) const;
+    virtual mcsCOMPL_STAT SetSearchArea(const mcsDOUBLE deltaRa,
+                                        const mcsDOUBLE deltaDec);
+    virtual mcsCOMPL_STAT GetSearchArea(mcsDOUBLE &deltaRa,
+                                        mcsDOUBLE &deltaDec) const;
 
     // Set and get circular search area size
-    virtual mcsCOMPL_STAT SetSearchArea(const mcsFLOAT radius);
-    virtual mcsCOMPL_STAT GetSearchArea(mcsFLOAT &radius) const;
+    virtual mcsCOMPL_STAT SetSearchArea(const mcsDOUBLE radius);
+    virtual mcsCOMPL_STAT GetSearchArea(mcsDOUBLE &radius) const;
 
     // Get the search area geometry, according to which methods were used to set
     // the search area size
@@ -165,10 +168,10 @@ private:
 
     /** Science object declinaison */
     string   _objectDec;
-    mcsFLOAT _objectDecInDeg;
+    mcsDOUBLE _objectDecInDeg;
 
     /** Science object magnitude */
-    mcsFLOAT _objectMag;
+    mcsDOUBLE _objectMag;
 
     /**
      * Band on which search should be realised and which correspond to a
@@ -180,13 +183,13 @@ private:
      * Maximum magnitude difference between the selected object minimum
      * magnitude and the science object magnitude
      */
-    mcsFLOAT _minMagRange;
+    mcsDOUBLE _minMagRange;
 
     /**
      * Maximum magnitude difference between the selected object maximum
      * magnitude and the science object magnitude
      */
-    mcsFLOAT _maxMagRange;
+    mcsDOUBLE _maxMagRange;
 
     /**
      * Search area geometry, implicitly defined according to which methods were
@@ -195,13 +198,13 @@ private:
     vobsSEARCH_AREA_GEOM _searchAreaGeometry;
 
     /** Rectangular area ra range in which catalog stars will be selected */
-    mcsFLOAT _deltaRa;
+    mcsDOUBLE _deltaRa;
 
     /** Rectangular area dec range in which catalog stars will be selected */
-    mcsFLOAT _deltaDec;
+    mcsDOUBLE _deltaDec;
 
     /** Circular area radius in which catalog stars will be selected */
-    mcsFLOAT _radius;
+    mcsDOUBLE _radius;
 
 };
 

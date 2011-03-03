@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.h,v 1.27 2009-04-15 16:12:56 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.h,v 1.28 2011-03-03 13:09:41 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.27  2009/04/15 16:12:56  lafrasse
+* Code, log and documentation enhancements.
+*
 * Revision 1.26  2006/08/22 14:45:42  gzins
 * Fixed compilation warning
 *
@@ -471,39 +474,39 @@ public:
                     if ((strcmp(wavelength, "") != 0) && (strcmp(flux, "") != 0))
                     {
                         // Get the wavelength value 
-                        mcsFLOAT lambdaValue = -1.0;
-                        if (sscanf(wavelength, "%f" , &lambdaValue) == 1)
+                        mcsDOUBLE lambdaValue = -1.0;
+                        if (sscanf(wavelength, "%lf" , &lambdaValue) == 1)
                         {
                             char* magnitudeBand = NULL;
 
                             // Determnine to corresponding magnitude
-                            if ((lambdaValue >= (mcsFLOAT)1.24) ||
-                                (lambdaValue <= (mcsFLOAT)1.26))
+                            if ((lambdaValue >= (mcsDOUBLE)1.24) ||
+                                (lambdaValue <= (mcsDOUBLE)1.26))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_J;
                             }
-                            else if ((lambdaValue >= (mcsFLOAT)1.64) ||
-                                     (lambdaValue <= (mcsFLOAT)1.66))
+                            else if ((lambdaValue >= (mcsDOUBLE)1.64) ||
+                                     (lambdaValue <= (mcsDOUBLE)1.66))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_H;
                             }
-                            else if ((lambdaValue >= (mcsFLOAT)2.19) ||
-                                     (lambdaValue <= (mcsFLOAT)2.21))
+                            else if ((lambdaValue >= (mcsDOUBLE)2.19) ||
+                                     (lambdaValue <= (mcsDOUBLE)2.21))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_K;
                             }
-                            else if ((lambdaValue >= (mcsFLOAT)3.49) ||
-                                     (lambdaValue <= (mcsFLOAT)3.51))
+                            else if ((lambdaValue >= (mcsDOUBLE)3.49) ||
+                                     (lambdaValue <= (mcsDOUBLE)3.51))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_L;
                             }
-                            else if ((lambdaValue >= (mcsFLOAT)4.99) ||
-                                     (lambdaValue <= (mcsFLOAT)5.01))
+                            else if ((lambdaValue >= (mcsDOUBLE)4.99) ||
+                                     (lambdaValue <= (mcsDOUBLE)5.01))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_M;
                             }
-                            else if ((lambdaValue >= (mcsFLOAT)9.99) ||
-                                     (lambdaValue <= (mcsFLOAT)10.01))
+                            else if ((lambdaValue >= (mcsDOUBLE)9.99) ||
+                                     (lambdaValue <= (mcsDOUBLE)10.01))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_N;
                             }

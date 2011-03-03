@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.9 2010-06-28 14:12:11 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.10 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2010/06/28 14:12:11  lafrasse
+ * Moved CDS return limit to 1000.
+ *
  * Revision 1.8  2006/03/03 15:03:27  scetre
  * Changed rcsId to rcsId __attribute__ ((unused))
  *
@@ -38,7 +41,7 @@
  *  Definition of vobsCATALOG_MERAND class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.9 2010-06-28 14:12:11 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.10 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -130,15 +133,15 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
     band = request.GetSearchBand();
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
-    mcsFLOAT minMagRange;
-    mcsFLOAT maxMagRange;
+    mcsDOUBLE minMagRange;
+    mcsDOUBLE maxMagRange;
     minMagRange = request.GetMinMagRange();
     maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
     // Add search box size
     mcsSTRING32 separation;
-    mcsFLOAT deltaRa;
-    mcsFLOAT deltaDec;
+    mcsDOUBLE deltaRa;
+    mcsDOUBLE deltaDec;
     if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
     {
         return mcsFAILURE;

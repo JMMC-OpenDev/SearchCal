@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.93 2010-08-24 13:54:03 mella Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.94 2011-03-03 13:09:43 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.93  2010/08/24 13:54:03  mella
+* display all column in vizier result
+*
 * Revision 1.92  2010/08/24 10:52:43  mella
 * fix VOTABLE link for RA DEC search on simbad
 *
@@ -19,7 +22,7 @@
 * Added sep1 and sep2 data retrieval from WDS catalog.
 *
 * Revision 1.88  2010/03/11 08:22:53  lafrasse
-* Updated pnRa and pmDec property definition to be float values instead of
+* Updated pnRa and pmDec property definition to be mcsDOUBLE values instead of
 * strings.
 *
 * Revision 1.87  2010/02/18 09:54:17  lafrasse
@@ -222,7 +225,7 @@
 * Accepted RA and DEC with either ':' or ' ' as separator
 *
 * Revision 1.24  2005/02/07 09:14:00  gzins
-* Fixed wrong type for isComputed parameter; mcsFLOAT instead of mcsLOGICAL
+* Fixed wrong type for isComputed parameter; mcsDOUBLE instead of mcsLOGICAL
 *
 * Revision 1.23  2005/02/04 14:31:30  scetre
 * add getLuminosityClass method
@@ -262,7 +265,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.93 2010-08-24 13:54:03 mella Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.94 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 /*
  * System Headers
@@ -404,7 +407,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
  * @li vobsERR_INVALID_PROPERTY_ID
  */
 mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
-                                         mcsFLOAT value,
+                                         mcsDOUBLE value,
                                          const char *origin,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
@@ -579,14 +582,14 @@ const char *vobsSTAR::GetPropertyValue(const char* id)
 }
 
 /**
- * Get a star property float value.
+ * Get a star property mcsDOUBLE value.
  *
  * @param id property id.
  * @param value pointer to store value.
  *
  * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetPropertyValue(const char* id, mcsFLOAT *value)
+mcsCOMPL_STAT vobsSTAR::GetPropertyValue(const char* id, mcsDOUBLE *value)
 {
     logTrace("vobsSTAR::GetPropertyValue(float*)");
 
@@ -693,16 +696,16 @@ mcsLOGICAL vobsSTAR::IsProperty(const char* id)
 /**
  * Get right ascension (RA) coordinate in degrees.
  *
- * @param ra pointer on an already allocated float value.
+ * @param ra pointer on an already allocated mcsDOUBLE value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
+mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
 {
     logTrace("vobsSTAR::GetRa()");
 
     mcsSTRING64 raHms;
-    mcsFLOAT    hh, hm, hs;
+    mcsDOUBLE    hh, hm, hs;
 
     // Check if the value is set
     if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE)
@@ -723,14 +726,14 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
     {
         return mcsFAILURE;
     }
-    if (sscanf(raHms, "%f %f %f", &hh, &hm, &hs) != 3)
+    if (sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs) != 3)
     {
         errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
         return mcsFAILURE;
     }
 
     // Get sign of hh which has to be propagated to hm and hs
-    mcsFLOAT sign;
+    mcsDOUBLE sign;
     sign = (raHms[0] == '-') ? -1.0 : 1.0;
 
     // Convert to degrees
@@ -748,16 +751,16 @@ mcsCOMPL_STAT vobsSTAR::GetRa(float &ra)
 /**
  * Get declinaison (DEC) coordinate in degrees.
  *
- * @param dec pointer on an already allocated float value.
+ * @param dec pointer on an already allocated mcsDOUBLE value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
+mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec)
 {
     logTrace("vobsSTAR::GetDec()");
 
     mcsSTRING64 decDms;
-    float dd,dm,ds;
+    mcsDOUBLE dd,dm,ds;
 
     // Check if the value is set
     if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE)
@@ -778,14 +781,14 @@ mcsCOMPL_STAT vobsSTAR::GetDec(float &dec)
     {
         return mcsFAILURE;
     }
-    if (sscanf(decDms, "%f %f %f", &dd, &dm, &ds) != 3)
+    if (sscanf(decDms, "%lf %lf %lf", &dd, &dm, &ds) != 3)
     {
         errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
         return mcsFAILURE;
     }
 
     // Get sign of hh which has to be propagated to hm and hs
-    mcsFLOAT sign;
+    mcsDOUBLE sign;
     sign = (decDms[0] == '-') ? -1.0 : 1.0; 
 
     // Convert to degrees
@@ -923,7 +926,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     // Check if the criteria list is empty
     if (criteriaList == NULL)
     {
-        mcsFLOAT ra1, ra2, dec1, dec2;
+        mcsDOUBLE ra1, ra2, dec1, dec2;
 
         // Get right ascension of the star. If not set return FALSE
         if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
@@ -994,10 +997,10 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     {
         const char *hd;
         mcsSTRING64 propertyId;
-        mcsFLOAT range;
+        mcsDOUBLE range;
         // Get the size of the criteria list
         int listSize=criteriaList->Size();
-        mcsFLOAT val1, val2;    
+        mcsDOUBLE val1, val2;    
         // Get each criteria of the list and check if the comparaison with all
         // this criteria gave a equality
         hd = GetPropertyValue(vobsSTAR_ID_HD);
@@ -1204,8 +1207,8 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
 
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
     mcsSTRING64 starId;
-    mcsFLOAT    starRa  = 0.0;
-    mcsFLOAT    starDec = 0.0;
+    mcsDOUBLE    starRa  = 0.0;
+    mcsDOUBLE    starDec = 0.0;
 
     GetId(starId, sizeof(starId));
 

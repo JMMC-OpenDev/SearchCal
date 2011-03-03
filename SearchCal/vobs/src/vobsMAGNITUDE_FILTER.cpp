@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.8 2009-04-17 15:29:48 lafrasse Exp $"
+ * "@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.9 2011-03-03 13:09:42 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.8  2009/04/17 15:29:48  lafrasse
+ * Updated log level from Info to Test to clean sclws log output.
+ *
  * Revision 1.7  2009/02/19 16:56:37  lafrasse
  * Improved lisibility.
  *
@@ -42,7 +45,7 @@
  * Definition of vobsMAGNITUDE_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.8 2009-04-17 15:29:48 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMAGNITUDE_FILTER.cpp,v 1.9 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -90,8 +93,8 @@ vobsMAGNITUDE_FILTER::~vobsMAGNITUDE_FILTER()
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsMAGNITUDE_FILTER::SetMagnitudeValue(mcsSTRING32 band,
-                                                        mcsFLOAT magValue,
-                                                        mcsFLOAT magRange)
+                                                        mcsDOUBLE magValue,
+                                                        mcsDOUBLE magRange)
 {
     logTrace("vobsMAGNITUDE_FILTER::SetMagnitudeValue()");
 
@@ -112,8 +115,8 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::SetMagnitudeValue(mcsSTRING32 band,
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsMAGNITUDE_FILTER::GetMagnitudeValue(mcsSTRING32 *band,
-                                                        mcsFLOAT *magValue,
-                                                        mcsFLOAT *magRange)
+                                                        mcsDOUBLE *magValue,
+                                                        mcsDOUBLE *magRange)
 {
     logTrace("vobsMAGNITUDE_FILTER::GetMagnitudeValue()");
 

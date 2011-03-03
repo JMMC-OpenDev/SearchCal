@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.25 2010-11-25 15:45:33 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.26 2011-03-03 13:12:52 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.25  2010/11/25 15:45:33  lafrasse
+ * Removed CHARM querying from all scenarii.
+ *
  * Revision 1.24  2010/01/26 14:16:06  lafrasse
  * Added WDS catalog querying.
  *
@@ -87,7 +90,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.25 2010-11-25 15:45:33 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.26 2011-03-03 13:12:52 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -181,7 +184,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // PRIMARY REQUEST
 
     // Get Radius entering by the user
-    mcsFLOAT radius;
+    mcsDOUBLE radius;
     if (request->GetSearchArea(radius) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -198,13 +201,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, raString, "no origin");
         star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, decString, "no origin");
 
-        mcsFLOAT ra;
-        mcsFLOAT dec;
+        mcsDOUBLE ra;
+        mcsDOUBLE dec;
         star.GetRa(ra);
         star.GetDec(dec);
         
-        mcsFLOAT magMin;
-        mcsFLOAT magMax;
+        mcsDOUBLE magMin;
+        mcsDOUBLE magMax;
         magMin = request->GetMinMagRange();
         magMax = request->GetMaxMagRange();
         
