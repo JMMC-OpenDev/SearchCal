@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatBuildMainList.xsl,v 1.7 2010-08-26 09:54:06 mella Exp $"
+# "@(#) $Id: sclcatBuildMainList.xsl,v 1.8 2011-03-09 10:05:38 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.7  2010/08/26 09:54:06  mella
+# add ra from exoplanet votable in list for future sorting
+#
 # Revision 1.6  2008/10/09 08:13:54  mella
 # fix multi planet per star generation
 #
@@ -50,9 +53,8 @@
     exclude-result-prefixes="math str">
     <xsl:output method="xml" 
         indent="yes"
-        doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
-        encoding="ISO-8859-1"
-        doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
+        encoding="UTF-8"
+				/>
 
     <xsl:param name="aliasFile">../config/sclcatAliases.xml</xsl:param>
 
