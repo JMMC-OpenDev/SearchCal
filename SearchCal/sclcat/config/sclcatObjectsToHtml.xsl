@@ -3,11 +3,14 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.23 2010-08-26 10:46:58 mella Exp $"
+# "@(#) $Id: sclcatObjectsToHtml.xsl,v 1.24 2011-03-09 10:05:03 mella Exp $"
 #
 # History
 #
 # $Log: not supported by cvs2svn $
+# Revision 1.23  2010/08/26 10:46:58  mella
+# display star without calib in a new table and sort all by RA
+#
 # Revision 1.22  2010/08/25 20:18:27  mella
 # Add date in statistic paragrph
 #
@@ -346,6 +349,11 @@
                 <xsl:with-param name="content" select="'E'"/>
               </xsl:call-template>
               ]
+              <xsl:variable name="diagdepFilename" select="concat('diagdep/',str:replace($simbadName,' ', '%20'),'.svg')"/>
+              <xsl:if test="document($diagdepFilename)">
+                  <a href="{$diagdepFilename}" target="_new">DD</a>
+                  <xsl:message><xsl:value-of select="concat('diagdep/',str:replace($simbadName,' ', '%20'),'.svg')"/></xsl:message>
+                  </xsl:if>
             </xsl:when>
 
             <xsl:when test="$selector='calibrators'">
