@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestLD2UD.c,v 1.6 2011-02-23 15:30:10 lafrasse Exp $"
+ * "@(#) $Id: alxTestLD2UD.c,v 1.7 2011-03-10 08:07:48 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.6  2011/02/23 15:30:10  lafrasse
+ * Removed dates and file lines from output log.
+ *
  * Revision 1.5  2010/01/28 16:25:12  lafrasse
  * Broaden test cases.
  * Added alxFlushUNIFORM_DIAMETERS() with FP_NAN support.
@@ -75,7 +78,7 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.6 2011-02-23 15:30:10 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.7 2011-03-10 08:07:48 mella Exp $"; 
 
 
 /* 
@@ -164,6 +167,69 @@ int main (int argc, char *argv[])
     else
     {
         printf("There is a bug in error handling.\n");
+    }
+
+    printf("alxComputeUDFromLDAndSP(1, \"B7V\"):\n");
+    if (alxComputeUDFromLDAndSP(1, "B7V", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
+    }    
+
+    printf("alxComputeUDFromLDAndSP(1, \"B7V\"):\n");
+    if (alxComputeUDFromLDAndSP(1, "B7V", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
+    }    
+  
+    printf("alxComputeUDFromLDAndSP(1, \"O5III\"):\n");
+    if (alxComputeUDFromLDAndSP(1, "O5III", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
+    }
+
+    /* should be equivalent to O5III */
+    printf("alxComputeUDFromLDAndSP(1, \"O4III\"):\n");
+    if (alxComputeUDFromLDAndSP(1, "O4III", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
+    }
+
+
+    printf("alxComputeUDFromLDAndSP(1, \"M5III\"):\n");
+    if (alxComputeUDFromLDAndSP(1, "M5III", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
+    }
+
+    /* should be equivalent to M5III */
+    printf("alxComputeUDFromLDAndSP(1, \"M6III\"):\n");
+    if (alxComputeUDFromLDAndSP(1, "M6III", &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
     }
 
     /* Close MCS services */
