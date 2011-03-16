@@ -6,11 +6,15 @@
  * SearchCal Proxy Service 
  * -----------------------
  *
- * "@(#) $Id: sclws-proxy.php,v 1.2 2011-02-28 12:42:31 mella Exp $"
+ * "@(#) $Id: sclws-proxy.php,v 1.3 2011-03-16 15:32:29 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.2  2011/02/28 12:42:31  mella
+ * Use 8078 as default port
+ * Return on error message to the soap client if the associated server doe not run
+ *
  * Revision 1.1  2010/11/04 08:49:34  mella
  * First revision
  * 
@@ -25,7 +29,7 @@
  *  Example: if SearchCal client calls the service using 
  *  http://apps.jmmc.fr/slcws/ , one sclws directory must serve this script.
  *  Then you should probably have following file:
- *    /var/www/html/sclws/index.php
+ *    /var/www/html/sclws/sclws-proxy.php
  * 
  *  Strongly inspired from http://discuss.joyent.com/viewtopic.php?pid=184925
  */
@@ -63,7 +67,6 @@ $postdata = $HTTP_RAW_POST_DATA;
 
 // Don't return HTTP headers. Do return the contents of the call
 curl_setopt($session, CURLOPT_HEADER, false);
-    curl_setopt($session, CURLOPT_HTTPHEADER, $header);
 
 // If it's a POST, put the POST data in the body
 if ($postdata) {
