@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.9 2011-03-03 12:59:53 lafrasse Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.10 2011-03-23 14:58:34 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2011/03/03 12:59:53  lafrasse
+ * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+ *
  * Revision 1.8  2006/04/10 12:36:41  gzins
  * Minor change in logged message
  *
@@ -90,7 +93,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.9 2011-03-03 12:59:53 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.10 2011-03-23 14:58:34 duvert Exp $"; 
 
 
 /* 
@@ -385,63 +388,50 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
      *      IV, IV/V, V, V/VI, VI,
      *          ==> Dwarfs
      */
-    if (spectralType.lightClass[0] == 'I')
+    int i;
+    #define nbVals 26
+    char *sptypList[nbVals] = {"VIII","VII","VI","III-IV","III/IV","IV-III","IV/III",
+                               "II-III","II/III","I-II","I/II","III","IB-II","IB/II","II","IV","V",
+                               "(I)","IA-O/IA","IA-O","IA/AB","IAB-B","IAB","IA","IB","I" };
+    int lCls[nbVals] = {alxDWARF,alxDWARF,alxDWARF,alxGIANT,alxGIANT,alxGIANT,alxGIANT,
+                        alxGIANT,alxGIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxGIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxGIANT,alxDWARF,alxDWARF,
+                        alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT};
+    
+    /* If no spectral type are defined, by default, starType is alxDWARF.
+     * TO BE CONFIRMED! */
+    starType = alxDWARF;
+    if (strlen(spectralType.lightClass) == 0)
     {
-        if (spectralType.lightClass[1] == 'I')
-        {
-            /* 
-             * case light class =
-             * II, II/III, III, III/IV
-             */
-            starType = alxGIANT;
-        }
-        else if (spectralType.lightClass[1] == 'V')
-        {
-            /*
-             * case light class =
-             * IV, IV/V
-             */
-            starType = alxDWARF;
-        }
-        else 
-        {
-            /* 
-             * case light class =
-             * Ia-O, Ia-O/Ia, Ia, Ia/ab, Iab, Iab-b, Ib, Ib-II
-             */
-            starType = alxSUPER_GIANT;
-        }
-    }
-    else if (spectralType.lightClass[0] == 'V')
-    {
-        /* 
-         * case light class = 
-         * V, V/VI, VI
-         */
         starType = alxDWARF;
+        logTest("Type of star = DWARF"); 
+/*         logTest("Type of star = Assumed_DWARF");  */
     }
-    else 
+    else
     {
-        /* case no light class */
-        starType = alxDWARF;
+        for(i=1;i<nbVals;i++)
+        {
+            if (strstr(spectralType.lightClass,sptypList[i])!=NULL)
+            {
+                starType = lCls[i];
+                break;
+            }
+        }
+        /* Print out type of star */
+        switch (starType)
+        {
+            case alxDWARF:
+                logTest("Type of star = DWARF"); 
+                break;
+                
+            case alxGIANT:
+                logTest("Type of star = GIANT");
+                break;
+                
+            case alxSUPER_GIANT:
+                logTest("Type of star = SUPER GIANT");
+                break;
+        }
     }
-
-    /* Print out type of star */
-    switch (starType)
-    {
-        case alxDWARF:
-            logTest("Type of star = DWARF"); 
-            break;
-
-        case alxGIANT:
-            logTest("Type of star = GIANT");
-            break;
-
-        case alxSUPER_GIANT:
-            logTest("Type of star = SUPER GIANT");
-            break;
-    }
-
     /*
      * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
@@ -803,10 +793,150 @@ static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
     logTrace("alxString2SpectralType()");
 
     /* 
-     * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
-     * number between 0 and 9 and LLL is the light class
+     * Should get each part of the spectral type XN.NLLL where X is a letter, N.N a
+     * number between 0 and 9 and LLL is the light class. Modified as to ingest the 
+     * more complicated spectral types found
      */
-    mcsINT32 nbItems = sscanf(spType, "%c%lf%s", &(spectralType->code), 
+    mcsINT32 nbItems ;
+    char *p,*q;
+    char type, sep;
+    mcsSTRING32 spt,dummy;
+    int dbl=0;
+    double subType;
+    int iType1,iType2;
+
+    /* remove ':', '(',')', ' ' from string. set 'dbl' if string contains '+'. Copy Alphabet to UPPERCASE. */
+    p=spType;
+    q=spt;
+    *q=0;
+    while (*p!=0)
+    {
+        switch (*p)
+        {
+            case 58: /* ":" */
+                break;
+            case 32: /* " " */
+                break;
+            case 40: /* "(" */
+                break;
+            case 41: /* ")" */
+                break;
+            case 43: /* "+" */
+                dbl=1;
+            default: /* copy eventually to uppercase */
+                if (*p>96 && *p<123) 
+                {
+                    *q=*p-32;
+                }
+                else
+                {
+                    *q=*p;
+                }
+                 q++;
+                *q=0;
+                break;
+        }
+        p++;
+    }
+
+    /* If the spectral type contains a "+" sign, it is a sure sign that the star
+     * is a close double and will be a trouble. Example:
+     * HD 47205 (J2000=06:36:41.0-19:15:21) which is K1III(+M) and passed our 
+     * previous tests, and is a *bad calibrator* */
+    if (dbl == 1)
+    {
+        /* fprintf(stderr,"Composite spectrum, ignore."); */
+        /* errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spType); */
+        /* return mcsFAILURE; */
+        q=strstr(spt,"+");
+        if (q!=NULL)
+        {
+            *q=0;
+        }
+    }
+
+    /*If the spectral type contains "SB", remove also */
+    if ((strstr(spt,"SB")!=NULL)||(strstr(spt,"sb")!=NULL))
+    {
+        /* fprintf(stderr,"Spectroscopic binary, ignore."); */
+        /* errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spType); */
+        /* return mcsFAILURE; */
+        q=strstr(spt,"SB");
+        if (q!=NULL)
+        {
+            *q=0;
+        }
+    }
+
+    /* If the spectral type contains "CN" or "BA" (Barium or Cyanogen), 
+     * or "VAR" (Variable), remove the trailing part 
+     * (the corresponding subcode, such as "CNIII/IV" or "B0IVAR"
+     * would interfere with the decoding of the luminosity class */
+    q=strstr(spt,"CN");
+    if (q!=NULL)
+    {
+        *q=0;
+    }
+    q=strstr(spt,"BA");
+    if (q!=NULL)
+    {
+        *q=0;
+    }
+    q=strstr(spt,"VAR");
+    if (q!=NULL)
+    {
+        *q=0;
+    }
+
+    /* If the spectral type hesitates between two subclasses (A0/3, A0-3), or has a wrong comma, replace by a numerical value.
+     */
+    nbItems = sscanf(spt, "%c%1d%c%1d",&type,&iType1,&sep,&iType2);
+    if (nbItems == 4)
+    { 
+        if (sep==47 || sep==45 ) /* "/","-" */
+        {
+            subType=((double)iType1+(double)iType2)/2.0;
+            sprintf(dummy,"%3.1f",subType);
+            strncpy(&spt[1],dummy,3);
+        } 
+        else if (sep==44) /* "," */
+        {
+            sprintf(dummy,"%1d%c%1d",iType1,46,iType2); /* "." */
+            strncpy(&spt[1],dummy,3);
+        }
+    } 
+    /* If the spectral type is AxM..., it is a peculiar A star which is normally a dwarf. We reinterpret this type here
+       by overwriting 'spt': 
+    */
+    nbItems = sscanf(spt, "%c%1d%c",&type,&iType1,&sep);
+    if (nbItems == 3)
+    { 
+        if (sep==77) /* "M" */
+        {
+            sprintf(spt,"%c%1dV (%c%1d%c)",type,iType1,type,iType1,sep); /* V for Dwarf, to be further interpreted */
+        } 
+    } 
+    
+    /* If the spectral type is sd[OBAFG..]xx, it is a subdwarf of type VI. We reinterpret this type here
+       by overwriting 'spt': 
+    */
+    q=strstr(spt,"SD");
+    if (q==spt)
+    {
+        fprintf(stderr,"%s",spt);
+        nbItems = sscanf(spt, "SD%c%c",&type,&sep);
+        if (nbItems == 2)
+        { 
+            sprintf(spt,"%c%cVI",type,sep); /* VI for SubDwarf, to be further interpreted */
+        } 
+        else
+        {
+            strcpy(dummy,&spt[2]);
+            strcpy(spt,dummy);
+        }
+    } 
+
+    nbItems = sscanf(spt, "%c%lf%s", &(spectralType->code), 
                              &spectralType->quantity, spectralType->lightClass);
     if ((nbItems != 2) && (nbItems != 3))
     {
@@ -818,7 +948,7 @@ static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
         return mcsFAILURE;
     }
 
-    /* If there is no light class in given spectral type, reset it */
+    /* If there is no luminosity class in given spectral type, reset it */
     if (nbItems == 2)
     {
         strcpy(spectralType->lightClass, ""); 
@@ -827,6 +957,7 @@ static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
     logTest("Type spectral = %s", spType);
     logTest("\tCode              = %c", spectralType->code);
     logTest("\tSub-type Quantity = %f", spectralType->quantity);
+/*     logTest("\tLuminosity Class       = %s", spectralType->lightClass); */
     logTest("\tLight class       = %s", spectralType->lightClass);
 
     /* return the pointer on the created spectral type structure */
