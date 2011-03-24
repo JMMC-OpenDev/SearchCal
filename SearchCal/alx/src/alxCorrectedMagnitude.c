@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.10 2011-03-23 14:58:34 duvert Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.11 2011-03-24 16:27:21 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2011/03/23 14:58:34  duvert
+ * introduce refined spectral type and luminosity class parsing.
+ *
  * Revision 1.9  2011/03/03 12:59:53  lafrasse
  * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
  *
@@ -93,7 +96,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.10 2011-03-23 14:58:34 duvert Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.11 2011-03-24 16:27:21 lafrasse Exp $"; 
 
 
 /* 
@@ -378,6 +381,7 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
 
     /* Determination of star type according to the spectral type */
     alxSTAR_TYPE starType;
+
     /* If light class = 
      *      Ia-O, Ia-O/Ia, Ia, Ia/ab, Iab, Iab-b, Ib, Ib-II,
      *          ==> SuperGiant
@@ -388,50 +392,50 @@ static alxCOLOR_TABLE *alxGetColorTableForBrightStar
      *      IV, IV/V, V, V/VI, VI,
      *          ==> Dwarfs
      */
-    int i;
-    #define nbVals 26
-    char *sptypList[nbVals] = {"VIII","VII","VI","III-IV","III/IV","IV-III","IV/III",
-                               "II-III","II/III","I-II","I/II","III","IB-II","IB/II","II","IV","V",
-                               "(I)","IA-O/IA","IA-O","IA/AB","IAB-B","IAB","IA","IB","I" };
-    int lCls[nbVals] = {alxDWARF,alxDWARF,alxDWARF,alxGIANT,alxGIANT,alxGIANT,alxGIANT,
-                        alxGIANT,alxGIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxGIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxGIANT,alxDWARF,alxDWARF,
-                        alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT};
+    char* spectralTypes[] = {"VIII", "VII", "VI", "III-IV", "III/IV", "IV-III", "IV/III",
+                             "II-III", "II/III", "I-II", "I/II", "III", "IB-II", "IB/II", "II", "IV", "V",
+                             "(I)", "IA-O/IA", "IA-O", "IA/AB", "IAB-B", "IAB", "IA", "IB", "I"};
+    int luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF, alxGIANT, alxGIANT, alxGIANT, alxGIANT,
+                               alxGIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxGIANT, alxDWARF, alxDWARF,
+                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT};
     
-    /* If no spectral type are defined, by default, starType is alxDWARF.
-     * TO BE CONFIRMED! */
-    starType = alxDWARF;
-    if (strlen(spectralType.lightClass) == 0)
+    /* If no spectral type are defined, use dwarf as default */
+    starType = alxDWARF; /* @TODO : TO BE CONFIRMED! */
+
+    /* Try to get the luminosity class among all handled spectral types */
+    char* lightClass = spectralType.lightClass;
+    if (strlen(lightClass) != 0)
     {
-        starType = alxDWARF;
-        logTest("Type of star = DWARF"); 
-/*         logTest("Type of star = Assumed_DWARF");  */
-    }
-    else
-    {
-        for(i=1;i<nbVals;i++)
+        mcsUINT32 index = 0;
+        while (spectralTypes[index] != NULL)
         {
-            if (strstr(spectralType.lightClass,sptypList[i])!=NULL)
+            /* If the current spectral type is found */
+            if (strstr(lightClass, spectralTypes[index]) != NULL)
             {
-                starType = lCls[i];
+                /* Get the corresponding luminoisity class */
+                starType = luminosityClasses[index];
                 break;
             }
-        }
-        /* Print out type of star */
-        switch (starType)
-        {
-            case alxDWARF:
-                logTest("Type of star = DWARF"); 
-                break;
-                
-            case alxGIANT:
-                logTest("Type of star = GIANT");
-                break;
-                
-            case alxSUPER_GIANT:
-                logTest("Type of star = SUPER GIANT");
-                break;
+            index++;
         }
     }
+
+    /* Print out type of star */
+    switch (starType)
+    {
+        case alxDWARF:
+            logTest("Type of star = DWARF"); 
+            break;
+            
+        case alxGIANT:
+            logTest("Type of star = GIANT");
+            break;
+            
+        case alxSUPER_GIANT:
+            logTest("Type of star = SUPER GIANT");
+            break;
+    }
+
     /*
      * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
