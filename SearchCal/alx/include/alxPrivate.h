@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.16 2011-03-03 12:59:53 lafrasse Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.17 2011-03-25 13:43:26 lafrasse Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2011/03/03 12:59:53  lafrasse
+ * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+ *
  * Revision 1.15  2006/07/17 08:23:05  scetre
  * Added One colum when reading Angular Diameter configuration file
  *
@@ -103,8 +106,8 @@ extern "C" {
  */
 typedef struct
 {
-    mcsLOGICAL loaded;
-    char      *fileName;
+    mcsLOGICAL  loaded;
+    char*       fileName;
     mcsDOUBLE   coeff[alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
     mcsDOUBLE   error[alxNB_COLOR_INDEXES];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
@@ -132,9 +135,14 @@ typedef struct
  */
 typedef struct
 {
-    char        code;          /* Code of the spectral type */
-    mcsDOUBLE    quantity;      /* Quantity of the spectral subtype */
-    mcsSTRING32 lightClass;    /* Luminosity class*/
+    char         code;              /* Code of the spectral type */
+    mcsDOUBLE    quantity;          /* Quantity of the spectral subtype */
+    mcsSTRING32  luminosityClass;   /* Luminosity class */
+    mcsLOGICAL   isDouble;          /* mcsTRUE if Spectral Type contained a '+' */
+    mcsLOGICAL   isSpectralBinary;  /* mcsTRUE if Spectral Type contained "SB" */
+    mcsLOGICAL   hasCyanogen;       /* mcsTRUE if Spectral Type contained "CN" */
+    mcsLOGICAL   hasBarium;         /* mcsTRUE if Spectral Type contained "BA" */
+    mcsLOGICAL   isVariable;        /* mcsTRUE if Spectral Type contained "VAR" */
 } alxSPECTRAL_TYPE;
 
 /*
@@ -164,11 +172,11 @@ typedef alxDATA alxDIFFERENTIAL_MAGNITUDES[alxNB_DIFF_MAG];
  */
 typedef struct
 {
-    mcsLOGICAL       loaded;
-    char            *fileName;
-    mcsINT32         nbLines;
-    alxSPECTRAL_TYPE spectralType[alxNB_SPECTRAL_TYPES];
-    alxDATA         index[alxNB_SPECTRAL_TYPES][alxNB_DIFF_MAG];
+    mcsLOGICAL        loaded;
+    char*             fileName;
+    mcsINT32          nbLines;
+    alxSPECTRAL_TYPE  spectralType[alxNB_SPECTRAL_TYPES];
+    alxDATA           index[alxNB_SPECTRAL_TYPES][alxNB_DIFF_MAG];
 } alxCOLOR_TABLE;
 
 /*
@@ -193,8 +201,8 @@ typedef enum
 typedef struct
 {
     mcsLOGICAL  loaded;    
-    char       *fileName;
-    mcsDOUBLE    rc[alxNB_BANDS];
+    char*       fileName;
+    mcsDOUBLE   rc[alxNB_BANDS];
 } alxEXTINCTION_RATIO_TABLE;
 /*
  * Polynomial to compute the interstellar absorbtion is made by 4 coefficients
@@ -209,9 +217,9 @@ typedef struct
  */
 typedef struct
 {
-    mcsLOGICAL loaded;
-    char      *fileName;
-    mcsINT32   nbLines;
+    mcsLOGICAL  loaded;
+    char*       fileName;
+    mcsINT32    nbLines;
     mcsDOUBLE   gLonMin[alxNB_MAX_LONGITUDE_STEPS];
     mcsDOUBLE   gLonMax[alxNB_MAX_LONGITUDE_STEPS];
     mcsDOUBLE   coeff[alxNB_MAX_LONGITUDE_STEPS][alxNB_POLYNOMIAL_COEFF_ABSORPTION];
@@ -227,12 +235,12 @@ typedef struct
 
 typedef struct
 {
-    mcsLOGICAL loaded;
-    char      *fileName;
+    mcsLOGICAL  loaded;
+    char*       fileName;
     mcsDOUBLE   gLonList[alxNB_GLON_STEPS];
     mcsDOUBLE   gLatList[alxNB_GLAT_STEPS];
     mcsDOUBLE   mag[alxNB_MAG_STEPS];
-    mcsINT32   nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
+    mcsINT32    nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
 } alxSTAR_POPULATION;
 
 #ifdef __cplusplus
