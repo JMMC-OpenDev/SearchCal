@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.12 2011-03-25 13:43:26 lafrasse Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.13 2011-03-25 15:05:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2011/03/25 13:43:26  lafrasse
+ * Code review of alxString2SpectralType().
+ * Code format and refinments.
+ *
  * Revision 1.11  2011/03/24 16:27:21  lafrasse
  * Code review of alxGetColorTableForBrightStar().
  *
@@ -99,7 +103,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.12 2011-03-25 13:43:26 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.13 2011-03-25 15:05:22 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf() */
@@ -145,9 +149,6 @@ static alxCOLOR_TABLE *
     
 static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
     
-static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
-                                            alxSPECTRAL_TYPE  *spectralType);
-
 static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
                                         alxSPECTRAL_TYPE  *spectralType,
                                         mcsSTRING32        spType);
@@ -797,7 +798,7 @@ alxGetColorTableForFaintStar(alxSPECTRAL_TYPE *spectralType)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-static mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spectralType,
+mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spectralType,
                                             alxSPECTRAL_TYPE  *decodedSpectralType)
 {
     logTrace("alxString2SpectralType()");

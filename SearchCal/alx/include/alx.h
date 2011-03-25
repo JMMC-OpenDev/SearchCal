@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.28 2011-03-03 12:59:53 lafrasse Exp $"
+ * "@(#) $Id: alx.h,v 1.29 2011-03-25 15:05:22 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.28  2011/03/03 12:59:53  lafrasse
+ * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+ *
  * Revision 1.27  2010/02/18 12:07:00  lafrasse
  * Retrieve Teff and LogG in alxComputeUDFromLDAndSP().
  *
@@ -166,6 +169,24 @@ typedef struct
 } alxDATA;
 
 
+/*
+ * spectral type structure.
+ *
+ * A spectral type is build with a code (O, B, A, F, G, K, M),
+ * a number between 0 and 9, and a light class which can be I,II,III,IV,etc...
+ */
+typedef struct
+{
+    char         code;              /* Code of the spectral type */
+    mcsDOUBLE    quantity;          /* Quantity of the spectral subtype */
+    mcsSTRING32  luminosityClass;   /* Luminosity class */
+    mcsLOGICAL   isDouble;          /* mcsTRUE if Spectral Type contained a '+' */
+    mcsLOGICAL   isSpectralBinary;  /* mcsTRUE if Spectral Type contained "SB" */
+    mcsLOGICAL   hasCyanogen;       /* mcsTRUE if Spectral Type contained "CN" */
+    mcsLOGICAL   hasBarium;         /* mcsTRUE if Spectral Type contained "BA" */
+    mcsLOGICAL   isVariable;        /* mcsTRUE if Spectral Type contained "VAR" */
+} alxSPECTRAL_TYPE;
+
 /**
  * Stucture of alxNB_BANDS(9) magnitudes
  */
@@ -249,6 +270,9 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
 
 mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(mcsSTRING32 spType, 
                                                alxMAGNITUDES magnitudes); 
+
+mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
+                                     alxSPECTRAL_TYPE  *spectralType);
 
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
                                             alxMAGNITUDES magnitudes);

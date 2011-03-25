@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.17 2011-03-25 13:43:26 lafrasse Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.18 2011-03-25 15:05:22 lafrasse Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2011/03/25 13:43:26  lafrasse
+ * Code review of alxString2SpectralType().
+ * Code format and refinments.
+ *
  * Revision 1.16  2011/03/03 12:59:53  lafrasse
  * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
  *
@@ -126,24 +130,6 @@ typedef struct
  *  M0 to M8  ---->  line 53 to 61
  */
 #define alxNB_SPECTRAL_TYPES 61
-
-/*
- * spectral type structure.
- *
- * A spectral type is build with a code (O, B, A, F, G, K, M),
- * a number between 0 and 9, and a light class which can be I,II,III,IV,etc...
- */
-typedef struct
-{
-    char         code;              /* Code of the spectral type */
-    mcsDOUBLE    quantity;          /* Quantity of the spectral subtype */
-    mcsSTRING32  luminosityClass;   /* Luminosity class */
-    mcsLOGICAL   isDouble;          /* mcsTRUE if Spectral Type contained a '+' */
-    mcsLOGICAL   isSpectralBinary;  /* mcsTRUE if Spectral Type contained "SB" */
-    mcsLOGICAL   hasCyanogen;       /* mcsTRUE if Spectral Type contained "CN" */
-    mcsLOGICAL   hasBarium;         /* mcsTRUE if Spectral Type contained "BA" */
-    mcsLOGICAL   isVariable;        /* mcsTRUE if Spectral Type contained "VAR" */
-} alxSPECTRAL_TYPE;
 
 /*
  * Colum identificator of magnitude difference.
