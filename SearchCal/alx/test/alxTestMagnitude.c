@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxTestMagnitude.c,v 1.19 2011-03-25 14:13:38 lafrasse Exp $"
+ * "@(#) $Id: alxTestMagnitude.c,v 1.20 2011-03-25 14:55:11 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2011/03/25 14:13:38  lafrasse
+ * Added spectral type decoding tests.
+ *
  * Revision 1.18  2011/03/03 12:59:53  lafrasse
  * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
  *
@@ -71,7 +74,7 @@
  *
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.19 2011-03-25 14:13:38 lafrasse Exp $";
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.20 2011-03-25 14:55:11 lafrasse Exp $";
 
 /* 
  * System Headers 
@@ -130,14 +133,13 @@ int main (int argc, char *argv[])
     alxSPECTRAL_TYPE decodedSpectralType;
     char* spectralTypes[] = {"-", "A0", "A0Ia", "A0Ib", "A0IV", "A0V", "A1III/IV", "A1V", "A2", "A2m", "A3", "A3IV", "A5", "A5V", "A7IV", "A7IV-V", "A8/A9V", "A8Vn", "A9V", "A9V...", "Am...", "Ap...", "B0IV...", "B1.5V", "B2", "B2III", "B2:IIIpshev", "B3IIIe", "B5", "B5III", "B5V", "B6III", "B7/B8V", "B8III", "B8V", "B8Vn", "B9", "B9.5IV:", "B9IIIMNp...", "B9IV", "F0", "F0IV...", "F2II/III", "F3Ia", "F5", "F5V", "F8", "G0", "G0Ib", "G0III...", "G0V", "G3Ib", "G3V", "G4Ibp...", "G5", "G5II...", "G5III", "G5IV", "G6/G8III", "G7III", "G8III", "G8IV/V", "K", "K0", "K0III", "K0IV", "K1Iabv", "K1III", "K1III/IV", "K1IIIvar", "K1/K2III", "K2", "K2III", "K2IIIvar", "K2IV", "K2/K3III", "K3Ib", "K3III", "K3IIvar", "K4III", "K4/K5III", "K5", "K5II", "K5III", "K5/M0III", "K7", "M0", "M0III", "M0I-M4Ia", "M1", "M1III", "M1IIIb", "M2Iabpe", "M3", "M3III", "M3/M4III", "M4.5IIIa", "M4III", "M4III:", "M5III", "M5/M6IV", "M6", "M6e-M7", "M6III", "M7III", "M8III:e", "Ma", "Mb", "Mc", "Md", "O", "O...", "O7", "A comp SB", "A0III SB", "A0V SB", "A3IVv SB", "A5Vv SB", "B2III SB", "B2IIIv SB", "B3V SB", "B5III SB", "B5V SB", "B6pv SB", "B8III SB", "B9p SB", "F2IV SB", "F4III SB", "F8V SB", "G2V SB", "G3Ibv SB", "G5III SB", "G8II SB", "G8III compSB", "G8III SB", "G8III-IV SB", "G8V SB", "K0III SB", "K0IV SB", "K0V SB", "K1III SB", "K3III SB", "K4II SB", "K5Ibv SB", "K5III SB", "M0III SB", "O9.5Ib SB", NULL};
     char** spectralTypePtr = spectralTypes;
-    while (*(spectralTypePtr++) != NULL)
+    while (*spectralTypePtr != NULL)
     {
         if (alxString2SpectralType(*spectralTypePtr, &decodedSpectralType) == mcsFAILURE)
         {
             errCloseStack();
         }
-        char c;
-        scanf("%c", &c);
+        spectralTypePtr++;
     }
 
     alxMAGNITUDES magnitudes;    
