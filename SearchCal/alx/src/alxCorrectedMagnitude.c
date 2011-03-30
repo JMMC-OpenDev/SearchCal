@@ -1,11 +1,25 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.14 2011-03-30 14:10:23 lafrasse Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.15 2011-03-30 14:12:46 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.14  2011/03/30 14:10:23  lafrasse
+ * Code factorization by Gilles DUVERT.
+ *
+ * Revision 1.13  2011/03/25 15:05:22  lafrasse
+ * Moved alxString2SpectralType() and alxSPECTRAL_TYPE strucuture to public access
+ * (for test purpose).
+ *
+ * Revision 1.12  2011/03/25 13:43:26  lafrasse
+ * Code review of alxString2SpectralType().
+ * Code format and refinments.
+ *
+ * Revision 1.11  2011/03/24 16:27:21  lafrasse
+ * Code review of alxGetColorTableForBrightStar().
+ *
  * Revision 1.10  2011/03/23 14:58:34  duvert
  * introduce refined spectral type and luminosity class parsing.
  *
@@ -96,7 +110,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.14 2011-03-30 14:10:23 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.15 2011-03-30 14:12:46 lafrasse Exp $"; 
 
 
 /* 
