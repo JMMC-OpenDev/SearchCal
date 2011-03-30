@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.15 2011-03-30 14:12:46 lafrasse Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.16 2011-03-30 14:50:06 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.15  2011/03/30 14:12:46  lafrasse
+ * Fixed CVS log.
+ *
  * Revision 1.14  2011/03/30 14:10:23  lafrasse
  * Code factorization by Gilles DUVERT.
  *
@@ -110,7 +113,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.15 2011-03-30 14:12:46 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.16 2011-03-30 14:50:06 lafrasse Exp $"; 
 
 
 /* 
@@ -459,11 +462,11 @@ static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
  * types. These tables are used to compute missing magnitudes.
  *  - alxColorTableForFaintDwarfStar.cfg : faint dwarf star 
  */
-static alxCOLOR_TABLE *
+static alxCOLOR_TABLE*
 alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
 {
-    /*Existing ColorTables*/
-    static alxCOLOR_TABLE colorTablesFaint[alxNB_STAR_TYPES]= {
+    /* Existing ColorTables */
+    static alxCOLOR_TABLE colorTablesFaint[alxNB_STAR_TYPES] = {
         {mcsFALSE, "alxColorTableForFaintDwarfStar.cfg"},
         {mcsFALSE, "alxColorTableForFaintGiantStar.cfg"},
         {mcsFALSE, "alxColorTableForFaintSuperGiantStar.cfg"},
@@ -477,20 +480,19 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
 
     logTrace("alxGetColorTableForStar()");
 
-    /* Color table for the different type of stars */
+    /* Choose the right Color table for the different type of stars */
     if (isBright)
     {
-        colorTables=colorTablesBright;
+        colorTables = colorTablesBright;
     }
     else
     {
-        colorTables=colorTablesFaint;
+        colorTables = colorTablesFaint;
     }
 
     /* Determination of star type according to the spectral type */
-    alxSTAR_TYPE starType;
-    /* Get the Luminosity Class */
-    starType=alxGetLuminosityClass(spectralType);
+    alxSTAR_TYPE starType = alxGetLuminosityClass(spectralType);
+
     /*
      * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
@@ -507,17 +509,17 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
         return NULL;
     }
     
-    /* Load file. Comment lines start with '#' */
+    /* Load file (comment lines start with '#') */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);    
-    logDebug("Loading %s ...", fileName); 
+    miscDynBufInit(&dynBuf);
+    logDebug("Loading %s ...", fileName);
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
         return NULL;
     }
 
-    /* For each line of the loaded file*/
+    /* For each line of the loaded file */
     mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
