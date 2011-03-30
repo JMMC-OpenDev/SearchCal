@@ -1,18 +1,11 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.13 2011-03-25 15:05:22 lafrasse Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.14 2011-03-30 14:10:23 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
- * Revision 1.12  2011/03/25 13:43:26  lafrasse
- * Code review of alxString2SpectralType().
- * Code format and refinments.
- *
- * Revision 1.11  2011/03/24 16:27:21  lafrasse
- * Code review of alxGetColorTableForBrightStar().
- *
  * Revision 1.10  2011/03/23 14:58:34  duvert
  * introduce refined spectral type and luminosity class parsing.
  *
@@ -103,23 +96,18 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.13 2011-03-25 15:05:22 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.14 2011-03-30 14:10:23 lafrasse Exp $"; 
 
 
-/* Needed to preclude warnings on snprintf() */
-#define  _BSD_SOURCE 1
-
-/*
+/* 
  * System Headers
  */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #include <ctype.h>
 
-/* Needed for FP_NAN support */
-#define  __USE_ISOC99 1
-#include <math.h>
 
 /*
  * MCS Headers 
@@ -142,13 +130,13 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,
  * Local Functions declaration
  */
 static alxCOLOR_TABLE *
-    alxGetColorTableForBrightStar(alxSPECTRAL_TYPE spectralType);
-
-static alxCOLOR_TABLE *
-    alxGetColorTableForFaintStar(alxSPECTRAL_TYPE *spectralType);
+alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright);
     
 static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
     
+mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
+                                            alxSPECTRAL_TYPE  *spectralType);
+
 static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
                                         alxSPECTRAL_TYPE  *spectralType,
                                         mcsSTRING32        spType);
@@ -160,27 +148,27 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
 
 static mcsCOMPL_STAT 
 alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
-                                     mcsDOUBLE                   mgB,
-                                     mcsDOUBLE                   mgV,
+                                     mcsDOUBLE                    mgB,
+                                     mcsDOUBLE                    mgV,
                                      alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
 
 static mcsCOMPL_STAT 
 alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                 spType,
-                                    mcsDOUBLE                   mgJ,
-                                    mcsDOUBLE                   mgK,
+                                    mcsDOUBLE                    mgJ,
+                                    mcsDOUBLE                    mgK,
                                     alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
 
 static mcsCOMPL_STAT
 alxComputeAllMagnitudesForBrightStar(alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes,
                                      alxMAGNITUDES               magnitudes,
-                                     mcsDOUBLE                   mgV);
+                                     mcsDOUBLE                    mgV);
 
 static mcsCOMPL_STAT
 alxComputeAllMagnitudesForFaintStar(alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes,
                                     alxMAGNITUDES               magnitudes,
-                                    mcsDOUBLE                   mgJ);
+                                    mcsDOUBLE                    mgJ);
 
-static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE             firstMag,
+static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE              firstMag,
                                          alxDATA               diffMag,
                                          alxDATA              *magnitude,
                                          alxCONFIDENCE_INDEX   confIndex);
@@ -357,202 +345,66 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     return (&extinctionRatioTable);
 }
 
-/**
- * Return the color table corresponding to a given spectral type.
- *
- * This method determines the color table associated to the given spectral
- * type of a bright star, and reads (if not yet done) this table from
- * the configuration file.
- *
- * @param spectralType spectral type of the star 
- * 
- * @return pointer to structure containing color table, or NULL if an error
- * occured.
- *
- * @usedfiles Files containing the color indexes, the absolute magnitude in V
- * and the stellar mass according to the temperature class for different star
- * types. These tables are used to compute missing magnitudes.
- *  - alxColorTableForBrightDwarfStar.cfg : bright dwarf star 
- *  - alxColorTableForBrightGiantStar.cfg : bright giant star
- *  - alxColorTableForBrightSuperGiantStar.cfg : bright super giant star
- */
-static alxCOLOR_TABLE *alxGetColorTableForBrightStar
-                                                 (alxSPECTRAL_TYPE spectralType)
+static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE *spectralType)
 {
-    logTrace("alxGetColorTableForBrightStar()");
-
-    /* Color table for the different type of stars */
-    static alxCOLOR_TABLE colorTables[alxNB_STAR_TYPES] = {
-        {mcsFALSE, "alxColorTableForBrightDwarfStar.cfg"},
-        {mcsFALSE, "alxColorTableForBrightGiantStar.cfg"},
-        {mcsFALSE, "alxColorTableForBrightSuperGiantStar.cfg"},
-    };
-
+    logTrace("alxGetLuminosityClass()");
     /* Determination of star type according to the spectral type */
     alxSTAR_TYPE starType;
-
-    /* If light class = 
-     *      Ia-O, Ia-O/Ia, Ia, Ia/ab, Iab, Iab-b, Ib, Ib-II,
-     *          ==> SuperGiant
-     * If light class =
-     *      II, II/III, III, III/IV,
-     *          ==> Giant
-     * If light class =
-     *      IV, IV/V, V, V/VI, VI,
-     *          ==> Dwarfs
-     */
-    char* spectralTypes[] = {"VIII", "VII", "VI", "III-IV", "III/IV", "IV-III", "IV/III",
-                             "II-III", "II/III", "I-II", "I/II", "III", "IB-II", "IB/II", "II", "IV", "V",
-                             "(I)", "IA-O/IA", "IA-O", "IA/AB", "IAB-B", "IAB", "IA", "IB", "I"};
-    int luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF, alxGIANT, alxGIANT, alxGIANT, alxGIANT,
-                               alxGIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxGIANT, alxDWARF, alxDWARF,
-                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT};
+    int i;
+    #define nbVals 27
+    char *sptypList[nbVals] = {"VIII","VII","VI","III-IV","III/IV","IV-III","IV/III",
+                               "II-III","II/III","I-II","I/II","III","IB-II","IB/II","IBV","II","IV","V",
+                               "(I)","IA-O/IA","IA-O","IA/AB","IAB-B","IAB","IA","IB","I" };
+    int lCls[nbVals] = {alxDWARF,alxDWARF,alxDWARF,alxGIANT,alxGIANT,alxGIANT,alxGIANT,
+                        alxGIANT,alxGIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxGIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxGIANT,alxDWARF,alxDWARF,
+                        alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT,alxSUPER_GIANT};
     
-    /* If no spectral type are defined, use dwarf as default */
-    starType = alxDWARF; /* @TODO : TO BE CONFIRMED! */
-
-    /* Try to get the luminosity class among all handled spectral types */
-    char* luminosityClass = spectralType.luminosityClass;
-    if (strlen(luminosityClass) != 0)
+    /* If no spectral type are defined, by default, starType is alxDWARF.
+     * TO BE CONFIRMED! */
+    starType = alxDWARF;
+    if (spectralType==NULL)
     {
-        mcsUINT32 index = 0;
-        while (spectralTypes[index] != NULL)
+        /* This message for compatibility with older version (TAT).
+        * to be replaced by a more explicit message below */
+        logTest("Type of star = DWARF");
+        /* logTest("alxGetLuminosityClass() returning DWARF on NULL pointer!");  */
+        return  (starType);
+    }
+    if (strlen(spectralType->luminosityClass) == 0)
+    {
+        starType = alxDWARF;
+        /* This message for compatibility with older version (TAT).
+         * to be replaced by a more explicit message below */
+        logTest("Type of star = DWARF");
+/*         logTest("Type of star = Assumed_DWARF");  */
+    }
+    else
+    {
+        for(i=1;i<nbVals;i++)
         {
-            /* If the current spectral type is found */
-            if (strstr(luminosityClass, spectralTypes[index]) != NULL)
+            if (strstr(spectralType->luminosityClass,sptypList[i])!=NULL)
             {
-                /* Get the corresponding luminoisity class */
-                starType = luminosityClasses[index];
+                starType = lCls[i];
                 break;
             }
-            index++;
         }
-    }
-
-    /* Print out type of star */
-    switch (starType)
-    {
-        case alxDWARF:
-            logTest("Type of star = DWARF"); 
-            break;
-
-        case alxGIANT:
-            logTest("Type of star = GIANT");
-            break;
-
-        case alxSUPER_GIANT:
-            logTest("Type of star = SUPER GIANT");
-            break;
-    }
-
-    /*
-     * Check if the structure in which polynomial coefficients will be stored is
-     * loaded into memory. If not load it.
-     */
-    if (colorTables[starType].loaded == mcsTRUE)
-    {
-        return (&colorTables[starType]);
-    }
-
-    /* Find the location of the file */
-    char* fileName = miscLocateFile(colorTables[starType].fileName);
-    if (fileName == NULL)
-    {
-        return NULL;
-    }
-    
-    /* Load file. Comment lines start with '#' */
-    miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);    
-    logDebug("Loading %s ...", fileName); 
-    if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
-    {
-        miscDynBufDestroy(&dynBuf);
-        return NULL;
-    }
-
-    /* For each line of the loaded file*/
-    mcsINT32 lineNum = 0;
-    const char *pos = NULL;
-    mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line),
-                                        mcsTRUE)) != NULL)
-    {
-        logDebug("miscDynBufGetNextLine() = '%s'", line);
-
-        /* Trim line for any leading and trailing blank characters */
-        miscTrimString (line, " ");
-
-        /* If line is not empty */
-        if (strlen(line) != 0)
+        /* Print out type of star */
+        switch (starType)
         {
-            /* Check if there are to many lines in file */
-            if (lineNum >= alxNB_SPECTRAL_TYPES)
-            {
-                miscDynBufDestroy(&dynBuf);
-                errAdd(alxERR_TOO_MANY_LINES, fileName);
-                return NULL;
-            }
-
-            /* Get polynomial coefficients */
-            if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf",   
-                       &colorTables[starType].spectralType[lineNum].code,
-                       &colorTables[starType].spectralType[lineNum].quantity,
-                       &colorTables[starType].index[lineNum][0].value,
-                       &colorTables[starType].index[lineNum][1].value,
-                       &colorTables[starType].index[lineNum][2].value,
-                       &colorTables[starType].index[lineNum][3].value,
-                       &colorTables[starType].index[lineNum][4].value,
-                       &colorTables[starType].index[lineNum][5].value,
-                       &colorTables[starType].index[lineNum][6].value,
-                       &colorTables[starType].index[lineNum][7].value)
-                != (alxNB_DIFF_MAG + 1))
-            {
-                /* destroy dynamic buffer used and return an error */
-                miscDynBufDestroy(&dynBuf);
-                errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
-                return NULL;
-            }
-
-            colorTables[starType].index[lineNum][0].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][0].value);
-            colorTables[starType].index[lineNum][1].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][1].value);
-            colorTables[starType].index[lineNum][2].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][2].value);
-            colorTables[starType].index[lineNum][3].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][3].value);
-            colorTables[starType].index[lineNum][4].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][4].value);
-            colorTables[starType].index[lineNum][5].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][5].value);
-            colorTables[starType].index[lineNum][6].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][6].value);
-            colorTables[starType].index[lineNum][7].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][7].value);
-
-            /* Next line */
-            lineNum++;
+            case alxDWARF:
+                logTest("Type of star = DWARF"); 
+                break;
+                
+            case alxGIANT:
+                logTest("Type of star = GIANT");
+                break;
+                
+            case alxSUPER_GIANT:
+                logTest("Type of star = SUPER GIANT");
+                break;
         }
     }
-
-    /* Destroy dynamic buffer used */
-    miscDynBufDestroy(&dynBuf);
-
-    /* Set the number of line in the color table */
-    colorTables[starType].nbLines = lineNum;
-    /* Set to "loaded" the structure table */
-    colorTables[starType].loaded = mcsTRUE;
-
-    return &(colorTables[starType]);
+    return  (starType);
 }
 
 /**
@@ -594,93 +446,37 @@ static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
  *  - alxColorTableForFaintDwarfStar.cfg : faint dwarf star 
  */
 static alxCOLOR_TABLE *
-alxGetColorTableForFaintStar(alxSPECTRAL_TYPE *spectralType)
+alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
 {
-    logTrace("alxGetColorTableForFaintStar()");
-
-    /* Color table for the different type of stars */
-    static alxCOLOR_TABLE colorTables[alxNB_STAR_TYPES] = {
+    /*Existing ColorTables*/
+    static alxCOLOR_TABLE colorTablesFaint[alxNB_STAR_TYPES]= {
         {mcsFALSE, "alxColorTableForFaintDwarfStar.cfg"},
         {mcsFALSE, "alxColorTableForFaintGiantStar.cfg"},
         {mcsFALSE, "alxColorTableForFaintSuperGiantStar.cfg"},
     };
+    static alxCOLOR_TABLE colorTablesBright[alxNB_STAR_TYPES] = {
+        {mcsFALSE, "alxColorTableForBrightDwarfStar.cfg"},
+        {mcsFALSE, "alxColorTableForBrightGiantStar.cfg"},
+        {mcsFALSE, "alxColorTableForBrightSuperGiantStar.cfg"},
+    };
+    static alxCOLOR_TABLE *colorTables;
 
-    /* Determination of star type according to the spectral type */
-    alxSTAR_TYPE starType;
-    if (spectralType == NULL)
+    logTrace("alxGetColorTableForStar()");
+
+    /* Color table for the different type of stars */
+    if (isBright)
     {
-        /* If no spectral type are defined, by default, starType is DWARF */
-        starType = alxDWARF;
+        colorTables=colorTablesBright;
     }
     else
     {
-        /* If light class = 
-         *      Ia-O, Ia-O/Ia, Ia, Ia/ab, Iab, Iab-b, Ib, Ib-II,
-         *          ==> SuperGiant
-         * If light class =
-         *      II, II/III, III, III/IV,
-         *          ==> Giant
-         * If light class =
-         *      IV, IV/V, V, V/VI, VI,
-         *          ==> Dwarfs
-         */
-        if (spectralType->luminosityClass[0] == 'I')
-        {
-            if (spectralType->luminosityClass[1] == 'I')
-            {
-                /* 
-                 * case light class =
-                 * II, II/III, III, III/IV
-                 */
-                starType = alxGIANT;
-            }
-            else if (spectralType->luminosityClass[1] == 'V')
-            {
-                /*
-                 * case light class =
-                 * IV, IV/V
-                 */
-                starType = alxDWARF;
-            }
-            else 
-            {
-                /* 
-                 * case light class =
-                 * Ia-O, Ia-O/Ia, Ia, Ia/ab, Iab, Iab-b, Ib, Ib-II
-                 */
-                starType = alxSUPER_GIANT;
-            }
-        }
-        else if (spectralType->luminosityClass[0] == 'V')
-        {
-            /* 
-             * case light class = 
-             * V, V/VI, VI
-             */
-            starType = alxDWARF;
-        }
-        else 
-        {
-            /* case no light class */
-            starType = alxDWARF;
-        }
+        colorTables=colorTablesFaint;
     }
-    
-    /* Print out type of star */
-    switch (starType)
-    {
-        case alxDWARF:
-            logTest("Type of star = DWARF"); 
-            break;
 
-        case alxGIANT:
-            logTest("Type of star = GIANT");
-            break;
-
-        case alxSUPER_GIANT:
-            logTest("Type of star = SUPER GIANT");
-            break;
-    }
+    /* Determination of star type according to the spectral type */
+    alxSTAR_TYPE starType;
+    /* Get the Luminosity Class */
+    starType=alxGetLuminosityClass(spectralType);
     /*
      * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
@@ -793,187 +589,186 @@ alxGetColorTableForFaintStar(alxSPECTRAL_TYPE *spectralType)
 /**
  * Create a spectral type structure from a string.
  *
- * @param spType spectral type of format 'XN.NLLL' where 'X' is a letter, 'N.N' a number between 0 and 9, and 'LLL' is the luminiosity class
- * @param decodedSpectralType ouputed spectral type structure to fulfill, zeroed on each call
+ * @param spType spectral type string
+ * @param spectralType spectral type structure to create
  *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
  */
-mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spectralType,
-                                            alxSPECTRAL_TYPE  *decodedSpectralType)
+mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
+                                            alxSPECTRAL_TYPE  *spectralType)
 {
     logTrace("alxString2SpectralType()");
 
-    /* Function parameter check */
-    if (spectralType == NULL)
-    {
-        errAdd(alxERR_NULL_PARAMETER, "spectralType");
-        return mcsFAILURE;
-    }
-    if (decodedSpectralType == NULL)
-    {
-        errAdd(alxERR_NULL_PARAMETER, "decodedSpectralType");
-        return mcsFAILURE;
-    }
-    else /* Initialize Spectral Type structure */
-    {
-        decodedSpectralType->code              = '\0';
-        decodedSpectralType->quantity          = FP_NAN;
-        strcpy(decodedSpectralType->luminosityClass, "");
-        decodedSpectralType->isDouble          = mcsFALSE;
-        decodedSpectralType->isSpectralBinary  = mcsFALSE;
-        decodedSpectralType->hasCyanogen       = mcsFALSE;
-        decodedSpectralType->hasBarium         = mcsFALSE;
-        decodedSpectralType->isVariable        = mcsFALSE;
-    }
+    /* 
+     * Should get each part of the spectral type XN.NLLL where X is a letter, N.N a
+     * number between 0 and 9 and LLL is the light class. Modified as to ingest the 
+     * more complicated spectral types found
+     */
+    mcsINT32 nbItems ;
+    char *p,*q;
+    char type, sep;
+    mcsSTRING32 spt,dummy;
+    int dbl=0;
+    double subType;
+    int iType1,iType2;
 
-    char* tempSP = miscDuplicateString(spectralType);
-    if (tempSP == NULL)
+    /* remove ':', '(',')', ' ' from string. set 'dbl' if string contains '+'. Copy Alphabet to UPPERCASE. */
+    p=spType;
+    q=spt;
+    *q=0;
+    while (*p!=0)
     {
-        errAdd(alxERR_NULL_PARAMETER, "tempSP");
-        return mcsFAILURE;
+        switch (*p)
+        {
+            case 58: /* ":" */
+                break;
+            case 32: /* " " */
+                break;
+            case 40: /* "(" */
+                break;
+            case 41: /* ")" */
+                break;
+            case 43: /* "+" */
+                dbl=1;
+            default: /* copy eventually to uppercase */
+                if (*p>96 && *p<123) 
+                {
+                    *q=*p-32;
+                }
+                else
+                {
+                    *q=*p;
+                }
+                 q++;
+                *q=0;
+                break;
+        }
+        p++;
     }
-    logDebug("Original spectral type = '%s'.", spectralType);
-
-    /* Remove ':', '(',')', ' ' from string, and move all the rest to UPPERCASE. */
-    miscDeleteChr(tempSP, ':', mcsTRUE);
-    miscDeleteChr(tempSP, '(', mcsTRUE);
-    miscDeleteChr(tempSP, ')', mcsTRUE);
-    miscDeleteChr(tempSP, ' ', mcsTRUE);
-    miscStrToUpper(tempSP);
-
-    logDebug("Cleaned spectral type = '%s'.", tempSP);
 
     /* If the spectral type contains a "+" sign, it is a sure sign that the star
-     * is a close binary system.
-     * Example: HD 47205 (J2000=06:36:41.0-19:15:21) which is K1III(+M) */
-    mcsSTRING256 subStrings[2];
-    mcsUINT32   nbSubString = 0;
-    miscSplitString(tempSP, '+', subStrings, 2, &nbSubString);
-    if (nbSubString > 1)
+     * is a close double and will be a trouble. Example:
+     * HD 47205 (J2000=06:36:41.0-19:15:21) which is K1III(+M) and passed our 
+     * previous tests, and is a *bad calibrator* */
+    if (dbl == 1)
     {
-        strncpy(tempSP, subStrings[0], sizeof(tempSP));
-        logTest("Un-doubled spectral type = '%s'.", tempSP);
-
-        decodedSpectralType->isDouble = mcsTRUE;
+        /* fprintf(stderr,"Composite spectrum, ignore."); */
+        /* errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spType); */
+        /* return mcsFAILURE; */
+        q=strstr(spt,"+");
+        if (q!=NULL)
+        {
+            *q=0;
+        }
     }
 
-    /* If the spectral type contains "SB", remove also */
-    char* tokenPosition = strstr(tempSP, "SB");
-    if (tokenPosition != NULL)
+    /*If the spectral type contains "SB", remove also */
+    if ((strstr(spt,"SB")!=NULL)||(strstr(spt,"sb")!=NULL))
     {
-        tokenPosition = '\0'; /* Cut here */
-        logTest("Un-SB spectral type = '%s'.", tempSP);
-
-        decodedSpectralType->isSpectralBinary = mcsTRUE;
+        /* fprintf(stderr,"Spectroscopic binary, ignore."); */
+        /* errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spType); */
+        /* return mcsFAILURE; */
+        q=strstr(spt,"SB");
+        if (q!=NULL)
+        {
+            *q=0;
+        }
     }
 
     /* If the spectral type contains "CN" or "BA" (Barium or Cyanogen), 
      * or "VAR" (Variable), remove the trailing part 
      * (the corresponding subcode, such as "CNIII/IV" or "B0IVAR"
      * would interfere with the decoding of the luminosity class */
-    tokenPosition = strstr(tempSP, "CN");
-    if (tokenPosition != NULL)
+    q=strstr(spt,"CN");
+    if (q!=NULL)
     {
-        tokenPosition = '\0'; /* Cut here */
-        logTest("Un-CN spectral type = '%s'.", tempSP);
-
-        decodedSpectralType->hasCyanogen = mcsTRUE;
+        *q=0;
     }
-    tokenPosition = strstr(tempSP, "BA");
-    if (tokenPosition != NULL)
+    q=strstr(spt,"BA");
+    if (q!=NULL)
     {
-        tokenPosition = '\0'; /* Cut here */
-        logTest("Un-BA spectral type = '%s'.", tempSP);
-
-        decodedSpectralType->hasBarium = mcsTRUE;
+        *q=0;
     }
-    tokenPosition = strstr(tempSP, "VAR");
-    if (tokenPosition != NULL)
+    q=strstr(spt,"VAR");
+    if (q!=NULL)
     {
-        tokenPosition = '\0'; /* Cut here */
-        logTest("Un-VAR spectral type = '%s'.", tempSP);
-
-        decodedSpectralType->isVariable = mcsTRUE;
+        *q=0;
     }
 
-    /* If the spectral type hesitates between two subclasses (A0/3, A0-3), or has a wrong comma, replace by a numerical value. */
-    char       type, separator;
-    mcsINT32   firstSubType, secondSubType;
-    mcsUINT32  nbOfTokens = sscanf(tempSP, "%c%1d%c%1d", &type, &firstSubType, &separator, &secondSubType);
-    if (nbOfTokens == 4)
-    {
-        char* luminosityClassPointer = tempSP + 1; /* Skipping first char */
-
-        if (separator == '/' || separator == '-' )
-        {
-            mcsDOUBLE meanSubType = (firstSubType + secondSubType) / 2.0;
-            snprintf(luminosityClassPointer, 3, "%3.1f", meanSubType);
-            logTest("Un-hesitated spectral type = '%s'.", tempSP);
-        }
-        else if (separator == ',')
-        {
-            snprintf(luminosityClassPointer, 3, "%1d.%1d", firstSubType, secondSubType);
-            logTest("Un-comma-ed spectral type = '%s'.", tempSP);
-        }
-    }
-
-    /* If the spectral type is AxM..., it is a peculiar A star which is normally a dwarf */
-    nbOfTokens = sscanf(tempSP, "%c%1d%c", &type, &firstSubType, &separator);
-    if (nbOfTokens == 3)
+    /* If the spectral type hesitates between two subclasses (A0/3, A0-3), or has a wrong comma, replace by a numerical value.
+     */
+    nbItems = sscanf(spt, "%c%1d%c%1d",&type,&iType1,&sep,&iType2);
+    if (nbItems == 4)
     { 
-        if (separator == 'M')
+        if (sep==47 || sep==45 ) /* "/","-" */
         {
-            snprintf(tempSP, sizeof(tempSP), "%c%1dV (%c%1d%c)", type, firstSubType, type, firstSubType, separator); /* V for Dwarf, to be further interpreted */
-            logTest("Un-M spectral type = '%s'.", tempSP);
+            subType=((double)iType1+(double)iType2)/2.0;
+            sprintf(dummy,"%3.1f",subType);
+            strncpy(&spt[1],dummy,3);
+        } 
+        else if (sep==44) /* "," */
+        {
+            sprintf(dummy,"%1d%c%1d",iType1,46,iType2); /* "." */
+            strncpy(&spt[1],dummy,3);
         }
     } 
+    /* If the spectral type is AxM..., it is a peculiar A star which is normally a dwarf. We reinterpret this type here
+       by overwriting 'spt': 
+    */
+    nbItems = sscanf(spt, "%c%1d%c",&type,&iType1,&sep);
+    if (nbItems == 3)
+    { 
+        if (sep==77) /* "M" */
+        {
+            sprintf(spt,"%c%1dV (%c%1d%c)",type,iType1,type,iType1,sep); /* V for Dwarf, to be further interpreted */
+        } 
+    } 
     
-    /* If the spectral type is sd[OBAFG..]xx, it is a subdwarf of type VI */
-    tokenPosition = strstr(tempSP, "SD");
-    if (tokenPosition == tempSP)
+    /* If the spectral type is sd[OBAFG..]xx, it is a subdwarf of type VI. We reinterpret this type here
+       by overwriting 'spt': 
+    */
+    q=strstr(spt,"SD");
+    if (q==spt)
     {
-        nbOfTokens = sscanf(tempSP, "SD%c%c", &type, &separator);
-        if (nbOfTokens == 2)
+        /* fprintf(stderr,"%s",spt); */
+        nbItems = sscanf(spt, "SD%c%c",&type,&sep);
+        if (nbItems == 2)
         { 
-            snprintf(tempSP, sizeof(tempSP), "%c%cVI", type, separator); /* VI for SubDwarf, to be further interpreted */
+            sprintf(spt,"%c%cVI",type,sep); /* VI for SubDwarf, to be further interpreted */
         } 
         else
         {
-            tempSP += 2; /* Skip leading 'SD' */
+            strcpy(dummy,&spt[2]);
+            strcpy(spt,dummy);
         }
-        logTest("Un-SD spectral type = '%s'.", tempSP);
     } 
 
-    /* Properly parse cleaned-up spectral type string */
-    nbOfTokens = sscanf(tempSP, "%c%lf%s", &(decodedSpectralType->code), &decodedSpectralType->quantity, decodedSpectralType->luminosityClass);
-    if ((nbOfTokens != 2) && (nbOfTokens != 3))
+    nbItems = sscanf(spt, "%c%lf%s", &(spectralType->code), 
+                             &spectralType->quantity, spectralType->luminosityClass);
+    if ((nbItems != 2) && (nbItems != 3))
     {
         /*
          * if an error occured during sscanf (i.e nbItems != 2 or 3), 
          * return error
          */
-        errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
+        errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spType);
         return mcsFAILURE;
     }
 
-    /* If no luminosity class found, reset it */
-    if (nbOfTokens == 2)
+    /* If there is no luminosity class in given spectral type, reset it */
+    if (nbItems == 2)
     {
-        strcpy(decodedSpectralType->luminosityClass, ""); 
+        strcpy(spectralType->luminosityClass, ""); 
     }
 
-    logTest("Spectral Type = '%s' (original value was '%s' before clean-up):", tempSP, spectralType);
-    logTest(" - Code                = '%c'.", decodedSpectralType->code);
-    logTest(" - Sub-type Quantity   = '%f'.", decodedSpectralType->quantity);
-    logTest(" - Luminosity Class    = '%s'.", decodedSpectralType->luminosityClass);
-    logTest(" - Is Double           = '%s'.", (decodedSpectralType->isDouble == mcsTRUE ? "YES" : "NO"));
-    logTest(" - Is Spectral Binary  = '%s'.", (decodedSpectralType->isSpectralBinary == mcsTRUE ? "YES" : "NO"));
-    logTest(" - Has Cyanogen        = '%s'.", (decodedSpectralType->hasCyanogen == mcsTRUE ? "YES" : "NO"));
-    logTest(" - Has Barium          = '%s'.", (decodedSpectralType->hasBarium == mcsTRUE ? "YES" : "NO"));
-    logTest(" - Is Variable         = '%s'.", (decodedSpectralType->isVariable == mcsTRUE ? "YES" : "NO"));
+    logTest("Type spectral = %s", spType);
+    logTest("\tCode              = %c", spectralType->code);
+    logTest("\tSub-type Quantity = %f", spectralType->quantity);
+/*     logTest("\tLuminosity Class       = %s", spectralType->luminosityClass); */
+    logTest("\tLight class       = %s", spectralType->luminosityClass);
 
-    /* Return the pointer on the created spectral type structure */
-    free(tempSP);
+    /* return the pointer on the created spectral type structure */
     return mcsSUCCESS;
 }
 
@@ -1202,25 +997,32 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
                         alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitudeForBrightStar()");
-    /* 
-     * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
-     * number between 0 and 9 and LLL is the light class
-     */
-    alxSPECTRAL_TYPE spectralType;
-    if (alxString2SpectralType(spType, &spectralType) == mcsFAILURE)
+    alxSPECTRAL_TYPE *spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
+    if (spType != NULL)
     {
-        return mcsFAILURE;
+        /* 
+         * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
+         * number between 0 and 9 and LLL is the light class
+         */
+        if (alxString2SpectralType(spType, spectralType) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
-
+    else
+    {
+        spectralType = NULL;
+    }
+    
     /* Get the color table according to the spectral type of the star */
     alxCOLOR_TABLE *colorTable;
-    colorTable = alxGetColorTableForBrightStar(spectralType);
+    colorTable = alxGetColorTableForStar(spectralType,(mcsLOGICAL)mcsTRUE);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
     }
     /* Line corresponding to the spectral type */
-    mcsINT32 line = alxGetLineForBrightStar(colorTable, &spectralType, spType);
+    mcsINT32 line = alxGetLineForBrightStar(colorTable, spectralType, spType);
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
@@ -1236,7 +1038,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
     diffMagnitudes[alxK_L].isSet = mcsFALSE;
     diffMagnitudes[alxK_M].isSet = mcsFALSE;
 
-    if (colorTable->spectralType[line].quantity == spectralType.quantity)
+    if (colorTable->spectralType[line].quantity == spectralType->quantity)
     {
         /* 
          * Compare B-V star differential magnitude to the one of the color table
@@ -1410,31 +1212,40 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
 {
     logTrace("alxComputeDiffMagnitudeForFaintStar()");
 
-    alxSPECTRAL_TYPE spectralType;
-    /* 
-     * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
-     * number between 0 and 9 and LLL is the light class
-     */
-    if (alxString2SpectralType(spType, &spectralType) == mcsFAILURE)
+    alxSPECTRAL_TYPE *spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
+    if (spType != NULL)
     {
-        return mcsFAILURE;
+        /* 
+         * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
+         * number between 0 and 9 and LLL is the light class
+         */
+        if (alxString2SpectralType(spType, spectralType) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        /* printf("FAINT--Spectral Type Pointer OK, spType=\"%s\"\n"); */
+    }
+    else
+    {
+        spectralType = NULL;
+        /* printf("FAINT--Spectral Type Pointer NULL!\n"); */
     }
     
     /* Get the color table according to the spectral type of the star */
-    alxCOLOR_TABLE* colorTable = alxGetColorTableForFaintStar(&spectralType);
+    alxCOLOR_TABLE *colorTable;
+    colorTable = alxGetColorTableForStar(spectralType,(mcsLOGICAL)mcsFALSE);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
     }
-
     /* Line corresponding to the spectral type */
-    mcsINT32 line = alxGetLineForFaintStar(colorTable, &spectralType, spType, mgJ-mgK);
+    mcsINT32 line = alxGetLineForFaintStar(colorTable, spectralType, spType,
+                                           mgJ-mgK);
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
         return mcsFAILURE;
     }
-
     /* If the spectral type matches the line of the color table */
     diffMagnitudes[alxB_V].isSet = mcsFALSE;
     diffMagnitudes[alxV_I].isSet = mcsFALSE;
@@ -1490,9 +1301,9 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
             (colorTable->index[lineInf][alxV_R].isSet != mcsFALSE))
         {
             diffMagnitudes[alxV_R].value =  
-                  colorTable->index[lineInf][alxV_R].value
+                colorTable->index[lineInf][alxV_R].value
                 + ratio * (colorTable->index[lineSup][alxV_R].value 
-                - colorTable->index[lineInf][alxV_R].value);
+                           - colorTable->index[lineInf][alxV_R].value);
             diffMagnitudes[alxV_R].isSet = mcsTRUE;
         }
 
@@ -1500,9 +1311,9 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
             (colorTable->index[lineInf][alxV_I].isSet != mcsFALSE))
         {
             diffMagnitudes[alxV_I].value = 
-                  -1 * (colorTable->index[lineInf][alxV_I].value
-                + ratio * (colorTable->index[lineSup][alxV_I].value
-                - colorTable->index[lineInf][alxV_I].value));
+                (-1) * (colorTable->index[lineInf][alxV_I].value                                        + ratio *
+                        (colorTable->index[lineSup][alxV_I].value
+                         - colorTable->index[lineInf][alxV_I].value));
             diffMagnitudes[alxV_I].isSet = mcsTRUE;
         }
 
@@ -1510,9 +1321,10 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
             (colorTable->index[lineInf][alxI_J].isSet != mcsFALSE))
         {
             diffMagnitudes[alxI_J].value = 
-                  -1 * (colorTable->index[lineInf][alxI_J].value
-                + ratio * (colorTable->index[lineSup][alxI_J].value 
-                - colorTable->index[lineInf][alxI_J].value));
+                (-1) * (colorTable->index[lineInf][alxI_J].value
+                        + ratio *
+                        (colorTable->index[lineSup][alxI_J].value 
+                         - colorTable->index[lineInf][alxI_J].value));
             diffMagnitudes[alxI_J].isSet = mcsTRUE;
         }
 
@@ -1520,9 +1332,9 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
             (colorTable->index[lineInf][alxJ_H].isSet != mcsFALSE))
         {
             diffMagnitudes[alxJ_H].value = 
-                  colorTable->index[lineInf][alxJ_H].value 
+                colorTable->index[lineInf][alxJ_H].value 
                 + ratio *(colorTable->index[lineSup][alxJ_H].value 
-                - colorTable->index[lineInf][alxJ_H].value);
+                          - colorTable->index[lineInf][alxJ_H].value);
             diffMagnitudes[alxJ_H].isSet = mcsTRUE;
         }
 
@@ -1530,13 +1342,16 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
             (colorTable->index[lineInf][alxB_V].isSet != mcsFALSE))
         {
             diffMagnitudes[alxB_V].value = 
-                  -1 * (colorTable->index[lineInf][alxB_V].value 
-                + ratio * (colorTable->index[lineSup][alxB_V].value 
-                - colorTable->index[lineSup][alxB_V].value));
+                (-1) * (colorTable->index[lineInf][alxB_V].value 
+                        + ratio *
+                        (colorTable->index[lineSup][alxB_V].value 
+                         - colorTable->index[lineSup][alxB_V].value));
             diffMagnitudes[alxB_V].isSet = mcsTRUE;
         }
     }
 
+    free(spectralType);
+    
     return mcsSUCCESS;
 }
 
