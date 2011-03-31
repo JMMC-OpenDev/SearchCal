@@ -3,11 +3,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.18 2011-03-25 15:05:22 lafrasse Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.19 2011-03-31 15:09:02 lafrasse Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2011/03/25 15:05:22  lafrasse
+ * Moved alxString2SpectralType() and alxSPECTRAL_TYPE strucuture to public access
+ * (for test purpose).
+ *
  * Revision 1.17  2011/03/25 13:43:26  lafrasse
  * Code review of alxString2SpectralType().
  * Code format and refinments.
@@ -156,13 +160,14 @@ typedef alxDATA alxDIFFERENTIAL_MAGNITUDES[alxNB_DIFF_MAG];
 /*
  * Structure of the color table.
  */
+#define alxNB_COLOR_INDEXES 8
 typedef struct
 {
     mcsLOGICAL        loaded;
     char*             fileName;
     mcsINT32          nbLines;
     alxSPECTRAL_TYPE  spectralType[alxNB_SPECTRAL_TYPES];
-    alxDATA           index[alxNB_SPECTRAL_TYPES][alxNB_DIFF_MAG];
+    alxDATA           index[alxNB_SPECTRAL_TYPES][alxNB_COLOR_INDEXES];
 } alxCOLOR_TABLE;
 
 /*
