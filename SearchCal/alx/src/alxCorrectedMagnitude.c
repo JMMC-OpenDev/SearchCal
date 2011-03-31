@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.18 2011-03-31 13:40:23 lafrasse Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.19 2011-03-31 14:29:26 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.18  2011/03/31 13:40:23  lafrasse
+ * Further refinments in alxGetColorTableForStar().
+ *
  * Revision 1.17  2011/03/31 11:31:49  lafrasse
  * Code refinments in alxGetLuminosityClass().
  *
@@ -119,7 +122,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.18 2011-03-31 13:40:23 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.19 2011-03-31 14:29:26 lafrasse Exp $"; 
 
 
 /* 
@@ -1038,6 +1041,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
     {
         return mcsFAILURE;
     }
+
     /* Line corresponding to the spectral type */
     mcsINT32 line = alxGetLineForBrightStar(colorTable, spectralType, spType);
     /* if line not found, i.e = -1, return mcsFAILURE */
@@ -1062,29 +1066,22 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
          * Compare B-V star differential magnitude to the one of the color table
          * line; delta should be less than +/- 0.1 
          */
-        if (fabs((mgB-mgV) - colorTable->index[line][alxB_V].value) <= 0.11)
+        if ((fabs((mgB - mgV) - colorTable->index[line][alxB_V].value)) <= 0.11)
         {
             /* Get differential magnitudes */
-            diffMagnitudes[alxB_V].value =
-                colorTable->index[line][alxB_V].value;
+            diffMagnitudes[alxB_V].value = colorTable->index[line][alxB_V].value;
             diffMagnitudes[alxB_V].isSet = mcsTRUE;
-            diffMagnitudes[alxV_I].value =
-                colorTable->index[line][alxV_I].value;
+            diffMagnitudes[alxV_I].value = colorTable->index[line][alxV_I].value;
             diffMagnitudes[alxV_I].isSet = mcsTRUE;
-            diffMagnitudes[alxV_R].value =
-                colorTable->index[line][alxV_R].value;
+            diffMagnitudes[alxV_R].value = colorTable->index[line][alxV_R].value;
             diffMagnitudes[alxV_R].isSet = mcsTRUE;
-            diffMagnitudes[alxI_J].value =
-                colorTable->index[line][alxI_J].value;
+            diffMagnitudes[alxI_J].value = colorTable->index[line][alxI_J].value;
             diffMagnitudes[alxI_J].isSet = mcsTRUE;
-            diffMagnitudes[alxJ_H].value =
-                colorTable->index[line][alxJ_H].value;
+            diffMagnitudes[alxJ_H].value = colorTable->index[line][alxJ_H].value;
             diffMagnitudes[alxJ_H].isSet = mcsTRUE;
-            diffMagnitudes[alxJ_K].value =
-                colorTable->index[line][alxJ_K].value;
+            diffMagnitudes[alxJ_K].value = colorTable->index[line][alxJ_K].value;
             diffMagnitudes[alxJ_K].isSet = mcsTRUE;
-            diffMagnitudes[alxK_L].value =
-                colorTable->index[line][alxK_L].value;
+            diffMagnitudes[alxK_L].value = colorTable->index[line][alxK_L].value;
             diffMagnitudes[alxK_L].isSet = mcsTRUE;
             if ((colorTable->index[line][alxK_L].isSet != mcsFALSE) &&
                 (colorTable->index[line][alxL_M].isSet != mcsFALSE))
@@ -1101,8 +1098,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
                     (mgB-mgV), colorTable->index[line][alxB_V].value);
         }
     }
-    /* Else, interpolate */
-    else
+    else /* Else, interpolate */
     {
         mcsDOUBLE ratio; /* need to compute ratio */
         mcsINT32 lineInf, lineSup; /* integer to have the lines sup and inf */
@@ -1119,85 +1115,77 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
             (fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) <= 0.1))
         {
             /* Compute ratio for interpolation */
-            ratio = fabs(((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) 
-                         / (colorTable->index[lineSup][alxB_V].value 
-                            - colorTable->index[lineInf][alxB_V].value));
+            ratio = fabs(((mgB - mgV) - colorTable->index[lineInf][alxB_V].value) / (colorTable->index[lineSup][alxB_V].value - colorTable->index[lineInf][alxB_V].value));
             logTest("Ratio = %f", ratio);
+
+            alxDATA* dataSup = NULL;
+            alxDATA* dataInf = NULL;
             
             /* Compute differential magnitudes */
-            if ((colorTable->index[lineSup][alxV_R].isSet != mcsFALSE) &&
-                (colorTable->index[lineInf][alxV_R].isSet != mcsFALSE))
+
+            /* V - R */
+            dataSup = &colorTable->index[lineSup][alxV_R];
+            dataInf = &colorTable->index[lineInf][alxV_R];
+            if ((dataSup->isSet != mcsFALSE) &&
+                (dataInf->isSet != mcsFALSE))
             {
-                diffMagnitudes[alxV_R].value = 
-                    colorTable->index[lineInf][alxV_R].value
-                    + ratio * (colorTable->index[lineSup][alxV_R].value 
-                               - colorTable->index[lineInf][alxV_R].value);
-            diffMagnitudes[alxV_R].isSet = mcsTRUE;
+                diffMagnitudes[alxV_R].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
+                diffMagnitudes[alxV_R].isSet = mcsTRUE;
             }
 
-            if ((colorTable->index[lineSup][alxV_I].isSet != mcsFALSE) &&
-                (colorTable->index[lineInf][alxV_I].isSet != mcsFALSE))
+            /* V - I */
+            dataSup = &colorTable->index[lineSup][alxV_I];
+            dataInf = &colorTable->index[lineInf][alxV_I];
+            if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
             {
-                diffMagnitudes[alxV_I].value = 
-                    colorTable->index[lineInf][alxV_I].value
-                    + ratio *(colorTable->index[lineSup][alxV_I].value 
-                              - colorTable->index[lineInf][alxV_I].value);
-            diffMagnitudes[alxV_I].isSet = mcsTRUE;
+                diffMagnitudes[alxV_I].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
+                diffMagnitudes[alxV_I].isSet = mcsTRUE;
             }
 
-            if ((colorTable->index[lineSup][alxI_J].isSet != mcsFALSE) &&
-                (colorTable->index[lineInf][alxI_J].isSet != mcsFALSE))
+            /* I - J */
+            dataSup = &colorTable->index[lineSup][alxI_J];
+            dataInf = &colorTable->index[lineInf][alxI_J];
+            if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
             {
-                diffMagnitudes[alxI_J].value =
-                    colorTable->index[lineInf][alxI_J].value
-                    + ratio *(colorTable->index[lineSup][alxI_J].value 
-                              - colorTable->index[lineInf][alxI_J].value);
-            diffMagnitudes[alxI_J].isSet = mcsTRUE;
+                diffMagnitudes[alxI_J].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
+                diffMagnitudes[alxI_J].isSet = mcsTRUE;
             }
 
-            if ((colorTable->index[lineSup][alxJ_H].isSet != mcsFALSE) &&
-                (colorTable->index[lineInf][alxJ_H].isSet != mcsFALSE))
+            /* J - H */
+            dataSup = &colorTable->index[lineSup][alxJ_H];
+            dataInf = &colorTable->index[lineInf][alxJ_H];
+            if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
             {
-                diffMagnitudes[alxJ_H].value = 
-                    colorTable->index[lineInf][alxJ_H].value 
-                    + ratio *(colorTable->index[lineSup][alxJ_H].value 
-                              - colorTable->index[lineInf][alxJ_H].value);
-            diffMagnitudes[alxJ_H].isSet = mcsTRUE;
+                diffMagnitudes[alxJ_H].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
+                diffMagnitudes[alxJ_H].isSet = mcsTRUE;
             }
 
-            if ((colorTable->index[lineSup][alxJ_K].isSet != mcsFALSE) &&
-                (colorTable->index[lineInf][alxJ_K].isSet != mcsFALSE))
+            /* J - K */
+            dataSup = &colorTable->index[lineSup][alxJ_K];
+            dataInf = &colorTable->index[lineInf][alxJ_K];
+            if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
             {
-                diffMagnitudes[alxJ_K].value =
-                    colorTable->index[lineInf][alxJ_K].value 
-                    + ratio *(colorTable->index[lineSup][alxJ_K].value 
-                              - colorTable->index[lineSup][alxJ_K].value);
-            diffMagnitudes[alxJ_K].isSet = mcsTRUE;
+                diffMagnitudes[alxJ_K].value = dataInf->value + ratio * (dataSup->value - dataSup->value);
+                diffMagnitudes[alxJ_K].isSet = mcsTRUE;
             }
 
-            if ((colorTable->index[lineSup][alxK_L].isSet != mcsFALSE) &&
-                (colorTable->index[lineInf][alxK_L].isSet != mcsFALSE))
+            /* K - L */
+            dataSup = &colorTable->index[lineSup][alxK_L];
+            dataInf = &colorTable->index[lineInf][alxK_L];
+            if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
             {
-                diffMagnitudes[alxK_L].value =
-                    colorTable->index[lineInf][alxK_L].value
-                    + ratio * (colorTable->index[lineSup][alxK_L].value 
-                               - colorTable->index[lineInf][alxK_L].value);
-            diffMagnitudes[alxK_L].isSet = mcsTRUE;
+                diffMagnitudes[alxK_L].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
+                diffMagnitudes[alxK_L].isSet = mcsTRUE;
             }
 
+            /* K - L & L - M */
             if ((colorTable->index[lineSup][alxK_L].isSet != mcsFALSE) &&
                 (colorTable->index[lineInf][alxK_L].isSet != mcsFALSE) &&
                 (colorTable->index[lineSup][alxL_M].isSet != mcsFALSE) &&
                 (colorTable->index[lineInf][alxL_M].isSet != mcsFALSE))
             {
-                diffMagnitudes[alxK_M].value =
-                    colorTable->index[lineInf][alxK_L].value 
-                    + colorTable->index[lineInf][alxL_M].value 
-                    + ratio *(colorTable->index[lineSup][alxK_L].value 
-                              + colorTable->index[lineSup][alxL_M].value 
-                              - colorTable->index[lineInf][alxK_L].value 
-                              - colorTable->index[lineInf][alxL_M].value);
-            diffMagnitudes[alxK_M].isSet = mcsTRUE;
+                diffMagnitudes[alxK_M].value = colorTable->index[lineInf][alxK_L].value + colorTable->index[lineInf][alxL_M].value + ratio *(colorTable->index[lineSup][alxK_L].value + colorTable->index[lineSup][alxL_M].value - colorTable->index[lineInf][alxK_L].value - colorTable->index[lineInf][alxL_M].value);
+                diffMagnitudes[alxK_M].isSet = mcsTRUE;
             }
         }
         else
@@ -1313,56 +1301,53 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32            
         }
         logTest("Ratio = %f", ratio);
 
+        alxDATA* dataSup = NULL;
+        alxDATA* dataInf = NULL;
+            
         /* Compute differential magnitudes */
-        if ((colorTable->index[lineSup][alxV_R].isSet != mcsFALSE) &&
-            (colorTable->index[lineInf][alxV_R].isSet != mcsFALSE))
+
+        /* V - R */
+        dataSup = &colorTable->index[lineSup][alxV_R];
+        dataInf = &colorTable->index[lineInf][alxV_R];
+        if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
         {
-            diffMagnitudes[alxV_R].value =  
-                colorTable->index[lineInf][alxV_R].value
-                + ratio * (colorTable->index[lineSup][alxV_R].value 
-                           - colorTable->index[lineInf][alxV_R].value);
+            diffMagnitudes[alxV_R].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
             diffMagnitudes[alxV_R].isSet = mcsTRUE;
         }
 
-        if ((colorTable->index[lineSup][alxV_I].isSet != mcsFALSE) &&
-            (colorTable->index[lineInf][alxV_I].isSet != mcsFALSE))
+        /* V - I */
+        dataSup = &colorTable->index[lineSup][alxV_I];
+        dataInf = &colorTable->index[lineInf][alxV_I];
+        if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
         {
-            diffMagnitudes[alxV_I].value = 
-                (-1) * (colorTable->index[lineInf][alxV_I].value + ratio *
-                        (colorTable->index[lineSup][alxV_I].value
-                         - colorTable->index[lineInf][alxV_I].value));
+            diffMagnitudes[alxV_I].value = (-1) * (dataInf->value + ratio * (dataSup->value - dataInf->value));
             diffMagnitudes[alxV_I].isSet = mcsTRUE;
         }
 
-        if ((colorTable->index[lineSup][alxI_J].isSet != mcsFALSE) &&
-            (colorTable->index[lineInf][alxI_J].isSet != mcsFALSE))
+        /* I - J */
+        dataSup = &colorTable->index[lineSup][alxI_J];
+        dataInf = &colorTable->index[lineInf][alxI_J];
+        if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
         {
-            diffMagnitudes[alxI_J].value = 
-                (-1) * (colorTable->index[lineInf][alxI_J].value
-                        + ratio *
-                        (colorTable->index[lineSup][alxI_J].value 
-                         - colorTable->index[lineInf][alxI_J].value));
+            diffMagnitudes[alxI_J].value = (-1) * (dataInf->value + ratio * (dataSup->value - dataInf->value));
             diffMagnitudes[alxI_J].isSet = mcsTRUE;
         }
 
-        if ((colorTable->index[lineSup][alxJ_H].isSet != mcsFALSE) &&
-            (colorTable->index[lineInf][alxJ_H].isSet != mcsFALSE))
+        /* J - H */
+        dataSup = &colorTable->index[lineSup][alxJ_H];
+        dataInf = &colorTable->index[lineInf][alxJ_H];
+        if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
         {
-            diffMagnitudes[alxJ_H].value = 
-                colorTable->index[lineInf][alxJ_H].value 
-                + ratio *(colorTable->index[lineSup][alxJ_H].value 
-                          - colorTable->index[lineInf][alxJ_H].value);
+            diffMagnitudes[alxJ_H].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
             diffMagnitudes[alxJ_H].isSet = mcsTRUE;
         }
 
-        if ((colorTable->index[lineSup][alxB_V].isSet != mcsFALSE) &&
-            (colorTable->index[lineInf][alxB_V].isSet != mcsFALSE))
+        /* B - V */
+        dataSup = &colorTable->index[lineSup][alxB_V];
+        dataInf = &colorTable->index[lineInf][alxB_V];
+        if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
         {
-            diffMagnitudes[alxB_V].value = 
-                (-1) * (colorTable->index[lineInf][alxB_V].value 
-                        + ratio *
-                        (colorTable->index[lineSup][alxB_V].value 
-                         - colorTable->index[lineSup][alxB_V].value));
+            diffMagnitudes[alxB_V].value = (-1) * (dataInf->value + ratio * (dataSup->value - dataSup->value));
             diffMagnitudes[alxB_V].isSet = mcsTRUE;
         }
     }
