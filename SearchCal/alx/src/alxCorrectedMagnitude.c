@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.17 2011-03-31 11:31:49 lafrasse Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.18 2011-03-31 13:40:23 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.17  2011/03/31 11:31:49  lafrasse
+ * Code refinments in alxGetLuminosityClass().
+ *
  * Revision 1.16  2011/03/30 14:50:06  lafrasse
  * Code refinments in alxGetColorTableForStar().
  *
@@ -116,7 +119,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.17 2011-03-31 11:31:49 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.18 2011-03-31 13:40:23 lafrasse Exp $"; 
 
 
 /* 
@@ -149,14 +152,14 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,
 /*
  * Local Functions declaration
  */
-static alxCOLOR_TABLE *
-alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright);
+mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
+                                     alxSPECTRAL_TYPE*  spectralType);
+
+static alxCOLOR_TABLE* alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType,
+                                               mcsLOGICAL        isBright);
     
 static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
     
-mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
-                                            alxSPECTRAL_TYPE  *spectralType);
-
 static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
                                         alxSPECTRAL_TYPE  *spectralType,
                                         mcsSTRING32        spType);
@@ -168,27 +171,27 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
 
 static mcsCOMPL_STAT 
 alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
-                                     mcsDOUBLE                    mgB,
-                                     mcsDOUBLE                    mgV,
+                                     mcsDOUBLE                   mgB,
+                                     mcsDOUBLE                   mgV,
                                      alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
 
 static mcsCOMPL_STAT 
 alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                 spType,
-                                    mcsDOUBLE                    mgJ,
-                                    mcsDOUBLE                    mgK,
+                                    mcsDOUBLE                   mgJ,
+                                    mcsDOUBLE                   mgK,
                                     alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
 
 static mcsCOMPL_STAT
 alxComputeAllMagnitudesForBrightStar(alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes,
                                      alxMAGNITUDES               magnitudes,
-                                     mcsDOUBLE                    mgV);
+                                     mcsDOUBLE                   mgV);
 
 static mcsCOMPL_STAT
 alxComputeAllMagnitudesForFaintStar(alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes,
                                     alxMAGNITUDES               magnitudes,
-                                    mcsDOUBLE                    mgJ);
+                                    mcsDOUBLE                   mgJ);
 
-static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE              firstMag,
+static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE             firstMag,
                                          alxDATA               diffMag,
                                          alxDATA              *magnitude,
                                          alxCONFIDENCE_INDEX   confIndex);
@@ -456,7 +459,9 @@ static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
  * type of a bright star, and reads (if not yet done) this table from
  * the configuration file.
  *
- * 
+ * @param starType the star type to consider.
+ * @param isBright mcsTRUE for bright stars, mcsFALSE for faint ones.
+ *
  * @return pointer to structure containing color table, or NULL if an error
  * occured.
  *
@@ -466,8 +471,10 @@ static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
  *  - alxColorTableForFaintDwarfStar.cfg : faint dwarf star 
  */
 static alxCOLOR_TABLE*
-alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
+alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
 {
+    logTrace("alxGetColorTableForStar()");
+
     /* Existing ColorTables */
     static alxCOLOR_TABLE colorTablesFaint[alxNB_STAR_TYPES] = {
         {mcsFALSE, "alxColorTableForFaintDwarfStar.cfg"},
@@ -479,11 +486,9 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
         {mcsFALSE, "alxColorTableForBrightGiantStar.cfg"},
         {mcsFALSE, "alxColorTableForBrightSuperGiantStar.cfg"},
     };
-    static alxCOLOR_TABLE *colorTables;
-
-    logTrace("alxGetColorTableForStar()");
 
     /* Choose the right Color table for the different type of stars */
+    alxCOLOR_TABLE* colorTables = NULL;
     if (isBright)
     {
         colorTables = colorTablesBright;
@@ -493,26 +498,27 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
         colorTables = colorTablesFaint;
     }
 
-    /* Determination of star type according to the spectral type */
+    /* Determination of star type according to the given star type */
     alxSTAR_TYPE starType = alxGetLuminosityClass(spectralType);
+    alxCOLOR_TABLE* colorTable = &colorTables[starType];
 
     /*
      * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
      */
-    if (colorTables[starType].loaded == mcsTRUE)
+    if (colorTable->loaded == mcsTRUE)
     {
-        return (&colorTables[starType]);
+        return colorTable;
     }
 
     /* Find the location of the file */
-    char* fileName = miscLocateFile(colorTables[starType].fileName);
+    char* fileName = miscLocateFile(colorTable->fileName);
     if (fileName == NULL)
     {
         return NULL;
     }
     
-    /* Load file (comment lines start with '#') */
+    /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
     logDebug("Loading %s ...", fileName);
@@ -526,8 +532,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
     mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line),
-                                        mcsTRUE)) != NULL)
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line), mcsTRUE)) != NULL)
     {
         logDebug("miscDynBufGetNextLine() = '%s'", line);
 
@@ -540,69 +545,63 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
             /* Check if there are to many lines in file */
             if (lineNum >= alxNB_SPECTRAL_TYPES)
             {
+                /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
                 return NULL;
             }
 
-            /* Get polynomial coefficients */
-            if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf",   
-                       &colorTables[starType].spectralType[lineNum].code,
-                       &colorTables[starType].spectralType[lineNum].quantity,
-                       &colorTables[starType].index[lineNum][0].value,
-                       &colorTables[starType].index[lineNum][1].value,
-                       &colorTables[starType].index[lineNum][2].value,
-                       &colorTables[starType].index[lineNum][3].value,
-                       &colorTables[starType].index[lineNum][4].value,
-                       &colorTables[starType].index[lineNum][5].value,
-                       &colorTables[starType].index[lineNum][6].value,
-                       &colorTables[starType].index[lineNum][7].value)
-                != (alxNB_DIFF_MAG + 1))
+            /* Try to read each polynomial coefficients */
+            mcsDOUBLE values[alxNB_COLOR_INDEXES];
+            mcsINT32 nbOfReadTokens = sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf",   
+                       &colorTable->spectralType[lineNum].code,
+                       &colorTable->spectralType[lineNum].quantity,
+                       &values[0],
+                       &values[1],
+                       &values[2],
+                       &values[3],
+                       &values[4],
+                       &values[5],
+                       &values[6],
+                       &values[7]);
+
+            /* If parsing went wrong */
+            if (nbOfReadTokens != (alxNB_DIFF_MAG + 1))
             {
-                /* destroy dynamic buffer used and return an error */
+                /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 return NULL;
             }
             
-            colorTables[starType].index[lineNum][0].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][0].value);
-            colorTables[starType].index[lineNum][1].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][1].value);
-            colorTables[starType].index[lineNum][2].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][2].value);
-            colorTables[starType].index[lineNum][3].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][3].value);
-            colorTables[starType].index[lineNum][4].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][4].value);
-            colorTables[starType].index[lineNum][5].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][5].value);
-            colorTables[starType].index[lineNum][6].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][6].value);
-            colorTables[starType].index[lineNum][7].isSet = 
-                alxIsBlankingValue(colorTables[starType].
-                                           index[lineNum][7].value);
+            /* Set whether each colorTable cell has been written or not */
+            int i;
+            for (i = 0; i < alxNB_COLOR_INDEXES; i++)
+            {
+                alxDATA* colorTableCell = &(colorTable->index[lineNum][i]);
+
+                mcsDOUBLE value = values[i];
+
+                colorTableCell->value = value;
+                colorTableCell->isSet = alxIsBlankingValue(value);
+            }
+
             /* Next line */
             lineNum++;
         }
     }
 
-    /* Destroy dynamic buffer used */
+    /* Set the total number of lines in the color table */
+    colorTable->nbLines = lineNum;
+
+    /* Mark the color table as "loaded" */
+    colorTable->loaded = mcsTRUE;
+
+    /* Destroy the temporary dynamic buffer used to parse the color table file */
     miscDynBufDestroy(&dynBuf);
 
-    /* Set the number of line in the color table */
-    colorTables[starType].nbLines = lineNum;
-    /* Set to "loaded" the structure table */
-    colorTables[starType].loaded = mcsTRUE;
-
-    return &(colorTables[starType]);
+    /* Return a pointer on the freshly loaded color table */
+    return colorTable;
 }
 
 /**
@@ -614,8 +613,8 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE *spectralType, mcsLOGICAL isBright)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
-                                            alxSPECTRAL_TYPE  *spectralType)
+mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spType,
+                                     alxSPECTRAL_TYPE* spectralType)
 {
     logTrace("alxString2SpectralType()");
 
@@ -1010,10 +1009,10 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
  * returned
  */
 static mcsCOMPL_STAT 
-alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
-                        mcsDOUBLE                   mgB,
-                        mcsDOUBLE                   mgV,
-                        alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
+alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
+                                     mcsDOUBLE                   mgB,
+                                     mcsDOUBLE                   mgV,
+                                     alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitudeForBrightStar()");
     alxSPECTRAL_TYPE *spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
@@ -1034,8 +1033,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
     }
     
     /* Get the color table according to the spectral type of the star */
-    alxCOLOR_TABLE *colorTable;
-    colorTable = alxGetColorTableForStar(spectralType,(mcsLOGICAL)mcsTRUE);
+    alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
@@ -1047,6 +1045,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
     {
         return mcsFAILURE;
     }
+
     /* If the spectral type matches the line of the color table */
     diffMagnitudes[alxB_V].isSet = mcsFALSE;
     diffMagnitudes[alxV_I].isSet = mcsFALSE;
@@ -1210,6 +1209,8 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
         }
     }
     
+    free(spectralType);
+
     return mcsSUCCESS;
 }
 
@@ -1223,11 +1224,10 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                spType,
  * @return mcsSUCCESS on successfull completion otherwise, mcsFAILURE is
  * returned
  */
-static mcsCOMPL_STAT
-alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
-                                    mcsDOUBLE                   mgJ,
-                                    mcsDOUBLE                   mgK,
-                                    alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
+static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                 spType,
+                                                         mcsDOUBLE                   mgJ,
+                                                         mcsDOUBLE                   mgK,
+                                                         alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitudeForFaintStar()");
 
@@ -1242,7 +1242,6 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
         {
             return mcsFAILURE;
         }
-        /* printf("FAINT--Spectral Type Pointer OK, spType=\"%s\"\n"); */
     }
     else
     {
@@ -1251,20 +1250,20 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
     }
     
     /* Get the color table according to the spectral type of the star */
-    alxCOLOR_TABLE *colorTable;
-    colorTable = alxGetColorTableForStar(spectralType,(mcsLOGICAL)mcsFALSE);
+    alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsFALSE);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
     }
+
     /* Line corresponding to the spectral type */
-    mcsINT32 line = alxGetLineForFaintStar(colorTable, spectralType, spType,
-                                           mgJ-mgK);
+    mcsINT32 line = alxGetLineForFaintStar(colorTable, spectralType, spType, mgJ-mgK);
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
         return mcsFAILURE;
     }
+
     /* If the spectral type matches the line of the color table */
     diffMagnitudes[alxB_V].isSet = mcsFALSE;
     diffMagnitudes[alxV_I].isSet = mcsFALSE;
@@ -1287,10 +1286,9 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
         diffMagnitudes[alxJ_H].isSet = mcsTRUE;
 
     }
-    /* Else, interpolate */
-    else
+    else /* Else, interpolate */
     {
-        mcsDOUBLE ratio; /* need to compute ratio */
+        mcsDOUBLE ratio; /* Need to compute ratio */
         mcsINT32 lineInf, lineSup; /* integer to have the lines sup and inf */
         lineSup = line;
         lineInf = line - 1;
@@ -1330,7 +1328,7 @@ alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                spType,
             (colorTable->index[lineInf][alxV_I].isSet != mcsFALSE))
         {
             diffMagnitudes[alxV_I].value = 
-                (-1) * (colorTable->index[lineInf][alxV_I].value                                        + ratio *
+                (-1) * (colorTable->index[lineInf][alxV_I].value + ratio *
                         (colorTable->index[lineSup][alxV_I].value
                          - colorTable->index[lineInf][alxV_I].value));
             diffMagnitudes[alxV_I].isSet = mcsTRUE;
