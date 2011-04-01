@@ -6,11 +6,14 @@
  * SearchCal Proxy Service 
  * -----------------------
  *
- * "@(#) $Id: sclws-proxy.php,v 1.3 2011-03-16 15:32:29 mella Exp $"
+ * "@(#) $Id: sclws-proxy.php,v 1.4 2011-04-01 15:04:21 mella Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.3  2011/03/16 15:32:29  mella
+ * Remove bad option handling line and update doc
+ *
  * Revision 1.2  2011/02/28 12:42:31  mella
  * Use 8078 as default port
  * Return on error message to the soap client if the associated server doe not run
@@ -67,6 +70,8 @@ $postdata = $HTTP_RAW_POST_DATA;
 
 // Don't return HTTP headers. Do return the contents of the call
 curl_setopt($session, CURLOPT_HEADER, false);
+// Set one timeout for housekeeping 
+curl_setopt($session, CURLOPT_TIMEOUT, 7200);
 
 // If it's a POST, put the POST data in the body
 if ($postdata) {
