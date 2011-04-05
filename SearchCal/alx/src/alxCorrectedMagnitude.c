@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.20 2011-04-05 15:38:13 lafrasse Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.21 2011-04-05 22:06:19 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20  2011/04/05 15:38:13  lafrasse
+ * Code refinments in alxString2SpectralType().
+ *
  * Revision 1.19  2011/03/31 14:29:26  lafrasse
  * Code refinments in alxComputeDiffMagnitudeForBrightStar() and
  * alxComputeDiffMagnitudeForFaintStar().
@@ -126,7 +129,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.20 2011-04-05 15:38:13 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.21 2011-04-05 22:06:19 duvert Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf() */
@@ -404,12 +407,17 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE *spectralType)
 
     /* Determination of star type according to the spectral type */
     char* spectralTypes[] = {"VIII", "VII", "VI", "III-IV", "III/IV", "IV-III", "IV/III",
-                             "II-III", "II/III", "I-II", "I/II", "III", "IB-II", "IB/II", "IBV", "II", "IV", "V",
-                             "(I)", "IA-O/IA", "IA-O", "IA/AB", "IAB-B", "IAB", "IA", "IB", "I",
+                             "II-III", "II/III", "I-II", "I/II", "III", "IB-II", "IB/II", 
+                             "IBV", "II", "IV", "V", "(I)", "IA-O/IA", "IA-O", "IA/AB",
+                             "IAB-B", "IAB", "IA", "IB", "I",
                               NULL};
-    alxSTAR_TYPE luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF, alxGIANT, alxGIANT, alxGIANT, alxGIANT,
-                                        alxGIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxGIANT, alxDWARF, alxDWARF,
-                                        alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT};
+    alxSTAR_TYPE luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF, alxGIANT, alxGIANT, 
+                                        alxGIANT, alxGIANT, alxGIANT, alxGIANT, alxSUPER_GIANT, 
+                                        alxSUPER_GIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT, 
+                                        alxSUPER_GIANT, alxGIANT, alxDWARF, alxDWARF,
+                                        alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, 
+                                        alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, 
+                                        alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT};
     char* luminosityClass = spectralType->luminosityClass;
     mcsUINT32 index = 0;
     while (spectralTypes[index] != NULL)
@@ -727,7 +735,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         decodedSpectralType->isVariable = mcsTRUE;
     }
 
-    /* If the spectral type hesitates between two subclasses (A0/3, A0-3), or has a wrong comma, replace by a numerical value.
+    /* If the spectral type hesitates between two subclasses (A0/3, A0-3), 
+     * or has a wrong comma, replace by a numerical value.
      */
     char        type, separator;
     mcsSTRING32 tempBuffer;
@@ -1767,5 +1776,35 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
     return mcsSUCCESS;
 }
 
+/**
+ * returns the ratio of the plack function B(lambda1,T1)/B(lambda2,T2)
+ * using constants and reduced planck function as in T. Michels, 
+ * Nasa Technical Note D-4446
+ *
+ * @param Teff1 double the first BlackBody temperature 
+ * @param lambda1 double the first BlackBody wavelength (in microns)
+ * @param Teff2 double the second BlackBody temperature 
+ * @param lambda2 double the second BlackBody wavelength (in microns)
+ *
+ * @return double the flux ratio
+ *
+ */
+static mcsDOUBLE alxBlackBodyFluxRatio(mcsDOUBLE Teff1,
+				       mcsDOUBLE lambda1,
+				       mcsDOUBLE Teff2,
+				       mcsDOUBLE lambda2)
+
+{
+  mcsDOUBLE nu1,nu2,x,y,ratio;
+
+    logTrace("alxBlackBodyFluxRatio()");
+
+    nu1=10000.0/lambda1;  /*wavenumber cm^-1*/
+    nu2=10000.0/lambda2;  /*wavenumber cm^-1*/
+    x=nu1/Teff1;
+    y=nu2/Teff2;
+    ratio=pow((x/y),5.0)*(exp(1.43879*y)-1)/(exp(1.43879*x)-1);
+    return ratio;
+}
 
 /*___oOo___*/
