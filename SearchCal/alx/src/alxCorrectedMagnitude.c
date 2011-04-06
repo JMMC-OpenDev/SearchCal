@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxCorrectedMagnitude.c,v 1.21 2011-04-05 22:06:19 duvert Exp $"
+ * "@(#) $Id: alxCorrectedMagnitude.c,v 1.22 2011-04-06 14:36:50 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.21  2011/04/05 22:06:19  duvert
+ * added alxBlackBodyFluxRatio().
+ * Main use is for computing Fnu_9 and Fnu_12 from Akari.
+ *
  * Revision 1.20  2011/04/05 15:38:13  lafrasse
  * Code refinments in alxString2SpectralType().
  *
@@ -114,10 +118,10 @@
  * Revision 1.1  2005/01/21 08:14:25  gluck
  * Creation
  *
- * 
- * scetre    28-Sep-2004  Created
  * gzins     12-Jan-2005  - Updated to be compliant with programming standards
  *                        - Improved reliability and error handling
+ * 
+ * scetre    28-Sep-2004  Created
  *
  ******************************************************************************/
 
@@ -129,7 +133,7 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.21 2011-04-05 22:06:19 duvert Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.22 2011-04-06 14:36:50 lafrasse Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf() */
@@ -214,7 +218,11 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE             firstMag,
 
 static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void);
 
-/* 
+static mcsDOUBLE alxBlackBodyFluxRatio(mcsDOUBLE Teff1,
+				                       mcsDOUBLE lambda1,
+				                       mcsDOUBLE Teff2,
+				                       mcsDOUBLE lambda2);
+/*
  * Local functions definition
  */
 /**
@@ -1741,7 +1749,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
  * for a representative number of stars.
  */
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
-                                            alxMAGNITUDES magnitudes)
+                                            alxMAGNITUDES  magnitudes)
 {
     logTrace("alxComputeRealMagnitudes()");
 
@@ -1777,9 +1785,9 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
 }
 
 /**
- * returns the ratio of the plack function B(lambda1,T1)/B(lambda2,T2)
+ * Returns the ratio of the plack function B(lambda1,T1)/B(lambda2,T2)
  * using constants and reduced planck function as in T. Michels, 
- * Nasa Technical Note D-4446
+ * Nasa Technical Note D-4446.
  *
  * @param Teff1 double the first BlackBody temperature 
  * @param lambda1 double the first BlackBody wavelength (in microns)
@@ -1787,23 +1795,21 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
  * @param lambda2 double the second BlackBody wavelength (in microns)
  *
  * @return double the flux ratio
- *
  */
 static mcsDOUBLE alxBlackBodyFluxRatio(mcsDOUBLE Teff1,
-				       mcsDOUBLE lambda1,
-				       mcsDOUBLE Teff2,
-				       mcsDOUBLE lambda2)
-
+				                       mcsDOUBLE lambda1,
+				                       mcsDOUBLE Teff2,
+				                       mcsDOUBLE lambda2)
 {
-  mcsDOUBLE nu1,nu2,x,y,ratio;
-
     logTrace("alxBlackBodyFluxRatio()");
 
-    nu1=10000.0/lambda1;  /*wavenumber cm^-1*/
-    nu2=10000.0/lambda2;  /*wavenumber cm^-1*/
-    x=nu1/Teff1;
-    y=nu2/Teff2;
-    ratio=pow((x/y),5.0)*(exp(1.43879*y)-1)/(exp(1.43879*x)-1);
+    mcsDOUBLE nu1 = 10000.0 / lambda1;  /*wavenumber cm^-1*/
+    mcsDOUBLE nu2 = 10000.0 / lambda2;  /*wavenumber cm^-1*/
+
+    mcsDOUBLE x = nu1 / Teff1;
+    mcsDOUBLE y = nu2 / Teff2;
+
+    mcsDOUBLE ratio = pow((x / y), 5.0) * (exp(1.43879 * y) - 1) / (exp(1.43879 * x) - 1);
     return ratio;
 }
 
