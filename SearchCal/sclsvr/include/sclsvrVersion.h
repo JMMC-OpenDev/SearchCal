@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrVersion.h,v 1.47 2011-03-03 13:12:51 lafrasse Exp $"
+ * "@(#) $Id: sclsvrVersion.h,v 1.48 2011-04-06 14:16:56 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.47  2011/03/03 13:12:51  lafrasse
+ * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+ *
  * Revision 1.46  2011/02/25 16:19:02  lafrasse
  * Fixed automated test throughout server code.
  *
@@ -167,7 +170,7 @@ extern "C" {
 #endif
 
 // Software version 
-#define sclsvrVERSION "3.8.0"
+#define sclsvrVERSION "3.8.1"
 
 #ifdef __cplusplus
 }
