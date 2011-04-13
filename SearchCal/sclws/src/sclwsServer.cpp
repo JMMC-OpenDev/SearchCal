@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.13 2011-04-13 12:56:12 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.14 2011-04-13 14:34:53 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.13  2011/04/13 12:56:12  lafrasse
+ * Added external configuration of listening port number through environment variable SCLWS_PORT_NB.
+ *
  * Revision 1.12  2010/12/02 13:54:19  lafrasse
  * Commit defualt port of berta version as we do not commit from production account
  * 'sclws'.
@@ -68,7 +71,7 @@
  * \envvar SCLWS_PORT_NB : socket port number the server should bind on (must be greater than 1024, less than 65536).
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.13 2011-04-13 12:56:12 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.14 2011-04-13 14:34:53 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -112,9 +115,9 @@ struct Namespace* namespaces;
 struct soap       globalSoapContext;
 
 // Port number configuration
-mcsENVNAME portNumberEnvVarName = "SCLWS_PORT_NB";
-uint       portNumber           = 8079; // Default value for beta testing.
-//uint       portNumber           = 8078; // Default value for production purpose.
+mcsENVNAME sclwsPortNumberEnvVarName = "SCLWS_PORT_NB";
+uint       sclwsPortNumber           = 8079; // Default value for beta testing.
+//uint       sclwsPortNumber           = 8078; // Default value for production purpose.
 
 
 /*
@@ -212,16 +215,16 @@ int main(int argc, char *argv[])
     mcsINT32 envPortNumber = -1;
     mcsINT32 minPortNumber = 1024;
     mcsINT32 maxPortNumber = 65536;
-    if (miscGetEnvVarIntValue(portNumberEnvVarName, &envPortNumber) == mcsSUCCESS)
+    if (miscGetEnvVarIntValue(sclwsPortNumberEnvVarName, &envPortNumber) == mcsSUCCESS)
     {
         // Use the guiven port only if in the right range.
         if ((envPortNumber <= minPortNumber) || (envPortNumber >= maxPortNumber))
         {
-            logError("'%s' environment variable does not contain a valid port number ('%d' not in [%d, %d[)", portNumberEnvVarName, envPortNumber, minPortNumber, maxPortNumber);
+            logError("'%s' environment variable does not contain a valid port number ('%d' not in [%d, %d[)", sclwsPortNumberEnvVarName, envPortNumber, minPortNumber, maxPortNumber);
             sclwsExit(EXIT_FAILURE);
         }
 
-        portNumber = envPortNumber;
+        sclwsPortNumber = envPortNumber;
     }
     // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
 
@@ -234,14 +237,14 @@ int main(int argc, char *argv[])
     soap_set_namespaces(&globalSoapContext, soap_namespaces);
 
     // Main SOAP socket creation
-    if (soap_bind(&globalSoapContext, NULL, portNumber, 100) < 0)
+    if (soap_bind(&globalSoapContext, NULL, sclwsPortNumber, 100) < 0)
     {
-        errAdd(sclwsERR_BIND, portNumber);
+        errAdd(sclwsERR_BIND, sclwsPortNumber);
         errCloseStack();
         sclwsExit(EXIT_FAILURE);
     }
 
-    logTest("Listening on port '%d'.", portNumber);
+    logTest("Listening on port '%d'.", sclwsPortNumber);
 
     // Infinite loop to receive requests
     for (uint nbOfConnection = 1; ; nbOfConnection++)
