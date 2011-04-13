@@ -133,7 +133,7 @@
    <error id="47">
       <errName>NO_CDS_RETURN</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Connexion to CDS failed]]></errFormat>
+      <errFormat><![CDATA[Connexion to VIZIER failed]]></errFormat>
    </error>
    <error id="48">
       <errName>CATALOG_LIST_EMPTY</errName>
