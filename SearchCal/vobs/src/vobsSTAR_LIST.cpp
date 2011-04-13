@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.37 2011-03-03 13:09:43 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.38 2011-04-13 14:33:20 mella Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.37  2011/03/03 13:09:43  lafrasse
+* Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+*
 * Revision 1.36  2007/02/26 16:40:28  lafrasse
 * Corrected Doxygen documentation.
 *
@@ -105,7 +108,7 @@
 *
 ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.37 2011-03-03 13:09:43 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.38 2011-04-13 14:33:20 mella Exp $"; 
 
 
 /* 
@@ -137,7 +140,7 @@ using namespace std;
  */
 vobsSTAR_LIST::vobsSTAR_LIST()
 {
-    _starIterator = NULL;
+    _starIterator = _starList.end();
 }
 
 
@@ -290,9 +293,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
                 }
                 else
                 {
-                    // Else set current pointer to NULL in order to restart scan
+                    // Else set current pointer to end() in order to restart scan
                     // from beginning of the list.
-                    _starIterator = NULL;
+                    _starIterator = _starList.end();
                 }
             }
             
@@ -337,7 +340,7 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
 {
     logTrace("vobsSTAR_LIST::GetNextStar()");
 
-    if ((init == mcsTRUE) || _starIterator == NULL)
+    if ((init == mcsTRUE) || _starIterator == _starList.end())
     {
         _starIterator = _starList.begin();
     }
