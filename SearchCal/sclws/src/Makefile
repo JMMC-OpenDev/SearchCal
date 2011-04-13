@@ -1,13 +1,17 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2010-11-04 15:59:48 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.10 2011-04-13 12:52:18 lafrasse Exp $"
 #
 # Makefile of sclws module
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9  2010/11/04 15:59:48  lafrasse
+# Added sclws-proxy.php installation routine.
+# Cleaned output log.
+#
 # Revision 1.8  2008/08/25 12:51:40  lafrasse
 # Added sclwsManager file installation (automated replicat needs it to start it automatically).
 #
@@ -152,8 +156,8 @@ CDF_FILES       =
 #
 # man pages to be done
 # --------------------
-MANSECTIONS =
-MAN1 =
+MANSECTIONS = 1
+MAN1 = $(addsuffix .c, $(EXECUTABLES))
 MAN3 =
 MAN5 =
 MAN7 =
