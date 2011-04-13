@@ -1,11 +1,15 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclwsServer.cpp,v 1.12 2010-12-02 13:54:19 lafrasse Exp $"
+ * "@(#) $Id: sclwsServer.cpp,v 1.13 2011-04-13 12:56:12 lafrasse Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.12  2010/12/02 13:54:19  lafrasse
+ * Commit defualt port of berta version as we do not commit from production account
+ * 'sclws'.
+ *
  * Revision 1.11  2010/01/22 15:41:29  lafrasse
  * Re-commited production port number (8078 instead of 8079 used for beta-testing).
  *
@@ -48,17 +52,23 @@
  ******************************************************************************/
 
 /**
- * @file
+ * \file
  * SearchCal SOAP webservice server.
  *
- * @synopsis
+ * \b Synopsis: \n
  * \<sclwsServer\>
  * 
- * @details
- * This daemon listen on port 8078.
+ * \b Details: \n
+ * This daemon listen on port:
+ * \li 8079 by default (beta config);
+ * \li 8078 for production purpose (code editing required);
+ * \li value of the 'SCLWS_PORT_NUMBER' environment variable if defined.
+ * 
+ * \env
+ * \envvar SCLWS_PORT_NB : socket port number the server should bind on (must be greater than 1024, less than 65536).
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.12 2010-12-02 13:54:19 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsServer.cpp,v 1.13 2011-04-13 12:56:12 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -79,6 +89,7 @@ using namespace std;
  * MCS Headers 
  */
 #include "mcs.h"
+#include "misc.h"
 #include "log.h"
 #include "err.h"
 #include "evh.h"
@@ -96,9 +107,14 @@ using namespace std;
 /*
  * Local Variables
  */
-uint   portNumber = 8079;
+// SOAP execution context
 struct Namespace* namespaces;
-struct soap globalSoapContext; // SOAP execution context
+struct soap       globalSoapContext;
+
+// Port number configuration
+mcsENVNAME portNumberEnvVarName = "SCLWS_PORT_NB";
+uint       portNumber           = 8079; // Default value for beta testing.
+//uint       portNumber           = 8078; // Default value for production purpose.
 
 
 /*
@@ -189,12 +205,29 @@ int main(int argc, char *argv[])
     evhTASK cliHandler;
     if (cliHandler.Init(argc, argv) == mcsFAILURE)
     {
-        exit (EXIT_FAILURE);
+        sclwsExit(EXIT_FAILURE);
     }
+
+    // Try to read ENV. VAR. to get port number to bind
+    mcsINT32 envPortNumber = -1;
+    mcsINT32 minPortNumber = 1024;
+    mcsINT32 maxPortNumber = 65536;
+    if (miscGetEnvVarIntValue(portNumberEnvVarName, &envPortNumber) == mcsSUCCESS)
+    {
+        // Use the guiven port only if in the right range.
+        if ((envPortNumber <= minPortNumber) || (envPortNumber >= maxPortNumber))
+        {
+            logError("'%s' environment variable does not contain a valid port number ('%d' not in [%d, %d[)", portNumberEnvVarName, envPortNumber, minPortNumber, maxPortNumber);
+            sclwsExit(EXIT_FAILURE);
+        }
+
+        portNumber = envPortNumber;
+    }
+    // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
 
     // @TODO : manage a "garbage collector" to close pending connections
 
-    logDebug("Initializing gSOAP ...", portNumber);
+    logDebug("Initializing gSOAP ...");
 
     // SOAP Initialization
     soap_init(&globalSoapContext);
