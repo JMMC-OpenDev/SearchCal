@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.h,v 1.2 2006-01-18 08:45:38 scetre Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.h,v 1.3 2011-04-18 13:53:31 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.2  2006/01/18 08:45:38  scetre
+* Added option in generic local and remote catalog
+*
 * Revision 1.1  2005/02/11 14:14:31  gluck
 * Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
 *
@@ -90,6 +93,9 @@ protected:
    miscDYN_BUF _query;
 
 private:
+   // URI to use for Vizier requests
+   std::string _vizierURI;
+
    // Declaration of assignment operator as private
    // method, in order to hide them from the users.
    vobsREMOTE_CATALOG& operator=(const vobsCATALOG&);

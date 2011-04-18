@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.21 2011-04-13 14:32:57 lafrasse Exp $"
+* "@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.22 2011-04-18 13:53:31 lafrasse Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2011/04/13 14:32:57  lafrasse
+* Added external configuration of VIZIER URI through environment variable VOBS_VIZIER_URI.
+*
 * Revision 1.20  2011/03/03 13:09:43  lafrasse
 * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
 *
@@ -75,7 +78,7 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.21 2011-04-13 14:32:57 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.22 2011-04-18 13:53:31 lafrasse Exp $"; 
 
 /* 
  * System Headers 
@@ -109,9 +112,6 @@ using namespace std;
 
 mcsENVNAME vobsVizierUriEnvVarName = "VOBS_VIZIER_URI";
 
-std::string vobsVizierUri = "http://vizier.u-strasbg.fr"; // For production purpose
-//std::string vobsVizierUri = "http://viz-beta.u-strasbg.fr"; // For beta testing
-
 std::string vobsVizierUriSuffix = "/viz-bin/asu-xml?"; // URI CGI suffix
 
 /*
@@ -125,6 +125,35 @@ vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
 {
     // Initialise dynamic buffer corresponding to query
     miscDynBufInit(&_query);
+
+    _vizierURI = "http://vizier.u-strasbg.fr"; // For production purpose
+    // _vizierURI = "http://viz-beta.u-strasbg.fr"; // For beta testing
+
+    // Try to read ENV. VAR. to get port number to bind on
+    mcsSTRING1024 envVizierUri = "";
+    if (miscGetEnvVarValue(vobsVizierUriEnvVarName, envVizierUri, sizeof(envVizierUri)) == mcsSUCCESS)
+    {
+        // Check the env. var. is not empty
+        if (strlen(envVizierUri) != 0)
+        {
+            logDebug("Found '%s' environment variable content for VIZIER URI.", vobsVizierUriEnvVarName);
+            _vizierURI = envVizierUri;
+        }
+        else
+        {
+            logWarning("'%s' environment variable does not contain a valid VIZIER URI (is empty), will use internal URI instead.", vobsVizierUriEnvVarName);
+        }
+    }
+    else // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
+    {
+        logDebug("Could not read '%s' environment variable content for VIZIER URI, will use internal URI instead.", vobsVizierUriEnvVarName);
+        errResetStack(); // Error is properly handled, so clean-up
+    }
+
+    // Add VIZIER CGI suffix
+    _vizierURI += vobsVizierUriSuffix;
+
+    logInfo("Catalog '%s' will get VIZIER data from '%s'.", _name.c_str(), _vizierURI.c_str());
 }
 
 
@@ -224,32 +253,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
         }
     }
 
-    // Try to read ENV. VAR. to get port number to bind
-    mcsSTRING1024 envVizierUri = "";
-    if (miscGetEnvVarValue(vobsVizierUriEnvVarName, envVizierUri, sizeof(envVizierUri)) == mcsSUCCESS)
-    {
-        // Use the guiven port only if in the right range.
-        if (strlen(envVizierUri) == 0)
-        {
-            logError("'%s' environment variable does not contain a valid Vizier URI (is empty indeed)", vobsVizierUriEnvVarName);
-            return mcsFAILURE;
-        }
-
-        vobsVizierUri = envVizierUri;
-
-        logInfo("Found '%s' environment variable content for VIZIER URI : '%s'", vobsVizierUriEnvVarName, vobsVizierUri.c_str());
-    }
-    else // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
-    {
-        logInfo("Could not read '%s' environment variable content for VIZIER URI, will use default one instead", vobsVizierUriEnvVarName);
-    }
-
-    // Add VIZIER CGI suffix
-    vobsVizierUri += vobsVizierUriSuffix;
-
     // The parser get the query result through Internet, and analyse it
     vobsPARSER parser;
-    if (parser.Parse(vobsVizierUri.c_str(), miscDynBufGetBuffer(&_query),
+    if (parser.Parse(_vizierURI.c_str(), miscDynBufGetBuffer(&_query),
                      GetName(), list, logFileName) == mcsFAILURE)
     {
         return mcsFAILURE; 
