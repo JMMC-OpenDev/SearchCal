@@ -66,14 +66,16 @@
 
 # Print usage 
 function printUsage () {
-        echo -e "Usage: sclinsInstall [-h] [-c] [-u] [-m] [-t tag]" 
-        echo -e "\t-h\tprint this help."
-        echo -e "\t-c\tonly compile; i.e. do not retrieve modules from "
+        echo -e "Usage: sclinsInstall [-h] [-c] [-u] [-m] [-t tag]|[-b branch]" 
+        echo -e "\t-h\tPrint this help."
+        echo -e "\t-c\tOnly compile; i.e. do not retrieve modules from "
         echo -e "\t\trepository."
-        echo -e "\t-u\tdo not delete modules to be installed from the "
+        echo -e "\t-u\tDo not delete modules to be installed from the "
         echo -e "\t\tcurrent directory; they are just updated."
-        echo -e "\t-m\tdo not create man pages."
-        echo -e "\t-t tag\tuse revision 'tag' when retrieving modules.\n"
+        echo -e "\t-m\tDo not create man pages."
+        echo -e "\t-t tag\tUse revision 'tag' when retrieving modules."
+        echo -e "\t-b brch\tUse 'brch' branch when retrieving modules."
+        echo
         exit 1;
 }
 
@@ -82,10 +84,10 @@ update="no";
 retrieve="yes";
 manpages="yes";
 tag="";
-while getopts "chumt:" option
+while getopts "chumt:b:" option
 # Initial declaration.
-# c, h, u, m and t are the options (flags) expected.
-# The : after option 't' shows it will have an argument passed with it.
+# c, h, u, m, t and b are the options (flags) expected.
+# The : after options 't' and 'b' shows it will have an argument passed with it.
 do
   case $option in
     h ) # Help option
@@ -94,8 +96,10 @@ do
         update="yes";;
     c ) # Update option
         retrieve="no";;
-    t ) # Update option
+    t ) # Tag option
         tag="$OPTARG";;
+    b ) # Branch option
+        branch="$OPTARG";;
     m ) # No man pages creation
         manpages="no";;
     * ) # Unknown option
@@ -126,6 +130,9 @@ export SW_PACKAGE=SCALIB
 if [ "$tag" != "" ]
 then
     export SW_RELEASE=$tag
+elif [ "$branch" != "" ]
+then
+    export SW_RELEASE=$branch
 else
     export SW_RELEASE=DEVELOPMENT
 fi
@@ -188,16 +195,6 @@ mkdir -p $fromdir/INSTALL
 logfile="$fromdir/INSTALL/sclinsInstall.log"
 rm -f $logfile
 
-# If modules have to be retrieved from repository; check repository
-if [ "$retrieve" == "yes" ]
-then
-    if [ "$CVSROOT" == "" ]
-    then
-        echo -e "\nERROR: 'CVSROOT' must be set ...\n";
-        exit 1;
-    fi
-fi
-
 # If modules have to be retrieved from repository
 if [ "$retrieve" == "yes" ]
 then
@@ -209,36 +206,39 @@ then
         rm -rf $scalibModules
     fi 
 
-    # Retrieve modules from CVS repository
-    # When a revision tag is specified, we have first to retrieve module giving
-    # this tag, and then to retrieve again to create empty directories which are
-    # not created by cvs command when '-r' option is used.
     echo -e "Retrieving modules from repository..."
     cd $fromdir
+
+    # Forging repository URL
+    repos="https://svn.jmmc.fr/jmmc-sw/SearchCal"
     if [ "$tag" != "" ]
     then
-        cvs co -r $tag $scalibModules > $logfile 2>&1
+        repos="$repos/tags/$tag"
+    elif [ "$branch" != "" ]
+    then
+        repos="$repos/branches/$branch"
+    else
+        repos="$repos/trunk"
+    fi
+
+    # Retrieve each module from SVN repository
+    for module in $scalibModules
+    do
+        path="$repos/$module"
+        svn co $path > $logfile 2>&1
         if [ $? != 0 ]
         then
-            echo -e "\nERROR: 'cvs co -r $tag $scalibModules' failed ... \n"; 
+            echo -e "\nERROR: 'svn co $path' failed ... \n";
             tail $logfile
             echo -e "See log file '$logfile' for details."
             exit 1;
         fi
-    fi
-
-    cvs co $scalibModules > $logfile 2>&1
-    if [ $? != 0 ]
-    then
-        echo -e "\nERROR: 'cvs co $scalibModules' failed ... \n"; 
-        tail $logfile
-        echo -e "See log file '$logfile' for details."
-        exit 1;
-    fi
+    done
 fi
 
 # Check all modules are there
-for mod in $scalibModules; do
+for mod in $scalibModules
+do
     cd $fromdir
     if [ ! -d $mod ]
     then
