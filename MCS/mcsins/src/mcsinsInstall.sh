@@ -298,18 +298,14 @@ then
     fi
 
     # Retrieve each module from SVN repository
-    for mod in $modules
-    do
-        path="$repos/$mod"
-        svn co $path > $logfile 2>&1
-        if [ $? != 0 ]
-        then
-            echo -e "\nERROR: 'svn co $path' failed ... \n";
-            tail $logfile
-            echo -e "See log file '$logfile' for details."
-            exit 1;
-        fi
-    done
+    svn co $repos ./ > $logfile 2>&1
+    if [ $? != 0 ]
+    then
+        echo -e "\nERROR: 'svn co $repos' failed ... \n";
+        tail $logfile
+        echo -e "See log file '$logfile' for details."
+        exit 1;
+    fi
 fi
 
 # Check all modules are there
