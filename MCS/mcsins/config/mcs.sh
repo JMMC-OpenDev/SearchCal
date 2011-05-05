@@ -123,7 +123,7 @@ if [ "$MANPATH" != "" ]
 then
     export MANPATH=$MANPATH:../man
 else
-    export MANPATH=../man
+    export MANPATH="/usr/man:/usr/share/man:/usr/local/man:/usr/local/share/man:/usr/X11R6/man:../man"
 fi
 
 # Set PATH
