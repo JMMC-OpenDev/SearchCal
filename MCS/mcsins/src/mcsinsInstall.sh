@@ -80,68 +80,73 @@
 #
 #*******************************************************************************
 #   NAME 
-#   mcsinsInstall - Install/Update MCS modules 
+#   mcsinsInstall - deploy MCS modules
 # 
 #   SYNOPSIS
-#   mcsinsInstall [-h] [-c] [-u] [-t tag]
+#   mcsinsInstall [-h] [-c] [-u] [-m] [-t tag]|[-r rtag]|[-b branch]
 # 
 #   DESCRIPTION
-#   This command retreives all the modules belonging to MCS from the CVS
+#   This command retreives all the modules belonging to MCS from the SVN
 #   repository and install them.
-#
-#   FILES
-#
-#   ENVIRONMENT
-#
-#   RETURN VALUES
-#
-#   CAUTIONS
-#
-#   EXAMPLES
-#
-#   SEE ALSO
-#
-#   BUGS     
-#
 #-------------------------------------------------------------------------------
 #
 
-# List of MCS modules
-mcsModules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth fnd misco env cmd msg sdb evh gwt jmcs modc modcpp modsh modjava"
+# Determine the SW package
+export SW_PACKAGE=MCS
 
+# Define package name
+package="MCS"
+
+# Modules repository
+repos="https://svn/jmmc.fr/jmmc-sw/$package"
+
+# List of modules
+modules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth fnd misco env cmd msg sdb evh gwt jmcs modc modcpp modsh modjava"
+
+# Print script usage and exits with an error code
 function printUsage () {
-        echo -e "Usage: mcsinsInstall [-h] [-c] [-u] [-t tag] [-r tag]" 
-        echo -e "\t-h\tprint this help."
-        echo -e "\t-c\tonly compile; i.e. do not retrieve modules from "
-        echo -e "\t\trepository."
-        echo -e "\t-u\tdo not delete modules to be installed from the "
-        echo -e "\t\tcurrent directory; they are just updated."
-        echo -e "\t-t tag\tuse revision 'tag' when retrieving modules.\n"
-        echo -e "\t-r tag\t perform a cvs rtag 'tag'.\n"
-        exit 1;
+    scriptName=`basename $0 .sh`
+    echo -e "Usage: $scriptName [-h] [-c] [-u] [-m] [-t tag]|[-r rtag]|[-b branch]"
+    echo -e "\t-h\tPrint this help."
+    echo -e "\t-c\tOnly compile; i.e. do not retrieve modules from "
+    echo -e "\t\trepository."
+    echo -e "\t-u\tDo not delete modules to be installed from the "
+    echo -e "\t\tcurrent directory; they are just updated."
+    echo -e "\t-m\tDo not create man pages."
+    echo -e "\t-b brch\tUse 'brch' branch when retrieving modules."
+    echo -e "\t-t tag\tUse revision 'tag' when retrieving modules."
+    echo -e "\t-r rtag\tTag head repository version with 'rtag'."
+    echo
+    exit 1;
 }
 
 # Parse command-line parameters
 update="no";
 retrieve="yes";
+manpages="yes";
 tag="";
 rtag="";
-while getopts "chut:r:" option
+branch=""
+while getopts "chumt:r:b:" option
 # Initial declaration.
-# c, h, u and t are the options (flags) expected.
-# The : after option 't' shows it will have an argument passed with it.
+# c, h, u, m, t, b, r are the options (flags) expected.
+# The : after options shows it will have an argument passed with it.
 do
   case $option in
+    c ) # Update option
+        retrieve="no";;
     h ) # Help option
         printUsage ;;
     u ) # Update option
         update="yes";;
-    c ) # Update option
-        retrieve="no";;
-    t ) # Update option
+    m ) # No man pages creation
+        manpages="no";;
+    t ) # Tag option
         tag="$OPTARG";;
-    r ) # Update option
+    r ) # Rtag option
         rtag="$OPTARG";;
+    b ) # Branch option
+        branch="$OPTARG";;
     * ) # Unknown option
         printUsage ;;
     esac
@@ -153,22 +158,20 @@ then
     printUsage
 fi
 
-# Determine the MCS release
+# Tag the package trunk
 if [ "$rtag" != "" ]
 then
-	echo "Tagging cvs repository for following module list with tag='$rtag' :"
-	echo "$mcsModules"
+	echo "Tagging Subversion trunk with tag = '$rtag' :"
 	echo -e "    Press enter to continue or ^C to abort "
 	read choice
-	cvs rtag $rtag $mcsModules
+	svn cp "$repos/trunk" "$repos/tags/$rtag" -m "Tagged $package trunk as '$rtag'."
 	exit
 fi
 
-#
 # Check that the script is not run by 'root'
 if [ `whoami` == "root" ]
 then
-    echo -e "\nERROR : MCS installation MUST NOT BE done as root !!" 
+    echo -e "\nERROR : $package installation MUST NOT BE done as root !!" 
     echo -e "\n  ->  Please log in as swmgr, and start again.\n" 
     exit 1
 fi
@@ -189,13 +192,13 @@ then
     exit 1
 fi
 
-# Determine the SW package
-export SW_PACKAGE=MCS
-
-# Determine the MCS release
+# Determine the package release
 if [ "$tag" != "" ]
 then
     export SW_RELEASE=$tag
+elif [ "$branch" != "" ]
+then
+    export SW_RELEASE=$branch
 else
     export SW_RELEASE=DEVELOPMENT
 fi
@@ -213,8 +216,7 @@ else
     source ~/.bash_profile
 fi
 
-#
-# Check that the home directory differs from installation directory 
+# Check that the installation directory differs from home directory 
 if [ $HOME == $insDir ]
 then
     echo -e "\nWARNING : $insDirName (installation directory) should differ from '`whoami`' home directory !!"
@@ -222,57 +224,53 @@ then
     exit 1
 fi
 
-# Set directory from where SCALIB will be installed 
+# Set directory from where package will be installed 
 fromdir=$PWD/$SW_PACKAGE/$SW_RELEASE
 
 # Display informations
-echo -e "\n-> All the MCS modules will be installed"
+echo -e "\n-> All the $package modules will be installed"
 echo -e "        from     : $fromdir"
 echo -e "        into     : $insDir"
-if [ -z "$tag" ]
+if [ "$tag" != "" ]
 then
-    echo -e "        revision : last version (DEVELOPMENT)\n"
+    echo -e "        tagged revision : $tag\n"
+elif [ "$branch" != "" ]
+then
+    echo -e "        branched revision : $branch\n"
 else
-    echo -e "        revision : $tag\n"
+    echo -e "        trunk revision : last version (DEVELOPMENT)\n"
 fi
-	    
-# Propose the user to continue or abort
+if [ "$manpages" == "no" ]
+then
+    echo -e "    WARNING: man pages and documentation will not be generated."
+fi
 if [ "$update" == "no" -a  "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be removed first"
-    echo -e "    from the $SW_PACKAGE/$SW_RELEASE directory. Use '-u' option "
-    echo -e "    to only update modules or '-c' to only compile modules.\n"
+    echo -e "    from the $SW_PACKAGE/$SW_RELEASE directory."
+    echo -e "    Use '-u' option to only update modules."
 elif [ "$retrieve" == "yes" ]
 then
     echo -e "    WARNING: modules to be installed will be updated in the"
-    echo -e "    $SW_PACKAGE/$SW_RELEASE directory. Use '-c' to only compile\n"
-    echo -e "    modules.\n"
+    echo -e "    $SW_PACKAGE/$SW_RELEASE directory."
 fi
+echo -e "    Use '-c' to only compile modules.\n"
+
+# Propose the user to continue or abort
 echo -e "    Press enter to continue or ^C to abort "
 read choice
 
-# Create directory from where MCS will be installed 
+# Create directory in which everything will be installed 
 mkdir -p $fromdir
 if [ $? != 0 ]
 then
     exit 1
 fi
 
-
 # Log file
 mkdir -p $fromdir/INSTALL
-logfile="$fromdir/INSTALL/mcsinsInstall.log"
+logfile="$fromdir/INSTALL/packageInstall.log"
 rm -f $logfile
-
-# If modules have to be retrieved from repository; check repository
-if [ "$retrieve" == "yes" ]
-then
-    if [ "$CVSROOT" == "" ]
-    then
-        echo -e "\nERROR: 'CVSROOT' must be set ...\n";
-        exit 1;
-    fi
-fi
 
 # If modules have to be retrieved from repository
 if [ "$retrieve" == "yes" ]
@@ -282,39 +280,41 @@ then
     if [ "$update" == "no" ]
     then
         echo -e "Deleting modules..."
-        rm -rf $mcsModules
+        rm -rf $modules
     fi 
 
-    # Retrieve modules from CVS repository
-    # When a revision tag is specified, we have first to retrieve module giving
-    # this tag, and then to retrieve again to create empty directories which are
-    # not created by cvs command when '-r' option is used.
     echo -e "Retrieving modules from repository..."
     cd $fromdir
+
+    # Forging repository URL
     if [ "$tag" != "" ]
     then
-        cvs co -r $tag $mcsModules > $logfile 2>&1
+        repos="$repos/tags/$tag"
+    elif [ "$branch" != "" ]
+    then
+        repos="$repos/branches/$branch"
+    else
+        repos="$repos/trunk"
+    fi
+
+    # Retrieve each module from SVN repository
+    for mod in $modules
+    do
+        path="$repos/$mod"
+        svn co $path > $logfile 2>&1
         if [ $? != 0 ]
         then
-            echo -e "\nERROR: 'cvs co -r $tag $mcsModules' failed ... \n"; 
+            echo -e "\nERROR: 'svn co $path' failed ... \n";
             tail $logfile
             echo -e "See log file '$logfile' for details."
             exit 1;
         fi
-    fi
-
-    cvs co $mcsModules > $logfile 2>&1
-    if [ $? != 0 ]
-    then
-        echo -e "\nERROR: 'cvs co $mcsModules' failed ... \n"; 
-        tail $logfile
-        echo -e "See log file '$logfile' for details."
-        exit 1;
-    fi
+    done
 fi
 
 # Check all modules are there
-for mod in $mcsModules; do
+for mod in $modules
+do
     cd $fromdir
     if [ ! -d $mod ]
     then
@@ -325,7 +325,7 @@ done
 
 # Compile and install them
 echo -e "Building modules..."
-for mod in $mcsModules; do
+for mod in $modules; do
     cd $fromdir
     echo -e "    $mod..."
     cd $mod/src 
@@ -334,7 +334,12 @@ for mod in $mcsModules; do
         echo -e "\nERROR: 'cd $mod/src' failed ...\n";
         exit 1
     fi
-    make clean all man install >> $logfile 2>&1
+    if [ "$manpages" == "no" ]
+    then
+        make clean all install  >> $logfile 2>&1
+    else
+        make clean all man install  >> $logfile 2>&1
+    fi
     if [ $? != 0 ]
     then
         echo -e "\nERROR: 'make clean all man install' in $mod failed ...\n";
