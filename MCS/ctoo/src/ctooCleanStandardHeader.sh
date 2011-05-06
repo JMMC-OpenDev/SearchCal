@@ -33,11 +33,34 @@
 
 #*****************************************************************************
 
-# Print usage 
+# Print usage
 function printUsage () {
     scriptName=`basename $0 .sh`
     echo -e "Usage: $scriptName module"
     exit 1;
+}
+
+# Cut $1 file content between $2 and $3 line numbers, and add $4 header instead
+function fileCut () {
+    TMP_FILE=`mktemp`
+
+    # Keep stuff above previous header
+    START_LINE=`expr $2 - 1`
+    if [ $START_LINE -ne 0 ]
+    then
+        head --lines=$START_LINE $FILE > $TMP_FILE
+    fi
+
+    # Add new header
+    cat $4 >> $TMP_FILE
+
+    # Keep below previous header
+    END_LINE=`expr $3 + 1`
+    tail --lines=+$END_LINE $FILE >> $TMP_FILE
+
+    mv -f $TMP_FILE $1
+
+    return;
 }
 
 
@@ -54,55 +77,42 @@ echo
 echo -e "Press enter to continue or ^C to abort."
 read
 
+# Find Templates directory
+if [ -d ../templates/forCoding ]
+then
+    TEMPLATES=../templates
+elif [ -d $INTROOT/templates/forCoding ]
+then
+    TEMPLATES=$INTROOT/templates
+else
+    TEMPLATES=$MCSROOT/templates
+fi
+
 # C/C++/Java files handling
+NEW_HEADER=$TEMPLATES/forCoding/svn-header.template
 C_FILES=`find "$1" -name \*.h -print -or -name \*.c -print -or -name \*.cpp -print -or -name \*.java -print`
 for FILE in $C_FILES;
 do
     echo -n "Removing $FILE header ... "
-    TMP_FILE=`mktemp`
 
-    # Search header beginning line number
     START_LINE=`grep -hn "^/\*\{70,\}$" $FILE | cut -d: -f1`
-    START_LINE=`expr $START_LINE - 1`
-    if [ $START_LINE -ne 0 ]
-    then
-        head --lines=$START_LINE $FILE > $TMP_FILE
-    fi
-
-    # Add new header file
-
-    # Search header ending line number
     END_LINE=`grep -hn "^\ \*\{70,\}/$" $FILE | cut -d: -f1`
-    END_LINE=`expr $END_LINE + 1`
-    tail --lines=+$END_LINE $FILE >> $TMP_FILE
+    fileCut $FILE $START_LINE $END_LINE $NEW_HEADER
 
-    mv -f $TMP_FILE $FILE
     echo "DONE."
 done
 
 # Shell Scripts/Makefile handling
+NEW_HEADER=$TEMPLATES/forMakefile/svn-header.template
 C_FILES=`find "$1" -name \*.sh -print -or -name \Makefile -print`
 for FILE in $C_FILES;
 do
     echo -n "Removing $FILE header ... "
-    TMP_FILE=`mktemp`
 
-    # Search header beginning line number
     START_LINE=`grep -hn "^#\*\{70,\}$" $FILE | head -1 | cut -d: -f1`
-    START_LINE=`expr $START_LINE - 1`
-    if [ $START_LINE -ne "0" ]
-    then
-        head --lines=$START_LINE $FILE > $TMP_FILE
-    fi
-
-    # Add new header file
-
-    # Search header ending line number
     END_LINE=`grep -hn "^#\*\{70,\}$" $FILE | tail -1 | cut -d: -f1`
-    END_LINE=`expr $END_LINE + 1`
-    tail --lines=+$END_LINE $FILE >> $TMP_FILE
+    fileCut $FILE $START_LINE $END_LINE $NEW_HEADER
 
-    mv -f $TMP_FILE $FILE
     echo "DONE."
 done
 
