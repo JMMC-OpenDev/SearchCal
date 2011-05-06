@@ -31,6 +31,7 @@
 # @sa http://stackoverflow.com/questions/151677/tool-for-adding-license-headers-to-source-files
 # */
 
+#*****************************************************************************
 
 # Print usage 
 function printUsage () {
@@ -61,7 +62,7 @@ do
     TMP_FILE=`mktemp`
 
     # Search header beginning line number
-    START_LINE=`grep -hn "^/\*\{79\}$" $FILE | cut -d: -f1`
+    START_LINE=`grep -hn "^/\*\{70,\}$" $FILE | cut -d: -f1`
     START_LINE=`expr $START_LINE - 1`
     if [ $START_LINE -ne 0 ]
     then
@@ -71,7 +72,33 @@ do
     # Add new header file
 
     # Search header ending line number
-    END_LINE=`grep -hn "^\ \*\{78\}/$" $FILE | cut -d: -f1`
+    END_LINE=`grep -hn "^\ \*\{70,\}/$" $FILE | cut -d: -f1`
+    END_LINE=`expr $END_LINE + 1`
+    tail --lines=+$END_LINE $FILE >> $TMP_FILE
+
+    mv -f $TMP_FILE $FILE
+    echo "DONE."
+done
+
+# Shell Scripts/Makefile handling
+C_FILES=`find "$1" -name \*.sh -print -or -name \Makefile -print`
+for FILE in $C_FILES;
+do
+    echo -n "Removing $FILE header ... "
+    TMP_FILE=`mktemp`
+
+    # Search header beginning line number
+    START_LINE=`grep -hn "^#\*\{70,\}$" $FILE | head -1 | cut -d: -f1`
+    START_LINE=`expr $START_LINE - 1`
+    if [ $START_LINE -ne "0" ]
+    then
+        head --lines=$START_LINE $FILE > $TMP_FILE
+    fi
+
+    # Add new header file
+
+    # Search header ending line number
+    END_LINE=`grep -hn "^#\*\{70,\}$" $FILE | tail -1 | cut -d: -f1`
     END_LINE=`expr $END_LINE + 1`
     tail --lines=+$END_LINE $FILE >> $TMP_FILE
 
