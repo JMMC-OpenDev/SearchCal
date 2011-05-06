@@ -87,7 +87,8 @@ SCRIPTS         = ctooGetTemplate \
 				  ctooGetSpecificHeaderFile \
 				  ctooGetModuleName \
                   ctooRename \
-                  ctooReplace
+                  ctooReplace \
+                  ctooCleanStandardHeader
 SCRIPTS_L       =
 
 #
@@ -166,6 +167,7 @@ install : install_all
 	-$(AT) cp -r ../templates/* ${TEMPLATES}
 	-$(AT) rm -f ${TEMPLATES}/*/*~
 	-$(AT) rm -f ${TEMPLATES}/*/.*.sw*
+	-$(AT) rm -rf ${TEMPLATES}/*/.svn
 	@echo " . . . installation done"
 
 #___oOo___
