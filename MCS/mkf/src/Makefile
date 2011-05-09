@@ -96,7 +96,7 @@ SCRIPTS         = mkfBuildDocIndex \
                   mkfCreateInstallRootDirs \
                   mkfDoxygen \
                   mkfDoManPages \
-		  mkfRepoUti \
+                  mkfRepoUtil \
                   mkfMakeCopySources \
 				  mkfMakeGeneratedFilesDependencies \
                   mkfMakeJavaClasspath \
