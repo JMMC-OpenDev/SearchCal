@@ -121,13 +121,26 @@ done
 
 # XML handling
 NEW_HEADER=$TEMPLATES/forDocumentation/svn-header.template
-FILELIST=`find "$1" -name \*.xml -print`
+FILELIST=`find "$1" -name \*.xml -print -or -name \*.cdf -print`
 for FILE in $FILELIST;
 do
-    # Find '***...***'
+    # Find first '***...***'
     START_LINE=`grep -hn "^\*\{70,\}$" $FILE | head -1 | cut -d: -f1`
-    # Find '***...***'
+    # Find second '***...***'
     END_LINE=`grep -hn "^\*\{70,\}$" $FILE | tail -1 | cut -d: -f1`
+
+    # If no closing '***...***' found (CDF case)
+    if [ -n "$START_LINE" ]
+    then
+        if [ "$START_LINE" -eq "$END_LINE" ]
+        then
+            echo "CDF file only ???"
+            # Use last line before first comment close tag
+            END_LINE=`grep -hn "^\-\->" $FILE | tail -1 | cut -d: -f1`
+            echo "END_LINE = '$END_LINE'"
+            END_LINE=`expr $END_LINE - 1`
+        fi
+    fi
 
     fileCut $FILE $START_LINE $END_LINE $NEW_HEADER
 done
