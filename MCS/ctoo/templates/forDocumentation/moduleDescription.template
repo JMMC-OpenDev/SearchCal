@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ********************************************************************************
- <INSTITUTE> project
-
- "@(#) $Id: moduleDescription.template,v 1.10 2008-04-23 15:01:37 rdautric Exp $"
-
- History
- ~~~~~~~
- $Log: not supported by cvs2svn $
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
  NAME
  moduleDescription.xml - Give module informations

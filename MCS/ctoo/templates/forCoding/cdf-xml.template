@@ -30,15 +30,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--uu
 ********************************************************************************
- <INSTITUTE> project
-
- "@(#) $I>-<d$"
-
- History
- ~~~~~~~
- $>-Log-<$
-
- you can remove next comments after modification or place yours.
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
 -->
 <cmd
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 

@@ -1,13 +1,5 @@
 #*******************************************************************************
-# <INSTITUTE> project
-#
-# "@(#) $I>-<d$"
-#
-# Makefile of <moduleName> module
-#
-# History
-# -------
-# $>-Log-<$
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile
