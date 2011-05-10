@@ -134,10 +134,8 @@ do
     then
         if [ "$START_LINE" -eq "$END_LINE" ]
         then
-            echo "CDF file only ???"
             # Use last line before first comment close tag
             END_LINE=`grep -hn "^\-\->" $FILE | tail -1 | cut -d: -f1`
-            echo "END_LINE = '$END_LINE'"
             END_LINE=`expr $END_LINE - 1`
         fi
     fi
