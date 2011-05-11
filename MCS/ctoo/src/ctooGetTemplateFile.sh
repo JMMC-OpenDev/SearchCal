@@ -1,25 +1,7 @@
 #!/bin/bash
-#*****************************************************************************
-# JMMC project
-#
-# "@(#) $Id: ctooGetTemplateFile.sh,v 1.13 2005-02-21 15:50:22 gluck Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.12  2005/01/26 13:40:14  gluck
-# Correct bug in comment ($Log: not supported by cvs2svn $ left in comment and then replaced whereas it is not expected)
-#
-# Revision 1.11  2005/01/24 15:47:51  gluck
-# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
-# Bug correction for log message automatic insertion (Revision 1.12  2005/01/26 13:40:14  gluck
-# Bug correction for log message automatic insertion (Correct bug in comment ($Log: not supported by cvs2svn $ left in comment and then replaced whereas it is not expected)
-# Bug correction for log message automatic insertion ()
-#
-# gluck     10-Aug-2004  Created
-#
-#
-#*****************************************************************************
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 
 #/**
 # \file

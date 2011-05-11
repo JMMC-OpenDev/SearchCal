@@ -1,15 +1,6 @@
 #! /bin/bash
-
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: ctooGetDirectoryStructure.sh,v 1.4 2005-01-24 15:47:51 gluck Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# lgluck    07/05/04    Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

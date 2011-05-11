@@ -1,40 +1,7 @@
 #! /bin/bash
-
-#******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: ctooGetCode.sh,v 1.9 2008-09-03 14:01:51 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.8  2006/06/09 11:56:31  mella
-# Add templates for xml files
-#
-# Revision 1.7  2006/06/05 14:30:30  gzins
-# Added command-definition-file choice
-#
-# Revision 1.6  2006/03/07 14:22:22  mella
-# Add templates for java
-#
-# Revision 1.5  2005/04/11 07:52:50  gluck
-# Fix problem report 3: directories creation with correct header file for C++ and template names update
-#
-# Revision 1.4  2005/01/24 15:47:51  gluck
-# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
-# Bug correction for log message automatic insertion (Revision 1.7  2006/06/05 14:30:30  gzins
-# Bug correction for log message automatic insertion (Added command-definition-file choice
-# Bug correction for log message automatic insertion (
-# Bug correction for log message automatic insertion (Revision 1.6  2006/03/07 14:22:22  mella
-# Bug correction for log message automatic insertion (Add templates for java
-# Bug correction for log message automatic insertion (
-# Bug correction for log message automatic insertion (Revision 1.5  2005/04/11 07:52:50  gluck
-# Bug correction for log message automatic insertion (Fix problem report 3: directories creation with correct header file for C++ and template names update
-# Bug correction for log message automatic insertion ()
-#
-# lgluck    14/05/04    Created
-#
-#******************************************************************************
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 
 #/**
 # \file

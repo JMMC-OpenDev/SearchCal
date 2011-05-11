@@ -1,27 +1,6 @@
 #!/bin/bash
-
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: ctooGetTemplateForDirectoryStructure.sh,v 1.13 2005-02-15 15:50:35 gluck Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.12  2005/01/24 15:47:51  gluck
-# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $)
-#
-# lgluck    23-Apr-2004 Created
-# gzins     04-Dec-2004 Look for templates in the following order:
-#                       ../templates, $INTROOT/templates and
-#                       $MCSROOT/templates
-# lgluck    17-Dec-2004 - Add automatic brief description replacement in
-#                         private header file when created in the module.
-#                       - Change call (ctooGetSpecificHeaderFile -> 
-#                         ctooGetSpecificHeaderFile) when create private
-#                         header file.
-#                       - Add module header file creation.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 

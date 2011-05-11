@@ -1,25 +1,6 @@
 #! /bin/sh
-
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: ctooReplace.sh,v 1.6 2007-11-06 05:29:16 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.5  2006/01/09 13:00:46  mella
-# Updated documetation
-#
-# Revision 1.4  2005/01/24 15:47:51  gluck
-# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
-# Bug correction for log message automatic insertion (Revision 1.5  2006/01/09 13:00:46  mella
-# Bug correction for log message automatic insertion (Updated documetation
-# Bug correction for log message automatic insertion ()
-#
-# lafrasse  29/07/04    Forked form VLT Software
-# lafrasse  11/12/04    Changed documentation from VLT Software style to Doxygen
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

@@ -1,16 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: ctooGetModuleName.sh,v 1.8 2005-01-24 15:47:51 gluck Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gluck     14-Sep-2004  Created
-# gzins     09-Dec-2004  Updated to print module name on stdout instead of
-#                        returning value in shell variable.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

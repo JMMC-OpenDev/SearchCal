@@ -1,28 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.21 2005-02-15 10:22:28 gzins Exp $"
-#
-# Makefile of ctoo module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.20  2005/02/15 09:21:36  gzins
-# Remove db_all target
-#
-# Revision 1.19  2005/01/24 15:47:51  gluck
-# Bug correction for log message automatic insertion ($Log: not supported by cvs2svn $
-# Bug correction for log message automatic insertion (Revision 1.20  2005/02/15 09:21:36  gzins
-# Bug correction for log message automatic insertion (Remove db_all target
-# Bug correction for log message automatic insertion ()
-#
-# gluck     18-May-2004 Created
-# gzins     09-Jun-2004 Added templates for doxygen
-# mella     24-Jun-2004 Add buildDocIndex related
-# lafrasse  29-Jul-2004 Added ctooRename & ctooReplace (forked the VLT Soft)
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

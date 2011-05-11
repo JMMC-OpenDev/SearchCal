@@ -1,16 +1,6 @@
 #! /bin/sh
-
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: ctooRename.sh,v 1.4 2005-01-24 15:47:51 gluck Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# lafrasse  29/07/04    Forked form VLT Software
-# lafrasse  11/12/04    Changed documentation from VLT Software style to Doxygen
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**
