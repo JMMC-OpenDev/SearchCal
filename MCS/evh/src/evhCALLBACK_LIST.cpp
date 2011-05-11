@@ -1,21 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhCALLBACK_LIST.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2005/01/29 15:17:02  gzins
- * Added CVS log as modification history
- *
- * gzins     23-Sep-2004  Created
- * gzins     08-Dec-2004  Handled evhCB_DELETE callback return value
- *                        Added some method documentation
- * lafrasse  08-Dec-2004  Added Purge().
- * gzins     08-Dec-2004  Updated Purge().
- * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

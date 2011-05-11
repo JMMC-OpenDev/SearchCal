@@ -1,13 +1,7 @@
 #ifndef evhStates_H
 #define evhStates_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhStates.h,v 1.1 2005-01-26 18:22:07 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

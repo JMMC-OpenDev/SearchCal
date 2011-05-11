@@ -1,41 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhHANDLER.cpp,v 1.11 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2005/12/14 23:09:51  gzins
- * Fixed infinite loop bug when execution of command given in command line failed
- *
- * Revision 1.9  2005/05/19 15:15:20  gzins
- * Added handling of message queue when looking for messages
- *
- * Revision 1.8  2005/02/09 16:28:28  lafrasse
- * Reflected function renaming in 'msg' (GetMsgQueue became GetSocketDescriptor)
- *
- * Revision 1.7  2005/02/03 06:57:01  gzins
- * Updated HandleHelpCmd to format returned reply when short description is requested
- *
- * Revision 1.6  2005/01/26 18:27:22  gzins
- * Handled timeout for callback related to command reply.
- *
- * gzins     22-Sep-2004  Created
- * gzins     17-Nov-2004  Used evhXXX_CALLBACK pointer instead of instance
- *                        reference in order to fix bug related to the
- *                        referencing of deleted callback instance.
- * gzins     18-Nov-2004  Updated main loop to accept message as argument.
- *                        Returned error when no callback is attached to the
- *                        received command.
- * gzins     08-Dec-2004  Added some method documentation
- * gzins     08-Dec-2004  Added purge of events whith no more callback attached
- * gzins     22-Dec-2004  Implemented GetHelp()
- * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *                        Implemented AddCallback() and Run() for command reply
- *                        Updated MainLoop to support cammnd reply event
- *                        Added evhMainHandler global variable
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

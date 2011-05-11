@@ -1,16 +1,7 @@
 #ifndef evhCALLBACK_LIST_H
 #define evhCALLBACK_LIST_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhCALLBACK_LIST.h,v 1.3 2005-01-29 15:16:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * gzins     23-Sep-2004  Created from VLT SW.
- * lafrasse  08-Dec-2004  Added Purge().
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

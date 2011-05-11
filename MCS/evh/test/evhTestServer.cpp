@@ -1,26 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhTestServer.cpp,v 1.10 2006-05-11 13:04:25 mella Exp $"
- *
- * History:
- * --------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2005/05/19 15:22:14  gzins
- * Updated to test message queue features
- *
- * Revision 1.8  2005/02/03 12:44:39  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.7  2005/01/29 20:18:20  gzins
- * Added errCloseStack when error occurs
- *
- * Revision 1.6  2005/01/29 07:24:48  gzins
- * Added CVS log as modification history
- *
- * gzins     24-Sep-2004  Created
- *
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

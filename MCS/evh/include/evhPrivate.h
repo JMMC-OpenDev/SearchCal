@@ -1,15 +1,7 @@
 #ifndef evhPrivate_H
 #define evhPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhPrivate.h,v 1.3 2005-01-29 15:16:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * sccmgr    22-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

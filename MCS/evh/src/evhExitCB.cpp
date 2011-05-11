@@ -1,15 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhExitCB.cpp,v 1.2 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2005/03/04 15:12:31  lafrasse
- * Added the 'EXIT' command callback and management
- *
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

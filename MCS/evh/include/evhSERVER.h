@@ -1,32 +1,7 @@
 #ifndef evhSERVER_H
 #define evhSERVER_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhSERVER.h,v 1.11 2005-10-07 06:53:12 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2005/03/04 15:12:31  lafrasse
- * Added the 'EXIT' command callback and management
- *
- * Revision 1.9  2005/01/29 20:14:52  gzins
- * Added unique parameter to Connect() method
- *
- * Revision 1.8  2005/01/29 15:15:23  gzins
- * Attached callback for DEBUG command.
- *
- * Revision 1.7  2005/01/26 18:09:49  gzins
- * Added methods related to state and sub-state hanlding
- *
- * gzins     09-Nov-2004  Created
- * gzins     23-Nov-2004  Used new msg C++ library.
- *                        Added SendReply method
- * gzins     03-Dec-2004  Added SendCommand
- * gzins     22-Dec-2004  Added HelpCB()
- * gzins     07-Jan-2005  Remove SendCommand(); moved to evhINTERFACE 
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

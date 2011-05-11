@@ -1,19 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhCALLBACK.cpp,v 1.6 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2005/01/29 15:17:02  gzins
- * Added CVS log as modification history
- *
- * gzins     22-Sep-2004  Created
- * gzins     08-Dec-2004  Implemented IsDetached()
- * gzins     22-Dec-2004  Added SetUserData()
- * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

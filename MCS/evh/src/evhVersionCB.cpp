@@ -1,19 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhVersionCB.cpp,v 1.4 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2005/01/29 15:17:02  gzins
- * Added CVS log as modification history
- *
- * Revision 1.2  2005/01/26 18:13:13  gzins
- * Fixed wrong buffer length when calling SetBody.
- *
- * gzins     09-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

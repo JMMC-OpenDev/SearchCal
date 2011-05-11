@@ -1,13 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.3 2005-01-29 07:24:48 gzins Exp $"
-#
-# Makefile of test programs for evh module 
-#
-# History:
-# --------
-# $Log: not supported by cvs2svn $
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

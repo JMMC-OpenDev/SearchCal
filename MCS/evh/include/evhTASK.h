@@ -1,21 +1,7 @@
 #ifndef evhTASK_H
 #define evhTASK_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhTASK.h,v 1.6 2005-10-07 06:51:40 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2005/01/26 18:11:00  gzins
- * Removed references to action log
- *
- * gzins     09-Jun-2004  created
- * gzins     18-Nov-2004  splitted parsing and usage methods to separate
- *                        options and arguments in command-line parameters
- * gzins     20-Dec-2004  removed IsTimerLogOption method
- * 
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,16 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhCMD_REPLY_KEY.cpp,v 1.3 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2005/01/26 18:15:45  gzins
- * Added timeout; i.e. the maximum waiting time for reply
- *
- * gzins     04-Jan-2005  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

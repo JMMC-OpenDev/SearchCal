@@ -1,24 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhTASK.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2005/10/07 06:52:09  gzins
- * Added AdditionalInit() method
- *
- * Revision 1.6  2005/01/26 18:23:25  gzins
- * Removed all references to action log
- *
- * gzins     09-Jun-2004  created
- * gzins     18-Nov-2004  splitted parsing and usage methods to separate
- *                        options and arguments in command-line parameters
- * gzins     03-Dec-2004  Added -n command-line option  
- * gzins     03-Dec-2004  Removed -t command-line option and added -m
- * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhTASK.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $";

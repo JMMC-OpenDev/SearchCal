@@ -1,23 +1,14 @@
 #ifndef evhKEY_H
 #define evhKEY_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhKEY.h,v 1.4 2005-01-29 15:16:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * gzins     24-Sep-2004  Created
- * gzins     19-Nov-2004  Added evhTYPE_COMMAND_REPLY
- * gzins     07-Jan-2005  Added evhTYPE_MESSAGE
- *                        Declared Match() as no pure virtual
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
  * \file
  * Declaration of the evhKEY class.
  */
+
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif

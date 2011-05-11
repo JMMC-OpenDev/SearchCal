@@ -1,15 +1,7 @@
 #ifndef evhIOSTREAM_KEY_H
 #define evhIOSTREAM_KEY_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhIOSTREAM_KEY.h,v 1.3 2005-01-29 15:16:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * gzins     27-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,35 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhINTERFACE.cpp,v 1.9 2007-02-22 12:30:42 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2006/05/11 13:04:18  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.7  2005/11/03 09:02:15  mella
- * Correct bug with message filtering onto Send method
- *
- * Revision 1.6  2005/05/19 15:17:22  gzins
- * Added reply filtering when sending asynchronous message
- * Fixed bug related to callback associated to command reply
- *
- * Revision 1.5  2005/02/15 13:39:03  gzins
- * Changed remaiming SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.4  2005/01/29 06:47:26  gzins
- * Fixed wrong prototype of Forward method
- *
- * Revision 1.3  2005/01/27 17:52:57  gzins
- * Implemented command reply callback: ReplyCB()
- *
- * Revision 1.2  2005/01/26 18:18:08  gzins
- * Added timeout when attaching callback for command reply.
- *
- * gzins     06-Jan-2005  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

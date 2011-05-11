@@ -1,17 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhDebugCB.cpp,v 1.3 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2005/02/03 06:54:42  gzins
- * Removed useless SendReply when error occurs (now done automatically by the evhHandler).
- *
- * Revision 1.1  2005/01/29 15:19:13  gzins
- * Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

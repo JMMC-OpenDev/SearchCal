@@ -1,15 +1,7 @@
 #ifndef evhIOSTREAM_CALLBACK_H
 #define evhIOSTREAM_CALLBACK_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhIOSTREAM_CALLBACK.h,v 1.2 2005-01-29 15:16:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * gzins     22-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

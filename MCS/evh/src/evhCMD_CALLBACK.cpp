@@ -1,25 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhCMD_CALLBACK.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2006/03/21 13:16:32  gzins
- * Fixed bug related to CB failure; ERR_RUN_CB was put in stack after command reply
- *
- * Revision 1.6  2005/02/03 06:53:21  gzins
- * Send reply to send process when callback execution failed.
- *
- * Revision 1.5  2005/01/29 15:17:02  gzins
- * Added CVS log as modification history
- *
- * gzins     22-Sep-2004  Created
- * gzins     17-Nov-2004  Fixed bug in assignment operator method
- * gzins     22-Dec-2004  Added SetMethod()
- * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

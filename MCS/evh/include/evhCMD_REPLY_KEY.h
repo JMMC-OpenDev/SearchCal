@@ -1,15 +1,7 @@
 #ifndef evhCMD_REPLY_KEY_H
 #define evhCMD_REPLY_KEY_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhCMD_REPLY_KEY.h,v 1.2 2005-01-26 18:06:42 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * gzins     04-Jan-2005  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

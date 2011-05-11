@@ -1,17 +1,9 @@
 #ifndef evhCMD_CALLBACK_H
 #define evhCMD_CALLBACK_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhCMD_CALLBACK.h,v 1.3 2005-01-29 15:16:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * gzins     22-Sep-2004  Created
- * gzins     22-Dec-2004  Added SetMethod()
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
+
 /**
  * \file
  * Declaration of the evhCMD_CALLBACK class 

@@ -1,53 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: evhSERVER.cpp,v 1.15 2006-08-25 07:28:05 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.14  2006/05/11 13:04:18  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.13  2005/12/14 23:09:51  gzins
- * Fixed infinite loop bug when execution of command given in command line failed
- *
- * Revision 1.12  2005/10/07 06:53:20  gzins
- * Renamed Init() to AdditionalInit()
- *
- * Revision 1.11  2005/03/04 15:12:31  lafrasse
- * Added the 'EXIT' command callback and management
- *
- * Revision 1.10  2005/02/15 13:39:03  gzins
- * Changed remaiming SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.9  2005/02/10 08:13:38  gzins
- * Removed logging message disabling
- *
- * Revision 1.8  2005/01/29 20:52:00  gzins
- * Fixed forgotten 'unique' argument for Connect()
- *
- * Revision 1.7  2005/01/29 20:14:52  gzins
- * Added unique parameter to Connect() method
- *
- * Revision 1.6  2005/01/29 15:15:00  gzins
- * Attached callback for DEBUG command.
- *
- * Revision 1.5  2005/01/26 18:19:25  gzins
- * Implement methods related to state/sub-state handling
- * Attached callback for STATE command
- *
- * gzins     09-Nov-2004  Created
- * gzins     18-Nov-2004  Added PrintSynopsis, PrintArguments, ParseArguments,
- *                        Connect, Disconnect and MainLoop methods
- *                        Updated Init.
- * gzins     03-Dec-2004  Added -n command-line option  
- * gzins     22-Dec-2004  Attached callback for HELP command
- *                        Replaced GetBodyPtr by GetBody
- * gzins     07-Jan-2005  Changed SUCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *                        Removed SendCommand()
- *                        Added some method documentation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
