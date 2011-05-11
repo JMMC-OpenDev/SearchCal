@@ -1,16 +1,8 @@
 <?xml version="1.0"?>
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: errXmlToH.xsd,v 1.7 2005-02-15 12:55:56 gzins Exp $"
-
- History 
- ~~~~~~~
- $Log: not supported by cvs2svn $
- Revision 1.6  2005/02/15 07:35:32  gzins
- Added file header
-
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 

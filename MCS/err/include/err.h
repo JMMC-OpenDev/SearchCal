@@ -1,20 +1,7 @@
 #ifndef err_H
 #define err_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: err.h,v 1.8 2005-02-09 14:26:03 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2005/01/27 14:13:59  gzins
- * Added declaration of functions/macros related to end-user oriented error message.
- *
- * berezne   02-Jun-2004  created
- * gzins     16-Jun-2004  completed implementation
- * lafrasse  14-Dec-2004  Added errMSG_MAX_LEN from errPrivate.H
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /* The following piece of code alternates the linkage type to C for all 

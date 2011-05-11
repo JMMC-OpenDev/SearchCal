@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: errXmlToH.xsl,v 1.8 2005-03-04 13:49:54 mella Exp $"
-
- History 
- ~~~~~~~
- $Log: not supported by cvs2svn $
- Revision 1.7  2005/02/15 12:55:56  gzins
- Fixed file header problem; placed <?xml version=1.0 encoding=ISO-8859-1?> as first line
-
- Revision 1.6  2005/02/15 07:34:14  gzins
- Added file header
- 
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>

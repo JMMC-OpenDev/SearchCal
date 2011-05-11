@@ -1,14 +1,6 @@
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: moduleDescription.xml,v 1.4 2005-02-15 07:36:55 gzins Exp $"
-
- History
- ~~~~~~~
- $Log: not supported by cvs2svn $
- mella     28-Jun-2004  Created
-
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
  NAME
  moduleDescription.xml - Give module informations

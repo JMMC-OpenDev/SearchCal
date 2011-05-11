@@ -1,23 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.15 2005-02-15 09:29:55 gzins Exp $"
-#
-# Makefile of err module 
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.14  2005/01/31 13:29:21  mella
-# Add the cvs history tag
-# 
-#
-# sccmgr    02-Jun-2004  Created
-# gzins     14-Dec-2004  Run standard installation target first (to create
-#                        INTROOT if needed) before installing jar files
-# gzins     14-Dec-2004  Removed include path for libxml2 and libgdome (done
-# 						 by mkf)
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

@@ -1,20 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: errUserGet.c,v 1.4 2006-01-10 14:40:39 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2005/06/01 13:23:49  gzins
- * Changed logExtDbg to logTrace
- *
- * Revision 1.2  2005/01/31 16:24:12  mella
- * Correct typo
- *
- * Revision 1.1  2005/01/27 14:12:55  gzins
- * Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

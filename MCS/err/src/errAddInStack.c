@@ -1,26 +1,6 @@
 /*******************************************************************************
-* JMMC project
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.6  2005/02/04 10:43:44  gzins
-* Improved log for test
-*
-* Revision 1.5  2005/02/01 07:38:51  mella
-* Correct typo
-*
-* Revision 1.4  2005/01/27 14:08:57  gzins
-* Added isErrUser parameter
-*
-* Revision 1.3  2005/01/24 14:45:09  gzins
-* Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-* Used CVS log as modification history
-*
-* gzins     17-Jun-2004  completed implementation
-* berezne   02-Jun-2004  created
-*
-*-----------------------------------------------------------------------------*/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * \file

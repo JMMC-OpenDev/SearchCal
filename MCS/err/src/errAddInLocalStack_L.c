@@ -1,33 +1,6 @@
 /*******************************************************************************
-* JMMC project
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.14  2005/06/01 13:23:49  gzins
-* Changed logExtDbg to logTrace
-*
-* Revision 1.13  2005/02/15 08:05:12  gzins
-* Completed documentation
-*
-* Revision 1.12  2005/02/04 10:43:44  gzins
-* Improved log for test
-*
-* Revision 1.11  2005/01/31 15:19:50  mella
-* Align some parentheses block
-*
-* Revision 1.10  2005/01/27 14:08:33  gzins
-* Added isErrUser parameter
-*
-* Revision 1.9  2005/01/24 14:49:18  gzins
-* Used CVS log as modification history
-*
-* gzins     23-Nov-2004  removed useless warning messages related to undefined
-*                        INTROOT and MCSROOT
-* gzins     17-Jun-2004  completed implementation
-* berezne   02-Jun-2004  created
-*
-*-----------------------------------------------------------------------------*/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * \file
