@@ -1,49 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: envLIST.cpp,v 1.16 2006-05-11 13:04:13 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.15  2005/12/06 07:13:55  gzins
- * Changed /home/MCS/etc/mcsEnvList to /home/MCS/data/mcscfgEnvList
- *
- * Revision 1.14  2005/12/02 13:44:05  gzins
- * Changed location of mcsEnvList file; located in MCSTOP/etc
- *
- * Revision 1.13  2005/03/24 15:32:05  lafrasse
- * Added code in envLIST:LoadEnvFile to replace any 'localhost' hostname value by the real host name
- *
- * Revision 1.12  2005/02/28 14:25:00  lafrasse
- * Reversed changelog order
- *
- * Revision 1.11  2005/02/28 14:13:50  lafrasse
- * Moved the MCS 'default' environment definition from hard-coded values to the 'mcsEnvList' file
- *
- * Revision 1.10  2005/02/22 11:17:15  lafrasse
- * Update miscDynBufGetNextLine() call because of a miscDynBuf API update
- *
- * Revision 1.9  2005/02/16 15:01:04  gzins
- * Updated call to miscDynBufGetNextLine()
- *
- * Revision 1.8  2005/02/15 13:09:01  gzins
- * Removed Pointer suffix to miscDynBufGetNextLine
- *
- * Revision 1.7  2005/02/13 17:26:51  gzins
- * Minor changes in documentation
- *
- * Revision 1.6  2005/02/13 16:53:13  gzins
- * Added CVS log as modification history
- *
- * gzins     05-Jan-2005  Minor changes in documentation
- * lafrasse  08-Dec-2004  Comment refinments, added the default MCS env in the
- *                        internal map by default, factorized the 'file already
- *                        loaded' detection code from GetHostName(), Show() and
- *                        GetPortNumber() to LoadEnvListFile(), and refined the
- *                        output format of Show()
- * lafrasse  07-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

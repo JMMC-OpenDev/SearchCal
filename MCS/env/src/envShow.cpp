@@ -1,29 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: envShow.cpp,v 1.9 2006-05-11 13:04:13 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2005/12/06 07:13:55  gzins
- * Changed /home/MCS/etc/mcsEnvList to /home/MCS/data/mcscfgEnvList
- *
- * Revision 1.7  2005/12/02 13:44:05  gzins
- * Changed location of mcsEnvList file; located in MCSTOP/etc
- *
- * Revision 1.6  2005/02/28 14:25:00  lafrasse
- * Reversed changelog order
- *
- * Revision 1.5  2005/02/13 17:26:51  gzins
- * Minor changes in documentation
- *
- * Revision 1.4  2005/02/13 16:53:13  gzins
- * Added CVS log as modification history
- *
- * lafrasse  08-Dec-2004  Comment refinments
- * lafrasse  07-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

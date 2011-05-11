@@ -1,18 +1,7 @@
 #ifndef envPrivate_H
 #define envPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: envPrivate.h,v 1.4 2005-02-28 14:13:51 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2005/02/13 16:53:13  gzins
- * Added CVS log as modification history
- *
- * lafrasse  07-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
