@@ -1,18 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.5 2005-06-13 10:24:25 scetre Exp $"
-#
-# Makefile of fnd module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.4  2005/02/15 10:45:22  gzins
-# Added CVS log as file modification history
-#
-# sccmgr    22-Sep-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

@@ -1,16 +1,7 @@
 #ifndef fndMVC_VIEW_H
 #define fndMVC_VIEW_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: fndMVC_VIEW.h,v 1.2 2005-06-17 08:29:00 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2005/06/13 10:24:06  scetre
- * Implementation of MVC base class
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

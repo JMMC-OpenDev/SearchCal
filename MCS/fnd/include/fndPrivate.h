@@ -1,15 +1,7 @@
 #ifndef fndPrivate_H
 #define fndPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: fndPrivate.h,v 1.3 2005-02-15 10:45:22 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * sccmgr    22-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,14 +1,7 @@
 #ifndef fndOBJECT_H
 #define fndOBJECT_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: fndOBJECT.h,v 1.3 2005-02-15 10:45:22 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $* gzins     22-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
