@@ -121,9 +121,9 @@ do
     fileCut $FILE $START_LINE $END_LINE $NEW_HEADER
 done
 
-# Shell Scripts/Makefile/Config handling.
+# Shell Scripts/Python/Makefile/Config handling.
 NEW_HEADER=$TEMPLATES/forMakefile/svn-header.template
-FILELIST=`find "$1" -name \*.sh -print -or -name \Makefile -print -or -name \*.cfg -print`
+FILELIST=`find "$1" -name \*.sh -print -or -name \*.py -print -or -name \Makefile -print -or -name \*.cfg -print`
 for FILE in $FILELIST;
 do
     # Find first '#***...***'
