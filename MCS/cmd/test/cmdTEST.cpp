@@ -1,43 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: cmdTEST.cpp,v 1.16 2006-10-10 15:50:19 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.15  2006/10/10 11:08:09  lafrasse
- * Typo correction.
- *
- * Revision 1.14  2006/10/10 10:56:42  lafrasse
- * Changed GetXMLSerialization() API in serializeToXML().
- *
- * Revision 1.13  2006/10/09 15:05:43  lafrasse
- * Added XML serialization of any command.
- *
- * Revision 1.12  2006/05/11 13:04:11  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.11  2006/01/04 12:33:01  mella
- * Improve test for default values
- *
- * Revision 1.10  2005/02/27 09:28:37  gzins
- * Updated to test error handling
- *
- * Revision 1.9  2005/02/22 12:39:11  mella
- * Place main code into a new lock {} to perform a better c++ housekeeping
- *
- * Revision 1.8  2005/02/17 18:00:10  gzins
- * Included test for GetCmdParamLine()
- *
- * Revision 1.7  2005/02/15 11:02:48  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.6  2005/02/15 10:58:58  gzins
- * Added CVS log as file modification history
- *
- * mella     16-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

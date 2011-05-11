@@ -1,55 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: cmdPARAM.cpp,v 1.18 2006-05-11 13:04:09 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.17  2006/01/04 12:36:19  mella
- * Corrected bug with default values
- *
- * Revision 1.16  2005/04/17 16:18:59  mella
- * Improve documentation
- *
- * Revision 1.15  2005/04/11 12:33:25  scetre
- * Revue : changed documentation
- *
- * Revision 1.14  2005/04/11 12:20:08  scetre
- * Revue : changed documentation
- *
- * Revision 1.13  2005/03/04 17:04:11  scetre
- * Defined errors related to parameter out of range as user error
- *
- * Revision 1.12  2005/03/03 16:13:43  lafrasse
- * Removed a repetitove 'unit' cout in cmdParam::GetHelp()
- *
- * Revision 1.11  2005/03/03 10:46:47  gzins
- * Fixed bug in range check of float parameters
- *
- * Revision 1.10  2005/02/28 13:38:18  lafrasse
- * Added minimum and maximum parameter values information output in cmdPARAM:GetHelp()
- *
- * Revision 1.9  2005/02/28 11:05:59  scetre
- * Removed unused printf
- *
- * Revision 1.8  2005/02/27 19:44:17  gzins
- * Implemented parameter value range check
- *
- * Revision 1.7  2005/02/27 09:27:41  gzins
- * Improved error handling
- *
- * Revision 1.6  2005/02/15 11:02:48  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.5  2005/02/15 10:58:58  gzins
- * Added CVS log as file modification history
- *
- * mella     15-Nov-2004  Created
- * gzins     15-Dec-2004  Added error handling
- * lafrasse  01-Feb-2005  Refined GetHelp output format and added type
- *                        management
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

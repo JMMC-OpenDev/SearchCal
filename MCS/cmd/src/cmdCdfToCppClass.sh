@@ -1,19 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: cmdCdfToCppClass.sh,v 1.9 2005-05-31 13:18:52 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.8  2005/02/15 10:58:58  gzins
-# Added CVS log as file modification history
-#
-# mella     21-Nov-2004  Created
-# gzins     09-Dec-2004  Removed module name argument
-# gzins     10-Dec-2004  Checked CDF name
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

@@ -3,51 +3,9 @@
     <xsl:output method="text" omit-xml-declaration="yes" indent="no"/>
 
 <!--
-    ********************************************************************************
-    JMMC project
-
-    "@(#) $Id: cmdCdfToCppCB.xsl,v 1.13 2006-10-16 07:54:25 mella Exp $"
-
-    History
-    ~~~~~~~
-    $Log: not supported by cvs2svn $
-    Revision 1.12  2006/10/06 12:38:05  mella
-    Correct lower case error for callback object name
-
-    Revision 1.11  2006/10/05 15:10:41  mella
-    And Suppress 2nd rcs id $
-
-    Revision 1.10  2006/10/05 15:09:01  mella
-    Suppress rcs log problem
-
-    Revision 1.9  2006/10/05 09:31:26  mella
-    Add header and change some doxygen documentation
-
-    Revision 1.8  2006/10/03 13:48:55  mella
-    Correct some subtil errors...
-
-    Revision 1.7  2006/09/28 15:23:14  mella
-    Add _NAME to one command name define
-
-    Revision 1.6  2006/09/28 14:52:37  mella
-    remove automatically generated... message
-
-    Revision 1.5  2005/12/14 14:56:56  mella
-    add comments
-
-    Revision 1.4  2005/06/01 08:12:58  mella
-    Add more code
-
-    Revision 1.3  2005/06/01 05:56:13  mella
-    Change case for filename
-
-    Revision 1.2  2005/06/01 05:38:12  mella
-    Add doxygen part for CB method
-
-    Revision 1.1  2005/05/31 14:56:53  mella
-    First revision
-
-    ********************************************************************************
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
 -->
     
     <xsl:param name="moduleName"/>

@@ -1,15 +1,7 @@
 #ifndef cmd_H
 #define cmd_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: cmd.h,v 1.3 2005-02-15 10:58:58 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * mella     23-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,33 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.13 2009-01-26 14:53:33 mella Exp $"
-#
-# Makefile of cmd
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.12  2005/12/16 15:35:52  mella
-# First revision
-#
-# Revision 1.11  2005/12/14 12:41:32  mella
-# Add CdfToTestScript
-#
-# Revision 1.10  2005/06/01 05:50:22  mella
-# Add cmdCdfToCB.xsl for install
-#
-# Revision 1.9  2005/05/31 14:57:36  mella
-# cmdCdfToCppCB.sh added
-#
-# Revision 1.8  2005/02/15 11:04:33  gzins
-# Removed unused target
-#
-# Revision 1.7  2005/02/15 10:58:58  gzins
-# Added CVS log as file modification history
-#
-# gzins     17-Jun-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

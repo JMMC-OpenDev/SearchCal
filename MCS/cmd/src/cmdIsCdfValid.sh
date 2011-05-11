@@ -1,17 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: cmdIsCdfValid.sh,v 1.3 2005-12-14 12:42:28 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.2  2005/02/15 10:58:58  gzins
-# Added CVS log as file modification history
-#
-# mella     21-Nov-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

@@ -1,15 +1,7 @@
 #ifndef cmdPrivate_H
 #define cmdPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: cmdPrivate.h,v 1.3 2005-02-15 10:58:58 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * sccmgr    19-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

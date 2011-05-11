@@ -3,19 +3,9 @@
     <xsl:output method="text" omit-xml-declaration="yes" indent="no"/>
 
 <!--
-    ********************************************************************************
-    JMMC project
-
-    "@(#) $Id: cmdCdfToJavaInterface.xsl,v 1.2 2006-10-13 10:30:53 mella Exp $"
-
-    History
-    ~~~~~~~
-    $Log: not supported by cvs2svn $
-    Revision 1.1  2006/09/29 07:27:45  mella
-    First revision
-
-
-    ********************************************************************************
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
 -->
     
     <xsl:param name="moduleName"/>

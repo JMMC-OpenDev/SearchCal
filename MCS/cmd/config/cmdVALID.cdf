@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+-->
+
 <cmd
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xsi:noNamespaceSchemaLocation="cmdDefinitionFile.xsd">

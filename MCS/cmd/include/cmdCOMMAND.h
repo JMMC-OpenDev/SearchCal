@@ -1,50 +1,7 @@
 #ifndef cmdCOMMAND_H
 #define cmdCOMMAND_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: cmdCOMMAND.h,v 1.18 2006-10-10 15:50:15 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.17  2006/10/10 11:08:04  lafrasse
- * Typo correction.
- *
- * Revision 1.16  2006/10/10 10:56:38  lafrasse
- * Changed GetXMLSerialization() API in serializeToXML().
- *
- * Revision 1.15  2006/10/09 15:05:37  lafrasse
- * Added XML serialization of any command.
- *
- * Revision 1.14  2005/04/11 12:20:08  scetre
- * Revue : changed documentation
- *
- * Revision 1.13  2005/02/27 19:44:17  gzins
- * Implemented parameter value range check
- *
- * Revision 1.12  2005/02/27 09:27:41  gzins
- * Improved error handling
- *
- * Revision 1.11  2005/02/17 09:03:01  gzins
- * Added GetCmdParamLine method
- * Updated to keep parameter order as defined in CDF
- *
- * Revision 1.10  2005/02/15 10:58:58  gzins
- * Added CVS log as file modification history
- *
- * mella     15-Nov-2004  Created
- * gzins     06-Dec-2004  Renamed _hasNotBeenYetParsed to _hasBeenYetParsed
- * gzins     09-Dec-2004  Added pure virtual Parse() method
- *                        Added cdfFilename argument to previous Parse() method
- * gzins     22-Dec-2004  Added cdfName parameter to constructor
- *                        Removed Parse(void) method
- *                        Renamed GetHelp to GetDescription
- *                        Added GetShortDescription
- * lafrasse  01-Feb-2005  Added GetFirstSentenceOfDescription()
- * lafrasse  02-Feb-2005  Moved GetFirstSentenceOfDescription() code in
- *                        GetShortDescription()
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

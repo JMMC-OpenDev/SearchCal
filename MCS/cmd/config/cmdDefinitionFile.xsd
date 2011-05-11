@@ -3,6 +3,12 @@
 xmlns:xs="http://www.w3.org/2001/XMLSchema" 
 elementFormDefault="qualified">
 
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+-->
+
     <!-- TYPE DEFINITION : cmd  -->
 	<xs:element name="cmd">
     <xs:complexType>

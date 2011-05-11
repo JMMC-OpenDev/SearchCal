@@ -1,14 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: cmdCdfToJavaInterface.sh,v 1.1 2006-09-29 07:27:45 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

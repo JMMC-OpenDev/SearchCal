@@ -1,13 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: cmdCdfToTestScript.sh,v 1.1 2005-12-14 12:46:46 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

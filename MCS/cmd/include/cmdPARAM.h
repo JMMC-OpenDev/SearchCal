@@ -1,32 +1,7 @@
 #ifndef cmdPARAM_H
 #define cmdPARAM_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: cmdPARAM.h,v 1.12 2005-04-17 16:18:48 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.11  2005/04/11 12:33:25  scetre
- * Revue : changed documentation
- *
- * Revision 1.10  2005/02/28 13:38:18  lafrasse
- * Added minimum and maximum parameter values information output in 
- * cmdPARAM:GetHelp()
- *
- * Revision 1.9  2005/02/27 19:44:17  gzins
- * Implemented parameter value range check
- *
- * Revision 1.8  2005/02/27 09:27:41  gzins
- * Improved error handling
- *
- * Revision 1.7  2005/02/15 10:58:58  gzins
- * Added CVS log as file modification history
- *
- * mella     15-Nov-2004  Created
- * lafrasse  01-Feb-2005  Added type management
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

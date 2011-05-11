@@ -1,35 +1,7 @@
 #!/usr/bin/python
-#******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: cmdBatch.py,v 1.8 2009-02-03 09:57:16 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.7  2009/02/03 09:52:27  mella
-# support config names on command line arguments
-#
-# Revision 1.6  2009/01/26 14:53:33  mella
-# improve error message
-#
-# Revision 1.5  2006/01/03 11:39:10  mella
-# Improve parameters parsing
-#
-# Revision 1.4  2006/01/03 10:12:24  mella
-# Remove unused part and protect parameters value with double quotes
-#
-# Revision 1.3  2005/12/16 16:04:16  mella
-# Do not require user action
-#
-# Revision 1.2  2005/12/16 15:36:43  mella
-# Remove unused Sesame import
-#
-# Revision 1.1  2005/12/16 15:35:52  mella
-# First revision
-#
-#
-#************************************************************************
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 """ This script aims to launch multiple requests based onto an input file that must be 
 given as first parameter. All sections are executed until user specified some on
 command line.
