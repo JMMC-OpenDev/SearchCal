@@ -1,25 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscTestDate.c,v 1.9 2006-05-11 13:04:56 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2005/05/26 09:53:31  lafrasse
- * Code review : refined user documentation
- *
- * Revision 1.7  2005/03/03 16:10:59  gluck
- * Update due to code review
- *
- * Revision 1.6  2005/02/15 09:44:37  gzins
- * Added CVS log as file modification history
- *
- * lafrasse  02-Aug-2004  Changed local includes to use miscDate headers
- * lafrasse  22-Jul-2004  Correted some typos, code factorization, and error
- *                        management
- * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestDate.c,v 1.9 2006-05-11 13:04:56 mella Exp $";

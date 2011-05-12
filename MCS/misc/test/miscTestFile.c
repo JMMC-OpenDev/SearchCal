@@ -1,43 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscTestFile.c,v 1.21 2010-01-15 14:18:44 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.20  2006/05/11 13:04:56  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.19  2005/10/10 12:00:11  lafrasse
- * Added miscLocateDir()
- *
- * Revision 1.18  2005/10/06 15:12:46  lafrasse
- * Added miscGetEnvVarIntValue function
- *
- * Revision 1.17  2005/05/26 16:05:11  lafrasse
- * Corrected a bug re-introduced during code review in miscResolvePath(), that was causing data loss upon call of the function on the result of another call of the same function
- *
- * Revision 1.16  2005/05/20 16:22:50  lafrasse
- * Code review : refined user and developper documentation, functions reordering, and rationnalized miscYankExtension()
- *
- * Revision 1.15  2005/02/15 09:44:37  gzins
- * Added CVS log as file modification history
- *
- * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
- * lafrasse  21-Jul-2004  Added miscResolvePath, miscGetEnvVarValue, and
- *                        miscYankLastPath tests
- * lafrasse  02-Aug-2004  Changed local includes to use miscFile headers
- * lafrasse  03-Aug-2004  Changed miscResolvePath test to reveal a bug that was
- *                        causing an '\' append at the end of the computed path
- * lafrasse  23-Aug-2004  Changed miscGetEnvVarValue API
- * lafrasse  27-Sep-2004  Added miscFileExists test
- * lafrasse  28-Sep-2004  Added miscLocateFileInPath test and corrected a bug in
- *                        the miscResolvePath test
- * lafrasse  30-Sep-2004  Added miscLocateFile test
- * lafrasse  01-Oct-2004  Updated to reflect miscResolvePath API change
- * lafrasse  07-Oct-2004  Changed miscFileExists API
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestFile.c,v 1.21 2010-01-15 14:18:44 lafrasse Exp $";

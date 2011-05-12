@@ -1,51 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscTestDynBuf.c,v 1.22 2010-01-15 17:03:30 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.21  2006/05/11 13:04:56  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.20  2005/12/02 13:04:32  lafrasse
- * Added miscDynBufSavePartInFile() and miscDynBufSaveInASCIIFile().
- * Changed miscDynBufSaveInFile() to rely on miscDynBufSavePartInFile().
- *
- * Revision 1.19  2005/02/22 11:11:38  lafrasse
- * Added miscDynBufGetNextCommentLine(), miscDynBufAppendLine() and miscDynBufAppendComentLine()
- *
- * Revision 1.18  2005/02/16 14:40:30  gzins
- * Updated after miscDynBufGetNextLine() API change.
- *
- * Revision 1.17  2005/02/15 12:43:26  gzins
- * Removed Pointer suffix to miscDynBufGetNextLine and miscDynBufGetBuffer
- *
- * Revision 1.16  2005/02/15 09:44:37  gzins
- * Added CVS log as file modification history
- *
- * gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
- *                        miscDynBufGetNbStoredBytes and
- *                        miscDynBufGetAllocatedBytesNumber to
- *                        miscDynBufGetNbAllocatedBytes
- * lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer(),
- *                        miscDynBufGetCommentPattern(),
- *                        miscDynBufSetCommentPattern() and miscDynBufLoadFile()
- *                        functions test
- * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
- * lafrasse  02-Aug-2004  Added miscTesDynStr code, due to null-terminated
- *                        string specific functions move from miscDynStr.h to
- *                        miscDynBuf.h
- * lafrasse  23-Jul-2004  Added error management to
- *                        miscDynBufGetStoredBytesNumber and
- *                        miscDynBufGetAllocatedBytesNumber, plus
- *                        miscDynBufGetBytesFromTo parameter refinments
- * lafrasse  20-Jul-2004  Removed all '\0' from char arrays
- * lafrasse  09-Jul-2004  Passed some polish
- * lafrasse  23-Jun-2004  Added miscDynBufSaveInFile() test
- * lafrasse  23-Jun-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestDynBuf.c,v 1.22 2010-01-15 17:03:30 lafrasse Exp $";

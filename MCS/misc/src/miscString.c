@@ -1,50 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.24  2006/01/10 14:40:39  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.23  2005/05/26 08:48:20  lafrasse
- * Code review : user and developper documentation refinments and code simplifications
- *
- * Revision 1.22  2005/05/20 12:55:01  gzins
- * Improved miscIsSpaceString documentation
- *
- * Revision 1.21  2005/04/07 08:29:57  gluck
- * Code review: minor changes
- *
- * Revision 1.20  2005/02/25 17:51:40  gzins
- * Simplified miscDeleteChr
- *
- * Revision 1.19  2005/02/25 16:43:52  lafrasse
- * Added miscDeleteChr()
- *
- * Revision 1.18  2005/02/21 15:27:52  lafrasse
- * Added miscIsCommentLine()
- *
- * Revision 1.17  2005/02/13 11:23:28  gzins
- * Changed parameter type of miscIsSpaceString from char* to const char*
- *
- * Revision 1.16  2005/01/31 12:54:45  gluck
- * Bug correction: in miscSplitString(), wrong (uncomplete) array initialisation to '\0'  with memset => add explicit '\0' at the end of each string
- *
- * Revision 1.15  2005/01/28 18:39:10  gzins
- * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
- *
- * lafrasse  17-Jan-2005  Added miscSplitString function
- * gzins     16-Dec-2004  Added miscDuplicateString function
- * gzins     15-Dec-2004  Added miscTrimString function
- * lafrasse  02-Aug-2004  Changed includes to isolate miscFile headers from
- *                        misc.h
- *                        Moved mcs.h include to miscString.h
- * lafrasse  23-Jul-2004  Added error management
- * gzins     23-Jul-2004  Added miscIsSpaceStr
- * lafrasse  17-Jun-2004  Added miscStrToUpper
- * gzins     16-Jun-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

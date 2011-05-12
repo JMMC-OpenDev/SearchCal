@@ -1,74 +1,7 @@
 #ifndef miscDynBuf_H
 #define miscDynBuf_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscDynBuf.h,v 1.24 2010-01-15 17:03:30 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.23  2005/12/02 13:04:32  lafrasse
- * Added miscDynBufSavePartInFile() and miscDynBufSaveInASCIIFile().
- * Changed miscDynBufSaveInFile() to rely on miscDynBufSavePartInFile().
- *
- * Revision 1.22  2005/05/26 13:03:44  lafrasse
- * Code review : added const attribute to necessary parameters, and change doxygen attributes from '\' to '@'
- *
- * Revision 1.21  2005/05/17 15:34:41  lafrasse
- * Re-ordered functions
- *
- * Revision 1.20  2005/03/03 16:10:31  gluck
- * Code review corrections: code + documentation ...
- *
- * Revision 1.19  2005/02/22 11:11:38  lafrasse
- * Added miscDynBufGetNextCommentLine(), miscDynBufAppendLine() and miscDynBufAppendComentLine()
- *
- * Revision 1.18  2005/02/16 14:39:55  gzins
- * Updated miscDynBufGetNextLine() function to do not alter buffer content.
- *
- * Revision 1.17  2005/02/15 12:40:22  gzins
- * Removed miscDynBufGetNextLinePointer and miscDynBufGetBufferPointer macros
- *
- * Revision 1.16  2005/02/10 10:08:07  lafrasse
- * Added miscDynBufSaveInFile(), and moved as most miscDynBuf parameters as possible to const type
- *
- * Revision 1.15  2005/02/03 08:59:24  gzins
- * Defined 'bytes' parameter as constant in miscDynBufAppendBytes
- * Defined 'str' parameter as constant in miscDynBufAppendString
- *
- * Revision 1.14  2005/01/28 18:10:17  gzins
- * Renamed miscDynBufGetBufferPointer to miscDynBufGetBuffer
- * Renamed miscDynBufGetNextLinePointer to miscDynBufGetNextLine
- * Added macros for backward compatibility
- *
- * Revision 1.13  2005/01/28 17:54:41  gzins
- * Declared dynBuf parameter of miscDynBufGetBufferPointer as const
- *
- * gzins     21-Dec-2004  Renamed miscDynBufGetStoredBytesNumber to
- *                        miscDynBufGetNbStoredBytes and
- *                        miscDynBufGetAllocatedBytesNumber to
- * lafrasse  08-Nov-2004  Added miscDynBufGetNextLinePointer() and
- *                        miscDynBufLoadFile() function, plus a new field in
- *                        the Dynamic Buffer structure to store the comment
- *                        pattern to be skipped by
- *                        miscDynBufGetNextLinePointer() with
- *                        miscDynBufGetCommentPattern() and
- *                        miscDynBufSetCommentPattern() to deal with this field
- * lafrasse  30-Sep-2004  Changed miscDynBufAlloc second parameter type from
- *                        mcsUINT32 to mcsINT32
- * lafrasse  23-Aug-2004  Moved miscDynBufInit from local to public
- * lafrasse  02-Aug-2004  Moved mcs.h include in from miscDynBuf.c
- *                        Moved in null-terminated string specific functions
- *                        from miscDynStr.h
- * lafrasse  23-Jul-2004  Moved miscDYN_BUF_MAGIC_STRUCTURE_ID to miscPrivate.h,
- *                        added error management to
- *                        miscDynBufGetStoredBytesNumber and
- *                        miscDynBufGetAllocatedBytesNumber, plus
- *                        miscDynBufGetBytesFromTo parameter refinments.
- * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
- * lafrasse  06-Jul-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

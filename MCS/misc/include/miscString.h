@@ -1,28 +1,7 @@
 #ifndef miscString_H
 #define miscString_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscString.h,v 1.12 2005-05-26 08:48:20 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.11  2005/02/25 16:43:52  lafrasse
- * Added miscDeleteChr()
- *
- * Revision 1.10  2005/02/21 15:27:52  lafrasse
- * Added miscIsCommentLine()
- *
- * Revision 1.9  2005/02/15 09:37:52  gzins
- * Added CVS log as file modification history
- *
- * lafrasse  17-Jan-2005  Added miscSplitString function
- * gzins     16-Dec-2004  Added miscDuplicateString function
- * gzins     15-Dec-2004  Added miscTrimString function
- * lafrasse  02-Aug-2004  Forked from misc.h to isolate miscString headers
- *                        Moved mcs.h include in from miscString.c
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

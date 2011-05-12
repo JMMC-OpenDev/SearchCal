@@ -1,47 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.17  2005/05/26 13:02:19  lafrasse
- * Corrected a compilation warning
- *
- * Revision 1.16  2005/05/26 12:33:18  gzins
- * Supressed warning related to assignment of read-only 'precision' parameter
- *
- * Revision 1.15  2005/05/26 09:53:31  lafrasse
- * Code review : refined user documentation
- *
- * Revision 1.14  2005/03/03 15:48:01  gluck
- * Code review corrections:
- *  - invert argument in prototypes to be compliant with I, I/O, O parameter order
- *  - improvments
- *  - code factorisation: put miscGetUtcTimeStr and miscGetLocalTimeStr code in static miscGetTimeStr function
- *
- * Revision 1.13  2005/02/22 15:05:55  gluck
- * Code review corrections
- *
- * Revision 1.12  2005/02/22 10:23:35  gluck
- * Code review corrections: doxygen file header
- *
- * Revision 1.11  2005/02/22 10:08:15  gluck
- * Code review corrections
- *
- * Revision 1.10  2005/02/15 09:40:34  gzins
- * Added CVS log as file modification history
- *
- * Revision 1.9  2005/01/28 18:39:10  gzins
- * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
- *
- * lafrasse  02-Aug-2004  Changed includes to isolate miscDate headers from
- *                        misc.h
- *                        Moved mcs.h include to miscDate.h
- * lafrasse  23-Jul-2004  Added error management code optimisation
- * lafrasse  22-Jul-2004  Added error management
- * lafrasse  17-Jun-2004  Added miscGetLocalTimeStr
- * gzins     16-Jun-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

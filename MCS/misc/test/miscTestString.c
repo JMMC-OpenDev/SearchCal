@@ -1,29 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscTestString.c,v 1.14 2006-05-11 13:04:56 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.13  2005/05/26 08:48:20  lafrasse
- * Code review : user and developper documentation refinments and code simplifications
- *
- * Revision 1.12  2005/02/25 16:43:52  lafrasse
- * Added miscDeleteChr()
- *
- * Revision 1.11  2005/02/21 15:27:52  lafrasse
- * Added miscIsCommentLine()
- *
- * Revision 1.10  2005/02/15 09:44:37  gzins
- * Added CVS log as file modification history
- *
- * lafrasse  17-Jan-2005  Added miscSplitString function
- * gzins     15-Dec-2004  Added test for miscTrimString function
- * lafrasse  02-Aug-2004  Changed local includes to use miscString headers
- * lafrasse  23-Jul-2004  Added error management, and miscIsSpaceStr test
- * lafrasse  23-Jun-2004  Forked from miscTestUtils.c
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestString.c,v 1.14 2006-05-11 13:04:56 mella Exp $";

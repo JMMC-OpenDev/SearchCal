@@ -1,24 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: misc.doc,v 1.11 2005-04-07 13:14:40 gluck Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2005/02/22 08:08:33  gluck
- * Code review updates
- *
- * Revision 1.9  2005/02/15 09:40:34  gzins
- * Added CVS log as file modification history
- *
- * lafrasse  18-Jul-2004  Created
- * lafrasse  22-Jul-2004  Added new File functions, and passed some polish
- * lafrasse  02-Aug-2004  Removed miscDynStr due to null-terminated string
- *                        specific functions move from miscDynStr.h to
- *                        miscDynBuf.h
- * lafrasse  03-Aug-2004  Added miscNetwork stuff
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

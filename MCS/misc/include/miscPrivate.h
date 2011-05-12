@@ -1,21 +1,7 @@
 #ifndef miscPrivate_H
 #define miscPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscPrivate.h,v 1.7 2005-03-03 16:11:51 gluck Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2005/02/15 09:37:52  gzins
- * Added CVS log as file modification history
- *
- * gzins     24-Jun-2004  Created
- * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
- * lafrasse  23-Jul-2004  Added miscDYN_BUF_MAGIC_STRUCTURE_ID from miscDynBuf.h
- * lafrasse  02-Aug-2004  Added mcs.h include
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,30 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscLocateFile.c,v 1.10 2006-01-10 14:40:39 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2005/10/06 12:52:41  lafrasse
- * Corrected some grammar mistakes in the documentation
- *
- * Revision 1.8  2005/05/26 08:59:26  lafrasse
- * Code review : minor modifications
- *
- * Revision 1.7  2005/04/07 12:55:05  gluck
- * Code review: minor changes
- *
- * Revision 1.6  2005/02/12 14:49:19  gzins
- * No longer resolve file name path before printing out name of found file; done by miscLocateFile
- *
- * Revision 1.5  2005/01/28 18:39:10  gzins
- * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
- *
- * gzins     23-Nov-2004  Returned a 'resolved' path; i.e. where environment
- *                        variables have substituted
- * gzins     09-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

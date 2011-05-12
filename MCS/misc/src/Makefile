@@ -1,34 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.16 2008-02-13 07:17:18 mella Exp $"
-#
-# Makefile of misc Library
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.15  2005/10/10 12:00:38  lafrasse
-# Added miscLocateDir
-#
-# Revision 1.14  2005/02/15 10:26:22  gzins
-# Removed unused target
-#
-# Revision 1.13  2005/02/15 09:40:34  gzins
-# Added CVS log as file modification history
-#
-# lafrasse  24-Jun-2004  Created
-# lafrasse  01-Jul-2004  Added miscDynBuf.h
-# lafrasse  13-Jul-2004  Added miscDynStr.h
-# lafrasse  02-Aug-2004  Removed miscDynStr compilation due to null-terminated
-#                        string specific functions move from miscDynStr.h to
-#                        miscDynBuf.h
-# lafrasse  03-Aug-2004  Added miscNetwork stuff
-# gzins     03-Aug-2004  Added installation of all include files 
-# lafrasse  10-Aug-2004  Removed miscPrivate. installation
-# gzins     09-Nov-2004  Added miscLocateFile compilation directives 
-# gzins     17-Dec-2004  Added miscHash
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

@@ -1,34 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.13 2008-05-16 08:13:47 ccmgr Exp $"
-#
-# Makefile of misc Tests
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.12  2005/10/10 12:00:11  lafrasse
-# Added miscLocateDir()
-#
-# Revision 1.11  2005/02/15 10:26:22  gzins
-# Removed unused target
-#
-# Revision 1.10  2005/02/15 09:44:37  gzins
-# Added CVS log as file modification history
-#
-# gzins     16-Jun-2004  created
-# lafrasse  23-Jun-2004  added miscTestDate.c
-#                        added miscTestString.c
-#                        added miscTestFile.c
-#                        removed miscTestUtils.c
-#                        added miscTestDynBuf.c
-# lafrasse  13-Jul-2004  added miscTestDynStr.c
-# lafrasse  02-Aug-2004  Removed miscTestDynStr compilation, due to
-#                        null-terminated string specific functions move from
-#                        miscDynStr.h to miscDynBuf.h
-# lafrasse  03-Aug-2004  Added miscTestNetwork.c
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

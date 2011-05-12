@@ -1,18 +1,7 @@
 #ifndef miscHash_H
 #define miscHash_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscHash.h,v 1.3 2005-04-06 12:59:33 gluck Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2005/02/15 09:37:52  gzins
- * Added CVS log as file modification history
- *
- * gzins     16-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,20 +1,6 @@
 #*******************************************************************************
-# JMMC project
-#
-# Doxyfile for Doxygen 1.3.3
-#
-# "@(#) $Id: doxyfile,v 1.4 2005-02-21 16:32:01 gluck Exp $" 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.3  2005/02/21 16:19:29  gluck
-# Added JMMC project in file header
-#
-# Revision 1.2  2005/02/21 16:17:50  gluck
-# Added standard header
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
 #
@@ -24,7 +10,7 @@
 # For lists items can also be appended using:
 #       TAG += value [value, ...]
 # Values that contain spaces should be placed between quotes (" ")
-#*******************************************************************************
+#
 
 #---------------------------------------------------------------------------
 # Module configuration options customization

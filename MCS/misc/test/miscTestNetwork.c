@@ -1,37 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscTestNetwork.c,v 1.12 2011-02-22 10:02:43 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.11  2010/02/15 15:59:55  mella
- * added miscPerformHttpPost()
- *
- * Revision 1.10  2010/01/15 17:05:45  lafrasse
- * Updated miscPerformHttpGet() to use miscDynBufExecuteCommand().
- *
- * Revision 1.9  2008/04/04 12:30:04  lafrasse
- * Added miscPerformHttpGet() function.
- *
- * Revision 1.8  2006/05/11 13:04:56  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.7  2005/10/06 15:11:23  lafrasse
- * Corrections in order to ensure compilation of src and test again
- *
- * Revision 1.6  2005/09/15 14:26:20  scetre
- * Added miscGetHostByName in the miscNetwork file and test
- *
- * Revision 1.5  2005/09/15 14:19:27  scetre
- * Added miscGetHostByName in the miscNetwork file
- *
- * Revision 1.4  2005/02/15 09:44:37  gzins
- * Added CVS log as file modification history
- *
- * lafrasse  03-Aug-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscTestNetwork.c,v 1.12 2011-02-22 10:02:43 mella Exp $";

@@ -1,22 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: miscHash.c,v 1.5 2006-01-10 14:40:39 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2005/05/20 12:55:42  gzins
- * Updated after code review
- *
- * Revision 1.3  2005/04/06 12:59:33  gluck
- * Code review: minor changes
- *
- * Revision 1.2  2005/01/28 18:39:10  gzins
- * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
- *
- * gzins     16-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

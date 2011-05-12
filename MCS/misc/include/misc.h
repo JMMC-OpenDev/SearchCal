@@ -1,36 +1,7 @@
 #ifndef misc_H
 #define misc_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: misc.h,v 1.23 2005-02-15 09:37:52 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * gzins     16-Jun-2004  Created
- * lafrasse  17-Jun-2004  Added miscGetLocalTimeStr, miscStripQuotes,
- *                        miscStrToUpper and miscGetExtension
- * lafrasse  18-Jun-2004  Added miscYankExtension and miscResolvePath
- * lafrasse  23-Jun-2004  added miscDynBuf stuff
- * lafrasse  01-Jul-2004  moved miscDynBuf stuff to miscDynBuf.h
- * lafrasse  08-Jul-2004  Added 'modc' like doxygen documentation tags
- * lafrasse  19-Jul-2004  Added miscDynStr doxygen comment
- * lafrasse  20-Jul-2004  Added miscResolvePath, miscGetValueEnvVar, and
- *                        miscYankLastPath for miscFile.c
- * lafrasse  22-Jul-2004  Added an include of misDynStr.h to centralize 'misc'
- *                        user includes on misc.h
- *                        Added error management to miscDate
- * gzins     23-Jul-2004  Added miscIsSpaceStr to miscString
- * lafrasse  23-Jul-2004  Added error management to miscString
- * lafrasse  02-Aug-2004  Removed all functions declaration, and included
- *                        separated header files instead
- *                        Removed miscDynStr.h include due to null-terminated
- *                        string specific functions move from miscDynStr.h to
- *                        miscDynBuf.h
- * lafrasse  03-Aug-2004  Added miscNetwork.h
- * gzins     16-Dec-2004  Added miscHash.h
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
  
 /**
