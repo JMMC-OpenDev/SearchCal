@@ -1,13 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mcscfgShow.sh,v 1.1 2005-12-06 07:38:59 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

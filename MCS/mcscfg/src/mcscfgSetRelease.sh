@@ -1,33 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mcscfgSetRelease.sh,v 1.2 2007-02-22 12:16:13 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2005/12/06 07:56:19  gzins
-# Moved from mcs module
-#
-# Revision 1.3  2005/12/02 15:04:37  mella
-# Finish to make good parsing
-#
-# Revision 1.2  2005/12/02 14:55:57  mella
-# Just use last meber of path for mcsRelease
-#
-# Revision 1.1  2005/12/02 14:19:42  swmgr
-# Replace old mcsRoot
-#
-# Revision 1.3  2005/09/15 06:48:29  swmgr
-# Make change retrieve JAVA into the Path and retrieve good setup as real login
-#
-# Revision 1.2  2005/03/14 10:37:16  mella
-# Check if MCSROOT is a directory
-#
-# Revision 1.1  2005/03/11 15:44:06  mella
-# First revision
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

@@ -2,23 +2,7 @@
 
 <!--
 ********************************************************************************
-JMMC project
-
-"@(#) $Id: mcscfgGenerateEnvList.xsl,v 1.6 2006-10-23 12:03:04 mella Exp $"
-
-History
-~~~~~~~
-$Log: not supported by cvs2svn $
-Revision 1.5  2005/12/06 07:44:12  mella
-Generate default localhost if no hostname founded
-
-Revision 1.4  2005/12/02 13:49:06  mella
-Do not generate localhost anymore
-
-Revision 1.3  2005/12/02 12:57:53  mella
-Add Common Header
-
-
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
 NAME
 mcscfgGenerateEnvList.xsl

@@ -1,45 +1,6 @@
 #*******************************************************************************
-# Jean-Marie Mariotti Center
-#
-# "@(#) $Id: Makefile,v 1.18 2005-12-06 11:58:01 gzins Exp $"
-#
-# Makefile of mcscfg module, which contains configuration files for MCS
-# environment.
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.17  2005/12/06 09:08:46  gzins
-# Minor change in printed message
-#
-# Revision 1.16  2005/12/06 07:38:35  gzins
-# Added mcscfgSetRelease and mcscfgShow scripts
-#
-# Revision 1.15  2005/12/06 07:08:33  gzins
-# Minor changes in documentation
-#
-# Revision 1.14  2005/12/02 12:21:28  mella
-# mcsEnvList is copied as other files
-#
-# Revision 1.13  2005/12/02 12:19:15  mella
-# Add mcscfgGenerateEnvList script
-#
-# Revision 1.12  2005/12/02 10:25:36  gzins
-# Updated for new MCS directory structure; installed files in $MCSTOP/etc
-#
-# Revision 1.11  2005/03/03 10:07:26  gildas
-# Fixed bug in install target
-#
-# Revision 1.10  2005/02/28 16:09:12  lafrasse
-# Added 'mcsEnvFile'
-#
-# Revision 1.9  2005/02/16 09:26:56  gzins
-# Added CVS log as modification file history
-#
-# gzins     25-Jun-2004  Created
-# gzins     10-Dec-2004  Added ../config/emacs
-#
-#------------------------------------------------------------------------
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 
 #
 # user definable C-compilation flags
