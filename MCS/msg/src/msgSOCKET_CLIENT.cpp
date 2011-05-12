@@ -1,24 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgSOCKET_CLIENT.cpp,v 1.11 2006-05-11 13:04:56 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.9  2005/01/24 15:02:47  gzins
- * Added CVS logs as modification history
- *
- * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
- * gzins     06-Dec-2004  Removed copy constructor
- * gzins     06-Dec-2004  Implemented copy constructor
- * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
- * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
- * scetre    22-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

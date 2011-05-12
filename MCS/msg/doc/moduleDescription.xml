@@ -1,14 +1,6 @@
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: moduleDescription.xml,v 1.2 2005-02-04 15:57:06 lafrasse Exp $"
-
- History
- ~~~~~~~
- $Log: not supported by cvs2svn $
- lafrasse  10-Aug-2004  Created
-
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
  NAME
  moduleDescription.xml - Give module informations

@@ -1,17 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgMESSAGE_FILTER.cpp,v 1.3 2006-05-11 13:04:56 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2005/02/14 07:59:18  gzins
- * Minor documentation changes
- *
- * Revision 1.1  2005/02/09 16:42:26  lafrasse
- * Added msgMESSAGE_FILTER class to manage message queues
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

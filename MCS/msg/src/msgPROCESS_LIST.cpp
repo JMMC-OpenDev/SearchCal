@@ -1,28 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgPROCESS_LIST.cpp,v 1.9 2006-05-11 13:04:56 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2005/02/09 16:38:29  lafrasse
- * Changed method prototypes to use as much 'const' parameters as possible
- *
- * Revision 1.7  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.6  2005/01/29 20:01:00  gzins
- * Minor change in code example
- *
- * Revision 1.5  2005/01/24 15:02:47  gzins
- * Added CVS logs as modification history
- *
- * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
- * gzins     14-Dec-2004  Minor documentation changes 
- * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
- * gzins     06-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,33 +1,7 @@
 #ifndef msgPROCESS_H
 #define msgPROCESS_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgPROCESS.h,v 1.8 2007-02-22 13:06:04 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2007/02/22 12:27:31  gzins
- * Fixed minor documentation warning
- *
- * Revision 1.6  2005/02/14 07:59:01  gzins
- * Minor documentation changes
- *
- * Revision 1.5  2005/02/09 16:34:51  lafrasse
- * Changed method prototypes to use as much 'const' parameters as possible
- *
- * Revision 1.4  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.3  2005/01/29 19:56:16  gzins
- * Added SetId/GetId and SetUnicity/IsUnique methods
- *
- * Revision 1.2  2005/01/24 15:39:54  gzins
- * Added CVS logs as modification history
- *
- * gzins     06-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

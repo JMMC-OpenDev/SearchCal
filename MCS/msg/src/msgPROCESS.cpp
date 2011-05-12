@@ -1,26 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgPROCESS.cpp,v 1.7 2006-05-11 13:04:56 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2005/02/09 16:38:11  lafrasse
- * Changed method prototypes to use as much 'const' parameters as possible
- *
- * Revision 1.5  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.4  2005/01/29 19:56:16  gzins
- * Added SetId/GetId and SetUnicity/IsUnique methods
- *
- * Revision 1.3  2005/01/24 15:02:47  gzins
- * Added CVS logs as modification history
- *
- * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
- * gzins     06-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

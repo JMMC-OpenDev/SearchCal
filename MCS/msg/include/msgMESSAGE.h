@@ -1,67 +1,7 @@
 #ifndef msgMESSAGE_H
 #define msgMESSAGE_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgMESSAGE.h,v 1.27 2006-06-20 13:30:31 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.26  2005/09/12 15:41:25  scetre
- * Move msgNO_WAIT and msgWAIT_FOREVER to msgSOCKET.h
- *
- * Revision 1.25  2005/02/14 07:59:01  gzins
- * Minor documentation changes
- *
- * Revision 1.24  2005/02/09 16:34:12  lafrasse
- * Changed method prototypes to use as much 'const' parameters as possible
- *
- * Revision 1.23  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.22  2005/02/03 06:51:42  gzins
- * Defined IsInternal method as constant
- *
- * Revision 1.21  2005/01/29 19:54:46  gzins
- * Added AppendStringToBody method
- *
- * Revision 1.20  2005/01/29 10:05:06  gzins
- * Changed msgMESSAGE.lastReply type from mcsLOGICAL to mcsSTRING8
- *
- * Revision 1.19  2005/01/29 07:17:59  gzins
- * Fixed wrong message body initialization in constructor
- *
- * Revision 1.18  2005/01/28 23:50:00  gzins
- * Defined GetBody and GetBodySize as constant method
- *
- * Revision 1.17  2005/01/24 15:39:54  gzins
- * Added CVS logs as modification history
- *
- * gzins     07-Jan-2005  Changed messageId to commandId
- * gzins     22-Dec-2004  Renamed GetBodyPtr to GetBody
- *                        Removed GetHeaderPtr
- *                        Declared AllocateBody as private
- *                        Renamed isInternal to IsInternal
- *                        Added ClearBody and AppendToBody
- *                        Declared msgSOCKET::Send and msgSOCKET::Receive as
- *                        friend
- * gzins     15-Dec-2004  Removed msgDEBUG_CMD_NAME definition (defined in
- *                        msgDEBUG_CMD.h)
- * gzins     15-Dec-2004  Added _NAME to command name definitions
- * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
- *                        misc Dynamic Buffer, and removed unused API
- * gzins     08-Dec-2004  Added senderId and messageId, with associated methods
- * gzins     06-Dec-2004  Updated to be only C++
- * lafrasse  01-Dec-2004  Comment refinments
- * scetre    30-Nov-2004  Set message body size to 32000
- * lafrasse  23-Nov-2004  Moved isInternal from msgMESSAGE_RAW to _isInternal in
- *                        msgMESSAGE, added SetLastReplyFlag method
- * lafrasse  22-Nov-2004  Added void type for functions without parameters
- * lafrasse  19-Nov-2004  Changed all method name first letter to upper case,
- *                        and re-commented
- * scetre    17-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

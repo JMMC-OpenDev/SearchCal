@@ -1,32 +1,7 @@
 #ifndef msgMANAGER_H
 #define msgMANAGER_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgMANAGER.h,v 1.8 2005-02-14 07:59:01 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2005/02/09 16:36:13  lafrasse
- * minor indentation refinments
- *
- * Revision 1.6  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.5  2005/01/29 09:56:46  gzins
- * Updated to notify client when a server is exiting abnormally
- *
- * Revision 1.4  2005/01/26 08:47:18  gzins
- * Added PrepareReply to fix bug related to wrong message type when sending reply to sender.
- *
- * Revision 1.3  2005/01/24 15:39:54  gzins
- * Added CVS logs as modification history
- *
- * gzins     15-Dec-2004  Set mcsTRUE as default value of lastReply parameter
- *                        of SendReply method
- * gzins     06-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,57 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgMANAGER.cpp,v 1.22 2006-09-25 05:35:52 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.21  2006/05/11 13:04:56  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.20  2006/04/06 08:20:06  gzins
- * Updated client notify when server exits abnormally; only remove client when last reply is received
- *
- * Revision 1.19  2005/02/09 16:36:13  lafrasse
- * minor indentation refinments
- *
- * Revision 1.18  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.17  2005/01/31 13:52:26  gzins
- * Fixed wrong returned completion status value in Forward()
- *
- * Revision 1.16  2005/01/29 20:04:35  gzins
- * Added PROCLIST command handling
- * Managed unicity flag for connected processes
- *
- * Revision 1.15  2005/01/29 09:56:25  gzins
- * Updated to notify client when a server is exiting abnormally
- *
- * Revision 1.14  2005/01/26 17:54:42  gzins
- * Removed reference to action log
- *
- * Revision 1.13  2005/01/26 08:47:18  gzins
- * Added PrepareReply to fix bug related to wrong message type when sending reply to sender.
- *
- * Revision 1.12  2005/01/24 15:02:47  gzins
- * Added CVS logs as modification history
- *
- * lafrasse  21-Jan-2005  Added a timeout when exiting in order to have
- *                        sufficient time to receive the 'EXIT' query answer
- * gzins     07-Jan-2005  Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE 
- * gzins     22-Dec-2004  Replaced GetBodyPtr by GetBody 
- * gzins     20-Dec-2004  Fixed bug related to the use of GetNextProcess after
- *                        removing a process from the list.
- * gzins     14-Dec-2004  Handled DEBUG command
- * lafrasse  14-Dec-2004  Changed body type from statically sized buffer to a
- *                        misc Dynamic Buffer (no more msgMAXLEN)
- * gzins     12-Dec-2004  Added errno.h header file
- * gzins     09-Dec-2004  Fixed cast problem with new mcsLOGICAL enumerate
- * gzins     08-Dec-2004  Replaced msgMCS_ENVS with envLIST
- * gzins     08-Dec-2004  Updated to support several processes with same name  
- * gzins     06-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

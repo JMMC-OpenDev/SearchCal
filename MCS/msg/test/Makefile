@@ -1,32 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.12 2006-06-20 13:32:09 gzins Exp $"
-#
-# Makefile of msgTest
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.11  2005/09/12 13:06:49  scetre
-# Added test on Socket client with time out when receiving CDS data
-#
-# Revision 1.10  2005/02/15 11:55:05  gzins
-# Removed unused target
-#
-# Revision 1.9  2005/02/09 16:42:26  lafrasse
-# Added msgMESSAGE_FILTER class to manage message queues
-#
-# Revision 1.8  2005/02/04 15:57:06  lafrasse
-# Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
-#
-# gzins     08-Dec-2004  Removed msgTestClient and msgTestServer
-#
-# lafrasse  20-Nov-2004  Added C++ attributes to each executable LIBS to become
-#                        compatible with the new C++ code in the library
-# gzins     01-Oct-2004  Removed msgTestManagerSend
-# lafrasse  11-Aug-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

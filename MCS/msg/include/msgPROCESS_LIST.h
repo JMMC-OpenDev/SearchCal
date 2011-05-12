@@ -1,25 +1,7 @@
 #ifndef msgPROCESS_LIST_H
 #define msgPROCESS_LIST_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgPROCESS_LIST.h,v 1.6 2005-02-14 07:59:01 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2005/02/09 16:35:13  lafrasse
- * Changed method prototypes to use as much 'const' parameters as possible
- *
- * Revision 1.4  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.3  2005/01/24 15:39:54  gzins
- * Added CVS logs as modification history
- *
- * gzins     08-Dec-2004  Added descriptor argument to GetProcess()
- * gzins     06-Dec-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

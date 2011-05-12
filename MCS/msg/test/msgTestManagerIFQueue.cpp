@@ -1,23 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgTestManagerIFQueue.cpp,v 1.5 2006-05-11 13:04:56 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2005/05/19 15:11:14  gzins
- * Changed QueuedMessagesNb() to GetNbQueuedMessages()
- *
- * Revision 1.3  2005/04/22 09:25:09  mella
- * Replace FAILURE by mcsFAILURE
- *
- * Revision 1.2  2005/02/10 14:13:05  lafrasse
- * Added QueuedMessagesNb() and GetNextQueuedMessage() methods test
- *
- * Revision 1.1  2005/02/09 16:42:26  lafrasse
- * Added msgMESSAGE_FILTER class to manage message queues
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

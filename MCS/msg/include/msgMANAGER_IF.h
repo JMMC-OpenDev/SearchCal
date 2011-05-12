@@ -1,38 +1,7 @@
 #ifndef msgMANAGER_IF_H
 #define msgMANAGER_IF_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgMANAGER_IF.h,v 1.14 2005-05-19 15:04:58 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.13  2005/02/14 07:59:01  gzins
- * Minor documentation changes
- *
- * Revision 1.12  2005/02/09 16:42:26  lafrasse
- * Added msgMESSAGE_FILTER class to manage message queues
- *
- * Revision 1.11  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.10  2005/01/29 19:58:17  gzins
- * Added únique' parameter to Connect()
- *
- * Revision 1.9  2005/01/24 15:39:54  gzins
- * Added CVS logs as modification history
- *
- * gzins     07-Jan-2005  Updated SendCommand prototype to return command Id
- * gzins     03-Dec-2004  Removed msgManagerHost param from Connect
- *                        Gave default value to paramList and paramLen
- *                        arguments of SendCommand
- * lafrasse  01-Dec-2004  Comment refinments
- * lafrasse  22-Nov-2004  Use msgSOCKET_CLIENT instead of system socket calls.
- * lafrasse  19-Nov-2004  Changed the class member name msgManagerSd for
- *                        _socket, and added the class description comment
- * lafrasse  18-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,33 +1,7 @@
 #ifndef msgSOCKET_H
 #define msgSOCKET_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: msgSOCKET.h,v 1.16 2005-09-12 15:42:36 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.15  2005/09/12 13:01:24  scetre
- * Added Receive method in a string and with a timeout in miscSOCKET
- *
- * Revision 1.14  2005/02/14 07:59:01  gzins
- * Minor documentation changes
- *
- * Revision 1.13  2005/02/04 15:57:06  lafrasse
- * Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
- *
- * Revision 1.12  2005/01/24 15:39:54  gzins
- * Added CVS logs as modification history
- *
- * gzins     22-Dec-2004  Replaced msgMESSAGE.h file inclusion by msgMESSAGE
- *                        class declaration
- * gzins     06-Dec-2004  Declared copy constructor as private method
- * gzins     06-Dec-2004  Declared copy constructor as public method
- * lafrasse  03-Dec-2004  Changed port number type from mcsINT32 to mcsUINT16
- * lafrasse  23-Nov-2004  Comment refinments, and includes cleaning
- * scetre    19-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,30 +1,6 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: msgTestSocketClientTimeOut.cpp,v 1.3 2006-05-11 13:04:56 mella Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.2  2005/09/12 13:08:05  scetre
-* Added test on Socket client with time out when receiving CDS data
-*
-* Revision 1.1  2005/09/12 13:06:49  scetre
-* Added test on Socket client with time out when receiving CDS data
-*
-* Revision 1.5  2005/04/22 09:25:09  mella
-* Replace FAILURE by mcsFAILURE
-*
-* Revision 1.4  2005/02/09 16:41:02  lafrasse
-* Changed the way mesage are displayed (now use msgMESSAGE 'operator<<' instead of 'Display')
-*
-* Revision 1.3  2005/02/04 15:57:06  lafrasse
-* Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
-*
-* lafrasse  14-Dec-2004  Added error code management
-* lafrasse  24-Nov-2004  Created
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * \file

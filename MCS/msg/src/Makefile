@@ -1,35 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.22 2008-02-13 08:07:44 mella Exp $"
-#
-# Makefile of msg
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.21  2005/02/15 11:55:05  gzins
-# Removed unused target
-#
-# Revision 1.20  2005/02/09 16:42:26  lafrasse
-# Added msgMESSAGE_FILTER class to manage message queues
-#
-# Revision 1.19  2005/02/04 15:57:06  lafrasse
-# Massive documentation review an refinment (also added automatic CVS log inclusion in every files)
-#
-# Revision 1.18  2005/01/29 20:05:27  gzins
-# Added PROCLIST command
-#
-# gzins     14-Dec-2004  Added CDF and class for DEBUG command
-# gzins     08-Dec-2004  Removed msgMCS_ENVS and added env library 
-# gzins     07-Dec-2004  Updated after C++ conversion 
-# gzins     06-Dec-2004  Renamed msgMCS_ENV to msgMCS_ENVS
-# lafrasse  03-Dec-2004  Added msgMCS_ENV compilation directives
-# lafrasse  23-Nov-2004  Added all the socket-related header
-# lafrasse  19-Nov-2004  Added msgMANAGER_IF.cpp and msgMESSAGE.cpp compilation
-#                        directives
-# lafrasse  10-Aug-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile
