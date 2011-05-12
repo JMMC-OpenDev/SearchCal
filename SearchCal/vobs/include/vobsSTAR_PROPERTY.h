@@ -177,7 +177,7 @@ public:
     virtual const char *GetLink(void) const;
 
     // Get the object summary as a string, including all its member's values
-    virtual string vobsSTAR_PROPERTY::GetSummaryString(void) const;
+    virtual string GetSummaryString(void) const;
 
 protected:
     

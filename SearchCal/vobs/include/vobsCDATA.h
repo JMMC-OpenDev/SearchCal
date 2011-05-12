@@ -178,10 +178,10 @@ public:
      * returned. 
      */
     template <class obj, class list>
-    mcsCOMPL_STAT vobsCDATA::Store(obj                       &object,
-                                   list                      &objectList,
-                                   vobsSTAR_PROPERTY_ID_LIST  ucdList, 
-                                   mcsLOGICAL                 extendedFormat = mcsFALSE)
+    mcsCOMPL_STAT Store(obj                       &object,
+                        list                      &objectList,
+                        vobsSTAR_PROPERTY_ID_LIST  ucdList, 
+                        mcsLOGICAL                 extendedFormat = mcsFALSE)
     {
         logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Store()");
 
