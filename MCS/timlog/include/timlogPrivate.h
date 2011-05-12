@@ -1,19 +1,7 @@
 #ifndef timlogPrivate_H
 #define timlogPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: timlogPrivate.h,v 1.5 2005-02-15 10:30:55 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2005/02/15 10:27:46  gzins
- * Added CVS log as file modification history
- *
- * sccmgr    17-Dec-2004  Created
- * gzins     20-Dec-2004  Added moduleName and fileLine fields to timlogENTRY
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

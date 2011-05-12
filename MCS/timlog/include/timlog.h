@@ -1,23 +1,7 @@
 #ifndef timlog_H
 #define timlog_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: timlog.h,v 1.5 2005-06-20 13:21:45 swmgr Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2005/02/15 10:30:55  gzins
- * Fixed wrong history log
- *
- * Revision 1.3  2005/02/15 10:27:46  gzins
- * Added CVS log as file modification history
- *
- * gzins     17-Dec-2004  Created
- * gzins     20-Dec-2004  Added moduleName and fileLine argument to timlogStart
- *                        Added timlogXxxStart macros
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,15 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.2 2005-02-15 10:27:46 gzins Exp $"
-#
-# Makefile of timlog module tests 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gzins     17-Dec-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

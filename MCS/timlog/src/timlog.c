@@ -1,23 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: timlog.c,v 1.6 2006-01-10 14:40:39 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2005/02/15 10:33:08  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.4  2005/02/15 10:30:55  gzins
- * Fixed wrong history log
- *
- * Revision 1.3  2005/02/15 10:27:46  gzins
- * Added CVS log as file modification history
- *
- * gzins     17-Dec-2004  Created
- * gzins     20-Dec-2004  Added moduleName and fileLine argument to timlogStart
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
