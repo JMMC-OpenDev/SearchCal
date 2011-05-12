@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: moduleDescription.xml,v 1.2 2006-03-22 07:01:07 sccmgr Exp $"
-
- History
- ~~~~~~~
- $Log: not supported by cvs2svn $
- Revision 1.1  2006/03/22 06:58:28  sccmgr
- Fix directory structure and add additional files
-
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
  NAME
  moduleDescription.xml - Give module informations

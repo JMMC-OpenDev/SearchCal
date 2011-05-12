@@ -1,22 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.3 2011-02-23 14:21:23 mella Exp $"
-#
-# Makefile of tat module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.3  2011/02/18 14:32:00  mella
-# add new program tat2.py
-#
-# Revision 1.2  2006/03/22 19:39:40  gzins
-# Added rules for script generation
-#
-# Revision 1.1  2006/03/22 06:58:28  sccmgr
-# Fix directory structure and add additional files
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

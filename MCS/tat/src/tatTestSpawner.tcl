@@ -1,11 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: tatTestSpawner.tcl,v 1.1 2006-03-22 19:38:37 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Adapted from the VLT/ALMA program

@@ -1,18 +1,7 @@
 #!/usr/bin/python
-#******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: tat2.py,v 1.1 2011-02-23 14:21:23 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2011/02/18 14:32:00  mella
-# add new program tat2.py
-#
-#
-#
-#************************************************************************
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 """ This script aims to reproduce at a lower lever the old tat functionnality.
 """
 
