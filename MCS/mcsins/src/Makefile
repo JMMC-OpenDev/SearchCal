@@ -1,31 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.10 2009-05-27 21:26:21 mella Exp $"
-#
-# Makefile for installation script of MCS 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.9  2008/04/21 09:43:23  ccmgr
-# Add java keystore in config files
-#
-# Revision 1.8  2006/10/14 10:38:37  gzins
-# Removed test related to INTROOT existence; i.e. always install configuration files
-#
-# Revision 1.7  2005/12/06 06:38:06  gzins
-# Added installation of MCS configuration files
-#
-# Revision 1.6  2005/12/02 09:50:38  gzins
-# Just copied installation script in ../.. directory instead of $MCSROOT or $INTROOT
-#
-# Revision 1.5  2005/01/29 13:44:04  gzins
-# Added CVS log as modification history
-#
-# gzins     08-Dec-2004  Created
-# gzins     08-Dec-2004  Fixed bug when installing script in $MCSROOT/bin 
-# gzins     09-Dec-2004  Renamed mcsinsInstallMcs to mcsinsInstall
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

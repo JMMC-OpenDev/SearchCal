@@ -1,94 +1,16 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mcsinsInstall.sh,v 1.25 2010-10-22 09:24:32 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.24  2009/05/27 21:32:59  mella
-# fix error messages
-#
-# Revision 1.23  2009/05/27 21:31:08  mella
-# fix error messages
-#
-# Revision 1.22  2008/12/17 10:32:53  ccmgr
-# Add option to remotly tag the list of modules
-#
-# Revision 1.21  2008/09/22 14:04:13  ccmgr
-# Added 'jmcs' module installation.
-#
-# Revision 1.20  2006/10/14 10:39:24  gzins
-# Added again mcscfg module
-#
-# Revision 1.19  2006/09/26 07:26:10  gzins
-# Supressed mcscfg from MCS module list
-#
-# Revision 1.18  2006/03/23 07:26:41  swmgr
-# Added modjava module
-#
-# Revision 1.17  2006/03/23 07:11:24  swmgr
-# Added tat module
-#
-# Revision 1.16  2006/02/22 10:46:20  gzins
-# Added MCSRELEASE setting
-#
-# Revision 1.15  2006/02/20 12:54:34  swmgr
-# Added mth module
-# Install SW from MCS sub-directory
-#
-# Revision 1.14  2005/12/14 22:17:55  gzins
-# Added thrd and sdb modules
-#
-# Revision 1.13  2005/12/06 08:52:38  gzins
-# Source .bash_profile when specifying tag
-#
-# Revision 1.12  2005/12/06 07:15:56  gzins
-# Added mcscfg module
-#
-# Revision 1.11  2005/12/02 09:51:56  gzins
-# Updated for new MCS directory structure
-#
-# Revision 1.10  2005/09/15 07:07:08  swmgr
-# Add revision to given informations
-#
-# Revision 1.9  2005/09/14 22:05:13  gzins
-# Improved checks
-#
-# Revision 1.8  2005/05/13 15:33:41  gzins
-# Added -c and -t options
-# Checked $HOME and $MCSROOT differs
-#
-# Revision 1.7  2005/02/11 09:45:11  gzins
-# Added installation of misco
-#
-# Revision 1.6  2005/01/29 13:49:36  gzins
-# Added CVS log as modification history
-# Forbid MCS installation as root
-#
-# gzins     04-Dec-2004  Created
-# gzins     08-Dec-2004  Moved from mkf module
-#                        Added installation of env module
-# gzins     08-Dec-2004  Added installation of gwt module
-# gzins     09-Dec-2004  Renamed to mcsinsInstall
-# gzins     09-Dec-2004  Added '-h' and '-u' options
-#                        Added logfile
-#                        Deleted modules before retrieving from repository
-# gzins     17-Dec-2004  Added installation of timlog module
-#                        Added 'clean' as first target of the make command 
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
-#   NAME 
-#   mcsinsInstall - deploy MCS modules
+# NAME 
+# mcsinsInstall - deploy MCS modules
 # 
-#   SYNOPSIS
-#   mcsinsInstall [-h] [-c] [-u] [-m] [-t tag]|[-r rtag]|[-b branch]
+# SYNOPSIS
+# mcsinsInstall [-h] [-c] [-u] [-m] [-t tag]|[-r rtag]|[-b branch]
 # 
-#   DESCRIPTION
-#   This command retreives all the modules belonging to MCS from the SVN
-#   repository and install them.
-#-------------------------------------------------------------------------------
+# DESCRIPTION
+# This command retreives all the modules belonging to MCS from the SVN
+# repository and install them.
 #
 
 # Determine the SW package

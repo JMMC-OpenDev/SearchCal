@@ -1,24 +1,11 @@
 "------------------------------------------------------------------------------
-" File:    $MCSROOT/etc/vimrc
-"
-" Version: $Id: gvimrc,v 1.1 2005-12-06 06:38:51 gzins Exp $
-" 
+" JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+"------------------------------------------------------------------------------
 " Purpose: VIM GUI special configuration file
-"
-" History
-" -------
-" $Log: not supported by cvs2svn $
-" Revision 1.6  2005/02/16 09:27:06  gzins
-" Added CVS log as modification file history
-"
-" gzins     14-05-2004  created
-" gzins     05-01-2005  removed lines already defined in vimrc
 " 
 " The commands in this are executed when the GUI is started.
 " To use it, added the following line in ~/.gvimrc 
 "       source $MCSROOT/etc/gvimrc
-"
-"------------------------------------------------------------------------------
 
 " Make external commands work through a pipe instead of a pseudo-tty
 "set noguipty

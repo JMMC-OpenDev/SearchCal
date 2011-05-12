@@ -1,42 +1,11 @@
 "------------------------------------------------------------------------------
-" File:    $MCSROOT/etc/vimrc
-"
-" Version: $Id: vimrc,v 1.2 2006-02-03 12:37:22 lsauge Exp $
-" 
+" JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+"------------------------------------------------------------------------------
 " Purpose: VIM special configuration file
-"
-" History
-" -------
-" $Log: not supported by cvs2svn $
-" Revision 1.1  2005/12/06 06:38:51  gzins
-" Moved from mcscfg
-"
-" Revision 1.13  2005/11/21 14:47:43  swmgr
-" Added /usr/local/include in path
-"
-" Revision 1.12  2005/02/16 09:28:18  gzins
-" Added mcsBYTES512, mcsBYTES1024, mcsSTRING512 and mcsSTRING1024 as cType keywords
-"
-" gzins     14-05-2004  created
-" gzins     23-11-2004  added MCS types to the list of C-types keywords
-" gzins     23-11-2004  added mcsTRUE and mcsFALSE to the list of C-types
-"                       keywords
-" gzins     23-11-2004  moved mcsTRUE and mcsFALSE to the list of C++-boolean
-"                       keywords
-" gzins     16-12-2004  added SUCCESS and FAILURE to the list of C++-boolean
-"                       keywords
-" gzins     16-12-2004  redefined mcsTRUE, mcsFALSE, SUCCESS and FAILURE as
-"                       cConstant 
-" gzins     05-01-2005  changed textwidth to 80 instead of 78
-" gzins     06-01-2005  changed FAILURE and SUCCESS to mcsFAILURE and mcsSUCCESS
-" gzins     06-01-2005  defined evhCB_COMPL_STAT as cType keywords
-"                       defined evhCB_FAILURE, evhCB_SUCCESS, evhCB_NO_DELETE
-"                       and evhCB_DELETE as cConstant keywords
 "
 " To use it, added the following line in ~/.vimrc 
 "       source $MCSROOT/etc/vimrc
 "
-"------------------------------------------------------------------------------
 
 set nocompatible    " Use Vim defaults (much better!)
 set bs=2            " allow backspacing over everything in insert mode
