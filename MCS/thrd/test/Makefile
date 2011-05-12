@@ -1,25 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.5 2006-11-02 07:41:16 gzins Exp $"
-#
-# Makefile of thrd module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.4  2005/12/21 10:43:47  lafrasse
-# Removed 'thrd' from the linked libraries as it has been added to the MCS list
-#
-# Revision 1.3  2005/12/19 16:48:30  lafrasse
-# Added semaphore support
-#
-# Revision 1.2  2005/12/16 15:03:57  lafrasse
-# Added mutex support
-#
-# Revision 1.1  2005/10/21 15:09:01  lafrasse
-# thrdThread creation
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

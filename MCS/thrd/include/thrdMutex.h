@@ -1,16 +1,7 @@
 #ifndef thrdMUTEX_H
 #define thrdMUTEX_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: thrdMutex.h,v 1.2 2005-12-16 17:18:32 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2005/12/16 15:03:57  lafrasse
- * Added mutex support
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

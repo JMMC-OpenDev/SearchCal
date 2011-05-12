@@ -1,11 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: thrdTestTHREAD.cpp,v 1.1 2006-11-02 07:42:14 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

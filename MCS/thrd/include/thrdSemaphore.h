@@ -1,13 +1,7 @@
 #ifndef thrdSEMAPHORE_H
 #define thrdSEMAPHORE_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: thrdSemaphore.h,v 1.1 2005-12-19 16:48:30 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

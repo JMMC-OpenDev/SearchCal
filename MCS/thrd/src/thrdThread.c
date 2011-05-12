@@ -1,20 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: thrdThread.c,v 1.4 2007-07-03 12:12:30 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2006/10/26 08:03:03  gzins
- * Renamed thrdTHREAD to thrdTHREAD_STRUCT
- *
- * Revision 1.2  2006/01/10 14:40:39  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.1  2005/10/21 15:09:01  lafrasse
- * thrdThread creation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

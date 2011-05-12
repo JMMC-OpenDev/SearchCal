@@ -1,23 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: thrdSemaphore.c,v 1.5 2007-02-09 17:02:38 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2006/11/02 07:40:19  gzins
- * Added
- *
- * Revision 1.3  2006/01/10 14:40:39  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.2  2005/12/22 14:08:00  lafrasse
- * Updated documentation to include the usefull UNIX command (special thanx to Fred. ROUSSEL) that remove any created semaphores when the OS can not create new semaphores anymore
- *
- * Revision 1.1  2005/12/19 16:48:30  lafrasse
- * Added semaphore support
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

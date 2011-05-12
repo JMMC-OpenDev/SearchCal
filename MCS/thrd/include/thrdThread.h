@@ -1,22 +1,7 @@
 #ifndef thrdTHREAD_STRUCT_H
 #define thrdTHREAD_STRUCT_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: thrdThread.h,v 1.4 2007-07-03 12:12:30 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2006/10/26 08:03:03  gzins
- * Renamed thrdTHREAD to thrdTHREAD_STRUCT
- *
- * Revision 1.2  2005/12/16 17:18:32  lafrasse
- * Added 'extern c' statement for C++ compatibility
- *
- * Revision 1.1  2005/10/21 15:09:01  lafrasse
- * thrdThread creation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

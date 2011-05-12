@@ -1,13 +1,7 @@
 #ifndef thrdTHREAD_H
 #define thrdTHREAD_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: thrdTHREAD.h,v 1.1 2006-11-02 07:40:11 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
