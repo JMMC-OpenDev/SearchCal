@@ -1,63 +1,8 @@
 #ifndef log_H
 #define log_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: log.h,v 1.21 2011-02-10 16:31:59 lafrasse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.20  2005/09/05 14:35:17  gzins
-* Added logEXTDBG definition for backward-compatibility
-*
-* Revision 1.19  2005/06/01 13:19:16  gzins
-* Changed 'extended debug' to 'trace'
-*
-* Revision 1.18  2005/01/26 17:27:47  lafrasse
-* Added automatic CVS history, refined user documentation, removed all
-* ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
-* mcsFAILURE
-*
-* gzins     20-Dec-2004  Added functions to filter stdout log depending on
-*                        module name
-*
-* gzins     18-Nov-2004  Added logError macro
-*
-* lafrasse  10-Aug-2004  Moved logGetTimeStamp back in log.h
-*                        Changed back to logData original API
-*
-* lafrasse  03-Aug-2004  Changed logData API
-*                        Moved local functions logGetTimeStamp declaration to
-*                        logPrivate.h
-*                        Added logSetLogManagerHostName and
-*                        logSetLogManagerPortNumber functions
-*
-* gluck     30-Jun-2004  Changed some APIs :
-*                        logSetFileLogVerbosity -> logSetFileLogLevel
-*                        logGetFileLogVerbosity -> logGetFileLogLevel
-*                        logSetStdoutLogVerbosity -> logSetStdoutLogLevel
-*                        logGetStdoutLogVerbosity -> logGetStdoutLogLevel
-*                        logSetActionLogVerbosity -> logSetActionLogLevel
-*                        logGetActionLogVerbosity -> logGetActionLogLevel
-*                        Replaced logSetFileLogState by logEnableFileLog and
-*                        logDisableFileLog
-*                        Replaced logSetStdoutLogState by logEnableStdoutLog and
-*                        logDisableStdoutLog
-*
-* lafrasse  30-Jun-2004  Changed some APIs :
-*                        logSetLog -> logSetFileLogState
-*                        logSetLogLevel -> logSetFileLogVerbosity
-*                        logGetLogLevel -> logGetFileLogVerbosity
-*                        logSetVerbose -> logSetStdoutLogState
-*                        logSetVerboseLevel -> logSetStdoutLogVerbosity
-*                        logGetVerboseLevel -> logGetStdoutLogVerbosity
-*                        logSetActionLevel -> logSetActionLogVerbosity
-*                        logGetActionLevel -> logGetActionLogVerbosity
-*
-* mella     07-May-2004  Created
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /* The following piece of code alternates the linkage type to C for all
 functions declared within the braces, which is necessary to use the

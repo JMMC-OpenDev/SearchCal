@@ -1,29 +1,10 @@
 #*******************************************************************************
-# JMMC Project
-#
-# "@(#) $Id: Makefile,v 1.10 2005-03-07 13:30:36 mella Exp $"
-#
-# Makefile of log 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.9  2005/02/15 10:23:44  gzins
-# Removed unused target
-#
-# Revision 1.8  2005/02/15 08:27:12  gzins
-# Added CVS log as file modification history
-#
-# mella     12-May-2004  Created
-# lafrasse  03-Aug-2004  Added logManager and logPrivate stuff
-#                        Removed cross-dependencies with err and misc
-# 
-#*******************************************************************************
-# This Makefile follows VLT Standards (see Makefile(5) for more).
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
-#    None
-#------------------------------------------------------------------------
+#    Makefile based on the VLT Makefile
+#
+#-------------------------------------------------------------------------------
 
 #
 # user definable C-compilation flags

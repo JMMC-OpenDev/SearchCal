@@ -1,51 +1,6 @@
 /*******************************************************************************
-* JMMC project
-* 
-* "@(#) $Id: logTest.c,v 1.15 2011-02-10 16:31:59 lafrasse Exp $"
-*
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.14  2005/06/01 13:21:39  gzins
-* Changed logExtDbg to logTrace
-*
-* Revision 1.13  2005/06/01 13:19:16  gzins
-* Changed 'extended debug' to 'trace'
-*
-* Revision 1.12  2005/01/26 17:28:22  lafrasse
-* Added automatic CVS history, refined user documentation, removed all
-* ActionLog-related code, and changed SUCCESS in mcsSUCCESS and FAILURE in
-* mcsFAILURE
-*
-* gzins     20-Dec-2004  Added tests for logAddToStdoutLogAllowedModList and
-*                        logClearStdoutLogAllowedModList functions
-*
-* lafrasse  03-Aug-2004  Changed some APIs :
-*                        logSetFileLogVerbosity -> logSetFileLogLevel
-*                        logGetFileLogVerbosity -> logGetFileLogLevel
-*                        logSetStdoutLogVerbosity -> logSetStdoutLogLevel
-*                        logGetStdoutLogVerbosity -> logGetStdoutLogLevel
-*                        logSetActionLogVerbosity -> logSetActionLogLevel
-*                        logGetActionLogVerbosity -> logGetActionLogLevel
-*                        Replaced logSetFileLogState by logEnableFileLog and
-*                        logDisableFileLog
-*                        Replaced logSetStdoutLogState by logEnableStdoutLog and
-*                        logDisableStdoutLog
-*
-* lafrasse  30-Jun-2004  Changed some APIs :
-*                        logSetLog -> logSetFileLogState
-*                        logSetLogLevel -> logSetFileLogLevel
-*                        logGetLogLevel -> logGetFileLogLevel
-*                        logSetVerbose -> logSetStdoutLogState
-*                        logSetVerboseLevel -> logSetStdoutLogLevel
-*                        logGetVerboseLevel -> logGetStdoutLogLevel
-*                        logSetActionLevel -> logSetActionLogLevel
-*                        logGetActionLevel -> logGetActionLogLevel
-*
-* mella     07-May-2004  Created
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /* 
  * System Headers 

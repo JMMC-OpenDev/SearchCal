@@ -1,38 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: logManager.c,v 1.10 2007-02-08 10:33:06 gluck Exp $"
- *
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2005/12/06 10:03:25  gzins
- * No longer use gethostbyname to get host information; set directly to localhost
- *
- * Revision 1.8  2005/03/06 18:05:41  gzins
- * Removed message about number of logged messages
- *
- * Revision 1.7  2005/02/15 08:25:13  gzins
- * Minor change in header indentation
- *
- * Revision 1.6  2005/02/15 08:18:43  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.5  2005/01/26 17:28:13  lafrasse
- * Added automatic CVS history, refined user documentation, removed all
- * ActionLog-related code, and changed mcsSUCCESS in mcsSUCCESS and mcsFAILURE
- * in mcsFAILURE
- *
- * gzins     10-Nov-2004  Replaced logDisplayError by logPrintErrMessage
- *                        Changed access mode of log file to rw-rw-rw-
- *
- * gzins     10-Nov-2004  Changed default log file to $MCSDATA/log/logfile
- *
- * lafrasse  23-Aug-2004  Changed var. name logManagerPortNumber to portNumber
- *
- * lafrasse  30-Jun-2004  Forked and ported (Windows to Linux) from CILAS Soft
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
