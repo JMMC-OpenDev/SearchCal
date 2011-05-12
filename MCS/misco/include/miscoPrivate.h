@@ -1,13 +1,7 @@
 #ifndef miscoPrivate_H
 #define miscoPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscoPrivate.h,v 1.1 2005-02-10 13:34:06 sccmgr Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

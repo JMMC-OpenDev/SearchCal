@@ -1,22 +1,7 @@
 #ifndef misco_H
 #define misco_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: misco.h,v 1.4 2006-10-16 07:34:19 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2005/04/08 12:41:19  gluck
- * Fixed bug: remove extren C sections
- *
- * Revision 1.2  2005/02/11 09:37:23  gzins
- * Added miscoDYN_BUF.h
- *
- * Revision 1.1  2005/02/10 13:34:06  sccmgr
- * Fix directory structure and add additional files
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,16 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.2 2006-10-16 07:34:25 mella Exp $"
-#
-# Makefile of ........
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2005/02/11 09:39:57  gzins
-# Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

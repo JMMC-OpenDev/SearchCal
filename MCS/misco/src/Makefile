@@ -1,19 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.3 2006-10-16 07:34:22 mella Exp $"
-#
-# Makefile of ........
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.2  2005/02/11 09:38:47  gzins
-# Added rules to created library and install public header files
-#
-# Revision 1.1  2005/02/10 13:34:06  sccmgr
-# Fix directory structure and add additional files
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

@@ -1,29 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.7 2010-01-28 13:04:02 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2007/02/22 12:23:03  gzins
- * Fixed parameter documentation error
- *
- * Revision 1.5  2006/10/17 11:27:19  mella
- * Add typed attribute and content
- *
- * Revision 1.4  2006/10/17 08:20:53  mella
- * Use standard ToXml() instead of previous ToString()
- *
- * Revision 1.3  2006/10/16 11:41:07  swmgr
- * typo ...
- *
- * Revision 1.2  2006/10/16 11:34:57  mella
- * First functionnal revision
- *
- * Revision 1.1  2006/10/16 07:34:22  mella
- * Class miscoXML_ELEMENT created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

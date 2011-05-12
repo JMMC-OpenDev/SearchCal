@@ -1,46 +1,7 @@
 #ifndef miscoDYN_BUF_H
 #define miscoDYN_BUF_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscoDYN_BUF.h,v 1.13 2010-01-15 17:27:51 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.12  2005/12/02 13:10:36  lafrasse
- * Added SavePartInFile() and SaveInASCIIFile().
- *
- * Revision 1.11  2005/05/26 13:48:45  lafrasse
- * Code review : added const attribute to parameters that should have it, replaced the Display() method by operator<<(), and changed doxygen tag from '\' to '@'
- *
- * Revision 1.10  2005/04/08 06:54:32  gluck
- * Code review: minor changes
- *
- * Revision 1.9  2005/02/22 15:42:45  lafrasse
- * Added a default value to the miscoDYN_BUF::GetNextLine() 'skipCommentFlag' parameter (mcsTRUE)
- *
- * Revision 1.8  2005/02/22 15:10:53  lafrasse
- * Removed documentation duplication between 'misc' and 'misco', changed miscoDYN_BUF::GetNextLine() API, added miscoDYN_BUF::GetNextCommentLine(), miscoDYN_BUF::AppendLine() and miscoDYN_BUF::AppendCommentLine()
- *
- * Revision 1.7  2005/02/16 14:57:23  gzins
- * Updated prototype to GetNextLine
- *
- * Revision 1.6  2005/02/14 14:10:13  scetre
- * move _dynBuf from private to protected
- *
- * Revision 1.5  2005/02/14 08:09:04  gzins
- * Implemented assignment operator and copy constructor
- *
- * Revision 1.4  2005/02/13 11:02:17  gzins
- * Set mcsTRUE as default value to skipCommentFlag parameter
- *
- * Revision 1.3  2005/02/12 20:04:44  gzins
- * Go back to version 1.1
- *
- * Revision 1.1  2005/02/11 09:37:57  gzins
- * Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

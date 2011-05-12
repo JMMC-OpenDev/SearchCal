@@ -1,24 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: miscoTestXmlElement.cpp,v 1.5 2006-10-17 11:27:19 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2006/10/17 08:20:56  mella
- * Use standard ToXml() instead of previous ToString()
- *
- * Revision 1.3  2006/10/16 10:32:30  mella
- * Add AddContent calls
- *
- * Revision 1.2  2006/10/16 10:29:21  mella
- * Just add attributes to one root child
- *
- * Revision 1.1  2006/10/16 07:34:25  mella
- * Class miscoXML_ELEMENT created
- *
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
