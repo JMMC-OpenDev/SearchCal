@@ -1,22 +1,6 @@
 /*******************************************************************************
- * JMMC project
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2005/02/15 12:37:36  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.7  2005/01/28 18:50:52  gzins
- * Added CVS log as modification history
- *
- * gzins     15-Jun-2004  Created
- * lafrasse  01-Dec-2004  Added MCS environment name management
- * lafrasse  08-Dec-2004  Corrected a bug that caused an empty env. name instead
- *                        of a mcsUNKNOWN_ENV env. name when $MCSENV was reset
- *                        to "" after being used with another value
- *
- *----------------------------------------------------------------------------*/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mcs.c,v 1.9 2006-01-10 14:40:39 mella Exp $"; 
 

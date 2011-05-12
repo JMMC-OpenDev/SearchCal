@@ -1,31 +1,10 @@
 #*******************************************************************************
-# Jean-Marie Mariotti Center 
-#
-# "@(#) $Id: Makefile,v 1.7 2005-12-06 07:46:35 gzins Exp $" 
-#
-# Makefile for MCS module 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.6  2005/12/02 14:18:08  swmgr
-# Replaced by mcsRelease
-#
-# Revision 1.5  2005/03/11 14:16:22  mella
-# Add mcsRoot.sh that should be sourced
-#
-# Revision 1.4  2005/01/28 18:50:52  gzins
-# Added CVS log as modification history
-#
-# gzins     11/04/04  Created
-#
-
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
-# This Makefile follows VLT Standards (see Makefile manpage documentation).
+# REMARKS
+#    Makefile based on the VLT/ALMA Makefile
 #
-# REMARK: this should be the first module to be installed.
-#         For such a reason, in few cases, it needs to work from /src.
-#*******************************************************************************
+#-------------------------------------------------------------------------------
 
 #
 # MODULE CODE DESCRIPTION:

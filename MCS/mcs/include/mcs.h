@@ -1,48 +1,7 @@
 #ifndef MCS_H
 #define MCS_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: mcs.h,v 1.22 2005-11-29 08:15:23 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.21  2005/11/24 12:41:58  scetre
- * Added mcsSTRING2048
- *
- * Revision 1.20  2005/02/16 09:22:42  gzins
- * Added mcsBYTES512, mcsBYTES1024, mcsSTRING512 and mcsSTRING1024 definitions
- *
- * Revision 1.19  2005/02/15 12:36:53  gzins
- * Removed SUCCESS and FAILURE definitions
- *
- * Revision 1.18  2005/01/29 07:27:29  gzins
- *  Changed (again) command and module max lenght to 15
- *  Changed (again) process name max lenght to 31
- *
- * Revision 1.17  2005/01/28 23:37:35  gzins
- * Changed (back) command name max length to 8
- * Changed (back) module name max length to 7
- * Changed (back) process name max length to 19
- *
- * Revision 1.16  2005/01/28 18:50:22  gzins
- * Changed command and module max lenght to 15
- * Changed process name max lenght to 31
- *
- * mella     07-May-2004  Preliminary version based on MCS from VLT/ESO
- * gzins     11-May-2004  Add RCS Id and removed unused definitions
- * lafrasse  01-Dec-2004  Added mcsUNKNOWN_ENV
- * gzins     09-Dec-2004  Defined mcsLOGICAL as an enumerate
- * lafrasse  14-Dec-2004  Increased environment name length constant
- *                        mcsENVNAME_LEN from 7 to 15
- * gzins     06-Jan-2005  Changed FAILURE to mcsFAILURE and SUCCESS to
- *                        mcsSUCCESS
- *                        Changed value for mcsFAILURE to -1
- *                        Added FAILURE and SUCCESS macros for backward
- *                        compatibility
- * lafrasse  26-Jan-2005  Changed mcsUNKNOWN_ENV from "none" to "default"
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /* The following piece of code alternates the linkage type to C for all 
