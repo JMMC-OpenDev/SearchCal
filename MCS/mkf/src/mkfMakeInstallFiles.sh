@@ -1,15 +1,7 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeInstallFiles.sh,v 1.3 2005-02-15 08:40:15 gzins Exp $" 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gzins     26-Aug-2004  Adapted from VLT 
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakeInstallFiles - copy the files into target area.
 # 
@@ -50,8 +42,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
-
 
 if [ $# != 3 ]
 then

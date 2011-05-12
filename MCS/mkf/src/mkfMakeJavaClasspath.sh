@@ -1,15 +1,7 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeJavaClasspath.sh,v 1.4 2005-02-15 08:40:15 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gzins     26-Aug-2004  Adapted from VLT
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakeJavaClasspath - create the makefile to build an executable
 # 
@@ -42,7 +34,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 # signal trap (if any)
 

@@ -1,24 +1,7 @@
 #! /bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfDoManPages
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.6  2005/12/15 10:04:21  gzins
-# Changed logo in docmentation header.
-#
-# Revision 1.5  2005/05/20 09:59:59  gzins
-# Fixed bug related to revision retrieving
-#
-# Revision 1.4  2005/02/15 08:40:15  gzins
-# Added CVS log as file modification history
-#
-# gzins     09-Jun-2004  created from ALMA doxygenize program
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 # NAME 
 #   mkfDoManPages - front-end to doxygen utilities
 # 
@@ -47,12 +30,11 @@
 #
 # BUGS     
 #
-#------------------------------------------------------------------------
+
 #
 # signal trap (if any)
 #
-# ___oOo___
-#
+
 # error conditions:
 # doxygen not found, configuration file not found
 # cannot create directories

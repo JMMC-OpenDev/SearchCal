@@ -1,21 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.4 2005-02-15 10:10:02 gzins Exp $"
-#
-# Makefile of mkf test programs 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.3  2005/02/15 09:18:22  gzins
-# Minor chages
-#
-# Revision 1.2  2005/02/15 09:12:26  gzins
-# Added CVS log as file modification history
-#
-# gzins     09-Sep-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

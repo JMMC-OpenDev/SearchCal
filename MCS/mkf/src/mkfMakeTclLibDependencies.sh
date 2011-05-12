@@ -1,15 +1,7 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeTclLibDependencies.sh,v 1.2 2005-02-15 08:40:15 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gzins     26-Aug-2004  Adapted from VLT
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakeTclLibDependencies - create the makefile to buid a Tcl/TK library
 # 
@@ -45,7 +37,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 if [ $# -ne 2 ]
 then

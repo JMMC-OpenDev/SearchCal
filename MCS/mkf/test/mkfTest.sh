@@ -1,14 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfTest.sh,v 1.2 2005-02-15 09:12:26 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gzins     09-Sep-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 echo "Hello World!"

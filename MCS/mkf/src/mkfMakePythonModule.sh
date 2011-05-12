@@ -1,17 +1,7 @@
 #! /bin/bash
 #*******************************************************************************
-# E.S.O. - VLT project
-#
-# "@(#) $Id: mkfMakePythonModule.sh,v 1.3 2008-05-25 14:37:05 gzins Exp $" 
-#
-# who       when        what
-# --------  ----------  ----------------------------------------------
-# rschmutz  1999-04-03  created
-# psivera   1999-09-21  check the definition of MAKE_VXWORKS before adding
-#                       the "uname" command to the script
-#
-
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakePythonModule - create a python module
 # 
@@ -40,7 +30,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 if [ $# -ne 1 ]
 then

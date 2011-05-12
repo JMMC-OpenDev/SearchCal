@@ -18,26 +18,7 @@
 <xsl:param name="inputFile">-</xsl:param>
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: mkfSTKToCWrapperForCpp.xsl,v 1.5 2005-09-12 06:38:00 mella Exp $"
-
- History
- ~~~~~~~
- $Log: not supported by cvs2svn $
- Revision 1.4  2005/08/30 07:38:50  mella
- Add swig defines for enum types
-
- Revision 1.3  2005/06/30 13:28:35  mella
- improve generation and place #define to change type if needed
-
- Revision 1.2  2005/06/29 13:26:45  mella
- Improve code generation completion
-
- Revision 1.1  2005/06/29 09:22:58  mella
- First revision
-
-
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
  NAME
  mkfSTKToCWrapperForCpp

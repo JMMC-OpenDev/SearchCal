@@ -1,26 +1,12 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeXslPath.sh,v 1.2 2008-01-11 13:10:13 laogtool Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2007/11/15 08:09:04  mella
-# Add new mkfMakeXslPath script
-#
-#
-#************************************************************************
-
-#/**
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 # @file
 # Write on standard output then path to search xsl files into.
 #
 # @synopsis
-#
 # mkfMakeXslPath 
-# 
 #
 # @details
 # Utility used by scripts and mkfMakefile to dynamically generate the
@@ -29,7 +15,6 @@
 # and it must be executed from the module's src directory. We are waiting 
 # the final decision
 # 
-#----------------------------------------------------------------------
 
 # signal trap (if any)
 

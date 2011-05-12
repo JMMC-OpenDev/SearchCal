@@ -1,28 +1,6 @@
 #!/bin/bash
-
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfCreateInstallRootDirs.sh,v 1.7 2008-12-19 08:14:15 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.6  2008/05/25 13:39:52  gzins
-# Added python directories
-#
-# Revision 1.5  2005/12/05 14:32:45  gzins
-# Fixed wrong MCSDATA directory structure
-#
-# Revision 1.4  2005/12/02 08:28:06  gzins
-# Updated to create directories according to the new MCS directory structure
-#
-# Revision 1.3  2005/02/15 08:40:15  gzins
-# Added CVS log as file modification history
-#
-# gzins     10-09-2004  Created
-# gzins     10-11-2004  Added creation of MCSDATA in MCSROOT
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # NAME
 #   mkfCreateInstallRootDirs- create/check standard installation directory
@@ -55,9 +33,8 @@
 #
 # BUGS    
 #
-#----------------------------------------------------------------------
-#
 
+#
 # signal trap (if any)
 
 

@@ -1,16 +1,7 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeGeneratedFilesDependencies.sh,v 1.3 2005-02-15 08:40:15 gzins Exp $" 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gzins     09-Dec-2004  Created
-# gzins     09-Dec-2004  Removed ../src from rule for C++ command class 
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakeGeneratedFilesDependencies - create the makefile to build the
 #   generated files 
@@ -37,7 +28,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 # if Linux: disable the bash builtin command 'echo'.
 if [ "`uname`" = "Linux" ]

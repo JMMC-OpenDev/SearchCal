@@ -1,15 +1,7 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeTclScript.sh,v 1.2 2005-02-15 08:40:15 gzins Exp $" 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gzins     26-Aug-2004  Adapted from VLT
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakeTclScript - create an executable Tcl/Tk procedure
 # 
@@ -56,7 +48,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 if [ $# -ne 6 ]
 then

@@ -18,26 +18,7 @@
 <xsl:param name="inputFile">-</xsl:param>
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: mkfSTKToYorickWrapperForC.xsl,v 1.6 2007-03-28 11:39:25 gzins Exp $"
-
- History
- ~~~~~~~
- $Log: not supported by cvs2svn $
- Revision 1.5  2007/03/12 15:56:07  mella
- Add blank before variable name for unsigned types
-
- Revision 1.4  2006/10/27 09:07:24  mella
- Use one external file to define new user's type mapping
-
- Revision 1.2  2006/07/06 07:55:27  mella
- Modified to support amdlib porting in yorick
-
- Revision 1.1  2005/06/30 15:35:02  mella
- First import
-
-
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
  NAME
  mkfSTKToYorickWrapperForCpp

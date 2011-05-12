@@ -1,43 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.18 2008-05-25 13:31:22 gzins Exp $"
-#
-# Makefile for MCS customization of make
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.17  2008/04/20 09:23:02  gzins
-# Added PATH setting
-#
-# Revision 1.16  2007/11/15 08:09:04  mella
-# Add new mkfMakeXslPath script
-#
-# Revision 1.15  2007/02/22 12:12:37  gzins
-# No longer generate man pages
-#
-# Revision 1.14  2005/08/19 14:01:20  mella
-# Typo
-#
-# Revision 1.13  2005/08/19 13:56:54  mella
-# Add some Yorick files
-#
-# Revision 1.12  2005/02/15 10:09:35  gzins
-# Removed unused target
-#
-# Revision 1.11  2005/02/15 08:40:15  gzins
-# Added CVS log as file modification history
-#
-# sccmgr    25-Jun-2004  Created
-# gzins     26-Aug-2004  Adapted from VLT
-# gzins     03-Dec-2004  Added mkfMakeInstallCmdDefFiles script
-# gzins     04-Dec-2004  Added mkfUpdateMcs script
-# gzins     04-Dec-2004  Changed mkfUpdateMcs to mkfInstallMcs
-# gzins     08-Dec-2004  Moved mkfInstallMcs to mcsins
-# gzins     09-Dec-2004  Removed mkfMakeErrorFileDependencies and added
-#                        mkfMakeGeneratedFilesDependencies
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

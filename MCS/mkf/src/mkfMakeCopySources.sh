@@ -1,18 +1,7 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeCopySources.sh,v 1.3 2006-08-25 08:58:31 gzins Exp $" 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.2  2005/02/15 08:40:15  gzins
-# Added CVS log as file modification history
-#
-# gzins     26-Aug-2004  Adapted from VLT
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakeCopySources - copy the module source files into integration area.
 # 
@@ -51,7 +40,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 # Integration area is not defined
 if [ "$INTROOT" = "" ]

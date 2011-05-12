@@ -1,11 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: doxyfile,v 1.1 2007-02-07 15:03:14 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $ 
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 # If the value of the INPUT tag contains directories, you can use the

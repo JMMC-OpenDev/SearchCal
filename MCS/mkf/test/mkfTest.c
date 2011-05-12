@@ -1,16 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: mkfTest.c,v 1.3 2006-05-11 13:04:56 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2005/02/15 09:12:26  gzins
- * Added CVS log as file modification history
- *
- * gzins     09-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

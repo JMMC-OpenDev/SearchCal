@@ -1,21 +1,7 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeJavaExecutable.sh,v 1.5 2009-10-06 14:22:02 mella Exp $" 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.4  2007/02/15 09:19:33  mella
-# Use now /home/users/mella/.java/logging.properties file if any
-#
-# Revision 1.3  2005/02/15 08:40:15  gzins
-# Added CVS log as file modification history
-#
-# gzins     26-Aug-2004  Adapted from VLT
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakeJavaExecutable - create the java program 
 # 
@@ -48,7 +34,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 javaName=$1
 class=$2

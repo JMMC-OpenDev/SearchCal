@@ -1,30 +1,7 @@
 #!/bin/bash
-
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfFilterForDoxygen.sh,v 1.7 2007-02-22 17:22:35 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.6  2006/11/21 10:25:35  gzins
-# Updated to improved generated documentation
-#
-# Revision 1.5  2006/03/22 07:45:18  gzins
-# Added tcl programs
-#
-# Revision 1.4  2005/02/22 13:56:50  gluck
-# Updated documentation
-#
-# Revision 1.3  2005/02/15 08:40:15  gzins
-# Added CVS log as file modification history
-#
-# lgluck    27/07/04    Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
-
-#/**
 # \file
 # File filter for doxygen.
 #
@@ -54,7 +31,6 @@
 # \usedfiles
 # \filename $FILE : input file feeding doxygen
 #
-# */
 
 # File to filter out
 FILE=$1

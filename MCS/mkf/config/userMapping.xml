@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: userMapping.xml,v 1.1 2006-10-27 09:07:48 mella Exp $"
-
- History
- ~~~~~~~
- $Log: not supported by cvs2svn $
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 ********************************************************************************
  NAME
  userMapping.xml - List user's type mapping between two or more

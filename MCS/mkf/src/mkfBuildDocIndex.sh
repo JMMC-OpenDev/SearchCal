@@ -1,14 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfBuildDocIndex.sh,v 1.4 2005-02-15 08:40:15 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# mella     23-Jun-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 #   NAME 
 #   mkfBuildDocIndex - Generate index.html to access module's documentation
@@ -35,9 +27,8 @@
 #
 #   BUGS     
 #
-#-------------------------------------------------------------------------------
-#
 
+#
 # signal trap (if any)
 
 #This function returns the complete pathname of the file given in parameter

@@ -1,16 +1,7 @@
 #! /bin/bash
 #*******************************************************************************
-# E.S.O. - VLT project
-#
-# "@(#) $Id: mkfMakePythonPackDependencies.sh,v 1.1 2008-05-25 13:31:23 gzins Exp $" 
-#
-# who       when      what
-# --------  --------  ----------------------------------------------
-# mzampare 2002-02-15 created 
-# mzampare 2002-02-27 package files now under explicit subdirectory under src
-# mzampare 2002-02-27 dependency files was incorrect for large directories
-# mzampare 2002-03-18 dependencies used a non declared variable
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakePythonPackDependencies - create the makefile to build one python package
 # 
@@ -44,7 +35,7 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
+
 if [ "${1}" != "" ]
 then
     packageName=$1

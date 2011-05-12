@@ -1,19 +1,7 @@
 #! /bin/bash
 #*******************************************************************************
-# E.S.O. - VLT project
-#
-# "@(#) $Id: mkfMakePythonModDependencies.sh,v 1.2 2008-05-25 14:22:50 gzins Exp $" 
-#
-# who       when      what
-# --------  --------  ----------------------------------------------
-# almamgr 2002-03-01 Now /bin/ksh
-# gfilippi  24/10/94  created
-# gfilippi  25/10/94  stop on error ("-" removed from the make command)
-# gfilippi  08/12/94  handle one script at time
-# gfilippi  20/12/95  use +wx (cmmCopy gives r--r--r-- files)
-# rschmutz 1999-04-03 use mkfMakeScript to copy the script to ../bin.
-
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakePythonModDependencies - create the makefile to build one python module
 # 
@@ -51,7 +39,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 echo "PYTHON MODULE = $1"
 if [ "${1}" != "" ]

@@ -1,18 +1,7 @@
 #! /bin/sh
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: mkfMakeExecutableDependencies.sh,v 1.4 2005-02-15 08:40:15 gzins Exp $" 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# gzins     26-Aug-2004  Adapted from VLT
-# gzins     18-Nov-2004  Added MCS C++ libraries only when MCS and C++ are
-#                        specified
-# gzins     18-Nov-2004  Fixed bug related to MCS C++ libraries
-#
-#************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 #   NAME
 #   mkfMakeExecutableDependencies - create the makefile to build an executable
 # 
@@ -68,7 +57,6 @@
 #
 #   BUGS    
 #
-#----------------------------------------------------------------------
 
 exeName=$1
 objectList=$2
