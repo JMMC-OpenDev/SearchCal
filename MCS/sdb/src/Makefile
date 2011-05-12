@@ -1,22 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.4 2007-10-26 13:25:26 lafrasse Exp $"
-#
-# Makefile of sdb module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.3  2005/12/20 14:43:11  lafrasse
-# Added sbdENTRY.h as a public header
-#
-# Revision 1.2  2005/12/20 13:52:34  lafrasse
-# Added preliminary support for INTRA-process action log
-#
-# Revision 1.1  2005/06/02 13:09:28  sccmgr
-# Fix directory structure and add additional files
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

@@ -1,24 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sdbTestSYNC_ENTRY.cpp,v 1.1 2007-10-29 12:06:45 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2007/10/26 13:25:26  lafrasse
- * Moved synchronized entry in sdbSYNC_ENTRY, and added timeout-based entry as
- * sdbENTRY.
- *
- * Revision 1.3  2006/12/21 15:03:08  lafrasse
- * Moved from static-based design to instance-based design.
- *
- * Revision 1.2  2006/05/11 13:04:57  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.1  2005/12/20 13:52:34  lafrasse
- * Added preliminary support for INTRA-process action log
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,15 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sdbTestENTRY.cpp,v 1.1 2007-10-29 12:05:21 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2007/10/26 13:25:26  lafrasse
- * Moved synchronized entry in sdbSYNC_ENTRY, and added timeout-based entry as
- * sdbENTRY.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

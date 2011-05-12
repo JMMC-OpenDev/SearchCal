@@ -1,23 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.4 2007-10-29 12:07:10 gzins Exp $"
-#
-# Makefile of sdb module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.3  2007/10/26 13:25:26  lafrasse
-# Moved synchronized entry in sdbSYNC_ENTRY, and added timeout-based entry as
-# sdbENTRY.
-#
-# Revision 1.2  2005/12/21 10:42:26  lafrasse
-# Removed 'sdb' and 'thrd' as library inclusion as they have been added to the MCS list
-#
-# Revision 1.1  2005/12/20 13:52:34  lafrasse
-# Added preliminary support for INTRA-process action log
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

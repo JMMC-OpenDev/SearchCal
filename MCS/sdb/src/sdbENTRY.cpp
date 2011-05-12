@@ -1,18 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sdbENTRY.cpp,v 1.3 2011-03-01 12:33:56 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2007/10/29 13:17:23  gzins
- * Simplified Read() method + added error when timeout expires
- *
- * Revision 1.1  2007/10/26 13:25:26  lafrasse
- * Moved synchronized entry in sdbSYNC_ENTRY, and added timeout-based entry as
- * sdbENTRY.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

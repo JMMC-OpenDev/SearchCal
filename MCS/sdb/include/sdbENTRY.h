@@ -1,13 +1,7 @@
 #ifndef sdbENTRY_H
 #define sdbENTRY_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sdbENTRY.h,v 1.1 2007-10-26 13:25:26 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
