@@ -20,7 +20,7 @@ export SW_PACKAGE=MCS
 package="MCS"
 
 # Modules repository
-repos="https://svn/jmmc.fr/jmmc-sw/$package"
+repos="https://svn.jmmc.fr/jmmc-sw/$package"
 
 # List of modules
 modules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth fnd misco env cmd msg sdb evh gwt jmcs modc modcpp modsh modjava"
