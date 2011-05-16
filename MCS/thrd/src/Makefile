@@ -45,7 +45,7 @@ xxxxx_LIBS      =
 # Includes (.h) files (public only)
 # ---------------------------------
 INCLUDES        = thrd.h          \
-				  thrdThread.h    \
+				  thrdThreadFunctions.h    \
 				  thrdMutex.h     \
 				  thrdSemaphore.h \
 				  thrdTHREAD.h

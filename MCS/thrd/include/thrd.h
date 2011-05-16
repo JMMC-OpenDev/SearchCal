@@ -13,7 +13,7 @@
 /*
  * Local headers
  */
-#include "thrdThread.h"
+#include "thrdThreadFunctions.h"
 #include "thrdMutex.h"
 #include "thrdSemaphore.h"
  
