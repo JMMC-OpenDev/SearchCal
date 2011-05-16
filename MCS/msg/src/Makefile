@@ -29,7 +29,7 @@ EXECUTABLES_L   =
 
 #
 # <brief description of msgManager program>
-msgManager_OBJECTS           = msgManager        \
+msgManager_OBJECTS           = msgManagerMain    \
 							   msgPROCESS        \
 							   msgPROCESS_LIST   \
 							   msgMANAGER
