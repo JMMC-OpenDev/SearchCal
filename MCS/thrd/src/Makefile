@@ -57,7 +57,7 @@ LIBRARIES_L     =
 
 #
 # <brief description of thrd library>
-thrd_OBJECTS   = thrdThread thrdMutex thrdSemaphore thrdTHREAD
+thrd_OBJECTS   = thrdThreadFunctions thrdMutex thrdSemaphore thrdTHREAD
 thrd_LDFLAGS   = -lpthread
 
 #
