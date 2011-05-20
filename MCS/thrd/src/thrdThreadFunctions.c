@@ -70,7 +70,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdThread.c,v 1.4 2007
 /* 
  * Local Headers
  */
-#include "thrdThread.h"
+#include "thrdThreadFunctions.h"
 #include "thrdPrivate.h"
 #include "thrdErrors.h"
 
