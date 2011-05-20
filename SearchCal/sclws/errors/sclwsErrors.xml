@@ -40,4 +40,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Invalid '%s' server id]]></errFormat>
    </error>
+   <error id="9">
+      <errName>STL_MUTEX</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Could not use mutex that prevents concurrent access to STL shared objects]]></errFormat>
+   </error>
 </errorList>
