@@ -212,7 +212,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         // free gdome object
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
-        xmlCleanupParser();
         return mcsFAILURE;
     }
 
@@ -225,7 +224,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         gdome_el_unref(root, &exc);            
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
-        xmlCleanupParser();
         return mcsFAILURE;
     }
 
@@ -236,7 +234,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         gdome_el_unref(root, &exc);            
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
-        xmlCleanupParser();
         return mcsFAILURE;
     }
 
@@ -323,7 +320,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
             gdome_el_unref(root, &exc);            
             gdome_doc_unref (doc, &exc);
             gdome_di_unref (domimpl, &exc);
-            xmlCleanupParser();
             starList.Clear();
             return mcsFAILURE;
         }
@@ -333,7 +329,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     gdome_el_unref(root, &exc);            
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
-    xmlCleanupParser();
       
     return mcsSUCCESS;
 }
