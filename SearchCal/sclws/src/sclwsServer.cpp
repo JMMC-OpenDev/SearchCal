@@ -126,7 +126,7 @@ uint       sclwsPortNumber           = 8079; // Default value for beta testing.
 void* sclwsJobHandler(void* soapContextPtr)
 {
     struct soap* soapContext = (struct soap*) soapContextPtr;
-
+   
     pthread_detach(pthread_self());
 
     // Fulfill the received remote call
@@ -152,6 +152,16 @@ void sclwsExit(int returnCode)
     // Close MCS services
     logDebug("Cleaning MCS ...");
     mcsExit();
+
+    /*
+     * Cleanup function for the XML library (libxml2).
+     * Library Clean up : must be called only once the process
+     * has no more use of the XML library => main exit()
+     * http://xmlsoft.org/html/libxml-parser.html
+     * 
+     * (valgrind check-mem)
+     */
+    xmlCleanupParser();
     
     // Exit from the application with SUCCESS
     printf("Exiting now.\n");
@@ -246,11 +256,12 @@ int main(int argc, char *argv[])
 
     logTest("Listening on port '%d'.", sclwsPortNumber);
 
+    globalSoapContext.accept_timeout = 0;
+    
     // Infinite loop to receive requests
     for (uint nbOfConnection = 1; ; nbOfConnection++)
     {
         // Wait (without timeout) a new connection
-        globalSoapContext.accept_timeout = 1;
         if (soap_accept(&globalSoapContext) < 0)
         {
             continue;
@@ -258,7 +269,7 @@ int main(int argc, char *argv[])
 
         // Fork the SOAP context
         struct soap* forkedSoapContext = soap_copy(&globalSoapContext);
-
+        
         // Start a new thread to handle the request
         pthread_t threadId;
         int status = pthread_create(&threadId, NULL, (void*(*)(void*))sclwsJobHandler, (void*)forkedSoapContext);

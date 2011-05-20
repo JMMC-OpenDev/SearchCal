@@ -71,8 +71,35 @@ using namespace std;
 #include "soapH.h"
 
 /*
+ * Local macro
+ */
+#define STL_LOCK() { \
+    logExtDbg("Enter critical section"); \
+    if (thrdMutexLock(&stlMutex) == mcsFAILURE) \
+    { \
+        errAdd(sclwsERR_STL_MUTEX); \
+        sclwsReturnSoapError(); \
+    } \
+}
+
+#define STL_UNLOCK() { \
+    logExtDbg("Exit critical section"); \
+    if (thrdMutexUnlock(&stlMutex) == mcsFAILURE) \
+    { \
+        errAdd(sclwsERR_STL_MUTEX); \
+        sclwsReturnSoapError(); \
+    } \
+}
+
+/*
  * Local Variables 
  */
+
+/**
+ * Shared mutex to circumvent un thread safe STL
+ */
+thrdMUTEX stlMutex;
+
 /**
  * Used to store each "Communication ID"-"sclsvSERVER instance" couples
  * to ensure multiple concurrent query handling.
@@ -92,6 +119,28 @@ typedef pair<sclwsTHREAD_ITERATOR, sclwsTHREAD_ITERATOR> sclwsTHREAD_RANGE;
  * @sa Used by the sclwsReturnSoapError() macro defined in sclwsPrivate.h
  */
 static char sclwsSoapErrMsg[256];
+
+/*
+ * Local methods
+ */
+ int dumpServerList(struct soap* soapContext, char* methodName, char* jobId)
+ {
+    if (logGetStdoutLogLevel() >= logDEBUG)
+    {
+        STL_LOCK();
+
+        logDebug("sclwsServerList[%s = %s] dump:", methodName, jobId);
+        
+        typedef map<string,sclsvrSERVER*>::const_iterator MapIterator;
+        for (MapIterator iter = sclwsServerList.begin(); iter != sclwsServerList.end(); iter++)
+        {
+            logDebug("ID: %s -> %p", iter->first.c_str(), iter->second);
+        }
+
+        STL_UNLOCK();
+    }
+    return SOAP_OK;
+}
 
 /*
  * Public methods
@@ -120,6 +169,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
         errAdd(sclwsERR_NULL_PTR, "soapContext");
         sclwsReturnSoapError();
     }
+
     if (jobId == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "jobId");
@@ -162,12 +212,16 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
         sclwsReturnSoapError();
     }
 
+    STL_LOCK();
+    
     // Associate the new sclsvrSERVER instance with the generated UUID for later
     sclwsServerList[*jobId] = server;
 
+    STL_UNLOCK();
+
     logDebug("\tSession '%s': server instanciated.", *jobId);
-    
-    return SOAP_OK;
+
+    return dumpServerList(soapContext, "GetCalOpenSession", *jobId);
 }
 
 /**
@@ -186,10 +240,15 @@ int ns__GetCalSearchCal(struct soap* soapContext,
                     char** voTable)
 {
     logTrace("ns__GetCalSearchCal('%s')", jobId);
-
+    
+    STL_LOCK();
+    
     // Store the thread ID iterator (used in case a Cancel occurs while this is running)
+    // @TODO: this iterator may be inconsistent at erase time (concurrency)
     sclwsTHREAD_ITERATOR threadIterator = 
         sclwsThreadList.insert(make_pair(jobId, pthread_self()));
+
+    STL_UNLOCK();
 
     // Test parameters validity
     if (soapContext == NULL)
@@ -213,8 +272,13 @@ int ns__GetCalSearchCal(struct soap* soapContext,
         sclwsReturnSoapError();
     }
 
+    STL_LOCK();
+    
     // Retrieve the sclsvrSERVER instance associated with the received UUID
     sclsvrSERVER* server = sclwsServerList[jobId];
+
+    STL_UNLOCK();
+    
     if (server == NULL)
     {
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
@@ -251,10 +315,30 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     logTest("\tSession '%s': terminating query.", jobId);
 
+    STL_LOCK();
+    
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
 
-    return SOAP_OK;
+    STL_UNLOCK();
+
+    // LEAK FIX = FREE MEMORY (LAURENT)
+    // @TODO : implement a GC-like algorithm !!!
+
+    // @TODO : remove ASAP
+    sleep(1);
+
+    STL_LOCK();
+    
+    sclwsServerList.erase(jobId);
+
+    STL_UNLOCK();
+    
+    // Delete the server instance
+    logDebug("\tSession '%s': deleting associated server.", jobId);
+    delete(server);
+
+    return dumpServerList(soapContext, "GetCalSearchCal", jobId);
 }
 
 /**
@@ -272,9 +356,14 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
 {
     logTrace("ns__GetCalQueryStatus('%s')", jobId);
 
+    STL_LOCK();
+    
     // Store the thread ID iterator (used in case a Cancel occurs while this is running)
+    // @TODO: this iterator may be inconsistent at erase time (concurrency)
     sclwsTHREAD_ITERATOR threadIterator = 
         sclwsThreadList.insert(make_pair(jobId, pthread_self()));
+
+    STL_UNLOCK();
 
     // Test parameters validity
     if (soapContext == NULL)
@@ -293,8 +382,13 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
         sclwsReturnSoapError();
     }
 
+    STL_LOCK();
+    
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = sclwsServerList[jobId];
+
+    STL_UNLOCK();
+    
     if (server == NULL)
     {
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
@@ -316,10 +410,14 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
 
     logTest("\tSession '%s': query status = '%s'.", jobId, *status);
 
+    STL_LOCK();
+
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
 
-    return SOAP_OK;
+    STL_UNLOCK();
+
+    return dumpServerList(soapContext, "GetCalQueryStatus", jobId);
 }
 
 /**
@@ -337,33 +435,35 @@ int ns__GetCalCancelSession(struct soap* soapContext,
 {
     logTrace("ns__GetCalCancelSession()");
 
+    *isOK = false;
+    
     // Test parameters validity
     if (soapContext == NULL)
     {
-        *isOK = false;
         errAdd(sclwsERR_NULL_PTR, "soapContext");
         sclwsReturnSoapError();
     }
     if (jobId == NULL)
     {
-        *isOK = false;
         errAdd(sclwsERR_NULL_PTR, "jobId");
         sclwsReturnSoapError();
     }
     if (isOK == NULL)
     {
-        *isOK = false;
         errAdd(sclwsERR_NULL_PTR, "isOK");
         sclwsReturnSoapError();
     }
 
     logTest("\tSession '%s': cancelling query.", jobId);
 
-    // Retrieve the sclsvrSERVER instance associated with th received UUID
+    STL_LOCK();
+    
+    // Retrieve the sclsvrSERVER instance associated with the received UUID
     sclsvrSERVER* server = sclwsServerList[jobId];
     if (server == NULL)
     {
-        *isOK = false; // Cancellation went bad
+        STL_UNLOCK();
+        
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
         logWarning("\tSession '%s': cancelling FAILED !", jobId);
         sclwsReturnSoapError();
@@ -371,6 +471,8 @@ int ns__GetCalCancelSession(struct soap* soapContext,
 
     // For each thread launched with the current job ID
     logDebug("\tSession '%s': killing all associated threads,", jobId);
+    
+    // @TODO : use that to fix STL erase higher ....
     sclwsTHREAD_RANGE range = sclwsThreadList.equal_range(jobId);
     sclwsTHREAD_ITERATOR threadIterator;
     for (threadIterator = range.first; threadIterator != range.second; ++threadIterator)
@@ -382,16 +484,20 @@ int ns__GetCalCancelSession(struct soap* soapContext,
         sclwsThreadList.erase(threadIterator);
     }
 
+    // @TODO : implement a GC-like algorithm !!!
+
     // Delete the server instance
     logDebug("\tSession '%s': deleting associated server.", jobId);
-    delete(server);
     sclwsServerList.erase(jobId);
+    delete(server);
+
+    STL_UNLOCK();
 
     *isOK = true; // Cancellation succesfully completed
 
     logTest("\tSession '%s': cancelling done.", jobId);
 
-    return SOAP_OK;
+    return dumpServerList(soapContext, "GetCalCancelSession", jobId);
 }
 
 /*___oOo___*/
