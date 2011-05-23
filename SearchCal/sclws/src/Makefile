@@ -223,7 +223,7 @@ clean_soap:
 # Copy PHP proxy script in current user's public_html directory
 install_proxy:
 	@echo "Installing PHP proxy in ~/public_html . . ."
-	cp sclws-proxy.php ~/public_html/
+	cp sclwsProxy.php ~/public_html/
 	@echo " . . . done"
 
 #___oOo___
