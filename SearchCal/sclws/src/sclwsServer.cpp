@@ -238,7 +238,8 @@ int main(int argc, char *argv[])
     }
     // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
 
-    // @TODO : manage a "garbage collector" to close pending connections
+    // @TODO : manage a "garbage collector" thread to close pending connections
+    // @TODO : Each connection should have a semaphore incremented at each thread launch and decremented at each thread end, that let sclsvrSERVER instance be deallocated once equal to 0.
 
     logDebug("Initializing gSOAP ...");
 
@@ -262,6 +263,7 @@ int main(int argc, char *argv[])
     for (uint nbOfConnection = 1; ; nbOfConnection++)
     {
         // Wait (without timeout) a new connection
+        globalSoapContext.accept_timeout = 0;
         if (soap_accept(&globalSoapContext) < 0)
         {
             continue;

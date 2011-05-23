@@ -53,6 +53,7 @@ using namespace std;
 #include <map>
 #include <uuid/uuid.h>
 #include <pthread.h>
+#include <unistd.h>
 
 /*
  * MCS Headers 
@@ -479,6 +480,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
     {
         // Kill the thread
         pthread_cancel(threadIterator->second);
+        // @TODO : Use pthread_exit() instead ?
 
         // Delete the thread ID
         sclwsThreadList.erase(threadIterator);
