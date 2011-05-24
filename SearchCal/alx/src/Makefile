@@ -1,13 +1,19 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.9 2010-01-08 22:29:04 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.9.2.2 2011-04-15 22:22:50 duvert Exp $"
 #
 # Makefile of the alx module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.9.2.1  2011/04/08 19:15:52  duvert
+# support for akari photometries
+#
+# Revision 1.9  2010/01/08 22:29:04  lafrasse
+# Added preliminary support for alxLD2UD.
+#
 # Revision 1.8  2006/03/28 07:17:25  gzins
 # Changed alxAngDiamPolynomialForBrightStar to alxAngDiamPolynomial
 #
@@ -171,8 +177,11 @@ INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg					\
 				../config/alxColorTableForFaintGiantStar.cfg		\
 				../config/alxColorTableForBrightSuperGiantStar.cfg	\
 				../config/alxColorTableForFaintSuperGiantStar.cfg	\
-				../config/alxExtinctionRatioTable.cfg	\
-				../config/alxStarPopulationInKBand.cfg
+				../config/alxExtinctionRatioTable.cfg		    	\
+				../config/alxStarPopulationInKBand.cfg 			    \
+		        ../config/alxAkariBlackBodyCorrectionTable.cfg		\
+		        ../config/alxTableTeffLogg.cfg				        \
+		        ../config/alxTableUDCoefficientCorrection.cfg
 
 #
 # list of all possible C-sources (used to create automatic dependencies)

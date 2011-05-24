@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCDATA.cpp,v 1.40 2010-07-28 14:08:44 lafrasse Exp $"
+* "@(#) $Id: vobsCDATA.cpp,v 1.40.2.1 2011-04-08 19:43:03 duvert Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.40  2010/07/28 14:08:44  lafrasse
+* Renamed VFlag columns to BinFlag for detailled bright N.
+*
 * Revision 1.39  2010/07/27 11:58:36  lafrasse
 * Added sep1 and sep2 data retrieval from WDS catalog.
 *
@@ -125,7 +128,7 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.40 2010-07-28 14:08:44 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.40.2.1 2011-04-08 19:43:03 duvert Exp $"; 
 
 
 /* 
@@ -738,6 +741,26 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         {
             return vobsSTAR_ORBIT_SEPARATION_SEP2;
         }
+    }
+    // Akari Photometry
+    if (strcmp(paramName, "S09") == 0)
+    {
+      return vobsSTAR_PHOT_FLUX_IR_09;
+    }
+
+    if (strcmp(paramName, "e_S09") == 0)
+    {
+      return vobsSTAR_PHOT_FLUX_IR_09_ERROR;
+    }
+
+    if (strcmp(paramName, "S18") == 0)
+    {
+      return vobsSTAR_PHOT_FLUX_IR_18; // at the moment, patch an UCD error at CDS...
+    }
+
+    if (strcmp(paramName, "e_S18") == 0)
+    {
+      return vobsSTAR_PHOT_FLUX_IR_18_ERROR;
     }
 
     // No property corresponding to the parameter name/UCD

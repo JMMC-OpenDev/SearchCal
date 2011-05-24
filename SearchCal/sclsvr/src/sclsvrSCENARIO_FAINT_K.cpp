@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.26 2011-03-03 13:12:52 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.26.2.1 2011-04-08 19:34:53 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.26  2011/03/03 13:12:52  lafrasse
+ * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+ *
  * Revision 1.25  2010/11/25 15:45:33  lafrasse
  * Removed CHARM querying from all scenarii.
  *
@@ -90,7 +93,7 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.26 2011-03-03 13:12:52 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.26.2.1 2011-04-08 19:34:53 duvert Exp $"; 
 
 /* 
  * System Headers 
@@ -340,6 +343,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
     
+    // II/297/irc aka AKARI
+    if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1,
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     return mcsSUCCESS;
 }
 

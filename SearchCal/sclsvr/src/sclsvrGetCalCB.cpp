@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.59 2011-02-10 17:17:21 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetCalCB.cpp,v 1.59.2.1 2011-04-15 22:42:07 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.59  2011/02/10 17:17:21  lafrasse
+ * Cleaned output log for regression test mode.
+ *
  * Revision 1.58  2011/02/10 13:46:36  lafrasse
  * Removed I, J and H bands in Faint K.
  *
@@ -190,7 +193,7 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.59 2011-02-10 17:17:21 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.59.2.1 2011-04-15 22:42:07 duvert Exp $"; 
 
 
 /* 
@@ -227,6 +230,7 @@ using namespace std;
 #include "sclsvrPrivate.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
+#include "sclsvrSCENARIO_JSDC.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
 
@@ -425,6 +429,12 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case '1':
                 // Load Bright K Catalog Scenario
                 scenario = &_scenarioBrightKCatalog;
+                break;
+
+            case '0':
+                // Load JSDC Catalog Scenario
+                scenario = &_scenarioJSDC;
+		request.SetSearchBand("K");
                 break;
 
             default:

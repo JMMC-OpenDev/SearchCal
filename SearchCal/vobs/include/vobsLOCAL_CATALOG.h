@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.5 2006-01-18 08:45:38 scetre Exp $"
+ * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.5.2.1 2011-04-15 22:21:11 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.5  2006/01/18 08:45:38  scetre
+ * Added option in generic local and remote catalog
+ *
  * Revision 1.4  2005/11/16 10:47:54  scetre
  * Updated documentation
  *
@@ -68,10 +71,10 @@ protected:
     // Flag to know if catalog is loaded or not
     mcsLOGICAL _loaded;
 
-    // Star list built from MIDI catalog stars
+    // Star list built from local catalog stars
     vobsSTAR_LIST _starList;
 
-    // Load MIDI catalog
+    // Load local catalog
     virtual mcsCOMPL_STAT Load(void);
 
    virtual mcsCOMPL_STAT SetOption(string option);    

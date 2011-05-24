@@ -1,13 +1,19 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.35 2010-01-26 14:15:38 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.35.2.2 2011-04-15 22:19:32 duvert Exp $"
 #
 # Makefile of vobs module 
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.35.2.1  2011/04/12 08:03:27  lafrasse
+# Fixed missing AKARI catalog handling.
+#
+# Revision 1.35  2010/01/26 14:15:38  lafrasse
+# Added vobsCATALOG_WDS.
+#
 # Revision 1.34  2009/12/09 09:57:53  lafrasse
 # Added alx library dependency for vobsDISTANCE_FILTER.
 #
@@ -128,6 +134,7 @@ INCLUDES        = vobs.h						\
 				  vobsREMOTE_CATALOG.h 			\
 				  vobsLOCAL_CATALOG.h 			\
 				  vobsCATALOG_ASCC.h 	   		\
+				  vobsCATALOG_ASCC_LOCAL.h 	   		\
 				  vobsCATALOG_BSC.h 	   		\
 				  vobsCATALOG_CHARM2.h 	   		\
 				  vobsCATALOG_CIO.h 	   		\
@@ -143,6 +150,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_UNSO.h			\
 				  vobsCATALOG_SB9.h 	   		\
 				  vobsCATALOG_WDS.h 	   		\
+				  vobsCATALOG_AKARI.h 	   		\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
@@ -178,6 +186,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsREMOTE_CATALOG			\
 				   vobsLOCAL_CATALOG			\
 				   vobsCATALOG_ASCC 			\
+				   vobsCATALOG_ASCC_LOCAL 			\
 				   vobsCATALOG_BSC 				\
 				   vobsCATALOG_CHARM2 			\
 				   vobsCATALOG_CIO 				\
@@ -193,6 +202,7 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_UNSO 			\
 				   vobsCATALOG_SB9   			\
 				   vobsCATALOG_WDS   			\
+				   vobsCATALOG_AKARI 	   		\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\
@@ -255,7 +265,7 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../config/vobsMidiCatalog.cfg \
+INSTALL_FILES = ../config/*.cfg \
 				../config/*.xs*
 
 #

@@ -1,13 +1,16 @@
 #*******************************************************************************
 # JMMC project
 #
-# "@(#) $Id: Makefile,v 1.24 2009-12-17 15:14:31 lafrasse Exp $"
+# "@(#) $Id: Makefile,v 1.24.2.1 2011-04-15 22:32:45 duvert Exp $"
 #
 # Makefile of sclsvr
 #
 # History
 # -------
 # $Log: not supported by cvs2svn $
+# Revision 1.24  2009/12/17 15:14:31  lafrasse
+# *** empty log message ***
+#
 # Revision 1.23  2007/10/31 11:36:51  gzins
 # Moved test program in test directory
 #
@@ -106,6 +109,7 @@ INCLUDES        = sclsvr.h						       \
 				  sclsvrSERVER.h				       \
 				  sclsvrVISIBILITY_FILTER.h		       \
 				  sclsvrSCENARIO_BRIGHT_K.h		       \
+				  sclsvrSCENARIO_JSDC.h		       \
 				  sclsvrSCENARIO_BRIGHT_K_CATALOG.h	   \
 				  sclsvrSCENARIO_BRIGHT_V.h		       \
 				  sclsvrSCENARIO_BRIGHT_N.h		       \
@@ -131,7 +135,8 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		      \
 				   sclsvrGetStarCB				      \
 				   sclsvrVISIBILITY_FILTER		      \
 				   sclsvrSCENARIO_BRIGHT_K		      \
-                   sclsvrSCENARIO_BRIGHT_K_CATALOG    \
+				   sclsvrSCENARIO_JSDC		      \
+				   sclsvrSCENARIO_BRIGHT_K_CATALOG    \
 				   sclsvrSCENARIO_BRIGHT_V		      \
 				   sclsvrSCENARIO_BRIGHT_N		      \
 				   sclsvrSCENARIO_FAINT_K		      \

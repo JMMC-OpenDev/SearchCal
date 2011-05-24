@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.37 2011-02-10 17:17:21 lafrasse Exp $"
+ * "@(#) $Id: sclsvrGetStarCB.cpp,v 1.37.2.1 2011-04-15 22:43:59 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.37  2011/02/10 17:17:21  lafrasse
+ * Cleaned output log for regression test mode.
+ *
  * Revision 1.36  2010/11/10 15:45:16  lafrasse
  * Decorelated GETSTAR from EVH callback mecanism.
  *
@@ -85,7 +88,7 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.37 2011-02-10 17:17:21 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.37.2.1 2011-04-15 22:43:59 duvert Exp $"; 
 
 
 /* 
@@ -324,12 +327,12 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             return evhCB_NO_DELETE | evhCB_FAILURE;
         }
         //
-        //       // Complete missing properties of the calibrator 
-        //       if (calibrator.Complete(request) == mcsFAILURE)
-        //       {
-        //           // Ignore error
-        //           errCloseStack(); 
-        //       }
+	// Complete missing properties of the calibrator 
+	if (calibrator.Complete(request) == mcsFAILURE)
+	  {
+	    // Ignore error
+	    errCloseStack(); 
+	  }
         //
         // Prepare reply
         int propIdx;
@@ -373,8 +376,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         // If a filename has been given, store results as file
         if (strcmp(request.GetFileName(), "") != 0)
         {
+	  vobsSTAR_LIST newStarList;
+	  newStarList.AddAtTail(calibrator);
             // Save the list as a VOTable v1.1
-            if (starList.SaveToVOTable
+            if (newStarList.SaveToVOTable
                 (request.GetFileName(), voHeader, softwareVersion,
                  requestString, xmlOutput.c_str()) == mcsFAILURE)
             {

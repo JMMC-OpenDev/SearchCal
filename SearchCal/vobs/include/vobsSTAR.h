@@ -3,11 +3,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.h,v 1.61 2011-03-03 13:09:42 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.h,v 1.61.2.1 2011-04-08 19:42:49 duvert Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.61  2011/03/03 13:09:42  lafrasse
+* Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+*
 * Revision 1.60  2010/07/28 14:08:44  lafrasse
 * Renamed VFlag columns to BinFlag for detailled bright N.
 *
@@ -238,8 +241,12 @@
 #define vobsSTAR_PHOT_COLOR_EXCESS              "PHOT_COLOR_EXCESS"
 #define vobsSTAR_IR_FLUX_ORIGIN                 "IR_FLUX_ORIGIN"
 #define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
+#define vobsSTAR_PHOT_FLUX_IR_09                "PHOT_FLUX_IR_09"
+#define vobsSTAR_PHOT_FLUX_IR_09_ERROR          "PHOT_FLUX_IR_09_ERROR"
 #define vobsSTAR_PHOT_FLUX_IR_12                "PHOT_FLUX_IR_12"
 #define vobsSTAR_PHOT_FLUX_IR_12_ERROR          "PHOT_FLUX_IR_12_ERROR"
+#define vobsSTAR_PHOT_FLUX_IR_18                "PHOT_FLUX_IR_18"
+#define vobsSTAR_PHOT_FLUX_IR_18_ERROR          "PHOT_FLUX_IR_18_ERROR"
 #define vobsSTAR_REF_STAR                       "REF_STAR"
 #define vobsSTAR_PHYS_TEMP_EFFEC                "PHYS_TEMP_EFFEC"
 #define vobsSTAR_PHYS_TEMP_EFFEC_ERROR          "PHYS_TEMP_EFFEC_ERROR"

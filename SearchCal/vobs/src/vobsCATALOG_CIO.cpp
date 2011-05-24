@@ -1,11 +1,14 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.21 2011-03-03 13:09:42 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.21.2.1 2011-04-15 22:12:22 duvert Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21  2011/03/03 13:09:42  lafrasse
+* Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+*
 * Revision 1.20  2010/06/28 14:12:11  lafrasse
 * Moved CDS return limit to 1000.
 *
@@ -72,7 +75,7 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.21 2011-03-03 13:09:42 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.21.2.1 2011-04-15 22:12:22 duvert Exp $"; 
 
 /* 
  * System Headers 
@@ -173,7 +176,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=F(IR)");
     miscDynBufAppendString(&_query, "&-out=x_F(IR)");
     //constraints
-    miscDynBufAppendString(&_query, "&&x_F(IR)=M");
+    miscDynBufAppendString(&_query, "&x_F(IR)=M");
     miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
     
     miscDynBufAppendString(&_query, "&-sort=_r");

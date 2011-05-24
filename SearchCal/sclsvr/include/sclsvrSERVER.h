@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.h,v 1.19 2010-11-10 15:45:16 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.h,v 1.19.2.1 2011-04-15 22:38:05 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19  2010/11/10 15:45:16  lafrasse
+ * Decorelated GETSTAR from EVH callback mecanism.
+ *
  * Revision 1.18  2009/12/17 15:14:31  lafrasse
  * *** empty log message ***
  *
@@ -78,6 +81,7 @@
  */
 #include "vobs.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
+#include "sclsvrSCENARIO_JSDC.h"
 #include "sclsvrSCENARIO_BRIGHT_K_CATALOG.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
@@ -138,6 +142,7 @@ private:
     // Virtual observatory
     vobsVIRTUAL_OBSERVATORY          _virtualObservatory;
     sclsvrSCENARIO_BRIGHT_K          _scenarioBrightK;
+    sclsvrSCENARIO_JSDC              _scenarioJSDC;
     sclsvrSCENARIO_BRIGHT_K_CATALOG  _scenarioBrightKCatalog;
     sclsvrSCENARIO_BRIGHT_V          _scenarioBrightV;
     sclsvrSCENARIO_BRIGHT_N          _scenarioBrightN;

@@ -3,11 +3,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.44 2010-06-28 14:15:09 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.h,v 1.44.2.2 2011-04-15 22:37:36 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.44.2.1  2011/04/08 19:29:15  duvert
+ * added cumputeIRFluxes()
+ *
+ * Revision 1.44  2010/06/28 14:15:09  lafrasse
+ * Added property identifiers for Teff and LogG computed from SpectralType
+ *
  * Revision 1.43  2010/01/28 16:45:49  lafrasse
  * Added UD_U property.
  *
@@ -208,6 +214,8 @@ private:
     mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
     mcsCOMPL_STAT ComputeCousinMagnitude(); 
+    mcsCOMPL_STAT ComputeIRFluxes(); 
+    mcsCOMPL_STAT ComputeTeffLogg(); 
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/

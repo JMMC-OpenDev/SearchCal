@@ -538,6 +538,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
     // Build of the stringlist
     miscDYN_BUF strList;
     miscDynBufInit(&strList);
+
     // write a star list object as a dynamic buffer in order to write it in a
     // string format in the query
     StarList2Sring(strList, list);
@@ -675,5 +676,72 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2Sring(miscDYN_BUF &strList,
     }
     return mcsSUCCESS;
 }
+
+// the following seems to be 50% faster on long (>50) star lists -- no DynBuf overhead?
+// mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2Sring(miscDYN_BUF &strList,
+//                                           vobsSTAR_LIST &list)
+// {
+//     logTrace("vobsREMOTE_CATALOG::StarList2String()");
+//     // if the list is not empty
+//     if (list.Size()!=0)
+//     {
+//       char *test;
+//       test=(char*)calloc(50000,sizeof(char));
+//       strcat(test,"&-c=%3C%3C%3D%3D%3D%3Dresult1%5F280%2Etxt&J");
+//       int compt=0;
+//       for (unsigned int el = 0; el < list.Size(); el++)
+//         {
+// 	  if (compt!=0)
+//             {
+// 	      strcat(test,"&J");
+//             }
+// 	  compt++;
+	  
+// 	  mcsSTRING32 ra;
+// 	  mcsSTRING32 dec;
+// 	  mcsSTRING32 hra, mra, sra;
+// 	  mcsSTRING32 ddec, mdec, sdec;
+            
+         
+// 	  vobsSTAR *star = list.GetNextStar((mcsLOGICAL)(el==0));
+// 	  strcpy(ra, star->GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
+// 	  if (sscanf(ra, "%s %s %s",
+// 		     (char*)&hra,
+// 		     (char*)&mra,
+// 		     (char*)&sra) != 3)
+//             {
+// 	      return mcsFAILURE;
+//             }
+// 	  strcat(test,hra);
+// 	  strcat(test,mra);
+// 	  strcat(test,sra);
+// 	  strcpy(dec, star->GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
+// 	  if (sscanf(dec, "%s %s %s",
+// 		     (char*)&hra,
+// 		     (char*)&mra,
+// 		     (char*)&sra) != 3)
+//             {
+// 	      return mcsFAILURE;
+//             }
+//             if (hra[0]=='+'||hra[0]=='-')
+//             {
+// 	      strcat(test,hra);
+// 	    }
+// 	    else
+// 	      {
+		
+// 		strcat(test,"+");
+// 		strcat(test,hra);
+// 	    }
+// 	    strcat(test,mra);
+// 	    strcat(test,sra);
+// 	}
+//       strcat(test,"&%3D%3D%3D%3Dresult1%5F280%2Etxt");
+//       logTest("%s",test);
+//       miscDynBufAppendString(&strList, test);
+//       free(test);
+//     }
+// 	return mcsSUCCESS;
+// }
 
 /*___oOo___*/

@@ -3,11 +3,18 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alx.h,v 1.29 2011-03-25 15:05:22 lafrasse Exp $"
+ * "@(#) $Id: alx.h,v 1.29.2.2 2011-04-16 10:32:10 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.29.2.1  2011/04/08 19:18:06  duvert
+ * support for akari photometries (Magnitudes N, Fluxes 9, 12 and 18 microns)
+ *
+ * Revision 1.29  2011/03/25 15:05:22  lafrasse
+ * Moved alxString2SpectralType() and alxSPECTRAL_TYPE strucuture to public access
+ * (for test purpose).
+ *
  * Revision 1.28  2011/03/03 12:59:53  lafrasse
  * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
  *
@@ -173,7 +180,7 @@ typedef struct
  * spectral type structure.
  *
  * A spectral type is build with a code (O, B, A, F, G, K, M),
- * a number between 0 and 9, and a light class which can be I,II,III,IV,etc...
+ * a number between 0 and 9, and a luminosity class which can be I,II,III,IV,etc...
  */
 typedef struct
 {
@@ -182,8 +189,6 @@ typedef struct
     mcsSTRING32  luminosityClass;   /* Luminosity class */
     mcsLOGICAL   isDouble;          /* mcsTRUE if Spectral Type contained a '+' */
     mcsLOGICAL   isSpectralBinary;  /* mcsTRUE if Spectral Type contained "SB" */
-    mcsLOGICAL   hasCyanogen;       /* mcsTRUE if Spectral Type contained "CN" */
-    mcsLOGICAL   hasBarium;         /* mcsTRUE if Spectral Type contained "BA" */
     mcsLOGICAL   isVariable;        /* mcsTRUE if Spectral Type contained "VAR" */
 } alxSPECTRAL_TYPE;
 
@@ -329,6 +334,21 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
 mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 
+mcsCOMPL_STAT alxComputeF12FluxFromAkari(mcsDOUBLE Teff,
+					 mcsDOUBLE *fnu_9,
+					 mcsDOUBLE *fnu_12);
+
+mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
+					      mcsDOUBLE *Teff,
+					      mcsDOUBLE *LogG);
+
+mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32 spType,
+					       mcsDOUBLE *Teff,
+					       mcsDOUBLE *LogG);
+mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE ld,
+				  const mcsDOUBLE teff,
+				  const mcsDOUBLE logg,
+				  alxUNIFORM_DIAMETERS* ud);
 #ifdef __cplusplus
 }
 #endif

@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.16 2009-12-17 15:14:32 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSERVER.cpp,v 1.16.2.1 2011-04-15 22:47:18 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.16  2009/12/17 15:14:32  lafrasse
+ * *** empty log message ***
+ *
  * Revision 1.15  2007/10/31 11:35:18  gzins
  * Updated to use new sdbENTRY non-blocking class
  * Changed progression status format
@@ -55,7 +58,7 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.16 2009-12-17 15:14:32 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.16.2.1 2011-04-15 22:47:18 duvert Exp $"; 
 
 
 /* 
@@ -164,6 +167,7 @@ thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
 sclsvrSERVER::sclsvrSERVER():
     _virtualObservatory(),
     _scenarioBrightK(&_status),
+    _scenarioJSDC(&_status),
     _scenarioBrightKCatalog(&_status),
     _scenarioBrightV(&_status),
     _scenarioBrightN(&_status),

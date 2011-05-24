@@ -3,11 +3,20 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.h,v 1.7 2010-01-26 14:15:38 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.h,v 1.7.2.3 2011-04-15 22:21:11 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7.2.2  2011/04/12 08:03:27  lafrasse
+ * Fixed missing AKARI catalog handling.
+ *
+ * Revision 1.7.2.1  2011/04/08 19:42:49  duvert
+ * Support for AKARI-related Photometries
+ *
+ * Revision 1.7  2010/01/26 14:15:38  lafrasse
+ * Added vobsCATALOG_WDS.
+ *
  * Revision 1.6  2009/05/04 15:20:26  lafrasse
  * Removed all references to unused CHARM catalog.
  *
@@ -52,6 +61,7 @@
  */
 #include "vobsCATALOG.h"
 #include "vobsCATALOG_ASCC.h"
+#include "vobsCATALOG_ASCC_LOCAL.h"
 #include "vobsCATALOG_BSC.h"
 #include "vobsCATALOG_CHARM2.h"
 #include "vobsCATALOG_CIO.h"
@@ -67,6 +77,7 @@
 #include "vobsCATALOG_UNSO.h"
 #include "vobsCATALOG_SB9.h"
 #include "vobsCATALOG_WDS.h"
+#include "vobsCATALOG_AKARI.h"
 
 /*
  * Class declaration
@@ -101,6 +112,7 @@ private:
     vobsCATALOG_CIO      _cio;
     vobsCATALOG_PHOTO    _photo;
     vobsCATALOG_ASCC     _ascc;
+    vobsCATALOG_ASCC_LOCAL     _ascc_local;
     vobsCATALOG_HIC      _hic;
     vobsCATALOG_MASS     _mass;
     vobsCATALOG_LBSI     _lbsi;
@@ -114,6 +126,7 @@ private:
     vobsCATALOG_UNSO     _unso;
     vobsCATALOG_SB9      _sb9;
     vobsCATALOG_WDS      _wds;
+    vobsCATALOG_AKARI    _akari;
 };
 
 

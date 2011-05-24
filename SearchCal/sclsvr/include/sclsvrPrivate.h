@@ -3,11 +3,14 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrPrivate.h,v 1.9 2007-10-31 11:26:30 gzins Exp $"
+ * "@(#) $Id: sclsvrPrivate.h,v 1.9.2.1 2011-04-08 19:30:23 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.9  2007/10/31 11:26:30  gzins
+ * Applied programming standards
+ *
  * Revision 1.8  2006/12/21 15:16:05  lafrasse
  * Updated progression monitoring code (moved from static-based to instance-based).
  *
@@ -42,6 +45,8 @@
 #include "sclsvrSERVER.h"
 
 #include "math.h"
+
+#define sclsvrARCSEC_IN_DEGREES ((mcsDOUBLE)(1.0/3600.0))
 
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 

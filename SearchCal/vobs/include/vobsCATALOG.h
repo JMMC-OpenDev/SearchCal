@@ -3,11 +3,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG.h,v 1.21 2010-01-29 13:07:59 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG.h,v 1.21.2.2 2011-04-15 22:21:11 duvert Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.21.2.1  2011/04/08 19:42:49  duvert
+* Support for AKARI-related Photometries
+*
+* Revision 1.21  2010/01/29 13:07:59  lafrasse
+* Updated CHARM2 identifier to be the true one, not CHARM.
+*
 * Revision 1.20  2010/01/26 14:15:38  lafrasse
 * Added vobsCATALOG_WDS.
 *
@@ -57,6 +63,7 @@
 
 #define vobsNO_CATALOG_ID           "NO CATALOG"
 #define vobsCATALOG_ASCC_ID         "I/280"
+#define vobsCATALOG_ASCC_LOCAL_ID   "I/280B"
 #define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_BSC_ID          "V/50/catalog"
 #define vobsCATALOG_CHARM2_ID       "J/A+A/431/773/charm2"
@@ -73,6 +80,7 @@
 #define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_SB9_ID          "B/sb9/main"
 #define vobsCATALOG_WDS_ID          "B/wds/wds"
+#define vobsCATALOG_AKARI_ID        "II/297/irc"
 
 /*
  * MCS header

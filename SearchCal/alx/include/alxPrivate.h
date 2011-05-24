@@ -3,11 +3,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: alxPrivate.h,v 1.19 2011-03-31 15:09:02 lafrasse Exp $"
+ * "@(#) $Id: alxPrivate.h,v 1.19.2.2 2011-04-15 22:28:01 duvert Exp $"
  * 
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.19.2.1  2011/04/08 19:18:06  duvert
+ * support for akari photometries (Magnitudes N, Fluxes 9, 12 and 18 microns)
+ *
+ * Revision 1.19  2011/03/31 15:09:02  lafrasse
+ * Added consts.
+ *
  * Revision 1.18  2011/03/25 15:05:22  lafrasse
  * Moved alxString2SpectralType() and alxSPECTRAL_TYPE strucuture to public access
  * (for test purpose).
@@ -169,6 +175,69 @@ typedef struct
     alxSPECTRAL_TYPE  spectralType[alxNB_SPECTRAL_TYPES];
     alxDATA           index[alxNB_SPECTRAL_TYPES][alxNB_COLOR_INDEXES];
 } alxCOLOR_TABLE;
+
+/*
+ * Structure of the Teff,Logg table.
+ */
+#define alxNB_LUMINOSITY_CLASSES 3
+typedef struct
+{
+    mcsLOGICAL        loaded;
+    char*             fileName;
+    mcsINT32          nbLines;
+    alxSPECTRAL_TYPE  spectralType[alxNB_SPECTRAL_TYPES];
+    mcsDOUBLE         teff[alxNB_SPECTRAL_TYPES][alxNB_LUMINOSITY_CLASSES];
+    mcsDOUBLE         logg[alxNB_SPECTRAL_TYPES][alxNB_LUMINOSITY_CLASSES];
+} alxTEFFLOGG_TABLE;
+
+#define alxNB_UD_BANDS 10
+
+#define alxNB_UD_ENTRIES 409
+typedef struct
+{
+  mcsLOGICAL        loaded;
+  char*             fileName;
+  mcsINT32          nbLines;
+  mcsDOUBLE         logg[alxNB_UD_ENTRIES];
+  mcsDOUBLE         teff[alxNB_UD_ENTRIES];
+  mcsDOUBLE         coeff[alxNB_UD_ENTRIES][alxNB_UD_BANDS];
+
+} alxUD_CORRECTION_TABLE;
+typedef enum
+{
+  alxU,alxB, alxV, alxR, alxI, alxJ, alxH, alxK, alxL, alxN, alxNBUD_BANDS
+} alxUD_BANDS;
+
+typedef enum
+{
+    alx7mu,                  /* column for 7  mu in akariTable */
+    alx9mu,                  /* column for 9  mu in akariTable */
+    alx11mu,                 /* column for 11 mu in akariTable */
+    alx15mu,                 /* column for 15 mu in akariTable */
+    alx18mu,                 /* column for 18 mu in akariTable */
+    alx24mu,                 /* column for 14 mu in akariTable */
+    alxNB_AKARI_BANDS        /* number of bands in akariTable */
+} alxAKARI_BANDS;
+
+#define AKARI_7MU 7.0
+#define AKARI_9MU 9.0
+#define AKARI_11MU 11.0
+#define AKARI_15MU 15.0
+#define AKARI_18MU 18.0
+#define AKARI_24MU 24.0
+
+/*
+ * Structure of the Akari Correction Table.
+ */
+#define alxNB_AKARI_TEFF 50
+typedef struct
+{
+    mcsLOGICAL        loaded;
+    char*             fileName;
+    mcsINT32          nbLines;
+    mcsDOUBLE         teff[alxNB_AKARI_TEFF];
+    mcsDOUBLE         coeff[alxNB_AKARI_TEFF][alxNB_AKARI_BANDS];
+} alxAKARI_TABLE;
 
 /*
  * Type of star.

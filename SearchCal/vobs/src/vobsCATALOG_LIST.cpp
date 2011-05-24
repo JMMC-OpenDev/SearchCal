@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.10 2010-01-26 14:15:38 lafrasse Exp $"
+ * "@(#) $Id: vobsCATALOG_LIST.cpp,v 1.10.2.2 2011-04-15 22:19:32 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10.2.1  2011/04/08 19:43:03  duvert
+ * Support for AKARI-related Photometries
+ *
+ * Revision 1.10  2010/01/26 14:15:38  lafrasse
+ * Added vobsCATALOG_WDS.
+ *
  * Revision 1.9  2009/05/04 15:20:26  lafrasse
  * Removed all references to unused CHARM catalog.
  *
@@ -40,7 +46,7 @@
  *  Definition of vobsCATALOG_LIST class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.10 2010-01-26 14:15:38 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LIST.cpp,v 1.10.2.2 2011-04-15 22:19:32 duvert Exp $"; 
 
 /* 
  * System Headers 
@@ -70,6 +76,7 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
 {
     // The constructor add all catalogs in the map
     _catalogList[vobsCATALOG_ASCC_ID]     = &_ascc;
+    _catalogList[vobsCATALOG_ASCC_LOCAL_ID]     = &_ascc_local;
     _catalogList[vobsCATALOG_BSC_ID]      = &_bsc;
     _catalogList[vobsCATALOG_CHARM2_ID]   = &_charm2;
     _catalogList[vobsCATALOG_CIO_ID]      = &_cio;
@@ -85,6 +92,7 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
     _catalogList[vobsCATALOG_UNSO_ID]     = &_unso;
     _catalogList[vobsCATALOG_SB9_ID]      = &_sb9;
     _catalogList[vobsCATALOG_WDS_ID]      = &_wds;
+    _catalogList[vobsCATALOG_AKARI_ID]    = &_akari;
 }
 
 /**

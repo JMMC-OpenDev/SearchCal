@@ -263,7 +263,6 @@ int main(int argc, char *argv[])
     for (uint nbOfConnection = 1; ; nbOfConnection++)
     {
         // Wait (without timeout) a new connection
-        globalSoapContext.accept_timeout = 0;
         if (soap_accept(&globalSoapContext) < 0)
         {
             continue;
@@ -271,7 +270,7 @@ int main(int argc, char *argv[])
 
         // Fork the SOAP context
         struct soap* forkedSoapContext = soap_copy(&globalSoapContext);
-        
+
         // Start a new thread to handle the request
         pthread_t threadId;
         int status = pthread_create(&threadId, NULL, (void*(*)(void*))sclwsJobHandler, (void*)forkedSoapContext);

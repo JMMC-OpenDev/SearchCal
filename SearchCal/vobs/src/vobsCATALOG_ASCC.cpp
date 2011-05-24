@@ -1,11 +1,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.25 2011-03-03 13:09:42 lafrasse Exp $"
+* "@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.25.2.2 2011-04-15 22:19:32 duvert Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.25.2.1  2011/04/08 19:41:47  duvert
+* modified ASCC to return the J H and K photometries and the LII, BII CDS coordinates, eliminating the need to use also 2MASS.
+*
+* Revision 1.25  2011/03/03 13:09:42  lafrasse
+* Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+*
 * Revision 1.24  2010/06/28 14:12:11  lafrasse
 * Moved CDS return limit to 1000.
 *
@@ -87,7 +93,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.25 2011-03-03 13:09:42 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.25.2.2 2011-04-15 22:19:32 duvert Exp $"; 
 
 /* 
  * System Headers 
@@ -164,6 +170,9 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
+//     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_J");
+//     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_H");
+//     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_K");
     miscDynBufAppendString(&_query, "&-out=v1");
     miscDynBufAppendString(&_query, "&-out=v2");
     miscDynBufAppendString(&_query, "&-out=v3");
@@ -225,12 +234,14 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     }
     sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
 
-//    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=");
+    // miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=1000&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
     // properties to retreive
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
+    // @TODO : Will get galactic coordinates from ASCC instead of 2MASS
+    // miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000,_Glon,_Glat&-oc=hms");
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
     miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
@@ -238,6 +249,10 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
+    // @TODO : Will replace 2MASS querying
+    // miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_J");
+    // miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_H");
+    // miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_K");
     miscDynBufAppendString(&_query, "&-out=v1");
     miscDynBufAppendString(&_query, "&-out=v2");
     miscDynBufAppendString(&_query, "&-out=v3");

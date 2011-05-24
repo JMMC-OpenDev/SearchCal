@@ -1,11 +1,14 @@
 /*******************************************************************************
  * JMMC project
  * 
- * "@(#) $Id: alxLD2UD.c,v 1.10 2011-02-23 17:19:26 lafrasse Exp $"
+ * "@(#) $Id: alxLD2UD.c,v 1.10.2.1 2011-04-08 19:17:16 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.10  2011/02/23 17:19:26  lafrasse
+ * *** empty log message ***
+ *
  * Revision 1.9  2011/02/23 15:13:33  lafrasse
  * Do not parse webservice result comment lines anymore.
  *
@@ -50,7 +53,7 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.10 2011-02-23 17:19:26 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.10.2.1 2011-04-08 19:17:16 duvert Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
@@ -90,6 +93,101 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.10 2011-
 /*
  * Public functions definition
  */
+/**
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
+					      mcsDOUBLE *Teff,
+					      mcsDOUBLE *LogG)
+{
+    logTrace("alxComputeTeffAndLoggFromSptype()");
+
+    /* Check parameter validity */
+    if (sp == NULL)
+    {
+        errAdd(alxERR_NULL_PARAMETER, "sp");
+        return mcsFAILURE;
+    }
+
+    /* Dynamic buffer initializaton */
+    miscDYN_BUF resultBuffer;
+    if (miscDynBufInit(&resultBuffer) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Forge URI using hard coded URL 
+     * (sptype is encoded because it can embed spaces or special characters) */
+    char* encodedSp = miscUrlEncode(sp);
+    const char* staticUri = "http://apps.jmmc.fr:8080/jmcs_ws/ld2ud.jsp?ld=1.0&sptype=%s";
+    int composedUriLength = strlen(staticUri)-2 + strlen(encodedSp)+1;
+    char* composedUri = (char*) malloc(composedUriLength * sizeof(char));
+    if (composedUri == NULL)
+    {
+        return mcsFAILURE;
+    }
+    snprintf(composedUri, composedUriLength, staticUri, encodedSp);
+    free(encodedSp);
+    
+    /* Call the web service (10 seconds timeout) */
+    mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 10);
+
+    /* Give back local dynamically-allocated memory */
+    free(composedUri);
+    if (executionStatus == mcsFAILURE)
+    {
+      return mcsFAILURE;
+    }
+
+    /* Remove any trailing or leading '\n' */
+    if (miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n") == mcsFAILURE)
+    {
+      return mcsFAILURE;
+    }
+
+    /* Parsing each line that does not start with '#' */
+    miscDynBufSetCommentPattern(&resultBuffer, "#");
+    mcsCOMPL_STAT parsingWentFine = mcsSUCCESS;
+    const char* index = NULL;
+    mcsSTRING256 currentLine;
+    const mcsUINT32 lineSize = sizeof(currentLine);
+    while ((index = miscDynBufGetNextLine(&resultBuffer,
+                                           index,
+                                           currentLine,
+                                           lineSize,
+                                           mcsTRUE)) != NULL)
+    {
+        logDebug("Parsing token '%s'.", currentLine);
+	char band='0';
+        mcsDOUBLE value = FP_NAN;
+
+        /* Try to read effective temperature */
+        if (sscanf(currentLine, "TEFF=%lf", &value) == 1)
+        {
+            *Teff = value;
+            continue;
+        }
+        /* Try to read surface gravity */
+        else if (sscanf(currentLine, "LOGG=%lf", &value) == 1)
+        {
+            *LogG = value;
+            continue;
+        }
+        else if (sscanf(currentLine, "UD_%c=%lf", &band, &value) == 2)
+        {
+	  continue;
+	}
+        /* Could not parse current token - stop and exit on failure */
+        parsingWentFine = mcsFAILURE;
+        break;
+    }
+
+    /* Parsing went fine all along */
+    miscDynBufDestroy(&resultBuffer);
+    return parsingWentFine;
+}
+
 /**
  * Compute uniform diameters from limb-darkened diamter and spectral type.
  *

@@ -1,11 +1,17 @@
 /*******************************************************************************
 * JMMC project
 *
-* "@(#) $Id: vobsSTAR.cpp,v 1.94 2011-03-03 13:09:43 lafrasse Exp $"
+* "@(#) $Id: vobsSTAR.cpp,v 1.94.2.2 2011-04-15 22:18:47 duvert Exp $"
 *
 * History
 * -------
 * $Log: not supported by cvs2svn $
+* Revision 1.94.2.1  2011/04/08 19:43:03  duvert
+* Support for AKARI-related Photometries
+*
+* Revision 1.94  2011/03/03 13:09:43  lafrasse
+* Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+*
 * Revision 1.93  2010/08/24 13:54:03  mella
 * display all column in vizier result
 *
@@ -265,7 +271,7 @@
  */
 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.94 2011-03-03 13:09:43 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.94.2.2 2011-04-15 22:18:47 duvert Exp $"; 
 
 /*
  * System Headers
@@ -392,7 +398,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
 }
 
 /**
- * Set the charater value of a given property.
+ * Set the character value of a given property.
  *
  * @param id property id
  * @param value property value
@@ -1176,8 +1182,12 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star, mcsLOGICAL overwrite)
         // If the current property is not yet defined
         if (IsPropertySet(propertyIdPtr) == mcsFALSE || overwrite == mcsTRUE )
         {
-            // Use the property from the given star
-            _propertyList[propertyID] = star._propertyList[propertyID];
+            // Use the property from the given star if existing!
+            if (star.IsPropertySet(propertyIdPtr) == mcsTRUE)
+            {
+                _propertyList[propertyID] = star._propertyList[propertyID];
+                logDebug("updated _propertyList[%s] = '%s'.\n", propertyIdPtr, star._propertyList[propertyID].GetSummaryString().c_str());
+            }
         }
         logDebug("_propertyList[%s] = '%s'.\n", propertyIdPtr, star._propertyList[propertyID].GetSummaryString().c_str());
     }
@@ -1451,10 +1461,20 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     AddProperty(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                 "Source of the IR Flux among IRAS or MSX");
 
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                "Mid-Infrared Flux Density at 9 microns");
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                "Relative Error on Mid-Infrared Flux Density at 9 microns");
+
     AddProperty(vobsSTAR_PHOT_FLUX_IR_12, "F12",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                 "Mid-Infrared Flux at 12 microns");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                 "Relative Error on Mid-Infrared Flux at 12 microns");
+
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_18, "S18",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                "Mid-Infrared Flux Density at 18 microns");
+    AddProperty(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                "Relative Error on Mid-Infrared Flux Density at 18 microns");
 
     AddProperty(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY);
 

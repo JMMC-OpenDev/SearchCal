@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.104 2011-03-03 13:12:51 lafrasse Exp $"
+ * "@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.104.2.2 2011-04-15 22:41:20 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.104.2.1  2011/04/08 19:32:23  duvert
+ * added computeIRFluxes() etc for AKARI
+ *
+ * Revision 1.104  2011/03/03 13:12:51  lafrasse
+ * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+ *
  * Revision 1.103  2010/07/30 12:21:07  lafrasse
  * Added columns description and units when available.
  *
@@ -277,7 +283,7 @@
  * sclsvrCALIBRATOR class definition.
  */
 
- static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.104 2011-03-03 13:12:51 lafrasse Exp $"; 
+ static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.104.2.2 2011-04-15 22:41:20 duvert Exp $"; 
 
 
 /* 
@@ -505,6 +511,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             ClearPropertyValue(vobsSTAR_CODE_MISC_I);
         }
     }
+    // Fill in the Teff and LogG entries using the spectral type decoder
+    if (ComputeTeffLogg() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Compute N Band and S_12 with AKARI 
+    if (ComputeIRFluxes() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     // Check parallax
     mcsDOUBLE parallax;
@@ -664,7 +681,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             return mcsFAILURE;
         }
     }
-    // If the researh is faint
+    // If the search is faint
     else
     {
         // Compute Galactic coordinates
@@ -1796,13 +1813,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     }
 
     // Get the value of the Spectral Type
-    mcsSTRING32 spType;
-    strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
-    if (strlen(spType) < 1)
-    {
-        logTest("Skipping (SpType unknown).");
-        return mcsSUCCESS;
-    }
+//     mcsSTRING32 spType;
+//     strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
+//     if (strlen(spType) < 1)
+//     {
+//         logTest("Skipping (SpType unknown).");
+//         return mcsSUCCESS;
+//     }
 
     // Does LD diameter exist ?
     if (IsPropertySet(sclsvrCALIBRATOR_DIAM_VK) == mcsFALSE)
@@ -1822,28 +1839,73 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     // Get LD diameter confidence index (UDs will have the same one)
     vobsCONFIDENCE_INDEX ldDiameterConfidenceIndex = GetPropertyConfIndex(sclsvrCALIBRATOR_DIAM_VK);
 
-    // Compute UD
-    logTest("Computing UDs for LD='%f' and SP='%s'...", ld, spType);
-    alxUNIFORM_DIAMETERS ud;
-    if (alxComputeUDFromLDAndSP(ld, spType, &ud) == mcsFAILURE)
+    // Does Teff exist ?
+    mcsDOUBLE Teff = FP_NAN;
+    if (IsPropertySet(sclsvrCALIBRATOR_TEFF_SPTYP) == mcsFALSE)
     {
-        logWarning("Aborting (error while computing).");
+        logTest("Skipping (Teff unknown).");
+        return mcsSUCCESS;
+    }
+    else
+      {
+	if (GetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, &Teff) == mcsFAILURE)
+	  {
+	    logWarning("Aborting (error while retrieving Teff).");
+	    return mcsSUCCESS;
+	  }
+      }
+
+    // Does LogG exist ?
+    mcsDOUBLE LogG = FP_NAN;
+    if (IsPropertySet(sclsvrCALIBRATOR_LOGG_SPTYP) == mcsFALSE)
+    {
+        logTest("Skipping (LogG unknown).");
+        return mcsSUCCESS;
+    }
+    else
+      {
+	if (GetPropertyValue(sclsvrCALIBRATOR_LOGG_SPTYP, &LogG) == mcsFAILURE)
+	  {
+	    logWarning("Aborting (error while retrieving LogG).");
+	    return mcsSUCCESS;
+	  }
+      }
+
+    // Compute UD
+    logTest("Computing UDs for LD='%f' and Teff='%lf',LogG='%lf'...", ld, Teff, LogG);
+    alxUNIFORM_DIAMETERS ud;
+//     if (alxComputeUDFromLDAndSP(ld, spType, &ud) == mcsFAILURE)
+    if (alxGetUDFromLDAndSP(ld, Teff, LogG, &ud) == mcsFAILURE)
+    {
+        logWarning("Aborting (error while computing UDs).");
         errResetStack(); // To flush miscDynBufExecuteCommand() related errors
         return mcsSUCCESS;
     }
 
-    // Set Teff eand LogG properties
-    if (SetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, ud.Teff, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (SetPropertyValue(sclsvrCALIBRATOR_LOGG_SPTYP, ud.LogG, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    // Set Teff and LogG properties
+//     if (SetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, ud.Teff, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+//     {
+//         return mcsFAILURE;
+//     }
+//     if (SetPropertyValue(sclsvrCALIBRATOR_LOGG_SPTYP, ud.LogG, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+//     {
+//         return mcsFAILURE;
+//     }
 
     // Set each UD_* properties accordinaly
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_U, ud.u, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     if (SetPropertyValue(sclsvrCALIBRATOR_UD_B, ud.b, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_V, ud.v, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_UD_R, ud.r, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1871,23 +1933,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     {
         return mcsFAILURE;
     }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_R, ud.r, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_U, ud.u, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (SetPropertyValue(sclsvrCALIBRATOR_UD_V, ud.v, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
 
-    if (logGetStdoutLogLevel() >= logTEST)
-    {
-        alxShowUNIFORM_DIAMETERS(&ud);
-    }
+//     if (logGetStdoutLogLevel() >= logTEST)
+//     {
+//         alxShowUNIFORM_DIAMETERS(&ud);
+//     }
 
     return mcsSUCCESS;
 }
@@ -2176,6 +2226,169 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
         return mcsFAILURE;
     }
 
+    return mcsSUCCESS;
+}
+
+/**
+ * Compute Teff and Log(g) from the SpType and Tables
+ * 
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeTeffLogg()");
+
+    mcsDOUBLE Teff = FP_NAN;
+    mcsDOUBLE LogG = FP_NAN;
+
+    mcsSTRING32 spType;
+    if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
+      {
+        logTest("Teff and LogG - Skipping (no SpType available).");
+	return mcsSUCCESS;
+      }
+    strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
+    if (strlen(spType) < 1)
+    {
+        logTest("Teff and LogG - Skipping (SpType unknown).");
+        return mcsSUCCESS;
+    }
+    //Get Teff 
+     if (alxRetrieveTeffAndLoggFromSptype(spType, &Teff, &LogG) == mcsFAILURE)
+    {
+      logTest("Teff and LogG - Skipping (alxRetrieveTeffAndLoggFromSptype() failed on this spectral type: %s).",spType);
+        errResetStack(); // To flush miscDynBufExecuteCommand() related errors
+        return mcsSUCCESS;
+    }
+    // Set Teff eand LogG properties
+    if (SetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, Teff, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (SetPropertyValue(sclsvrCALIBRATOR_LOGG_SPTYP, LogG, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+     return mcsSUCCESS;
+}
+
+
+/**
+ * Compute Infrared Fluxes and N band using Akari
+ * 
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeIRFluxes()");
+
+    mcsDOUBLE Teff = FP_NAN;
+    mcsDOUBLE fnu_9 = FP_NAN;
+    mcsDOUBLE e_fnu_9 = FP_NAN;
+    mcsDOUBLE fnu_12     = FP_NAN;
+    mcsDOUBLE e_fnu_12     = FP_NAN;
+    mcsDOUBLE magN    = FP_NAN;
+
+    // Get fnu_09 (vobsSTAR_PHOT_FLUX_IR_09)
+    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09) == mcsTRUE)
+    {
+        // retrieve it
+        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09, &fnu_9) == mcsFAILURE)
+        {       
+            return mcsFAILURE;
+        }
+    }
+    else
+    {
+        logTest("IR Fluxes - Skipping (no 9 mu flux available).");
+	    return mcsSUCCESS;
+    }
+    // Get out if fnu_12 *property* does not exist!
+    if (IsProperty(vobsSTAR_PHOT_FLUX_IR_12) == mcsFALSE)
+    {
+        logTest("IR Fluxes - Skipping (no fnu_12 property).");
+	    return mcsSUCCESS;
+    }
+    // Get out if fnu_12 is already defined!
+    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12) == mcsTRUE)
+    {
+        logTest("IR Fluxes - Skipping (fnu_12 already set elsewhere).");
+	    return mcsSUCCESS;
+    }
+    // Get the value of Teff
+    if (IsPropertySet(sclsvrCALIBRATOR_TEFF_SPTYP) == mcsTRUE)
+    {
+        // retrieve it
+        if (GetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, &Teff) == mcsFAILURE)
+        {       
+            return mcsFAILURE;
+        }
+    }
+    else
+    {
+        logTest("IR Fluxes - Skipping (no Teff available).");
+        return mcsSUCCESS;
+    }
+
+    // compute fnu_12 
+    if (alxComputeF12FluxFromAkari(Teff,&fnu_9,&fnu_12) == mcsFAILURE)
+    {
+        logTest("IR Fluxes - Skipping (akari internal error).");
+        return mcsSUCCESS;
+    }
+    logTest("IR Fluxes - fnu_9 akari  computed  = %f",fnu_9);
+    logTest("IR Fluxes - fnu_12 akari computed = %f",fnu_12);
+    
+    
+    // store it
+    if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    {
+	    return mcsFAILURE;
+    }
+
+    // compute Mag N ()
+    magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
+    logTest("IR Fluxes MagN akari computed = %f",magN);
+
+    // store it
+    if (IsPropertySet(vobsSTAR_PHOT_JHN_N) == mcsFALSE)
+    {
+        if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+        {
+	        return mcsFAILURE;
+        }
+    }
+    // redo for s_12 error, if present:
+    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09_ERROR) == mcsTRUE)
+    {
+        // retrieve it
+        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09_ERROR, &e_fnu_9) == mcsFAILURE)
+        {       
+            return mcsFAILURE;
+        }
+    }
+    else
+    {
+	    return mcsSUCCESS;
+    }
+
+    // compute e_fnu_12 
+
+    if (alxComputeF12FluxFromAkari(Teff,&e_fnu_9,&e_fnu_12) == mcsFAILURE)
+    {
+        logTest("IR Fluxes - Skipping e_fnu12 (akari internal error).");
+        return mcsSUCCESS;
+    }
+    // logTest("IR Fluxes e_fnu_9 akari  computed  = %f",e_fnu_9);
+    // logTest("IR Fluxes e_fnu_12 akari computed = %f",e_fnu_12);
+    
+    
+    // store it
+    if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     return mcsSUCCESS;
 }
 

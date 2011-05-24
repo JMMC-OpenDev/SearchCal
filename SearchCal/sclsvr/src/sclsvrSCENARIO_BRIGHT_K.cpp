@@ -1,11 +1,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.20 2011-03-03 13:12:52 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.20.2.2 2011-04-15 22:46:20 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.20.2.1  2011/04/08 19:34:25  duvert
+ * modified scenario to read directly with magnitude range in K the new ASCC (which contains 2MASS NIR fluxes), avoiding the trouble to as 2MASS directly.
+ *
+ * Revision 1.20  2011/03/03 13:12:52  lafrasse
+ * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
+ *
  * Revision 1.19  2010/11/24 15:27:27  lafrasse
  * Removed CHARM querying from Bright K scenario.
  *
@@ -71,7 +77,7 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.20 2011-03-03 13:12:52 lafrasse Exp $"; 
+static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.20.2.2 2011-04-15 22:46:20 duvert Exp $"; 
 
 /* 
  * System Headers 
@@ -134,26 +140,30 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     _starListS.Clear();
     
     // BUILD REQUEST USED
-    // Build Genaral request
+    // Build General request
     _request.Copy(*request);
     // Build the request for I/280
     _requestI280.Copy(_request);
-    _requestI280.SetSearchBand("V");
+//      _requestI280.SetSearchBand("K");
+     _requestI280.SetSearchBand("V");
     mcsDOUBLE kMax = _request.GetMaxMagRange();
+//    mcsDOUBLE kMin = _request.GetMinMagRange();
     mcsDOUBLE vMax = kMax + 2.0;
     mcsDOUBLE vMin = 0.0;
     _requestI280.SetMinMagRange(vMin);
     _requestI280.SetMaxMagRange(vMax);
+//     _requestI280.SetMinMagRange(kMin);
+//     _requestI280.SetMaxMagRange(kMax);
 
     // BUILD CRITERIA LIST
     // Build criteria list on ra dec
     _criteriaListRaDec.Clear();
     // Add Criteria on coordinates
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) == mcsFAILURE)
+    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) == mcsFAILURE)
+    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -161,12 +171,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // Build criteria list on ra dec and V
     _criteriaListRaDecMagV.Clear();
     // Add Criteria on coordinates
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) ==
+    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) ==
+    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
@@ -180,12 +190,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
 
     // Build criteria list on ra dec and hd
     _criteriaListRaDecHd.Clear();
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) ==
+    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) ==
+    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
@@ -199,8 +209,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
 
     // BUILD FILTER USED
     // Build origin = 2MASS for Kmag filter
-    _originFilter.SetOriginName(vobsCATALOG_MASS_ID ,vobsSTAR_PHOT_JHN_K);
-    _originFilter.Enable();
+     _originFilter.SetOriginName(vobsCATALOG_MASS_ID ,vobsSTAR_PHOT_JHN_K);
+//      _originFilter.SetOriginName(vobsCATALOG_ASCC_ID ,vobsSTAR_PHOT_JHN_K);
+     _originFilter.Enable();
     // Build filter on magnitude
     // Get research band
     mcsSTRING32 band;
@@ -212,12 +223,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     // Build filter list
     _filterList.Add(&_originFilter, "Origin Filter");
     _filterList.Add(&_magnitudeFilter, "Magnitude Filter");
-    
+
     // PRIMARY REQUEST
     
     // I/280
     if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP,
-                 vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+                 vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -259,7 +270,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     
     // I/280 bis
     if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS,
-                 vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+                 vobsCOPY, NULL, NULL,  "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -340,6 +351,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
     
     // B/wsd/wsd
     if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS, &_starListS,
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // II/297/irc aka AKARI
+    if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS,
                  vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;

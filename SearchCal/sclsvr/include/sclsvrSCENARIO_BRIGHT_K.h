@@ -3,11 +3,17 @@
 /*******************************************************************************
  * JMMC project
  *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.7 2010-10-15 13:33:19 lafrasse Exp $"
+ * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K.h,v 1.7.2.2 2011-04-15 22:36:44 duvert Exp $"
  *
  * History
  * -------
  * $Log: not supported by cvs2svn $
+ * Revision 1.7.2.1  2011/04/08 19:31:04  duvert
+ * criterial list name is now in K
+ *
+ * Revision 1.7  2010/10/15 13:33:19  lafrasse
+ * Removed "B-V<1" filter.
+ *
  * Revision 1.6  2006/12/21 15:16:05  lafrasse
  * Updated progression monitoring code (moved from static-based to instance-based).
  *
@@ -71,7 +77,7 @@ private:
     sclsvrSCENARIO_BRIGHT_K(const sclsvrSCENARIO_BRIGHT_K&);
     sclsvrSCENARIO_BRIGHT_K& operator=(const sclsvrSCENARIO_BRIGHT_K&);
 
-    // Star lists used in scenarion
+    // Star lists used in scenario
     vobsSTAR_LIST     _starListP;
     vobsSTAR_LIST     _starListS;
 
