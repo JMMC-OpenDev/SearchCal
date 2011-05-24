@@ -37,7 +37,7 @@
 #   BUGS    
 #
 
-echo "SCRIPT NAME = $1"
+echo "#SCRIPT NAME = $1"
 if [ "${1}" != "" ]
 then
     scriptName=$1
