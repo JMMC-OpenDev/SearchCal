@@ -18,7 +18,7 @@
 # 
 # @usedfiles
 # @filename ../config/vobsCopyVotParamsAsFields.xsl :  xslt file
-#*/
+# */
 
 # signal trap (if any)
 

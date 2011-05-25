@@ -4,7 +4,7 @@
 
 /**
  * @file
- *  Definition of vobsLUMINOSITY_FILTER class.
+ * Definition of vobsLUMINOSITY_FILTER class.
  */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsLUMINOSITY_FILTER.cpp,v 1.6 2006-03-03 15:03:27 scetre Exp $"; 

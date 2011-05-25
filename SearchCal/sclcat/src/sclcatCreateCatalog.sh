@@ -20,7 +20,7 @@
 # in \em log sub-directory.
 # The results of SearchCal are VOTables which are merged into a single result
 # file.
-# # */
+# */
 
 # Print usage 
 function printUsage () {

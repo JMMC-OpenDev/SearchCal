@@ -18,7 +18,7 @@
 # @usedfiles
 # @filename VOTable-1.0.xsd :  xml schema for 1.0 version
 # @filename VOTable-1.1.xsd :  xml schema for 1.1 version
-#*/
+# */
 
 # signal trap (if any)
 

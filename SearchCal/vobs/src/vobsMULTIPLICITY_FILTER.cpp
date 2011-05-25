@@ -4,7 +4,7 @@
 
 /**
  * @file
- *  Definition of vobsMULTIPLICITY_FILTER class.
+ * Definition of vobsMULTIPLICITY_FILTER class.
  */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsMULTIPLICITY_FILTER.cpp,v 1.7 2006-04-07 08:23:00 gzins Exp $"; 

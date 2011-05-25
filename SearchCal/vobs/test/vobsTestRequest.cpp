@@ -8,7 +8,6 @@
  *
  * \synopsis
  * vobsTestRequest [] 
- *
  */
 
 static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestRequest.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"; 

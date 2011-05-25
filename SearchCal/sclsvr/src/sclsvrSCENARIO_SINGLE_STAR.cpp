@@ -4,7 +4,7 @@
 
 /**
  * \file
- *  Definition of sclsvrSCENARIO_SINGLE_STAR class.
+ * Definition of sclsvrSCENARIO_SINGLE_STAR class.
  */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.8.2.1 2011-04-15 22:46:57 duvert Exp $";

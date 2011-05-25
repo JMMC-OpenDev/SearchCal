@@ -4,7 +4,7 @@
 
 /**
  * @file
- *  Definition of vobsLOCAL_CATALOG class.
+ * Definition of vobsLOCAL_CATALOG class.
  */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.12 2006-08-25 05:56:35 gzins Exp $"; 
