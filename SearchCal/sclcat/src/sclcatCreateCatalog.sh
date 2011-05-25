@@ -1,12 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatCreateCatalog.sh,v 1.1 2010-04-13 14:53:34 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

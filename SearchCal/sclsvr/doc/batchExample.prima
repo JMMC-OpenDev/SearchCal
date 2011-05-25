@@ -1,12 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: batchExample.prima,v 1.1 2006-07-10 15:08:26 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 #/**
 # @file

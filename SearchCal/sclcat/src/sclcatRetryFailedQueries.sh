@@ -1,26 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatRetryFailedQueries.sh,v 1.5 2010-03-04 16:29:09 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.4  2008/12/04 10:42:16  lafrasse
-# Hardened robustness.
-# Updated options.
-#
-# Revision 1.3  2008/07/28 13:39:46  lafrasse
-# Added an option to detect abnormally missing result files.
-#
-# Revision 1.2  2008/07/25 12:56:33  lafrasse
-# Added a new option to report errors and warnings separatively.
-# Enhanced documentation.
-#
-# Revision 1.1  2008/07/23 22:34:10  lafrasse
-# Creation.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

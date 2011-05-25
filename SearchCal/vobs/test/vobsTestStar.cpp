@@ -1,27 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsTestStar.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.12  2011/02/25 15:58:58  lafrasse
- * Removed date and filelines from test outputs.
- *
- * Revision 1.11  2006/03/03 15:17:43  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.10  2005/11/16 10:45:14  scetre
- * Updated vobs test
- *
- * Revision 1.9  2005/02/13 08:54:00  gzins
- * Updated after vobs classes changes
- * Added CVS log as modifification history
- *
- * Revision 1.8  2005/02/04 10:04:55  gzins
- * Clean-up
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStar.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"; 

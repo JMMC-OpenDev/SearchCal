@@ -1,39 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsTestMidiCatalog.cpp,v 1.10 2011-02-25 15:58:58 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2006/03/03 15:17:43  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.8  2005/11/23 17:30:20  lafrasse
- * Added circular search box geometry support and normalized area size methods
- *
- * Revision 1.7  2005/11/16 10:45:14  scetre
- * Updated vobs test
- *
- * Revision 1.6  2005/02/16 15:30:32  gzins
- * Fixed wrong mcsmcs prefix
- *
- * Revision 1.5  2005/02/15 15:27:41  gzins
- * Changed min/maxRangeMag to min/maxMagRange
- *
- * Revision 1.4  2005/02/15 15:26:06  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.3  2005/02/13 08:54:00  gzins
- * Updated after vobs classes changes
- * Added CVS log as modifification history
- *
- * Revision 1.2  2005/02/11 16:41:40  gluck
- * Updated to be fit with new vobsREQUEST class
- *
- * Revision 1.1  2005/02/08 06:38:44  gzins
- * Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

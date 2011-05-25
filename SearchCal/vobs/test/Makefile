@@ -1,41 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.22 2011-02-25 14:57:16 lafrasse Exp $"
-#
-# Makefile for test of vobs module 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.21  2009/10/14 14:50:58  lafrasse
-# Added proper support of floating point value (without loosing presion with
-# conversion from string representation) with accompagning tests.
-#
-# Revision 1.20  2005/11/23 10:22:20  scetre
-# Generalized filter
-#
-# Revision 1.19  2005/11/16 10:45:14  scetre
-# Updated vobs test
-#
-# Revision 1.18  2005/11/15 15:02:07  scetre
-# Added catalog list test
-#
-# Revision 1.17  2005/02/15 15:20:21  gzins
-# Removed unused target
-#
-# Revision 1.16  2005/02/13 09:07:50  gzins
-# Renamed vobsTestVirtualObservtary... to vobsTestVOIn...
-#
-# Revision 1.15  2005/02/13 08:54:00  gzins
-# Updated after vobs classes changes
-# Added CVS log as modifification history
-#
-# Revision 1.14  2005/02/04 10:06:40  gzins
-# Added test for vobsCATALOG_MIDI
-#
-# scetre    16-Jun-2004  created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT Makefile

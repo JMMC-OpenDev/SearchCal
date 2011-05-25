@@ -1,15 +1,7 @@
 <?xml version="1.0"?>
 <!--
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatObjectsCommon.xsl,v 1.2 2009-11-16 09:08:08 mella Exp $"
-#
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2009/05/06 13:54:34  mella
-# add common column description
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

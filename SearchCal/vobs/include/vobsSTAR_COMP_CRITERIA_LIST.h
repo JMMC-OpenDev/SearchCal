@@ -1,29 +1,8 @@
 #ifndef vobsSTAR_COMP_CRITERIA_LIST_H
 #define vobsSTAR_COMP_CRITERIA_LIST_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.h,v 1.8 2011-03-03 13:09:42 lafrasse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.7  2005/11/16 14:26:19  scetre
-* Added Clear method
-*
-* Revision 1.6  2005/11/16 10:47:54  scetre
-* Updated documentation
-*
-* Revision 1.5  2005/11/16 10:47:54  scetre
-* Updated documentation
-*
-* Revision 1.4  2005/01/26 08:10:32  scetre
-* change history
-*
-* scetre    14-Dec-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * \file

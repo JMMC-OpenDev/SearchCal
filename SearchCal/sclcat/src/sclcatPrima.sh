@@ -1,33 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatPrima.sh,v 1.8 2010-06-16 08:59:23 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.7  2008/07/11 12:55:29  lafrasse
-# Added documentation.
-#
-# Revision 1.6  2007/03/27 14:55:56  scetre
-# Updated documentation
-#
-# Revision 1.5  2007/02/09 07:26:57  mella
-#  respond to -g option
-#
-# Revision 1.4  2007/01/31 10:02:23  mella
-# Launch result parsing at end of script
-#
-# Revision 1.3  2006/11/27 10:31:19  scetre
-# Added Fortrant treatment in the catalogue file generation
-#
-# Revision 1.2  2006/11/06 15:30:26  scetre
-# Cancelled removal of CVS repository when generated reference
-#
-# Revision 1.1  2006/10/31 14:23:54  gzins
-# Added
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

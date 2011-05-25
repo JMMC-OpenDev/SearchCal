@@ -1,40 +1,7 @@
 #ifndef vobsCATALOG_LIST_H
 #define vobsCATALOG_LIST_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_LIST.h,v 1.7.2.3 2011-04-15 22:21:11 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7.2.2  2011/04/12 08:03:27  lafrasse
- * Fixed missing AKARI catalog handling.
- *
- * Revision 1.7.2.1  2011/04/08 19:42:49  duvert
- * Support for AKARI-related Photometries
- *
- * Revision 1.7  2010/01/26 14:15:38  lafrasse
- * Added vobsCATALOG_WDS.
- *
- * Revision 1.6  2009/05/04 15:20:26  lafrasse
- * Removed all references to unused CHARM catalog.
- *
- * Revision 1.5  2009/02/09 16:26:10  lafrasse
- * Added Spectral Binary catalog (SB9).
- *
- * Revision 1.4  2005/11/29 13:47:12  gzins
- * Removed useless iterator
- *
- * Revision 1.3  2005/11/29 10:27:06  gzins
- * Minor change in documentation
- *
- * Revision 1.2  2005/11/24 14:54:25  scetre
- * UNSO catalog added
- *
- * Revision 1.1  2005/11/15 14:56:43  scetre
- * Create catalog list
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

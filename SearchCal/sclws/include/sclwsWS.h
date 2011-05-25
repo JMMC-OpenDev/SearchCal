@@ -1,43 +1,7 @@
 #ifndef sclwsWS_H
 #define sclwsWS_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclwsWS.h,v 1.10 2010-12-02 13:54:19 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2010/01/22 15:41:29  lafrasse
- * Re-commited production port number (8078 instead of 8079 used for beta-testing).
- *
- * Revision 1.8  2010/01/22 15:35:29  lafrasse
- * Log refinments.
- *
- * Revision 1.7  2007/11/12 10:32:15  lafrasse
- * Update Web Service API function name.
- * Update documentation and traces.
- * Added support for command line option parsing and handling.
- *
- * Revision 1.6  2007/10/31 11:46:56  gzins
- * Set web-service port to 8078
- *
- * Revision 1.5  2007/10/31 11:45:12  gzins
- * Updated web-service API
- *
- * Revision 1.4  2007/07/03 17:07:58  lafrasse
- * Corrected connection port number.
- *
- * Revision 1.3  2007/07/03 17:00:03  lafrasse
- * Added support for query cancellation.
- *
- * Revision 1.2  2007/02/04 20:56:45  lafrasse
- * Updated webservice URL port number.
- * Updated according to APIs changes in sclsvr.
- *
- * Revision 1.1  2006/12/22 15:17:50  lafrasse
- * Creation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

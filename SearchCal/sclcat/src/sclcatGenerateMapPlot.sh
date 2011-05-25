@@ -1,15 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatGenerateMapPlot.sh,v 1.2 2010-11-26 12:48:55 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2010/04/13 14:35:17  lafrasse
-# Added sclcatGenerateMapPlot.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

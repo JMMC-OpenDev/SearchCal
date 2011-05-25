@@ -1,44 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsLOCAL_CATALOG.cpp,v 1.12 2006-08-25 05:56:35 gzins Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.11  2006/03/03 15:03:27  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.10  2006/02/28 13:18:48  scetre
- * Added error in SetOption method only if a non null string is gave as parameters
- *
- * Revision 1.9  2006/01/18 08:45:38  scetre
- * Added option in generic local and remote catalog
- *
- * Revision 1.8  2005/11/16 10:47:55  scetre
- * Updated documentation
- *
- * Revision 1.7  2005/11/16 10:47:54  scetre
- * Updated documentation
- *
- * Revision 1.6  2005/08/08 11:27:28  scetre
- * Moved specific treatment of midi catalog in the vobsCATALOG_MIDI class instead of vobsLOCAL_CATALOG class
- *
- * Revision 1.5  2005/06/01 14:16:55  scetre
- * Changed logExtDbg to logTrace
- *
- * Revision 1.4  2005/03/04 11:08:18  gzins
- * Updated diffRa/diffDec as bos size for search
- *
- * Revision 1.3  2005/02/24 17:01:35  scetre
- * Set _loaded flag to true when catalog has been loaded
- *
- * Revision 1.2  2005/02/13 15:58:08  gzins
- * Updated Load() method to use new vobsCDATA class methods
- *
- * Revision 1.1  2005/02/11 14:14:31  gluck
- * Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

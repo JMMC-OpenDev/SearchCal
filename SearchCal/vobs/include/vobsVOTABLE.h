@@ -1,25 +1,7 @@
 #ifndef vobsVOTABLE_H
 #define vobsVOTABLE_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsVOTABLE.h,v 1.5 2006-12-21 15:08:15 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2006/10/09 15:07:08  lafrasse
- * Added request XML serialization in VOTables.
- *
- * Revision 1.3  2006/02/24 15:01:22  lafrasse
- * Updates Doxygen tags
- *
- * Revision 1.2  2005/12/07 15:28:20  lafrasse
- * Updated VOTable generation to include information about software version, request and date
- *
- * Revision 1.1  2005/11/30 15:24:37  lafrasse
- * Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

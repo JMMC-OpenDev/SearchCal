@@ -1,33 +1,7 @@
 <?xml version="1.0"?>
 <!--
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatBuildMainList.xsl,v 1.8 2011-03-09 10:05:38 mella Exp $"
-#
-# History
-#
-# $Log: not supported by cvs2svn $
-# Revision 1.7  2010/08/26 09:54:06  mella
-# add ra from exoplanet votable in list for future sorting
-#
-# Revision 1.6  2008/10/09 08:13:54  mella
-# fix multi planet per star generation
-#
-# Revision 1.5  2008/10/08 15:53:05  mella
-# Handle votable as input file
-#
-# Revision 1.4  2007/03/27 14:53:42  scetre
-# Updated documentation
-# Added creation information in resulting file
-#
-# Revision 1.3  2007/03/26 11:53:03  scetre
-# Moved documentation blok in the first xml tag
-#
-# Revision 1.2  2007/03/26 11:34:03  scetre
-# Added header documentation
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 ##

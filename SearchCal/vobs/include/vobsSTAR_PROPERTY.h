@@ -1,69 +1,8 @@
 #ifndef vobsSTAR_PROPERTY_H
 #define vobsSTAR_PROPERTY_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsSTAR_PROPERTY.h,v 1.20 2011-03-03 13:09:42 lafrasse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.19  2010/02/02 10:12:49  lafrasse
-* Added default value for unit for STAR_PROPERTY creation.
-*
-* Revision 1.18  2009/10/14 14:50:58  lafrasse
-* Added proper support of floating point value (without loosing presion with
-* conversion from string representation) with accompagning tests.
-*
-* Revision 1.17  2009/04/15 12:51:56  lafrasse
-* Added GetSummaryString() method to easily output members values.
-*
-* Revision 1.16  2006/04/10 14:51:29  gzins
-* Added ClearValue()
-*
-* Revision 1.15  2006/01/06 15:59:55  lafrasse
-* Added CDS link in star property
-*
-* Revision 1.14  2006/01/05 09:07:39  lafrasse
-* Code review
-*
-* Revision 1.13  2005/12/07 16:49:18  lafrasse
-* Added support for 'description' attribute in VOTable column descriptors FIELD.
-*
-* Revision 1.12  2005/12/02 17:42:26  lafrasse
-* Added property unit handling
-*
-* Revision 1.11  2005/11/16 10:47:54  scetre
-* Updated documentation
-*
-* Revision 1.10  2005/11/16 10:47:54  scetre
-* Updated documentation
-*
-* Revision 1.9  2005/11/11 16:38:09  gzins
-* Added GetType() method
-*
-* Revision 1.8  2005/03/04 06:34:37  gzins
-* Updated GetConfidenceIndex prototype
-*
-* Revision 1.7  2005/02/11 10:43:35  gzins
-* Fixed bug related to vobsCONFIDENCE_INDEX type
-*
-* Revision 1.6  2005/02/08 20:26:16  gzins
-* Changed _isComputed by _origin
-*
-* Revision 1.5  2005/02/08 07:16:56  gzins
-* Changed value parameter type: char* to const char*
-*
-* Revision 1.4  2005/02/04 15:25:13  gzins
-* Redefined confidence index
-*
-* Revision 1.3  2005/01/26 08:10:32  scetre
-* change history
-*
-* gzins     13-Dec-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * @file

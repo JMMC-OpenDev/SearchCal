@@ -1,45 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: alxLD2UD.c,v 1.10.2.1 2011-04-08 19:17:16 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2011/02/23 17:19:26  lafrasse
- * *** empty log message ***
- *
- * Revision 1.9  2011/02/23 15:13:33  lafrasse
- * Do not parse webservice result comment lines anymore.
- *
- * Revision 1.8  2011/02/22 10:36:50  mella
- * encode sptype during ld2ud uri built
- *
- * Revision 1.7  2011/02/21 08:25:15  mella
- * replace jmcsLD2UD call by a web service onto http://jmmc.fr:8080/ld2ud/ld2ud.jsp
- *
- * Revision 1.6  2011/02/10 15:38:14  lafrasse
- * Cleaned ouput log of runtime-dependant pointer addresses.
- *
- * Revision 1.5  2010/02/18 12:07:00  lafrasse
- * Retrieve Teff and LogG in alxComputeUDFromLDAndSP().
- *
- * Revision 1.4  2010/01/28 16:23:17  lafrasse
- * Added UD_U diameter in alxUNIFORM_DIAMETERS.
- * Added alxFlushUNIFORM_DIAMETERS() with FP_NAN support.
- * Enhanced log and outputs.
- *
- * Revision 1.3  2010/01/18 15:52:37  lafrasse
- * Added alxShowUNIFORM_DIAMETERS().
- *
- * Revision 1.2  2010/01/15 17:44:22  lafrasse
- * Added use of miscLocateExe() to properly resolve 'jmcsLD2UD' executable path.
- * Moved shell command execution code to miscDynBufExecuteCommand().
- * Added log.
- *
- * Revision 1.1  2010/01/08 22:29:04  lafrasse
- * Added preliminary support for alxLD2UD.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

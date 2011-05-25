@@ -1,30 +1,7 @@
 #ifndef vobsCATALOG_MIDI_H
 #define vobsCATALOG_MIDI_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_MIDI.h,v 1.6 2005-11-16 10:47:54 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2005/11/16 10:47:54  scetre
- * Updated documentation
- *
- * Revision 1.4  2005/08/08 11:27:28  scetre
- * Moved specific treatment of midi catalog in the vobsCATALOG_MIDI class instead of vobsLOCAL_CATALOG class
- *
- * Revision 1.3  2005/02/11 14:22:10  gluck
- * - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
- * - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
- * - Updated some comments
- *
- * Revision 1.2  2005/02/04 15:10:25  gluck
- * Update documentation
- *
- * Revision 1.1  2005/02/04 13:56:40  gzins
- * Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

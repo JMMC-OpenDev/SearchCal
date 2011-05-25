@@ -1,18 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: vobsCopyVotParamsAsFields.sh,v 1.2 2009-10-07 09:18:28 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2009/09/16 11:10:52  mella
-# add vobsCopyVotParamsAsFields.sh script
-#
-# Revision 1.1  2006/01/05 14:26:48  mella
-# First revision
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**
@@ -30,8 +18,7 @@
 # 
 # @usedfiles
 # @filename ../config/vobsCopyVotParamsAsFields.xsl :  xslt file
-#
-# */
+#*/
 
 # signal trap (if any)
 

@@ -1,37 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrServer.cpp,v 1.14 2010-11-10 15:46:14 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.13  2010/11/09 15:00:59  lafrasse
- * Refactored to cut on EVH dependencies to handle callbacks, preventing compilation under GCC 4.x and newer.
- *
- * Revision 1.12  2007/05/11 15:58:43  gzins
- * Minor documentation fixing
- *
- * Revision 1.11  2007/05/11 15:41:28  gzins
- * Updated to prevent unreleased semaphores
- *
- * Revision 1.10  2006/03/03 15:25:23  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.9  2005/10/26 11:27:24  lafrasse
- * Code review
- *
- * Revision 1.8  2005/03/08 16:33:51  gzins
- * Disconnected process from message service before exiting
- *
- * Revision 1.7  2005/02/08 04:52:33  gzins
- * Printed ou error stack when connection to MCS services fails
- *
- * Revision 1.6  2005/02/07 15:01:21  gzins
- * Added CVS log as modification history
- *
- * gzins     23-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

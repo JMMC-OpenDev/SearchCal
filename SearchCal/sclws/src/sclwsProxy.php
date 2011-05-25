@@ -1,47 +1,31 @@
 <?php
-
 /*******************************************************************************
- * JMMC project
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+ * By default the searchcal SOAP service responds on non standard HTTP port.
  *
- * SearchCal Proxy Service 
- * -----------------------
- *
- * "@(#) $Id: sclws-proxy.php,v 1.4 2011-04-01 15:04:21 mella Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2011/03/16 15:32:29  mella
- * Remove bad option handling line and update doc
- *
- * Revision 1.2  2011/02/28 12:42:31  mella
- * Use 8078 as default port
- * Return on error message to the soap client if the associated server doe not run
- *
- * Revision 1.1  2010/11/04 08:49:34  mella
- * First revision
+ * This script aims to be a proxy for SearchCal webservice. 
+ * The service can be queried on the common HTTP webserver, which forwards it to 
+ * the real SOAP server instance.
  * 
- *  
- *  By default the searchcal soap service responds on non standart http port.
- *  This script aims to be a proxy for searchcal webservice. 
- *  The service can be queried to the common http webserver which forward it to 
- *  the real soap server instance.
+ * It must be placed into the webserver directory so that it matches the caller 
+ * service address (see sclgui).
+ *
+ * Example: if SearchCal client calls the service using 
+ * http://apps.jmmc.fr/slcws/ , one sclws directory must serve this script.
+ * Then you should probably have the following file:
+ *   /var/www/html/sclws/sclws-proxy.php
  * 
- *  It must be placed into the webserver directory so that it match the caller 
- *  service address (sclgui).
- *  Example: if SearchCal client calls the service using 
- *  http://apps.jmmc.fr/slcws/ , one sclws directory must serve this script.
- *  Then you should probably have following file:
- *    /var/www/html/sclws/sclws-proxy.php
- * 
- *  Strongly inspired from http://discuss.joyent.com/viewtopic.php?pid=184925
+ * Strongly inspired from http://discuss.joyent.com/viewtopic.php?pid=184925
  */
 
 // URL of the SOAP server
 $url = $this_header['SOAPServer'];
 $url = "http://jmmc.fr:8078";
 
-// soap error message returned if searchCal server does not seems to run 
+// SOAP error message returned if SearchCal server does not seem to run 
 $soapErrorMsg = <<<EOM
 <?xml version='1.0' encoding='UTF-8'?>
 <SOAP-ENV:Envelope
@@ -61,35 +45,37 @@ If the problem still occurs, please send one feedback report (Help menu).
 </SOAP-ENV:Envelope>
 EOM;
 
-
-
-//Start the Curl session
+// Start the CURL session
 $session = curl_init($url);
-//Capture all data posted
+
+// Capture all data posted
 $postdata = $HTTP_RAW_POST_DATA;
 
 // Don't return HTTP headers. Do return the contents of the call
 curl_setopt($session, CURLOPT_HEADER, false);
+
 // Set one timeout for housekeeping 
 curl_setopt($session, CURLOPT_TIMEOUT, 7200);
 
 // If it's a POST, put the POST data in the body
 if ($postdata) {
-curl_setopt ($session, CURLOPT_POSTFIELDS, $postdata);
+    curl_setopt ($session, CURLOPT_POSTFIELDS, $postdata);
 }
+
 // The web service returns XML. Set the Content-Type appropriately
 header("Content-Type:text/xml");
 
 // Make the call
 $response = curl_exec($session);
-if($response != FALSE){
-  $header_size = curl_getinfo($session,CURLINFO_HEADER_SIZE);
-  $result = substr($response, $header_size );
-  echo $result;
-}else{
-  echo $soapErrorMsg;
+
+if ($response != FALSE) {
+    $header_size = curl_getinfo($session,CURLINFO_HEADER_SIZE);
+    $result = substr($response, $header_size );
+    echo $result;
+} else {
+    echo $soapErrorMsg;
 }
 
+// Close the CURL session
 curl_close($session);
 ?>
-

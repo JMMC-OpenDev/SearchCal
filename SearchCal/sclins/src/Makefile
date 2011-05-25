@@ -1,24 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.6 2006-02-20 16:35:32 swmgr Exp $"
-#
-# Makefile of mcsins module 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.5  2006/02/20 13:20:26  swmgr
-# Added instruction to start installation
-#
-# Revision 1.4  2005/02/25 11:17:35  scetre
-# added sclinsStart, sclinsStop, sclinsQuery
-#
-# Revision 1.3  2005/02/15 16:02:02  gzins
-# Added CVS log as file modification history
-#
-# sccmgr    08-Dec-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

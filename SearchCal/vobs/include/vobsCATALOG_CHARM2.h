@@ -1,13 +1,7 @@
 #ifndef vobsCATALOG_CHARM2_H
 #define vobsCATALOG_CHARM2_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_CHARM2.h,v 1.1 2005-06-13 10:19:30 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

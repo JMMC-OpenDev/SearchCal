@@ -1,23 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: alxTestDistance.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2006/05/11 13:03:29  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.3  2006/04/07 06:13:24  gzins
- * Adjust logging service for test
- *
- * Revision 1.2  2005/11/10 16:18:22  lafrasse
- * Corrected unit consistency in alxComputeDistance()
- *
- * Revision 1.1  2005/10/26 11:30:41  lafrasse
- * Created alxComputeDistance function stuff
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

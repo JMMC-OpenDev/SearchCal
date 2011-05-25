@@ -1,30 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsTestFilter.cpp,v 1.7 2011-02-25 15:58:58 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2006/03/03 15:18:35  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- * Updated test filter
- *
- * Revision 1.5  2005/12/07 12:23:38  gzins
- * Updated according to the new vobsGENERIC_FILTER API
- *
- * Revision 1.4  2005/11/30 15:22:50  gzins
- * Changed vobsFILTER to vobsGENERIC_FILTER
- *
- * Revision 1.3  2005/11/28 10:11:24  scetre
- * Changed OR test to AND test
- *
- * Revision 1.2  2005/11/24 08:15:27  scetre
- * Updated filter test
- *
- * Revision 1.1  2005/11/23 10:22:20  scetre
- * Generalized filter
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

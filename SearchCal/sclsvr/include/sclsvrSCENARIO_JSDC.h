@@ -1,7 +1,7 @@
 #ifndef sclsvrSCENARIO_JSDC_H
 #define sclsvrSCENARIO_JSDC_H
 /*******************************************************************************
- * JMMC project
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

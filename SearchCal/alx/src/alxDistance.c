@@ -1,23 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: alxDistance.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2006/03/03 14:48:24  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.3  2005/11/10 16:18:22  lafrasse
- * Corrected unit consistency in alxComputeDistance()
- *
- * Revision 1.2  2005/10/26 12:29:37  lafrasse
- * Added error management to alxComputeDistance()
- *
- * Revision 1.1  2005/10/26 11:30:41  lafrasse
- * Created alxComputeDistance function stuff
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,16 +1,7 @@
 #ifndef vobsCATALOG_UNSO_H
 #define vobsCATALOG_UNSO_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_UNSO.h,v 1.2 2005-11-24 14:54:25 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2005/11/21 13:49:26  scetre
- * UNSO catalog added
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

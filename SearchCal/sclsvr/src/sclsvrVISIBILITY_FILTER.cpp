@@ -1,43 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.11 2011-03-03 13:12:52 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2006/03/03 15:25:23  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.9  2006/02/21 12:16:33  gzins
- * Fixed wrong test on visibility; i.e. relative visibility is expressed in %
- *
- * Revision 1.8  2005/12/14 15:13:41  scetre
- * Added log info of deleted stars in visibility filter
- *
- * Revision 1.7  2005/12/14 09:02:00  scetre
- * Updated constructor with filter name
- *
- * Revision 1.6  2005/11/30 10:35:21  scetre
- * Updated Filter without name
- * Updated scenario
- *
- * Revision 1.5  2005/10/26 11:27:24  lafrasse
- * Code review
- *
- * Revision 1.4  2005/06/21 06:21:58  scetre
- * Changed IsEnable() method to IsEnabled()
- *
- * Revision 1.3  2005/06/20 14:42:11  scetre
- * Changed call to mother class from sclsvrFILTER to vobsFILTER after filter removed to vobs module
- *
- * Revision 1.2  2005/06/13 10:22:47  scetre
- * Updated documentation
- *
- * Revision 1.1  2005/06/01 14:18:54  scetre
- * Added filters and filter list objects.
- * Changed logExtDbg to logTrace
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

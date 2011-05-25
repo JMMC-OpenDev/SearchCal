@@ -1,15 +1,6 @@
 #!/usr/bin/python
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatGenerateConfigFromCoordinates.py,v 1.2 2010-03-18 14:56:53 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2010/02/10 14:00:27  lafrasse
-# Added sclcatGenerateConfigFromCoordinates.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

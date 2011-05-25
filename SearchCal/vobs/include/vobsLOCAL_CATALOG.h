@@ -1,28 +1,7 @@
 #ifndef vobsLOCAL_CATALOG_H
 #define vobsLOCAL_CATALOG_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsLOCAL_CATALOG.h,v 1.5.2.1 2011-04-15 22:21:11 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2006/01/18 08:45:38  scetre
- * Added option in generic local and remote catalog
- *
- * Revision 1.4  2005/11/16 10:47:54  scetre
- * Updated documentation
- *
- * Revision 1.3  2005/11/16 10:47:54  scetre
- * Updated documentation
- *
- * Revision 1.2  2005/08/08 11:27:28  scetre
- * Moved specific treatment of midi catalog in the vobsCATALOG_MIDI class instead of vobsLOCAL_CATALOG class
- *
- * Revision 1.1  2005/02/11 14:14:31  gluck
- * Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

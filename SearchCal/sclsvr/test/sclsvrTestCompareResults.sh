@@ -1,12 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclsvrTestCompareResults.sh,v 1.1 2011-03-02 16:52:16 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

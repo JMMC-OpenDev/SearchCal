@@ -1,28 +1,7 @@
 #ifndef sclsvrSCENARIO_BRIGHT_V_H
 #define sclsvrSCENARIO_BRIGHT_V_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.h,v 1.6 2006-12-21 15:16:05 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2005/11/29 10:38:38  gzins
- * Changed vobsBASE_FILTER to vobsFILTER
- *
- * Revision 1.4  2005/11/24 13:21:38  scetre
- * Clean the presentation of the add entry
- *
- * Revision 1.3  2005/11/23 08:38:14  scetre
- * ReAdd criteria on HD number for cross matching for I/196 and BSC/SBSC
- *
- * Revision 1.2  2005/11/16 14:28:02  scetre
- * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
- *
- * Revision 1.1  2005/11/15 15:00:33  scetre
- * Added scenario K V and N
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

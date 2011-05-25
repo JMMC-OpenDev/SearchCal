@@ -1,56 +1,8 @@
 #ifndef vobsCATALOG_H
 #define vobsCATALOG_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsCATALOG.h,v 1.21.2.2 2011-04-15 22:21:11 duvert Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.21.2.1  2011/04/08 19:42:49  duvert
-* Support for AKARI-related Photometries
-*
-* Revision 1.21  2010/01/29 13:07:59  lafrasse
-* Updated CHARM2 identifier to be the true one, not CHARM.
-*
-* Revision 1.20  2010/01/26 14:15:38  lafrasse
-* Added vobsCATALOG_WDS.
-*
-* Revision 1.19  2009/05/04 15:20:26  lafrasse
-* Removed all references to unused CHARM catalog.
-*
-* Revision 1.18  2009/02/26 10:39:03  lafrasse
-* Corrected SB9 catalog ID.
-*
-* Revision 1.17  2009/02/09 16:26:10  lafrasse
-* Added Spectral Binary catalog (SB9).
-*
-* Revision 1.16  2006/01/18 09:06:43  scetre
-* Added option in the query
-*
-* Revision 1.15  2005/11/24 14:54:25  scetre
-* UNSO catalog added
-*
-* Revision 1.14  2005/11/21 13:49:40  scetre
-* Added UNSO id
-*
-* Revision 1.13  2005/11/17 08:05:52  scetre
-* Added possibility to add no catalog in an entry
-*
-* Revision 1.12  2005/11/15 14:57:56  scetre
-* Added new scenario structure
-* Added possibility to query merand and borde as primary catalog
-*
-* Revision 1.11  2005/02/11 14:22:10  gluck
-* - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
-* - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
-* - Updated some comments
-*
-* scetre    27-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * \file

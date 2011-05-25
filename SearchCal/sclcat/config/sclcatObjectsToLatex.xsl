@@ -1,41 +1,7 @@
 <?xml version="1.0"?>
 <!--
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatObjectsToLatex.xsl,v 1.5 2010-08-26 10:28:13 mella Exp $"
-#
-# History
-#
-# $Log: not supported by cvs2svn $
-# Revision 1.4  2009/05/11 10:36:35  mella
-# fix exoplanet name for starname column and surround +XX latex values
-#
-# Revision 1.3  2009/05/07 20:48:32  mella
-# Use latex filter to surround negative values by $
-#
-# Revision 1.2  2009/05/06 13:54:34  mella
-# add common column description
-#
-# Revision 1.1  2009/04/29 10:45:16  mella
-# add orbit column in html and latex
-#
-# Revision 1.9  2009/04/27 10:04:35  mella
-# add better comment
-#
-# Revision 1.8  2009/01/22 14:12:10  mella
-# improve presetation
-#
-# Revision 1.7  2007/03/27 14:53:51  scetre
-# Updated documentation
-#
-# Revision 1.6  2007/03/26 11:53:03  scetre
-# Moved documentation blok in the first xml tag
-#
-# Revision 1.5  2007/03/26 11:34:23  scetre
-# Added header documentation
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

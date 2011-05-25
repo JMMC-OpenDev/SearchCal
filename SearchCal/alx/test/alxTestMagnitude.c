@@ -1,80 +1,10 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: alxTestMagnitude.c,v 1.21 2011-04-05 15:38:13 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.20  2011/03/25 14:55:11  lafrasse
- * Fixed spectral type testing.
- *
- * Revision 1.19  2011/03/25 14:13:38  lafrasse
- * Added spectral type decoding tests.
- *
- * Revision 1.18  2011/03/03 12:59:53  lafrasse
- * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
- *
- * Revision 1.17  2011/02/23 15:15:19  lafrasse
- * Updated to reflect alx API changes.
- *
- * Revision 1.16  2006/05/11 13:03:29  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.15  2006/04/07 06:13:24  gzins
- * Adjust logging service for test
- *
- * Revision 1.14  2006/04/06 11:52:21  gzins
- * Set confidence index
- *
- * Revision 1.13  2005/12/22 10:09:14  scetre
- * Updated test
- *
- * Revision 1.12  2005/12/19 20:46:49  gzins
- * Updated test programs according new function names
- *
- * Revision 1.11  2005/12/02 12:05:59  scetre
- * Added test of faint missing magnitude
- *
- * Revision 1.10  2005/07/06 05:07:15  gzins
- * Fixed API to alxComputeAngularDiameter
- *
- * Revision 1.9  2005/03/30 12:48:46  scetre
- * Changed API
- *
- * Revision 1.8  2005/02/22 16:22:04  gzins
- * Updated test after test on B-V delta has been added
- *
- * Revision 1.7  2005/02/22 10:18:08  gzins
- * Initialized magnitudes to blanked value before alxComputeMagnitudesForBrightStar
- *
- * Revision 1.6  2005/02/21 19:36:30  gzins
- * Updated according to alxComputeMagnitudesForBrightStar and alxComputeRealMagnitudes changes.
- *
- * Revision 1.5  2005/02/17 19:05:23  gzins
- * Changed remaining FAILURE to mcsFAILURE
- *
- * Revision 1.4  2005/02/12 15:18:56  gzins
- * Set logging service for test; do not print time stamp and file/line information and set level to logTEST
- *
- * Revision 1.3  2005/01/31 13:32:53  scetre
- * *** empty log message ***
- *
- * Revision 1.2  2005/01/24 10:56:25  scetre
- * Changed valid format for spectral type
- *
- * Revision 1.1  2005/01/21 08:14:25  gluck
- * Creation
- *
- *
- * scetre    22-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
  * \file
  * Test program of the function which computes magnitudes.
- *
  */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.21 2011-04-05 15:38:13 lafrasse Exp $";

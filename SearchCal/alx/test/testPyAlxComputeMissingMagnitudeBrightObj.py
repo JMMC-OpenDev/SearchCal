@@ -1,18 +1,7 @@
 #!/usr/bin/python
 
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: testPyAlxComputeMissingMagnitudeBrightObj.py,v 1.3 2011-03-03 12:59:54 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.2  2005/02/25 15:46:43  gluck
-# Updated test for new prototype and different implementation
-#
-# gluck  21-Jan-2005  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 

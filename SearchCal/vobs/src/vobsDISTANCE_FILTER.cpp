@@ -1,52 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.11 2011-03-03 13:09:42 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2009/12/09 10:00:10  lafrasse
- * Updated to truly compute distance as star separation and not as coordinates box
- * selection, to better filter science objects in sclsvr.
- *
- * Revision 1.9  2006/04/07 08:23:00  gzins
- * Removed useless \n in log messages
- *
- * Revision 1.8  2006/03/03 15:03:27  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.7  2006/03/01 16:41:38  lafrasse
- * Added const attributes for SetDistanceValue() method parameters.
- * Replaced all the 'strcpy' calls with 'strncpy'.
- * Code review
- *
- * Revision 1.6  2005/12/14 15:07:53  scetre
- * Added log information about deleted star in filters
- *
- * Revision 1.5  2005/12/13 16:30:33  lafrasse
- * Added filter Id management through additional constructor parameter
- *
- * Revision 1.4  2005/11/29 13:49:19  gzins
- * Removed filter name setting
- *
- * Revision 1.3  2005/11/29 10:33:02  gzins
- * Minor changes
- *
- * Revision 1.2  2005/06/21 06:20:45  scetre
- * Changed method Disable() and Enable() to Disabled() and Enabled()
- * Changed '\' in doxygen documentatiuon to '@'
- *
- * Revision 1.1  2005/06/20 11:44:25  scetre
- * Added filter class
- *
- * Revision 1.2  2005/06/07 12:36:27  scetre
- * Updated documentation
- *
- * Revision 1.1  2005/06/01 14:18:54  scetre
- * Added filters and filter list objects.
- * Changed logExtDbg to logTrace
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

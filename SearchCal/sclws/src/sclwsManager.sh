@@ -11,16 +11,7 @@ if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclwsManager.sh,v 1.2 2011-01-13 08:48:04 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2008/02/18 15:31:44  lafrasse
-# Creation.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

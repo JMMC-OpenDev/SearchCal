@@ -1,15 +1,8 @@
 <?xml version="1.0"?>
 <!--
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatObjectsToCSV.xsl,v 1.1 2009-11-17 21:18:59 mella Exp $"
-# $Log: not supported by cvs2svn $
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
-
-##
-#
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:exslt="http://exslt.org/common"

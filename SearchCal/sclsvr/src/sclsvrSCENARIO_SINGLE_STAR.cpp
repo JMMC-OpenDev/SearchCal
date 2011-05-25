@@ -1,37 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.cpp,v 1.8.2.1 2011-04-15 22:46:57 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2011/03/03 13:12:52  lafrasse
- * Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
- *
- * Revision 1.7  2010/09/01 07:28:35  mella
- * clean unused variable
- *
- * Revision 1.6  2007/10/31 11:31:56  gzins
- * Removed some useless code
- *
- * Revision 1.5  2007/06/27 13:00:59  scetre
- * Do not removed science star if present in the resulting list.
- * Updated get star command
- *
- * Revision 1.4  2006/12/21 15:16:05  lafrasse
- * Updated progression monitoring code (moved from static-based to instance-based).
- *
- * Revision 1.3  2006/05/11 13:04:57  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.2  2006/03/03 15:25:23  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.1  2005/11/21 13:51:47  scetre
- * Changed bad scenario name
- * Added scenario for single star research -> updated getStar
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

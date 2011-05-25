@@ -1,25 +1,7 @@
 #ifndef vobsORIGIN_FILTER_H
 #define vobsORIGIN_FILTER_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsORIGIN_FILTER.h,v 1.5 2005-12-13 16:30:33 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2005/11/29 13:45:57  gzins
- * Removed filter name definition
- *
- * Revision 1.3  2005/11/29 10:28:54  gzins
- * Changed vobsBASE_FILTER to vobsFILTER
- *
- * Revision 1.2  2005/11/24 08:13:50  scetre
- * Changed mother class of filter from vobsFILTER to vobsFILTER
- *
- * Revision 1.1  2005/11/15 14:54:33  scetre
- * Added filter on origin and B-V
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

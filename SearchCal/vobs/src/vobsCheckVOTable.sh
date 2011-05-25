@@ -1,12 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: vobsCheckVOTable.sh,v 1.1 2006-01-05 14:26:48 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**
@@ -24,8 +18,7 @@
 # @usedfiles
 # @filename VOTable-1.0.xsd :  xml schema for 1.0 version
 # @filename VOTable-1.1.xsd :  xml schema for 1.1 version
-#
-# */
+#*/
 
 # signal trap (if any)
 

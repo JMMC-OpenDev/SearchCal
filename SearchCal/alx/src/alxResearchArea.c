@@ -1,49 +1,6 @@
 /*******************************************************************************
-* JMMC project
-* 
-* "@(#) $Id alxDefResearchArea.c, 2005/01/13 12:12:00 clausse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.12  2006/04/06 09:32:31  gzins
-* Fixed bug when no star is found is magnitude range; consider there is at least 1 star
-*
-* Revision 1.11  2006/03/03 14:48:24  scetre
-* Changed rcsId to rcsId __attribute__ ((unused))
-*
-* Revision 1.10  2005/12/22 10:28:31  scetre
-* Updated documentation
-*
-* Revision 1.9  2005/12/21 15:14:08  scetre
-* Added log
-*
-* Revision 1.8  2005/12/21 15:11:26  scetre
-* Added log
-*
-* Revision 1.7  2005/12/19 21:13:07  gzins
-* Changed longitude limit from 350 to 360
-*
-* Revision 1.6  2005/11/30 10:47:15  scetre
-* Added new formula to compute radius
-*
-* Revision 1.5  2005/10/26 11:24:01  lafrasse
-* Code review
-*
-* Revision 1.4  2005/06/01 14:16:07  scetre
-* Changed logExtDbg to logTrace
-*
-* Revision 1.3  2005/02/22 16:18:21  gzins
-* *** empty log message ***
-*
-* Revision 1.2  2005/02/16 15:10:57  gzins
-* Updated call to miscDynBufGetNextLine()
-*
-* Revision 1.1  2005/02/12 14:59:11  gzins
-* Created
-*
-* clausse     13-Jan-2005  Created
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * @file

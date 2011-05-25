@@ -1,41 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclwsWS.cpp,v 1.9 2009-04-17 15:38:44 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.8  2007/11/12 10:32:15  lafrasse
- * Update Web Service API function name.
- * Update documentation and traces.
- * Added support for command line option parsing and handling.
- *
- * Revision 1.7  2007/10/31 11:51:17  gzins
- * Updated according to new web-service API
- * Improved error handling
- *
- * Revision 1.6  2007/07/03 17:00:03  lafrasse
- * Added support for query cancellation.
- *
- * Revision 1.5  2007/06/27 21:19:40  gzins
- * Implemented work-around related to 'semop - EIDRM' -> 'Identifier removed' bug
- *
- * Revision 1.4  2007/02/13 16:18:34  lafrasse
- * *** empty log message ***
- *
- * Revision 1.3  2007/02/09 17:07:46  lafrasse
- * Enhanced log and error monitoring.
- * Corrected a bug inherent to early deallocation of sclsvrSERVER _progress
- * leading to a crash on empty resulting queries.
- *
- * Revision 1.2  2007/02/04 20:56:45  lafrasse
- * Updated webservice URL port number.
- * Updated according to APIs changes in sclsvr.
- *
- * Revision 1.1  2006/12/22 15:17:50  lafrasse
- * Creation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

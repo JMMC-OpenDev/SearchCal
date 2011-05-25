@@ -1,43 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.10 2011-02-23 15:16:13 lafrasse Exp $"
-#
-# Makefile of ........
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.9  2010/01/08 22:29:04  lafrasse
-# Added preliminary support for alxLD2UD.
-#
-# Revision 1.8  2009/10/15 07:33:59  mella
-# Make alxTestVisibility compile and set is as first target
-#
-# Revision 1.7  2006/09/27 15:05:34  mella
-# Use MCSROOT instead of /home/MCSROOT and use Python2.4 includes
-#
-# Revision 1.6  2006/04/06 11:49:08  gzins
-# Minor changes
-#
-# Revision 1.5  2005/10/26 11:30:41  lafrasse
-# Created alxComputeDistance function stuff
-#
-# Revision 1.4  2005/02/15 14:47:55  gzins
-# Removed unused target
-#
-# Revision 1.3  2005/02/12 15:19:47  gzins
-# Added alxTestResearchArea program
-#
-# Revision 1.2  2005/01/21 15:23:53  gluck
-# Add instructions for module python tests
-#
-# Revision 1.1  2005/01/21 08:14:25  gluck
-# Creation
-#
-#
-# scetre    22-Sep-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

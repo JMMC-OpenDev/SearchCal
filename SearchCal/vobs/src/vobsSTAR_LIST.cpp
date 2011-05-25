@@ -1,112 +1,11 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsSTAR_LIST.cpp,v 1.38 2011-04-13 14:33:20 mella Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.37  2011/03/03 13:09:43  lafrasse
-* Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
-*
-* Revision 1.36  2007/02/26 16:40:28  lafrasse
-* Corrected Doxygen documentation.
-*
-* Revision 1.35  2006/12/21 15:08:15  lafrasse
-* Added GetVotable() API.
-*
-* Revision 1.34  2006/10/09 15:07:09  lafrasse
-* Added request XML serialization in VOTables.
-*
-* Revision 1.33  2006/04/03 11:49:49  gzins
-* Hanlded list empty case in GetNextXxx() method
-*
-* Revision 1.32  2006/04/03 11:44:18  gzins
-* Fixed bug in GetNextStar() method; handled case where list is empty
-*
-* Revision 1.31  2006/03/03 15:03:28  scetre
-* Changed rcsId to rcsId __attribute__ ((unused))
-*
-* Revision 1.30  2006/01/05 09:07:39  lafrasse
-* Code review
-*
-* Revision 1.29  2005/12/22 10:38:45  scetre
-* Updated doxygen documentation
-*
-* Revision 1.28  2005/12/07 15:28:20  lafrasse
-* Updated VOTable generation to include information about software version, request and date
-*
-* Revision 1.27  2005/12/07 15:10:09  scetre
-* Removed unused printf
-*
-* Revision 1.26  2005/11/30 15:24:37  lafrasse
-* Exported VOTable generation code from vobsSTAR_LIST to vobsVOTABLE
-*
-* Revision 1.25  2005/11/16 10:47:55  scetre
-* Updated documentation
-*
-* Revision 1.24  2005/11/16 10:47:54  scetre
-* Updated documentation
-*
-* Revision 1.23  2005/11/15 16:39:55  lafrasse
-* Added experimental VOTable export support
-*
-* Revision 1.22  2005/11/11 16:39:04  gzins
-* Added Sort() method
-*
-* Revision 1.21  2005/06/20 14:32:25  scetre
-* Removed unused printf
-* changed iterator initialisation to NULL
-*
-* Revision 1.20  2005/06/17 15:11:41  gzins
-* Fixed conflict between Remove() and GetNextStar() methods when element to be deleted is the current element pointed by GetNextStar()
-*
-* Revision 1.19  2005/06/01 14:16:56  scetre
-* Changed logExtDbg to logTrace
-*
-* Revision 1.18  2005/04/14 14:39:03  scetre
-* Updated documentation.
-* added test on method return.
-*
-* Revision 1.17  2005/03/30 12:49:26  scetre
-* Updated documentation
-*
-* Revision 1.16  2005/03/04 16:28:28  scetre
-* Changed Call to Save method
-*
-* Revision 1.15  2005/03/04 16:05:51  scetre
-* Updated call to Save method
-*
-* Revision 1.14  2005/02/15 15:41:47  gzins
-* Fixed wrong mcsmcsSUCCESS and mcsmcsFAILURE
-*
-* Revision 1.13  2005/02/15 15:19:30  gzins
-* Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
-*
-* Revision 1.12  2005/02/14 08:44:43  scetre
-* removed unused printf
-*
-* Revision 1.11  2005/02/13 15:56:55  gzins
-* Added optional origin parameter to Load() method
-*
-* Revision 1.10  2005/02/13 15:27:53  gzins
-* Added Load() method
-* Updated Save() method to use new vobsCDATA class
-* Set default value of criteriaList to NULL
-*
-* Revision 1.9  2005/02/04 14:31:50  scetre
-* updated documentation
-*
-* Revision 1.8  2005/01/26 14:12:24  scetre
-* rewrite save method in vobsSTAR_LIST
-*
-* Revision 1.7  2005/01/26 08:18:15  scetre
-* change history
-*
-* scetre    06-Jul-2004  Created
-* gzins     09-Dec-2004  Fixed cast problem with nez mcsLOGICAL enumerate
-*
-******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+ * @file
+ * vobsSTAR_LIST class definition.
+ */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.38 2011-04-13 14:33:20 mella Exp $"; 
 

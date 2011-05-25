@@ -1,25 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobs.doc,v 1.11 2006-02-24 14:59:40 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2006/01/05 09:07:39  lafrasse
- * Code review
- *
- * Revision 1.9  2005/11/16 13:35:58  scetre
- * Updated Documentation
- *
- * Revision 1.8  2005/11/16 12:53:18  scetre
- * Updated documentation
- *
- * Revision 1.5  2005/02/15 15:21:26  gzins
- * Added CVS log as file modification history
- *
- * scetre    25-Aug-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

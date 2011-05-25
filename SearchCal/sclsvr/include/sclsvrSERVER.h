@@ -1,62 +1,7 @@
 #ifndef sclsvrSERVER_H
 #define sclsvrSERVER_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSERVER.h,v 1.19.2.1 2011-04-15 22:38:05 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.19  2010/11/10 15:45:16  lafrasse
- * Decorelated GETSTAR from EVH callback mecanism.
- *
- * Revision 1.18  2009/12/17 15:14:31  lafrasse
- * *** empty log message ***
- *
- * Revision 1.17  2007/10/31 11:28:20  gzins
- * Removed oldScenario parameter
- * Updated to use new sdbENTRY non-blocking class
- * Updated API related to web-service
- *
- * Revision 1.16  2007/02/04 20:50:37  lafrasse
- * Replaced GetCalStatus() by WaitForCurrentCatalogName() and IsLastCatalog().
- * Added GetCatalogIndex() API to get the index of the catalog being queried.
- * Added GetNbOfCatalogs() API to get the number of catalogs of the scenario.
- *
- * Revision 1.15  2006/12/21 15:16:05  lafrasse
- * Updated progression monitoring code (moved from static-based to instance-based).
- *
- * Revision 1.14  2006/07/17 09:10:36  scetre
- * Added old scenario option
- *
- * Revision 1.13  2006/03/07 15:33:39  scetre
- * Removed old scenario in band K
- *
- * Revision 1.12  2005/12/12 14:10:00  scetre
- * Added old scenario with 2mass in primary request
- *
- * Revision 1.11  2005/11/24 13:21:26  scetre
- * Added an element scenario faint K
- *
- * Revision 1.10  2005/11/21 13:51:47  scetre
- * Changed bad scenario name
- * Added scenario for single star research -> updated getStar
- *
- * Revision 1.9  2005/11/15 15:01:19  scetre
- * Updated with new scenario structure
- *
- * Revision 1.8  2005/10/26 11:27:24  lafrasse
- * Code review
- *
- * Revision 1.7  2005/03/06 20:29:40  gzins
- * Added GetSwVersion method
- *
- * Revision 1.6  2005/02/07 15:00:23  gzins
- * Added CVS log as modification history
- *
- * scetre    04-Oct-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

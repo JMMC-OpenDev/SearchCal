@@ -1,30 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclinsStart.sh,v 1.7 2005-11-05 20:11:35 gzins Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.6  2005/09/12 13:58:11  scetre
-# Changed sclguiPanel to sclguiDisplay process name
-#
-# Revision 1.5  2005/03/08 13:55:27  scetre
-# Redirect stdout of servers on /dev/null
-#
-# Revision 1.4  2005/03/08 10:14:31  gzins
-# Started process in real background with nohup
-#
-# Revision 1.3  2005/03/04 15:05:52  gzins
-# Updated to return correct execution status, display error when execution failed and suppress useless sleep
-#
-# Revision 1.2  2005/02/25 15:06:00  scetre
-# *** empty log message ***
-#
-# Revision 1.1  2005/02/25 11:16:50  scetre
-# Added script to star, stop and run Search Calibrators
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

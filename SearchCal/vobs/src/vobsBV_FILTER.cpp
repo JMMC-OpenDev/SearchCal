@@ -1,41 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsBV_FILTER.cpp,v 1.11 2011-03-03 13:09:42 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2009/04/17 15:29:48  lafrasse
- * Updated log level from Info to Test to clean sclws log output.
- *
- * Revision 1.9  2006/03/03 15:03:27  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.8  2005/12/14 15:07:53  scetre
- * Added log information about deleted star in filters
- *
- * Revision 1.7  2005/12/13 16:30:33  lafrasse
- * Added filter Id management through additional constructor parameter
- *
- * Revision 1.6  2005/11/29 13:49:19  gzins
- * Removed filter name setting
- *
- * Revision 1.5  2005/11/29 10:25:58  gzins
- * Minor change
- *
- * Revision 1.4  2005/11/16 12:53:18  scetre
- * Updated documentation
- *
- * Revision 1.3  2005/11/16 10:47:55  scetre
- * Updated documentation
- *
- * Revision 1.2  2005/11/16 10:47:54  scetre
- * Updated documentation
- *
- * Revision 1.1  2005/11/15 14:54:33  scetre
- * Added filter on origin and B-V
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

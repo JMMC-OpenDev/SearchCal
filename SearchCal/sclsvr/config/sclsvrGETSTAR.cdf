@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ********************************************************************************
- JMMC project
-
- "@(#) $Id: sclsvrGETSTAR.cdf,v 1.6 2010-09-23 19:18:41 mella Exp $"
-
- History 
- ~~~~~~~
- $Log: not supported by cvs2svn $
- Revision 1.5  2005/02/07 14:42:11  gzins
- Renamed lambda to wlen.
-
- Revision 1.4  2005/02/03 10:38:32  gzins
- Fixed conflict
-
- Definition of GETSTAR command.
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
 -->
 <cmd
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 

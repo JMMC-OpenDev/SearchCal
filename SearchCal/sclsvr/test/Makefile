@@ -1,39 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.14 2011-03-02 16:52:16 lafrasse Exp $"
-#
-# Makefile of sclsvr test module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.13  2010/11/09 11:15:30  lafrasse
-# Removed deprecated TAT test suite.
-#
-# Revision 1.12  2007/10/31 11:40:01  gzins
-# Added sclsvrTestSERVER program
-#
-# Revision 1.11  2007/05/11 15:52:23  gzins
-# Added sclsvrTestBright_BD+23_492 and sclsvrTestBright_HD_103945 tests
-#
-# Revision 1.10  2006/08/25 06:58:56  gzins
-# New name for tests related to 'bright' scenario
-#
-# Revision 1.9  2006/04/19 12:09:31  gzins
-# Added L_Car test script
-#
-# Revision 1.8  2006/04/10 14:56:58  gzins
-# Added test scripts
-#
-# Revision 1.7  2005/11/25 13:14:45  scetre
-# *** empty log message ***
-#
-# Revision 1.6  2005/02/15 15:52:00  gzins
-# Added CVS log as file modification history
-#
-# scetre    15-Sep-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

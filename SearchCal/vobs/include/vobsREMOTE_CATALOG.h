@@ -1,23 +1,8 @@
 #ifndef vobsREMOTE_CATALOG_H
 #define vobsREMOTE_CATALOG_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsREMOTE_CATALOG.h,v 1.3 2011-04-18 13:53:31 lafrasse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.2  2006/01/18 08:45:38  scetre
-* Added option in generic local and remote catalog
-*
-* Revision 1.1  2005/02/11 14:14:31  gluck
-* Added vobsLOCAL_CATALOG  and vobsREMOTE_CATALOG classes to have a more coherent and homogenous inheritance tree
-*
-* scetre    27-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * \file

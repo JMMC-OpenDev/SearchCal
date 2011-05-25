@@ -1,42 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsTestParser.cpp,v 1.11 2011-03-04 13:38:21 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2011/02/25 15:58:58  lafrasse
- * Removed date and filelines from test outputs.
- *
- * Revision 1.9  2011/02/25 14:59:27  lafrasse
- * Fixed compilation due to API change.
- *
- * Revision 1.8  2009/02/03 08:53:08  mella
- * Made changes to fall back on UCD1 with viz-bin service
- *
- * Revision 1.7  2008/03/10 07:53:42  lafrasse
- * Changed VIZIER URI to reflect CDS changes.
- * Minor modifications on comments and log traces.
- *
- * Revision 1.6  2006/03/03 15:17:43  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.5  2005/11/16 10:45:14  scetre
- * Updated vobs test
- *
- * Revision 1.4  2005/02/15 15:26:06  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.3  2005/02/13 16:01:08  gzins
- * Changed log level to logDEBUG
- *
- * Revision 1.2  2005/02/13 08:54:00  gzins
- * Updated after vobs classes changes
- * Added CVS log as modifification history
- *
- * scetre    12-Jul-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestParser.cpp,v 1.11 2011-03-04 13:38:21 lafrasse Exp $"; 

@@ -1,28 +1,7 @@
 #ifndef vobsBV_FILTER_H
 #define vobsBV_FILTER_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsBV_FILTER.h,v 1.6 2011-03-03 13:09:41 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.5  2005/12/13 16:30:33  lafrasse
- * Added filter Id management through additional constructor parameter
- *
- * Revision 1.4  2005/11/29 13:45:57  gzins
- * Removed filter name definition
- *
- * Revision 1.3  2005/11/29 10:26:41  gzins
- * Changed parent class to vobsFILTER
- *
- * Revision 1.2  2005/11/24 08:13:50  scetre
- * Changed mother class of filter from vobsFILTER to vobsFILTER
- *
- * Revision 1.1  2005/11/15 14:54:33  scetre
- * Added filter on origin and B-V
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

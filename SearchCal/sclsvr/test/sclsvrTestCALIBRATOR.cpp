@@ -1,14 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrTestCALIBRATOR.cpp,v 1.2 2010-11-09 10:58:30 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2007/10/31 11:38:45  gzins
- * Moved from sclsvrTestCalibrator.cpp
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrTestCALIBRATOR.cpp,v 1.2 2010-11-09 10:58:30 lafrasse Exp $"; 

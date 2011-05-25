@@ -1,13 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.1 2007-10-31 11:52:18 gzins Exp $"
-#
-# Makefile of sclws module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

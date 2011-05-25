@@ -1,56 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSERVER.cpp,v 1.16.2.1 2011-04-15 22:47:18 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.16  2009/12/17 15:14:32  lafrasse
- * *** empty log message ***
- *
- * Revision 1.15  2007/10/31 11:35:18  gzins
- * Updated to use new sdbENTRY non-blocking class
- * Changed progression status format
- * Removed obsolete methods related to web-service
- *
- * Revision 1.14  2007/05/15 08:37:16  gzins
- * Fixed bug related to thread synchronisation
- *
- * Revision 1.13  2007/02/09 17:04:06  lafrasse
- * Moved _progress deletion from GetCalCB() to sclsvrSERVER destructor.
- *
- * Revision 1.12  2007/02/04 20:45:53  lafrasse
- * Added GetCatalogIndex() API to get the index of the catalog being queried.
- * Added GetNbOfCatalogs() API to get the number of catalogs of the scenario.
- *
- * Revision 1.11  2007/01/23 14:29:45  lafrasse
- * Removed unwanted debugging traces.
- *
- * Revision 1.10  2006/12/21 15:16:05  lafrasse
- * Updated progression monitoring code (moved from static-based to instance-based).
- *
- * Revision 1.9  2006/03/03 15:25:23  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.8  2006/02/21 16:52:39  scetre
- * Moved the 2 same method in one in sclsvrSERVER.cpp
- * move the 2 same struct in sclsvrPrivate.h
- *
- * Revision 1.7  2005/10/26 11:27:24  lafrasse
- * Code review
- *
- * Revision 1.6  2005/06/01 14:18:54  scetre
- * Added filters and filter list objects.
- * Changed logExtDbg to logTrace
- *
- * Revision 1.5  2005/03/06 20:29:40  gzins
- * Added GetSwVersion method
- *
- * Revision 1.4  2005/01/26 13:13:04  gzins
- * Added CVS log as modification history.
- * Added CDF file when attaching command callbacks.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

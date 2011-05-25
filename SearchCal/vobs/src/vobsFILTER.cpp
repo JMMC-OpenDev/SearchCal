@@ -1,29 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsFILTER.cpp,v 1.15 2006-03-03 15:03:27 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.14  2005/12/22 10:38:45  scetre
- * Updated doxygen documentation
- *
- * Revision 1.13  2005/12/14 15:07:53  scetre
- * Added log information about deleted star in filters
- *
- * Revision 1.12  2005/12/13 16:30:33  lafrasse
- * Added filter Id management through additional constructor parameter
- *
- * Revision 1.11  2005/11/29 13:53:40  gzins
- * Removed GetName method
- *
- * Revision 1.10  2005/11/29 10:33:22  gzins
- * Changed vobsBASE_FILTER to vobsFILTER
- *
- * Revision 1.1  2005/11/24 08:13:50  scetre
- * Changed mother class of filter from vobsFILTER to vobsFILTER
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

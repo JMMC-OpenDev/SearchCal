@@ -1,27 +1,7 @@
 <?xml version="1.0"?>
 <!--
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatObjectsToBatch.xsl,v 1.7 2009-10-08 19:32:41 mella Exp $"
-#
-# History
-#
-# $Log: not supported by cvs2svn $
-# Revision 1.6  2009/10/08 19:13:44  mella
-# add support for kmag
-#
-# Revision 1.5  2007/03/27 14:53:42  scetre
-# Updated documentation
-# Added creation information in resulting file
-#
-# Revision 1.4  2007/03/26 11:53:03  scetre
-# Moved documentation blok in the first xml tag
-#
-# Revision 1.3  2007/03/26 11:34:13  scetre
-# Added header documentation
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 ##

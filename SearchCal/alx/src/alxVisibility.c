@@ -1,47 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: alxVisibility.c,v 1.11 2011-03-03 12:59:53 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2006/03/03 14:48:24  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.9  2005/10/26 11:24:01  lafrasse
- * Code review
- *
- * Revision 1.8  2005/06/01 14:16:07  scetre
- * Changed logExtDbg to logTrace
- *
- * Revision 1.7  2005/04/04 07:22:11  scetre
- * Updated documentation
- *
- * Revision 1.6  2005/03/30 12:48:21  scetre
- * *** empty log message ***
- *
- * Revision 1.5  2005/02/23 09:11:48  gzins
- * Added log for test
- *
- * Revision 1.4  2005/02/18 08:29:42  scetre
- * Fixed Bug in dV compute
- *
- * Revision 1.3  2005/02/18 08:19:42  scetre
- * Fixed Bug in visibility error compute
- *
- * Revision 1.2  2005/02/17 19:04:16  gzins
- * Updated formulas to compute dV and dV²
- *
- * Revision 1.1  2005/01/21 08:14:25  gluck
- * Creation
- *
- *
- * scetre    19-Oct-2004  Created
- * gzins     12-Jan-2005  - Updated to be compliant with programming standards
- *                        - Update formula to be coherent with specification 
- *                          document
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

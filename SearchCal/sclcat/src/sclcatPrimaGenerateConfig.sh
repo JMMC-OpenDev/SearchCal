@@ -1,49 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatPrimaGenerateConfig.sh,v 1.15 2010-06-16 07:24:23 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.14  2010/05/27 20:58:13  mella
-# update
-#
-# Revision 1.13  2009/10/23 09:54:10  mella
-# always download last votable
-#
-# Revision 1.12  2009/10/08 19:13:44  mella
-# add support for kmag
-#
-# Revision 1.11  2009/08/20 15:29:20  mella
-# add assert todo
-#
-# Revision 1.10  2009/08/20 15:06:28  mella
-# add more info
-#
-# Revision 1.9  2009/04/29 10:43:41  mella
-# get last version of exoplanet votable on the fly
-#
-# Revision 1.8  2009/04/27 10:02:30  mella
-# use votables to extract microlensing stars
-#
-# Revision 1.7  2009/01/22 14:06:13  mella
-# Improve process
-#
-# Revision 1.6  2008/10/09 08:10:37  mella
-# exit on build failure
-#
-# Revision 1.5  2008/10/08 15:58:20  mella
-# Help to build aliases
-#
-# Revision 1.4  2007/04/10 08:34:17  scetre
-# Updated documentation
-#
-# Revision 1.3  2007/03/27 14:55:56  scetre
-# Updated documentation
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

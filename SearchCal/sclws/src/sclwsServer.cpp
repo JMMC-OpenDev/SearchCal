@@ -1,57 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclwsServer.cpp,v 1.14 2011-04-13 14:34:53 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.13  2011/04/13 12:56:12  lafrasse
- * Added external configuration of listening port number through environment variable SCLWS_PORT_NB.
- *
- * Revision 1.12  2010/12/02 13:54:19  lafrasse
- * Commit defualt port of berta version as we do not commit from production account
- * 'sclws'.
- *
- * Revision 1.11  2010/01/22 15:41:29  lafrasse
- * Re-commited production port number (8078 instead of 8079 used for beta-testing).
- *
- * Revision 1.10  2010/01/22 15:35:29  lafrasse
- * Log refinments.
- *
- * Revision 1.9  2009/04/17 15:38:44  lafrasse
- * Added connected IP logging, plus various logging level refinments.
- * Code and documentation enhancement.
- *
- * Revision 1.8  2007/11/12 10:32:15  lafrasse
- * Update Web Service API function name.
- * Update documentation and traces.
- * Added support for command line option parsing and handling.
- *
- * Revision 1.7  2007/07/03 17:07:58  lafrasse
- * Corrected connection port number.
- *
- * Revision 1.6  2007/07/03 17:00:03  lafrasse
- * Added support for query cancellation.
- *
- * Revision 1.5  2007/07/02 13:58:47  lafrasse
- * Added signal and error handling, plus proper exit.
- *
- * Revision 1.4  2007/02/16 09:54:55  lafrasse
- * Refined log management.
- *
- * Revision 1.3  2007/02/09 17:07:46  lafrasse
- * Enhanced log and error monitoring.
- * Corrected a bug inherent to early deallocation of sclsvrSERVER _progress
- * leading to a crash on empty resulting queries.
- *
- * Revision 1.2  2007/02/04 20:56:45  lafrasse
- * Updated webservice URL port number.
- * Updated according to APIs changes in sclsvr.
- *
- * Revision 1.1  2006/12/22 15:17:50  lafrasse
- * Creation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

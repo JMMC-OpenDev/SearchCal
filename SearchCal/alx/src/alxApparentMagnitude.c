@@ -1,21 +1,5 @@
 /*******************************************************************************
- * JMMC project
- * 
- * "@(#) $Id: alxApparentMagnitude.c,v 1.4 2011-03-03 12:59:53 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2007/05/11 15:38:42  gzins
- * Deleted some empty lines
- *
- * Revision 1.2  2006/03/03 14:48:24  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.1  2005/12/22 10:08:58  scetre
- * Added extinction coefficient computation
- * changed realMag to CorrectedMag
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

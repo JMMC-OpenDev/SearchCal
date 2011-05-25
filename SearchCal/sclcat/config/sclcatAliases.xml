@@ -1,40 +1,6 @@
 <!--
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatAliases.xml,v 1.13 2010-09-24 11:20:30 mella Exp $"
-#
-# History
-#
-# $Log: not supported by cvs2svn $
-# Revision 1.12  2010/08/26 10:46:16  mella
-# restart from scratch
-#
-# Revision 1.11  2010/08/24 13:47:32  mella
-# update
-#
-# Revision 1.10  2010/06/16 09:04:37  mella
-# add some aliases
-#
-# Revision 1.9  2010/05/27 20:58:13  mella
-# update
-#
-# Revision 1.8  2009/11/16 16:13:04  mella
-# manual update
-#
-# Revision 1.7  2009/05/07 19:41:41  mella
-# gm update
-#
-# Revision 1.6  2009/04/27 10:29:14  mella
-# GM: add aliases manually
-#
-# Revision 1.5  2008/10/08 15:52:48  mella
-# Add new aliases
-#
-# Revision 1.4  2007/03/26 11:53:03  scetre
-# Moved documentation blok in the first xml tag
-#
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 /**
@@ -57,8 +23,6 @@ names. -->
     <object name="1RXS1609" alias="1RXS J160929.1-210524" />
     <object name="WASP-8"  alias="TYC 7522-505-1" />
     <object name="2M J044144"  alias="2MASS J04414489+2301513" />
-
-
-		<object name="BD14 4559" alias="BD +14 4559"/>
-		<object name="Lupus-TR-3" alias="Lupus-TR 3"/>
+    <object name="BD14 4559" alias="BD +14 4559"/>
+	<object name="Lupus-TR-3" alias="Lupus-TR 3"/>
 </aliases>

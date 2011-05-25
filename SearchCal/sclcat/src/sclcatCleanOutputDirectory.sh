@@ -1,15 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatCleanOutputDirectory.sh,v 1.2 2010-04-12 13:43:28 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2010/03/04 16:26:19  lafrasse
-# First revision.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

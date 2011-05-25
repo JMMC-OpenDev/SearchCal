@@ -1,13 +1,7 @@
 #ifndef vobsCATALOG_SB9_H
 #define vobsCATALOG_SB9_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_SB9.h,v 1.1 2009-02-09 16:23:48 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

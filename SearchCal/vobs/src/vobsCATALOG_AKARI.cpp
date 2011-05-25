@@ -1,12 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_AKARI.cpp,v 1.1.2.1 2011-04-08 19:43:03 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,20 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_UNSO.cpp,v 1.4 2006-03-03 15:03:27 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.3  2005/11/24 14:54:25  scetre
- * UNSO catalog added
- *
- * Revision 1.2  2005/11/23 08:34:15  scetre
- * Added property for faint K scenario
- *
- * Revision 1.1  2005/11/21 13:49:26  scetre
- * UNSO catalog added
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

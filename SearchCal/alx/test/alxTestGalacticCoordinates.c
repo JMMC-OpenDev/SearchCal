@@ -1,26 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: alxTestGalacticCoordinates.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2006/05/11 13:03:29  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.3  2005/02/17 19:05:23  gzins
- * Changed remaining FAILURE to mcsFAILURE
- *
- * Revision 1.2  2005/02/12 15:18:56  gzins
- * Set logging service for test; do not print time stamp and file/line information and set level to logTEST
- *
- * Revision 1.1  2005/01/21 08:14:25  gluck
- * Creation
- *
- * 
- * scetre    28-Sep-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

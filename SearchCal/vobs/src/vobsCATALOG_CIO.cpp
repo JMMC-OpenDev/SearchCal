@@ -1,75 +1,7 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsCATALOG_CIO.cpp,v 1.21.2.1 2011-04-15 22:12:22 duvert Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.21  2011/03/03 13:09:42  lafrasse
-* Moved all numerical computations from mcsFLOAT to mcsDOUBLE.
-*
-* Revision 1.20  2010/06/28 14:12:11  lafrasse
-* Moved CDS return limit to 1000.
-*
-* Revision 1.19  2006/03/03 15:03:27  scetre
-* Changed rcsId to rcsId __attribute__ ((unused))
-*
-* Revision 1.18  2006/02/20 16:30:49  scetre
-* Patched with option -c.geom=b in request
-*
-* Revision 1.17  2005/11/23 17:30:20  lafrasse
-* Added circular search box geometry support and normalized area size methods
-*
-* Revision 1.16  2005/11/23 08:33:32  scetre
-* Removed obsolete PrepareQuery() method
-*
-* Revision 1.15  2005/11/21 13:47:57  scetre
-* arrange properties when the URL is written
-*
-* Revision 1.14  2005/11/16 10:47:55  scetre
-* Updated documentation
-*
-* Revision 1.13  2005/11/16 10:47:54  scetre
-* Updated documentation
-*
-* Revision 1.12  2005/10/14 08:44:24  scetre
-* Updated p77 according to JMMC-MEM-2600-0004
-*
-* Revision 1.11  2005/06/01 14:16:55  scetre
-* Changed logExtDbg to logTrace
-*
-* Revision 1.10  2005/04/14 14:39:03  scetre
-* Updated documentation.
-* added test on method return.
-*
-* Revision 1.9  2005/02/14 15:22:44  scetre
-* changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
-*
-* Revision 1.8  2005/02/13 15:29:04  gzins
-* Change Min/MaxDeltaMag to Min/MaxMagRange
-*
-* Revision 1.7  2005/02/11 14:22:10  gluck
-* - Updated to fit with vobsLOCAL_CATALOG and vobsREMOTE_CATALOG classes introduction
-* - Changed catalog naming: suppressed SetName() method in general catalog and put it in initialisation list of specialised catalog
-* - Updated some comments
-*
-* Revision 1.6  2005/02/08 20:30:37  gzins
-* Changed _name type; mcsSTRING to string
-*
-* Revision 1.5  2005/02/08 08:36:13  scetre
-* Added query reset before preparing a new query
-*
-* Revision 1.4  2005/02/07 19:40:58  gzins
-* Updated vobsREQUEST API
-*
-* Revision 1.3  2005/01/26 08:11:28  scetre
-* change history
-*
-* scetre    28-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
 /**
  * @file
  * vobsCATALOG_CIO class definition.

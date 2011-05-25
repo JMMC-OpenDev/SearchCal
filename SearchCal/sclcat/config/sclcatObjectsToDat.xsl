@@ -1,22 +1,7 @@
 <?xml version="1.0"?>
 <!--
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatObjectsToDat.xsl,v 1.4 2009-11-17 20:41:20 mella Exp $"
-#
-# History
-#
-# $Log: not supported by cvs2svn $
-# Revision 1.3  2009/11/16 14:20:56  mella
-# add null value for missing kmag
-#
-# Revision 1.2  2009/11/16 09:09:58  mella
-# add kmag and galactical coordinates in the final dat file
-#
-# Revision 1.1  2009/05/18 15:49:35  mella
-# output table.dat
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"

@@ -1,60 +1,8 @@
 #ifndef vobsREQUEST_H
 #define vobsREQUEST_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsREQUEST.h,v 1.25 2011-03-03 13:09:42 lafrasse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.24  2005/11/30 15:26:50  gzins
-* Added _objectDecInDeg member
-*
-* Revision 1.23  2005/11/23 17:30:21  lafrasse
-* Added circular search box geometry support and normalized area size methods
-*
-* Revision 1.22  2005/11/23 15:49:45  lafrasse
-* Removed _maxNbOfSelectedObjects member and associated code
-*
-* Revision 1.21  2005/11/23 15:41:15  lafrasse
-* Removed GetMaxNbOfSelectedObjects() and SetMaxNbOfSelectedObjects() methods
-*
-* Revision 1.20  2005/11/15 14:57:56  scetre
-* Added new scenario structure
-* Added possibility to query merand and borde as primary catalog
-*
-* Revision 1.19  2005/02/14 15:22:29  scetre
-* changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
-*
-* Revision 1.18  2005/02/14 15:09:12  scetre
-* changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
-*
-* Revision 1.17  2005/02/13 15:24:50  gzins
-* Change Min/MaxDeltaMag to Min/MaxRangeMag
-*
-* Revision 1.16  2005/02/11 14:44:11  gluck
-* Changed Set/Get max number of selected object type parameters: mcsUINT32 -> mcsINT32
-*
-* Revision 1.15  2005/02/11 14:08:08  gluck
-* Changed max number of selected object type: mcsUINT32 -> mcsINT32
-*
-* Revision 1.14  2005/02/07 19:35:05  gzins
-* Changed RA, DEC and band type as well as prototypes of the related methods
-*
-* Revision 1.13  2005/02/07 17:28:11  gluck
-* New vobsREQUEST class implementation
-*
-* Revision 1.12  2005/02/04 08:06:28  scetre
-* changed mcsSTRING32 to mcsSTRING256 for constraints
-*
-* Revision 1.11  2005/01/26 08:10:32  scetre
-* change history
-*
-* scetre    26-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * @file

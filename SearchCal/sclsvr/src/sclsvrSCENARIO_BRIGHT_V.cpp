@@ -1,53 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_V.cpp,v 1.15 2010-11-25 15:45:33 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.14  2010/01/26 14:16:06  lafrasse
- * Added WDS catalog querying.
- *
- * Revision 1.13  2009/04/20 14:41:41  lafrasse
- * Corrected copy-paste errors.
- *
- * Revision 1.12  2009/04/20 14:37:42  lafrasse
- * Added spectral binary detection (SBC9 catalog).
- *
- * Revision 1.11  2007/10/31 11:31:25  gzins
- * Code indentation
- *
- * Revision 1.10  2006/12/21 15:16:05  lafrasse
- * Updated progression monitoring code (moved from static-based to instance-based).
- *
- * Revision 1.9  2006/03/28 12:58:13  scetre
- * Added parameters constraints on I/280 query
- *
- * Revision 1.8  2006/03/03 15:25:23  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.7  2005/12/14 09:02:35  scetre
- * Changed constructor in order to handle the filter of the scenario classes
- *
- * Revision 1.6  2005/12/07 14:51:42  scetre
- * Used new generic filter
- *
- * Revision 1.5  2005/11/29 10:39:03  gzins
- * Changed vobsBASE_FILTER to vobsFILTER
- *
- * Revision 1.4  2005/11/24 13:21:38  scetre
- * Clean the presentation of the add entry
- *
- * Revision 1.3  2005/11/23 08:38:14  scetre
- * ReAdd criteria on HD number for cross matching for I/196 and BSC/SBSC
- *
- * Revision 1.2  2005/11/16 14:28:02  scetre
- * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
- *
- * Revision 1.1  2005/11/15 15:00:33  scetre
- * Added scenario K V and N
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

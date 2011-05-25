@@ -1,17 +1,7 @@
 #ifndef sclsvrSCENARIO_SINGLE_STAR_H
 #define sclsvrSCENARIO_SINGLE_STAR_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSCENARIO_SINGLE_STAR.h,v 1.2 2006-12-21 15:16:05 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2005/11/21 13:51:47  scetre
- * Changed bad scenario name
- * Added scenario for single star research -> updated getStar
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

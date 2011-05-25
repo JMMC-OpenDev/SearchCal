@@ -1,15 +1,6 @@
 #!/usr/bin/python
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatGenerateConfigByMozaicing.py,v 1.2 2010-04-13 14:36:58 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.1  2010/04/12 14:45:52  lafrasse
-# Renamed (and generalyzed) sclcatESOGenerateConfig in sclcatGenerateConfigByMozaicing.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

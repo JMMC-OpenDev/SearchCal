@@ -1,37 +1,7 @@
 #ifndef sclsvrPrivate_H
 #define sclsvrPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrPrivate.h,v 1.9.2.1 2011-04-08 19:30:23 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.9  2007/10/31 11:26:30  gzins
- * Applied programming standards
- *
- * Revision 1.8  2006/12/21 15:16:05  lafrasse
- * Updated progression monitoring code (moved from static-based to instance-based).
- *
- * Revision 1.7  2006/05/12 08:27:45  mella
- * Add general math.h inclusion
- *
- * Revision 1.6  2006/02/21 16:52:39  scetre
- * Moved the 2 same method in one in sclsvrSERVER.cpp
- * move the 2 same struct in sclsvrPrivate.h
- *
- * Revision 1.5  2005/10/26 11:27:24  lafrasse
- * Code review
- *
- * Revision 1.4  2005/03/06 20:28:24  gzins
- * Added sclsvrREQUEST_TAG and sclsvrFORMAT_TAG definition
- *
- * Revision 1.3  2005/02/07 15:00:13  gzins
- * Added CVS log as modification history
- *
- * sccmgr    23-Nov-2004  Created
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

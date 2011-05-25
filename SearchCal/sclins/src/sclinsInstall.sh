@@ -1,52 +1,16 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclinsInstall.sh,v 1.12 2008-09-22 14:04:58 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.11  2007/02/14 10:22:09  lafrasse
-# Added 'sclws' & 'jmcs' modules auto-installation.
-#
-# Revision 1.10  2006/10/10 10:54:49  lafrasse
-# Added '-m' option to deactivate man pages and documentation generation.
-#
-# Revision 1.9  2006/02/20 13:21:25  swmgr
-# Updated to be similar to mcsinsInstall
-#
-# Revision 1.8  2005/12/02 13:54:25  gzins
-# Remove MCS installation check
-#
-# Revision 1.7  2005/09/15 07:18:08  swmgr
-# Display information of installation directory
-#
-# Revision 1.6  2005/09/14 22:04:06  gzins
-# Added -c and -t options + improved checks
-#
-# Revision 1.5  2005/02/17 14:05:39  gzins
-# Changed 'make all man install' to 'make clean all man install'
-#
-# Revision 1.4  2005/02/15 16:02:02  gzins
-# Added CVS log as file modification history
-#
-# gzins     04-Dec-2004  Created
-# gzins     09-Dec-2004  Added '-h' and '-u' options
-#                        Added logfile
-#                        Deleted modules before retrieving from repository
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
-#   NAME 
-#   sclinsInstall - deploy SCALIB modules
+# NAME 
+# sclinsInstall - deploy SCALIB modules
 # 
-#   SYNOPSIS
-#   sclinsInstall [-h] [-c] [-u] [-m] [-t tag]|[-r rtag]|[-b branch]
+# SYNOPSIS
+# sclinsInstall [-h] [-c] [-u] [-m] [-t tag]|[-r rtag]|[-b branch]
 # 
-#   DESCRIPTION
-#   This command retreives all the modules belonging to SCALIB from the SVN
-#   repository and install them.
-#-------------------------------------------------------------------------------
+# DESCRIPTION
+# This command retreives all the modules belonging to SCALIB from the SVN
+# repository and install them.
 #
 
 # Determine the SW package

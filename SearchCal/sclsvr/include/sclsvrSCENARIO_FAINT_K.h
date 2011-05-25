@@ -1,31 +1,7 @@
 #ifndef sclsvrSCENARIO_FAINT_K_H
 #define sclsvrSCENARIO_FAINT_K_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSCENARIO_FAINT_K.h,v 1.7 2006-12-21 15:16:05 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.6  2006/01/18 08:49:40  scetre
- * Removed unused filter on Qflg and opt because they are now managed by the catalog option
- *
- * Revision 1.5  2005/11/29 13:06:50  scetre
- * changed vobsFILTER to vobsGENERIC_FILTER
- *
- * Revision 1.4  2005/11/29 08:23:19  scetre
- * Added check scenario for scenario faint K
- *
- * Revision 1.3  2005/11/25 08:45:55  scetre
- * Added filter Qflag=AAA
- *
- * Revision 1.2  2005/11/24 13:21:38  scetre
- * Clean the presentation of the add entry
- *
- * Revision 1.1  2005/11/23 08:39:03  scetre
- * Added scenario for faint K
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

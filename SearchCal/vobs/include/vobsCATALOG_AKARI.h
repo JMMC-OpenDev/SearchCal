@@ -1,16 +1,7 @@
 #ifndef vobsCATALOG_AKARI_H
 #define vobsCATALOG_AKARI_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_AKARI.h,v 1.1.2.1 2011-04-08 19:42:49 duvert Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2010/01/26 14:15:38  lafrasse
- * Added vobsCATALOG_AKARI.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

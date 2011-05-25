@@ -1,19 +1,7 @@
 #ifndef sclsvrSCENARIO_BRIGHT_N_H
 #define sclsvrSCENARIO_BRIGHT_N_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_N.h,v 1.3 2006-12-21 15:16:05 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2005/11/16 14:28:02  scetre
- * Used criteria list as member of the class. All necessary criteria list are now built at the beginning of the Init() method
- *
- * Revision 1.1  2005/11/15 15:00:33  scetre
- * Added scenario K V and N
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

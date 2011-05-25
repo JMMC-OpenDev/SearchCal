@@ -1,52 +1,10 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsFILTER_LIST.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2005/12/22 10:38:45  scetre
- * Updated doxygen documentation
- *
- * Revision 1.9  2005/12/13 16:30:33  lafrasse
- * Added filter Id management through additional constructor parameter
- *
- * Revision 1.8  2005/11/29 14:05:18  gzins
- * Removed GetNextFilter() method.
- * Associated name to the filters added into the list
- *
- * Revision 1.7  2005/11/29 10:33:40  gzins
- * Changed vobsBASE_FILTER to vobsFILTER
- *
- * Revision 1.6  2005/11/24 08:14:23  scetre
- * Changed mother class of filter from vobsFILTER to vobsFILTER
- *
- * Revision 1.5  2005/11/16 10:47:55  scetre
- * Updated documentation
- *
- * Revision 1.4  2005/11/16 10:47:54  scetre
- * Updated documentation
- *
- * Revision 1.3  2005/11/05 15:52:36  gzins
- * Change Enabled and Disabled to Enable and Disable
- *
- * Revision 1.2  2005/06/21 06:20:45  scetre
- * Changed method Disable() and Enable() to Disabled() and Enabled()
- * Changed '\' in doxygen documentatiuon to '@'
- *
- * Revision 1.1  2005/06/20 11:31:53  scetre
- * Added filter class
- *
- * Revision 1.1  2005/06/01 14:18:54  scetre
- * Added filters and filter list objects.
- * Changed logExtDbg to logTrace
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
  * @file
- *  Definition of vobsFILTER_LIST class.
+ * Definition of vobsFILTER_LIST class.
  */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsFILTER_LIST.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"; 

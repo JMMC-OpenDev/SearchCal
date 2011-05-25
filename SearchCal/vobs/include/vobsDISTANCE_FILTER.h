@@ -1,44 +1,7 @@
 #ifndef vobsDISTANCE_FILTER_H
 #define vobsDISTANCE_FILTER_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsDISTANCE_FILTER.h,v 1.8 2011-03-03 13:09:42 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.7  2009/12/09 10:00:10  lafrasse
- * Updated to truly compute distance as star separation and not as coordinates box
- * selection, to better filter science objects in sclsvr.
- *
- * Revision 1.6  2006/03/01 16:41:38  lafrasse
- * Added const attributes for SetDistanceValue() method parameters.
- * Replaced all the 'strcpy' calls with 'strncpy'.
- * Code review
- *
- * Revision 1.5  2005/12/13 16:30:33  lafrasse
- * Added filter Id management through additional constructor parameter
- *
- * Revision 1.4  2005/11/29 13:45:57  gzins
- * Removed filter name definition
- *
- * Revision 1.3  2005/11/29 10:27:23  gzins
- * Changed parent class to vobsFILTER
- *
- * Revision 1.2  2005/11/24 08:13:50  scetre
- * Changed mother class of filter from vobsFILTER to vobsFILTER
- *
- * Revision 1.1  2005/06/20 11:44:25  scetre
- * Added filter class
- *
- * Revision 1.2  2005/06/07 12:35:59  scetre
- * Updated documentation
- *
- * Revision 1.1  2005/06/01 14:18:54  scetre
- * Added filters and filter list objects.
- * Changed logExtDbg to logTrace
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

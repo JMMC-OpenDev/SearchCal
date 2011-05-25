@@ -1,24 +1,5 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsTestStarProperty.cpp,v 1.5 2011-03-03 13:09:43 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.4  2011/02/25 15:58:58  lafrasse
- * Removed date and filelines from test outputs.
- *
- * Revision 1.3  2009/10/26 12:59:16  lafrasse
- * Changed delta compution method on String tests.
- *
- * Revision 1.2  2009/10/16 10:00:54  mella
- * add string tests
- *
- * Revision 1.1  2009/10/14 14:50:58  lafrasse
- * Added proper support of floating point value (without loosing presion with
- * conversion from string representation) with accompagning tests.
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestStarProperty.cpp,v 1.5 2011-03-03 13:09:43 lafrasse Exp $"; 

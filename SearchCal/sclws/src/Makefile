@@ -1,40 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.10 2011-04-13 12:52:18 lafrasse Exp $"
-#
-# Makefile of sclws module
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.9  2010/11/04 15:59:48  lafrasse
-# Added sclws-proxy.php installation routine.
-# Cleaned output log.
-#
-# Revision 1.8  2008/08/25 12:51:40  lafrasse
-# Added sclwsManager file installation (automated replicat needs it to start it automatically).
-#
-# Revision 1.7  2008/08/25 12:48:16  lafrasse
-# Added commom MCS LDFLAG.
-#
-# Revision 1.6  2007/10/31 11:50:24  gzins
-# Removed sclwsGetCal program (moved to test directory)
-# Created library
-# Re-organized targets
-#
-# Revision 1.5  2007/05/14 08:38:22  gzins
-# Removed full path when invoking soapcpp2 tool
-#
-# Revision 1.4  2007/02/14 13:40:26  lafrasse
-# Added export of the WSDL file.
-#
-# Revision 1.3  2007/02/14 10:25:03  lafrasse
-# Added and integrated SOAP targets.
-#
-# Revision 1.2  2006/12/22 15:17:50  lafrasse
-# Creation
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

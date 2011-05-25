@@ -1,19 +1,7 @@
 #ifndef sclsvrSCENARIO_BRIGHT_K_CATALOG_H
 #define sclsvrSCENARIO_BRIGHT_K_CATALOG_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.h,v 1.3 2010-10-15 13:33:19 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2010/01/22 15:35:29  lafrasse
- * Log refinments.
- *
- * Revision 1.1  2009/12/17 15:14:31  lafrasse
- * *** empty log message ***
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,105 +1,10 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsREQUEST.cpp,v 1.35 2011-03-03 13:09:43 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.34  2006/04/10 11:48:10  gzins
- * Change logTest to logDebug for delta ra/dec parameters
- *
- * Revision 1.33  2006/03/03 15:03:28  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.32  2006/02/22 11:21:03  gzins
- * Fixed bug related to RA/DEC format
- *
- * Revision 1.31  2005/12/07 15:10:09  scetre
- * Removed unused printf
- *
- * Revision 1.30  2005/11/30 15:27:59  gzins
- * Took into account object declinaison when computing box size along X direction
- *
- * Revision 1.29  2005/11/29 08:22:23  scetre
- * Minor changes
- *
- * Revision 1.28  2005/11/23 17:30:21  lafrasse
- * Added circular search box geometry support and normalized area size methods
- *
- * Revision 1.27  2005/11/23 15:49:45  lafrasse
- * Removed _maxNbOfSelectedObjects member and associated code
- *
- * Revision 1.26  2005/11/23 15:41:15  lafrasse
- * Removed GetMaxNbOfSelectedObjects() and SetMaxNbOfSelectedObjects() methods
- *
- * Revision 1.25  2005/11/23 08:37:05  scetre
- * Cancel previous change
- *
- * Revision 1.24  2005/11/23 08:36:01  scetre
- * Added test on ucd and name to retreive properties
- *
- * Revision 1.23  2005/11/16 10:47:55  scetre
- * Updated documentation
- *
- * Revision 1.22  2005/11/16 10:47:54  scetre
- * Updated documentation
- *
- * Revision 1.21  2005/11/15 14:57:56  scetre
- * Added new scenario structure
- * Added possibility to query merand and borde as primary catalog
- *
- * Revision 1.20  2005/06/01 14:16:55  scetre
- * Changed logExtDbg to logTrace
- *
- * Revision 1.19  2005/04/14 14:39:03  scetre
- * Updated documentation.
- * added test on method return.
- *
- * Revision 1.18  2005/03/06 10:41:33  gzins
- * Removed printf
- *
- * Revision 1.17  2005/03/04 16:58:15  scetre
- * Changed format of DEC
- *
- * Revision 1.16  2005/03/04 16:53:16  scetre
- * Removed useless sign when reformatting RA
- *
- * Revision 1.15  2005/03/04 08:07:58  gzins
- * Removed undesirated '\n' when re-formatting RA/DEC
- *
- * Revision 1.14  2005/03/04 07:51:30  gzins
- * Fixed bug in new added code for RA/DEC check
- *
- * Revision 1.13  2005/03/04 06:37:01  gzins
- * Checked and reformated RA and DEC parameter
- *
- * Revision 1.12  2005/02/15 15:41:47  gzins
- * Fixed wrong mcsmcsSUCCESS and mcsmcsFAILURE
- *
- * Revision 1.11  2005/02/15 15:19:30  gzins
- * Changed SUCCESS/FAILURE to mcsSUCCESS/mcsFAILURE
- *
- * Revision 1.10  2005/02/14 15:22:44  scetre
- * changed minRangeMag to minMagRange and maxRangeMag to maxMagRange
- *
- * Revision 1.9  2005/02/13 15:24:50  gzins
- * Change Min/MaxDeltaMag to Min/MaxMagRange
- *
- * Revision 1.8  2005/02/11 16:21:57  gluck
- * Changed Set/Get max number of selected object type parameters: mcsUINT32 -> mcsINT32
- *
- * Revision 1.7  2005/02/07 19:35:05  gzins
- * Changed RA, DEC and band type as well as prototypes of the related methods
- *
- * Revision 1.6  2005/02/07 17:28:11  gluck
- * New vobsREQUEST class implementation
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
  * @file
- *  Definition of vobsREQUEST class.
+ * Definition of vobsREQUEST class.
  */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREQUEST.cpp,v 1.35 2011-03-03 13:09:43 lafrasse Exp $"; 

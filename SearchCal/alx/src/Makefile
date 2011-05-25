@@ -1,45 +1,5 @@
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: Makefile,v 1.9.2.2 2011-04-15 22:22:50 duvert Exp $"
-#
-# Makefile of the alx module 
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.9.2.1  2011/04/08 19:15:52  duvert
-# support for akari photometries
-#
-# Revision 1.9  2010/01/08 22:29:04  lafrasse
-# Added preliminary support for alxLD2UD.
-#
-# Revision 1.8  2006/03/28 07:17:25  gzins
-# Changed alxAngDiamPolynomialForBrightStar to alxAngDiamPolynomial
-#
-# Revision 1.7  2005/12/22 10:08:58  scetre
-# Added extinction coefficient computation
-# changed realMag to CorrectedMag
-#
-# Revision 1.6  2005/12/02 12:05:42  scetre
-# Added computation of diameter and missing magnitude in faint
-#
-# Revision 1.5  2005/10/26 11:30:41  lafrasse
-# Created alxComputeDistance function stuff
-#
-# Revision 1.4  2005/02/15 14:47:55  gzins
-# Removed unused target
-#
-# Revision 1.3  2005/02/12 15:11:51  gzins
-# Added rules for alxGetResearchAreaSize function
-#
-# Revision 1.2  2005/01/21 08:10:30  gluck
-# - Updated
-# - Insert automatic rcs log in header file
-#
-#
-# scetre    20-Sep-2004  Created
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 # REMARKS
 #    Makefile based on the VLT/ALMA Makefile

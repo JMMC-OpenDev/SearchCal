@@ -1,8 +1,7 @@
 #ifndef vobsCATALOG_ASCC_LOCAL_H
 #define vobsCATALOG_ASCC_LOCAL_H
 /*******************************************************************************
- * JMMC project
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

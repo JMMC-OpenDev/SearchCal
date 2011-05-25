@@ -1,40 +1,6 @@
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.12  2007/10/31 11:18:47  gzins
-* Minod documentation change
-*
-* Revision 1.11  2006/04/03 11:49:49  gzins
-* Hanlded list empty case in GetNextXxx() method
-*
-* Revision 1.10  2006/03/03 15:03:28  scetre
-* Changed rcsId to rcsId __attribute__ ((unused))
-*
-* Revision 1.9  2005/11/16 14:26:19  scetre
-* Added Clear method
-*
-* Revision 1.8  2005/11/16 10:47:55  scetre
-* Updated documentation
-*
-* Revision 1.7  2005/11/16 10:47:54  scetre
-* Updated documentation
-*
-* Revision 1.6  2005/06/01 14:16:56  scetre
-* Changed logExtDbg to logTrace
-*
-* Revision 1.5  2005/01/26 08:14:09  scetre
-* Update copy constructor, assignement operator, Add and GetNextCriteria Method.
-* Create Remove Method.
-*
-* scetre    14-Dec-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 /**
  * @file

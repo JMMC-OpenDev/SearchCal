@@ -1,21 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatConcatenateVotables.sh,v 1.4 2010-06-16 11:35:03 mella Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.3  2010/04/13 08:41:17  lafrasse
-# Enhanced documentation and execution log.
-#
-# Revision 1.2  2010/04/12 15:25:31  lafrasse
-# Enforced exit after usage printing.
-#
-# Revision 1.1  2010/04/12 13:59:59  lafrasse
-# Renamed (and generalyzed) sclcatESOParseResult in sclcatConcatenateVotables.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**

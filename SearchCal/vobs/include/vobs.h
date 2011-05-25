@@ -1,39 +1,8 @@
 #ifndef vobs_H
 #define vobs_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobs.h,v 1.13 2009-05-05 12:52:37 lafrasse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.12  2006/01/04 12:34:25  lafrasse
-* Added vobsVOTABLE.h include
-*
-* Revision 1.11  2005/11/29 10:29:48  gzins
-* Moved vobsFILTER to vobsGENERIC_FILTER
-*
-* Revision 1.10  2005/11/24 08:14:37  scetre
-* Changed mother class of filter from vobsFILTER to vobsFILTER
-*
-* Revision 1.9  2005/11/15 14:57:56  scetre
-* Added new scenario structure
-* Added possibility to query merand and borde as primary catalog
-*
-* Revision 1.8  2005/06/20 11:31:53  scetre
-* Added filter class
-*
-* Revision 1.7  2005/02/04 09:57:15  gzins
-* Added vobsCATALOG_MIDI header file
-*
-* Revision 1.6  2005/01/26 08:10:32  scetre
-* change history
-*
-* scetre    15-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C

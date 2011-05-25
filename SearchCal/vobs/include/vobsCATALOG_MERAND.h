@@ -1,16 +1,7 @@
 #ifndef vobsCATALOG_MERAND_H
 #define vobsCATALOG_MERAND_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_MERAND.h,v 1.2 2005-11-15 14:57:56 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.1  2005/06/13 10:19:30  scetre
- * Added Charm2, Merand and new Denis catalogs
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

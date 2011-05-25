@@ -1,13 +1,7 @@
 #ifndef vobsCATALOG_WDS_H
 #define vobsCATALOG_WDS_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsCATALOG_WDS.h,v 1.1 2010-01-26 14:15:38 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

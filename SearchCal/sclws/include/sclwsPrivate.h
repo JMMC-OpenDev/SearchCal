@@ -1,19 +1,7 @@
 #ifndef sclwsPrivate_H
 #define sclwsPrivate_H
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: sclwsPrivate.h,v 1.3 2009-04-17 15:38:44 lafrasse Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.2  2007/10/31 11:44:22  gzins
- * Added sclwsReturnSoapError macro
- *
- * Revision 1.1  2006/12/21 15:19:19  ccmgr
- * Fix directory structure and add additional files
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**

@@ -1,54 +1,10 @@
 /*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.11 2007-03-15 12:35:03 scetre Exp $"
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2007/03/15 12:12:14  scetre
- * Added in variability filter varflag1 and varflag2
- *
- * Revision 1.9  2007/03/12 13:51:11  scetre
- * Don't removed star if flag is C
- *
- * Revision 1.8  2006/04/07 08:23:00  gzins
- * Removed useless \n in log messages
- *
- * Revision 1.7  2006/03/03 15:03:28  scetre
- * Changed rcsId to rcsId __attribute__ ((unused))
- *
- * Revision 1.6  2005/12/14 15:10:03  scetre
- * Added log information about deleted star in filters
- *
- * Revision 1.5  2005/12/13 16:30:33  lafrasse
- * Added filter Id management through additional constructor parameter
- *
- * Revision 1.4  2005/11/29 13:49:19  gzins
- * Removed filter name setting
- *
- * Revision 1.3  2005/11/23 08:35:10  scetre
- * changed vobsCODE_VARIAB to vobsCODE_VARIAB_V3
- *
- * Revision 1.2  2005/06/21 06:20:45  scetre
- * Changed method Disable() and Enable() to Disabled() and Enabled()
- * Changed '\' in doxygen documentatiuon to '@'
- *
- * Revision 1.1  2005/06/20 11:31:53  scetre
- * Added filter class
- *
- * Revision 1.2  2005/06/07 12:36:28  scetre
- * Updated documentation
- *
- * Revision 1.1  2005/06/01 14:18:54  scetre
- * Added filters and filter list objects.
- * Changed logExtDbg to logTrace
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
 /**
  * @file
- *  Definition of vobsVARIABILITY_FILTER class.
+ * Definition of vobsVARIABILITY_FILTER class.
  */
 
 static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.11 2007-03-15 12:35:03 scetre Exp $"; 

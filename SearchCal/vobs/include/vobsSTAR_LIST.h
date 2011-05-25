@@ -1,56 +1,8 @@
 #ifndef vobsSTAR_LIST_H
 #define vobsSTAR_LIST_H
 /*******************************************************************************
-* JMMC project
-*
-* "@(#) $Id: vobsSTAR_LIST.h,v 1.23 2006-12-21 15:08:15 lafrasse Exp $"
-*
-* History
-* -------
-* $Log: not supported by cvs2svn $
-* Revision 1.22  2006/10/09 15:07:08  lafrasse
-* Added request XML serialization in VOTables.
-*
-* Revision 1.21  2006/01/05 09:07:39  lafrasse
-* Code review
-*
-* Revision 1.20  2005/12/07 15:28:20  lafrasse
-* Updated VOTable generation to include information about software version, request and date
-*
-* Revision 1.19  2005/11/29 10:31:14  gzins
-* Minor change in documentation
-*
-* Revision 1.18  2005/11/15 16:39:55  lafrasse
-* Added experimental VOTable export support
-*
-* Revision 1.17  2005/11/11 16:38:32  gzins
-* Added Sort() method
-*
-* Revision 1.16  2005/03/06 20:24:30  gzins
-* Updated vobsSTAR_PROPERTY_ID_LIST; used string instead of char *
-*
-* Revision 1.15  2005/03/04 16:28:28  scetre
-* Changed Call to Save method
-*
-* Revision 1.14  2005/03/04 15:50:45  scetre
-* Added typedef of vobsSTAR_PROPERTY_ID
-* Updated call to Store method of CDATA
-*
-* Revision 1.13  2005/02/13 15:56:55  gzins
-* Added optional origin parameter to Load() method
-*
-* Revision 1.12  2005/02/13 15:27:53  gzins
-* Added Load() method
-* Updated Save() method to use new vobsCDATA class
-* Set default value of criteriaList to NULL
-*
-* Revision 1.11  2005/01/26 08:10:32  scetre
-* change history
-*
-* scetre    06-Jul-2004  Created
-*
-*
-*******************************************************************************/
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C

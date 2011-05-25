@@ -1,34 +1,6 @@
 #!/bin/bash
 #*******************************************************************************
-# JMMC project
-#
-# "@(#) $Id: sclcatFilterCatalog.sh,v 1.8 2010-11-26 12:33:53 lafrasse Exp $"
-#
-# History
-# -------
-# $Log: not supported by cvs2svn $
-# Revision 1.7  2010/10/15 15:03:03  mella
-# change filter with new WDS handling in the server: we must check sep1 and sep2
-#
-# Revision 1.6  2010/10/15 07:08:48  mella
-# add manual filtering for wds and sbc9 using simbad
-#
-# Revision 1.5  2010/10/15 07:06:01  mella
-# add manual filtering to sort out wds and sbc9
-#
-# Revision 1.4  2010/06/07 14:33:16  mella
-# do not put a space after TYC to build tyco identifiers
-#
-# Revision 1.3  2010/06/02 09:14:43  mella
-# Build valid TYCO name for cds cataogue
-#
-# Revision 1.2  2010/06/01 13:22:02  lafrasse
-# Added Java options to stilts.
-#
-# Revision 1.1  2010/04/13 14:53:34  lafrasse
-# Renamed (and generalyzed) sclcatESO in sclcatiCreateCatalog.
-# Renamed (and generalyzed) sclcatESOiFilterResult in sclcatFilterCatalog.
-#
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
 #/**
