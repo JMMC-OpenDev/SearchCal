@@ -15,6 +15,8 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.94.2.2 
  */
 #include <math.h>
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
 using namespace std;
 
 /*
@@ -906,6 +908,8 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star, mcsLOGICAL overwrite)
 {
     logTrace("vobsSTAR::Update()");
 
+    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
+
     // For each star property
     map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
     for (propertyIter  = _propertyList.begin();
@@ -923,10 +927,13 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star, mcsLOGICAL overwrite)
             if (star.IsPropertySet(propertyIdPtr) == mcsTRUE)
             {
                 _propertyList[propertyID] = star._propertyList[propertyID];
-                logDebug("updated _propertyList[%s] = '%s'.\n", propertyIdPtr, star._propertyList[propertyID].GetSummaryString().c_str());
+                
+                if (isLogDebug)
+                {
+                    logDebug("updated _propertyList[%s] = '%s'.\n", propertyIdPtr, star._propertyList[propertyID].GetSummaryString().c_str());
+                }
             }
         }
-        logDebug("_propertyList[%s] = '%s'.\n", propertyIdPtr, star._propertyList[propertyID].GetSummaryString().c_str());
     }
 
     return mcsSUCCESS;
@@ -1009,9 +1016,9 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, char *name,
-                                    vobsPROPERTY_TYPE type, char *unit,
-                                    char *format, char *link, char *description)
+mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, const char *name,
+                                    const vobsPROPERTY_TYPE type, const char *unit,
+                                    const char *format, const char *link, const char *description)
 {
     logTrace("vobsSTAR::AddProperty()");
 

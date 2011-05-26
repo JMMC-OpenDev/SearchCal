@@ -198,13 +198,13 @@ public:
     
 protected:
     // Add a property. Should be only called by constructors.
-    mcsCOMPL_STAT AddProperty(const char*              id,
-                              char*              name,
-                              vobsPROPERTY_TYPE  type,
-                              char*              unit        = NULL,
-                              char*              format      = NULL,
-                              char*              link        = NULL,
-                              char*              description = NULL);
+    mcsCOMPL_STAT AddProperty(const char*        id,
+                               const char*        name,
+                               const vobsPROPERTY_TYPE  type,
+                               const char*        unit        = NULL,
+                               const char*        format      = NULL,
+                               const char*        link        = NULL,
+                               const char*        description = NULL);
 
     map<string, vobsSTAR_PROPERTY>            _propertyList;
     map<string, vobsSTAR_PROPERTY>::iterator  _propertyListIterator;
