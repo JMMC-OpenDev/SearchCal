@@ -471,13 +471,20 @@ mcsLOGICAL logGetPrintFileLine()
 mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
                        const char *fileLine, const char *logFormat, ...)
 {
-    va_list argPtr;
+    mcsCOMPL_STAT status = mcsSUCCESS;
 
+    // fast return if this log message is discarded
+    if ( !( (logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel) )
+            && 
+         !( (logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel) ) )
+    {
+        return status;
+    }
+
+    va_list argPtr;
     mcsBYTES32 infoTime;
     char buffer[8192];
     buffer[0] = '\0';
-
-    mcsCOMPL_STAT status = mcsSUCCESS;
 
     /* Get UNIX-style time and display as number and string. */
     logGetTimeStamp(infoTime);
