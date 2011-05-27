@@ -88,8 +88,34 @@ static char sclwsSoapErrMsg[256];
 /*
  * Local methods
  */
- int dumpServerList(struct soap* soapContext, char* methodName, char* jobId)
- {
+mcsUINT16 sclwsGetServerPortNumber(void)
+{
+    mcsUINT16 defaultPortNumber = 8079; // Default value for beta testing.
+    //mcsUINT16 defaultPortNumber = 8078; // Default value for production purpose.
+
+    // Try to read ENV. VAR. to get port number to bind
+    mcsINT32 readPortNumber = -1;
+    if (miscGetEnvVarIntValue(SCLWS_PORTNUMBER_ENVVAR_NAME, &readPortNumber) == mcsFAILURE)
+    {
+        logInfo("'%s' environment variable is not set, will use default '%d' instead.", SCLWS_PORTNUMBER_ENVVAR_NAME, defaultPortNumber);
+        return defaultPortNumber;
+    }
+
+    // Assert given prot number validity
+    mcsINT32 minPortNumber = 1024;
+    mcsINT32 maxPortNumber = 65536;
+    if ((readPortNumber <= minPortNumber) || (readPortNumber >= maxPortNumber))
+    {
+        logWarning("'%s' environment variable does not contain a valid port number ('%d' not in [%d, %d[), will use default '%d' instead.", SCLWS_PORTNUMBER_ENVVAR_NAME, readPortNumber, minPortNumber, maxPortNumber, defaultPortNumber);
+        return defaultPortNumber;
+    }
+
+    // Everything went fine, return read port number
+    return readPortNumber;
+}
+
+int sclwsDumpServerList(struct soap* soapContext, char* methodName, char* jobId)
+{
     if (logGetStdoutLogLevel() >= logDEBUG)
     {
         STL_LOCK();
@@ -110,6 +136,8 @@ static char sclwsSoapErrMsg[256];
 /*
  * Public methods
  */
+
+
 /*
  * sclwsGETCAL Web Service
  */
@@ -186,7 +214,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 
     logDebug("\tSession '%s': server instanciated.", *jobId);
 
-    return dumpServerList(soapContext, "GetCalOpenSession", *jobId);
+    return sclwsDumpServerList(soapContext, "GetCalOpenSession", *jobId);
 }
 
 /**
@@ -303,7 +331,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     logDebug("\tSession '%s': deleting associated server.", jobId);
     delete(server);
 
-    return dumpServerList(soapContext, "GetCalSearchCal", jobId);
+    return sclwsDumpServerList(soapContext, "GetCalSearchCal", jobId);
 }
 
 /**
@@ -382,7 +410,7 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
 
     STL_UNLOCK();
 
-    return dumpServerList(soapContext, "GetCalQueryStatus", jobId);
+    return sclwsDumpServerList(soapContext, "GetCalQueryStatus", jobId);
 }
 
 /**
@@ -463,7 +491,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
 
     logTest("\tSession '%s': cancelling done.", jobId);
 
-    return dumpServerList(soapContext, "GetCalCancelSession", jobId);
+    return sclwsDumpServerList(soapContext, "GetCalCancelSession", jobId);
 }
 
 /*___oOo___*/

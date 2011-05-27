@@ -62,11 +62,6 @@ using namespace std;
 struct Namespace* namespaces;
 struct soap       globalSoapContext;
 
-// Port number configuration
-mcsENVNAME sclwsPortNumberEnvVarName = "SCLWS_PORT_NB";
-uint       sclwsPortNumber           = 8079; // Default value for beta testing.
-//uint       sclwsPortNumber           = 8078; // Default value for production purpose.
-
 
 /*
  * Local Functions
@@ -169,23 +164,6 @@ int main(int argc, char *argv[])
         sclwsExit(EXIT_FAILURE);
     }
 
-    // Try to read ENV. VAR. to get port number to bind
-    mcsINT32 envPortNumber = -1;
-    mcsINT32 minPortNumber = 1024;
-    mcsINT32 maxPortNumber = 65536;
-    if (miscGetEnvVarIntValue(sclwsPortNumberEnvVarName, &envPortNumber) == mcsSUCCESS)
-    {
-        // Use the guiven port only if in the right range.
-        if ((envPortNumber <= minPortNumber) || (envPortNumber >= maxPortNumber))
-        {
-            logError("'%s' environment variable does not contain a valid port number ('%d' not in [%d, %d[)", sclwsPortNumberEnvVarName, envPortNumber, minPortNumber, maxPortNumber);
-            sclwsExit(EXIT_FAILURE);
-        }
-
-        sclwsPortNumber = envPortNumber;
-    }
-    // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
-
     // @TODO : manage a "garbage collector" thread to close pending connections
     // @TODO : Each connection should have a semaphore incremented at each thread launch and decremented at each thread end, that let sclsvrSERVER instance be deallocated once equal to 0.
 
@@ -195,15 +173,17 @@ int main(int argc, char *argv[])
     soap_init(&globalSoapContext);
     soap_set_namespaces(&globalSoapContext, soap_namespaces);
 
+    mcsUINT16 portNumber = sclwsGetServerPortNumber();
+
     // Main SOAP socket creation
-    if (soap_bind(&globalSoapContext, NULL, sclwsPortNumber, 100) < 0)
+    if (soap_bind(&globalSoapContext, NULL, portNumber, 100) < 0)
     {
-        errAdd(sclwsERR_BIND, sclwsPortNumber);
+        errAdd(sclwsERR_BIND, portNumber);
         errCloseStack();
         sclwsExit(EXIT_FAILURE);
     }
 
-    logTest("Listening on port '%d'.", sclwsPortNumber);
+    logInfo("Listening on port '%d'.", portNumber);
 
     globalSoapContext.accept_timeout = 0;
     

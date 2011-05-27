@@ -9,6 +9,12 @@
  * sclws private header file.
  */
 
+/* Server port number configuration */
+mcsENVNAME SCLWS_PORTNUMBER_ENVVAR_NAME = "SCLWS_PORT_NB";
+
+/* Retrieve current server port */
+mcsUINT16 sclwsGetServerPortNumber(void);
+
 /*
  * Constants definition
  */

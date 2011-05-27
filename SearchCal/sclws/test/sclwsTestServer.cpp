@@ -42,7 +42,7 @@ using namespace std;
  * Local Variables
  */
 struct Namespace *namespaces;
-char* sclwsURL = "http://jmmc.fr:8078";
+mcsSTRING256 sclwsURL;
 typedef struct
 {
     // Request
@@ -170,6 +170,11 @@ int main(int argc, char *argv[])
 
     // Set stdout log level 
     logSetStdoutLogLevel(logINFO);
+
+    // Composing server address
+    char* url = "http://jmmc.fr";
+    mcsUINT16 portNumber = sclwsGetServerPortNumber();
+    snprintf(sclwsURL, sizeof(sclwsURL), "%s:%d", url, portNumber);
 
     // Define a SOAP context for main()
     struct soap v_soap;
