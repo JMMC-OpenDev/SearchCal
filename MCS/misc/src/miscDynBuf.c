@@ -334,12 +334,6 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
         /* Do nothing */
         return mcsSUCCESS;
     }
-
-    if (dynBuf->storedBytes + length < dynBuf->allocatedBytes)
-    {
-        /* Do nothing */
-        return mcsSUCCESS;
-    }
     
     /* new total size */
     mcsINT32 newAllocSize = 0;
@@ -1728,7 +1722,11 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
     }
 
     /* Expand the received Dynamic Buffer size */
-    if (miscDynBufAlloc(dynBuf, length) == mcsFAILURE)
+    mcsUINT32 nonUsedBytes;
+    mcsINT32 bytesToAlloc;
+    nonUsedBytes = dynBuf->allocatedBytes - dynBuf->storedBytes;
+    bytesToAlloc = length - nonUsedBytes;
+    if (miscDynBufAlloc(dynBuf, bytesToAlloc) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
