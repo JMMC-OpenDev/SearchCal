@@ -334,6 +334,12 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
         /* Do nothing */
         return mcsSUCCESS;
     }
+
+    if (dynBuf->storedBytes + length < dynBuf->allocatedBytes)
+    {
+        /* Do nothing */
+        return mcsSUCCESS;
+    }
     
     /* new total size */
     mcsINT32 newAllocSize = 0;
