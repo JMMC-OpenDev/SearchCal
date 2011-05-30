@@ -707,7 +707,7 @@ mcsCOMPL_STAT  msgMESSAGE::AllocateBody(const mcsUINT32 bufLen)
     logExtDbg("msgMESSAGE::AllocateBody()");
 
     // Empty the message body dynamic buffer
-    if (miscDynBufReset(&_body) == mcsFAILURE)
+    if (miscDynBufDestroy(&_body) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
