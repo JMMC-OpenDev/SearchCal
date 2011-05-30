@@ -95,16 +95,6 @@ void sclwsExit(int returnCode)
     // Close MCS services
     logDebug("Cleaning MCS ...");
     mcsExit();
-
-    /*
-     * Cleanup function for the XML library (libxml2).
-     * Library Clean up : must be called only once the process
-     * has no more use of the XML library => main exit()
-     * http://xmlsoft.org/html/libxml-parser.html
-     * 
-     * (valgrind check-mem)
-     */
-    xmlCleanupParser();
     
     // Exit from the application with SUCCESS
     printf("Exiting now.\n");
@@ -171,12 +161,20 @@ int main(int argc, char *argv[])
 
     // SOAP Initialization
     soap_init(&globalSoapContext);
+    
+    // no socket timeout:
+    globalSoapContext.accept_timeout = 0;
+    
+    // reuse server port:
+    globalSoapContext.bind_flags = SO_REUSEADDR;
+    
     soap_set_namespaces(&globalSoapContext, soap_namespaces);
 
     mcsUINT16 portNumber = sclwsGetServerPortNumber();
 
     // Main SOAP socket creation
-    if (soap_bind(&globalSoapContext, NULL, portNumber, 100) < 0)
+    SOAP_SOCKET m = soap_bind(&globalSoapContext, NULL, portNumber, 100);
+    if ((m < 0) || (!soap_valid_socket(m)))
     {
         errAdd(sclwsERR_BIND, portNumber);
         errCloseStack();
@@ -184,17 +182,17 @@ int main(int argc, char *argv[])
     }
 
     logInfo("Listening on port '%d'.", portNumber);
-
-    globalSoapContext.accept_timeout = 0;
     
     // Infinite loop to receive requests
     for (uint nbOfConnection = 1; ; nbOfConnection++)
     {
         // Wait (without timeout) a new connection
-        if (soap_accept(&globalSoapContext) < 0)
+        SOAP_SOCKET s = soap_accept(&globalSoapContext);
+        
+        if ((s < 0) || (!soap_valid_socket(s)))
         {
-            continue;
-        }
+           continue; // retry
+        }         
 
         // Fork the SOAP context
         struct soap* forkedSoapContext = soap_copy(&globalSoapContext);
