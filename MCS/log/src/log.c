@@ -473,7 +473,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
 {
     mcsCOMPL_STAT status = mcsSUCCESS;
 
-    // fast return if this log message is discarded
+    /* fast return if this log message is discarded */
     if ( !( (logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel) )
             && 
          !( (logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel) ) )
@@ -483,8 +483,6 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
 
     va_list argPtr;
     mcsBYTES32 infoTime;
-    char buffer[8192];
-    buffer[0] = '\0';
 
     /* Get UNIX-style time and display as number and string. */
     logGetTimeStamp(infoTime);
@@ -496,6 +494,10 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     {
         /* Log information to file */
         va_start(argPtr,logFormat);
+        
+        char buffer[8192];
+        buffer[0] = '\0';
+        
         vsprintf(buffer, logFormat, argPtr);
         status = logData(modName, level, infoTime, fileLine, buffer);
         va_end(argPtr);
