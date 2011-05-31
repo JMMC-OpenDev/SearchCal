@@ -85,7 +85,7 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
                                           mcsSTRING32    computedTime)
 {
     struct timeval  time;
-    struct tm      *timeNow;
+    struct tm       timeNow;
     mcsSTRING32     timeComputingError, format, tmpBuf;
 
     /* Get the system time */
@@ -99,17 +99,17 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
     if (timeType == miscUTC_TIME)
     {
         /* utc time */
-        timeNow = gmtime(&time.tv_sec);
+        gmtime_r(&time.tv_sec, &timeNow);
         sprintf(timeComputingError, "%s", "gmtime");
     }
     else
     {
         /* local time */
-        timeNow = localtime(&time.tv_sec);
+        localtime_r(&time.tv_sec, &timeNow);
         sprintf(timeComputingError, "%s", "localtime");
     }
 
-    if (timeNow == NULL)
+    if (&timeNow == NULL)
     {
         errAdd(miscERR_FUNC_CALL, timeComputingError, strerror(errno));
         return mcsFAILURE;
@@ -117,7 +117,7 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
 
     /* Create a string from it */
     if (strftime(computedTime, sizeof(mcsSTRING32), "%Y-%m-%dT%H:%M:%S", 
-                  timeNow) == 0)
+                  &timeNow) == 0)
     {
         errAdd(miscERR_FUNC_CALL, "strftime", strerror(errno));
         return mcsFAILURE;
