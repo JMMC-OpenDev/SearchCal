@@ -188,7 +188,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
             {
                 /* fitzpatrick identifier */
                 alxBAND fitzId;
-                switch toupper(band)
+                switch (toupper(band))
                 {
                     case 'M':
                         fitzId = alxM_BAND;
@@ -2157,11 +2157,13 @@ mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32  spType,
          */
         if (alxString2SpectralType(spType, spectralType) == mcsFAILURE)
         {
+            free(spectralType);
             return mcsFAILURE;
         }
     }
     else
     {
+        free(spectralType);
         errAdd(alxERR_NULL_PARAMETER, "spType");
         return mcsFAILURE;
     }
@@ -2170,6 +2172,7 @@ mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32  spType,
     alxTEFFLOGG_TABLE* teffloggTable = alxGetTeffLoggTable(spectralType);
     if (teffloggTable == NULL)
     {
+        free(spectralType);
         return mcsFAILURE;
     }
     /* Line corresponding to the spectral type */
@@ -2177,6 +2180,7 @@ mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32  spType,
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
+        free(spectralType);
         return mcsFAILURE;
     }
     /* interpolate */
@@ -2211,6 +2215,7 @@ mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32  spType,
     /* We add the LogG of the Sun = 4.378 to get LogG in cm s^-2 */
     *LogG = dataInf + ratio * (dataSup - dataInf) + 4.378;
 
+    free(spectralType);
     return mcsSUCCESS;
 }
 
@@ -2316,9 +2321,10 @@ static mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
     mcsINT32 line = 0;
     mcsINT32 i;
     mcsDOUBLE *distToUd = malloc(alxNB_UD_ENTRIES * sizeof(mcsDOUBLE));
+    
     distToUd[0] = sqrt(pow(teff-udTable->teff[0], 2.0) + pow(logg-udTable->logg[0], 2.0));
     line = 0;
-    for (i=1;i< udTable->nbLines;i++)
+    for (i = 1; i< udTable->nbLines; i++)
     {
         distToUd[i]=sqrt(pow(teff-udTable->teff[i],2.0)+pow(logg-udTable->logg[i],2.0));
         if (distToUd[i] < distToUd[line])
@@ -2327,6 +2333,7 @@ static mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
         }
     }
 
+    free(distToUd);
     /* return the line found */
     return line;
 }
