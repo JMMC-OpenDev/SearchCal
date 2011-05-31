@@ -690,15 +690,15 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
 void logGetTimeStamp(mcsBYTES32 timeStamp)
 {
     struct timeval time;
-    struct tm      *timeNow;
+    struct tm      timeNow;
     mcsSTRING32    tmpBuf;
 
     /* Get local time */
     gettimeofday(&time, NULL);
  
     /* Format the date */
-    timeNow = gmtime(&time.tv_sec);
-    strftime(timeStamp, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", timeNow);
+    gmtime_r(&time.tv_sec, &timeNow);
+    strftime(timeStamp, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", &timeNow);
  
     /* Add milli-second and micro-second */
     sprintf(tmpBuf, "%.6f", time.tv_usec/1e6);
