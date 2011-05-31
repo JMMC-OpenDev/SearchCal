@@ -11,7 +11,7 @@ touch $VG_LOG
 
 # valgrind helgrind options:  --show-reachable=yes --track-origins=yes
 # --gen-suppressions=all
-valgrind -v --suppressions=./custom_suppressions.txt --tool=helgrind --conflict-cache-size=30000000 --read-var-info=yes --log-file=$VG_LOG sclwsServer -v $VERBOSITY &
+valgrind -v --num-callers=8 --suppressions=./custom_suppressions.txt --tool=helgrind --conflict-cache-size=30000000 --read-var-info=yes --log-file=$VG_LOG sclwsServer -v $VERBOSITY &
 
 # Remember server PID for later kill
 VG_PID=$!
@@ -21,10 +21,11 @@ echo "valgrind started: $VG_PID"
 sleep 3 
 
 # queries (N, V, ...):
-./testBright.sh
+./testBright.sh &
+./testBright.sh 
 
 # Wait for valgrind overhead
-sleep 3
+sleep 9 
 
 # kill server to get valgrind report
 echo -n "valgrind stopping ..."
@@ -32,7 +33,7 @@ kill $VG_PID
 echo "done."
 
 # wait for valgrind shutdown hook ...
-sleep 2 
+sleep 3 
 
 # Remove PID from output log
 sed -i "s/^==[0123456789]*==//g" $VG_LOG

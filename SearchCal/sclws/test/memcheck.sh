@@ -11,7 +11,7 @@ touch $VG_LOG
 
 # valgrind memcheck options:  --show-reachable=yes --track-origins=yes
 # --gen-suppressions=all
-valgrind -v --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full sclwsServer -v $VERBOSITY &
+valgrind -v --num-callers=8 --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full sclwsServer -v $VERBOSITY &
 
 # Remember server PID for later kill
 VG_PID=$!
