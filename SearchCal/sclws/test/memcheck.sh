@@ -10,7 +10,8 @@ rm $VG_LOG
 touch $VG_LOG
 
 # valgrind memcheck options:  --show-reachable=yes --track-origins=yes
-valgrind -v --log-file=$VG_LOG --leak-check=full sclwsServer -v 1 &
+# --gen-suppressions=all
+valgrind -v --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full sclwsServer -v $VERBOSITY &
 
 # Remember server PID for later kill
 VG_PID=$!
@@ -31,7 +32,7 @@ kill $VG_PID
 echo "done."
 
 # wait for valgrind shutdown hook ...
-sleep 1
+sleep 2
 
 # Remove PID from output log
 sed -i "s/^==[0123456789]*==//g" $VG_LOG

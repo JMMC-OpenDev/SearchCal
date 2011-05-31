@@ -1,0 +1,33 @@
+{
+   disable_strcpy_overlap
+   Memcheck:Overlap
+   fun:strcpy
+}
+
+{
+   gSoap2_recv
+   Helgrind:Race
+   fun:frecv
+   fun:soap_recv_raw
+   fun:soap_recv
+   fun:soap_getchar
+}
+
+{
+   gSoap2_tag_cmp
+   Helgrind:Race
+   fun:soap_tag_cmp
+   fun:http_parse_header
+   fun:http_parse
+}
+
+{
+   gSoap2_http_parse
+   Helgrind:Race
+   fun:soap_malloc
+   fun:soap_strdup
+   fun:http_parse_header
+   fun:http_parse
+}
+
+
