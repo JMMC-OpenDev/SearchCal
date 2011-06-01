@@ -13,6 +13,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sdbENTRY.cpp,v 1.3 2011
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 
@@ -37,9 +38,8 @@ using namespace std;
  */
 #include <unistd.h>
 
-
 /*
- * Static members dfinition 
+ * Static members definition 
  */
 
 
@@ -48,7 +48,7 @@ using namespace std;
  */
 sdbENTRY::sdbENTRY()
 {
-    _initSucceed = mcsFALSE;
+    thrdMutexInit(&_mutex);
     _isNewMessage = mcsFALSE;
     memset(_buffer, '\0', sizeof(mcsSTRING256));
 }
@@ -58,7 +58,7 @@ sdbENTRY::sdbENTRY()
  */
 sdbENTRY::~sdbENTRY()
 {
-    Destroy();
+    thrdMutexDestroy(&_mutex);
 }
 
 
@@ -84,15 +84,6 @@ mcsCOMPL_STAT sdbENTRY::Write(const char* message)
         return mcsFAILURE;
     }
     
-    // Initialize object if needed
-    if (IsInit() == mcsFALSE)
-    {
-        if (Init()  == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-    }
-
     logDebug("Enter critical section for writing");
     if (thrdMutexLock(&_mutex) == mcsFAILURE)
     {
@@ -134,15 +125,6 @@ mcsCOMPL_STAT sdbENTRY::Read(char*             message,
     {
         errAdd(sdbERR_NULL_PARAM, "message");
         return mcsFAILURE;
-    }
-
-    // Initialize object if needed
-    if (IsInit() == mcsFALSE)
-    {
-        if (Init()  == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
     }
 
     // Loop configuration
@@ -211,72 +193,5 @@ mcsCOMPL_STAT sdbENTRY::Read(char*             message,
 
     return mcsSUCCESS;
 }
-
-/*
- * Protected methods
- */
-/**
- * Return whter the object has been fully initialized or not.
- *
- * @return mcsTRUE if the object has been fully initialized, mcsFALSE otherwise.
- */
-mcsLOGICAL sdbENTRY::IsInit()
-{
-    logTrace("sdbENTRY::IsInit()");
-
-    return _initSucceed;
-}
-
-/**
- * Initialize internal synchronization mechanism.
- *
- * @warning Must be called before any other sdbENTRY calls.
- *
- * @return mcsSUCCESS or mcsFAILURE.
- */
-mcsCOMPL_STAT sdbENTRY::Init(void)
-{
-    if (Destroy() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    /* Mutex initialisation */
-    if (thrdMutexInit(&_mutex) == mcsFAILURE)
-    {
-        _initSucceed = mcsFALSE;
-        return mcsFAILURE;
-    }
-
-    _initSucceed = mcsTRUE;
-    return mcsSUCCESS;
-}
-
-/**
- * Destroy internal synchronization mechanism.
- *
- * @warning Must be called after all other sdbENTRY calls.
- *
- * @return mcsSUCCESS or mcsFAILURE.
- */
-mcsCOMPL_STAT sdbENTRY::Destroy(void)
-{
-    if (_initSucceed == mcsTRUE)
-    {
-        /* Mutex destruction */
-        if (thrdMutexDestroy(&_mutex) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-    }
-    _initSucceed = mcsFALSE;
-
-    return mcsSUCCESS;
-}
-
-/*
- * Private methods
- */
-
 
 /*___oOo___*/

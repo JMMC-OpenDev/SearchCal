@@ -40,16 +40,10 @@ public:
     // Class destructor
     virtual ~sdbENTRY();
 
-    mcsCOMPL_STAT  Init    (void);
-    mcsCOMPL_STAT  Destroy (void);
-
     mcsCOMPL_STAT  Write   (const char*       message);
     mcsCOMPL_STAT  Read    (      char*       message,
                                   mcsLOGICAL  waitNewMessage = mcsFALSE,
                                   mcsINT32    timeoutInMs = -1);
-
-    mcsLOGICAL     IsInit  (void);
-
 protected:
     
 private:
@@ -59,8 +53,6 @@ private:
     sdbENTRY& operator=(const sdbENTRY&);
 
     thrdMUTEX      _mutex;
-    mcsLOGICAL     _initSucceed;
-
     mcsSTRING256   _buffer;
     mcsLOGICAL     _isNewMessage;
 };
