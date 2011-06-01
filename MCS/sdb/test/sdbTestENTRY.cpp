@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
         cout << endl;
 
         cout << "Reading message with a 1 second timeout :" << endl;
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (entry.Read(message, mcsTRUE, 1000) == mcsFAILURE)
             {
