@@ -4,5 +4,5 @@
 #*******************************************************************************
 source env.sh
 
-sclwsServer -v 1 
+sclwsServer -v $VERBOSITY 
 
