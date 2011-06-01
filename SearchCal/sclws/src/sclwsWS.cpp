@@ -25,8 +25,10 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-#include "sclsvrSERVER.h"
-#include "miscoDYN_BUF.h"
+#include <thrd.h>
+#include "sclsvr.h"
+#include "misco.h"
+#include "timlog.h"
 
 /*
  * Local Headers 
@@ -57,13 +59,39 @@ using namespace std;
 }
 
 /*
+ * Local macro
+ */
+#define UUID_LOCK() { \
+    logExtDbg("Enter critical section"); \
+    if (thrdMutexLock(&uuidMutex) == mcsFAILURE) \
+    { \
+        errAdd(sclwsERR_UUID_MUTEX); \
+        sclwsReturnSoapError(); \
+    } \
+}
+
+#define UUID_UNLOCK() { \
+    logExtDbg("Exit critical section"); \
+    if (thrdMutexUnlock(&uuidMutex) == mcsFAILURE) \
+    { \
+        errAdd(sclwsERR_UUID_MUTEX); \
+        sclwsReturnSoapError(); \
+    } \
+}
+
+/*
  * Local Variables 
  */
 
 /**
  * Shared mutex to circumvent un thread safe STL
  */
-thrdMUTEX stlMutex;
+thrdMUTEX stlMutex = PTHREAD_MUTEX_INITIALIZER;
+
+/**
+ * Shared mutex to circumvent un thread safe to uuid library
+ */
+thrdMUTEX uuidMutex = PTHREAD_MUTEX_INITIALIZER;
 
 /**
  * Used to store each "Communication ID"-"sclsvSERVER instance" couples
@@ -77,13 +105,6 @@ map<string,sclsvrSERVER*> sclwsServerList;
 multimap<string,pthread_t> sclwsThreadList;
 typedef multimap<string,pthread_t>::iterator sclwsTHREAD_ITERATOR;
 typedef pair<sclwsTHREAD_ITERATOR, sclwsTHREAD_ITERATOR> sclwsTHREAD_RANGE;
-
-/**
- * Error message string to report SOAP service failure.
- *
- * @sa Used by the sclwsReturnSoapError() macro defined in sclwsPrivate.h
- */
-static char sclwsSoapErrMsg[256];
 
 /*
  * Local methods
@@ -169,20 +190,29 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
         sclwsReturnSoapError();
     }
 
-    // Compute connection IP and log it
-    mcsSTRING16 conectionIP;
-    // @WARNING : IP address computing code is probably endian-ness dependant !
-    unsigned long ipAddress = soapContext->ip;
-    long firstByte  = (long)((ipAddress >> 24) & 0xFF);
-    long secondByte = (long)((ipAddress >> 16) & 0xFF);
-    long thirdByte  = (long)((ipAddress >> 8)  & 0xFF);
-    long forthByte  = (long)((ipAddress >> 0)  & 0xFF);
-    snprintf(conectionIP, sizeof(conectionIP), "%ld.%ld.%ld.%ld", firstByte, secondByte, thirdByte, forthByte);
-    logInfo("Accepted connection from IP address '%s'.", conectionIP);
+    if ((logGetStdoutLogLevel() >= logINFO))
+    {
+        // Compute connection IP and log it
+        mcsSTRING16 connectionIP;
+        // @WARNING : IP address computing code is probably endian-ness dependant !
+        unsigned long ipAddress = soapContext->ip;
+        long firstByte  = (long)((ipAddress >> 24) & 0xFF);
+        long secondByte = (long)((ipAddress >> 16) & 0xFF);
+        long thirdByte  = (long)((ipAddress >> 8)  & 0xFF);
+        long forthByte  = (long)((ipAddress >> 0)  & 0xFF);
+        snprintf(connectionIP, sizeof(connectionIP), "%ld.%ld.%ld.%ld", firstByte, secondByte, thirdByte, forthByte);
+        
+        logInfo("Accepted connection from IP address '%s'.", connectionIP);
+    }
     
     // Create a "Universally Unique Identifier" (man uuid for more informations)
     uuid_t uuidID;
+    
+    UUID_LOCK();
+    
     uuid_generate(uuidID);
+    
+    UUID_UNLOCK();
 
     // Allocate SOAP-aware memory to return the generated UUID
     int jobIdLength = 37; // An UUID is 36-byte string (plus tailing '\0')
@@ -233,7 +263,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
                     char** voTable)
 {
     logTrace("ns__GetCalSearchCal('%s')", jobId);
-    
+            
     STL_LOCK();
     
     // Store the thread ID iterator (used in case a Cancel occurs while this is running)

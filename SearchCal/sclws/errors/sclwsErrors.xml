@@ -45,4 +45,9 @@
       <errSeverity>FATAL</errSeverity>
       <errFormat><![CDATA[Could not use mutex that prevents concurrent access to STL shared objects]]></errFormat>
    </error>
+   <error id="10">
+      <errName>UUID_MUTEX</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Could not use mutex that prevents concurrent access to UUID generate function]]></errFormat>
+   </error>
 </errorList>

@@ -10,7 +10,7 @@
  */
 
 /* Server port number configuration */
-mcsENVNAME SCLWS_PORTNUMBER_ENVVAR_NAME = "SCLWS_PORT_NB";
+#define SCLWS_PORTNUMBER_ENVVAR_NAME "SCLWS_PORT_NB"
 
 /* Retrieve current server port */
 mcsUINT16 sclwsGetServerPortNumber(void);
@@ -25,11 +25,14 @@ mcsUINT16 sclwsGetServerPortNumber(void);
 /** Usefull macro to return error when executing SOAP service. The error message
  * is get from error stack */
 #define sclwsReturnSoapError()                                       \
+{                                                                    \
     soap_fault(soapContext);                                         \
+    char sclwsSoapErrMsg[256];                                       \
     strncpy(sclwsSoapErrMsg, errUserGet(), sizeof(sclwsSoapErrMsg)); \
     soapContext->fault->faultstring = sclwsSoapErrMsg;               \
     errCloseStack();                                                 \
-    return SOAP_ERR;
+    return SOAP_ERR;                                                 \
+}
 
 #endif /*!sclwsPrivate_H*/
 
