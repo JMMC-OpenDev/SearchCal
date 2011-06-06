@@ -189,7 +189,7 @@ static mcsLOGICAL logSocketIsAlreadyOpen = mcsFALSE;
  * (and thus cannot be changed anymore), or if the given host name parameter
  * seems wrong, mcsSUCCESS otherwise
  */
-mcsCOMPL_STAT logSetLogManagerHostName(mcsBYTES256 hostName)
+mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256 hostName)
 {
     /* If the socket to the logManager has already been opened... */
     if (logSocketIsAlreadyOpen == mcsTRUE)
@@ -482,7 +482,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     }
 
     va_list argPtr;
-    mcsBYTES32 infoTime;
+    mcsSTRING32 infoTime;
 
     /* Get UNIX-style time and display as number and string. */
     logGetTimeStamp(infoTime);
@@ -587,7 +587,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     struct hostent *hp = NULL;
 
     /* Message formating gstuff */
-    mcsBYTES32      infoTime;
+    mcsSTRING32      infoTime;
     char            *priorityMsg = NULL;
     char            logMsg[8192];
     logMsg[0]       = '\0';
@@ -687,7 +687,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
  * 
  * \param timeStamp character array where the resulting date is stored
  */
-void logGetTimeStamp(mcsBYTES32 timeStamp)
+void logGetTimeStamp(mcsSTRING32 timeStamp)
 {
     struct timeval time;
     struct tm      timeNow;
@@ -698,7 +698,7 @@ void logGetTimeStamp(mcsBYTES32 timeStamp)
  
     /* Format the date */
     gmtime_r(&time.tv_sec, &timeNow);
-    strftime(timeStamp, sizeof(mcsBYTES32), "%Y-%m-%dT%H:%M:%S", &timeNow);
+    strftime(timeStamp, sizeof(mcsSTRING32), "%Y-%m-%dT%H:%M:%S", &timeNow);
  
     /* Add milli-second and micro-second */
     sprintf(tmpBuf, "%.6f", time.tv_usec/1e6);

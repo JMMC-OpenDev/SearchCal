@@ -77,7 +77,7 @@
 int main(int argc, char** argv)
 {
     /* Character buffers */
-    mcsBYTES256        logFilePath, oldLogFilePath, logMsg;
+    mcsSTRING256        logFilePath, oldLogFilePath, logMsg;
 
     /* Files stuff */
     char*              mcsDataPath = NULL;
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
     mcsINT32           newPortNumber;
     int                sock = 0;
     struct sockaddr_in from;
-    int                fromLen = 0;
+    mcsUINT32          fromLen = 0;
 
     /* 'getopt()' stuff */
     int index;

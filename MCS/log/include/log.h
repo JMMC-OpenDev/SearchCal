@@ -45,7 +45,7 @@ typedef enum
 /*
  * File and Stdout logging functions
  */
-mcsCOMPL_STAT logSetLogManagerHostName(mcsBYTES256);
+mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256);
 mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32);
 
 
@@ -75,7 +75,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID, logLEVEL, const char *, const char *,
 mcsCOMPL_STAT logData(const mcsMODULEID, logLEVEL, const char *, const char *,
                       const char *logText);
 
-void          logGetTimeStamp(mcsBYTES32);
+void          logGetTimeStamp(mcsSTRING32);
 
 
 /*

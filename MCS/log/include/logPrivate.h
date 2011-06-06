@@ -44,7 +44,7 @@ extern "C" {
  * Define logging definition structure 
  */
 typedef struct {
-        mcsBYTES256 logManagerHostName;
+        mcsSTRING256 logManagerHostName;
         mcsUINT32   logManagerPortNumber;
         mcsLOGICAL  log;
         mcsLOGICAL  verbose;

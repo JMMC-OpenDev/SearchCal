@@ -94,7 +94,7 @@ void logPrintErrMessage(const char *format, ...)
 {
     va_list argPtr;
 
-    mcsBYTES32 utcTime;
+    mcsSTRING32 utcTime;
 
     /* Display the current UTC time */
     logGetTimeStamp(utcTime);
