@@ -110,6 +110,8 @@ typedef struct
  * Definition of mutex type
  */
 typedef pthread_mutex_t mcsMUTEX; /**< mutex type. */
+/** mcsMUTEX static intializer */
+#define MCS_MUTEX_STATIC_INITIALIZER PTHREAD_MUTEX_INITIALIZER
 
 /*
  * Public functions

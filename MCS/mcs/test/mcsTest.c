@@ -27,6 +27,11 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: mcsTest.c,v 1.4 2006-05-
 #include "mcs.h"
 #include "mcsPrivate.h"
 
+/*
+ * Local variables
+ */
+mcsMUTEX staticMutex = MCS_MUTEX_STATIC_INITIALIZER;
+
 
 /* 
  * Main
@@ -34,6 +39,11 @@ static char *rcsId __attribute__ ((unused)) ="@(#) $Id: mcsTest.c,v 1.4 2006-05-
 
 int main (int argc, char *argv[])
 {
+    if (mcsMutexLock(&staticMutex) == mcsFAILURE)
+    {
+        printf("Could not lock static mutex.\n");
+    }
+
     /* Initializes MCS services */
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
@@ -59,12 +69,17 @@ int main (int argc, char *argv[])
     }
     if (mcsMutexDestroy(&mutex) == mcsFAILURE)
     {
-        printf("Could not desroy mutex.\n");
+        printf("Could not destroy mutex.\n");
     }
 
     /* Close MCS services */
     mcsExit();
     
+    if (mcsMutexUnlock(&staticMutex) == mcsFAILURE)
+    {
+        printf("Could not lock static mutex.\n");
+    }
+
     /* Exit from the application with mcsSUCCESS */
     exit (EXIT_SUCCESS);
 }
