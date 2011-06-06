@@ -141,6 +141,12 @@
 #include "logPrivate.h"
 
 
+
+/*
+ * To prevent concurrent access to shared ressources in multi-threaded context.
+ */
+static mcsMUTEX logMutex = MCS_MUTEX_STATIC_INITIALIZER;
+
 /*
  * Default initialization for logging levels, printtime, and so on.
  *
@@ -191,6 +197,8 @@ static mcsLOGICAL logSocketIsAlreadyOpen = mcsFALSE;
  */
 mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256 hostName)
 {
+    mcsMutexLock(&logMutex);
+
     /* If the socket to the logManager has already been opened... */
     if (logSocketIsAlreadyOpen == mcsTRUE)
     {
@@ -207,6 +215,8 @@ mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256 hostName)
 
     /* Store the desired logManager host name */
     strcpy(logRulePtr->logManagerHostName, hostName);
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS;
 }
@@ -227,6 +237,8 @@ mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256 hostName)
  */
 mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 portNumber)
 {
+    mcsMutexLock(&logMutex);
+
     /* If the socket to the logManager has already been opened... */
     if (logSocketIsAlreadyOpen == mcsTRUE)
     {
@@ -244,6 +256,8 @@ mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 portNumber)
     /* Store the desired logManager host name */
     logRulePtr->logManagerPortNumber = portNumber;
 
+    mcsMutexUnlock(&logMutex);
+
     return mcsSUCCESS;
 }
 
@@ -255,10 +269,14 @@ mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 portNumber)
  */
 mcsCOMPL_STAT logEnableFileLog()
 {
-   /* Switch ON the file logging */
-   logRulePtr->log = mcsTRUE;
+    mcsMutexLock(&logMutex);
 
-   return mcsSUCCESS;
+    /* Switch ON the file logging */
+    logRulePtr->log = mcsTRUE;
+
+    mcsMutexUnlock(&logMutex);
+
+    return mcsSUCCESS;
 }
 
 
@@ -269,10 +287,14 @@ mcsCOMPL_STAT logEnableFileLog()
  */
 mcsCOMPL_STAT logDisableFileLog()
 {
-   /* Switch OFF the file logging */
-   logRulePtr->log = mcsFALSE;
+    mcsMutexLock(&logMutex);
 
-   return mcsSUCCESS;
+    /* Switch OFF the file logging */
+    logRulePtr->log = mcsFALSE;
+
+    mcsMutexUnlock(&logMutex);
+
+    return mcsSUCCESS;
 }
 
 
@@ -287,8 +309,12 @@ mcsCOMPL_STAT logDisableFileLog()
  */
 mcsCOMPL_STAT logSetFileLogLevel (logLEVEL level)
 {
+    mcsMutexLock(&logMutex);
+
     /* Set the file logging level to the specified one */
     logRulePtr->logLevel = level;
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS; 
 }
@@ -302,8 +328,14 @@ mcsCOMPL_STAT logSetFileLogLevel (logLEVEL level)
  */
 logLEVEL logGetFileLogLevel ()
 {
+    mcsMutexLock(&logMutex);
+
+    logLEVEL level = logRulePtr->logLevel;
+
+    mcsMutexUnlock(&logMutex);
+
     /* Returns the file logging level */
-    return (logRulePtr->logLevel);
+    return (level);
 }
 
 
@@ -314,8 +346,12 @@ logLEVEL logGetFileLogLevel ()
  */
 mcsCOMPL_STAT logEnableStdoutLog ()
 {
+    mcsMutexLock(&logMutex);
+
    /* Switch ON the stdout logging */
     logRulePtr->verbose = mcsTRUE;
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS;
 }
@@ -328,8 +364,12 @@ mcsCOMPL_STAT logEnableStdoutLog ()
  */
 mcsCOMPL_STAT logDisableStdoutLog ()
 {
-   /* Switch OFF the stdout logging */
+    mcsMutexLock(&logMutex);
+
+    /* Switch OFF the stdout logging */
     logRulePtr->verbose = mcsFALSE;
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS;
 }
@@ -346,8 +386,12 @@ mcsCOMPL_STAT logDisableStdoutLog ()
  */
 mcsCOMPL_STAT logSetStdoutLogLevel (logLEVEL level)
 {
+    mcsMutexLock(&logMutex);
+
     /* Set the stdout logging level to the specified one */
     logRulePtr->verboseLevel = level;
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS; 
 }
@@ -360,8 +404,14 @@ mcsCOMPL_STAT logSetStdoutLogLevel (logLEVEL level)
  */
 logLEVEL logGetStdoutLogLevel ()
 {
+    mcsMutexLock(&logMutex);
+
+    logLEVEL level = logRulePtr->verboseLevel;
+
+    mcsMutexUnlock(&logMutex);
+
     /* Returns the stdout logging level */
-    return (logRulePtr->verboseLevel);
+    return (level);
 }
 
 /**
@@ -375,8 +425,12 @@ logLEVEL logGetStdoutLogLevel ()
  */
 mcsCOMPL_STAT logClearStdoutLogAllowedModList(void)
 {
+    mcsMutexLock(&logMutex);
+
     /* Reset the number of allowed modules */
     logNbAllowedMod = 0;
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS; 
 }
@@ -393,6 +447,8 @@ mcsCOMPL_STAT logClearStdoutLogAllowedModList(void)
  */
 mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
 {
+    mcsMutexLock(&logMutex);
+
     /* Check if table is full */
     if (logNbAllowedMod == logNB_MAX_ALLOWED_MOD)
     {
@@ -402,6 +458,8 @@ mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
     /* Add module to the list */
     strncpy(logAllowedModList[logNbAllowedMod], mod, mcsMODULEID_LEN);
     logNbAllowedMod++;
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS; 
 }
@@ -415,8 +473,12 @@ mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
  */
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
 {
+    mcsMutexLock(&logMutex);
+
     /* Set 'print date' flag  */
     logRulePtr->printDate = flag;
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS;
 }
@@ -428,7 +490,13 @@ mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
  */
 mcsLOGICAL logGetPrintDate()
 {
-    return logRulePtr->printDate;
+    mcsMutexLock(&logMutex);
+
+    mcsLOGICAL boolean = logRulePtr->printDate;
+
+    mcsMutexUnlock(&logMutex);
+
+    return boolean;
 }
 
 
@@ -441,8 +509,12 @@ mcsLOGICAL logGetPrintDate()
  */
 mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
 {
+    mcsMutexLock(&logMutex);
+
     /* Set 'print line/file' flag  */
     logRulePtr->printFileLine = flag;
+
+    mcsMutexUnlock(&logMutex);
 
     return mcsSUCCESS;
 }
@@ -454,7 +526,13 @@ mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
  */
 mcsLOGICAL logGetPrintFileLine()
 {
-    return logRulePtr->printFileLine;
+    mcsMutexLock(&logMutex);
+
+    mcsLOGICAL boolean = logRulePtr->printFileLine;
+
+    mcsMutexUnlock(&logMutex);
+
+    return boolean;
 }
 
 
@@ -473,24 +551,31 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
 {
     mcsCOMPL_STAT status = mcsSUCCESS;
 
+    mcsMutexLock(&logMutex);
+    mcsLOGICAL shouldLog = ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
+                           && 
+                          !((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel));
+    mcsMutexUnlock(&logMutex);
+
     /* fast return if this log message is discarded */
-    if ( !( (logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel) )
-            && 
-         !( (logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel) ) )
+    if (!shouldLog)
     {
         return status;
     }
 
     va_list argPtr;
-    mcsSTRING32 infoTime;
 
     /* Get UNIX-style time and display as number and string. */
+    mcsSTRING32 infoTime;
     logGetTimeStamp(infoTime);
 
     /* If the log message should be file-logged, and that its log level is less
      * than or egal to the desired file-logging level
      */
-    if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
+    mcsMutexLock(&logMutex);
+    shouldLog = (logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel);
+    mcsMutexUnlock(&logMutex);
+    if (shouldLog)
     {
         /* Log information to file */
         va_start(argPtr,logFormat);
@@ -506,7 +591,9 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     /* If the log message should be stdout logged, and that its log level is
      * less than or egal to the desired stdout logging level
      */
-    if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
+    mcsMutexLock(&logMutex);
+    shouldLog = (logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel);
+    if (shouldLog)
     {
         /* Check if module belongs to the list of allowed modules */
         mcsLOGICAL allowed;
@@ -562,6 +649,8 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
         /* End if */
     }
 
+    mcsMutexUnlock(&logMutex);
+
     return status;
 }
 
@@ -587,23 +676,51 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     struct hostent *hp = NULL;
 
     /* Message formating gstuff */
-    mcsSTRING32      infoTime;
-    char            *priorityMsg = NULL;
+    mcsSTRING32     infoTime;
+    char           *priorityMsg = NULL;
     char            logMsg[8192];
     logMsg[0]       = '\0';
 
     /* Get UNIX-style time and display as number and string. */
     logGetTimeStamp(infoTime);
 
+    /* If no specific logManager host name has not been redefined by the log
+     * library user...
+     */
+    mcsMutexLock(&logMutex);
+    mcsUINT32 logManagerHostNameLength = strlen(logRulePtr->logManagerHostName);
+    mcsMutexUnlock(&logMutex);
+
+    if (logManagerHostNameLength == 0)
+    {
+        /* Try to get the local host name */
+        if (logGetHostName(logRulePtr->logManagerHostName,
+                           sizeof(logRulePtr->logManagerHostName))
+            == mcsFAILURE)
+        {
+            logPrintErrMessage("- LOG LIBRARY ERROR - logGetHostName() failed - %s", strerror(errno));
+            return mcsFAILURE;
+        }
+        
+        /* If the local host name seems empty... */
+        if ((logRulePtr->logManagerHostName == NULL)
+            || (strlen(logRulePtr->logManagerHostName) == 0))
+        {
+            logPrintErrMessage("- LOG LIBRARY ERROR - got an empty hostname");
+            return mcsFAILURE;
+        }
+    }
+
     /* initialize priority according given loglevel */
-    switch (level){
+    switch (level)
+    {
         case logERROR:      priorityMsg = "Error";      break;
         case logQUIET:      priorityMsg = "Quiet";      break;
         case logWARNING:    priorityMsg = "Warning";    break;
         case logINFO:       priorityMsg = "Info" ;      break;
         case logTEST:       priorityMsg = "Test";       break;
         case logDEBUG:	    priorityMsg = "Debug";      break;
-        case logTRACE:      priorityMsg = "Trace";    break;
+        case logTRACE:      priorityMsg = "Trace";      break;
         default:            priorityMsg = "Info";       break;
     }
     
@@ -612,36 +729,17 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
             mcsGetProcName(), modName, priorityMsg, infoTime, fileLine,
             logText);
 
+    mcsMutexLock(&logMutex);
+
     /* If the connection to the logManager is NOT already opened, open it */
     if (logSocketIsAlreadyOpen == mcsFALSE)
     {
-        /* If no specific logManager host name has not been redefined by the log
-         * library user...
-         */
-        if (strlen(logRulePtr->logManagerHostName) == 0)
-        {
-            /* Try to get the local host name */
-            if (logGetHostName(logRulePtr->logManagerHostName,
-                               sizeof(logRulePtr->logManagerHostName))
-                == mcsFAILURE)
-            {
-                logPrintErrMessage("- LOG LIBRARY ERROR - logGetHostName() failed - %s", strerror(errno));
-                return mcsFAILURE;
-            }
-            
-            /* If the local host name seems empty... */
-            if ((logRulePtr->logManagerHostName == NULL)
-                || (strlen(logRulePtr->logManagerHostName) == 0))
-            {
-                logPrintErrMessage("- LOG LIBRARY ERROR - got an empty hostname");
-                return mcsFAILURE;
-            }
-        }
 
         /* Try to create ths socket */
         sock = socket(AF_INET, SOCK_DGRAM, 0);
         if (sock == -1) 
         {
+            mcsMutexUnlock(&logMutex);
             logPrintErrMessage("- LOG LIBRARY ERROR - socket() failed - %s",
                     strerror(errno));
             return mcsFAILURE;
@@ -650,6 +748,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
         hp = gethostbyname(logRulePtr->logManagerHostName);
         if (hp == NULL )
         {
+            mcsMutexUnlock(&logMutex);
             logPrintErrMessage("- LOG LIBRARY ERROR - gethostbyname(%s) failed", logRulePtr->logManagerHostName);
             return mcsFAILURE;
         }
@@ -667,11 +766,13 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     if (sendto(sock, (void *)logMsg, strlen(logMsg), 0,
                (const struct sockaddr *)&server, sizeof(server)) == -1)
     {
+        mcsMutexUnlock(&logMutex);
         logPrintErrMessage("- LOG LIBRARY ERROR - sendto() failed - %s",
                 strerror(errno));
         return mcsFAILURE;
     }
 
+    mcsMutexUnlock(&logMutex);
     return mcsSUCCESS;
 }
 
