@@ -196,4 +196,114 @@ mcsCOMPL_STAT mcsStoreEnvName (const char *envName)
     return mcsSUCCESS;
 }
 
+
+/**
+ * Initialize a new mutex.
+ *
+ * @warning The call to this function is MANDATORY for each new mcsMUTEX.
+ *
+ * @param mutex the mutex to initialize
+ *
+ * @sa pthread_mutex_init
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT mcsMutexInit(mcsMUTEX* mutex)
+{
+    /* Initialize the new mutex */
+    if (pthread_mutex_init(mutex, NULL) != 0)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Destroy a mutex.
+ *
+ * @warning The call to this function is MANDATORY for each mcsMUTEX.
+ *
+ * @param mutex the mutex to destroy
+ *
+ * @sa pthread_mutex_destroy
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT mcsMutexDestroy(mcsMUTEX* mutex)
+{
+    /* Verify parameter vailidity */
+    if (mutex == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Destroy the mutex */
+    if (pthread_mutex_destroy(mutex) != 0)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Lock a mutex.
+ *
+ * If the mutex is already locked, then the caller is blocked until the mutex is
+ * unlocked.
+ *
+ * @param mutex the mutex to lock
+ *
+ * @sa pthread_mutex_lock
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT mcsMutexLock(mcsMUTEX* mutex)
+{
+    /* Verify parameter vailidity */
+    if (mutex == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Lock the mutex */
+    if (pthread_mutex_lock(mutex) != 0)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Unlock a mutex.
+ *
+ * @param mutex the mutex to unlock
+ *
+ * @sa pthread_mutex_unlock
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT mcsMutexUnlock(mcsMUTEX* mutex)
+{
+    /* Verify parameter vailidity */
+    if (mutex == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Unlock the mutex */
+    if (pthread_mutex_unlock(mutex) != 0)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
 /*___oOo___*/

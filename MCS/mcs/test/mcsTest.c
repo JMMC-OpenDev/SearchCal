@@ -44,6 +44,24 @@ int main (int argc, char *argv[])
     printf("Processus   Name is '%s'.\n", mcsGetProcName());
     printf("Environment Name is '%s'.\n", mcsGetEnvName());
 
+    mcsMUTEX mutex;
+    if (mcsMutexInit(&mutex) == mcsFAILURE)
+    {
+        printf("Could not intialize mutex.\n");
+    }
+    if (mcsMutexLock(&mutex) == mcsFAILURE)
+    {
+        printf("Could not lock mutex.\n");
+    }
+    if (mcsMutexUnlock(&mutex) == mcsFAILURE)
+    {
+        printf("Could not unlock mutex.\n");
+    }
+    if (mcsMutexDestroy(&mutex) == mcsFAILURE)
+    {
+        printf("Could not desroy mutex.\n");
+    }
+
     /* Close MCS services */
     mcsExit();
     

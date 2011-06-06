@@ -13,6 +13,11 @@ in C++-code.
 extern "C" {
 #endif
 
+/*
+ * System header
+ */
+#include <pthread.h>
+
 /************************************************************************
  *                           MCS  Constants                             *
  ************************************************************************/
@@ -101,6 +106,11 @@ typedef struct
     mcsDOUBLE im; /**<< imaginary part */
 } mcsCOMPLEX;
 
+/**
+ * Definition of mutex type
+ */
+typedef pthread_mutex_t mcsMUTEX; /**< mutex type. */
+
 /*
  * Public functions
  */
@@ -108,6 +118,12 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName);
 const char *mcsGetProcName();
 const char *mcsGetEnvName();
 void mcsExit();
+
+mcsCOMPL_STAT mcsMutexInit     (mcsMUTEX* mutex);
+mcsCOMPL_STAT mcsMutexDestroy  (mcsMUTEX* mutex);
+mcsCOMPL_STAT mcsMutexLock     (mcsMUTEX* mutex);
+mcsCOMPL_STAT mcsMutexUnlock   (mcsMUTEX* mutex);
+
 
 /*
  * Convenience macros
