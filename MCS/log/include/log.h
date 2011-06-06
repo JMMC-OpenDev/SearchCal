@@ -65,9 +65,9 @@ mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char*);
 
 
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL);
-mcsLOGICAL logGetPrintDate(void);
+mcsLOGICAL    logGetPrintDate(void);
 mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL);
-mcsLOGICAL logGetPrintFileLine(void);
+mcsLOGICAL    logGetPrintFileLine(void);
 
 
 mcsCOMPL_STAT logPrint(const mcsMODULEID, logLEVEL, const char *, const char *,
@@ -141,7 +141,7 @@ void          logGetTimeStamp(mcsSTRING32);
 #define logTrace(format, arg...) \
     logPrint(MODULE_ID, logTRACE, __FILE_LINE__, format, ##arg)
 
-/* OBSSOLETE - Keep for backward-compatibility */
+/* OBSSOLETE - Kept for backward-compatibility */
 #define logExtDbg logTrace
 #define logEXTDBG logTRACE
 
