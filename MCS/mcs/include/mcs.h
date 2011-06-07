@@ -127,16 +127,8 @@ mcsCOMPL_STAT mcsMutexDestroy  (mcsMUTEX* mutex);
 mcsCOMPL_STAT mcsMutexLock     (mcsMUTEX* mutex);
 mcsCOMPL_STAT mcsMutexUnlock   (mcsMUTEX* mutex);
 
-/* Global mutex to protected Gdome library access */
-static mcsMUTEX gdomeMUTEX = MCS_MUTEX_STATIC_INITIALIZER;
-
-#define GDOME_LOCK() {         \
-    mcsMutexLock(&gdomeMUTEX); \
-}
-
-#define GDOME_UNLOCK() {         \
-    mcsMutexUnlock(&gdomeMUTEX); \
-}
+mcsCOMPL_STAT mcsLockGdomeMutex(void);
+mcsCOMPL_STAT mcsUnlockGdomeMutex(void);
 
 /*
  * Convenience macros

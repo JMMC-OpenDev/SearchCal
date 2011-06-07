@@ -25,14 +25,18 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mcs.c,v 1.9 2006-01-10 
 static mcsPROCNAME mcsProcName = mcsUNKNOWN_PROC;
 static mcsENVNAME  mcsEnvName  = mcsUNKNOWN_ENV;
 
+/* Global mutex to protected Gdome library access */
+static mcsMUTEX gdomeMUTEX = MCS_MUTEX_STATIC_INITIALIZER;
 /* Gdome implementation singleton used by multiple threads */
 static GdomeDOMImplementation *domimpl = NULL;
+
 
 /*
  * Local functions
  */
 static mcsCOMPL_STAT mcsStoreProcName (const char *procName);
 static mcsCOMPL_STAT mcsStoreEnvName  (const char *envName);
+
 
 /**
  * \mainpage mcs : MCS services 
@@ -343,6 +347,27 @@ mcsCOMPL_STAT mcsMutexUnlock(mcsMUTEX* mutex)
     }
 
     return mcsSUCCESS;
+}
+
+/**
+ * Lock global mutex to prevent concurrent access to Gdome stuff.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT mcsLockGdomeMutex(void)
+{
+    return mcsMutexLock(&gdomeMUTEX);
+}
+/**
+ * Unlock global mutex to prevent concurrent access to Gdome stuff.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT mcsUnlockGdomeMutex(void)
+{
+    return mcsMutexUnlock(&gdomeMUTEX);
 }
 
 /*___oOo___*/
