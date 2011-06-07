@@ -114,9 +114,6 @@ typedef pthread_mutex_t mcsMUTEX; /**< mutex type. */
 /** mcsMUTEX static initializer */
 #define MCS_MUTEX_STATIC_INITIALIZER PTHREAD_MUTEX_INITIALIZER
 
-/** mcsMUTEX static initializer (reentrant) */
-#define MCS_MUTEX_RECURSIVE_INITIALIZER PTHREAD_MUTEX_RECURSIVE
-
 /*
  * Public functions
  */
@@ -131,7 +128,7 @@ mcsCOMPL_STAT mcsMutexLock     (mcsMUTEX* mutex);
 mcsCOMPL_STAT mcsMutexUnlock   (mcsMUTEX* mutex);
 
 /* Global mutex to protected Gdome library access */
-static mcsMUTEX gdomeMUTEX = MCS_MUTEX_RECURSIVE_INITIALIZER;
+static mcsMUTEX gdomeMUTEX = MCS_MUTEX_STATIC_INITIALIZER;
 
 #define GDOME_LOCK() {         \
     mcsMutexLock(&gdomeMUTEX); \
