@@ -183,7 +183,7 @@ vpath %.idl $(IDL_PATH_LIST)
 #
 ../object/%.dx:
 	- @echo "== Dependencies: $@"
-	$(AT)mkfMakeExecutableDependencies $(*F) "$($(*F)_OBJECTS)" "$($(*F)_LDFLAGS)" "$($(*F)_LIBS)" >../object/$*.dx
+	$(AT)mkfMakeExecutableDependencies $(*F) "$($(*F)_OBJECTS)" "$($(*F)_LDFLAGS) $(MCSSTD_LIBLIST)" "$($(*F)_LIBS)" >../object/$*.dx
 
 # - for Automatic Dependencies for libraries.
 #   a "../object/xxxx.da[l]" containing the dependencies structure of a library 
