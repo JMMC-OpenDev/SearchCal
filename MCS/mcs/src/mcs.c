@@ -10,6 +10,8 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mcs.c,v 1.9 2006-01-10 
  */
 #include <string.h>
 #include <stdlib.h>
+#include <libgdome/gdome.h>
+#include <libxml/parser.h>
 
 /* 
  * Local Headers
@@ -22,6 +24,10 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mcs.c,v 1.9 2006-01-10 
  */
 static mcsPROCNAME mcsProcName = mcsUNKNOWN_PROC;
 static mcsENVNAME  mcsEnvName  = mcsUNKNOWN_ENV;
+
+/* Gdome implementation singleton used by multiple threads */
+static GdomeDOMImplementation *domimpl = NULL;
+
 /*
  * Local functions
  */
@@ -91,6 +97,20 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
         mcsStoreEnvName(envValue);
     }
 
+    /*
+     * Starting with 2.4.7, libxml2 makes provisions to ensure that concurrent threads can safely work in parallel parsing different documents. There is however a couple of things to do to ensure it:
+     *
+     * configure the library accordingly using the --with-threads options
+     * call xmlInitParser() in the "main" thread before using any of the libxml2 API (except possibly selecting a different memory allocator)
+     */
+    xmlInitParser();
+
+    if (domimpl == NULL)
+    {
+        /* Get a DOMImplementation reference */
+        domimpl = gdome_di_mkref ();
+    }
+    
     return mcsSUCCESS;
 }
 
@@ -134,6 +154,25 @@ const char *mcsGetEnvName()
  */
 void mcsExit()
 {
+
+    if (domimpl != NULL)
+    {
+        /* free gdome implementation */ 
+        GdomeException exc;
+        gdome_di_unref (domimpl, &exc);
+        domimpl = NULL;
+    }
+    
+    /*
+     * Cleanup function for the XML library (libxml2).
+     * Library Clean up : must be called only once the process
+     * has no more use of the XML library => main exit()
+     * http://xmlsoft.org/html/libxml-parser.html
+     * 
+     * (valgrind check-mem)
+     */
+    xmlCleanupParser();    
+
     /* Store the application name */
     mcsStoreProcName(mcsUNKNOWN_PROC);
     mcsStoreEnvName(mcsUNKNOWN_ENV);

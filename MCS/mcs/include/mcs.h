@@ -8,6 +8,7 @@
 functions declared within the braces, which is necessary to use the functions
 in C++-code.
 */
+#include <pthread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -110,8 +111,11 @@ typedef struct
  * Definition of mutex type
  */
 typedef pthread_mutex_t mcsMUTEX; /**< mutex type. */
-/** mcsMUTEX static intializer */
+/** mcsMUTEX static initializer */
 #define MCS_MUTEX_STATIC_INITIALIZER PTHREAD_MUTEX_INITIALIZER
+
+/** mcsMUTEX static initializer (reentrant) */
+#define MCS_MUTEX_RECURSIVE_INITIALIZER PTHREAD_MUTEX_RECURSIVE
 
 /*
  * Public functions
@@ -126,6 +130,16 @@ mcsCOMPL_STAT mcsMutexDestroy  (mcsMUTEX* mutex);
 mcsCOMPL_STAT mcsMutexLock     (mcsMUTEX* mutex);
 mcsCOMPL_STAT mcsMutexUnlock   (mcsMUTEX* mutex);
 
+/* Global mutex to protected Gdome library access */
+static mcsMUTEX gdomeMUTEX = MCS_MUTEX_RECURSIVE_INITIALIZER;
+
+#define GDOME_LOCK() {         \
+    mcsMutexLock(&gdomeMUTEX); \
+}
+
+#define GDOME_UNLOCK() {         \
+    mcsMutexUnlock(&gdomeMUTEX); \
+}
 
 /*
  * Convenience macros
