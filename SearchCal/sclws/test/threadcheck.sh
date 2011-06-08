@@ -10,8 +10,8 @@ rm $VG_LOG
 touch $VG_LOG
 
 # valgrind helgrind options:  --show-reachable=yes --track-origins=yes
-# --gen-suppressions=all
-valgrind -v --num-callers=8 --suppressions=./custom_suppressions.txt --tool=helgrind --conflict-cache-size=30000000 --read-var-info=yes --log-file=$VG_LOG sclwsServer -v $VERBOSITY &
+# --gen-suppressions=all  --conflict-cache-size=5000000
+valgrind -v --num-callers=8 --suppressions=./custom_suppressions.txt --tool=helgrind --read-var-info=yes --log-file=$VG_LOG sclwsServer -v $VERBOSITY &
 
 # Remember server PID for later kill
 VG_PID=$!
