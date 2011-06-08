@@ -80,9 +80,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     // Set the catalog name
     cData.SetCatalogName(catalogName);
 
-    // Get a DOMImplementation reference
-    domimpl = gdome_di_mkref ();
-
     // Load a new document from the URI
     logTest("Get XML document from '%s' with POST data '%s'", uri, data);
 
@@ -96,6 +93,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         return mcsFAILURE;
     }
     
+    mcsLockGdomeMutex();
+    
+    // Get a DOMImplementation reference
+    domimpl = gdome_di_mkref ();
+
     // XML parsing of the CDS answer
     doc = gdome_di_createDocFromMemory(domimpl,
                                        completeReturnBuffer.GetBuffer(),
@@ -106,6 +108,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         // free gdome object
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
+        
+        mcsUnlockGdomeMutex();
+        
         return mcsFAILURE;
     }
 
@@ -118,6 +123,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         gdome_el_unref(root, &exc);            
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
+
+        mcsUnlockGdomeMutex();
+        
         return mcsFAILURE;
     }
 
@@ -128,8 +136,18 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         gdome_el_unref(root, &exc);            
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
+
+        mcsUnlockGdomeMutex();
+        
         return mcsFAILURE;
     }
+    
+    // free gdome object
+    gdome_el_unref(root, &exc);            
+    gdome_doc_unref (doc, &exc);
+    gdome_di_unref (domimpl, &exc);
+
+    mcsUnlockGdomeMutex();
 
     // Print out CDATA description and Save xml file
     if (logGetStdoutLogLevel() >= logDEBUG)
@@ -210,20 +228,10 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         cData.SetNbLinesToSkip(0);
         if (cData.Extract(star, starList) == mcsFAILURE)
         {
-            // free gdome object
-            gdome_el_unref(root, &exc);            
-            gdome_doc_unref (doc, &exc);
-            gdome_di_unref (domimpl, &exc);
             starList.Clear();
             return mcsFAILURE;
         }
     }
-
-    // Free the document structure and the DOMImplementation
-    gdome_el_unref(root, &exc);            
-    gdome_doc_unref (doc, &exc);
-    gdome_di_unref (domimpl, &exc);
-      
     return mcsSUCCESS;
 }
 
