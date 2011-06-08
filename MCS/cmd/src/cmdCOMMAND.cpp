@@ -951,20 +951,21 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     }
  
     // Find the correcsponding CDF file
-    char * fullCdfFilename = miscLocateFile(_cdfName.data());
+    char * xmlFilename = miscLocateFile(_cdfName.data());
     // Check if the CDF file has been found   
-    if (fullCdfFilename == NULL)
+    if (xmlFilename == NULL)
     {
         errAdd(cmdERR_NO_CDF, _cdfName.data());
         return mcsFAILURE;
     }
+    logDebug("Using CDF file '%s'", xmlFilename);
+    
+    mcsLockGdomeMutex();
 
     // Get a DOMImplementation reference
     domimpl = gdome_di_mkref ();
-
+    
     // Create a new Document from the CDF file
-    const char *xmlFilename = miscResolvePath(fullCdfFilename);
-    logDebug("Using CDF file %s",xmlFilename);
     doc = gdome_di_createDocFromURI(domimpl, 
                                     xmlFilename,
                                     GDOME_LOAD_PARSING,
@@ -1001,7 +1002,9 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     gdome_el_unref(root, &exc);
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
-    xmlCleanupParser();
+
+    mcsUnlockGdomeMutex();
+
     _cdfHasBeenYetParsed = mcsTRUE;
     return mcsSUCCESS;
 
@@ -1010,8 +1013,10 @@ errCond:
     gdome_el_unref(root, &exc);
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
-    xmlCleanupParser();
-    errAdd (cmdERR_PARSE_CDF, fullCdfFilename, _name.data());
+    
+    mcsUnlockGdomeMutex();
+    
+    errAdd (cmdERR_PARSE_CDF, xmlFilename, _name.data());
     return mcsFAILURE;
 }
 

@@ -77,15 +77,12 @@ static const char *errGetErrProp(const char *moduleId,
     unsigned long i, nbChilds, nbTags;
     mcsINT32 id;
     mcsINT32 node;
-    static mcsSTRING256 propValue;
+    mcsSTRING256 propValue;
     mcsSTRING256 errFileName;
     char *envVar;
     mcsLOGICAL errDefFileFound;
     struct stat statBuf;
     char *retVal = NULL;
-
-    /* Get a DOMImplementation reference */
-    domimpl = gdome_di_mkref ();
 
     /* Look for the error definition file */
     errDefFileFound= mcsFALSE;
@@ -115,7 +112,7 @@ static const char *errGetErrProp(const char *moduleId,
             {
                 errDefFileFound = mcsTRUE;
             }
-	    }
+        }
     }
 
     /* If not found in $INTROOT, look in $MCSROOT */
@@ -148,6 +145,11 @@ static const char *errGetErrProp(const char *moduleId,
 
     logTrace("Used error definition file '%s'", errFileName);
 
+    mcsLockGdomeMutex();
+
+    /* Get a DOMImplementation reference */
+    domimpl = gdome_di_mkref ();
+    
     /* Load a new document from a file */
     doc = gdome_di_createDocFromURI(domimpl, errFileName, GDOME_LOAD_PARSING,
                                     &exc);
@@ -158,7 +160,9 @@ static const char *errGetErrProp(const char *moduleId,
                     "with exception #%d", errFileName, exc);
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
-        xmlCleanupParser();
+        
+        mcsUnlockGdomeMutex();
+        
         return NULL;
     }
 
@@ -171,7 +175,9 @@ static const char *errGetErrProp(const char *moduleId,
         gdome_el_unref(root, &exc);            
         gdome_doc_unref (doc, &exc);
         gdome_di_unref (domimpl, &exc);
-        xmlCleanupParser();        
+        
+        mcsUnlockGdomeMutex();
+
         return NULL;
     }
 
@@ -353,7 +359,8 @@ errCond:
     gdome_el_unref(root, &exc);
     gdome_doc_unref (doc, &exc);
     gdome_di_unref (domimpl, &exc);
-    xmlCleanupParser();
+    
+    mcsUnlockGdomeMutex();
 
     /* Return property value */
     return retVal;
