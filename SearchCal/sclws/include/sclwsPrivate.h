@@ -27,8 +27,7 @@ mcsUINT16 sclwsGetServerPortNumber(void);
 #define sclwsReturnSoapError()                                       \
 {                                                                    \
     soap_fault(soapContext);                                         \
-    char sclwsSoapErrMsg[256];                                       \
-    strncpy(sclwsSoapErrMsg, errUserGet(), sizeof(sclwsSoapErrMsg)); \
+    char* sclwsSoapErrMsg = soap_strdup(soapContext, errUserGet());  \
     soapContext->fault->faultstring = sclwsSoapErrMsg;               \
     errCloseStack();                                                 \
     return SOAP_ERR;                                                 \
