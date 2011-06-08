@@ -6,6 +6,16 @@
 #
 #-------------------------------------------------------------------------------
 
+
+#
+# user definable C-compilation flags
+USER_CFLAGS = -D_GNU_SOURCE
+
+#
+# additional include and library search paths
+#USER_INC = 
+#USER_LIB = 
+
 #
 # MODULE CODE DESCRIPTION:
 # ------------------------

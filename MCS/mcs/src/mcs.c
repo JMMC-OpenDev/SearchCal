@@ -25,8 +25,9 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mcs.c,v 1.9 2006-01-10 
 static mcsPROCNAME mcsProcName = mcsUNKNOWN_PROC;
 static mcsENVNAME  mcsEnvName  = mcsUNKNOWN_ENV;
 
-/* Global mutex to protected Gdome library access */
-static mcsMUTEX gdomeMUTEX = MCS_MUTEX_STATIC_INITIALIZER;
+/* Global mutex to protected Gdome library access (recursive needed for err module) */
+static mcsMUTEX gdomeMUTEX = MCS_RECURSIVE_MUTEX_INITIALIZER;
+
 /* Gdome implementation singleton used by multiple threads */
 static GdomeDOMImplementation *domimpl = NULL;
 

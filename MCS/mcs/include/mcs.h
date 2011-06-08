@@ -113,6 +113,8 @@ typedef struct
 typedef pthread_mutex_t mcsMUTEX; /**< mutex type. */
 /** mcsMUTEX static initializer */
 #define MCS_MUTEX_STATIC_INITIALIZER PTHREAD_MUTEX_INITIALIZER
+/** mcsMUTEX static initializer supporting recursive lock/unlock (requires _GNU_SOURCE in CFLAGS) */
+#define MCS_RECURSIVE_MUTEX_INITIALIZER PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
 
 /*
  * Public functions
