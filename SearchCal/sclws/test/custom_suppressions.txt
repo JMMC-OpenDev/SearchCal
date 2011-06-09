@@ -4,6 +4,33 @@
    fun:strcpy
 }
 
+
+{
+   std_string_M_replace_safe__ignore
+   Helgrind:Race
+   fun:_ZNSs9_M_mutateEmmm
+   fun:_ZNSs15_M_replace_safeEmmPKcm
+}
+
+{
+   std_string_assign__ignore
+   Helgrind:Race
+   fun:_ZNSs6assignEPKcm
+}
+
+{
+   std_string_length__ignore
+   Helgrind:Race
+   fun:_ZNKSs6lengthEv
+}
+
+{
+   std_basic_string__ignore
+   Helgrind:Race
+   fun:_ZNSsC1ERKSs
+}
+
+
 {
    gSoap2_recv
    Helgrind:Race

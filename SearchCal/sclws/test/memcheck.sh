@@ -11,7 +11,7 @@ touch $VG_LOG
 
 # valgrind memcheck options:  --show-reachable=yes --track-origins=yes
 # --gen-suppressions=all
-valgrind -v --num-callers=8 --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full sclwsServer -v $VERBOSITY &
+valgrind -v --num-callers=12 --freelist-vol=500000000 --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full sclwsServer -v $VERBOSITY &
 
 # Remember server PID for later kill
 VG_PID=$!
@@ -24,7 +24,7 @@ sleep 1
 ./testBright.sh
 
 # Wait for valgrind overhead
-sleep 3
+sleep 3 
 
 # kill server to get valgrind report
 echo -n "valgrind stopping ..."
@@ -32,7 +32,7 @@ kill $VG_PID
 echo "done."
 
 # wait for valgrind shutdown hook ...
-sleep 2
+sleep 3 
 
 # Remove PID from output log
 sed -i "s/^==[0123456789]*==//g" $VG_LOG
