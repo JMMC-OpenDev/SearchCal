@@ -9,8 +9,6 @@
  * @sa JMMC-MEM-2600-0005 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxResearchArea.c,v 1.13 2011-03-03 12:59:53 lafrasse Exp $";
-
 
 /*
  * System Headers
@@ -181,7 +179,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
  * Return the number of stars in the given sky area.
  *
  * This function determines the number of stars in the given magnitude range
- * around the galactic position into a 1 deg² solid angle circle.
+ * around the galactic position into a 1 degï¿½ solid angle circle.
  *
  * @param gLon galatic longitude in degree
  * @param gLat galatic lattitude in degree
@@ -387,6 +385,18 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
     *radius = 60.0 * sqrt (areaSize/M_PI);
     logTest("Sky research radius = %.2f (arcmin)", *radius);
 
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Initialize this code
+ * @return void
+ */
+mcsCOMPL_STAT alxResearchAreaInit(void)
+{
+    alxGetStarPopulation();
+    
     return mcsSUCCESS;
 }
 

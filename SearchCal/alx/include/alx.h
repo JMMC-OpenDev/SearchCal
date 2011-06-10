@@ -99,8 +99,8 @@ typedef alxDATA alxMAGNITUDES[alxNB_BANDS];
  * Structure of visibilities :
  *  - visibility
  *  - visError
- *  - vis²
- *  - vis²Error
+ *  - vis2
+ *  - vis2Error
  */
 typedef struct
 {
@@ -165,8 +165,16 @@ typedef struct
 
 
 /*
- * Pubic functions declaration
+ * Public functions declaration
  */
+
+/* Init functions */
+mcsCOMPL_STAT alxCorrectedMagnitudeInit(void);
+mcsCOMPL_STAT alxAngularDiameterInit(void);
+mcsCOMPL_STAT alxInterstellarAbsorptionInit(void);
+mcsCOMPL_STAT alxResearchAreaInit(void);
+
+
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType, 
                                                 alxMAGNITUDES magnitudes);
 

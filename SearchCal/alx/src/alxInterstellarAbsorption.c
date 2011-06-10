@@ -9,8 +9,6 @@
  * @sa JMMC-MEM-2600-0008 document. 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxInterstellarAbsorption.c,v 1.3 2011-03-03 12:59:53 lafrasse Exp $"; 
-
 
 /* 
  * System Headers
@@ -250,6 +248,15 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
 }
 
 
-
+/**
+ * Initialize this code
+ * @return void
+ */
+mcsCOMPL_STAT alxInterstellarAbsorptionInit(void)
+{
+    alxGetPolynamialForInterstellarAbsorption();
+    
+    return mcsSUCCESS;
+}
 
 /*___oOo___*/

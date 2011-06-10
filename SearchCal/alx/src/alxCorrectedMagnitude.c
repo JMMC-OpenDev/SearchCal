@@ -10,8 +10,6 @@
  * @sa JMMC-MEM-2600-0008 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxCorrectedMagnitude.c,v 1.22 2011-04-06 14:36:50 lafrasse Exp $"; 
-
 
 /* Needed to preclude warnings on snprintf() */
 #define  _BSD_SOURCE 1
@@ -287,18 +285,19 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE *spectralType)
     }
 
     /* Determination of star type according to the spectral type */
-    char* spectralTypes[] = {"VIII", "VII", "VI", "III-IV", "III/IV", "IV-III", "IV/III",
+    static char* spectralTypes[] = {"VIII", "VII", "VI", "III-IV", "III/IV", "IV-III", "IV/III",
                              "II-III", "II/III", "I-II", "I/II", "III", "IB-II", "IB/II", 
                              "IBV", "II", "IV", "V", "(I)", "IA-O/IA", "IA-O", "IA/AB",
                              "IAB-B", "IAB", "IA", "IB", "I",
                               NULL};
-    alxSTAR_TYPE luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF, alxGIANT, alxGIANT, 
+    static alxSTAR_TYPE luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF, alxGIANT, alxGIANT, 
                                         alxGIANT, alxGIANT, alxGIANT, alxGIANT, alxSUPER_GIANT, 
                                         alxSUPER_GIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT, 
                                         alxSUPER_GIANT, alxGIANT, alxDWARF, alxDWARF,
                                         alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, 
                                         alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT, 
                                         alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT};
+    
     char* luminosityClass = spectralType->luminosityClass;
     mcsUINT32 index = 0;
     while (spectralTypes[index] != NULL)
@@ -2223,10 +2222,16 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
 {
     logTrace("alxGetUDTable()");
 
+    /* TEST load UD Table properly (could be put in table struct directly ??) */
+/*    static mcsMUTEX mutex_udTable = MCS_MUTEX_STATIC_INITIALIZER; */
+
     static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg"};
+
+/*    mcsMutexLock(&mutex_udTable); */
 
     if (udTable.loaded == mcsTRUE)
     {
+/*        mcsMutexUnlock(&mutex_udTable); */
         return &udTable;
     }
 
@@ -2234,6 +2239,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
     char* fileName = miscLocateFile(udTable.fileName);
     if (fileName == NULL)
     {
+/*        mcsMutexUnlock(&mutex_udTable); */
         return NULL;
     }
     
@@ -2244,6 +2250,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
+/*        mcsMutexUnlock(&mutex_udTable); */
         return NULL;
     }
 
@@ -2267,6 +2274,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
+/*        mcsMutexUnlock(&mutex_udTable); */
                 return NULL;
             }
 
@@ -2291,6 +2299,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+/*        mcsMutexUnlock(&mutex_udTable); */
                 return NULL;
             }
             
@@ -2308,6 +2317,8 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
     /* Destroy the temporary dynamic buffer used to parse the ud table file */
     miscDynBufDestroy(&dynBuf);
 
+/*        mcsMutexUnlock(&mutex_udTable); */
+    
     /* Return a pointer on the freshly loaded  ud table */
     return &udTable;
 }
@@ -2372,7 +2383,7 @@ mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE       ld,
         return mcsFAILURE;
     }
 
-    alxUD_CORRECTION_TABLE* udTable=alxGetUDTable();
+    alxUD_CORRECTION_TABLE* udTable = alxGetUDTable();
     if (udTable == NULL)
     {
         return mcsFAILURE;
@@ -2436,5 +2447,39 @@ mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE       ld,
 
     return mcsSUCCESS;
 }
+
+/**
+ * Initialize this code
+ * @return void
+ */
+mcsCOMPL_STAT alxCorrectedMagnitudeInit(void)
+{
+    alxGetExtinctionRatioTable();
+
+    alxSPECTRAL_TYPE *spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
+
+    strcpy(spectralType->luminosityClass, "VIII"); /* alxDWARF */
+    alxGetColorTableForStar(spectralType, mcsTRUE);
+    alxGetColorTableForStar(spectralType, mcsFALSE);
+
+    strcpy(spectralType->luminosityClass, "IV/III"); /* alxGIANT */
+    alxGetColorTableForStar(spectralType, mcsTRUE);
+    alxGetColorTableForStar(spectralType, mcsFALSE);
+    
+    strcpy(spectralType->luminosityClass, "I"); /* alxSUPER_GIANT */
+    alxGetColorTableForStar(spectralType, mcsTRUE);
+    alxGetColorTableForStar(spectralType, mcsFALSE);
+    
+    free(spectralType);
+    
+    alxLoadAkariTable();
+    
+    alxGetTeffLoggTable();
+    
+    alxGetUDTable();
+    
+    return mcsSUCCESS;
+}
+
 
 /*___oOo___*/

@@ -9,8 +9,6 @@
  * @sa JMMC-MEM-2600-0009 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxAngularDiameter.c,v 1.38 2011-03-03 12:59:53 lafrasse Exp $"; 
-
 
 /* 
  * System Headers
@@ -507,6 +505,17 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                 "they are not kept");
     }
 
+    return mcsSUCCESS;
+}
+
+/**
+ * Initialize this code
+ * @return void
+ */
+mcsCOMPL_STAT alxAngularDiameterInit(void)
+{
+    alxGetPolynamialForAngularDiameter();
+    
     return mcsSUCCESS;
 }
 /*___oOo___*/
