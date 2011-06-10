@@ -681,7 +681,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     }
     
     /* Compute the log message */
-    sprintf(logMsg, "%s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
+    snprintf(logMsg, 8192,  "%s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
             mcsGetProcName(), modName, priorityMsg, infoTime, fileLine, logText);
 
     mcsMutexLock(&logMutex);
@@ -777,7 +777,7 @@ void logGetTimeStamp(mcsSTRING32 timeStamp)
     strftime(timeStamp, sizeof(mcsSTRING32), "%Y-%m-%dT%H:%M:%S", &timeNow);
  
     /* Add milli-second and micro-second */
-    sprintf(tmpBuf, "%.6f", time.tv_usec/1e6);
+    snprintf(tmpBuf, sizeof(mcsSTRING32), "%.6f", time.tv_usec/1e6);
     strcat(timeStamp, &tmpBuf[1]);
 }
 
