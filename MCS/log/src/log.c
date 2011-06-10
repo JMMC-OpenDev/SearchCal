@@ -575,7 +575,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
         char buffer[8192];
         buffer[0] = '\0';
         
-        vsprintf(buffer, logFormat, argPtr);
+        vsnprintf(buffer, 8192, logFormat, argPtr);
         status = logData(modName, level, infoTime, fileLine, buffer);
         va_end(argPtr);
     }
