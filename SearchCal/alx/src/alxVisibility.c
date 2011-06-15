@@ -68,7 +68,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
     /* and its assosiated error for Diameter Uniform Disc */
     visibilities->visError  = 2 * jnf(2, x) * angDiamError / angDiam;
 
-    /* Compute V² */
+    /* Compute Vï¿½ */
     visibilities->vis2 = pow(visibilities->vis, 2);
 
     /* and its assosiated error for Diameter Uniform Disc */
@@ -80,8 +80,8 @@ mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
             angDiamError, baseMax, wlen);
     logTest("V   = %.6f", visibilities->vis);
     logTest("dV  = %.6f", visibilities->visError);
-    logTest("V²  = %.6f", visibilities->vis2);
-    logTest("dV² = %.6f", visibilities->vis2Error);
+    logTest("V2  = %.6f", visibilities->vis2);
+    logTest("dV2 = %.6f", visibilities->vis2Error);
 
     return mcsSUCCESS;
 }
