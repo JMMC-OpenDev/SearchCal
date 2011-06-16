@@ -1022,11 +1022,13 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
          */
         if (alxString2SpectralType(spType, spectralType) == mcsFAILURE)
         {
+            free(spectralType);
             return mcsFAILURE;
         }
     }
     else
     {
+        free(spectralType);
         spectralType = NULL;
     }
     
@@ -1034,6 +1036,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
     alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
     if (colorTable == NULL)
     {
+        free(spectralType);
         return mcsFAILURE;
     }
 
@@ -1042,6 +1045,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
+        free(spectralType);
         return mcsFAILURE;
     }
 
@@ -1223,11 +1227,13 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32            
          */
         if (alxString2SpectralType(spType, spectralType) == mcsFAILURE)
         {
+            free(spectralType);
             return mcsFAILURE;
         }
     }
     else
     {
+        free(spectralType);
         spectralType = NULL;
         /* printf("FAINT--Spectral Type Pointer NULL!\n"); */
     }
@@ -1236,6 +1242,7 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32            
     alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsFALSE);
     if (colorTable == NULL)
     {
+        free(spectralType);
         return mcsFAILURE;
     }
 
@@ -1244,6 +1251,7 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32            
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
+        free(spectralType);
         return mcsFAILURE;
     }
 
