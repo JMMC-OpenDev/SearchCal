@@ -575,7 +575,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
         char buffer[8192];
         buffer[0] = '\0';
         
-        vsnprintf(buffer, 8192, logFormat, argPtr);
+        vsnprintf(buffer, sizeof(buffer), logFormat, argPtr);
         status = logData(modName, level, infoTime, fileLine, buffer);
         va_end(argPtr);
     }
@@ -608,6 +608,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
         /* If message can be printed out */
         if (allowed == mcsTRUE)
         {
+            /* TODO : use a single call to fprintf(stdout) to avoid interlaced output made by multiple threads */
             /* Print the log message header */
             fprintf(stdout, "%s - %s - ", mcsGetProcName(), modName);
             fflush(stdout);
@@ -659,13 +660,9 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
                       const char *logText)
 {
     /* Message formating gstuff */
-    mcsSTRING32     infoTime;
     char           *priorityMsg = NULL;
     char            logMsg[8192];
     logMsg[0]       = '\0';
-
-    /* Get UNIX-style time and display as number and string. */
-    logGetTimeStamp(infoTime);
 
     /* initialize priority according given loglevel */
     switch (level)
@@ -681,8 +678,8 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     }
     
     /* Compute the log message */
-    snprintf(logMsg, 8192,  "%s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
-            mcsGetProcName(), modName, priorityMsg, infoTime, fileLine, logText);
+    snprintf(logMsg, sizeof(logMsg),  "%s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
+            mcsGetProcName(), modName, priorityMsg, timeStamp, fileLine, logText);
 
     mcsMutexLock(&logMutex);
 
