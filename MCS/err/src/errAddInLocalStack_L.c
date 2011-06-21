@@ -7,9 +7,6 @@
  * Definition of errAddInLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errAddInLocalStack_L.c,v 1.15 2006-01-10 14:40:39 mella Exp $"; 
-
-
 /* 
  * System Headers
  */
@@ -47,8 +44,9 @@ errERROR_STACK errGlobalStack;
 /*
  * Declaration of local functions
  */
-static const char *errGetErrProp(const char *moduleId, 
-                           int errorId, const char * propName);
+static mcsCOMPL_STAT errGetErrProp(const char *moduleId, 
+                          int errorId, const char *propName,
+                          mcsSTRING256* propValue);
 
 /*
  * Definition of local functions
@@ -65,8 +63,10 @@ static const char *errGetErrProp(const char *moduleId,
  *
  * \return property value or NULL if not found. 
  */
-static const char *errGetErrProp(const char *moduleId, 
-                                 int errorId, const char * propName){
+static mcsCOMPL_STAT errGetErrProp(const char *moduleId, 
+                          int errorId, const char *propName,
+                          mcsSTRING256* propValue)
+{
 
     GdomeDOMImplementation *domimpl;
     GdomeDocument *doc;
@@ -77,12 +77,14 @@ static const char *errGetErrProp(const char *moduleId,
     unsigned long i, nbChilds, nbTags;
     mcsINT32 id;
     mcsINT32 node;
-    mcsSTRING256 propValue;
     mcsSTRING256 errFileName;
     char *envVar;
     mcsLOGICAL errDefFileFound;
     struct stat statBuf;
-    char *retVal = NULL;
+    mcsCOMPL_STAT result = mcsFAILURE;
+    
+    /* reset result */
+    *propValue[0] = '\0';
 
     /* Look for the error definition file */
     errDefFileFound= mcsFALSE;
@@ -131,8 +133,8 @@ static const char *errGetErrProp(const char *moduleId,
             if (stat(errFileName, &statBuf) == 0)
             {
                 errDefFileFound = mcsTRUE;
-	        }
-	    }
+            }
+        }
     }
 
     /* If error definition file has not been found */
@@ -140,7 +142,7 @@ static const char *errGetErrProp(const char *moduleId,
     {
         logWarning ("Error definition file '%sErrors.xml' can not be found",
                     moduleId);
-        return NULL;
+        return mcsFAILURE;
     }
 
     logTrace("Used error definition file '%s'", errFileName);
@@ -163,7 +165,7 @@ static const char *errGetErrProp(const char *moduleId,
         
         mcsUnlockGdomeMutex();
         
-        return NULL;
+        return mcsFAILURE;
     }
 
     /* Get reference to the root element of the document */
@@ -178,7 +180,7 @@ static const char *errGetErrProp(const char *moduleId,
         
         mcsUnlockGdomeMutex();
 
-        return NULL;
+        return mcsFAILURE;
     }
 
     /* Get the reference to the childrens NodeList of the root element */
@@ -332,8 +334,8 @@ static const char *errGetErrProp(const char *moduleId,
                     goto errCond;         
                 }
 
-                strncpy(propValue, value->str, sizeof(mcsSTRING256)-1);
-                retVal = propValue;
+                strncpy(*propValue, value->str, sizeof(mcsSTRING256)-1);
+                result = mcsSUCCESS;
 
                 gdome_nl_unref(texts, &exc);                 
                 gdome_el_unref(elerr, &exc);
@@ -346,7 +348,7 @@ static const char *errGetErrProp(const char *moduleId,
     }
 
     /* Check the error property has bben found */
-    if (retVal == NULL)
+    if (result == mcsFAILURE)
     {
         logWarning ("Definition of errorId #%d not found in error "
                     "definition file '%s'",
@@ -361,9 +363,8 @@ errCond:
     gdome_di_unref (domimpl, &exc);
     
     mcsUnlockGdomeMutex();
-
-    /* Return property value */
-    return retVal;
+    
+    return result;
 }
 
 /**
@@ -391,7 +392,7 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     mcsSTRING256 format;
     mcsSTRING256 errName;
     mcsSTRING256 runTimePar;
-    const char   *propValue;
+    mcsSTRING256 propValue;
 
     logTrace("errAddInLocalStack_v()");
 
@@ -402,24 +403,20 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     } 
 
     /* Get error severity */
-    propValue = errGetErrProp(moduleId, errorId, "errSeverity");
-    if (propValue == NULL)
+    if (errGetErrProp(moduleId, errorId, "errSeverity", &propValue) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     severity = (char)toupper((int)propValue[0]);
 
     /* Get error format */
-    propValue = errGetErrProp(moduleId, errorId, "errFormat");
-    if (propValue == NULL)
+    if (errGetErrProp(moduleId, errorId, "errFormat", &format) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    strcpy(format, propValue);
 
     /* Get error format */
-    propValue = errGetErrProp(moduleId, errorId, "errName");
-    if (propValue == NULL)
+    if (errGetErrProp(moduleId, errorId, "errName", &propValue) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -429,7 +426,7 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     logGetTimeStamp(timeStamp);
 
     /* Fill the error message */
-    vsprintf(runTimePar, format, argPtr);
+    vsnprintf(runTimePar, sizeof(mcsSTRING256) - 1, format, argPtr);
     
     /* Add error to the stack */
     return (errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId,

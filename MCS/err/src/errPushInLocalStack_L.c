@@ -7,8 +7,6 @@
  * Definition of errPushInLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errPushInLocalStack_L.c,v 1.8 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -48,7 +46,7 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
                                   mcsINT32       errorId,
                                   mcsLOGICAL     isErrUser,
                                   char           severity,
-                                  char           *runTimePar)
+                                  const char     *runTimePar)
 {
     mcsINT32 errNum;
 
@@ -90,7 +88,8 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
     error->stack[errNum].errorId = errorId;
     error->stack[errNum].isErrUser = isErrUser;
     error->stack[errNum].severity = severity;
-    strcpy((char *)error->stack[errNum].runTimePar, runTimePar);
+    strncpy((char *)error->stack[errNum].runTimePar, runTimePar, 
+            sizeof(mcsSTRING256)-1);
 
     /* Display newly error added (for debug purpose only) */
     logDebug("%s - %s %s %s %d %c %s\n",
