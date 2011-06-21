@@ -7,13 +7,13 @@
  * vobsSCENARIO class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO.cpp,v 1.49 2011-02-10 17:17:21 lafrasse Exp $"; 
-
-
 /* 
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 using namespace std;
 #include<list>
 
@@ -115,14 +115,14 @@ mcsCOMPL_STAT vobsSCENARIO::Init(vobsREQUEST * request)
  * @return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32                   catalogName,
+mcsCOMPL_STAT vobsSCENARIO::AddEntry(const mcsSTRING32             catalogName,
                                      vobsREQUEST*                  request,
                                      vobsSTAR_LIST*                listInput,
                                      vobsSTAR_LIST*                listOutput,
                                      vobsACTION                    action,
                                      vobsSTAR_COMP_CRITERIA_LIST*  criteriaList,
                                      vobsFILTER*                   filter,
-                                     string                        queryOption)
+                                     const char*                   queryOption)
 {
     logTrace("vobsSCENARIO::AddEntry()");
     
@@ -137,7 +137,10 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(mcsSTRING32                   catalogName,
                              criteriaList,
                              filter);
     // Set query option
-    entry.SetQueryOption(queryOption);
+    if (queryOption != NULL)
+    {
+        entry.SetQueryOption(string(queryOption));
+    }
     
     // Increment true catalog counter (if not a filter)
     if (strcmp(catalogName, vobsNO_CATALOG_ID) != 0)
@@ -176,7 +179,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 {
     logTrace("vobsSCENARIO::Execute()");
 
-    // Create a temporary list of star in xhich will be store the lst input
+    // Create a temporary list of star in which will be store the lst input
     vobsSTAR_LIST tempList;
     // Create an iterator for this temporary list
     _entryIterator = _entryList.begin();
@@ -232,7 +235,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
 
             // Start time counter
-            timlogDebugStart(timLogActionName);
+            timlogInfoStart(timLogActionName);
 
             // Write the current action in the shared database
             mcsSTRING256 message;

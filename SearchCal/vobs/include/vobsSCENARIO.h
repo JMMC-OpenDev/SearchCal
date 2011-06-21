@@ -58,14 +58,14 @@ public :
     vobsSCENARIO(sdbENTRY* progress);
     virtual ~vobsSCENARIO(); 
     
-    virtual mcsCOMPL_STAT AddEntry(mcsSTRING32      catalog,
-                                   vobsREQUEST      *request,
-                                   vobsSTAR_LIST    *listInput,
-                                   vobsSTAR_LIST    *listOutput,
-                                   vobsACTION       action,
+    virtual mcsCOMPL_STAT AddEntry(const mcsSTRING32 catalog,
+                                   vobsREQUEST       *request,
+                                   vobsSTAR_LIST     *listInput,
+                                   vobsSTAR_LIST     *listOutput,
+                                   vobsACTION        action,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL,
-                                   vobsFILTER       *filter=NULL,
-                                   string queryOption="");
+                                   vobsFILTER        *filter=NULL,
+                                   const char*       queryOption = NULL);
   
     // Execute the scenario
     virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
