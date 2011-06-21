@@ -59,7 +59,7 @@ public:
 
     vobsSTAR_PROPERTY(const char*        id,
                       const char*        name,
-                      vobsPROPERTY_TYPE  type,
+                      const vobsPROPERTY_TYPE   type,
                       const char*        unit        = NULL,
                       const char*        format      = NULL,
                       const char*        link        = NULL,
@@ -121,21 +121,21 @@ public:
 protected:
     
 private:
-    string               _id;              // Identifier
-    string               _name;            // Name
-    vobsPROPERTY_TYPE    _type;            // Type of the value
-    string               _unit;            // Unit of the value
-    string               _format;          // Format to print value 
-    string               _link;            // CDS link of the value
-    string               _description;     // Description of the value
-    mcsSTRING64          _value;           // Value
-    mcsDOUBLE             _numerical;       // Value as a true floating point numerical (!)
-    vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index
-    string               _origin;          /* Either the catalog name where the
-                                            * value has been found or
-                                            * vobsSTAR_COMPUTED_PROP if the
-                                            * value has been calculated.
-                                            */
+    const char*              _id;              // Identifier
+    const char*              _name;            // Name
+    vobsPROPERTY_TYPE        _type;            // Type of the value
+    const char*              _unit;            // Unit of the value
+    const char*              _format;          // Format to print value 
+    const char*              _link;            // CDS link of the value
+    const char*              _description;     // Description of the value
+    mcsSTRING64              _value;           // Value
+    mcsDOUBLE                _numerical;       // Value as a true floating point numerical (!)
+    vobsCONFIDENCE_INDEX     _confidenceIndex; // Confidence index
+    mcsSTRING32              _origin;          /* Either the catalog name where the
+                                                * value has been found or
+                                                * vobsSTAR_COMPUTED_PROP if the
+                                                * value has been calculated.
+                                                */
 };
 
 #endif /*!vobsSTAR_PROPERTY_H*/
