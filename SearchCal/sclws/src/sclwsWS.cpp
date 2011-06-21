@@ -7,8 +7,6 @@
  *  Definition of sclwsWS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsWS.cpp,v 1.9 2009-04-17 15:38:44 lafrasse Exp $"; 
-
 /* 
  * System Headers 
  */
@@ -79,6 +77,9 @@ using namespace std;
     } \
 }
 
+/** minimum delay (ms) before freeing server resources to let pending GetCalStatus queries run whereas GetCalQuery finished */
+#define DELAY_BEFORE_GC 2000
+
 /*
  * Local Variables 
  */
@@ -86,12 +87,12 @@ using namespace std;
 /**
  * Shared mutex to circumvent un thread safe STL
  */
-thrdMUTEX stlMutex = PTHREAD_MUTEX_INITIALIZER;
+thrdMUTEX stlMutex = MCS_MUTEX_STATIC_INITIALIZER;
 
 /**
  * Shared mutex to circumvent un thread safe to uuid library
  */
-thrdMUTEX uuidMutex = PTHREAD_MUTEX_INITIALIZER;
+thrdMUTEX uuidMutex = MCS_MUTEX_STATIC_INITIALIZER;
 
 /**
  * Used to store each "Communication ID"-"sclsvSERVER instance" couples
@@ -105,6 +106,23 @@ map<string,sclsvrSERVER*> sclwsServerList;
 multimap<string,pthread_t> sclwsThreadList;
 typedef multimap<string,pthread_t>::iterator sclwsTHREAD_ITERATOR;
 typedef pair<sclwsTHREAD_ITERATOR, sclwsTHREAD_ITERATOR> sclwsTHREAD_RANGE;
+
+/* server information used by GC thread */
+struct server_info {
+   struct timeval lastUsedTime; /* last used time */
+   string jobId;                /* job id */
+   sclsvrSERVER* server;        /* server instance */
+};
+
+/**
+ * Shared mutex to circumvent un thread safe STL
+ */
+thrdMUTEX gcMutex = MCS_MUTEX_STATIC_INITIALIZER;
+
+/**
+ * Used to store each inactive server instance to free
+ */
+static list<server_info*> gcServerList;
 
 /*
  * Local methods
@@ -135,7 +153,7 @@ mcsUINT16 sclwsGetServerPortNumber(void)
     return readPortNumber;
 }
 
-int sclwsDumpServerList(struct soap* soapContext, char* methodName, char* jobId)
+int sclwsDumpServerList(struct soap* soapContext, const char* methodName, char* jobId)
 {
     if (logGetStdoutLogLevel() >= logDEBUG)
     {
@@ -157,6 +175,102 @@ int sclwsDumpServerList(struct soap* soapContext, char* methodName, char* jobId)
 /*
  * Public methods
  */
+
+/**
+ * Free server instances (GC like)
+ * @param forceCleanup flag to force cleanup
+ */
+void freeServerList(const bool forceCleanup)
+{
+    /*
+     * Note/TODO : it waits for the known active GetCalStatus thread but if this query answers 1,
+     * another future GetCalStatus query will happen next, and it will then fail (no server associated to jobId) !!
+     * 
+     * TODO: Define a proper endSession message or use GC like algorithm (semaphore ...)
+     * An alternative is to ignore the GetCalStatus exception in case the GetCal succeeds first.
+     */
+    
+    thrdMutexLock(&gcMutex);
+
+    if (!gcServerList.empty())
+    {
+        logDebug("GC: freeServerList: enter");
+        
+        struct timeval now;
+        long deltaMillis;
+        server_info* info;
+        string jobId;
+        bool jobHasThread;
+
+        /* Get local time */
+        gettimeofday(&now, NULL);
+        
+        list<server_info*>::iterator iter;
+        for (iter = gcServerList.begin(); iter != gcServerList.end(); iter++)
+        {
+            info = *iter;
+
+            jobId = info->jobId;
+            
+            // skip too recent ones (1s) ...
+            
+            deltaMillis  = (now.tv_sec  - info->lastUsedTime.tv_sec) * 1000;
+            deltaMillis += (now.tv_usec - info->lastUsedTime.tv_usec) / 1000;
+            
+            if (forceCleanup || deltaMillis > DELAY_BEFORE_GC)
+            {
+
+                logDebug("GC: freeServerList: check Session '%s'", jobId.c_str());
+
+                jobHasThread = false;
+
+                thrdMutexLock(&stlMutex);
+
+                sclwsTHREAD_RANGE range = sclwsThreadList.equal_range(jobId);
+
+                // TODO: use a better solution to check if the range is empty
+                sclwsTHREAD_ITERATOR threadIterator;
+                for (threadIterator = range.first; threadIterator != range.second; ++threadIterator)
+                {
+                    jobHasThread = true;
+
+                    logInfo("GC: freeServerList: Session '%s' has at least one thread : %d", jobId.c_str(), threadIterator->second);
+
+                    break;
+                }
+
+                thrdMutexUnlock(&stlMutex);
+
+                if (!jobHasThread) {
+                    // do cleanup
+
+                    thrdMutexLock(&stlMutex);
+
+                    sclwsServerList.erase(jobId);
+
+                    thrdMutexUnlock(&stlMutex);
+
+                    // Delete the server instance
+                    logInfo("GC: freeServerList: Session '%s': deleting associated server.", jobId.c_str());
+
+                    // free Server resources:
+                    delete(info->server); 
+
+                    iter = gcServerList.erase(iter);
+
+                    // free server_info:
+                    delete(info);
+                }
+            } else {
+                logDebug("GC: Session '%s' terminated too recently = %d ms", jobId.c_str(), deltaMillis);
+            }
+        }
+
+        logDebug("GC: freeServerList: exit");
+    }
+    
+    thrdMutexUnlock(&gcMutex);
+}
 
 
 /*
@@ -263,15 +377,6 @@ int ns__GetCalSearchCal(struct soap* soapContext,
                     char** voTable)
 {
     logTrace("ns__GetCalSearchCal('%s')", jobId);
-            
-    STL_LOCK();
-    
-    // Store the thread ID iterator (used in case a Cancel occurs while this is running)
-    // @TODO: this iterator may be inconsistent at erase time (concurrency)
-    sclwsTHREAD_ITERATOR threadIterator = 
-        sclwsThreadList.insert(make_pair(jobId, pthread_self()));
-
-    STL_UNLOCK();
 
     // Test parameters validity
     if (soapContext == NULL)
@@ -294,32 +399,44 @@ int ns__GetCalSearchCal(struct soap* soapContext,
         errAdd(sclwsERR_NULL_PTR, "voTable");
         sclwsReturnSoapError();
     }
-
+    
     STL_LOCK();
     
     // Retrieve the sclsvrSERVER instance associated with the received UUID
     sclsvrSERVER* server = sclwsServerList[jobId];
-
-    STL_UNLOCK();
     
     if (server == NULL)
     {
+        STL_UNLOCK();
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
         sclwsReturnSoapError();
     }
+    
+    // Store the thread ID iterator (used in case a Cancel occurs while this is running)
+    // @TODO: this iterator may be inconsistent at erase time (concurrency)
+    sclwsTHREAD_ITERATOR threadIterator = 
+        sclwsThreadList.insert(make_pair(jobId, pthread_self()));
+
+    STL_UNLOCK();
 
     logTest("\tSession '%s': launching query.", jobId);
+
+    int status = SOAP_OK;
+    
+    server_info* info;
+    const char* result = NULL;
+    uint resultSize = 0;
 
     // Launch the GETCAL query with the received paramters
     miscoDYN_BUF dynBuf;
     if (server->GetCal(query, dynBuf) == mcsFAILURE)
     {
-        sclwsReturnSoapError();
+        sclwsDefineSoapError();
+        status = SOAP_ERR;
+        goto cleanup;
     }
 
     // Allocate SOAP-aware memory to return the resulting VO Table
-    char* result = NULL;
-    uint resultSize = 0;
     dynBuf.GetNbStoredBytes(&resultSize);
     if (resultSize != 0)
     {
@@ -338,30 +455,34 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     logTest("\tSession '%s': terminating query.", jobId);
 
+cleanup:    
+    
     STL_LOCK();
     
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
 
     STL_UNLOCK();
-
-    // LEAK FIX = FREE MEMORY (LAURENT)
-    // @TODO : implement a GC-like algorithm !!!
-
-    // @TODO : remove ASAP
-    sleep(1);
-
-    STL_LOCK();
     
-    sclwsServerList.erase(jobId);
-
-    STL_UNLOCK();
+    // add server information for GC thread:
     
-    // Delete the server instance
-    logDebug("\tSession '%s': deleting associated server.", jobId);
-    delete(server);
+    info = new server_info;
+    
+    /* Get local time */
+    gettimeofday(&info->lastUsedTime, NULL);
 
-    return sclwsDumpServerList(soapContext, "GetCalSearchCal", jobId);
+    info->jobId = string(jobId);
+    info->server = server;
+
+    thrdMutexLock(&gcMutex);
+            
+    gcServerList.push_back(info);
+    
+    thrdMutexUnlock(&gcMutex);
+
+    sclwsDumpServerList(soapContext, "GetCalSearchCal", jobId);
+    
+    return status;
 }
 
 /**
@@ -379,15 +500,6 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
 {
     logTrace("ns__GetCalQueryStatus('%s')", jobId);
 
-    STL_LOCK();
-    
-    // Store the thread ID iterator (used in case a Cancel occurs while this is running)
-    // @TODO: this iterator may be inconsistent at erase time (concurrency)
-    sclwsTHREAD_ITERATOR threadIterator = 
-        sclwsThreadList.insert(make_pair(jobId, pthread_self()));
-
-    STL_UNLOCK();
-
     // Test parameters validity
     if (soapContext == NULL)
     {
@@ -404,19 +516,25 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
         errAdd(sclwsERR_NULL_PTR, "status");
         sclwsReturnSoapError();
     }
-
+    
     STL_LOCK();
     
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = sclwsServerList[jobId];
-
-    STL_UNLOCK();
     
     if (server == NULL)
     {
+        STL_UNLOCK();
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
         sclwsReturnSoapError();
     }
+
+    // Store the thread ID iterator (used in case a Cancel occurs while this is running)
+    // @TODO: this iterator may be inconsistent at erase time (concurrency)
+    sclwsTHREAD_ITERATOR threadIterator = 
+        sclwsThreadList.insert(make_pair(jobId, pthread_self()));
+    
+    STL_UNLOCK();
 
     // Allocate SOAP-aware memory to return the current catalog name
     int statusLength = 256; // Should be enough !
@@ -424,11 +542,11 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
     if (*status == NULL)
     {
         errAdd(sclwsERR_ALLOC_MEM, statusLength);
-        sclwsReturnSoapError();
+        goto errCond;
     }
     if (server->GetStatus(*status) == mcsFAILURE)
     {
-        sclwsReturnSoapError();
+        goto errCond;
     }
 
     logTest("\tSession '%s': query status = '%s'.", jobId, *status);
@@ -441,6 +559,17 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
     STL_UNLOCK();
 
     return sclwsDumpServerList(soapContext, "GetCalQueryStatus", jobId);
+    
+errCond:
+
+    STL_LOCK();
+
+    // Delete the thread ID
+    sclwsThreadList.erase(threadIterator);
+
+    STL_UNLOCK();
+    
+    sclwsReturnSoapError();
 }
 
 /**
@@ -494,6 +623,11 @@ int ns__GetCalCancelSession(struct soap* soapContext,
 
     // For each thread launched with the current job ID
     logDebug("\tSession '%s': killing all associated threads,", jobId);
+    
+    /*
+     * TODO: simply add this session to gcServerList
+     */
+    
     
     // @TODO : use that to fix STL erase higher ....
     sclwsTHREAD_RANGE range = sclwsThreadList.equal_range(jobId);
