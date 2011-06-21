@@ -7,9 +7,6 @@
  * sclsvrGetCalCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetCalCB.cpp,v 1.59.2.1 2011-04-15 22:42:07 duvert Exp $"; 
-
-
 /* 
  * System Headers 
  */
@@ -186,7 +183,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     strcpy(requestString, query);
  
     // Start timer log
-    timlogDebugStart("GETCAL");
+    timlogInfoStart("GETCAL");
     
     // Monitoring task parameters
     sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
@@ -358,7 +355,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     { 
         string xmlOutput;
         request.AppendParamsToVOTable(xmlOutput);
-        char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+        const char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
         // Get the software name and version
         mcsSTRING32 softwareVersion;
         snprintf(softwareVersion, sizeof(softwareVersion), 
