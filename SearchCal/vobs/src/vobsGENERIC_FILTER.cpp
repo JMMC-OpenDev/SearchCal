@@ -7,12 +7,11 @@
  * Definition of vobsGENERIC_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsGENERIC_FILTER.cpp,v 1.8 2011-03-03 13:09:42 lafrasse Exp $"; 
-
 /* 
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 /*
@@ -43,8 +42,8 @@ using namespace std;
  * @param exprType type of expression; vobsAND or vobsOR
  */
 vobsGENERIC_FILTER::vobsGENERIC_FILTER(const char*         filterId,
-                                             char*         propId, 
-                                       vobsEXPRESSION_TYPE exprType)
+                                         const char*         propId, 
+                                         const vobsEXPRESSION_TYPE exprType)
                    :vobsFILTER(filterId)
 {
     // Copy the name of property
@@ -73,8 +72,8 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
-                                               mcsDOUBLE value)
+mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
+                                                const mcsDOUBLE value)
 {
     logTrace("vobsGENERIC_FILTER::AddCondition(float)");
 
@@ -94,7 +93,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
     }
 
     // Add new condition to the list
-    vobsCONDITION condition(op, value);;
+    vobsCONDITION condition(op, value);
     _conditions.push_back(condition);
 
     return mcsSUCCESS;
@@ -109,8 +108,8 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
-                                               char *value)
+mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
+                                                const char *value)
 {
     logTrace("vobsGENERIC_FILTER::AddCondition(string)");
 
@@ -130,7 +129,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(vobsOPERATOR op,
     }
 
     // Add new condition to the list
-    vobsCONDITION condition(op, value);;
+    vobsCONDITION condition(op, value);
     _conditions.push_back(condition);
 
     return mcsSUCCESS;
@@ -226,7 +225,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             else
             {
                 mcsDOUBLE numValue;
-                string   strValue;
+                string strValue;
                 if (_propType == vobsFLOAT_PROPERTY)
                 {
                     if (star->GetPropertyValue(_propId, 
@@ -289,15 +288,15 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 /**
  * Class constructor
  */
-vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(vobsOPERATOR op, 
-                                                 mcsDOUBLE operand)
+vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(const vobsOPERATOR op, 
+                                                  const mcsDOUBLE operand)
 {
     _operator = op;
     _numOperand = operand;
 }
 
-vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(vobsOPERATOR op,
-                                                 char *operand)
+vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(const vobsOPERATOR op,
+                                                  const char *operand)
 {
     _operator = op;
     _strOperand = operand;
@@ -313,7 +312,7 @@ vobsGENERIC_FILTER::vobsCONDITION::~vobsCONDITION()
 /**
  * Condition evaluators.
  */
-bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(mcsDOUBLE value)
+bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(const mcsDOUBLE value)
 {
     switch (_operator)
     {
@@ -359,7 +358,7 @@ bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(mcsDOUBLE value)
     return false;
 }
 
-bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(string value)
+bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(const string& value)
 {
     switch (_operator)
     {

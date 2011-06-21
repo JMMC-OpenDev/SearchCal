@@ -63,14 +63,14 @@ class vobsGENERIC_FILTER : public vobsFILTER
 public:
     // Class constructor
     vobsGENERIC_FILTER(const char*         filterId,
-                             char*         propId,
-                       vobsEXPRESSION_TYPE exprType=vobsAND);
+                         const char*         propId,
+                         vobsEXPRESSION_TYPE exprType=vobsAND);
 
     // Class destructor
     virtual ~vobsGENERIC_FILTER();
 
-    virtual mcsCOMPL_STAT AddCondition(vobsOPERATOR op, mcsDOUBLE value);
-    virtual mcsCOMPL_STAT AddCondition(vobsOPERATOR op, char *value);
+    virtual mcsCOMPL_STAT AddCondition(const vobsOPERATOR op, const mcsDOUBLE value);
+    virtual mcsCOMPL_STAT AddCondition(const vobsOPERATOR op, const char *value);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
@@ -82,19 +82,19 @@ private:
     public:
 
         // Class constructor
-        vobsCONDITION(vobsOPERATOR op, mcsDOUBLE operand=0.0);
-        vobsCONDITION(vobsOPERATOR op, char *operand);
+        vobsCONDITION(const vobsOPERATOR op, const mcsDOUBLE operand=0.0);
+        vobsCONDITION(const vobsOPERATOR op, const char *operand);
 
         // Class destructor
         virtual ~vobsCONDITION();
 
         // Condition evaluation
-        bool Evaluate(mcsDOUBLE value);
-        bool Evaluate(string   value);
+        bool Evaluate(const mcsDOUBLE value);
+        bool Evaluate(const string& value);
 
     protected:
         vobsOPERATOR _operator;
-        mcsDOUBLE     _numOperand;
+        mcsDOUBLE    _numOperand;
         string       _strOperand;
 
     private:
