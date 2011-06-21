@@ -63,7 +63,7 @@ class vobsSTAR_LIST
                                 vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL, 
                                 mcsLOGICAL updateOnly=mcsFALSE);
 
-    virtual mcsCOMPL_STAT Sort(char *propertyId,
+    virtual mcsCOMPL_STAT Sort(const char *propertyId,
                                mcsLOGICAL reverseOrder=mcsFALSE);
 
     virtual void          Display(void);

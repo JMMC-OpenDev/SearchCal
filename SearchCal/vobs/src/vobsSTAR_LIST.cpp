@@ -6,10 +6,6 @@
  * @file
  * vobsSTAR_LIST class definition.
  */
-
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_LIST.cpp,v 1.38 2011-04-13 14:33:20 mella Exp $"; 
-
-
 /* 
  * System Headers 
  */
@@ -66,7 +62,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
 {
     logTrace("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
 
-    for (unsigned int el = 0; el < list.Size(); el++)
+    const unsigned int nbStars = list.Size();
+    for (unsigned int el = 0; el < nbStars; el++)
     {
         if (AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0)))) == mcsFAILURE)
         {
@@ -237,8 +234,6 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  */
 vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init) 
 {
-    logTrace("vobsSTAR_LIST::GetNextStar()");
-
     if ((init == mcsTRUE) || _starIterator == _starList.end())
     {
         _starIterator = _starList.begin();
@@ -280,8 +275,6 @@ vobsSTAR *vobsSTAR_LIST::GetNextStar(mcsLOGICAL init)
 vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
                                  vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    logTrace("vobsSTAR_LIST::GetStar()");
-
     // Search star in the list
     std::list<vobsSTAR *>::iterator iter;
     for (iter=_starList.begin(); iter != _starList.end(); iter++)
@@ -312,16 +305,18 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 {
     logTrace("vobsSTAR_LIST::Merge()");
 
+    vobsSTAR *starPtr;
+    vobsSTAR *starToUpdatePtr;
+    
     // For each star of the given list
-    unsigned int nbStars;
-    nbStars = list.Size();
+    const unsigned int nbStars = list.Size();
     for (unsigned int el = 0; el < nbStars; el++)
     {
-        vobsSTAR *starPtr;
         starPtr = list.GetNextStar((mcsLOGICAL)(el==0));
+        
         // If star is in the list
-        vobsSTAR *starToUpdatePtr;
         starToUpdatePtr = GetStar(*starPtr, criteriaList);
+        
         if (starToUpdatePtr != NULL)
         {
             // Update the star
@@ -353,7 +348,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
  *
  * @return mcsSUCCESS on successful completion, and mcsFAILURE otherwise. 
  */
-mcsCOMPL_STAT vobsSTAR_LIST::Sort(char *propertyId, mcsLOGICAL reverseOrder)
+mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrder)
 {
     logTrace("vobsSTAR_LIST::Sort()");
  
