@@ -7,9 +7,6 @@
  * Definition of vobsSTAR class.
  */
 
-
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR.cpp,v 1.94.2.2 2011-04-15 22:18:47 duvert Exp $"; 
-
 /*
  * System Headers
  */
@@ -34,6 +31,10 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+/* Blanking value used for parsed RA/DEC coordinates */
+#define EMPTY_COORD_DEG 1000.
+
+
 /*
  * Class constructor
  */
@@ -42,6 +43,10 @@ using namespace std;
  */
 vobsSTAR::vobsSTAR()
 {
+    // define ra/dec to blanking value:
+    _ra = EMPTY_COORD_DEG;
+    _dec = EMPTY_COORD_DEG;
+    
     // Add all star properties
     AddProperties();
 
@@ -63,8 +68,10 @@ vobsSTAR::vobsSTAR(vobsSTAR &star)
  */
 vobsSTAR&vobsSTAR::operator=(const vobsSTAR&star)
 {
-    logTrace("vobsSTAR::operator=()");
-   
+    // copy the parsed ra/dec:
+    _ra = star._ra;
+    _dec = star._dec;
+    
     // Clear the 2 internal maps
     _propertyList.erase(_propertyList.begin(), _propertyList.end());
     _propertyOrder.erase(_propertyOrder.begin(), _propertyOrder.end());
@@ -112,23 +119,16 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
-    logTrace("vobsSTAR::SetPropertyValue(char*)");
-
     // Look for the given property
-    map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
-    propertyIter = _propertyList.find(id);
-
-    // If no property with the given Id was found
-    if (propertyIter == _propertyList.end())
+    vobsSTAR_PROPERTY* property = GetProperty(id);
+    if (property == NULL)
     {
-        // Raise an error
-        errAdd(vobsERR_INVALID_PROPERTY_ID, id);
+        // Return error
         return mcsFAILURE;
     }
 
     // Set this property value
-    if (propertyIter->second.SetValue(value, origin, confidenceIndex, overwrite)
-        == mcsFAILURE)
+    if (property->SetValue(value, origin, confidenceIndex, overwrite) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -157,24 +157,16 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
-    logTrace("vobsSTAR::SetPropertyValue(float)");
-
-    
     // Look for the given property
-    map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
-    propertyIter = _propertyList.find(id);
-
-    // If no property with the given Id was found
-    if (propertyIter == _propertyList.end())
+    vobsSTAR_PROPERTY* property = GetProperty(id);
+    if (property == NULL)
     {
-        // Raise an error
-        errAdd(vobsERR_INVALID_PROPERTY_ID, id);
+        // Return error
         return mcsFAILURE;
     }
 
     // Set this property value
-    if (propertyIter->second.SetValue(value, origin, confidenceIndex, overwrite) 
-        == mcsFAILURE)
+    if (property->SetValue(value, origin, confidenceIndex, overwrite) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -195,23 +187,16 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
  */
 mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char *id)
 {
-    logTrace("vobsSTAR::ClearPropertyValue()");
-
-    
     // Look for the given property
-    map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
-    propertyIter = _propertyList.find(id);
-
-    // If no property with the given Id was found
-    if (propertyIter == _propertyList.end())
+    vobsSTAR_PROPERTY* property = GetProperty(id);
+    if (property == NULL)
     {
-        // Raise an error
-        errAdd(vobsERR_INVALID_PROPERTY_ID, id);
+        // Return error
         return mcsFAILURE;
     }
 
-    // Set this property value
-    if (propertyIter->second.ClearValue() == mcsFAILURE)
+    // Clear this property value
+    if (property->ClearValue() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -234,10 +219,8 @@ mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char *id)
  */
 vobsSTAR_PROPERTY* vobsSTAR::GetProperty(const char* id)
 {
-    logTrace("vobsSTAR::GetProperty()");
-
     // Look for property
-    map<string, vobsSTAR_PROPERTY> ::iterator propertyIter;
+    PropertyMap::iterator propertyIter;
     propertyIter = _propertyList.find(id);
 
     // If no property with the given Id was found
@@ -274,8 +257,6 @@ vobsSTAR_PROPERTY* vobsSTAR::GetProperty(const char* id)
  */
 vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
 {
-    logTrace("vobsSTAR::GetNextProperty()");
-
     // if the logical value of the parameter, init is mcsTRUE, the wanted value
     // is the first
     if (init == mcsTRUE)
@@ -301,7 +282,6 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
     return &(_propertyListIterator->second);
 }
 
-
 /**
  * Get a property character value.
  *
@@ -312,10 +292,22 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
  */
 const char *vobsSTAR::GetPropertyValue(const char* id)
 {
-    logTrace("(char*)vobsSTAR::GetPropertyValue()");
-
     // Look for property
     vobsSTAR_PROPERTY* property = GetProperty(id);
+    
+    return GetPropertyValue(property);
+}
+
+/**
+ * Get a property character value.
+ *
+ * @param property property to use.
+ *
+ * @return pointer to the found star property value on successful completion.
+ * Otherwise NULL is returned.
+ */
+const char* vobsSTAR::GetPropertyValue (const vobsSTAR_PROPERTY* property)
+{
     if (property == NULL)
     {
         // Return error
@@ -336,10 +328,22 @@ const char *vobsSTAR::GetPropertyValue(const char* id)
  */
 mcsCOMPL_STAT vobsSTAR::GetPropertyValue(const char* id, mcsDOUBLE *value)
 {
-    logTrace("vobsSTAR::GetPropertyValue(float*)");
-
     // Look for property
     vobsSTAR_PROPERTY* property = GetProperty(id);
+    
+    return GetPropertyValue(property, value);
+}
+
+/**
+ * Get a star property mcsDOUBLE value.
+ *
+ * @param property property to use.
+ * @param value pointer to store value.
+ *
+ * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT vobsSTAR::GetPropertyValue(const vobsSTAR_PROPERTY* property, mcsDOUBLE *value)
+{
     if (property == NULL)
     {
         // Return error
@@ -361,11 +365,27 @@ mcsCOMPL_STAT vobsSTAR::GetPropertyValue(const char* id, mcsDOUBLE *value)
  */
 vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(const char* id)
 {
-    logTrace("vobsSTAR::GetPropertyType()");
-
     // Look for property
-    vobsSTAR_PROPERTY *property;
-    property = GetProperty(id);
+    vobsSTAR_PROPERTY *property = GetProperty(id);
+    
+    return GetPropertyType(property);
+}
+
+/**
+ * Get a star property type.
+ *
+ * @sa vobsSTAR_PROPERTY
+ *
+ * @param property property to use.
+ *
+ * @return property type. Otherwise vobsSTRING_PROPERTY is returned.
+ */
+vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(const vobsSTAR_PROPERTY* property)
+{
+   if (property == NULL)
+    {
+        return vobsSTRING_PROPERTY;
+    }
 
     // Return property
     return (property->GetType());
@@ -382,11 +402,8 @@ vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(const char* id)
  */
 vobsCONFIDENCE_INDEX vobsSTAR::GetPropertyConfIndex(const char* id)
 {
-    logTrace("vobsSTAR::GetPropertyConfIndex()");
-
     // Look for property
-    vobsSTAR_PROPERTY *property;
-    property = GetProperty(id);
+    vobsSTAR_PROPERTY *property = GetProperty(id);
 
     // Return property confidence index
     return (property->GetConfidenceIndex());
@@ -403,10 +420,23 @@ vobsCONFIDENCE_INDEX vobsSTAR::GetPropertyConfIndex(const char* id)
  */
 mcsLOGICAL vobsSTAR::IsPropertySet(const char* id)
 {
-    logTrace("vobsSTAR::IsPropertySet()");
-
     // Look for the property
     vobsSTAR_PROPERTY *property = GetProperty(id);
+    
+    return IsPropertySet(property);
+}
+
+/**
+ * Check whether the property is set or not.
+ *
+ * @param property property to use.
+ *
+ * @warning If the given property is NULL, this method returns mcsFALSE.
+ *
+ * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
+ */
+mcsLOGICAL vobsSTAR::IsPropertySet(const vobsSTAR_PROPERTY* property)
+{
     if (property == NULL)
     {
         return mcsFALSE;
@@ -424,10 +454,8 @@ mcsLOGICAL vobsSTAR::IsPropertySet(const char* id)
  */
 mcsLOGICAL vobsSTAR::IsProperty(const char* id)
 {
-    logTrace("vobsSTAR::IsProperty()");
-
     // Look for property
-    map<string, vobsSTAR_PROPERTY>::iterator propertyIter;
+    PropertyMap::iterator propertyIter;
     propertyIter = _propertyList.find(id);
     if (propertyIter == _propertyList.end())
     {
@@ -437,6 +465,28 @@ mcsLOGICAL vobsSTAR::IsProperty(const char* id)
     return mcsTRUE;
 }
 
+/**
+ * Return if the RA property is set
+ * @return true if the RA coordinate is set
+ */
+mcsLOGICAL vobsSTAR::IsPropertyRaSet(void)
+{
+    // use cached ra coordinate:
+    if (_ra != EMPTY_COORD_DEG)
+    {
+        return mcsTRUE;
+    }
+
+    // Check if the value is set
+    if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE)
+    {
+        // if not, return error
+        errAdd(vobsERR_RA_NOT_SET);
+        return mcsFALSE;
+    }
+    
+    return mcsTRUE;
+}
 
 /**
  * Get right ascension (RA) coordinate in degrees.
@@ -447,22 +497,30 @@ mcsLOGICAL vobsSTAR::IsProperty(const char* id)
  */
 mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
 {
-    logTrace("vobsSTAR::GetRa()");
-
-    mcsSTRING64 raHms;
-    mcsDOUBLE    hh, hm, hs;
+    // use cached ra coordinate:
+    if (_ra != EMPTY_COORD_DEG)
+    {
+        ra = _ra;
+        return mcsSUCCESS;
+    }
+    
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_EQ_RA_MAIN);
 
     // Check if the value is set
-    if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE)
+    if (IsPropertySet(property) == mcsFALSE)
     {
         // if not, return error
         errAdd(vobsERR_RA_NOT_SET);
         return mcsFAILURE;
     }
+    
+    mcsSTRING64 raHms;
+    mcsDOUBLE    hh, hm, hs;
 
     // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
     // Replace ':' by ' ', and remove trailing and leading pace
-    strcpy(raHms, GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
+    strcpy(raHms, GetPropertyValue(property));
+    
     if (miscReplaceChrByChr(raHms, ':', ' ') == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -482,15 +540,41 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
     sign = (raHms[0] == '-') ? -1.0 : 1.0;
 
     // Convert to degrees
-    ra  = (hh + sign*hm/60.0 + sign*hs/3600.0) * 15.0;
+    ra  = (hh + sign * hm / 60.0 + sign * hs / 3600.0) * 15.0;
 
     // Set angle range [-180 - 180]
     if (ra > 180)
     {
         ra = -1.0 * (360 - ra);
     }
+    
+    // cache value:
+    _ra = ra;
 
     return mcsSUCCESS;
+}
+
+/**
+ * Return if the RA property is set
+ * @return true if the RA coordinate is set
+ */
+mcsLOGICAL vobsSTAR::IsPropertyDecSet(void)
+{
+    // use cached ra coordinate:
+    if (_dec != EMPTY_COORD_DEG)
+    {
+        return mcsTRUE;
+    }
+
+    // Check if the value is set
+    if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE)
+    {
+        // if not, return error
+        errAdd(vobsERR_DEC_NOT_SET);
+        return mcsFALSE;
+    }
+    
+    return mcsTRUE;
 }
 
 /**
@@ -502,22 +586,30 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
  */
 mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec)
 {
-    logTrace("vobsSTAR::GetDec()");
-
-    mcsSTRING64 decDms;
-    mcsDOUBLE dd,dm,ds;
+    // use cached dec coordinate:
+    if (_dec != EMPTY_COORD_DEG)
+    {
+        dec = _dec;
+        return mcsSUCCESS;
+    }
+    
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_EQ_DEC_MAIN);
 
     // Check if the value is set
-    if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE)
+    if (IsPropertySet(property) == mcsFALSE)
     {
         // if not, return error
         errAdd(vobsERR_DEC_NOT_SET);
         return mcsFAILURE;
     }
 
+    mcsSTRING64 decDms;
+    mcsDOUBLE dd,dm,ds;
+    
     // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
     // Replace ':' by ' ', and remove trailing and leading pace
-    strcpy(decDms, GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
+    strcpy(decDms, GetPropertyValue(property));
+    
     if (miscReplaceChrByChr(decDms, ':', ' ') == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -537,7 +629,10 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec)
     sign = (decDms[0] == '-') ? -1.0 : 1.0; 
 
     // Convert to degrees
-    dec  = dd + sign*dm/60.0 + sign*ds/3600.0;
+    dec  = dd + sign * dm / 60.0 + sign * ds / 3600.0;
+  
+    // cache value:    
+    _dec = dec;
 
     return mcsSUCCESS;
 }
@@ -552,13 +647,14 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec)
  */
 mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
 {
-    logTrace("vobsSTAR::GetId()");
-
     const char* propertyValue = NULL;
+    vobsSTAR_PROPERTY* property = NULL;
+    
+    property = GetProperty(vobsSTAR_ID_HD);
 
-    if (IsPropertySet(vobsSTAR_ID_HD) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        propertyValue = GetPropertyValue(vobsSTAR_ID_HD);
+        propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "HD %s", propertyValue);
@@ -566,9 +662,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    if (IsPropertySet(vobsSTAR_ID_HIP) == mcsTRUE)
+    property = GetProperty(vobsSTAR_ID_HIP);
+
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        propertyValue = GetPropertyValue(vobsSTAR_ID_HIP);
+        propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "HIP %s", propertyValue);
@@ -576,9 +674,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    if (IsPropertySet(vobsSTAR_ID_DM) == mcsTRUE)
+    property = GetProperty(vobsSTAR_ID_DM);
+
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        propertyValue = GetPropertyValue(vobsSTAR_ID_DM);
+        propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "DM %s", propertyValue);
@@ -586,9 +686,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    if (IsPropertySet(vobsSTAR_ID_TYC1) == mcsTRUE)
+    property = GetProperty(vobsSTAR_ID_TYC1);
+
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        propertyValue = GetPropertyValue(vobsSTAR_ID_TYC1);
+        propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "TYC1 %s", propertyValue);
@@ -596,9 +698,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
     
-    if (IsPropertySet(vobsSTAR_ID_2MASS) == mcsTRUE)
+    property = GetProperty(vobsSTAR_ID_2MASS);
+
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        propertyValue = GetPropertyValue(vobsSTAR_ID_2MASS);
+        propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "2MASS %s", propertyValue);
@@ -606,9 +710,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    if (IsPropertySet(vobsSTAR_ID_DENIS) == mcsTRUE)
+    property = GetProperty(vobsSTAR_ID_DENIS);
+
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        propertyValue = GetPropertyValue(vobsSTAR_ID_DENIS);
+        propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "DENIS %s", propertyValue);
@@ -616,9 +722,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    if (IsPropertySet(vobsSTAR_ID_TYC2) == mcsTRUE)
+    property = GetProperty(vobsSTAR_ID_TYC2);
+
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        propertyValue = GetPropertyValue(vobsSTAR_ID_TYC2);
+        propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "TYC2 %s", propertyValue);
@@ -626,9 +734,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    if (IsPropertySet(vobsSTAR_ID_TYC3) == mcsTRUE)
+    property = GetProperty(vobsSTAR_ID_TYC3);
+
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        propertyValue = GetPropertyValue(vobsSTAR_ID_TYC3);
+        propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
         {
             snprintf(starId, (maxLength - 1), "TYC3 %s", propertyValue);
@@ -636,15 +746,16 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    const char* raValue  = NULL;
-    const char* decValue = NULL;
-    if ((IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN)  == mcsTRUE) && 
-        (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE))
+    property = GetProperty(vobsSTAR_POS_EQ_RA_MAIN);
+    vobsSTAR_PROPERTY* propertyDec = GetProperty(vobsSTAR_POS_EQ_DEC_MAIN);
+
+    if ((IsPropertySet(property)  == mcsTRUE) && 
+        (IsPropertySet(propertyDec) == mcsTRUE))
     {
-        raValue  = GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN);
-        decValue = GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN);
-        snprintf(starId, (maxLength - 1), "Coordinates-ra=%s/dec=%s",
-                 raValue, decValue);
+        const char* raValue  = GetPropertyValue(property);
+        const char* decValue = GetPropertyValue(propertyDec);
+        
+        snprintf(starId, (maxLength - 1), "Coordinates-ra=%s/dec=%s", raValue, decValue);
         return mcsSUCCESS;        
     }
     
@@ -666,15 +777,13 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
 mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                             vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    logTrace("vobsSTAR::IsSame(0x%x)", criteriaList);
-
     // Check if the criteria list is empty
     if (criteriaList == NULL)
     {
         mcsDOUBLE ra1, ra2, dec1, dec2;
 
         // Get right ascension of the star. If not set return FALSE
-        if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
+        if (IsPropertyRaSet() == mcsTRUE)
         {
             if (GetRa(ra1) == mcsFAILURE)
             {
@@ -687,7 +796,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             return mcsFALSE;
         }
 
-        if (star.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
+        if (star.IsPropertyRaSet() == mcsTRUE)
         {
             if (star.GetRa(ra2) == mcsFAILURE)
             {
@@ -701,7 +810,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         }
 
         // Get declinaison of the star. If not set return FALSE
-        if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
+        if (IsPropertyDecSet() == mcsTRUE)
         {
             if (GetDec(dec1) == mcsFAILURE)
             {
@@ -714,7 +823,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             return mcsFALSE;
         }
 
-        if (star.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
+        if (star.IsPropertyDecSet() == mcsTRUE)
         {
             if (star.GetDec(dec2) == mcsFAILURE)
             {
@@ -737,90 +846,117 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             return mcsFALSE;
         }
     }
+    
     // if criteria list is not empty
-    else
+    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
+    
+    const char* propertyId;
+    vobsSTAR_PROPERTY* prop1 = NULL;
+    vobsSTAR_PROPERTY* prop2 = NULL;
+
+    mcsDOUBLE range;
+    vobsPROPERTY_TYPE type;
+    const char *val1Str, *val2Str;
+    mcsDOUBLE val1, val2; 
+
+    const char* hd = NULL;
+    if (isLogDebug)
     {
-        const char *hd;
-        mcsSTRING64 propertyId;
-        mcsDOUBLE range;
-        // Get the size of the criteria list
-        int listSize=criteriaList->Size();
-        mcsDOUBLE val1, val2;    
-        // Get each criteria of the list and check if the comparaison with all
-        // this criteria gave a equality
-        hd = GetPropertyValue(vobsSTAR_ID_HD);
-        for (int el = 0; el < listSize; el++)
+        hd = GetPropertyValue(vobsSTAR_ID_HD);   
+    }
+
+    // Get the size of the criteria list
+    const int listSize = criteriaList->Size();
+
+    // Get each criteria of the list and check if the comparaison with all
+    // this criteria gave a equality
+
+    for (int el = 0; el < listSize; el++)
+    {
+        if (criteriaList->GetNextCriteria
+            (&propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
         {
-            if (criteriaList->GetNextCriteria
-                (propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
+            return mcsFALSE;
+        }
+
+        if (isLogDebug)
+        {
+            logDebug("%s: %s delta is in +/- %g?", hd, propertyId, range);
+        }
+
+        type = vobsFLOAT_PROPERTY;
+
+        if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+        {
+            // Get right ascension of the stars. If not set return FALSE
+            if (IsPropertyRaSet() == mcsTRUE)
+            {
+                if (GetRa(val1) == mcsFAILURE)
+                {
+                    errCloseStack();
+                    return mcsFALSE;
+                }
+            }
+            else
             {
                 return mcsFALSE;
             }
-            logDebug("%s: %s delta is in +/- %g?", hd, propertyId, range);
-            if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+            if (star.IsPropertyRaSet() == mcsTRUE)
             {
-                // Get right ascension of the stars. If not set return FALSE
-                if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
+                if (star.GetRa(val2) == mcsFAILURE)
                 {
-                    if (GetRa(val1) == mcsFAILURE)
-                    {
-                        errCloseStack();
-                        return mcsFALSE;
-                    }
-                }
-                else
-                {
-                    return mcsFALSE;
-                }
-                if (star.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
-                {
-                    if (star.GetRa(val2) == mcsFAILURE)
-                    {
-                        errCloseStack();
-                        return mcsFALSE;
-                    }
-                }
-                else
-                {
+                    errCloseStack();
                     return mcsFALSE;
                 }
             }
-            else if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+            else
             {
-                // Get declinaison of the stars. If not set return FALSE
-                if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
+                return mcsFALSE;
+            }
+        }
+        else if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+        {
+            // Get declinaison of the stars. If not set return FALSE
+            if (IsPropertyDecSet() == mcsTRUE)
+            {
+                if (GetDec(val1) == mcsFAILURE)
                 {
-                    if (GetDec(val1) == mcsFAILURE)
-                    {
-                        errCloseStack();
-                        return mcsFALSE;
-                    }
-                }
-                else
-                {
-                    return mcsFALSE;
-                }
-                if (star.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
-                {
-                    if (star.GetDec(val2) == mcsFAILURE)
-                    {
-                        errCloseStack();
-                        return mcsFALSE;
-                    }
-                }
-                else
-                {
+                    errCloseStack();
                     return mcsFALSE;
                 }
             }
-            // If property is a sting
-            else if (GetProperty(propertyId)->GetType() == vobsSTRING_PROPERTY)
+            else
             {
-                const char *val1Str, *val2Str;
+                return mcsFALSE;
+            }
+            if (star.IsPropertyDecSet() == mcsTRUE)
+            {
+                if (star.GetDec(val2) == mcsFAILURE)
+                {
+                    errCloseStack();
+                    return mcsFALSE;
+                }
+            }
+            else
+            {
+                return mcsFALSE;
+            }
+        }
+        else 
+        {
+            prop1 = GetProperty(propertyId);
+            prop2 = star.GetProperty(propertyId);
+
+            // Suppose types are the same:
+            type = GetPropertyType(prop1);
+
+            // If property is a string
+            if (type == vobsSTRING_PROPERTY)
+            {
                 // Get value of the property id
-                if (IsPropertySet(propertyId) == mcsTRUE)
+                if (IsPropertySet(prop1) == mcsTRUE)
                 {
-                    val1Str = GetPropertyValue(propertyId);
+                    val1Str = GetPropertyValue(prop1);
                     if (val1Str == NULL)
                     {
                         errCloseStack();
@@ -831,9 +967,9 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 {
                     return mcsFALSE;
                 }    
-                if (star.IsPropertySet(propertyId) == mcsTRUE)
+                if (star.IsPropertySet(prop2) == mcsTRUE)
                 {
-                    val2Str = star.GetPropertyValue(propertyId);
+                    val2Str = star.GetPropertyValue(prop2);
                     if (val2Str == NULL)
                     {
                         errCloseStack();
@@ -844,21 +980,13 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 {
                     return mcsFALSE;
                 }    
-                if (strcmp(val1Str, val2Str) == 0)
-                {
-                    return mcsTRUE;
-                }
-                else
-                {
-                    return mcsFALSE;
-                }
             }
             else
             {
                 // Get value of the property id
-                if (IsPropertySet(propertyId) == mcsTRUE)
+                if (IsPropertySet(prop1) == mcsTRUE)
                 {
-                    if (GetPropertyValue(propertyId, &val1) == mcsFAILURE)
+                    if (GetPropertyValue(prop1, &val1) == mcsFAILURE)
                     {
                         errCloseStack();
                         return mcsFALSE;
@@ -868,9 +996,9 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 {
                     return mcsFALSE;
                 }    
-                if (star.IsPropertySet(propertyId) == mcsTRUE)
+                if (star.IsPropertySet(prop2) == mcsTRUE)
                 {
-                    if (star.GetPropertyValue(propertyId, &val2) == mcsFAILURE)
+                    if (star.GetPropertyValue(prop2, &val2) == mcsFAILURE)
                     {
                         errCloseStack();
                         return mcsFALSE;
@@ -881,16 +1009,34 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                     return mcsFALSE;
                 }    
             }
+        }
+
+        if (type == vobsSTRING_PROPERTY)
+        {
+            if (isLogDebug)
+            {
+                logDebug("%s: %s delta = ('%s' - '%s')", hd, propertyId, val1Str, val2Str);
+            }
+
+            if (strcmp(val1Str, val2Str) != 0)
+            {
+                return mcsFALSE;
+            }            
+        } else {
             double delta = fabs(val1 - val2);
-            logDebug("%s: %s delta = (%g - %g) = %g", 
-                     hd, propertyId, val1, val2, delta);
+
+            if (isLogDebug)
+            {
+                logDebug("%s: %s delta = (%g - %g) = %g", hd, propertyId, val1, val2, delta);
+            }
+
             if (delta > range)
             {
                 return mcsFALSE;
             }
         }
-        return mcsTRUE;
     }
+    return mcsTRUE;
 }
 
 /**
@@ -906,31 +1052,28 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
  */
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star, mcsLOGICAL overwrite)
 {
-    logTrace("vobsSTAR::Update()");
-
     const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
 
     // For each star property
-    map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
+    PropertyMap::iterator propertyIter;
     for (propertyIter  = _propertyList.begin();
          propertyIter != _propertyList.end();
          propertyIter++)
     {
         // Retrieve the identifier of the current property
-        string propertyID = propertyIter->first;
-        const char* propertyIdPtr = propertyID.c_str();
+        const char* propertyID = propertyIter->first;
 
         // If the current property is not yet defined
-        if (IsPropertySet(propertyIdPtr) == mcsFALSE || overwrite == mcsTRUE )
+        if (IsPropertySet(propertyID) == mcsFALSE || overwrite == mcsTRUE )
         {
             // Use the property from the given star if existing!
-            if (star.IsPropertySet(propertyIdPtr) == mcsTRUE)
+            if (star.IsPropertySet(propertyID) == mcsTRUE)
             {
                 _propertyList[propertyID] = star._propertyList[propertyID];
                 
                 if (isLogDebug)
                 {
-                    logDebug("updated _propertyList[%s] = '%s'.\n", propertyIdPtr, star._propertyList[propertyID].GetSummaryString().c_str());
+                    logDebug("updated _propertyList[%s] = '%s'.\n", propertyID, star._propertyList[propertyID].GetSummaryString().c_str());
                 }
             }
         }
@@ -957,9 +1100,7 @@ mcsINT32 vobsSTAR::NbProperties()
  */
 void vobsSTAR::Display(mcsLOGICAL showPropId)
 {
-    logTrace("vobsSTAR::Display()");
-
-    map<string, vobsSTAR_PROPERTY > ::iterator propertyIter;
+    PropertyMap::iterator propertyIter;
     mcsSTRING64 starId;
     mcsDOUBLE    starRa  = 0.0;
     mcsDOUBLE    starDec = 0.0;
@@ -1016,12 +1157,10 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, const char *name,
-                                    const vobsPROPERTY_TYPE type, const char *unit,
-                                    const char *format, const char *link, const char *description)
+mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, const char* name,
+                                    const vobsPROPERTY_TYPE type, const char* unit,
+                                    const char* format, const char* link, const char* description)
 {
-    logTrace("vobsSTAR::AddProperty()");
-
     // Verify that the desired property does not already exist
     if (_propertyList.find(id) != _propertyList.end())
     {
@@ -1046,8 +1185,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, const char *name,
  */
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
-    logTrace("vobsSTAR::AddProperties()");
-
     AddProperty(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
                 "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}",
                 "HD identifier, click to call Simbad on this object");
