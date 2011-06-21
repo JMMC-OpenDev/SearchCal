@@ -48,11 +48,11 @@ public:
     virtual mcsCOMPL_STAT Clear(void);
     
     // Method to add a criteria in the list
-    virtual mcsCOMPL_STAT Add(char *propertyId, mcsDOUBLE range);
+    virtual mcsCOMPL_STAT Add(const char* propertyId, mcsDOUBLE range);
     // Method to remove a criteria of the list
-    virtual mcsCOMPL_STAT Remove(char *propertyId);
+    virtual mcsCOMPL_STAT Remove(const char* propertyId);
     // Method to Get the next criteria
-    virtual mcsCOMPL_STAT GetNextCriteria(char *propertyId,
+    virtual mcsCOMPL_STAT GetNextCriteria(const char** propertyId,
                                           mcsDOUBLE *range,
                                           mcsLOGICAL init = mcsFALSE);
 
@@ -63,8 +63,8 @@ protected:
     
 private:
     // List of criteria
-    std::map<char *, float>           _criteriaList;
-    std::map<char *, float>::iterator _criteriaIterator;
+    std::map<const char *, float>           _criteriaList;
+    std::map<const char *, float>::iterator _criteriaIterator;
 };
 
 #endif /*!vobsSTAR_COMP_CRITERIA_LIST_H*/

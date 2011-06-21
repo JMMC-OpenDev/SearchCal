@@ -7,12 +7,11 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSTAR_COMP_CRITERIA_LIST.cpp,v 1.13 2011-03-03 13:09:43 lafrasse Exp $"; 
-
 /* 
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
 using namespace std;
 #include <map>
 
@@ -54,6 +53,8 @@ vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST
  */
 vobsSTAR_COMP_CRITERIA_LIST::~vobsSTAR_COMP_CRITERIA_LIST()
 {
+    // note: criteria list contains char* keys but these are in fact literals
+    // That's why they must not be freed !
 }
 
 /**
@@ -62,7 +63,6 @@ vobsSTAR_COMP_CRITERIA_LIST::~vobsSTAR_COMP_CRITERIA_LIST()
 vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
 (const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
 {
-    logTrace("vobsSTAR_COMP_CRITERIA_LIST::operator=()"); 
     // Copy it in the criteria list
     _criteriaList = criteriaList._criteriaList;
     return *this;
@@ -78,8 +78,6 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
 {
-    logTrace("vobsSTAR_COMP_CRITERIA_LIST::Clear()");
-
     _criteriaList.erase(_criteriaList.begin(), _criteriaList.end());
 
     return mcsSUCCESS;
@@ -95,11 +93,9 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
  * @return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
                                                mcsDOUBLE range)
 {
-    logTrace("vobsSTAR_COMP_CRITERIA_LIST::Add()");
-  
     // create a star
     vobsSTAR star;
     // this star gave method to check that a property is known
@@ -124,7 +120,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(char *propertyId,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(char *propertyId)
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(const char* propertyId)
 {
     // create a star
     vobsSTAR star;
@@ -166,11 +162,10 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(char *propertyId)
  * The possible errors are :
  * \li vobsERR_NO_MORE_CRITERIA
  */
-mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(const char** propertyId,
                                                            mcsDOUBLE *range,
                                                            mcsLOGICAL init)
 {
-    logTrace("vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria()");
     // if init == mcsTRUE the wanted criteria is the first of the list
     if (init == mcsTRUE)
     {
@@ -190,8 +185,8 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(char *propertyId,
         return mcsFAILURE;
     }
 
-    // copy the criteria name found and get the value of the range
-    strcpy(propertyId, (*_criteriaIterator).first);
+    // get the criteria name found and get the value of the range
+    *propertyId = (*_criteriaIterator).first;
     *range = (*_criteriaIterator).second;
     
     return mcsSUCCESS;
