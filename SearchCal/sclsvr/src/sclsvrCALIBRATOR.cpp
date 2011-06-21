@@ -7,9 +7,6 @@
  * sclsvrCALIBRATOR class definition.
  */
 
- static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR.cpp,v 1.104.2.2 2011-04-15 22:41:20 duvert Exp $"; 
-
-
 /* 
  * System Headers 
  */
@@ -594,7 +591,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     // WARNING: Property Id lists should be defined in the same order than
     // alxBAND enumerate. In order to be able to use this enumerate as index of
     // this list.
-    char* mag0PropertyId[alxNB_BANDS] = 
+    const char* mag0PropertyId[alxNB_BANDS] = 
     {
         sclsvrCALIBRATOR_BO,
         sclsvrCALIBRATOR_VO,
@@ -869,7 +866,7 @@ ComputeInterstellarAbsorption(mcsLOGICAL isBright)
     logTrace("sclsvrCALIBRATOR::ComputeInterstellarAbsorption()");
 
     // Magnitudes to be used
-    char *magPropertyId[alxNB_BANDS]; 
+    const char* magPropertyId[alxNB_BANDS]; 
     if (isBright == mcsTRUE)
     {
         magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
@@ -897,7 +894,7 @@ ComputeInterstellarAbsorption(mcsLOGICAL isBright)
     // WARNING: Property Id lists should be defined in the same order than
     // alxBAND enumerate. In order to be able to use this enumerate as index of
     // this list.
-    char *mag0PropertyId[alxNB_BANDS] = 
+    const char* mag0PropertyId[alxNB_BANDS] = 
     {
         sclsvrCALIBRATOR_BO,
         sclsvrCALIBRATOR_VO,
@@ -1005,7 +1002,7 @@ sclsvrCALIBRATOR::ComputeApparentMagnitude(mcsLOGICAL isBright)
     logTrace("sclsvrCALIBRATOR::ComputeApparentMagnitude()");
 
     // Magnitudes to be used
-    char *magPropertyId[alxNB_BANDS]; 
+    const char *magPropertyId[alxNB_BANDS]; 
     if (isBright == mcsTRUE)
     {
         magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
@@ -1034,7 +1031,7 @@ sclsvrCALIBRATOR::ComputeApparentMagnitude(mcsLOGICAL isBright)
     // WARNING: Property Id lists should be defined in the same order than
     // alxBAND enumerate. In order to be able to use this enumerate as index of
     // this list.
-    char *mag0PropertyId[alxNB_BANDS] = 
+    const char *mag0PropertyId[alxNB_BANDS] = 
     {
         sclsvrCALIBRATOR_BO,
         sclsvrCALIBRATOR_VO,
@@ -1123,7 +1120,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
 
     // Declare the 4 properties name for I0, J0, K0, H0
     int nbProperties;
-    char *starPropertyId[6];
+    const char *starPropertyId[6];
     if (isBright == mcsTRUE)
     {
         nbProperties = 4;
@@ -1689,7 +1686,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
     }
 
     // Get object diameter. First look at the diameters coming from catalog
-    char *diamId[4][2] = 
+    const char *diamId[4][2] = 
     {
         {vobsSTAR_UD_DIAM, vobsSTAR_UD_DIAM_ERROR},
         {vobsSTAR_LD_DIAM, vobsSTAR_LD_DIAM_ERROR},

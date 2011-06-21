@@ -7,9 +7,6 @@
  * sclsvrGetStarCB class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrGetStarCB.cpp,v 1.37.2.1 2011-04-15 22:43:59 duvert Exp $"; 
-
-
 /* 
  * System Headers 
  */
@@ -286,7 +283,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
         string xmlOutput;
         //request.AppendParamsToVOTable(xmlOutput);
-        char* voHeader = "Produced by beta version of getStar (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+        const char* voHeader = "Produced by beta version of getStar (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
         // Get the software name and version
         mcsSTRING32 softwareVersion;
         snprintf(softwareVersion, sizeof(softwareVersion), 
