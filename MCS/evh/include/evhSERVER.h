@@ -72,10 +72,10 @@ public:
 
 protected:
     // Method to add a new state in the state definition list.
-    mcsCOMPL_STAT AddState(mcsINT32 id, char *name);
+    mcsCOMPL_STAT AddState(mcsINT32 id, const char *name);
 
     // Method to add a new state in the state definition list.
-    mcsCOMPL_STAT AddSubState(mcsINT32 id, char *name);
+    mcsCOMPL_STAT AddSubState(mcsINT32 id, const char *name);
 
 private:
     // Declaration of copy constructor and assignment operator as private

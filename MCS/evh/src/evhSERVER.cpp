@@ -7,12 +7,11 @@
  * Definition of the evhSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhSERVER.cpp,v 1.15 2006-08-25 07:28:05 gzins Exp $";
-
 /* 
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 /*
@@ -419,7 +418,7 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
  * The possible error is :
  * \li evhERR_DUPLICATED_STATE
  */
-mcsCOMPL_STAT evhSERVER::AddState(mcsINT32  id, char *name)
+mcsCOMPL_STAT evhSERVER::AddState(mcsINT32  id, const char *name)
 {
     logExtDbg("evhSERVER::AddState()");
 
@@ -445,7 +444,7 @@ mcsCOMPL_STAT evhSERVER::AddState(mcsINT32  id, char *name)
  * The possible error is :
  * \li evhERR_DUPLICATED_SUBSTATE
  */
-mcsCOMPL_STAT evhSERVER::AddSubState(mcsINT32 id, char *name)
+mcsCOMPL_STAT evhSERVER::AddSubState(mcsINT32 id, const char *name)
 {
     logExtDbg("evhSERVER::AddSubState()");
 
