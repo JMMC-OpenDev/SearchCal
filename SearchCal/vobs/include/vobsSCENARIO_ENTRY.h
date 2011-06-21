@@ -57,7 +57,7 @@ class vobsSCENARIO_ENTRY
 {
 public:
     // Class constructor
-    vobsSCENARIO_ENTRY(mcsSTRING32                  catalogName,
+    vobsSCENARIO_ENTRY(const mcsSTRING32            catalogName,
                        vobsREQUEST                  *request,
                        vobsSTAR_LIST                *listInput,
                        vobsSTAR_LIST                *listOutput,

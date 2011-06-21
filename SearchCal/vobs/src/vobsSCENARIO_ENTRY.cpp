@@ -7,12 +7,11 @@
  * Definition of vobsSCENARIO_ENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSCENARIO_ENTRY.cpp,v 1.12 2006-03-03 15:03:28 scetre Exp $"; 
-
 /* 
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 /*
@@ -31,7 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(mcsSTRING32                 catalogName,
+vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const mcsSTRING32         catalogName,
                                        vobsREQUEST                 *request,
                                        vobsSTAR_LIST               *listInput,
                                        vobsSTAR_LIST               *listOutput,
