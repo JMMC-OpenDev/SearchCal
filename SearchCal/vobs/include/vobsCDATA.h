@@ -17,7 +17,8 @@
  * system header files
  */
 #include <vector>
-
+#include <string.h>
+#include <stdio.h>
 /*
  * MCS header files
  */
@@ -253,8 +254,8 @@ public:
                 mcsUINT32    nbOfSubStrings;
                 char        *paramName;
                 char        *ucdName;
-                char        *ucdValue;
-                char        *propertyID;
+                const char  *ucdValue;
+                const char  *propertyID;
                 const char  *origin;
                 vobsCONFIDENCE_INDEX confidenceIndex;
                 obj          object;
@@ -391,7 +392,7 @@ public:
                         mcsDOUBLE lambdaValue = -1.0;
                         if (sscanf(wavelength, "%lf" , &lambdaValue) == 1)
                         {
-                            char* magnitudeBand = NULL;
+                            const char* magnitudeBand = NULL;
 
                             // Determnine to corresponding magnitude
                             if ((lambdaValue >= (mcsDOUBLE)1.24) ||
@@ -465,7 +466,7 @@ private:
     vobsCDATA& operator=(const vobsCDATA&);
     
     mcsCOMPL_STAT LoadParamsAndUCDsNamesLines(void);
-    char *GetPropertyId(const char *paramName, const char *ucdName);
+    const char *GetPropertyId(const char *paramName, const char *ucdName);
     
     std::vector<char*> _paramName; // Name of parameters
     std::vector<char*> _ucdName; // Name of corresponding UCD

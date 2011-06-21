@@ -7,13 +7,11 @@
  * vobsCDATA class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCDATA.cpp,v 1.40.2.1 2011-04-08 19:43:03 duvert Exp $"; 
-
-
 /* 
  * System Headers 
  */
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 
 
@@ -33,6 +31,9 @@ using namespace std;
 #include "vobsErrors.h"
 #include "vobsPrivate.h"
 
+/** initial capacity for vectors */
+#define INITIAL_CAPACITY 20
+
 /*
  * Class constructor.
  */
@@ -40,6 +41,10 @@ vobsCDATA::vobsCDATA()
 {
     _nbLines = 0;
     _nbLinesToSkip = 0;
+    
+    // reserve space in vectors:
+    _paramName.reserve(INITIAL_CAPACITY);
+    _ucdName.reserve(INITIAL_CAPACITY);
 }
 
 /*
@@ -54,7 +59,7 @@ vobsCDATA::~vobsCDATA()
     {
         free(*paramName);
     }
-
+    
     // Free all strings containing UCD names
     std::vector<char *>::iterator ucdName;
     for (ucdName = _ucdName.begin(); ucdName != _ucdName.end(); ucdName++)
@@ -479,7 +484,7 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
  *
  * @return the found property ID, or NULL id none corresponded.
  */
-char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
+const char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
 {
     // object identifiers 
     if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
@@ -534,7 +539,7 @@ char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
     // Flag of variability
     if (strcmp(ucdName, "CODE_VARIAB") == 0)
     {
-        char* id = NULL;
+        const char* id = NULL;
 
         if (strcmp(paramName, "v1") == 0) // ASCC catalog
         {
