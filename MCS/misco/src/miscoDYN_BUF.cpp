@@ -8,7 +8,6 @@
  * byte-based buffers.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoDYN_BUF.cpp,v 1.11 2010-01-15 17:27:51 lafrasse Exp $";
 /* 
  * System Headers 
  */
@@ -157,8 +156,6 @@ const char* miscoDYN_BUF::GetNextLine(const char        *currentPos,
                                       const mcsUINT32   maxLineLength,
                                       const mcsLOGICAL  skipCommentFlag)
 {
-    logExtDbg("miscoDYN_BUF::GetNextLine()");
-
     return miscDynBufGetNextLine(&_dynBuf, currentPos, nextLine, maxLineLength,
                                  skipCommentFlag);
 }
@@ -325,8 +322,6 @@ mcsCOMPL_STAT miscoDYN_BUF::AppendBytes(const char        *bytes,
  */
 mcsCOMPL_STAT miscoDYN_BUF::AppendString(const char *str)
 {
-    logExtDbg("miscoDYN_BUF::AppendString()");
-
     return miscDynBufAppendString(&_dynBuf, str);
 }
 
@@ -335,8 +330,6 @@ mcsCOMPL_STAT miscoDYN_BUF::AppendString(const char *str)
  */
 mcsCOMPL_STAT miscoDYN_BUF::AppendLine(const char *line)
 {
-    logExtDbg("miscoDYN_BUF::AppendLine()");
-
     return miscDynBufAppendLine(&_dynBuf, line);
 }
 
