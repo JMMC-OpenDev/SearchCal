@@ -7,8 +7,6 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MIDI.cpp,v 1.26 2011-03-03 13:09:42 lafrasse Exp $"; 
-
 /* 
  * System Headers 
  */
@@ -138,12 +136,12 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     
     // Add reference star constraints to constaint list
     // Field on sky: ra constraint
-    if (constraintlist.Add("POS_EQ_RA_MAIN", deltaRa) == mcsFAILURE)
+    if (constraintlist.Add(vobsSTAR_POS_EQ_RA_MAIN, deltaRa) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // Field on sky: dec constraint
-    if (constraintlist.Add("POS_EQ_DEC_MAIN", deltaDec) == mcsFAILURE)
+    if (constraintlist.Add(vobsSTAR_POS_EQ_DEC_MAIN, deltaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -178,13 +176,13 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     middleNFlux = (minNFlux + diffNFlux);
 
     // Add N flux constraint to constraint list
-    if (constraintlist.Add("PHOT_FLUX_IR_12", diffNFlux) == mcsFAILURE)
+    if (constraintlist.Add(vobsSTAR_PHOT_FLUX_IR_12, diffNFlux) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // Set flux for reference star to the middle of the flux range
-    if (referenceStar.SetPropertyValue("PHOT_FLUX_IR_12", 
+    if (referenceStar.SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, 
                                        middleNFlux, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
