@@ -3,6 +3,19 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
+/** 
+ * If the $filename exists, then each soap client requests are appended 
+ * (you would probably have to set permission to allow apache writing )
+ */
+function logInFile($data){
+    $filename = 'sclwsProxy.log';
+    if (is_writable($filename)) {
+        if ($handle = fopen($filename, 'a')) {
+            fwrite($handle, "<e>\n<date>".date("c")."</date>\n<ip>".$_SERVER['REMOTE_ADDR']."</ip>\n".preg_replace('~.*?\?>~', '', $data)."\n</e>\n");
+        }
+    }
+}
+
 /**
  * By default the searchcal SOAP service responds on non standard HTTP port.
  *
@@ -61,6 +74,8 @@ curl_setopt($session, CURLOPT_TIMEOUT, 7200);
 if ($postdata) {
     curl_setopt ($session, CURLOPT_POSTFIELDS, $postdata);
 }
+
+logInFile($postdata);
 
 // The web service returns XML. Set the Content-Type appropriately
 header("Content-Type:text/xml");
