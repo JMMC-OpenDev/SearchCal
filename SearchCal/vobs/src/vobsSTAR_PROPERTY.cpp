@@ -246,7 +246,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
             return (mcsFAILURE);
         }
 
-        logDebug("_numerical('%s') = %f -('%s')-> \"%s\".\n", _id, _numerical, usedFormat, _value);
+        logDebug("_numerical('%s') = %f -('%s')-> \"%s\".", _id, _numerical, usedFormat, _value);
     }
 
     return mcsSUCCESS;    
@@ -461,7 +461,14 @@ string vobsSTAR_PROPERTY::GetSummaryString(void) const
     // @TODO : thread safety !!!
     numericalStream << (double)_numerical; 
 
-    string summary = string("vobsSTAR_PROPERTY(Id = '") +_id + "'; Name = '" + _name + "'; Value = '" + _value + "'; Numerical = '" + numericalStream.str() + "'; Unit = '" + _unit + "'; Type = '" + (_type == vobsSTRING_PROPERTY ? "STRING" : "FLOAT") + "', Origin = '" + _origin + "'; Confidence = '" + (_confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (_confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH")) + "'; Desc = '" + _description + "'; Link = '" + _link + "')";
+    string summary = string("vobsSTAR_PROPERTY(Id = '") + string(_id);
+    summary += "'; Name = '" + string(_name);
+    summary += "'; Value = '" + string(_value) + "'; Numerical = '" + numericalStream.str();
+    summary += "'; Unit = '" + string(_unit) + "'; Type = '" +  (_type == vobsSTRING_PROPERTY ? "STRING" : "FLOAT");
+    summary += "', Origin = '" + string(_origin) + "'; Confidence = '" + 
+            (_confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (_confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
+    summary +=  "'; Desc = '" + (_description == NULL ? "" : string(_description));
+    summary += "'; Link = '" + (_link == NULL ? "" : string(_link)) + "')";
 
     return summary;
 }
