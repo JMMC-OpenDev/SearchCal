@@ -7,9 +7,6 @@
  * sclsvrCALIBRATOR_LIST class definition.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrCALIBRATOR_LIST.cpp,v 1.53 2006-04-05 15:12:39 gzins Exp $"; 
-
-
 /* 
  * System Headers 
  */
@@ -59,7 +56,7 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::Copy()");
+    logTest("sclsvrCALIBRATOR_LIST::Copy()");
 
     // Put each star of the given vobsSTAR_LIST in the internal list
     for (unsigned int el = 0; el < list.Size(); el++)
@@ -122,8 +119,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::AddAtTail()");
-
     // Copy the given calibrator
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(calibrator);
 
@@ -142,8 +137,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::AddAtTail()");
-    
     // Copy the given star as a calibrator
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(star);
 
@@ -161,7 +154,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::Complete()");
+    logTest("sclsvrCALIBRATOR_LIST::Complete() - start");
 
     // For each calibrator of the list 
     for (unsigned int el = 0; el < Size(); el++)
@@ -179,6 +172,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
     // Sort calibrators according to their distance from the science object in
     // ascending order, i.e. the closest first.
     Sort(sclsvrCALIBRATOR_DIST);
+
+    logTest("sclsvrCALIBRATOR_LIST::Complete() - exit");
 
     return mcsSUCCESS;
 }
