@@ -39,10 +39,6 @@
  * @sa pthread
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdMutex.c,v 1.3 2006-01-10 14:40:39 mella Exp $"; 
-
-
-
 /* 
  * System Headers
  */
@@ -108,7 +104,7 @@ mcsCOMPL_STAT thrdMutexInit(thrdMUTEX *mutex)
  */
 mcsCOMPL_STAT thrdMutexDestroy(thrdMUTEX *mutex)
 {
-    logTrace("thrdMutexLock()");
+    logTrace("thrdMutexDestroy()");
 
     /* Verify parameter vailidity */
     if (mutex == NULL)
@@ -154,16 +150,12 @@ mcsCOMPL_STAT thrdMutexDestroy(thrdMUTEX *mutex)
  */
 mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
 {
-    logTrace("thrdMutexLock()");
-
     /* Verify parameter vailidity */
     if (mutex == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "mutex");
         return mcsFAILURE;
     }
-
-    logDebug("thrdMutexLock() - waiting for the resource to be released.");
 
     /* Lock the mutex */
     if (pthread_mutex_lock(mutex) != 0)
@@ -184,8 +176,6 @@ mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
         return mcsFAILURE;
     }
 
-    logDebug("thrdMutexLock() - resource acquired.");
-
     return mcsSUCCESS;
 }
 
@@ -201,8 +191,6 @@ mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
  */
 mcsCOMPL_STAT thrdMutexUnlock(thrdMUTEX *mutex)
 {
-    logTrace("thrdMutexUnlock()");
-
     /* Verify parameter vailidity */
     if (mutex == NULL)
     {
@@ -228,8 +216,6 @@ mcsCOMPL_STAT thrdMutexUnlock(thrdMUTEX *mutex)
 
         return mcsFAILURE;
     }
-
-    logDebug("thrdMutexUnlock() - resource released.");
 
     return mcsSUCCESS;
 }
