@@ -98,6 +98,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line),
                                         mcsTRUE)) != NULL)
     {
+        /* use test level to see coefficient changes */
         logTest("miscDynBufGetNextLine() = '%s'", line);
 
         /* If the current line is not empty */

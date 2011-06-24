@@ -106,6 +106,8 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line),
                                         mcsTRUE)) != NULL)
     {
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
+        
         /* If line is not empty */
         miscTrimString (line, " ");
         if (strlen(line) != 0)

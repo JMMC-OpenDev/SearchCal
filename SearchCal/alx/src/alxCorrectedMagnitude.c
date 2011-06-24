@@ -157,7 +157,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     while ((pos = miscDynBufGetNextLine
             (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
     {
-        logDebug("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for leading and trailing characters */        
         miscTrimString (line, " ");
@@ -343,8 +343,6 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE *spectralType)
  */
 static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
 {
-    logTrace("alxIsBlankingValue()");
-    
     if (cellValue == (mcsDOUBLE)alxBLANKING_VALUE)
     {
         return mcsFALSE;
@@ -436,7 +434,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
     mcsSTRING1024 line;
     while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line), mcsTRUE)) != NULL)
     {
-        logDebug("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
         miscTrimString (line, " ");
@@ -1821,7 +1819,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
     mcsSTRING1024 line;
     while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line), mcsTRUE)) != NULL)
     {
-        logDebug("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
         miscTrimString (line, " ");
@@ -2018,7 +2016,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
     mcsSTRING1024 line;
     while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line), mcsTRUE)) != NULL)
     {
-        logDebug("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
         miscTrimString (line, " ");
@@ -2268,7 +2266,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
     mcsSTRING1024 line;
     while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line), mcsTRUE)) != NULL)
     {
-        logDebug("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
         miscTrimString (line, " ");

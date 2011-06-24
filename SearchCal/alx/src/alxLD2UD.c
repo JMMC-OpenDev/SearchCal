@@ -118,8 +118,9 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
                                            lineSize,
                                            mcsTRUE)) != NULL)
     {
-        logDebug("Parsing token '%s'.", currentLine);
-	char band='0';
+        logTrace("miscDynBufGetNextLine() = '%s'", currentLine);
+
+        char band='0';
         mcsDOUBLE value = FP_NAN;
 
         /* Try to read effective temperature */
@@ -235,7 +236,8 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                            lineSize,
                                            mcsTRUE)) != NULL)
     {
-        logDebug("Parsing token '%s'.", currentLine);
+        logTrace("miscDynBufGetNextLine() = '%s'", currentLine);
+
         char band = '0';
         mcsDOUBLE value = FP_NAN;
 

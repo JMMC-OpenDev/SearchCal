@@ -104,7 +104,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     while ((pos = miscDynBufGetNextLine
             (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
     {
-        logDebug("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If line is not empty */
         /* Trim line for leading and trailing characters */        
